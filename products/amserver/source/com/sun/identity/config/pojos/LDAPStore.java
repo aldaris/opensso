@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPStore.java,v 1.4 2008-01-18 06:34:45 jonnelson Exp $
+ * $Id: LDAPStore.java,v 1.5 2008-02-21 22:35:44 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,7 @@ public class LDAPStore implements Serializable {
 
     private String name;
     private String hostName;
-    private int hostPort = 389;
+    private int hostPort;
     private boolean hostPortSecure = false;
     private String baseDN;
     private String username;

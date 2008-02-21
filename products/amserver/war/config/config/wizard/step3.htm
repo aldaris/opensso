@@ -1,104 +1,216 @@
 <script type="text/javascript">
 
-    function ${type}StoreServerValidated( response ) {
+    function configStoreServerValidated( response ) {
         storeServerValidated( '$type', response );
     }
-    function ${type}StoreBaseDNValidated( response ) {
+    function configStoreBaseDNValidated( response ) {
         storeBaseDNValidated('$type', response );
     }
-    function ${type}StoreLoginIdValidated( response ) {
+    function configStoreLoginIdValidated( response ) {
         storeLoginIdValidated( '$type', response );
     }
 
-    function validate${type}StoreServer() {
+    function validateconfigStoreServer() {
         validateStoreServer('$type');
     }
-    function validate${type}StoreBaseDN() {
+    function validateconfigStoreBaseDN() {
         validateStoreBaseDN('$type');
     }
-    function validate${type}StoreLoginId() {
+    function validateconfigStoreLoginId() {
         validateStoreLoginId('$type');
     }
 
+    function validatePort() {
+	field = "configStorePort";
+	if ($(field).value > 65535) {
+	    $(field+'Status').innerHTML = "Invalid Port Number";
+	    return;
+	}
+	validate();
+    }
+
+    function validateConfigStoreHost() {
+	field = "configStoreHost";
+ 	validate();
+    }
+
+    function validateConfigStoreLoginId() {
+	field = "configStoreLoginId";
+ 	validate();
+    }
+
+    function validateConfigStorePassword() {
+	field = "configStorePassword";
+ 	validate();
+    }
 
     function validateRootSuffix() {
-        var callUrl = "$context$path?actionLink=validateRootSuffix&rootSuffix=" + $('rootSuffix').value
-        AjaxUtils.call(callUrl, rootSuffixValidated);
+	field = "rootSuffix";
+ 	validate();
     }
-    function rootSuffixValidated(response) {
-        if ( response.responseText == "true" ) {
-            $('rootSuffixStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>ok</small>';
- 		$('nextTabButton').disabled = false;
-        } else {
-            $('rootSuffixStatus').innerHTML = response.responseText;
-        }
+
+    function validateHostName() {
+        field = "existingHost";
+        validate();
+    }
+
+    function validateLocalRepPort() {
+        field = "localRepPort";
+        validate();
+    }
+
+    function validateExistingPort() {
+        field = "existingPort";
+        validate();
+    }
+
+    function validateExistingRepPort() {
+        field = "existingRepPort";
+        validate();
+    }
+
+    function enableExisting() {
+        document.getElementById("existingInstance").style.display = "";
+	AjaxUtils.call("$context$path?actionLink=setReplication&multi=enable");
+    }
+
+    function disableExisting() {
+        document.getElementById("existingInstance").style.display = "none";
+	AjaxUtils.call("$context$path?actionLink=setReplication&multi=disable");
+    }
+
+    function enableRemote() {
+        document.getElementById("configStoreModule").style.display = "";
+        document.getElementById("embeddedModule").style.display = "none";
+	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote");
+    }
+
+    function disableRemote() {
+        document.getElementById("configStoreModule").style.display = "none";
+        document.getElementById("embeddedModule").style.display = "";
+	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded");
     }
 
     function initialize() {
         if ( $usingCustomStore ) {
-            enableCustomConfig('$type');
-            validateStore('$type');
+            disableRemote('config');
         }
     }
 
-
     YAHOO.util.Event.onDOMReady(initialize);
-
 </script>
 
 <h1>Step 3: Configuration Store Settings<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>Select the configuration option you would like to use. Choose external to use an existing data store.</p>
+<p>Federated Access Manager requires a data store for the configuration 
+data. The supported configuration data stores are Embedded (OpenDS) or 
+External (Sun Java System Directory Server). </p> 
 
-<input type="radio" id="${type}StoreDefault" name="${type}StoreCustom" style="margin-left:1em" value="false" checked="checked" onclick="disableCustomConfig('$type');"/>
-<span>Embeded Store</span><br/>
-<input type="radio" id="${type}StoreCustom" name="${type}StoreCustom" style="margin-left:1em" value="true" onclick="enableCustomConfig('$type');"/>
-<span>External Store</span>
-<div id="${type}StoreModule" style="width:570px; display:none">
-    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+<input type="radio" id="configStoreDefault" name="configStoreCustom" 
+    style="margin-left:1em" value="false" checked="checked" 
+    onclick="disableRemote();"/> Embedded (Open DS)
+<input type="radio" id="configStoreCustom" name="configStoreCustom" 
+    style="margin-left:1em" value="true" onclick="enableRemote();"/>
+    External (Sun Java System DS)
+
+<!-- EMBEDDED STORE PROPERTIES -->
+<div id="configStoreProperties" style="width:570px;" >
+    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
     <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox" style="margin-left:10px">Configuration Store Details</div>
+    <div class="headerBox" style="margin-left:10px">
+	Configuration Store Details
+    </div>
     <div class="bodyBox" style="height:230px;margin-left:10px">	
-        <fieldset id="${type}StoreFieldset" style="padding:0px; margin-top:-80px">
-            <ol>
-                <li class="beginChunk">
-                    <label for="${type}StoreHost">Directory Host Name<em>*</em></label>
-                    <input id="${type}StoreHost" name="${type}StoreHost" type="text" class="text" style="width:150px" value="#if($store.hostName)$store.hostName#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreServer )"/>
-                    <span id="${type}StoreHostStatus"></span>
-                </li>
-                <li>
-                    <label for="${type}StorePort">Port<em>*</em></label>
-                    <input id="${type}StorePort" name="${type}StorePort" type="text" class="text" style="width:40px" value="$store.hostPort" onkeyup="APP.callDelayed(this, validate${type}StoreServer )"/>
-                </li>
-                <li class="endChunk">
-                    <label for="${type}StoreSecurePort">Is this a secure port?<em>*</em></label>
-                    <input id="${type}StoreSecurePortNo" name="${type}StoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('$type'); validate${type}StoreServer();"/><span>No</span>
-                    <input id="${type}StoreSecurePortYes" name="${type}StoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('$type'); validate${type}StoreServer();"/><span>Yes</span>
-                </li>
-                <li class="singleChunk">
-                    <label for="${type}StoreBaseDN">Directory Base DN<em>*</em></label>
-                    <input id="${type}StoreBaseDN" name="${type}StoreBaseDN" type="text" class="text" style="width:150px" value="#if($store.baseDN)$store.baseDN#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreBaseDN )"/>
-                    <span id="${type}StoreBaseDNStatus"></span>
-                </li>
-                <li class="beginChunk">
-                    <label for="${type}StoreLoginId">Directory Login ID<em>*</em></label>
-                    <input id="${type}StoreLoginId" name="${type}StoreLoginId" type="text" class="text" style="width:150px" value="#if($store.username)$store.username#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreLoginId )"/>
-                    <span id="${type}StoreLoginIdStatus"></span>
-                </li>
-                <li>
-                    <label for="${type}StorePassword">Directory Password<em>*</em></label>
-                    <input id="${type}StorePassword" name="${type}StorePassword" type="password" class="text" style="width:150px" value="#if($store.password)$store.password#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreLoginId )"/>
-                </li>
-		#if (${type} == "config") 
+        <fieldset id="configStoreFieldset" style="padding:0px; margin-top:-60px">
                 <li>
                     <label for="rootSuffix">Root Suffix<em>*</em></label>
-                    <input id="rootSuffix" name="rootSuffix" type="text" class="text" style="width:150px" value="$rootSuffix" onkeyup="APP.callDelayed(this, validateRootSuffix )"/>
+                    <input id="rootSuffix" name="rootSuffix" 
+			type="text" class="text" style="width:150px" 
+			value="$rootSuffix" 
+			onkeyup="APP.callDelayed(this, validateRootSuffix)"/>
                     <span id="rootSuffixStatus"></span>
                 </li>
+                <li>
+                    <label for="configStorePort">Port<em>*</em></label>
+                    <input id="configStorePort" name="configStorePort" 
+			type="text" size="5" maxLength="5" 
+			value="$configStorePort" 
+			onkeyup="APP.callDelayed(this, validatePort)"/>
+                    	<span id="configStorePortStatus"></span>
+                </li>
+		<div id="embeddedModule">
+		<li>
+		    <label>Add to Exising Instance? </label>
+			<input type="radio" id="existingNo" name="existingInstance" value="false" checked="checked" onclick="disableExisting();"/>No
+			<input type="radio" id="existingYes" name="existingInstance" value="true" onclick="enableExisting();"/>Yes
+		</li>
+		<div id="existingInstance" style="display:none">
+                <li>
+                    <label for="localRepPort">Local Replication Port<em>*</em></label>
+                    <input id="localRepPort" name="localRepPort" type="text" 
+			class="text" size="5" maxLength="5" 
+			value="$localRepPort" 
+                        onkeyup="APP.callDelayed(this, validateLocalRepPort)"/>
+                    <span id="localRepPortStatus"></span>
+                </li>
+                <li>
+                    <label for="existingHost">
+                        Existing Host Name <em>*</em>
+                    </label>
+                    <input id="existingHost" name="existingHost" type="text" 
+                        class="text" style="width:150px" 
+                        onkeyup="APP.callDelayed(this, validateHostName)"/>
+                    <span id="existingHostStatus"></span>
+                <li>
+                    <label for="existingPort">Existing Port<em>*</em></label>
+                    <input id="existingPort" name="existingPort" type="text" 
+			class="text" size="5" maxLength="5" 
+			value="$existingPort" 
+                        onkeyup="APP.callDelayed(this, validateExistingPort)"/>
+                    <span id="existingPortStatus"></span>
+                </li>
+                <li>
+                    <label for="existingRepPort">Existing Replication Port<em>*</em></label>
+                    <input id="existingRepPort" name="existingRepPort" 
+			type="text" class="text" size="5" maxLength="5"
+			value="$existingRepPort" 
+                        onkeyup="APP.callDelayed(this, validateExistingRepPort)"/>
+                    <span id="existingRepPortStatus"></span>
+                </li>
+		</div> <!-- Existing Instance -->
+		</div> <!-- Embedded Store -->
 
-		#end
+		<!-- EXTERNAL STORE PROPERTIES -->
+		<div id="configStoreModule" style="display:none">
+                <li> 
+                    <label for="configStoreHost">Host Name<em>*</em></label>
+                    <input id="configStoreHost" name="configStoreHost" type="text" 
+                        class="text" style="width:150px" 
+			value="$configStoreHost"
+                        onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
+                    <span id="configStoreHostStatus"></span>
+                </li>
+                <li> 
+                    <label for="configStoreLoginId">Login ID<em>*</em></label>
+                    <input id="configStoreLoginId" name="configStoreLoginId" type="text" 
+                        class="text" style="width:150px" 
+			value="$configStoreLoginId"
+                        onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"/>
+                    <span id="configStoreLoginIdStatus"></span>
+                </li>
+                <li>
+                    <label for="configStorePassword">Password<em>*</em></label>
+                    <input id="configStorePassword" name="configStorePassword" 
+                        type="password" class="text" style="width:150px" 
+                        value="#if($store.password)$store.password#{end}" 
+                        onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
+                    <span id="configStorePasswordStatus"></span>
+                </li>
+		</div>
             </ol>
         </fieldset>
     </div>
-	<div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
+    <div style="margin-left:10px">
+	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+    </div>
 </div>
 

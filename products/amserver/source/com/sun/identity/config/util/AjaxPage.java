@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.10 2008-02-04 20:57:19 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.11 2008-02-21 22:35:44 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,10 +36,15 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.click.control.ActionLink;
 import net.sf.click.Page;
 
 
 public abstract class AjaxPage extends Page {
+
+
+    public ActionLink validateInputLink =
+        new ActionLink("validateInput", this, "validateInput" );
 
     public static final String RESPONSE_TEMPLATE = "{\"valid\":${valid}, \"body\":\"${body}\"}";
     public static final String OLD_RESPONSE_TEMPLATE = "{\"isValid\":${isValid}, \"errorMessage\":\"${errorMessage}\"}";
@@ -241,5 +246,20 @@ public abstract class AjaxPage extends Page {
         }
         
         return cookieDomain;
+    }
+
+    public boolean validateInput() {
+        String key = toString("key");
+        String value = toString("value");
+
+        if (value == null) {
+            writeToResponse(getLocalizedString("missing.required.field"));
+        } else {
+            getContext().setSessionAttribute(key, value);
+            writeToResponse("OK");
+        }
+
+        setPath(null);
+        return false;
     }
 }

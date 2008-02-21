@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.4 2008-02-04 20:57:20 jonnelson Exp $
+ * $Id: Wizard.java,v 1.5 2008-02-21 22:35:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,12 +49,14 @@ public class Wizard extends AjaxPage {
     public ActionLink pushConfigLink = 
         new ActionLink("pushConfig", this, "pushConfig" );
 
+    public static String defaultUserName = "cn=Directory Manager";
+    public static String defaultPassword = "";
+    public static String defaultRootSuffix = "dc=opensso,dc=java,dc=net";
+
     private String cookieDomain = null;
     private String hostName = getHostName();
-    private String userName = "cn=Directory Manager";
-    private String password = "";
-    private int port = AMSetupServlet.getUnusedPort(hostName,50389, 1000);;
-    private String rootSuffix = "dc=opensso,dc=java,dc=net";
+    private int defaultPort = 
+        AMSetupServlet.getUnusedPort(hostName, 50389, 1000);
     private String dataStore = SetupConstants.SMS_EMBED_DATASTORE;
     
     public void onInit() {       
@@ -73,54 +75,93 @@ public class Wizard extends AjaxPage {
         HttpServletResponseWrapper response =                
             new HttpServletResponseWrapper(getContext().getResponse());        
         
-        // get the admin password. use the same value for password and confirm
-        // value because they were validated in the input screen
+        /* 
+         * Get the admin password. use the same value for password and confirm
+         * value because they were validated in the input screen
+         */
         String adminPassword = (String)getContext().getSessionAttribute(
             SetupConstants.CONFIG_VAR_ADMIN_PWD);        
-        request.addParameter(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);
-        request.addParameter(SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, adminPassword);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, adminPassword);
         
-        // get the agent password. same value used for password and confirm
-        // because they were validated in the input screen.
+        /*
+         * Get the agent password. same value used for password and confirm
+         * because they were validated in the input screen.
+         */
         String agentPassword = (String)getContext().getSessionAttribute(
             SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
-        request.addParameter(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);
-        request.addParameter(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM, agentPassword);
-        
-        // set configuration repository information
-        LDAPStore config = (LDAPStore)getContext().getSessionAttribute( 
-            Step2.LDAP_STORE_SESSION_KEY);       
-        if (config != null) {                          
-            hostName = config.getHostName();
-            dataStore =  SetupConstants.SMS_DS_DATASTORE;
-            port = config.getHostPort();
-            userName = config.getUsername();
-            password = config.getPassword();
-            rootSuffix = config.getBaseDN();
-        }
-        
-        request.addParameter(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, hostName);
-        request.addParameter(SetupConstants.CONFIG_VAR_DATA_STORE, dataStore);
         request.addParameter(
-                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT, port + ""); 
-        request.addParameter(SetupConstants.CONFIG_VAR_DS_MGR_DN, userName);
-        request.addParameter(SetupConstants.CONFIG_VAR_DS_MGR_PWD, password);
-        request.addParameter(SetupConstants.CONFIG_VAR_ROOT_SUFFIX, rootSuffix);
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM, agentPassword);
+        
+        /* 
+         * Set the data store information
+         */
+        String tmp = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_DATA_STORE);
+        request.addParameter(SetupConstants.CONFIG_VAR_DATA_STORE, tmp);
+
+        if ((tmp!= null) && tmp.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+            tmp = getAttribute(SetupConstants.DS_EMB_REPL_FLAG, "false");
+
+            /*
+             * set the embedded replication information for local host port
+             * and remote host port
+             */
+            if (tmp.equals(SetupConstants.DS_EMP_REPL_FLAG_VAL)) {
+                request.addParameter(
+                    SetupConstants.DS_EMB_REPL_FLAG,
+                    SetupConstants.DS_EMP_REPL_FLAG_VAL);
+                
+                tmp = getAttribute("localRepPort", "");
+                request.addParameter(SetupConstants.DS_EMB_REPL_REPLPORT1, tmp);
+
+                tmp = getAttribute("existingHost", "");
+                request.addParameter(SetupConstants.DS_EMB_REPL_HOST2, tmp);
+
+                tmp = getAttribute("existingPort", "");
+                request.addParameter(SetupConstants.DS_EMB_REPL_PORT2, tmp);
+
+                tmp = getAttribute("existingRepPort", "");
+                request.addParameter(SetupConstants.DS_EMB_REPL_REPLPORT2, tmp);
+            }
+        }
+
+        tmp = getAttribute("configStorePort", Integer.toString(defaultPort));
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT, tmp); 
+
+        tmp = getAttribute("rootSuffix", defaultRootSuffix);
+        request.addParameter(SetupConstants.CONFIG_VAR_ROOT_SUFFIX, tmp);
        
+        tmp = getAttribute("configStoreHost", hostName);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
+
+        tmp = getAttribute("configStoreLoginId", defaultUserName);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DS_MGR_DN, tmp);
+
+        tmp = getAttribute("configStorePassword", "");
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DS_MGR_PWD, tmp);
                 
         // user store repository
         LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute( 
             Step4.LDAP_STORE_SESSION_KEY);
-
         if (userStore != null) {                       
             Map store = new HashMap();            
             store.put(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST,
                 userStore.getHostName());
             store.put(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT, 
-                userStore.getHostPort()+"");
-            store.put(SetupConstants.CONFIG_VAR_DS_MGR_DN, userStore.getUsername());
-            store.put(SetupConstants.CONFIG_VAR_DS_MGR_PWD, userStore.getPassword());                       
-            
+                Integer.toString(userStore.getHostPort()));
+            store.put(
+                SetupConstants.CONFIG_VAR_DS_MGR_DN, userStore.getUsername());
+            store.put(
+                SetupConstants.CONFIG_VAR_DS_MGR_PWD, userStore.getPassword());                       
             request.addParameter("UserStore", store);
         }
         
@@ -137,20 +178,24 @@ public class Wizard extends AjaxPage {
                 SetupConstants.CONFIG_VAR_SITE_CONFIGURATION, siteConfig);
         }
 
-
         // server properties
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_HOST, getHostName());
         request.addParameter(
-            SetupConstants.CONFIG_VAR_SERVER_PORT, ""+req.getServerPort());
+            SetupConstants.CONFIG_VAR_SERVER_PORT, 
+            Integer.toString(req.getServerPort()));
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_URI, req.getRequestURI());
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_URL, 
             req.getRequestURL().toString());        
+
+        tmp = (String)getContext().getSessionAttribute("encryptionKey");
+        if (tmp == null) {
+            tmp = AMSetupServlet.getRandomString();
+        }
         request.addParameter(
-            SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, 
-            AMSetupServlet.getRandomString());
+            SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, tmp);
 
         String cookie = 
             (String)getContext().getSessionAttribute("cookieDomain");
@@ -181,34 +226,15 @@ public class Wizard extends AjaxPage {
             }
         } catch (Exception e) {
             writeToResponse("Error during configuration. Consult debug files for more information");
+            debug.error("error in processRequest: ", e);
         }
         
         setPath(null);
         return false;
     }
 
-    /**
-     * In a multi-instance configuration, this method will push the the new 
-     * instance configuration to that instance.
-     */
-    public boolean pushConfig() {
-
-        //String newInstanceUrl = (String)getContext().getSessionAttribute( Step2.NEW_INSTANCE_URL_SESSION_KEY );
-//        if ( newInstanceUrl == null ) {
-//            throw new IllegalStateException( "This method should only be called by html/javascript after a user " +
-//                "has specified a 'New Instance URL' in a multi-instance configuration." );
-//        }
-
-//        try {
-//            getConfigurator().pushConfiguration( newInstanceUrl );
-//            writeToResponse("true");
-//        } catch ( Exception e ) {
-//            writeToResponse(e.getMessage());
-//        }
-//
-//        setPath(null);
-        return false;
+    private String getAttribute(String attr, String defaultValue) {
+        String value = (String)getContext().getSessionAttribute(attr);
+        return (value != null) ? value : defaultValue;
     }
-    
-
 }

@@ -1,20 +1,21 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta name="author" content="Les Hazlewood"/>
-    <meta name="robots" content="all"/>
-    <title>Sun Java&trade; System Federated Access Manager - $title</title>
+    <title>Sun Java&trade; System Federated Access Manager</title>
+
+    <meta name="Copyright" content="All Rights Reserved. Use is subject to license terms.">
+
+    <link rel="shortcut icon" href="$context/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css"  href="$context/com_sun_web_ui/css/css_ns6up.css">
     <link rel="stylesheet" type="text/css" href="$context/assets/lib/yui/reset-fonts-grids/reset-fonts-grids.css"/>
     <link rel="stylesheet" type="text/css" href="$context/assets/lib/yui/base/base.css"/>
     <link rel="stylesheet" type="text/css" href="$context/assets/lib/yui/assets/skins/sam/skin.css"/>
-	<link rel="stylesheet" type="text/css" href="$context/assets/lib/yui/logger/assets/skins/sam/logger.css"/>
+    <link rel="stylesheet" type="text/css" href="$context/assets/lib/yui/logger/assets/skins/sam/logger.css"/>
     <link rel="stylesheet" type="text/css" href="$context/assets/lib/yui/datatable/assets/skins/sam/datatable.css"/>
     <link rel="stylesheet" type="text/css" href="$context/assets/css/yui-overrides.css"/>
-    <!--<link rel="stylesheet" type="text/css" href="$context/assets/css/sunstyle.css"/>-->
     <link rel="stylesheet" type="text/css" href="$context/assets/css/style.css"/>
     <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="$context/assets/css/iestyle.css"/><![endif]-->
-
-	<script type="text/javascript" src="$context/assets/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="$context/assets/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/connection/connection-min.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/animation/animation-min.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/container/container-min.js"></script>
@@ -22,34 +23,94 @@
     <script type="text/javascript" src="$context/assets/lib/yui/button/button-beta-min.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/dragdrop/dragdrop-min.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/logger/logger-min.js"></script>
-	<script type="text/javascript" src="$context/assets/lib/yui/tabview/tabview.js"></script>
+    <script type="text/javascript" src="$context/assets/lib/yui/tabview/tabview.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/datasource/datasource-beta-min.js"></script>
     <script type="text/javascript" src="$context/assets/lib/yui/datatable/datatable-beta-min.js"></script>
-
-	<script type="text/javascript" src="$context/assets/lib/json/json.js"></script>
-
+    <script type="text/javascript" src="$context/assets/lib/json/json.js"></script>
     <script type="text/javascript" src="$context/assets/js/AjaxUtils.js"></script>
     <script type="text/javascript" src="$context/assets/js/App.js"></script>
 
     $imports
-    <!-- <link rel="Shortcut Icon" type="image/x-icon" href="$context/favicon.ico" /> -->
+
+<script language="Javascript">
+    function gotoLoginPage() {
+        this.location.replace("./index.html");
+    }
+</script>
+
+<!--// Empty script so IE5.0 Windows will draw table and button borders-->
+<script type="text/javascript">
+</script>
+<style>
+    table.temp {
+    border-width: 0px 0px 0px 0px;
+    }
+    table.temp th {
+    border-width: 0px 0px 0px 0px;
+    }
+    table.temp td {
+    border-width: 0px 0px 0px 0px;
+    }
+</style>
 </head>
-<body class="yui-skin-sam">
-<div id="doc3" class="yui-t7">
-    <div id="hd">
-        <h1>Sun Java&trade;System Federated Access Manager</h1>
-    </div>
-    <div id="bd">
-        <div class="yui-g">
-        #parse($path)
-        </div> <!-- end class="yui-g" -->
-    </div> <!-- end id="bd" -->
-    <div id="ft">
-        <p>Copyright &copy; 2005-$currentYear Sun Microsystems, Inc. All rights reserved.</p>
-    </div>
-    <!-- <script type="text/javascript">
- 	    var myLogReader = new YAHOO.widget.LogReader(); 
-	</script> -->
-</div>
+
+<body class="yui-skin-sam" style="background-color:#4A5C69;margin:0px">
+  <table class="temp">
+    <tr>
+      <td width="50%"><img src="$context/images/dot.gif" width="1" height="1" alt="" /></td>
+      <td><img src="$context/images/dot.gif" width="400" height="1" alt="" /></td>
+      <td width="50%"><img src="$context/images/dot.gif" width="1" height="1" alt="" /></td>
+    </tr>
+
+    <tr class="LogTopBnd" 
+        style="background-image: url($context/images/gradlogtop.jpg); 
+            background-repeat: repeat-x; background-position: left top;">
+      <td>&nbsp;</td>
+      <td><img src="$context/images/dot.gif" width="1" height="30" alt="" /></td>
+      <td>&nbsp;</td>
+    </tr>
+    
+    <tr style="background-color:white">
+        <td class="LogMidBnd" style="background-image: url($context/images/gradlogsides.jpg);
+            background-repeat:repeat-x;background-position:left top;">&nbsp;</td>
+        <td  style="background-image: url($context/images/login-backimage.jpg);
+            background-repeat:no-repeat;background-position:left top;" height="435" align="center">
+            <table border="0" background="$context/images/dot.gif" cellpadding="0" cellspacing="0">
+                <tr>
+            <td width="260">
+                <img src="$context/images/dot.gif" width="260" height="2" alt="" />
+            </td>
+                    <td>
+                        <div id="doc3" class="yui-t7">
+                            <div id="bd">
+                                <div class="yui-g">
+                                    #parse($path)
+                                </div> <!-- end class="yui-g" -->
+                            </div> <!-- end id="bd" -->
+                            
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td class="LogMidBnd" style="background-image: url($context/images/gradlogsides.jpg);
+        background-repeat:repeat-x;background-position:left top;">&nbsp;</td>
+    </tr>
+    <tr class="LogBotBnd" style="background-image: url($context/images/gradlogbot.jpg);
+        background-repeat:repeat-x;background-position:left top;">
+
+          <td>&nbsp;</td>
+          <td align="left">
+              <div class="logCpy"><span class="logTxtCpy">
+                  Copyright ) 2007 Sun Microsystems, Inc.  All rights reserved.  Sun Microsystems, Inc. has intellectual property rights relating to technology embodied in the product that is described in this document. In particular, and without limitation, these intellectual property rights may include one or more of the U.S. patents listed at http://www.sun.com/patents and one or more additional patents or pending patent applications in the U.S. and in other countries.U.S. Government Rights - Commercial software.  Government users are subject to the Sun Microsystems, Inc. standard license agreement and applicable provisions of the FAR and its supplements.  Use is subject to license terms.  This distribution may include materials developed by third parties.Sun,  Sun Microsystems and  the Sun logo are trademarks or registered trademarks of Sun Microsystems, Inc. in the U.S. and other countries.<br>
+              </span></div>
+          </td>
+          <td>&nbsp;</td>
+    </tr>
+
+  </table>
+
 </body>
 </html>
+
+

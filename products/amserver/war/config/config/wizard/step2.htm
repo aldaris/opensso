@@ -1,123 +1,71 @@
 <script type="text/javascript">
-    function configStoreServerValidated( response ) {
-        storeServerValidated( 'config', response );
-    }
-    function configStoreBaseDNValidated( response ) {
-        storeBaseDNValidated('config', response );
-    }
-    function configStoreLoginIdValidated( response ) {
-        storeLoginIdValidated( 'config', response );
+
+    function validateServerURL() {
+	field = "serverURL";
+        validate();
     }
 
-    function validateconfigStoreServer() {
-        validateStoreServer('config');
-    }
-    function validateconfigStoreBaseDN() {
-        validateStoreBaseDN('config');
-    }
-    function validateconfigStoreLoginId() {
-        validateStoreLoginId('config');
-    }
+    function validateLocale() {
+	field = "platformLocale";
+        validate();
+    } 
 
+    function validateConfigDir() {
+	field = "configDirectory";
+        validate();
+    } 
 
-    function validateConfigBaseDir() {
-        var callUrl = "$context$path?actionLink=validateConfigBaseDir&configBaseDir=" + $('configBaseDir').value
-        AjaxUtils.call(callUrl, baseDirValidated);
-    }
-    function baseDirValidated(response) {
-        if ( response.responseText == "true" ) {
-            $('configBaseDirStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-		  '<small>ok</small>';
- 		$('nextTabButton').disabled = false;
-        } else {
-            $('configBaseDirStatus').innerHTML = response.responseText;
-        }
-    }
+    function validateEncryptionKey() {
+	field = "encryptionKey";
+        validate();
+    } 
 
-
-    function enableFirstFAMInstance() {
-        firstFAMInstance = true;
-        $('famAssociationDiv').style.display = "none";
-        $('firstFAMInstanceTrue').checked = true;
-        $('firstFAMInstanceFalse').checked = false;
-        nextTab = rangeCheck(currentTab + 1);
-        previousTab = rangeCheck(currentTab - 1);
-        $('tab3').style.color = "";
-        $('tab4').style.color = "";
-        $('tab5').style.color = "";
-        $('tab6').style.color = "";
-        $('nextTabButton').disabled = false;
-       
-        AjaxUtils.call("$context$path?actionLink=clear");
-    }
-
-    function disableFirstFAMInstance() {
-        firstFAMInstance = false;
-        $('famAssociationDiv').style.display = "";
-        $('firstFAMInstanceTrue').checked = false;
-        $('firstFAMInstanceFalse').checked = true;
-        $('tab3').style.color = "#D3D3D3";
-        $('tab4').style.color = "#D3D3D3";
-        $('tab5').style.color = "#D3D3D3";
-        $('tab6').style.color = "#D3D3D3";
-        nextTab = 7;
-        previousTab = 2;
-        $('nextTabButton').disabled = true;
-    }
-
-    function initialize() {
-    }
+    function validateCookieDomain() {
+	field = "cookieDomain";
+        validate();
+    } 
 
     YAHOO.util.Event.onDOMReady(initialize);
-
 </script>
 
-<h1>Step 2: Associations</h1>
-<p>Would you like to add this instance to an existing deployment?</p>
-<input type="radio" id="firstFAMInstanceTrue" name="firstFamInstance" style="margin-left:1em" value="true" checked="checked" onclick="enableFirstFAMInstance();"/>
-<span>No, this is the first FAM instance of a new deployment</span><br/>
-<input type="radio" id="firstFAMInstanceFalse" name="firstFamInstance" style="margin-left:1em" value="false" onclick="disableFirstFAMInstance();"/>
-<span>Yes, add this instance to the existing deployment</span>
-<div id="famAssociationDiv" style="width:570px; display:none">
-    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
+<h1>Step 2: Server Settings<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+<p>Confirm the following settings to use for the server.
+If you are setting up a multi-server deployment your encryption key value
+must be identical in all deployments. </p>
+
+<div id="serverSettingsDiv" style="width:570px">
+    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
     <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox" style="margin-left:10px">$typeTitle Store Details</div>
-    <div class="bodyBox" style="height:230px;margin-left:10px">	
-        <fieldset id="configStoreFieldset" style="padding:0px; margin-top:-80px">
+	<div class="headerBox" style="margin-left:10px">Server Settings</div>
+    <div class="bodyBox" style="height:220px;margin-left:10px">	
+        <fieldset id="serverFieldSet" style="padding:0px; margin-top:-60px">
+
             <ol>
-                <li class="beginChunk">
-                    <label for="configStoreHost">Directory Host Name<em>*</em></label>
-                    <input id="configStoreHost" name="configStoreHost" type="text" class="text" style="width:150px" value="#if($store.hostName)$store.hostName#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreServer )"/>
-                    <span id="configStoreHostStatus"></span>
+                <li>
+                    <label for="serverURL">Server URL<em>*</em></label>
+                    <input id="serverURL" name="serverURL" type="text" class="text" style="width:200px" value="$serverURL" onkeyup="APP.callDelayed(this, validateServerURL)"/>
+                    <span id="serverURLStatus"></span>
                 </li>
                 <li>
-                    <label for="configStorePort">Port<em>*</em></label>
-		    <input id="configStorePort" name="configStorePort" type="text" class="text" style="width:40px" value="#if($store.hostPort)$store.hostPort#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreServer )"/>
-                </li>
-                <li class="endChunk">
-                    <label for="configStoreSecurePort">Is this a secure port?<em>*</em></label>
-                    <input id="configStoreSecurePortNo" name="configStoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('config'); validateconfigStoreServer();"/><span>No</span>
-                    <input id="configStoreSecurePortYes" name="configStoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('config'); validateconfigStoreServer();"/><span>Yes</span>
-                </li>
-                <li class="singleChunk">
-                    <label for="configStoreBaseDN">Directory Base DN<em>*</em></label>
-                    <input id="configStoreBaseDN" name="configStoreBaseDN" type="text" class="text" style="width:150px" value="#if($store.baseDN)$store.baseDN#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreBaseDN )"/>
-                    <span id="configStoreBaseDNStatus"></span>
-                </li>
-                <li class="beginChunk">
-                    <label for="configStoreLoginId">Directory Login ID<em>*</em></label>
-                    <input id="configStoreLoginId" name="configStoreLoginId" type="text" class="text" style="width:150px" value="#if($store.username)$store.username#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreLoginId )"/>
-                    <span id="configStoreLoginIdStatus"></span>
+		    <label for="cookieDomain">Cookie Domain<em>*</em></label>
+                    <input id="cookieDomain" name="cookieDomain" type="text" class="text" style="width:150px" value="$cookieDomain" onkeyup="APP.callDelayed(this, validateCookieDomain)"/>
+                    <span id="cookieDomainStatus"></span>
                 </li>
                 <li>
-                    <label for="configStorePassword">Directory Password<em>*</em></label>
-                    <input id="configStorePassword" name="configStorePassword" type="password" class="text" style="width:150px" value="#if($store.password)$store.password#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreLoginId )"/>
+		    <label for="platformLocale">Platform Locale<em>*</em></label>
+                    <input id="platformLocale" name="platformLocale" type="text" class="text" style="width:150px" value="$platformLocale" onkeyup="APP.callDelayed(this, validateLocale)"/>
+		    <span id="platformLocaleStatus"></span>
                 </li>
-		<li class="beginChunk">
-                    <label for="configBaseDir">Configuration Directory<em>*</em></label>
-                    <input id="configBaseDir" name="configBaseDir" type="text" class="text" style="width:150px" value="$configBaseDir" onkeyup="APP.callDelayed(this, validateConfigBaseDir)"/>
-                    <span id="configBaseDirStatus"></span>
-		</li>
+                <li>
+		    <label for="encryptionKey">Encryption Key<em>*</em></label>
+                    <input id="encryptionKey" name="encryptionKey" type="text" class="text" style="width:200px" value="$encryptionKey" onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
+                    <span id="encryptionKeyStatus"></span>
+                </li>
+                <li>
+		    <label for="configDirectory">Configuration Directory<em>*</em></label>
+                    <input id="configDirectory" name="configDirectory" type="text" class="text" style="width:150px" value="$configDirectory" onkeyup="APP.callDelayed(this, validateConfigDir)"/>
+                    <span id="configDirectoryStatus"></span>
+                </li>
             </ol>
         </fieldset>
     </div>

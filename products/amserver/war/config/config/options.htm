@@ -203,7 +203,7 @@
 
 <div id="container" align="center">
     
-    <div id="options" align="left" style="width:800px">
+    <div id="options" align="left" style="width:400px">
         #if ( $upgrade )
         <h1>$page.getLocalizedString("upgrade.available")</h1>
         <h4>$page.getLocalizedString("upgrade.available.option")</h4>
@@ -219,10 +219,11 @@
             <a id="upgradeLink" class="blue pointer">$page.getLocalizedString("upgrade.link")</a>
             #else
             <h3>$page.getLocalizedString("configuration.options.option1.title")</h3>
-	    <p>
             $page.getLocalizedString("configuration.options.option1.description")
-            </p>
+	    <br>
+            <p>
             <a id="DemoConfiguration" class="blue pointer" onclick="setOption(1);">$page.getLocalizedString("configuration.options.option1.link")</a>
+            </p>
             #end
         </div>
 	<!-- enable if adding third option
@@ -236,6 +237,7 @@
             #else
             <h3>$page.getLocalizedString("configuration.options.option2.title")</h3>
 	    $page.getLocalizedString("configuration.options.option2.description")
+	    <br>
             <p>
             <a id="CreateNewConf" class="blue pointer" onclick="setOption(2);">$page.getLocalizedString("configuration.options.option2.link")</a>
             </p>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.4 2008-01-18 06:23:40 jonnelson Exp $
+ * $Id: Step4.java,v 1.5 2008-02-21 22:35:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,6 @@ public class Step4 extends LDAPStoreWizardPage {
     }
     
     public void onInit() {
-        //uses the same template.  The rendered page is changed based on the above 3 props.
-        //setPath("/config/wizard/step3.htm"); 
         super.onInit();
     }   
 }

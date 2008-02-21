@@ -28,6 +28,7 @@
     }
 
 </script>
+
 <style>
     table.temp {
 	border-width: 0px 0px 0px 0px;
@@ -40,29 +41,25 @@
     }
 </style>
 
-<div style="float:left; width:500px">
-    <h1>Step 1: General Properties</h1>
-    <p>The first step is to setup a few general properties required for accessing the system. These include the default users and the configuration location
-    </p>
+<h1>Step 1: General Properties<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+<p>The first step is to setup a few general properties required for accessing the system. These include the default users and the configuration location
+</p>
 
-    <div class="summaryPanel" style="width:400px">
+<div class="summaryPanel" style="width:570px">
+    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
         <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
         <div class="headerBox">Default User Passwords</div>
         <div class="bodyBox"  style="height:230px">
             <span>
-                These users are required to make the system work. The passwords
-                must be at least 8 characters in length and may not be the 
-                same value.
-                <p>
                 <table class="temp">
                     <tr>
 		        <td colspan="2"><b>Default User [amAdmin]</b></td></tr>
                     <tr>
-                        <td>Password:</td>
+                        <td><em>&nbsp;*&nbsp;</em>Password:</td>
                         <td><input id="adminPassword" name="adminPassword" type="password" value="" class="text"></td>
                     </tr>
                     <tr>
-                        <td>Confirm:</td>
+                        <td><em>&nbsp;*&nbsp;</em>Confirm:</td>
                         <td>
                             <input id="adminConfirm" name="adminConfirm" type="password" value="" class="text" onkeyup="APP.callDelayed(this,validatePasswords)"/>
                             <span id="adminPasswordStatus"></span>
@@ -73,11 +70,11 @@
                     <tr>
                         <td colspan="2"><b>Default Agent</b></td></tr>
                     <tr>
-                        <td>Password:</td>
+                        <td><em>&nbsp;*&nbsp;</em>Password:</td>
                         <td><input id="agentPassword" name="adminPassword" type="password" value="" class="text"></td>
                     </tr>
                     <tr>
-                        <td>Confirm:</td>
+                        <td><em>&nbsp;*&nbsp;</em>Confirm:</td>
                         <td>
                             <input id="agentConfirm" name="adminConfirm" type="password" value="" class="text" onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>
                             <span id="agentPasswordStatus"></span>
@@ -88,4 +85,3 @@
         </div>
         <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
     </div>
-</div>

@@ -318,6 +318,11 @@ h2{
 	text-align:left;
 }
 
+em {
+    color: red;
+}
+
+
 /*All Button*/
 button{
 	background:url(../images/wizard/buttonbg.png);

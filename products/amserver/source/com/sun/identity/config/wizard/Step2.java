@@ -17,53 +17,67 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
+ * $Id: Step2.java,v 1.6 2008-02-21 22:35:44 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.util.AjaxPage;
-import net.sf.click.control.ActionLink;
+import com.sun.identity.setup.AMSetupServlet;
+import com.sun.identity.setup.SetupConstants;
 
-public class Step2 extends LDAPStoreWizardPage {
+public class Step2 extends AjaxPage {
 
-    public static final String LDAP_STORE_SESSION_KEY = "wizardCustomConfigStore";
-
-    public ActionLink clearLink = new ActionLink("clear", this, "clear");
-    public ActionLink validateConfigBaseDirLink = 
-        new ActionLink("validateConfigBaseDir", this, "validateConfigBaseDir");
-    
     public Step2() {
-        setType("config");
-        setTypeTitle( "Configuration" );
-        setPageNum(2);
-        setStoreSessionName(LDAP_STORE_SESSION_KEY);
     }
     
     public void onInit() {
-        addModel("configBaseDir", getBaseDir());
-        addModel("configStoreBaseDN", "dc=opensso,dc=java,dc=net");
-        addModel("configStoreLoginId", "cn=Directory Manager");
+        String val = (String)getContext().getSessionAttribute("encryptionKey");
+        if (val == null) {
+            val = AMSetupServlet.getRandomString();
+        }
+        add("encryptionKey", val);
+
+        val = (String)getContext().getSessionAttribute("serverURL");
+        if (val == null) {
+            val = getServerURL();
+        }
+        add("serverURL", val);
+
+        val = (String)getContext().getSessionAttribute("cookieDomain");
+        if (val == null) {
+            val = getCookieDomain();
+        }
+        add("cookieDomain", val);
+
+        val = (String)getContext().getSessionAttribute("platformLocale");
+        if (val == null) {
+            val = SetupConstants.DEFAULT_PLATFORM_LOCALE;
+        }
+        add("platformLocale", val);
+
+        val = (String)getContext().getSessionAttribute("configDirectory");
+        if (val == null) {
+            val = getBaseDir();
+        }
+        add("configDirectory", val);
         super.onInit();
     }   
-    
-    public boolean clear() {
-        getContext().removeSessionAttribute(LDAP_STORE_SESSION_KEY);
-        setPath( null );
-        return false;
+
+    private String getServerURL() {        
+        String hostname = (String)getContext().getRequest().getServerName();
+        int portnum  = (int)getContext().getRequest().getServerPort();
+        String protocol = (String)getContext().getRequest().getScheme();
+        return protocol + "://" + hostname + ":" + portnum;
     }
 
-    public boolean validateConfigBaseDir() {
-        // verify base directory
-        String path = toString("configBaseDir");
-        if (path == null) {
-            writeToResponse(getLocalizedString("missing.required.field"));            
-        } else {                   
-            getContext().setSessionAttribute("ConfigBaseDir", path);
-            writeToResponse("true");
-        }
-        setPath(null);        
-        return false;
+    /**
+     * used to add the key to the page and to the session so it can 
+     * be retrieved when the final store is done
+     */
+    private void add(String key, String value) {
+        addModel(key, value);
+        getContext().setSessionAttribute(key, value);
     }
 }

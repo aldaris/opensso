@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step1.java,v 1.5 2008-01-24 20:26:40 jonnelson Exp $
+ * $Id: Step1.java,v 1.6 2008-02-21 22:35:44 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,8 @@ public class Step1 extends AjaxPage {
                 writeInvalid(getLocalizedString("invalid.password.length"));
             } else if (!adminPassword.equals(adminConfirm)) {
                 writeInvalid(getLocalizedString("passwords.do.not.match"));
-            } else {writeValid("OK");
+            } else {
+                writeValid("OK");
                 getContext().setSessionAttribute(
                     SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);                
             }         

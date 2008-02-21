@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.6 2008-02-04 20:57:20 jonnelson Exp $
+ * $Id: Step6.java,v 1.7 2008-02-21 22:35:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,54 +25,62 @@ package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.pojos.LDAPStore;
 import com.sun.identity.config.util.AjaxPage;
-import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.SetupConstants;
-import net.sf.click.control.ActionLink;
+import net.sf.click.Page;
+
 
 public class Step6 extends AjaxPage {
 
-    public ActionLink validateInputLink = 
-        new ActionLink("validateInput", this, "validateInput" );
-    
-    public Step6() {
-    }
-    
+    public Step6(){}
+
     public void onInit() {
-        add("encryptionKey", AMSetupServlet.getRandomString());
-        add("serverURL", getServerURL());
-        add("cookieDomain", getCookieDomain());
-        add("platformLocale", SetupConstants.DEFAULT_PLATFORM_LOCALE);
-        add("configDirectory", getBaseDir());
-        super.onInit();
-    }   
-
-    private String getServerURL() {        
-        String hostname = (String)getContext().getRequest().getServerName();
-        int portnum  = (int)getContext().getRequest().getServerPort();
-        String protocol = (String)getContext().getRequest().getScheme();
-        return protocol + "://" + hostname + ":" + portnum;
-    }
-
-    /**
-     * used to add the key to the page and to the session so it can 
-     * be retrieved when the final store is done
-     */
-    private void add(String key, String value) {
-        addModel(key, value);
-        getContext().setSessionAttribute(key, value);
-    }
-
-    public boolean validateInput() {
-        String key = toString("key");
-        String value = toString("value");
- 
-        if (value == null) {        
-            writeToResponse(getLocalizedString("missing.required.field"));
-        } else { 
-            getContext().setSessionAttribute(key, value);
-            writeToResponse("OK");                               
+        String hostName = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
+        if (hostName != null) {                    
+            add("hostName", hostName);            
+            add("hostPort", (String)getContext().getSessionAttribute(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
+            add("userDN", (String)getContext().getSessionAttribute(
+                SetupConstants.CONFIG_VAR_DS_MGR_DN));
+            add("baseDN", (String)getContext().getSessionAttribute(
+                SetupConstants.CONFIG_VAR_ROOT_SUFFIX));
         }
-        setPath(null);
-        return false;
+        
+        String tmp =(String)getContext().getSessionAttribute("configDirectory");
+        add("configDirectory", tmp);
+        
+        tmp = (String)getContext().getSessionAttribute("configStoreHost");
+        add("configStoreHost", tmp);
+
+        tmp = (String)getContext().getSessionAttribute("rootSuffix");
+        add("rootSuffix", tmp);
+
+        tmp = (String)getContext().getSessionAttribute("configStorePort");
+        add("configStorePort", tmp);
+
+        tmp = (String)getContext().getSessionAttribute("configStoreLoginId");
+        add("configStoreLoginId", tmp);
+
+
+        LDAPStore configStore = (LDAPStore)getContext().getSessionAttribute(
+            Step3.LDAP_STORE_SESSION_KEY);
+        add("configStore", configStore);
+
+        LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute(
+            Step4.LDAP_STORE_SESSION_KEY);
+        add( "userStore", userStore);
+
+        add("loadBalancerHost", 
+            (String)getContext().getSessionAttribute(SetupConstants.LB_SITE_NAME));
+        add("loadBalancerPort", 
+            (String)getContext().getSessionAttribute(SetupConstants.LB_PRIMARY_URL));
+
+        super.onInit();
+    }
+
+    protected void add(String key, Object value) {
+        if (value != null) {
+            addModel(key, value);
+        }
     }
 }
