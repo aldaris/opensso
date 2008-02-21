@@ -730,7 +730,7 @@ void Properties::set_list(const std::string& key,
 	            Utils::trim(listIndex);
                     if(listIndex.size() > 0) {
                         try {
-                            std:size_t index = Utils::getNumber(listIndex);
+                            std::size_t index = Utils::getNumber(listIndex);
                             std::string listValue = ((*map_iter).second);
         	            Utils::trim(listValue);
                             if(listValue.size() > 0) {
