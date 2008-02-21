@@ -18,9 +18,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutRedirect.jsp,v 1.6 2008-02-21 23:20:43 hengming Exp $
+   $Id: idpSingleLogoutPOST.jsp,v 1.1 2008-02-21 23:20:43 hengming Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 
@@ -37,7 +37,7 @@
 <%@ page import="com.sun.identity.saml2.protocol.ProtocolFactory" %>
 <%@ page import="com.sun.identity.saml2.profile.LogoutUtil" %>
 <%--
-    idpSingleLogoutRedirect.jsp
+    idpSingleLogoutPOST.jsp
 
     - receives the LogoutRequest and sends the LogoutResponse to
     Service Provider from the Identity Provider.

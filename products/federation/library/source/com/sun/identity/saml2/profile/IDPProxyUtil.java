@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.6 2007-10-17 18:46:36 weisun2 Exp $
+ * $Id: IDPProxyUtil.java,v 1.7 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,11 +142,11 @@ public class IDPProxyUtil {
      * @param response HttpServletResponse
      * @param realm Realm
      * @param relayState the Relay State 
+     * @param binding the binding
      * @exception SAML2Exception for any SAML2 failure.
      * @exception IOException if there is a failure in redirection.
-     * @return String the redirect URL
      */
-    public static String sendProxyAuthnRequest (
+    public static void sendProxyAuthnRequest (
          AuthnRequest authnRequest,
          String preferredIDP,
          SPSSODescriptorElement spSSODescriptor,
@@ -154,7 +154,8 @@ public class IDPProxyUtil {
          HttpServletRequest request,
          HttpServletResponse response, 
          String realm, 
-         String relayState)
+         String relayState,
+         String binding)
          throws SAML2Exception, IOException 
     {
          String classMethod = "IDPProxyUtil.sendProxyAuthnRequest: ";
@@ -193,80 +194,95 @@ public class IDPProxyUtil {
                  getIDPSSODescriptor(realm, preferredIDP);
              List ssoServiceList =
                  idpDescriptor.getSingleSignOnService();
-             targetURL = SPSSOFederate.getSSOURL(ssoServiceList,
-                 SAML2Constants.HTTP_REDIRECT);
+             targetURL = SPSSOFederate.getSSOURL(ssoServiceList, binding);
              
-             if (targetURL == null) {
-                 SAML2Utils.debug.error(
-                     classMethod + "Single Sign-on service " +
-                     "is not found for the proxying IDP.");
-                 return ((String) null);
-             }
-
              localDescriptor = IDPSSOUtil.metaManager.
                  getSPSSODescriptor(realm, hostedEntityId);
              localDescriptorConfig = IDPSSOUtil.metaManager.
                  getSPSSOConfig(realm, hostedEntityId);
-         } catch (Exception e) {
-             SAML2Utils.debug.error(
-                 classMethod, e);
-             return ((String) null);
+         } catch (SAML2MetaException e) {
+             SAML2Utils.debug.error(classMethod, e);
+             throw new SAML2Exception(e.getMessage());
          }
-         
-         String authReqXMLString = newAuthnRequest.toXMLString(true,true);
 
-         if (SAML2Utils.debug.messageEnabled()) {
-             SAML2Utils.debug.message("SPSSOFederate: AuthnRequest:"
-                  + authReqXMLString);
+         if (targetURL == null) {
+             SAML2Utils.debug.error(classMethod + "Single Sign-on service " +
+                 "is not found for the proxying IDP.");
+             throw new SAML2Exception(SAML2Utils.bundle.getString(
+                 "ssoServiceNotFoundIDPProxy"));
          }
-         // encode the xml string
-         String encodedXML = SAML2Utils.encodeForRedirect(authReqXMLString);
-         StringBuffer queryString =
-             new StringBuffer().append(SAML2Constants.SAML_REQUEST)
-                 .append(SAML2Constants.EQUAL)
-                 .append(encodedXML);
+
+         boolean signingNeeded = ((idpDescriptor != null) &&
+             idpDescriptor.isWantAuthnRequestsSigned()) ||
+             ((localDescriptor != null) &&
+             localDescriptor.isAuthnRequestsSigned());
+
          // check if relayState is present and get the unique
          // id which will be appended to the SSO URL before
          // redirecting 
-         if (relayState != null && relayState.length()> 0) {
-             String relayStateID = SPSSOFederate.getRelayStateID(relayState,
-                 authnRequest.getID());
-             //TODO:  should it be newAuthnRequest??? 
-             if (relayStateID != null && relayStateID.length() > 0) {
-                  queryString.append("&").append(SAML2Constants.RELAY_STATE)
-                      .append("=")
-                      .append(URLEncDec.encode(relayStateID));
-             }
-         }
-         StringBuffer redirectURL =
-             new StringBuffer().append(targetURL).append("?");
-         // sign the query string
-         if ((idpDescriptor != null && idpDescriptor.isWantAuthnRequestsSigned()) ||
-             (localDescriptor != null && localDescriptor.isAuthnRequestsSigned()) ) {
-              String certAlias =
-                  SPSSOFederate.getParameter(
-                  SAML2MetaUtils.getAttributes(localDescriptorConfig),
-                  SAML2Constants.SIGNING_CERT_ALIAS);
-              String signedQueryStr =
-                  SPSSOFederate.signQueryString(
-                  queryString.toString(),certAlias);
-              redirectURL.append(signedQueryStr);
-          } else {
-              redirectURL.append(queryString);
-          }
-          
-          String[] data = { targetURL };
-          LogUtil.access(Level.INFO, LogUtil.REDIRECT_TO_SP,data,
-              null);
-          AuthnRequestInfo reqInfo =
-              new AuthnRequestInfo(request,response,realm,hostedEntityId,
-                  preferredIDP, newAuthnRequest,relayState,
-                 null);
-          synchronized(SPCache.requestHash) {
-              SPCache.requestHash.put(requestID, reqInfo);
-          }
-       
-          return (redirectURL.toString());
+        String relayStateID = null;
+        if (relayState != null && relayState.length()> 0) {
+            relayStateID = SPSSOFederate.getRelayStateID(relayState,
+                authnRequest.getID());
+        }
+
+        if (binding.equals(SAML2Constants.HTTP_POST)) {
+            if (signingNeeded) {
+                String certAlias = SPSSOFederate.getParameter(
+                    SAML2MetaUtils.getAttributes(localDescriptorConfig),
+                    SAML2Constants.SIGNING_CERT_ALIAS);
+                SPSSOFederate.signAuthnRequest(certAlias,newAuthnRequest);
+	    }
+            String authXMLString = newAuthnRequest.toXMLString(true,true);
+
+            String encodedReqMsg = SAML2Utils.encodeForPOST(authXMLString);
+            SAML2Utils.postToTarget(response, "SAMLRequest",
+                encodedReqMsg, "RelayState", relayStateID, targetURL);
+        } else { 
+        
+            String authReqXMLString = newAuthnRequest.toXMLString(true,true);
+
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(classMethod + " AuthnRequest: " +
+                    authReqXMLString);
+            }
+             // encode the xml string
+            String encodedXML = SAML2Utils.encodeForRedirect(authReqXMLString);
+            StringBuffer queryString =
+                new StringBuffer().append(SAML2Constants.SAML_REQUEST)
+                    .append(SAML2Constants.EQUAL)
+                    .append(encodedXML);
+            //TODO:  should it be newAuthnRequest??? 
+            if (relayStateID != null && relayStateID.length() > 0) {
+                queryString.append("&").append(SAML2Constants.RELAY_STATE)
+                    .append("=")
+                    .append(URLEncDec.encode(relayStateID));
+            }
+
+            StringBuffer redirectURL =
+                new StringBuffer().append(targetURL).append("?");
+             // sign the query string
+            if (signingNeeded) {
+                String certAlias = SPSSOFederate.getParameter(
+                    SAML2MetaUtils.getAttributes(localDescriptorConfig),
+                    SAML2Constants.SIGNING_CERT_ALIAS);
+                String signedQueryStr = SPSSOFederate.signQueryString(
+                    queryString.toString(),certAlias);
+                redirectURL.append(signedQueryStr);
+            } else {
+                redirectURL.append(queryString);
+            }
+            response.sendRedirect(redirectURL.toString());
+        }
+
+        String[] data = { targetURL };
+        LogUtil.access(Level.INFO, LogUtil.REDIRECT_TO_SP,data, null);
+        AuthnRequestInfo reqInfo = new AuthnRequestInfo(request, response,
+            realm, hostedEntityId, preferredIDP, newAuthnRequest, relayState,
+            null);
+        synchronized(SPCache.requestHash) {
+            SPCache.requestHash.put(requestID, reqInfo);
+        }
     }
 
     /**
@@ -548,15 +564,16 @@ public class IDPProxyUtil {
      * @param spMetaAlias IDP proxy's meta alias acting as SP
      * @param realm Realm
      */    
-    public static void initiateSPLgoutRequest( 
+    public static void initiateSPLogoutRequest( 
         HttpServletRequest request,
         HttpServletResponse response,
         String partner,
         String spMetaAlias, 
         String realm,
-        String samlRequest, 
+        LogoutRequest logoutReq, 
         SOAPMessage msg,
-        IDPSession idpSession
+        IDPSession idpSession,
+        String binding
         ) 
     {
         String RelayState = request.getParameter(
@@ -582,12 +599,6 @@ public class IDPProxyUtil {
             paramsMap.put("spMetaAlias", metaAlias);
             paramsMap.put("idpEntityID", partner);
             paramsMap.put(SAML2Constants.ROLE, SAML2Constants.SP_ROLE);
-            String binding = null; 
-            if (samlRequest != null && (!samlRequest.equals(""))) {
-                binding = SAML2Constants.HTTP_REDIRECT;
-            } else if (msg != null) { 
-                binding =  SAML2Constants.SOAP;
-            } 
             paramsMap.put(SAML2Constants.BINDING, binding); 
             String dest = getLocation(realm, partner, binding); 
             if (dest != null && !dest.equals("")) {
@@ -604,7 +615,7 @@ public class IDPProxyUtil {
             } 
             idpSession.removeSessionPartner(partner);
             SPSingleLogout.initiateLogoutRequest(request,response,
-                binding, paramsMap, samlRequest, msg, ssoToken);
+                binding, paramsMap, logoutReq, msg, ssoToken);
         } catch (SAML2Exception sse) {
             SAML2Utils.debug.error("Error sending Logout Request " , sse);
             try {
@@ -613,7 +624,7 @@ public class IDPProxyUtil {
                     "LogoutRequestCreationError"));
             } catch(Exception se) {
                 SAML2Utils.debug.error("IDPProxyUtil." +
-                     "initiateSPLgoutRequest: ", se); 
+                     "initiateSPLogoutRequest: ", se); 
             }        
             return ;
         } catch (Exception e) {
@@ -624,7 +635,7 @@ public class IDPProxyUtil {
                     "LogoutRequestCreationError"));
             } catch(Exception mme) {
                 SAML2Utils.debug.error("IDPProxyUtil." +
-                     "initiateSPLgoutRequest: ", mme); 
+                     "initiateSPLogoutRequest: ", mme); 
             }  
             return;
         }
@@ -712,8 +723,9 @@ public class IDPProxyUtil {
     public static void sendProxyLogoutRequest(
         HttpServletRequest request,
         HttpServletResponse response,
-        String samlRequest,
-        List partners)
+        LogoutRequest logoutReq,
+        List partners,
+        String binding)
     {
         try { 
             Object tmpsession = sessionProvider.getSession(request);
@@ -740,8 +752,8 @@ public class IDPProxyUtil {
                 getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
             String party = partner.getPartner();
             idpSession.removeSessionPartner(party);
-            initiateSPLgoutRequest(request,response,
-                party, metaAlias, realm, samlRequest, null, idpSession);
+            initiateSPLogoutRequest(request,response, party, metaAlias, realm,
+                logoutReq, null, idpSession, binding);
         } catch (SessionException se) {
             SAML2Utils.debug.error(
                 "sendProxyLogoutRequest: ", se);
@@ -752,7 +764,8 @@ public class IDPProxyUtil {
        HttpServletResponse response,
        String originatingRequestID,
        Map infoMap,
-       String remoteEntity)
+       String remoteEntity,
+       String binding)
        throws SAML2Exception
    {  
        String entityID = (String) infoMap.get("entityid"); 
@@ -771,14 +784,14 @@ public class IDPProxyUtil {
            "/", SAML2Constants.IDP_ROLE,
            remoteEntity);
        String location = IDPSingleLogout.getSingleLogoutLocation(
-           remoteEntity,"/");
+           remoteEntity,"/", SAML2Constants.HTTP_REDIRECT);
        if (SAML2Utils.debug.messageEnabled()) {
            SAML2Utils.debug.message("Proxy to: " + location); 
        }    
        LogoutUtil.sendSLOResponse(response, logoutRes, 
            location, null, "/", entityID, 
            SAML2Constants.IDP_ROLE,
-           remoteEntity);       
+           remoteEntity, binding);       
    }  
    
     public static void sendProxyLogoutRequestSOAP(
@@ -805,8 +818,8 @@ public class IDPProxyUtil {
                 getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
             String party = partner.getPartner();
             idpSession.removeSessionPartner(party);
-            initiateSPLgoutRequest(request,response,
-                party, metaAlias, realm, null, msg ,idpSession);
+            initiateSPLogoutRequest(request,response, party, metaAlias, realm,
+                null, msg ,idpSession, SAML2Constants.SOAP);
        
    }
    
@@ -898,7 +911,8 @@ public class IDPProxyUtil {
         LogoutResponse logoutResponse, 
         String location,
         String spEntityID, 
-        String idpEntityID)  
+        String idpEntityID,
+        String binding)  
        throws SAML2Exception
    {
         try { 
@@ -939,7 +953,7 @@ public class IDPProxyUtil {
             if (logoutAll != null) {
                 paramsMap.put(SAML2Constants.LOGOUT_ALL, logoutAll);
             }
-            String binding = SAML2Constants.HTTP_REDIRECT;
+
             IDPSingleLogout.initiateLogoutRequest(request,response,
                 binding,paramsMap);
             

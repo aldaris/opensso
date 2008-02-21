@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.3 2006-12-13 19:03:54 weisun2 Exp $
+   $Id: spSSOInit.jsp,v 1.4 2008-02-21 23:20:43 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -138,6 +138,12 @@
 
 			    Note: This parameter may not be supported for
 			    this release.
+    18.reqBinding	    URI value that identifies a SAML protocol binding to
+			    used when sending the AuthnRequest.
+
+			    The supported values are :
+			    urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+			    urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
 --%>
 <html>
 

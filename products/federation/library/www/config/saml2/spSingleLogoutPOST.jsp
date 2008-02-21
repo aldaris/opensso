@@ -18,10 +18,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.7 2008-02-21 23:20:43 hengming Exp $
+   $Id: spSingleLogoutPOST.jsp,v 1.1 2008-02-21 23:20:43 hengming Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
+
 
 
 
@@ -47,7 +48,7 @@
 <%@ page import="java.util.Map" %>
 
 <%--
-    spSingleLogoutRedirect.jsp
+    spSingleLogoutPOST.jsp
 
     - receives the LogoutRequest and sends the LogoutResponse to
     Identity Provider from the Service Provider.
@@ -114,7 +115,7 @@
               IDPProxyUtil.sendProxyLogoutResponse(response,
                   origLogoutRequest.getID(), infoMap,
                   origLogoutRequest.getIssuer().getValue(),
-                  SAML2Constants.HTTP_REDIRECT); 
+                  SAML2Constants.HTTP_POST); 
               return;        
           }          
         } catch (SAML2Exception sse) {

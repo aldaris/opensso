@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.10 2007-12-15 06:22:21 hengming Exp $
+ * $Id: IDPSSOFederate.java,v 1.11 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.saml2.profile;
 import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
-import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
@@ -50,6 +49,10 @@ import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.xml.XMLUtils;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -64,6 +67,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -173,7 +177,12 @@ public class IDPSSOFederate {
             AuthnRequest authnReq = null;
             String relayState = null;
             if (reqID == null) {
-                authnReq = getAuthnRequest(request, isFromECP);
+                String binding = SAML2Constants.HTTP_REDIRECT;
+	        if (request.getMethod().equals("POST")) {
+                    binding = SAML2Constants.HTTP_POST;
+                }
+
+                authnReq = getAuthnRequest(request, isFromECP, binding);
                 if (authnReq == null) {
                     sendError(response, SAML2Constants.CLIENT_FAULT,
                         "InvalidSAMLRequest", null, isFromECP);
@@ -255,9 +264,15 @@ public class IDPSSOFederate {
                         if (isFromECP) {
                             isSignatureOK = authnReq.isSignatureValid(spCert);
                         } else {
-                            String queryString = request.getQueryString();
-                            isSignatureOK =
-                                QuerySignatureUtil.verify(queryString, spCert);
+			    String method  = request.getMethod();
+			    if (method.equals("POST")) {
+				isSignatureOK = authnReq.isSignatureValid(
+                                    spCert);
+			    } else {
+                                String queryString = request.getQueryString();
+                                isSignatureOK = QuerySignatureUtil.verify(
+                                    queryString, spCert);
+                            }
                         }
                         if (!isSignatureOK) {
                             SAML2Utils.debug.error(classMethod +
@@ -383,11 +398,10 @@ public class IDPSSOFederate {
                                     SAML2Utils.debug.message(classMethod +
                                         "IDP to be proxied" +  preferredIDP);
                                 }
-                                String tmp = IDPProxyUtil.sendProxyAuthnRequest(
+                                IDPProxyUtil.sendProxyAuthnRequest(
                                     authnReq, preferredIDP, spSSODescriptor,
                                     idpEntityID, request, response, realm,
-                                    relayState);
-                                response.sendRedirect(tmp);
+                                    relayState, binding);
                                 return;
                             }
                         }
@@ -631,7 +645,7 @@ public class IDPSSOFederate {
      *  Returns the <code>AuthnRequest</code> from HttpServletRequest
      */
     private static AuthnRequest getAuthnRequest(HttpServletRequest request,
-        boolean isFromECP) {
+        boolean isFromECP, String binding) {
 
         if (isFromECP) {
             MimeHeaders headers = SAML2Utils.getHeaders(request);
@@ -646,17 +660,53 @@ public class IDPSSOFederate {
             }
             return null;
         } else {
-            String samlRequest = 
-                request.getParameter(SAML2Constants.SAML_REQUEST);
+	    if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
+                String samlRequest = 
+                    request.getParameter(SAML2Constants.SAML_REQUEST);
     
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("IDPSSOFederate.getAuthnRequest: " +
-                    "saml request = " + samlRequest);
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("IDPSSOFederate.getAuthnRequest: " +
+                        "saml request = " + samlRequest);
+                }
+                if (samlRequest == null) { 
+                    return null;
+                }
+                return getAuthnRequest(samlRequest);
+            } else if (binding.equals(SAML2Constants.HTTP_POST)) {
+                String samlRequest = request.getParameter(
+                    SAML2Constants.SAML_REQUEST);
+                ByteArrayInputStream bis = null;
+                AuthnRequest authnRequest = null;
+                try {
+                    byte[] raw = Base64.decode(samlRequest);
+                    if (raw != null) {
+                        bis = new ByteArrayInputStream(raw);
+                        Document doc = XMLUtils.toDOMDocument(bis,
+                            SAML2Utils.debug);
+                        if (doc != null) {
+                            authnRequest = ProtocolFactory.getInstance().
+                                createAuthnRequest(doc.getDocumentElement());
+                        }
+                    }
+                } catch (Exception ex) {
+                    SAML2Utils.debug.error("IDPSSOFederate.getAuthnRequest:",
+                        ex);
+                    return null;
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (Exception ie) {
+                            if (SAML2Utils.debug.messageEnabled()) {
+                                SAML2Utils.debug.message(
+                                    "IDPSSOFederate.getAuthnRequest:", ie);
+                            }
+                        }
+                    }
+                }
+                return authnRequest;
             }
-            if (samlRequest == null) { 
-                return null;
-            }
-            return getAuthnRequest(samlRequest);
+            return null;
         }
     }
     /**

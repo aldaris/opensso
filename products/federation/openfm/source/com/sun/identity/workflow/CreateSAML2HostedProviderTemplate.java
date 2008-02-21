@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.6 2008-02-12 21:55:46 asyhuang Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.7 2008-02-21 23:21:54 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -747,6 +747,11 @@ public class CreateSAML2HostedProviderTemplate {
             "            ResponseLocation=\"" + url + "/IDPSloRedirect" +
             maStr + "\"/>\n" +
             "        <SingleLogoutService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
+            "            Location=\"" + url + "/IDPSloPOST" + maStr + "\"\n" +
+            "            ResponseLocation=\"" + url + "/IDPSloPOST" +
+            maStr + "\"/>\n" +
+            "        <SingleLogoutService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/IDPSloSoap" + maStr + "\"/>\n" +
             "        <ManageNameIDService\n" +
@@ -773,7 +778,7 @@ public class CreateSAML2HostedProviderTemplate {
             "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
             "        <SingleSignOnService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
-            "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
+            "            Location=\"" + url + "/SSOPOST" + maStr + "\"/>\n" +
             "        <SingleSignOnService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/SSOSoap" + maStr + "\"/>\n" +
@@ -849,6 +854,11 @@ public class CreateSAML2HostedProviderTemplate {
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
             "            Location=\"" + url + "/SPSloRedirect" + maStr + "\"\n"+
             "            ResponseLocation=\"" + url + "/SPSloRedirect" + maStr +
+            "\"/>\n" +
+            "        <SingleLogoutService\n" +
+            "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\"\n" +
+            "            Location=\"" + url + "/SPSloPOST" + maStr + "\"\n"+
+            "            ResponseLocation=\"" + url + "/SPSloPOST" + maStr +
             "\"/>\n" +
             "        <SingleLogoutService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +

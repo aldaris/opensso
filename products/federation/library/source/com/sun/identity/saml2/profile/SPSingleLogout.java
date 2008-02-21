@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.12 2008-01-25 14:22:21 hengming Exp $
+ * $Id: SPSingleLogout.java,v 1.13 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 package com.sun.identity.saml2.profile;
 
 import javax.xml.soap.SOAPMessage;
+import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
@@ -53,6 +54,7 @@ import com.sun.identity.shared.debug.Debug;
 
 
 import java.security.AccessController;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -151,7 +153,7 @@ public class SPSingleLogout {
         HttpServletResponse response,
         String binding,
         Map paramsMap, 
-        String origLogoutRequest, 
+        LogoutRequest origLogoutRequest, 
         SOAPMessage msg, 
         Object newSession)
         throws SAML2Exception {
@@ -298,7 +300,7 @@ public class SPSingleLogout {
         HttpServletResponse response,
         Map paramsMap,
         String infoKeyString,
-        String origLogoutRequest, 
+        LogoutRequest origLogoutRequest, 
         SOAPMessage msg) throws SAML2Exception, SessionException {
 
         SPFedSession fedSession = null;
@@ -384,7 +386,8 @@ public class SPSingleLogout {
         }
          
         if ((requestIDStr != null) && (requestIDStr.length() != 0) &&
-            binding.equals(SAML2Constants.HTTP_REDIRECT) && 
+            (binding.equals(SAML2Constants.HTTP_REDIRECT) ||
+            binding.equals(SAML2Constants.HTTP_POST)) && 
             (origLogoutRequest != null)) {
              IDPCache.proxySPLogoutReqCache.put(requestIDStr, 
                  origLogoutRequest);
@@ -422,16 +425,22 @@ public class SPSingleLogout {
             debug.message(method + "relayState : " + relayState);
         }
 
-        String decodedStr =
-            SAML2Utils.decodeFromRedirect(samlResponse);
-        if (decodedStr == null) {
-            throw new SAML2Exception(
-                SAML2Utils.bundle.getString(
-                "nullDecodedStrFromSamlResponse"));
-        }
-        
-        LogoutResponse logoutRes = 
-            ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
+	String rmethod = request.getMethod();
+	LogoutResponse logoutRes = null;
+        String binding = SAML2Constants.HTTP_REDIRECT;
+	if (rmethod.equals("POST")) {
+            binding = SAML2Constants.HTTP_POST;
+	    logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
+                response);
+	} else if (rmethod.equals("GET")) {
+            String decodedStr = SAML2Utils.decodeFromRedirect(samlResponse);
+            if (decodedStr == null) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "nullDecodedStrFromSamlResponse"));
+            }
+            logoutRes = 
+                ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
+	}
         String metaAlias =
                 SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
         String realm = SAML2Utils.
@@ -445,8 +454,7 @@ public class SPSingleLogout {
 
         // invoke SPAdapter preSingleLogoutProcess
         String userId = preSingleLogoutProcess(spEntityID, realm, request, 
-            response, null, logoutReq, logoutRes, 
-            SAML2Constants.HTTP_REDIRECT); 
+            response, null, logoutReq, logoutRes, binding);
  
         SAML2Utils.verifyResponseIssuer(
             realm, spEntityID, resIssuer, inResponseTo);
@@ -462,18 +470,26 @@ public class SPSingleLogout {
         Map infoMap = new HashMap(); 
         infoMap.put("entityid", spEntityID);  
  
-        if (needToVerify == true) {
-            String queryString = request.getQueryString();
-            boolean valid = SAML2Utils.verifyQueryString(queryString, realm,
-                            SAML2Constants.SP_ROLE, idpEntityID);
-            if (valid == false) {
-                debug.error("Invalid signature in SLO Response.");
-                    throw new SAML2Exception(
-                        SAML2Utils.bundle.getString("invalidSignInResponse"));
+        if (needToVerify) {
+            boolean valid = false;
+            if (rmethod.equals("GET")) {
+                String queryString = request.getQueryString();
+                valid = SAML2Utils.verifyQueryString(queryString, realm,
+                    SAML2Constants.SP_ROLE, idpEntityID);
+            } else {
+                valid = LogoutUtil.verifySLOResponse(logoutRes, realm,
+                    idpEntityID, spEntityID, SAML2Constants.SP_ROLE);
+	    }
+
+            if (!valid) {
+                debug.error("SPSingleLogout.processLogoutResponse: " +
+                    "Invalid signature in SLO Response.");
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "invalidSignInResponse"));
             }
             SPSSODescriptorElement spsso =
                 sm.getSPSSODescriptor(realm, spEntityID);
-            String loc = getSLOResponseLocationOrLocation(spsso); 
+            String loc = getSLOResponseLocationOrLocation(spsso, binding); 
             if (!SAML2Utils.verifyDestination(logoutRes.getDestination(),
                 loc)) {
                 throw new SAML2Exception(
@@ -520,7 +536,7 @@ public class SPSingleLogout {
     
         // invoke SPAdapter postSingleLogoutSucces
         postSingleLogoutSuccess(spEntityID, realm, request, response, userId,
-            logoutReq, logoutRes, SAML2Constants.HTTP_REDIRECT); 
+            logoutReq, logoutRes, binding); 
 
         return infoMap; 
     }
@@ -606,13 +622,22 @@ public class SPSingleLogout {
             debug.message(method + "samlRequest : " + samlRequest);
             debug.message(method + "relayState : " + relayState);
         }
-        String decodedStr = SAML2Utils.decodeFromRedirect(samlRequest);
-        if (decodedStr == null) {
-            throw new SAML2Exception(SAML2Utils.bundle.getString(
-                "nullDecodedStrFromSamlRequest"));
+	String rmethod = request.getMethod();
+	LogoutRequest logoutReq = null;
+	String binding = SAML2Constants.HTTP_REDIRECT;
+	if (rmethod.equals("POST")) {
+            binding = SAML2Constants.HTTP_POST;
+            logoutReq = LogoutUtil.getLogoutRequestFromPost(samlRequest,
+                response);
+	} else if (rmethod.equals("GET")) {
+            String decodedStr = SAML2Utils.decodeFromRedirect(samlRequest);
+            if (decodedStr == null) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "nullDecodedStrFromSamlRequest"));
+            }
+            logoutReq = 
+                ProtocolFactory.getInstance().createLogoutRequest(decodedStr);
         }
-        LogoutRequest logoutReq = 
-            ProtocolFactory.getInstance().createLogoutRequest(decodedStr);
         String metaAlias =
             SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
         String realm = 
@@ -636,18 +661,24 @@ public class SPSingleLogout {
         }
         
         if (needToVerify == true) {
-            String queryString = request.getQueryString();
-            boolean valid = 
-                        SAML2Utils.verifyQueryString(queryString, realm,
-                                    SAML2Constants.SP_ROLE, idpEntityID);
-            if (valid == false) {
-                    debug.error("Invalid signature in SLO Request.");
-                    throw new SAML2Exception(
-                        SAML2Utils.bundle.getString("invalidSignInRequest"));
+            boolean valid = false;
+            if (rmethod.equals("POST")) {
+                valid = LogoutUtil.verifySLORequest(logoutReq, realm,
+                    idpEntityID, spEntityID, SAML2Constants.SP_ROLE); 
+            } else {
+                String queryString = request.getQueryString();
+                valid = SAML2Utils.verifyQueryString(queryString, realm,
+                    SAML2Constants.SP_ROLE, idpEntityID);
+            }
+            if (!valid) {
+                debug.error("SPSingleLogout.processLogoutRequest: " +
+                    "Invalid signature in SLO Request.");
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "invalidSignInRequest"));
             }
             SPSSODescriptorElement spsso =
                 sm.getSPSSODescriptor(realm, spEntityID);
-            String loc = getSLOResponseLocationOrLocation(spsso);
+            String loc = getSLOResponseLocationOrLocation(spsso, binding);
             if (!SAML2Utils.verifyDestination(logoutReq.getDestination(),
                 loc)) {
                 throw new SAML2Exception(
@@ -677,11 +708,10 @@ public class SPSingleLogout {
         }
         
         location = LogoutUtil.getSLOResponseServiceLocation(
-            slosList, SAML2Constants.HTTP_REDIRECT);
+            slosList, binding);
         if (location == null || location.length() == 0) {
-            location = LogoutUtil.getSLOServiceLocation(
-                slosList,
-                SAML2Constants.HTTP_REDIRECT);
+            location = LogoutUtil.getSLOServiceLocation(slosList, binding);
+
             if (location == null || location.length() == 0) {
                 debug.error(
                     "Unable to find the IDP's single logout "+
@@ -709,17 +739,19 @@ public class SPSingleLogout {
         if (partners != null && !partners.isEmpty()) {
             LogoutResponse logoutRespon =
                 processLogoutRequest(logoutReq, spEntityID, realm,
-                request, response, false, false, SAML2Constants.HTTP_REDIRECT);
+                request, response, false, false, binding);
             logoutRespon.setDestination(location);
             IDPProxyUtil.sendIDPInitProxyLogoutRequest(request, response,
-                 logoutRespon, location, spEntityID, idpEntityID);
+                 logoutRespon, location, spEntityID, idpEntityID, binding);
         } else {
             LogoutResponse logoutRes = processLogoutRequest(
                 logoutReq, spEntityID, realm,
-                request, response, true, SAML2Constants.HTTP_REDIRECT);
+                request, response, true, binding);
             logoutRes.setDestination(location);
-            LogoutUtil.sendSLOResponse(response, logoutRes, location, relayState,
-               realm, spEntityID, SAML2Constants.SP_ROLE, idpEntityID);
+
+            LogoutUtil.sendSLOResponse(response, logoutRes, location,
+                relayState, realm, spEntityID, SAML2Constants.SP_ROLE,
+                idpEntityID, binding);
         }
     }
 
@@ -818,6 +850,18 @@ public class SPSingleLogout {
                 if (debug.messageEnabled()) {
                     debug.message(method + "SPFedsessions=" + list);
                 }
+
+		if ((list == null) || list.isEmpty()) {
+                    String spQ = nameID.getSPNameQualifier();
+                    if ((spQ == null) || (spQ.length() == 0)) {
+                        infoKeyString = (new NameIDInfoKey(nameID.getValue(), 
+                            spEntityID,
+                            nameID.getNameQualifier())).toValueString(); 
+                        list = (List)SPCache.fedSessionListsByNameIDInfoKey
+                            .get(infoKeyString);
+
+                    }
+		}
 
                 boolean foundPeer = false;
                 List remoteServiceURLs = null;
@@ -1131,16 +1175,16 @@ public class SPSingleLogout {
     }
    
     private static String getSLOResponseLocationOrLocation(
-        SPSSODescriptorElement spsso) {
+        SPSSODescriptorElement spsso, String binding) {
         String location = null;
         if (spsso != null) {
             List sloList = spsso.getSingleLogoutService();
             if (sloList != null && !sloList.isEmpty()) {
                 location = LogoutUtil.getSLOResponseServiceLocation(
-                           sloList, SAML2Constants.HTTP_REDIRECT);
+                           sloList, binding);
                 if (location == null || (location.length() == 0)) {
                     location = LogoutUtil.getSLOServiceLocation(
-                          sloList, SAML2Constants.HTTP_REDIRECT);
+                          sloList, binding);
                 }
             }
         }

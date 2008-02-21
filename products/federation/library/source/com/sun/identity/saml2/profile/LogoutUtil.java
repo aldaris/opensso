@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.10 2008-01-25 14:22:21 hengming Exp $
+ * $Id: LogoutUtil.java,v 1.11 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,9 @@
 
 package com.sun.identity.saml2.profile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
@@ -44,9 +46,11 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.EncryptedID;
@@ -251,7 +255,6 @@ public class LogoutUtil {
             debug.message(logoutReq.toXMLString(true,true));
         }
         
-        // supports two bindings
         if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
             try {
                 doSLOByHttpRedirect(logoutReq.toXMLString(true, true),
@@ -286,7 +289,18 @@ public class LogoutUtil {
             doSLOBySOAP(requestID, logoutReq,
                 location, realm, requesterEntityID, hostEntityRole, 
                 request, response); 
-        }
+        } else if (binding.equals(SAML2Constants.HTTP_POST)) {
+            logoutRequestID.append(requestID);
+            signSLORequest(logoutReq, realm, requesterEntityID, 
+                hostEntityRole, recipientEntityID);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "SLO Request after signing : ");
+                debug.message(logoutReq.toXMLString(true,true));
+            }
+            doSLOByPOST(requestID, logoutReq.toXMLString(true,true),
+                location, relayState,realm, requesterEntityID, hostEntityRole, 
+                response); 
+	}
         SPCache.logoutRequestIDHash.put(logoutRequestID.toString(), logoutReq);
         return logoutRequestID;
     }
@@ -340,9 +354,8 @@ public class LogoutUtil {
                             realm, hostEntity, hostEntityRole);
         }
         
-        String redirectURL = 
-                new StringBuffer().append(sloURL).append("?")
-                                  .append(signedQueryString).toString();
+        String redirectURL = sloURL + (sloURL.contains("?") ? "&" : "?") +
+            signedQueryString;
         if (debug.messageEnabled()) {
             debug.message(method + "LogoutRequestXMLString : " 
                                           + sloRequestXMLString);
@@ -1042,6 +1055,50 @@ public class LogoutUtil {
     }    
 
     public static void sendSLOResponse(HttpServletResponse response,
+        LogoutResponse sloResponse, String sloURL, String relayState,
+        String realm, String hostEntity, String hostEntityRole, 
+        String remoteEntity) throws SAML2Exception {
+
+        sendSLOResponseRedirect(response, sloResponse, sloURL, relayState,
+            realm, hostEntity, hostEntityRole, remoteEntity);
+    }
+
+    public static void sendSLOResponse(HttpServletResponse response,
+        LogoutResponse sloResponse, String sloURL, String relayState,
+        String realm, String hostEntity, String hostEntityRole, 
+        String remoteEntity, String binding) throws SAML2Exception {
+
+        if (SAML2Constants.HTTP_POST.equals(binding)) {
+            sendSLOResponsePost(response, sloResponse, sloURL, relayState,
+                realm, hostEntity, hostEntityRole, remoteEntity);
+        } else {
+            sendSLOResponseRedirect(response, sloResponse, sloURL, relayState,
+                realm, hostEntity, hostEntityRole, remoteEntity);
+        }
+    }
+
+    public static void sendSLOResponsePost(HttpServletResponse response,
+        LogoutResponse sloResponse, String sloURL, String relayState,
+        String realm, String hostEntity, String hostEntityRole, 
+        String remoteEntity) throws SAML2Exception {
+
+        signSLOResponse(sloResponse, realm, hostEntity, hostEntityRole,
+            remoteEntity);
+
+        String logoutResponseStr = sloResponse.toXMLString(true,true);
+        String encMsg = SAML2Utils.encodeForPOST(logoutResponseStr);
+
+        try {
+            SAML2Utils.postToTarget(response, "SAMLResponse", encMsg,
+                "RelayState", relayState, sloURL);
+        } catch (IOException ioe) {
+            SAML2Utils.debug.error("LogoutUtil.sendSLOResponsePost:", ioe);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "errorPostingLogoutResponse"));
+        }
+    }
+
+    public static void sendSLOResponseRedirect(HttpServletResponse response,
                     LogoutResponse sloResponse, 
                     String sloURL,
                     String relayState,
@@ -1050,6 +1107,7 @@ public class LogoutUtil {
                     String hostEntityRole, 
                     String remoteEntity)        
         throws SAML2Exception {
+
         try {
             String logoutResXMLString = sloResponse.toXMLString(true,true);
 
@@ -1085,8 +1143,8 @@ public class LogoutUtil {
                                            hostEntity, hostEntityRole); 
             }
             
-            String redirectURL = new StringBuffer().append(sloURL).append("?")
-                .append(signedQueryString).toString();
+            String redirectURL = sloURL+ (sloURL.contains("?") ? "&" : "?") +
+                signedQueryString;
 
             if (debug.messageEnabled()) {
                 debug.message("redirectURL :" + redirectURL);
@@ -1264,6 +1322,113 @@ public class LogoutUtil {
         List extensionsList = null;
         // TODO Get the Extensions list from request parameter
         return extensionsList;
+    }
+
+    private static void doSLOByPOST(String requestID,
+        String sloRequestXMLString, String sloURL, String relayState,
+        String realm, String hostEntity, String hostRole, 
+        HttpServletResponse response) throws SAML2Exception, SessionException {
+
+        if (debug.messageEnabled()) {
+            debug.message("LogoutUtil.doSLOByPOST : SLORequestXML: " 
+                + sloRequestXMLString + "\nPOSTURL : " + sloURL);
+            debug.message("LogoutUtil.doSLOByPOST : relayState : " 
+                + sloRequestXMLString + "\nPOSTURL : " + relayState);
+        }
+
+	String encMsg = SAML2Utils.encodeForPOST(sloRequestXMLString);
+
+	try {
+	    SAML2Utils.postToTarget(response, "SAMLRequest", encMsg,
+                "RelayState", relayState, sloURL);
+	} catch (Exception e) {
+            debug.error("LogoutUtil.doSLOByPOST:", e);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "postToTargetFailed"));
+        }
+    }
+
+    static LogoutResponse getLogoutResponseFromPost(String samlResponse,
+        HttpServletResponse response) throws SAML2Exception {
+
+        if (samlResponse == null) {
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "missingLogoutResponse"));
+        }
+
+        LogoutResponse resp = null;
+        ByteArrayInputStream bis = null;
+        try {
+            byte[] raw = Base64.decode(samlResponse);
+            if (raw != null) {
+                bis = new ByteArrayInputStream(raw);
+                Document doc = XMLUtils.toDOMDocument(bis, debug);
+                if (doc != null) {
+                    resp = ProtocolFactory.getInstance().
+                        createLogoutResponse(doc.getDocumentElement());
+                }
+            }
+        } catch (Exception e) {
+            debug.error("LogoutUtil.getLogoutResponseFromPost:", e);
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (Exception ie) {
+                    if (debug.messageEnabled()) {
+                        debug.message("LogoutUtil.getLogoutResponseFromPost:",
+                            ie);
+                    }
+                }
+            }
+        }
+
+        if (resp == null) {
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "errorGettingLogoutResponse"));
+        }
+        return resp;
+    }
+
+    static LogoutRequest getLogoutRequestFromPost(String samlRequest,
+        HttpServletResponse response) throws SAML2Exception {
+ 
+        if (samlRequest == null) {
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "missingLogoutRequest"));
+        }
+
+        LogoutRequest req = null;
+        ByteArrayInputStream bis = null;
+        try {
+            byte[] raw = Base64.decode(samlRequest);
+            if (raw != null) {
+                bis = new ByteArrayInputStream(raw);
+                Document doc = XMLUtils.toDOMDocument(bis, debug);
+                if (doc != null) {
+                    req = ProtocolFactory.getInstance().
+                        createLogoutRequest(doc.getDocumentElement());
+                }
+            }
+        } catch (Exception e) {
+            debug.error("LogoutUtil.getLogoutRequestFromPost:", e);
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (Exception ie) {
+                    if (debug.messageEnabled()) {
+                        debug.message("LogoutUtil.getLogoutRequestFromPost:",
+                            ie);
+                    }
+                }
+            }
+        }
+        if (req == null) {
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "errorGettingLogoutRequest"));
+        }
+        return req;
     }
 }
 

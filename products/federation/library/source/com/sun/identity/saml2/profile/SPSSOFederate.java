@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.11 2007-12-15 06:22:22 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.12 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,7 @@ import com.sun.identity.liberty.ws.paos.PAOSException;
 import com.sun.identity.liberty.ws.paos.PAOSConstants;
 import com.sun.identity.liberty.ws.paos.PAOSHeader;
 import com.sun.identity.liberty.ws.paos.PAOSRequest;
-import com.sun.identity.shared.encode.URLEncDec;
-import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
@@ -64,6 +63,8 @@ import com.sun.identity.saml2.plugins.SPAuthnContextMapper;
 import com.sun.identity.saml2.protocol.Scoping; 
 import com.sun.identity.saml2.protocol.IDPEntry;
 import com.sun.identity.saml2.protocol.IDPList;
+import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.encode.URLEncDec;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.PrivateKey;
@@ -111,7 +112,7 @@ public class SPSSOFederate {
      *              map are of the type String. The values in the paramsMap
      *              are of the type List.
      *              Some of the possible keys are:RelayState,NameIDFormat,
-     *              binding, AssertionConsumerServiceIndex,
+     *              reqBinding, binding, AssertionConsumerServiceIndex,
      *              AttributeConsumingServiceIndex (currently not supported),
      *              isPassive, ForceAuthN, AllowCreate, Destination,
      *              AuthnContextDeclRef, AuthnContextClassRef,
@@ -156,7 +157,7 @@ public class SPSSOFederate {
      *              map are the parameter names of the type String. 
      *              The values in the paramsMap are of the type List.
      *              Some of the possible keys are:RelayState,NameIDFormat,
-     *              binding, AssertionConsumerServiceIndex,
+     *              reqBinding, binding, AssertionConsumerServiceIndex,
      *              AttributeConsumingServiceIndex (currently not supported),
      *              isPassive, ForceAuthN, AllowCreate, Destination,
      *              AuthnContextDeclRef, AuthnContextClassRef,
@@ -189,6 +190,10 @@ public class SPSSOFederate {
                  SAML2Utils.bundle.getString("nullIDPEntityID"));
         }
         
+        String binding = getParameter(paramsMap,"reqBinding");
+        if (binding == null) {
+            binding = SAML2Constants.HTTP_REDIRECT;
+        }
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message("SPSSOFederate: in initiateSSOFed");
             SAML2Utils.debug.message("SPSSOFederate: spEntityID is : "
@@ -237,8 +242,7 @@ public class SPSSOFederate {
             }
             
             List ssoServiceList = idpsso.getSingleSignOnService();
-            String ssoURL = getSSOURL(ssoServiceList,
-                SAML2Constants.HTTP_REDIRECT);
+            String ssoURL = getSSOURL(ssoServiceList, binding);
 
             if (ssoURL == null || ssoURL.length() == 0) {
               String[] data = { idpEntityID };
@@ -267,47 +271,67 @@ public class SPSSOFederate {
                 SAML2Utils.debug.message("SPSSOFederate: AuthnRequest:" 
                                           +authReqXMLString);
             }
-            // encode the xml string
-            String encodedXML = SAML2Utils.encodeForRedirect(authReqXMLString);
-        
-            StringBuffer queryString = 
-                new StringBuffer().append(SAML2Constants.SAML_REQUEST)
-                                  .append(SAML2Constants.EQUAL)
-                                  .append(encodedXML);
-        
             // Default URL if relayState not present? in providerConfig?
             // TODO get Default URL from metadata 
             String relayState = getParameter(paramsMap,
-                                             SAML2Constants.RELAY_STATE);
+                SAML2Constants.RELAY_STATE);
 
             // check if relayState is present and get the unique
             // id which will be appended to the SSO URL before
             // redirecting.
+            String relayStateID = null;
             if (relayState != null && relayState.length()> 0) {
-                String relayStateID = getRelayStateID(relayState,
-                                                      authnRequest.getID());
+                relayStateID = getRelayStateID(relayState,
+                    authnRequest.getID());
+            }
 
-                if (relayStateID != null && relayStateID.length() > 0) {
+	    if (binding.equals(SAML2Constants.HTTP_POST)) {
+                if (((idpsso != null) && idpsso.isWantAuthnRequestsSigned()) ||
+                    ((spsso != null) && spsso.isAuthnRequestsSigned()) ) {
+                    String certAlias = getParameter(spConfigAttrsMap,
+                        SAML2Constants.SIGNING_CERT_ALIAS);
+		    signAuthnRequest(certAlias,authnRequest);
+	        }
+                String authXMLString = authnRequest.toXMLString(true,true);
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(
+                        "SPSSOFederate.initiateAuthnRequest: " +
+                        "SAML Response content :\n" + authXMLString);
+                }
+                String encodedReqMsg = SAML2Utils.encodeForPOST(authXMLString);
+                SAML2Utils.postToTarget(response, "SAMLRequest",
+                    encodedReqMsg, "RelayState", relayStateID, ssoURL);
+	    } else {
+                // encode the xml string
+                String encodedXML = SAML2Utils.encodeForRedirect(
+                    authReqXMLString);
+        
+                StringBuffer queryString = new StringBuffer();
+                queryString.append(SAML2Constants.SAML_REQUEST)
+                           .append(SAML2Constants.EQUAL).append(encodedXML);
+        
+                if ((relayStateID != null) && (relayStateID.length() > 0)) {
                     queryString.append("&").append(SAML2Constants.RELAY_STATE)
                                .append("=")
                                .append(URLEncDec.encode(relayStateID));
                 }
+
+                StringBuffer redirectURL = 
+                    new StringBuffer().append(ssoURL).append("?");
+                // sign the query string
+                if (((idpsso != null) && idpsso.isWantAuthnRequestsSigned()) ||
+                    ((spsso != null) && spsso.isAuthnRequestsSigned()) ) {
+                    String certAlias = getParameter(spConfigAttrsMap,
+                        SAML2Constants.SIGNING_CERT_ALIAS);
+                    String signedQueryStr = signQueryString(
+                        queryString.toString(), certAlias);
+                    redirectURL.append(signedQueryStr);
+                } else {
+                    redirectURL.append(queryString);
+                }
+                response.sendRedirect(redirectURL.toString());
             }
-            StringBuffer redirectURL = 
-                new StringBuffer().append(ssoURL).append("?");
-            // sign the query string
-            if ((idpsso != null && idpsso.isWantAuthnRequestsSigned()) ||
-                (spsso != null && spsso.isAuthnRequestsSigned()) ) {
-                String certAlias = 
-                        getParameter(spConfigAttrsMap,
-                                     SAML2Constants.SIGNING_CERT_ALIAS);
-                    String signedQueryStr = 
-                        signQueryString(queryString.toString(),certAlias);
-                redirectURL.append(signedQueryStr);
-            } else {
-                redirectURL.append(queryString);
-            }
-            response.sendRedirect(redirectURL.toString());
             String[] data = { ssoURL };
             LogUtil.access(Level.INFO,LogUtil.REDIRECT_TO_SP,data,
                            null);
@@ -684,7 +708,7 @@ public class SPSSOFederate {
          Integer attrIndex = getIndex(paramsMap,SAML2Constants.ATTR_INDEX);
          
          String protocolBinding = isForECP ? SAML2Constants.PAOS : 
-             getParameter(paramsMap,SAML2Constants.BINDING);
+             getParameter(paramsMap, "binding");
          OrderedSet acsSet = getACSUrl(spsso,protocolBinding);
          String acsURL = (String) acsSet.get(0);
          protocolBinding = (String)acsSet.get(1);
@@ -1044,5 +1068,19 @@ public class SPSSOFederate {
         KeyProvider kp = KeyUtil.getKeyProviderInstance();
         PrivateKey privateKey = kp.getPrivateKey(certAlias);
         return QuerySignatureUtil.sign(queryString,privateKey);
+    }
+
+    public static void signAuthnRequest(String certAlias,
+        AuthnRequest authnRequest) throws SAML2Exception {
+
+        KeyProvider kp = KeyUtil.getKeyProviderInstance();
+        if (kp == null) {
+            SAML2Utils.debug.error("SPSSOFederate:signAuthnRequest: " +
+                "Unable to get a key provider instance.");
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "nullKeyProvider"));
+        }
+        authnRequest.sign(kp.getPrivateKey(certAlias),
+            kp.getX509Certificate(certAlias));
     }
 }

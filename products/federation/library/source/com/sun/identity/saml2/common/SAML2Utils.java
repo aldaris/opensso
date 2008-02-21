@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.17 2008-01-25 14:20:01 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.18 2008-02-21 23:17:58 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -988,6 +988,25 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
     }
     
+    /**
+     * Returns the encoded request message. The SAML Request message must be
+     * encoded before being transmitted. The Request message is  base-64
+     * encoded according to the rules specified in RFC2045.
+     * @param str String to be encoded.
+     * @return String the encoded String value or null on error.
+     */
+    public static String encodeForPOST(String str) {
+        String encoded = null;
+        try {
+            encoded = Base64.encode(str.getBytes("UTF-8"),
+                SAMLConstants.BASE64CHARPERLINE);
+        } catch (UnsupportedEncodingException uee) {
+            debug.error("SAML2Utils.encodeForPOST", uee);
+        }
+
+        return encoded;
+    }
+
     /**
      * Returns the encoded request message.
      * The SAML Request message must be

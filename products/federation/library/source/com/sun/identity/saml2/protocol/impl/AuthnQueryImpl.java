@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryImpl.java,v 1.1 2008-01-16 04:38:59 hengming Exp $
+ * $Id: AuthnQueryImpl.java,v 1.2 2008-02-21 23:19:32 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,7 +131,8 @@ public class AuthnQueryImpl extends SubjectQueryAbstractImpl
     /**
      * Sets the value of <code>SessionIndex</code> attribute.
      *
-     * @param sessionIndex new value of the <code>SessionIndex</code> attribute.     * @throws SAML2Exception if the object is immutable.
+     * @param sessionIndex new value of the <code>SessionIndex</code> attribute.
+     * @throws SAML2Exception if the object is immutable.
      * @see #getSessionIndex
      */
     public void setSessionIndex(String sessionIndex) throws SAML2Exception{

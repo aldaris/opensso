@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.8 2008-01-25 14:22:21 hengming Exp $
+ * $Id: DoManageNameID.java,v 1.9 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2020,17 +2020,7 @@ public class DoManageNameID {
         String hostEntityRole, String remoteEntity,
         HttpServletResponse response) throws SAML2Exception, IOException {
 
-        String encMsg = null;
-        try {
-            encMsg = Base64.encode(mniXMLString.getBytes("UTF-8"), 
-                SAMLConstants.BASE64CHARPERLINE);
-
-        } catch (UnsupportedEncodingException uee) {
-            debug.error("DoManageNameID.doMNIByPOST:" , uee);
-            throw new SAML2Exception(SAML2Utils.bundle.getString(
-                "unSupportedEncoding"));
-        }
-
+        String encMsg = SAML2Utils.encodeForPOST(mniXMLString);
         SAML2Utils.postToTarget(response, "SAMLRequest", encMsg, "RelayState",
             relayState, mniURL);
     }
@@ -2154,14 +2144,7 @@ public class DoManageNameID {
 
         //send MNI Response by POST
         String mniRespString = mniResponse.toXMLString(true, true);
-        String encMsg  = null;
-        try {
-           encMsg = Base64.encode(mniRespString.getBytes("UTF-8"),
-               SAMLConstants.BASE64CHARPERLINE);
-        } catch (UnsupportedEncodingException uee) {
-            debug.error("DoManageNameID.processPOSTRequest:", uee);
-            throw new SAML2Exception("Unsupporte encoding");
-        }
+        String encMsg  = SAML2Utils.encodeForPOST(mniRespString);
 
         String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.18 2008-02-09 04:28:55 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.19 2008-02-21 23:18:55 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@
 package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.encode.URLEncDec;
-import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.DateUtils;
 
 import com.sun.identity.cot.CircleOfTrustManager;
@@ -548,16 +547,7 @@ public class IDPSSOUtil {
                 SAML2Utils.debug.message(classMethod +
                     "SAML Response content :\n" + resMsg);
             }
-            String encodedResMsg = null;
-            try {
-               encodedResMsg = Base64.encode(resMsg.getBytes("UTF-8"),
-                                               SAMLConstants.BASE64CHARPERLINE);
-            } catch (UnsupportedEncodingException uee) {
-                SAML2Utils.debug.error("IDPSSOUtil:sendResponse : "
-                                          + "Unsupported encoding " , uee);
-                throw new SAML2Exception(SAML2Utils.bundle.getString(
-                                                        "unSupportedEncoding"));
-            }
+            String encodedResMsg = SAML2Utils.encodeForPOST(resMsg);
 
             String[] logdata1 = { spEntityID, idpMetaAlias, resMsg };
             LogUtil.access(Level.INFO, 
