@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.9 2008-02-06 21:30:31 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.10 2008-02-21 23:59:18 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,11 +67,9 @@ public class IdRepoSampleCreateId {
             return;
         }
 
+        IdType tmpIdtype = idtype;
         if (idtype.equals(IdType.AGENT)) {
-            System.out.println("Use IdType 'agentonly' and 'agentgroup' for" +
-                " creation of agents."+
-                "\nOnly operation supported for IdType 'agent' is READ");
-            return;
+            tmpIdtype = IdType.AGENTONLY;
         }
 
         try {
@@ -80,7 +78,7 @@ public class IdRepoSampleCreateId {
              * for reference...
              */
             IdSearchResults adRes =
-                idRepo.searchIdentities(idtype, "*", new IdSearchControl());
+                idRepo.searchIdentities(tmpIdtype, "*", new IdSearchControl());
             Set adResSet = adRes.getSearchResults();
             if (!adResSet.isEmpty()) {
                 System.out.println("    Current list of " +
@@ -99,11 +97,15 @@ public class IdRepoSampleCreateId {
             AMIdentity tmpId = null;
 
             if (idtype.equals(IdType.AGENT)) {
-                System.out.println("Use IdType 'agentonly' for creation of "+
-                    "agents.Only operation supported for IdType 'agent' is "+
-                    "READ");
+                String tmpS = sampleUtils.getLine(idName + "'s password: ");
+                vals = new HashSet();
+                vals.add(tmpS);
+                attrs.put("userpassword", vals);
+
+                tmpId = idRepo.createIdentity(IdType.AGENTONLY, idName, attrs);
+                idtype = IdType.AGENTONLY;
             } else if (idtype.equals(IdType.AGENTONLY) || 
-                idtype.equals(IdType.AGENTGROUP)) {
+                idtype.equals(IdType.AGENTGROUP)) { 
 
                 String tmpS = sampleUtils.getLine(idName + "'s agentType: ");
                 vals.add(tmpS);

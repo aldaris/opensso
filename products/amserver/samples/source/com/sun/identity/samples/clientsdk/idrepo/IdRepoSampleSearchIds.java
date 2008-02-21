@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleSearchIds.java,v 1.2 2008-02-14 21:32:12 goodearth Exp $
+ * $Id: IdRepoSampleSearchIds.java,v 1.3 2008-02-21 23:59:18 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -268,7 +268,8 @@ public class IdRepoSampleSearchIds {
                             System.err.println ("'" + answer + "' is invalid.");
                         }
                     }
-                } else if (idtype.equals(IdType.AGENT)) {
+                } else if (idtype.equals(IdType.AGENT) ||
+                    idtype.equals(IdType.AGENTONLY)) {
                     /*
                      * can:
                      *   see if exists
