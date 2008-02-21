@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.20 2008-02-14 21:32:44 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.21 2008-02-21 23:58:41 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -194,16 +194,34 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         String agentType = null;
         ServiceConfig aTypeConfig = null;
         if (attrMap != null && !attrMap.isEmpty()) {
-            Set aTypeSet = (HashSet) attrMap.get(IdConstants.AGENT_TYPE);
+            if ((attrMap.keySet()).contains(IdConstants.AGENT_TYPE)) {
+                Set aTypeSet = (HashSet) attrMap.get(IdConstants.AGENT_TYPE);
 
-            if ((aTypeSet != null) && (!aTypeSet.isEmpty())) {
-                agentType = (String) aTypeSet.iterator().next();
-                attrMap.remove(IdConstants.AGENT_TYPE);
-            } else {
-                debug.error("AgentsRepo.create():Unable to create agents. "+
-                   "Agent Type "+aTypeSet+ " is empty");
-                return (null);
-            } 
+                if ((aTypeSet != null) && (!aTypeSet.isEmpty())) {
+                    agentType = (String) aTypeSet.iterator().next();
+                    attrMap.remove(IdConstants.AGENT_TYPE);
+                } else {
+                    debug.error("AgentsRepo.create():Unable to create agents."
+                       + " Agent Type "+aTypeSet+ " is empty");
+                    throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201",
+                        null);
+                } 
+            } else { 
+                // To be backward compatible, look for 'AgentType' attribute 
+                // in the attribute map which is passed as a parameter and if 
+                // not present/sent, check if the IdType.AGENTONLY and then 
+                // assume that it is '2.2_Agent' type and create that agent 
+                // under the 2.2_Agent node.  
+
+                if (type.equals(IdType.AGENTONLY)) {
+                    agentType = "2.2_Agent";
+                } else {
+                    debug.error("AgentsRepo.create():Unable to create agents."
+                       + " Agent Type "+agentType+ " is empty");
+                    throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201",
+                        null);
+                } 
+            }
         }
         try {
             Set vals = (Set) attrMap.get("userpassword");
@@ -247,7 +265,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } catch (SMSException smse) {
             debug.error("AgentsRepo.create():Unable to create agents ", smse);
             Object args[] = { NAME };
-            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "200", args);
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "226", args);
         }
         return (aTypeConfig.getDN());
     }
