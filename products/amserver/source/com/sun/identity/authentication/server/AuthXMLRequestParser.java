@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.6 2008-02-20 06:42:34 superpat7 Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.7 2008-02-21 22:48:26 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -182,6 +182,16 @@ public class AuthXMLRequestParser {
                     if (hostName != null) {
                         authXMLRequest.setHostName(hostName);
                     }  
+                    String forceAuth = 
+                        parseNodeAttributes(loginNode,"forceAuth");
+                    if (forceAuth != null) {
+                        authXMLRequest.setForceAuth(forceAuth);
+                        if (debug.messageEnabled()) {
+                            debug.message("AuthXMLRequestParser.parseXML: "
+                            + "Got the force auth flag: "+forceAuth);
+                        }
+                    }
+                    boolean forceAuthBool = Boolean.parseBoolean(forceAuth);  
                     authXMLRequest.setRequestType(AuthXMLRequest.Login);
                     parseLoginNodeElements(loginNode,authXMLRequest);
                     AuthContext.IndexType indexType = authXMLRequest.
@@ -190,7 +200,7 @@ public class AuthXMLRequestParser {
                     authContext =
                         AuthUtils.getAuthContext(orgName,authIdentifier,false,
                             servletReq, indexTypeParam,
-                            authXMLRequest.getIndexName());
+                            authXMLRequest.getIndexName(),forceAuthBool);
                     authXMLRequest.setAuthContext(authContext);
                 }        
 

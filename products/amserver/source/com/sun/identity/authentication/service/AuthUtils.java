@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.16 2008-02-20 06:42:36 superpat7 Exp $
+ * $Id: AuthUtils.java,v 1.17 2008-02-21 22:47:18 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -864,6 +864,27 @@ public class AuthUtils extends AuthClientUtils {
     
     /* create auth context for org  and sid, if sessionupgrade then
      * save the previous authcontext and create new authcontext
+     * orgName - organization name to login to
+     * sessionId - sessionID of the request - "0" if new request
+     * isLogout - is this a logout request 
+     *  @param orgName OrganizationName in request
+     *  @param sessionID Session ID for this request
+     *  @param isLogout a boolean which is true if it is a Logout request
+     *  @param req HttpServletRequest
+     *  @param indexType Index Type
+     *  @param indexName Index Name
+     *  @return AuthContextLocal object
+     */
+    public static AuthContextLocal getAuthContext(String orgName,
+    String sessionID, boolean isLogout, HttpServletRequest req,
+    String indexType, String indexName)
+    throws AuthException {
+         return getAuthContext(orgName, sessionID, false, req,indexType,
+             indexName,false);
+    }
+
+    /* create auth context for org  and sid, if sessionupgrade then
+     * save the previous authcontext and create new authcontext
      * orgName - organization name to login too
      * sessionId - sessionID of the request - "0" if new request
      * isLogout - is this a logout request - if yes then no session
@@ -876,11 +897,12 @@ public class AuthUtils extends AuthClientUtils {
      *  @param req HttpServletRequest
      *  @param indexType Index Type
      *  @param indexName Index Name
+     *  @param forceAuth force auth flag
      *  @return AuthContextLocal object
      */
     public static AuthContextLocal getAuthContext(String orgName,
     String sessionID, boolean isLogout, HttpServletRequest req,
-    String indexType, String indexName)
+    String indexType, String indexName, boolean forceAuth)
     throws AuthException {
         AuthContextLocal authContext = null;
         SessionID sid = null;
@@ -919,9 +941,14 @@ public class AuthUtils extends AuthClientUtils {
                             Hashtable indexTable = new Hashtable();
                             indexTable.put(indexType, indexName);
                             if (authContext != null) {
-                                SSOToken ssot = prevLoginState.getSSOToken();
-                                sessionUpgrade = checkSessionUpgrade(ssot,
-                                    indexTable);
+                                if (forceAuth) {
+                                    sessionUpgrade = true;
+                                } else {
+                                    SSOToken ssot = prevLoginState.
+                                        getSSOToken();
+                                    sessionUpgrade = checkSessionUpgrade(ssot,
+                                        indexTable);
+                                }
                             }
                         } else {
                             sessionUpgrade = true;
@@ -939,6 +966,8 @@ public class AuthUtils extends AuthClientUtils {
                 + authContext);
                 utilDebug.message("AuthUtil:getAuthContext:sessionUpgrade is.. .: "
                 + sessionUpgrade);
+                utilDebug.message("AuthUtil:getAuthContext:ForceAuth is.. .: "
+                    + forceAuth);
             }
             
             if ((orgName == null) && (authContext == null)) {
@@ -987,6 +1016,9 @@ public class AuthUtils extends AuthClientUtils {
                     throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
                 }
                 
+            }
+            if (forceAuth){ 
+                loginState.setForceAuth(forceAuth);
             }
             
             

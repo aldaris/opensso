@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.10 2008-02-20 06:42:34 superpat7 Exp $
+ * $Id: AuthXMLHandler.java,v 1.11 2008-02-21 22:48:26 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -670,6 +670,8 @@ public class AuthXMLHandler implements RequestHandler {
                             allCallbacksAreSet = false;
                             break;
                         }
+                    } else {
+                        allCallbacksAreSet = false;
                     }
                     // add more callbacks if required
                 }    

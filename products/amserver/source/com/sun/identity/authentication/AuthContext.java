@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.10 2007-12-14 00:51:24 pawand Exp $
+ * $Id: AuthContext.java,v 1.11 2008-02-21 22:46:16 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,6 +128,7 @@ public class AuthContext extends Object implements java.io.Serializable {
     AuthLoginException loginException = null;
 
     String hostName = null;
+    private boolean forceAuth=false;
     String nickName = null;
     private URL authURL = null;
     private URL authServiceURL = null;
@@ -305,6 +306,43 @@ public class AuthContext extends Object implements java.io.Serializable {
      */
     public AuthContext(SSOToken ssoToken) throws AuthLoginException {
         this.ssoToken = ssoToken;
+    }
+    
+    /**
+     * Constructs an instance of <code>AuthContext</code> for a given
+     * organization name, or sub organization name contained in the
+     * single sign on token.
+     *
+     * This constructor should be called for re-authentication of an
+     * authenticated user. single sign on token is the authenticated resource's
+     * Single-Sign-On Token. If the session properties based on
+     * the login method used matches those in the user's new
+     * authenticated  session then session upgrade will be done.
+     * If forceAuth flag is <code>true</code> then the existing session 
+     * is used and no new session is created otherwise this constructor 
+     * behaves same as the constructor with no forceAuth flag.
+     *
+     * Caller would then use <code>login</code> to start the
+     * authentication process and use <code>getRequirements()</code> and
+     * <code>submitRequirements()</code> to pass the credentials
+     * needed for authentication by the plugin authentication modules.
+     * The method <code>getStatus()</code> returns the
+     * authentication status.
+     *
+     * @param ssoToken single sign on token representing the resource's 
+     *        previous authenticated session.
+     * @param forceAuth indicates that authentication preocess has to be 
+     *        restarted and given single sign on token will be used and new 
+     *        session will not be created.
+     * @throws AuthLoginException if <code>AuthContext</code> creation fails.
+     *         This exception is kept for backward compatibility only.
+     *
+     * @supported.api
+     */
+    public AuthContext(SSOToken ssoToken, boolean forceAuth) throws 
+        AuthLoginException {
+        this.ssoToken = ssoToken;
+        this.forceAuth = forceAuth;
     }
     
     /**
@@ -707,6 +745,14 @@ public class AuthContext extends Object implements java.io.Serializable {
                     .append(AuthXMLTags.EQUAL)
                     .append(AuthXMLTags.QUOTE)
                     .append(XMLUtils.escapeSpecialCharacters(hostName))
+                    .append(AuthXMLTags.QUOTE);
+                }
+                if (forceAuth) {
+                    request.append(AuthXMLTags.SPACE)
+                    .append(AuthXMLTags.FORCE_AUTH_ATTR)
+                    .append(AuthXMLTags.EQUAL)
+                    .append(AuthXMLTags.QUOTE)
+                    .append("true")
                     .append(AuthXMLTags.QUOTE);
                 }
             }

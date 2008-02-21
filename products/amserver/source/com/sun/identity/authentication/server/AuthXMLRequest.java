@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.4 2007-11-05 17:57:45 ericow Exp $
+ * $Id: AuthXMLRequest.java,v 1.5 2008-02-21 22:48:26 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,6 +94,7 @@ public class AuthXMLRequest {
     private String appSSOTokenID=null;
     private String orgName=null;
     private String hostName=null;
+    private String forceAuth=null;
     private String requestedInformation=null;
     private boolean isPCookie=false;
     private AuthContext.IndexType indexType=null;
@@ -186,6 +187,15 @@ public class AuthXMLRequest {
      */
     public void setHostName(String hostName) {
 	this.hostName = hostName;
+    }
+
+    /**
+     * Sets the Force Auth attribute.
+     *
+     * @param aForceAuth Force Auth flag.
+     */
+    public void setForceAuth(String aForceAuth) {
+	this.forceAuth = aForceAuth;
     }
 
     /**
@@ -296,6 +306,15 @@ public class AuthXMLRequest {
      */
     public String getHostName() {
  	return hostName;
+    }
+
+    /**
+     * Returns the force auth flag.
+     *
+     * @return the force auth flag.
+     */
+    public String getForceAuth() {
+ 	return forceAuth;
     }
 
     /**
