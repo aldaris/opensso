@@ -709,3 +709,78 @@ Properties::vfind(const Properties::mapped_type &v) const {
     }
     return map_iter;
 }
+
+/* Throws std::invalid_argument if a value for key is not found. */
+void Properties::set_list(const std::string& key,
+                          const std::string& valueSep) 
+{
+    if(!isSet(key)) {
+        Properties::const_iterator map_iter = begin();
+        const std::string tmpKey = key + "[";
+        std::string tmpValue = "";
+        for(; map_iter != end(); map_iter++) {
+            size_t found=(*map_iter).first.find(tmpKey);
+            if (found!=std::string::npos) {
+                std::string firstStr = (*map_iter).first;
+                size_t beginSB = firstStr.find('[');
+                size_t endSB = firstStr.find(']');
+                if(beginSB != std::string::npos &&
+                   endSB != std::string::npos) {
+                    std::string listIndex = firstStr.substr(beginSB+1, (endSB - beginSB)-1);
+	            Utils::trim(listIndex);
+                    if(listIndex.size() > 0) {
+                        try {
+                            std:size_t index = Utils::getNumber(listIndex);
+                            std::string listValue = ((*map_iter).second);
+        	            Utils::trim(listValue);
+                            if(listValue.size() > 0) {
+                                tmpValue += listValue + valueSep;
+                            }
+                        }
+                        catch (...) {
+                            // ignore invalid indexes and corresponding values
+                        }
+                    }
+                }
+            }
+        }
+	Utils::trim(tmpValue);
+        if(tmpValue.size() > 0) {
+	    set(key, tmpValue);
+        }
+    }
+    return;
+}
+
+/* Throws std::invalid_argument if a value for key is not found. */
+void Properties::set_map(const std::string& key,
+                         const std::string& mapSep, 
+                         const std::string& valueSep) 
+{
+    if(!isSet(key)) {
+        Properties::const_iterator map_iter = begin();
+        const std::string tmpKey = key + "[";
+        std::string tmpValue = "";
+        for(; map_iter != end(); map_iter++) {
+            size_t found=(*map_iter).first.find(tmpKey);
+            if (found!=std::string::npos) {
+                std::string firstStr = (*map_iter).first;
+                size_t beginSB = firstStr.find('[');
+                size_t endSB = firstStr.find(']');
+                if(beginSB != std::string::npos &&
+                   endSB != std::string::npos) {
+                    std::string map = firstStr.substr(beginSB+1, (endSB - beginSB)-1);
+	            Utils::trim(map);
+                    if(map.size() > 0) {
+                        tmpValue += map + mapSep + ((*map_iter).second) + valueSep;
+                    }
+                }
+            }
+        }
+	Utils::trim(tmpValue);
+        if(tmpValue.size() > 0) {
+	    set(key, tmpValue);
+        }
+    }
+    return;
+}

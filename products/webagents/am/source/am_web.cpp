@@ -439,7 +439,7 @@ static Utils::url_info_t *find_active_login_server(void* agent_config)
     if(initialized == AM_TRUE) {
 	PR_Lock((*agentConfigPtr)->lock);
 
-	if((*agentConfigPtr)->cdsso_enabled) {
+	if((*agentConfigPtr)->cdsso_enable) {
 	    url_list = &(*agentConfigPtr)->cdsso_server_url_list;
 	} else {
 	    url_list = &(*agentConfigPtr)->login_url_list;
@@ -508,12 +508,14 @@ load_bootstrap_properties(Utils::boot_info_t *boot_ptr,
         }
     }
 
+/*
     if (AM_SUCCESS == status) {
 	function_name = "am_properties_get";
 	parameter = AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY;
 	am_properties_get(boot_ptr->properties, parameter,
 				  &boot_ptr->agent_props_location);
      }
+*/
 
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_PASSWORD_PROPERTY;
@@ -1604,16 +1606,16 @@ am_web_is_access_allowed(const char *sso_token,
         }
     }
 
-    // No further processing if ignore_policy_evaluation_if_notenforced
-    // is set to true and URL is not enforced and 
+    // No further processing if notenforced_url_attributes_enable
+    // is set to false and URL is not enforced and 
     // also not logout url. 
     // If the accessed URL is logout url, then it requires processing.
     if (isNotEnforced == AM_TRUE &&
-	(*agentConfigPtr)->ignore_policy_evaluation_if_notenforced &&
+	(*agentConfigPtr)->notenforced_url_attributes_enable == AM_FALSE &&
         isLogoutURL == AM_FALSE ) {
            am_web_log_debug("URL = %s is in notenforced list and  "
-                           "ignore_policy_evaluation_if_notenforced is set to "
-			   "TRUE", url);
+                           "notenforced.url.attributes.enable is set to "
+			   "false", url);
     } else {
       if (status == AM_SUCCESS) {
 
@@ -2414,7 +2416,7 @@ am_web_get_url_to_redirect(am_status_t status,
 			retVal.append((url_info_ptr->has_parameters) ?"&":"?");
 			retVal.append(URL_REDIRECT_PARAM);
 			retVal.append("=");
-			if((*agentConfigPtr)->cdsso_enabled == AM_TRUE &&
+			if((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
 				method != NULL) {
 			    string temp_url = goto_url;
 			    temp_url.append(
@@ -2430,7 +2432,7 @@ am_web_get_url_to_redirect(am_status_t status,
 			}
 			retVal.append(encoded_url);
                         
-			if((*agentConfigPtr)->cdsso_enabled == AM_TRUE) {
+			if((*agentConfigPtr)->cdsso_enable == AM_TRUE) {
 			    am_web_log_debug("%s: The goto_url and url before "
 					     "appending cdsso elements: "
 					     "[%s] [%s]", thisfunc,
@@ -2530,8 +2532,9 @@ am_web_reset_cookies_list(const Utils::cookie_info_list_t *cookies_list,
 		    am_web_log_max_debug("am_web_reset_cookies_list(): "
 					 "resetting cookie: %s", reset_header);
 		    tmpStatus =  setFunc(reset_header, args);
-		    if (AM_SUCCESS != tmpStatus)
+		    if (AM_SUCCESS != tmpStatus) {
 			status = tmpStatus;
+                    }
 		    free(reset_header);
 		    reset_header = NULL;
 		}
@@ -2644,7 +2647,7 @@ am_web_do_cookies_reset(am_status_t (*setFunc)(const char *, void **),
     am_status_t tmpStatus = AM_SUCCESS;
 
     // Reset cookies from properties file.
-    if ((*agentConfigPtr)->cookie_reset_enabled == AM_TRUE) {
+    if ((*agentConfigPtr)->cookie_reset_enable == AM_TRUE) {
         tmpStatus  = am_web_reset_cookies_list(&(*agentConfigPtr)->cookie_list,
 					       setFunc, args);
         if (AM_SUCCESS != tmpStatus) {
@@ -3316,7 +3319,7 @@ am_web_is_postpreserve_enabled(void* agent_config) {
 
 
     return static_cast<bool>(
-	    (*agentConfigPtr)->postdatapreserve_enabled)==true?B_TRUE:B_FALSE;
+	    (*agentConfigPtr)->postdatapreserve_enable)==true?B_TRUE:B_FALSE;
 }
 
 /**
@@ -5134,15 +5137,15 @@ process_access_success(char *url,
 
     // set user - if fail, access is forbidden.
     // If remote_user is null there are two possibilities:
-    //   1) if ignore_policy_evaluation_if_notenforced is set
-    //      to false (default) it is up to the agent/container
+    //   1) if notenforced_url_attributes_enable is set
+    //      to true, it is up to the agent/container
     //      to decide whether or not to allow null user.
-    //   2) if ignore_policy_evaluation_if_notenforced is set 
-    //      to true, the remote user is not set to anything
-    if (((*agentConfigPtr)->ignore_policy_evaluation_if_notenforced) &&
+    //   2) if notenforced_url_attributes_enable is set 
+    //      to false, the remote user is not set to anything
+    if (((*agentConfigPtr)->notenforced_url_attributes_enable == AM_FALSE) &&
             (policy_result.remote_user == NULL)) {
-       am_web_log_debug("%s: ignore_policy_evaluation_if_notenforced is "
-                        "set to true and remote user is NULL: "
+       am_web_log_debug("%s: notenforced.url.attributes.enable is "
+                        "set to false and remote user is NULL: "
                         "REMOTE_USER header will not be set.",
                          thisfunc);
        setting_user = AM_FALSE;
@@ -5288,7 +5291,7 @@ get_sso_token(am_web_request_params_t *req_params,
     // get the sso token from assertion and ignore the cookie in the agent's
     // domain, in case user has logged out of IS but sso token cookie in
     // agent's domain has not been updated.
-    if ((*agentConfigPtr)->cdsso_enabled == AM_TRUE &&
+    if ((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
 	(sts = get_original_method(req_params, orig_method)) != AM_SUCCESS &&
 	sts != AM_NOT_FOUND) {
 	am_web_log_error("%s: Error while checking if original method "
@@ -5753,7 +5756,7 @@ am_web_is_owa_enabled(void* agent_config) {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
 
-    if((*agentConfigPtr)->owa_enabled == AM_TRUE) {
+    if((*agentConfigPtr)->owa_enable == AM_TRUE) {
         status = B_TRUE;
     }
     return status;
@@ -5769,7 +5772,7 @@ am_web_is_owa_enabled_change_protocol(void* agent_config) {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
 
-    if((*agentConfigPtr)->owa_enabled_change_protocol == AM_TRUE) {
+    if((*agentConfigPtr)->owa_enable_change_protocol == AM_TRUE) {
         status = B_TRUE;
     }
     return status;
@@ -5784,7 +5787,7 @@ am_web_is_owa_enabled_session_timeout_url(void* agent_config) {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
 
-    return (*agentConfigPtr)->owa_enabled_session_timeout_url;
+    return (*agentConfigPtr)->owa_enable_session_timeout_url;
 }
 
 /**
@@ -5819,7 +5822,7 @@ am_web_is_cdsso_enabled(void* agent_config) {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
 
-    if((*agentConfigPtr)->cdsso_enabled == AM_TRUE) {
+    if((*agentConfigPtr)->cdsso_enable == AM_TRUE) {
         status = B_TRUE;
     }
 

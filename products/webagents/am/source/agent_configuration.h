@@ -50,7 +50,7 @@ public:
     Utils::url_info_list_t not_enforced_list;
     std::set<std::string> *not_enforce_IPAddr;
     PRBool reverse_the_meaning_of_not_enforced_list;
-    PRBool ignore_policy_evaluation_if_notenforced;
+    PRBool notenforced_url_attributes_enable;
     PRBool do_sso_only;
     const char *instance_name;
     const char *cookie_name;
@@ -60,12 +60,12 @@ public:
     PRLock *lock;
     Utils::url_info_list_t login_url_list;
     Utils::url_info_list_t cdsso_server_url_list;
-    PRBool notification_enabled;
+    PRBool notification_enable;
     const char *notification_url;
     PRBool url_comparison_ignore_case;
     PostCache *postcache_handle;
     unsigned long postcacheentry_life;
-    PRBool postdatapreserve_enabled;
+    PRBool postdatapreserve_enable;
     const char *postcache_url;
     const char *url_redirect_param;
     const char *user_id_param;
@@ -83,9 +83,9 @@ public:
     FqdnHandler *fqdn_handler;
     const char *fqdn_default;
     size_t fqdn_default_len;   
-    PRBool cookie_reset_enabled;
+    PRBool cookie_reset_enable;
     std::set<std::string> *cookie_domain_list;
-    PRBool cdsso_enabled;
+    PRBool cdsso_enable;
     Utils::cookie_info_list_t cookie_list;
     const char *cookie_reset_default_domain;
     Utils::url_info_t agent_server_url;
@@ -109,9 +109,9 @@ public:
     PRBool override_host_port;	// used by Proxy agent
     const char *iis6_replaypasswd_key; // IIS6 replay passwd key
     const char *filter_priority; //IIS 5 filter priority
-    PRBool owa_enabled;	// OWA enabled in IIS6
-    PRBool owa_enabled_change_protocol;	// OWA enabled change protocol in IIS6
-    const char *owa_enabled_session_timeout_url; // OWA enabled session timeout url 
+    PRBool owa_enable;	// OWA enable in IIS6
+    PRBool owa_enable_change_protocol;	// OWA enable change protocol in IIS6
+    const char *owa_enable_session_timeout_url; // OWA enable session timeout url 
     const char * attrCookiePrefix;
     const char * attrCookieMaxAge;
     const char * profileMode;
@@ -139,7 +139,7 @@ public:
         this->properties =  ((am_properties_t) 0);
         this->not_enforce_IPAddr =  NULL; 
         this->reverse_the_meaning_of_not_enforced_list = AM_FALSE;
-        this-> ignore_policy_evaluation_if_notenforced = AM_FALSE;
+        this->notenforced_url_attributes_enable = AM_FALSE;
         this->do_sso_only = AM_FALSE;
         this->instance_name = NULL;
         this->cookie_name = NULL;
@@ -147,12 +147,12 @@ public:
         this->is_cookie_secure = AM_FALSE;
         this->access_denied_url = NULL;
         this->lock = (PRLock *) NULL;
-        this->notification_enabled = AM_FALSE;
+        this->notification_enable = AM_FALSE;
         this->notification_url = NULL;
         this->url_comparison_ignore_case = false;
         this->postcacheentry_life = 0;
         this->postcache_handle = NULL;
-        this->postdatapreserve_enabled = AM_TRUE;
+        this->postdatapreserve_enable = AM_TRUE;
         this->postcache_url = NULL;
         this->url_redirect_param = NULL;
         this->user_id_param = NULL;
@@ -169,9 +169,9 @@ public:
         this->fqdn_handler = NULL;
         this->fqdn_default = NULL;
         this->fqdn_default_len =  0;
-        this->cookie_reset_enabled = AM_FALSE;
+        this->cookie_reset_enable = AM_FALSE;
         this->cookie_domain_list = NULL;
-        this->cdsso_enabled = AM_FALSE;
+        this->cdsso_enable = AM_FALSE;
         this->cookie_reset_default_domain  = NULL;
         this->getClientHostname = AM_FALSE;
         this->log_access_type = (unsigned int)-1;
@@ -187,8 +187,8 @@ public:
         this->override_host_port = AM_FALSE;
         this->iis6_replaypasswd_key = NULL;
         this->filter_priority = IIS_FILTER_PRIORITY;
-        this->owa_enabled = AM_FALSE;
-        this->owa_enabled_change_protocol = NULL;        
+        this->owa_enable = AM_FALSE;
+        this->owa_enable_change_protocol = NULL;        
         this->attrCookiePrefix = COOKIE_ATTRIBUTE_PREFIX;
         this->attrCookieMaxAge = COOKIE_ATTRIBUTE_MAX_AGE;
         this->profileMode = POLICY_ATTRIBUTES_MODE_NONE;

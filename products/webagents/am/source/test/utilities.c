@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include <am.h>
+#include <am_web.h>
 #include <am_log.h>
 
 #include "utilities.h"
@@ -207,7 +208,7 @@ args_t *init(int argc, char **argv)
 	    fatal_with_status(status, "unable to load properties");
 	}
     } else {
-	set_property(parsed_args.properties, AM_POLICY_LOGIN_URL_PROPERTY,
+	set_property(parsed_args.properties, AM_WEB_LOGIN_URL_PROPERTY,
 		     "http://piras.red.iplanet.com:8080/amserver/UI/Login");
 	set_property(parsed_args.properties, AM_COMMON_COOKIE_NAME_PROPERTY,
 		     "iPlanetDirectoryPro");

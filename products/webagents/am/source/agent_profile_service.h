@@ -105,6 +105,8 @@ private:
     void AgentProfileService::parseURL(std::string serviceURL, 
                                        bool isRestURL,
                                        std::string &parsedServiceURL);
+    bool isListMapProperty(const char* propName); 
+
 };
 
 END_PRIVATE_NAMESPACE

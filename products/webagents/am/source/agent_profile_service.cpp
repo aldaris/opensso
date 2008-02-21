@@ -479,14 +479,16 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
     if (element.isNamed("userdetails")) {
 
         // get the first attribute element
-	element.getSubElement("attribute", element);
-	if (element.isNamed("attribute")) {
+        element.getSubElement("attribute", element);
+        if (element.isNamed("attribute")) {
 
             // iterate through all the attribute elements
             while (element.isValid()) {
                 if(element.isNamed("attribute")) {
                     std::string propName;
                     std::string propValue;
+                    bool propSet = false;
+
                     // get property name and assign it to propName
                     if (element.getAttributeValue("name", propName)) {
 
@@ -499,7 +501,7 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
                             //append them with a separator ' '
                              while (element1.isValid()) {
                                  if(element1.isNamed("value")) {
-			             std::string tmpValue;
+                                     std::string tmpValue;
                                      if (element1.getValue(tmpValue)) {
 
                                          // Process freeform properties
@@ -517,6 +519,48 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
                                                  ffPropName.c_str(), ffPropValue.c_str()); 
                                          }
 
+                                         // Process list/map properties
+                                         if(isListMapProperty(propName.c_str())) {
+                                             size_t equals = tmpValue.find("=");
+                                             //the following returns [] portion before =
+                                             std::string lmPropNameSuffix = tmpValue.substr(0, equals);
+                                             //the following returns value portion after =
+                                             std::string lmPropValue = tmpValue.substr(equals + 1);
+                                             std::string tmpPropName = propName;
+                                             am_properties_set(properties, 
+                                                 (tmpPropName.append(lmPropNameSuffix)).c_str(), 
+                                                 lmPropValue.c_str());
+                                             propSet = true;
+                                             Log::log(logModule, Log::LOG_DEBUG, 
+                                                 "agentAttributes() %s : %s  ",
+                                                 propName.c_str(), lmPropValue.c_str()); 
+                                         }
+
+                                         // Process log.level property
+                                         if(strcasecmp(propName.c_str(), 
+                                             AM_COMMON_LOG_LEVELS_PROPERTY) == 0) {
+                                             std::string tmpLogLevel;
+                                             if(strcasecmp(tmpValue.c_str(),"Error") == 0)
+                                                 tmpLogLevel = "all:1";
+                                             if(strcasecmp(tmpValue.c_str(),"Warning") == 0)
+                                                 tmpLogLevel = "all:2";
+                                             if(strcasecmp(tmpValue.c_str(),"Info") == 0)
+                                                 tmpLogLevel = "all:3";
+                                             if(strcasecmp(tmpValue.c_str(),"Message") == 0)
+                                                 tmpLogLevel = "all:4";
+                                             if(strcasecmp(tmpValue.c_str(),"All") == 0)
+                                                 tmpLogLevel = "all:5";
+                                                  
+                                             if(!tmpLogLevel.empty()) {
+                                                  am_properties_set(properties, 
+                                                      propName.c_str(), 
+                                                      tmpLogLevel.c_str());
+                                                  propSet = true;
+                                                 Log::log(logModule, Log::LOG_DEBUG, 
+                                                     "agentAttributes() %s : %s  ",
+                                                     propName.c_str(), tmpLogLevel.c_str()); 
+                                             }
+                                         }
                                          if(i > 0)
                                              propValue.append(" ");
                                    
@@ -524,53 +568,54 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
                                       } else {
                                           throw XMLTree::ParseException(
                                               "Attribute value missing ");
-			              }
-		                  }
+                                      }
+                                  }
                                   element1.nextSibling();
                                   i++;
                               } // end of value element while loop 
                                     
                           } // end of if value check 
 
-
-                          // assign  property name and value in properties object.
-                          if(!propValue.empty()) {
-                              am_properties_set(properties, 
-                                  propName.c_str(), 
-                                  propValue.c_str());
-                          } else {
-                              // The following is required for validation of 
-                              // agent repository location value.
-                              if(strcasecmp(propName.c_str(), 
-                                AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY) == 0) 
-                              {
-                                  am_properties_set_null(properties, 
-                                      propName.c_str(), "\0");
+                          if(!propSet) {
+                              // assign  property name and value in properties object.
+                              if(!propValue.empty()) {
+                                  am_properties_set(properties, 
+                                      propName.c_str(), 
+                                      propValue.c_str());
+                              } else {
+                                  // The following is required for validation of 
+                                  // agent repository location value.
+                                  if(strcasecmp(propName.c_str(), 
+                                    AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY) == 0) 
+                                  {
+                                      am_properties_set_null(properties, 
+                                          propName.c_str(), "\0");
+                                  }
                               }
+                              Log::log(logModule, Log::LOG_DEBUG, 
+                                  "agentAttributes() %s : %s", 
+                                  propName.c_str(), propValue.c_str());
                           }
-                          Log::log(logModule, Log::LOG_DEBUG, 
-                              "agentAttributes() %s : %s", 
-                              propName.c_str(), propValue.c_str());
 
                     } else {
-			    throw XMLTree::ParseException("Attribute name missing ");
+                        throw XMLTree::ParseException("Attribute name missing ");
                     }
-		}
-		element.nextSibling();
+                }
+                element.nextSibling();
             }
 
             status = AM_SUCCESS;
         } else {
             throw XMLTree::ParseException("attribute element not present in "
-					  "Attributes Response xml");
+                "Attributes Response xml");
         } 
     } else {
         throw XMLTree::ParseException("userdetails root element not present in "
-					  "Attributes Response xml");
+            "Attributes Response xml");
     }
 
     Log::log(logModule, Log::LOG_DEBUG, "parseAgentResponse() "
-	     "returning with status %s.", am_status_to_string(status));
+        "returning with status %s.", am_status_to_string(status));
     return status;
 }
 
@@ -887,3 +932,32 @@ void AgentProfileService::parseURL(std::string serviceURL,
              parsedServiceURL.c_str());
     return;
 } 
+
+bool AgentProfileService::isListMapProperty(const char* propName) {
+    bool retVal = false;
+    if(strcasecmp(propName,
+        AM_WEB_NOT_ENFORCED_LIST_PROPERTY) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_NOT_ENFORCED_IPADDRESS) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_FQDN_MAP) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_COOKIE_RESET_LIST) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_CDSSO_COOKIE_DOMAIN_LIST) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY) == 0 ||
+       strcasecmp(propName,
+        AM_POLICY_PROFILE_ATTRS_MAP) == 0 ||
+       strcasecmp(propName,
+        AM_POLICY_SESSION_ATTRS_MAP) == 0 ||
+       strcasecmp(propName,
+        AM_POLICY_RESPONSE_ATTRS_MAP) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_LOGIN_URL_PROPERTY) == 0) 
+    {
+        retVal = true;
+    }
+
+    return retVal;
+}

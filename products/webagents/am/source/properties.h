@@ -269,6 +269,12 @@ public:
     //		if unable to allocate memory to store the new key/value.
     //
     void set(const std::string& key, const std::string& value);
+    void set_list(const std::string& key,
+                  const std::string& valueSep);
+    void Properties::set_map(const std::string& key,
+                         const std::string& mapSep,
+                         const std::string& valueSep);
+
 
     const_iterator vfind(const Properties::mapped_type &value) const;
 private:

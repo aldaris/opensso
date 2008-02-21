@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.30 2008-02-05 20:53:21 sean_brydon Exp $
+   $Id: AgentService.xml,v 1.31 2008-02-21 14:25:12 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -72,7 +72,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.repository.location"
+                        name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
                         syntax="string"
                         i18nKey="a110">
@@ -85,7 +85,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.cookie.name"
+                        name="com.sun.identity.agents.config.cookie.name"
                         type="single"
                         syntax="string"
                         i18nKey="a400">
@@ -94,7 +94,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.cookie.secure"
+                        name="com.sun.identity.agents.config.cookie.secure"
                         type="single"
                         syntax="boolean"
                         i18nKey="a401">
@@ -107,16 +107,23 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.log.level"
-                        type="single"
+                        name="com.sun.identity.agents.config.log.level"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a466">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a468">Error</ChoiceValue>
+                            <ChoiceValue i18nKey="a469">Warning</ChoiceValue>
+                            <ChoiceValue i18nKey="a470">Info</ChoiceValue>
+                            <ChoiceValue i18nKey="a471">Message</ChoiceValue>
+                            <ChoiceValue i18nKey="a472">All</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>Error</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.local.log.rotate"
+                        name="com.sun.identity.agents.config.local.log.rotate"
                         type="single"
                         syntax="boolean"
                         i18nKey="a402">
@@ -129,7 +136,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.local.log.size"
+                        name="com.sun.identity.agents.config.local.log.size"
                         type="single"
                         syntax="string"
                         i18nKey="a403">
@@ -138,7 +145,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.remote.log"
+                        name="com.sun.identity.agents.config.remote.logfile"
                         type="single"
                         syntax="string"
                         i18nKey="a404">
@@ -147,7 +154,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.notification.enable"
+                        name="com.sun.identity.agents.config.notification.enable"
                         type="single"
                         syntax="string"
                         i18nKey="a405">
@@ -163,13 +170,13 @@
                         name="com.sun.identity.client.notification.url"
                         type="single"
                         syntax="string"
-                        i18nKey="a109">
+                        i18nKey="a406">
                         <DefaultValues>
-                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@/UpdateAgentCacheServlet?shortcircuit</Value>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@/UpdateAgentCacheServlet?shortcircuit=false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.am.url_comparison.case_ignore"
+                        name="com.sun.identity.agents.config.url.comparison.case.ignore"
                         type="single"
                         syntax="boolean"
                         i18nKey="a407">
@@ -182,7 +189,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.am.polling.interval"
+                        name="com.sun.identity.agents.config.policy.cache.polling.interval"
                         type="single"
                         syntax="string"
                         i18nKey="a408">
@@ -191,7 +198,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.sso.polling.period"
+                        name="com.sun.identity.agents.config.sso.cache.polling.interval"
                         type="single"
                         syntax="string"
                         i18nKey="a409">
@@ -200,7 +207,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.am.userid.param"
+                        name="com.sun.identity.agents.config.userid.param"
                         type="single"
                         syntax="string"
                         i18nKey="a410">
@@ -209,7 +216,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.am.userid.param.type"
+                        name="com.sun.identity.agents.config.userid.param.type"
                         type="single"
                         syntax="string"
                         i18nKey="a411">
@@ -218,70 +225,79 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.profile.attribute.fetch.mode"
-                        type="single"
+                        name="com.sun.identity.agents.config.profile.attribute.fetch.mode"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a412">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a20">NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a21">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a23">HTTP_COOKIE</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.profile.attribute.map"
-                        type="single"
+                        name="com.sun.identity.agents.config.profile.attribute.mapping"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a413">
                         <DefaultValues>
-                            <Value>cn|common-name,ou|organizational-unit,o|organization,mail|email,employeenumber|employee-number,c|country</Value>
+                            <Value>[]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.session.attribute.fetch.mode"
-                        type="single"
+                        name="com.sun.identity.agents.config.session.attribute.fetch.mode"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a414">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a20">NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a21">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a23">HTTP_COOKIE</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.session.attribute.map"
-                        type="single"
+                        name="com.sun.identity.agents.config.session.attribute.mapping"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a415">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.response.attribute.fetch.mode"
-                        type="single"
+                        name="com.sun.identity.agents.config.response.attribute.fetch.mode"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a416">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a20">NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a21">HTTP_HEADER</ChoiceValue>
+                            <ChoiceValue i18nKey="a23">HTTP_COOKIE</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>NONE</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.response.attribute.map"
-                        type="single"
+                        name="com.sun.identity.agents.config.response.attribute.mapping"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a417">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.attribute.multi_value_separator"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a418">
-                        <DefaultValues>
-                            <Value>|</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.am.load_balancer.enable"
+                        name="com.sun.identity.agents.config.load.balancer.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a419">
@@ -294,7 +310,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.ignore_server_check"
+                        name="com.sun.identity.agents.config.ignore.server.check"
                         type="single"
                         syntax="boolean"
                         i18nKey="a420">
@@ -307,7 +323,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.ignore_policy_evaluation_if_notenforced"
+                        name="com.sun.identity.agents.config.notenforced.url.attributes.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a467">
@@ -320,7 +336,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.ignore.preferred_naming_url"
+                        name="com.sun.identity.agents.config.ignore.preferred.naming.url"
                         type="single"
                         syntax="boolean"
                         i18nKey="a421">
@@ -333,7 +349,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.poll_primary_server"
+                        name="com.sun.identity.agents.config.poll.primary.server"
                         type="single"
                         syntax="string"
                         i18nKey="a422">
@@ -342,25 +358,32 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.am.login.url"
-                        type="single"
+                        name="com.sun.identity.agents.config.login.url"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a423">
                         <DefaultValues>
-                            <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login</Value>
+                            <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.audit.accesstype"
-                        type="single"
+                        name="com.sun.identity.agents.config.audit.accesstype"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a424">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a14">LOG_NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a15">LOG_ALLOW</ChoiceValue>
+                            <ChoiceValue i18nKey="a16">LOG_DENY</ChoiceValue>
+                            <ChoiceValue i18nKey="a17">LOG_BOTH</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
-                            <Value>LOG_DENY</Value>
+                            <Value>LOG_NONE</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.deny_on_log_failure"
+                        name="com.sun.identity.agents.config.deny.access.log.failure"
                         type="single"
                         syntax="boolean"
                         i18nKey="a425">
@@ -373,7 +396,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.agenturi.prefix"
+                        name="com.sun.identity.agents.config.agenturi.prefix"
                         type="single"
                         syntax="string"
                         i18nKey="a426">
@@ -382,7 +405,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.locale"
+                        name="com.sun.identity.agents.config.locale"
                         type="single"
                         syntax="string"
                         i18nKey="a427">
@@ -391,7 +414,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.do_sso_only"
+                        name="com.sun.identity.agents.config.sso.only"
                         type="single"
                         syntax="boolean"
                         i18nKey="a428">
@@ -404,7 +427,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.accessdenied.url"
+                        name="com.sun.identity.agents.config.access.denied.url"
                         type="single"
                         syntax="string"
                         i18nKey="a429">
@@ -413,7 +436,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.fqdn.check.enable"
+                        name="com.sun.identity.agents.config.fqdn.check.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a430">
@@ -426,7 +449,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.fqdn.default"
+                        name="com.sun.identity.agents.config.fqdn.default"
                         type="single"
                         syntax="string"
                         i18nKey="a431">
@@ -435,16 +458,17 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.fqdn.map"
-                        type="single"
+                        name="com.sun.identity.agents.config.fqdn.mapping"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a432">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.cookie.reset.enable"
+                        name="com.sun.identity.agents.config.cookie.reset.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a433">
@@ -457,25 +481,27 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.cookie.reset.list"
-                        type="single"
+                        name="com.sun.identity.agents.config.cookie.reset"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a434">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.cookie.domain.list"
-                        type="single"
+                        name="com.sun.identity.agents.config.cdsso.cookie.domain"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a435">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.anonymous_user"
+                        name="com.sun.identity.agents.config.anonymous.user.id"
                         type="single"
                         syntax="string"
                         i18nKey="a436">
@@ -484,7 +510,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.anonymous_user.enable"
+                        name="com.sun.identity.agents.config.anonymous.user.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a437">
@@ -497,16 +523,17 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.notenforced_list"
-                        type="single"
+                        name="com.sun.identity.agents.config.notenforced.url"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a438">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.notenforced_list.invert"
+                        name="com.sun.identity.agents.config.notenforced.url.invert"
                         type="single"
                         syntax="boolean"
                         i18nKey="a439">
@@ -519,16 +546,17 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.notenforced_client_ip_list"
-                        type="single"
+                        name="com.sun.identity.agents.config.notenforced.ip"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a440">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.postdata.preserve.enable"
+                        name="com.sun.identity.agents.config.postdata.preserve.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a441">
@@ -541,7 +569,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.postcache.entry.lifetime"
+                        name="com.sun.identity.agents.config.postcache.entry.lifetime"
                         type="single"
                         syntax="string"
                         i18nKey="a442">
@@ -550,7 +578,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.cdsso.enable"
+                        name="com.sun.identity.agents.config.cdsso.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a443">
@@ -563,7 +591,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.cdcservlet.url"
+                        name="com.sun.identity.agents.config.cdsso.cdcservlet.url"
                         type="single"
                         syntax="string"
                         i18nKey="a444">
@@ -572,7 +600,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.client_ip_validation.enable"
+                        name="com.sun.identity.agents.config.client.ip.validation.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a445">
@@ -585,7 +613,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.profile.attribute.cookie.prefix"
+                        name="com.sun.identity.agents.config.profile.attribute.cookie.prefix"
                         type="single"
                         syntax="string"
                         i18nKey="a446">
@@ -594,7 +622,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.profile.attribute.cookie.maxage"
+                        name="com.sun.identity.agents.config.profile.attribute.cookie.maxage"
                         type="single"
                         syntax="string"
                         i18nKey="a447">
@@ -603,7 +631,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.logout.url"
+                        name="com.sun.identity.agents.config.logout.url"
                         type="single"
                         syntax="string"
                         i18nKey="a448">
@@ -612,16 +640,17 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.logout.cookie.reset.list"
-                        type="single"
+                        name="com.sun.identity.agents.config.logout.cookie.reset"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a449">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.am.fetch_from_root_resource"
+                        name="com.sun.identity.agents.config.fetch.from.root.resource"
                         type="single"
                         syntax="boolean"
                         i18nKey="a450">
@@ -634,7 +663,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.get_client_host_name"
+                        name="com.sun.identity.agents.config.get.client.host.name"
                         type="single"
                         syntax="boolean"
                         i18nKey="a451">
@@ -647,7 +676,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.convert_mbyte.enable"
+                        name="com.sun.identity.agents.config.convert.mbyte.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a452">
@@ -660,7 +689,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.encode_url_special_chars.enable"
+                        name="com.sun.identity.agents.config.encode.url.special.chars.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a453">
@@ -673,7 +702,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.ignore_path_info"
+                        name="com.sun.identity.agents.config.ignore.path.info"
                         type="single"
                         syntax="boolean"
                         i18nKey="a454">
@@ -686,7 +715,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.override_protocol"
+                        name="com.sun.identity.agents.config.override.protocol"
                         type="single"
                         syntax="string"
                         i18nKey="a455">
@@ -695,7 +724,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.override_host"
+                        name="com.sun.identity.agents.config.override.host"
                         type="single"
                         syntax="string"
                         i18nKey="a456">
@@ -704,7 +733,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.override_port"
+                        name="com.sun.identity.agents.config.override.port"
                         type="single"
                         syntax="string"
                         i18nKey="a457">
@@ -713,7 +742,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.override_notification.url"
+                        name="com.sun.identity.agents.config.override.notification.url"
                         type="single"
                         syntax="string"
                         i18nKey="a458">
@@ -722,16 +751,16 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.connection_timeout"
+                        name="com.sun.identity.agents.config.auth.connection.timeout"
                         type="single"
                         syntax="string"
                         i18nKey="a459">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>2</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.poll_primary_server"
+                        name="com.sun.identity.agents.config.poll.primary.server"
                         type="single"
                         syntax="string"
                         i18nKey="a460">
@@ -740,7 +769,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.policy.agents.config.locale"
+                        name="com.sun.identity.agents.config.locale"
                         type="single"
                         syntax="string"
                         i18nKey="a461">
@@ -749,7 +778,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                      <AttributeSchema
-                        name="com.sun.am.policy.agents.config.proxy.override_host_port"
+                        name="com.sun.identity.agents.config.proxy.override.host.port"
                         type="single"
                         syntax="boolean"
                         i18nKey="a462">
@@ -762,7 +791,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.agents.config.polling.interval"
+                        name="com.sun.identity.agents.config.polling.interval"
                         type="single"
                         syntax="string"
                         i18nKey="a463">
@@ -771,7 +800,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.am.agents.config.cleanup.interval"
+                        name="com.sun.identity.agents.config.cleanup.interval"
                         type="single"
                         syntax="string"
                         i18nKey="a464">
@@ -784,6 +813,127 @@
                         type="list"
                         syntax="string"
                         i18nKey="a465">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.iis.auth.type"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a477">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.replaypasswd.key"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a478">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.iis.filter.priority"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a479">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a473">HIGH</ChoiceValue>
+                            <ChoiceValue i18nKey="a474">LOW</ChoiceValue>
+                            <ChoiceValue i18nKey="a475">MEDIUM</ChoiceValue>
+                            <ChoiceValue i18nKey="a476">DEFAULT</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>HIGH</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                     <AttributeSchema
+                        name="com.sun.identity.agents.config.iis.owa.enable"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a480">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                     <AttributeSchema
+                        name="com.sun.identity.agents.config.iis.owa.enable.change.protocol"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a481">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.iis.owa.enable.session.timeout.url"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a482">
+                        <DefaultValues>
+                            <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                     <AttributeSchema
+                        name="com.sun.identity.agents.config.domino.check.name.database"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a483">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                     <AttributeSchema
+                        name="com.sun.identity.agents.config.domino.ltpa.enable"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a484">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.domino.ltpa.cookie.name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a485">
+                        <DefaultValues>
+                            <Value>LtpaToken</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.domino.ltpa.config.name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a486">
+                        <DefaultValues>
+                            <Value>LtpaToken</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.domino.ltpa.org.name"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a487">
                         <DefaultValues>
                             <Value></Value>
                         </DefaultValues>

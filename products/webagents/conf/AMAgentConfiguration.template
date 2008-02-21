@@ -39,524 +39,647 @@
 #########################################################################
 
 #
-# The URL of the login page on the Access Manager.
+# LOGIN URL
+#   Specifies the login URLs to be used by the Agent to redirect
+#   incoming users without sufficient credentials to the Access Manager
+#   authentication service.
+# Hot-Swap Enabled: Yes
 #
-com.sun.am.policy.am.login.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login
+com.sun.identity.agents.config.login.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Login
 
 #
-# The name of the cookie passed between the Access Manager
-# and the SDK. 
+# SSO TOKEN COOKIE NAME
+#   The name of the SSO Token cookie used between the Access Manager and
+#   the Agent.
+#   WARNING: Changing this property without making the corresponding change
+#   to the Access Manager will disable the SDK.
+# Hot-Swap Enabled: No
 #
-# WARNING: Changing this property without making the corresponding change
-# to the Access Manager will disable the SDK.
-#
-com.sun.am.cookie.name = iPlanetDirectoryPro
+com.sun.identity.agents.config.cookie.name = iPlanetDirectoryPro
 
 #
-# If this property is set to true the cookies set by the agent
-# will be marked secure and will only be transmitted if the
-# communications channel with the host is a secure one.
+# SSO TOKEN COOKIE SECURITY
+#   If this property is set to true the cookies set by the agent
+#   will be marked secure and will only be transmitted if the
+#   communications channel with the host is a secure one.
+# Hot-Swap Enabled: No
 #
-com.sun.am.cookie.secure = false
+com.sun.identity.agents.config.cookie.secure = false
 
 #
-# Set the logging level for the specified logging categories.
-# The format of the values is
+# AGENT DEBUG LOG LEVEL
+#   Set the logging level for the specified logging categories.
+#   The format of the values is
 #
-#	<ModuleName>[:<Level>][,<ModuleName>[:<Level>]]*
+#      <ModuleName>[:<Level>][,<ModuleName>[:<Level>]]*
 #
-# The currently used module names are: AuthService, NamingService,
-# PolicyService, SessionService, PolicyEngine, ServiceEngine,
-# Notification, PolicyAgent, RemoteLog and all.
+#   The currently used module names are: AuthService, NamingService,
+#   PolicyService, SessionService, PolicyEngine, ServiceEngine,
+#   Notification, PolicyAgent, RemoteLog and all.
 #
-# The all module can be used to set the logging level for all currently
-# none logging modules.  This will also establish the default level for
-# all subsequently created modules.
+#   The all module can be used to set the logging level for all currently
+#   none logging modules.  This will also establish the default level for
+#   all subsequently created modules.
 #
-# The meaning of the 'Level' value is described below:
+#   The meaning of the 'Level' value is described below:
 #
-#	0	Disable logging from specified module*
-#	1	Log error messages
-#	2	Log warning and error messages
-#	3	Log info, warning, and error messages
-#	4	Log debug, info, warning, and error messages
-#	5	Like level 4, but with even more debugging messages
-# 128	log url access to log file on AM server. 
-# 256	log url access to log file on local machine. 
+#      0       Disable logging from specified module*
+#      1       Log error messages
+#      2       Log warning and error messages
+#      3       Log info, warning, and error messages
+#      4       Log debug, info, warning, and error messages
+#      5       Like level 4, but with even more debugging messages
+#      128     log url access to log file on AM server.
+#      256     log url access to log file on local machine.
 #
-# If level is omitted, then the logging module will be created with
-# the default logging level, which is the logging level associated with
-# the 'all' module.
+#   If level is omitted, then the logging module will be created with
+#   the default logging level, which is the logging level associated with
+#   the 'all' module.
 #
-# for level of 128 and 256, you must also specify a value of either 
-# LOG_ALLOW, LOG_DENY or LOG_BOTH for the property
-# com.sun.am.policy.agents.config.audit.accesstype
-# 
+#   For level of 128 and 256, you must also specify audit.access.type property.
 #
-# *Even if the level is set to zero, some messages may be produced for
-# a module if they are logged with the special level value of 'always'.
+#   Even if the level is set to zero, some messages may be produced for
+#   a module if they are logged with the special level value of 'always'.
 #
-com.sun.am.log.level = 
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.log.level = 
 
 #
-# This property is used for Log Rotation. The value of the property specifies 
-# whether the agent deployed on the server supports the feature of not. If set 
-# to false all log messages are written to the same file.
+# AGENT LOCAL LOG FILE PROPERTIES
+#   - local.log.rotate: The value of the property specifies whether the agent's
+#       local log file gets rotated or not based on local.log.size value. 
+#   - local.log.size: the number of bytes after which the local debug log file 
+#       will be rotated. Minimum value is 3000 bytes. Any value below that will be 
+#       reset to 3000 bytes. Default value is 10MB.
 #
-com.sun.am.policy.agents.config.local.log.rotate = @LOG_ROTATION@
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.local.log.rotate = @LOG_ROTATION@
+com.sun.identity.agents.config.local.log.size = 10000000 
 
 #
-# This property is used to determine the number of bytes after which
-# the local debug log file will be rotated. Minimum value is 3000 bytes.
-# Any value below that will be reset to 3000 bytes. Default value is 10MB.
+# AGENT USERNAME AND PASSWORD PROPERTIES
+#   These are the credentials used by the Agent to identify and
+#   authenticate itself before requesting any services that require the
+#   Agent to be authenticated.
 #
-com.sun.am.policy.agents.config.local.log.size = 10000000 
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.username = @AGENT_PROFILE_NAME@
+com.sun.identity.agents.config.password = @AGENT_ENCRYPTED_PASSWORD@
 
 #
-# The username and password for Agent to login to AM.
+# AGENT URL ACCESS AUDIT TYPE
+#   Set the url access logging level. the choices are 
+#     LOG_NONE   - do not log user access to url
+#     LOG_DENY   - log url access that was denied.
+#     LOG_ALLOW  - log url access that was allowed.
+#     LOG_BOTH   - log url access that was allowed or denied.
 #
-com.sun.am.policy.am.username = @AGENT_PROFILE_NAME@
-com.sun.am.policy.am.password = @AGENT_ENCRYPTED_PASSWORD@
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.audit.accesstype = LOG_DENY
 
 #
-# Set the url access logging level. the choices are 
-#      LOG_NONE   - do not log user access to url
-#      LOG_DENY   - log url access that was denied.
-#      LOG_ALLOW  - log url access that was allowed.
-#      LOG_BOTH   - log url access that was allowed or denied.
-com.sun.am.policy.agents.config.audit.accesstype = LOG_DENY
+# AGENT URL ACCESS AUDIT FILE
+#   Name of the Access Manager log file to use for logging messages to 
+#   Access Manager.
+#   Just the name of the file is needed. The directory of the file
+#   is determined by settings configured on the Access Manager.
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.remote.logfile = amAuthLog.@AGENT_HOST@.@AGENT_PREF_PORT@
 
 #
-# Name of the Access Manager log file to use for logging messages to 
-# Access Manager.
-# Just the name of the file is needed. The directory of the file
-# is determined by settings configured on the Access Manager.
+# DENY RESOURCE ACCESS ON REMOTE LOG FAILURE
+#   The below property indicates whether agent needs to send an access denied 
+#   status if remote logging fails. A value of true indicates that agent will 
+#   send an access denied status and a value of false indicates a status
+#   of success will be sent even if remote logging fails.
 #
-com.sun.am.policy.agents.config.remote.log = amAuthLog.@AGENT_HOST@.@AGENT_PREF_PORT@
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.deny.access.log.failure = true
 
 #
-# The below property indicates whether agent needs to send an access denied 
-# status if remote logging fails. A value of true indicates that agent will 
-# send an access denied status and a value of false indicates a status
-# of success will be sent even if remote logging fails.
+# NOTIFICATION PROPERTIES
+#   - notification.enable: Should the policy SDK use the Access Manager notification
+#       mechanism to maintain the consistency of its internal cache?  If the value
+#       is false, then a polling mechanism is used to maintain cache consistency.
+#       Possible values are true or false.
+#   - notification.url: URL to which notification messages should be sent if notification is
+#       enabled, see previous property.
 #
-com.sun.am.policy.agents.config.deny_on_log_failure = true
-
+# Hot-Swap Enabled: No
 #
-# Should the policy SDK use the Access Manager notification
-# mechanism to maintain the consistency of its internal cache?  If the value
-# is false, then a polling mechanism is used to maintain cache consistency.
-#
-# Possible values are true or false.
-#
-com.sun.am.notification.enable = @NOTIFICATION_ENABLE@
-
-#
-# URL to which notification messages should be sent if notification is
-# enabled, see previous property.
-#
+com.sun.identity.agents.config.notification.enable = @NOTIFICATION_ENABLE@
 com.sun.identity.client.notification.url = @AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/UpdateAgentCacheServlet?shortcircuit=false
 
 #
-# This property determines whether URL string case sensitivity is
-# obeyed during policy evaluation
+# URL CASE SENSITIVITY CHECK 
+#   This property determines whether URL string case sensitivity is
+#   obeyed during policy and not enforced url evaluation.
 #
-com.sun.am.policy.am.url_comparison.case_ignore = true
-
-# This property determines the amount of time (in minutes) an entry
-# remains valid after it has been added to the cache. The default
-# value for this property is 3 minutes.
-
-com.sun.am.policy.am.polling.interval=3
-
-# This property determines the amount of time (in minutes) an sso entry
-# remains valid after it has been added to the cache. The default
-# value for this property is 3 minutes.
-
-com.sun.am.sso.polling.period=3
-
-# This property allows the user to configure the User Id parameter passed
-# by the session information from the access manager. The value of User
-# Id will be used by the agent to set the value of REMOTE_USER server
-# variable. By default this parameter is set to "UserToken"
+# Hot-Swap Enabled: Yes
 #
-com.sun.am.policy.am.userid.param=UserToken
-
-# 
-# This property indicates from where the value of UserToken needs to be
-# fetched. Possible values are SESSION and LDAP
-#
-com.sun.am.policy.am.userid.param.type= SESSION
+com.sun.identity.agents.config.url.comparison.case.ignore = true
 
 #
-# Profile attributes fetch mode
+# POLICY CACHE POLLING INTERVAL
+#   This property determines the amount of time (in minutes) an entry
+#   remains valid after it has been added to the cache. The default
+#   value for this property is 3 minutes.
 #
-# String attribute mode to specify if additional user profile attributes should
-# be introduced into the request. Possible values are:
-# NONE - no additional user profile attributes will be introduced.
-# HTTP_HEADER - additional user profile attributes will be introduced into 
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.policy.cache.polling.interval = 3
+
+#
+# SSO TOKEN CACHE POLLING INTERVAL
+#   This property determines the amount of time (in minutes) an sso entry
+#   remains valid after it has been added to the cache. The default
+#   value for this property is 3 minutes.
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.sso.cache.polling.interval = 3
+
+#
+# USER ID PROPERTIES
+#   - userid.param: This property allows the user to configure the User Id parameter passed
+#       by the session information from the access manager. The value of User
+#       Id will be used by the agent to set the value of REMOTE_USER server
+#       variable. By default this parameter is set to "UserToken".
+#   - userid.param.type: Indicates from where the value of UserToken needs to be
+#       fetched. Possible values are SESSION and LDAP.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.userid.param = UserToken
+com.sun.identity.agents.config.userid.param.type = SESSION
+
+#
+# PROFILE ATTRIBUTES FETCH MODE 
+#   String attribute mode to specify if additional user profile attributes should
+#   be introduced into the request. Possible values are:
+#   NONE - no additional user profile attributes will be introduced.
+#   HTTP_HEADER - additional user profile attributes will be introduced into 
 #               HTTP header.
-# HTTP_COOKIE - additional user profile attributes will be introduced through 
+#   HTTP_COOKIE - additional user profile attributes will be introduced through 
 #               cookies.
-# If not within these values, it will be considered as NONE.
-com.sun.am.policy.agents.config.profile.attribute.fetch.mode=NONE
+#   If not within these values, it will be considered as NONE.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.profile.attribute.fetch.mode = NONE
 
 #
-# The user profile attributes to be added to the HTTP header.  The 
-# specification is of the format ldap_attribute_name|http_header_name[,...].  
-# ldap_attribute_name is the attribute in data store to be fetched and 
-# http_header_name is the name of the header to which the value needs 
-# to be assigned.
+# PROFILE ATTRIBUTES MAP
+#   The user profile attributes to be added to the HTTP header.  The 
+#   specification is of the format [ldap_attribute_name] = http_header_name.  
+#   ldap_attribute_name is the attribute in data store to be fetched and 
+#   http_header_name is the name of the header to which the value needs 
+#   to be assigned.
 #
 # NOTE: In most cases, in a destination application where a "http_header_name" 
 #       shows up as a request header, it will be prefixed by HTTP_, and all
 #       lower case letters will become upper case, and any - will become _;
 #       For example, "common-name" would become "HTTP_COMMON_NAME"
 #
-com.sun.am.policy.agents.config.profile.attribute.map=cn|common-name,ou|organizational-unit,o|organization,mail|email,employeenumber|employee-number,c|country
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.profile.attribute.mapping[cn] = common-name
+com.sun.identity.agents.config.profile.attribute.mapping[ou] = organizational-unit
+com.sun.identity.agents.config.profile.attribute.mapping[o] = organization
+com.sun.identity.agents.config.profile.attribute.mapping[mail] = email
+com.sun.identity.agents.config.profile.attribute.mapping[employeenumber] = employee-number
+com.sun.identity.agents.config.profile.attribute.mapping[c] = country
  
 #
-# Session attributes mode
+# SESSION ATTRIBUTES MODE 
+#   String attribute mode to specify if additional user session attributes should
+#   be introduced into the request. Possible values are:
+#   NONE - no additional user session attributes will be introduced.
+#   HTTP_HEADER - additional user session attributes will be introduced into HTTP header.
+#   HTTP_COOKIE - additional user session attributes will be introduced through cookies.
+#   If not within these values, it will be considered as NONE.
 #
-# String attribute mode to specify if additional user session attributes should
-# be introduced into the request. Possible values are:
-# NONE - no additional user session attributes will be introduced.
-# HTTP_HEADER - additional user session attributes will be introduced into HTTP header.
-# HTTP_COOKIE - additional user session attributes will be introduced through cookies.
-# If not within these values, it will be considered as NONE.
-com.sun.am.policy.agents.config.session.attribute.fetch.mode=NONE
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.session.attribute.fetch.mode = NONE
 
 #
-# The session attributes to be added to the HTTP header.  The specification is
-# of the format session_attribute_name|http_header_name[,...].  
-# session_attribute_name is the attribute in session to be fetched and 
-# http_header_name is the name of the header to which the value needs to be 
-# assigned.
+# SESSION ATTRIBUTES MAP
+#   The session attributes to be added to the HTTP header.  The specification is
+#   of the format [session_attribute_name] = http_header_name.  
+#   session_attribute_name is the attribute in session to be fetched and 
+#   http_header_name is the name of the header to which the value needs to be 
+#   assigned.
 #
-# NOTE: In most cases, in a destination application where a "http_header_name" 
+#   NOTE: In most cases, in a destination application where a "http_header_name" 
 #       shows up as a request header, it will be prefixed by HTTP_, and all
 #       lower case letters will become upper case, and any - will become _;
 #       For example, "common-name" would become "HTTP_COMMON_NAME"
 #
-com.sun.am.policy.agents.config.session.attribute.map=
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.session.attribute.mapping[] =
  
 #
-# Response Attribute Fetch Mode
-#
-# String attribute mode to specify if additional user response attributes should
-# be introduced into the request. Possible values are:
-# NONE - no additional user response attributes will be introduced.
-# HTTP_HEADER - additional user response attributes will be introduced into 
+# RESPONSE ATTRIBUTES FETCH MODE 
+#   String attribute mode to specify if additional user response attributes should
+#   be introduced into the request. Possible values are:
+#   NONE - no additional user response attributes will be introduced.
+#   HTTP_HEADER - additional user response attributes will be introduced into 
 #               HTTP header.
-# HTTP_COOKIE - additional user response attributes will be introduced through 
+#   HTTP_COOKIE - additional user response attributes will be introduced through 
 #               cookies.
-# If not within these values, it will be considered as NONE.
-com.sun.am.policy.agents.config.response.attribute.fetch.mode=NONE
+#   If not within these values, it will be considered as NONE.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.response.attribute.fetch.mode = NONE
 
 #
-# The response attributes to be added to the HTTP header.  The specification is
-# of the format response_attribute_name|http_header_name[,...].  
-# response_attribute_name is the attribute in policy response to be fetched and 
-# http_header_name is the name of the header to which the value needs to be 
-# assigned.
+# RESPONSE ATTRIBUTES MAP
+#   The response attributes to be added to the HTTP header.  The specification is
+#   of the format response_attribute_name|http_header_name[,...].  
+#   response_attribute_name is the attribute in policy response to be fetched and 
+#   http_header_name is the name of the header to which the value needs to be 
+#   assigned.
 #
-# NOTE: In most cases, in a destination application where a "http_header_name" 
+#   NOTE: In most cases, in a destination application where a "http_header_name" 
 #       shows up as a request header, it will be prefixed by HTTP_, and all
 #       lower case letters will become upper case, and any - will become _;
 #       For example, "common-name" would become "HTTP_COMMON_NAME"
 #
-com.sun.am.policy.agents.config.response.attribute.map=
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.response.attribute.mapping[] =
 
 #
-# The below propery indicates the character that will be used to separate
-# multiple values of the same attribute name returned in any of the previous
-# maps (profile, session and policy)
-com.sun.am.policy.agents.config.attribute.multi_value_separator = |
-
-# indicate where a load balancer is used for Access Manager
-# services.
+# LOAD BALENCER ENABLE
+#   Indicate where a load balancer is used for Access Manager
+#   services. Valid values: true | false
 #
-# true | false
+# Hot-Swap Enabled: No
 #
-com.sun.am.load_balancer.enable = false
-
-
-# Agent prefix
-com.sun.am.policy.agents.config.agenturi.prefix = @AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/amagent
+com.sun.identity.agents.config.load.balancer.enable = false
 
 #
-# Locale setting.
+# AGENT DEPLOYMENT URI PREFIX 
 #
-com.sun.am.policy.agents.config.locale = en_US
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.agenturi.prefix = @AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@/amagent
 
 #
-# The unique identifier for this agent instance.
+# LOCALE
 #
-com.sun.am.policy.agents.config.instance.name = unused
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.locale = en_US
 
 #
-# Do SSO only 
-# Boolean attribute to indicate whether the agent will just enforce user
-# authentication (SSO) without enforcing policies (authorization)
+# SSO ONLY 
+#   Boolean attribute to indicate whether the agent will just enforce user
+#   authentication (SSO) without enforcing policies (authorization)
 #
-com.sun.am.policy.agents.config.do_sso_only = false
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.sso.only = false
 
 #
-# The URL of the access denied page.  If no value is specified, then
-# the agent will return an HTTP status of 403 (Forbidden).
+# ACCESS DENIED URL
+#   The URL of the access denied page.  If no value is specified, then
+#   the agent will return an HTTP status of 403 (Forbidden).
 #
-com.sun.am.policy.agents.config.accessdenied.url =
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.access.denied.url =
 
 #
-# This property indicates if FQDN checking is enabled or not.
+# FQDN CHECK ENABLE
+#   This property indicates if FQDN checking is enabled or not.
 #
-com.sun.am.policy.agents.config.fqdn.check.enable = true
+# Hot-Swap Enabled: Yes
+#
+#
+com.sun.identity.agents.config.fqdn.check.enable = true
 
 #
-# Default FQDN is the fully qualified hostname that the users should use
-# in order to access resources on this web server instance. This is a
-# required configuration value without which the Web server may not
-# startup correctly.
+# FQDN DEFAULT VALUE
+#   Default FQDN is the fully qualified hostname that the users should use
+#   in order to access resources on this web server instance. This is a
+#   required configuration value without which the Web server may not
+#   startup correctly.
 #
-# The primary purpose of specifying this property is to ensure that if
-# the users try to access protected resources on this web server
-# instance without specifying the FQDN in the browser URL, the Agent
-# can take corrective action and redirect the user to the URL that
-# contains the correct FQDN.
+#   The primary purpose of specifying this property is to ensure that if
+#   the users try to access protected resources on this web server
+#   instance without specifying the FQDN in the browser URL, the Agent
+#   can take corrective action and redirect the user to the URL that
+#   contains the correct FQDN.
 #
-# This property is set during the agent installation and need not be
-# modified unless absolutely necessary to accommodate deployment 
-# requirements. 
+#   This property is set during the agent installation and need not be
+#   modified unless absolutely necessary to accommodate deployment 
+#   requirements. 
 #
 # WARNING: Invalid value for this property can result in the Web Server
 # becoming unusable or the resources becoming inaccessible.
 #
-# See also: com.sun.am.policy.agents.config.fqdn.check.enable,
-#           com.sun.am.policy.agents.config.fqdn.map
-com.sun.am.policy.agents.config.fqdn.default = @AGENT_HOST@
+# See also: com.sun.identity.agents.config.fqdn.check.enable,
+#           com.sun.identity.agents.config.fqdn.map[]
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.fqdn.default = @AGENT_HOST@
 
 #
-# The FQDN Map is a simple map that enables the Agent to take corrective
-# action in the case where the users may have typed in an incorrect URL
-# such as by specifying partial hostname or using an IP address to
-# access protected resources.  It redirects the browser to the URL
-# with fully qualified domain name so that cookies related to the domain
-# are received by the agents.
+# FQDN MAP
+#   The FQDN Map is a simple map that enables the Agent to take corrective
+#   action in the case where the users may have typed in an incorrect URL
+#   such as by specifying partial hostname or using an IP address to
+#   access protected resources.  It redirects the browser to the URL
+#   with fully qualified domain name so that cookies related to the domain
+#   are received by the agents.
 #
-# The format for this property is:
+#   The format for this property is:
 #
-# com.sun.am.policy.agents.config.fqdn.map = [invalid_hostname|valid_hostname][,...]
+#   com.sun.identity.agents.config.fqdn.mapping[invalid_hostname] = valid_hostname
 #
-# This property can also be used so that the agents use the name specified
-# in this map instead of the web server's actual name. This can be
-# accomplished by doing the following.
-# Say you want your server to be addressed as xyz.hostname.com whereas the
-# actual name of the server is abc.hostname.com.  The browsers only knows
-# xyz.hostname.com and you have specified polices using xyz.hostname.com at
-# the Access Manager policy console, in this file set the mapping as
+#   This property can also be used so that the agents use the name specified
+#   in this map instead of the web server's actual name. This can be
+#   accomplished by doing the following.
+#   Say you want your server to be addressed as xyz.hostname.com whereas the
+#   actual name of the server is abc.hostname.com.  The browsers only knows
+#   xyz.hostname.com and you have specified polices using xyz.hostname.com at
+#   the Access Manager policy console, in this file set the mapping as
 #
-# com.sun.am.policy.agents.config.fqdn.map = valid|xyz.hostname.com
+#   com.sun.identity.agents.config.fqdn.mapping[valid1]= xyz.hostname.com
 #
-# Another example is if you have multiple virtual servers say rst.hostname.com,
-# uvw.hostname.com and xyz.hostname.com pointing to the same actual server
-# abc.hostname.com and each of the virtual servers have their own policies 
-# defined, then the fqdnMap should be defined as follows:
+#   Another example is if you have multiple virtual servers say rst.hostname.com,
+#   uvw.hostname.com and xyz.hostname.com pointing to the same actual server
+#   abc.hostname.com and each of the virtual servers have their own policies 
+#   defined, then the fqdnMap should be defined as follows:
 #
-# com.sun.am.policy.agents.config.fqdn.map = valid1|rst.hostname.com,valid2|uvw.hostname.com,valid3|xyz.hostname.com
+#   com.sun.identity.agents.config.fqdn.mapping[valid1] = rst.hostname.com
+#   com.sun.identity.agents.config.fqdn.mapping[valid2] = uvw.hostname.com
+#   com.sun.identity.agents.config.fqdn.mapping[valid3] = xyz.hostname.com
 #
-# WARNING: Invalid value for this property can result in the Web Server
-# becoming unusable or the resources becoming inaccessible.
-com.sun.am.policy.agents.config.fqdn.map = 
-
-# Cookie Reset
-# This property must be set to true, if this agent needs to
-# reset cookies in the response before redirecting to
-# Access Manager for Authentication.
-# By default this is set to false.
+#   Another example including all the above:
 #
-# Example  : com.sun.am.policy.agents.config.cookie.reset.enable=true
+#   com.sun.identity.agents.config.fqdn.mapping[invalid_hostname] = valid_hostname
+#   com.sun.identity.agents.config.fqdn.mapping[valid1] = rst.hostname.com
+#   com.sun.identity.agents.config.fqdn.mapping[valid2] = uvw.hostname.com
+#   com.sun.identity.agents.config.fqdn.mapping[valid3] = xyz.hostname.com
 #
-com.sun.am.policy.agents.config.cookie.reset.enable=false
-
-# This property gives the comma separated list of Cookies, that
-# need to be  included in the Redirect Response to Access Manager.
-# This property is used only if the  Cookie Reset feature is enabled. 
+#   WARNING: Invalid value for this property can result in the Web Server
+#   becoming unusable or the resources becoming inaccessible.
 #
-# The  Cookie details need to be  specified in the following Format 
-# name[=value][;Domain=value]
+# Hot-Swap Enabled: Yes
 #
-# If "Domain" is not specified, then the default agent domain is
-# used to set the Cookie. 
-#
-# Example : com.sun.am.policy.agents.config.cookie.reset.list=LtpaToken,
-#           token=value;Domain=subdomain.domain.com
-
-com.sun.am.policy.agents.config.cookie.reset.list=
-
-# This property gives the space separated list of domains in
-# which cookies have to be set in a CDSSO scenario. This property
-# is used only if CDSSO is enabled. 
-#
-# If this property is left blank then the fully qualified cookie
-# domain for the agent server will be used for setting the cookie
-# domain.  In such case it is a host cookie instead of a domain cookie.
-#
-# Example : com.sun.am.policy.agents.config.cookie.domain.list=.sun.com .iplanet.com 
-com.sun.am.policy.agents.config.cookie.domain.list=
-
-# user id returned if accessing global allow page and not authenticated
-#
-com.sun.am.policy.agents.config.anonymous_user=anonymous
-
-# Enable/Disable REMOTE_USER processing for anonymous users
-# true | false
-#
-com.sun.am.policy.agents.config.anonymous_user.enable=false
+com.sun.identity.agents.config.fqdn.mapping[] = 
 
 #
-# Not enforced list is the list of URLs for which no authentication is
-# required.  Wildcards can be used to define a pattern of URLs.
-# The URLs specified may not contain any query parameters.
-# Each service have their own not enforced list.  The service name is suffixed
-# after "com.sun.am.policy.agents.notenforcedList." to specify a list
-# for a particular service.  SPACE is the separator between the URL.
+# COOKIE RESET ENABLE
+#   This property must be set to true, if this agent needs to
+#   reset cookies in the response before redirecting to Access Manager for 
+#   Authentication. By default this is set to false.
 #
-com.sun.am.policy.agents.config.notenforced_list = SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/UI/* SERVER_PROTO://SERVER_HOST:SERVER_PORTCONSOLE_DEPLOY_URI/* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/login_images/* SERVER_PROTO://SERVER_HOST:SERVER_PORT/docs* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/namingservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/sessionservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/loggingservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/profileservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/policyservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/config* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/js/* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/css/* SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/authservice SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/SAMLAwareServlet SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/SAMLSOAPReceiver SERVER_PROTO://SERVER_HOST:SERVER_PORTSERVER_DEPLOY_URI/SAMLPOSTProfileServlet
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.cookie.reset.enable = false
 
 #
-# Boolean attribute to indicate whether the above list is a not enforced list
-# or an enforced list; When the value is true, the list means enforced list,
-# or in other words, the whole web site is open/accessible without
-# authentication except for those URLs in the list.
+# COOKIE RESET LIST
+#   This property gives the list of Cookies, that need to be  included 
+#   in the Redirect Response to Access Manager.
+#   This property is used only if the  Cookie Reset feature is enabled. 
+#
+#   The  Cookie details need to be  specified in the following Format 
+#   [0] = name[=value][;Domain=value]
+#   [1] = name1[=value1][;Domain1=value]
+#
+#   If "Domain" is not specified, then the default agent domain is
+#   used to set the Cookie. 
+#
+#   Example : 
+#     com.sun.identity.agents.config.cookie.reset[0] = LtpaToken
+#     com.sun.identity.agents.config.cookie.reset[1] = token=value;Domain=subdomain.domain.com
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.cookie.reset[0] = 
+
+
+#
+# ANONYMOUS USER PROPERTIES
+#   - anonymous.user.enable: Enable/Disable REMOTE_USER processing for 
+#       anonymous users 
+#   - anonymous.user.id: user id returned if accessing global allow page 
+#       and not authenticated
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.anonymous.user.enable = false
+com.sun.identity.agents.config.anonymous.user.id = anonymous
+
+#
+# NOT ENFORCED URL PROPERTIES
+#   - notenforced.url: The list of URLs for which no authentication is 
+#       required. Wildcards can be used to define a pattern of URLs. 
+#       The URLs specified may not contain any query parameters.
+#   - notenforced.url.invert: Indicate whether the above list is a not 
+#       enforced list or an enforced list; When the value is true, the list 
+#       means enforced list, or in other words, the whole web site is 
+#       open/accessible without authentication except for those URLs in the list.
+#   - notenforced.url.attributes.enable: Indicates whether profile attributes need
+#       to be fetched for not enforced urls also. This involve policy evaluation to
+#       fetch attributes.
+#   - notenforced.ip: Not enforced client IP address list is a list of 
+#       client IP addresses. No authentication and authorization are required 
+#       for the requests coming from these client IP addresses. 
+#   Examples:
+#     com.sun.identity.agents.config.notenforced.url[0] = http://agent.host.com:8080/test.html
+#     com.sun.identity.agents.config.notenforced.url[1] = http://agent.host.com:8080/images/*
+#   
+#     com.sun.identity.agents.config.notenforced.ip[0] = 192.168.12.2 
+#     com.sun.identity.agents.config.notenforced.ip[1] = 1.1.1.1
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.notenforced.url[0] = 
+com.sun.identity.agents.config.notenforced.url.invert = false
+com.sun.identity.agents.config.notenforced.url.attributes.enable = false
+com.sun.identity.agents.config.notenforced.ip[0] =
+
+#
+# POST DATA PRESERVATION
+#   - postdata.preserve.enable: Enables POST data preservation.
+#   - postcache.entry.lifetime: POST data cache entry lifetime in minutes,
+#       After the specified interval, the entry will be dropped
+#   NOTE: This property is applicable for SJS Web Server agent only.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.postdata.preserve.enable = false
+com.sun.identity.agents.config.postcache.entry.lifetime = 10
+
+#
+# CLIENT IP VALIDATION
+#   Enable/Disable client IP address validation. This validate
+#   will check if the subsequent browser requests come from the
+#   same ip address that the SSO token is initially issued against
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.client.ip.validation.enable = false
+
+#
+# COOKIE ATTRIBUTES
+#   - profile.attribute.cookie.prefix: Customized cookie prefix value.
+#   - profile.attribute.cookie.maxage: Customized cookie max-age value.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.profile.attribute.cookie.prefix = HTTP_
+com.sun.identity.agents.config.profile.attribute.cookie.maxage = 300
+
+#
+# CDSSO PROPERTIES
+#   - cdsso.enable: Enables Cross-Domain Single Sign.
+#   - cdcservlet.url: URL the user will be redirected to for authentication
+#       in a CDSSO Scenario.
+#   - cookie.domain:  This property gives the list of domains in
+#       which cookies have to be set in a CDSSO scenario. This property
+#       is used only if CDSSO is enabled.  If this property is left blank 
+#       then the fully qualified cookie domain for the agent server will 
+#       be used for setting the cookie domain. In such case it is a host 
+#       cookie instead of a domain cookie.
+#   Example : 
+#     com.sun.identity.agents.config.cdsso.cookie.domain[0]=.sun.com 
+#     com.sun.identity.agents.config.cdsso.cookie.domain[1]=.iplanet.com 
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.cdsso.enable = false
+com.sun.identity.agents.config.cdsso.cdcservlet.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
+com.sun.identity.agents.config.cdsso.cookie.domain[0] = 
+
+#
+# LOGOUT PROCESSING
+#   - logout.url: Application's Logout URL.
+#       This URL is not enforced by policy. 
+#       if set, agent will intercept this URL and destroy the user's session,
+#       if any. The application's logout URL will be allowed whether or not 
+#       the session destroy is successful.
+#   - logout.cookie.reset: List of cookies to be reset upon logout;
+#       in the same format as cookie reset list.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.logout.url = 
+com.sun.identity.agents.config.logout.cookie.reset[0] = 
+
+#
+# FETCH POLICY DECISIONS FROM ROOT RESOURCE
+#   By default, when a policy decision for a resource is needed, 
+#   agent gets and caches the policy decision of the resource and 
+#   all resource from the root of the resource down, from the Access Manager.
+#   For example, if the resource is http://host/a/b/c, the the root of the 
+#   resource is http://host/. This is because more resources from the 
+#   same path are likely to be accessed subsequently. 
+#   However this may take a long time the first time if there 
+#   are many many policies defined under the root resource.
+#   To have agent get and cache the policy decision for the resource only,
+#   set the following property to false.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.fetch.from.root.resource = true
+
+#
+# FETCH CLIENT HOST NAME
+#   Whether to get the client's hostname through DNS reverse lookup for use 
+#   in policy evaluation.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.get.client.host.name = false
+
+#
+# ENABLE NATIVE ENCODING
+#   The following property is to enable native encoding of 
+#   ldap header attributes forwarded by agents. If set to true 
+#   agent will encode the ldap header value in the default 
+#   encoding of OS locale. If set to false ldap header values 
+#   will be encoded in UTF-8
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.convert.mbyte.enable = false
+
+#
+# ENCODE URL SPECIAL CHARACTERS
+#   The following property is used whether to do encoding of the url 
+#   which has special characters before doing policy evaluation. 
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.encode.url.special.chars.enable = false
+
+#
+# IGNORE URL PATH
+#   When the not enforced list or policy has a wildcard '*' character, agent 
+#   strips the path info from the request URI and uses the resulting request 
+#   URI to check against the not enforced list or policy instead of the entire 
+#   request URI, in order to prevent someone from getting access to any URI by 
+#   simply appending the matching pattern in the policy or not enforced list. 
+#   For example, if the not enforced list has the value http://host/*.gif,
+#   stripping the path info from the request URI will prevent someone from 
+#   getting access to http://host/index.html by using the URL http://host/index.html?hack.gif.
+#   However when a web server (for exmample apache) is configured to be a reverse
+#   proxy server for a J2EE application server, path info is interpreted in a different 
+#   manner since it maps to a resource on the proxy instead of the app server.  
+#   This prevents the not enforced list or policy from being applied to part of 
+#   the URI below the app serverpath if there is a wildcard character. For example, 
+#   if the not enforced list has value  http://host/webapp/servcontext/* and the 
+#   request URL is http://host/webapp/servcontext/example.jsp the path info 
+#   is /servcontext/example.jsp and the resulting request URL with path info stripped
+#   is http://host/webapp, which will not match the not enforced list. By setting the 
+#   following property to true, the path info will not be stripped from the request URL 
+#   even if there is a wild character in the not enforced list or policy. 
+#   Be aware though that if this is set to true there should be nothing following the
+#   wildcard character '*' in the not enforced list or policy, or the 
+#   security loophole described above may occur.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.ignore.path.info = false
+
+#
+# OVERRIDE PROPERTIES
+#   Override the request url given by the web server with 
+#   the protocol, host or port of the agent's uri specified in 
+#   the com.sun.identity.agents.config.policy.agents.agenturi.prefix property.
+#   These may be needed if the agent is sitting behind a ssl off-loader, 
+#   load balancer, or proxy, and either the protocol (HTTP scheme), 
+#   hostname, or port of the machine in front of agent which users go through  
+#   is different from the agent's protocol, host or port.
 # 
-com.sun.am.policy.agents.config.notenforced_list.invert = false
-
+#   Override the notification url in the same way as other request urls. 
+#   Set this to true if any one of the override properties above is true, 
+#   and if the notification url is coming through the proxy or load balancer 
+#   in the same way as other request url's. 
 #
-# Not enforced client IP address list is a list of client IP addresses.
-# No authentication and authorization are required for the requests coming
-# from these client IP addresses. The IP address must be in the form of
-# eg: 192.168.12.2 1.1.1.1 
+# Hot-Swap Enabled: Yes
 #
-
-com.sun.am.policy.agents.config.notenforced_client_ip_list =
-
-# Enable POST data preservation; By default it is set to false
-com.sun.am.policy.agents.config.postdata.preserve.enable = false
-
-# POST data preservation : POST cache entry lifetime in minutes,
-# After the specified interval, the entry will be dropped
-com.sun.am.policy.agents.config.postcache.entry.lifetime = 10
-
-# Enable/Disable client IP address validation. This validate
-# will check if the subsequent browser requests come from the
-# same ip address that the SSO token is initially issued against
-#
-com.sun.am.policy.agents.config.client_ip_validation.enable = false
-
-# Below properties are used to define cookie prefix and cookie max age
-com.sun.am.policy.agents.config.profile.attribute.cookie.prefix = HTTP_
-com.sun.am.policy.agents.config.profile.attribute.cookie.maxage = 300
-
-#
-# Cross-Domain Single Sign On URL
-# Is CDSSO enabled.
-com.sun.am.policy.agents.config.cdsso.enable=false
-
-# This is the URL the user will be redirected to for authentication
-# in a CDSSO Scenario.
-com.sun.am.policy.agents.config.cdcservlet.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
-
-#
-# Logout URL - application's Logout URL.
-# This URL is not enforced by policy. 
-# if set, agent will intercept this URL and destroy the user's session,
-# if any. The application's logout URL will be allowed whether or not 
-# the session destroy is successful.
-com.sun.am.policy.agents.config.logout.url=
-
-# Any cookies to be reset upon logout in the same format as cookie_reset_list 
-com.sun.am.policy.agents.config.logout.cookie.reset.list = 
-
-#
-# By default, when a policy decision for a resource is needed, 
-# agent gets and caches the policy decision of the resource and 
-# all resource from the root of the resource down, from the Access Manager.
-# For example, if the resource is http://host/a/b/c, the the root of the 
-# resource is http://host/. This is because more resources from the 
-# same path are likely to be accessed subsequently. 
-# However this may take a long time the first time if there 
-# are many many policies defined under the root resource.
-# To have agent get and cache the policy decision for the resource only,
-# set the following property to false.
-com.sun.am.policy.am.fetch_from_root_resource = true
-
-#
-# Whether to get the client's hostname through DNS reverse lookup for use 
-# in policy evaluation.
-# It is true by default, if the property does not exist or if it is 
-# any value other than false. 
-#
-com.sun.am.policy.agents.config.get_client_host_name = false
-
-# The following property is to enable native encoding of 
-# ldap header attributes forwarded by agents. If set to true 
-# agent will encode the ldap header value in the default 
-# encoding of OS locale. If set to false ldap header values 
-# will be encoded in UTF-8
-com.sun.am.policy.agents.config.convert_mbyte.enable = false
-
-#
-# The following property is used whether to do encoding of the url 
-# which has special characters before doing policy evaluation. 
-# 
-com.sun.am.policy.agents.config.encode_url_special_chars.enable = false
-
-#
-#When the not enforced list or policy has a wildcard '*' character, agent 
-#strips the path info from the request URI and uses the resulting request 
-#URI to check against the not enforced list or policy instead of the entire 
-#request URI, in order to prevent someone from getting access to any URI by 
-#simply appending the matching pattern in the policy or not enforced list. 
-#For example, if the not enforced list has the value http://host/*.gif,
-#stripping the path info from the request URI will prevent someone from 
-#getting access to http://host/index.html by using the URL http://host/index.html?hack.gif.
-#However when a web server (for exmample apache) is configured to be a reverse
-#proxy server for a J2EE application server, path info is interpreted in a different 
-#manner since it maps to a resource on the proxy instead of the app server.  
-#This prevents the not enforced list or policy from being applied to part of 
-#the URI below the app serverpath if there is a wildcard character. For example, 
-#if the not enforced list has value  http://host/webapp/servcontext/* and the 
-#request URL is http://host/webapp/servcontext/example.jsp the path info 
-#is /servcontext/example.jsp and the resulting request URL with path info stripped
-#is http://host/webapp, which will not match the not enforced list. By setting the 
-#following property to true, the path info will not be stripped from the request URL 
-#even if there is a wild character in the not enforced list or policy. 
-#Be aware though that if this is set to true there should be nothing following the
-#wildcard character '*' in the not enforced list or policy, or the 
-#security loophole described above may occur.
-#
-com.sun.am.policy.agents.config.ignore_path_info = false
-
-#
-# Override the request url given by the web server with 
-# the protocol, host or port of the agent's uri specified in 
-# the com.sun.am.policy.agents.agenturiprefix property.
-# These may be needed if the agent is sitting behind a ssl off-loader, 
-# load balancer, or proxy, and either the protocol (HTTP scheme), 
-# hostname, or port of the machine in front of agent which users go through  
-# is different from the agent's protocol, host or port.
-# 
-com.sun.am.policy.agents.config.override_protocol =
-com.sun.am.policy.agents.config.override_host =
-com.sun.am.policy.agents.config.override_port =
-
-#
-# Override the notification url in the same way as other request urls. 
-# Set this to true if any one of the override properties above is true, 
-# and if the notification url is coming through the proxy or load balancer 
-# in the same way as other request url's. 
-#
-com.sun.am.policy.agents.config.override_notification.url =
+com.sun.identity.agents.config.override.protocol =
+com.sun.identity.agents.config.override.host =
+com.sun.identity.agents.config.override.port =
+com.sun.identity.agents.config.override.notification.url =
 
 # 
 # The following property defines how long to wait in attempting
@@ -564,25 +687,114 @@ com.sun.am.policy.agents.config.override_notification.url =
 # The default value is 2 seconds. This value needs to be increased
 # when receiving the error "unable to find active Access Manager Auth server"
 #
-com.sun.am.policy.agents.config.connection_timeout =
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.auth.connection.timeout =
 
 #
-# This property indicates whether Agent needs to check whether Access 
-# Manager is up and running before doing a 302 redirect
+# IGNORE SERVER ALIVE CHECK
+#   This property indicates whether Agent needs to check whether Access 
+#   Manager is up and running before doing a 302 redirect
 #
-com.sun.am.ignore_server_check = false
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.ignore.server.check = false
 
 #
-# This property determines the amount of time (in minutes) after which
-# the agent polls whether the primary server is up and running.
-# The default value is 5 minutes
-com.sun.am.poll_primary_server = 5
+# POLL PRIMARY FAM SERVER
+#   This property determines the amount of time (in minutes) after which
+#   the agent polls whether the primary server is up and running.
+#   The default value is 5 minutes
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.poll.primary.server = 5
 
 #
-# This property indicates whether the naming request will have a preferred
-# naming url as an attribute
-# A value of true indicates that the naming request will not have the 
-# preferred naming url as attribute and a value of false indicates
-# that naming request will have the preferred naming url as an attribute
-com.sun.am.ignore.preferred_naming_url = true
+# IGNORE PREFERRED NAMING URL
+#   This property indicates whether the naming request will have a preferred
+#   naming url as an attribute
+#   A value of true indicates that the naming request will not have the 
+#   preferred naming url as attribute and a value of false indicates
+#   that naming request will have the preferred naming url as an attribute
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.ignore.preferred.naming.url = true
 
+#
+# AGENT CONFIGURATION POLLING INTERVAL
+#   Agent fetches new configuration either from server or local file(i.e. this file)
+#   based on agent repository type value: centralized/local.
+#   If agent is configured with AM 7.x, then agent uses local file(i.e. this file)
+#   The value is in minutes.
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.polling.interval = 60
+
+#
+# AGENT CONFIGURATION CACHE CLEAN INTERVAL
+#   Agent maintains a cache for it's configuration entries as part of
+#   hot-swapping framework. Based on this value, agent cleans old
+#   configuration entries, provided they are not referenced by any requests. 
+#   The value is in minutes.
+#
+# Hot-Swap Enabled: No
+com.sun.identity.agents.config.cleanup.interval = 30
+
+#
+# IIS specific property
+#   Authentication Type
+#
+com.sun.identity.agents.config.iis.auth.type = dsame 
+
+#
+# IIS specific property
+#    DES key for decrypting the basic authentication 
+#      password in the session.
+#
+com.sun.identity.agents.config.replaypasswd.key = 
+
+#
+# IIS specific property
+#   Set the IIS filter priority. The choices are
+#      HIGH      - IIS5 filter priority is HIGH.
+#      LOW       - IIS5 filter priority is LOW.
+#      MEDIUM    - IIS5 filter priority is MEDIUM.
+#      DEFAULT   - IIS5 filter priority is DEFAULT.
+#
+com.sun.identity.agents.config.iis.filter.priority = HIGH
+
+
+#
+# IIS-OWA specific properties
+#   - owa.enable: Set to true if the IIS agent filter is configured for OWA.
+#   - owa.enable.change.protocol: f true, avoids IE6 security pop-ups. 
+#   - enable.session.timeout.url: The local idle session timeout page url.
+#
+com.sun.identity.agents.config.iis.owa.enable = false
+com.sun.identity.agents.config.iis.owa.enable.change.protocol = false
+com.sun.identity.agents.config.iis.owa.enable.session.timeout.url = 
+
+#
+# Sun Java System Proxy Server specific properties
+#
+com.sun.identity.agents.config.proxy.override.host.port = false
+
+#
+# IBM Lotus Domino Server specific properties
+#   - check.name.database: If true, agent checks user existence 
+#       in Domino name database.
+#   - ltpa.enable: Set to true if agent needs to use LTPA Token.
+#   - ltpa.cookie.name: The name of the cookie that contains 
+#       the LTPA token.
+#   - ltpa.config.name: The configuration name that the agent uses 
+#       in order to employ the LTPA token mechanism. 
+#   - ltpa.org.name: The organization name to which the LTPA token belongs.
+#
+com.sun.identity.agents.config.domino.check.name.database = false
+com.sun.identity.agents.config.domino.ltpa.enable = false
+com.sun.identity.agents.config.domino.ltpa.cookie.name = LtpaToken
+com.sun.identity.agents.config.domino.ltpa.config.name = LtpaToken
+com.sun.identity.agents.config.domino.ltpa.org.name = 

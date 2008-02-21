@@ -164,11 +164,23 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
     
+    /* set fqdn.map */
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_FQDN_MAP;
+        status = am_properties_set_map(this->properties,
+                parameter,
+                "|",
+                ",");
+    }
+
     /* Get the cookie domain list. */
     if (AM_SUCCESS == status) {
         const char *cookie_domain_listptr;
         this->cookie_domain_list = NULL;
-        parameter = AM_WEB_COOKIE_DOMAIN_LIST;
+        parameter = AM_WEB_CDSSO_COOKIE_DOMAIN_LIST;
+
+        status =am_properties_set_list(this->properties, parameter, " ");
+
         status = am_properties_get_with_default(this->properties, parameter,
                 NULL, &cookie_domain_listptr);
         if(NULL != cookie_domain_listptr && '\0' != cookie_domain_listptr[0]) {
@@ -402,7 +414,10 @@ am_status_t AgentConfiguration::populateAgentProperties()
     /* Get the login URL.*/
     if (AM_SUCCESS == status) {
         const char *property_str;
-        parameter = AM_POLICY_LOGIN_URL_PROPERTY;
+        parameter = AM_WEB_LOGIN_URL_PROPERTY;
+
+        status =am_properties_set_list(this->properties, parameter, " ");
+
         status = am_properties_get(this->properties, parameter,
                 &property_str);
         if (AM_SUCCESS == status) {
@@ -416,15 +431,15 @@ am_status_t AgentConfiguration::populateAgentProperties()
         parameter = AM_COMMON_NOTIFICATION_ENABLE_PROPERTY;
         status = am_properties_get_boolean_with_default(this->properties,
                 parameter, B_FALSE,
-                reinterpret_cast<int *>(&this->notification_enabled));
-        if (this->notification_enabled) {
+                reinterpret_cast<int *>(&this->notification_enable));
+        if (this->notification_enable) {
             parameter = AM_COMMON_NOTIFICATION_URL_PROPERTY;
             status = am_properties_get_with_default(this->properties,
                     parameter, "",
                     &this->notification_url);
             if (this->notification_url == NULL ||
                     strlen(this->notification_url) == 0) {
-                this->notification_enabled = AM_FALSE;
+                this->notification_enable = AM_FALSE;
             }
         }
     }
@@ -444,7 +459,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 parameter,
                 AM_FALSE,
                 reinterpret_cast<int *>
-                (&this->postdatapreserve_enabled));
+                (&this->postdatapreserve_enable));
     }
     
     
@@ -458,7 +473,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
     
     /* Get locale setting */
     if(AM_SUCCESS == status) {
-        parameter = AM_WEB_PROPERTY_PREFIX "locale";
+        parameter = AM_WEB_LOCALE_PROPERTY;
         am_properties_get_with_default(this->properties, parameter,
                 NULL, &this->locale);
     }
@@ -492,6 +507,9 @@ am_status_t AgentConfiguration::populateAgentProperties()
     if (AM_SUCCESS == status) {
         const char *not_enforced_ipstr;
         parameter = AM_WEB_NOT_ENFORCED_IPADDRESS;
+
+        status =am_properties_set_list(this->properties, parameter, " ");
+
         status = am_properties_get_with_default(this->properties,
                 parameter,
                 NULL,
@@ -515,6 +533,9 @@ am_status_t AgentConfiguration::populateAgentProperties()
         const char *not_enforced_str;
         
         parameter = AM_WEB_NOT_ENFORCED_LIST_PROPERTY;
+
+        status =am_properties_set_list(this->properties, parameter, " ");
+
         status = am_properties_get_with_default(this->properties,
                 parameter,
                 NULL,
@@ -535,13 +556,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 &this->reverse_the_meaning_of_not_enforced_list);
     }
     
-    /* Get ignore_policy_evaluation_if_notenforced */
+    /* Get notenforced_url_attributes_enable */
     if (AM_SUCCESS == status) {
-        parameter = AM_WEB_IGNORE_POLICY_EVALUATION_IF_NOT_ENFORCED;
+        parameter = AM_WEB_NOTENFORCED_URL_ATTRS_ENABLED_PROPERTY;
         status = am_properties_get_boolean_with_default(this->properties,
                 parameter,
                 AM_FALSE,
-                &this->ignore_policy_evaluation_if_notenforced);
+                &this->notenforced_url_attributes_enable);
     }
     
     /* Get do_sso_only.*/
@@ -559,7 +580,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
         status = am_properties_get_boolean_with_default(this->properties,
                 parameter,
                 AM_FALSE,
-                &this->cdsso_enabled);
+                &this->cdsso_enable);
     }
     
     /* Get Logout URLs if any */
@@ -585,6 +606,9 @@ am_status_t AgentConfiguration::populateAgentProperties()
         this->logout_cookie_reset_list.list = NULL;
         parameter = AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY;
         const char *logout_cookie_reset_str = NULL;
+
+        status =am_properties_set_list(this->properties, parameter, ",");
+
         status = am_properties_get_with_default(this->properties,
                 parameter,
                 NULL,
@@ -615,15 +639,18 @@ am_status_t AgentConfiguration::populateAgentProperties()
         status = am_properties_get_boolean_with_default(this->properties,
                 parameter,
                 AM_FALSE,
-                &this->cookie_reset_enabled);
+                &this->cookie_reset_enable);
     }
     
     /* Get the List of Cookies to be Reset */
     
     if (AM_SUCCESS == status) {
-        if (this->cookie_reset_enabled == AM_TRUE) {
+        if (this->cookie_reset_enable == AM_TRUE) {
             const char *cookie_str = NULL;
             parameter = AM_WEB_COOKIE_RESET_LIST;
+
+            status =am_properties_set_list(this->properties, parameter, ",");
+
             status = am_properties_get_with_default(this->properties,
                     parameter,
                     NULL,
@@ -642,7 +669,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 }
             }
             else {
-                this->cookie_reset_enabled = AM_FALSE;
+                this->cookie_reset_enable = AM_FALSE;
                 am_web_log_max_debug("%s: no cookies to be reset.", thisfunc);
             }
         }
@@ -688,7 +715,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 this->properties, parameter, 0,
                 &(this->override_port));
     }
-    if (AM_SUCCESS == status && this->notification_enabled) {
+    if (AM_SUCCESS == status && this->notification_enable) {
         parameter = AM_WEB_OVERRIDE_NOTIFICATION_URL;
         status = am_properties_get_boolean_with_default(
                 this->properties, parameter, 0,
@@ -747,28 +774,28 @@ am_status_t AgentConfiguration::populateAgentProperties()
     }
     
     
-    // get owa_enabled flag
+    // get owa.enable flag
     if (AM_SUCCESS == status) {
         parameter = AM_WEB_OWA_ENABLED;
         status = am_properties_get_boolean_with_default(
                 this->properties, parameter, 0,
-                &(this->owa_enabled));
+                &(this->owa_enable));
     }
     
-    // get owa_enabled_change_protocol flag
+    // get owa.enable.change.protocol flag
     if (AM_SUCCESS == status) {
         parameter = AM_WEB_OWA_ENABLED_CHANGE_PROTOCOL;
         status = am_properties_get_boolean_with_default(
                 this->properties, parameter, 0,
-                &(this->owa_enabled_change_protocol));
+                &(this->owa_enable_change_protocol));
     }
     
-    // get owa_enabled_session_timeout_url
+    // get owa_enable_session_timeout_url
     if (AM_SUCCESS == status) {
         function_name = "am_properties_get";
         parameter = AM_WEB_OWA_ENABLED_SESSION_TIMEOUT_URL;
         status = am_properties_get_with_default(this->properties, parameter,
-                NULL, &this->owa_enabled_session_timeout_url);
+                NULL, &this->owa_enable_session_timeout_url);
     }
     
     // get proxy's override_host_port
@@ -801,6 +828,16 @@ am_status_t AgentConfiguration::populateAgentProperties()
 
 
     if (AM_SUCCESS == status) {
+
+        status = am_properties_set_map(this->properties, 
+                              AM_POLICY_PROFILE_ATTRS_MAP,
+                              "|", ",");
+        status = am_properties_set_map(this->properties, 
+                              AM_POLICY_SESSION_ATTRS_MAP,
+                              "|", ",");
+        status = am_properties_set_map(this->properties, 
+                              AM_POLICY_RESPONSE_ATTRS_MAP,
+                              "|", ",");
 
         status = am_properties_get_with_default(this->properties,
                                                AM_POLICY_PROFILE_ATTRS_MODE,
@@ -866,14 +903,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
         else {
             this->setUserResponseAttrsMode = SET_ATTRS_NONE;
-        }
-
-        if (AM_SUCCESS == status) {
-            status = am_properties_get_with_default(
-                             this->properties,
-                             AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR,
-                             ATTRIBUTES_SEPARATOR,
-                             &this->attrMultiValueSeparator);
         }
 
         try {
@@ -975,7 +1004,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
     if (AM_SUCCESS == status) {
         Properties *props = 
             reinterpret_cast<Properties *>(this->properties);
-        if (this->postdatapreserve_enabled == AM_TRUE) {
+        if (this->postdatapreserve_enable == AM_TRUE) {
             try {
                 this->postcache_handle = new PostCache(*props);
             }
@@ -1151,9 +1180,9 @@ void AgentConfiguration::cleanup_properties()
         }
 
     this->iis6_replaypasswd_key = NULL;
-        this->owa_enabled_session_timeout_url = NULL;
+        this->owa_enable_session_timeout_url = NULL;
 
-    if (this->postdatapreserve_enabled) {
+    if (this->postdatapreserve_enable) {
         if(this->postcache_handle != NULL){
             delete this->postcache_handle;
         }

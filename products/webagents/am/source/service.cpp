@@ -770,8 +770,7 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
     policy_res->attr_session_map = AM_MAP_NULL;
     policy_res->attr_response_map = AM_MAP_NULL;
 
-    std::string attrMultiValueSeparator =
-        properties.get(AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR, "|");
+    std::string attrMultiValueSeparator = ATTRIBUTES_SEPARATOR;
     
     // if remote user id param type was ldap or if fetch ldap attributes
     // is true, get the ldap attributes and set remote user and

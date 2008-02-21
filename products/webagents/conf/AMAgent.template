@@ -37,31 +37,52 @@
 # software.
 #
 #########################################################################
-#
-# The URL for the Access Manager Naming service.
-#
-com.sun.am.naming.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/namingservice 
 
 #
-# Name of the file to use for logging messages.
+# NAMING SERVICE URL
+#   Specifies the naming service url(s) that can be used by the system
+#   for naming lookups. One or more urls can be specified for this
+#   property as a string of urls separated by single space characters.
 #
-com.sun.am.policy.agents.config.local.log.file =@DEBUG_LOGS_DIR@/amAgent
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.naming.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/namingservice 
 
 #
-# Set the logging level for the specified logging categories.
-# The format of the values is
+# AGENT USERNAME AND PASSWORD PROPERTIES
+#   These are the credentials used by the Agent to identify and
+#   authenticate itself before requesting any services that require the
+#   Agent to be authenticated.
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.username = @AGENT_PROFILE_NAME@
+com.sun.identity.agents.config.password = @AGENT_ENCRYPTED_PASSWORD@
+
+#
+# AGENT LOCAL LOG FILE
+#   Name of the file to use for logging messages and debug information.
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.local.logfile = @DEBUG_LOGS_DIR@/amAgent
+
+#
+# AGENT DEBUG LOG LEVEL
+#   Set the logging level for the specified logging categories.
+#   The format of the values is
 #
 #	<ModuleName>[:<Level>][,<ModuleName>[:<Level>]]*
 #
-# The currently used module names are: AuthService, NamingService,
-# PolicyService, SessionService, PolicyEngine, ServiceEngine,
-# Notification, PolicyAgent, RemoteLog and all.
+#   The currently used module names are: AuthService, NamingService,
+#   PolicyService, SessionService, PolicyEngine, ServiceEngine,
+#   Notification, PolicyAgent, RemoteLog and all.
 #
-# The all module can be used to set the logging level for all currently
-# none logging modules.  This will also establish the default level for
-# all subsequently created modules.
+#   The all module can be used to set the logging level for all currently
+#   none logging modules.  This will also establish the default level for
+#   all subsequently created modules.
 #
-# The meaning of the 'Level' value is described below:
+#   The meaning of the 'Level' value is described below:
 #
 #	0	Disable logging from specified module*
 #	1	Log error messages
@@ -69,73 +90,60 @@ com.sun.am.policy.agents.config.local.log.file =@DEBUG_LOGS_DIR@/amAgent
 #	3	Log info, warning, and error messages
 #	4	Log debug, info, warning, and error messages
 #	5	Like level 4, but with even more debugging messages
-# 128	log url access to log file on AM server. 
-# 256	log url access to log file on local machine. 
+#       128	log url access to log file on AM server. 
+#       256	log url access to log file on local machine. 
 #
-# If level is omitted, then the logging module will be created with
-# the default logging level, which is the logging level associated with
-# the 'all' module.
+#   If level is omitted, then the logging module will be created with
+#   the default logging level, which is the logging level associated with
+#   the 'all' module.
 #
-# for level of 128 and 256, you must also specify a logAccessType.
+#   For level of 128 and 256, you must also specify audit.access.type property.
 #
-# *Even if the level is set to zero, some messages may be produced for
-# a module if they are logged with the special level value of 'always'.
+#   Even if the level is set to zero, some messages may be produced for
+#   a module if they are logged with the special level value of 'always'.
 #
-com.sun.am.log.level = 
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.log.level = 
 
 #
-# The username and password for Agent to login to AM.
+# SSL comunication related properties
+#   The following properties are for to establish secure communication
+#   between agent and access manager.
 #
-com.sun.am.policy.am.username = @AGENT_PROFILE_NAME@
-com.sun.am.policy.am.password = @AGENT_ENCRYPTED_PASSWORD@
+#   - sslcert.dir: Name of the directory containing the certificate databases for SSL.
+#   - certdb.prefix: Set this property if the certificate databases in the directory
+#         specified by the previous property have a prefix.
+#   - certdb.password: Certificates database password.
+#   - auth.certificate.alias: Certificate alias.
+#   - trust.server.certs: Should agent trust all server certificates when Access Manager
+#         is running SSL? Valid values are {true, false}
+#
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.sslcert.dir = 
+com.sun.identity.agents.config.certdb.prefix = 
+com.sun.identity.agents.config.certdb.password = 
+com.sun.identity.agents.config.certificate.alias = 
+com.sun.identity.agents.config.trust.server.certs = true
 
-# Name of the directory containing the certificate databases for SSL.
-#
-com.sun.am.sslcert.dir = 
-
-#
-# Set this property if the certificate databases in the directory specified
-# by the previous property have a prefix.
-#
-com.sun.am.certdb.prefix = 
-
-#
-# 
-# Cert database password
-#
-com.sun.am.certdb.password = 
-
-#
-# 
-# Auth certificate alias
-#
-com.sun.am.auth.certificate.alias = 
 
 #
-# Should agent trust all server certificates when Access Manager
-# is running SSL?
+# Connection timeout related properties
 #
-# Possible values are true or false.
+#   - receive.timeout: Time in milliseconds the agent will wait to receive the
+#       response from Access Manager. After the timeout, the connection
+#       will be drop. A value of 0 means that the agent will wait until 
+#       receiving the response.
+#       WARNING: Invalid value for this property can result in 
+#       the resources becoming inaccessible.
+#   - connect.timeout: In milliseconds indicates how long the socket connection 
+#       needs to be kept open.  The default value is 0 which implies no timeout.
+#   - tcp.nodelay.enable: Indicate if the socket option TCP_NODELAY should be enabled.
+#       Possible values are true or false. Default is false.
 #
-com.sun.am.trust_server_certs = true
-
+# Hot-Swap Enabled: No
 #
-# Time in milliseconds the agent will wait to receive the
-# response from Access Manager. After the timeout, the connection
-# will be drop.
-# A value of 0 means that the agent will wait until receiving the response.
-# WARNING: Invalid value for this property can result in 
-# the resources becoming inaccessible.
-com.sun.am.receive_timeout = 0
-
-#
-# The following property in milliseconds indicates how long the
-# socket connection needs to be kept open.
-# The default value is 0 which implies no timeout.
-#
-com.sun.am.connect_timeout = 0
-
-# Indicate if the socket option TCP_NODELAY should be enabled.
-# Possible values are true or false. Default is false
-#
-com.sun.am.tcp_nodelay.enable = false
+com.sun.identity.agents.config.receive.timeout = 0
+com.sun.identity.agents.config.connect.timeout = 0
+com.sun.identity.agents.config.tcp.nodelay.enable = false

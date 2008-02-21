@@ -400,6 +400,16 @@ am_properties_iter_get_value(am_properties_iter_t properties_iter);
 AM_EXPORT am_status_t
 am_properties_set_null(am_properties_t properties, const char *key,
 		     const char *value);
+AM_EXPORT am_status_t
+am_properties_set_list(am_properties_t properties, 
+                       const char *key,
+                       const char *valueSep);
+AM_EXPORT am_status_t
+am_properties_set_map(am_properties_t properties,
+                      const char *key,
+                      const char *mapSep,
+                      const char *valueSep);
+
 AM_END_EXTERN_C
 
 #endif	/* not AM_PROPERTIES_H */
