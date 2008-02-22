@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.43 2008-02-14 02:06:31 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.44 2008-02-22 02:12:45 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -489,7 +489,7 @@ public class AMSetupServlet extends HttpServlet {
                     throw new ConfiguratorException(
                         "EmbeddedDS : failed to gsetup serverid;ex="+ex);
                 }
-           } 
+            } 
             SystemProperties.setServerInstanceName(serverInstanceName);
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
@@ -500,8 +500,8 @@ public class AMSetupServlet extends HttpServlet {
              * integration that we had done.
              */
             createPasswordFiles(basedir, deployuri);
-            createDemoUser();
             if (!isDITLoaded) {
+                createDemoUser();
                 createIdentitiesForWSSecurity(serverURL, deployuri);
             }
             isConfiguredFlag = true;
