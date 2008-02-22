@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.12 2008-02-22 22:01:57 huacui Exp $
+$Id: README,v 1.13 2008-02-22 22:14:48 huacui Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -168,15 +168,15 @@ workspace. The default target that is executed is the usage target which
 displays a brief description about the other targets. Currently the main
 targets available in the workspace are:
    
-     - build         : compiles the sources
+     - all           : build all the J2EE agents
      - clean         : deletes the generated files
      - usage         : displays this usage message
-     - appserver_v9 : build the Sun Appserver 8.1/8.2/9.0/9.1 agent
-     - weblogic_v10 : build the WebLogic 10.0 agent
+     - appserver_v9  : build the Sun Appserver 8.1/8.2/9.0/9.1 agent
+     - weblogic_v10  : build the WebLogic 10.0 agent
 
-%% 3.1 build target
+%% 3.1 all target
 
-The build target compiles the common sources
+The all target builds all the J2EE agents.
 
 
 %% 3.2 clean target
