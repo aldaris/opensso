@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISPolicy.java,v 1.2 2006-10-12 06:23:13 veiming Exp $
+ * $Id: ISPolicy.java,v 1.3 2008-02-22 02:17:13 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.util.Enumeration;
 
 /**
  * This is an implementation of abstract class
- * <code>javax.security.auth.Policy</code> for representing the system security
+ * <code>java.security.Policy</code> for representing the system security
  * policy for a Java application environment. It provides a custom policy
  * implementation based on JAAS and JDK 1.5 and above.It makes policy evaluation
  * against the Access Manager Policy Service instead of the default file based
