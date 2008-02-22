@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 Sun Microsystems, Inc.
-Software: Open SSO Policy Agent 2.2
+Software: Open SSO Policy Agent 3.0
 -----------------------------------------------------------------------------
 
 The product manual and release notes for this product are published
