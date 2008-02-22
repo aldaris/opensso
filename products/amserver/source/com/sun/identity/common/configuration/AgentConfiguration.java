@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.16 2008-02-05 18:01:08 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.17 2008-02-22 05:14:54 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -747,19 +747,30 @@ public class AgentConfiguration {
     
     private static Map parseAttributeMap(String agentType, Map attrValues)
         throws SMSException, SSOException {
+        Map dummy = new HashMap();
+        dummy.putAll(attrValues);
         Map result = new HashMap();
         Set attributeSchemas = getAgentAttributeSchemas(agentType);
         
         if ((attributeSchemas != null) && !attributeSchemas.isEmpty()) {
             for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
                 AttributeSchema as = (AttributeSchema)i.next();
-                Set values = parseAttributeMap(as, attrValues);
+                Set values = parseAttributeMap(as, dummy);
                 if (values != null) {
                     result.put(as.getName(), values);
                 }
             }
-        } else {
-            result.putAll(attrValues);
+        }
+        if (!dummy.isEmpty()) {
+            Set freeForm = new HashSet();
+            for (Iterator i = dummy.keySet().iterator(); i.hasNext(); ) {
+                String name = (String)i.next();
+                Set values = (Set)dummy.get(name);
+                for (Iterator j = values.iterator(); j.hasNext(); ) {
+                    freeForm.add(name + "=" + ((String)j.next()));
+                }
+            }
+            result.put(ATTR_NAME_FREE_FORM, freeForm);
         }
         
         return result;
@@ -794,13 +805,14 @@ public class AgentConfiguration {
                             results.add(set.iterator().next());
                         }
                     }
+                    i.remove();
                 }
             }
             if (results.isEmpty()) {
                 results = null;
             }
         } else {
-            results = (Set)attrValues.get(attrName);
+            results = (Set)attrValues.remove(attrName);
         }
         return results;
     }
