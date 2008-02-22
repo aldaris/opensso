@@ -17,9 +17,9 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgent.template,v 1.10 2008-01-04 02:05:44 huacui Exp $
+# $Id: AMAgent.template,v 1.11 2008-02-22 02:31:49 leiming Exp $
 #
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
 
 #------------------------------------------------------------------------------

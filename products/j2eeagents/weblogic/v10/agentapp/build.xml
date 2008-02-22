@@ -18,9 +18,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2007-08-07 01:45:21 sean_brydon Exp $
+   $Id: build.xml,v 1.2 2008-02-22 02:31:48 leiming Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project name="agentApp" basedir = "." default="build">

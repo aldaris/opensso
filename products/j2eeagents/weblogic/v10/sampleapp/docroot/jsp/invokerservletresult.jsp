@@ -2,8 +2,28 @@
 <html>
 <head>
 <!--
-Copyright (c) 2007 Sun Microsystems, Inc. All rights reserved
-Use is subject to license terms.
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: invokerservletresult.jsp,v 1.3 2008-02-22 02:31:53 leiming Exp $
+
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"> 
 <title>Sample Application</title>
@@ -174,10 +194,10 @@ a:hover{text-decoration:underline}
     </tr>
     <tr>
       <td style="vertical-align: top; width: 150px;">
-      <hr class="menutop">&copy; Sun Microsystems 2005 </td>
+      <hr class="menutop"></td>
       <td style="vertical-align: top;">
       <hr class="menutop">
-      <div style="text-align: right;">Use Restricted to Terms and Conditions of Applicable License Agreement</div> </td>
+      <div style="text-align: right;"></div> </td>
       <td style="vertical-align: top; width: 50px;">&nbsp;<br>
       </td>
     </tr>
