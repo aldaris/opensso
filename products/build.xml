@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2008-02-13 04:52:24 veiming Exp $
+   $Id: build.xml,v 1.27 2008-02-23 02:57:41 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -165,6 +165,8 @@
         <ant antfile="${upgrade.basedir}/build.xml" inheritRefs="true" target="nightly" />
         <copy file="${upgrade.dist.dir}/opensso.zip"
 	    todir="${prd.nightly.dist.dir}/openfm" />
+        <checksum file="${prd.nightly.dist.dir}/openfm/opensso.zip"
+            algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="srczip">
