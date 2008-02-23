@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.36 2008-02-08 08:25:19 kanduls Exp $
+ * $Id: TestCommon.java,v 1.37 2008-02-23 01:39:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ import org.testng.Reporter;
  * It has commonly used methods.
  */
 public class TestCommon implements TestConstants {
-    private String logEntryTemplate;
+
     private String className;
     static private ResourceBundle rb_amconfig;
     static protected String adminUser;
@@ -85,6 +85,7 @@ public class TestCommon implements TestConstants {
     static protected int notificationSleepTime;
     static protected Level logLevel;
     static private Logger logger;
+    static private String logEntryTemplate;
     static private Server server;
     private String productSetupResult;
     
@@ -165,7 +166,7 @@ public class TestCommon implements TestConstants {
     /**
      * Writes a log entry.
      */
-    protected void log(Level level, String methodName, Object message) {
+    protected static void log(Level level, String methodName, Object message) {
         Object[] args = {methodName, message};
         logger.log(level, MessageFormat.format(logEntryTemplate, args));
     }
@@ -173,7 +174,7 @@ public class TestCommon implements TestConstants {
     /**
      * Writes a log entry.
      */
-    protected void log(
+    protected static void log(
             Level level,
             String methodName,
             String message,
@@ -905,6 +906,28 @@ public class TestCommon implements TestConstants {
             item = (String)keyIter.next();
             set1.add(item);
         }
+    }
+
+    /**
+     * Returns true if the value set contained in the Set
+     * contains the requested string.
+     */
+    protected static boolean setValuesHasString(Set set, String str)
+    throws Exception {
+        log(Level.FINEST, "setValuesHasString", "The values in the set are:\n" + set);
+        boolean res = false;
+        Iterator keyIter = set.iterator();
+        String item;
+        Object obj;
+        while (keyIter.hasNext()) {
+            obj = (Object)keyIter.next();
+            item = obj.toString();
+            if (item.indexOf(str) != 0) {
+                res = true;
+                break;
+            }
+        }
+        return res;
     }
 
     /**

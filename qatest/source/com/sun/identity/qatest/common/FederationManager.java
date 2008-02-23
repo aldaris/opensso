@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.9 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: FederationManager.java,v 1.10 2008-02-23 01:39:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,18 +32,21 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.sun.identity.qatest.common.TestCommon;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.StringBuffer;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
-public class FederationManager {
+public class FederationManager extends TestCommon {
     private String amadmUrl;
     private String amUrl;
 
     public FederationManager(String url) {
+        super("FederationManager");
         amUrl = url;
         amadmUrl = url + "/famadm.jsp?cmd=";
     }
@@ -60,6 +63,11 @@ public class FederationManager {
                 val = Integer.parseInt(exitCode);
             }
         }
+        if (val != 0) {
+            log(Level.SEVERE, "getExitCode", "Non zero exit code:\n" + 
+                    content.substring(start, content.indexOf("</pre>", start)));
+        }
+        
         return val;
     }
 
