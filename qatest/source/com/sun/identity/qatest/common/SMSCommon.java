@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.11 2008-02-08 08:27:05 kanduls Exp $
+ * $Id: SMSCommon.java,v 1.12 2008-02-23 00:11:51 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -865,6 +865,27 @@ public class SMSCommon extends TestCommon {
         exiting("isPluginConfigured");
         return isPluginConfigured;
     }
+    
+    /**
+     * Check if the FAM is deployed against AM DIT. 
+     * Return true if it is AM DIT.
+     */
+    public boolean isAMDIT()
+    throws Exception {
+        boolean result = false;
+            ServiceSchemaManager idRepoServiceSchemaManager;
+            idRepoServiceSchemaManager = new ServiceSchemaManager(admintoken,
+                    "sunIdentityRepositoryService", "1.0");
+            int svcRevisionNumber = idRepoServiceSchemaManager
+                    .getRevisionNumber(); 
+            if (svcRevisionNumber <= 20) {
+                log(Level.FINE, "isAMDIT", "This is AM 7.x DIT"); 
+                result = true;
+            } else {
+                log(Level.FINE, "isAMDIT", "This is FAM 8.x DIT"); 
+            }
+        return result;
+    }    
   
     /**
      * This method checks whether a given type of datastore plugin is 

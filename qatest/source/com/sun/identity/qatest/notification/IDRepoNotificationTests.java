@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoNotificationTests.java,v 1.3 2007-11-30 18:46:51 rmisra Exp $
+ * $Id: IDRepoNotificationTests.java,v 1.4 2008-02-23 00:12:17 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdEventListener;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +87,7 @@ public class IDRepoNotificationTests extends TestCommon implements
             log(Level.FINEST, "setup", "Getting AMIdentityRepository object");
             idrepo = new AMIdentityRepository(token, realm);
             Set types = idrepo.getSupportedIdTypes();
+            log(Level.FINEST, "setup", "Supported IdTypes are: " + types);
             Iterator iter = types.iterator();
             //If the idtype is not supported, exit the setup. 
             //e.g. roles are not supported on AD. 
@@ -137,23 +139,36 @@ public class IDRepoNotificationTests extends TestCommon implements
                         realm);
                 attrToModify = "inetuserstatus";
                 valToModify = "inactive";
-            } else if (strIdType.equalsIgnoreCase("AGENT")) {
-                set = putSetIntoMap("agentid", map, strID);
+            } else if (strIdType.contains("AGENT")) {
+                map = new HashMap();
+                set = new HashSet();
+                set = new HashSet();
                 set.add(strID);
-                map.put("agentid", set);
                 map.put("userpassword", set);
                 set = new HashSet();
-                set.add("active");
-                map.put("sunIdentityServerDeviceStatus",set);
+                set.add("Active");
+                map.put("sunIdentityServerDeviceStatus", set);
+                set = new HashSet();
+                SMSCommon smsC = new SMSCommon(token);
+                if ((smsC.isAMDIT())) {
+                     idmc.createIdentity(token, realm, IdType.AGENT, strID, 
+                             map);
+               } else {
+                    log(Level.FINE, "identityCreationTest", "This is FAM " +
+                            "DIT, Agents are part of SM node");
+                    set.add("webagent");
+                    map.put("AgentType", set);
+                    idmc.createIdentity(token, realm, IdType.AGENTONLY, strID, 
+                            map);
+                }
                 log(Level.FINEST, "identityCreationTest", "Create the agent " +
                     "with ID " + strID);
-                idmc.createIdentity(token, realm, IdType.AGENT, strID, map);
                 log(Level.FINEST, "identityCreationTest", "Get the agent " +
                     "to check successful creation ");
-                amid = idmc.getFirstAMIdentity(token, strID, IdType.AGENT, 
+                amid = idmc.getFirstAMIdentity(token, strID, IdType.AGENTONLY, 
                         realm);
                 attrToModify = "sunIdentityServerDeviceStatus";
-                valToModify = "inactive";
+                valToModify = "Inactive";
             } else if (strIdType.equalsIgnoreCase("ROLE")) {
                 //datastore should have description attribute under role
                 set.add("Role Description");
@@ -209,6 +224,8 @@ public class IDRepoNotificationTests extends TestCommon implements
         } catch (Exception e) {
             log(Level.SEVERE, "identityCreationTest", e.getMessage());
             e.printStackTrace();
+            log(Level.SEVERE, "identityCreationTest", "Delete the identity");
+            identityDeletionTest();
             throw e;
         } finally {
             assert (result);
@@ -270,6 +287,9 @@ public class IDRepoNotificationTests extends TestCommon implements
         } catch (Exception e) {
             log(Level.SEVERE, "identityModificationTest", e.getMessage());
             e.printStackTrace();
+            log(Level.SEVERE, "identityModificationTest", "Delete the " +
+                    "identity");
+            identityDeletionTest();
             throw e;
         } finally {
             assert (result);
