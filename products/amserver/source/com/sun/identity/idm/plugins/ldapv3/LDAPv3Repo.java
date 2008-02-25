@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.35 2008-02-08 02:47:28 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.36 2008-02-25 23:29:09 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -495,7 +495,7 @@ public class LDAPv3Repo extends IdRepo {
     }
 
     private void enableCache(LDAPConnection ld) {
-        if ((cacheEnabled) && (ld.getCache() == null)) {
+        if ((cacheEnabled) && (ld.getCache() != ldapCache)) {
                 if (debug.messageEnabled()) {
                     debug.message("LDAPv3Repo: isExists. ldapcache is null.");
                 }
@@ -1211,7 +1211,7 @@ public class LDAPv3Repo extends IdRepo {
         return true;
     }
 
-    public synchronized void removeListener() {
+    public void removeListener() {
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: removeListener called ");
         }
@@ -1279,7 +1279,7 @@ public class LDAPv3Repo extends IdRepo {
      * @see com.iplanet.am.sdk.IdRepo#addListener(com.iplanet.sso.SSOToken,
      *      com.iplanet.am.sdk.AMObjectListener, java.util.Map)
      */
-    public synchronized int addListener(SSOToken token, IdRepoListener listener)
+    public int addListener(SSOToken token, IdRepoListener listener)
             throws IdRepoException, SSOException {
 
         if (debug.messageEnabled()) {
@@ -3983,13 +3983,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ldc = connPool.getConnection();
-        if ((cacheEnabled) && (ldc.getCache() == null)) {
-            if (debug.messageEnabled()) {
-                debug.message("LDAPv3Repo.searchForName."
-                    + " ldapcache is null.");
-            }
-            ldc.setCache(ldapCache);
-        }
+        enableCache(ldc);
         try {
             if (debug.messageEnabled()) {
                 debug.message("Connecting to " + firstHostAndPort + ":" +
@@ -4532,13 +4526,7 @@ public class LDAPv3Repo extends IdRepo {
         LDAPSchema dirSchema = new LDAPSchema();
         checkConnPool();
         LDAPConnection conn = connPool.getConnection();
-        if ((cacheEnabled) && (conn.getCache() == null)) {
-            if (debug.messageEnabled()) {
-                debug.message("LDAPv3Repo.getLDAPSchema."
-                    + " ldapcache is null.");
-            }
-            conn.setCache(ldapCache);
-        }
+        enableCache(conn);
         dirSchema.fetchSchema(conn);
         connPool.close(conn);
         return (dirSchema);
