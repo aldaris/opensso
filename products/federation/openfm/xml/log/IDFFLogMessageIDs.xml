@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: IDFFLogMessageIDs.xml,v 1.2 2007-10-16 22:10:11 exu Exp $
+   $Id: IDFFLogMessageIDs.xml,v 1.3 2008-02-25 21:45:38 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -519,6 +519,7 @@
         description="Creating of Entity Descriptor succeeded.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>EntityDescriptor is stored in the data repository.</item>
@@ -530,6 +531,7 @@
         description="Storing of IDFF Meta Data in the repository failed.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to create EntityDescriptor.</item>
@@ -563,6 +565,7 @@
         description="The EntityDescriptor object is not valid.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to retrieve or modify EntityDescriptor.</item>
@@ -579,6 +582,7 @@
         description="Retrieval of Entity Configuration failed.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>EntityDescriptor is retrieved.</item>
@@ -592,6 +596,7 @@
         description="Retrieval of Entity Descriptor succeeded.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Entity Configuration is returned to the requester.</item>
@@ -603,6 +608,7 @@
         description="Storing of Entity Configuration failed.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to modify IDFF Standard Meta data.</item>
@@ -617,6 +623,7 @@
         description="Modifying Entity Descriptor succeeded.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Entity Descriptor is modified in the data repository.</item>
@@ -670,6 +677,7 @@
         description="Entity Configuration could not be found.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to create IDFF extended Meta data.</item>
@@ -683,6 +691,7 @@
         description="Creation of Extended Entity Configuration failed since it already exists.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to create IDFF extended Meta data.</item>
@@ -701,6 +710,7 @@
         description="Failed to get entity configuration.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to retrieve IDFF extended Meta data.</item>
@@ -714,6 +724,7 @@
         description="Retrieval of Entity Configuration succeeded.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Entity Configuration is retrieved from the data repository</item>
@@ -725,6 +736,7 @@
         description="Extended Entity Configuration was modified.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Extended Entity Configuration is modified in the data repository</item>
@@ -736,6 +748,7 @@
         description="Failed to modify Extended Entity Configuration.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Extended Entity Configuration is modified in the data repository</item>
@@ -749,6 +762,7 @@
         description="Extended Entity Configuration was created.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Extended Entity Configuration is stored in the data repository</item>
@@ -760,6 +774,7 @@
         description="Storing of IDFF Extended Configuration in the repository failed.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to create Extended Entity Configuration.</item>
@@ -775,6 +790,7 @@
         description="The Extended Entity Configuration is invalid.">
         <datainfo>
             <item>Entity ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Trying to create, modify or retrieve Extended Entity Configuration.</item>
@@ -937,6 +953,7 @@
         <datainfo>
             <item>Entity ID</item>
             <item>Affiliation ID</item>
+            <item>Realm or Organization Name</item>
         </datainfo>
         <triggers>
             <item>Checks if the provider is a member of the Affiliation.</item>

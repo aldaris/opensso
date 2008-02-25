@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.8 2008-01-04 18:50:20 asyhuang Exp $
+   $Id: configure.jsp,v 1.9 2008-02-25 21:45:37 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -167,15 +167,11 @@
 
                     // [START] Swap protocol, host, port and deployment URI
                     //         to form IDP metadata XML and import it
-                    metaXML = metaXML.replaceAll(remoteSPEntityID,
-                        "@remoteSPEntityID@");
                     String spMetaXML = metaXML.replaceAll(localProto, proto);
                     spMetaXML = spMetaXML.replaceAll(localHost, host);
                     spMetaXML = spMetaXML.replaceAll(localPort, port);
                     spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
                         deploymenturi);
-                    spMetaXML = spMetaXML.replaceAll("@remoteSPEntityID@",
-                        remoteSPEntityID);
                     EntityDescriptorElement spDescriptor =
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(spMetaXML);
@@ -202,6 +198,7 @@
                     configured = true;
                 } catch (Exception clie) {
                     errorMsg = clie.getMessage();
+                    clie.printStackTrace();
                 }
             } else {
                 errorMsg = "Required fields are missing.";
