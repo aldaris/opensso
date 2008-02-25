@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.7 2008-01-29 18:55:05 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.8 2008-02-25 22:35:12 rajeevangal Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,13 +28,17 @@ import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.common.ShutdownPriority;
 import com.sun.identity.shared.debug.Debug;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import javax.servlet.ServletContext;
 
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.servlet.ServletContext;
 
 import org.opends.server.core.DirectoryServer;
 import org.opends.server.extensions.ConfigFileHandler;
@@ -80,6 +84,17 @@ public class EmbeddedOpenDS {
      */
     public static void setup(Map map, ServletContext servletCtx)
         throws Exception {
+        // Determine Cipher to be used
+        SetupProgress.reportStart("emb.installingemb", null);
+        String xform =  getSupportedTransformation();
+        if (xform == null) {
+            SetupProgress.reportEnd("emb.noxform", null);
+            throw new Exception("No transformation found");
+        } else {
+            map.put(OPENDS_TRANSFORMATION, xform);
+            SetupProgress.reportEnd("emb.success", xform);
+        }
+
         String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
         String odsRoot = basedir + "/" +
             SetupConstants.SMS_OPENDS_DATASTORE;
@@ -99,10 +114,8 @@ public class EmbeddedOpenDS {
 
         // copy files
         String[] files = {
-            //"config/upgrade/schema.ldif.3056",
-            //"config/upgrade/config.ldif.3056",
-            "config/upgrade/schema.ldif.3463",
-            "config/upgrade/config.ldif.3463",
+            "config/upgrade/schema.ldif.3883",
+            "config/upgrade/config.ldif.3883",
             "config/config.ldif",
             "config/admin-backend.ldif",
             "config/famsuffix.ldif",
@@ -173,6 +186,37 @@ public class EmbeddedOpenDS {
             SetupProgress.reportEnd("emb.done", null);
         }
         //java.lang.Thread.sleep(5000);
+    }
+
+    /**
+      * Preferred transforms
+      */
+    final static String[] preferredTransforms =
+    {
+         "RSA/ECB/OAEPWithSHA1AndMGF1Padding",      // Sun JCE
+         "RSA/ /OAEPPADDINGSHA-1",                  // IBMJCE
+         "RSA/ECB/OAEPWithSHA-1AndMGF-1Padding",    // BouncyCastle
+         "RSA/ECB/PKCS1Padding"                     // Fallback
+    };
+    final static String  OPENDS_TRANSFORMATION = "OPENDS_TRANSFORMATION";
+
+    /**
+     * Traverses <code>preferredTransforms</code> list in order to
+     * find a Cipher supported by underlying JCE providers.`
+     * @returns transformation available.
+     */
+    private static String getSupportedTransformation() {
+        for (int i = 0; i < preferredTransforms.length ; i++) {
+            try {
+                Cipher.getInstance(preferredTransforms[i]);
+                return preferredTransforms[i];
+             } 
+             catch  ( NoSuchAlgorithmException ex) {  
+             }
+             catch  ( NoSuchPaddingException ex) {  
+             }
+        }
+        return null;
     }
 
     /**
