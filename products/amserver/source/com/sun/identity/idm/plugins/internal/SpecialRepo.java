@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.11 2007-11-21 01:22:32 goodearth Exp $
+ * $Id: SpecialRepo.java,v 1.12 2008-02-25 23:28:24 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdRepoFatalException;
 import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
@@ -74,6 +75,17 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     private static final String statusAttribute = "inetUserStatus";
     private static final String statusActive = "Active";
     private static final String statusInactive = "Inactive";
+    private static final String snAttribute = "sn";
+    private static final String cnAttribute = "cn";
+    private static final String gnAttribute = "givenName";
+    private static final String empNumAttribute = "employeeNumber";
+    private static final String aliasAttribute = "iplanet-am-user-alias-list";
+    private static final String successAttribute = "iplanet-am-user-success-url";
+    private static final String failureAttribute = "iplanet-am-user-failure-url";
+    private static final String mailAttribute = "mail";
+    private static final String addrAttribute = "postalAddress";
+    private static final String msisdnAttribute = "sunIdentityMSISDNNumber";
+    private static final String phoneAttribute = "telephoneNumber";
 
     IdRepoListener repoListener = null;
 
@@ -155,10 +167,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public void assignService(SSOToken token, IdType type, String name,
             String serviceName, SchemaType stype, Map attrMap)
             throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.SERVICE.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
-
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(), 
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+               "305", args);
+        }
     }
 
     /*
@@ -184,10 +202,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public void delete(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.SERVICE.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
-
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(), 
+                type + " " + name  };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -199,9 +223,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public Set getAssignedServices(SSOToken token, IdType type, String name,
             Map mapOfServicesAndOCs) throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.SERVICE.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -316,9 +347,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public Map getBinaryAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.READ.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.READ.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -331,10 +369,17 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public void setBinaryAttributes(SSOToken token, IdType type, String name,
             Map attributes, boolean isAdd) throws IdRepoException, SSOException 
     {
-        Object args[] = { NAME, IdOperation.EDIT.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.EDIT.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
 
+        }
     }
 
     /*
@@ -518,9 +563,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public Map getBinaryServiceAttributes(SSOToken token, IdType type,
             String name, String serviceName, Set attrNames)
             throws IdRepoException, SSOException {
-        Object args[] = {NAME, IdOperation.READ.getName()};
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = {NAME, IdOperation.READ.getName()};
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        }
     }
 
     /*
@@ -531,9 +583,13 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public boolean isExists(SSOToken token, IdType type, String name)
             throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.SERVICE.getName(), type };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            return true;
+        } else {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(), type };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -547,10 +603,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public void modifyMemberShip(SSOToken token, IdType type, String name,
             Set members, IdType membersType, int operation)
             throws IdRepoException, SSOException {
-
-        Object args[] = { NAME, IdOperation.EDIT.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.EDIT.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -563,9 +625,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public void modifyService(SSOToken token, IdType type, String name,
             String serviceName, SchemaType sType, Map attrMap)
             throws IdRepoException, SSOException {
-        Object args[] = { NAME, IdOperation.SERVICE.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -577,7 +646,16 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public void removeAttributes(SSOToken token, IdType type, String name,
             Set attrNames) throws IdRepoException, SSOException {
-
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = { NAME, IdOperation.SERVICE.getName() };
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        }
     }
 
     /*
@@ -773,6 +851,61 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
                         statusAttribute)) != null) {
                         attrs.put(statusAttribute, vals);
                     }
+                    if ((vals = (Set) attributes.get(cnAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        cnAttribute)) != null) {
+                        attrs.put(cnAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(snAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        snAttribute)) != null) {
+                        attrs.put(snAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(gnAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        gnAttribute)) != null) {
+                        attrs.put(gnAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(empNumAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        empNumAttribute)) != null) {
+                        attrs.put(empNumAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(aliasAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        aliasAttribute)) != null) {
+                        attrs.put(aliasAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(successAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        successAttribute)) != null) {
+                        attrs.put(successAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(failureAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        failureAttribute)) != null) {
+                        attrs.put(failureAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(mailAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        mailAttribute)) != null) {
+                        attrs.put(mailAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(addrAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        addrAttribute)) != null) {
+                        attrs.put(addrAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(msisdnAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        msisdnAttribute)) != null) {
+                        attrs.put(msisdnAttribute, vals);
+                    }
+                    if ((vals = (Set) attributes.get(phoneAttribute))
+                        != null || (vals = (Set) attributes.get(
+                        phoneAttribute)) != null) {
+                        attrs.put(phoneAttribute, vals);
+                    }
                     usc1.setAttributes(attrs);
                     // If password is changed for dsameuser, need to
                     // update serverconfig.xml and directory
@@ -819,11 +952,18 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public void unassignService(SSOToken token, IdType type, String name,
             String serviceName, Map attrMap) throws IdRepoException,
             SSOException {
-        Object args[] = {
+        if (isSpecialUser(token, type, name)) {
+            Object args[] = { NAME, IdOperation.SERVICE.getName(),
+                type + " " + name };
+            throw new IdRepoFatalException(IdRepoBundle.BUNDLE_NAME,
+                "305", args);
+        } else {
+            Object args[] = {
                 "com.sun.identity.idm.plugins.specialusers.SpecialRepo",
                 IdOperation.SERVICE.getName() };
-        throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
-                args);
+            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, 
+                "305", args);
+        }
     }
 
     /*
@@ -906,6 +1046,35 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         scm.removeListener(scmListenerId);
         ssm.removeListener(ssmListenerId);
     }
+
+
+    private boolean isSpecialUser(SSOToken token, IdType type, 
+        String  name) throws  SSOException  {
+        boolean isSpecUser = false;
+        if (type.equals(IdType.USER)) {
+            try {
+                if (userConfig == null) {
+                    if (globalConfig == null) {
+                        if (scm == null) {
+                            scm = new ServiceConfigManager(token,
+                                    IdConstants.REPO_SERVICE, "1.0");
+                        }
+                        globalConfig = scm.getGlobalConfig(null);
+                    }
+                    userConfig = globalConfig.getSubConfig("users");
+                }
+                Set userSet = new CaseInsensitiveHashSet();
+                userSet.addAll(userConfig.getSubConfigNames());
+                if (userSet != null && userSet.contains(name)) {
+                    isSpecUser = true;
+                }
+            } catch (SMSException smse) {
+                isSpecUser = false;
+            }
+        }
+        return isSpecUser;
+    }
+
 
     private void loadSupportedOps() {
         Set opSet = new HashSet();

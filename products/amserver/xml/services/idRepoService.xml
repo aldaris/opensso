@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.18 2008-01-24 20:01:30 goodearth Exp $
+   $Id: idRepoService.xml,v 1.19 2008-02-25 23:27:43 kenwho Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -83,6 +83,50 @@
                             type="single"
                             isSearchable="yes"
                             i18nKey="dn" />
+                        <AttributeSchema name="sn"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="sn" />
+                        <AttributeSchema name="cn"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="cn" />
+                        <AttributeSchema name="employeeNumber"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="employeeNumber" />
+                        <AttributeSchema name="givenName"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="givenName" />
+                        <AttributeSchema name="iplanet-am-user-alias-list"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="iplanet-am-user-alias-list" />
+                        <AttributeSchema name="iplanet-am-user-success-url"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="iplanet-am-user-success-url" />
+                        <AttributeSchema name="iplanet-am-user-failure-url"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="iplanet-am-user-failure-url" />
+                        <AttributeSchema name="mail"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="mail" />
+                        <AttributeSchema name="postalAddress"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="postalAddress" />
+                        <AttributeSchema name="sunIdentityMSISDNNumber"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="sunIdentityMSISDNNumber" />
+                        <AttributeSchema name="telephoneNumber"
+                            type="single"
+                            isSearchable="yes"
+                            i18nKey="telephoneNumber" />
                         <AttributeSchema name="roles" i18nKey="roles" />
                     </SubSchema>
                 </SubSchema>
@@ -2380,13 +2424,57 @@
                             <Attribute name="userPassword" />
                             <Value>@HASHADMINPASSWD@</Value>
                         </AttributeValuePair>
-                       <AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="inetUserStatus" />
                             <Value>Active</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
                             <Value>@USER_NAMING_ATTR@=amAdmin,ou=people,@NORMALIZED_ORGBASE@</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="sn" />
+                            <Value>amAdmin</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="cn" />
+                            <Value>amAdmin</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="givenName" />
+                            <Value>amAdmin</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="employeeNumber" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-user-alias-list" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-user-success-url" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-user-failure-url" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="mail" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="postalAddress" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="sunIdentityMSISDNNumber" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="telephoneNumber" />
+                            <Value></Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="roles" />
@@ -2417,6 +2505,50 @@
                         <AttributeValuePair>
                             <Attribute name="dn" />
                             <Value>@USER_NAMING_ATTR@=anonymous,ou=people,@NORMALIZED_ORGBASE@</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="sn" />
+                            <Value>anonymous</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="cn" />
+                            <Value>anonymous</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="givenName" />
+                            <Value>anonymous</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="employeeNumber" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-user-alias-list" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-user-success-url" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="iplanet-am-user-failure-url" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="mail" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="postalAddress" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="sunIdentityMSISDNNumber" />
+                            <Value></Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="telephoneNumber" />
+                            <Value></Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="amldapuser"
