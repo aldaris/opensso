@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.12 2008-02-14 22:59:09 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.13 2008-02-25 21:06:25 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,8 @@ public interface SAMLv2Model
         "httpPostLocation";
     
     //SAML2 IDP Extended Attributes
-    public static final String IDP_SIGN_CERT_ALIAS = "signingCertAlias";
+    public static final String IDP_SIGN_CERT_ALIAS = 
+        "signingCertAlias";
     public static final String IDP_ENCRYPT_CERT_ALIAS =
         "encryptionCertAlias";
     public static final String IDP_BASIC_AUTH_ON = "basicAuthOn";
@@ -110,7 +111,8 @@ public interface SAMLv2Model
     public static final String IDP_AUTO_FED_ENABLED = "autofedEnabled";
     public static final String IDP_AUTO_FED_ATTR = "autofedAttribute";
     public static final String IDP_ATTR_MAP = "attributeMap";
-    public static final String IDP_NAMEID_ENCRYPTED = "wantNameIDEncrypted";
+    public static final String IDP_NAMEID_ENCRYPTED = 
+        "wantNameIDEncrypted";
     public static final String IDP_LOGOUT_REQ_SIGN =
         "wantLogoutRequestSigned";
     public static final String IDP_LOGOUT_RESP_SIGN =
@@ -216,6 +218,22 @@ public interface SAMLv2Model
      public static final String ATTRIBUTE_PROFILE = "AttributeProfile";
      public static final String AUTHN_QUERY_SERVICE = "authnQueryServLocation";
      public static final String ATTR_NAMEID_FORMAT = "attrnameidlist";
+     public static final String ASSERTION_ID_SAOP_LOC = 
+             "soapAssertionidrequest";
+     public static final String ASSERTION_ID_URI_LOC = 
+             "uriAssertionIDRequest";
+     
+     //SAML AUTHORITY Extended
+     public static final String SIGN_CERT_ALIAS = "signingCertAlias";
+     public static final String ENCRYPT_CERT_ALIAS = "encryptionCertAlias";
+     public static final String DEF_AUTH_MAPPER = 
+             "default_attributeAuthorityMapper";
+     public static final String X509_AUTH_MAPPER = 
+             "x509Subject_attributeAuthorityMapper";
+     public static final String SUB_DATA_STORE = 
+             "x509SubjectDataStoreAttrName";
+     public static final String ASSERTION_ID_REQ_MAPPER = 
+             "assertionIDRequestMapper";
 
     // XACML PDP/PEP
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
@@ -624,6 +642,117 @@ public interface SAMLv2Model
     public Map getExtendedAttrQueryAttributes(
         String realm,
         String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Saves the standard attribute values for Attribute Authority.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param attrAuthValues Map which contains standard attribute auth values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setStdAttributeAuthorityValues(
+        String realm,
+        String entityName,
+        Map attrAuthValues
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns SAMLv2 Extended Attribute Authority values.
+     *
+     * @return SAMLv2 Extended Attribute Authority values.
+     */
+    public Map getattrAuthEXDataMap();
+    
+    /**
+     * Saves the extended attribute values for Attribute Authority.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param attrAuthExtValues Map which contains the extended values.
+     * @param location has the information whether remote or hosted.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setExtAttributeAuthorityValues(
+        String realm,
+        String entityName,
+        Map attrAuthExtValues,
+        String location
+        ) throws AMConsoleException;
+    
+    /**
+     * Saves the standard attribute values for Authn Authority.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param authnAuthValues Map which contains standard authn authority values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setStdAuthnAuthorityValues(
+        String realm,
+        String entityName,
+        Map authnAuthValues
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns SAMLv2 Extended Authn Authority values.
+     *
+     * @return SAMLv2 Extended Authn Authority values.
+     */
+    public Map getauthnAuthEXDataMap();
+    
+    /**
+     * Saves the extended attribute values for Authn Authority.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param authnAuthExtValues Map which contains the extended authn values.
+     * @param location has the information whether remote or hosted.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setExtauthnAuthValues(
+        String realm,
+        String entityName,
+        Map authnAuthExtValues,
+        String location
+        ) throws AMConsoleException;
+    
+     /**
+     * Saves the standard attribute values for Attribute Query.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param attrQueryValues Map which contains standard attribute query values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setStdAttributeQueryValues(
+        String realm,
+        String entityName,
+        Map attrQueryValues
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns SAMLv2 Extended Attribute Query values.
+     *
+     * @return SAMLv2 Extended Attribute Query values.
+     */
+    public Map getattrQueryEXDataMap();
+    
+    /**
+     * Saves the extended attribute values for Attribute Query.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param attrQueryExtValues Map which contains the extended values.
+     * @param location has the information whether remote or hosted.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setExtAttributeQueryValues(
+        String realm,
+        String entityName,
+        Map attrQueryExtValues,
+        String location
         ) throws AMConsoleException;
     
 }

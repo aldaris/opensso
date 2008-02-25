@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthnAuthorityViewBean.java,v 1.1 2008-02-14 22:58:45 babysunil Exp $
+ * $Id: SAMLv2AuthnAuthorityViewBean.java,v 1.2 2008-02-25 21:08:01 babysunil Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,35 @@ public class SAMLv2AuthnAuthorityViewBean extends SAMLv2Base {
     
     public void handleButton1Request(RequestInvocationEvent event)
     throws ModelControlException {
+        try {
+            
+            SAMLv2Model model = (SAMLv2Model)getModel();
+            AMPropertySheet ps =
+                    (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            
+            //retrieve the standard metadata values from the property sheet
+            Map authnAuthValues = ps.getAttributeValues(
+                    model.getStandardAuthnAuthorityAttributes(
+                    realm, entityName), false, model);
+            
+            //save the standard metadata values for attribute authority
+            model.setStdAuthnAuthorityValues(
+                realm, entityName, authnAuthValues);
+            
+            //retrieve the extended metadata values from the property sheet
+            Map authnAuthExtValues = ps.getAttributeValues(
+                    model.getauthnAuthEXDataMap(), false, model);
+            
+            //save the extended metadata values for attribute authority
+            model.setExtauthnAuthValues(
+                    realm, entityName, authnAuthExtValues,location);
+            
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "samlv2.authnauth.property.updated");
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+        }
         forwardTo();
     }
     

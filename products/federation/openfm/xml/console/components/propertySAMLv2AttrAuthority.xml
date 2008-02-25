@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2AttrAuthority.xml,v 1.1 2008-02-14 23:02:51 babysunil Exp $
+   $Id: propertySAMLv2AttrAuthority.xml,v 1.2 2008-02-25 21:09:23 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -54,7 +54,7 @@
                     <label name="lbldeafultAttributeService" defaultValue="samlv2idp.attribute.label.deafultattrservicelocation" 
                            labelFor="attrSerdefaultLocation" />
                     <cc name="attrSerdefaultLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
+                        <attribute name="size" value="115" />
                         <attribute name="autoSubmit" value="false" />
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
@@ -77,7 +77,39 @@
                            defaultValue="samlv2idp.attribute.label.attrservicelocation"
                            labelFor="attrSerLocation" />
                     <cc name="attrSerLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
+                        <attribute name="size" value="115" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+    </section>
+    <section name="assertionIDRequestService" defaultValue="samlv2idp.attribute.label.assertionIDRequestService" > 
+        <property>
+            <label name="lblSoapAssertionIDRequest" defaultValue="samlv2idp.attribute.label.soapAssertionIDRequest" /> 
+            <ccgroup>
+                <property>
+                    <label name="lblsoapAssertIDService" defaultValue="samlv2idp.attribute.label.soaplocation" 
+                           labelFor="soapAssertionidrequest" />
+                    <cc name="soapAssertionidrequest" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="115" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
+                </property>
+            </ccgroup>            
+        </property>
+        
+        <property>
+            <label name="lbluriAssertionIDRequest" defaultValue="samlv2idp.attribute.label.uriAssertionIDRequest" /> 
+            <ccgroup>
+                <property>
+                    <label name="lbluriassertionIDRequest"
+                           defaultValue="samlv2idp.attribute.label.urilocation"
+                           labelFor="uriAssertionIDRequest" />
+                    <cc name="uriAssertionIDRequest" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="115" />
                         <attribute name="autoSubmit" value="false" />
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
@@ -167,5 +199,18 @@
             </ccgroup>
         </property>
     </section>
-    
+    <section name="secassertionIDRequestMapper" defaultValue="samlv2idp.attribute.label.assertionIDrequestMapper" >
+        <property> 
+            <ccgroup> 
+                <property>
+                    <cc name="assertionIDRequestMapper" 
+                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="95" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
+                </property>               
+            </ccgroup>
+        </property>
+    </section>    
 </propertysheet>
