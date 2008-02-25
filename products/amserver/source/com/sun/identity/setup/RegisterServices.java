@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.6 2007-10-15 17:55:02 rajeevangal Exp $
+ * $Id: RegisterServices.java,v 1.7 2008-02-25 18:30:41 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,6 +114,11 @@ public class RegisterServices {
             }
             
         }
+        // Set installTime to false, to avoid in-memory notification from
+        // SMS in cases where not needed, and to denote that service  
+        // registration got completed during configuration phase and it 
+        // has passed installtime.
+        System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "false");
     }
 
     private String manipulateServiceXML(String serviceFileName, String strXML){
