@@ -178,9 +178,27 @@ PolicyEntry::add_policy(XMLElement &policyNode, KVMRefCntPtr env) {
 bool
 PolicyEntry::removePolicy(const ResourceName &resName) {
     ScopeLock myLock(lock);
+    bool retVal = false;
     Tree *tree = getTree(resName, false);
-    if(tree != NULL) {
-	return tree->remove(resName);
+    if(tree != NULL) {      
+      if (tree->remove(resName)) {
+         return true;
+      } else {
+         // tree->remove() has failed because resName is the root of the tree.
+         // In this case need to remove the tree from the forest to delete
+         // the policy
+         std::list<Tree *>::iterator iter = forest.begin();
+         while (iter != forest.end()) {
+             tree = *iter;
+             if(tree != NULL && (tree->isInTree(resName, false))) {
+                 iter = forest.erase(iter);
+                 delete(tree);
+                 retVal=true;
+                 continue;
+             }
+             iter++;
+         }
+      }
     }
-    return false;
+    return retVal;
 }

@@ -74,10 +74,40 @@ AM_BEGIN_EXTERN_C
 #define AUTH_USER_VAR           	"auth-user"
 #define AUTH_TYPE_VAR           	"auth-type"
 #define GOTO_PARAMETER          	"goto"
-#define REQUEST_METHOD_TYPE     	"sunwMethod"
 #define REFERER_SERVLET         	"refererservlet"
-#define FORM_METHOD_POST        	"POST"
-#define FORM_METHOD_GET         	"GET"
+
+/* for am_web_process_request and related functions */
+#define REQUEST_METHOD_TYPE                     "sunwMethod"
+#define REQUEST_METHOD_GET                      "GET"
+#define REQUEST_METHOD_POST                     "POST"
+#define REQUEST_METHOD_HEAD                     "HEAD"
+#define REQUEST_METHOD_PUT                      "PUT"
+#define REQUEST_METHOD_DELETE                   "DELETE"
+#define REQUEST_METHOD_TRACE                    "TRACE"
+#define REQUEST_METHOD_OPTIONS                  "OPTIONS"
+#define REQUEST_METHOD_CONNECT                  "CONNECT"
+#define REQUEST_METHOD_COPY                     "COPY"
+#define REQUEST_METHOD_INVALID                  "INVALID"
+#define REQUEST_METHOD_LOCK                     "LOCK"
+#define REQUEST_METHOD_UNLOCK                   "UNLOCK"
+#define REQUEST_METHOD_MKCOL                    "MKCOL"
+#define REQUEST_METHOD_MOVE                     "MOVE"
+#define REQUEST_METHOD_PATCH                    "PATCH"
+#define REQUEST_METHOD_PROPFIND                 "PROPFIND"
+#define REQUEST_METHOD_PROPPATCH                "PROPPATCH"
+#define REQUEST_METHOD_VERSION_CONTROL          "VERSION_CONTROL"
+#define REQUEST_METHOD_CHECKOUT                 "CHECKOUT"
+#define REQUEST_METHOD_UNCHECKOUT               "UNCHECKOUT"
+#define REQUEST_METHOD_CHECKIN                  "CHECKIN"
+#define REQUEST_METHOD_UPDATE                   "UPDATE"
+#define REQUEST_METHOD_LABEL                    "LABEL"
+#define REQUEST_METHOD_REPORT                   "REPORT"
+#define REQUEST_METHOD_MKWORKSPACE              "MKWORKSPACE"
+#define REQUEST_METHOD_MKACTIVITY               "MKACTIVITY"
+#define REQUEST_METHOD_BASELINE_CONTROL         "BASELINE_CONTROL"
+#define REQUEST_METHOD_MERGE                    "MERGE"
+#define REQUEST_METHOD_UNKNOWN                  "UNKNOWN"
+
 
 #define HTTP_PROTOCOL_STR       	"http://"
 #define HTTP_PROTOCOL_STR_LEN   	(sizeof(HTTP_PROTOCOL_STR) - 1)
@@ -275,7 +305,18 @@ typedef enum {
     AM_WEB_REQUEST_MKCOL,
     AM_WEB_REQUEST_PATCH,
     AM_WEB_REQUEST_PROPFIND,
-    AM_WEB_REQUEST_PROPPATCH
+    AM_WEB_REQUEST_PROPPATCH,
+    AM_WEB_REQUEST_VERSION_CONTROL,
+    AM_WEB_REQUEST_CHECKOUT,
+    AM_WEB_REQUEST_UNCHECKOUT,
+    AM_WEB_REQUEST_CHECKIN,
+    AM_WEB_REQUEST_UPDATE,
+    AM_WEB_REQUEST_LABEL,
+    AM_WEB_REQUEST_REPORT,
+    AM_WEB_REQUEST_MKWORKSPACE,
+    AM_WEB_REQUEST_MKACTIVITY,
+    AM_WEB_REQUEST_BASELINE_CONTROL,
+    AM_WEB_REQUEST_MERGE
 } am_web_req_method_t;
 
 typedef enum {

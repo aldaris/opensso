@@ -98,7 +98,6 @@ USING_PRIVATE_NAMESPACE
 #define	AUTH_REALM_URL_PREFIX		"&realm="
 #define	AUTH_REALM_URL_PREFIX_LEN	(sizeof(AUTH_REALM_URL_PREFIX) - 1)
 
-#define REQUEST_METHOD_TYPE 	"sunwMethod"
 #define COMPOSITE_ADVICE_KEY "sunamcompositeadvice"
 #define SESSION_COND_KEY     "SessionConditionAdvice"
 
@@ -117,26 +116,6 @@ USING_PRIVATE_NAMESPACE
 #define ELEMENT_SUBJECT				"Subject"
 #define ELEMENT_NAME_IDENTIFIER			"IDPProvidedNameIdentifier"
 
-/* for am_web_process_request and related functions */
-#define REQUEST_METHOD_TYPE_PARAM      "sunwMethod"
-#define REQUEST_METHOD_GET             "GET"
-#define REQUEST_METHOD_POST            "POST"
-#define REQUEST_METHOD_HEAD            "HEAD"
-#define REQUEST_METHOD_PUT	       "PUT"
-#define REQUEST_METHOD_DELETE	       "DELETE"
-#define REQUEST_METHOD_TRACE	       "TRACE"
-#define REQUEST_METHOD_OPTIONS	       "OPTIONS"
-#define REQUEST_METHOD_CONNECT	       "CONNECT"
-#define REQUEST_METHOD_COPY	       "COPY"
-#define REQUEST_METHOD_INVALID	       "INVALID"
-#define REQUEST_METHOD_LOCK	       "LOCK"
-#define REQUEST_METHOD_UNLOCK	       "UNLOCK"
-#define REQUEST_METHOD_MKCOL	       "MKCOL"
-#define REQUEST_METHOD_MOVE	       "MOVE"
-#define REQUEST_METHOD_PATCH	       "PATCH"
-#define REQUEST_METHOD_PROPFIND	       "PROPFIND"
-#define REQUEST_METHOD_PROPPATCH       "PROPPATCH"
-#define REQUEST_METHOD_UNKNOWN         "Unknown"
 // notification response body.
 #define NOTIFICATION_OK		       "OK\r\n"
 
@@ -858,27 +837,31 @@ am_bool_t in_not_enforced_list(URL &urlObj,
     
     /* First check is the access denied URL */
     if ((*agentConfigPtr)->access_denied_url != NULL) {
-    /*we append the sunwerrorcode as a querystring to the access denied url
-    if the policy denies access to the resouce. This query parameter
-    needs to be removed from the url if present before comparison */
-    std::string urlStr;
-    const char* accessUrl = url;
-    std::string accessDeniedUrlStr;
-    const char* access_denied_url = NULL;
+        /*we append the sunwerrorcode as a querystring to the access denied url
+        if the policy denies access to the resouce. This query parameter
+        needs to be removed from the url if present before comparison */
+        std::string urlStr;
+        const char* accessUrl = url;
+        std::string accessDeniedUrlStr;
+        const char* access_denied_url = NULL;
 
-    URL accessDeniedUrlObj((*agentConfigPtr)->access_denied_url);
-    accessDeniedUrlObj.getURLString(accessDeniedUrlStr);
-    access_denied_url = accessDeniedUrlStr.c_str();
+        URL accessDeniedUrlObj((*agentConfigPtr)->access_denied_url);
+        accessDeniedUrlObj.getURLString(accessDeniedUrlStr);
+        access_denied_url = accessDeniedUrlStr.c_str();
 
-    if (url_str.find(sunwErrCode) != std::string::npos) {
-        urlObj.removeQueryParameter(sunwErrCode);
-        urlObj.removeQueryParameter(URL_REDIRECT_PARAM);
-        urlObj.getURLString(urlStr);
-        accessUrl = urlStr.c_str();
-    }
+        if (url_str.find(sunwErrCode) != std::string::npos) {
+            urlObj.removeQueryParameter(sunwErrCode);
+            urlObj.getURLString(url_str);
+            if (url_str.find(
+	        (*agentConfigPtr)->url_redirect_param) != std::string::npos) {
+             urlObj.removeQueryParameter((*agentConfigPtr)->url_redirect_param);
+            }
+            urlObj.getURLString(urlStr);
+            accessUrl = urlStr.c_str();
+        }
 
-	am_web_log_debug("Matching %s with access_denied_url %s",
-		         url, (*agentConfigPtr)->access_denied_url);
+        am_web_log_debug("Matching %s with access_denied_url %s",
+                     url, (*agentConfigPtr)->access_denied_url);
         am_resource_match_t access_denied_url_match;
         access_denied_url_match = am_policy_compare_urls(&rsrcTraits,
 					access_denied_url, accessUrl, B_FALSE);
@@ -2405,7 +2388,6 @@ am_web_get_url_to_redirect(am_status_t status,
 		    std::string retVal;
 
 		    url_info_ptr = find_active_login_server(agent_config);
-		    //url_info_ptr = find_active_login_server(&agent_info);
 		    if (NULL == url_info_ptr) {
 			am_web_log_warning("%s: unable to find active Access "
 					   "Manager Auth server.", thisfunc);
@@ -4022,6 +4004,39 @@ am_web_method_num_to_str(am_web_req_method_t method)
     case AM_WEB_REQUEST_PROPPATCH:
 	methodName = REQUEST_METHOD_PROPPATCH;
 	break;
+    case AM_WEB_REQUEST_VERSION_CONTROL:
+        methodName = REQUEST_METHOD_VERSION_CONTROL;
+        break;
+    case AM_WEB_REQUEST_CHECKOUT:
+        methodName = REQUEST_METHOD_CHECKOUT;
+        break;
+    case AM_WEB_REQUEST_UNCHECKOUT:
+        methodName = REQUEST_METHOD_UNCHECKOUT;
+        break;
+    case AM_WEB_REQUEST_CHECKIN:
+        methodName = REQUEST_METHOD_CHECKIN;
+        break;
+    case AM_WEB_REQUEST_UPDATE:
+        methodName = REQUEST_METHOD_UPDATE;
+        break;
+    case AM_WEB_REQUEST_LABEL:
+        methodName = REQUEST_METHOD_LABEL;
+        break;
+    case AM_WEB_REQUEST_REPORT:
+        methodName = REQUEST_METHOD_REPORT;
+        break;
+    case AM_WEB_REQUEST_MKWORKSPACE:
+        methodName = REQUEST_METHOD_MKWORKSPACE;
+        break;
+    case AM_WEB_REQUEST_MKACTIVITY:
+        methodName = REQUEST_METHOD_MKACTIVITY;
+        break;
+    case AM_WEB_REQUEST_BASELINE_CONTROL:
+        methodName = REQUEST_METHOD_BASELINE_CONTROL;
+        break;
+    case AM_WEB_REQUEST_MERGE:
+        methodName = REQUEST_METHOD_MERGE;
+        break;
     case AM_WEB_REQUEST_UNKNOWN:
     default:
 	methodName = REQUEST_METHOD_UNKNOWN;
@@ -4049,6 +4064,48 @@ am_web_method_str_to_num(const char *method_str)
 	    method = AM_WEB_REQUEST_TRACE;
 	else if (!strcmp(method_str, REQUEST_METHOD_OPTIONS))
 	    method = AM_WEB_REQUEST_OPTIONS;
+	else if (!strcmp(method_str, REQUEST_METHOD_CONNECT))
+	    method = AM_WEB_REQUEST_CONNECT;
+	else if (!strcmp(method_str, REQUEST_METHOD_COPY))
+	    method = AM_WEB_REQUEST_COPY;
+	else if (!strcmp(method_str, REQUEST_METHOD_INVALID))
+	    method = AM_WEB_REQUEST_INVALID;
+	else if (!strcmp(method_str, REQUEST_METHOD_LOCK))
+	    method = AM_WEB_REQUEST_LOCK;
+	else if (!strcmp(method_str, REQUEST_METHOD_UNLOCK))
+	    method = AM_WEB_REQUEST_UNLOCK;
+	else if (!strcmp(method_str, REQUEST_METHOD_MKCOL))
+	    method = AM_WEB_REQUEST_MKCOL;
+	else if (!strcmp(method_str, REQUEST_METHOD_MOVE))
+	    method = AM_WEB_REQUEST_MOVE;
+	else if (!strcmp(method_str, REQUEST_METHOD_PATCH))
+	    method = AM_WEB_REQUEST_PATCH;
+	else if (!strcmp(method_str, REQUEST_METHOD_PROPFIND))
+	    method = AM_WEB_REQUEST_PROPFIND;
+	else if (!strcmp(method_str, REQUEST_METHOD_PROPPATCH))
+	    method = AM_WEB_REQUEST_PROPPATCH;
+	else if (!strcmp(method_str, REQUEST_METHOD_VERSION_CONTROL))
+	    method = AM_WEB_REQUEST_VERSION_CONTROL;
+	else if (!strcmp(method_str, REQUEST_METHOD_CHECKOUT))
+	    method = AM_WEB_REQUEST_CHECKOUT;
+	else if (!strcmp(method_str, REQUEST_METHOD_UNCHECKOUT))
+	    method = AM_WEB_REQUEST_UNCHECKOUT;
+	else if (!strcmp(method_str, REQUEST_METHOD_CHECKIN))
+	    method = AM_WEB_REQUEST_CHECKIN;
+	else if (!strcmp(method_str, REQUEST_METHOD_UPDATE))
+	    method = AM_WEB_REQUEST_UPDATE;
+	else if (!strcmp(method_str, REQUEST_METHOD_LABEL))
+	    method = AM_WEB_REQUEST_LABEL;
+	else if (!strcmp(method_str, REQUEST_METHOD_REPORT))
+	    method = AM_WEB_REQUEST_REPORT;	   
+	else if (!strcmp(method_str, REQUEST_METHOD_MKWORKSPACE))
+	    method = AM_WEB_REQUEST_MKWORKSPACE;
+	else if (!strcmp(method_str, REQUEST_METHOD_MKACTIVITY))
+	    method = AM_WEB_REQUEST_MKACTIVITY;
+	else if (!strcmp(method_str, REQUEST_METHOD_BASELINE_CONTROL))
+	    method = AM_WEB_REQUEST_BASELINE_CONTROL;	    	    
+	else if (!strcmp(method_str, REQUEST_METHOD_MERGE))
+	    method = AM_WEB_REQUEST_MERGE;
 	else
 	    method = AM_WEB_REQUEST_UNKNOWN;
     }
@@ -4472,7 +4529,7 @@ remove_cdsso_params_from_query(char **query,
     am_status_t remove_sts = AM_SUCCESS;
     const char *cookieName = am_web_get_cookie_name(agent_config);
     const char *cdsso_params[] = {
-		    REQUEST_METHOD_TYPE_PARAM,
+		    REQUEST_METHOD_TYPE,
 		    cookieName,
 		    "RequestID",
 		    "MajorVersion",
@@ -4769,7 +4826,7 @@ get_original_method(am_web_request_params_t *req_params,
     *orig_method = AM_WEB_REQUEST_UNKNOWN;
 
     status = am_web_get_parameter_value(req_params->url,
-		    REQUEST_METHOD_TYPE_PARAM, &orig_method_str);
+		    REQUEST_METHOD_TYPE, &orig_method_str);
     if (status == AM_SUCCESS) {
 	if (orig_method_str == NULL || orig_method_str[0] == '\0') {
 	    status = AM_NOT_FOUND;
@@ -4778,7 +4835,7 @@ get_original_method(am_web_request_params_t *req_params,
 	    am_web_log_debug("%s: got original method %s from "
 			     "query parameter %s.",
 			     thisfunc, orig_method_str,
-			     REQUEST_METHOD_TYPE_PARAM);
+			     REQUEST_METHOD_TYPE);
 	    *orig_method = am_web_method_str_to_num(orig_method_str);
 	    if (*orig_method == AM_WEB_REQUEST_UNKNOWN) {
 		am_web_log_warning("%s: Unrecognized original method "

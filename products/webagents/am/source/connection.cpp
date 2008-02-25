@@ -89,10 +89,6 @@ PRIntervalTime receive_timeout;
 PRIntervalTime connect_timeout;
 bool tcp_nodelay_is_enabled = false;
 
-char      buffer[PR_NETDB_BUF_SIZE];
-PRNetAddr address;
-PRHostEnt hostEntry;
-PRIntn    hostIndex;
 std::string defaultHostName(" ");
 
 am_status_t Connection::initialize(const Properties& properties)
@@ -286,23 +282,24 @@ Connection::Connection(const ServerInfo& server,
 		       bool alwaysTrustServerCert) 
     : socket(NULL)
 {
+    char      buffer[PR_NETDB_BUF_SIZE];
+    PRNetAddr address;
+    PRHostEnt hostEntry;
+    PRIntn    hostIndex;
     PRStatus	prStatus;
     SECStatus	secStatus;
 
-    if(strcmp(defaultHostName.c_str(),server.getHost().c_str()) != 0 ) {
-        prStatus = PR_GetHostByName(server.getHost().c_str(), buffer,
+    prStatus = PR_GetHostByName(server.getHost().c_str(), buffer,
 				sizeof(buffer), &hostEntry);
-        if (PR_SUCCESS != prStatus) {
-	    throw NSPRException("Connection::Connection", "PR_GetHostByName");
-        }
- 
-        hostIndex = PR_EnumerateHostEnt(0, &hostEntry, server.getPort(), &address);
-        if (hostIndex < 0) {
-	    throw NSPRException("Connection::Connection", "PR_EnumerateHostEnt");
-        }
-
-        defaultHostName = server.getHost();
+    if (PR_SUCCESS != prStatus) {
+        throw NSPRException("Connection::Connection", "PR_GetHostByName");
     }
+
+    hostIndex = PR_EnumerateHostEnt(0, &hostEntry, server.getPort(), &address);
+    if (hostIndex < 0) {
+        throw NSPRException("Connection::Connection", "PR_EnumerateHostEnt");
+    }
+
     socket = createSocket(address, server.useSSL(),
 			  certDBPasswd,
 			  certNickName,
