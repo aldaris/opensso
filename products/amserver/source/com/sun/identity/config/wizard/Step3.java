@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.5 2008-02-21 22:35:44 jonnelson Exp $
+ * $Id: Step3.java,v 1.6 2008-02-25 19:36:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,8 @@ public class Step3 extends LDAPStoreWizardPage {
         new ActionLink("setReplication", this, "setReplication");
     public ActionLink setConfigType = 
         new ActionLink("setConfigType", this, "setConfigType");
+    public ActionLink loadSchemaLink = 
+        new ActionLink("loadSchema", this, "loadSchema");
     
     public Step3() {
         setType("config");
@@ -48,64 +50,34 @@ public class Step3 extends LDAPStoreWizardPage {
     }
     
     public void onInit() {
-        String val = (String)getContext().getSessionAttribute("rootSuffix");
-        if (val == null) {
-            val = "dc=opensso,dc=java,dc=net";
-        }
+        String val = getAttribute("rootSuffix", Wizard.defaultRootSuffix);        
         addModel("rootSuffix", val);
 
-        val = (String)getContext().getSessionAttribute("configStorePort");
-        if (val == null) {
-            val = Integer.toString(
-                AMSetupServlet.getUnusedPort(getHostName(), 50389, 1000));
-        }
+        val = getAttribute("configStorePort", getAvailablePort(50389));
         addModel("configStorePort", val);
 
-        val = (String)getContext().getSessionAttribute("localRepPort");
-        if (val == null) {
-            val = Integer.toString(
-                AMSetupServlet.getUnusedPort(getHostName(), 58989, 1000));
-        }
+        val = getAttribute("localRepPort", getAvailablePort(58989));
         addModel("localRepPort", val);
 
-        val = (String)getContext().getSessionAttribute("existingPort");
-        if (val == null) {
-            val = Integer.toString(
-                AMSetupServlet.getUnusedPort(getHostName(), 50389, 1000));
-        }
+        val = getAttribute("existingPort", getAvailablePort(50389));        
         addModel("existingPort", val);
 
-        val = (String)getContext().getSessionAttribute("existingRepPort");
-        if (val == null) {
-            val = Integer.toString(
-                AMSetupServlet.getUnusedPort(getHostName(), 58990, 1000));
-        }
+        val = getAttribute("existingRepPort", getAvailablePort(58990));
         addModel("existingRepPort", val);
 
         // initialize the data store type being used
-        val = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_DATA_STORE);
-        if (val == null) {
-            val = SetupConstants.SMS_EMBED_DATASTORE;
-        }
+        val = getAttribute(
+            SetupConstants.CONFIG_VAR_DATA_STORE, 
+            SetupConstants.SMS_EMBED_DATASTORE);
         addModel(SetupConstants.CONFIG_VAR_DATA_STORE, val);
 
-        val = (String)getContext().getSessionAttribute("configStoreHost");
-        if (val == null) {
-            val = "localhost";
-        }
+        val = getAttribute("configStoreHost", "localhost");
         addModel("configStoreHost", val);
 
-        val = (String)getContext().getSessionAttribute("configStorePassword");
-        if (val == null) {
-            val = Wizard.defaultPassword;
-        }
+        val = getAttribute("configStorePassword", Wizard.defaultPassword);
         addModel("configStorePassword", val);
 
-        val = (String)getContext().getSessionAttribute("configStoreLoginId");
-        if (val == null) {
-            val = Wizard.defaultUserName;
-        }
+        val = getAttribute("configStoreLoginId", Wizard.defaultUserName);
         addModel("configStoreLoginId", val);
 
         super.onInit();        
@@ -145,4 +117,14 @@ public class Step3 extends LDAPStoreWizardPage {
         setPath(null);        
         return false;    
     }
+    
+    public boolean loadSchema() {
+        String schemaValue = toString("schema");
+        getContext().setSessionAttribute(
+            SetupConstants.CONFIG_VAR_DS_UM_SCHEMA, schemaValue);
+            
+        setPath(null);        
+        return false;    
+    }
+
 }

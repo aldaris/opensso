@@ -69,6 +69,15 @@
         validate();
     }
 
+    function loadUMSchema() {
+        var checked = document.getElementById("enableUMSchema").checked;
+        var value = "";
+        if (checked == true) {
+            value = document.getElementById("enableUMSchema").value;
+        }
+        AjaxUtils.call("$context$path?actionLink=loadSchema&schema="+value);
+    }
+    
     function enableExisting() {
         document.getElementById("existingInstance").style.display = "";
 	AjaxUtils.call("$context$path?actionLink=setReplication&multi=enable");
@@ -204,6 +213,12 @@ External (Sun Java System Directory Server). </p>
                         value="#if($store.password)$store.password#{end}" 
                         onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
                     <span id="configStorePasswordStatus"></span>
+                </li>
+                <li>
+                    <label for="enableUMSchema">Load User Schema<em>*</em></label>
+                    <input type="checkbox" id="enableUMSchema" 
+                        name="enableUMSchema" value="sdkSchema" 
+                        onclick="loadUMSchema();"/>
                 </li>
 		</div>
             </ol>

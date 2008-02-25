@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.5 2008-02-21 22:35:45 jonnelson Exp $
+ * $Id: Wizard.java,v 1.6 2008-02-25 19:36:44 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,16 +48,16 @@ public class Wizard extends AjaxPage {
         new ActionLink("testNewInstanceUrl", this, "testNewInstanceUrl" );
     public ActionLink pushConfigLink = 
         new ActionLink("pushConfig", this, "pushConfig" );
-
+    
+    private String cookieDomain = null;
+    private String hostName = getHostName();
+    private String dataStore = SetupConstants.SMS_EMBED_DATASTORE;
+    
     public static String defaultUserName = "cn=Directory Manager";
     public static String defaultPassword = "";
     public static String defaultRootSuffix = "dc=opensso,dc=java,dc=net";
-
-    private String cookieDomain = null;
-    private String hostName = getHostName();
-    private int defaultPort = 
-        AMSetupServlet.getUnusedPort(hostName, 50389, 1000);
-    private String dataStore = SetupConstants.SMS_EMBED_DATASTORE;
+    public String defaultPort = Integer.toString(
+        AMSetupServlet.getUnusedPort(hostName, 50389, 1000));
     
     public void onInit() {       
     }
@@ -130,7 +130,7 @@ public class Wizard extends AjaxPage {
             }
         }
 
-        tmp = getAttribute("configStorePort", Integer.toString(defaultPort));
+        tmp = getAttribute("configStorePort", defaultPort);
         request.addParameter(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT, tmp); 
 
@@ -148,6 +148,10 @@ public class Wizard extends AjaxPage {
         tmp = getAttribute("configStorePassword", "");
         request.addParameter(
             SetupConstants.CONFIG_VAR_DS_MGR_PWD, tmp);
+        
+        tmp = getAttribute(SetupConstants.CONFIG_VAR_DS_UM_SCHEMA,"");
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DS_UM_SCHEMA, tmp);
                 
         // user store repository
         LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute( 
@@ -233,8 +237,5 @@ public class Wizard extends AjaxPage {
         return false;
     }
 
-    private String getAttribute(String attr, String defaultValue) {
-        String value = (String)getContext().getSessionAttribute(attr);
-        return (value != null) ? value : defaultValue;
-    }
+
 }

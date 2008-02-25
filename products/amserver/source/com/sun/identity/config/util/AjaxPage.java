@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.11 2008-02-21 22:35:44 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.12 2008-02-25 19:36:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -262,4 +262,14 @@ public abstract class AjaxPage extends Page {
         setPath(null);
         return false;
     }
+    
+    public String getAttribute(String attr, String defaultValue) {
+        String value = (String)getContext().getSessionAttribute(attr);
+        return (value != null) ? value : defaultValue;
+    }
+          
+    public String getAvailablePort(int portNumber) {
+        return Integer.toString(
+            AMSetupServlet.getUnusedPort(getHostName(), portNumber, 1000));
+    }  
 }

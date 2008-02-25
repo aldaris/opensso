@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.7 2008-02-21 22:35:45 jonnelson Exp $
+ * $Id: Step6.java,v 1.8 2008-02-25 19:36:45 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,12 +55,11 @@ public class Step6 extends AjaxPage {
         tmp = (String)getContext().getSessionAttribute("rootSuffix");
         add("rootSuffix", tmp);
 
-        tmp = (String)getContext().getSessionAttribute("configStorePort");
+        tmp = getAttribute("configStorePort", getAvailablePort(50389));
         add("configStorePort", tmp);
 
-        tmp = (String)getContext().getSessionAttribute("configStoreLoginId");
+        tmp = getAttribute("configStoreLoginId", Wizard.defaultUserName);
         add("configStoreLoginId", tmp);
-
 
         LDAPStore configStore = (LDAPStore)getContext().getSessionAttribute(
             Step3.LDAP_STORE_SESSION_KEY);
