@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoServiceManager.java,v 1.3 2007-10-17 23:00:55 veiming Exp $
+ * $Id: DiscoServiceManager.java,v 1.4 2008-02-26 22:23:02 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,8 @@ public class DiscoServiceManager implements ConfigurationListener {
                                 "sunIdentityServerDiscoAuthorizer";
     private static final String ATTR_ENTRY_HANDLER =
                                 "sunIdentityServerDiscoEntryHandler";
+    private static final String ATTR_GLOBAL_ENTRY_HANDLER =
+                                "sunIdentityServerDiscoGlobalEntryHandler";
     private static final String ATTR_ID_MAPPER =
                         "sunIdentityServerDiscoProviderResourceIDMapper";
     private static final String KEY_PROVIDER_ID = "providerid";
@@ -111,6 +113,7 @@ public class DiscoServiceManager implements ConfigurationListener {
     private static boolean policyEvalUpdate = false;
     private static Authorizer authorizer = null;
     private static DiscoEntryHandler entryHandler = null;
+    private static DiscoEntryHandler globalEntryHandler = null;
     private static Map idMappers = null;
     private static String bootDiscoEntryStr = null;
     private static boolean requireSessionContextStmt = false;
@@ -231,6 +234,15 @@ public class DiscoServiceManager implements ConfigurationListener {
     }
 
     /**
+     * Returns the glbal <code>DiscoEntryHandler</code> for 
+     * business-to-enterprise (B2E) scenarios. This handler is invoked 
+     * when the resource id is implied. 
+     */
+    public static synchronized DiscoEntryHandler getGlobalEntryHandler() {
+        return globalEntryHandler;
+    }
+
+    /**
      * Returns the <code>ResourceIDMapper</code> associated with the providerID.
      * @param providerID a provider's ID
      * @return ResourceIDMapper associated with providerID. Null will be
@@ -338,6 +350,20 @@ public class DiscoServiceManager implements ConfigurationListener {
                     if (debug.messageEnabled()) {
                         debug.error("DiscoServiceManager.setValues: "
                         + "Exception when instantiating entry handler:", e);
+                    }
+                }
+            }
+
+            String globalHandler = CollectionHelper.getMapAttr(
+                    attrsMap, ATTR_GLOBAL_ENTRY_HANDLER);
+            if ((globalHandler != null) && (globalHandler.length() != 0)) {
+                try {
+                    globalEntryHandler = (DiscoEntryHandler) Class.
+                                forName(globalHandler).newInstance();
+                } catch (Exception e) {
+                    if (debug.messageEnabled()) {
+                        debug.error("DiscoServiceManager.setValues: Exception"+
+                         " when instantiating global entry handler:", e);
                     }
                 }
             }

@@ -134,6 +134,7 @@ com/sun/identity/liberty/ws/interfaces/Authorizer.class
 com/sun/identity/liberty/ws/interfaces/ResourceIDMapper.class
 com/sun/identity/liberty/ws/interfaces/ServiceInstanceUpdate.class
 com/sun/identity/liberty/ws/security/SecurityTokenProvider.class
+com/sun/identity/liberty/ws/security/LibSecurityTokenProvider.class
 com/sun/identity/liberty/ws/security/ProxySubject.class
 com/sun/identity/liberty/ws/security/ResourceAccessStatement.class
 com/sun/identity/liberty/ws/security/SecurityAssertion.class

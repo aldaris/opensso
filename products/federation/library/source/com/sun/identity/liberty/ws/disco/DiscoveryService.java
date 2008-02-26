@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryService.java,v 1.2 2006-12-23 05:06:49 hengming Exp $
+ * $Id: DiscoveryService.java,v 1.3 2008-02-26 22:23:01 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,35 +187,46 @@ public final class DiscoveryService implements RequestHandler {
         } else {
             resourceID = resID.getValue();
         }
+        DiscoEntryHandler entryHandler = null;
+        String userDN = null;
+        boolean isB2E = false;
+        if(resourceID != null &&
+               resourceID.equals(DiscoConstants.IMPLIED_RESOURCE)) {
+           // B2E case           
+           DiscoUtils.debug.message("DiscoveryService.lookup: in B2E case");
+           isB2E = true;
+        }
 
-        // find the disco ResourceIDMapper from config
-        ResourceIDMapper idMapper = DiscoServiceManager.getResourceIDMapper(
+        if(!isB2E) {
+           // find the disco ResourceIDMapper from config
+           ResourceIDMapper idMapper = DiscoServiceManager.getResourceIDMapper(
                                                         providerID);
-        if (idMapper == null) {
-            idMapper = DiscoServiceManager.getDefaultResourceIDMapper();
+           if (idMapper == null) {
+               idMapper = DiscoServiceManager.getDefaultResourceIDMapper();
+           }
+           userDN = idMapper.getUserID(providerID, resourceID, message);
+           if (userDN == null) {
+               DiscoUtils.debug.error("DiscoService.lookup: couldn't find the "
+                       + "user associated with the resourceID:" + resourceID);
+               status.setCode(DiscoConstants.QNAME_FAILED);
+               Document doc = null;
+               try {
+                   doc = XMLUtils.newDocument();
+               } catch (Exception ex) {
+                   DiscoUtils.debug.error("DiscoService.lookup:", ex);
+               }
+               DiscoUtils.getDiscoMarshaller().marshal(resp, doc);
+               return doc.getDocumentElement();
+           }
+           if (DiscoUtils.debug.messageEnabled()) {
+               DiscoUtils.debug.message("DiscoService.lookup: userDN="
+                                        + userDN);
+           }
+           entryHandler = DiscoServiceManager.getDiscoEntryHandler();
+        } else {
+           entryHandler = DiscoServiceManager.getGlobalEntryHandler();  
         }
-        String userDN = idMapper.getUserID(providerID, resourceID, message);
-        if (userDN == null) {
-            DiscoUtils.debug.error("DiscoService.lookup: couldn't find the "
-                        + "user associated with the resourceID:" + resourceID);
-            status.setCode(DiscoConstants.QNAME_FAILED);
-            Document doc = null;
-            try {
-                doc = XMLUtils.newDocument();
-            } catch (Exception ex) {
-                DiscoUtils.debug.error("DiscoService.lookup:", ex);
-            }
-            DiscoUtils.getDiscoMarshaller().marshal(resp, doc);
-            return doc.getDocumentElement();
-        }
-
-        if (DiscoUtils.debug.messageEnabled()) {
-            DiscoUtils.debug.message("DiscoService.lookup: userDN=" + userDN);
-        }
-
-        // find the DiscoEntryHandler from config
-        DiscoEntryHandler entryHandler =
-                        DiscoServiceManager.getDiscoEntryHandler();
+                
         if (entryHandler == null) {
             status.setCode(DiscoConstants.QNAME_FAILED);
             DiscoUtils.debug.message(
@@ -323,16 +334,28 @@ public final class DiscoveryService implements RequestHandler {
         } else {
             resourceID = resID.getValue();
         }
-
-        // find the disco ResourceIDMapper from config
-        ResourceIDMapper idMapper = DiscoServiceManager.getResourceIDMapper(
-                                        providerID);
-        if (idMapper == null) {
-            idMapper = DiscoServiceManager.getDefaultResourceIDMapper();
+        
+        DiscoEntryHandler entryHandler = null;
+        String userDN = null;
+        boolean isB2E = false;
+        String logMsg = null;
+        if(resourceID != null &&
+               resourceID.equals(DiscoConstants.IMPLIED_RESOURCE)) {
+           // B2E case           
+           DiscoUtils.debug.message("DiscoveryService.lookup: in B2E case");
+           isB2E = true;
         }
-        String userDN = idMapper.getUserID(providerID, resourceID, message);
 
-        String logMsg = DiscoUtils.bundle.getString("messageID") + "="
+        if(!isB2E) {
+           // find the disco ResourceIDMapper from config
+           ResourceIDMapper idMapper = DiscoServiceManager.getResourceIDMapper(
+                                        providerID);
+           if (idMapper == null) {
+               idMapper = DiscoServiceManager.getDefaultResourceIDMapper();
+           }
+           userDN = idMapper.getUserID(providerID, resourceID, message);
+
+           logMsg = DiscoUtils.bundle.getString("messageID") + "="
                         + message.getCorrelationHeader().getMessageID() + "."
                         + DiscoUtils.bundle.getString("providerID") + "="
                         + providerID + "."
@@ -343,19 +366,21 @@ public final class DiscoveryService implements RequestHandler {
                         + DiscoUtils.bundle.getString("operation") + "="
                         + "Update";
 
-        if (userDN == null) {
-            DiscoUtils.debug.error("DiscoService.update: couldn't find user "
+           if (userDN == null) {
+               DiscoUtils.debug.error("DiscoService.update: couldn't find user "
                         + "from resourceID: " + resourceID);
-            status.setCode(DiscoConstants.QNAME_FAILED);
-            String[] data = { resourceID };
-            LogUtil.error(Level.INFO,
+               status.setCode(DiscoConstants.QNAME_FAILED);
+               String[] data = { resourceID };
+               LogUtil.error(Level.INFO,
                         LogUtil.DS_UPDATE_FAILURE,data);
-            return resp;
-        }
+               return resp;
+           }
 
-        // find the DiscoEntryHandler from config
-        DiscoEntryHandler entryHandler =
-                        DiscoServiceManager.getDiscoEntryHandler();
+            // find the DiscoEntryHandler from config
+            entryHandler = DiscoServiceManager.getDiscoEntryHandler();
+        } else {
+            entryHandler = DiscoServiceManager.getGlobalEntryHandler();
+        }
 
         // get flag if policy check for modify from config
         if (DiscoServiceManager.needPolicyEvalUpdate()) {
