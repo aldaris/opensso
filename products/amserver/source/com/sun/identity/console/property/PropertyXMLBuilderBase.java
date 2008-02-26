@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.5 2007-12-21 21:25:37 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.6 2008-02-26 22:14:37 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,6 +97,7 @@ public abstract class PropertyXMLBuilderBase
         mapSyntaxToName.put(AttributeSchema.Syntax.NUMBER_RANGE,"number_range");
         mapSyntaxToName.put(AttributeSchema.Syntax.NUMBER, "number");
         mapSyntaxToName.put(AttributeSchema.Syntax.DN, "dn");
+        mapSyntaxToName.put(AttributeSchema.Syntax.URL, "url");
     }
 
     protected ServiceSchemaManager svcSchemaManager;
