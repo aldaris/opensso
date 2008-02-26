@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.8 2008-01-29 15:14:49 subbae Exp $
+ * $Id: iws_agent.c,v 1.9 2008-02-26 19:11:44 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -69,7 +69,6 @@ static agent_props_t agent_props = {
 };
 
 boolean_t agentInitialized = B_FALSE;
-char* gtemp_buff = NULL;
 static CRITICAL initLock;
 
 void init_at_request();
@@ -440,10 +439,6 @@ static int process_new_notification(pblock *param, Session *sn, Request *rq)
 }
 
 NSAPI_PUBLIC void agent_cleanup(void *args) {
-    if(gtemp_buff!= NULL){
-	free(gtemp_buff);
-	gtemp_buff= NULL;
-    }
     am_properties_destroy(agent_props.agent_bootstrap_props);
     am_web_cleanup();
     crit_terminate(initLock);
@@ -474,11 +469,6 @@ NSAPI_PUBLIC int web_agent_init(pblock *param, Session *sn, Request *rq)
     initLock = crit_init();
 
     temp_buf = pblock_findval(DSAME_CONF_DIR, param);
-
-    gtemp_buff = malloc(strlen(temp_buf)+1);
-    if(gtemp_buff!=NULL){
-	strcpy(gtemp_buff,temp_buf);
-    }
 
     if (temp_buf != NULL) {
         agent_bootstrap_file = 
@@ -945,7 +935,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
      */
 
     if(am_web_is_cdsso_enabled(agent_config) == B_TRUE ) {
-	if((strcmp(method, FORM_METHOD_POST) == 0)
+	if((strcmp(method, REQUEST_METHOD_POST) == 0)
 	    && (orig_req != NULL) 
             && (strlen(orig_req) > 0)) {
 		response = get_post_assertion_data(sn, rq, request_url);
@@ -986,7 +976,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 			}
 			pblock_nvinsert(REQUEST_CLF, clf_req, rq->reqpb);
 		}
-	} else if((strcmp(method, FORM_METHOD_GET) == 0)
+	} else if((strcmp(method, REQUEST_METHOD_GET) == 0)
 			&& (orig_req != NULL)
 			&& (strlen(orig_req) > 0)) {
 	    status = am_web_check_cookie_in_query(
@@ -1075,7 +1065,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     case AM_INVALID_SESSION:
 	am_web_do_cookies_reset(reset_cookie, args, agent_config);
 	// No magic URI, No SSO Token....
-	if (strcmp(method, FORM_METHOD_POST) == 0 &&
+	if (strcmp(method, REQUEST_METHOD_POST) == 0 &&
 	    B_TRUE==am_web_is_postpreserve_enabled(agent_config)) {
 	    // Create the magic URI, actionurl
 	    post_urls_t *post_urls;
