@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.4 2008-02-07 07:17:16 veiming Exp $
+   $Id: Home.jsp,v 1.5 2008-02-26 01:24:11 jonnelson Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -148,7 +148,7 @@
         <table id="button2" width="100%"  border="0" cellspacing="0" cellpadding="0">
         <tr>
         <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif11" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
-        <td width="100%" class="TskPgeTskCntrTd"><a href="http://docs.sun.com/app/docs/coll/1292.1?l=en&q=Access+Manager+7" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'">
+        <td width="100%" class="TskPgeTskCntrTd"><a href="https://opensso.dev.java.net/public/use/docs/index.html" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'">
         <span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span>
         <span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtLblDoc" defaultValue="commontask.label.doc" bundleID="amConsole"/></span></a></td>
         <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" >
