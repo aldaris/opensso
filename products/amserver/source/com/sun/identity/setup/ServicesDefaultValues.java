@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.22 2008-01-24 19:58:40 goodearth Exp $
+ * $Id: ServicesDefaultValues.java,v 1.23 2008-02-26 21:59:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -514,6 +514,7 @@ public class ServicesDefaultValues {
         for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
             String key = (String)i.next();
             String value = (String)map.get(key);
+            value = value.replaceAll("[$]", "\\\\\\$");
             
             if (preappendSlash.contains(key)) {
                 orig = orig.replaceAll("/@" + key + "@", value);
