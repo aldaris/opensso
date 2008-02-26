@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.8 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: SAMLv2Common.java,v 1.9 2008-02-26 01:57:48 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/saml2/jsp/spSSOInit.jsp?metaAlias=/" + sp_alias
+                + "/saml2/jsp/spSSOInit.jsp?metaAlias=" + sp_alias
                 + "&amp;idpEntityID=" + idp_entity_name );
         if (bindingType == "post") {
             out.write("&amp;binding=HTTP-POST");
@@ -153,7 +153,7 @@ public class SAMLv2Common extends TestCommon {
         String strResult = (String)m.get(TestConstants.KEY_SSO_INIT_RESULT);
         out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
                 + idp_port + idp_deployment_uri
-                + "/saml2/jsp/idpSSOInit.jsp?metaAlias=/" + idp_alias
+                + "/saml2/jsp/idpSSOInit.jsp?metaAlias=" + idp_alias
                 + "&amp;spEntityID=" + sp_entity_name);
         if (bindingType == "post") {
             out.write("&amp;binding=HTTP-POST");
@@ -215,7 +215,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/saml2/jsp/spSSOInit.jsp?metaAlias=/" + sp_alias
+                + "/saml2/jsp/spSSOInit.jsp?metaAlias=" + sp_alias
                 + "&amp;idpEntityID=" + idp_entity_name );
         if (bindingType == "artifact") {
             out.write("\">");
@@ -265,7 +265,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/saml2/jsp/spSingleLogoutInit.jsp?metaAlias=/"
+                + "/saml2/jsp/spSingleLogoutInit.jsp?metaAlias="
                 + sp_alias + "&amp;idpEntityID=" + idp_entity_name);
         if (bindingType == "soap") {
             out.write("&amp;" +
@@ -313,7 +313,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
                 + idp_port + idp_deployment_uri
-                + "/saml2/jsp/idpSingleLogoutInit.jsp?metaAlias=/"
+                + "/saml2/jsp/idpSingleLogoutInit.jsp?metaAlias="
                 + idp_alias + "&amp;spEntityID=" + sp_entity_name);
         if (bindingType == "soap") {
             out.write("&amp;" +
@@ -366,7 +366,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=/" + sp_alias
+                + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" + sp_alias
                 + "&amp;idpEntityID=" + idp_entity_name
                 + "&amp;requestType=Terminate");
         if (bindingType == "soap") {
@@ -423,7 +423,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
                 + idp_port + idp_deployment_uri
-                + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=/" + idp_alias
+                + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=" + idp_alias
                 + "&amp;spEntityID=" + sp_entity_name
                 + "&amp;requestType=Terminate");
         if (bindingType == "soap") {
@@ -481,7 +481,7 @@ public class SAMLv2Common extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=/" + sp_alias
+                + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" + sp_alias
                 + "&amp;idpEntityID=" + idp_entity_name
                 + "&amp;requestType=Terminate" );
         if (bindingType == "soap") {
@@ -932,7 +932,7 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
-                        (String)m.get(TestConstants.KEY_SP_REALM),
+                        (String)m.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         arrMetadata[0], arrMetadata[1],
                         (String)m.get(TestConstants.KEY_SP_COT), "saml2")) != 0)
                 {
@@ -1009,7 +1009,7 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(idpfm.importEntity(webClient,
-                        (String)m.get(TestConstants.KEY_IDP_REALM),
+                        (String)m.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         arrMetadata[0], arrMetadata[1],
                         (String)m.get(TestConstants.KEY_IDP_COT), "saml2"))
                         != 0) {
@@ -1051,7 +1051,7 @@ public class SAMLv2Common extends TestCommon {
             }
             if (FederationManager.getExitCode(fmidp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false,
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
                     "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Deleted idp entity on " +
                         "IDP side");
@@ -1063,7 +1063,7 @@ public class SAMLv2Common extends TestCommon {
                 assert false;
             }
             if (FederationManager.getExitCode(fmidp.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM),
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     metadata, metadataext, null, "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Successfully " +
                         "imported IDP metadata on IDP side");
@@ -1086,7 +1086,7 @@ public class SAMLv2Common extends TestCommon {
                     "on SP" + metadataext);
             if (FederationManager.getExitCode(fmsp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), false,
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                     "saml2")) == 0) {
                 log(Level.FINE, "loadIDPMetadata", "Deleted idp entity on " +
                         "SP side");
@@ -1098,7 +1098,7 @@ public class SAMLv2Common extends TestCommon {
                 assert false;
             }
             if (FederationManager.getExitCode(fmsp.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), metadata,
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), metadata,
                     metadataext,
                     (String)configMap.get(TestConstants.KEY_SP_COT),
                     "saml2")) == 0) {
@@ -1143,7 +1143,7 @@ public class SAMLv2Common extends TestCommon {
             }
             if (FederationManager.getExitCode(fmsp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), false,
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                     "saml2")) == 0) {
                 log(Level.FINEST, "loadSPMetadata", "Deleted sp entity on " +
                         "SP side");
@@ -1156,7 +1156,7 @@ public class SAMLv2Common extends TestCommon {
             }
 
             if (FederationManager.getExitCode(fmsp.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     metadata, metadataext, null, "saml2")) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Successfully " +
                         "imported SP metadata on SP side");
@@ -1179,8 +1179,8 @@ public class SAMLv2Common extends TestCommon {
                     "on IDP" + metadataext);
             if (FederationManager.getExitCode(fmidp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false,
-                    "saml2")) == 0) {
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                    false, "saml2")) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Deleted sp entity on " +
                         "IDP side");
             } else {
@@ -1190,8 +1190,8 @@ public class SAMLv2Common extends TestCommon {
                         " famadm command failed");
                 assert false;
             }
-             if (FederationManager.getExitCode(fmidp.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM),
+            if (FederationManager.getExitCode(fmidp.importEntity(webClient,
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     metadata, metadataext,
                     (String)configMap.get(TestConstants.KEY_IDP_COT),
                     "saml2")) == 0) {

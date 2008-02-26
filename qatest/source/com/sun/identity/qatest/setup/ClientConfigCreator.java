@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.16 2007-12-17 19:52:30 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.17 2008-02-26 01:56:38 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -282,6 +282,18 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "idpcot";
             }
+            if (key.equals(TestConstants.KEY_ATT_METAALIAS)) {
+                if (!configDef1.getString(TestConstants.
+                        KEY_ATT_EXECUTION_REALM).endsWith("/")) {
+                    value = configDef1.getString(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
+                            value;
+                } else {
+                    value = configDef1.getString(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
+                            value;
+                }
+            }
             if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
@@ -295,7 +307,7 @@ public class ClientConfigCreator {
                 serverName2 + ".properties"));
 
         strNamingURL = configDef2.getString(TestConstants.KEY_ATT_NAMING_SVC);
-
+ 
         iFirstSep = strNamingURL.indexOf(":");
         strProtocol = strNamingURL.substring(0, iFirstSep);
 
@@ -406,6 +418,17 @@ public class ClientConfigCreator {
                     value = strHost;
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "spcot";
+            }
+            if (key.equals(TestConstants.KEY_ATT_METAALIAS)) {
+                if (!configDef2.getString(TestConstants.
+                        KEY_ATT_EXECUTION_REALM).endsWith("/")) {
+                    value = configDef2.getString(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
+                            value;
+                } else {
+                    value = configDef2.getString(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) +  value;
+                }
             }
             if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.7 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.8 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,7 @@ public class SAMLv2SmokeTest extends TestCommon {
         HtmlPage page;
         ArrayList list;
         try {
-            log(logLevel, "setup", "Entering");
+            log(Level.FINEST, "setup", "Entering");
             //Upload global properties file in configMap
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
@@ -91,7 +91,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2SmokeTest",
                     configMap);
-            log(logLevel, "setup", "ConfigMap is : " + configMap );
+            log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users
             String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
@@ -110,7 +110,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), "User", list))
                     != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -136,7 +136,7 @@ public class SAMLv2SmokeTest extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM),
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list))
                     != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command " +
@@ -176,11 +176,11 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testSPSSOInit", null);
         try {
-            log(logLevel, "testSPSSOInit", "Running: testSPSSOInit");
+            log(Level.FINEST, "testSPSSOInit", "Running: testSPSSOInit");
             getWebClient();
             xmlfile = baseDir + "test1spssoinit.xml";
             SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false);
-            log(logLevel, "testSPSSOInit", "Run " + xmlfile);
+            log(Level.FINEST, "testSPSSOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -201,10 +201,10 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testSPSLO", null);
         try {
-            log(logLevel, "testSPSLO", "Running: testSPSLO");
+            log(Level.FINEST, "testSPSLO", "Running: testSPSLO");
             xmlfile = baseDir + "test2spslo.xml";
             SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");
-            log(logLevel, "testSPSSOInit", "Run " + xmlfile);
+            log(Level.FINEST, "testSPSSOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -225,10 +225,10 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testSPTerminate", null);
         try {
-            log(logLevel, "testSPTerminate", "Running: testSPTerminate");
+            log(Level.FINEST, "testSPTerminate", "Running: testSPTerminate");
             xmlfile = baseDir + "test3spterminate.xml";
             SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "http");
-            log(logLevel, "testSPTerminate", "Run " + xmlfile);
+            log(Level.FINEST, "testSPTerminate", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -249,17 +249,17 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testIDPSSO", null);
         try {
-            log(logLevel, "testIDPSSO", "\nRunning: testIDPSSO\n");
+            log(Level.FINEST, "testIDPSSO", "\nRunning: testIDPSSO\n");
             getWebClient();
             xmlfile = baseDir + "test7idplogin.xml";
             SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);
-            log(logLevel, "testIDPSSO", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPSSO", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
             xmlfile = baseDir + "test7idpssoinit.xml";
             SAMLv2Common.getxmlIDPInitSSO(xmlfile, configMap, "artifact",
                     false);
-            log(logLevel, "testIDPSSO", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPSSO", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -280,10 +280,10 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testIDPSLO", null);
         try {
-            log(logLevel, "testIDPSLO", "Running: testIDPSLO");
+            log(Level.FINEST, "testIDPSLO", "Running: testIDPSLO");
             xmlfile = baseDir + "test8idpslo.xml";
             SAMLv2Common.getxmlIDPSLO(xmlfile, configMap, "http");
-            log(logLevel, "testIDPSLO", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPSLO", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -304,10 +304,10 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testIDPTerminate", null);
         try {
-            log(logLevel, "testIDPTerminate", "Running: testIDPTerminate");
+            log(Level.FINEST, "testIDPTerminate", "Running: testIDPTerminate");
             xmlfile = baseDir + "test9idpterminate.xml";
             SAMLv2Common.getxmlIDPTerminate(xmlfile, configMap, "http");
-            log(logLevel, "testIDPTerminate", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPTerminate", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -328,11 +328,11 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testSPSSOInitPost", null);
         try {
-            log(logLevel, "testSPSSOInitPost", "Running: testSPSSOInitPost");
+            log(Level.FINEST, "testSPSSOInitPost", "Running: testSPSSOInitPost");
             getWebClient();
             xmlfile = baseDir + "test4spssoinit.xml";
             SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);
-            log(logLevel, "testSPSSOInitPost", "Run " + xmlfile);
+            log(Level.FINEST, "testSPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -353,10 +353,10 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testSPSLOSOAP", null);
         try {
-            log(logLevel, "testSPSLOSOAP", "Running: testSPSLOSOAP");
+            log(Level.FINEST, "testSPSLOSOAP", "Running: testSPSLOSOAP");
             xmlfile = baseDir + "test5spslo.xml";
             SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
-            log(logLevel, "testSPSLOSOAP", "Run " + xmlfile);
+            log(Level.FINEST, "testSPSLOSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -377,11 +377,11 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testSPTerminateSOAP", null);
         try {
-            log(logLevel, "testSPTerminateSOAP", "Running: " +
+            log(Level.FINEST, "testSPTerminateSOAP", "Running: " +
                     "testSPTerminateSOAP");
             xmlfile = baseDir + "test6spterminate.xml";
             SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "soap");
-            log(logLevel, "testSPTerminateSOAP", "Run " + xmlfile);
+            log(Level.FINEST, "testSPTerminateSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -403,17 +403,17 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testIDPSSOInitPost", null);
         try {
-            log(logLevel, "testIDPSSOInitPost", "Running: testIDPSSOInitPost");
+            log(Level.FINEST, "testIDPSSOInitPost", "Running: testIDPSSOInitPost");
             getWebClient();
             xmlfile = baseDir + "test10idplogin.xml";
             SAMLv2Common.getxmlIDPLogin(xmlfile, configMap);
-            log(logLevel, "testIDPSSOInitPost", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
             
             xmlfile = baseDir + "test10idpssoinit.xml";
             SAMLv2Common.getxmlIDPInitSSO(xmlfile, configMap, "post", false);
-            log(logLevel, "testIDPSSOInitPost", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -434,11 +434,11 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testIDPSLOSOAP", null);
         try {
-            log(logLevel, "testIDPSLOSOAP", "Running: testIDPSLOSOAP");
+            log(Level.FINEST, "testIDPSLOSOAP", "Running: testIDPSLOSOAP");
             
             xmlfile = baseDir + "test11idpslo.xml";
             SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
-            log(logLevel, "testIDPSLOSOAP", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPSLOSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -459,11 +459,11 @@ public class SAMLv2SmokeTest extends TestCommon {
     throws Exception {
         entering("testIDPTerminateSOAP", null);
         try {
-            log(logLevel, "testIDPTerminateSOAP",
+            log(Level.FINEST, "testIDPTerminateSOAP",
                     "Running: testIDPTerminateSOAP");
             xmlfile = baseDir + "test12idpterminate.xml";
             SAMLv2Common.getxmlSPTerminate(xmlfile, configMap, "soap");
-            log(logLevel, "testIDPTerminateSOAP", "Run " + xmlfile);
+            log(Level.FINEST, "testIDPTerminateSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
         } catch (Exception e) {
@@ -495,10 +495,10 @@ public class SAMLv2SmokeTest extends TestCommon {
             fmSP = new FederationManager(spurl);
             idList = new ArrayList();
             idList.add(configMap.get(TestConstants.KEY_SP_USER));
-            log(logLevel, "cleanup", "sp users to delete :" +
+            log(Level.FINEST, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), idList,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idList,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -517,10 +517,10 @@ public class SAMLv2SmokeTest extends TestCommon {
             fmIDP = new FederationManager(idpurl);
             idList = new ArrayList();
             idList.add(configMap.get(TestConstants.KEY_IDP_USER));
-            log(logLevel, "cleanup", "idp users to delete :" +
+            log(Level.FINEST, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
             if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), idList,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idList,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");

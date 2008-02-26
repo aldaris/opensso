@@ -89,6 +89,16 @@ amadmin_password=
 # Root realm (default is set to "/")
 realm=/
 
+# Execution realm against which the tests should be run (default is set to "/")
+execution_realm=/
+
+# This flag indicates if the execution realm tree should be deleted recursivly
+# or not. 
+# If execution_realm is set to /sub1/sub2/sub3 
+# and this flag is set to true then /sub1 realm will be deleted recursivly. 
+# But if this flag is set to false then only /sub3 realm will be deleted. 
+subrealm_recursive_delete=false
+
 # Logging level for the framework. Framework user the following log levels:
 # SEVERE, CONFIG, FINE and FINEST
 log_level=

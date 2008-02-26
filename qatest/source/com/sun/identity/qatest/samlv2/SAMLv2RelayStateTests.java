@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2RelayStateTests.java,v 1.5 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: SAMLv2RelayStateTests.java,v 1.6 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,7 +154,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                         TestConstants.KEY_SP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
-                        configMap.get(TestConstants.KEY_SP_REALM),
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User",
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -171,7 +171,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
                 if (FederationManager.getExitCode(fmIDP.createIdentity(
-                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
+                        webClient, configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User",
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -880,7 +880,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), spuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
                         " command failed");
@@ -895,7 +895,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(idpurl);
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idpuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
                         " command failed");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.11 2008-01-31 22:06:28 rmisra Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.12 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,20 +28,17 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
-import com.sun.identity.qatest.common.MultiProtocolCommon;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 /**
  * This class configures SP & IDP deployed war's if it hasn't done so.
@@ -55,6 +52,8 @@ public class ConfigureSAMLv2 extends TestCommon {
     private Map<String, String> spConfigMap;
     private Map<String, String> idpConfigMap;
     public String groupName="";
+    String spurl;
+    String idpurl;
     
     /** Creates a new instance of ConfigureSAMLv2 */
     public ConfigureSAMLv2() {
@@ -80,7 +79,7 @@ public class ConfigureSAMLv2 extends TestCommon {
      * @DocTest: SAML2|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void configureSAMLv2(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
@@ -100,44 +99,21 @@ public class ConfigureSAMLv2 extends TestCommon {
                     configMap);
             log(Level.FINEST, "configureSAMLv2", "Map:" + configMap);
             
-            String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
+            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_SP_PORT)
                     + configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            String idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
+             idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL)
             + "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            
-            url = new URL(spurl);
-            page = (HtmlPage)spWebClient.getPage(url);
-            spConfigMap = MultiProtocolCommon.getSPConfigurationMap(configMap);
-            boolean spConfigResult = configureProduct(spConfigMap);
-            if (spConfigResult) {
-                log(Level.FINEST, "configureSAMLv2", spurl + "is configured" +
-                        "Proceed with SAMLv2 SP configuration");
-            } else {
-                log(Level.FINEST, "configureSAMLv2", spurl + "is not " +
-                        "configured successfully. " +
-                        "Exiting the SAMLv2 configuration");
-                assert false;
-            }
-            
-            url = new URL(idpurl);
-            page = (HtmlPage)idpWebClient.getPage(url);
-            idpConfigMap =
-                    MultiProtocolCommon.getIDPConfigurationMap(configMap);
-            boolean idpConfigResult = configureProduct(idpConfigMap);
-            if (idpConfigResult) {
-                log(Level.FINEST, "configureSAMLv2", idpurl + "is configured" +
-                        "Proceed with SAMLv2 IDP configuration");
-            } else {
-                log(Level.FINEST, "configureSAMLv2", idpurl + "is not " +
-                        "configured successfully. " +
-                        "Exiting the SAMLv2 configuration");
-                assert false;
-            }
-            
+        } catch(Exception e) {
+            log(Level.SEVERE, "ConfigureSAMLv2", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+
+        try {
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
             
@@ -147,8 +123,15 @@ public class ConfigureSAMLv2 extends TestCommon {
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
+            IDMCommon idmC = new IDMCommon();
+            
+            //If execution_realm is different than root realm (/) 
+            //then create the realm
+            idmC.createSubRealms(spWebClient, spfm, configMap.get(
+                       TestConstants.KEY_SP_EXECUTION_REALM));
+            
             HtmlPage spcotPage = spfm.listCots(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM));
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM));
             if (FederationManager.getExitCode(spcotPage) != 0) {
                log(Level.SEVERE, "configureSAMLv2", "listCots famadm command" +
                        " failed");
@@ -158,7 +141,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 if (FederationManager.getExitCode(spfm.createCot(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_REALM),
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         null, null)) != 0) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't create " +
                             "COT at SP side");
@@ -170,9 +153,9 @@ public class ConfigureSAMLv2 extends TestCommon {
                 log(Level.FINEST, "configureSAMLv2", "COT exists at SP side");
             }
             
-            String spMetadata[]= {"",""};
+            String spMetadata[] = {"", ""};
             HtmlPage spEntityPage = spfm.listEntities(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "saml2");
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "saml2");
             if (FederationManager.getExitCode(spEntityPage) != 0) {
                log(Level.SEVERE, "configureSAMLv2", "listEntities famadm" +
                        " command failed");
@@ -199,7 +182,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage spExportEntityPage = spfm.exportEntity(spWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false, true,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false, true,
                         true, "saml2");
                 if (FederationManager.getExitCode(spExportEntityPage) != 0) {
                    log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
@@ -222,9 +205,14 @@ public class ConfigureSAMLv2 extends TestCommon {
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
+
+            //If execution_realm is different than root realm (/) 
+            //then create the realm
+            idmC.createSubRealms(idpWebClient, idpfm, configMap.get(
+                       TestConstants.KEY_IDP_EXECUTION_REALM));
             
             HtmlPage idpcotPage = idpfm.listCots(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM));
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM));
             if (FederationManager.getExitCode(idpcotPage) != 0) {
                log(Level.SEVERE, "configureSAMLv2", "listCots famadm command" +
                        " failed");
@@ -236,7 +224,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             } else {
                 if (FederationManager.getExitCode(idpfm.createCot(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_REALM),
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         null, null)) != 0) {
                     log(Level.SEVERE, "configureSAMLv2", "Couldn't create " +
                             "COT at IDP side");
@@ -248,7 +236,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "saml2");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "saml2");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "configureSAMLv2", "listEntities famadm" +
                        " command failed");
@@ -281,7 +269,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage idpExportEntityPage = idpfm.exportEntity(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false, true,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, true,
                         true, "saml2");
                 if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
                    log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
@@ -308,7 +296,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                 if (FederationManager.getExitCode(idpfm.deleteEntity(
                         idpWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
                         "saml2")) == 0) {
                     log(Level.FINEST, "configureSAMLv2", "Delete sp entity" +
                             " on IDP side");
@@ -325,7 +313,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), spMetadata[0],
                     spMetadata[1],
                     (String)configMap.get(TestConstants.KEY_IDP_COT), "saml2"))
                     != 0) {
@@ -343,7 +331,7 @@ public class ConfigureSAMLv2 extends TestCommon {
                         " sp. Delete & load the metadata ");
                 if (FederationManager.getExitCode(spfm.deleteEntity(spWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                         "saml2")) == 0) {
                     log(Level.FINEST, "configureSAMLv2", "Delete idp entity" +
                             " on SP side");
@@ -360,7 +348,7 @@ public class ConfigureSAMLv2 extends TestCommon {
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(spfm.importEntity(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idpMetadata[0],
                     idpMetadata[1],
                     (String)configMap.get(TestConstants.KEY_SP_COT), "saml2"))
                     != 0) {
@@ -370,95 +358,14 @@ public class ConfigureSAMLv2 extends TestCommon {
                         " command failed");
                 assert false;
             }
-            consoleLogout(spWebClient, spurl);
-            consoleLogout(idpWebClient, idpurl);
         } catch (Exception e) {
             log(Level.SEVERE, "configureSAMLv2", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+            consoleLogout(spWebClient, spurl);
+            consoleLogout(idpWebClient, idpurl);
         }
         exiting("configureSAMLv2");
-    }
-    
-    /**
-     * This method fills map with SP configuration data which is needed by
-     * TestCommon.configureProduct method.
-     */
-    private void getSPConfigurationMap(Map spMap, Map confMap)
-    throws Exception {
-        try {
-            spMap.put("serverurl",confMap.get(TestConstants.KEY_SP_PROTOCOL)
-            + ":" + "//" + confMap.get(TestConstants.KEY_SP_HOST) + ":"
-                    + confMap.get(TestConstants.KEY_SP_PORT));
-            spMap.put("serveruri",
-                    confMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI));
-            spMap.put(TestConstants.KEY_ATT_COOKIE_DOMAIN,
-                    confMap.get(TestConstants.KEY_SP_COOKIE_DOMAIN));
-            spMap.put(TestConstants.KEY_ATT_CONFIG_DIR,
-                    confMap.get(TestConstants.KEY_SP_CONFIG_DIR));
-            spMap.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD,
-                    confMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            spMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
-                    confMap.get(TestConstants.KEY_SP_DATASTORE));
-            spMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
-                    confMap.get(TestConstants.KEY_SP_ENC_KEY));
-            spMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
-                    confMap.get(TestConstants.KEY_SP_DIRECTORY_SERVER));
-            spMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
-                    confMap.get(TestConstants.KEY_SP_DIRECTORY_PORT));
-            spMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_SP_CONFIG_ROOT_SUFFIX));
-            spMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
-                    confMap.get(TestConstants.KEY_SP_DS_DIRMGRDN));
-            spMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
-                    confMap.get(TestConstants.KEY_SP_DS_DIRMGRPASSWORD));
-            spMap.put(TestConstants.KEY_ATT_LOAD_UMS,
-                    confMap.get(TestConstants.KEY_SP_LOAD_UMS));
-        } catch(Exception e) {
-            log(Level.SEVERE, "getspConfigurationMap", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-    
-    /**
-     * This method fills map with IDP configuration data which is needed by
-     * TestCommon.configureProduct method.
-     */
-    private void getIDPConfigurationMap(Map idpMap, Map confMap)
-    throws Exception {
-        try {
-            idpMap.put("serverurl",confMap.get(TestConstants.KEY_IDP_PROTOCOL)
-            + ":" + "//" + confMap.get(TestConstants.KEY_IDP_HOST) + ":"
-                    + confMap.get(TestConstants.KEY_IDP_PORT));
-            idpMap.put("serveruri",
-                    confMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI));
-            idpMap.put(TestConstants.KEY_ATT_COOKIE_DOMAIN,
-                    confMap.get(TestConstants.KEY_IDP_COOKIE_DOMAIN));
-            idpMap.put(TestConstants.KEY_ATT_CONFIG_DIR,
-                    confMap.get(TestConstants.KEY_IDP_CONFIG_DIR));
-            idpMap.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD,
-                    confMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            idpMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
-                    confMap.get(TestConstants.KEY_IDP_DATASTORE));
-            idpMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
-                confMap.get(TestConstants.KEY_IDP_ENC_KEY));
-            idpMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
-                    confMap.get(TestConstants.KEY_IDP_DIRECTORY_SERVER));
-            idpMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
-                    confMap.get(TestConstants.KEY_IDP_DIRECTORY_PORT));
-            idpMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_IDP_CONFIG_ROOT_SUFFIX));
-            idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
-                    confMap.get(TestConstants.KEY_IDP_DS_DIRMGRDN));
-            idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
-                    confMap.get(TestConstants.KEY_IDP_DS_DIRMGRPASSWORD));
-            idpMap.put(TestConstants.KEY_ATT_LOAD_UMS,
-                    confMap.get(TestConstants.KEY_SP_LOAD_UMS));
-        } catch(Exception e) {
-            log(Level.SEVERE, "getidpConfigurationMap", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
 }

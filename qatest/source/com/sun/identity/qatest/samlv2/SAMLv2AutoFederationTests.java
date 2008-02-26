@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFederationTests.java,v 1.5 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: SAMLv2AutoFederationTests.java,v 1.6 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -182,7 +182,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                         list);
                 if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                         configMap.get(
-                        TestConstants.KEY_SP_REALM),
+                        TestConstants.KEY_SP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User",
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -203,7 +203,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                 log(Level.FINEST, "setup", "IDP user to be created is " + list,
                         null);
                 if (FederationManager.getExitCode(fmIDP.createIdentity(
-                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
+                        webClient, configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User",
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -267,7 +267,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             
             HtmlPage spmetaPage = spfm.exportEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     false, false, true, "saml2");
             if (FederationManager.getExitCode(spmetaPage) != 0) {
                log(Level.SEVERE, "autoFedSetup", "exportEntity famadm command" +
@@ -285,7 +285,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                     spmetadataMod);
             if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     true, "saml2")) != 0) {
                 log(Level.SEVERE, "autoFedSetup", "Deletion of Extended " +
                         "entity failed");
@@ -295,7 +295,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             }
             
             if (FederationManager.getExitCode(spfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "",
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "",
                     spmetadataMod, "", "saml2")) != 0) {
                 log(Level.FINEST, "autoFedSetup", "Failed to import extended " +
                         "metadata");
@@ -309,7 +309,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             
             HtmlPage idpmetaPage = idpfm.exportEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_REALM), false, false,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, false,
                     true, "saml2");
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
                log(Level.SEVERE, "autoFedSetup", "exportEntity famadm command" +
@@ -329,7 +329,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             
             if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_REALM), true, "saml2"))
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), true, "saml2"))
                     != 0) {
                 log(Level.SEVERE, "autoFedSetup", "Deletion of idp Extended " +
                         "entity failed");
@@ -339,7 +339,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             }
             
             if (FederationManager.getExitCode(idpfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "",
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "",
                     idpmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "autoFedSetup", "Failed to import idp " +
                         "extended metadata");
@@ -555,7 +555,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             if (FederationManager.getExitCode(spfm.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), spuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
                         " command failed");
@@ -564,7 +564,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             
             if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of Extended " +
                         "entity failed");
@@ -574,7 +574,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             }
             
             if (FederationManager.getExitCode(spfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "",
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "",
                     spmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to import extended " +
                         "metadata");
@@ -586,7 +586,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             if (FederationManager.getExitCode(idpfm.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM),idpuserlist,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),idpuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -595,7 +595,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             
             if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_REALM), true, "saml2"))
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), true, "saml2"))
                     != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of idp Extended " +
                         "entity failed");
@@ -605,7 +605,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             }
             
             if (FederationManager.getExitCode(idpfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "",
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "",
                     idpmetadata, "", "saml2")) != 0) {
                 log(Level.FINEST, "cleanup", "Failed to import idp " +
                         "extended metadata");

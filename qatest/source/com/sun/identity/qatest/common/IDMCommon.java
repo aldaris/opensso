@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.8 2008-02-13 19:12:29 arunav Exp $
+ * $Id: IDMCommon.java,v 1.9 2008-02-26 01:57:27 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -68,7 +70,7 @@ public class IDMCommon extends TestCommon {
             IdType idType,
             String entityName,
             Map values)
-    throws Exception {
+            throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         AMIdentity amid = repo.createIdentity(idType, entityName, values);
@@ -82,7 +84,7 @@ public class IDMCommon extends TestCommon {
     public AMIdentity getRealmIdentity(
             SSOToken ssoToken,
             String parentRealm)
-    throws Exception {
+            throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         return (repo.getRealmIdentity());
@@ -95,32 +97,32 @@ public class IDMCommon extends TestCommon {
             SSOToken ssoToken,
             String serviceName,
             String attributeName)
-    throws Exception {
+            throws Exception {
         AMIdentity amid = new AMIdentity(ssoToken);
         Map attrValues = amid.getServiceAttributes(serviceName);
-        log(Level.FINEST, "getIdentityAttribute", "Attributes List" + 
+        log(Level.FINEST, "getIdentityAttribute", "Attributes List" +
                 attrValues);
         return (Set)attrValues.get(attributeName);
     }
     
-     /**
-     * Returns Map with IdentityAttributes 
+    /**
+     * Returns Map with IdentityAttributes
      * based on realm and user name
      */
     public Map getIdentityAttributes(String userName, String realm)
     throws Exception {
         SSOToken admintoken = getToken(adminUser, adminPassword, basedn);
-        Set<AMIdentity> set = getAMIdentity(admintoken, userName, 
+        Set<AMIdentity> set = getAMIdentity(admintoken, userName,
                 IdType.USER, realm);
         AMIdentity amid = null;
         for (Iterator itr = set.iterator(); itr.hasNext();) {
             amid = (AMIdentity)itr.next();
         }
         Map attrMap = new HashMap();
-        attrMap = amid.getAttributes();        
+        attrMap = amid.getAttributes();
         return attrMap;
     }
-
+    
     /**
      * Modifies specified identity attributes
      */
@@ -149,15 +151,15 @@ public class IDMCommon extends TestCommon {
             String parentRealm,
             IdType idType,
             String entityName)
-    throws Exception {
+            throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         repo.deleteIdentities(getAMIdentity(
                 ssoToken, entityName, idType, parentRealm));
     }
-
+    
     /**
-     * Deletes multiple identities based on specified ssotoken, realm, id type, 
+     * Deletes multiple identities based on specified ssotoken, realm, id type,
      * and a list of entity names
      */
     public void deleteIdentity(
@@ -165,14 +167,14 @@ public class IDMCommon extends TestCommon {
             String parentRealm,
             List<IdType> idType,
             List entityName)
-    throws Exception {
+            throws Exception {
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssoToken, parentRealm);
         Iterator iterNameSet = entityName.iterator();
         Iterator iterTypeSet = idType.iterator();
         Set amid = new HashSet<AMIdentity>();
         while (iterNameSet.hasNext()) {
-            amid.add(getFirstAMIdentity(ssoToken, (String)iterNameSet.next(), 
+            amid.add(getFirstAMIdentity(ssoToken, (String)iterNameSet.next(),
                     (IdType)iterTypeSet.next(), parentRealm));
         }
         repo.deleteIdentities(amid);
@@ -187,7 +189,7 @@ public class IDMCommon extends TestCommon {
             String name,
             IdType idType,
             String realm)
-    throws Exception {
+            throws Exception {
         Set<AMIdentity> set = new HashSet<AMIdentity>();
         set.add(new AMIdentity(ssoToken, name, idType, realm, null));
         return set;
@@ -202,7 +204,7 @@ public class IDMCommon extends TestCommon {
             String name,
             IdType idType,
             String realm)
-    throws Exception {
+            throws Exception {
         Set<AMIdentity> set = getAMIdentity(ssoToken, name, idType, realm);
         AMIdentity amid = null;
         for (Iterator itr = set.iterator(); itr.hasNext();) {
@@ -223,7 +225,7 @@ public class IDMCommon extends TestCommon {
             String parentRealm,
             String entityName,
             String suffix)
-    throws Exception {
+            throws Exception {
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         putSetIntoMap("sn", map, "sn" + suffix);
         putSetIntoMap("cn", map, "cn" + suffix);
@@ -251,7 +253,7 @@ public class IDMCommon extends TestCommon {
                 parentRealm = tokens.nextToken();
             }
         }
-        log(Level.FINEST, "getParentRealm", "Parent realm for" + realmName + 
+        log(Level.FINEST, "getParentRealm", "Parent realm for" + realmName +
                 " is " + parentRealm );
         return parentRealm;
     }
@@ -271,7 +273,7 @@ public class IDMCommon extends TestCommon {
             assert (orgMgr.getSubOrganizationNames().contains(realm));
         }
     }
-
+    
     /**
      * Deletes a realm
      */
@@ -292,7 +294,7 @@ public class IDMCommon extends TestCommon {
      */
     public void addUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType)
-    throws Exception {
+            throws Exception {
         addUserMember(ssotoken, userName, memberName, memberType, realm);
     }
     
@@ -301,7 +303,7 @@ public class IDMCommon extends TestCommon {
      */
     public void addUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType, String tRealm)
-    throws Exception {
+            throws Exception {
         Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, tRealm);
         Set setMember = getAMIdentity(ssotoken, memberName, memberType, tRealm);
         AMIdentity amidUser = null;
@@ -326,7 +328,7 @@ public class IDMCommon extends TestCommon {
      */
     public void removeUserMember(SSOToken ssotoken, String userName,
             String memberName, IdType memberType, String tRealm)
-    throws Exception {
+            throws Exception {
         Set setUser = getAMIdentity(ssotoken, userName, IdType.USER, tRealm);
         Set setMember = getAMIdentity(ssotoken, memberName, memberType, tRealm);
         AMIdentity amidUser = null;
@@ -349,9 +351,9 @@ public class IDMCommon extends TestCommon {
      * @param memberType member type
      * @param tRealm realm name
      */
-    public Set<AMIdentity> getMembers(SSOToken ssotoken, String idName, 
+    public Set<AMIdentity> getMembers(SSOToken ssotoken, String idName,
             IdType idType, IdType memberType, String tRealm)
-    throws Exception {
+            throws Exception {
         Set setId = getAMIdentity(ssotoken, idName, idType, tRealm);
         AMIdentity amid = null;
         Iterator itr;
@@ -371,13 +373,13 @@ public class IDMCommon extends TestCommon {
     public Set searchRealms(SSOToken ssotoken, String pattern, String realm)
     throws Exception  {
         entering("searchRealms", null);
-        Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM, 
+        Set realmNames = searchIdentities(ssotoken, pattern, IdType.REALM,
                 realm);
         exiting("searchRealms");
         return realmNames;
     }
     
-     /**
+    /**
      * This method searches and retrieves a list of realm
      * @param ssotoken SSO token object
      * @param pattern realm name or pattern
@@ -391,7 +393,7 @@ public class IDMCommon extends TestCommon {
         return realmNames;
     }
     
-     /**
+    /**
      * This method searches and retrieves a list of identity
      * @param ssotoken SSO token object
      * @param pattern realm name or pattern
@@ -413,7 +415,7 @@ public class IDMCommon extends TestCommon {
      */
     public Set searchIdentities(SSOToken ssotoken, String pattern, IdType type,
             String realmName)
-    throws Exception  {
+            throws Exception  {
         entering("searchIdentities", null);
         AMIdentityRepository repo = new AMIdentityRepository(
                 ssotoken, realmName);
@@ -441,7 +443,7 @@ public class IDMCommon extends TestCommon {
     }
     
     /**
-     * This method retrieves the configuration key and values by the prefix 
+     * This method retrieves the configuration key and values by the prefix
      * string and store them in a map.
      * @param prefixName key prefix string
      * @param cfgFileName properties config file name
@@ -474,30 +476,30 @@ public class IDMCommon extends TestCommon {
     }
     
     /**
-     * This method checks and compare IDM exception error message and error 
-     * code with expected error message and code. 
+     * This method checks and compare IDM exception error message and error
+     * code with expected error message and code.
      * @param IdRepoException idm exception
      * @param eMessage expected error message
      * @param eCode expected error code
      * @return true if match
      */
-    public boolean checkIDMExpectedErrorMessageCode(IdRepoException e, 
+    public boolean checkIDMExpectedErrorMessageCode(IdRepoException e,
             String eMessage, String eCode)
-    throws Exception {
+            throws Exception {
         entering("checkIDMExpectedErrorMessageCode", null);
         boolean isMatch = false;
         String errorCode = e.getErrorCode();
         String errorMessage = e.getMessage();
         log(Level.FINEST, "checkExpectedMessageErrorCode", "Error message: " +
                 e.getMessage() + " error code: " + e.getErrorCode());
-        log(Level.FINEST, "checkExpectedMessageErrorCode", 
+        log(Level.FINEST, "checkExpectedMessageErrorCode",
                 "Expected message: " + eMessage + " expected error code: " +
                 eCode);
         if (errorCode.equals(eCode) && errorMessage.indexOf(eMessage) >= 0) {
             log(Level.FINE, "checkExpectedMessageErrorCode",
                     "Error code and message match");
             isMatch = true;
-        }  
+        }
         exiting("checkIDMExpectedErrorMessageCode");
         return isMatch;
     }
@@ -509,15 +511,15 @@ public class IDMCommon extends TestCommon {
      * @param idtype identity type
      * @return true if identity type to be checked is supported identity type
      */
-    public boolean isIdTypeSupported(SSOToken ssotoken, String realmName, 
+    public boolean isIdTypeSupported(SSOToken ssotoken, String realmName,
             String idtype)
-    throws Exception {
+            throws Exception {
         entering("isIdTypeSupported", null);
         boolean supportsIDType = false;
-        AMIdentityRepository idrepo = 
+        AMIdentityRepository idrepo =
                 new AMIdentityRepository(ssotoken, realmName);
         Set types = idrepo.getSupportedIdTypes();
-        log(Level.FINEST, "isIdTypeSupported", "Support id type is " + 
+        log(Level.FINEST, "isIdTypeSupported", "Support id type is " +
                 types.toString());
         Iterator iter = types.iterator();
         IdType type;
@@ -543,7 +545,7 @@ public class IDMCommon extends TestCommon {
     public boolean addMembers(String idName, String idType, String memberName,
             SSOToken ssoToken,
             String realmName)
-    throws Exception {
+            throws Exception {
         entering("addMembers", null);
         boolean opSuccess = false;
         log(Level.FINE, "addMembers", "Adding a user member name " +
@@ -564,7 +566,7 @@ public class IDMCommon extends TestCommon {
         exiting("addMembers");
         return opSuccess;
     }
-       
+    
     /**
      * This method removes an user member from an identity with identity name,
      * type, and member name.
@@ -577,7 +579,7 @@ public class IDMCommon extends TestCommon {
             String memberName,
             SSOToken ssoToken,
             String realmName)
-    throws Exception {
+            throws Exception {
         entering("removeMembers", null);
         boolean opSuccess = false;
         log(Level.FINE, "removeMembers", "Removing a user member name " +
@@ -586,12 +588,12 @@ public class IDMCommon extends TestCommon {
                 realmName);
         AMIdentity memid = getFirstAMIdentity(ssoToken, memberName,
                 IdType.USER, realmName);
-        AMIdentity id = getFirstAMIdentity(ssoToken, idName, getIdType(idType), 
+        AMIdentity id = getFirstAMIdentity(ssoToken, idName, getIdType(idType),
                 realmName);
         opSuccess = (!memid.isMember(id)) ? true : false;
         if (opSuccess) {
             log(Level.FINE, "removeMembers", "User member " + memberName +
-                    " is removed from " + idType + " " + idName + 
+                    " is removed from " + idType + " " + idName +
                     " successfully");
         } else {
             log(Level.FINE, "removeMembers", "Failed to remove member");
@@ -613,7 +615,7 @@ public class IDMCommon extends TestCommon {
     public boolean createID(String idName, String idType, String userAttr,
             SSOToken ssoToken,
             String realmName)
-    throws Exception {
+            throws Exception {
         entering("createID", null);
         boolean opSuccess = false;
         log(Level.FINE, "createID", "Creating identity " + idType +
@@ -705,7 +707,7 @@ public class IDMCommon extends TestCommon {
     public boolean doesIdentityExists(String idName, String idType,
             SSOToken ssoToken,
             String realmName)
-    throws Exception {
+            throws Exception {
         return doesIdentityExists(idName, getIdType(idType), ssoToken,
                 realmName);
     }
@@ -722,7 +724,7 @@ public class IDMCommon extends TestCommon {
     public boolean doesIdentityExists(String idName, IdType idType,
             SSOToken ssoToken,
             String realmName)
-    throws Exception {
+            throws Exception {
         entering("doesIdentityExists", null);
         boolean idFound = false;
         Set idRes = searchIdentities(ssoToken, idName, idType,
@@ -753,11 +755,11 @@ public class IDMCommon extends TestCommon {
      */
     public boolean deleteID(String idName, String idType, SSOToken ssoToken,
             String realmName)
-    throws Exception {
+            throws Exception {
         entering("deleteID", null);
         boolean opSuccess = false;
         if (idType == null) {
-            log(Level.FINE, "deleteID", "Failed to delete idType cannot be null" 
+            log(Level.FINE, "deleteID", "Failed to delete idType cannot be null"
                     + idType + " " + idName);
             return false;
         }
@@ -821,6 +823,77 @@ public class IDMCommon extends TestCommon {
             log(Level.SEVERE, "getIdType", "Invalid id type " + gidtType);
             assert false;
             return null;
+        }
+    }
+    
+    /*
+     * This method creates the subrealms if they dont exists.
+     * realmsToCreate can be /aaa/bbb/ccc
+     */
+    public void createSubRealms(WebClient webClient, FederationManager fm,
+            String realmToCreate)
+            throws Exception {
+        //If execution_realm is different than root realm (/)
+        //then create the realm
+        if (!realmToCreate.equals("/")) {
+            String topRealm = "/";
+            StringTokenizer stRealms = new StringTokenizer(realmToCreate, "/");
+            while (stRealms.hasMoreTokens()) {
+                String subRealm = stRealms.nextToken();
+                HtmlPage spRealmPage = fm.listRealms(webClient, topRealm, "",
+                        false);
+                if (FederationManager.getExitCode(spRealmPage) != 0) {
+                    log(Level.SEVERE, "configureSAMLv2", "ListRealms " +
+                            "command failed at SP");
+                    assert false;
+                }
+                //Append / if topRealm doesnt end with /
+                if (!topRealm.endsWith("/")) {
+                    topRealm = topRealm + "/";
+                }
+                if (spRealmPage.getWebResponse().getContentAsString().contains(
+                        subRealm)) {
+                    log(Level.FINE, "configureSAMLv2", "Execution realm " +
+                            "already exists at SP");
+                } else {
+                    spRealmPage = fm.createRealm(webClient,
+                            topRealm + subRealm);
+                    if (FederationManager.getExitCode(spRealmPage) != 0) {
+                        log(Level.SEVERE, "configureSAMLv2", "Execution realm " +
+                                "creation failed at SP");
+                        assert false;
+                    }
+                }
+                topRealm = topRealm + subRealm;
+            }
+        }
+    }
+    
+    /*
+     * Based on the subrealm_recursive_delete_flag this method deletes the
+     * subrealms.
+     * If this flag is true, whole subrealm tree is deleted.
+     * If this flag is false, only leaf subrealm is deleted.
+     */
+    public void deleteSubRealms(WebClient webClient, FederationManager fm,
+            String realmsToDelete, String recursiveDeleteFlag)
+            throws Exception {
+        if (!realmsToDelete.equals("/")) {
+            HtmlPage spRealmPage;
+            //If the recursive flag is set to true, delete the whole tree
+            if (recursiveDeleteFlag.equalsIgnoreCase("true")) {
+                StringTokenizer stSPRealms = new StringTokenizer(realmsToDelete,
+                        "/");
+                String subRealm = "/" + stSPRealms.nextToken();
+                spRealmPage = fm.deleteRealm(webClient, subRealm, true);
+            } else {
+                //delete the last subrealm
+                spRealmPage = fm.deleteRealm(webClient, realmsToDelete, false);
+            }
+            if (FederationManager.getExitCode(spRealmPage) != 0) {
+                log(Level.SEVERE, "deleteSubRealms", "Execution " +
+                        "realm deletion failed");
+            }
         }
     }
 }

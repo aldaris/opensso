@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.6 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.7 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,13 +82,13 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
         HtmlPage page;
         ArrayList list;
         try {
-            log(logLevel, "setup", "Entering");
+            log(Level.FINEST, "setup", "Entering");
             //Upload global properties file in configMap
             baseDir = getTestBase();
             configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            log(logLevel, "setup", "ConfigMap is : " + configMap );
+            log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
@@ -121,10 +121,10 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                 list.add("userpassword=" + usersMap.get(
                         TestConstants.KEY_SP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
-                log(logLevel, "setup", "SP user to be created is " + list);
+                log(Level.FINE, "setup", "SP user to be created is " + list);
                 if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                         configMap.get(
-                        TestConstants.KEY_SP_REALM),
+                        TestConstants.KEY_SP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User",
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -140,9 +140,9 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                 list.add("userpassword=" + usersMap.get(
                         TestConstants.KEY_IDP_USER_PASSWORD + i));
                 list.add("inetuserstatus=Active");
-                log(logLevel, "setup", "IDP user to be created is " + list);
+                log(Level.FINE, "setup", "IDP user to be created is " + list);
                 if (FederationManager.getExitCode(fmIDP.createIdentity(
-                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
+                        webClient, configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User",
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -191,7 +191,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER + 1));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
-            log(logLevel, "testforceAuthNtrueArt",
+            log(Level.FINE, "testforceAuthNtrueArt",
                     "Running: testforceAuthNtrueArt");
             getWebClient();
             consoleLogin(webClient, idpurl + "/UI/Login",
@@ -212,7 +212,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "testforceAuthNtrueArt",
+                log(Level.FINE, "testforceAuthNtrueArt",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
@@ -234,7 +234,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     throws Exception {
         entering("testforceAuthNtruePost", null);
         try {
-            log(logLevel, "testforceAuthNtruePost", "Running: " +
+            log(Level.FINE, "testforceAuthNtruePost", "Running: " +
                     "testforceAuthNtruePost");
             configMap.put(TestConstants.KEY_SP_USER, 
                     usersMap.get(TestConstants.KEY_SP_USER + 2));
@@ -262,7 +262,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "testforceAuthNtruePost",
+                log(Level.FINE, "testforceAuthNtruePost",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i]
                         + ".xml");
@@ -292,7 +292,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     usersMap.get(TestConstants.KEY_IDP_USER + 3));
             configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, 
                     usersMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 3));
-            log(logLevel, "testforceAuthNfalseArt",
+            log(Level.FINE, "testforceAuthNfalseArt",
                     "Running: testforceAuthNfalseArt");
             getWebClient();
             consoleLogin(webClient, idpurl + "/UI/Login",
@@ -311,7 +311,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "http");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "testforceAuthNfalseArt",
+                log(Level.FINE, "testforceAuthNfalseArt",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
@@ -333,7 +333,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
     throws Exception {
         entering("testforceAuthNfalsePost", null);
         try {
-            log(logLevel, "testforceAuthNfalsePost", "Running: " +
+            log(Level.FINE, "testforceAuthNfalsePost", "Running: " +
                     "testforceAuthNfalsePost");
             configMap.put(TestConstants.KEY_SP_USER, 
                     usersMap.get(TestConstants.KEY_SP_USER + 4));
@@ -360,7 +360,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "soap");
             
             for (int i = 0; i < arrActions.length; i++) {
-                log(logLevel, "testforceAuthNfalsePost",
+                log(Level.FINE, "testforceAuthNfalsePost",
                         "Executing xml: " + arrActions[i]);
                 task = new DefaultTaskHandler(baseDir + arrActions[i] + ".xml");
                 page = task.execute(webClient);
@@ -387,7 +387,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), spuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -398,7 +398,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idpuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -439,7 +439,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
 
             out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                     + sp_port + sp_deployment_uri
-                    + "/saml2/jsp/spSSOInit.jsp?metaAlias=/" + sp_alias
+                    + "/saml2/jsp/spSSOInit.jsp?metaAlias=" + sp_alias
                     + "&amp;idpEntityID=" + idp_entity_name );
             if (bindingType == "post") {
                 out.write("&amp;binding=HTTP-POST");

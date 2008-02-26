@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.16 2007-12-17 19:51:34 rmisra Exp $
+ * $Id: TestConstants.java,v 1.17 2008-02-26 01:57:08 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,6 +136,16 @@ public interface TestConstants {
      * Property key for <code>realm</code>.
      */
     String KEY_ATT_REALM = "realm";
+
+    /**
+     * Property key for <code>execution_realm</code>.
+     */
+    String KEY_ATT_EXECUTION_REALM = "execution_realm";
+
+    /**
+     * Property key for <code>subrealm_recursive_delete</code>.
+     */
+    String KEY_ATT_SUBREALM_RECURSIVE_DELETE = "subrealm_recursive_delete";
 
     /**
      * Property key for <code>testservername</code>.
@@ -324,6 +334,16 @@ public interface TestConstants {
     String KEY_SP_REALM = "sp_realm";      
     
     /** 
+     * SAMLv2, IDFF Property key for <code>sp_execution_realm</code>
+     */
+    String KEY_SP_EXECUTION_REALM = "sp_execution_realm";      
+    
+    /**
+     * Property key for <code>sp_subrealm_recursive_delete</code>.
+     */
+    String KEY_SP_SUBREALM_RECURSIVE_DELETE = "sp_subrealm_recursive_delete";
+
+    /** 
      * SAMLv2, IDFF Property key for <code>sp_cot</code>
      */
     String KEY_SP_COT = "sp_cot";      
@@ -445,6 +465,16 @@ public interface TestConstants {
     String KEY_IDP_REALM = "idp_realm";      
     
     /** 
+     * SAMLv2, IDFF Property key for <code>idp_execution_realm</code>
+     */
+    String KEY_IDP_EXECUTION_REALM = "idp_execution_realm";      
+    
+    /**
+     * Property key for <code>idp_subrealm_recursive_delete</code>.
+     */
+    String KEY_IDP_SUBREALM_RECURSIVE_DELETE = "idp_subrealm_recursive_delete";
+
+   /** 
      * SAMLv2, IDFF Property key for <code>idp_cot</code>
      */
     String KEY_IDP_COT = "idp_cot";      

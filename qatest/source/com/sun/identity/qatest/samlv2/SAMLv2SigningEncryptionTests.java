@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SigningEncryptionTests.java,v 1.4 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: SAMLv2SigningEncryptionTests.java,v 1.5 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -233,12 +233,12 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                 log(Level.FINE, "setup", "SP user to be created is " + list);
                 if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
                         configMap.get(
-                        TestConstants.KEY_SP_REALM),
+                        TestConstants.KEY_SP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_SP_USER + i), "User", 
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
-                            " failed");
-                    assert false;
+                            " failed at SP");
+//                    assert false;
                 }
                 spuserlist.add(usersMap.get(TestConstants.KEY_SP_USER + i));
                 list.clear();
@@ -252,22 +252,23 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                 list.add("inetuserstatus=Active");
                 log(Level.FINE, "setup", "IDP user to be created is " + list);
                 if (FederationManager.getExitCode(fmIDP.createIdentity(
-                        webClient, configMap.get(TestConstants.KEY_IDP_REALM),
+                        webClient, configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         usersMap.get(TestConstants.KEY_IDP_USER + i), "User", 
                         list)) != 0) {
                     log(Level.SEVERE, "setup", "createIdentity famadm command" +
-                            " failed");
-                    assert false;
+                            " failed at IDP");
+//                    assert false;
                 }
                 idpuserlist.add(usersMap.get(TestConstants.KEY_IDP_USER + i));
                 list.clear();
             }
-            
+            Thread.sleep(10000);
             //Change the metadata based on the parameters received. 
             changeMetadata(strAttribute, strMetadata, fmSP, fmIDP);
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
+            cleanup();
             throw e;
         } finally {
             log(Level.FINE, "setup", "Logging out of sp & idp");
@@ -497,11 +498,10 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), spuserlist,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), spuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
-                assert false;
             }
             
             // Create idp users
@@ -510,11 +510,10 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), idpuserlist,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idpuserlist,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
-                assert false;
             }
 
             if ((spMetadata[0].equals("")) || (spMetadata[1].equals(""))) {
@@ -562,8 +561,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             if (strMetadata.contains("sp") || strMetadata.contains("both")) {
                 HtmlPage spExportEntityPage = fmSP.exportEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false, true,
-                        true, "saml2");
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                        false, true, true, "saml2");
                 if (FederationManager.getExitCode(spExportEntityPage) != 0) {
                    log(Level.SEVERE, "changeMetadata", "exportEntity famadm" +
                            " command failed");
@@ -593,8 +592,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             if (strMetadata.contains("idp") || strMetadata.contains("both")) {
                 HtmlPage idpExportEntityPage = fmIDP.exportEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false, true,
-                        true, "saml2");
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                        false, true, true, "saml2");
                 if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
                    log(Level.SEVERE, "changeMetadata", "exportEntity famadm" +
                            " command failed");

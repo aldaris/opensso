@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.4 2008-01-31 22:06:29 rmisra Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.5 2008-02-26 01:56:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,6 +101,10 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
                     configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
+                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
+                    configMap.get(TestConstants.KEY_IDP_PORT) +
+                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             getWebClient();
             consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
@@ -113,7 +117,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), "User", list))
                     != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -122,10 +126,6 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             }
             
             // Create idp users
-            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_IDP_PORT) +
-                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             consoleLogin(webClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
@@ -138,7 +138,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM),
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list))
                     != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -168,7 +168,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
         try {
             HtmlPage spmetaPage = fmSP.exportEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     false, false, true, "saml2");
             if (FederationManager.getExitCode(spmetaPage) != 0) {
                log(Level.SEVERE, "DefaultRelayStateSPSetup", "exportEntity" +
@@ -187,7 +187,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     spmetadataMod);
             if (FederationManager.getExitCode(fmSP.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     true, "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Deletion of " +
                         "Extended entity failed");
@@ -200,8 +200,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             }
             
             if (FederationManager.getExitCode(fmSP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), "",
-                    spmetadataMod, "", "saml2")) != 0) {
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                    "", spmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Failed to " +
                         "import extended metadata");
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "importEntity" +
@@ -215,7 +215,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             //Import SP ext metadata on IDP side 
             spmetaPage = fmIDP.exportEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     false, false, true, "saml2");
             if (FederationManager.getExitCode(spmetaPage) != 0) {
                log(Level.SEVERE, "DefaultRelayStateSPSetup", "exportEntity" +
@@ -230,7 +230,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     "metadata from IDP side: " + idpmetadataMod);
             if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM),
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     true, "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Deletion of " +
                         "Extended entity failed on IDP side");
@@ -243,8 +243,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             }
             
            if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), "",
-                    idpmetadataMod, "", "saml2")) != 0) {
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                    "", idpmetadataMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "Failed to " +
                         "import extended metadata on IDP side");
                 log(Level.SEVERE, "DefaultRelayStateSPSetup", "importEntity" +
@@ -661,7 +661,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), idList,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idList,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -677,7 +677,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
             if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), idList,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idList,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -686,7 +686,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
 
             if (FederationManager.getExitCode(fmSP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of " +
                         "Extended entity failed");
@@ -698,7 +698,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             }
             
             if (FederationManager.getExitCode(fmSP.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "",
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "",
                     spmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to import extended " +
                         "metadata");
@@ -712,7 +712,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             //Import SP ext metadata on IDP side 
             if (FederationManager.getExitCode(fmIDP.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_REALM),
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     true, "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Deletion of " +
                         "Extended entity failed on IDP side");
@@ -724,7 +724,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             }
             
            if (FederationManager.getExitCode(fmIDP.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "",
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "",
                     idpmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to " +
                         "import extended metadata on IDP side");
