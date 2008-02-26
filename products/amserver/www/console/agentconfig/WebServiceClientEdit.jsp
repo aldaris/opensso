@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.1 2007-12-17 19:42:45 veiming Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.2 2008-02-26 20:47:36 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -57,17 +57,19 @@
         var securityMech = frm.elements['WebServiceClientEdit.SecurityMech'];
         var disableSTS = true;
         var disableDiscovery = true;
+        var disableLibertyServiceURN = true;
         for (var i = 0; (i < securityMech.length); i++) {
             if (securityMech[i].checked) {
-                disableSTS =
-                    (securityMech[i].value != "urn:sun:wss:sts:security");
+                var value = securityMech[i].value;
+                disableSTS = (value != "urn:sun:wss:sts:security");
                 disableDiscovery =
-                    (securityMech[i].value != "urn:sun:liberty:discovery:security");
+                    (value != "urn:sun:liberty:discovery:security");
+                disableLibertyServiceURN = disableSTS && disableDiscovery;
                 break;
             }
         }
         frm.elements['WebServiceClientEdit.wspendpoint'].disabled = disableSTS;
-        frm.elements['WebServiceClientEdit.libertyservicetype'].disabled = disableSTS;
+        frm.elements['WebServiceClientEdit.libertyservicetype'].disabled = disableLibertyServiceURN;
         frm.elements['WebServiceClientEdit.sts'].disabled = disableSTS;
         frm.elements['WebServiceClientEdit.discovery'].disabled = disableDiscovery;
     }
