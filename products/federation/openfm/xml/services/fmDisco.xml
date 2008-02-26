@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmDisco.xml,v 1.4 2008-01-15 04:15:28 bina Exp $
+   $Id: fmDisco.xml,v 1.5 2008-02-26 22:21:46 mallas Exp $
                                                                                 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -217,6 +217,14 @@
                         <Value>com.sun.identity.liberty.ws.disco.plugins.IDFFNameIdentifierMapper</Value>
                     </DefaultValues>
                 </AttributeSchema>
+                <AttributeSchema name="sunIdentityServerGlobalDiscoEntryHandler"
+                    type="single"
+                    syntax="string"
+                    i18nKey="g206">
+                    <DefaultValues>
+                        <Value>@DISCO_GLOBAL_ENTRY_HANDLER@</Value>
+                    </DefaultValues>
+                </AttributeSchema>
             </Global>
             <Dynamic>
                 <AttributeSchema name="sunIdentityServerDynamicDiscoEntries"
@@ -253,7 +261,7 @@
                 <AttributeSchema name="sunIdentityServerDiscoEntries"
                     type="list"
                     syntax="xml"
-                    i18nKey="">
+                    i18nKey="p103">
                 </AttributeSchema>
             </User>
         </Schema>
