@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.5 2007-12-21 19:11:57 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.6 2008-02-26 01:15:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.qatest.agents;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +47,7 @@ public class ConfigureUnconfigure extends TestCommon {
     private SSOToken admintoken;
     private ResourceBundle rbg;
     private IDMCommon idmc;
+    private SMSCommon smsc;
     private String agentId;
     private String agentPassword;
     private String strGblRB = "agentsGlobal";
@@ -79,14 +81,30 @@ public class ConfigureUnconfigure extends TestCommon {
             set = new HashSet();
             set.add("Active");
             map.put("sunIdentityServerDeviceStatus", set);
+            log(Level.FINEST, "createAgentProfile", "Create the agent " +
+                    "with ID " + agentId);
             admintoken = getToken(adminUser, adminPassword, basedn);
-            idmc.createIdentity(admintoken, realm, IdType.AGENT, agentId,  map);
+            smsc = new SMSCommon(admintoken);
+            if (smsc.isAMDIT()) {
+                if (!setValuesHasString(idmc.searchIdentities(admintoken,
+                        agentId, IdType.AGENT), agentId))
+                    idmc.createIdentity(admintoken, realm, IdType.AGENT,
+                            agentId,  map);
+            } else {
+                set = new HashSet();
+                set.add("2.2_Agent");
+                map.put("AgentType",set);
+                if (!setValuesHasString(idmc.searchIdentities(admintoken,
+                        agentId, IdType.AGENTONLY), agentId))
+                    idmc.createIdentity(admintoken, realm, IdType.AGENTONLY,
+                            agentId, map);
+            }
         } catch (Exception e) {
+            stopNotificationServer();
             log(Level.SEVERE, "createAgentProfile", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            stopNotificationServer();
             destroyToken(admintoken);
         }
         exiting("createAgentProfile");
@@ -101,14 +119,23 @@ public class ConfigureUnconfigure extends TestCommon {
         entering("deleteAgentProfile", null);
         try {
             admintoken = getToken(adminUser, adminPassword, basedn);
-            idmc.deleteIdentity(admintoken, realm, IdType.AGENT, agentId);
+            smsc = new SMSCommon(admintoken);
+            if (smsc.isAMDIT())
+                if (setValuesHasString(idmc.searchIdentities(admintoken,
+                agentId, IdType.AGENT), agentId))
+                    idmc.deleteIdentity(admintoken, realm, IdType.AGENT,
+                            agentId);
+            else
+                if (setValuesHasString(idmc.searchIdentities(admintoken,
+                agentId, IdType.AGENTONLY), agentId))
+                    idmc.deleteIdentity(admintoken, realm, IdType.AGENTONLY,
+                            agentId);
             stopNotificationServer();
         } catch (Exception e) {
+            stopNotificationServer();
             log(Level.SEVERE, "deleteAgentProfile", e.getMessage());
-            e.printStackTrace();
             throw e;
         } finally {
-            stopNotificationServer();
             destroyToken(admintoken);
         }
         exiting("deleteAgentProfile");
