@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoEntryHandlerImplUtils.java,v 1.1 2006-10-30 23:18:03 qcheng Exp $
+ * $Id: DiscoEntryHandlerImplUtils.java,v 1.2 2008-02-26 22:21:08 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,10 +57,12 @@ import com.sun.identity.liberty.ws.disco.jaxb11.GenerateBearerTokenElement;
 import com.sun.identity.liberty.ws.disco.plugins.jaxb.DiscoEntryElement;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.liberty.ws.interfaces.ResourceIDMapper;
 
 public class DiscoEntryHandlerImplUtils {
 
-    protected static Debug debug = Debug.getInstance("fmDiscoEntryHandlerImpl");
+    protected static Debug debug = DiscoUtils.debug;
 
     /*
      * Retrieves discovery entries from an user entry.
@@ -401,5 +403,98 @@ public class DiscoEntryHandlerImplUtils {
         return insertResults;
     }
 
+    /**
+     * This is used by the global disocvery service handler to retrieve
+     * the resource offerings registered at the realm, org, role etc.
+     */
+    public static void getGlobalDiscoEntries(AMIdentity amIdentity,
+        String attrName, Map discoEntries, String userID) throws Exception
+    {
+        Map map = amIdentity.getServiceAttributes(
+                      "sunIdentityServerDiscoveryService");
 
+        Set attr = (Set)map.get(attrName);                
+        if (attr == null || attr.isEmpty()) {
+            debug.error("DiscoEntryHandlerImplUtils.getServiceDiscoEntries: " +
+            "The resource offerings are not available");
+            return;
+        }
+
+        if(debug.messageEnabled()) {
+           debug.message("DiscoEntryHandlerImplUtils.getServiceDiscoEntries: " +
+                         attr);
+        }
+
+        Iterator j = attr.iterator();
+        String entryStr = null;
+        String resIDValue = null;
+        DiscoEntryElement entry = null;
+        ResourceIDType resID = null;
+        ResourceOfferingType resOff = null;
+        String entryID = null;
+        String providerID = null;
+        while (j.hasNext()) {
+            entryStr = (String) j.next();
+            try {
+                entry = (DiscoEntryElement)
+                         DiscoUtils.getDiscoUnmarshaller().unmarshal(
+                        new StreamSource(new StringReader(entryStr)));
+                resOff = entry.getResourceOffering();
+                entryID = resOff.getEntryID();
+                if(entryID == null) {
+                   entryID = SAMLUtils.generateID();
+                   resOff.setEntryID(entryID);
+                }
+                ResourceIDType rid = resOff.getResourceID();
+                if((rid == null) || (rid.getValue() == null) || 
+                              (rid.getValue().equals(""))) {
+                   com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory 
+                                       discoFac =
+                   new com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory();
+                   resID = discoFac.createResourceIDType();
+                   resID.setValue(DiscoConstants.IMPLIED_RESOURCE);
+                   resOff.setResourceID(resID);
+                }
+                entry.setResourceOffering(resOff);
+                discoEntries.put(entryID, entry);
+            } catch (Exception e) {
+                debug.error("DiscoEntryHandlerImplUtils.getServiceDiscoEntries:"
+                    + " Exception for getting entry: " + entryStr + ":", e);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Registers the discovery service resource offerings to the AMIdentity
+     *  
+     * This is used by the global disocvery service handler to register
+     * the resource offerings to the realm, org, role etc.
+     * @param 
+     */
+    public static boolean setGlobalDiscoEntries(
+          AMIdentity amIdentity, String attrName, Collection entries) {
+        try {
+            Iterator i = entries.iterator();
+            Set xmlStrings = new HashSet();
+            String entryId = null;
+            StringWriter sw = null;
+            while (i.hasNext()) {
+                sw = new StringWriter(1000);
+                DiscoUtils.getDiscoMarshaller().marshal(
+                        ((DiscoEntryElement)i.next()),
+                                              sw);
+                xmlStrings.add(sw.getBuffer().toString());
+            }
+            Map map = new HashMap();
+            map.put(attrName, xmlStrings);
+            amIdentity.modifyService("sunIdentityServerDiscoveryService", map);
+            amIdentity.store();
+            return true;
+        } catch (Exception e) {
+            debug.error("DiscoEntryHandlerImplUtils.setServiceDiscoEntries:"
+                        + " Exception", e);
+            return false;
+        }
+    }
 }

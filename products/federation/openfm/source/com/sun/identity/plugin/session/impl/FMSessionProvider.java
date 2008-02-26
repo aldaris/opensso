@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.7 2008-02-20 06:42:37 superpat7 Exp $
+ * $Id: FMSessionProvider.java,v 1.8 2008-02-26 22:21:08 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,9 +88,16 @@ public class FMSessionProvider implements SessionProvider {
     private static Debug debug = Debug.getInstance("fmSessionProvider");;
     private static String cookieName = SystemPropertiesManager.
         get(Constants.AM_COOKIE_NAME);
+/**
+ *  Commented out since initializing session service statically here brings
+ *  in the whole FAM which is not desirable for clientsdk.
+ *  Can remove this, issue handler probably could do that.
     private static String lbcookieName = Session.lbCookieName;
     private static String lbcookieValue = SessionService.getSessionService().
         getLocalServerID();
+*/
+    private static String lbcookieName =  null;
+    private static String lbcookieValue = null;
     private static boolean urlRewriteEnabled = false;
     private static SecureRandom random = new SecureRandom();
     private static final int SECRET_LENGTH = 20;
@@ -351,7 +358,8 @@ public class FMSessionProvider implements SessionProvider {
     public void setLoadBalancerCookie(HttpServletResponse response)
     {
         Cookie lbCookie = null;
-        Set cookieDomains = AuthClientUtils.getCookieDomains();
+        AuthClientUtils acs = new AuthClientUtils();
+        Set cookieDomains = acs.getCookieDomains();
         if (cookieDomains.size() == 0) {
             lbCookie = setlbCookie(null);
             if (lbCookie != null) {
@@ -380,6 +388,12 @@ public class FMSessionProvider implements SessionProvider {
      */
     private static Cookie setlbCookie(String cookieDomain) {
         Cookie lbCookie = null;
+        // Assigned locally so that this wont be called during clientsdk.
+        // Also these variables seem to be static and getSessionService 
+        // returns only one instance. 
+        String lbcookieName = Session.lbCookieName;
+        String lbcookieValue = SessionService.getSessionService().
+                               getLocalServerID();
         if (lbcookieName != null && lbcookieName.length() != 0 &&
             lbcookieValue != null && lbcookieValue.length() != 0) {
             lbCookie = CookieUtils.newCookie(lbcookieName,

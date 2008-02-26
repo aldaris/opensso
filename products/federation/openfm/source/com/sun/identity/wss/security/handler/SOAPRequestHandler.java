@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.10 2008-01-15 17:43:29 dlarson Exp $
+ * $Id: SOAPRequestHandler.java,v 1.11 2008-02-26 22:21:09 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,8 +183,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             }
             MessageProcessor processor = new MessageProcessor(config);
             try {
-                return processor.validateRequest(soapRequest, subject,
+                processor.validateRequest(soapRequest, subject,
                         sharedState, request);
+                removeValidatedHeaders(config, soapRequest);
+                return subject;
             } catch (SOAPBindingException sbe) {
                 debug.error("SOAPRequestHandler.validateRequest:: SOAP" +
                         "BindingException:: ", sbe);
@@ -475,6 +477,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             MessageProcessor processor = new MessageProcessor(config);
             try {
                 processor.validateResponse(soapMessage, sharedState);
+                removeValidatedHeaders(config, soapMessage);
                 return;
             } catch (SOAPBindingException sbe) {
                 debug.error("SOAPRequestHandler.validateResponse:: SOAP" +
@@ -520,7 +523,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if(keyStoreFile == null || ksPasswd == null) {
            if(debug.messageEnabled()) {
                 debug.message("SOAPRequestHandler.initSystemProperties:: " +
-                        "Provider config does not have keystore information. Will " +
+                "Provider config does not have keystore information. Will " +
                         "fallback to the default configuration in AMConfig.");
             }
             return;
