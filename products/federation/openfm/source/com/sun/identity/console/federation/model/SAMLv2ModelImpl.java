@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.17 2008-02-26 18:31:51 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.18 2008-02-26 20:39:45 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -970,7 +970,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             ) throws AMConsoleException {
         List attrList = baseConfig.getAttribute();
         try {
-            if (!attrList.isEmpty()) {
+            if (attrList.size() > 1) {
                 for (Iterator it = attrList.iterator(); it.hasNext(); ) {
                     AttributeElement avpnew = (AttributeElement)it.next();
                     String name = avpnew.getName();
