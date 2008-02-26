@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.33 2008-02-26 01:21:23 veiming Exp $
+ * $Id: SMSEntry.java,v 1.34 2008-02-26 16:49:33 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -261,7 +261,18 @@ public class SMSEntry implements Cloneable {
                 specialUserSet.add(new DN(adminUser).toRFCString()
                     .toLowerCase());
             }
+        } else {
+            try {
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+                String name = (new DN(adminToken.getPrincipal().getName())).
+                    toRFCString();
+                specialUserSet.add(name.toLowerCase());
+            } catch (SSOException e) {
+                debug.error("SMSEntry.initializeClass", e);
+            }
         }
+        
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: Special User Set: " + specialUserSet);
         }
