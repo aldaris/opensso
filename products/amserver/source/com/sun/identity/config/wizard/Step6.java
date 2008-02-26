@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.8 2008-02-25 19:36:45 jonnelson Exp $
+ * $Id: Step6.java,v 1.9 2008-02-26 21:17:15 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,10 +49,10 @@ public class Step6 extends AjaxPage {
         String tmp =(String)getContext().getSessionAttribute("configDirectory");
         add("configDirectory", tmp);
         
-        tmp = (String)getContext().getSessionAttribute("configStoreHost");
+        tmp = getAttribute("configStoreHost", getHostName());
         add("configStoreHost", tmp);
 
-        tmp = (String)getContext().getSessionAttribute("rootSuffix");
+        tmp = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
         add("rootSuffix", tmp);
 
         tmp = getAttribute("configStorePort", getAvailablePort(50389));

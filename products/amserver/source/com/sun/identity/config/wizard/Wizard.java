@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.6 2008-02-25 19:36:44 jonnelson Exp $
+ * $Id: Wizard.java,v 1.7 2008-02-26 21:17:15 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,11 +100,12 @@ public class Wizard extends AjaxPage {
         /* 
          * Set the data store information
          */
-        String tmp = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_DATA_STORE);
+        String tmp = getAttribute(
+            SetupConstants.CONFIG_VAR_DATA_STORE, 
+            SetupConstants.SMS_EMBED_DATASTORE);
         request.addParameter(SetupConstants.CONFIG_VAR_DATA_STORE, tmp);
 
-        if ((tmp!= null) && tmp.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+        if (tmp.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
             tmp = getAttribute(SetupConstants.DS_EMB_REPL_FLAG, "false");
 
             /*
