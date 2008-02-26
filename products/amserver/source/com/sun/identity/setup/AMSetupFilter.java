@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.5 2008-01-31 22:56:40 jonnelson Exp $
+ * $Id: AMSetupFilter.java,v 1.6 2008-02-26 01:27:05 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,10 +46,11 @@ public final class AMSetupFilter implements Filter {
     private ServletContext servletCtx;
     private boolean initialized;
     private boolean passthrough;
-    private static final String SETUPURI = "/configurator.jsp";
+    private static final String SETUPURI = "/config/options.htm";
 
-    private static String[] fList = { ".css", ".js", ".jpg", ".gif", ".png", 
-        "SMSObjectIF" }; 
+    private static String[] fList = { 
+        ".htm", ".css", ".js", ".jpg", ".gif", ".png", "SMSObjectIF" 
+    }; 
 
     /**
      * Redirects request to configuration page if the product is not yet 
@@ -72,7 +73,7 @@ public final class AMSetupFilter implements Filter {
         try {
             //Check to see if AM is configured 
             if (AMSetupServlet.isConfigured() ||
-                httpRequest.getRequestURI().endsWith(".htm")) 
+                httpRequest.getRequestURI().endsWith("configurator.jsp")) 
             {
                 filterChain.doFilter(httpRequest, httpResponse);
             } else {
