@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.16 2008-02-25 21:06:42 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.17 2008-02-26 18:31:51 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1540,12 +1540,13 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 tmp = tmp.substring(0, index);
                 index = tmp.lastIndexOf("|");
                 
-                String level = tmp.substring(index+1);
+                String authScheme = tmp.substring(index+1);
                 tmp = tmp.substring(0, index);
                 
                 index = tmp.indexOf("|");
-                String authScheme = tmp.substring(index + 1);
-                String name = tmp.substring(0,index);
+                String level = tmp.substring(index + 1);
+                String name = tmp.substring(0,index);   
+             
                 cxt.put(name, "true", authScheme, level, isDefault);
             }
             

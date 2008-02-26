@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthContexts.java,v 1.1 2008-02-12 21:57:57 asyhuang Exp $
+ * $Id: SAMLv2AuthContexts.java,v 1.2 2008-02-26 18:27:43 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,10 +75,10 @@ public class SAMLv2AuthContexts
             Map.Entry entry = (Map.Entry)iterator.next();            
             SAMLv2AuthContext SAMLv2AuthContextObj =
                 (SAMLv2AuthContext)entry.getValue();
-            String str = SAMLv2AuthContextObj.name 
+            String str = SAMLv2AuthContextObj.name
+                + "|" +  SAMLv2AuthContextObj.level 
                 + "|" +  SAMLv2AuthContextObj.key 
                 + "=" +  SAMLv2AuthContextObj.value 
-                + "|" +  SAMLv2AuthContextObj.level
                 + "|";
             if(SAMLv2AuthContextObj.isDefault){
                 str = str + "default";
@@ -130,10 +130,8 @@ public class SAMLv2AuthContexts
         c.supported = supported;
         c.key = "";
         c.value = "";
-        c.level = level;       
-        
-       c.isDefault = isDefault;
-       
+        c.level = level;               
+        c.isDefault = isDefault;       
         collections.put(name, c);
     }
     
