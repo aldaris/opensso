@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.4 2007-10-10 06:15:55 mrudul_uchil Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.5 2008-02-26 20:40:45 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,8 @@ import java.util.StringTokenizer;
 
 public class FAMTrustSPMetadata implements TrustSPMetadata {
     
+    // Initialize the Attributes names set
+    private static Set attrNames = new HashSet();
     private String endpoint;
     private String spName;
     private String tokenType;
@@ -69,24 +71,29 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
     private static Debug debug = STSUtils.debug;
     private List secMech = null;
 
-    private static final String AGENT_CONFIG_ATTR = 
-                       "sunIdentityServerDeviceKeyValue";
+    private static final String AGENT_TYPE_ATTR = "AgentType";
     private static final String WSP_ENDPOINT = "WSPEndpoint";
-    private static final String TYPE = "Type";
     private static final String NAME = "Name";
     private static final String SEC_MECH = "SecurityMech";
-    private static final String KEY_ALIAS = "keyAlias";
-    private static final String KEY_TYPE = "keyType";
+    private static final String KEY_ALIAS = "privateKeyAlias";
+    private static final String KEY_TYPE = "privateKeyType";
+    
+    static {
+        attrNames.add(SEC_MECH);
+        attrNames.add(WSP_ENDPOINT);
+        attrNames.add(KEY_ALIAS);
+        attrNames.add(KEY_TYPE);
+    }
 
     /** Creates a new instance of FAMTrustSPMetedata */
     public FAMTrustSPMetadata(String spEndPoint) {
         this.endpoint = spEndPoint;
 
-        getAndProcessWSPKeyValues(spName);
+        getAndProcessWSPKeyValues(spEndPoint);
 
-        this.certAlias = 
-            SystemConfigurationUtil.getProperty(
-                Constants.SAML_XMLSIG_CERT_ALIAS);
+        //this.certAlias = 
+        //    SystemConfigurationUtil.getProperty(
+        //        Constants.SAML_XMLSIG_CERT_ALIAS);
     }
 
     public String getSPEndPoint(){
@@ -124,7 +131,6 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
     // Get WSP configuration and process Key/Value pairs.
     private void getAndProcessWSPKeyValues(String providerEndPoint) {
         Set agentConfigAttribute = new HashSet();
-        agentConfigAttribute.add(AGENT_CONFIG_ATTR);
 
         // Obtain the provider configuration from Agent profile
         try {
@@ -133,35 +139,33 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
                 new AMIdentityRepository(adminToken, "/");
 
             IdSearchControl control = new IdSearchControl();
-            control.setReturnAttributes(agentConfigAttribute);
+            control.setAllReturnAttributes(true);
             control.setTimeOut(0);
-            control.setMaxResults(2);
-
+            
             Map kvPairMap = new HashMap();
             Set set = new HashSet();
-            set.add(TYPE + "=" + "WSP");
-            set.add(WSP_ENDPOINT + "=" + providerEndPoint);
-            kvPairMap.put(AGENT_CONFIG_ATTR, set);
+            set.add(ProviderConfig.WSP);            
+            kvPairMap.put(AGENT_TYPE_ATTR, set);
+            
+            set = new HashSet();
+            set.add(providerEndPoint);            
+            kvPairMap.put(WSP_ENDPOINT, set);
 
             control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
-            IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
-                "*", control);
+            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
+               "*", control);
             Set agents = results.getSearchResults();
             if (!agents.isEmpty()) {
                 Map attrs = (Map) results.getResultAttributes();
                 AMIdentity provider = (AMIdentity) agents.iterator().next();
-                Map attributes = (Map) attrs.get(provider);
+                Map attributes = (Map) provider.getAttributes(attrNames);
                 if(debug.messageEnabled()) {
                    debug.message("FAMTrustSPMetadata.getAndProcessWSPKeyValues:"
                                   + " SP Attributes: " + attributes);
                 }
-                Set attributeValues = (Set) attributes.get(
-                          AGENT_CONFIG_ATTR.toLowerCase());
-                if (attributeValues != null) {
-                    // Get the values and initialize the properties
-                    parseAgentKeyValues(attributeValues);
-                }
+                
+                parseAgentKeyValues(attributes);
             }
         } catch (Exception e) {
             debug.error("FAMTrustSPMetadata.getAndProcessWSPKeyValues:ERROR: "
@@ -170,20 +174,27 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
 
     }
 
-    private void parseAgentKeyValues(Set keyValues) {
-        if(keyValues == null || keyValues.isEmpty()) {
+    private void parseAgentKeyValues(Map attributes) throws ProviderException {
+        if(attributes == null || attributes.isEmpty()) {
            return;
         }
-        Iterator iter = keyValues.iterator(); 
-        while(iter.hasNext()) {
-           String entry = (String)iter.next();
-           int index = entry.indexOf("=");
-           if(index == -1) {
-              continue;
-           }
-           setConfig(entry.substring(0, index),
-                      entry.substring(index+1, entry.length()));
+
+        for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            Set valSet = (Set)attributes.get(key);
+            String value = null;
+            if ((valSet != null) && (valSet.size() > 0)) {
+                Iterator iter = valSet.iterator();
+                StringBuffer sb =  new StringBuffer(100);
+                while(iter.hasNext()) {
+                   sb.append((String)iter.next()).append(",");
+                }
+                sb = sb.deleteCharAt(sb.length() - 1);
+                value = sb.toString();
+            }
+            setConfig(key, value);
         }
+
     }
 
     private void setConfig(String attr, String value) {
@@ -219,7 +230,7 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
             }
 
         } else if(attr.equals(KEY_ALIAS)) {
-            //this.certAlias = value;
+            this.certAlias = value;
         } else if(attr.equals(KEY_TYPE)) {
             if ( value == null || value.length() == 0 ) {
                 this.keyType = STSConstants.PUBLIC_KEY;
