@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.6 2008-01-09 04:19:33 beomsuk Exp $
+ * $Id: ISArchiveVerify.java,v 1.7 2008-02-26 19:03:41 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,6 @@ import com.sun.identity.log.LogReader;
 import com.sun.identity.log.handlers.SecureFileHandler;
 import com.sun.identity.log.secure.SecureLogHelper;
 import com.sun.identity.log.secure.VerifierList;
-import com.sun.identity.log.spi.IVerifierOutput;
 import com.sun.identity.log.spi.VerifierAction;
 import com.sun.identity.security.keystore.AMPassword;
 import com.sun.identity.setup.Bootstrap;
@@ -112,7 +111,7 @@ public class ISArchiveVerify{
             System.exit(1);
         }
 
-        if (VersionCheck.isValid() == 1) {
+        if (VersionCheck.isVersionValid() == 1) {
             System.exit(1);
         }
 

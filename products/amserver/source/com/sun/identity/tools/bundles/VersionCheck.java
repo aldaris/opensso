@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.5 2007-11-30 00:13:32 veiming Exp $
+ * $Id: VersionCheck.java,v 1.6 2008-02-26 19:03:42 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,6 @@ public class VersionCheck implements SetupConstants {
      * @param bundle The ResourceBundle contains the prompt message.
      */
     public static int isValid() {
-        String javaExpectedVersion = System.getProperty(JAVA_VERSION_EXPECTED);
-        String amExpectedVersion = System.getProperty(AM_VERSION_EXPECTED);
         try {
             Bootstrap.load();
         } catch (Exception ex) {
@@ -47,6 +45,12 @@ public class VersionCheck implements SetupConstants {
                 + System.getProperty(Bootstrap.JVM_OPT_BOOTSTRAP));
             return 1;
         }
+        return isVersionValid();
+    }
+
+    public static int isVersionValid() {
+        String javaExpectedVersion = System.getProperty(JAVA_VERSION_EXPECTED);
+        String amExpectedVersion = System.getProperty(AM_VERSION_EXPECTED);
         String configVersion = SystemProperties.get(System.getProperty(
             AM_VERSION_CURRENT));
         if (!versionCompatible(System.getProperty(JAVA_VERSION_CURRENT),

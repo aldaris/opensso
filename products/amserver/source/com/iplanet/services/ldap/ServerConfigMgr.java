@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.8 2008-01-27 08:01:09 veiming Exp $
+ * $Id: ServerConfigMgr.java,v 1.9 2008-02-26 19:03:41 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -450,14 +450,14 @@ public class ServerConfigMgr {
         try {
             Bootstrap.load();
             
-            if (VersionCheck.isValid() == 1) {
+            if (VersionCheck.isVersionValid() == 1) {
                 System.exit(1);
             }
             
             debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
             validateArguments(args);
-            boolean proceeded = printHelpMessage(args) || encryptPassword(args) ||
-                changePassword(args);
+            boolean proceeded = printHelpMessage(args) ||
+                encryptPassword(args) || changePassword(args);
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
