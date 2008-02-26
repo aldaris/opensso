@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ParseOutput.java,v 1.1 2005-11-01 00:30:27 arvindp Exp $
+ * $Id: ParseOutput.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,11 @@ public interface ParseOutput {
      *            contains text value of this node
      * @see ParseOutput
      */
-    public void process(String name, Vector elems, Hashtable atts, 
-            String Pcdata) throws XMLException;
+    void process(
+        XMLParser parser,
+        String name,
+        Vector elems,
+        Hashtable atts, 
+        String Pcdata
+    ) throws XMLException;
 }

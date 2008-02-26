@@ -17,34 +17,39 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerGroup.java,v 1.1 2005-11-01 00:30:18 arvindp Exp $
+ * $Id: ServerGroup.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.ldap;
 
+
+import com.iplanet.services.util.GenericNode;
+import com.iplanet.services.util.ParseOutput;
+import com.iplanet.services.util.XMLException;
+import com.iplanet.services.util.XMLParser;
+import com.iplanet.ums.IUMSConstants;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
-
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
-
-import com.iplanet.services.util.GenericNode;
-import com.iplanet.services.util.ParseOutput;
-import com.iplanet.services.util.XMLException;
-import com.iplanet.ums.IUMSConstants;
 
 public class ServerGroup implements ParseOutput {
     /**
      * Not to be called. This is a method to be called by the parser to read the
      * xml information.
      */
-    public void process(String name, Vector elems, Hashtable atts, 
-            String Pcdata) throws XMLException {
+    public void process(
+        XMLParser parser,
+        String name,
+        Vector elems,
+        Hashtable atts, 
+        String Pcdata
+    ) throws XMLException {
         if (DSConfigMgr.debugger.messageEnabled()) {
             DSConfigMgr.debugger.message("in ServerGroup.process()");
         }
@@ -142,7 +147,7 @@ public class ServerGroup implements ParseOutput {
         }
 
         // Put it in the list of groups.
-        DSConfigMgr.thisInstance.groupHash.put(groupName, this);
+        parser.getGroupContainer().put(groupName, this);
     }
 
     /**
@@ -171,10 +176,7 @@ public class ServerGroup implements ParseOutput {
             }
         }
 
-        if (serv == null) {
-            return null;
-        }
-        if (user != null) {
+        if ((serv != null) && (user != null)) {
             return new ServerInstance(this, serv, user);
         }
 

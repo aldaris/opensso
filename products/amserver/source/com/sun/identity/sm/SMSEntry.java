@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.32 2008-01-04 21:00:08 veiming Exp $
+ * $Id: SMSEntry.java,v 1.33 2008-02-26 01:21:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -198,63 +198,55 @@ public class SMSEntry implements Cloneable {
 
     static boolean enableDataStoreNotification;
 
-    // Initialize the above variables
     static {
         // Initialize for checking delegation permissions
         readActionSet.add(READ);
         modifyActionSet.add(MODIFY);
-
-        // Check if backend has permission check enabled
-        String proxy = SystemProperties.get(DB_PROXY_ENABLE);
-        if (proxy != null && proxy.equalsIgnoreCase("true")) {
-            backendProxyEnabled = true;
-        }
-
+        
         // initialize case sensitive attributes
-        // (everything else is case Insensitive)
         mCaseSensitiveAttributes = new CaseInsensitiveHashSet(3);
         mCaseSensitiveAttributes.add(SMSEntry.ATTR_SCHEMA);
         mCaseSensitiveAttributes.add(SMSEntry.ATTR_PLUGIN_SCHEMA);
         mCaseSensitiveAttributes.add(SMSEntry.ATTR_KEYVAL);
 
+        // Resource bundle
+        AMResourceBundleCache amCache = AMResourceBundleCache.getInstance();
+        bundle = amCache.getResBundle(IUMSConstants.UMS_BUNDLE_NAME,
+            java.util.Locale.ENGLISH);
+        initializeClass();
+    }
+    
+    public static void initializeClass() {
+        // Check if backend has permission check enabled
+        String proxy = SystemProperties.get(DB_PROXY_ENABLE);
+        backendProxyEnabled = (proxy != null) && proxy.equalsIgnoreCase("true");
+
         // Check if SMSEntries can be cached
         String cacheEnabled = System.getProperty(GLOBAL_CACHE_PROPERTY,
-                SystemProperties.get(GLOBAL_CACHE_PROPERTY, "true"));
+            SystemProperties.get(GLOBAL_CACHE_PROPERTY, "true"));
         if (cacheEnabled.equalsIgnoreCase("true")) {
             cacheSMSEntries = true;
         } else { // Global Property - set to false. Check component property
             cacheEnabled = SystemProperties.get(SM_CACHE_PROPERTY);
-            if (cacheEnabled != null && cacheEnabled.length() > 0) {
-                cacheSMSEntries = (cacheEnabled.equalsIgnoreCase("true")) ? true
-                        : false;
-            } else {
-                cacheSMSEntries = false;
-            }
+            cacheSMSEntries = (cacheEnabled != null) &&
+                cacheEnabled.equalsIgnoreCase("true");
         }
-
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: cache enabled: " + cacheSMSEntries);
         }
 
         // Check if backend datastore notification needs to be enabled
         String enable = SystemProperties.get(SMS_ENABLE_DB_NOTIFICATION);
-        if (enable != null && enable.equalsIgnoreCase("true")) {
-            enableDataStoreNotification = true;
-        }
+        enableDataStoreNotification = (enable != null) && 
+            enable.equalsIgnoreCase("true");
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: DN notification enabled: "
                     + enableDataStoreNotification);
         }
 
-        // Resource bundle
-        AMResourceBundleCache amCache = AMResourceBundleCache.getInstance();
-        bundle = amCache.getResBundle(IUMSConstants.UMS_BUNDLE_NAME,
-                java.util.Locale.ENGLISH);
-
         // Get an instance of SMSObject(can be SMSLDAP or SMSJAXRPC)
         // after the properties for cache/resourcebundle/internal users
         // are retrieved/initialized.
-
         initSMSObject();
         // Cache internal users
         String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");

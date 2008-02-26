@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.11 2008-01-24 23:14:14 veiming Exp $
+ * $Id: DSConfigMgr.java,v 1.12 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ import netscape.ldap.LDAPv3;
  * configuration file (serverconfig.xml) is loaded and cached in this object.
  * This class exists as a singleton instance.
  */
-public class DSConfigMgr {
+public class DSConfigMgr implements IDSConfigMgr {
 
     private static final String LDAP_CONNECTION_NUM_RETRIES =
         "com.iplanet.am.ldap.connection.num.retries";
@@ -69,16 +69,22 @@ public class DSConfigMgr {
     private static final String RUN_TIME_CONFIG_PATH = 
         "com.iplanet.coreservices.configpath";
 
-    private static int connNumRetry = 3;
+    private int connNumRetry = 3;
 
-    private static int connRetryInterval = 1000;
+    private int connRetryInterval = 1000;
 
-    private static HashSet retryErrorCodes = new HashSet();
+    private HashSet retryErrorCodes = new HashSet();
 
     static Debug debugger = null;
 
     static {        
         debugger = Debug.getInstance(IUMSConstants.UMS_DEBUG);
+    }
+
+    DSConfigMgr() {
+        i18n = I18n.getInstance(IUMSConstants.UMS_PKG);
+        groupHash = new Hashtable();
+        
         String numRetryStr = SystemProperties.get(LDAP_CONNECTION_NUM_RETRIES);
         if (numRetryStr != null) {
             try {
@@ -91,8 +97,8 @@ public class DSConfigMgr {
             }
         }
 
-        String retryIntervalStr = SystemProperties
-                .get(LDAP_CONNECTION_RETRY_INTERVAL);
+        String retryIntervalStr = SystemProperties.get(
+            LDAP_CONNECTION_RETRY_INTERVAL);
         if (retryIntervalStr != null) {
             try {
                 connRetryInterval = Integer.parseInt(retryIntervalStr);
@@ -111,19 +117,6 @@ public class DSConfigMgr {
                 retryErrorCodes.add(stz.nextToken().trim());
             }
         }
-
-        if (debugger.messageEnabled()) {
-            debugger.message("DataLayer: number of retry = " + connNumRetry);
-            debugger.message("DataLayer: retry interval = " 
-                            + connRetryInterval);
-            debugger.message("DataLayer: retry error codes = "
-                    + retryErrorCodes);
-        }
-    }
-
-    DSConfigMgr() {
-        i18n = I18n.getInstance(IUMSConstants.UMS_PKG);
-        groupHash = new Hashtable();
     }
 
     /**
@@ -563,7 +556,7 @@ public class DSConfigMgr {
     private void loadServerConfiguration(InputStream is)
             throws LDAPServiceException {
         // Instantiate the XML classes and pass the file names.
-        XMLParser parser = new XMLParser(true);
+        XMLParser parser = new XMLParser(true, groupHash);
 
         // Get the data from the xml classes
         parser.register(SERVERGROUP, "com.iplanet.services.ldap.ServerGroup");

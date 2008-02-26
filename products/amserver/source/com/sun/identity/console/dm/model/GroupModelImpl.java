@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupModelImpl.java,v 1.1 2008-01-15 22:22:59 jonnelson Exp $
+ * $Id: GroupModelImpl.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,8 +46,8 @@ import com.iplanet.am.sdk.AMSearchControl;
 import com.iplanet.am.sdk.AMStaticGroup;
 import com.iplanet.am.sdk.AMSearchResults;
 import com.iplanet.am.sdk.AMStoreConnection;
-import com.iplanet.am.util.OrderedSet;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;

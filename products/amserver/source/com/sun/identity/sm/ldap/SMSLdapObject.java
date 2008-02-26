@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.13 2008-02-05 01:19:01 goodearth Exp $
+ * $Id: SMSLdapObject.java,v 1.14 2008-02-26 01:21:24 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     // Other parameters
     static ResourceBundle bundle;
 
-    static boolean initialized;
+    boolean initialized;
 
     static boolean initializedForNotification;
 
@@ -133,6 +133,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         if (initialized)
             return;
 
+        SMDataLayer.reset();
         // Obtain the I18N resource bundle & Debug
         debug = Debug.getInstance("amSMSLdap");
         AMResourceBundleCache amCache = AMResourceBundleCache.getInstance();

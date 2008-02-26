@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.44 2008-02-22 02:12:45 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.45 2008-02-26 01:21:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,6 +115,7 @@ public class AMSetupServlet extends HttpServlet {
 
     final static String BOOTSTRAP_EXTRA = "bootstrap";    
     final static String BOOTSTRAP_FILE_LOC = "bootstrap.file";
+    final static String OPENDS_DIR = "/opends";
 
     private static String errorMessage = null;
 
@@ -129,6 +130,15 @@ public class AMSetupServlet extends HttpServlet {
         }
         checkConfigProperties();
         LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
+        
+        if (isConfiguredFlag && !ServerConfiguration.isLegacy()) { 
+            try {
+                BootstrapCreator.createBootstrap();
+            } catch (ConfigurationException e) {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "AMSetupServlet,init", e);
+            }        
+        }
     }
 
     /*
@@ -151,13 +161,13 @@ public class AMSetupServlet extends HttpServlet {
             overrideAMC.equalsIgnoreCase("false");
         
         if ((!isConfiguredFlag) && (servletCtx != null)) {
+            String baseDir = getBaseDir();
             try {
                 String bootstrapFile = getBootStrapFile();
                 if (bootstrapFile != null) {
                     isConfiguredFlag = Bootstrap.load(
-                        new BootstrapData(bootstrapFile), false);
-                } else {
-                    String baseDir = getBaseDir();
+                        new BootstrapData(baseDir), false);
+                } else {                    
                     if (baseDir != null) {
                         isConfiguredFlag = loadAMConfigProperties(
                             baseDir + "/" + SetupConstants.AMCONFIG_PROPERTIES);
@@ -248,10 +258,6 @@ public class AMSetupServlet extends HttpServlet {
             SetupConstants.CONFIG_VAR_SITE_CONFIGURATION);
 
         try {
-/*            Map bootstrapRes = createBootstrapResource(false);
-            isConfiguredFlag = 
-                Bootstrap.load(new BootstrapData(bootstrapRes), true) ||
-                configure(map);*/
             isConfiguredFlag = configure(map);
             if (isConfiguredFlag) {
                 postInitialize(getAdminSSOToken());
@@ -336,8 +342,8 @@ public class AMSetupServlet extends HttpServlet {
                 baseDirectory.mkdir();
             } else {
                 SetupProgress.reportStart("emb.checkingbasedir",basedir);
-                File bootstrapFile = new File(basedir+"/"+BOOTSTRAP_EXTRA);
-                File opendsDir = new File(basedir+"/opends");
+                File bootstrapFile = new File(basedir + "/" + BOOTSTRAP_EXTRA);
+                File opendsDir = new File(basedir + OPENDS_DIR);
                 if (bootstrapFile.exists() || opendsDir.exists()) {
                     SetupProgress.reportEnd("emb.basedirfailed", null);
                     throw new ConfiguratorException(
@@ -622,12 +628,6 @@ public class AMSetupServlet extends HttpServlet {
             initMap.put(BootstrapData.DS_PWD, 
                 map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD));
         }
-        
-        if (dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
-            initMap.put(BootstrapData.EMBEDDED_DS, basedir + "/" +
-                SetupConstants.SMS_OPENDS_DATASTORE);
-        }
-        
         initMap.put(BootstrapData.SERVER_INSTANCE, serverURL + deployuri);
         return initMap;
     }

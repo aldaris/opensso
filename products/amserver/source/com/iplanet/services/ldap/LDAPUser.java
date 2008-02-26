@@ -17,19 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUser.java,v 1.1 2005-11-01 00:30:17 arvindp Exp $
+ * $Id: LDAPUser.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.ldap;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import com.iplanet.services.util.Crypt;
 import com.iplanet.services.util.GenericNode;
 import com.iplanet.services.util.ParseOutput;
+import com.iplanet.services.util.XMLParser;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * This class represents user who is going to be authorized to log onto the
@@ -42,10 +42,13 @@ public class LDAPUser implements ParseOutput {
         userType = Type.AUTH_ANONYMOUS;
     }
 
-    public void process(String name, Vector elems, Hashtable atts, 
-            String Pcdata) 
-    {
-
+    public void process(
+        XMLParser parser,
+        String name,
+        Vector elems,
+        Hashtable atts, 
+        String Pcdata
+    ) { 
         if (DSConfigMgr.debugger.messageEnabled()) {
             DSConfigMgr.debugger.message("in LDAPUser.process()");
         }

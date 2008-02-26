@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLParser.java,v 1.1 2005-11-01 00:30:27 arvindp Exp $
+ * $Id: XMLParser.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -53,6 +54,7 @@ public class XMLParser {
     private Hashtable elemmap = new Hashtable();
 
     private boolean useGenericClass = false;
+    private Map groupContainer;
 
     /*
      * static public void main(String argv[]) throws Exception { XMLParser wp =
@@ -108,7 +110,7 @@ public class XMLParser {
                 throw new XMLException(buf.toString());
             }
         }
-        po.process(nd.getNodeName(), elements, atts, pcdata);
+        po.process(this, nd.getNodeName(), elements, atts, pcdata);
         return po;
     }
 
@@ -132,8 +134,9 @@ public class XMLParser {
      * 
      * @param usegeneric
      */
-    public XMLParser(boolean usegeneric) {
+    public XMLParser(boolean usegeneric, Map groupContainer) {
         useGenericClass = usegeneric;
+        this.groupContainer = groupContainer;
     }
 
     /**
@@ -199,5 +202,9 @@ public class XMLParser {
         if (elemmap == null)
             elemmap = new Hashtable();
         elemmap.put(elemname, classname);
+    }
+
+    public Map getGroupContainer() {
+        return groupContainer;
     }
 }

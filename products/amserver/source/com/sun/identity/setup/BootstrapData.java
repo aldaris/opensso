@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.1 2008-01-24 23:14:14 veiming Exp $
+ * $Id: BootstrapData.java,v 1.2 2008-02-26 01:21:23 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.util.Crypt;
-import com.sun.identity.shared.Constants;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -50,7 +49,9 @@ import java.util.StringTokenizer;
 
 public class BootstrapData {
     private List data = new ArrayList();
-
+    
+    private final static String BOOTSTRAP = "bootstrap";
+    
     static final String PROTOCOL = "protocol";
     static final String SERVER_INSTANCE = "serverinstance";
     static final String FF_BASE_DIR = "ffbasedir";
@@ -61,14 +62,13 @@ public class BootstrapData {
     static final String DS_MGR = "dsmgr";
     static final String DS_BASE_DN = "dsbasedn";
     static final String PWD = "pwd";
-    static final String EMBEDDED_DS = "embeddedds";
     static final String PROT_FILE = "file";
     static final String PROT_LDAP = "ldap";
     static final String PROTOCOL_FILE = "file://";
     static final String PROTOCOL_LDAP = "ldap://";
-    private static final String LOCATION = "location";
     private static final String BOOTSTRAPCONFIG = "bootstrapConfig.properties";
     
+    private String basedir;
     private String dsbasedn;
     private String dsameUserPwd;
     private String instanceName;
@@ -76,12 +76,13 @@ public class BootstrapData {
     /**
      * Creates an instance of this class
      *
-     * @param fileName Path of bootstrap file.
+     * @param basedir Base Directory of the installation.
      * @throws IOException if cannot read the file.
      */
-    public BootstrapData(String fileName) 
+    public BootstrapData(String basedir) 
         throws IOException {
-        readFile(fileName);
+        this.basedir = basedir;
+        readFile(basedir + "/" + BOOTSTRAP);
     }
     
     public BootstrapData(Map mapConfig)
@@ -119,7 +120,7 @@ public class BootstrapData {
         Crypt.reinitialize();
         loadServerConfigXML(serverConfigXML);
         
-        startEmbeddedDS();
+        startEmbeddedDS(basedir + AMSetupServlet.OPENDS_DIR);
     }
 
     private Properties getBootstrapProperties() {
@@ -141,44 +142,20 @@ public class BootstrapData {
         return prop;
     }
     
-    private void startEmbeddedDS() 
-        throws MalformedURLException, UnsupportedEncodingException {
-        for (Iterator i = data.iterator(); i.hasNext();) {
-            String info = (String) i.next();
-
-            // need to do this because URL class does not understand ldap://
-            if (info.startsWith(BootstrapData.PROTOCOL_LDAP)) {
-                info = "http://" + info.substring(7);
-            }
-            
-            URL url = new URL(info);
-            Map mapQuery = queryStringToMap(url.getQuery());
-            String e = (String)mapQuery.get(EMBEDDED_DS);
-            if ((e != null) && (e.length() > 0)) {
-                startEmbeddedDS(e);
-            }
-        }
-    }
-    
-    private static boolean startEmbeddedDS(String odsDir) {
-        boolean started = false;
+    private static void startEmbeddedDS(String odsDir) {
         File odsDirFile = new File(odsDir);
 
         if (odsDirFile.exists()) {
             if (!EmbeddedOpenDS.isStarted()) {
                 try {
                     SetupProgress.reportStart("emb.startemb", null);
-                    started = true;
                     EmbeddedOpenDS.startServer(odsDir);
                     SetupProgress.reportEnd("emb.success", null);
                 } catch (Exception ex) {
                     //ignore, it maybe started.
                 }
-            } else {
-                started = true;
             }
         }
-        return started;
     }
     
     static void loadServerConfigXML(String xml)
@@ -355,15 +332,7 @@ public class BootstrapData {
             buff.append(PWD);
             buff.append("=");
             buff.append(URLEncoder.encode(pwd, "UTF-8"));
-            
-            String embeddedDS = (String)configuration.get(EMBEDDED_DS);
-            
-            if ((embeddedDS != null) && (embeddedDS.length() > 0)) {
-                buff.append("&");
-                buff.append(EMBEDDED_DS);
-                buff.append("=");
-                buff.append(URLEncoder.encode(embeddedDS, "UTF-8"));
-            }
+
             buff.append("&");
             buff.append(DS_BASE_DN);
             buff.append("=");

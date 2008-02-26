@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericNode.java,v 1.1 2005-11-01 00:30:26 arvindp Exp $
+ * $Id: GenericNode.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,8 @@ public class GenericNode implements ParseOutput {
 
     /**
      * Store the node information into this object.
+     *
+     * @param parser XML Parser instance
      * 
      * @param name
      *            the name of this node.
@@ -65,9 +67,13 @@ public class GenericNode implements ParseOutput {
      *            contains text value of this node
      * @see ParseOutput
      */
-    public void process(String name, Vector elems, Hashtable atts,
-            String pcdata) 
-    {
+    public void process(
+        XMLParser parser,
+        String name, 
+        Vector elems, 
+        Hashtable atts,
+        String pcdata
+    ) {
         _name = name;
         _elems = elems;
         _atts = atts;

@@ -17,19 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Server.java,v 1.1 2005-11-01 00:30:17 arvindp Exp $
+ * $Id: Server.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.ldap;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import com.iplanet.services.util.ParseOutput;
 import com.iplanet.services.util.XMLException;
+import com.iplanet.services.util.XMLParser;
 import com.iplanet.ums.IUMSConstants;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * This class represents a server. This class holds the server name and the port
@@ -88,8 +88,13 @@ public class Server implements ParseOutput {
      * process not process which can load information from xml file for you. So
      * stop calling me.
      */
-    public void process(String name, Vector elems, Hashtable atts, 
-            String Pcdata) throws XMLException {
+    public void process(
+        XMLParser parser,
+        String name,
+        Vector elems,
+        Hashtable atts, 
+        String Pcdata
+    ) throws XMLException {
         if (DSConfigMgr.debugger.messageEnabled()) {
             DSConfigMgr.debugger.message("in Server.process()");
         }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.10 2008-02-05 01:19:01 goodearth Exp $
+ * $Id: SMDataLayer.java,v 1.11 2008-02-26 01:21:23 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,14 +69,18 @@ class SMDataLayer {
      * Default maximum backlog queue size
      */
     static final int MAX_BACKLOG = 100;
-
     static final String LDAP_MAXBACKLOG = "maxbacklog";
-
     static final String LDAP_RELEASECONNBEFORESEARCH = 
         "releaseconnectionbeforesearchcompletes";
-
     static final String LDAP_REFERRAL = "referral";
+    
+    private static SMDataLayer m_instance = null;
 
+    private LDAPConnectionPool _ldapPool = null;
+    private LDAPConnection _trialConn = null;
+    private boolean m_releaseConnectionBeforeSearchCompletes;
+    private LDAPSearchConstraints _defaultSearchConstraints = null;
+    
     /**
      * SMDataLayer constructor
      */
@@ -84,6 +88,10 @@ class SMDataLayer {
         initLdapPool();
     }
 
+    public static void reset() {
+        m_instance = null;
+    }
+    
     /**
      * create the singleton SMDataLayer object if it doesn't exist already.
      */
@@ -300,14 +308,4 @@ class SMDataLayer {
             e.printStackTrace();
         }
     }
-
-    static private LDAPConnectionPool _ldapPool = null;
-
-    static private LDAPConnection _trialConn = null;
-
-    static private LDAPSearchConstraints _defaultSearchConstraints = null;
-
-    static private SMDataLayer m_instance = null;
-
-    private boolean m_releaseConnectionBeforeSearchCompletes = false;
 }

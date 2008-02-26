@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.8 2008-01-27 08:01:11 veiming Exp $
+ * $Id: Bootstrap.java,v 1.9 2008-02-26 01:21:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.io.BufferedReader;
@@ -61,7 +62,6 @@ public class Bootstrap {
      * Directory where bootstrap file resides.
      */
     public static final String JVM_OPT_BOOTSTRAP = "bootstrap.dir";
-    private final static String BOOTSTRAP = "bootstrap";
     private static boolean isBootstrap;
 
     private Bootstrap() {
@@ -112,9 +112,10 @@ public class Bootstrap {
             } finally {
                 propIn.close();
             }
+            SystemProperties.initializeProperties(prop);
         } else {
             isBootstrap = true;
-            BootstrapData bData = new BootstrapData(basedir + BOOTSTRAP);
+            BootstrapData bData = new BootstrapData(basedir);
             prop = getConfiguration(bData, true);
         }
         
@@ -181,6 +182,7 @@ public class Bootstrap {
                     ssoToken, instanceName);
                 Crypt.reinitialize();
                 BootstrapData.loadServerConfigXML(serverConfigXML);
+                SMSEntry.initializeClass();
                 AdminUtils.initialize();
                 SMSAuthModule.initialize();
                 SystemProperties.initializeProperties(
