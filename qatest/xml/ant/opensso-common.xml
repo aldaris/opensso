@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.9 2008-01-22 23:50:00 rmisra Exp $
+ $Id: opensso-common.xml,v 1.10 2008-02-26 01:39:19 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,7 +55,16 @@
         </copy>
     </target>
 
+    <target name="check-idsvcs-cond" depends="init-common">
+        <echo message="TEST_MODULE=${TEST_MODULE}"/>
+        <condition property="compile.idsvcs">
+            <equals arg1="${TEST_MODULE}" arg2="idsvcs"/>
+        </condition>
+        <echo message="compile.idsvcs=${compile.idsvcs}"/>
+    </target>
+
     <target name="check-cond" depends="init-common">
+
         <condition property="server1.set" else="false">
             <isset property="SERVER_NAME1"/>
         </condition>
@@ -182,7 +191,7 @@
         <classpath refid="client.classpath"/>
     </taskdef>
 
-    <target name="wscompile-idsvcs">
+    <target name="wscompile-idsvcs-module" depends="check-idsvcs-cond" if="compile.idsvcs">
         <wscompile
             fork= "false"
             base="${built.classes.dir}"
@@ -193,7 +202,29 @@
         </wscompile>
     </target>
 
-    <target name="compile-idsvcs" depends="wscompile-idsvcs">
+    <target name="compile-idsvcs-module" depends="wscompile-idsvcs-module" if="compile.idsvcs">
+        <echo message="Compiling idsvcs test source files"/>
+        <javac destdir="${built.classes.dir}"
+        debug="on"
+        failonerror="true">
+            <src path="./source"/>
+            <include name="com/sun/identity/qatest/idsvcs/**"/>
+            <classpath refid="client.classpath"/>
+        </javac>
+    </target>
+
+    <target name="wscompile-idsvcs-all">
+        <wscompile
+            fork= "false"
+            base="${built.classes.dir}"
+            classpath="${client.cp}"
+            gen="true"
+            verbose="true"
+            config="./xml/idsvcs/idsvcsSoapTest.xml">
+        </wscompile>
+    </target>
+
+    <target name="compile-idsvcs-all" depends="wscompile-idsvcs-all">
         <echo message="Compiling idsvcs test source files"/>
         <javac destdir="${built.classes.dir}"
         debug="on"
@@ -246,7 +277,7 @@
         </java>
 
         <copy file="./resources/AMConfig.properties" tofile="${built.classes.dir}/AMConfig.properties"/>
-        <antcall target="compile-idsvcs"/>
+        <antcall target="compile-idsvcs-all"/>
 
         <taskdef name="testng" classname="com.beust.testng.TestNGAntTask"
         classpathref="client.classpath"/>
@@ -290,7 +321,7 @@
         </java>
 
         <copy file="./resources/AMConfig.properties" tofile="${built.classes.dir}/AMConfig.properties"/>
-        <antcall target="compile-idsvcs"/>
+        <antcall target="compile-idsvcs-module"/>
 
         <taskdef name="testng" classname="com.beust.testng.TestNGAntTask" classpathref="client.classpath"/>
         <testng classpathref="client.classpath" outputdir="${base.report.dir}">
