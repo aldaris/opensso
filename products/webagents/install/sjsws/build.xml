@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2007-12-15 01:32:17 madan_ranganath Exp $
+   $Id: build.xml,v 1.3 2008-02-27 00:32:15 subbae Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -92,9 +92,11 @@
         <antcall target="copy-${build.os}-library"/>
 
         <!-- Generate SJSWS agent install archive -->
-        <zip destfile="${webagents.dist.dir}/${containername}_v70_${build.os}_agent.zip"
-             basedir="${webagents.container.scratch.dir}"
-        /> 
+        <zip destfile="${webagents.dist.dir}/${containername}_v70_${build.os}_agent.zip">
+             <fileset dir="${webagents.container.scratch.dir}" excludes="**/bin/**"/>
+             <zipfileset dir="${container.web_agent.bin.dir}" filemode="755"
+                         prefix="web_agents/sjsws_agent/bin"/>
+        </zip> 
         <checksum file="${webagents.dist.dir}/${containername}_v70_${build.os}_agent.zip"
             algorithm="SHA" fileext=".sha" />
 
