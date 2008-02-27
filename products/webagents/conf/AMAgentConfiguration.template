@@ -798,3 +798,17 @@ com.sun.identity.agents.config.domino.ltpa.enable = false
 com.sun.identity.agents.config.domino.ltpa.cookie.name = LtpaToken
 com.sun.identity.agents.config.domino.ltpa.config.name = LtpaToken
 com.sun.identity.agents.config.domino.ltpa.org.name = 
+
+#
+# Time in seconds used adjust time difference between Agent machine and
+# Access Manager. In the absence of this property and where Agent time differs+
+# from Access Manager time you would see agent making policy calls to
+# Access Manager even before the policy subject cache has expired
+# (subject timeToLive) or infinite re-direction happening.
+# User still needs to run a time syncing service to keep the time on
+# Agent machine and Access Manager machine as close as possible.
+#
+# Use this property to adjust for the small time difference in spite of
+# running time syncing service
+# Clock skew in seconds = AgentTime - AccessManagerTime
+com.sun.identity.agents.config.policy.clock.skew = 0

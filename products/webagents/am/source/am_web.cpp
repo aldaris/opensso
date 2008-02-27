@@ -118,6 +118,7 @@ USING_PRIVATE_NAMESPACE
 
 // notification response body.
 #define NOTIFICATION_OK		       "OK\r\n"
+unsigned long policy_clock_skew = 0;
 
 /**
   * Constants to create the POST submit form
@@ -1660,6 +1661,9 @@ am_web_is_access_allowed(const char *sso_token,
                         ignorePolicyResult = AM_TRUE;
                 }
                 
+		// Use the policy clock skew if set
+		policy_clock_skew = (*agentConfigPtr)->policy_clock_skew;
+
 		eval_status = am_policy_evaluate_ignore_url_notenforced(
 						 boot_info.policy_handle,
 						 sso_token, url, action_name,

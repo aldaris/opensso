@@ -48,7 +48,7 @@ am_resource_match_t match_patterns(const char * /*pattern*/,
 				   const char * /*target*/,
 				   bool /*ignorecase*/);
 
-PRTime getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &);
+PRTime getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &, unsigned long);
 
 /* Throws 
  *	std::range_error if value is too small or large.

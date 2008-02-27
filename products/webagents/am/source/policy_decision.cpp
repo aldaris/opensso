@@ -34,6 +34,7 @@
 
 USING_PRIVATE_NAMESPACE
 using std::string;
+extern unsigned long policy_clock_skew;
 
 const PDRefCntPtr PolicyDecision::INVALID_POLICY_DECISION;
 
@@ -107,7 +108,8 @@ PolicyDecision::construct_policy_decision(const ResourceName &resName,
 		    if(attrNode.getAttributeValue(ATTRIBUTE_NAME, actName)) {
 			// Create the ActionDecision with
 			// the action name and TTL.
-			ad = new ActionDecision(actName, Utils::getTTL(iter));
+			ad = new ActionDecision(actName, 
+                                       Utils::getTTL(iter,policy_clock_skew));
 
 			// Add the action values.
 			XMLElement values;

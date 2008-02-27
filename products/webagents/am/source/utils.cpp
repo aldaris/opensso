@@ -190,9 +190,13 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
 }
 
 PRTime
-Utils::getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &element) {
+Utils::getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &element,
+              unsigned long policy_clock_skew) {
     std::string ttl;
     PRTime retVal = 0;
+    PRExplodedTime explodedExpTime;
+    PRExplodedTime tmpExplodedExpTime;
+
 
     if (element.getAttributeValue(TIME_TO_LIVE, ttl)) {
 	       
@@ -205,6 +209,13 @@ Utils::getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &element) {
 		retVal = MAX_64_BIT_INT;
 	    }
 	}
+    }
+    // Adjust any policy clock skew if set
+    if (policy_clock_skew > 0) {
+        PR_ExplodeTime(retVal, PR_LocalTimeParameters, &explodedExpTime);
+        explodedExpTime.tm_sec += policy_clock_skew;
+        PR_NormalizeTime(&explodedExpTime, PR_LocalTimeParameters);
+        retVal = PR_ImplodeTime(&explodedExpTime);
     }
     return retVal;
 }

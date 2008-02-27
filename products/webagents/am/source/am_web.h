@@ -115,8 +115,6 @@ AM_BEGIN_EXTERN_C
 #define HTTPS_PROTOCOL_STR_LEN  	(sizeof(HTTPS_PROTOCOL_STR) - 1)
 
 
-//#define AM_WEB_PROPERTY_PREFIX		"com.sun.identity.agents.config."
-
 #define AM_WEB_LOGIN_URL_PROPERTY    AM_COMMON_PROPERTY_PREFIX "login.url"
 #define AM_WEB_CHECK_CLIENT_IP_PROPERTY		AM_COMMON_PROPERTY_PREFIX "client.ip.validation.enable"
 #define AM_WEB_ACCESS_DENIED_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "access.denied.url"
@@ -172,6 +170,7 @@ AM_BEGIN_EXTERN_C
 #define AM_POLICY_SESSION_ATTRS_MAP   AM_COMMON_PROPERTY_PREFIX "session.attribute.mapping"
 #define AM_POLICY_RESPONSE_ATTRS_MODE AM_COMMON_PROPERTY_PREFIX "response.attribute.fetch.mode"
 #define AM_POLICY_RESPONSE_ATTRS_MAP   AM_COMMON_PROPERTY_PREFIX "response.attribute.mapping"
+#define AM_POLICY_CLOCK_SKEW AM_COMMON_PROPERTY_PREFIX "policy.clock.skew"
 
 /* Followings are for the Header attribute modes */
 #define AM_POLICY_SET_ATTRS_AS_COOKIE "HTTP_COOKIE"

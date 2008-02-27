@@ -736,6 +736,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
     }
     
     
+    /* Policy clock skew */
+    if (AM_SUCCESS == status) {
+        parameter = AM_POLICY_CLOCK_SKEW;
+        status = am_properties_get_positive_number(this->properties,
+                                       parameter, 0, &this->policy_clock_skew);
+    }
+
     /* To skip is_server_alive()? */
     if (AM_SUCCESS == status) {
         parameter = AM_COMMON_IGNORE_SERVER_CHECK;
