@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerSiteModelImpl.java,v 1.1 2007-10-17 23:00:42 veiming Exp $
+ * $Id: ServerSiteModelImpl.java,v 1.2 2008-02-27 05:46:02 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.console.service.model;
 
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.configuration.ConfigurationException;
@@ -33,26 +32,20 @@ import com.sun.identity.common.configuration.ServerConfigXML;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
-import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.shared.Constants;
-import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 /**
  * Server and Site model implementation.
@@ -138,7 +131,7 @@ public class ServerSiteModelImpl
         String[] param = {name};
         logEvent("ATTEMPT_GET_SITE_FAILOVER_URLS", param);
         try {
-            Set urls = SiteConfiguration.getSiteFailoverURLs(getUserSSOToken(),
+            Set urls = SiteConfiguration.getSiteSecondaryURLs(getUserSSOToken(),
                 name);
             logEvent("SUCCEED_GET_SITE_FAILOVER_URLS", param);
             return urls;
@@ -300,7 +293,7 @@ public class ServerSiteModelImpl
             logEvent("ATTEMPT_MODIFY_SITE", param);
             
             SiteConfiguration.setSitePrimaryURL(ssoToken, siteName, primaryURL);
-            SiteConfiguration.setSiteFailoverURLs(ssoToken, siteName, 
+            SiteConfiguration.setSiteSecondaryURLs(ssoToken, siteName, 
                 failoverURLs);
             logEvent("SUCCEED_MODIFY_SITE", param);
         } catch (ConfigurationException e) {

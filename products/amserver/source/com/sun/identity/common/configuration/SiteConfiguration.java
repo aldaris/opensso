@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.2 2008-01-05 01:33:28 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.3 2008-02-27 05:46:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,8 +82,7 @@ public class SiteConfiguration extends ConfigurationBase {
         return siteInfo;
     }
 
-    
-   private static Set getSiteInfo(
+    private static Set getSiteInfo(
         ServiceConfig rootNode,
         String name
     ) throws SMSException, SSOException {
@@ -97,14 +96,14 @@ public class SiteConfiguration extends ConfigurationBase {
         info.add((String)setURL.iterator().next() + "|" +
             (String)setId.iterator().next());
                 
-        Set failovers = accessPoint.getSubConfigNames("*");
-        if ((failovers != null) && !failovers.isEmpty()) {
-            for (Iterator i = failovers.iterator(); i.hasNext(); ) {
-                String foName = (String)i.next();
-                ServiceConfig s = accessPoint.getSubConfig(foName);
+        Set secURLs = accessPoint.getSubConfigNames("*");
+        if ((secURLs != null) && !secURLs.isEmpty()) {
+            for (Iterator i = secURLs.iterator(); i.hasNext(); ) {
+                String secName = (String)i.next();
+                ServiceConfig s = accessPoint.getSubConfig(secName);
                 Map mapValues = s.getAttributes();
-                setId = (Set)mapValues.get(ATTR_FAILOVER_ID);
-                info.add(foName + "|" + (String)setId.iterator().next()); 
+                setId = (Set)mapValues.get(ATTR_SEC_ID);
+                info.add(secName + "|" + (String)setId.iterator().next()); 
             }
         }
         return info;
@@ -202,7 +201,7 @@ public class SiteConfiguration extends ConfigurationBase {
      *        service management datastore.
      * @param siteName Name of the site.
      * @param siteURL primary URL of the site.
-     * @param failoverURLs failover URLs of the site.
+     * @param secondaryURLs secondary URLs of the site.
      * @throws SMSException if errors access in the service management
      *         datastore.
      * @throws SSOException if the <code>ssoToken</code> is not valid.
@@ -212,7 +211,7 @@ public class SiteConfiguration extends ConfigurationBase {
         SSOToken ssoToken,
         String siteName,
         String siteURL,
-        Collection failoverURLs
+        Collection secondaryURLs    
     ) throws SMSException, SSOException, ConfigurationException {
         boolean created = false;
 
@@ -235,7 +234,7 @@ public class SiteConfiguration extends ConfigurationBase {
             if (sc != null) {
                 String siteId = getNextId(ssoToken);
                 created = createSite(ssoToken, siteName, siteURL, siteId,
-                    failoverURLs);
+                    secondaryURLs);
             }
         }
 
@@ -255,7 +254,7 @@ public class SiteConfiguration extends ConfigurationBase {
      * @param siteName Name of the site.
      * @param siteURL Primary URL of the site.
      * @param siteId Identifier of the site.
-     * @param failoverURLs failover URLs of the site.
+     * @param secondaryURLs Secondary URLs of the site.
      * @throws SMSException if errors access in the service management
      *         datastore.
      * @throws SSOException if the <code>ssoToken</code> is not valid.
@@ -265,7 +264,7 @@ public class SiteConfiguration extends ConfigurationBase {
         String siteName,
         String siteURL,
         String siteId,
-        Collection failoverURLs
+        Collection secondaryURLs    
     ) throws SMSException, SSOException, ConfigurationException {
         boolean created = false;
         ServiceConfig sc = getRootSiteConfig(ssoToken);
@@ -277,6 +276,24 @@ public class SiteConfiguration extends ConfigurationBase {
                 String[] param = {siteURL};
                 throw new ConfigurationException("invalid.site.url", param);
             }
+            
+            Set allURLs = getAllSiteURLs(ssoToken);
+            if (allURLs.contains(siteURL)) {
+                String[] param = {siteURL};
+                throw new ConfigurationException("duplicated.site.url", param);                
+            }
+            
+            if ((secondaryURLs != null) && !secondaryURLs.isEmpty()) {
+                for (Iterator i = secondaryURLs.iterator(); i.hasNext(); ) {
+                    String url = (String)i.next();
+                    if (allURLs.contains(url)) {
+                        String[] param = {url};
+                        throw new ConfigurationException("duplicated.site.url", 
+                            param);                
+                    }
+                }
+            }
+            
             sc.addSubConfig(siteName, SUBSCHEMA_SITE, 0, Collections.EMPTY_MAP);
             ServiceConfig scSite = sc.getSubConfig(siteName);
             
@@ -290,8 +307,8 @@ public class SiteConfiguration extends ConfigurationBase {
             scSite.addSubConfig(SUBCONFIG_ACCESS_URL, SUBCONFIG_ACCESS_URL, 0,
                 siteValues);
 
-            if ((failoverURLs != null) && !failoverURLs.isEmpty()) {
-                setSiteFailoverURLs(ssoToken, siteName, failoverURLs);
+            if ((secondaryURLs != null) && !secondaryURLs.isEmpty()) {
+                setSiteSecondaryURLs(ssoToken, siteName, secondaryURLs);
             }
 
             created = true;
@@ -322,31 +339,56 @@ public class SiteConfiguration extends ConfigurationBase {
     }
 
     /**
-     * Returns the failover URLs of a site.
+     * Returns the primary and secondary URLs of a site.
      *
      * @param ssoToken Single Sign-On Token which is used to access to the
      *        service management datastore.
      * @param siteName Name of the site.
-     * @return the failover URLs of a site.
+     * @return the primary and secondary URLs of a site.
      * @throws SMSException if errors access in the service management
      *         datastore.
      * @throws SSOException if the <code>ssoToken</code> is not valid.
      */
-    public static Set getSiteFailoverURLs(SSOToken ssoToken, String siteName)
+    public static Set getSiteURLs(SSOToken ssoToken, String siteName)
         throws SMSException, SSOException {
-        Set failoverURLs = new HashSet();
+        Set urls = new HashSet();
+        ServiceConfig rootNode = getRootSiteConfig(ssoToken);
+        ServiceConfig sc = rootNode.getSubConfig(siteName);
+        ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
+        Map map = accessPoint.getAttributes();
+        Set set = (Set)map.get(ATTR_PRIMARY_SITE_URL);
+        urls.add(set.iterator().next());
+
+        Set secondary = accessPoint.getSubConfigNames("*");
+        if ((secondary != null) && !secondary.isEmpty()) {
+            urls.addAll(secondary);
+        }
+        return urls;
+    }
+    
+    /**
+     * Returns the secondary URLs of a site.
+     *
+     * @param ssoToken Single Sign-On Token which is used to access to the
+     *        service management datastore.
+     * @param siteName Name of the site.
+     * @return the secondary URLs of a site.
+     * @throws SMSException if errors access in the service management
+     *         datastore.
+     * @throws SSOException if the <code>ssoToken</code> is not valid.
+     */
+    public static Set getSiteSecondaryURLs(SSOToken ssoToken, String siteName)
+        throws SMSException, SSOException {
+        Set secondaryURLs = new HashSet();
         ServiceConfig rootNode = getRootSiteConfig(ssoToken);
         ServiceConfig sc = rootNode.getSubConfig(siteName);
         ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
 
-        Set failovers = accessPoint.getSubConfigNames("*");
-        if ((failovers != null) && !failovers.isEmpty()) {
-            for (Iterator i = failovers.iterator(); i.hasNext(); ) {
-                failoverURLs.add(i.next());
-            }
+        Set secondary = accessPoint.getSubConfigNames("*");
+        if ((secondary != null) && !secondary.isEmpty()) {
+            secondaryURLs.addAll(secondary);
         }
-        return failoverURLs;
-
+        return secondaryURLs;
     }
 
     /**
@@ -364,47 +406,47 @@ public class SiteConfiguration extends ConfigurationBase {
         SSOToken ssoToken,
         String siteName,
         String siteURL
-    ) throws SMSException, SSOException {
-        ServiceConfig rootNode = getRootSiteConfig(ssoToken);
-        ServiceConfig sc = rootNode.getSubConfig(siteName);
-        ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
-
-        Map map = new HashMap(2);
-        Set set = new HashSet(2);
-        set.add(siteURL);
-        map.put(ATTR_PRIMARY_SITE_URL, set);
-        accessPoint.setAttributes(map);
-    }
-
-    /**
-     * Sets the failover URLs of a site.
-     *
-     * @param ssoToken Single Sign-On Token which is used to access to the
-     *        service management datastore.
-     * @param siteName Name of the site.
-     * @param failoverURLs Failover URLs of a site.
-     * @throws SMSException if errors access in the service management
-     *         datastore.
-     * @throws SSOException if the <code>ssoToken</code> is not valid.
-     */
-    public static void setSiteFailoverURLs(
-        SSOToken ssoToken,
-        String siteName,
-        Collection failoverURLs
     ) throws SMSException, SSOException, ConfigurationException {
         ServiceConfig rootNode = getRootSiteConfig(ssoToken);
         ServiceConfig sc = rootNode.getSubConfig(siteName);
         ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
 
-        Set failovers = accessPoint.getSubConfigNames("*");
-        if ((failovers != null) && !failovers.isEmpty()) {
-            for (Iterator i = failovers.iterator(); i.hasNext(); ) {
-                String foName = (String)i.next();
-                accessPoint.removeSubConfig(foName);
+        Map existing = accessPoint.getAttributes();
+        Set existingSet = (Set)existing.get(ATTR_PRIMARY_SITE_URL);
+        
+        if (!existingSet.contains(siteURL)) {
+            Set allURLs = getAllSiteURLs(ssoToken);
+            
+            if (allURLs.contains(siteURL)) {
+                String[] param = {siteURL};
+                throw new ConfigurationException("duplicated.site.url", param);
             }
+            
+            Map map = new HashMap(2);
+            Set set = new HashSet(2);
+            set.add(siteURL);
+            map.put(ATTR_PRIMARY_SITE_URL, set);
+            accessPoint.setAttributes(map);
         }
+    }
 
-        for (Iterator i = failoverURLs.iterator(); i.hasNext(); ) {
+    /**
+     * Sets the secondary URLs of a site.
+     *
+     * @param ssoToken Single Sign-On Token which is used to access to the
+     *        service management datastore.
+     * @param siteName Name of the site.
+     * @param secondaryURLs secondary URLs of a site.
+     * @throws SMSException if errors access in the service management
+     *         datastore.
+     * @throws SSOException if the <code>ssoToken</code> is not valid.
+     */
+    public static void setSiteSecondaryURLs(
+        SSOToken ssoToken,
+        String siteName,
+        Collection secondaryURLs
+    ) throws SMSException, SSOException, ConfigurationException {
+        for (Iterator i = secondaryURLs.iterator(); i.hasNext(); ) {
             String url = (String)i.next();
             try {
                 new URL(url);
@@ -414,85 +456,119 @@ public class SiteConfiguration extends ConfigurationBase {
             }
         }
         
-        for (Iterator i = failoverURLs.iterator(); i.hasNext(); ) {
-            String url = (String)i.next();
-            Map values = new HashMap(2);
-            Set set = new HashSet(2);
-            set.add(getNextId(ssoToken));
-            values.put(ATTR_FAILOVER_ID, set);
-            accessPoint.addSubConfig(url, SUBCONFIG_FAILOVERS, 0, values);
-        }
-    }
-
-    /**
-     * Adds the failover URLs of a site.
-     *
-     * @param ssoToken Single Sign-On Token which is used to access to the
-     *        service management datastore.
-     * @param siteName Name of the site.
-     * @param failoverURLs Failover URLs to be added to site.
-     * @throws SMSException if errors access in the service management
-     *         datastore.
-     * @throws SSOException if the <code>ssoToken</code> is not valid.
-     */
-    public static void addSiteFailoverURLs(
-        SSOToken ssoToken,
-        String siteName,
-        Collection failoverURLs
-    ) throws SMSException, SSOException {
         ServiceConfig rootNode = getRootSiteConfig(ssoToken);
         ServiceConfig sc = rootNode.getSubConfig(siteName);
         ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
 
-        Set toAdd = new HashSet(failoverURLs.size() *2);
-        toAdd.addAll(failoverURLs);
-
-        Set failovers = accessPoint.getSubConfigNames("*");
-        if ((failovers != null) && !failovers.isEmpty()) {
-            for (Iterator i = toAdd.iterator(); i.hasNext(); ) {
-                String foName = (String)i.next();
-                if (failovers.contains(foName)) {
-                    i.remove();
-                }
+        Set secondary = accessPoint.getSubConfigNames("*");
+        Set toAdd = new HashSet(secondaryURLs.size());
+        toAdd.addAll(secondaryURLs);
+        Set toRemove = new HashSet(secondary.size());
+      
+        if ((secondary != null) && !secondary.isEmpty()) {
+            toRemove.addAll(secondary);
+            toRemove.removeAll(secondaryURLs);
+            toAdd.removeAll(secondary);
+        }
+        
+        Set allURLs = getAllSiteURLs(ssoToken);
+        for (Iterator i = toAdd.iterator(); i.hasNext(); ) {
+            String url = (String)i.next();
+            if (allURLs.contains(url)) {
+                String[] param = {url};
+                throw new ConfigurationException("duplicated.site.url", param);
             }
         }
+  
+        for (Iterator i = toRemove.iterator(); i.hasNext(); ) {
+            String url = (String)i.next();
+            accessPoint.removeSubConfig(url);
+        }
+        
+        for (Iterator i = toAdd.iterator(); i.hasNext(); ) {
+            String url = (String)i.next();
+            Map values = new HashMap(2);
+            Set set = new HashSet(2);
+            set.add(getNextId(ssoToken));
+            values.put(ATTR_SEC_ID, set);
+            accessPoint.addSubConfig(url, SUBCONFIG_SEC_URLS, 0, values);
+        }
+    }
 
+    /**
+     * Adds the secondary URLs of a site.
+     *
+     * @param ssoToken Single Sign-On Token which is used to access to the
+     *        service management datastore.
+     * @param siteName Name of the site.
+     * @param secondaryURLs Secondary URLs to be added to site.
+     * @throws SMSException if errors access in the service management
+     *         datastore.
+     * @throws SSOException if the <code>ssoToken</code> is not valid.
+     */
+    public static void addSiteSecondaryURLs(
+        SSOToken ssoToken,
+        String siteName,
+        Collection secondaryURLs    
+    ) throws SMSException, SSOException, ConfigurationException {
+        ServiceConfig rootNode = getRootSiteConfig(ssoToken);
+        ServiceConfig sc = rootNode.getSubConfig(siteName);
+        ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
+
+        Set toAdd = new HashSet(secondaryURLs.size() *2);
+        toAdd.addAll(secondaryURLs);
+
+        Set secondary = accessPoint.getSubConfigNames("*");
+        if ((secondary != null) && !secondary.isEmpty()) {
+            toAdd.removeAll(secondary);
+        }
+
+        Set allURLs = getAllSiteURLs(ssoToken);
+        for (Iterator i = toAdd.iterator(); i.hasNext(); ) {
+            String url = (String)i.next();
+            if (allURLs.contains(url)) {
+                String[] param = {url};
+                throw new ConfigurationException("duplicated.site.url", param);
+            }
+        }
+        
         for (Iterator i = toAdd.iterator(); i.hasNext(); ){
             String url = (String)i.next();
             Map values = new HashMap(2);
             Set set = new HashSet(2);
             set.add(getNextId(ssoToken));
-            values.put(ATTR_FAILOVER_ID, set);
-            accessPoint.addSubConfig(url, SUBCONFIG_FAILOVERS, 0, values);
+            values.put(ATTR_SEC_ID, set);
+            accessPoint.addSubConfig(url, SUBCONFIG_SEC_URLS, 0, values);
         }
     }
 
     /**
-     * Removes the failover URLs from a site.
+     * Removes the secondary URLs from a site.
      *
      * @param ssoToken Single Sign-On Token which is used to access to the
      *        service management datastore.
      * @param siteName Name of the site.
-     * @param failoverURLs Failover URLs to be removed from site.
+     * @param secondaryURLs Secondary URLs to be removed from site.
      * @throws SMSException if errors access in the service management
      *         datastore.
      * @throws SSOException if the <code>ssoToken</code> is not valid.
      */
-    public static void removeSiteFailoverURLs(
+    public static void removeSiteSecondaryURLs(
         SSOToken ssoToken,
         String siteName,
-        Collection failoverURLs
+        Collection secondaryURLs
+    
     ) throws SMSException, SSOException {
         ServiceConfig rootNode = getRootSiteConfig(ssoToken);
         ServiceConfig sc = rootNode.getSubConfig(siteName);
         ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
 
-        Set failovers = accessPoint.getSubConfigNames("*");
-        if ((failovers != null) && !failovers.isEmpty()) {
-            for (Iterator i = failovers.iterator(); i.hasNext(); ) {
-                String foName = (String)i.next();
-                if (failoverURLs.contains(foName)) {
-                    accessPoint.removeSubConfig(foName);
+        Set secondary = accessPoint.getSubConfigNames("*");
+        if ((secondary != null) && !secondary.isEmpty()) {
+            for (Iterator i = secondary.iterator(); i.hasNext(); ) {
+                String secName = (String)i.next();
+                if (secondaryURLs.contains(secName)) {
+                    accessPoint.removeSubConfig(secName);
                 }
             }
         }
@@ -557,7 +633,6 @@ public class SiteConfiguration extends ConfigurationBase {
         if (isLegacy(ssoToken)) {
             Set sites = legacyGetSiteInfo(ssoToken);
             if ((sites != null) && !sites.isEmpty()) {
-                boolean added = false;
                 for (Iterator i = sites.iterator();
                     i.hasNext() && (siteId == null);
                 ) {
@@ -636,5 +711,42 @@ public class SiteConfiguration extends ConfigurationBase {
     ) throws SMSException, SSOException {
         Set sites = getSites(ssoToken);
         return sites.contains(siteName);
+    }
+    
+    private static Set getAllSiteURLs(SSOToken ssoToken)
+        throws SMSException, SSOException {
+        Set urls = new HashSet();
+        Set sites = getSites(ssoToken);
+        for (Iterator i = sites.iterator(); i.hasNext(); ) {
+            String siteName = (String)i.next();
+            urls.addAll(getSiteURLs(ssoToken, siteName));
+        }
+        return urls;
+    }
+
+    /**
+     * Returns site name where the given URL is either its primary or
+     * secondary URL.
+     * 
+     * @param ssoToken Single Sign-On Token which is used to access to the
+     *        service management datastore.
+     * @param URL Lookup URL.
+     * @return site name.
+     * @throws SMSException if errors access in the service management
+     *         datastore.
+     * @throws SSOException if the <code>ssoToken</code> is not valid.
+     */
+    public static String getSiteIdByURL(SSOToken ssoToken, String url) 
+        throws SMSException, SSOException {
+        String siteName = null;
+        Set sites = getSites(ssoToken);
+        for (Iterator i = sites.iterator(); i.hasNext() && (siteName == null);){
+            String name = (String)i.next();
+            Set urls = getSiteURLs(ssoToken, name);
+            if (urls.contains(url)) {
+                siteName = name;
+            }
+        }
+        return siteName;
     }
 }

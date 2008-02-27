@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowSite.java,v 1.1 2007-10-17 23:00:29 veiming Exp $
+ * $Id: ShowSite.java,v 1.2 2008-02-27 05:46:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,7 +71,7 @@ public class ShowSite extends AuthenticatedCommand {
             if (SiteConfiguration.isSiteExist(adminSSOToken, siteName)) {
                 String primaryURL = SiteConfiguration.getSitePrimaryURL(
                     adminSSOToken, siteName);
-                Set failoverURLs = SiteConfiguration.getSiteFailoverURLs(
+                Set failoverURLs = SiteConfiguration.getSiteSecondaryURLs(
                     adminSSOToken, siteName);
                 Object[] args = {primaryURL};
                 outputWriter.printlnMessage(MessageFormat.format(

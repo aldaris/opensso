@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddSiteFailoverURLs.java,v 1.1 2007-10-17 23:00:26 veiming Exp $
+ * $Id: AddSiteFailoverURLs.java,v 1.2 2008-02-27 05:46:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
@@ -69,7 +70,7 @@ public class AddSiteFailoverURLs extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_ADD_SITE_FAILOVER_URLS", params);
             if (SiteConfiguration.isSiteExist(adminSSOToken, siteName)) {
-                SiteConfiguration.addSiteFailoverURLs(
+                SiteConfiguration.addSiteSecondaryURLs(
                     adminSSOToken, siteName, secondaryURLs);
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("add-site-secondary-urls-succeeded"),
@@ -83,6 +84,12 @@ public class AddSiteFailoverURLs extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_ADD_SITE_FAILOVER_URLS", params);
         } catch (SSOException e) {
+            String[] args = {siteName, e.getMessage()};
+            debugError("AddSiteFailoverURLs.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_ADD_SITE_FAILOVER_URLS", args);
+            throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (ConfigurationException e) {
             String[] args = {siteName, e.getMessage()};
             debugError("AddSiteFailoverURLs.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

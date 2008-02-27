@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetSiteFailoverURLs.java,v 1.1 2007-10-17 23:00:29 veiming Exp $
+ * $Id: SetSiteFailoverURLs.java,v 1.2 2008-02-27 05:46:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,7 @@ public class SetSiteFailoverURLs extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_SET_SITE_FAILOVER_URLS", params);
             if (SiteConfiguration.isSiteExist(adminSSOToken, siteName)) {
-                SiteConfiguration.setSiteFailoverURLs(
+                SiteConfiguration.setSiteSecondaryURLs(
                     adminSSOToken, siteName, secondaryURLs);
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("set-site-secondary-urls-succeeded"),

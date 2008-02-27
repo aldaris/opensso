@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationBase.java,v 1.1 2007-10-17 23:00:30 veiming Exp $
+ * $Id: ConfigurationBase.java,v 1.2 2008-02-27 05:46:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,8 +64,8 @@ public abstract class ConfigurationBase {
     protected static final String SUBCONFIG_ACCESS_URL = "accesspoint";
     protected static final String ATTR_PRIMARY_SITE_ID = "primary-siteid";
     protected static final String ATTR_PRIMARY_SITE_URL = "primary-url";
-    protected static final String SUBCONFIG_FAILOVERS = "failover-urls";
-    protected static final String ATTR_FAILOVER_ID = "failover-siteid";
+    protected static final String SUBCONFIG_SEC_URLS = "secondary-urls";
+    protected static final String ATTR_SEC_ID = "secondary-siteid";
 
     protected static String getNextId(SSOToken ssoToken) 
         throws SMSException, SSOException {
@@ -144,7 +144,7 @@ public abstract class ConfigurationBase {
                     String foName = (String)i.next();
                     ServiceConfig s = accessPoint.getSubConfig(foName);
                     Map mapValues = s.getAttributes();
-                    set = (Set)map.get(ATTR_FAILOVER_ID);
+                    set = (Set)mapValues.get(ATTR_SEC_ID);
                     if ((set != null) && !set.isEmpty()) {
                         currentIds.add(set.iterator().next());
                     }

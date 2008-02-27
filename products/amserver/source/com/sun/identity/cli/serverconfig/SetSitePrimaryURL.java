@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetSitePrimaryURL.java,v 1.1 2007-10-17 23:00:29 veiming Exp $
+ * $Id: SetSitePrimaryURL.java,v 1.2 2008-02-27 05:46:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
@@ -82,6 +83,12 @@ public class SetSitePrimaryURL extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_SET_SITE_PRIMARY_URL", params);
         } catch (SSOException e) {
+            String[] args = {siteName, siteURL, e.getMessage()};
+            debugError("SetSitePrimaryURL.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SET_SITE_PRIMARY_URL", args);
+            throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (ConfigurationException e) {
             String[] args = {siteName, siteURL, e.getMessage()};
             debugError("SetSitePrimaryURL.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amPlatform.xml,v 1.4 2007-11-17 00:12:06 dillidorai Exp $
+   $Id: amPlatform.xml,v 1.5 2008-02-27 05:46:02 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -91,8 +91,8 @@
                             <AttributeSchema name="primary-url" 
                                 type="single"
                                 syntax="string" />
-                            <SubSchema name="failover-urls" inheritance="multiple">
-                                <AttributeSchema name="failover-siteid" 
+                            <SubSchema name="secondary-urls" inheritance="multiple">
+                                <AttributeSchema name="secondary-siteid" 
                                     type="single"
                                     syntax="string" />
                             </SubSchema>
