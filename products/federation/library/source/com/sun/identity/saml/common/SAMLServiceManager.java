@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.5 2007-11-29 19:55:02 qcheng Exp $
+ * $Id: SAMLServiceManager.java,v 1.6 2008-02-27 01:27:43 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml.common;
 
+import java.lang.NumberFormatException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -307,9 +308,9 @@ public class SAMLServiceManager implements ConfigurationListener {
          * @return SiteAttributeMapper instance.
          */
         public SiteAttributeMapper getSiteAttributeMapper() {
-            SAMLUtils.debug.message("getSiteAttributeMapper() called");
+            SAMLUtilsCommon.debug.message("getSiteAttributeMapper() called");
             if (_siteAttributeMapper == null) {
-                   SAMLUtils.debug.message("siteMapper is null");
+                   SAMLUtilsCommon.debug.message("siteMapper is null");
             }
             return _siteAttributeMapper;
         }
@@ -319,9 +320,9 @@ public class SAMLServiceManager implements ConfigurationListener {
          * @return PartnerSiteAttributeMapper instance.
          */
         public PartnerSiteAttributeMapper getPartnerSiteAttributeMapper() {
-            SAMLUtils.debug.message("getPartnerSiteAttributeMapper() called");
+            SAMLUtilsCommon.debug.message("getPartnerSiteAttrMapper() called");
             if (localFlag && _partnerSiteAttributeMapper == null) {
-                SAMLUtils.debug.message("partnerSiteMapper is null");
+                SAMLUtilsCommon.debug.message("partnerSiteMapper is null");
             }
             return _partnerSiteAttributeMapper;
         }
@@ -382,8 +383,8 @@ public class SAMLServiceManager implements ConfigurationListener {
                             newSet.add(addrs[m].getHostAddress());
                         }
                     } catch (Exception ne) {
-                        if (SAMLUtils.debug.warningEnabled()) {
-                            SAMLUtils.debug.warning("SAML Service Manager: "
+                        if (SAMLUtilsCommon.debug.warningEnabled()) {
+                            SAMLUtilsCommon.debug.warning("SAMLServiceManager: "
                             + "getHostSet: possible wrong hostname in the "
                             + "host list.");
                         }
@@ -398,7 +399,7 @@ public class SAMLServiceManager implements ConfigurationListener {
     }
 
     private static void init() {
-        SAMLUtils.debug.message("SAMLServiceManager.init:"
+        SAMLUtilsCommon.debug.message("SAMLServiceManager.init:"
                 + " Constructing a new instance of SAMLServiceManager");
         instance = new SAMLServiceManager();
         try {
@@ -412,7 +413,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                 removeAssertion = (Boolean.valueOf(rmAssertion)).booleanValue();
             }
         } catch (Exception e) {
-            SAMLUtils.debug.error("SAMLServiceListener.init: Exception:",e);
+            SAMLUtilsCommon.debug.error("SAMLServiceManager.init()",e);
         }
     }
 
@@ -521,13 +522,21 @@ public class SAMLServiceManager implements ConfigurationListener {
                 Set values = (Set) 
                         attrs.get(SAMLConstants.NOTBEFORE_TIMESKEW_NAME);
                 int value = SAMLConstants.NOTBEFORE_TIMESKEW_DEFAULT;
-                if (values.size() == 1) {
-                    value = Integer.parseInt((String)
-                                                values.iterator().next());
+                if ((values != null) && (values.size() == 1)) {
+                    try {
+                        value = Integer.parseInt((String)
+                            values.iterator().next());
+                    } catch (NumberFormatException nfe) {
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
+                                + " not before time skew period value: " + value
+                                + ", using default.", nfe);
+                        value = SAMLConstants.NOTBEFORE_TIMESKEW_DEFAULT;
+                    } 
                     if (value <= 0) {
-                        SAMLUtils.debug.error("SAMLServiceManager: invalid"
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
                                 + " not before time skew period value=" + value
                                 + ", using default.");
+                        value = SAMLConstants.NOTBEFORE_TIMESKEW_DEFAULT;
                     }
                 }
                 Integer newValue = new Integer(value);
@@ -537,11 +546,18 @@ public class SAMLServiceManager implements ConfigurationListener {
                 values = (Set) 
                         attrs.get(SAMLConstants.ARTIFACT_TIMEOUT_NAME);
                 value = SAMLConstants.ARTIFACT_TIMEOUT_DEFAULT;
-                if (values.size() == 1) {
-                    value = Integer.parseInt((String)
-                                                values.iterator().next());
+                if ((values != null) && (values.size() == 1)) {
+                    try {
+                        value = Integer.parseInt((String)
+                            values.iterator().next());
+                    } catch (NumberFormatException nfe) {
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
+                                + " artifact timeout value: " + value
+                                + ", using default.", nfe);
+                        value = SAMLConstants.ARTIFACT_TIMEOUT_DEFAULT;
+                    }
                     if (value <= 0) {
-                        SAMLUtils.debug.error("SAMLServiceManager: invalid"
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
                                 + " artifact timeout value=" + value
                                 + ", using default.");
                         value = SAMLConstants.ARTIFACT_TIMEOUT_DEFAULT;
@@ -553,11 +569,18 @@ public class SAMLServiceManager implements ConfigurationListener {
                 // retrieve assertion timeout
                 values = (Set) attrs.get(SAMLConstants.ASSERTION_TIMEOUT_NAME);
                 value = SAMLConstants.ASSERTION_TIMEOUT_DEFAULT;
-                if (values.size() == 1) {
-                    value = Integer.parseInt((String)
-                                                values.iterator().next());
+                if ((values != null) && (values.size() == 1)) {
+                    try {
+                        value = Integer.parseInt((String)
+                            values.iterator().next());
+                    } catch (NumberFormatException nfe) {
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
+                                + " assertion timeout value: " + value
+                                + ", using default.", nfe);
+                        value = SAMLConstants.ASSERTION_TIMEOUT_DEFAULT;
+                    }
                     if (value <= 0) {
-                        SAMLUtils.debug.error("SAMLServiceManager: invalid"
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
                                 + " assertion timeout value=" + value
                                 + ", using default.");
                         value = SAMLConstants.ASSERTION_TIMEOUT_DEFAULT;
@@ -569,11 +592,18 @@ public class SAMLServiceManager implements ConfigurationListener {
                 values = (Set)
                         attrs.get(SAMLConstants.ASSERTION_MAX_NUMBER_NAME);
                 value = SAMLConstants.ASSERTION_MAX_NUMBER_DEFAULT;
-                if (values.size() == 1) {
-                    value = Integer.parseInt((String)
-                                                values.iterator().next());
+                if ((values != null) && (values.size() == 1)) {
+                    try {
+                        value = Integer.parseInt((String)
+                            values.iterator().next());
+                    } catch (NumberFormatException nfe) {
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
+                                + " assertion max number value: " + value
+                                + ", using default.", nfe);
+                        value = SAMLConstants.ASSERTION_MAX_NUMBER_DEFAULT;
+                    }
                     if (value < 0) {
-                        SAMLUtils.debug.error("SAMLServiceManager: invalid"
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
                                 + " assertion max number value=" + value
                                 + ", using default.");
                         value = SAMLConstants.ASSERTION_MAX_NUMBER_DEFAULT;
@@ -584,11 +614,18 @@ public class SAMLServiceManager implements ConfigurationListener {
 
                 values = (Set) attrs.get(SAMLConstants.CLEANUP_INTERVAL_NAME);
                 value = SAMLConstants.CLEANUP_INTERVAL_DEFAULT;
-                if (values.size() == 1) {
-                    value = Integer.parseInt((String)
-                                                values.iterator().next());
+                if ((values != null) && (values.size() == 1)) {
+                    try {
+                        value = Integer.parseInt((String)
+                            values.iterator().next());
+                    } catch (NumberFormatException nfe) {
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
+                                + " cleanup interval value: " + value
+                                + ", using default.", nfe);
+                        value = SAMLConstants.CLEANUP_INTERVAL_DEFAULT;
+                    }
                     if (value <= 0) {
-                        SAMLUtils.debug.error("SAMLServiceManager: invalid"
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager:invalid"
                                 + " cleanup interval value=" + value
                                 + ", using default.");
                         value = SAMLConstants.CLEANUP_INTERVAL_DEFAULT;
@@ -605,7 +642,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                 // get the targets which accept POST
                 Set targets = (Set)attrs.get(SAMLConstants.POST_TO_TARGET_URLS);
                 if ((targets == null) || (targets.size() == 0)) {
-                    SAMLUtils.debug.message("SAMLServiceManager: No POST "
+                    SAMLUtilsCommon.debug.message("SAMLServiceManager: No POST "
                         + "to targets found");
                 } else {
                     Set targetsNoProtocol = Collections.synchronizedSet(
@@ -623,7 +660,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                                 .append("/").append(url.getPath()).toString(); 
                             targetsNoProtocol.add(targetNoProtocol);
                         } catch (MalformedURLException me) {
-                                SAMLUtils.debug.error("SAMLServiceManager: "
+                            SAMLUtilsCommon.debug.error("SAMLServiceManager: "
                                     + "Malformed Url in the POST to target "
                                     + "list, skipping entry:"+targetString);
                         }
@@ -632,7 +669,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                         newMap.put(SAMLConstants.POST_TO_TARGET_URLS, 
                             targetsNoProtocol);
                     } else {
-                        SAMLUtils.debug.error("SAMLServiceManager: All"
+                        SAMLUtilsCommon.debug.error("SAMLServiceManager: All"
                             +" POST to target URLs malformed");
                     }
                 }
@@ -659,8 +696,8 @@ public class SAMLServiceManager implements ConfigurationListener {
                 Set siteIDNameList = (Set) attrs.get(
                                 SAMLConstants.SITE_ID_ISSUER_NAME_LIST);
                 if (siteIDNameList.size() == 0) {
-                    SAMLUtils.debug.error("SAMLServiceManager: No Site ID or "
-                        + "Issuer Name in the SAML service config.");
+                    SAMLUtilsCommon.debug.error("SAMLServiceManager: No Site ID"
+                        + " or Issuer Name in the SAML service config.");
                  } else {
                     String entry = null;
                     StringTokenizer tok1 = null;
@@ -683,13 +720,13 @@ public class SAMLServiceManager implements ConfigurationListener {
                             element = tok1.nextToken();
                             int pos = -1;
                             if ((pos = element.indexOf("=")) == -1) {
-                                SAMLUtils.debug.error("SAMLServiceManager: "
+                                SAMLUtilsCommon.debug.error("SAMLSManager: "
                                     + "wrong format: " + element);
                                 break;
                             }
                             int nextpos = pos + 1 ;
                             if (nextpos >= element.length()) {
-                                SAMLUtils.debug.error("SAMLServiceManager: "
+                                SAMLUtilsCommon.debug.error("SAMLSManager: "
                                     + "wrong format: " + element);
                                 break;
                             }
@@ -706,25 +743,26 @@ public class SAMLServiceManager implements ConfigurationListener {
                             {
                                 issuerName = element.substring(nextpos);
                             } else {
-                                SAMLUtils.debug.error("SAMLServiceManager: "
+                                SAMLUtilsCommon.debug.error("SAMLSManager: "
                                     + "wrong format: " + element);
                             }
                         } // end of looping tokens in each entry
 
                         if (instanceID == null) {
-                            SAMLUtils.debug.error("SAMLServiceManager: "
+                            SAMLUtilsCommon.debug.error("SAMLServiceManager: "
                                 + "missing instanceID:" + entry);
                             break;
                         }
                         boolean thisSite = instanceID.equalsIgnoreCase(sb) ||
                             instanceID.equalsIgnoreCase(legacyId);
                         if (siteID != null) {
-                            siteID = SAMLUtils.getDecodedSourceIDString(siteID);
+                            siteID = SAMLUtilsCommon.getDecodedSourceIDString(
+                                siteID);
                             if (siteID != null) {
                                 siteidMap.put(instanceID, siteID);
                                 instanceMap.put(siteID, instanceID); 
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message("SAMLSManager: "
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message("SAMLSMangr: "
                                         + "add instanceID: " + instanceID
                                         + ", serverURL=" + sb 
                                         + ", legacy serverURL=" + legacyId 
@@ -748,27 +786,28 @@ public class SAMLServiceManager implements ConfigurationListener {
                 if (!siteidMap.containsKey(sb) && 
                     !siteidMap.containsKey(legacyId)) {
                     String siteID = SAMLSiteID.generateSourceID(sb);
-                    if (SAMLUtils.debug.warningEnabled()) {
-                        SAMLUtils.debug.warning("SAMLSManager: site " + sb
+                    if (SAMLUtilsCommon.debug.warningEnabled()) {
+                        SAMLUtilsCommon.debug.warning("SAMLSManager: site " + sb
                             + " not configured, create new " + siteID);
                     }
                     if (siteID != null) {
-                        siteID = SAMLUtils.getDecodedSourceIDString(siteID);
+                        siteID = SAMLUtilsCommon.getDecodedSourceIDString(
+                            siteID);
                         if (siteID != null) {
                             siteidMap.put(sb, siteID);
                             instanceMap.put(siteID, sb); 
                             newMap.put(SAMLConstants.SITE_ID, siteID);
                         } else {
-                            SAMLUtils.debug.error("Missing Site ID.");
+                            SAMLUtilsCommon.debug.error("Missing Site ID.");
                         }
                     }
                 }
                 // set default issuer name
                 if (!issuerNameMap.containsKey(sb) && 
                     !issuerNameMap.containsKey(legacyId)) {
-                    if (SAMLUtils.debug.warningEnabled()) {
-                        SAMLUtils.debug.warning("SAMLSManager: issuer for " + sb
-                            + " not configured, set to " + sb);
+                    if (SAMLUtilsCommon.debug.warningEnabled()) {
+                        SAMLUtilsCommon.debug.warning("SAMLSManager:issuer for "
+                            + sb + " not configured, set to " + sb);
                     }
                     issuerNameMap.put(sb, sb);
                     newMap.put(SAMLConstants.ISSUER_NAME, sb);
@@ -806,9 +845,9 @@ public class SAMLServiceManager implements ConfigurationListener {
                 Set soapRevList = Collections.synchronizedSet(new HashSet()); 
                 soapRevList = (Set)attrs.get(SAMLConstants.PARTNER_URLS); 
                 if (soapRevList.size() == 0) {
-                    if (SAMLUtils.debug.messageEnabled()) {
-                        SAMLUtils.debug.message("SAMLServiceManager: No entry" +
-                                                "in partner url config!");     
+                    if (SAMLUtilsCommon.debug.messageEnabled()) {
+                        SAMLUtilsCommon.debug.message("SAMLServiceManager: " 
+                            + "No entry in partner url config!");     
                     }
                 } else {
                     Set _Sites = Collections.synchronizedSet(new HashSet()); 
@@ -845,26 +884,26 @@ public class SAMLServiceManager implements ConfigurationListener {
                         // retrieve the trusted server list
                         if (e.toUpperCase().indexOf(SAMLConstants.SOURCEID)==-1)
                         {
-                            SAMLUtils.debug.error("Ignore this trusted site " +
-                                "since SourceID is absent:"+e);
+                            SAMLUtilsCommon.debug.error("Ignore this trusted " 
+                                + "site since SourceID is absent:"+e);
                             continue; 
                         }
                         StringTokenizer tok1 = new StringTokenizer(e, "|");
                         while (tok1.hasMoreElements()) {    
                             // break on "|"
                             element = tok1.nextToken();
-                            if (SAMLUtils.debug.messageEnabled()) {
-                                SAMLUtils.debug.message("SAML Service Manager:"+
-                                                " PartnerUrl List:" +  element);
+                            if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                SAMLUtilsCommon.debug.message("SAMLSManager:" +
+                                    " PartnerUrl List:" +  element);
                             }
             
                           //manually break on "=" since sourceid may contain "="
                             int pos = -1; 
                             //ignore the attribute which not include "="
                             if ((pos = element.indexOf("=")) == -1) {
-                                SAMLUtils.debug.error("SAML Service Manager:" +
-                                            " illegal format of PartnerUrl:"
-                                            +element);    
+                                SAMLUtilsCommon.debug.error("SAMLSManager:" +
+                                    " illegal format of PartnerUrl:"
+                                    +element);    
                                 break;
                             }
                             int nextpos = pos + 1 ;
@@ -875,8 +914,9 @@ public class SAMLServiceManager implements ConfigurationListener {
                                
                             String key = element.substring(0, pos);
                             if (key.equalsIgnoreCase(SAMLConstants.SOURCEID)) {
-                                _destID = SAMLUtils.getDecodedSourceIDString(
-                                                element.substring(nextpos));
+                                _destID = 
+                                    SAMLUtilsCommon.getDecodedSourceIDString(
+                                    element.substring(nextpos));
                             } else if (key.equalsIgnoreCase(
                                                     SAMLConstants.TARGET)) {
                                 _siteID = element.substring(nextpos);   
@@ -892,22 +932,23 @@ public class SAMLServiceManager implements ConfigurationListener {
                             } else if (key.equalsIgnoreCase(
                                                     SAMLConstants.AUTHTYPE)) {
                                 _authType = element.substring(nextpos); 
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message("authtype =" +
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message("authtype =" +
                                                             _authType); 
                                 }
                             } else if (key.equalsIgnoreCase(SAMLConstants.UID)){
                                 _user = element.substring(nextpos);
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message("user = "+ _user);
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message("user = "
+                                        + _user);
                                 }
                             } else if (key.equalsIgnoreCase(
                                         SAMLConstants.AUTH_UID))
                             {
                                 basic_auth_user = element.substring(nextpos);
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message("basic auth user="
-                                        + basic_auth_user);
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message(
+                                        "basic auth user=" + basic_auth_user);
                                 }
                             } else if (key.equalsIgnoreCase(
                                         SAMLConstants.AUTH_PASSWORD))
@@ -926,18 +967,18 @@ public class SAMLServiceManager implements ConfigurationListener {
                                         _partnerAccountMapper =
                                            (PartnerAccountMapper) temp;
                                     } else {
-                                        SAMLUtils.debug.error(
+                                        SAMLUtilsCommon.debug.error(
                                         "SAMLServiceManager:Invalid account " +
                                         "mapper");
                                     }
                                 } catch (InstantiationException ie) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"+
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"+
                                                           ie); 
                                 } catch (IllegalAccessException ae) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"+
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"+
                                                           ae); 
                                 } catch (ClassNotFoundException ce) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"+
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"+
                                                           ce); 
                                     _partnerAccountMapper = null;
                                 }
@@ -950,22 +991,22 @@ public class SAMLServiceManager implements ConfigurationListener {
                                            forName(element.substring(nextpos)).
                                            newInstance();
                                 } catch (InstantiationException ie) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ie); 
                                 } catch (IllegalAccessException ae) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ae); 
                                 } catch (ClassNotFoundException ce) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ce); 
                                     _partnerAccountMapper = null;
                                 }
                             } else if (key.equalsIgnoreCase(
                                             SAMLConstants.CERTALIAS)) {
                                 _certAlias = element.substring(nextpos);
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message("certAlias =" + 
-                                                            _certAlias);
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message("certAlias = "
+                                        + _certAlias);
                                 }
                             } else if (key.equalsIgnoreCase(
                                            SAMLConstants.SITEATTRIBUTEMAPPER)) {
@@ -980,18 +1021,18 @@ public class SAMLServiceManager implements ConfigurationListener {
                                         _partnerSiteAttributeMapper =
                                            (PartnerSiteAttributeMapper) temp;
                                     } else {
-                                        SAMLUtils.debug.error(
+                                        SAMLUtilsCommon.debug.error(
                                         "SAMLServiceManager:Invalid site " +
                                         "attribute mapper");
                                     }
                                 } catch (InstantiationException ie) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"+
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"+
                                                           ie); 
                                 } catch (IllegalAccessException ae) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"+
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"+
                                                           ae); 
                                 } catch (ClassNotFoundException ce) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"+
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"+
                                                           ce); 
                                     _siteAttributeMapper = null;
                                 }
@@ -1003,13 +1044,13 @@ public class SAMLServiceManager implements ConfigurationListener {
                                      Class.forName(element.substring(nextpos)).
                                             newInstance();
                                 } catch (InstantiationException ie) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ie); 
                                 } catch (IllegalAccessException ae) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ae); 
                                 } catch (ClassNotFoundException ce) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ce); 
                                     _partnerSiteAttributeMapper= null;
                                 }
@@ -1020,7 +1061,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                                          Class.forName(element.substring(
                                          nextpos)).newInstance();
                                 } catch (Exception ex) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:",
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:",
                                         ex);
                                 }
                             } else if (key.equalsIgnoreCase(
@@ -1030,7 +1071,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                                             forName(element.substring(nextpos)).
                                             newInstance();
                                 } catch (Exception ex) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                         + ex);
                                 }
                             } else if (key.equalsIgnoreCase(
@@ -1040,14 +1081,14 @@ public class SAMLServiceManager implements ConfigurationListener {
                                            forName(element.substring(nextpos)).
                                            newInstance();
                                 } catch (Exception ex) {
-                                    SAMLUtils.debug.error("SAMLServiceManager:"
+                                    SAMLUtilsCommon.debug.error("SAMLSManager:"
                                         + ex);
                                 }
                             } else if (key.equalsIgnoreCase(
                                                     SAMLConstants.ISSUER)) {
                                 _issuer = element.substring(nextpos).trim();
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message(
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message(
                                         "issuer = "+ _issuer);
                                 }
                             } else if (key.equalsIgnoreCase(
@@ -1074,8 +1115,8 @@ public class SAMLServiceManager implements ConfigurationListener {
                                                 addr[m].getHostAddress());
                                         }
                                     } catch (Exception ne) {
-                                        if (SAMLUtils.debug.warningEnabled()) {
-                                            SAMLUtils.debug.warning(
+                                        if (SAMLUtilsCommon.debug.warningEnabled()) {
+                                            SAMLUtilsCommon.debug.warning(
                                                 "SAML Service"
                                                 + " Manager: possible wrong " 
                                                 + "hostname in the host list.");
@@ -1086,8 +1127,8 @@ public class SAMLServiceManager implements ConfigurationListener {
                                     hostSet.add(token); 
                                     origHostSet.add(token);
                                     }
-                                if (SAMLUtils.debug.messageEnabled()) {
-                                    SAMLUtils.debug.message("hostSet = "
+                                if (SAMLUtilsCommon.debug.messageEnabled()) {
+                                    SAMLUtilsCommon.debug.message("hostSet = "
                                         +hostSet);
                                 }
                             } else if (key.equalsIgnoreCase(
@@ -1133,14 +1174,14 @@ public class SAMLServiceManager implements ConfigurationListener {
                         // create truseted server set 
                         if (_destID == null || _destID.length() == 0)
                         { 
-                           SAMLUtils.debug.error("Ignore this trusted site " +
-                                "since SourceID is misconfigured:"+e);
+                           SAMLUtilsCommon.debug.error("Ignore this trusted " +
+                                "site since SourceID is misconfigured: " + e);
                         } else {
                             if (_siteID == null || _siteID.length() == 0 || 
                                 ((_samlUrl == null || _samlUrl.length() == 0) &&
                                 (postUrl == null || postUrl.length() == 0)))
                             {
-                                SAMLUtils.debug.warning("Either target or both"
+                                SAMLUtilsCommon.debug.warning("Target or both"
                                     +" SAMLUrl and POSTUrl are misconfigured:"
                                     +e);
                             }
@@ -1149,9 +1190,9 @@ public class SAMLServiceManager implements ConfigurationListener {
                                              new StringTokenizer(_siteID, ","); 
                                 while (tok2.hasMoreElements()) {
                                     String el = tok2.nextToken();
-                                    if (SAMLUtils.debug.messageEnabled()) {
-                                        SAMLUtils.debug.message("SAML Service" 
-                                            + "Manager:target= " + el);
+                                    if (SAMLUtilsCommon.debug.messageEnabled()){
+                                        SAMLUtilsCommon.debug.message( 
+                                            "SAMLServiceManager:target= " + el);
                                     }
 
                                     // break the target url to host and port 
@@ -1190,7 +1231,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                 }
                 map = newMap;
             } catch (Exception e) {
-                SAMLUtils.debug.error("SAMLServiceManager.setValues:"
+                SAMLUtilsCommon.debug.error("SAMLServiceManager.setValues:"
                                 + " Exception:", e);
             }
         }
@@ -1254,8 +1295,8 @@ public class SAMLServiceManager implements ConfigurationListener {
      * @param e Configuration action event, like ADDED, DELETED, MODIFIED etc.
      */
     public void configChanged(ConfigurationActionEvent e) {
-        if (SAMLUtils.debug.messageEnabled()) {
-            SAMLUtils.debug.message("SAMLServiceManager:configChanged");
+        if (SAMLUtilsCommon.debug.messageEnabled()) {
+            SAMLUtilsCommon.debug.message("SAMLServiceManager:configChanged");
         }
         setValues();
     }

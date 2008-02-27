@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtilsCommon.java,v 1.1 2006-10-30 23:15:43 qcheng Exp $
+ * $Id: SAMLUtilsCommon.java,v 1.2 2008-02-27 01:27:43 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.saml.common;
 
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.saml.xmlsig.PasswordDecoder;
+import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.util.ResourceBundle;
@@ -261,5 +262,45 @@ public class SAMLUtilsCommon {
             retString = s;
         }
         return retString;
+    }
+
+    /**
+     * Decodes the Base64 encoded <code>sourceid</code> and returns
+     * a String of the raw-byte source id.
+     *
+     * @param encodedID A String representing the Base64 encoded source id.
+     * @return A String representing the raw byte source id.
+     *
+     */
+    public static String getDecodedSourceIDString(String encodedID) {
+        String result = null;
+        if (encodedID == null) {
+            SAMLUtils.debug.error("SAMLUtils.getDecodedSourceIDString: null "
+            + "input.");
+            return null;
+        }
+        
+        try {
+            result = byteArrayToString(Base64.decode(encodedID));
+        } catch (Exception e) {
+            SAMLUtils.debug.error("SAMLUtils.getDecodedSourceIDString: ", e);
+            return null;
+        }
+        
+        return result;
+    }
+
+
+    /**
+     * Converts byte array to string.
+     * @param bytes byte array to be converted.
+     * @return result string.
+     */
+    public static String byteArrayToString(byte[] bytes) {
+        char chars[] = new char[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            chars[i] = (char) bytes[i];
+        }
+        return new String(chars);
     }
 }

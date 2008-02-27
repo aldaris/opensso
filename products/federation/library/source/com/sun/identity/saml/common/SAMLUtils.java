@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.6 2008-01-31 00:02:26 qcheng Exp $
+ * $Id: SAMLUtils.java,v 1.7 2008-02-27 01:27:43 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,7 +106,7 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 
 /**
- * This class contain some convenient methods, such as getDecodedSourceIDString.
+ * This class contains some utility methods for processing SAML protocols.
  *
  * @supported.api
  */
@@ -243,33 +243,6 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         return true;
     }
     
-    /**
-     * Decodes the Base64 encoded <code>sourceid</code> and returns
-     * a String of the raw-byte source id.
-     *
-     * @param encodedID A String representing the Base64 encoded source id.
-     * @return A String representing the raw byte source id.
-     *
-     * @supported.api
-     */
-    public static String getDecodedSourceIDString(String encodedID) {
-        String result = null;
-        if (encodedID == null) {
-            SAMLUtils.debug.error("SAMLUtils.getDecodedSourceIDString: null "
-            + "input.");
-            return null;
-        }
-        
-        try {
-            result = SAMLUtils.byteArrayToString(Base64.decode(encodedID));
-        } catch (Exception e) {
-            SAMLUtils.debug.error("SAMLUtils.getDecodedSourceIDString: ", e);
-            return null;
-        }
-        
-        return result;
-    }
-
     /**
      * Generates sourceID of a site.
      * @param siteURL a String that uniquely identifies a site.
@@ -514,19 +487,6 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         return bytes;
     }
  
-
-    /**
-     * Converts byte array to string.
-     * @param bytes byte array to be converted.
-     * @return result string.
-     */
-    public static String byteArrayToString(byte[] bytes) {
-        char chars[] = new char[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            chars[i] = (char) bytes[i];
-        }
-        return new String(chars);
-    }
 
     /**
      * Returns server ID.
