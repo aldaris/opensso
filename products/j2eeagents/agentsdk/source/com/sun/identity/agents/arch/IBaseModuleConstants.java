@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IBaseModuleConstants.java,v 1.1 2006-09-28 23:21:29 huacui Exp $
+ * $Id: IBaseModuleConstants.java,v 1.2 2008-02-27 01:41:48 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,60 +135,6 @@ public interface IBaseModuleConstants {
     */
     public static final int AM_LOG_OFFSET = AM_REALM_OFFSET
                                             + OFFSET_MULTIPLIER;
-
-   //-------------- AmPeopleSoft Module Constatns ---------------//    
-
-   /**
-    * AmPeopleSoft Module: module code
-    */
-    public static final byte AM_PEOPLESOFT_MODULE_CODE = 0x10;
-
-   /**
-    * AmPeopleSoft Module: resource
-    */
-    public static final String AM_PEOPLESOFT_RESOURCE = "amPeopleSoft";
-
-   /**
-    * AmPeopleSoft Module: offset
-    */
-    public static final int AM_PEOPLESOFT_OFFSET = OPTIONAL_MODULE_OFFSET;
-
-    
-   //-------------- AmSAP Module Constatns -----------------------//
-
-   /**
-    * AmSAP Module: module code
-    */
-    public static final byte AM_SAP_MODULE_CODE = 0x11;
-
-   /**
-    * AmSAP Module: resource 
-    */
-    public static final String AM_SAP_RESOURCE = "amSAP";
-
-   /**
-    * AmSAP Module: offset
-    */
-    public static final int AM_SAP_OFFSET = AM_PEOPLESOFT_OFFSET
-                                            + OFFSET_MULTIPLIER;
-    
-   //-------------- AmWebsphere Module Constatns -----------------------//
-    
-    /**
-     * AmWebsphere Module: module code
-     */
-    public static final byte AM_WEBSPHERE_MODULE_CODE = 0x12;
-    
-    /**
-     * AmWebsphere: resource
-     */
-    public static final String AM_WEBSPHERE_RESOURCE = "amWebsphere";
-            
-    /**
-     * AmWebsphere: offset
-     */
-    public static final int AM_WEBSPHERE_OFFSET = AM_SAP_OFFSET 
-                                                  + OFFSET_MULTIPLIER; 
 
 
    //------------------- Base Module Constants -----------------------//

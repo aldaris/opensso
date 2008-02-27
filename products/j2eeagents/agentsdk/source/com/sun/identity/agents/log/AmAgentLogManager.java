@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentLogManager.java,v 1.1 2006-09-28 23:42:58 huacui Exp $
+ * $Id: AmAgentLogManager.java,v 1.2 2008-02-27 01:41:48 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,6 @@ import com.sun.identity.agents.arch.ServiceFactory;
 public class AmAgentLogManager extends Manager {
     
     private AmAgentLogManager() throws AgentException {
-
         super(AmAgentLogModule.getModule(), new String[] {});
         setAmAgentLog(ServiceFactory.getAmAgentLog(this));
     }

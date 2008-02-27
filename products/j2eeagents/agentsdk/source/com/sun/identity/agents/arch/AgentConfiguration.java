@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.15 2008-02-14 02:05:06 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.16 2008-02-27 01:41:48 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -452,19 +452,27 @@ public class AgentConfiguration implements
     }
     
     /**
-     * load from AMAgent.properties for start up properties
+     * Load from AMAgent.properties for start up properties.
+     * This method should only be called once at start up time
+     * since bootstrap properties are not hot swappable by editting the
+     * properties file without a restart.
+     * If it is called more than once(already initialized, then it will just
+     * return the bootstrap properties that were read and saved at start 
+     * up time.
      **/
     private static Properties getPropertiesFromConfigFile() 
     throws Exception {
         Properties result = new Properties();
-        BufferedInputStream instream = null;
-        try {
-            instream = new BufferedInputStream(
+        if (!isInitialized()) {
+            BufferedInputStream instream = null;
+            try {
+                instream = new BufferedInputStream(
                     new FileInputStream(getConfigFilePath()));
-            result.load(instream);
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
+                result.load(instream);
+                setBootstrapProperties(result);
+            } catch (Exception ex) {
+                throw ex;
+            } finally {
                 if (instream != null) {
                     try {
                         instream.close();
@@ -472,8 +480,14 @@ public class AgentConfiguration implements
                         // No handling required
                     }
                 }
+            }
+           
+        } else { //already initialized
+            //this is to enforce that coders do not accidently try to re-read 
+            //the agents bootstrap configuration file. If already initialized 
+            //then will return the original set of bootstrap properties
+            result = getBootstrapProperties();
         }
-        
         return result;
     }
     
@@ -1142,8 +1156,10 @@ public class AgentConfiguration implements
         boolean result = false;
         try {
             Properties properties = new Properties();
-            properties.clear();
-            properties.putAll(getPropertiesFromConfigFile());
+            properties.clear();     
+            //add in bootstrap properties which were saved on
+            //agent initial start up
+            properties.putAll(getBootstrapProperties());
             
             if (!isAgentConfigurationRemote()) {                        
                 properties.putAll(getPropertiesFromLocal());
@@ -1312,11 +1328,24 @@ public class AgentConfiguration implements
         return _moduleConfigListeners;
     }
     
+    private static void setBootstrapProperties(Properties bootstrapProperties){
+        //ensure its only set once at start up, not on configuration reloads
+        if (!isInitialized()) {
+            _bootstrapProperties.putAll(bootstrapProperties);
+        }
+    }
+    
+    private static Properties getBootstrapProperties() {
+        return _bootstrapProperties;
+    }
+     
+    
     private static boolean _isAgentConfigurationRemote = false;
     private static boolean _initialized;
     private static String _configFilePath;
     private static String _localConfigFilePath;
     private static Properties _properties = new Properties();
+    private static Properties _bootstrapProperties = new Properties();
     private static Debug _debug;
     private static long _modInterval = 0L;
     private static long _lastLoadTime = 0L;
