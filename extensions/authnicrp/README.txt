@@ -1,4 +1,4 @@
-OpenSSO Authentication Module for Information Cards (RP)
+OpenSSO Authentication Module for Information Cards (RP).
 
 --------------------------------------------------------------------------------
 In order to run the build.xml to compile the jar file the following files need
