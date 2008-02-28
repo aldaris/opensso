@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- *$Id: AccountLockoutTest.java,v 1.4 2008-02-13 19:08:15 arunav Exp $*
+ *$Id: AccountLockoutTest.java,v 1.5 2008-02-28 04:13:17 inthanga Exp $*
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.qatest.authentication;
@@ -86,6 +86,7 @@ public class AccountLockoutTest extends TestCommon {
     private String moduleSubConfigId;
     private String testModName;
     private String url;
+    private String famadmURL;
     private String logoutURL;
     private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
@@ -96,9 +97,11 @@ public class AccountLockoutTest extends TestCommon {
      **/
     public AccountLockoutTest() {
         super("AccountLockoutTest");
-        url = protocol + ":" + "//" + host + ":" + port + uri;
-        logoutURL = url + "/UI/Logout";
-        fm = new FederationManager(url);
+        url = getLoginURL("/");
+        logoutURL = protocol + ":" + "//" + host + ":" + port + uri + 
+                "/UI/Logout";
+        famadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
+        fm = new FederationManager(famadmURL);
     }
 
     /**

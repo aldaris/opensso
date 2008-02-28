@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.3 2008-02-06 18:50:22 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.4 2008-02-28 04:13:00 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -291,9 +291,12 @@ public class RedirectTest extends TestCommon {
                 log(Level.FINEST, "cleanup", "TestModule: " + testModule);
                 Reporter.log("TestRealm: " + testRealm);
                 Reporter.log("TestModule: " + testModule);                
-                String url = protocol + ":" + "//" + host + ":" + port + uri;
-                log(Level.FINEST, "cleanup", url);
-                FederationManager am = new FederationManager(url);
+                String url = getLoginURL("/"); 
+       		String famadmURL  = protocol + ":" + "//" + host + ":"
+                                + port + uri ;
+                log(Level.FINE, "cleanup", "Login URL: " + url);
+                log(Level.FINE, "cleanup", "famadm.jsp URL" + famadmURL);
+                FederationManager am = new FederationManager(famadmURL);
                 WebClient webClient = new WebClient();
                 deleteModule(testRealm, testModule);                
                 consoleLogin(webClient, url, adminUser, adminPassword);
@@ -319,8 +322,9 @@ public class RedirectTest extends TestCommon {
                     }
                 }
 
-                url = url + "/UI/Logout";
-                consoleLogout(webClient, url);
+            String logoutUrl = protocol + ":" + "//" + host + ":" + port + uri +
+                    "/UI/Logout";
+                consoleLogout(webClient, logoutUrl);
             } catch(Exception e) {
                 log(Level.SEVERE, "cleanup", e.getMessage());
                 e.printStackTrace();
