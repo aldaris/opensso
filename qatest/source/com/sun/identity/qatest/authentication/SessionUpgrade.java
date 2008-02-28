@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.3 2008-02-06 18:50:22 cmwesley Exp $
+ * $Id: SessionUpgrade.java,v 1.4 2008-02-28 04:07:31 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,9 +88,11 @@ public class SessionUpgrade extends TestCommon {
      */
     public SessionUpgrade() {
         super("SessionUpgrade");
-        url = protocol + ":" + "//" + host + ":" + port + uri;
-        logoutURL = url + "/UI/Logout";
-        fm = new FederationManager(url);
+        url = getLoginURL("/");
+        logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
+                + "/UI/Logout";
+        String famadmURL = protocol + ":" + "//" + host + ":" + port + uri;
+        fm = new FederationManager(famadmURL);
         testResources = ResourceBundle.getBundle("SessionUpgrade");
     }
     

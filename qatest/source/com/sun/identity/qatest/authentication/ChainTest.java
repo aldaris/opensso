@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.5 2008-02-06 18:50:22 cmwesley Exp $
+ * $Id: ChainTest.java,v 1.6 2008-02-28 04:06:14 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -265,7 +265,7 @@ public class ChainTest extends TestCommon {
         Object[] params = {testChainName};
         entering("cleanup", params);
         try {
-            String url = protocol + ":" + "//" + host + ":" + port + uri;
+            String url = getLoginURL("/") ;
             log(Level.FINEST, "cleanup", url);
             log(Level.FINEST, "cleanup", "chainName: " + testChainName);
             log(Level.FINEST, "validateNegativeTests", "TestDescription: " + 
@@ -282,7 +282,8 @@ public class ChainTest extends TestCommon {
                 String[] instanceData = moduleInstances.nextToken().split(",");
                 instanceNames.add(instanceData[0]);
             }
-            FederationManager am = new FederationManager(url);
+            String famadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
+            FederationManager am = new FederationManager(famadmURL);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             log(Level.FINE, "cleanup", "Deleting auth configurations " + 
@@ -308,8 +309,9 @@ public class ChainTest extends TestCommon {
                 log(Level.SEVERE, "cleanup", 
                         "deleteIdentities (User) famadm command failed");
             }            
-            url = url + "/UI/Logout";
-            consoleLogout(webClient, url);
+            String logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
+                    +  "/UI/Logout";
+            consoleLogout(webClient, logoutURL);
         } catch(Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();

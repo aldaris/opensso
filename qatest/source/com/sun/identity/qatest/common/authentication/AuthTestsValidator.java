@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestsValidator.java,v 1.4 2008-02-13 19:17:52 arunav Exp $
+ * $Id: AuthTestsValidator.java,v 1.5 2008-02-28 04:04:25 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,8 +62,10 @@ public class AuthTestsValidator extends TestCommon {
     throws Exception {
         super("AuthTestsValidator");
         mapValidate = testMap;
-        testURL = protocol + ":" + "//" + host + ":" + port + uri;
-        testLogoutURL = testURL + "/UI/Logout";
+        testURL = getLoginURL("/");
+        testLogoutURL = protocol + ":" + "//" + host + ":" + port +
+                        uri + "/UI/Logout";
+
         baseDir = getTestBase();
         log(Level.FINEST, "AuthTestsValidator", "BaseDir:" + baseDir);
         mapValidate.put("url", testURL);

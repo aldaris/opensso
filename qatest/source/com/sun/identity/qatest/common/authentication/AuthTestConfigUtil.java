@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.7 2008-02-06 18:48:27 cmwesley Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.8 2008-02-28 04:04:50 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public class AuthTestConfigUtil extends TestCommon {
     private static final String moduleSubconfigid = "serverconfig";
     private String testbaseDir;
     private String url;
+    private String famadmURL;
     private String logoutURL;
     private String configInfo;
     private String testConfigRealm = "/";
@@ -66,9 +67,12 @@ public class AuthTestConfigUtil extends TestCommon {
         super("AuthTestConfigUtil");
         this.configInfo = config;
         this.configdata =  ResourceBundle.getBundle(configInfo);
-        url = protocol + ":" + "//" + host + ":" + port + uri;
-        logoutURL = url + "/UI/Logout";
-        am = new FederationManager(url);
+        url = getLoginURL("/");
+        logoutURL = protocol + ":" + "//" + host + ":" + port +
+                        uri + "/UI/Logout";
+        famadmURL = protocol + ":" + "//" + host + ":" + port +
+                        uri;
+        am = new FederationManager(famadmURL);
     }
     
     /**

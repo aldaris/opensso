@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.5 2008-02-06 18:50:22 cmwesley Exp $
+ * $Id: ProfileAttributesTest.java,v 1.6 2008-02-28 04:08:14 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,7 @@ public class ProfileAttributesTest extends TestCommon {
     private String moduleSubConfigId;
     private String testModName;
     private String url;
+    private String famadmURL;
     private String logoutURL;
     private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
@@ -82,9 +83,11 @@ public class ProfileAttributesTest extends TestCommon {
      **/
     public ProfileAttributesTest() {
         super("ProfileAttributesTest");
-        url = protocol + ":" + "//" + host + ":" + port + uri;
-        logoutURL = url + "/UI/Logout";
-        fm = new FederationManager(url);
+        url = getLoginURL("/");
+        logoutURL = protocol + ":" + "//" + host + ":" + port + 
+                uri + "/UI/Logout";
+        famadmURL  = protocol + ":" + "//" + host + ":" + port + uri ;
+        fm = new FederationManager(famadmURL);
     }
     
     /**

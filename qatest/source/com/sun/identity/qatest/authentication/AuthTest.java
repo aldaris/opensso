@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.11 2008-02-06 18:50:22 cmwesley Exp $
+ * $Id: AuthTest.java,v 1.12 2008-02-28 04:05:44 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,8 +155,7 @@ public class AuthTest extends TestCommon {
             Reporter.log("UserName: " + user);
             Reporter.log("UserPassword: " + password);
                 
-            loginURL = protocol + ":" + "//" + host + ":" + port +
-                        uri + "/UI/Login";
+            loginURL = getLoginURL("/");
             logoutURL = protocol + ":" + "//" + host + ":" + port +
                         uri + "/UI/Logout";
             amadmURL = protocol + ":" + "//" + host + ":" + port +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTestValidation.java,v 1.6 2007-12-21 22:31:16 sridharev Exp $
+ * $Id: ChainTestValidation.java,v 1.7 2008-02-28 04:06:31 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class ChainTestValidation extends TestCommon {
     public ChainTestValidation(Map testMap) throws Exception {
         super("ChainTestValidation");
         mapService = testMap;
-        testURL = protocol + ":" + "//" + host + ":" + port + uri;
+        testURL = getLoginURL("/"); 
         testLogoutURL = testURL + "/UI/Logout";
         baseDir = getTestBase();
         log(logLevel,"ChainTestValidation" , "BaseDir: " + baseDir);
