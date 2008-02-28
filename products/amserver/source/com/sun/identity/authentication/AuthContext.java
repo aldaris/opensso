@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.11 2008-02-21 22:46:16 pawand Exp $
+ * $Id: AuthContext.java,v 1.12 2008-02-28 01:18:59 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,8 @@ public class AuthContext extends Object implements java.io.Serializable {
     AuthLoginException loginException = null;
 
     String hostName = null;
-    private boolean forceAuth=false;
+    private boolean forceAuth = false;
+    private boolean localSessionChecked = false;
     String nickName = null;
     private URL authURL = null;
     private URL authServiceURL = null;
@@ -646,12 +647,20 @@ public class AuthContext extends Object implements java.io.Serializable {
                     acLocal = com.sun.identity.authentication.service.AuthUtils.
                         getAuthContext(organizationName);
                 } else {
+                    if (authDebug.messageEnabled()) {
+                        authDebug.message("AuthContext.runLogin: "
+                        + "ForceAuth = "+forceAuth);
+                    }
                     acLocal = com.sun.identity.authentication.service.AuthUtils.
-                        getAuthContext(organizationName, ssoTokenID);
+                        getAuthContext(organizationName, ssoTokenID, false, 
+                            null, null, null, forceAuth);
                 }
                 acLocal.login(indexType, indexName, pCookie, locale);
             } catch (AuthException e) {
                 throw new AuthLoginException(e);
+            }
+            if (acLocal.getStatus().equals(Status.SUCCESS)) {
+                onSuccessLocal();
             }
             return;
         }
@@ -1019,6 +1028,9 @@ public class AuthContext extends Object implements java.io.Serializable {
                 return;
             }
             acLocal.submitRequirements(info);
+            if (acLocal.getStatus().equals(Status.SUCCESS)) {
+                onSuccessLocal();
+            }
             return;
         } else {
             // Check if we are still in login session
@@ -1963,4 +1975,33 @@ public class AuthContext extends Object implements java.io.Serializable {
         }
         return authservice;
     }
+    
+    private void onSuccessLocal() {
+        if (localSessionChecked) {
+            return;
+        }
+        com.sun.identity.authentication.server.AuthContextLocal 
+        oldACLocal = acLocal.getPrevAuthContext();
+        com.sun.identity.authentication.server.AuthContextLocal
+        acLocalToDestroy = null;
+        if (oldACLocal != null) {
+            if (forceAuth) {
+                acLocalToDestroy = acLocal;
+                acLocal = oldACLocal;
+                
+            } else {
+                acLocalToDestroy = oldACLocal;
+            }
+            try {
+                SSOToken tmpSession = acLocalToDestroy.getSSOToken();
+                SSOTokenManager.getInstance().
+                    destroyToken(tmpSession);
+            } catch (SSOException ssoExp) {
+                authDebug.error("AuthContext.onSuccessLocal: ",
+                    ssoExp);
+	
+            }
+        }
+        localSessionChecked = true;
+    } 
 }
