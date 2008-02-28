@@ -2,12 +2,19 @@ OpenSSO Authentication Module for Information Cards (RP).
 
 --------------------------------------------------------------------------------
 In order to run the build.xml to compile the jar file the following files need
-to be in the lib dir:
+to be in the authnicrp/lib dir:
 --------------------------------------------------------------------------------
 
 xmldap-1.0.jar:
-    The Xmldap.org jar file can be retrieved from the 'openinfocard' project at
+    The Xmldap.org code can be retrieved from the 'openinfocard' project at
     http://code.google.com/p/openinfocard/
+    To build:
+        svn checkout http://openinfocard.googlecode.com/svn/trunk/ \
+        openinfocard-read-only
+        cd openinfocard-read-only/ant
+        ant
+    Copy xmldap-1.0.jar from openinfocard-read-only/build/xmldap-1.0/ to 
+    authnicrp/lib
 
 opensso.jar:
 opensso-sharelib.jar
@@ -16,7 +23,8 @@ opensso-sharelib.jar
 servlet.jar:
     The three names I have seen for servlet.jar, depends on the server
     (servlet.jar, servlet-api.jar, j2ee.jar). If you have a Servlet Container,
-    it will be somewhere in the container's classpath, (Tomcat = common/lib directory)
+    it will be somewhere in the container's classpath, (Tomcat = common/lib 
+    directory)
     Otherwise, look into downloading Tomcat, or look for J2EE 1.4 SDK and for an
     implementation from Sun Microsystems.
 
