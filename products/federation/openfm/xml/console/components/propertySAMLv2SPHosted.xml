@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPHosted.xml,v 1.9 2008-02-12 21:53:18 asyhuang Exp $
+   $Id: propertySAMLv2SPHosted.xml,v 1.10 2008-02-28 18:42:38 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -482,6 +482,7 @@
         <property required="true">
             <label name="lblDefaultAuthenticationContext" defaultValue="samlv2.entityDescriptor.provider.attribute.label.defaultAuthenticationContext" labelFor="singleChoiceDefaultAuthenticationContext" />
             <cc name="spDefaultAuthnContext" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
+                <option label="samlv2.authenticationContext.none.label" value="none"/>
                 <option label="samlv2.authenticationContext.InternetProtocol.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol"/>
                 <option label="samlv2.authenticationContext.InternetProtocolPassword.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocolPassword"/>
                 <option label="samlv2.authenticationContext.Kerberos.label" value="urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos"/>

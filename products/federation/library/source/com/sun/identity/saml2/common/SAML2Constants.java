@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.22 2008-02-04 05:00:08 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.23 2008-02-28 18:39:42 asyhuang Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1000,7 +1000,7 @@ public interface SAML2Constants {
      * AuthLevel Mapping value.
      */
     public String SP_AUTHCONTEXT_CLASSREF_VALUE=
-                        "PasswordProtectedTransport|0|default";
+        "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|0|default";
     /**
      * Service provider AuthnContext Comparison Type attribute name.
      */
