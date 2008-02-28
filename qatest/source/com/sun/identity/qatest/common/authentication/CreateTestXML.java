@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateTestXML.java,v 1.6 2008-02-13 19:15:45 arunav Exp $ 
+ * $Id: CreateTestXML.java,v 1.7 2008-02-28 04:03:42 inthanga Exp $ 
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,7 @@ public class CreateTestXML {
         }
         PrintWriter out = new PrintWriter(new BufferedWriter
                 (new FileWriter(fileName)));
-        out.write("<url href=\"" + testURL + "/UI/Login?service=" +
+        out.write("<url href=\"" + testURL + "?service=" +
                 loginService);
         out.write("\">");
         out.write(newline);
@@ -88,8 +88,11 @@ public class CreateTestXML {
             String tpass;
             int uLength = testUserName.length();
             int uIndex = testUserName.indexOf(":");
-            tuser= testUserName.substring(0,uIndex);
-            tpass = testUserName.substring(uIndex+1,uLength);
+            tuser= testUserName.substring(0, uIndex);
+            tpass = testUserName.substring(uIndex + 1, uLength);
+            if (testNegative) {
+                 tpass = tpass + "fail";
+            }
             out.write("<form name=\"Login\" IDButton=\"\" >");
             out.write(newline);
             out.write("<input name=\"IDToken1\" value=\"" + tuser + "\" />");
