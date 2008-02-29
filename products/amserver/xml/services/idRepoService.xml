@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.19 2008-02-25 23:27:43 kenwho Exp $
+   $Id: idRepoService.xml,v 1.20 2008-02-29 21:45:47 kenwho Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2247,7 +2247,7 @@
 
                 <SubSchema name="files"
                     inheritance="multiple"
-                    i18nKey="a3000">
+                    i18nKey="">
                     <AttributeSchema name="RequiredValueValidator"
                         type="validator"
                         syntax="string">
