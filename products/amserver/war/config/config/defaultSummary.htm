@@ -1,8 +1,140 @@
-<div id="defaultSummary">
-    <div class="header">Default Summary</div>
-    <div class="bd" style="background-color:white">
-               
-        $defaultForm
-        
+<script type="text/javascript">
+
+    var defaultAgentFieldsValid = false;
+    var defaultAdminFieldsValid = false;
+    function defaultFieldsValid() {
+        return defaultAgentFieldsValid &&
+               defaultAdminFieldsValid; 
+    }
+
+    function closeDefault() {
+        YAHOO.sun.identity.config.options.defaultSummary.hide(); 
+    }
+    
+    function createConfigResponse(response) {
+        YAHOO.sun.identity.config.options.inProgress.hide();
+        if (response.responseText == "true") {              
+            YAHOO.sun.identity.config.options.confComplete.show();
+        } else {
+            alert("Error: "+response.responseText);
+        }
+    }
+    function createConfig() {
+        YAHOO.sun.identity.config.options.inProgress.show();
+        AjaxUtils.call("$context$path?actionLink=createDefaultConfig", createConfigResponse);         
+    }
+    
+    
+    function defaultAdminPasswordResponse(response) {
+	if (response.responseText == "true") {
+	   $('defaultAdminPasswordStatus').innerHTML = '$page.getLocalizedString("ok.string")';
+           defaultAdminFieldsValid = true;
+	} else {
+	   $('defaultAdminPasswordStatus').innerHTML = response.responseText;
+           defaultAdminFieldsValid = false;
+	}
+        $('createDefaultConfig').disabled = !defaultFieldsValid();
+    }
+
+    function validateDefaultAdminPasswords() {
+        var link = "?actionLink=checkPasswords";
+        var cValue = "&confirm=" + $('defaultAdminConfirm').value;
+        var aValue = "&password=" + $('defaultAdminPassword').value;        
+        var type = "&type=admin";
+        AjaxUtils.call(
+            "$context$path"+link+cValue+aValue+type, defaultAdminPasswordResponse);
+    }
+
+    function defaultAgentPasswordResponse(response) {
+	if (response.responseText == "true") {
+	   $('defaultAgentPasswordStatus').innerHTML = '$page.getLocalizedString("ok.string")';
+	   defaultAgentFieldsValid = true;
+	} else {
+	   $('defaultAgentPasswordStatus').innerHTML = response.responseText;
+	   defaultAgentFieldsValid = false;
+	}
+        $('createDefaultConfig').disabled = !defaultFieldsValid();
+    }
+       
+    function validateDefaultAgentPasswords() {
+        var link = "?actionLink=checkPasswords";
+        var cValue = "&confirm=" + $('defaultAgentConfirm').value;
+        var aValue = "&password=" + $('defaultAgentPassword').value;
+        var type = "&type=agent";
+        AjaxUtils.call( 
+            "$context$path"+link+cValue+aValue+type, defaultAgentPasswordResponse)
+    }
+    
+    
+    function initialize() {
+        $('createDefaultConfig').disabled = true;
+    }
+    YAHOO.util.Event.onDOMReady(initialize);
+</script>
+
+<link href="$context/assets/css/Specific/wizard.css" rel="stylesheet" type="text/css" />
+
+<div id="defaultSummary" style="width:800px;background-color: #FFFFFF">    
+    <div style="background-color: #FFFFFF;padding:0">
+	<div class="header">$page.getLocalizedString("fam.configurator.title")</div>
+        <div id="title">$page.getLocalizedString("default.config.title")</div>
     </div>
-</div
+    <div style="margin-left: 5%; margin-top: 5%; margin-bottom:5%; margin-right: 5%;">
+        $page.getLocalizedString("default.config.description");
+        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
+        <table class="temp">
+            <tr>
+                <td colspan="2"><b>$page.getLocalizedString("default.user.name")</b></td>
+            </tr>
+            <tr>
+                <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("password.label")</td>
+                <td><input id="defaultAdminPassword" name="defaultAdminPassword" 
+                        type="password" value="" class="text"
+                        onkeyup="APP.callDelayed(this,validateDefaultAdminPasswords)">
+                    <span id="defaultAdminPasswordStatus"></span>
+                </td>
+            </tr>
+            <tr>
+                <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("confirm.label")</td>
+                <td>
+                    <input id="defaultAdminConfirm" name="defaultAdminConfirm" 
+                        type="password" value="" class="text" 
+                        onkeyup="APP.callDelayed(this,validateDefaultAdminPasswords)">
+                </td>
+            </tr>
+        </table>      
+        <table class="temp">
+            <tr>
+                <td colspan="2"><b>$page.getLocalizedString("agent.user.name")</b></td>
+            </tr>
+            <tr>
+                <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("password.label")</td>
+                <td>
+                    <input id="defaultAgentPassword" name="defaultAgentPassword" 
+                        type="password" class="text"                
+                        onkeyup="APP.callDelayed(this,validateDefaultAgentPasswords)">
+                    <span id="defaultAgentPasswordStatus"></span>
+                </td>
+            </tr>
+            <tr>
+                <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("confirm.label")</td>
+                <td>
+                    <input id="defaultAgentConfirm" name="defaultAgentConfirm" 
+                        type="password" class="text" 
+                        onkeyup="APP.callDelayed(this,validateDefaultAgentPasswords)">
+                </td>
+            </tr>
+        </table>      
+    </div>
+ 
+    <div id="wizardFooter">        
+        <div align="left" style="float:left">
+            <button id="createDefaultConfig" type="button" onclick="createConfig();" class="buttonblue">$page.getLocalizedString("create.button")</button>
+        </div>
+        <div align="right">
+            <button id="wizardCancelButton" type="button" onclick="closeDefault();">$page.getLocalizedString("cancel.button")</button>
+        </div>
+    </div>
+</div>
+
+

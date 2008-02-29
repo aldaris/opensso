@@ -17,167 +17,94 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.6 2008-02-04 20:57:19 jonnelson Exp $
+ * $Id: DefaultSummary.java,v 1.7 2008-02-29 19:32:00 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config;
 
-import com.sun.identity.setup.AMSetupServlet;
-import com.sun.identity.config.util.TemplatedPage;
-import net.sf.click.Context;
-import net.sf.click.control.ActionLink;
-import net.sf.click.control.Button;
-import net.sf.click.control.Form;
-import net.sf.click.control.FieldSet;
-import net.sf.click.control.HiddenField;
-import net.sf.click.control.Label;
-import net.sf.click.control.PasswordField;
-import net.sf.click.control.Submit;
-
-import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.config.util.AjaxPage;
-import java.io.File;
-
-import java.util.Iterator;
-import java.util.Enumeration;
+import com.sun.identity.setup.AMSetupServlet;
+import com.sun.identity.setup.HttpServletRequestWrapper;
+import com.sun.identity.setup.HttpServletResponseWrapper;
+import com.sun.identity.setup.SetupConstants;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.click.control.ActionLink;
 
-/**
- * 
- */
 public class DefaultSummary extends AjaxPage {
-
-    public Form defaultForm = new Form("defaultForm");
-
-    private String cookieDomain = null;
-    private String hostName = null;
     
-    public void onInit() {
-        HttpServletRequest request = getContext().getRequest();
-        
-        defaultForm.setColumns(2);
-        FieldSet fieldSet = new FieldSet(
-            "fieldSet", "Configuration Default Values");
-        defaultForm.add(fieldSet);
-        fieldSet.setShowBorder(true);              
-        
-        // User Name and Password Fields
-        fieldSet.add(new Label("name", "Administrator:"));
-        fieldSet.add(new Label("nameValue", "amAdmin"));
-        defaultForm.add(new HiddenField("username", "amAdmin" ) );        
-        fieldSet.add(new PasswordField(
-            SetupConstants.CONFIG_VAR_ADMIN_PWD, 
-            "Administrator Password", true), 2);
-        fieldSet.add(new PasswordField(
-            SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, 
-            "Retype Administrator Password", true ), 2);
-        fieldSet.add(new PasswordField(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, 
-            "Default Agent Password", true ), 2);
-        fieldSet.add(new PasswordField(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM, 
-            "Retype Default Agent Password", true ), 2);
+    public ActionLink createConfig = 
+        new ActionLink("createDefaultConfig", this, "createDefaultConfig");
+    
+    public boolean createDefaultConfig() {
+        HttpServletRequest req = getContext().getRequest();
+        HttpServletRequestWrapper request = 
+            new HttpServletRequestWrapper(getContext().getRequest());          
+        HttpServletResponseWrapper response =                
+            new HttpServletResponseWrapper(getContext().getResponse());        
                 
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, getHostName()));
-        defaultForm.add(new HiddenField(
+        String adminPassword = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_ADMIN_PWD);        
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, adminPassword);
+
+        String agentPassword = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM, agentPassword);
+        
+        
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, getHostName());
+        request.addParameter(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT, 
-            "" + AMSetupServlet.getUnusedPort(getHostName(),50389, 1000)));
+            "" + AMSetupServlet.getUnusedPort(getHostName(),50389, 1000));
         
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_SERVER_HOST, getHostName()));
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_SERVER_PORT, ""+request.getServerPort()));
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_SERVER_URI, request.getRequestURI()));
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_SERVER_URL, request.getRequestURL().toString()));
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_SERVER_HOST, getHostName());
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_SERVER_PORT, ""+req.getServerPort());
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_SERVER_URI, req.getRequestURI());
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_SERVER_URL, req.getRequestURL().toString());
         
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_BASE_DIR, getBaseDir()));
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_BASE_DIR, getBaseDir());
 
-        defaultForm.add(new HiddenField(
+        request.addParameter(
             SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, 
-            AMSetupServlet.getRandomString()));
+            AMSetupServlet.getRandomString());
         
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_COOKIE_DOMAIN, getCookieDomain()));
-        
-        
-        defaultForm.add(new HiddenField(
-            SetupConstants.CONFIG_VAR_DS_MGR_PWD, ""));
-        
-        defaultForm.add(new HiddenField(SetupConstants.CONFIG_VAR_DATA_STORE,
-            SetupConstants.SMS_EMBED_DATASTORE));                       
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_COOKIE_DOMAIN, getCookieDomain());
                 
-        defaultForm.add(new HiddenField(SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, 
-            SetupConstants.DEFAULT_PLATFORM_LOCALE));
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DS_MGR_PWD, "");
         
-        Submit submit = new Submit(
-            "save", getMessage("save"), this, "onSubmit");
-        submit.setAttribute( 
-            "onclick", "submitDefaultSummaryForm(); return false;");
-        defaultForm.add(submit);
-
-        Button cancel = new Button("cancel", getMessage("cancel"));
-        cancel.setOnClick("cancelDefaultSummary();");
-        defaultForm.add(cancel);
-    }
-
-    public boolean onSubmit() {            
-        HttpServletResponse response = getContext().getResponse();
-        HttpServletRequest request = getContext().getRequest();
-        
-        if (defaultForm.isValid() ) {
-            String password = defaultForm.getField(
-                SetupConstants.CONFIG_VAR_ADMIN_PWD).getValue();
-            String passwordConfirm = defaultForm.getField(
-                    SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD).getValue();
-                        
-            if (!password.equals(passwordConfirm) ) {
-                defaultForm.setError(getLocalizedString("newPassword.error" ) );
-                response.setHeader("formError", "true" );
-                return false;
-            } else {                 
-                String agentPassword = defaultForm.getField(
-                    SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD).getValue();
-                String agentConfirm = defaultForm.getField(
-                    SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM).getValue();
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DATA_STORE,
+            SetupConstants.SMS_EMBED_DATASTORE);                       
                 
-                if (agentPassword.equals(agentConfirm)) {
-                    if (!agentPassword.equals(password)) {
-                        if (!AMSetupServlet.processRequest(request, response)) {
-                            // configuration failed.
-                            // tbd: get the reason for the failure.
-                            defaultForm.setError(getLocalizedString(
-                                "configuration.failed.error"));
-                            response.setHeader("formError","true");
-                            return false;
-                        }
-                    } else {
-                        // agent and admin password are not different
-                        defaultForm.setError(getLocalizedString(
-                            "configurator.urlaccessagent.passwd.match.amadmin.pwd"));
-                        response.setHeader("formError", "true");
-                        return false;
-                    }
-                } else {
-                    // agent passwords did not match
-                    defaultForm.setError(getLocalizedString(
-                        "configurator.urlaccessagent.passwd.nomatch"));
-                    response.setHeader("formError", "true");
-                    return false;
-                }                
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, 
+            SetupConstants.DEFAULT_PLATFORM_LOCALE);
+                
+        try {
+            if (!AMSetupServlet.processRequest(request, response)) {                
+                responseString = AMSetupServlet.getErrorMessage();
             }
-        } else {
-            defaultForm.setError("Processing error in page.");
-            response.setHeader("formError", "true" );
-            return false;
+        } catch (Exception e) {
+            responseString = "Error during configuration. Consult debug files for more information";
+            debug.error("DefaultSummary.createDefaultConfig()", e);
         }
-        
-        // configuration went ok...
-        return true;
+        writeToResponse(responseString);
+        setPath(null);
+        return false;
     }
 }

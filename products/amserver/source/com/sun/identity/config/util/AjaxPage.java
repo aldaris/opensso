@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.12 2008-02-25 19:36:45 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.13 2008-02-29 19:32:01 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.config.Configurator;
 import com.sun.identity.config.DummyConfigurator;
 import com.sun.identity.setup.AMSetupServlet;
+import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
@@ -42,7 +43,9 @@ import net.sf.click.Page;
 
 public abstract class AjaxPage extends Page {
 
-
+    public ActionLink checkPasswordsLink = 
+        new ActionLink("checkPasswords", this, "checkPasswords");
+    
     public ActionLink validateInputLink =
         new ActionLink("validateInput", this, "validateInput" );
 
@@ -50,7 +53,7 @@ public abstract class AjaxPage extends Page {
     public static final String OLD_RESPONSE_TEMPLATE = "{\"isValid\":${isValid}, \"errorMessage\":\"${errorMessage}\"}";
    
     private Configurator configurator = null;
-    
+    private static int MIN_PASSWORD_SIZE = 8;
     private boolean rendering = false;
     private String hostName;
     
@@ -58,6 +61,7 @@ public abstract class AjaxPage extends Page {
     protected ResourceBundle rb = null;
     protected static final String RB_NAME = "amConfigurator";
     
+    public String responseString = "true";
     public static Debug debug = Debug.getInstance("amConfigurator");
     
     public AjaxPage() {
@@ -272,4 +276,36 @@ public abstract class AjaxPage extends Page {
         return Integer.toString(
             AMSetupServlet.getUnusedPort(getHostName(), portNumber, 1000));
     }  
+    
+    public boolean checkPasswords() {
+        String confirm = toString("confirm");
+        String password = toString("password");
+        String otherPassword = toString("otherPassword");
+        String type = toString("type");
+        
+        if (password == null) {
+            responseString = getLocalizedString("missing.password");
+        } else if (password.length() < MIN_PASSWORD_SIZE) {
+            responseString = getLocalizedString("password.size.invalid");
+        } else if (confirm == null) {
+            responseString = getLocalizedString("missing.confirm.password");
+        } else if (confirm.length() < MIN_PASSWORD_SIZE) {
+            responseString = getLocalizedString("password.size.invalid");
+        } else if (!password.equals(confirm)) {
+            responseString = getLocalizedString("password.dont.match");
+        } else if ((otherPassword != null) && (otherPassword.equals(password))) {
+            responseString = getLocalizedString("agent.admin.password.same");
+        } else {            
+            if (type.equals("agent")) {
+                type = SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD;               
+            } else {
+                type = SetupConstants.CONFIG_VAR_ADMIN_PWD;
+            }
+            getContext().setSessionAttribute(type, password);
+        }
+        
+        writeToResponse(responseString);
+        setPath(null);
+        return false;
+    }
 }

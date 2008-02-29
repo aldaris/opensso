@@ -1,83 +1,114 @@
 <script type="text/javascript">
-    function validatePasswords() {
-        var params = "admin=" + $('adminPassword').value + "&adminConfirm=" + $('adminConfirm').value;
-        APP.call( "$context$path", "checkAdminPassword", params, passwordsValid, passwordsInvalid );
+    var agentValid = false;
+    var adminValid = false;
+    function fieldsValid() {
+        return agentValid && adminValid; 
+    }
+           
+    function adminPasswordResponse(response) {
+	if (response.responseText == "true") {
+	   $('adminPasswordStatus').innerHTML = '$page.getLocalizedString("ok.string")';
+           adminValid = true;
+	} else {
+	   $('adminPasswordStatus').innerHTML = response.responseText;
+           adminValid = false;
+	}
+        $('nextTabButton').disabled = !fieldsValid();
+    }
+        
+    function validateAdminPasswords() {        
+        var link = "?actionLink=checkPasswords";
+        var cValue = "&confirm=" + $('adminConfirm').value;
+        var aValue = "&password=" + $('adminPassword').value;  
+        var oValue = "&otherPassword=" + $('agentPassword').value;
+        var type = "&type=admin";
+        AjaxUtils.call(
+            "$context$path"+link+cValue+aValue+oValue+type, adminPasswordResponse);        
     } 
     
-    function passwordsValid( body ) {
-        $('nextTabButton').disabled = false;
-        $('adminPasswordStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>' + body + '</small>';
+    function agentPasswordResponse(response) {
+	if (response.responseText == "true") {
+	   $('agentPasswordStatus').innerHTML = '$page.getLocalizedString("ok.string")';
+           agentValid = true;
+	} else {
+	   $('agentPasswordStatus').innerHTML = response.responseText;
+           agentValid = false;
+	}
+        $('nextTabButton').disabled = !fieldsValid();
     }
-    function passwordsInvalid( body ) {
-        $('nextTabButton').disabled = true;
-        $('adminPasswordStatus').innerHTML = body;
-    }
-  
-    
-    function validateAgentPasswords() {
-        var params = "agent=" + $('agentPassword').value + "&agentConfirm="+ $('agentConfirm').value;
-        APP.call( "$context$path", "checkAgentPassword", params, agentValid, agentInvalid );
+        
+    function validateAgentPasswords() {        
+        var link = "?actionLink=checkPasswords";
+        var cValue = "&confirm=" + $('agentConfirm').value;
+        var aValue = "&password=" + $('agentPassword').value; 
+        var oValue = "&otherPassword=" + $('adminPassword').value;
+        var type = "&type=agent";
+        AjaxUtils.call(
+            "$context$path"+link+cValue+aValue+oValue+type, agentPasswordResponse);        
     } 
-    function agentValid( body ) {
-        $('nextTabButton').disabled = false;
-        $('agentPasswordStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>' + body + '</small>';
-    }
-    function agentInvalid( body ) {
+    
+    function initStep1() {
         $('nextTabButton').disabled = true;
-        $('agentPasswordStatus').innerHTML = body;
     }
-
+    YAHOO.util.Event.onDOMReady(initStep1);
 </script>
 
-<style>
-    table.temp {
-	border-width: 0px 0px 0px 0px;
-    }
-    table.temp th {
-	border-width: 0px 0px 0px 0px;
-    }
-    table.temp td {
-	border-width: 0px 0px 0px 0px;
-    }
-</style>
 
-<h1>Step 1: General Properties<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>The first step is to setup a few general properties required for accessing the system. These include the default users and the configuration location
-</p>
+<h1>$page.getLocalizedString("step1.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+<p>$page.getLocalizedString("step1.description")</p>
 
 <div class="summaryPanel" style="width:570px">
-    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
+    <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
         <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-        <div class="headerBox">Default User Passwords</div>
+        <div class="headerBox">$page.getLocalizedString("step1.subtitle")</div>
         <div class="bodyBox"  style="height:230px">
             <span>
                 <table class="temp">
                     <tr>
-		        <td colspan="2"><b>Default User [amAdmin]</b></td></tr>
+		        <td colspan="2"><b>$page.getLocalizedString("step1.admin.user.name")</b></td></tr>
                     <tr>
-                        <td><em>&nbsp;*&nbsp;</em>Password:</td>
-                        <td><input id="adminPassword" name="adminPassword" type="password" value="" class="text"></td>
+                        <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("password.label")</td>
+                        <td>
+                            <input id="adminPassword" name="adminPassword" 
+                                type="password" value="" class="text"
+                                onkeyup="APP.callDelayed(this,validateAdminPasswords)">
+                                <span id="adminPasswordStatus"></span>
+                        </td>
                     </tr>
                     <tr>
-                        <td><em>&nbsp;*&nbsp;</em>Confirm:</td>
+                        <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("confirm.label")</td>
                         <td>
-                            <input id="adminConfirm" name="adminConfirm" type="password" value="" class="text" onkeyup="APP.callDelayed(this,validatePasswords)"/>
-                            <span id="adminPasswordStatus"></span>
+                            <input id="adminConfirm" name="adminConfirm" 
+                            type="password" value="" class="text" 
+                            onkeyup="APP.callDelayed(this,validateAdminPasswords)">                            
                         </td>
                     </tr>
                 </table>      
                 <table class="temp">
                     <tr>
-                        <td colspan="2"><b>Default Agent</b></td></tr>
-                    <tr>
-                        <td><em>&nbsp;*&nbsp;</em>Password:</td>
-                        <td><input id="agentPassword" name="adminPassword" type="password" value="" class="text"></td>
+                        <td colspan="2">
+                            <b>$page.getLocalizedString("step1.agent.user.name")</b>
+                        </td>
                     </tr>
                     <tr>
-                        <td><em>&nbsp;*&nbsp;</em>Confirm:</td>
                         <td>
-                            <input id="agentConfirm" name="adminConfirm" type="password" value="" class="text" onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>
-                            <span id="agentPasswordStatus"></span>
+                            <em>&nbsp;*&nbsp;</em>$page.getLocalizedString("password.label")
+                        </td>
+                        <td>
+                            <input id="agentPassword" name="agentPassword" 
+                                type="password" value="" class="text"
+                                onkeyup="APP.callDelayed(this,validateAgentPasswords)">                            
+                                <span id="agentPasswordStatus"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <em>&nbsp;*&nbsp;</em>$page.getLocalizedString("confirm.label")
+                        </td>
+                        <td>
+                            <input id="agentConfirm" name="agentConfirm" 
+                                type="password" value="" class="text" 
+                                onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>                            
                         </td>
                     </tr>
                 </table>      
@@ -85,3 +116,4 @@
         </div>
         <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
     </div>
+
