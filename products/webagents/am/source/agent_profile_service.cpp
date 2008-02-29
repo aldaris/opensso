@@ -954,7 +954,11 @@ bool AgentProfileService::isListMapProperty(const char* propName) {
        strcasecmp(propName,
         AM_POLICY_RESPONSE_ATTRS_MAP) == 0 ||
        strcasecmp(propName,
-        AM_WEB_LOGIN_URL_PROPERTY) == 0) 
+        AM_WEB_LOGIN_URL_PROPERTY) == 0 || 
+       strcasecmp(propName,
+        AM_WEB_LOGOUT_URL_PROPERTY) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_CDC_SERVLET_URL_PROPERTY) == 0 )
     {
         retVal = true;
     }

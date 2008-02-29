@@ -313,12 +313,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 &fetchCDSSOURL);
         if(fetchCDSSOURL) {
             parameter = AM_WEB_CDC_SERVLET_URL_PROPERTY;
+            status =am_properties_set_list(this->properties, parameter, " ");
+
             status = am_properties_get(this->properties,
                     parameter,
                     &property_str);
             if(AM_SUCCESS == status &&
                     property_str != NULL && property_str[0] != '\0') {
-                //status = Utils::parse_url_list(property_str, ' ',
                 status = Utils::parse_url_list(property_str, ' ',
                         &this->cdsso_server_url_list,
                         AM_TRUE);
@@ -587,6 +588,8 @@ am_status_t AgentConfiguration::populateAgentProperties()
     if (AM_SUCCESS == status) {
         this->logout_url_list.size = 0;
         parameter = AM_WEB_LOGOUT_URL_PROPERTY;
+        status =am_properties_set_list(this->properties, parameter, " ");
+
         const char *logout_url_str;
         status = am_properties_get_with_default(this->properties,
                 parameter,

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.32 2008-02-27 00:24:18 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.33 2008-02-29 23:57:40 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -601,11 +601,12 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.cdsso.cdcservlet.url"
-                        type="single"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a444">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -641,11 +642,12 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.logout.url"
-                        type="single"
+                        type="list"
                         syntax="string"
+                        validator="ListValueValidator"
                         i18nKey="a448">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[0]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema

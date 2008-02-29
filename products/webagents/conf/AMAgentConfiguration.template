@@ -550,8 +550,8 @@ com.sun.identity.agents.config.profile.attribute.cookie.maxage = 300
 #
 # CDSSO PROPERTIES
 #   - cdsso.enable: Enables Cross-Domain Single Sign.
-#   - cdcservlet.url: URL the user will be redirected to for authentication
-#       in a CDSSO Scenario.
+#   - cdcservlet.url: List of URLs used by agent to redirect to the user 
+#       for authentication in a CDSSO Scenario.
 #   - cookie.domain:  This property gives the list of domains in
 #       which cookies have to be set in a CDSSO scenario. This property
 #       is used only if CDSSO is enabled.  If this property is left blank 
@@ -565,13 +565,13 @@ com.sun.identity.agents.config.profile.attribute.cookie.maxage = 300
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.cdsso.enable = false
-com.sun.identity.agents.config.cdsso.cdcservlet.url = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
+com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
 com.sun.identity.agents.config.cdsso.cookie.domain[0] = 
 
 #
 # LOGOUT PROCESSING
-#   - logout.url: Application's Logout URL.
-#       This URL is not enforced by policy. 
+#   - logout.url: List of Applications's Logout URLs.
+#       These URLs are not enforced by policy. 
 #       if set, agent will intercept this URL and destroy the user's session,
 #       if any. The application's logout URL will be allowed whether or not 
 #       the session destroy is successful.
@@ -580,7 +580,7 @@ com.sun.identity.agents.config.cdsso.cookie.domain[0] =
 #
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.logout.url = 
+com.sun.identity.agents.config.logout.url[0] = 
 com.sun.identity.agents.config.logout.cookie.reset[0] = 
 
 #
