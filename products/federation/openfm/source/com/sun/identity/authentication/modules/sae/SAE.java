@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAE.java,v 1.1 2007-08-17 22:50:49 exu Exp $
+ * $Id: SAE.java,v 1.2 2008-02-29 00:26:01 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,6 @@ public class SAE extends AMLoginModule {
 
 
     public void init(Subject subject, Map sharedState, Map options) {
-        setAuthLevel(DEFAULT_AUTH_LEVEL);
     }
 
     /**
@@ -135,7 +134,7 @@ public class SAE extends AMLoginModule {
             if (debug.messageEnabled()) 
                 debug.message("SAE AuthModule.: SAE attrs:"+attrs); 
         } catch (Exception ex) {
-            debug.error("SAE AuthModule.process: verification failed."); 
+            debug.error("SAE AuthModule.process: verification failed.", ex); 
             throw new AuthLoginException("verify failed");
         }
       
@@ -160,6 +159,21 @@ public class SAE extends AMLoginModule {
            setUserSessionProperty(key, value);
         }
 
+        String authLevel = (String)attrs.get(SecureAttrs.SAE_PARAM_AUTHLEVEL);
+        int authLevelInt = DEFAULT_AUTH_LEVEL;
+        if (authLevel != null && authLevel.length() != 0) {
+            try {
+                authLevelInt = Integer.parseInt(authLevel);
+            } catch (Exception e) {
+                debug.error("Unable to parse auth level " +
+                            authLevel + ". Using default.",e);
+                authLevelInt = DEFAULT_AUTH_LEVEL;
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("SAE AuthModule: auth level = " + authLevelInt);
+        }
+        setAuthLevel(authLevelInt);
         debug.message("SAE AuthModule:return SUCCESS");
  
         return  ISAuthConstants.LOGIN_SUCCEED; 

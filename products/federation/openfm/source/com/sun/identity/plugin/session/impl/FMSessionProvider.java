@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.9 2008-02-27 01:48:48 mallas Exp $
+ * $Id: FMSessionProvider.java,v 1.10 2008-02-29 00:26:01 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -191,14 +191,23 @@ public class FMSessionProvider implements SessionProvider {
         Object oldSession = null;
         try {
             oldSession = getSession(request);
+            String oldPrincipal = getPrincipalName(oldSession);
+            if ((!oldPrincipal.equals(principalName)) &&
+                (!oldPrincipal.startsWith(
+                "id=" + principalName.toLowerCase() +",")))
+            {
+                invalidateSession(oldSession, request, response);
+                oldSession = null;
+            }
         } catch (SessionException se) {
+            oldSession = null;
         }
 
         // Call auth module "Federation"
         AuthContext ac = null;
         try {
             if (oldSession != null) {
-                ac = new AuthContext((SSOToken) oldSession);
+                ac = new AuthContext((SSOToken) oldSession, true);
             } else {
                 ac = new AuthContext(realm);
             }

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.2 2007-12-15 09:24:06 rajeevangal Exp $
+   $Id: saeIDPApp.jsp,v 1.3 2008-02-29 00:26:01 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -69,6 +69,7 @@ public void jspInit()
 
     // String representing authenticated user.
     String userid = "testuser";
+    String authlevel = "0";
     // String representing profile attributes of authenticated user
     String mail   = "testuser@foo.com";
     String branch = "mainbranch" ;
@@ -105,6 +106,10 @@ iv) SP-App is already deployed and ready to accept requests.
         <tr>
           <td>Userid on local IDP : </td>
           <td><input  type="text" name="userid" value="<%=userid%>"></td>
+        </tr>
+        <tr>
+          <td>Authenticated auth level : </td>
+          <td><input  type="text" name="authlevel" value="<%=authlevel%>"></td>
         </tr>
         <tr>
           <td>mail attribute : </td>
@@ -156,6 +161,7 @@ iv) SP-App is already deployed and ready to accept requests.
 <%  } else  {// POST
         HashMap map = new HashMap();
         userid = request.getParameter("userid");    
+        authlevel = request.getParameter("authlevel");
         mail = request.getParameter("mail");    
         branch = request.getParameter("branch");    
         spapp = request.getParameter("spapp");    
@@ -182,6 +188,7 @@ iv) SP-App is already deployed and ready to accept requests.
         map.put("mail",mail); 
         // Following code secures attributes
         map.put(SecureAttrs.SAE_PARAM_USERID, userid); 
+        map.put(SecureAttrs.SAE_PARAM_AUTHLEVEL, authlevel);
         map.put(SecureAttrs.SAE_PARAM_SPAPPURL, spapp); 
         map.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
         String encodedString = sa.getEncodedString(map, secret);
@@ -190,6 +197,7 @@ iv) SP-App is already deployed and ready to accept requests.
         out.println("<br>branch="+branch);
         out.println("<br>mail="+mail);
         out.println("<br>"+SecureAttrs.SAE_PARAM_USERID+"="+userid);
+        out.println("<br>"+SecureAttrs.SAE_PARAM_AUTHLEVEL+"="+authlevel);
         out.println("<br>"+SecureAttrs.SAE_PARAM_SPAPPURL+"="+spapp);
         out.println("<br>"+SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName);
 
