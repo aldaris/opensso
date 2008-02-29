@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLClientSample.java,v 1.1 2007-08-30 08:08:07 dillidorai Exp $
+ * $Id: XACMLClientSample.java,v 1.2 2008-02-29 18:30:46 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,7 @@ public class XACMLClientSample {
     public static void main(String[] args) throws Exception {
         XACMLClientSample clientSample = new XACMLClientSample();
         clientSample.runSample(args);
+        System.exit(0);
     }
 
     public void runSample(String[] args) throws Exception {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationSample.java,v 1.1 2007-11-17 00:12:05 dillidorai Exp $
+ * $Id: PolicyEvaluationSample.java,v 1.2 2008-02-29 18:30:46 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public class PolicyEvaluationSample {
     public static void main(String[] args) throws Exception {
         PolicyEvaluationSample clientSample = new PolicyEvaluationSample();
         clientSample.runSample(args);
+        System.exit(0);
     }
 
     public void runSample(String[] args) throws Exception {

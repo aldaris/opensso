@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownManager.java,v 1.3 2008-01-24 20:34:29 ww203982 Exp $
+ * $Id: ShutdownManager.java,v 1.4 2008-02-29 18:30:46 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,6 +50,13 @@ public class ShutdownManager {
         for (int i = 0; i < size; i++) {
             listeners[i] = new HashSet();
         }
+        // add the trigger for stand alone application to shutdown.
+        Runtime.getRuntime().addShutdownHook(new Thread(
+            new Runnable() {
+                public void run() {
+                    shutdown();
+                }
+            }, "ShutdownThread"));
     }
     
     /**
@@ -121,6 +128,9 @@ public class ShutdownManager {
                     j.hasNext();) {
                     ShutdownListener element = (ShutdownListener) j.next();
                     element.shutdown();
+                    // remove the components which have been shutdown to avoid
+                    // problem when the shutdown function is called twice.
+                    j.remove();
                 }
             }
         }

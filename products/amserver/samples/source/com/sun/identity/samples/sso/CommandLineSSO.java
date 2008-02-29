@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandLineSSO.java,v 1.1 2006-08-04 21:07:01 veiming Exp $
+ * $Id: CommandLineSSO.java,v 1.2 2008-02-29 18:30:46 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,7 @@ public class CommandLineSSO {
         } else {
              System.out.println("Authentication Failed ....... ");
         }
+        System.exit(0);
     }
 
     // Creates AuthContext and submits requirements

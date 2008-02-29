@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.3 2006-12-08 21:02:13 veiming Exp $
+ * $Id: Main.java,v 1.4 2008-02-29 18:30:46 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -247,5 +247,6 @@ public class Main {
         } catch (MissingResourceException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
 }

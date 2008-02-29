@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenSample.java,v 1.1 2006-08-04 21:07:02 veiming Exp $
+ * $Id: SSOTokenSample.java,v 1.2 2008-02-29 18:30:46 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,6 +124,7 @@ public class SSOTokenSample {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
 
 }

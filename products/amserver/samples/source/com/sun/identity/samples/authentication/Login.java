@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Login.java,v 1.3 2008-01-07 20:37:10 veiming Exp $
+ * $Id: Login.java,v 1.4 2008-02-29 18:30:45 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -214,5 +214,6 @@ public class Login {
         } catch (UnsupportedCallbackException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
 }
