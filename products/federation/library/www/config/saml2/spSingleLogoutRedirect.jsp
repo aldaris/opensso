@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.7 2008-02-21 23:20:43 hengming Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.8 2008-02-29 00:23:32 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -207,7 +207,7 @@ boolean processSAELogout(
             appSLOUrlStr = SAML2Utils.getAttributeValueFromSPSSOConfig(
                 spConfig, SAML2Constants.SAE_SP_LOGOUT_URL);
         }
-        if (appSLOUrlStr == null) {
+        if ((appSLOUrlStr == null) || (appSLOUrlStr.length() == 0)) {
             SAML2Utils.debug.message(
                 "spSLORedir:SAE:appSLOUrl not configured.");
             return false;

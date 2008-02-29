@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.3 2007-12-15 09:24:06 rajeevangal Exp $
+   $Id: SA_IDP.jsp,v 1.4 2008-02-29 00:23:32 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -129,15 +129,27 @@ com.sun.identity.shared.debug.Debug"
 
     // Check if a user is already authenticated
     boolean loggedIn = false;
+    boolean forceAuth = false;
     String loggedinPrincipal = null;
+    String loggedinAuthLevel = null;
     try {
         provider = SessionManager.getProvider();
         token = provider.getSession(request);
         if((token != null) && (provider.isValid(token))) {
             loggedIn = true;
             loggedinPrincipal = provider.getPrincipalName(token);
+            String[] levelStr = 
+                    provider.getProperty(token, SessionProvider.AUTH_LEVEL);
+            if ((levelStr != null) && (levelStr.length > 0)) {
+                loggedinAuthLevel = levelStr[0];
+            }
         } else {
             token  = null; // for logging
+        }
+    } catch (UnsupportedOperationException ue) {
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(
+                "SA_IDP:cannot get auth level from session:",ue);
         }
     } catch (SessionException e) {
 	SAML2Utils.debug.message("SA_IDP:sessionvalidation exc:ignored" , e);
@@ -298,53 +310,48 @@ com.sun.identity.shared.debug.Debug"
                     loggedIn = false;
                 }
                 rawattrs = verifiedattrs;
+            } else {
+                String requestedAuthLevel = 
+                    (String) rawattrs.get(SecureAttrs.SAE_PARAM_AUTHLEVEL);
+                if ((requestedAuthLevel != null) &&
+                    (loggedinAuthLevel != null) &&
+                    (Integer.parseInt(requestedAuthLevel) >
+                        Integer.parseInt(loggedinAuthLevel)))
+                {
+                    forceAuth = true;
+                }
             }
         }
     }
     
     // Process fresh login/1st time FM access/switched user
-    if(!loggedIn) {
-	SAML2Utils.debug.message(
-             "SA_IDP:Fresh session needs to be created first.");
+    if(!loggedIn || forceAuth) {
+        if (SAML2Utils.debug.messageEnabled()) {
+	    SAML2Utils.debug.message(
+                "SA_IDP:Fresh session needs to be created or the existing " +
+                "session needs to be updated.");
+        }
         String qs = Utils.queryStringFromRequest(request); 
         if (qs != null && qs.length() > 0) {
             gotoUrl = gotoUrl + "?" + qs;
         } 
 
         String redirectUrl;
-        HashMap postParams = null;
-        if (action.equals("GET")) {
-            redirectUrl = appBase + "UI/Login?module=SAE&"+
-                SecureAttrs.SAE_PARAM_DATA+"="+sunData +
-                "&" + SAML2Constants.SAE_REALM + "=" + 
-                java.net.URLEncoder.encode(realm) +
-                "&" + SAML2Constants.SAE_IDP_ENTITYID + "=" + 
-                java.net.URLEncoder.encode(idpEntityId) +
-                "&" + SAML2Constants.SAE_IDPAPP_URL + "=" + 
-                java.net.URLEncoder.encode(idpAppUrl) +
-                "&goto=" + java.net.URLEncoder.encode(gotoUrl);
-        } else  {
-            postParams = new HashMap();
-            redirectUrl = appBase + "UI/Login";
-            postParams.put("module", "SAE");
-            //postParams.put("forward", "true");
-            postParams.put(SecureAttrs.SAE_PARAM_DATA, sunData);
-            postParams.put(SAML2Constants.SAE_REALM,
-                realm);
-            postParams.put(SAML2Constants.SAE_IDP_ENTITYID ,
-                idpEntityId);
-            postParams.put(SAML2Constants.SAE_IDPAPP_URL,
-                idpAppUrl);
-            postParams.put("goto", gotoUrl);
+        HashMap postParams = new HashMap();
+        redirectUrl = appBase + "UI/Login";
+        postParams.put("module", "SAE");
+        //postParams.put("forward", "true");
+        postParams.put(SecureAttrs.SAE_PARAM_DATA, sunData);
+        postParams.put(SAML2Constants.SAE_REALM, realm);
+        postParams.put(SAML2Constants.SAE_IDP_ENTITYID ,
+            idpEntityId);
+        postParams.put(SAML2Constants.SAE_IDPAPP_URL,
+            idpAppUrl);
+        postParams.put("goto", gotoUrl);
+        if (forceAuth) {
+            postParams.put("ForceAuth", "true");
         }
-
         
-	if (SAML2Utils.debug.messageEnabled()) {
-            String loginUrl = redirectUrl
-                + "&goto=" + java.net.URLEncoder.encode(gotoUrl);
-	    SAML2Utils.debug.message(
-                "SA_IDP:Fresh session needs to be created. URL="+loginUrl);
-        }
         String[] data = {rawattrs.toString()};
         SAML2Utils.logAccess(Level.INFO, LogUtil.SAE_IDP_AUTH, 
                    data, token, ipaddr, userid, realm, "SAE", null);
@@ -352,7 +359,7 @@ com.sun.identity.shared.debug.Debug"
             Utils.redirect(response, redirectUrl, postParams, action);
         } catch (Exception ex) {
             String errStr = 
-              errorUrl+"SA_IDP:errcode=5,redirect to Lofin failed:"+ex;
+              errorUrl+"SA_IDP:errcode=5,redirect to Login failed:"+ex;
 	    SAML2Utils.debug.error(errStr);
             String[] data1 = {errStr, rawattrs.toString()};
             SAML2Utils.logError(Level.INFO, LogUtil.SAE_IDP_ERROR, 

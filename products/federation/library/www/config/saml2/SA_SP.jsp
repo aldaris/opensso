@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_SP.jsp,v 1.3 2007-12-15 09:24:06 rajeevangal Exp $
+   $Id: SA_SP.jsp,v 1.4 2008-02-29 00:23:32 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -76,12 +76,18 @@ com.sun.identity.sae.api.Utils"
     // Check if a user is already authenticated
     boolean loggedIn = false;
     String loggedinPrincipal = null;
+    String loggedinAuthLevel = null;
     try {
         provider = SessionManager.getProvider();
         token = provider.getSession(request);
         if((token != null) && (provider.isValid(token))) {
             loggedIn = true;
             loggedinPrincipal = provider.getPrincipalName(token);
+            String[] levelStr =
+                    provider.getProperty(token, SessionProvider.AUTH_LEVEL);
+            if ((levelStr != null) && (levelStr.length > 0)) {
+                loggedinAuthLevel = levelStr[0];
+            }
         } else {
             token  = null; // for logging
         }
@@ -112,6 +118,7 @@ com.sun.identity.sae.api.Utils"
         return;
     }
     HashMap map = new HashMap();
+    map.put(SecureAttrs.SAE_PARAM_AUTHLEVEL, loggedinAuthLevel);
     try {
         realm = SAML2MetaUtils.getRealmByMetaAlias(spMetaAlias);
         SAML2MetaManager mm = SAML2Utils.getSAML2MetaManager();
@@ -195,19 +202,8 @@ com.sun.identity.sae.api.Utils"
         response.sendRedirect(errStr);
         return;
     }
-    String ssoUrl = null;
-    HashMap sParams = null;
-    if (action.equals("GET")) {
-        if (spApp.indexOf("?") > 0) {
-            ssoUrl = spApp+"&"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
-        } else {
-            ssoUrl = spApp+"?"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
-        }
-    } else {
-        ssoUrl = spApp;
-        sParams = new HashMap();
-        sParams.put(SecureAttrs.SAE_PARAM_DATA, encodedString);
-    }
+    HashMap sParams = new HashMap();
+    sParams.put(SecureAttrs.SAE_PARAM_DATA, encodedString);
 
     String data[] = {map.toString()};
     SAML2Utils.logAccess(Level.INFO, LogUtil.SAE_SP_SUCCESS, 
@@ -215,7 +211,7 @@ com.sun.identity.sae.api.Utils"
     // Comment this redirect and uncomment the below href for debugging. 
     // The href at the bottom will take effect
     try {
-        Utils.redirect(response, ssoUrl, sParams, action);
+        Utils.redirect(response, spApp, sParams, action);
     } catch (Exception ex) {
        String errStr = errorUrl
                        +"?errorcode=7&errorstring=Couldnt_redirect:"+ex
