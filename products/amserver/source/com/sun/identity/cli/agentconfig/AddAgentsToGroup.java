@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAgentsToGroup.java,v 1.1 2007-11-10 06:14:01 veiming Exp $
+ * $Id: AddAgentsToGroup.java,v 1.2 2008-02-29 20:35:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,10 +33,11 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.AgentConfiguration;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -75,7 +76,7 @@ public class AddAgentsToGroup extends AuthenticatedCommand {
                     "ATTEMPT_ADD_AGENT_TO_GROUP", params);
                 AMIdentity amid = new AMIdentity(
                     adminSSOToken, agentName, IdType.AGENTONLY, realm, null); 
-                amidGroup.addMember(amid);
+                AgentConfiguration.AddAgentToGroup(amidGroup, amid);
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                     "SUCCEED_ADD_AGENT_TO_GROUP", params);
             }
@@ -88,6 +89,12 @@ public class AddAgentsToGroup extends AuthenticatedCommand {
                     "add-agent-to-group-succeeded"));
             }
         } catch (IdRepoException e) {
+            String[] args = {realm, agentGroupName, agentName, e.getMessage()};
+            debugError("AddAgentsToGroup.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_ADD_AGENT_TO_GROUP", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (ConfigurationException e) {
             String[] args = {realm, agentGroupName, agentName, e.getMessage()};
             debugError("AddAgentsToGroup.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

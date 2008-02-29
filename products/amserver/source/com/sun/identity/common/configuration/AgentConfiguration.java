@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.17 2008-02-22 05:14:54 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.18 2008-02-29 20:35:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 import java.security.AccessController;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * This class provides agent configuration utilities.
@@ -63,10 +65,32 @@ public class AgentConfiguration {
     public final static String ATTR_NAME_PWD = "userpassword";
     public final static String ATTR_NAME_FREE_FORM =
         "com.sun.identity.agents.config.freeformproperties";
+    private final static String ATTR_CONFIG_REPO =
+        "com.sun.identity.agents.config.repository.location";
+    private final static String VAL_CONFIG_REPO_LOCAL = "local";
+
+    private static final String AGENT_LOCAL_PROPERTIES = "agentlocaleprop";
+    private static Map localAgentProperties;
+
     private static final Pattern patternArray =
         Pattern.compile("(.+?\\[.*?\\]\\s*?)=(.*)");
 
   
+    static {
+        localAgentProperties = new HashMap();
+        ResourceBundle rb = ResourceBundle.getBundle(AGENT_LOCAL_PROPERTIES);
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            Set set = new HashSet();
+            String value = rb.getString(key);
+            StringTokenizer st = new StringTokenizer(value, ",");
+            while (st.hasMoreTokens()) {
+                set.add(st.nextToken());
+            }
+            localAgentProperties.put(key, set);
+        }
+    }
+    
     private AgentConfiguration() {
     }
 
@@ -735,8 +759,32 @@ public class AgentConfiguration {
     public static Map getAgentAttributes(AMIdentity amid, boolean reformat)
         throws IdRepoException, SMSException, SSOException {
         Map values = amid.getAttributes();
-        return (reformat) ? unparseAttributeMap(getAgentType(amid), values) :
-            correctAttributeNames(getAgentType(amid), values);
+        String agentType = getAgentType(amid);
+        if (supportLocalProperties(agentType) && 
+            isPropertiesLocallyStored(amid)
+        ) {
+            Set localProp = getLocalPropertyNames(agentType);
+            Map temp = new HashMap(localProp.size()*2);
+            for (Iterator i = localProp.iterator(); i.hasNext(); ) {
+                String key = (String)i.next();
+                temp.put(key, values.get(key));
+            }
+            values = temp;
+        }
+        
+        return (reformat) ? unparseAttributeMap(agentType, values) :
+            correctAttributeNames(agentType, values);
+    }
+    
+    private static boolean isPropertiesLocallyStored(AMIdentity amid)
+        throws IdRepoException, SSOException {
+        boolean isLocal = false;
+        Set setRepo = (Set)amid.getAttribute(ATTR_CONFIG_REPO);
+        if ((setRepo != null) && !setRepo.isEmpty()) {
+            String repo = (String) setRepo.iterator().next();
+            isLocal = (repo.equalsIgnoreCase(VAL_CONFIG_REPO_LOCAL));
+        }
+        return isLocal;
     }
     
     private static String getAgentType(AMIdentity amid)
@@ -1168,5 +1216,51 @@ public class AgentConfiguration {
 
         String rbName = ssm.getI18NFileName();
         return ResourceBundle.getBundle(rbName, locale);
+    }
+    
+    
+    /**
+     * Adds an agent to a group.
+     * 
+     * @param group Agent Group.
+     * @param agent Agent.
+     * @throws SSOException if Single Sign on for accessing identity attribute
+     *         values is invalid.
+     * @throws IdRepoException if unable to access attribute values.
+     * @throws ConfigurationException if agent's properties are locally stored.
+     */
+    public static void AddAgentToGroup(AMIdentity group, AMIdentity agent) 
+        throws IdRepoException, SSOException, ConfigurationException {
+        String agentType = getAgentType(agent);
+        if (supportLocalProperties(agentType) && 
+            isPropertiesLocallyStored(agent)
+        ) {
+            String agentName = agent.getName();
+            String[] param = {agentName};
+            throw new ConfigurationException(
+                "cannot.add.agent.to.group.proeprties.locally.stored", param);
+        }
+        group.addMember(agent);
+    }
+    
+    /**
+     * Returns <code>true</code> if an agent type support local properties.
+     * 
+     * @param agentType Agent Type.
+     * @return <code>true</code> if an agent type support local properties.
+     */
+    public static boolean supportLocalProperties(String agentType) {
+        return localAgentProperties.containsKey(agentType);
+    }
+    
+    /**
+     * Returns a set of local property name if an agent type. Returns null
+     * if agent type does not support local properties.
+     * 
+     * @param agentType Agent Type.
+     * @return a set of local property name if an agent type.
+     */
+    public static Set getLocalPropertyNames(String agentType) {
+        return (Set)localAgentProperties.get(agentType);
     }
 }
