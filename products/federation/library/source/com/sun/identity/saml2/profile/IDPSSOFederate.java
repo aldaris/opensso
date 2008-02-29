@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.11 2008-02-21 23:18:55 hengming Exp $
+ * $Id: IDPSSOFederate.java,v 1.12 2008-02-29 00:22:04 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -352,7 +352,9 @@ public class IDPSSOFederate {
                     }
                 }
                 // need to check if the forceAuth is true. if so, do auth 
-                if (Boolean.TRUE.equals(authnReq.isForceAuthn())) {
+                if ((Boolean.TRUE.equals(authnReq.isForceAuthn())) &&
+                    (!Boolean.TRUE.equals(authnReq.isPassive())))
+                {
                     if (session != null) {
                         try {
                             SessionManager.getProvider().invalidateSession(
@@ -420,7 +422,7 @@ public class IDPSSOFederate {
                     // redirect to the authentication service
                     try {
                         redirectAuthentication(request, response, authnReq,
-                            reqID, realm, idpEntityID);
+                            reqID, realm, idpEntityID, false);
                     } catch (IOException ioe) {
                         SAML2Utils.debug.error(classMethod +
                             "Unable to redirect to authentication.", ioe);
@@ -475,7 +477,7 @@ public class IDPSSOFederate {
 
                         try {
                              redirectAuthentication(request, response, authnReq,
-                                 reqID, realm, idpEntityID);
+                                 reqID, realm, idpEntityID, true);
                              return;
                         } catch (IOException ioe) {
                             SAML2Utils.debug.error(classMethod +
@@ -718,7 +720,8 @@ public class IDPSSOFederate {
                              AuthnRequest authnReq,
                              String reqID,
                              String realm,
-                             String idpEntityID) 
+                             String idpEntityID,
+                             boolean isSessionUpgrade) 
         throws SAML2Exception, IOException {
         String classMethod = "IDPSSOFederate.redirectAuthentication: ";
         // get the authentication service url 
@@ -754,8 +757,15 @@ public class IDPSSOFederate {
             }
         }
         if (newURL.indexOf("?") == -1) {
-            newURL.append("?goto=");
+            if (isSessionUpgrade) {
+                newURL.append("?ForceAuth=true&goto=");
+            } else {
+                newURL.append("?goto=");
+            }
         } else {
+            if (isSessionUpgrade) {
+                newURL.append("&ForceAuth=true");
+            } 
             newURL.append("&goto=");
         }
         newURL.append(URLEncDec.encode(request.getRequestURL().

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.19 2008-02-21 23:18:55 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.20 2008-02-29 00:22:04 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -897,13 +897,27 @@ public class IDPSSOUtil {
         }
         authnStatement.setAuthnInstant(authInstant);
        
+        String authLevel = null;
+        try {
+            String[] values = sessionProvider.getProperty(
+                session, SessionProvider.AUTH_LEVEL);
+            if (values != null && values.length != 0 &&
+                values[0] != null && values[0].length() != 0) {
+                authLevel = values[0];
+            }                                                     
+        } catch (Exception e) {
+            SAML2Utils.debug.error(classMethod +
+                "exception retrieving auth level info from the session: ", e);
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("errorGettingAuthnStatement")); 
+        }
+
         IDPAuthnContextMapper idpAuthnContextMapper = 
             getIDPAuthnContextMapper(realm, idpEntityID);
         
-        IDPAuthnContextInfo info = 
-            idpAuthnContextMapper.getIDPAuthnContextInfo(
-                authnReq, idpEntityID, realm);
-        AuthnContext authnContext = info.getAuthnContext();
+        AuthnContext authnContext = 
+            idpAuthnContextMapper.getAuthnContextFromAuthLevel(
+                authLevel, realm, idpEntityID);
             
         authnStatement.setAuthnContext(authnContext);
        

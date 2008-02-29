@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAuthnContextMapper.java,v 1.3 2007-10-18 23:53:54 qcheng Exp $
+ * $Id: DefaultSPAuthnContextMapper.java,v 1.4 2008-02-29 00:22:04 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -129,7 +129,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                 (Map) SPCache.authContextHash.get(hostEntityID+"|"+realm);
         }
         // Retreive the AuthClass Reference from SP Configuration
-        if (authRefMap != null && authRefMap.isEmpty()) {
+        if (authRefMap == null || authRefMap.isEmpty()) {
             authRefMap = (Map) getAuthnCtxFromSPConfig(spConfigMap);
             if (authRefMap != null && !authRefMap.isEmpty()) {
                 SPCache.authContextHash.put(hostEntityID+"|"+realm,authRefMap);
@@ -323,11 +323,10 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
             Iterator i = authContextClassRefConfig.iterator();
             while (i.hasNext()) { 
                 boolean isDefault = false;
-                String authRef = (String)i.next();
-                int idx = authRef.indexOf(DEFAULT);
-                String authRefVal = authRef;
-                if (idx != -1) {
-                    authRefVal = authRef.substring(0,idx);
+                String authRefVal = (String)i.next();
+                if (authRefVal.endsWith("|" + DEFAULT)) {
+                    authRefVal = authRefVal.substring(0,
+                        authRefVal.length() - DEFAULT.length());
                     isDefault = true;
                 }
                 StringTokenizer st = new StringTokenizer(authRefVal,"|");
