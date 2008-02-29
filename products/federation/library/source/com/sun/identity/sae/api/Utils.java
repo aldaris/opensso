@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.1 2007-12-15 09:24:06 rajeevangal Exp $
+ * $Id: Utils.java,v 1.2 2008-02-29 00:20:57 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,7 +119,7 @@ public class Utils
             String val = (String) pmap.get(name);
             if (priorparam)
                 buf.append("&");
-            buf.append(name+"="+val);
+            buf.append(name+"="+java.net.URLEncoder.encode(val));
             priorparam = true;
         }
         return buf.toString();

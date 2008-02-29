@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.3 2007-10-01 23:55:36 exu Exp $
+ * $Id: SecureAttrs.java,v 1.4 2008-02-29 00:20:57 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,14 @@ public class SecureAttrs
      * @supported.api
      */
     public static final String SAE_PARAM_USERID   = "sun.userid";
+
+    /**
+     *  SAE Parameter representing the session's authentication level.
+     *  IDP  : Uses this parameter to send authentication level to FM.
+     *  SP   : Receives authentication level in this parameter.
+     * @supported.api
+     */
+    public static final String SAE_PARAM_AUTHLEVEL   = "sun.authlevel";
 
     /**
      *  SAE Parameter representing the requested SP app to be invoked.
