@@ -1,39 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Access Manager 数据存储库类型
+  <title>Federated Access Manager 数据存储库类型 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="idrepoadd"></A><h3>Access Manager 数据存储库类型</h3>
-<p>在 Access Manager 数据存储库选择屏幕中，可创建以下数据存储库类型：</p>
-<A NAME="gdlnj"></A><h4>Access Manager 系统信息库插件</h4>
-<p>该数据存储库类型驻留在 Sun Java System Directory Server 实例中，并拥有 Access Manager 信息树。该数据存储库类型使用不属于 LDAP 版本 3 规范的 Directory Server 功能（如角色和服务类），并与以前的 Access Manager 版本兼容。</p>
-<p>有关属性定义的信息，参见<A HREF="amrepoattrs.html#amrepoattrs">Access Manager 系统信息库属性</A>。</p>
-<A NAME="gdlmv"></A><h4>活动目录</h4>
-<p>该数据存储类型使用 LDAP 版本 3 规范将身份数据写入到 Microsoft 活动目录的实例中。</p>
-<p>有关属性定义的信息，参见<A HREF="adattrs.html#adattrs">活动目录属性</A>。</p>
-<A NAME="gdlml"></A><h4>平面文件系统信息库</h4>
-<p>该系统信息库允许用户在 Access Manager 的本地安装实例上以平面 DIT 结构存储数据和身份，而不必创建单独的数据存储库。通常将其用于测试或验证概念部署。</p>
-<p>有关属性定义的信息，参见<A HREF="flatfileattr.html#flatfileattr">平面文件系统信息库属性</A>。</p>
-<A NAME="gdlmr"></A><h4>普通 LDAPv3</h4>
-<p>该数据存储库类型允许将身份数据写入任意与 LDAPv3 兼容的数据库。如果所使用的 LDAPv3 数据库不支持持久性搜索，则无法使用高速缓存功能。</p>
-<p>有关属性定义的信息，参见<A HREF="gdoto.html#gdoto">普通 LDAPv3 属性</A>。</p>
-<A NAME="gdlnw"></A><h4>使用 Access Manager 模式的 Sun Directory Server</h4>
-<p>该数据存储库类型驻留在 Sun Java System Directory Server 实例中，并拥有 Access Manager 信息树。它与 Access Manager 系统信息库插件不同，后者包含更多配置属性，从而可更好地自定义数据存储库。</p>
-<p>有关属性定义的信息，参见<A HREF="sundirattrs.html#sundirattrs">使用 Access Manager 模式的 Sun Directory Server 属性</A>。</p>
 
-<br />
+
+<a name="idrepoadd"></a><h4>Federated Access Manager 数据存储库类型</h4>
+<p>在 Federated Access Manager 数据存储库选择屏幕中，可创建以下数据存储库类型：</p>
+
+<a name="gdlnj"></a><h5>Federated Access Manager 系统信息库插件</h5>
+<p>该数据存储库类型驻留在 Sun Java System Directory Server 实例中，并拥有 Federated Access Manager 信息树。该数据存储库类型使用不属于 LDAP
+版本 3 规范的 Directory Server 功能（如角色和服务类），并与以前的 Federated Access Manager 版本兼容。</p><p>有关属性定义的信息，参见 <a href="amrepoattrs.html">Federated Access Manager 系统信息库属性</a>。</p>
+
+<a name="gdlmv"></a><h5>Active Directory</h5>
+<p>该数据存储类型使用 LDAP 版本 3 规范将身份数据写入到 Microsoft Active Directory 的实例中。</p><p>有关属性定义的信息，参见 <a href="adattrs.html">Active Directory 属性</a>。</p>
+
+<a name="gdlml"></a><h5>平面文件系统信息库</h5>
+<p>该系统信息库允许用户在 Federated Access Manager 的本地安装实例上以平面 DIT 结构存储数据和身份，而不必创建单独的数据存储库。通常将其用于测试或验证概念部署。</p><p>有关属性定义的信息，参见<a href="flatfileattr.html">平面文件系统信息库属性</a>。</p>
+
+<a name="gdlmr"></a><h5>普通 LDAPv3</h5>
+<p>该数据存储库类型允许将身份数据写入任意与 LDAPv3 兼容的数据库。如果所使用的 LDAPv3 数据库不支持持久性搜索，则无法使用高速缓存功能。</p><p>有关属性定义的信息，参见<a href="gdoto.html">普通 LDAPv3 属性</a>。</p>
+
+<a name="gdlnw"></a><h5>使用 Federated Access Manager 模式的 Sun Directory Server</h5>
+<p>该数据存储库类型驻留在 Sun Java System Directory Server 实例中，并拥有 Federated Access Manager 信息树。它与 Federated
+Access Manager 系统信息库插件不同之处在于，它包含更多配置属性，从而可更好地自定义数据存储库。</p><p>有关属性定义的信息，参见<a href="sundirattrs.html">使用 Federated Access Manager 模式的 Sun Directory Server 属性</a>。</p>
+<br/>
 
 </body>
 </html>

@@ -1,36 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>인증 도메인
+  <title>인증 도메인 - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fsauthdomains"></A><h2>인증 도메인</h2>
-<A NAME="indexterm-58"></A><p><b>인증 도메인</b>은 기본 사용자가 안전하고 완벽하게 통합된 환경에서 비즈니스를 함께 수행할 수 있는 서비스 공급자(및 하나 이상의 Identity 공급자)의 연합입니다. 인증 도메인을 만들고 채우려면 먼저 인증 도메인의 구성원이 될 각 공급자에 대해 <b>메타데이터</b>(특정 Identity 서비스 아키텍처를 정의하는 구성 정보)를 저장하는 <b>엔티티</b>를 만듭니다. 그런 다음, 인증 도메인을 구성 및 저장합니다. 마지막으로 인증 도메인에 추가할 엔티티(구성된 공급자)의 등록 정보를 편집합니다.</p>
-<p><hr size="1" noshade><p><b>주 &#8211; </b>엔티티에 대한 자세한 내용은 <A HREF="federation.fsentitydescriptors.html#federation.fsentitydescriptors"> 엔티티: 공급자 및 계열사</A>를 참조하십시오.</p>
-<hr size="1" noshade></p><p>구성된 모든 인증 도메인은 인증 도메인에 나열됩니다. 인증 도메인과 연관된 작업은 다음과 같습니다.</p>
-<ul><li><p><A HREF="federation.fsauthdomainsadd.html#federation.fsauthdomainsadd"> 새 인증 도메인 작성</A></p>
-</li>
-<li><p><A HREF="federation.fsauthdomainsedit.html#federation.fsauthdomainsedit"> 인증 도메인 프로필 수정</A></p>
-</li>
-<li><p><A HREF="federation.fsauthdomainsselectprovider.html#federation.fsauthdomainsselectprovider"> 인증 도메인에 공급자 추가</A></p>
-</li>
-<li><p><A HREF="deleteauthdomain.html#deleteauthdomain"> 인증 도메인 프로필 삭제</A></p>
-</li>
-</ul>
-<p><hr size="1" noshade><p><b>주 &#8211; </b>인증 도메인의 구성원은 <A target="_blank" HREF="http://www.projectliberty.org/specs/liberty-trust-models-guidelines-v1.0.pdf">Liberty Trust Model Guidelines</A>에 기초한 <b>circle of trust</b> 운영 협약을 미리 설정해야 합니다.</p>
-<hr size="1" noshade></p>
-<br />
+
+
+<a name="federation.fsauthdomains"></a><h3>인증 도메인</h3>
+<a name="indexterm-58"></a><p><b>인증 도메인</b>은 기본 사용자가 안전하고 완벽하게 통합된 환경에서 비즈니스를 함께 수행할 수 있는
+서비스 공급자(및 하나 이상의 Identity 공급자)의 연합입니다. 인증 도메인을 만들고 채우려면 먼저
+인증 도메인의 구성원이 될 각 공급자에 대해 <b>메타데이터</b>(특정 Identity 서비스 아키텍처를 정의하는
+구성 정보)를 저장하는 <b>엔티티</b>를 만듭니다. 그런 다음, 인증 도메인을 구성 및 저장합니다.
+마지막으로 인증 도메인에 추가할 엔티티(구성된 공급자)의 등록 정보를 편집합니다.</p>
+<hr><p><b>주 &#8211; </b>엔티티에 대한 자세한 내용은 <a href="federation.fsentitydescriptors.html">엔티티: 공급자 및 계열사</a>를 참조하십시오.</p>
+<hr>
+<p>구성된 모든 인증 도메인은 인증 도메인에 나열됩니다. 인증 도메인과 연관된 작업은 다음과
+같습니다.</p>
+<ul><li><p><a href="federation.fsauthdomainsadd.html">새 인증 도메인 작성</a></p></li>
+<li><p><a href="federation.fsauthdomainsedit.html">인증 도메인 프로필 수정</a></p></li>
+<li><p><a href="federation.fsauthdomainsselectprovider.html">인증 도메인에 공급자 추가</a></p></li>
+<li><p><a href="deleteauthdomain.html">인증 도메인 프로필 삭제</a></p></li></ul>
+
+<hr><p><b>주 &#8211; </b>인증 도메인의 구성원은 Liberty Trust Model Guidelines에 기초한 <b>circle of trust</b> 운영 협약을 미리
+설정해야 합니다.</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

@@ -1,32 +1,65 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Directivas admitidas
+  <title>Directivas admitidas - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="supporteddirectives"></A><h3>Directivas admitidas</h3>
-<A NAME="indexterm-132"></A><A NAME="indexterm-133"></A><p>Este atributo permite especifica una directiva relacionada con pol&#237;ticas para un recurso. Si un proveedor de servicios desea utilizar una directiva no admitida, la solicitud fallar&#225;. La siguiente tabla detalla las opciones disponibles.</p>
 
-<table cellspacing="5" border="1">
-<tr><th scope="col"><p>Directiva</p></th><th scope="col"><p>Objetivo</p></th></tr>
-<tr><td><p><tt>AuthenticateRequester</tt></p></td><td><p>El Servicio de detecci&#243;n deber&#237;a incluir la aserci&#243;n SAML (que contenga <tt>AuthenticationStatement </tt>) en sus respuestas para permitir al cliente que se autentique en la instancia de servicio que aloja el recurso.</p></td></tr>
-<tr><td><p><tt>AuthenticateSessionContext</tt></p></td><td><p>El Servicio de detecci&#243;n deber&#237;a incluir una aserci&#243;n SAML (que contenga <tt>SessionContextStatement </tt>) en las respuestas que indiquen el estado de la sesi&#243;n.</p></td></tr>
-<tr><td><p><tt>AuthorizeRequestor</tt> </p></td><td><p>El Servicio de detecci&#243;n deber&#237;a incluir una aserci&#243;n SAML (que contenga <tt>ResourceAccessStatement </tt>) en las respuestas que indiquen si el cliente puede acceder al recurso.</p></td></tr>
-<tr><td><p><tt>EncryptResourceID</tt></p></td><td><p>El Servicio de detecci&#243;n deber&#237;a cifrar el identificador de recursos en las respuestas destinadas a todos los clientes.</p></td></tr>
-<tr><td><p><tt>GenerateBearerToken</tt></p></td><td><p>Si se utiliza la autenticaci&#243;n de token de servicio de control, el Servicio de detecci&#243;n deber&#237;a generar un token que conceda permiso de servicio de control para acceder al recurso. </p></td></tr>
-</table><hr size="1" noshade><p><IMG ALT="Precauci&oacute;n" src="graphics/caution.gif">  <b>Precauci&#243;n &#8211; </b>Las directivas <tt>AuthorizeRequestor</tt> y <tt>EncryptResourceID </tt> no se pueden utilizar conjuntamente.</p><hr size="1" noshade>
-<br />
+
+<a name="supporteddirectives"></a><h4>Directivas admitidas</h4>
+<a name="indexterm-132"></a><a name="indexterm-133"></a><p>Este atributo permite especifica una directiva relacionada con pol&#237;ticas para un recurso.
+Si un proveedor de servicios desea utilizar una directiva no admitida, la
+solicitud fallar&#225;. La siguiente tabla detalla las opciones disponibles.</p><table><col width="50*"><col width="50*"><tr><th align="left" valign="top" scope="column"><p>Directiva</p></th>
+<th align="left" valign="top" scope="column"><p>Funci&#243;n</p></th>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>AuthenticateRequester</tt></p></td>
+<td align="left" valign="top" scope="row"><p>El Servicio de detecci&#243;n
+deber&#237;a incluir la aserci&#243;n SAML (que contenga <tt>AuthenticationStatement </tt>) en sus respuestas para
+permitir al cliente que se autentique en la instancia de servicio que
+aloja el recurso.</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>AuthenticateSessionContext</tt></p></td>
+<td align="left" valign="top" scope="row"><p>El Servicio de detecci&#243;n deber&#237;a incluir una aserci&#243;n SAML (que
+contenga <tt>SessionContextStatement </tt>) en las respuestas que indiquen el estado de la sesi&#243;n.</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>AuthorizeRequestor</tt>
+</p></td>
+<td align="left" valign="top" scope="row"><p>El Servicio de detecci&#243;n deber&#237;a incluir una aserci&#243;n SAML (que contenga <tt>ResourceAccessStatement </tt>)
+en las respuestas que indiquen si el cliente puede acceder al recurso.</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>EncryptResourceID</tt></p></td>
+<td align="left" valign="top" scope="row"><p>El
+Servicio de detecci&#243;n deber&#237;a cifrar el identificador de recursos en las respuestas
+destinadas a todos los clientes.</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>GenerateBearerToken</tt></p></td>
+<td align="left" valign="top" scope="row"><p>Si se utiliza la autenticaci&#243;n de token de
+servicio de control, el Servicio de detecci&#243;n deber&#237;a generar un token que
+conceda permiso de servicio de control para acceder al recurso. </p></td>
+</tr>
+</table>
+<hr><p><b>Precauci&#243;n &#8211; </b>Las directivas <tt>AuthorizeRequestor</tt> y <tt>EncryptResourceID </tt> no se pueden utilizar conjuntamente.</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

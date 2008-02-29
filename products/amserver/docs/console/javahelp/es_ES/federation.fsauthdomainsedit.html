@@ -1,40 +1,54 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Para modificar un perfil de dominio de autenticaci&#243;n
+  <title>Para modificar un perfil de dominio de autenticaci&#243;n - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fsauthdomainsedit"></A><h3>Para modificar un perfil de dominio de autenticaci&#243;n</h3>
-<A NAME="indexterm-60"></A><p>Siga este procedimiento para editar los atributos generales de un dominio de autenticaci&#243;n existente o para agregar proveedores a dicho dominio. El punto de partida es Dominios de autenticaci&#243;n en la interfaz Federaci&#243;n.</p>
-<ol><li><p><b>Haga clic en el nombre de un dominio de autenticaci&#243;n configurado para modificar su perfil o para agregarle proveedores.</b></p><p>Aparece la p&#225;gina Editar dominio de autenticaci&#243;n.</p>
+
+
+<a name="federation.fsauthdomainsedit"></a><h4>Para modificar un perfil de dominio de autenticaci&#243;n</h4><a name="indexterm-60"></a><p>Siga este procedimiento para editar los atributos generales de un dominio de
+autenticaci&#243;n existente o para agregar proveedores a dicho dominio. El punto de
+partida es Dominios de autenticaci&#243;n en la interfaz Federaci&#243;n.</p><ol>
+<li><b>Haga clic en el nombre de un dominio de autenticaci&#243;n configurado para
+modificar su perfil o para agregarle proveedores.</b><p>Aparece la p&#225;gina Editar dominio de autenticaci&#243;n.</p></li>
+<li><b>Escriba los nuevos valores o edite los valores existentes para los atributos
+generales del dominio de autenticaci&#243;n:</b><dl><dt>Nombre</dt>
+<dd><p>El valor est&#225;tico de este atributo es el nombre proporcionado al crear el dominio de autenticaci&#243;n.</p></dd>
+<dt>Descripci&#243;n</dt>
+<dd><p>El valor de este atributo es una descripci&#243;n del dominio de autenticaci&#243;n. Puede modificar la descripci&#243;n introducida anteriormente si es necesario.</p></dd>
+<dt>URL de servicio de escritor</dt>
+<dd><p>Este atributo especifica la ubicaci&#243;n del servicio que escribe la cookie del dominio com&#250;n. La URL presenta el formato <tt><b> http://</tt><i>common-domain-host</i><tt>:</tt><i>port</i><tt>/common/writer </b></tt>.</p></dd>
+<dt>URL de servicio de lector</dt>
+<dd><p>Este atributo especifica la ubicaci&#243;n del servicio que lee la cookie del dominio com&#250;n. La URL presenta el formato <tt><b> http://</tt><i>common-domain-host</i><tt>:</tt><i>port</i><tt>/common/transfer </b></tt>.</p></dd>
+<dt>Estado</dt>
+<dd><p>El estado predeterminado es âActivoâ (Active). Si selecciona âInactivoâ (Inactive), se deshabilita la comunicaci&#243;n dentro del dominio de autenticaci&#243;n.</p></dd>
+</dl>
 </li>
-<li><p><b>Escriba los nuevos valores o edite los valores existentes para los atributos generales del dominio de autenticaci&#243;n:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>Nombre</p></td><td valign="top"><p>El valor est&#225;tico de este atributo es el nombre proporcionado al crear el dominio de autenticaci&#243;n.</p>
-</td></tr><tr><td valign="top"><p>Descripci&#243;n</p></td><td valign="top"><p>El valor de este atributo es una descripci&#243;n del dominio de autenticaci&#243;n. Puede modificar la descripci&#243;n introducida anteriormente si es necesario.</p>
-</td></tr><tr><td valign="top"><p>URL de servicio de escritor</p></td><td valign="top"><p>Este atributo especifica la ubicaci&#243;n del servicio que escribe la cookie del dominio com&#250;n. La URL presenta el formato <tt><b> http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/writer </b></tt>.</p>
-</td></tr><tr><td valign="top"><p>URL de servicio de lector</p></td><td valign="top"><p>Este atributo especifica la ubicaci&#243;n del servicio que lee la cookie del dominio com&#250;n. La URL presenta el formato <tt><b> http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/transfer </b></tt>.</p>
-</td></tr><tr><td valign="top"><p>Estado</p></td><td valign="top"><p>El estado predeterminado es "Activo" (Active). Si selecciona "Inactivo" (Inactive), se deshabilita la comunicaci&#243;n dentro del dominio de autenticaci&#243;n.</p>
-</td></tr></table>
-</li>
-<li><p><b>Haga clic en Agregar para agregar proveedores al dominio de autenticaci&#243;n.</b></p><p>Aparece la p&#225;gina Seleccionar socio de confianza.</p>
-</li>
-<li><p><b>Elija uno o varios de los proveedores disponibles y haga clic en la flecha Agregar para seleccionarlos.</b></p><p>La lista proporcionada contiene los nombres de las entidades creadas y rellenadas con proveedores. Para obtener m&#225;s informaci&#243;n, consulte <A HREF="federation.fsauthdomainsselectprovider.html#federation.fsauthdomainsselectprovider">Para agregar proveedores a un dominio de autenticaci&#243;n</A>.</p>
-</li>
-<li><p><b>Pulse Aceptar para guardar los proveedores para el dominio de autenticaci&#243;n.</b></p><p>A continuaci&#243;n, volver&#225; a la pantalla de perfil Dominio de autenticaci&#243;n.</p>
-</li>
-<li><p><b>Haga clic en Guardar para completar la operaci&#243;n.</b></p></li>
-</ol>
-<br />
+<li><b>Haga clic en Agregar para agregar proveedores al dominio de autenticaci&#243;n.</b><p>Aparece la p&#225;gina Seleccionar socio de confianza.</p></li>
+<li><b>Elija uno o varios de los proveedores disponibles y haga clic en
+la flecha Agregar para seleccionarlos.</b><p>La lista proporcionada contiene los nombres de las entidades creadas y rellenadas
+con proveedores. Para obtener m&#225;s informaci&#243;n, consulte <a href="federation.fsauthdomainsselectprovider.html">Para agregar proveedores a un dominio de autenticaci&#243;n</a>.</p></li>
+<li><b>Pulse Aceptar para guardar los proveedores para el dominio de autenticaci&#243;n.</b><p>A continuaci&#243;n, volver&#225; a la pantalla de perfil Dominio de autenticaci&#243;n.</p></li>
+<li><b>Haga clic en Guardar para completar la operaci&#243;n.</b></li></ol>
+<br/>
 
 </body>
 </html>

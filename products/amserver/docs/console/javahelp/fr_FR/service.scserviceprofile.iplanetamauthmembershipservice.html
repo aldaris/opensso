@@ -1,106 +1,199 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Appartenance
+  <title>Appartenance - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamauthmembershipservice"></A><h3>Appartenance</h3>
-<p><A NAME="indexterm-183"></A>Le module d'authentification Appartenance est impl&#233;ment&#233; dans des sites personnalis&#233;s. Lorsque l'authentification d'appartenance est activ&#233;e, un utilisateur peut s'auto-enregistrer. Cela signifie que l'utilisateur peut cr&#233;er un compte, le personnaliser et y acc&#233;der en tant qu'utilisateur enregistr&#233; sans l'aide d'un administrateur. Les attributs sont des attributs de domaine. Ces attributs sont les suivants :</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumys">Longueur minimale du mot de passe</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyr">R&#244;les utilisateur par d&#233;faut</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyt">Statut de l'utilisateur apr&#232;s enregistrement</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzt">Serveur LDAP principal</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumza">Serveur LDAP secondaire</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyz">DN o&#249; d&#233;marrer recherche util.</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzb">DN pour liaison utilisateur root</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumze">Mot de passe pour liaison utilisateur root</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzd">Mot de passe pour liaison utilisateur root (confirmer)</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzc">Attribut utilis&#233; pour r&#233;cup&#233;rer le profil utilisateur</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzh">Attributs utilis&#233;s pour rechercher un utilisateur &#224; authentifier</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzg">Filtre de recherche d'utilisateur</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzj">&#201;tendue de la recherche</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzi">Activer SSL pour acc&#233;der au serveur LDAP</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzk">Renvoyer DN utilisateur &#224; authentifier</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzm">Niveau d'authentification</A></p>
-</li>
-</ul>
-<A NAME="fumys"></A><h4>Longueur minimale du mot de passe</h4>
-<p>Indique le nombre minimal de caract&#232;res requis pour un mot de passe d&#233;fini lors de l'auto-enregistrement. La valeur par d&#233;faut est 8.</p>
-<p>Si cette valeur est modifi&#233;e, elle doit &#233;galement &#234;tre modifi&#233;e dans le texte d'enregistrement et d'erreur du fichier suivant :</p>
-<p><tt></tt><i>Base AccessManager<tt></i>/locale/amAuthMembership.properties </tt> (entr&#233;e <i>PasswdMinChars</i>)</p>
-<A NAME="fumyr"></A><h4>R&#244;les utilisateur par d&#233;faut</h4>
-<p>Indique les r&#244;les affect&#233;s aux nouveaux utilisateurs dont les profils sont cr&#233;&#233;s par le biais de l'auto-enregistrement. Il n'y a pas de valeur par d&#233;faut. L'administrateur doit sp&#233;cifier les DN des r&#244;les qui seront affect&#233;s au nouvel utilisateur.</p>
-<p><hr size="1" noshade><p><b>Remarque &#8211; </b>Le r&#244;le sp&#233;cifi&#233; doit se trouver sous le domaine dont l'authentification est configur&#233;e. Seuls les r&#244;les qui peuvent &#234;tre affect&#233;s &#224; l'utilisateur seront ajout&#233;s lors de l'auto-enregistrement. Tous les autres DN seront ignor&#233;s. Ce r&#244;le peut &#234;tre soit un r&#244;le Access Manager soit un r&#244;le LDAP, mais les r&#244;les filtr&#233;s ne sont pas accept&#233;s.</p>
-<hr size="1" noshade></p><A NAME="fumyt"></A><h4>Statut de l'utilisateur apr&#232;s enregistrement</h4>
-<p>Indique si les services sont imm&#233;diatement disponibles pour un utilisateur qui s'est auto-enregistr&#233;. La valeur par d&#233;faut est Actif et les services sont disponibles pour le nouvel utilisateur. En s&#233;lectionnant Inactif, l'administrateur choisit de rendre tous les services indisponibles pour le nouvel utilisateur.</p>
-<A NAME="fumzt"></A><h4>Serveur LDAP principal</h4>
-<p>Indique le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP principal d&#233;fini lors de l'installation d'Access Manager. C'est le premier serveur contact&#233; pour l'authentification. Le format est <tt></tt><i>nomh&#244;te:port<tt></i></tt>. Si aucun num&#233;ro de port n'est sp&#233;cifi&#233;, le port <tt>389</tt> est utilis&#233; par d&#233;faut.</p>
-<p>Si Access Manager est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier la liaison de communication entre des instances sp&#233;cifiques d'Access Manager et de Directory Server dans le format suivant (les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local) :</p>
-<p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p>
-<p>Par exemple, si vous avez d&#233;ploy&#233; deux instances Access Manager dans diff&#233;rents emplacements (L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de Directory Server (L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante :</p>
-<p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p>
-<p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
-<A NAME="fumza"></A><h4>Serveur LDAP secondaire</h4>
-<p>Sp&#233;cifie le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP secondaire disponible pour la plate-forme Access Manager. Si le serveur LDAP principal ne r&#233;pond pas &#224; une demande d'authentification, ce serveur sera contact&#233;. Si le serveur principal est en fonctionnement, Access Manager rebascule vers ce serveur principal. Le format est &#233;galement <tt></tt><i>nomh&#244;te:port<tt></i></tt>. Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local.</p>
-<hr size="1" noshade><p><IMG ALT="Attention" src="graphics/caution.gif">  <b>Attention &#8211; </b>Lors de l'authentification d'utilisateurs &#224; partir d'un serveur Directory Server distant par rapport &#224; l'entreprise Access Manager, il est important de sp&#233;cifier les ports primaires et secondaires LDAP. La valeur d'un seul emplacement de serveur Directory Server peut &#234;tre utilis&#233;e pour les deux champs.</p><hr size="1" noshade><A NAME="fumyz"></A><h4>DN o&#249; d&#233;marrer recherche util.</h4>
-<p>Sp&#233;cifie le DN du n&#339;ud &#224; partir duquel doit commencer la recherche d'un utilisateur. (Pour des raisons de performance, ce DN doit &#234;tre aussi sp&#233;cifique que possible.) La valeur par d&#233;faut est la racine de la structure de r&#233;pertoire. Tout DN valide sera reconnu. Si la valeur OBJECT est s&#233;lectionn&#233;e pour l'attribut &#201;tendue de la recherche, le DN doit indiquer le niveau sup&#233;rieur par rapport au niveau auquel figure le profil. Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Le format est <tt></tt><i>nomserveur|dn recherche<tt></i></tt>.</p>
-<p>Lorsqu'il existe plusieurs entr&#233;es :</p>
-<p><tt></tt><i>nomserveur1|dn recherche nomserveur2|dn recherche nomserveur3|dn recherche<tt></i>...</tt></p>
-<p>Si plusieurs entr&#233;es ont le m&#234;me ID utilisateur dans l'organisation racine, ce param&#232;tre doit &#234;tre d&#233;fini de sorte qu'une seule entr&#233;e &#224; authentifier soit recherch&#233;e ou d&#233;tect&#233;e. Par exemple, au cas o&#249; l'ID d'agent et l'ID d'utilisateur seraient identiques &#224; la racine de l'organisation, ce param&#232;tre doit &#234;tre <tt>ou=Agents</tt> pour que l'organisation racine authentifie selon l'ID d'agent et <tt>ou=People, </tt> pour que l'organisation racine authentifie selon l'ID d'utilisateur.</p>
-<A NAME="fumzb"></A><h4>DN pour liaison utilisateur root</h4>
-<p>Sp&#233;cifie le DN de l'utilisateur qui sera associ&#233; au serveur Directory Server indiqu&#233; dans le champ Serveur et port LDAP principaux en tant qu'administrateur. Le service d'authentification doit &#234;tre associ&#233; &#224; ce DN afin de pouvoir rechercher le DN utilisateur correspondant &#224; un ID de connexion utilisateur donn&#233;. La valeur par d&#233;faut est <tt>amldapuser.</tt> Tout DN valide est reconnu.</p>
-<A NAME="fumze"></A><h4>Mot de passe pour liaison utilisateur root</h4>
-<p>Contient le mot de passe du profil administrateur sp&#233;cifi&#233; dans le champ DN pour liaison utilisateur root. Il n'y a pas de valeur par d&#233;faut. Seul le mot de passe LDAP valide de l'administrateur sera reconnu.</p>
-<A NAME="fumzd"></A><h4>Mot de passe pour liaison utilisateur root (confirmer)</h4>
+
+
+<a name="service.scserviceprofile.iplanetamauthmembershipservice"></a><h4>Appartenance</h4>
+<p><a name="indexterm-183"></a>Le module d'authentification Appartenance est impl&#233;ment&#233; dans des sites personnalis&#233;s. Lorsque l'authentification
+d'appartenance est activ&#233;e, un utilisateur peut s'auto-enregistrer. Cela signifie que l'utilisateur peut
+cr&#233;er un compte, le personnaliser et y acc&#233;der en tant qu'utilisateur enregistr&#233;
+sans l'aide d'un administrateur. Les attributs sont des attributs de domaine. Ces
+attributs sont les suivants :</p>
+<ul><li><p><a href="#fumys">Longueur minimale du mot de passe</a></p></li>
+<li><p><a href="#fumyr">R&#244;les utilisateur par d&#233;faut</a></p></li>
+<li><p><a href="#fumyt">Statut de l'utilisateur apr&#232;s enregistrement</a></p></li>
+<li><p><a href="#fumzt">Serveur LDAP principal</a></p></li>
+<li><p><a href="#fumza">Serveur LDAP secondaire</a></p></li>
+<li><p><a href="#fumyz">DN o&#249; d&#233;marrer recherche util.</a></p></li>
+<li><p><a href="#fumzb">DN pour liaison utilisateur root</a></p></li>
+<li><p><a href="#fumze">Mot de passe pour liaison utilisateur root</a></p></li>
+<li><p><a href="#fumzd">Mot de passe pour liaison utilisateur root (confirmer)</a></p></li>
+<li><p><a href="#fumzc">Attribut utilis&#233; pour r&#233;cup&#233;rer le profil utilisateur</a></p></li>
+<li><p><a href="#fumzh">Attributs utilis&#233;s pour rechercher un utilisateur &#224; authentifier</a></p></li>
+<li><p><a href="#fumzg">Filtre de recherche d'utilisateur</a></p></li>
+<li><p><a href="#fumzj">&#201;tendue de la recherche</a></p></li>
+<li><p><a href="#fumzi">Activer SSL pour acc&#233;der au serveur LDAP</a></p></li>
+<li><p><a href="#fumzk">Renvoyer DN utilisateur &#224; authentifier</a></p></li>
+<li><p><a href="#fumzm">Niveau d'authentification</a></p></li></ul>
+
+
+<a name="fumys"></a><h5>Longueur minimale du mot de passe</h5>
+<p>Indique le nombre minimal de caract&#232;res requis pour un mot de passe
+d&#233;fini lors de l'auto-enregistrement. La valeur par d&#233;faut est 8.</p><p>Si cette valeur est modifi&#233;e, elle doit &#233;galement &#234;tre modifi&#233;e dans le
+texte d'enregistrement et d'erreur du fichier suivant :</p><p><tt></tt><i>Base AccessManager</i><tt>/locale/amAuthMembership.properties </tt> (entr&#233;e <i>PasswdMinChars</i>)</p>
+
+<a name="fumyr"></a><h5>R&#244;les utilisateur par d&#233;faut</h5>
+<p>Indique les r&#244;les affect&#233;s aux nouveaux utilisateurs dont les profils sont cr&#233;&#233;s
+par le biais de l'auto-enregistrement. Il n'y a pas de valeur par
+d&#233;faut. L'administrateur doit sp&#233;cifier les DN des r&#244;les qui seront affect&#233;s au
+nouvel utilisateur.</p>
+<hr><p><b>Remarque &#8211; </b>Le r&#244;le sp&#233;cifi&#233; doit se trouver sous le domaine dont l'authentification est
+configur&#233;e. Seuls les r&#244;les qui peuvent &#234;tre affect&#233;s &#224; l'utilisateur seront ajout&#233;s
+lors de l'auto-enregistrement. Tous les autres DN seront ignor&#233;s. Ce r&#244;le peut
+&#234;tre soit un r&#244;le Federated Access Manager soit un r&#244;le LDAP, mais
+les r&#244;les filtr&#233;s ne sont pas accept&#233;s.</p>
+<hr>
+
+
+<a name="fumyt"></a><h5>Statut de l'utilisateur apr&#232;s enregistrement</h5>
+<p>Indique si les services sont imm&#233;diatement disponibles pour un utilisateur qui s'est
+auto-enregistr&#233;. La valeur par d&#233;faut est Actif et les services sont disponibles
+pour le nouvel utilisateur. En s&#233;lectionnant Inactif, l'administrateur choisit de rendre tous
+les services indisponibles pour le nouvel utilisateur.</p>
+
+<a name="fumzt"></a><h5>Serveur LDAP principal</h5>
+<p>Indique le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP
+principal d&#233;fini lors de l'installation de Federated Access Manager. C'est le premier
+serveur contact&#233; pour l'authentification. Le format est <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Si aucun num&#233;ro de
+port n'est sp&#233;cifi&#233;, le port <tt>389</tt> est utilis&#233; par d&#233;faut.</p><p>Si Federated Access Manager est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier
+la liaison de communication entre des instances sp&#233;cifiques de Federated Access Manager
+et de Directory Server dans le format suivant (les entr&#233;es multiples doivent
+&#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local) :</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances Federated Access Manager dans
+diff&#233;rents emplacements (L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de
+Directory Server (L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante
+:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
+
+<a name="fumza"></a><h5>Serveur LDAP secondaire</h5>
+<p>Sp&#233;cifie le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP
+secondaire disponible pour la plate-forme Federated Access Manager. Si le serveur LDAP
+principal ne r&#233;pond pas &#224; une demande d'authentification, ce serveur sera contact&#233;.
+Si le serveur principal est en fonctionnement, Federated Access Manager rebascule vers
+ce serveur principal. Le format est &#233;galement <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Les entr&#233;es multiples doivent
+&#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local.</p>
+<hr><p><b>Attention &#8211; </b>Lors de l'authentification d'utilisateurs &#224; partir d'un serveur Directory Server distant par
+rapport &#224; l'entreprise Federated Access Manager, il est important de sp&#233;cifier les
+ports primaires et secondaires LDAP. La valeur d'un seul emplacement de serveur
+Directory Server peut &#234;tre utilis&#233;e pour les deux champs.</p>
+<hr>
+
+
+<a name="fumyz"></a><h5>DN o&#249; d&#233;marrer recherche util.</h5>
+<p>Sp&#233;cifie le DN du n&#339;ud &#224; partir duquel doit commencer la recherche
+d'un utilisateur. (Pour des raisons de performance, ce DN doit &#234;tre aussi
+sp&#233;cifique que possible.) La valeur par d&#233;faut est la racine de la
+structure de r&#233;pertoire. Tout DN valide sera reconnu. Si la valeur OBJECT
+est s&#233;lectionn&#233;e pour l'attribut &#201;tendue de la recherche, le DN doit indiquer
+le niveau sup&#233;rieur par rapport au niveau auquel figure le profil. Les
+entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Le format
+est <tt></tt><i>nomserveur|dn recherche</i><tt></tt>.</p><p>Lorsqu'il existe plusieurs entr&#233;es :</p><p><tt></tt><i>nomserveur1|dn recherche nomserveur2|dn recherche nomserveur3|dn recherche</i><tt>...</tt></p><p>Si plusieurs entr&#233;es ont le m&#234;me ID utilisateur dans l'organisation racine, ce
+param&#232;tre doit &#234;tre d&#233;fini de sorte qu'une seule entr&#233;e &#224; authentifier soit
+recherch&#233;e ou d&#233;tect&#233;e. Par exemple, au cas o&#249; l'ID d'agent et l'ID
+d'utilisateur seraient identiques &#224; la racine de l'organisation, ce param&#232;tre doit &#234;tre
+<tt>ou=Agents</tt> pour que l'organisation racine authentifie selon l'ID d'agent et <tt>ou=People, </tt> pour
+que l'organisation racine authentifie selon l'ID d'utilisateur.</p>
+
+<a name="fumzb"></a><h5>DN pour liaison utilisateur root</h5>
+<p>Sp&#233;cifie le DN de l'utilisateur qui sera associ&#233; au serveur Directory Server
+indiqu&#233; dans le champ Serveur et port LDAP principaux en tant qu'administrateur.
+Le service d'authentification doit &#234;tre associ&#233; &#224; ce DN afin de pouvoir
+rechercher le DN utilisateur correspondant &#224; un ID de connexion utilisateur donn&#233;.
+La valeur par d&#233;faut est <tt>amldapuser.</tt> Tout DN valide est reconnu.</p>
+
+<a name="fumze"></a><h5>Mot de passe pour liaison utilisateur root</h5>
+<p>Contient le mot de passe du profil administrateur sp&#233;cifi&#233; dans le champ
+DN pour liaison utilisateur root. Il n'y a pas de valeur par
+d&#233;faut. Seul le mot de passe LDAP valide de l'administrateur sera reconnu.</p>
+
+<a name="fumzd"></a><h5>Mot de passe pour liaison utilisateur root (confirmer)</h5>
 <p>Confirmation du mot de passe.</p>
-<A NAME="fumzc"></A><h4>Attribut utilis&#233; pour r&#233;cup&#233;rer le profil utilisateur</h4>
-<p>Indique l'attribut utilis&#233; comme convention de nommage des entr&#233;es utilisateur. Par d&#233;faut, Access Manager suppose que les entr&#233;es utilisateur sont identifi&#233;es par l'attribut uid. Si votre serveur Directory Server utilise un attribut diff&#233;rent (tel que <i>givenname</i>), indiquez son nom dans ce champ.</p>
-<A NAME="fumzh"></A><h4>Attributs utilis&#233;s pour rechercher un utilisateur &#224; authentifier</h4>
-<p>R&#233;pertorie les attributs du filtre de recherche &#224; utiliser pour authentifier un utilisateur, et permet &#224; l'utilisateur de s'authentifier avec plusieurs attributs dans son entr&#233;e. Par exemple, si ce champ contient <i>uid</i>, <i>employeenumber</i> et <i>mail</i>, l'utilisateur peut s'authentifier avec chacun de ces noms.</p>
-<A NAME="fumzg"></A><h4>Filtre de recherche d'utilisateur</h4>
-<p>Indique l&#8217;attribut &#224; utiliser pour trouver un utilisateur &#224; l'aide du champ DN duquel d&#233;marrer la recherche utilisateur. Il fonctionne avec l'attribut d'affectation de nom &#224; un utilisateur. Il n'y a pas de valeur par d&#233;faut. Tout attribut d'entr&#233;e utilisateur valide est reconnu.</p>
-<A NAME="fumzj"></A><h4>&#201;tendue de la recherche</h4>
-<p>Indique le nombre de niveaux du serveur Directory Server qui seront inspect&#233;s afin de trouver un profil utilisateur correspondant. La recherche commence &#224; partir du n&#339;ud sp&#233;cifi&#233; dans l'attribut DN duquel d&#233;marrer la recherche utilisateur, page 315. La valeur par d&#233;faut SOUS-ARBORESCENCE. L'un des choix suivants peut &#234;tre s&#233;lectionn&#233; dans la liste :</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>OBJET</p></td><td valign="top"><p>Recherche uniquement sur le n&#339;ud sp&#233;cifi&#233;.</p>
-</td></tr><tr><td valign="top"><p>UN_NIVEAU</p></td><td valign="top"><p>Recherche au niveau du n&#339;ud sp&#233;cifi&#233; et au niveau inf&#233;rieur.</p>
-</td></tr><tr><td valign="top"><p>SOUS_ARBORESCENCE</p></td><td valign="top"><p>Recherche toutes les entr&#233;es au niveau du n&#339;ud sp&#233;cifi&#233; ainsi qu'&#224; tous les niveaux qui lui sont inf&#233;rieurs.</p>
-</td></tr></table>
-<A NAME="fumzi"></A><h4>Activer SSL pour acc&#233;der au serveur LDAP</h4>
-<p>Active l'acc&#232;s SSL au serveur Directory Server indiqu&#233; dans le champ Serveur et port LDAP principaux et secondaires. Par d&#233;faut, cette case n'est pas coch&#233;e et le protocole SSL n'est pas utilis&#233; pour acc&#233;der &#224; Directory Server.</p>
-<p>Si le serveur LDAP fonctionne avec SSL activ&#233; (LDAPS), vous devez vous assurer qu'Access Manager est configur&#233; avec les certificats de confiance SSL appropri&#233;s, afin qu'AM puisse se connecter au serveur Directory Server par le biais du protocole LDAPS.</p>
-<A NAME="fumzk"></A><h4>Renvoyer DN utilisateur &#224; authentifier</h4>
-<p>Lorsque le r&#233;pertoire Access Manager est identique &#224; celui configur&#233; pour LDAP, cette option peut &#234;tre activ&#233;e. Dans ce cas, elle permet au module d'authentification LDAP de renvoyer le DN au lieu de l'ID utilisateur et aucune recherche n'est n&#233;cessaire. Normalement, un module d'authentification renvoie uniquement l'ID utilisateur et le service d'authentification cherche l'utilisateur dans le LDAP du serveur Access Manager local. Si un r&#233;pertoire LDAP externe est utilis&#233;, cette option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
-<A NAME="fumzm"></A><h4>Niveau d'authentification</h4>
-<p>Le niveau d'authentification est d&#233;fini s&#233;par&#233;ment pour chaque m&#233;thode d'authentification. La valeur indique le niveau de confiance associ&#233; &#224; un m&#233;canisme d'authentification. Une fois qu'un utilisateur s'est authentifi&#233;, cette valeur est stock&#233;e dans le jeton SSO pour la session. Lorsque le jeton SSO est pr&#233;sent&#233; &#224; une application &#224; laquelle l'utilisateur souhaite acc&#233;der, l'application utilise la valeur stock&#233;e pour d&#233;terminer si le niveau est suffisant pour accorder l'acc&#232;s &#224; l'utilisateur. Si le niveau d'authentification enregistr&#233; dans le jeton SSO ne correspond pas &#224; la valeur minimale requise, l'application peut inviter l'utilisateur &#224; s'authentifier &#224; nouveau par l'interm&#233;diaire d'un service avec un niveau d'authentification plus &#233;lev&#233;. La valeur par d&#233;faut est 0.</p>
-<p><hr size="1" noshade><p><b>Remarque &#8211; </b>Si aucun niveau d'authentification n'est pr&#233;cis&#233;, le jeton SSO stocke la valeur sp&#233;cifi&#233;e dans l'attribut d'authentification Noyau <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Niveau d'authentification par d&#233;faut</A>.</p>
-<hr size="1" noshade></p>
-<br />
+
+<a name="fumzc"></a><h5>Attribut utilis&#233; pour r&#233;cup&#233;rer le profil utilisateur</h5>
+<p>Indique l'attribut utilis&#233; comme convention de nommage des entr&#233;es utilisateur. Par d&#233;faut,
+Federated Access Manager suppose que les entr&#233;es utilisateur sont identifi&#233;es par l'attribut
+uid. Si votre serveur Directory Server utilise un attribut diff&#233;rent (tel que
+<i>givenname</i>), indiquez son nom dans ce champ.</p>
+
+<a name="fumzh"></a><h5>Attributs utilis&#233;s pour rechercher un utilisateur &#224; authentifier</h5>
+<p>R&#233;pertorie les attributs du filtre de recherche &#224; utiliser pour authentifier un
+utilisateur, et permet &#224; l'utilisateur de s'authentifier avec plusieurs attributs dans son
+entr&#233;e. Par exemple, si ce champ contient <i>uid</i>, <i>employeenumber</i> et <i>mail</i>, l'utilisateur
+peut s'authentifier avec chacun de ces noms.</p>
+
+<a name="fumzg"></a><h5>Filtre de recherche d'utilisateur</h5>
+<p>Indique l&#8217;attribut &#224; utiliser pour trouver un utilisateur &#224; l'aide du champ
+DN duquel d&#233;marrer la recherche utilisateur. Il fonctionne avec l'attribut d'affectation de
+nom &#224; un utilisateur. Il n'y a pas de valeur par d&#233;faut.
+Tout attribut d'entr&#233;e utilisateur valide est reconnu.</p>
+
+<a name="fumzj"></a><h5>&#201;tendue de la recherche</h5>
+<p>Indique le nombre de niveaux du serveur Directory Server qui seront inspect&#233;s
+afin de trouver un profil utilisateur correspondant. La recherche commence &#224; partir
+du n&#339;ud sp&#233;cifi&#233; dans l'attribut DN duquel d&#233;marrer la recherche utilisateur, page
+315. La valeur par d&#233;faut SOUS-ARBORESCENCE. L'un des choix suivants peut &#234;tre
+s&#233;lectionn&#233; dans la liste :</p><dl><dt>OBJET</dt>
+<dd><p>Recherche uniquement sur le n&#339;ud sp&#233;cifi&#233;.</p></dd>
+<dt>UN_NIVEAU</dt>
+<dd><p>Recherche au niveau du n&#339;ud sp&#233;cifi&#233; et au niveau inf&#233;rieur.</p></dd>
+<dt>SOUS_ARBORESCENCE</dt>
+<dd><p>Recherche toutes les entr&#233;es au niveau du n&#339;ud sp&#233;cifi&#233; ainsi qu'&#224; tous les niveaux qui lui sont inf&#233;rieurs.</p></dd>
+</dl>
+
+
+<a name="fumzi"></a><h5>Activer SSL pour acc&#233;der au serveur LDAP</h5>
+<p>Active l'acc&#232;s SSL au serveur Directory Server indiqu&#233; dans le champ Serveur
+et port LDAP principaux et secondaires. Par d&#233;faut, cette case n'est pas
+coch&#233;e et le protocole SSL n'est pas utilis&#233; pour acc&#233;der &#224; Directory
+Server.</p><p>Si le serveur LDAP fonctionne avec SSL activ&#233; (LDAPS), vous devez vous
+assurer que Federated Access Manager est configur&#233; avec les certificats de confiance
+SSL appropri&#233;s, afin qu'AM puisse se connecter au serveur Directory Server par
+le biais du protocole LDAPS.</p>
+
+<a name="fumzk"></a><h5>Renvoyer DN utilisateur &#224; authentifier</h5>
+<p>Lorsque le r&#233;pertoire Federated Access Manager est identique &#224; celui configur&#233; pour
+LDAP, cette option peut &#234;tre activ&#233;e. Dans ce cas, elle permet au
+module d'authentification LDAP de renvoyer le DN au lieu de l'ID utilisateur
+et aucune recherche n'est n&#233;cessaire. Normalement, un module d'authentification renvoie uniquement l'ID
+utilisateur et le service d'authentification cherche l'utilisateur dans le LDAP du serveur
+Federated Access Manager local. Si un r&#233;pertoire LDAP externe est utilis&#233;, cette
+option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
+
+<a name="fumzm"></a><h5>Niveau d'authentification</h5>
+<p>Le niveau d'authentification est d&#233;fini s&#233;par&#233;ment pour chaque m&#233;thode d'authentification. La valeur
+indique le niveau de confiance associ&#233; &#224; un m&#233;canisme d'authentification. Une fois
+qu'un utilisateur s'est authentifi&#233;, cette valeur est stock&#233;e dans le jeton SSO
+pour la session. Lorsque le jeton SSO est pr&#233;sent&#233; &#224; une application
+&#224; laquelle l'utilisateur souhaite acc&#233;der, l'application utilise la valeur stock&#233;e pour d&#233;terminer
+si le niveau est suffisant pour accorder l'acc&#232;s &#224; l'utilisateur. Si le
+niveau d'authentification enregistr&#233; dans le jeton SSO ne correspond pas &#224; la
+valeur minimale requise, l'application peut inviter l'utilisateur &#224; s'authentifier &#224; nouveau par
+l'interm&#233;diaire d'un service avec un niveau d'authentification plus &#233;lev&#233;. La valeur par
+d&#233;faut est 0.</p>
+<hr><p><b>Remarque &#8211; </b>Si aucun niveau d'authentification n'est pr&#233;cis&#233;, le jeton SSO stocke la valeur
+sp&#233;cifi&#233;e dans l'attribut d'authentification Noyau <a href="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Niveau d'authentification par d&#233;faut</a>.</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

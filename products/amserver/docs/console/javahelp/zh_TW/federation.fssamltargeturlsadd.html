@@ -1,34 +1,45 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>配置目標 URL
+  <title>配置目標 URL - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamltargeturlsadd"></A><h4>配置目標 URL</h4>
-<A NAME="indexterm-92"></A><A NAME="indexterm-93"></A><p>可以針對每個將要透過 POST 接收指定的目標 URL，定義 (或修改) 以下子屬性。</p>
-<ol><li><p><b>按一下 [新建] 以新增目標 URL。</b></p><p>會顯示 [將新 Post 新增至目標 URL]。您也可以選取已定義目標 URL 的 [編輯] 或 [複製] 按鈕來到達此頁面。</p>
+
+
+<a name="federation.fssamltargeturlsadd"></a><h5>配置目標 URL</h5>
+<a name="indexterm-92"></a><a name="indexterm-93"></a><p>可以針對每個將要透過 POST 接收指定的目標 URL，定義 (或修改) 以下子屬性。</p><ol>
+<li><b>按一下 [新建] 以新增目標 URL。</b><p>會顯示 [將新 Post 新增至目標 URL]。您也可以選取已定義目標 URL 的 [編輯] 或 [複製] 按鈕來到達此頁面。</p></li>
+<li><b>鍵入屬性的值。</b><dl><dt>協定</dt>
+<dd><p>選擇 <tt>http</tt> 或 <tt>https</tt>。</p></dd>
+<dt>伺服器名稱</dt>
+<dd><p>TARGET URL 所在伺服器的名稱，例如 <tt>www.sun.com</tt>。</p></dd>
+<dt>連接埠</dt>
+<dd><p>此屬性包含了如 <tt>58080</tt> 的連接埠號。</p></dd>
+<dt>路徑</dt>
+<dd><p>此屬性包含 URI，如 <tt>/amserver/console</tt>。</p></dd>
+</dl>
 </li>
-<li><p><b>鍵入屬性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>協定</p></td><td valign="top"><p>選擇 <tt>http</tt> 或 <tt>https</tt>。</p>
-</td></tr><tr><td valign="top"><p>伺服器名稱</p></td><td valign="top"><p>TARGET URL 所在伺服器的名稱，例如 <tt>www.sun.com</tt>。</p>
-</td></tr><tr><td valign="top"><p>連接埠</p></td><td valign="top"><p>此屬性包含了如 <tt>58080</tt> 的連接埠號。</p>
-</td></tr><tr><td valign="top"><p>路徑</p></td><td valign="top"><p>此屬性包含 URI，如 <tt>/amserver/console</tt>。</p>
-</td></tr></table>
-</li>
-<li><p><b>按一下 [確定] 以完成目標 URL 的配置。</b></p></li>
-<li><p><b>按一下 [SAML 設定檔 ] 頁面上的 [儲存] 以完成 SAML 配置。</b></p></li>
-</ol>
-<br />
+<li><b>按一下 [確定] 以完成目標 URL 的配置。</b></li>
+<li><b>按一下 [SAML 設定檔 ] 頁面上的 [儲存] 以完成 SAML 配置。</b></li></ol>
+<br/>
 
 </body>
 </html>

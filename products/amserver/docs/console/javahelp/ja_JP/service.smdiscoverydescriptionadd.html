@@ -1,32 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>サービス記述を設定する
+  <title>サービス記述を設定する - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.smdiscoverydescriptionadd"></A><h4>サービス記述を設定する</h4>
-<A NAME="indexterm-156"></A><A NAME="indexterm-157"></A><p>サービス記述属性は、個別のプロトコルエンドポイントで実行中の Web サービスを定義します。これは、<A HREF="resourceofferingsbootstrapping.html#resourceofferingsbootstrapping">「ブートストラップのリソースオファリング」</A>を設定する際に定義されます。サービスインスタンスに関する情報は、各種のコンテキスト間でやり取りされる必要があります。たとえば、定義されているディスカバリサービスは、リソースオファリング (それぞれにはサービスインスタンス記述が含まれる) の列挙を提供するアイデンティティーサービスの 1 つです。</p>
-<ol><li><p><b>「新規記述」をクリックして新規のサービス記述属性を表示するか、「編集」をクリックして既存の記述を変更します。</b></p></li>
-<li><p><b>次の情報に基づいて属性の値を入力します。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>セキュリティーメカニズム ID</p></td><td valign="top"><p>この属性では、ディスカバリサービスがサポートする認証方法が追加されます。このセキュリティーメカニズムは、Web サービスコンシューマが Web サービスプロバイダに対して認証を受ける方法、またはメッセージレベルのセキュリティーを提供する方法を参照します。デフォルトでは、サービスインスタンスがサポートするすべての方法が選択されます。Web サービスコンシューマが認証方法を 1 つも選択せずに、その方法で要求を送信しようとすると、その要求は拒否されます。<A HREF="supportedauthmechanisms.html#supportedauthmechanisms">「サポートされている認証メカニズム」</A>を参照してください。</p>
-</td></tr><tr><td valign="top"><p>エンドポイント URL</p></td><td valign="top"><p>この属性の値は、SOAP-over-HTTP エンドポイントの URL です。URI スキーマは、<tt>https://soap.profile-provider.com/soap</tt> のように HTTP または HTTPS にする必要があります。</p>
-</td></tr><tr><td valign="top"><p>SOAP アクション</p></td><td valign="top"><p>この属性は省略可能でその値は、サービスの具体的な WSDL ベースの記述にある <tt>wsdlsoap:operation</tt> 要素の <tt>wsdlsoap:soapAction</tt> 属性と等価です。</p>
-</td></tr></table>
+
+
+<a name="service.smdiscoverydescriptionadd"></a><h5>サービス記述を設定する</h5>
+<a name="indexterm-156"></a><a name="indexterm-157"></a><p>サービス記述属性は、個別のプロトコルエンドポイントで実行中の Web サービスを定義します。これは、<a href="resourceofferingsbootstrapping.html">「ブートストラップのリソースオファリング」</a>を設定する際に定義されます。サービスインスタンスに関する情報は、各種のコンテキスト間でやり取りされる必要があります。たとえば、定義されているディスカバリサービスは、リソースオファリング (それぞれにはサービスインスタンス記述が含まれる) の列挙を提供するアイデンティティーサービスの 1 つです。</p><ol>
+<li><b>「新規記述」をクリックして新規のサービス記述属性を表示するか、「編集」をクリックして既存の記述を変更します。</b></li>
+<li><b>次の情報に基づいて属性の値を入力します。</b><dl><dt>セキュリティーメカニズム ID</dt>
+<dd><p>この属性では、ディスカバリサービスがサポートする認証方法が追加されます。このセキュリティーメカニズムは、Web サービスコンシューマが Web サービスプロバイダに対して認証を受ける方法、またはメッセージレベルのセキュリティーを提供する方法を参照します。デフォルトでは、サービスインスタンスがサポートするすべての方法が選択されます。Web サービスコンシューマが認証方法を 1 つも選択せずに、その方法で要求を送信しようとすると、その要求は拒否されます。<a href="supportedauthmechanisms.html">「サポートされている認証メカニズム」</a>を参照してください。</p></dd>
+<dt>エンドポイント URL</dt>
+<dd><p>この属性の値は、SOAP-over-HTTP エンドポイントの URL です。URI スキーマは、<tt>https://soap.profile-provider.com/soap</tt> のように HTTP または HTTPS にする必要があります。</p></dd>
+<dt>SOAP アクション</dt>
+<dd><p>この属性は省略可能でその値は、サービスの具体的な WSDL ベースの記述にある <tt>wsdlsoap:operation</tt> 要素の <tt>wsdlsoap:soapAction</tt> 属性と等価です。</p></dd>
+</dl>
 </li>
-<li><p><b>「了解」をクリックしてサービスの設定を完了します。</b></p></li>
-<li><p><b>ディスカバリサービスページで「保存」をクリックして、サービスの設定を完了します。</b></p></li>
-</ol>
-<br />
+<li><b>「了解」をクリックしてサービスの設定を完了します。</b></li>
+<li><b>ディスカバリサービスページで「保存」をクリックして、サービスの設定を完了します。</b></li></ol>
+<br/>
 
 </body>
 </html>

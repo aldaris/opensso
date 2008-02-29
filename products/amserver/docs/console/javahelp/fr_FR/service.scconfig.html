@@ -1,38 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Attributs de configuration
+  <title>Attributs de configuration - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scconfig"></A><h1>Attributs de configuration</h1>
-<p><A NAME="indexterm-172"></A>La page Configuration contient tous les attributs permettant de configurer les services par d&#233;faut d'Access Manager. Les attributs qui d&#233;finissent un service Access Manager sont class&#233;s selon l'un des types suivants (certains services peuvent avoir plusieurs types) :</p>
-<p><b>G&#233;n&#233;ral</b> &#8211; Appliqu&#233; &#224; toute la configuration d'Access Manager. Ils ne peuvent &#234;tre appliqu&#233;s aux utilisateurs, r&#244;les ou domaines car l'objectif des attributs globaux est de personnaliser l'application Identity Server.</p>
-<p><b>Domaine</b> &#8211; Les attributs de domaine ne sont attribu&#233;s qu'aux domaines. Aucune classe d'objet n'est associ&#233;e aux attributs de domaine. Les attributs mentionn&#233;s dans les services d'authentification sont d&#233;finis en tant qu'attributs de domaine car l'authentification est effectu&#233;e au niveau du domaine plut&#244;t qu'au niveau d'une sous-arborescence ou d'un utilisateur.</p>
-<p><b>Dynamique</b> &#8211; Attribu&#233; &#224; un domaine ou un r&#244;le configur&#233; d'Access Manager. Lorsque le r&#244;le est assign&#233; &#224; un utilisateur ou qu'un utilisateur est cr&#233;&#233; dans un domaine, l'attribut dynamique devient alors une caract&#233;ristique de l'utilisateur.</p>
-<p><b>Utilisateur</b> &#8211; Attribu&#233; directement &#224; chaque utilisateur. Ces attributs ne sont pas h&#233;rit&#233;s d'un r&#244;le ou d'un domaine et ils sont g&#233;n&#233;ralement diff&#233;rents pour chaque utilisateur.</p>
-<p>Les propri&#233;t&#233;s de configuration que vous pouvez modifier sont :</p>
-<ul><li><p><A HREF="authattrs.html#authattrs">Authentification</A></p>
-</li>
-<li><p><A HREF="consoleprops.html#consoleprops">Propri&#233;t&#233;s de la console</A></p>
-</li>
-<li><p><A HREF="global.html#global">Propri&#233;t&#233;s g&#233;n&#233;rales</A></p>
-</li>
-<li><p><A HREF="systemprops.html#systemprops">Propri&#233;t&#233;s du syst&#232;me</A></p>
-</li>
-</ul>
+<a name="service.scconfig"></a><h3>Attributs de configuration</h3><p><a name="indexterm-172"></a>La page Configuration contient tous les attributs permettant de configurer les services
+par d&#233;faut de Federated Access Manager. Les attributs qui d&#233;finissent un service
+Federated Access Manager sont class&#233;s selon l'un des types suivants (certains services
+peuvent avoir plusieurs types) :</p><p><b>G&#233;n&#233;ral</b> &#8211; Appliqu&#233; &#224; toute la configuration de Federated Access Manager. Ils
+ne peuvent &#234;tre appliqu&#233;s aux utilisateurs, r&#244;les ou domaines car l'objectif des
+attributs globaux est de personnaliser l'application Identity Server.</p><p><b>Domaine</b> &#8211; Les attributs de domaine ne sont attribu&#233;s qu'aux domaines. Aucune
+classe d'objet n'est associ&#233;e aux attributs de domaine. Les attributs mentionn&#233;s dans
+les services d'authentification sont d&#233;finis en tant qu'attributs de domaine car l'authentification
+est effectu&#233;e au niveau du domaine plut&#244;t qu'au niveau d'une sous-arborescence ou
+d'un utilisateur.</p><p><b>Dynamique</b> &#8211; Attribu&#233; &#224; un domaine ou un r&#244;le configur&#233; de Federated
+Access Manager. Lorsque le r&#244;le est assign&#233; &#224; un utilisateur ou qu'un
+utilisateur est cr&#233;&#233; dans un domaine, l'attribut dynamique devient alors une caract&#233;ristique
+de l'utilisateur.</p><p><b>Utilisateur</b> &#8211; Attribu&#233; directement &#224; chaque utilisateur. Ces attributs ne sont pas
+h&#233;rit&#233;s d'un r&#244;le ou d'un domaine et ils sont g&#233;n&#233;ralement diff&#233;rents pour
+chaque utilisateur.</p><p>Les propri&#233;t&#233;s de configuration que vous pouvez modifier sont :</p>
+<ul><li><p><a href="authattrs.html">Authentification</a></p></li>
+<li><p><a href="consoleprops.html">Propri&#233;t&#233;s de la console</a></p></li>
+<li><p><a href="global.html">Propri&#233;t&#233;s g&#233;n&#233;rales</a></p></li>
+<li><p><a href="systemprops.html">Propri&#233;t&#233;s du syst&#232;me</a></p></li></ul>
 
-<br />
+<br/>
 
 </body>
 </html>

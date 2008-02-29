@@ -1,36 +1,44 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>配置站点标识符
+  <title>配置站点标识符 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamlsiteidadd"></A><h4>配置站点标识符</h4>
-<A NAME="indexterm-87"></A><A NAME="indexterm-88"></A><p>此属性定义了由装有 Access Manager 的服务器托管的任何站点。在安装期间，会为主机定义一个默认值和一个自动生成的站点 ID（使用从 <tt>AMConfig.properties</tt> 中检索到的值）。可能有多个条目。例如，负载平衡或共享同一个 Directory Server 的多个 Access Manager 实例都需要进行定义。起点是联合界面下的 "SAML" 屏幕上的“站点标识符”属性。</p>
-<ol><li><p><b>单击“新建”以添加新的站点标识符；或单击已配置的站点标识符的名称，对其配置文件进行修改。</b></p><p>随即显示“站点标识符”属性。</p>
+
+
+<a name="federation.fssamlsiteidadd"></a><h5>配置站点标识符</h5>
+<a name="indexterm-87"></a><a name="indexterm-88"></a><p>此属性定义了由装有 Access Manager 的服务器托管的任何站点。在安装期间，会为主机定义一个默认值和一个自动生成的站点 ID（使用从 <tt>AMConfig.properties</tt> 中检索到的值）。可能有多个条目。例如，负载平衡或共享同一个 Directory Server 的多个 Access Manager
+实例都需要进行定义。起点是联合界面下的 "SAML" 屏幕上的“站点标识符”属性。</p><ol>
+<li><b>单击“新建”以添加新的站点标识符；或单击已配置的站点标识符的名称，对其配置文件进行修改。</b><p>随即显示“站点标识符”属性。</p></li>
+<li><b>基于以下信息，为“站点标识符”属性提供值：</b><dl><dt>实例 ID</dt>
+<dd><p>此属性的值为 <i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i>。</p><p>如果要为 SSL 配置 SAML（同时在源站点和目标站点中），请确保此处定义的协议为 <tt>https//</tt>。</p></dd>
+<dt>站点 ID</dt>
+<dd><p>站点 ID 是为每个站点生成的标识符（尽管该值对于负载平衡器背后的多个服务器相同）。<tt>com.sun.identity.saml.common</tt> 软件包中有一个类，如果需要，可以使用该类手动生成此标识符。在命令行中键入以下命令：</p><pre>% <tt><b>java -classpath </tt><i>FM-classpath</i><tt> com.sun.identity.saml.common.SAMLSiteID </tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt></b></tt></pre></dd>
+<dt>发布者名称</dt>
+<dd><p>此属性的默认值为 <i>host</i><tt>:</tt><i>port</i>，但它可以是任何 URI。</p></dd>
+</dl>
 </li>
-<li><p><b>基于以下信息，为“站点标识符”属性提供值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>实例 ID</p></td><td valign="top"><p>此属性的值为 <i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i>。</p>
-<p>如果要为 SSL 配置 SAML（同时在源站点和目标站点中），请确保此处定义的协议为 <tt>https//</tt>。</p>
-</td></tr><tr><td valign="top"><p>站点 ID</p></td><td valign="top"><p>站点 ID 是为每个站点生成的标识符（尽管该值对于负载平衡器背后的多个服务器相同）。<tt>com.sun.identity.saml.common</tt> 软件包中有一个类，如果需要，可以使用该类手动生成此标识符。在命令行中键入以下命令：</p>
-<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>% <tt><b>java -classpath </tt><i>FM-classpath<tt></i> com.sun.identity.saml.common.SAMLSiteID 
-</tt><i>protocol<tt></i>://</tt><i>host<tt></i>:</tt><i>port<tt></i></b></tt></pre>
-</td></table><br></td></tr><tr><td valign="top"><p>发布者名称</p></td><td valign="top"><p>此属性的默认值为 <i>host</i><tt>:</tt><i>port</i>，但它可以是任何 URI。</p>
-</td></tr></table>
-</li>
-<li><p><b>单击“确定”完成“站点标识符”的配置操作。</b></p></li>
-<li><p><b>单击“SAML 配置文件”页面上的“保存”完成 SAML 的配置操作。</b></p></li>
-</ol>
-<br />
+<li><b>单击“确定”完成“站点标识符”的配置操作。</b></li>
+<li><b>单击“SAML 配置文件”页面上的“保存”完成 SAML 的配置操作。</b></li></ol>
+<br/>
 
 </body>
 </html>

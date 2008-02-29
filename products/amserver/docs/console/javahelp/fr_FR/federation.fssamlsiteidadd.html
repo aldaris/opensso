@@ -1,36 +1,52 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuration d'un identificateur de site 
+  <title>Configuration d'un identificateur de site  - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamlsiteidadd"></A><h4>Configuration d'un identificateur de site </h4>
-<A NAME="indexterm-87"></A><A NAME="indexterm-88"></A><p>Cet attribut d&#233;finit tout site h&#233;berg&#233; par le serveur sur lequel Access Manager est install&#233;. Une valeur par d&#233;faut et un ID de site g&#233;n&#233;r&#233; automatiquement sont d&#233;finis pour l'h&#244;te lors de l'installation (avec des valeurs provenant du fichier <tt>AMConfig.properties</tt>). Il peut y avoir plusieurs entr&#233;es. Par exemple, l'&#233;quilibrage de charge ou plusieurs instances d'Access Manager partageant le m&#234;me Directory Server doivent &#234;tre tous d&#233;finis. Le point de d&#233;part est l'attribut Identificateurs de site dans l'&#233;cran SAML sous l'interface F&#233;d&#233;ration.</p>
-<ol><li><p><b>Cliquez sur Nouveau pour ajouter un identificateur de site ou cliquez sur le nom d'un identificateur de site configur&#233; pour modifier son profil.</b></p><p>Les attributs de l'identificateur de site s'affichent.</p>
+
+
+<a name="federation.fssamlsiteidadd"></a><h5>Configuration d'un identificateur de site </h5>
+<a name="indexterm-87"></a><a name="indexterm-88"></a><p>Cet attribut d&#233;finit tout site h&#233;berg&#233; par le serveur sur lequel Access
+Manager est install&#233;. Une valeur par d&#233;faut et un ID de site
+g&#233;n&#233;r&#233; automatiquement sont d&#233;finis pour l'h&#244;te lors de l'installation (avec des valeurs
+provenant du fichier <tt>AMConfig.properties</tt>). Il peut y avoir plusieurs entr&#233;es. Par exemple,
+l'&#233;quilibrage de charge ou plusieurs instances d'Access Manager partageant le m&#234;me Directory
+Server doivent &#234;tre tous d&#233;finis. Le point de d&#233;part est l'attribut Identificateurs
+de site dans l'&#233;cran SAML sous l'interface F&#233;d&#233;ration.</p><ol>
+<li><b>Cliquez sur Nouveau pour ajouter un identificateur de site ou cliquez sur
+le nom d'un identificateur de site configur&#233; pour modifier son profil.</b><p>Les attributs de l'identificateur de site s'affichent.</p></li>
+<li><b>Fournissez les valeurs pour les attributs d'identificateur de site en vous basant
+sur les informations suivantes :</b><dl><dt>ID d'instance</dt>
+<dd><p>La valeur de cette propri&#233;t&#233; est <i>protocol</i> <tt> ://</tt><i>host</i><tt>:</tt> <i> port</i>.</p><p>En cas de configuration SAML pour SSL (dans les sites source et de destination), v&#233;rifiez que le protocole d&#233;fini ici est <tt>https//</tt>. </p></dd>
+<dt>ID de site</dt>
+<dd><p>L'ID de site est un identificateur g&#233;n&#233;r&#233; pour chaque site (bien que la valeur puisse &#234;tre identique pour plusieurs serveurs plac&#233;s derri&#232;re un &#233;quilibreur de charge). Vous pouvez utiliser une classe du package <tt>com.sun.identity.saml.common</tt> afin de g&#233;n&#233;rer manuellement cet identificateur si besoin est. Tapez la commande suivante sur la ligne de commandes :</p><pre>% <tt><b>java -classpath </tt><i>FM-classpath</i><tt> com.sun.identity.saml.common.SAMLSiteID </tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt></b></tt></pre></dd>
+<dt>Nom de l'&#233;metteur</dt>
+<dd><p>La valeur par d&#233;faut de cette propri&#233;t&#233; est <i>host</i> <tt> :</tt><i>port</i>, mais ce peut &#234;tre un URI quelconque.</p></dd>
+</dl>
 </li>
-<li><p><b>Fournissez les valeurs pour les attributs d'identificateur de site en vous basant sur les informations suivantes :</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>ID d'instance</p></td><td valign="top"><p>La valeur de cette propri&#233;t&#233; est <i>protocol</i> <tt> ://</tt><i>host</i><tt>:</tt> <i> port</i>.</p>
-<p>En cas de configuration SAML pour SSL (dans les sites source et de destination), v&#233;rifiez que le protocole d&#233;fini ici est <tt>https//</tt>. </p>
-</td></tr><tr><td valign="top"><p>ID de site</p></td><td valign="top"><p>L'ID de site est un identificateur g&#233;n&#233;r&#233; pour chaque site (bien que la valeur puisse &#234;tre identique pour plusieurs serveurs plac&#233;s derri&#232;re un &#233;quilibreur de charge). Vous pouvez utiliser une classe du package <tt>com.sun.identity.saml.common</tt> afin de g&#233;n&#233;rer manuellement cet identificateur si besoin est. Tapez la commande suivante sur la ligne de commandes :</p>
-<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>% <tt><b>java -classpath </tt><i>FM-classpath<tt></i> com.sun.identity.saml.common.SAMLSiteID
-</tt><i>protocol<tt></i>://</tt><i>host<tt></i>:</tt><i>port<tt></i></b></tt></pre>
-</td></table><br></td></tr><tr><td valign="top"><p>Nom de l'&#233;metteur</p></td><td valign="top"><p>La valeur par d&#233;faut de cette propri&#233;t&#233; est <i>host</i> <tt> :</tt><i>port</i>, mais ce peut &#234;tre un URI quelconque.</p>
-</td></tr></table>
-</li>
-<li><p><b>Cliquez sur OK pour terminer la configuration de l'identificateur de site.</b></p></li>
-<li><p><b>Cliquez sur Enregistrer dans la page Profil SAML pour terminer la configuration SAML.</b></p></li>
-</ol>
-<br />
+<li><b>Cliquez sur OK pour terminer la configuration de l'identificateur de site.</b></li>
+<li><b>Cliquez sur Enregistrer dans la page Profil SAML pour terminer la configuration
+SAML.</b></li></ol>
+<br/>
 
 </body>
 </html>

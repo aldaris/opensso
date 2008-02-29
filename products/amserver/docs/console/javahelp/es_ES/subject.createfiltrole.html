@@ -1,33 +1,44 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Para crear un rol filtrado
+  <title>Para crear un rol filtrado - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="subject.createfiltrole"></A><h4>Para crear un rol filtrado</h4>
-<ol><li><p><b>En el panel de navegaci&#243;n, despl&#225;cese a la organizaci&#243;n en la que se crear&#225; el rol.</b></p></li>
-<li><p><b>Haga clic en Nuevo.</b></p></li>
-<li><p><b>Introduzca un nombre para el rol filtrado.</b></p></li>
-<li><p><b>Introduzca la informaci&#243;n para los criterios de b&#250;squeda.</b></p><p>Por ejemplo,</p>
-<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>(&#38;(uid=user1)(|(inetuserstatus=active)(!(inetuserstatus=*))))</pre>
-</td></table><br><p>Si se deja en blanco el filtro, se crear&#225; el siguiente rol de forma predeterminada:</p>
-<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>(objectclass = inetorgperson)</pre>
-</td></table><br></li>
-<li><p><b>Haga clic en Aceptar para iniciar la b&#250;squeda basada en los criterios del filtro. Las identidades definidas por los criterios del filtro se asignan autom&#225;ticamente al rol.</b></p></li>
-<li><p><b>Una vez creado el rol filtrado, haga clic en su nombre para ver los usuarios que pertenecen a dicho rol. Puede hacer clic en la ficha Services (Servicios) para agregar servicios al rol. Consulte <A HREF="idm.entityservices.html#idm.entityservices">Para agregar servicios a una identidad</A>.</b></p></li>
-</ol>
-<br />
+
+
+<a name="subject.createfiltrole"></a><h5>Para crear un rol filtrado</h5>
+<ol>
+<li><b>En el panel de navegaci&#243;n, despl&#225;cese a la organizaci&#243;n en la que
+se crear&#225; el rol.</b></li>
+<li><b>Haga clic en Nuevo.</b></li>
+<li><b>Introduzca un nombre para el rol filtrado.</b></li>
+<li><b>Introduzca la informaci&#243;n para los criterios de b&#250;squeda.</b><p>Por ejemplo:</p><pre>(&#38;(uid=user1)(|(inetuserstatus=active)(!(inetuserstatus=*))))</pre><p>Si se deja en blanco el filtro, se crear&#225; el siguiente rol
+de forma predeterminada:</p><pre>(objectclass = inetorgperson)</pre></li>
+<li><b>Haga clic en Aceptar para iniciar la b&#250;squeda basada en los criterios
+del filtro. Las identidades definidas por los criterios del filtro se asignan
+autom&#225;ticamente al rol.</b></li>
+<li><b>Una vez creado el rol filtrado, haga clic en su nombre para
+ver los usuarios que pertenecen a dicho rol. Puede hacer clic en
+la ficha Services (Servicios) para agregar servicios al rol. Consulte <a href="idm.entityservices.html">Para agregar servicios a una identidad</a>.</b></li></ol>
+<br/>
 
 </body>
 </html>

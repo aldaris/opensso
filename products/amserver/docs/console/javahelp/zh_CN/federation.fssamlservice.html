@@ -1,58 +1,50 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SAML
+  <title>SAML - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamlservice"></A><h2>SAML</h2>
-<A NAME="indexterm-86"></A><p>安全声明标记语言 (Security Assertion Markup Language, SAML) 是一个开放标准的协议，它使用 XML 框架在<b>授权机构</b>与<b>可信赖</b>的伙伴站点之间交换安全信息。这些安全信息与主题的验证状态、访问授权和属性信息有关。（由电子邮件地址标识的人是一个主题，正如是一台打印机那样。）SAML 授权（也称为<b>声明方</b>）是已与 SAML API 集成在一起的平台或应用程序，因而它可以中继安全信息。例如，通过传递所需的属性来声明某个主题已通过其系统的验证。可信赖伙伴站点接收安全信息并信任其真实性。</p>
-<p>可以为您的实现配置以下 SAML 属性：</p>
-<ul><li><p><A HREF="targetspecifier.html#targetspecifier">目标指示符</A></p>
-</li>
-<li><p><A HREF="siteidentifiers.html#siteidentifiers">站点标识符</A></p>
-</li>
-<li><p><A HREF="trustedpartners.html#trustedpartners">可信赖的伙伴</A></p>
-</li>
-<li><p><A HREF="targeturl.html#targeturl">目标 URL</A></p>
-</li>
-<li><p><A HREF="assertiontimeout.html#assertiontimeout">声明超时</A></p>
-</li>
-<li><p><A HREF="assertionskew.html#assertionskew">声明<tt>不早于</tt>偏差因数</A></p>
-</li>
-<li><p><A HREF="artifacttimeout.html#artifacttimeout">辅件超时</A></p>
-</li>
-<li><p><A HREF="samlartifactname.html#samlartifactname">SAML 辅件名称</A></p>
-</li>
-<li><p><A HREF="signsamlassertion.html#signsamlassertion">签署 SAML 声明</A></p>
-</li>
-<li><p><A HREF="signsamlrequest.html#signsamlrequest">签署 SAML 请求</A></p>
-</li>
-<li><p><A HREF="signsamlresponse.html#signsamlresponse">签署 SAML 响应</A></p>
-</li>
-</ul>
-<p>以下任务与配置 SAML 关联：</p>
-<ul><li><p><A HREF="federation.fssamlsiteidadd.html#federation.fssamlsiteidadd">配置站点标识符</A></p>
-</li>
-<li><p><A HREF="federation.fssamlselecttrustedpartnertype.html#federation.fssamlselecttrustedpartnertype">可信赖的伙伴：选择伙伴类型和配置文件</A></p>
-</li>
-<li><p><A HREF="federation.fssamltrustedpartnersadd.html#federation.fssamltrustedpartnersadd">可信赖的伙伴：配置可信赖的伙伴属性</A></p>
-</li>
-<li><p><A HREF="federation.fssamltargeturlsadd.html#federation.fssamltargeturlsadd">配置目标 URL</A></p>
-</li>
-</ul>
 
-<br />
+
+<a name="federation.fssamlservice"></a><h3>SAML</h3>
+<a name="indexterm-86"></a><p>安全声明标记语言 (Security Assertion Markup Language, SAML) 是一个开放标准的协议，它使用 XML 框架在<b>授权机构</b>与<b>可信赖</b>的伙伴站点之间交换安全信息。这些安全信息与主题的验证状态、访问授权和属性信息有关。（由电子邮件地址标识的人是一个主题，正如是一台打印机那样。）SAML 授权（也称为<b>声明方</b>）是已与 SAML API
+集成在一起的平台或应用程序，因而它可以中继安全信息。例如，通过传递所需的属性来声明某个主题已通过其系统的验证。可信赖伙伴站点接收安全信息并信任其真实性。</p><p>可以为您的实现配置以下 SAML 属性：</p>
+<ul><li><p><a href="targetspecifier.html">目标指示符</a></p></li>
+<li><p><a href="siteidentifiers.html">站点标识符</a></p></li>
+<li><p><a href="trustedpartners.html">可信赖的伙伴</a></p></li>
+<li><p><a href="targeturl.html">目标 URL</a></p></li>
+<li><p><a href="assertiontimeout.html">声明超时</a></p></li>
+<li><p><a href="assertionskew.html">声明<tt>不早于</tt>偏差因数</a></p></li>
+<li><p><a href="artifacttimeout.html">辅件超时</a></p></li>
+<li><p><a href="samlartifactname.html">SAML 辅件名称</a></p></li>
+<li><p><a href="signsamlassertion.html">签署 SAML 声明</a></p></li>
+<li><p><a href="signsamlrequest.html">签署 SAML 请求</a></p></li>
+<li><p><a href="signsamlresponse.html">签署 SAML 响应</a></p></li></ul>
+<p>以下任务与配置 SAML 关联：</p>
+<ul><li><p><a href="federation.fssamlsiteidadd.html">配置站点标识符</a></p></li>
+<li><p><a href="federation.fssamlselecttrustedpartnertype.html">可信赖的伙伴：选择伙伴类型和配置文件</a></p></li>
+<li><p><a href="federation.fssamltrustedpartnersadd.html">可信赖的伙伴：配置可信赖的伙伴属性</a></p></li>
+<li><p><a href="federation.fssamltargeturlsadd.html">配置目标 URL</a></p></li></ul>
+
+<br/>
 
 </body>
 </html>

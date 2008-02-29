@@ -1,30 +1,57 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Lista de administradores de solicitudes
+  <title>Lista de administradores de solicitudes - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="requesthandlerlist"></A><h3>Lista de administradores de solicitudes</h3>
-<A NAME="indexterm-159"></A><A NAME="indexterm-160"></A><p>El Servicio de enlace de SOAP proporciona la interfaz <tt>RequestHandler</tt> para procesar el mensaje de solicitud y devolver una respuesta. La interfaz debe implementarse en el servidor por parte de cada servicio de identidad basado en Liberty que utilice el Servicio de enlace de SOAP. El atributo "Lista de administradores de solicitudes" guarda informaci&#243;n sobre las clases de implementaci&#243;n de los servicios Web que implementa el administrador de solicitudes. La lista de administradores de solicitudes muestra entradas que contienen pares clave-valor separados por una l&#237;nea vertical como en: <tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>. Los par&#225;metros se explican en la siguiente tabla.</p>
 
-<table cellspacing="5" border="1">
-<tr><th scope="col"><p>Par&#225;metro</p></th><th scope="col"><p>Encabezado</p></th></tr>
-<tr><td><p><tt>key</tt></p></td><td><p>El par&#225;metro <tt>key</tt> requerido es la &#250;ltima parte de la ruta del URI a un punto final de SOAP. El punto final de SOAP en Access Manager el servlet del receptor de SOAP. El URI para el receptor de SOAP es: <tt><b></tt><i>protocol<tt></i>://</tt><i> host<tt></i>:</tt><i>port<tt></i>/</tt><i>deploy-uri<tt></i>/Liberty/key </b></tt> Si define <tt><b>disco</b></tt> como clave, la ruta del URI al punto final de SOAP para el Servicio de detecci&#243;n correspondiente ser&#225;: <tt><b></tt><i> protocol<tt></i>://</tt><i>host<tt></i>:</tt><i>port <tt></i>/amserver/Liberty/disco</b></tt>. Distintos clientes de servicios utilizan distintas claves al conectarse al receptor de SOAP.</p></td></tr>
-<tr><td><p><tt>class</tt></p></td><td><p>Este par&#225;metro <tt>class</tt> requerido especifica el nombre de la clase de implementaci&#243;n del administrador de solicitudes para el servicio de identidades concreto. Por ejemplo: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></td></tr>
-</table><p>Para agregar un nuevo administrador de solicitudes, consulte <A HREF="service.scsoapbindingrequesthandlerlistadd.html#service.scsoapbindingrequesthandlerlistadd">Para configurar un administrador de solicitudes</A>.</p>
 
-<br />
+<a name="requesthandlerlist"></a><h4>Lista de administradores de solicitudes</h4>
+<a name="indexterm-159"></a><a name="indexterm-160"></a><p>El Servicio de enlace de SOAP proporciona la interfaz <tt>RequestHandler</tt> para procesar
+el mensaje de solicitud y devolver una respuesta. La interfaz debe implementarse
+en el servidor por parte de cada servicio de identidad basado en
+Liberty que utilice el Servicio de enlace de SOAP. El atributo âLista
+de administradores de solicitudesâ guarda informaci&#243;n sobre las clases de implementaci&#243;n de
+los servicios Web que implementa el administrador de solicitudes. La lista de
+administradores de solicitudes muestra entradas que contienen pares clave-valor separados por una
+l&#237;nea vertical como en: <tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>. Los par&#225;metros se explican en la siguiente
+tabla.</p><table><col width="50*"><col width="50*"><tr><th align="left" valign="top" scope="column"><p>Par&#225;metro</p></th>
+<th align="left" valign="top" scope="column"><p>Encabezado</p></th>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
+<td align="left" valign="top" scope="row"><p>El par&#225;metro <tt>key</tt> requerido es la &#250;ltima parte de la ruta del
+URI a un punto final de SOAP. El punto final de SOAP
+en Access Manager el servlet del receptor de SOAP. El URI para
+el receptor de SOAP es: <tt><b></tt><i>protocol</i><tt>://</tt><i> host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key </b></tt> Si define <tt><b>disco</b></tt> como clave, la
+ruta del URI al punto final de SOAP para el Servicio de
+detecci&#243;n correspondiente ser&#225;: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Distintos clientes de servicios utilizan distintas claves al
+conectarse al receptor de SOAP.</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
+<td align="left" valign="top" scope="row"><p>Este par&#225;metro <tt>class</tt> requerido especifica el nombre de
+la clase de implementaci&#243;n del administrador de solicitudes para el servicio de
+identidades concreto. Por ejemplo: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></td>
+</tr>
+</table><p>Para agregar un nuevo administrador de solicitudes, consulte <a href="service.scsoapbindingrequesthandlerlistadd.html">Para configurar un administrador de solicitudes</a>.</p>
+<br/>
 
 </body>
 </html>

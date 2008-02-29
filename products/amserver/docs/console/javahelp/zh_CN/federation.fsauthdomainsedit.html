@@ -1,40 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>修改验证域配置文件
+  <title>修改验证域配置文件 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fsauthdomainsedit"></A><h3>修改验证域配置文件</h3>
-<A NAME="indexterm-60"></A><p>按照以下过程编辑现有验证域已配置的常规属性，或向其中添加提供者。起点是联合界面下的“验证域”。</p>
-<ol><li><p><b>单击已配置验证域的名称，修改其配置文件，或向其中添加提供者。</b></p><p>随即显示“编辑验证域”页面。</p>
+
+
+<a name="federation.fsauthdomainsedit"></a><h4>修改验证域配置文件</h4><a name="indexterm-60"></a><p>按照以下过程编辑现有验证域已配置的常规属性，或向其中添加提供者。起点是联合界面下的“验证域”。</p><ol>
+<li><b>单击已配置验证域的名称，修改其配置文件，或向其中添加提供者。</b><p>随即显示“编辑验证域”页面。</p></li>
+<li><b>键入验证域“常规”属性的新值或编辑其现有值：</b><dl><dt>名称</dt>
+<dd><p>此属性的静态值是您在创建验证域时提供的名称。</p></dd>
+<dt>说明</dt>
+<dd><p>此属性的值是对验证域所做的说明。可以修改已输入的说明（如果适用）。</p></dd>
+<dt>记录器服务 URL</dt>
+<dd><p>此属性指定了记录通用域 cookie 的服务的位置。该 URL 的格式为 <tt><b>http://</tt><i>common-domain-host</i><tt>:</tt><i>port</i><tt>/common/writer</b></tt>。</p></dd>
+<dt>读取器服务 URL</dt>
+<dd><p>此属性指定了读取通用域 cookie 的服务的位置。该 URL 的格式为 <tt><b>http://</tt><i>common-domain-host</i><tt>:</tt><i>port</i><tt>/common/transfer</b></tt>。</p></dd>
+<dt>状态</dt>
+<dd><p>默认值为活动。选择不活动将禁用验证域之间的通信。</p></dd>
+</dl>
 </li>
-<li><p><b>键入验证域“常规”属性的新值或编辑其现有值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>名称</p></td><td valign="top"><p>此属性的静态值是您在创建验证域时提供的名称。</p>
-</td></tr><tr><td valign="top"><p>说明</p></td><td valign="top"><p>此属性的值是对验证域所做的说明。可以修改已输入的说明（如果适用）。</p>
-</td></tr><tr><td valign="top"><p>记录器服务 URL</p></td><td valign="top"><p>此属性指定了记录通用域 cookie 的服务的位置。该 URL 的格式为 <tt><b>http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/writer</b></tt>。</p>
-</td></tr><tr><td valign="top"><p>读取器服务 URL</p></td><td valign="top"><p>此属性指定了读取通用域 cookie 的服务的位置。该 URL 的格式为 <tt><b>http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/transfer</b></tt>。</p>
-</td></tr><tr><td valign="top"><p>状态</p></td><td valign="top"><p>默认值为活动。选择不活动将禁用验证域之间的通信。</p>
-</td></tr></table>
-</li>
-<li><p><b>单击“添加”为验证域添加提供者。</b></p><p>随即显示“选择可信赖的伙伴”页面。</p>
-</li>
-<li><p><b>选择一个或多个可用的提供者并单击“添加”箭头来选定它们。</b></p><p>所提供的列表包含已创建并填充了提供者的实体的名称 。有关更多信息，参见<A HREF="federation.fsauthdomainsselectprovider.html#federation.fsauthdomainsselectprovider">向验证域添加提供者</A>。</p>
-</li>
-<li><p><b>单击“确定”将提供者保存至验证域。</b></p><p>这将使您返回到“验证域配置文件”屏幕。</p>
-</li>
-<li><p><b>单击“保存”完成该操作。</b></p></li>
-</ol>
-<br />
+<li><b>单击“添加”为验证域添加提供者。</b><p>随即显示“选择可信赖的伙伴”页面。</p></li>
+<li><b>选择一个或多个可用的提供者并单击“添加”箭头来选定它们。</b><p>所提供的列表包含已创建并填充了提供者的实体的名称 。有关更多信息，参见<a href="federation.fsauthdomainsselectprovider.html">向验证域添加提供者</a>。</p></li>
+<li><b>单击“确定”将提供者保存至验证域。</b><p>这将使您返回到“验证域配置文件”屏幕。</p></li>
+<li><b>单击“保存”完成该操作。</b></li></ol>
+<br/>
 
 </body>
 </html>

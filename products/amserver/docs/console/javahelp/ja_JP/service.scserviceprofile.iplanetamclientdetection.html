@@ -1,73 +1,83 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>クライアントディテクション
+  <title>クライアントディテクション - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamclientdetection"></A><h3>クライアントディテクション</h3>
-<p><A NAME="indexterm-203"></A>認証プロセスの初期のステップでは、HTTP(S) 要求を行っているクライアントの種類が識別されます。Access Manager のこの機能を、クライアントディテクションと呼びます。クライアントの特性を取得するために、URL 情報が使用されます。この特性に基づいて、適切な認証ページが返されます。たとえば、Netscape ブラウザ経由で Web ページを要求した場合、Access Manager 7.1 は HTML ログインページを表示します。ユーザーの検証が完了すると、そのクライアントタイプ (Netscape ブラウザ) がセッショントークンに追加されます。クライアントディテクションサービスに定義されている属性は、グローバル属性です。</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxcei">「クライアントタイプ」</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxbxh">「デフォルトクライアントタイプ」</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxccp">「クライアントディテクションクラス」</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamclientdetection.html#fxbvy">「クライアントディテクション」</A></p>
-</li>
-</ul>
-<A NAME="fxcei"></A><h4>クライアントタイプ</h4>
-<p>クライアントタイプをディテクトするには、Access Manager がその識別特性を認識する必要があります。これらの特性によって、クライアントデータの形式でサポートされているすべてのタイプのプロパティーが識別されます。この属性により、クライアントマネージャーインタフェースを通じてクライアントデータを変更できます。クライアントマネージャーにアクセスするには、「編集」リンクをクリックします。初期状態では、Access Manager のクライアントタイプには次のタイプがあります。</p>
-<ul><li><p>HDML</p>
-</li>
-<li><p>HTML</p>
-</li>
-<li><p>JHTML</p>
-</li>
-<li><p>VoiceX</p>
-</li>
-<li><p>WML</p>
-</li>
-<li><p>XHTML</p>
-</li>
-<li><p>cHTML</p>
-</li>
-<li><p>iHTML</p>
-</li>
-</ul>
-<p>これらのクライアントタイプの説明については、<A target="_blank" HREF="http://docs.sun.com/app/docs/coll/1483.1">http://docs.sun.com/app/docs/coll/1483.1</A> を参照してください。</p>
-<A NAME="gciwk"></A><h5>クライアントマネージャー</h5>
-<p><A NAME="indexterm-204"></A>クライアントマネージャーは、ベースクライアント、スタイル、関連プロパティーを一覧表示するインタフェースであり、デバイスの追加と設定を行うことができます。ベースクライアントタイプが、クライアントマネージャーの最上部に一覧表示されます。これらのクライアントタイプには、クライアントタイプに属するすべてのデバイスが継承できるデフォルトプロパティーが含まれます。</p>
-<A NAME="gcivx"></A><h5>クライアントタイプ</h5>
-<p>スタイルプロファイル。クライアントマネージャーは、「基本のクライアントタイプ」自体を含む利用可能なすべてのクライアントを「クライアントタイプ」リストにグループ化します。各クライアントのプロパティーは、デバイス名をクリックすると変更することができます。プロパティーが「クライアント編集」ウィンドウに表示されます。プロパティーを編集するには、プルダウンリストから次の分類を選択します。</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>ハードウェアプラットフォーム</p></td><td valign="top"><p>表示サイズ、サポートされている文字セットなどのデバイスのハードウェアプロパティーです。</p>
-</td></tr><tr><td valign="top"><p>ソフトウェアプラットフォーム</p></td><td valign="top"><p>デバイスのアプリケーション環境、オペレーティングシステム、およびインストールされているソフトウェアのプロパティーです。</p>
-</td></tr><tr><td valign="top"><p>ネットワーク特性</p></td><td valign="top"><p>サポートされているベアラなどのネットワーク環境を説明するプロパティーです。</p>
-</td></tr><tr><td valign="top"><p>ブラウザユーザーエージェント</p></td><td valign="top"><p>デバイス上で実行するブラウザユーザーエージェントに関連する属性です。</p>
-</td></tr><tr><td valign="top"><p>WAP 特性</p></td><td valign="top"><p>デバイスがサポートする WAP (Wireless Application Protocol) 環境のプロパティーです。</p>
-</td></tr><tr><td valign="top"><p>Push 特性名</p></td><td valign="top"><p>デバイスがサポートする WAP 環境のプロパティーです。</p>
-</td></tr><tr><td valign="top"><p>追加プロパティー</p></td><td valign="top"><p>デバイスがサポートする WAP (Wireless Application Protocol) 環境のプロパティーです。</p>
-</td></tr></table>
-<p><hr size="1" noshade><p><b>注 &#8211; </b>個別のプロパティー定義については、『<b>Open Mobile Alliance Ltd. (OMA) Wireless Application Protocol, Version 20-Oct-2001</b>』を参照してください (<A target="_blank" HREF="http://www1.wapforum.org/tech/terms.asp?doc=WAP-248-UAProf-20011020-a.pdf">http://www1.wapforum.org/tech/terms.asp?doc=WAP-248-UAProf-20011020-a.pdf</A>)。</p>
-<p>このドキュメントにアクセスするには、まず WAP Forum<IMG alt="trade" SRC="ents/trade.gif"> に登録する必要があります。詳細については、<A target="_blank" HREF="http://www.wapforum.org/faqs/index.htm">http://www.wapforum.org/faqs/index.htm</A> を参照してください。</p>
-<hr size="1" noshade></p><A NAME="fxbxh"></A><h4>デフォルトクライアントタイプ</h4>
-<p>この属性は、クライアントタイプ属性のクライアントタイプのリストの中からデフォルトクライアントタイプを定義します。デフォルトは genericHTML です。</p>
-<A NAME="fxccp"></A><h4>クライアントディテクションクラス</h4>
-<p>この属性は、クライアントディテクション要求のすべてが送信されるクライアントディテクションクラスを定義します。この属性によって返される文字列は、クライアントタイプ属性に指定されているクライアントタイプのいずれかと一致します。デフォルトのクライアントディテクションクラスは <tt>com.sun.mobile.cdm.FEDIClientDetector</tt> です。Access Manager には <tt>com.iplanet.services.cdm.</tt><tt>ClientDetectionDefaultImpl</tt> も含まれます。</p>
-<A NAME="fxbvy"></A><h4>クライアントディテクション</h4>
-<p>クライアントディテクション機能を有効にします。クライアントディテクションが有効になっている場合 (デフォルト)、すべての要求はクライアントディテクションクラス属性で指定されているクラスを使って送信されます。デフォルトでは、クライアントディテクション機能は有効になっています。この属性が選択されていない場合は、Access Manager では、クライアントが genericHTML で、HTML ブラウザからアクセスしているものと判断されます。</p>
 
-<br />
+
+<a name="service.scserviceprofile.iplanetamclientdetection"></a><h4>クライアントディテクション</h4>
+<p><a name="indexterm-203"></a>認証プロセスの初期のステップでは、HTTP(S) 要求を行っているクライアントの種類が識別されます。Federated Access Manager のこの機能を、クライアントディテクションと呼びます。クライアントの特性を取得するために、URL 情報が使用されます。この特性に基づいて、適切な認証ページが返されます。たとえば、Netscape ブラウザ経由で Web ページを要求した場合、Federated Access Manager 8.0
+は HTML ログインページを表示します。ユーザーの検証が完了すると、そのクライアントタイプ (Netscape ブラウザ) がセッショントークンに追加されます。クライアントディテクションサービスに定義されている属性は、グローバル属性です。</p>
+<ul><li><p><a href="#fxcei">「クライアントタイプ」</a></p></li>
+<li><p><a href="#fxbxh">「デフォルトクライアントタイプ」</a></p></li>
+<li><p><a href="#fxccp">「クライアントディテクションクラス」</a></p></li>
+<li><p><a href="#fxbvy">「クライアントディテクション」</a></p></li></ul>
+
+
+<a name="fxcei"></a><h5>クライアントタイプ</h5>
+<p>クライアントタイプをディテクトするには、Federated Access Manager がその識別特性を認識する必要があります。これらの特性によって、クライアントデータの形式でサポートされているすべてのタイプのプロパティーが識別されます。この属性により、クライアントマネージャーインタフェースを通じてクライアントデータを変更できます。クライアントマネージャーにアクセスするには、「編集」リンクをクリックします。初期状態では、Federated Access Manager のクライアントタイプには次のタイプがあります。</p>
+<ul><li><p>HDML</p></li>
+<li><p>HTML</p></li>
+<li><p>JHTML</p></li>
+<li><p>VoiceX</p></li>
+<li><p>WML</p></li>
+<li><p>XHTML</p></li>
+<li><p>cHTML</p></li>
+<li><p>iHTML</p></li></ul>
+<p>これらのクライアントタイプについては、<a href="http://docs.sun.com/app/docs/coll/1483.1">http://docs.sun.com/app/docs/coll/1483.1</a> を参照してください。</p>
+
+<a name="gciwk"></a><h5>クライアントマネージャー</h5>
+<p><a name="indexterm-204"></a>クライアントマネージャーは、ベースクライアント、スタイル、関連プロパティーを一覧表示するインタフェースであり、デバイスの追加と設定を行うことができます。ベースクライアントタイプが、クライアントマネージャーの最上部に一覧表示されます。これらのクライアントタイプには、クライアントタイプに属するすべてのデバイスが継承できるデフォルトプロパティーが含まれます。</p>
+
+<a name="gcivx"></a><h5>クライアントタイプ</h5>
+<p>スタイルプロファイル。クライアントマネージャーは、「基本のクライアントタイプ」自体を含む利用可能なすべてのクライアントを「クライアントタイプ」リストにグループ化します。各クライアントのプロパティーは、デバイス名をクリックすると変更することができます。プロパティーが「クライアント編集」ウィンドウに表示されます。プロパティーを編集するには、プルダウンリストから次の分類を選択します。</p><dl><dt>ハードウェアプラットフォーム</dt>
+<dd><p>表示サイズ、サポートされている文字セットなどのデバイスのハードウェアプロパティーです。</p></dd>
+<dt>ソフトウェアプラットフォーム</dt>
+<dd><p>デバイスのアプリケーション環境、オペレーティングシステム、およびインストールされているソフトウェアのプロパティーです。</p></dd>
+<dt>ネットワーク特性</dt>
+<dd><p>サポートされているベアラなどのネットワーク環境を説明するプロパティーです。</p></dd>
+<dt>ブラウザユーザーエージェント</dt>
+<dd><p>デバイス上で実行するブラウザユーザーエージェントに関連する属性です。</p></dd>
+<dt>WAP 特性</dt>
+<dd><p>デバイスがサポートする WAP (Wireless Application Protocol) 環境のプロパティーです。</p></dd>
+<dt>Push 特性名</dt>
+<dd><p>デバイスがサポートする WAP 環境のプロパティーです。</p></dd>
+<dt>追加プロパティー</dt>
+<dd><p>デバイスがサポートする WAP (Wireless Application Protocol) 環境のプロパティーです。</p></dd>
+</dl>
+
+<hr><p><b>注 &#8211; </b>個別のプロパティー定義については、『<b>Open Mobile Alliance Ltd. (OMA) Wireless Application Protocol, Version 20-Oct-2001</b>』を参照してください (<a href="http://www1.wapforum.org/tech/terms.asp?doc=WAP-248-UAProf-20011020-a.pdf">http://www1.wapforum.org/tech/terms.asp?doc=WAP-248-UAProf-20011020-a.pdf</a>)。</p><p>このドキュメントにアクセスするには、まず WAP Forum<sup>TM</sup> に登録する必要があります。詳細については、<a href="http://www.wapforum.org/faqs/index.htm">http://www.wapforum.org/faqs/index.htm</a> を参照してください。</p>
+<hr>
+
+
+<a name="fxbxh"></a><h5>デフォルトクライアントタイプ</h5>
+<p>この属性は、クライアントタイプ属性のクライアントタイプのリストの中からデフォルトクライアントタイプを定義します。デフォルトは genericHTML です。</p>
+
+<a name="fxccp"></a><h5>クライアントディテクションクラス</h5>
+<p>この属性は、クライアントディテクション要求のすべてが送信されるクライアントディテクションクラスを定義します。この属性によって返される文字列は、クライアントタイプ属性に指定されているクライアントタイプのいずれかと一致します。デフォルトのクライアントディテクションクラスは <tt>com.sun.mobile.cdm.FEDIClientDetector</tt> です。Federated Access Manager には <tt>com.iplanet.services.cdm.</tt><tt>ClientDetectionDefaultImpl</tt> も含まれます。</p>
+
+<a name="fxbvy"></a><h5>クライアントディテクション</h5>
+<p>クライアントディテクション機能を有効にします。クライアントディテクションが有効になっている場合 (デフォルト)、すべての要求はクライアントディテクションクラス属性で指定されているクラスを使って送信されます。デフォルトでは、クライアントディテクション機能は有効になっています。この属性が選択されていない場合は、Federated Access Manager では、クライアントが genericHTML で、HTML ブラウザからアクセスしているものと判断されます。</p>
+<br/>
 
 </body>
 </html>

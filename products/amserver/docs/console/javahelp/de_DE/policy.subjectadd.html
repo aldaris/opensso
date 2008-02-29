@@ -1,36 +1,57 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>So f&#252;gen Sie einer Richtlinie einen Betreff hinzu.
+  <title>So f&#252;gen Sie einer Richtlinie einen Betreff hinzu. - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="policy.subjectadd"></A><h4>So f&#252;gen Sie einer Richtlinie einen Betreff hinzu.</h4>
-<ol><li><p><b><A NAME="indexterm-28"></A>Wenn Sie die Richtlinie bereits erstellt haben, klicken Sie auf den Namen der Richtlinie, f&#252;r die Sie den Betreff hinzuf&#252;gen m&#246;chten. Wenn die Richtlinie noch nicht erstellt wurde, ziehen Sie <A HREF="policy.policynormaladd.html#policy.policynormaladd">So erstellen Sie eine neue normale Richtlinie</A> zurate.</b></p></li>
-<li><p><b>Klicken Sie unter der Liste &#8220;Betreff&#34; auf &#8220;Neu&#34;.</b></p></li>
-<li><p><b>W&#228;hlen Sie einen der Standard-Betrefftypen aus. Eine Beschreibung der Betrefftypen finden Sie unter <A HREF="normalsubject.html#normalsubject">Betreffe</A></b></p></li>
-<li><p><b>Klicken Sie auf &#8220;Weiter&#34;.</b></p></li>
-<li><p><b>Geben Sie einen Namen f&#252;r den Betreff ein.</b></p></li>
-<li><p><b>Aktivieren bzw. deaktivieren Sie das Feld &#8220;Exklusiv&#34;.</b></p><p>Falls dieses Feld nicht aktiviert ist (Standard), wird die Richtlinie auf die Identity angewendet, die Mitglied des Betreffs ist. Falls dieses Feld aktiviert ist, wird die Richtlinie auf die Identi&#228;t angewendet, die <b>kein</b> Mitglied des Betreffs ist.</p>
-<p>Falls in der Richtlinie mehrere Betreffe vorhanden sind, wird die Richtlinie auf die Identit&#228;t angewendet, wenn mindestens einer der Betreffe impliziert, dass die Richtlinie auf die angegebene Identity zutrifft.</p>
-</li>
-<li><p><b>F&#252;hren Sie eine Suche durch, um die Identit&#228;ten anzuzeigen, die Sie dem Betreff hinzuf&#252;gen m&#246;chten. Dieser Schritt gilt nicht f&#252;r die Betreffe &#8220;Authentifizierte Benutzer&#34; und &#8220;Webdienste-Clients&#34;.</b></p><p>Das Standard-Suchmuster (*) zeigt alle qualifizierten Eintr&#228;ge an.</p>
-</li>
-<li><p><b>W&#228;hlen Sie die einzelnen Identit&#228;ten, die Sie dem Betreff hinzuf&#252;gen m&#246;chten, und klicken Sie auf &#8220;Alle hinzuf&#252;gen&#34;, um alle Identit&#228;ten gleichzeitig hinzuzuf&#252;gen. Klicken Sie auf &#8220;Hinzuf&#252;gen&#34;, um die Identit&#228;ten der Liste der ausgew&#228;hlten Identit&#228;ten hinzuzuf&#252;gen. Dieser Schritt trifft nicht f&#252;r den Betreff &#8220;Authentifizierte Benutzer&#34; zu.</b></p></li>
-<li><p><b>Klicken Sie auf &#8220;Fertig stellen&#34;</b></p></li>
-<li><p><b>Zum Entfernen eines Betreffs aus einer Richtlinie w&#228;hlen Sie den Betreff aus und klicken Sie auf &#8220;L&#246;schen&#34;. Zum Bearbeiten einer Betreffdefinition klicken Sie auf den Namen des Betreffs.</b></p></li>
-</ol>
-<br />
+
+
+<a name="policy.subjectadd"></a><h5>So f&#252;gen Sie einer Richtlinie einen Betreff hinzu.</h5>
+<ol>
+<li><b><a name="indexterm-28"></a>Wenn Sie die Richtlinie bereits erstellt haben, klicken Sie auf den Namen
+der Richtlinie, f&#252;r die Sie den Betreff hinzuf&#252;gen m&#246;chten. Wenn die Richtlinie
+noch nicht erstellt wurde, ziehen Sie <a href="policy.policynormaladd.html">So erstellen Sie eine neue normale Richtlinie</a> zurate. </b></li>
+<li><b>Klicken Sie unter der Liste "Betreff" auf "Neu".</b></li>
+<li><b>W&#228;hlen Sie einen der Standard-Betrefftypen aus. Eine Beschreibung der Betrefftypen finden Sie
+unter <a href="normalsubject.html">Betreffe</a></b></li>
+<li><b>Klicken Sie auf "Weiter".</b></li>
+<li><b>Geben Sie einen Namen f&#252;r den Betreff ein.</b></li>
+<li><b>Aktivieren bzw. deaktivieren Sie das Feld "Exklusiv".</b><p>Falls dieses Feld nicht aktiviert ist (Standard), wird die Richtlinie auf die
+Identity angewendet, die Mitglied des Betreffs ist. Falls dieses Feld aktiviert ist,
+wird die Richtlinie auf die Identi&#228;t angewendet, die <b>kein</b> Mitglied des Betreffs
+ist.</p><p>Falls in der Richtlinie mehrere Betreffe vorhanden sind, wird die Richtlinie auf
+die Identit&#228;t angewendet, wenn mindestens einer der Betreffe impliziert, dass die Richtlinie
+auf die angegebene Identity zutrifft.</p></li>
+<li><b>F&#252;hren Sie eine Suche durch, um die Identit&#228;ten anzuzeigen, die Sie dem
+Betreff hinzuf&#252;gen m&#246;chten. Dieser Schritt gilt nicht f&#252;r die Betreffe "Authentifizierte Benutzer"
+und "Webdienste-Clients".</b><p>Das Standard-Suchmuster (*) zeigt alle qualifizierten Eintr&#228;ge an.</p></li>
+<li><b>W&#228;hlen Sie die einzelnen Identit&#228;ten, die Sie dem Betreff hinzuf&#252;gen m&#246;chten, und
+klicken Sie auf "Alle hinzuf&#252;gen", um alle Identit&#228;ten gleichzeitig hinzuzuf&#252;gen. Klicken Sie
+auf "Hinzuf&#252;gen", um die Identit&#228;ten der Liste der ausgew&#228;hlten Identit&#228;ten hinzuzuf&#252;gen. Dieser
+Schritt trifft nicht f&#252;r den Betreff "Authentifizierte Benutzer" zu.</b></li>
+<li><b>Klicken Sie auf "Fertig stellen".</b></li>
+<li><b>Zum Entfernen eines Betreffs aus einer Richtlinie w&#228;hlen Sie den Betreff aus
+und klicken Sie auf "L&#246;schen". Zum Bearbeiten einer Betreffdefinition klicken Sie auf
+den Namen des Betreffs.</b></li></ol>
+<br/>
 
 </body>
 </html>

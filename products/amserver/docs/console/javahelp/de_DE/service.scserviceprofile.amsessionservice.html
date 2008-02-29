@@ -1,85 +1,138 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Sitzung
+  <title>Sitzung - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.amsessionservice"></A><h3>Sitzung</h3>
-<p><A NAME="indexterm-199"></A>Der Sitzungsdienst definiert Werte f&#252;r die Sitzung eines authentifizierten Benutzers, wie beispielsweise die maximale Sitzungsdauer und die maximale Leerlaufzeit. Bei den Sitzungsattributen kann es sich um globale, um dynamische oder um Benutzerattribute handeln. Es existieren folgende Attribute:</p>
-<ul><li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfeu">Sekund&#228;re Konfigurationsinstanz</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfew">Maximale Anzahl an Suchergebnissen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfex">Timeout f&#252;r Suche</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfez">Benachrichtigungen &#252;ber Eigenschafts&#228;nderung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfey">Quoteneinschr&#228;nkungen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffa">Zeit&#252;berschreitung beim Lesen f&#252;r Quotenbeschr&#228;nkung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffb">Admin-Benutzer der ersten Ebene von der Einschr&#228;nkungspr&#252;fung ausnehmen </A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffc">Verhalten, wenn eine Sitzungsquote ersch&#246;pft ist</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffd">Eigenschaften f&#252;r Benachrichtigung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffe">Maximale Sitzungsdauer</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwfff">Maximale Leerlaufzeit</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffh">Maximale Caching-Zeit</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.amsessionservice.html#fwffi">Aktive Benutzersitzungen</A></p>
-</li>
-</ul>
-<A NAME="fwfeu"></A><h4>Sekund&#228;re Konfigurationsinstanz</h4>
-<p>Stellt die Verbindungsinformationen f&#252;r das Sitzungs-Repository bereit, das in Access Manager f&#252;r die Sitzungs-Failover-Funktion verwendet wird. Als Bezeichner f&#252;r die sekund&#228;re Konfiguration sollte der URL des Lastenausgleichs angegeben werden. Wenn die sekund&#228;re Konfiguration auf diese Weise angegeben ist, wird die Sitzungs-Failover-Funktion automatisch aktiviert und nach dem Server-Neustart wirksam. Weitere Informationen finden Sie unter <A HREF="service.subconfigadd.html#service.subconfigadd">So f&#252;gen Sie eine Subkonfiguration hinzu</A>.</p>
-<A NAME="fwfew"></A><h4>Maximale Anzahl an Suchergebnissen</h4>
-<p>Gibt an, wie viele Suchergebnisse bei einer Sitzungssuche maximal angezeigt werden. Der Standardwert ist 120.</p>
-<A NAME="fwfex"></A><h4>Timeout f&#252;r Suche</h4>
-<p>Gibt an, wie lange eine Sitzungssuche fortgesetzt wird, bevor sie wegen Zeit&#252;berschreitung abgebrochen wird. Der Standardwert ist 5 Sekunden.</p>
-<A NAME="fwfez"></A><h4>Benachrichtigungen &#252;ber Eigenschafts&#228;nderung</h4>
-<p>Aktiviert bzw. deaktiviert die Benachrichtigung bei einer &#196;nderung der Sitzungseigenschaften. In einer Single Sign-On-Umgebung (SSO) kann eine Access Manager-Sitzung von mehreren Anwendungen verwendet werden. Wenn diese Funktion auf &#8220;AKTIVIERT&#34; gesetzt ist, wird eine Benachrichtigung an alle anderen Anwendungen gesendet, die an der gleichen SSO-Umgebung teilnehmen, sobald eine der teilnehmenden Anwendungen eine Sitzungseigenschaft der Liste Eigenschaften f&#252;r Benachrichtigung &#228;ndert (diese Liste ist in einem gesonderten Sitzungsdienst-Attribut definiert).</p>
-<A NAME="fwfey"></A><h4>Quoteneinschr&#228;nkungen</h4>
-<p>Aktiviert bzw. deaktiviert Sitzungsquotenbeschr&#228;nkungen. Sitzungsquotenbeschr&#228;nkungen erm&#246;glichen es dem Administrator, einen Benutzer auf Basis globaler Beschr&#228;nkungseinstellungen bzw. auf Basis der Konfigurationen der einzelnen Entities (Bereich/Rolle/Benutzer), denen der jeweilige Benutzer angeh&#246;rt, auf eine bestimmte Anzahl aktiver bzw. gleichzeitiger Sitzungen einzuschr&#228;nken.</p>
-<p>Die Standardeinstellung dieses Attributs ist &#8220;DEAKTIVIERT&#34;. Nach einer &#196;nderung der Einstellungen muss der Server neu gestartet werden.</p>
-<A NAME="fwffa"></A><h4>Zeit&#252;berschreitung beim Lesen f&#252;r Quotenbeschr&#228;nkung</h4>
-<p>Bestimmt die Zeit (in Millisekunden), die eine Anfrage an das Sitzungs-Repository f&#252;r den Live-Benutzersitzungsz&#228;hler fortgesetzt wird, bevor sie wegen Zeit&#252;berschreitung abgebrochen wird.</p>
-<p>Wenn das Zeitlimit f&#252;r die Anfrage erreicht ist, wird ein Fehler ausgegeben. Dieses Attribut wird nur verwendet, wenn die Sitzungsquotenbeschr&#228;nkung in der Sitzungs-Failover-Konfiguration aktiviert ist. Der Standardwert ist 6000 Millisekunden. Nach einer &#196;nderung der Einstellungen muss der Server neu gestartet werden.</p>
-<A NAME="fwffb"></A><h4>Admin-Benutzer der ersten Ebene von der Einschr&#228;nkungspr&#252;fung ausnehmen </h4>
-<p>Legt fest, ob Benutzer, die der Top-Level-Admin-Rolle angeh&#246;ren, von der Sitzungseinschr&#228;nkungspr&#252;fung ausgenommen werden. Wenn dieses Attribut aktiviert ist, findet f&#252;r Top-Level-Administratoren trotz aktivierter Sitzungsbeschr&#228;nkung keine &#220;berpr&#252;fung der Sitzungsquoten statt.</p>
-<p>Die Standardeinstellung dieses Attributs ist &#8220;Nein&#34;. Nach einer Einstellungs&#228;nderung m&#252;ssen Sie den Server neu starten. Dieses Attribut wird nur angewendet, wenn die Sitzungsquotenbeschr&#228;nkung aktiviert ist.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Der f&#252;r Access Manager in <tt>AMConfig.properties </tt> konfigurierte Superuser (<tt>com.sun.identity.authentication.super.user</tt>) ist auf jeden Fall von der &#220;berpr&#252;fung der Sitzungsquotenbeschr&#228;nkung ausgeschlossen. </p>
-<hr size="1" noshade></p><A NAME="fwffc"></A><h4>Verhalten, wenn eine Sitzungsquote ersch&#246;pft ist</h4>
-<p>Legt das Verhalten fest, wenn die Sitzungsquote eines Benutzers ersch&#246;pft ist. F&#252;r dieses Attribut stehen zwei Optionen zur Auswahl:</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>DESTROY_OLD_SESSION</p></td><td valign="top"><p>Die n&#228;chste ablaufende Sitzung wird beendet.</p>
-</td></tr><tr><td valign="top"><p>DENY_ACCESS</p></td><td valign="top"><p>Die neue Sitzungserstellungsanforderung wird abgelehnt.</p>
-</td></tr></table>
-<p>Dieses Attribut wird nur verwendet, wenn die Sitzungsquotenbeschr&#228;nkung aktiviert ist und die Standardeinstellung &#8220;DESTROY_OLD_SESSION&#34; lautet.</p>
-<A NAME="fwffd"></A><h4>Eigenschaften f&#252;r Benachrichtigung</h4>
-<p>Sobald eine in der Liste aufgef&#252;hrte Sitzungseigenschaft ge&#228;ndert wird, wird an die registrierten Zielger&#228;te eine Benachrichtigung gesendet. Das Attribut wird nur verwendet, wenn die Funktion Benachrichtigung bei &#196;nderung der Sitzungseigenschaften aktiviert ist.</p>
-<A NAME="fwffe"></A><h4>Maximale Sitzungsdauer</h4>
-<p>Gibt an, nach wie vielen Minuten eine Sitzung abl&#228;uft. Der Benutzer muss sich danach erneut authentifizieren, um Zugriff zu erhalten. Zul&#228;ssig sind Werte von 1 oder h&#246;her. Der Standardwert ist 120. (Eine sowohl sichere als auch benutzerfreundliche Einstellung erhalten Sie, wenn Sie einen relativ hohen Wert f&#252;r &#8220;Maximale Sitzungsdauer&#34; w&#228;hlen und einen relativ niedrigen Wert f&#252;r &#8220;Maximale Leerlaufzeit&#34;.)) Die maximale Sitzungsdauer begrenzt die G&#252;ltigkeit der Sitzung. Sie wird nicht &#252;ber den konfigurierten Wert hinaus ausgedehnt.</p>
-<A NAME="fwfff"></A><h4>Maximale Leerlaufzeit</h4>
-<p>Gibt an, nach wie vielen Minuten der Inaktivit&#228;t eine Sitzung abl&#228;uft. Der Benutzer muss sich danach erneut authentifizieren, um Zugriff zu erhalten. Zul&#228;ssig sind Werte von 1 oder h&#246;her. Der Standardwert ist 30. (Eine sowohl sichere als auch benutzerfreundliche Einstellung erhalten Sie, wenn Sie einen relativ hohen Wert f&#252;r &#8220;Maximale Sitzungsdauer&#34; w&#228;hlen und einen relativ niedrigen Wert f&#252;r &#8220;Maximale Leerlaufzeit&#34;.))</p>
-<A NAME="fwffh"></A><h4>Maximale Caching-Zeit</h4>
-<p>Gibt entsprechend dem maximalen Intervall an, nach wie vielen Minuten der Client auf Access Manager zugreift, um die zwischengespeicherten Sitzungsinformationen zu aktualisieren. Zul&#228;ssig sind Werte von 0 oder h&#246;her. Der Standardwert ist 3. Die maximale Caching-Zeit sollte niedriger sein als die maximale Leerlaufzeit.</p>
-<A NAME="fwffi"></A><h4>Aktive Benutzersitzungen</h4>
-<p>Gibt die maximale Anzahl gleichzeitiger Sitzungen an, die f&#252;r einen Benutzer erlaubt sind.</p>
 
-<br />
+
+<a name="service.scserviceprofile.amsessionservice"></a><h4>Sitzung</h4>
+<p><a name="indexterm-199"></a>Der Sitzungsdienst definiert Werte f&#252;r die Sitzung eines authentifizierten Benutzers, wie beispielsweise
+die maximale Sitzungsdauer und die maximale Leerlaufzeit. Bei den Sitzungsattributen kann es
+sich um globale, um dynamische oder um Benutzerattribute handeln. Es existieren folgende
+Attribute:</p>
+<ul><li><p><a href="#fwfeu">Sekund&#228;re Konfigurationsinstanz</a></p></li>
+<li><p><a href="#fwfew">Maximale Anzahl an Suchergebnissen</a></p></li>
+<li><p><a href="#fwfex">Timeout f&#252;r Suche</a></p></li>
+<li><p><a href="#fwfez">Benachrichtigungen &#252;ber Eigenschafts&#228;nderung</a></p></li>
+<li><p><a href="#fwfey">Quoteneinschr&#228;nkungen</a></p></li>
+<li><p><a href="#fwffa">Zeit&#252;berschreitung beim Lesen f&#252;r Quotenbeschr&#228;nkung</a></p></li>
+<li><p><a href="#fwffb">Admin-Benutzer der ersten Ebene von der Einschr&#228;nkungspr&#252;fung ausnehmen </a></p></li>
+<li><p><a href="#fwffc">Verhalten, wenn eine Sitzungsquote ersch&#246;pft ist</a></p></li>
+<li><p><a href="#fwffd">Eigenschaften f&#252;r Benachrichtigung</a></p></li>
+<li><p><a href="#fwffe">Maximale Sitzungsdauer</a></p></li>
+<li><p><a href="#fwfff">Maximale Leerlaufzeit</a></p></li>
+<li><p><a href="#fwffh">Maximale Caching-Zeit</a></p></li>
+<li><p><a href="#fwffi">Aktive Benutzersitzungen</a></p></li></ul>
+
+
+<a name="fwfeu"></a><h5>Sekund&#228;re Konfigurationsinstanz</h5>
+<p>Stellt die Verbindungsinformationen f&#252;r das Sitzungs-Repository bereit, das in Federated Access Manager
+f&#252;r die Sitzungs-Failover-Funktion verwendet wird. Als Bezeichner f&#252;r die sekund&#228;re Konfiguration sollte
+der URL des Lastenausgleichs angegeben werden. Wenn die sekund&#228;re Konfiguration auf diese
+Weise angegeben ist, wird die Sitzungs-Failover-Funktion automatisch aktiviert und nach dem Server-Neustart
+wirksam. Weitere Informationen finden Sie unter <a href="service.subconfigadd.html">So f&#252;gen Sie eine Subkonfiguration hinzu</a>.</p>
+
+<a name="fwfew"></a><h5>Maximale Anzahl an Suchergebnissen</h5>
+<p>Gibt an, wie viele Suchergebnisse bei einer Sitzungssuche maximal angezeigt werden. Der
+Standardwert ist 120.</p>
+
+<a name="fwfex"></a><h5>Timeout f&#252;r Suche</h5>
+<p>Gibt an, wie lange eine Sitzungssuche fortgesetzt wird, bevor sie wegen Zeit&#252;berschreitung
+abgebrochen wird. Der Standardwert ist 5 Sekunden.</p>
+
+<a name="fwfez"></a><h5>Benachrichtigungen &#252;ber Eigenschafts&#228;nderung</h5>
+<p>Aktiviert bzw. deaktiviert die Benachrichtigung bei einer &#196;nderung der Sitzungseigenschaften. In einer
+Single Sign-On-Umgebung (SSO) kann eine Federated Access Manager-Sitzung von mehreren Anwendungen verwendet
+werden. Wenn diese Funktion auf ";AKTIVIERT" gesetzt ist, wird eine Benachrichtigung an
+alle anderen Anwendungen gesendet, die an der gleichen SSO-Umgebung teilnehmen, sobald eine
+der teilnehmenden Anwendungen eine Sitzungseigenschaft der Liste Eigenschaften f&#252;r Benachrichtigung &#228;ndert (diese
+Liste ist in einem gesonderten Sitzungsdienst-Attribut definiert).</p>
+
+<a name="fwfey"></a><h5>Quoteneinschr&#228;nkungen</h5>
+<p>Aktiviert bzw. deaktiviert Sitzungsquotenbeschr&#228;nkungen. Sitzungsquotenbeschr&#228;nkungen erm&#246;glichen es dem Administrator, einen Benutzer auf
+Basis globaler Beschr&#228;nkungseinstellungen bzw. auf Basis der Konfigurationen der einzelnen Entities (Bereich/Rolle/Benutzer),
+denen der jeweilige Benutzer angeh&#246;rt, auf eine bestimmte Anzahl aktiver bzw. gleichzeitiger
+Sitzungen einzuschr&#228;nken.</p><p>Die Standardeinstellung dieses Attributs ist ";DEAKTIVIERT". Nach einer &#196;nderung der Einstellungen muss
+der Server neu gestartet werden.</p>
+
+<a name="fwffa"></a><h5>Zeit&#252;berschreitung beim Lesen f&#252;r Quotenbeschr&#228;nkung</h5>
+<p>Bestimmt die Zeit (in Millisekunden), die eine Anfrage an das Sitzungs-Repository f&#252;r
+den Live-Benutzersitzungsz&#228;hler fortgesetzt wird, bevor sie wegen Zeit&#252;berschreitung abgebrochen wird.</p><p>Wenn das Zeitlimit f&#252;r die Anfrage erreicht ist, wird ein Fehler ausgegeben.
+Dieses Attribut wird nur verwendet, wenn die Sitzungsquotenbeschr&#228;nkung in der Sitzungs-Failover-Konfiguration aktiviert
+ist. Der Standardwert ist 6000 Millisekunden. Nach einer &#196;nderung der Einstellungen muss
+der Server neu gestartet werden.</p>
+
+<a name="fwffb"></a><h5>Admin-Benutzer der ersten Ebene von der Einschr&#228;nkungspr&#252;fung ausnehmen </h5>
+<p>Legt fest, ob Benutzer, die der Top-Level-Admin-Rolle angeh&#246;ren, von der Sitzungseinschr&#228;nkungspr&#252;fung ausgenommen
+werden. Wenn dieses Attribut aktiviert ist, findet f&#252;r Top-Level-Administratoren trotz aktivierter Sitzungsbeschr&#228;nkung
+keine &#220;berpr&#252;fung der Sitzungsquoten statt.</p><p>Die Standardeinstellung dieses Attributs ist ";Nein". Nach einer Einstellungs&#228;nderung m&#252;ssen Sie den
+Server neu starten. Dieses Attribut wird nur angewendet, wenn die Sitzungsquotenbeschr&#228;nkung aktiviert
+ist.</p>
+<hr><p><b>Hinweis &#8211; </b>Der f&#252;r Federated Access Manager in <tt>AMConfig.properties </tt> konfigurierte Superuser (<tt>com.sun.identity.authentication.super.user</tt>) ist auf
+jeden Fall von der &#220;berpr&#252;fung der Sitzungsquotenbeschr&#228;nkung ausgeschlossen. </p>
+<hr>
+
+
+<a name="fwffc"></a><h5>Verhalten, wenn eine Sitzungsquote ersch&#246;pft ist</h5>
+<p>Legt das Verhalten fest, wenn die Sitzungsquote eines Benutzers ersch&#246;pft ist. F&#252;r
+dieses Attribut stehen zwei Optionen zur Auswahl:</p><dl><dt>DESTROY_OLD_SESSION</dt>
+<dd><p>Die n&#228;chste ablaufende Sitzung wird beendet.</p></dd>
+<dt>DENY_ACCESS</dt>
+<dd><p>Die neue Sitzungserstellungsanforderung wird abgelehnt.</p></dd>
+</dl>
+<p>Dieses Attribut wird nur verwendet, wenn die Sitzungsquotenbeschr&#228;nkung aktiviert ist und die
+Standardeinstellung ";DESTROY_OLD_SESSION" lautet.</p>
+
+<a name="fwffd"></a><h5>Eigenschaften f&#252;r Benachrichtigung</h5>
+<p>Sobald eine in der Liste aufgef&#252;hrte Sitzungseigenschaft ge&#228;ndert wird, wird an die
+registrierten Zielger&#228;te eine Benachrichtigung gesendet. Das Attribut wird nur verwendet, wenn die
+Funktion Benachrichtigung bei &#196;nderung der Sitzungseigenschaften aktiviert ist.</p>
+
+<a name="fwffe"></a><h5>Maximale Sitzungsdauer</h5>
+<p>Gibt an, nach wie vielen Minuten eine Sitzung abl&#228;uft. Der Benutzer muss
+sich danach erneut authentifizieren, um Zugriff zu erhalten. Zul&#228;ssig sind Werte von
+1 oder h&#246;her. Der Standardwert ist 120. (Eine sowohl sichere als auch
+benutzerfreundliche Einstellung erhalten Sie, wenn Sie einen relativ hohen Wert f&#252;r ";Maximale
+Sitzungsdauer" w&#228;hlen und einen relativ niedrigen Wert f&#252;r "Maximale Leerlaufzeit".)) Die maximale
+Sitzungsdauer begrenzt die G&#252;ltigkeit der Sitzung. Sie wird nicht &#252;ber den konfigurierten
+Wert hinaus ausgedehnt.</p>
+
+<a name="fwfff"></a><h5>Maximale Leerlaufzeit</h5>
+<p>Gibt an, nach wie vielen Minuten der Inaktivit&#228;t eine Sitzung abl&#228;uft. Der
+Benutzer muss sich danach erneut authentifizieren, um Zugriff zu erhalten. Zul&#228;ssig sind
+Werte von 1 oder h&#246;her. Der Standardwert ist 30. (Eine sowohl sichere
+als auch benutzerfreundliche Einstellung erhalten Sie, wenn Sie einen relativ hohen Wert
+f&#252;r ";Maximale Sitzungsdauer" w&#228;hlen und einen relativ niedrigen Wert f&#252;r "Maximale Leerlaufzeit".))</p>
+
+<a name="fwffh"></a><h5>Maximale Caching-Zeit</h5>
+<p>Gibt entsprechend dem maximalen Intervall an, nach wie vielen Minuten der Client
+auf Federated Access Manager zugreift, um die zwischengespeicherten Sitzungsinformationen zu aktualisieren. Zul&#228;ssig
+sind Werte von 0 oder h&#246;her. Der Standardwert ist 3. Die maximale
+Caching-Zeit sollte niedriger sein als die maximale Leerlaufzeit.</p>
+
+<a name="fwffi"></a><h5>Aktive Benutzersitzungen</h5>
+<p>Gibt die maximale Anzahl gleichzeitiger Sitzungen an, die f&#252;r einen Benutzer erlaubt
+sind.</p>
+<br/>
 
 </body>
 </html>

@@ -1,30 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>メカニズムハンドラリスト
+  <title>メカニズムハンドラリスト - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="mechanismhandlerslist"></A><h3>メカニズムハンドラリスト</h3>
-<A NAME="indexterm-168"></A><A NAME="indexterm-169"></A><p>「メカニズムハンドラリスト」属性には、認証 Web サービスがサポートする SASL メカニズムについての情報が格納されます。この属性には、キーと値のペアを含むエントリが次のようにパイプ記号で区切られて表示されます。<tt>key=PLAIN|class=com.sun.identity.liberty.ws.authnsvc.mechanism.PlainMechanismHandler</tt>次の表は各パラメータの説明です。</p>
 
-<table cellspacing="5" border="1">
-<tr><th scope="col"><p>パラメータ</p></th><th scope="col"><p>値</p></th></tr>
-<tr><td><p><tt>key</tt></p></td><td><p>必須の<tt>キー</tt>パラメータは、認証 Web サービスでサポートされている SASL メカニズムを定義します。</p></td></tr>
-<tr><td><p><tt>class</tt></p></td><td><p>必須の<tt>クラス</tt>パラメータは、SASL メカニズムの実装クラス名を指定します。認証 Web サービスレイヤーは、ハンドラインタフェースを提供します。これは、各 SASL メカニズムが要求されたメッセージを処理して応答を返すために実装される必要があります。</p></td></tr>
-</table><p>新しい要求ハンドラを追加するには、「<b>追加</b>」をクリックし、<A HREF="webservices.wsauthnserviceshandlersadd.html#webservices.wsauthnserviceshandlersadd">「新規メカニズムハンドラを設定する」</A>を参照してください。</p>
 
-<br />
+<a name="mechanismhandlerslist"></a><h4>メカニズムハンドラリスト</h4>
+<a name="indexterm-168"></a><a name="indexterm-169"></a><p>「メカニズムハンドラリスト」属性には、認証 Web サービスがサポートする SASL メカニズムについての情報が格納されます。この属性には、キーと値のペアを含むエントリが次のようにパイプ記号で区切られて表示されます。<tt>key=PLAIN|class=com.sun.identity.liberty.ws.authnsvc.mechanism.PlainMechanismHandler</tt>次の表は各パラメータの説明です。</p><table><col width="50*"><col width="50*"><tr><th align="left" valign="top" scope="column"><p>パラメータ</p></th>
+<th align="left" valign="top" scope="column"><p>値</p></th>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
+<td align="left" valign="top" scope="row"><p>必須の<tt>キー</tt>パラメータは、認証 Web サービスでサポートされている SASL メカニズムを定義します。</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
+<td align="left" valign="top" scope="row"><p>必須の<tt>クラス</tt>パラメータは、SASL メカニズムの実装クラス名を指定します。認証 Web サービスレイヤーは、ハンドラインタフェースを提供します。これは、各
+SASL メカニズムが要求されたメッセージを処理して応答を返すために実装される必要があります。</p></td>
+</tr>
+</table><p>新しい要求ハンドラを追加するには、「<b>追加</b>」をクリックし、<a href="webservices.wsauthnserviceshandlersadd.html">「新規メカニズムハンドラを設定する」</a>を参照してください。</p>
+<br/>
 
 </body>
 </html>

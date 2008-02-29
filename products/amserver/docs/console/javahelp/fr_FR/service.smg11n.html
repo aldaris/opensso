@@ -1,52 +1,75 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Param&#232;tres de globalisation
+  <title>Param&#232;tres de globalisation - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.smg11n"></A><h3>Param&#232;tres de globalisation</h3>
-<p><A NAME="indexterm-195"></A>Le service Param&#232;tres de globalisation contient des attributs g&#233;n&#233;raux qui vous permettent de configurer Access Manager pour diff&#233;rents param&#232;tres r&#233;gionaux et jeux de caract&#232;res. Ces attributs sont les suivants :</p>
-<ul><li><p><A HREF="service.smg11n.html#fsvdx">Jeux de caract&#232;res compatibles par version des param&#232;tres locaux</A></p>
-</li>
-<li><p><A HREF="service.smg11n.html#fsvec">D&#233;signation des jeux de caract&#232;res</A></p>
-</li>
-<li><p><A HREF="service.smg11n.html#fsveb">Format de nom commun g&#233;n&#233;r&#233; automatiquement</A></p>
-</li>
-</ul>
-<A NAME="fsvdx"></A><h4>Jeux de caract&#232;res compatibles par version des param&#232;tres locaux</h4>
-<p>Cet attribut r&#233;pertorie les jeux de caract&#232;res pris en charge pour chaque langue, indiquant le mappage entre la langue et le jeu de caract&#232;res. Le format est le suivant :</p>
-<p>Pour ajouter un nouveau jeu de caract&#232;res pris en charge, cliquez sur Ajouter et d&#233;finissez les param&#232;tres suivants :</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>Param&#232;tres locaux</p></td><td valign="top"><p>Les nouveaux param&#232;tres locaux que vous souhaitez ajouter. Pour plus d'informations, reportez-vous &#224; <A HREF="supportedlang.html#supportedlang">Environnements linguistiques pris en charge</A>.</p>
-</td></tr><tr><td valign="top"><p>Jeux de caract&#232;res support&#233;s</p></td><td valign="top"><p>Entrez le jeu de caract&#232;res support&#233; pour la langue sp&#233;cifi&#233;e. Les jeux de caract&#232;res sont d&#233;limit&#233;s par un point-virgule. Par exemple, <tt>charset=jeu_caract&#232;res1;jeu_caract&#232;res2;jeu_caract&#232;res3;...;jeu_caract&#232;resn </tt></p>
-</td></tr></table>
-<p>Pour modifier tout jeu de caract&#232;res support&#233;, cliquez sur le nom voulu dans le tableau des jeux de caract&#232;res support&#233;s. Cliquez sur OK lorsque vous avez termin&#233;.</p>
-<A NAME="fsvec"></A><h4>D&#233;signation des jeux de caract&#232;res</h4>
-<p>Cet attribut r&#233;pertorie les noms de jeu de codes (mapp&#233;s sur des noms IANA) qui seront utilis&#233;s pour envoyer la r&#233;ponse. Ces noms de jeu de codes ne doivent pas n&#233;cessairement correspondre &#224; des noms de jeu de codes Java. Actuellement, il existe une table de hachage qui fournit la correspondance entre les jeux de caract&#232;res Java et les jeux de caract&#232;res IANA.</p>
-<p>Pour ajouter une nouvelle d&#233;signation de jeu de caract&#232;re, cliquez sur le bouton Ajouter, puis d&#233;finissez les param&#232;tres suivants :</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>Nom MIME</p></td><td valign="top"><p>Nom de mappage IANA. Par exemple, <tt>Shift_JIS</tt></p>
-</td></tr><tr><td valign="top"><p>Nom Java</p></td><td valign="top"><p>Jeu de caract&#232;res Java &#224; mapper sur le jeu de caract&#232;res IANA. </p>
-</td></tr></table>
-<p>Pour modifier toute d&#233;signation de jeu de caract&#232;res, cliquez sur le nom voulu dans le tableau. Cliquez sur OK lorsque vous avez termin&#233;.</p>
-<A NAME="fsveb"></A><h4>Format de nom commun g&#233;n&#233;r&#233; automatiquement</h4>
-<p>Cette option d'affichage vous permet de d&#233;finir la mani&#232;re dont un nom est automatiquement g&#233;n&#233;r&#233; pour adapter les formats de nom &#224; diff&#233;rents param&#232;tres locaux et jeux de caract&#232;res. La syntaxe par d&#233;faut est la suivante (notez que les virgules et/ou les espaces inclus dans la d&#233;finition s'afficheront dans le format du nom) :</p>
-<p><tt>en_us = {nomdonn&#233;} {initiales} {sn}</tt></p>
-<p>Par exemple, si vous voulez afficher un nouveau format de nom pour un utilisateur (Utilisateur Un) avec un uid (11111) pour le jeu de caract&#232;res chinois, d&#233;finissez :</p>
-<p><tt>zh = {sn}{nomdonn&#233;}({uid})</tt></p>
-<p>L'affichage est le suivant :</p>
-<p><tt>Utilisateur 11111</tt></p>
 
-<br />
+
+<a name="service.smg11n"></a><h4>Param&#232;tres de globalisation</h4>
+<p><a name="indexterm-195"></a>Le service Param&#232;tres de globalisation contient des attributs g&#233;n&#233;raux qui vous permettent
+de configurer Federated Access Manager pour diff&#233;rents param&#232;tres r&#233;gionaux et jeux de
+caract&#232;res. Ces attributs sont les suivants :</p>
+<ul><li><p><a href="#fsvdx">Jeux de caract&#232;res compatibles par version des param&#232;tres locaux</a></p></li>
+<li><p><a href="#fsvec">D&#233;signation des jeux de caract&#232;res</a></p></li>
+<li><p><a href="#fsveb">Format de nom commun g&#233;n&#233;r&#233; automatiquement</a></p></li></ul>
+
+
+<a name="fsvdx"></a><h5>Jeux de caract&#232;res compatibles par version des param&#232;tres locaux</h5>
+<p>Cet attribut r&#233;pertorie les jeux de caract&#232;res pris en charge pour chaque
+langue, indiquant le mappage entre la langue et le jeu de caract&#232;res.
+Le format est le suivant :</p><p>Pour ajouter un nouveau jeu de caract&#232;res pris en charge, cliquez sur
+Ajouter et d&#233;finissez les param&#232;tres suivants :</p><dl><dt>Param&#232;tres locaux</dt>
+<dd><p>Les nouveaux param&#232;tres locaux que vous souhaitez ajouter. Pour plus d'informations, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.</p></dd>
+<dt>Jeux de caract&#232;res support&#233;s</dt>
+<dd><p>Entrez le jeu de caract&#232;res support&#233; pour la langue sp&#233;cifi&#233;e. Les jeux de caract&#232;res sont d&#233;limit&#233;s par un point-virgule. Par exemple, <tt>charset=jeu_caract&#232;res1;jeu_caract&#232;res2;jeu_caract&#232;res3;...;jeu_caract&#232;resn </tt></p></dd>
+</dl>
+<p>Pour modifier tout jeu de caract&#232;res support&#233;, cliquez sur le nom voulu
+dans le tableau des jeux de caract&#232;res support&#233;s. Cliquez sur OK lorsque
+vous avez termin&#233;.</p>
+
+<a name="fsvec"></a><h5>D&#233;signation des jeux de caract&#232;res</h5>
+<p>Cet attribut r&#233;pertorie les noms de jeu de codes (mapp&#233;s sur des
+noms IANA) qui seront utilis&#233;s pour envoyer la r&#233;ponse. Ces noms de
+jeu de codes ne doivent pas n&#233;cessairement correspondre &#224; des noms de
+jeu de codes Java. Actuellement, il existe une table de hachage qui
+fournit la correspondance entre les jeux de caract&#232;res Java et les jeux
+de caract&#232;res IANA.</p><p>Pour ajouter une nouvelle d&#233;signation de jeu de caract&#232;re, cliquez sur le
+bouton Ajouter, puis d&#233;finissez les param&#232;tres suivants :</p><dl><dt>Nom MIME</dt>
+<dd><p>Nom de mappage IANA. Par exemple, <tt>Shift_JIS</tt></p></dd>
+<dt>Nom Java</dt>
+<dd><p>Jeu de caract&#232;res Java &#224; mapper sur le jeu de caract&#232;res IANA. </p></dd>
+</dl>
+<p>Pour modifier toute d&#233;signation de jeu de caract&#232;res, cliquez sur le nom
+voulu dans le tableau. Cliquez sur OK lorsque vous avez termin&#233;.</p>
+
+<a name="fsveb"></a><h5>Format de nom commun g&#233;n&#233;r&#233; automatiquement</h5>
+<p>Cette option d'affichage vous permet de d&#233;finir la mani&#232;re dont un nom
+est automatiquement g&#233;n&#233;r&#233; pour adapter les formats de nom &#224; diff&#233;rents param&#232;tres
+locaux et jeux de caract&#232;res. La syntaxe par d&#233;faut est la suivante
+(notez que les virgules et/ou les espaces inclus dans la d&#233;finition s'afficheront
+dans le format du nom) :</p><p><tt>en_us = {nomdonn&#233;} {initiales} {sn}</tt></p><p>Par exemple, si vous voulez afficher un nouveau format de nom pour
+un utilisateur (Utilisateur Un) avec un uid (11111) pour le jeu de
+caract&#232;res chinois, d&#233;finissez :</p><p><tt>zh = {sn}{nomdonn&#233;}({uid})</tt></p><p>L'affichage est le suivant :</p><p><tt>Utilisateur 11111</tt></p>
+<br/>
 
 </body>
 </html>

@@ -1,32 +1,61 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Vertrauensw&#252;rdige Partner: Ausw&#228;hlen von Partnertyp und -profil
+  <title>Vertrauensw&#252;rdige Partner: Ausw&#228;hlen von Partnertyp und -profil - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamlselecttrustedpartnertype"></A><h4>Vertrauensw&#252;rdige Partner: Ausw&#228;hlen von Partnertyp und -profil</h4>
-<A NAME="indexterm-89"></A><A NAME="indexterm-90"></A><p>Dieses Attribut legt alle vertrauensw&#252;rdigen Partner fest (Remote-Partner des Servers, auf dem Access Manager installiert ist), die mit Access Manager kommunizieren.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Es muss bereits eine Vertrauensstellung zwischen der Site des vertrauensw&#252;rdigen Partners und ein oder mehreren mit dem Attribut &#8220;Site-Bezeichner&#34; konfigurierten Sites bestehen.</p>
-<hr size="1" noshade></p><p>Bei der Konfiguration eines vertrauensw&#252;rdigen Partners bestimmen Sie zun&#228;chst die Rolle des Partners innerhalb der Vertrauensstellung. Ein vertrauensw&#252;rdiger Partner kann eine Quellsite (eine Site, die eine Single Sign-On-Assertion generiert) oder eine Zielsite (eine Site, die eine Single Sign-On-Assertion konsumiert) sein. Handelt es sich bei dem Partner um die Quellsite, dann wird dieses Attribut entsprechend der Methode konfiguriert, mit der der Partner Assertionen sendet. Ist der Partner hingegen die Zielsite, dann wird dieses Attribut entsprechend dem Profil konfiguriert, in dem der Partner Assertionen empf&#228;ngt. Der erste Teil der Konfiguration eines vertrauensw&#252;rdigen Partners umfasst die nachfolgend beschriebenen Schritte. Der Ausgangspunkt ist der Bildschirm &#8220;SAML&#34; unter &#8220;Verbindung&#34;.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Zum Bearbeiten oder Duplizieren der Attribute eines vertrauensw&#252;rdigen Partners klicken Sie in der Spalte &#8220;Aktionen&#34; neben dem Namen des konfigurierten vertrauensw&#252;rdigen Partners auf die entsprechende Schaltfl&#228;che.</p>
-<hr size="1" noshade></p><ol><li><p><b>W&#228;hlen Sie die Rolle (Ziel oder Quelle) der zu konfigurierenden Partnersite aus. W&#228;hlen Sie dazu die Profile aus, die zur Kommunikation mit der Site verwendet werden.</b></p><p>Zur Auswahl stehen <b>Webbrowser-Produktprofil</b> oder <b>Webbrowser-Ver&#246;ffentlichungsprofil</b> f&#252;r das Ziel, die Quelle oder beides sowie <b>SOAP-Anfrage</b> nur f&#252;r das Ziel. Ihre Auswahl bestimmt, welche Attribute Sie in den folgenden Schritten konfigurieren m&#252;ssen.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Klicken Sie auf &#8220;Bearbeiten&#34;, wenn Sie die Rolle der Partnersite eines bereits vorhandenen vertrauensw&#252;rdigen Partners &#228;ndern m&#246;chten.</p>
-<hr size="1" noshade></p></li>
-<li><p><b>Klicken Sie auf &#8220;Weiter&#34;.</b></p></li>
-<li><p><b>Informationen zum Abschlie&#223;en der Konfiguration finden Sie unter <A HREF="federation.fssamltrustedpartnersadd.html#federation.fssamltrustedpartnersadd">Vertrauensw&#252;rdige Partner: Konfigurieren von Attributen f&#252;r vertrauensw&#252;rdige Partner</A>.</b></p></li>
-</ol>
-<br />
+
+
+<a name="federation.fssamlselecttrustedpartnertype"></a><h5>Vertrauensw&#252;rdige Partner: Ausw&#228;hlen von Partnertyp und -profil</h5>
+<a name="indexterm-89"></a><a name="indexterm-90"></a><p>Dieses Attribut legt alle vertrauensw&#252;rdigen Partner fest (Remote-Partner des Servers, auf dem
+Access Manager installiert ist), die mit Access Manager kommunizieren.</p>
+<hr><p><b>Hinweis &#8211; </b>Es muss bereits eine Vertrauensstellung zwischen der Site des vertrauensw&#252;rdigen Partners und
+ein oder mehreren mit dem Attribut "Site-Bezeichner" konfigurierten Sites bestehen.</p>
+<hr>
+<p>Bei der Konfiguration eines vertrauensw&#252;rdigen Partners bestimmen Sie zun&#228;chst die Rolle des
+Partners innerhalb der Vertrauensstellung. Ein vertrauensw&#252;rdiger Partner kann eine Quellsite (eine Site,
+die eine Single Sign-On-Assertion generiert) oder eine Zielsite (eine Site, die eine
+Single Sign-On-Assertion konsumiert) sein. Handelt es sich bei dem Partner um die
+Quellsite, dann wird dieses Attribut entsprechend der Methode konfiguriert, mit der der
+Partner Assertionen sendet. Ist der Partner hingegen die Zielsite, dann wird dieses
+Attribut entsprechend dem Profil konfiguriert, in dem der Partner Assertionen empf&#228;ngt. Der
+erste Teil der Konfiguration eines vertrauensw&#252;rdigen Partners umfasst die nachfolgend beschriebenen Schritte.
+Der Ausgangspunkt ist der Bildschirm "SAML" unter "Verbindung".</p>
+<hr><p><b>Hinweis &#8211; </b>Zum Bearbeiten oder Duplizieren der Attribute eines vertrauensw&#252;rdigen Partners klicken Sie in
+der Spalte "Aktionen" neben dem Namen des konfigurierten vertrauensw&#252;rdigen Partners auf die
+entsprechende Schaltfl&#228;che.</p>
+<hr>
+<ol>
+<li><b>W&#228;hlen Sie die Rolle (Ziel oder Quelle) der zu konfigurierenden Partnersite aus.
+W&#228;hlen Sie dazu die Profile aus, die zur Kommunikation mit der Site
+verwendet werden.</b><p>Zur Auswahl stehen <b>Webbrowser-Produktprofil</b> oder <b>Webbrowser-Ver&#246;ffentlichungsprofil</b> f&#252;r das Ziel, die Quelle oder
+beides sowie <b>SOAP-Anfrage</b> nur f&#252;r das Ziel. Ihre Auswahl bestimmt, welche Attribute
+Sie in den folgenden Schritten konfigurieren m&#252;ssen.</p>
+<hr><p><b>Hinweis &#8211; </b>Klicken Sie auf "Bearbeiten", wenn Sie die Rolle der Partnersite eines bereits
+vorhandenen vertrauensw&#252;rdigen Partners &#228;ndern m&#246;chten.</p>
+<hr>
+</li>
+<li><b>Klicken Sie auf "Weiter".</b></li>
+<li><b>Informationen zum Abschlie&#223;en der Konfiguration finden Sie unter <a href="federation.fssamltrustedpartnersadd.html">Vertrauensw&#252;rdige Partner: Konfigurieren von Attributen f&#252;r vertrauensw&#252;rdige Partner</a>.</b></li></ol>
+<br/>
 
 </body>
 </html>

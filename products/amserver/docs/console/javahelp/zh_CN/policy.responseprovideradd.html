@@ -1,32 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>向策略添加响应提供者
+  <title>向策略添加响应提供者 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="policy.responseprovideradd"></A><h4>向策略添加响应提供者</h4>
-<ol><li><p><b><A NAME="indexterm-42"></A>如果已创建了策略，请单击要为其添加响应提供者的策略的名称。如果尚未创建策略，请参见<A HREF="policy.policynormaladd.html#policy.policynormaladd">创建新的常规策略</A>。</b></p></li>
-<li><p><b>在“响应提供者”列表中单击“新建”。</b></p></li>
-<li><p><b>请输入响应提供者的名称。</b></p></li>
-<li><p><b>定义以下值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>StaticAttribute</p></td><td valign="top"><p>这是属性值格式的静态属性，在存储于策略中的 <tt>IDResponseProvider</tt> 实例中进行定义。</p>
-</td></tr><tr><td valign="top"><p>DynamicAttribute</p></td><td valign="top"><p>应首先在相应领域的“策略配置服务”中定义此处所选择的响应属性。所定义的属性名称应为已配置数据存储库 (IDRepository) 中现有属性名称的子集。有关如何定义属性的详细信息，参见“策略配置”属性定义。要选择特定属性或多个属性，请按住 "Ctrl" 键并单击鼠标左键。</p>
-</td></tr></table>
+
+
+<a name="policy.responseprovideradd"></a><h5>向策略添加响应提供者</h5>
+<ol>
+<li><b><a name="indexterm-42"></a>如果已创建了策略，请单击要为其添加响应提供者的策略的名称。如果尚未创建策略，请参见<a href="policy.policynormaladd.html">创建新的常规策略</a>。</b></li>
+<li><b>在“响应提供者”列表中单击“新建”。</b></li>
+<li><b>请输入响应提供者的名称。</b></li>
+<li><b>定义以下值：</b><dl><dt>StaticAttribute</dt>
+<dd><p>这是属性值格式的静态属性，在存储于策略中的 <tt>IDResponseProvider</tt> 实例中进行定义。</p></dd>
+<dt>DynamicAttribute</dt>
+<dd><p>应首先在相应领域的<a href="ggdbu.html#ggdcj">策略配置服务</a>中定义此处所选择的响应属性。所定义的属性名称应为已配置数据存储库 (IDRepository) 中现有属性名称的子集。有关如何定义属性的详细信息，参见“策略配置”属性定义。要选择特定属性或多个属性，请按住 "Ctrl" 键并单击鼠标左键。</p></dd>
+</dl>
 </li>
-<li><p><b>单击&#8220;完成&#8221;。</b></p></li>
-<li><p><b>要从策略中删除响应提供者，请选择相应主题，然后单击&#8220;删除&#8221;。您可以通过单击响应提供者名称来编辑任何响应提供者的定义。</b></p></li>
-</ol>
-<br />
+<li><b>单击“完成”。</b></li>
+<li><b>要从策略中删除响应提供者，请选择相应主题，然后单击“删除”。您可以通过单击响应提供者名称来编辑任何响应提供者的定义。</b></li></ol>
+<br/>
 
 </body>
 </html>

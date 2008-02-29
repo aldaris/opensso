@@ -1,171 +1,271 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Core
+  <title>Core - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamauthservice"></A><h3>Core</h3>
-<p><A NAME="indexterm-178"></A>Dieses Modul ist die allgemeine Konfigurationsbasis f&#252;r die Authentifizierungsdienste von Access Manager. Es muss f&#252;r die einzelnen Authentifizierungsmodulinstanzen registriert und konfiguriert sein. In diesem Modul legt der Administrator Standardwerte fest, die von denjenigen Attributen &#252;bernommen werden, die nicht explizit in den Standard-Authentifizierungsmodulen angegeben sind. Bei den Kern-Attributen handelt es sich sowohl um globale als auch um Bereichsattribute. Es existieren folgende Attribute:</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnje">PAM-Klassen (Pluggable Authentification Module)</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjc">Unterst&#252;tzte Authentifizierungsmodule f&#252;r Clients</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnir">LDAP-Verbindung Pool-Gr&#246;&#223;e</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkh">LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkq">Benutzerprofil</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnks">Administrator-Authentifizierungskonfiguration</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjw">Standardrollen f&#252;r dynamisches Erstellen von Benutzerprofilen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjn">Modus f&#252;r persistentes Cookie</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnke">Maximaler Zeitraum f&#252;r persistentes Cookie</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnlc">Attributname f&#252;r Aliassuche</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkt">Standard-Authentifizierungs-L&#228;ndereinstellung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjj">Konfiguration der Organisationsauthentifizierung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkl">Anmeldefehler Sperrmodus</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjz">Anmeldefehler Sperrz&#228;hlung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnko">Anmeldefehler Sperrintervall</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkd">E-Mail-Adresse f&#252;r das Versenden der Sperrbenachrichtigung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkr">Benutzer nach n Fehlern warnen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkc">Anmeldefehler Sperrdauer</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjy">Sperrattributname</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnle">Sperrattributwert</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkz">Standard-URL f&#252;r erfolgreiche Anmeldung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnlf">Standard-URL f&#252;r erfolglose Anmeldung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnlb">Nachverarbeitungs-Authentifizierungsklasse</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjl">Modus f&#252;r UserID-Erzeugung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjq">Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnki">Identit&#228;tstypen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnlh">Ersetzbare Benutzerstatus-Ereignisklassen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjv">Ung&#252;ltige Versuche im Data Store speichern</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnjo">Modulbasierte Authentifizierung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Standard-Authentifizierungsebene</A></p>
-</li>
-</ul>
-<A NAME="gcnje"></A><h4>PAM-Klassen (Pluggable Authentification Module)</h4>
-<p>Gibt die Java-Klassen der Authentifizierungsmodule an, die f&#252;r alle innerhalb der Access Manager-Plattform konfigurierten Bereiche zur Verf&#252;gung stehen. Mit der AMLoginModule-SPI oder der JAAS LoginModule-SPI k&#246;nnen Sie eigene Authentifizierungsmodule entwickeln. Weitere Informationen hierzu finden Sie im Access Manager Developer's Guide. Zur Definition neuer Authentifizierungsdienste m&#252;ssen Sie in dieses Feld den vollst&#228;ndigen Klassennamen (einschlie&#223;lich des Paketnamens) des neuen Dienstes eingegeben.</p>
-<A NAME="gcnjc"></A><h4>Unterst&#252;tzte Authentifizierungsmodule f&#252;r Clients</h4>
-<p>Legt eine Liste der unterst&#252;tzten Authentifizierungsmodule f&#252;r einen bestimmten Client fest. Das Attribut hat folgendes Format:</p>
-<p><tt>clientType | module1,module2,module3</tt></p>
-<p>Dieses Attribut ist nur aktiv, wenn &#8220;Client-Erkennung&#34; aktiviert ist.</p>
-<A NAME="gcnir"></A><h4>LDAP-Verbindung Pool-Gr&#246;&#223;e</h4>
-<p>Gibt den Minimal- und Maximalwert des Verbindungspools an, der f&#252;r einen bestimmten LDAP-Server und -Anschluss verwendet werden soll. Dieses Attribut wird nur f&#252;r LDAP- und Mitgliedschafts-Authentifizierungsdienste verwendet. Das Attribut hat folgendes Format:</p>
-<p><tt>host:port:min:max</tt></p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Dieser Verbindungspool ist nicht identisch mit dem &#252;ber <tt>serverconfig.xml</tt> konfigurierten SDK-Verbindungspool.</p>
-<hr size="1" noshade></p><A NAME="gcnkh"></A><h4>LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e</h4>
-<p>Gibt den Standard-Minimal- und -Maximalwert des Verbindungspools an, der f&#252;r alle Konfigurationen von LDAP-Authentifizierungsmodulen verwendet werden soll. Wenn im Attribut &#8220;LDAP-Verbindung Pool-Gr&#246;&#223;e&#34; ein Eintrag f&#252;r Host und Port vorhanden ist, werden nicht die Einstellungen f&#252;r Minimum und Maximum aus &#8220;LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e&#34; &#252;bernommen.</p>
-<A NAME="gcnkq"></A><h4>Benutzerprofil</h4>
-<p>Hiermit legen Sie die Optionen f&#252;r ein Benutzerprofil fest. Folgende Optionen stehen zur Auswahl:</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p><b>Erforderlich</b></p></td><td valign="top"><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers im lokalen Directory Server von Access Manager ein entsprechendes Benutzerprofil vorhanden sein muss, damit der Authentifizierungsdienst ein SSO-Token ausstellen kann.</p>
-</td></tr><tr><td valign="top"><p><b>Dynamisch</b></p></td><td valign="top"><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst erstellt wird, sofern noch keines vorhanden ist. Das SSO-Token wird anschlie&#223;end ausgestellt. Das Benutzerprofil wird im lokalen Directory Server von Access Manager erstellt.</p>
-</td></tr><tr><td valign="top"><p><b>Dynamisch mit Benutzer-Alias</b></p></td><td valign="top"><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst unter Verwendung des Attributs &#8220;Benutzer-Alias-Liste&#34; erstellt wird. </p>
-</td></tr><tr><td valign="top"><p><b>Ignorieren</b></p></td><td valign="top"><p>Diese Option legt fest, dass f&#252;r die erfolgreiche Authentifizierung und die Ausstellung eines SSO-Tokens durch den Authentifizierungsdienst kein Benutzerprofil ben&#246;tigt wird.</p>
-</td></tr></table>
-<A NAME="gcnks"></A><h4>Administrator-Authentifizierungskonfiguration</h4>
-<p>Legt den Authentifizierungsdienst f&#252;r Administratoren fest. Dieses Attribut kann verwendet werden, wenn f&#252;r Administratoren ein anderes Authentifizierungsmodul verwendet werden soll als f&#252;r Endbenutzer. Die in diesem Attribut konfigurierten Module werden beim Zugriff auf die Access Manager-Konsole &#252;bernommen. Beispiel:</p>
-<p><tt><b>http://</tt><i>servername.port/console_deploy_uri<tt></i></b></tt></p>
-<A NAME="gcnjw"></A><h4>Standardrollen f&#252;r dynamisches Erstellen von Benutzerprofilen</h4>
-<p>Dieses Feld gibt an, welche Rollen einem neuen Benutzer bei der Profilerstellung zugewiesen werden, wenn im Benutzerprofil die Option &#8220;Dynamische Erstellung&#34; gew&#228;hlt wurde. Es gibt keinen Standardwert. Der Administrator muss die DNs der Rollen angeben, die selbst-registrierten Benutzer zugewiesen werden sollen. 	</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Die angegebene Rolle muss unter dem Bereich liegen, f&#252;r den die Authentifizierung konfiguriert wird. Diese Rolle kann eine Access Manager- oder LDAP-Rolle, jedoch keine gefilterte Rolle sein.</p>
-<p>	 Wenn dem Benutzer automatisch bestimmte Dienste zugewiesen werden sollen, m&#252;ssen Sie im Benutzerprofil das Attribut &#8220;Erforderliche Dienste&#34; konfigurieren.</p>
-<hr size="1" noshade></p><A NAME="gcnjn"></A><h4>Modus f&#252;r persistentes Cookie</h4>
-<p>Legt fest, ob Benutzer nach einem Browser-Neustart zu einer bereits authentifizierten Sitzung zur&#252;ckkehren k&#246;nnen. Wenn die Option &#8220;Modus f&#252;r persistentes Cookie aktivieren&#34; aktiviert ist, bleiben Benutzersitzungen erhalten. Konkret bewirkt das Aktivieren der Option &#8220;Modus f&#252;r persistentes Cookie aktivieren&#34;, dass die Benutzersitzung erst dann abl&#228;uft, wenn das zugeh&#246;rige persistente Cookie ung&#252;ltig wird oder der Benutzer sich explizit abmeldet. Die Ablaufzeit ist unter &#8220;Maximaler Zeitraum f&#252;r persistentes Cookie&#34; festgelegt. In der Standardeinstellung ist der &#8220;Modus f&#252;r persistentes Cookie&#34; deaktiviert und der Authentifizierungsdienst verwendet nur die im Speicher abgelegten Cookies.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Ein persistentes Cookie muss vom Client unter Verwendung des Parameters <i>iPSPCookie=yes</i>  im Anmelde-URL explizit angefordert werden.</p>
-<hr size="1" noshade></p><A NAME="gcnke"></A><h4>Maximaler Zeitraum f&#252;r persistentes Cookie</h4>
-<p>Gibt an, nach wie vielen Sekunden ein persistentes Cookie abl&#228;uft. Der angegebene Zeitraum beginnt, sobald die Authentifizierung der Benutzersitzung erfolgreich abgeschlossen wurde. Der Maximalwert betr&#228;gt 2147483647 (Sekunden). In diesem Feld ist jede ganze Zahl unter dem Maximalwert zul&#228;ssig.</p>
-<A NAME="gcnlc"></A><h4>Attributname f&#252;r Aliassuche</h4>
-<p>Nach der erfolgreichen Authentifizierung eines Benutzers wird sein Profil abgerufen. In diesem Feld wird ein zweites LDAP-Attribut angegeben, das f&#252;r die Suche nach einem &#252;bereinstimmenden Benutzerprofil verwendet wird, wenn die Suche unter Verwendung des ersten LDAP-Attributs nicht erfolgreich ist. 	 Dieses Attribut wird in erster Linie verwendet, wenn die vom Authentifizierungsmodul ermittelte Benutzerkennung nicht mit der unter Benutzer-Namensattribut angegebenen Kennung &#252;bereinstimmt. Beispiel: Der RADIUS-Server gibt den Wert <tt>abc1234</tt>  zur&#252;ck, der Benutzername lautet jedoch <tt> abc</tt>. F&#252;r dieses Attribut gibt es keinen Standardwert.</p>
-<p>In diesem Feld ist jedes g&#252;ltige LDAP-Attribut zul&#228;ssig (beispielsweise &#8220;cn&#34;).</p>
-<A NAME="gcnkt"></A><h4>Standard-Authentifizierungs-L&#228;ndereinstellung</h4>
-<p>Gibt an, welchen Sprachenuntertyp der Authentifizierungsdienst standardm&#228;&#223;ig verwendet. Der Standardwert ist en_US. Eine Liste der g&#252;ltigen Sprachen finden Sie unter  <A HREF="supportedlang.html#supportedlang">Unterst&#252;tzte Sprach- bzw. L&#228;ndereinstellungen</A>. 	</p>
-<p>Um eine andere L&#228;ndereinstellung verwenden zu k&#246;nnen, m&#252;ssen zun&#228;chst alle Authentifizierungsvorlagen f&#252;r die betreffende L&#228;ndereinstellung erstellt werden. Anschlie&#223;end muss ein neues Verzeichnis f&#252;r diese Vorlagen angelegt werden. Weitere Informationen finden Sie im Administration Guide unter &#8220;Login URL Parameters&#34;.</p>
-<A NAME="gcnjj"></A><h4>Konfiguration der Organisationsauthentifizierung</h4>
-<p>Legt das Authentifizierungsmodul der Organisation fest. Standardm&#228;&#223;ig wird das Authentifizierungsmodul LDAP verwendet.</p>
-<A NAME="gcnkl"></A><h4>Anmeldefehler Sperrmodus</h4>
-<p>Legt fest, ob ein Benutzer einen zweiten Authentifizierungsversuch erh&#228;lt, sollte der erste Versuch fehlschlagen. Mit diesem Attribut aktivieren Sie einen Sperrmodus, der dem Benutzer nur einen Authentifizierungsversuch einr&#228;umt. Der Sperrmodus ist standardm&#228;&#223;ig deaktiviert. Dieses Attribut wird in Kombination mit anderen Sperr- und Benachrichtigungsattributen verwendet.</p>
-<A NAME="gcnjz"></A><h4>Anmeldefehler Sperrz&#228;hlung</h4>
-<p>Legt die Anzahl der Authentifizierungsversuche fest, die dem Benutzer innerhalb des im Attribut Anmeldefehler Sperrintervall festgelegten Zeitraums einger&#228;umt werden, bevor der Benutzer gesperrt wird.</p>
-<A NAME="gcnko"></A><h4>Anmeldefehler Sperrintervall</h4>
-<p>Legt die Zeit fest, innerhalb der der Sperrz&#228;hler heraufgesetzt wird, wenn zwei aufeinanderfolgende Anmeldeversuche fehlschlagen. Wenn eine Anmeldung fehlschl&#228;gt und innerhalb des Sperrintervalls ein weiterer fehlgeschlagener Anmeldeversuch erfolgt, wird der Sperrz&#228;hler heraufgesetzt. Erfolgt innerhalb des Intervalls kein weiterer fehlgeschlagener Anmeldeversuch, wird der Sperrz&#228;hler zur&#252;ckgesetzt.</p>
-<A NAME="gcnkd"></A><h4>E-Mail-Adresse f&#252;r das Versenden der Sperrbenachrichtigung</h4>
-<p>Gibt die E-Mail-Adresse an, an die eine Nachricht gesendet wird, wenn ein Benutzer gesperrt wird. Mehrere Adressen, an die Nachrichten gesendet werden sollen, m&#252;ssen durch Leerzeichen getrennt werden. Bei einer nicht englischen L&#228;ndereinstellung gilt folgendes Format:</p>
-<p><tt>email_address|locale|charset</tt> </p>
-<A NAME="gcnkr"></A><h4>Benutzer nach n Fehlern warnen</h4>
-<p>Legt die Anzahl der fehlgeschlagenen Authentifizierungsversuche fest, nach denen Access Manager den Benutzer warnt, dass er gesperrt wird.</p>
-<A NAME="gcnkc"></A><h4>Anmeldefehler Sperrdauer</h4>
-<p>Aktiviert die Arbeitsspeichersperre. Standardm&#228;&#223;ig deaktiviert der Sperrmechanismus nach einem fehlgeschlagenen Anmeldeversuch das unter <i>Sperrattributname</i> angegebene Benutzerprofil. Wenn der Wert von &#8220;Anmeldefehler Sperrdauer&#34; gr&#246;&#223;er als 0 ist, werden die Arbeitsspeichersperre und das Benutzerkonto f&#252;r die angegebene Dauer (in Minuten) gesperrt.</p>
-<A NAME="gcnjy"></A><h4>Sperrattributname</h4>
-<p>Legt ein beliebiges LDAP-Attribut fest, das f&#252;r die Sperre eingerichtet werden soll. Um die Sperre f&#252;r diesen Attributnamen zu erm&#246;glichen, muss auch der Wert des Attributs Sperrattributwert ge&#228;ndert werden. Standardm&#228;&#223;ig ist das Attribut &#8220;Sperrattributname&#34; auf der Access Manager-Konsole leer. Die Standard-Implementierungswerte sind <i>inetuserstatus</i>  (LDAP-Attribut) und <i>Inaktiv</i>, wenn der Benutzer gesperrt ist und &#8220;Anmeldefehler Sperrdauer&#34; auf 0 gesetzt ist.</p>
-<A NAME="gcnle"></A><h4>Sperrattributwert</h4>
-<p>Legt fest, ob die Sperre f&#252;r das in &#8220;Sperrattributname&#34; angegebene Attribut aktiviert oder deaktiviert ist. Standardm&#228;&#223;ig ist dieses Attribut f&#252;r <i>inetuserstatus</i> deaktiviert.</p>
-<A NAME="gcnkz"></A><h4>Standard-URL f&#252;r erfolgreiche Anmeldung</h4>
-<p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer erfolgreichen Authentifizierung umgeleitet wird. Das Format dieses Attributs lautet <tt>clientType|URL</tt>. Sie k&#246;nnen auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt. 	Der Standardwert lautet <i>/amserver/console </i> .</p>
-<A NAME="gcnlf"></A><h4>Standard-URL f&#252;r erfolglose Anmeldung</h4>
-<p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer fehlgeschlagenen Authentifizierung umgeleitet wird. Das Format dieses Attributs lautet <tt>clientType|URL</tt>. Sie k&#246;nnen auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt.</p>
-<A NAME="gcnlb"></A><h4>Nachverarbeitungs-Authentifizierungsklasse</h4>
-<p>Gibt den Namen der Java-Klasse an, die zur Anpassung der Nachverarbeitungsvorg&#228;nge nach einer erfolgreichen oder fehlgeschlagenen Anmeldung verwendet wird. Beispiel:</p>
-<p><tt>com.abc.authentication.</tt><tt>PostProcessClass </tt> </p>
-<p>Die Java-Klasse muss folgende Java-Schnittstelle implementieren:</p>
-<p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface </tt></p>
-<p>Au&#223;erdem m&#252;ssen Sie im Java Classpath-Attribut des Web Servers den Pfad der Klasse angeben.</p>
-<A NAME="gcnjl"></A><h4>Modus f&#252;r UserID-Erzeugung</h4>
-<p>Dieses Attribut wird vom Mitgliedschafts-Authentifizierungsmodul verwendet. Wenn dieses Attributfeld aktiviert ist, kann das Mitgliedschaftsmodul f&#252;r Benutzer, die sich selbst registrieren, neue Benutzer-IDs generieren, falls deren Benutzer-IDs bereits vorhanden sind. Die Benutzer-IDs werden mit der im Attribut Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen angegebenen Java-Klasse generiert.</p>
-<A NAME="gcnjq"></A><h4>Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen</h4>
-<p>Gibt den Namen der Java-Klasse an, die f&#252;r die Generierung von Benutzer-IDs verwendet wird, wenn Generierung des UserID-Modus aktivieren aktiviert ist.</p>
-<A NAME="gcnki"></A><h4>Identit&#228;tstypen</h4>
-<p>Gibt den bzw. die Identit&#228;tstypen an, nach denen Access Manager sucht.</p>
-<A NAME="gcnlh"></A><h4>Ersetzbare Benutzerstatus-Ereignisklassen</h4>
-<p>Erweitert die Authentifizierungs-SPIs um einen R&#252;ckruf-Mechanismus f&#252;r Benutzerstatus&#228;nderungen w&#228;hrend der Authentifizierung. Folgende Status&#228;nderungen werden unterst&#252;tzt:</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p><tt>account lockout</tt></p></td><td valign="top"><p>Das Kontosperre-Ereignis ist f&#252;r alle Authentifizierungsmodule verf&#252;gbar. Die Funktion wird &#252;ber das Attribut <A HREF="service.scserviceprofile.iplanetamauthservice.html#gcnkl">Anmeldefehler Sperrmodus</A> konfiguriert.</p>
-</td></tr><tr><td valign="top"><p><tt>password change</tt></p></td><td valign="top"><p>Dieses Ereignis ist nur f&#252;r den LDAP-Authentifizierungsmodultyp verf&#252;gbar, da eine Passwort&#228;nderung nur von diesem Modul unterst&#252;tzt wird.</p>
-</td></tr></table>
-<A NAME="gcnjv"></A><h4>Ung&#252;ltige Versuche im Data Store speichern</h4>
-<p>Wenn dieses Attribut aktiviert ist, ist die gemeinsame Nutzung fehlgeschlagener Anmeldeversuche in einem Identit&#228;ts-Repository m&#246;glich, das von mehreren Access Manager-Objekten gemeinsam genutzt wird. Wenn beispielsweise Directory Server als Identit&#228;ts-Repository f&#252;r eine bestimmte Bereitstellung verwendet wird, werden die ung&#252;ltigen Versuche in  <tt>sunAMAuthInvalidAttemptsData</tt> gespeichert (geh&#246;rt zur Objektklasse <tt>sunAMAuthAccountLockout</tt>). Das Format der Daten wird gespeichert als:</p>
-<p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword> </tt></p>
-<p>Diese Informationen werden f&#252;r jeden Benutzer im Directory Server aufrechterhalten. Beim Auftreten ung&#252;ltiger Versuche wird <tt>&#60;InvalidCount></tt> jeweils erh&#246;ht.</p>
-<A NAME="gcnjo"></A><h4>Modulbasierte Authentifizierung</h4>
-<p>Wenn dieses Attribut aktiviert ist, k&#246;nnen sich die Benutzer &#252;ber modulbasierte Authentifizierung anmelden. Wenn dieses Attribut nicht aktiviert ist, ist modulbasierte Anmeldung nicht zul&#228;ssig. S&#228;mtliche Anmeldeversuche mit <tt>module=&#60; </tt><i> module_instance_name<tt></i>></tt> schlagen fehl.</p>
-<A NAME="fwbfn"></A><h4>Standard-Authentifizierungsebene</h4>
-<p>Mit dem Wert f&#252;r die Authentifizierungsebene wird angegeben, wie stark einer Authentifizierung vertraut wird. Sobald ein Benutzer authentifiziert wurde, wird der Wert im SSO-Token der aktuellen Sitzung gespeichert. Wird das SSO-Token einer Anwendung vorgelegt, auf die der Benutzer zugreifen m&#246;chte, kann die Anwendung anhand des gespeicherten Werts bestimmen, ob die Authentifizierungsebene ausreicht, um dem Benutzer Zugriff zu gew&#228;hren. Wenn die im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Mindestwert aufweist, wird der Benutzer aufgefordert, sich erneut &#252;ber einen Dienst mit einer h&#246;heren Authentifizierungsebene zu authentifizieren.</p>
-<p>Die Authentifizierungsebene sollte in der Authentifizierungsvorlage des jeweiligen Bereichs festgelegt sein. Der im Attribut &#8220;Standard-Authentifizierungsebene&#34; eingegebene Wert wird nur verwendet, wenn im Feld &#8220;Authentifizierungsebene&#34; der Authentifizierungsvorlage eines Bereichs kein Wert angegeben wurde. Der Standardwert von &#8220;Standard-Authentifizierungsebene&#34; ist 0. (Der Wert dieses Attributs wird von Access Manager nicht verwendet, steht jedoch f&#252;r externe Anwendungen zur Verf&#252;gung, sofern diese den Wert ben&#246;tigen.)</p>
 
-<br />
+
+<a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Core</h4>
+<p><a name="indexterm-178"></a>Dieses Modul ist die allgemeine Konfigurationsbasis f&#252;r die Authentifizierungsdienste von Federated Access
+Manager. Es muss f&#252;r die einzelnen Authentifizierungsmodulinstanzen registriert und konfiguriert sein. In
+diesem Modul legt der Administrator Standardwerte fest, die f&#252;r Werte &#252;bernommen werden,
+welche nicht explizit in den Standard-Authentifizierungsmodulen von Federated Access Manager angegeben sind.
+Bei den Kern-Attributen handelt es sich sowohl um globale als auch um
+Bereichsattribute. Es existieren folgende Attribute:</p>
+<ul><li><p><a href="#gcnje">PAM-Klassen (Pluggable Authentification Module)</a></p></li>
+<li><p><a href="#gcnjc">Unterst&#252;tzte Authentifizierungsmodule f&#252;r Clients</a></p></li>
+<li><p><a href="#gcnir">LDAP-Verbindung Pool-Gr&#246;&#223;e</a></p></li>
+<li><p><a href="#gcnkh">LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e</a></p></li>
+<li><p><a href="#gcnkq">Benutzerprofil</a></p></li>
+<li><p><a href="#gcnks">Administrator-Authentifizierungskonfiguration</a></p></li>
+<li><p><a href="#gcnjw">Standardrollen f&#252;r dynamisches Erstellen von Benutzerprofilen</a></p></li>
+<li><p><a href="#gcnjn">Modus f&#252;r persistentes Cookie</a></p></li>
+<li><p><a href="#gcnke">Maximaler Zeitraum f&#252;r persistentes Cookie</a></p></li>
+<li><p><a href="#gcnlc">Attributname f&#252;r Aliassuche</a></p></li>
+<li><p><a href="#gcnkt">Standard-Authentifizierungs-L&#228;ndereinstellung</a></p></li>
+<li><p><a href="#gcnjj">Konfiguration der Organisationsauthentifizierung</a></p></li>
+<li><p><a href="#gcnkl">Anmeldefehler Sperrmodus</a></p></li>
+<li><p><a href="#gcnjz">Anmeldefehler Sperrz&#228;hlung</a></p></li>
+<li><p><a href="#gcnko">Anmeldefehler Sperrintervall</a></p></li>
+<li><p><a href="#gcnkd">E-Mail-Adresse f&#252;r das Versenden der Sperrbenachrichtigung</a></p></li>
+<li><p><a href="#gcnkr">Benutzer nach n Fehlern warnen</a></p></li>
+<li><p><a href="#gcnkc">Anmeldefehler Sperrdauer</a></p></li>
+<li><p><a href="#gcnjy">Sperrattributname</a></p></li>
+<li><p><a href="#gcnle">Sperrattributwert</a></p></li>
+<li><p><a href="#gcnkz">Standard-URL f&#252;r erfolgreiche Anmeldung</a></p></li>
+<li><p><a href="#gcnlf">Standard-URL f&#252;r erfolglose Anmeldung</a></p></li>
+<li><p><a href="#gcnlb">Nachverarbeitungs-Authentifizierungsklasse</a></p></li>
+<li><p><a href="#gcnjl">Modus f&#252;r UserID-Erzeugung</a></p></li>
+<li><p><a href="#gcnjq">Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen</a></p></li>
+<li><p><a href="#gcnki">Identit&#228;tstypen</a></p></li>
+<li><p><a href="#gcnlh">Ersetzbare Benutzerstatus-Ereignisklassen</a></p></li>
+<li><p><a href="#gcnjv">Ung&#252;ltige Versuche im Data Store speichern</a></p></li>
+<li><p><a href="#gcnjo">Modulbasierte Authentifizierung</a></p></li>
+<li><p><a href="#fwbfn">Standard-Authentifizierungsebene</a></p></li></ul>
+
+
+<a name="gcnje"></a><h5>PAM-Klassen (Pluggable Authentification Module)</h5>
+<p>Gibt die Java-Klassen der Authentifizierungsmodule an, die f&#252;r alle innerhalb der Federated
+Access Manager-Plattform konfigurierten Bereiche zur Verf&#252;gung stehen. Mit der AMLoginModule-SPI oder der
+JAAS LoginModule-SPI k&#246;nnen Sie eigene Authentifizierungsmodule entwickeln. Weitere Informationen hierzu finden Sie
+im Federated Access Manager Developer's Guide. Zur Definition neuer Authentifizierungsdienste m&#252;ssen Sie
+in dieses Feld den vollst&#228;ndigen Klassennamen (einschlie&#223;lich des Paketnamens) des neuen Dienstes
+eingegeben.</p>
+
+<a name="gcnjc"></a><h5>Unterst&#252;tzte Authentifizierungsmodule f&#252;r Clients</h5>
+<p>Legt eine Liste der unterst&#252;tzten Authentifizierungsmodule f&#252;r einen bestimmten Client fest. Das
+Attribut hat folgendes Format:</p><p><tt>clientType | module1,module2,module3</tt></p><p>Dieses Attribut ist nur aktiv, wenn ";Client-Erkennung" aktiviert ist.</p>
+
+<a name="gcnir"></a><h5>LDAP-Verbindung Pool-Gr&#246;&#223;e</h5>
+<p>Gibt den Minimal- und Maximalwert des Verbindungspools an, der f&#252;r einen bestimmten
+LDAP-Server und -Anschluss verwendet werden soll. Dieses Attribut wird nur f&#252;r LDAP-
+und Mitgliedschafts-Authentifizierungsdienste verwendet. Das Attribut hat folgendes Format:</p><p><tt>host:port:min:max</tt></p>
+<hr><p><b>Hinweis &#8211; </b>Dieser Verbindungspool ist nicht identisch mit dem &#252;ber <tt>serverconfig.xml</tt> konfigurierten SDK-Verbindungspool.</p>
+<hr>
+
+
+<a name="gcnkh"></a><h5>LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e</h5>
+<p>Gibt den Standard-Minimal- und -Maximalwert des Verbindungspools an, der f&#252;r alle Konfigurationen
+von LDAP-Authentifizierungsmodulen verwendet werden soll. Wenn im Attribut ";LDAP-Verbindung Pool-Gr&#246;&#223;e" ein Eintrag
+f&#252;r Host und Port vorhanden ist, werden nicht die Einstellungen f&#252;r Minimum
+und Maximum aus "LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e" &#252;bernommen.</p>
+
+<a name="gcnkq"></a><h5>Benutzerprofil</h5>
+<p>Hiermit legen Sie die Optionen f&#252;r ein Benutzerprofil fest. Es stehen folgende
+Optionen zur Verf&#252;gung:</p><dl><dt><b>Erforderlich</b></dt>
+<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers im lokalen Directory Server von Federated Access Manager ein entsprechendes Benutzerprofil vorhanden sein muss, damit der Authentifizierungsdienst ein SSO-Token ausstellen kann.</p></dd>
+<dt><b>Dynamisch</b></dt>
+<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst erstellt wird, sofern noch keines vorhanden ist. Das SSO-Token wird anschlie&#223;end ausgestellt. Das Benutzerprofil wird im lokalen Directory Server von Federated Access Manager erstellt.</p></dd>
+<dt><b>Dynamisch mit Benutzer-Alias</b></dt>
+<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst unter Verwendung des Attributs ";Benutzer-Alias-Liste" erstellt wird. </p></dd>
+<dt><b>Ignorieren</b></dt>
+<dd><p>Diese Option legt fest, dass f&#252;r die erfolgreiche Authentifizierung und die Ausstellung eines SSO-Tokens durch den Authentifizierungsdienst kein Benutzerprofil ben&#246;tigt wird.</p></dd>
+</dl>
+
+
+<a name="gcnks"></a><h5>Administrator-Authentifizierungskonfiguration</h5>
+<p>Legt den Authentifizierungsdienst f&#252;r Administratoren fest. Dieses Attribut kann verwendet werden, wenn
+f&#252;r Administratoren ein anderes Authentifizierungsmodul verwendet werden soll als f&#252;r Endbenutzer. Die
+in diesem Attribut konfigurierten Module werden beim Zugriff auf die Federated Access
+Manager-Konsole &#252;bernommen. Beispiel:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
+
+<a name="gcnjw"></a><h5>Standardrollen f&#252;r dynamisches Erstellen von Benutzerprofilen</h5>
+<p>Dieses Feld gibt an, welche Rollen einem neuen Benutzer bei der Profilerstellung
+zugewiesen werden, wenn im Benutzerprofil die Option ";Dynamische Erstellung" gew&#228;hlt wurde. Es
+gibt keinen Standardwert. Der Administrator muss die DNs der Rollen angeben, die
+selbst-registrierten Benutzer zugewiesen werden sollen.  </p>
+<hr><p><b>Hinweis &#8211; </b>Die angegebene Rolle muss unter dem Bereich liegen, f&#252;r den die Authentifizierung
+konfiguriert wird. Diese Rolle kann eine Federated Access Manager- oder LDAP-Rolle, jedoch
+keine gefilterte Rolle sein.</p><p> Wenn dem Benutzer automatisch bestimmte Dienste zugewiesen werden sollen, m&#252;ssen Sie im
+Benutzerprofil das Attribut ";Erforderliche Dienste" konfigurieren.</p>
+<hr>
+
+
+<a name="gcnjn"></a><h5>Modus f&#252;r persistentes Cookie</h5>
+<p>Legt fest, ob Benutzer nach einem Browser-Neustart zu einer bereits authentifizierten Sitzung
+zur&#252;ckkehren k&#246;nnen. Wenn die Option ";Modus f&#252;r persistentes Cookie aktivieren" aktiviert ist,
+bleiben Benutzersitzungen erhalten. Konkret bewirkt das Aktivieren der Option ";Modus f&#252;r persistentes
+Cookie aktivieren", dass die Benutzersitzung erst dann abl&#228;uft, wenn das zugeh&#246;rige persistente
+Cookie ung&#252;ltig wird oder der Benutzer sich explizit abmeldet. Die Ablaufzeit ist
+unter ";Maximaler Zeitraum f&#252;r persistentes Cookie" festgelegt. In der Standardeinstellung ist der
+";Modus f&#252;r persistentes Cookie" deaktiviert und der Authentifizierungsdienst verwendet nur die im
+Speicher abgelegten Cookies.</p>
+<hr><p><b>Hinweis &#8211; </b>Ein persistentes Cookie muss vom Client unter Verwendung des Parameters <i>iPSPCookie=yes</i> 
+im Anmelde-URL explizit angefordert werden.</p>
+<hr>
+
+
+<a name="gcnke"></a><h5>Maximaler Zeitraum f&#252;r persistentes Cookie</h5>
+<p>Gibt an, nach wie vielen Sekunden ein persistentes Cookie abl&#228;uft. Der angegebene
+Zeitraum beginnt, sobald die Authentifizierung der Benutzersitzung erfolgreich abgeschlossen wurde. Der Maximalwert
+betr&#228;gt 2147483647 (Sekunden). In diesem Feld ist jede ganze Zahl unter dem
+Maximalwert zul&#228;ssig.</p>
+
+<a name="gcnlc"></a><h5>Attributname f&#252;r Aliassuche</h5>
+<p>Nach der erfolgreichen Authentifizierung eines Benutzers wird sein Profil abgerufen. In diesem
+Feld wird ein zweites LDAP-Attribut angegeben, das f&#252;r die Suche nach einem
+&#252;bereinstimmenden Benutzerprofil verwendet wird, wenn die Suche unter Verwendung des ersten LDAP-Attributs
+nicht erfolgreich ist.  Dieses Attribut wird in erster Linie verwendet, wenn die
+vom Authentifizierungsmodul ermittelte Benutzerkennung nicht mit der unter Benutzer-Namensattribut angegebenen Kennung &#252;bereinstimmt.
+Beispiel: Der RADIUS-Server gibt den Wert <tt>abc1234</tt>  zur&#252;ck, der Benutzername lautet
+jedoch <tt> abc</tt>. F&#252;r dieses Attribut gibt es keinen Standardwert.</p><p>In diesem Feld ist jedes g&#252;ltige LDAP-Attribut zul&#228;ssig (beispielsweise ";cn").</p>
+
+<a name="gcnkt"></a><h5>Standard-Authentifizierungs-L&#228;ndereinstellung</h5>
+<p>Gibt an, welchen Sprachenuntertyp der Authentifizierungsdienst standardm&#228;&#223;ig verwendet. Der Standardwert ist en_US.
+Eine Liste der g&#252;ltigen Sprachen finden Sie unter  <a href="supportedlang.html">Unterst&#252;tzte Sprach- bzw. L&#228;ndereinstellungen</a>.  </p><p>Um eine andere L&#228;ndereinstellung verwenden zu k&#246;nnen, m&#252;ssen zun&#228;chst alle Authentifizierungsvorlagen f&#252;r
+die betreffende L&#228;ndereinstellung erstellt werden. Anschlie&#223;end muss ein neues Verzeichnis f&#252;r diese
+Vorlagen angelegt werden. Weitere Informationen finden Sie im Administration Guide unter ";Login
+URL Parameters".</p>
+
+<a name="gcnjj"></a><h5>Konfiguration der Organisationsauthentifizierung</h5>
+<p>Legt das Authentifizierungsmodul der Organisation fest. Standardm&#228;&#223;ig wird das Authentifizierungsmodul LDAP verwendet.</p>
+
+<a name="gcnkl"></a><h5>Anmeldefehler Sperrmodus</h5>
+<p>Legt fest, ob ein Benutzer einen zweiten Authentifizierungsversuch erh&#228;lt, sollte der erste
+Versuch fehlschlagen. Mit diesem Attribut aktivieren Sie einen Sperrmodus, der dem Benutzer
+nur einen Authentifizierungsversuch einr&#228;umt. Der Sperrmodus ist standardm&#228;&#223;ig deaktiviert. Dieses Attribut wird
+in Kombination mit anderen Sperr- und Benachrichtigungsattributen verwendet.</p>
+
+<a name="gcnjz"></a><h5>Anmeldefehler Sperrz&#228;hlung</h5>
+<p>Legt die Anzahl der Authentifizierungsversuche fest, die dem Benutzer innerhalb des im
+Attribut Anmeldefehler Sperrintervall festgelegten Zeitraums einger&#228;umt werden, bevor der Benutzer gesperrt wird.</p>
+
+<a name="gcnko"></a><h5>Anmeldefehler Sperrintervall</h5>
+<p>Legt die Zeit fest, innerhalb der der Sperrz&#228;hler heraufgesetzt wird, wenn zwei
+aufeinanderfolgende Anmeldeversuche fehlschlagen. Wenn eine Anmeldung fehlschl&#228;gt und innerhalb des Sperrintervalls ein
+weiterer fehlgeschlagener Anmeldeversuch erfolgt, wird der Sperrz&#228;hler heraufgesetzt. Erfolgt innerhalb des Intervalls
+kein weiterer fehlgeschlagener Anmeldeversuch, wird der Sperrz&#228;hler zur&#252;ckgesetzt.</p>
+
+<a name="gcnkd"></a><h5>E-Mail-Adresse f&#252;r das Versenden der Sperrbenachrichtigung</h5>
+<p>Gibt die E-Mail-Adresse an, an die eine Nachricht gesendet wird, wenn ein
+Benutzer gesperrt wird. Mehrere Adressen, an die Nachrichten gesendet werden sollen, m&#252;ssen
+durch Leerzeichen getrennt werden. Bei einer nicht englischen L&#228;ndereinstellung gilt folgendes Format:</p><p><tt>email_address|locale|charset</tt> </p>
+
+<a name="gcnkr"></a><h5>Benutzer nach n Fehlern warnen</h5>
+<p>Legt die Anzahl der fehlgeschlagenen Authentifizierungsversuche fest, nach denen Federated Access Manager
+den Benutzer warnt, dass er gesperrt wird.</p>
+
+<a name="gcnkc"></a><h5>Anmeldefehler Sperrdauer</h5>
+<p>Aktiviert die Arbeitsspeichersperre. Standardm&#228;&#223;ig deaktiviert der Sperrmechanismus nach einem fehlgeschlagenen Anmeldeversuch das
+unter <i>Sperrattributname</i> angegebene Benutzerprofil. Wenn der Wert von ";Anmeldefehler Sperrdauer" gr&#246;&#223;er als
+0 ist, werden die Arbeitsspeichersperre und das Benutzerkonto f&#252;r die angegebene Dauer
+(in Minuten) gesperrt.</p>
+
+<a name="gcnjy"></a><h5>Sperrattributname</h5>
+<p>Legt ein beliebiges LDAP-Attribut fest, das f&#252;r die Sperre eingerichtet werden soll.
+Um die Sperre f&#252;r diesen Attributnamen zu erm&#246;glichen, muss auch der Wert
+des Attributs Sperrattributwert ge&#228;ndert werden. Standardm&#228;&#223;ig ist das Attribut "Sperrattributname" auf der
+Federated Access Manager-Konsole leer. Die Standard-Implementierungswerte sind <i>inetuserstatus</i>  (LDAP-Attribut) und <i>Inaktiv</i>,
+wenn der Benutzer gesperrt ist und ";Anmeldefehler Sperrdauer" auf 0 gesetzt ist.</p>
+
+<a name="gcnle"></a><h5>Sperrattributwert</h5>
+<p>Legt fest, ob die Sperre f&#252;r das in ";Sperrattributname" angegebene Attribut aktiviert
+oder deaktiviert ist. Standardm&#228;&#223;ig ist dieses Attribut f&#252;r <i>inetuserstatus</i> deaktiviert.</p>
+
+<a name="gcnkz"></a><h5>Standard-URL f&#252;r erfolgreiche Anmeldung</h5>
+<p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer
+erfolgreichen Authentifizierung umgeleitet wird. Das Format dieses Attributs lautet <tt>clientType|URL</tt>. Sie k&#246;nnen
+auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt.  Der
+Standardwert lautet <i>/amserver/console </i> .</p>
+
+<a name="gcnlf"></a><h5>Standard-URL f&#252;r erfolglose Anmeldung</h5>
+<p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer
+fehlgeschlagenen Authentifizierung umgeleitet wird. Das Format dieses Attributs lautet <tt>clientType|URL</tt>. Sie k&#246;nnen
+auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt.</p>
+
+<a name="gcnlb"></a><h5>Nachverarbeitungs-Authentifizierungsklasse</h5>
+<p>Gibt den Namen der Java-Klasse an, die zur Anpassung der Nachverarbeitungsvorg&#228;nge nach
+einer erfolgreichen oder fehlgeschlagenen Anmeldung verwendet wird. Beispiel:</p><p><tt>com.abc.authentication.</tt><tt>PostProcessClass </tt> </p><p>Die Java-Klasse muss folgende Java-Schnittstelle implementieren:</p><p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface </tt></p><p>Au&#223;erdem m&#252;ssen Sie im Java Classpath-Attribut des Web Servers den Pfad der
+Klasse angeben.</p>
+
+<a name="gcnjl"></a><h5>Modus f&#252;r UserID-Erzeugung</h5>
+<p>Dieses Attribut wird vom Mitgliedschafts-Authentifizierungsmodul verwendet. Wenn dieses Attributfeld aktiviert ist, kann
+das Mitgliedschaftsmodul f&#252;r Benutzer, die sich selbst registrieren, neue Benutzer-IDs generieren, falls
+deren Benutzer-IDs bereits vorhanden sind. Die Benutzer-IDs werden mit der im Attribut
+Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen angegebenen Java-Klasse generiert.</p>
+
+<a name="gcnjq"></a><h5>Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen</h5>
+<p>Gibt den Namen der Java-Klasse an, die f&#252;r die Generierung von Benutzer-IDs
+verwendet wird, wenn Generierung des UserID-Modus aktivieren aktiviert ist.</p>
+
+<a name="gcnki"></a><h5>Identit&#228;tstypen</h5>
+<p>Gibt den bzw. die Identit&#228;tstypen an, nach denen Federated Access Manager sucht.</p>
+
+<a name="gcnlh"></a><h5>Ersetzbare Benutzerstatus-Ereignisklassen</h5>
+<p>Erweitert die Authentifizierungs-SPIs um einen R&#252;ckruf-Mechanismus f&#252;r Benutzerstatus&#228;nderungen w&#228;hrend der Authentifizierung. Folgende
+Status&#228;nderungen werden unterst&#252;tzt:</p><dl><dt><tt>account lockout</tt></dt>
+<dd><p>Das Kontosperre-Ereignis ist f&#252;r alle Authentifizierungsmodule verf&#252;gbar. Die Funktion wird &#252;ber das Attribut <a href="#gcnkl">Anmeldefehler Sperrmodus</a> konfiguriert.</p></dd>
+<dt><tt>password change</tt></dt>
+<dd><p>Dieses Ereignis ist nur f&#252;r den LDAP-Authentifizierungsmodultyp verf&#252;gbar, da eine Passwort&#228;nderung nur von diesem Modul unterst&#252;tzt wird.</p></dd>
+</dl>
+
+
+<a name="gcnjv"></a><h5>Ung&#252;ltige Versuche im Data Store speichern</h5>
+<p>Wenn dieses Attribut aktiviert ist, ist die gemeinsame Nutzung fehlgeschlagener Anmeldeversuche in
+einem Identit&#228;ts-Repository m&#246;glich, das von mehreren Federated Access Manager-Objekten gemeinsam genutzt wird.
+Wenn beispielsweise Directory Server als Identit&#228;ts-Repository f&#252;r eine bestimmte Bereitstellung verwendet wird,
+werden die ung&#252;ltigen Versuche in  <tt>sunAMAuthInvalidAttemptsData</tt> gespeichert (geh&#246;rt zur Objektklasse <tt>sunAMAuthAccountLockout</tt>).
+Das Format der Daten wird gespeichert als:</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword> </tt></p><p>Diese Informationen werden f&#252;r jeden Benutzer im Directory Server aufrechterhalten. Beim Auftreten
+ung&#252;ltiger Versuche wird <tt>&#60;InvalidCount></tt> jeweils erh&#246;ht.</p>
+
+<a name="gcnjo"></a><h5>Modulbasierte Authentifizierung</h5>
+<p>Wenn dieses Attribut aktiviert ist, k&#246;nnen sich die Benutzer &#252;ber modulbasierte Authentifizierung
+anmelden. Wenn dieses Attribut nicht aktiviert ist, ist modulbasierte Anmeldung nicht zul&#228;ssig.
+S&#228;mtliche Anmeldeversuche mit <tt>module=&#60; </tt><i> module_instance_name</i><tt>></tt> schlagen fehl.</p>
+
+<a name="fwbfn"></a><h5>Standard-Authentifizierungsebene</h5>
+<p>Mit dem Wert f&#252;r die Authentifizierungsebene wird angegeben, wie stark einer Authentifizierung
+vertraut wird. Sobald ein Benutzer authentifiziert wurde, wird der Wert im SSO-Token
+der aktuellen Sitzung gespeichert. Wird das SSO-Token einer Anwendung vorgelegt, auf die
+der Benutzer zugreifen m&#246;chte, kann die Anwendung anhand des gespeicherten Werts bestimmen,
+ob die Authentifizierungsebene ausreicht, um dem Benutzer Zugriff zu gew&#228;hren. Wenn die
+im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Mindestwert aufweist, wird der Benutzer
+aufgefordert, sich erneut &#252;ber einen Dienst mit einer h&#246;heren Authentifizierungsebene zu authentifizieren.</p><p>Die Authentifizierungsebene sollte in der Authentifizierungsvorlage des jeweiligen Bereichs festgelegt sein. Der
+im Attribut ";Standard-Authentifizierungsebene" eingegebene Wert wird nur verwendet, wenn im Feld "Authentifizierungsebene"
+der Authentifizierungsvorlage eines Bereichs kein Wert angegeben wurde. Der Standardwert von "Standard-Authentifizierungsebene"
+ist 0. (Der Wert dieses Attributs wird von Federated Access Manager nicht
+verwendet, steht jedoch f&#252;r externe Anwendungen zur Verf&#252;gung, sofern diese den Wert
+ben&#246;tigen.)</p>
+<br/>
 
 </body>
 </html>

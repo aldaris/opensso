@@ -1,196 +1,708 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='euc-kr'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "toc_1_0.dtd">
 <toc version="2.0">
-<tocitem target="aawelcome" text="Sun Java System Access Manager 7.1 ì˜¨ë¼ì¸ ë„ì›€ë§" expand="false"><tocitem target="intro" text="ì†Œê°œ" expand="false"></tocitem>
-</tocitem>
-<tocitem target="accesscontrol" text="ì•¡ì„¸ìŠ¤ ì œì–´" expand="false"><tocitem target="realm.rmrealm" text="ì˜ì—­" expand="false"><tocitem target="realm.rmrealmadd" text="ìƒˆ ì˜ì—­ ë§Œë“¤ê¸°" expand="false"></tocitem>
-<tocitem target="realm.realmproperties" text="ì¼ë°˜ ë“±ë¡ ì •ë³´" expand="false"></tocitem>
-</tocitem>
-<tocitem target="authentication.authproperties" text="ì¸ì¦" expand="false"><tocitem target="authentication.newauthinstance" text="ìƒˆ ì¸ì¦ ëª¨ë“ˆ ì¸ìŠ¤í„´ìŠ¤ ë§Œë“¤ê¸°" expand="false"></tocitem>
-<tocitem target="authentication.newauthconfig" text="ìƒˆ ì¸ì¦ ì²´ì¸ ë§Œë“¤ê¸°" expand="false"></tocitem>
-</tocitem>
-<tocitem target="realm.services" text="ì„œë¹„ìŠ¤" expand="false"><tocitem target="realm.servicesadd" text="ì˜ì—­ì— ì„œë¹„ìŠ¤ ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="realm.idrepo" text="ë°ì´í„° ì €ìž¥ì†Œ" expand="false"><tocitem target="realm.idreposelecttype" text="ìƒˆ ë°ì´í„° ì €ìž¥ì†Œ ë§Œë“¤ê¸°" expand="false"></tocitem>
-<tocitem target="idrepoadd" text="Access Manager ë°ì´í„° ì €ìž¥ì†Œ ìœ í˜•" expand="false"></tocitem>
-<tocitem target="amrepoattrs" text="Access Manager ì €ìž¥ì†Œ ì†ì„±" expand="false"></tocitem>
-<tocitem target="adattrs" text="í™œì„± ë””ë ‰í† ë¦¬ ì†ì„±" expand="false"></tocitem>
-<tocitem target="flatfileattr" text="í”Œëž« íŒŒì¼ ì €ìž¥ì†Œ ì†ì„±" expand="false"></tocitem>
-<tocitem target="gdoto" text="ì¼ë°˜ LDAPv3 ì†ì„±" expand="false"></tocitem>
-<tocitem target="sundirattrs" text="Access Manager ìŠ¤í‚¤ë§ˆ ì†ì„±ì„ ì‚¬ìš©í•˜ëŠ” Sun Directory Server" expand="false"></tocitem>
-</tocitem>
-<tocitem target="delegation.delegation" text="ê¶Œí•œ" expand="false"></tocitem>
-<tocitem target="policy.policy" text="ì •ì±…" expand="false"><tocitem target="normalpolicy" text="ì¼ë°˜ ì •ì±…" expand="false"><tocitem target="policy.policynormaladd" text="ìƒˆ ì¼ë°˜ ì •ì±… ë§Œë“¤ê¸°" expand="false"></tocitem>
-</tocitem>
-<tocitem target="normalrule" text="ê·œì¹™" expand="false"><tocitem target="policy.ruleadd" text="ì •ì±…ì— ê·œì¹™ ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="normalsubject" text="ì£¼ì œ" expand="false"><tocitem target="policy.subjectadd" text="ì •ì±…ì— ì£¼ì œ ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="policyconditions" text="ì¡°ê±´" expand="false"><tocitem target="policy.conditionadd" text="ì •ì±…ì— ì¡°ê±´ ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="policy.pmdefaultsessioncondtionadd" text="í™œì„± ì„¸ì…˜ ì‹œê°„" expand="false"></tocitem>
-<tocitem target="policy.authtoserviceadd" text="ì¸ì¦ ì²´ì¸" expand="false"></tocitem>
-<tocitem target="policy.pmdefaultauthlevelconditionadd" text="ì¸ì¦ ìˆ˜ì¤€(ë³´ë‹¤ í¬ê±°ë‚˜ ê°™ìŒ)" expand="false"></tocitem>
-<tocitem target="gdovl" text="ì¸ì¦ ìˆ˜ì¤€(ë³´ë‹¤ ë‚®ê±°ë‚˜ ê°™ìŒ)" expand="false"></tocitem>
-<tocitem target="policy.pmdefaultauthschemeconditionadd" text="ì¸ì¦ ëª¨ë“ˆ ì¸ìŠ¤í„´ìŠ¤" expand="false"></tocitem>
-<tocitem target="policy.sessionpropertyconditionadd" text="í˜„ìž¬ ì„¸ì…˜ ë“±ë¡ ì •ë³´" expand="false"></tocitem>
-<tocitem target="policy.pmdefaultipcondition" text="IP ì£¼ì†Œ/DNS ì´ë¦„" expand="false"></tocitem>
-<tocitem target="gdkmp" text="LDAP í•„í„° ì¡°ê±´" expand="false"></tocitem>
-<tocitem target="policy.authtorealmadd" text="ì˜ì—­ ì¸ì¦" expand="false"></tocitem>
-<tocitem target="policy.pmdefaulttimeconditionadd" text="ì‹œê°„(ìš”ì¼, ë‚ ì§œ, ì‹œê°„ ë° í‘œì¤€ ì‹œê°„ëŒ€)" expand="false"></tocitem>
-<tocitem target="responseprovider" text="ì‘ë‹µ ê³µê¸‰ìž" expand="false"><tocitem target="policy.responseprovideradd" text="ì •ì±…ì— ì‘ë‹µ ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="fyfby" text="ì°¸ì¡° ì •ì±…" expand="false"><tocitem target="policy.policyreferraladd" text="ìƒˆ ì°¸ì¡° ì •ì±… ë§Œë“¤ê¸°" expand="false"></tocitem>
-</tocitem>
-<tocitem target="referrals" text="ì°¸ì¡°" expand="false"><tocitem target="policy.selectreferraltype" text="ì •ì±…ì— ì°¸ì¡° ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="idm.entities" text="ì£¼ì œ" expand="false"><tocitem target="subjectuser" text="ì‚¬ìš©ìž" expand="false"><tocitem target="subjectcreateuser" text="ì‚¬ìš©ìž ë§Œë“¤ê¸° ë˜ëŠ” ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="addusertogroup" text="ì—­í•  ë° ê·¸ë£¹ì— ì‚¬ìš©ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="idm.entityservices" text="Identityì— ì„œë¹„ìŠ¤ ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="subjectagents" text="ì—ì´ì „íŠ¸" expand="false"><tocitem target="subjectcreateagent" text="ì—ì´ì „íŠ¸ ë§Œë“¤ê¸° ë˜ëŠ” ìˆ˜ì •" expand="false"></tocitem>
-</tocitem>
-<tocitem target="subject.filteredrole" text="í•„í„°ë§ëœ ì—­í• " expand="false"><tocitem target="subject.createfiltrole" text="í•„í„°ë§ëœ ì—­í•  ë§Œë“¤ê¸°" expand="false"></tocitem>
-</tocitem>
-<tocitem target="subject.role" text="ì—­í• " expand="false"><tocitem target="subject.createrole" text="ì—­í•  ë§Œë“¤ê¸° ë˜ëŠ” ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="idm.entitymembers" text="ì—­í•  ë˜ëŠ” ê·¸ë£¹ì— ì‚¬ìš©ìž ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="subject.group" text="ê·¸ë£¹" expand="false"><tocitem target="subject.creategroup" text="ê·¸ë£¹ ë§Œë“¤ê¸° ë˜ëŠ” ìˆ˜ì •" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="dirmang" text="ë””ë ‰í† ë¦¬ ê´€ë¦¬" expand="false"><tocitem target="dm.home" text="ë””ë ‰í† ë¦¬ ê´€ë¦¬" expand="false"></tocitem>
-</tocitem>
-<tocitem target="federation" text="ì—°í•©" expand="false"><tocitem target="federation.fsauthdomains" text="ì¸ì¦ ë„ë©”ì¸" expand="false"><tocitem target="federation.fsauthdomainsadd" text="ìƒˆ ì¸ì¦ ë„ë©”ì¸ ìž‘ì„±" expand="false"></tocitem>
-<tocitem target="federation.fsauthdomainsedit" text="ì¸ì¦ ë„ë©”ì¸ í”„ë¡œí•„ ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fsauthdomainsselectprovider" text="ì¸ì¦ ë„ë©”ì¸ì— ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="deleteauthdomain" text="ì¸ì¦ ë„ë©”ì¸ í”„ë¡œí•„ ì‚­ì œ" expand="false"></tocitem>
-</tocitem>
-<tocitem target="federation.fsentitydescriptors" text="ì—”í‹°í‹°: ê³µê¸‰ìž ë° ê³„ì—´ì‚¬" expand="false"><tocitem target="federation.fsentitydescriptorsadd" text="ê³µê¸‰ìž ì—”í‹°í‹° ë˜ëŠ” ê³„ì—´ì‚¬ ì—”í‹°í‹° ìž‘ì„±" expand="false"></tocitem>
-<tocitem target="federation.fsentitydescriptorsprofile" text="ê³µê¸‰ìž ì—”í‹°í‹° ë˜ëŠ” ê³„ì—´ì‚¬ ì—”í‹°í‹°ì˜ ì¼ë°˜ ì†ì„± ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fsidentityprovider" text="ê³µê¸‰ìž ì—”í‹°í‹°ì— Identity ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderhostedadd" text="ê³µê¸‰ìž ì—”í‹°í‹°ì— ìƒˆ í˜¸ìŠ¤íŠ¸ Identity ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderremoteadd" text="ê³µê¸‰ìž ì—”í‹°í‹°ì— ìƒˆ ì›ê²© Identity ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fsserviceprovider" text="ê³µê¸‰ìž ì—”í‹°í‹°ì— ì„œë¹„ìŠ¤ ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderhostedadd" text="ê³µê¸‰ìž ì—”í‹°í‹°ì— ìƒˆ í˜¸ìŠ¤íŠ¸ ì„œë¹„ìŠ¤ ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderremoteadd" text="ê³µê¸‰ìž ì—”í‹°í‹°ì— ìƒˆ ì›ê²© ì„œë¹„ìŠ¤ ê³µê¸‰ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderhostedprofile" text="ê³µê¸‰ìž ì—”í‹°í‹°ì˜ í˜¸ìŠ¤íŠ¸ Identity ê³µê¸‰ìž ì†ì„± ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderremoteprofile" text="ê³µê¸‰ìž ì—”í‹°í‹°ì˜ ì›ê²© Identity ê³µê¸‰ìž ì†ì„± ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderhostedprofile" text="ê³µê¸‰ìž ì—”í‹°í‹°ì˜ í˜¸ìŠ¤íŠ¸ ì„œë¹„ìŠ¤ ê³µê¸‰ìž ì†ì„± ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderremoteprofile" text="ê³µê¸‰ìž ì—”í‹°í‹°ì˜ ì›ê²© ì„œë¹„ìŠ¤ ê³µê¸‰ìž ì†ì„± ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fscreatecontactperson" text="ê³µê¸‰ìž ì—”í‹°í‹°ì˜ ê³µê¸‰ìžì— ì—°ë½ ë‹´ë‹¹ìž ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="federation.fseditcontactperson" text="ê³µê¸‰ìž ì—”í‹°í‹°ì˜ ì—°ë½ ë‹´ë‹¹ìž í”„ë¡œí•„ ìˆ˜ì •" expand="false"></tocitem>
-<tocitem target="federation.fsentitydescriptorsaffiliate" text="ê³„ì—´ì‚¬ ì—”í‹°í‹°ì— êµ¬ì„±ì› ì¶”ê°€" expand="false"></tocitem>
-</tocitem>
-<tocitem target="federation.fssamlservice" text="SAML" expand="false"><tocitem target="targetspecifier" text="ëŒ€ìƒ ì§€ì •ìž" expand="false"></tocitem>
-<tocitem target="siteidentifiers" text="ì‚¬ì´íŠ¸ ì‹ë³„ìž" expand="false"><tocitem target="federation.fssamlsiteidadd" text="ì‚¬ì´íŠ¸ ì‹ë³„ìž êµ¬ì„± " expand="false"></tocitem>
-</tocitem>
-<tocitem target="trustedpartners" text="ì‹ ë¢°í•  ìˆ˜ ìžˆëŠ” íŒŒíŠ¸ë„ˆ" expand="false"><tocitem target="federation.fssamlselecttrustedpartnertype" text="ì‹ ë¢°í•  ìˆ˜ ìžˆëŠ” íŒŒíŠ¸ë„ˆ: íŒŒíŠ¸ë„ˆ ìœ í˜• ë° í”„ë¡œí•„ ì„ íƒ" expand="false"></tocitem>
-<tocitem target="federation.fssamltrustedpartnersadd" text="ì‹ ë¢°í•  ìˆ˜ ìžˆëŠ” íŒŒíŠ¸ë„ˆ: ì‹ ë¢°í•  ìˆ˜ ìžˆëŠ” íŒŒíŠ¸ë„ˆ ì†ì„± êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-<tocitem target="targeturl" text="ëŒ€ìƒ URL" expand="false"><tocitem target="federation.fssamltargeturlsadd" text="ëŒ€ìƒ URL êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-<tocitem target="assertiontimeout" text="ë…¼ë¦¬ ê²€ì‚¬ ì‹œê°„ ì´ˆê³¼" expand="false"></tocitem>
-<tocitem target="assertionskew" text="notBefore ì‹œê°„ì— ëŒ€í•œ ìŠ¤í íŒ©í„° ë‹¨ì •" expand="false"></tocitem>
-<tocitem target="artifacttimeout" text="ì•„í‹°íŒ©íŠ¸ ì‹œê°„ ì´ˆê³¼" expand="false"></tocitem>
-<tocitem target="samlartifactname" text="SAML ì•„í‹°íŒ©íŠ¸ ì´ë¦„" expand="false"></tocitem>
-<tocitem target="signsamlassertion" text="SAML ëª…ì œì— ì„œëª…" expand="false"></tocitem>
-<tocitem target="signsamlrequest" text="SAML ìš”ì²­ì— ì„œëª…" expand="false"></tocitem>
-<tocitem target="signsamlresponse" text="SAML ì‘ë‹µì— ì„œëª…" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="webservices" text="ì›¹ ì„œë¹„ìŠ¤" expand="false"><tocitem target="webservices.wspersonalprofileservice" text="ë¦¬ë²„í‹° ê°œì¸ í”„ë¡œí•„ ì„œë¹„ìŠ¤" expand="false"><tocitem target="resourceidmapper" text="ìžì› ì•„ì´ë”” ë§¤í¼" expand="false"></tocitem>
-<tocitem target="authorizer" text="ì¸ì¦ìž" expand="false"></tocitem>
-<tocitem target="attributemapper" text="ì†ì„± ë§¤í¼" expand="false"></tocitem>
-<tocitem target="ppproviderid" text="ê³µê¸‰ìž ì•„ì´ë””" expand="false"></tocitem>
-<tocitem target="namescheme" text="ì´ë¦„ ì²´ê³„" expand="false"></tocitem>
-<tocitem target="namespaceprefix" text="ì´ë¦„ ê³µê°„ ì ‘ë‘ì–´" expand="false"></tocitem>
-<tocitem target="supportedcontainers" text="ì§€ì›ë˜ëŠ” ì»¨í…Œì´ë„ˆ" expand="false"><tocitem target="webservices.wsppservicesupportedcontaineradd" text="ì§€ì›ë˜ëŠ” ì»¨í…Œì´ë„ˆ êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-<tocitem target="ppldapattributemaplist" text="PPLDAP ì†ì„± ë§µ ëª©ë¡" expand="false"><tocitem target="webservices.wsppservicedsattributemaplistadd" text="ì†ì„± ë§¤í•‘ êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-<tocitem target="requirequery" text="ì¿¼ë¦¬ ì •ì±… í‰ê°€ ìš”êµ¬" expand="false"></tocitem>
-<tocitem target="requiremodify" text="ìˆ˜ì • ì •ì±… í‰ê°€ ìš”êµ¬" expand="false"></tocitem>
-<tocitem target="extensioncontainerattributes" text="í™•ìž¥ ì»¨í…Œì´ë„ˆ ì†ì„±" expand="false"></tocitem>
-<tocitem target="extensionattributesnamespaceprefix" text="í™•ìž¥ ì†ì„± ì´ë¦„ ê³µê°„ ì ‘ë‘ì–´" expand="false"></tocitem>
-<tocitem target="serviceupdateenabled" text="ì„œë¹„ìŠ¤ ì—…ë°ì´íŠ¸" expand="false"></tocitem>
-<tocitem target="serviceinstanceupdateclass" text="ì„œë¹„ìŠ¤ ì¸ìŠ¤í„´ìŠ¤ ì—…ë°ì´íŠ¸ í´ëž˜ìŠ¤" expand="false"></tocitem>
-<tocitem target="alternateendpoint" text="ëŒ€ì²´ ì¢…ì " expand="false"></tocitem>
-<tocitem target="alternatesecuritymechanisms" text="ëŒ€ì²´ ë³´ì•ˆ ê¸°ë²•" expand="false"></tocitem>
-</tocitem>
-<tocitem target="service.smdiscoveryservice" text="ê²€ìƒ‰ ì„œë¹„ìŠ¤" expand="false"><tocitem target="dsproviderid" text="ê³µê¸‰ìž ì•„ì´ë””" expand="false"></tocitem>
-<tocitem target="supportedauthmechanisms" text="ì§€ì›ë˜ëŠ” ì¸ì¦ ê¸°ë²•" expand="false"></tocitem>
-<tocitem target="supporteddirectives" text="ì§€ì›ë˜ëŠ” ì§€ì‹œë¬¸" expand="false"></tocitem>
-<tocitem target="policyevaldiscolookup" text="ê²€ìƒ‰ ì¡°íšŒì— ëŒ€í•œ ì •ì±… í‰ê°€" expand="false"></tocitem>
-<tocitem target="policyevaldiscoupdate" text="ê²€ìƒ‰ ì—…ë°ì´íŠ¸ì— ëŒ€í•œ ì •ì±… í‰ê°€" expand="false"></tocitem>
-<tocitem target="authorizerpluginclass" text="ì¸ì¦ìž í”ŒëŸ¬ê·¸ì¸ í´ëž˜ìŠ¤:" expand="false"></tocitem>
-<tocitem target="entryhandlerpluginclass" text="í•­ëª© ì²˜ë¦¬ê¸° í”ŒëŸ¬ê·¸ì¸ í´ëž˜ìŠ¤" expand="false"></tocitem>
-<tocitem target="resourceidmapperpluginclass" text="ìžì› ì•„ì´ë”” ë§¤í¼ í”ŒëŸ¬ê·¸ì¸ í´ëž˜ìŠ¤ " expand="false"><tocitem target="service.smdiscoveryproviderresourceidmapadd" text="ìžì› ì•„ì´ë”” ë§¤í¼ êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-<tocitem target="authresponsemessage" text="ì‘ë‹µ ë©”ì‹œì§€ ì¸ì¦" expand="false"></tocitem>
-<tocitem target="generatesessioncontext" text="ë¶€íŠ¸ìŠ¤íŠ¸ëž©ìš© ì„¸ì…˜ ì»¨í…ìŠ¤íŠ¸ ë¬¸" expand="false"></tocitem>
-<tocitem target="encryptnameidentifier" text="ë¶€íŠ¸ìŠ¤íŠ¸ëž©ìš© ì„¸ì…˜ ì»¨í…ìŠ¤íŠ¸ì—ì„œ NameIdentifier ì•”í˜¸í™”" expand="false"></tocitem>
-<tocitem target="useimpliedresource" text="í•¨ì¶•ëœ ìžì›" expand="false"></tocitem>
-<tocitem target="resourceofferingsbootstrapping" text="ë¶€íŠ¸ìŠ¤íŠ¸ëž©ìš© ìžì› ì˜¤í¼ë§" expand="false"><tocitem target="service.smdiscoverybootstraprefoffadd" text="ë¶€íŠ¸ìŠ¤íŠ¸ëž©ìš© ìžì› ì˜¤í¼ë§ êµ¬ì„±" expand="false"></tocitem>
-<tocitem target="service.smdiscoverydescriptionadd" text="ì„œë¹„ìŠ¤ ì„¤ëª… êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="service.scsoapbinding" text="SOAP ë°”ì¸ë“œ ì„œë¹„ìŠ¤" expand="false"><tocitem target="requesthandlerlist" text="ìš”ì²­ ì²˜ë¦¬ê¸° ëª©ë¡" expand="false"><tocitem target="service.scsoapbindingrequesthandlerlistadd" text="ìš”ì²­ ì²˜ë¦¬ê¸° êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-<tocitem target="webserviceauthenticator" text="ì›¹ ì„œë¹„ìŠ¤ ì¸ì¦ìž" expand="false"></tocitem>
-<tocitem target="soapsuppauthmech" text="ì§€ì›ë˜ëŠ” ì¸ì¦ ê¸°ë²•" expand="false"></tocitem>
-</tocitem>
-<tocitem target="webservices.wsauthnservices" text="ì¸ì¦ ì›¹ ì„œë¹„ìŠ¤" expand="false"><tocitem target="mechanismhandlerslist" text="ë©”ì»¤ë‹ˆì¦˜ ì²˜ë¦¬ê¸° ëª©ë¡" expand="false"><tocitem target="webservices.wsauthnserviceshandlersadd" text="ìƒˆ ë©”ì»¤ë‹ˆì¦˜ ì²˜ë¦¬ê¸° êµ¬ì„±" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="service.scconfig" text="êµ¬ì„± ì†ì„±" expand="false"><tocitem target="authattrs" text="ì¸ì¦" expand="false"><tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="ìµëª…" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthadservice" text="í™œì„± ë””ë ‰í† ë¦¬" expand="false"></tocitem>
-<tocitem target="authentication.authconfig" text="ì¸ì¦ êµ¬ì„± " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ì¸ì¦ì„œ " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthservice" text="í•µì‹¬" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="ë°ì´í„° ì €ìž¥ì†Œ" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP ê¸°ë³¸" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false"><tocitem target="jdbcexample" text="ì—°ê²° í’€ êµ¬ì„± &#8212; ì˜ˆì œ" expand="false"></tocitem>
-</tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="êµ¬ì„±ì›" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows ë°ìŠ¤í¬íƒ‘ SSO" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false"></tocitem>
-<tocitem target="supportedlang" text="ì§€ì›ë˜ëŠ” ì–¸ì–´ ë¡œì¼ˆ" expand="false"></tocitem>
-</tocitem>
-<tocitem target="consoleprops" text="ì½˜ì†” ë“±ë¡ ì •ë³´" expand="false"><tocitem target="service.scserviceprofile.amadminconsoleservice" text="ê´€ë¦¬ " expand="false"></tocitem>
-<tocitem target="service.smg11n" text="êµ­ì œí™” ì„¤ì •" expand="false"></tocitem>
-</tocitem>
-<tocitem target="global" text="ì „ì—­ ë“±ë¡ ì •ë³´" expand="false"><tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ë¹„ë°€ë²ˆí˜¸ ìž¬ì„¤ì •" expand="false"></tocitem>
-<tocitem target="service.scpolicy" text="ì •ì±… êµ¬ì„±" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.amsessionservice" text="ì„¸ì…˜" expand="false"></tocitem>
-<tocitem target="service.subconfigadd" text="í•˜ìœ„ êµ¬ì„± ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamuserservice" text="ì‚¬ìš©ìž" expand="false"></tocitem>
-</tocitem>
-<tocitem target="systemprops" text="ì‹œìŠ¤í…œ ë“±ë¡ ì •ë³´" expand="false"><tocitem target="service.scserviceprofile.iplanetamclientdetection" text="í´ë¼ì´ì–¸íŠ¸ ê²€ìƒ‰" expand="false"></tocitem>
-<tocitem target="service.mapcreatedevice" text="ìƒˆ í´ë¼ì´ì–¸íŠ¸ ì¶”ê°€" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ë¡œê¹… " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ì´ë¦„ ì§€ì • " expand="false"></tocitem>
-<tocitem target="service.scplatform" text="í”Œëž«í¼" expand="false"></tocitem>
-<tocitem target="service.scplatformsitelistadd" text="ìƒˆ ì‚¬ì´íŠ¸ ì´ë¦„ ë§Œë“¤ê¸°" expand="false"></tocitem>
-<tocitem target="service.scplatformserverlistadd" text="ìƒˆ ì¸ìŠ¤í„´ìŠ¤ ì´ë¦„ ë§Œë“¤ê¸°" expand="false"></tocitem>
-<tocitem target="service.scplatformclientcharsetsadd" text="ìƒˆ ë¬¸ìž ì§‘í•© ë§Œë“¤ê¸°" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="sessions" text="ì„¸ì…˜" expand="false"><tocitem target="sessionpage" text="ì„¸ì…˜ íŽ˜ì´ì§€" expand="false"><tocitem target="sessionsearch" text="ê²€ìƒ‰" expand="false"></tocitem>
-<tocitem target="viewsession" text="ë³´ê¸° ì„¸ì…˜" expand="false"></tocitem>
-<tocitem target="session.smprofile" text="ì„¸ì…˜ ì°½" expand="false"></tocitem>
-<tocitem target="invalidatesession" text="ì„¸ì…˜ ë¬´íš¨í™”" expand="false"></tocitem>
-</tocitem>
-</tocitem>
 
+ <tocitem target="aawelcome" text="Sun Java System Federated Access Manager 8.0 ¿Â¶óÀÎ µµ¿ò¸»" expand="false">
+    <tocitem target="intro" text="¼Ò°³" expand="false"></tocitem></tocitem>
+ <tocitem target="accesscontrol" text="¾×¼¼½º Á¦¾î" expand="false">
+    <tocitem target="realm.rmrealm" text="¿µ¿ª" expand="false">
+        <tocitem target="realm.rmrealmadd" text="»õ ¿µ¿ª ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="realm.realmproperties" text="ÀÏ¹Ý µî·Ï Á¤º¸" expand="false"></tocitem></tocitem>
+    <tocitem target="authentication.authproperties" text="ÀÎÁõ" expand="false">
+        <tocitem target="authentication.newauthinstance" text="»õ ÀÎÁõ ¸ðµâ ÀÎ½ºÅÏ½º ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="authentication.newauthconfig" text="»õ ÀÎÁõ Ã¼ÀÎ ¸¸µé±â" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.services" text="¼­ºñ½º" expand="false">
+        <tocitem target="realm.servicesadd" text="¿µ¿ª¿¡ ¼­ºñ½º Ãß°¡" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.idrepo" text="µ¥ÀÌÅÍ ÀúÀå¼Ò" expand="false">
+        <tocitem target="realm.idreposelecttype" text="»õ µ¥ÀÌÅÍ ÀúÀå¼Ò ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="idrepoadd" text="Federated Access Manager µ¥ÀÌÅÍ ÀúÀå¼Ò À¯Çü" expand="false">
+            <tocitem target="idrepoadd" text="Federated Access Manager ÀúÀå¼Ò ÇÃ·¯±×ÀÎ" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="È°¼º µð·ºÅä¸®" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="ÇÃ·§ ÆÄÀÏ ÀúÀå¼Ò" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="ÀÏ¹Ý LDAPv3" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="Federated Access Manager ½ºÅ°¸¶¸¦ »ç¿ëÇÏ´Â Sun Directory Server" expand="false"></tocitem></tocitem>
+        <tocitem target="amrepoattrs" text="Federated Access Manager ÀúÀå¼Ò ¼Ó¼º" expand="false">
+            <tocitem target="amrepoattrs" text="Å¬·¡½º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Federated Access ManagerÀÇ Áö¿øµÇ´Â À¯Çü ¹× ÀÛ¾÷" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Á¶Á÷ DN °ª" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="»ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="»ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Àç±ÍÀû °Ë»ö" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="¿µ¿ª ±¸¼º º¹»ç" expand="false"></tocitem></tocitem>
+        <tocitem target="adattrs" text="È°¼º µð·ºÅä¸® ¼Ó¼º" expand="false">
+            <tocitem target="adattrs" text="LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¹ÙÀÎµå DN" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP Á¶Á÷ DN" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP SSL" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¬°á Ç® ÃÖ¼Ò Å©±â" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¬°á Ç® ÃÖ´ë Å©±â" expand="false"></tocitem>
+            <tocitem target="adattrs" text="°Ë»ö¿¡¼­ ¹ÝÈ¯µÇ´Â ÃÖ´ë °á°ú ¼ö" expand="false"></tocitem>
+            <tocitem target="adattrs" text="°Ë»ö ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP¿¡¼­ ÂüÁ¶¸¦ µû¸§" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAPv3 ÀúÀå¼Ò ÇÃ·¯±×ÀÎ Å¬·¡½º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="adattrs" text="ÀÏ¹Ý ¼Ó¼º ÀÌ¸§ ¸ÅÇÎ" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAPv3 ÇÃ·¯±×ÀÎ Áö¿ø À¯Çü ¹× ÀÛ¾÷" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAPv3 ÇÃ·¯±×ÀÎ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ ÀÛ¼º ¼Ó¼º ¸ÅÇÎ" expand="false"></tocitem>
+            <tocitem target="adattrs" text="»ç¿ëÀÚ »óÅÂ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="»ç¿ëÀÚ »óÅÂ È°¼º °ª" expand="false"></tocitem>
+            <tocitem target="adattrs" text="»ç¿ëÀÚ »óÅÂ ºñÈ°¼º °ª" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ±×·ì °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ±×·ì °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ±×·ì ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ±×·ì ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ±×·ì °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ±×·ì ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="±×·ì ±¸¼º¿ø ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="°íÀ¯ ±¸¼º¿ø ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="±×·ì ±¸¼º¿ø URL ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¡ÀÌÀüÆ® °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ º¯¼ö" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¡ÀÌÀüÆ® °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¡ÀÌÀüÆ® °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="LDAP ¿¡ÀÌÀüÆ® ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="adattrs" text="ÀÎÁõ °¡´ÉÇÑ Identity À¯Çü" expand="false"></tocitem>
+            <tocitem target="adattrs" text="¿µ±¸ °Ë»ö ±âº» DN" expand="false"></tocitem>
+            <tocitem target="adattrs" text="¿µ±¸ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="adattrs" text="½Ã½ºÅÛ Àç½ÃÀÛ ÀüÀÇ ÃÖ´ë À¯ÈÞ ½Ã°£ ¿µ±¸ °Ë»ö" expand="false"></tocitem>
+            <tocitem target="adattrs" text="¿À·ù ÄÚµå ÈÄÀÇ ÃÖ´ë Àç½Ãµµ È½¼ö" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Àç½Ãµµ »çÀÌÀÇ Áö¿¬ ½Ã°£" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Àç½ÃµµÇÒ LDAP ¿¹¿Ü ¿À·ù ÄÚµå" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Ä³½Ì" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Ä³½ÃµÈ Ç×¸ñÀÇ ÃÖ´ë ±â°£" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Ä³½ÃÀÇ ÃÖ´ë Å©±â" expand="false"></tocitem></tocitem>
+        <tocitem target="flatfileattr" text="ÇÃ·§ ÆÄÀÏ ÀúÀå¼Ò ¼Ó¼º" expand="false">
+            <tocitem target="flatfileattr" text="ÆÄÀÏ ÀúÀå¼Ò ÇÃ·¯±×ÀÎ Å¬·¡½º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="ÆÄÀÏ ÀúÀå¼Ò µð·ºÅä¸®" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Ä³½Ã" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Ä³½Ã ¾÷µ¥ÀÌÆ® ½Ã°£" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="ÆÄÀÏ »ç¿ëÀÚ °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="ºñ¹Ð¹øÈ£ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="»óÅÂ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="ÇØ½ÃµÈ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="¾ÏÈ£È­µÈ ¼Ó¼º" expand="false"></tocitem></tocitem>
+        <tocitem target="gdoto" text="ÀÏ¹Ý LDAPv3 ¼Ó¼º" expand="false">
+            <tocitem target="gdoto" text="LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¹ÙÀÎµå DN" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP Á¶Á÷ DN" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP SSL" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¬°á Ç® ÃÖ¼Ò Å©±â" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¬°á Ç® ÃÖ´ë Å©±â" expand="false"></tocitem>
+            <tocitem target="gdoto" text="°Ë»ö¿¡¼­ ¹ÝÈ¯µÇ´Â ÃÖ´ë °á°ú ¼ö" expand="false"></tocitem>
+            <tocitem target="gdoto" text="°Ë»ö ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP¿¡¼­ ÂüÁ¶¸¦ µû¸§" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAPv3 ÀúÀå¼Ò ÇÃ·¯±×ÀÎ Å¬·¡½º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="gdoto" text="ÀÏ¹Ý ¼Ó¼º ÀÌ¸§ ¸ÅÇÎ" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAPv3 ÇÃ·¯±×ÀÎ Áö¿ø À¯Çü ¹× ÀÛ¾÷" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAPv3 ÇÃ·¯±×ÀÎ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ ÀÛ¼º ¼Ó¼º ¸ÅÇÎ" expand="false"></tocitem>
+            <tocitem target="gdoto" text="»ç¿ëÀÚ »óÅÂ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="»ç¿ëÀÚ »óÅÂ È°¼º °ª" expand="false"></tocitem>
+            <tocitem target="gdoto" text="»ç¿ëÀÚ »óÅÂ ºñÈ°¼º °ª" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ±×·ì °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ±×·ì °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ±×·ì ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ±×·ì ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ±×·ì °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ±×·ì ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="±×·ì ±¸¼º¿ø ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="°íÀ¯ ±¸¼º¿ø ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="±×·ì ±¸¼º¿ø URL ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¡ÀÌÀüÆ® °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ º¯¼ö" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¡ÀÌÀüÆ® °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¡ÀÌÀüÆ® °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="LDAP ¿¡ÀÌÀüÆ® ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="gdoto" text="ÀÎÁõ °¡´ÉÇÑ Identity À¯Çü" expand="false"></tocitem>
+            <tocitem target="gdoto" text="¿µ±¸ °Ë»ö ±âº» DN" expand="false"></tocitem>
+            <tocitem target="gdoto" text="¿µ±¸ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="gdoto" text="½Ã½ºÅÛ Àç½ÃÀÛ ÀüÀÇ ÃÖ´ë À¯ÈÞ ½Ã°£ ¿µ±¸ °Ë»ö" expand="false"></tocitem>
+            <tocitem target="gdoto" text="¿À·ù ÄÚµå ÈÄÀÇ ÃÖ´ë Àç½Ãµµ È½¼ö" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Àç½Ãµµ »çÀÌÀÇ Áö¿¬ ½Ã°£" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Àç½ÃµµÇÒ LDAP ¿¹¿Ü ¿À·ù ÄÚµå" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Ä³½Ì" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Ä³½ÃµÈ Ç×¸ñÀÇ ÃÖ´ë ±â°£" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Ä³½ÃÀÇ ÃÖ´ë Å©±â" expand="false"></tocitem></tocitem>
+        <tocitem target="sundirattrs" text="Federated Access Manager ½ºÅ°¸¶ ¼Ó¼ºÀ» »ç¿ëÇÏ´Â Sun Directory Server" expand="false">
+            <tocitem target="sundirattrs" text="LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¹ÙÀÎµå DN" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP Á¶Á÷ DN" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP SSL" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¬°á Ç® ÃÖ¼Ò Å©±â" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¬°á Ç® ÃÖ´ë Å©±â" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="°Ë»ö¿¡¼­ ¹ÝÈ¯µÇ´Â ÃÖ´ë °á°ú ¼ö" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="°Ë»ö ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP¿¡¼­ ÂüÁ¶¸¦ µû¸§" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAPv3 ÀúÀå¼Ò ÇÃ·¯±×ÀÎ Å¬·¡½º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="ÀÏ¹Ý ¼Ó¼º ÀÌ¸§ ¸ÅÇÎ" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAPv3 ÇÃ·¯±×ÀÎ Áö¿ø À¯Çü ¹× ÀÛ¾÷" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAPv3 ÇÃ·¯±×ÀÎ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ ÀÛ¼º ¼Ó¼º ¸ÅÇÎ" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="»ç¿ëÀÚ »óÅÂ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="»ç¿ëÀÚ »óÅÂ È°¼º °ª" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="»ç¿ëÀÚ »óÅÂ ºñÈ°¼º °ª" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ±×·ì °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ±×·ì °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ±×·ì ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ±×·ì ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ±×·ì °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ±×·ì ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="±×·ì ±¸¼º¿ø ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="°íÀ¯ ±¸¼º¿ø ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="±×·ì ±¸¼º¿ø URL ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¡ÀÌÀüÆ® °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê ÀÌ¸§ ÁöÁ¤ º¯¼ö" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê °ª" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¡ÀÌÀüÆ® °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¡ÀÌÀüÆ® °´Ã¼ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="LDAP ¿¡ÀÌÀüÆ® ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="ÀÎÁõ °¡´ÉÇÑ Identity À¯Çü" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="¿µ±¸ °Ë»ö ±âº» DN" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="¿µ±¸ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="½Ã½ºÅÛ Àç½ÃÀÛ ÀüÀÇ ÃÖ´ë À¯ÈÞ ½Ã°£ ¿µ±¸ °Ë»ö" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="¿À·ù ÄÚµå ÈÄÀÇ ÃÖ´ë Àç½Ãµµ È½¼ö" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Àç½Ãµµ »çÀÌÀÇ Áö¿¬ ½Ã°£" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Àç½ÃµµÇÒ LDAP ¿¹¿Ü ¿À·ù ÄÚµå" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Ä³½Ì" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Ä³½ÃµÈ Ç×¸ñÀÇ ÃÖ´ë ±â°£" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Ä³½ÃÀÇ ÃÖ´ë Å©±â" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="delegation.delegation" text="±ÇÇÑ" expand="false"></tocitem>
+    <tocitem target="policy.policy" text="Á¤Ã¥" expand="false">
+        <tocitem target="normalpolicy" text="ÀÏ¹Ý Á¤Ã¥" expand="false"></tocitem>
+        <tocitem target="policy.policynormaladd" text="»õ ÀÏ¹Ý Á¤Ã¥ ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="normalrule" text="±ÔÄ¢" expand="false"></tocitem>
+        <tocitem target="policy.ruleadd" text="Á¤Ã¥¿¡ ±ÔÄ¢ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="normalsubject" text="ÁÖÁ¦" expand="false"></tocitem>
+        <tocitem target="policy.subjectadd" text="Á¤Ã¥¿¡ ÁÖÁ¦ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="policyconditions" text="Á¶°Ç" expand="false"></tocitem>
+        <tocitem target="policy.conditionadd" text="Á¤Ã¥¿¡ Á¶°Ç Ãß°¡" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultsessioncondtionadd" text="È°¼º ¼¼¼Ç ½Ã°£" expand="false"></tocitem>
+        <tocitem target="policy.authtoserviceadd" text="ÀÎÁõ Ã¼ÀÎ" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthlevelconditionadd" text="ÀÎÁõ ¼öÁØ(º¸´Ù Å©°Å³ª °°À½)" expand="false"></tocitem>
+        <tocitem target="gdovl" text="ÀÎÁõ ¼öÁØ(º¸´Ù ³·°Å³ª °°À½)" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthschemeconditionadd" text="ÀÎÁõ ¸ðµâ ÀÎ½ºÅÏ½º" expand="false"></tocitem>
+        <tocitem target="policy.sessionpropertyconditionadd" text="ÇöÀç ¼¼¼Ç µî·Ï Á¤º¸" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultipcondition" text="IP ÁÖ¼Ò/DNS ÀÌ¸§" expand="false"></tocitem>
+        <tocitem target="gdkmp" text="LDAP ÇÊÅÍ Á¶°Ç" expand="false"></tocitem>
+        <tocitem target="policy.authtorealmadd" text="¿µ¿ª ÀÎÁõ" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaulttimeconditionadd" text="½Ã°£(¿äÀÏ, ³¯Â¥, ½Ã°£ ¹× Ç¥ÁØ ½Ã°£´ë)" expand="false"></tocitem>
+        <tocitem target="responseprovider" text="ÀÀ´ä °ø±ÞÀÚ" expand="false"></tocitem>
+        <tocitem target="policy.responseprovideradd" text="Á¤Ã¥¿¡ ÀÀ´ä °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="fyfby" text="ÂüÁ¶ Á¤Ã¥" expand="false"></tocitem>
+        <tocitem target="policy.policyreferraladd" text="»õ ÂüÁ¶ Á¤Ã¥ ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="referrals" text="ÂüÁ¶" expand="false"></tocitem>
+        <tocitem target="policy.selectreferraltype" text="Á¤Ã¥¿¡ ÂüÁ¶ Ãß°¡" expand="false"></tocitem></tocitem>
+    <tocitem target="idm.entities" text="ÁÖÁ¦" expand="false">
+        <tocitem target="subjectuser" text="»ç¿ëÀÚ" expand="false"></tocitem>
+        <tocitem target="subjectcreateuser" text="»ç¿ëÀÚ ¸¸µé±â ¶Ç´Â ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="addusertogroup" text="¿ªÇÒ ¹× ±×·ì¿¡ »ç¿ëÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="idm.entityservices" text="Identity¿¡ ¼­ºñ½º Ãß°¡" expand="false"></tocitem>
+        <tocitem target="subjectagents" text="¿¡ÀÌÀüÆ®" expand="false"></tocitem>
+        <tocitem target="subjectcreateagent" text="¿¡ÀÌÀüÆ® ¸¸µé±â ¶Ç´Â ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="subject.filteredrole" text="ÇÊÅÍ¸µµÈ ¿ªÇÒ" expand="false"></tocitem>
+        <tocitem target="subject.createfiltrole" text="ÇÊÅÍ¸µµÈ ¿ªÇÒ ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="subject.role" text="¿ªÇÒ" expand="false"></tocitem>
+        <tocitem target="subject.createrole" text="¿ªÇÒ ¸¸µé±â ¶Ç´Â ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="idm.entitymembers" text="¿ªÇÒ ¶Ç´Â ±×·ì¿¡ »ç¿ëÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="subject.group" text="±×·ì" expand="false"></tocitem>
+        <tocitem target="subject.creategroup" text="±×·ì ¸¸µé±â ¶Ç´Â ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="ggdbu" text="Á¤Ã¥ ±¸¼º ¼­ºñ½º " expand="false">
+            <tocitem target="ggdbu" text="ÁÖÁ¦ °á°ú À¯Áö ½Ã°£" expand="false"></tocitem>
+            <tocitem target="ggdbu" text="µ¿Àû ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="ggdbu" text="amldapuser Á¤ÀÇ" expand="false"></tocitem></tocitem></tocitem></tocitem>
+ <tocitem target="dirmang" text="µð·ºÅä¸® °ü¸®" expand="false">
+    <tocitem target="dm.home" text="µð·ºÅä¸® °ü¸®" expand="false"></tocitem></tocitem>
+ <tocitem target="federation" text="¿¬ÇÕ" expand="false">
+    <tocitem target="federation.fsauthdomains" text="ÀÎÁõ µµ¸ÞÀÎ" expand="false">
+        <tocitem target="federation.fsauthdomainsadd" text="»õ ÀÎÁõ µµ¸ÞÀÎ ÀÛ¼º" expand="false"></tocitem>
+        <tocitem target="federation.fsauthdomainsedit" text="ÀÎÁõ µµ¸ÞÀÎ ÇÁ·ÎÇÊ ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fsauthdomainsselectprovider" text="ÀÎÁõ µµ¸ÞÀÎ¿¡ °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="deleteauthdomain" text="ÀÎÁõ µµ¸ÞÀÎ ÇÁ·ÎÇÊ »èÁ¦" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.fsentitydescriptors" text="¿£Æ¼Æ¼: °ø±ÞÀÚ ¹× °è¿­»ç" expand="false">
+        <tocitem target="federation.fsentitydescriptorsadd" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ ¶Ç´Â °è¿­»ç ¿£Æ¼Æ¼ ÀÛ¼º" expand="false"></tocitem>
+        <tocitem target="federation.fsentitydescriptorsprofile" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ ¶Ç´Â °è¿­»ç ¿£Æ¼Æ¼ÀÇ ÀÏ¹Ý ¼Ó¼º ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityprovider" text="°ø±ÞÀÚ ¿£Æ¼Æ¼¿¡ Identity °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderhostedadd" text="°ø±ÞÀÚ ¿£Æ¼Æ¼¿¡ »õ È£½ºÆ® Identity °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderremoteadd" text="°ø±ÞÀÚ ¿£Æ¼Æ¼¿¡ »õ ¿ø°Ý Identity °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceprovider" text="°ø±ÞÀÚ ¿£Æ¼Æ¼¿¡ ¼­ºñ½º °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderhostedadd" text="°ø±ÞÀÚ ¿£Æ¼Æ¼¿¡ »õ È£½ºÆ® ¼­ºñ½º °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderremoteadd" text="°ø±ÞÀÚ ¿£Æ¼Æ¼¿¡ »õ ¿ø°Ý ¼­ºñ½º °ø±ÞÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderhostedprofile" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ÀÇ È£½ºÆ® Identity °ø±ÞÀÚ ¼Ó¼º ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderremoteprofile" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ÀÇ ¿ø°Ý Identity °ø±ÞÀÚ ¼Ó¼º ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderhostedprofile" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ÀÇ È£½ºÆ® ¼­ºñ½º °ø±ÞÀÚ ¼Ó¼º ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderremoteprofile" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ÀÇ ¿ø°Ý ¼­ºñ½º °ø±ÞÀÚ ¼Ó¼º ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fscreatecontactperson" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ÀÇ °ø±ÞÀÚ¿¡ ¿¬¶ô ´ã´çÀÚ Ãß°¡" expand="false"></tocitem>
+        <tocitem target="federation.fseditcontactperson" text="°ø±ÞÀÚ ¿£Æ¼Æ¼ÀÇ ¿¬¶ô ´ã´çÀÚ ÇÁ·ÎÇÊ ¼öÁ¤" expand="false"></tocitem>
+        <tocitem target="federation.fsentitydescriptorsaffiliate" text="°è¿­»ç ¿£Æ¼Æ¼¿¡ ±¸¼º¿ø Ãß°¡" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.fssamlservice" text="SAML" expand="false">
+        <tocitem target="targetspecifier" text="´ë»ó ÁöÁ¤ÀÚ" expand="false"></tocitem>
+        <tocitem target="siteidentifiers" text="»çÀÌÆ® ½Äº°ÀÚ" expand="false"></tocitem>
+        <tocitem target="federation.fssamlsiteidadd" text="»çÀÌÆ® ½Äº°ÀÚ ±¸¼º " expand="false"></tocitem>
+        <tocitem target="trustedpartners" text="½Å·ÚÇÒ ¼ö ÀÖ´Â ÆÄÆ®³Ê" expand="false"></tocitem>
+        <tocitem target="federation.fssamlselecttrustedpartnertype" text="½Å·ÚÇÒ ¼ö ÀÖ´Â ÆÄÆ®³Ê: ÆÄÆ®³Ê À¯Çü ¹× ÇÁ·ÎÇÊ ¼±ÅÃ" expand="false"></tocitem>
+        <tocitem target="federation.fssamltrustedpartnersadd" text="½Å·ÚÇÒ ¼ö ÀÖ´Â ÆÄÆ®³Ê: ½Å·ÚÇÒ ¼ö ÀÖ´Â ÆÄÆ®³Ê ¼Ó¼º ±¸¼º" expand="false"></tocitem>
+        <tocitem target="targeturl" text="´ë»ó URL" expand="false"></tocitem>
+        <tocitem target="federation.fssamltargeturlsadd" text="´ë»ó URL ±¸¼º" expand="false"></tocitem>
+        <tocitem target="assertiontimeout" text="³í¸® °Ë»ç ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+        <tocitem target="assertionskew" text="notBefore ½Ã°£¿¡ ´ëÇÑ ½ºÅ¥ ÆÑÅÍ ´ÜÁ¤" expand="false"></tocitem>
+        <tocitem target="artifacttimeout" text="¾ÆÆ¼ÆÑÆ® ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+        <tocitem target="samlartifactname" text="SAML ¾ÆÆ¼ÆÑÆ® ÀÌ¸§" expand="false"></tocitem>
+        <tocitem target="signsamlassertion" text="SAML ¸íÁ¦¿¡ ¼­¸í" expand="false"></tocitem>
+        <tocitem target="signsamlrequest" text="SAML ¿äÃ»¿¡ ¼­¸í" expand="false"></tocitem>
+        <tocitem target="signsamlresponse" text="SAML ÀÀ´ä¿¡ ¼­¸í" expand="false"></tocitem></tocitem></tocitem>
+ <tocitem target="webservices" text="À¥ ¼­ºñ½º" expand="false">
+    <tocitem target="webservices.wspersonalprofileservice" text="¸®¹öÆ¼ °³ÀÎ ÇÁ·ÎÇÊ ¼­ºñ½º" expand="false">
+        <tocitem target="resourceidmapper" text="ÀÚ¿ø ¾ÆÀÌµð ¸ÅÆÛ" expand="false"></tocitem>
+        <tocitem target="authorizer" text="ÀÎÁõÀÚ" expand="false"></tocitem>
+        <tocitem target="attributemapper" text="¼Ó¼º ¸ÅÆÛ" expand="false"></tocitem>
+        <tocitem target="ppproviderid" text="°ø±ÞÀÚ ¾ÆÀÌµð" expand="false"></tocitem>
+        <tocitem target="namescheme" text="ÀÌ¸§ Ã¼°è" expand="false"></tocitem>
+        <tocitem target="namespaceprefix" text="ÀÌ¸§ °ø°£ Á¢µÎ¾î" expand="false"></tocitem>
+        <tocitem target="supportedcontainers" text="Áö¿øµÇ´Â ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+        <tocitem target="webservices.wsppservicesupportedcontaineradd" text="Áö¿øµÇ´Â ÄÁÅ×ÀÌ³Ê ±¸¼º" expand="false"></tocitem>
+        <tocitem target="ppldapattributemaplist" text="PPLDAP ¼Ó¼º ¸Ê ¸ñ·Ï" expand="false"></tocitem>
+        <tocitem target="webservices.wsppservicedsattributemaplistadd" text="¼Ó¼º ¸ÅÇÎ ±¸¼º" expand="false"></tocitem>
+        <tocitem target="requirequery" text="Äõ¸® Á¤Ã¥ Æò°¡ ¿ä±¸" expand="false"></tocitem>
+        <tocitem target="requiremodify" text="¼öÁ¤ Á¤Ã¥ Æò°¡ ¿ä±¸" expand="false"></tocitem>
+        <tocitem target="extensioncontainerattributes" text="È®Àå ÄÁÅ×ÀÌ³Ê ¼Ó¼º" expand="false"></tocitem>
+        <tocitem target="extensionattributesnamespaceprefix" text="È®Àå ¼Ó¼º ÀÌ¸§ °ø°£ Á¢µÎ¾î" expand="false"></tocitem>
+        <tocitem target="serviceupdateenabled" text="¼­ºñ½º ¾÷µ¥ÀÌÆ®" expand="false"></tocitem>
+        <tocitem target="serviceinstanceupdateclass" text="¼­ºñ½º ÀÎ½ºÅÏ½º ¾÷µ¥ÀÌÆ® Å¬·¡½º" expand="false"></tocitem>
+        <tocitem target="alternateendpoint" text="´ëÃ¼ Á¾Á¡" expand="false"></tocitem>
+        <tocitem target="alternatesecuritymechanisms" text="´ëÃ¼ º¸¾È ±â¹ý" expand="false"></tocitem></tocitem>
+    <tocitem target="service.smdiscoveryservice" text="°Ë»ö ¼­ºñ½º" expand="false">
+        <tocitem target="dsproviderid" text="°ø±ÞÀÚ ¾ÆÀÌµð" expand="false"></tocitem>
+        <tocitem target="supportedauthmechanisms" text="Áö¿øµÇ´Â ÀÎÁõ ±â¹ý" expand="false"></tocitem>
+        <tocitem target="supporteddirectives" text="Áö¿øµÇ´Â Áö½Ã¹®" expand="false"></tocitem>
+        <tocitem target="policyevaldiscolookup" text="°Ë»ö Á¶È¸¿¡ ´ëÇÑ Á¤Ã¥ Æò°¡" expand="false"></tocitem>
+        <tocitem target="policyevaldiscoupdate" text="°Ë»ö ¾÷µ¥ÀÌÆ®¿¡ ´ëÇÑ Á¤Ã¥ Æò°¡" expand="false"></tocitem>
+        <tocitem target="authorizerpluginclass" text="ÀÎÁõÀÚ ÇÃ·¯±×ÀÎ Å¬·¡½º:" expand="false"></tocitem>
+        <tocitem target="entryhandlerpluginclass" text="Ç×¸ñ Ã³¸®±â ÇÃ·¯±×ÀÎ Å¬·¡½º" expand="false"></tocitem>
+        <tocitem target="resourceidmapperpluginclass" text="ÀÚ¿ø ¾ÆÀÌµð ¸ÅÆÛ ÇÃ·¯±×ÀÎ Å¬·¡½º " expand="false"></tocitem>
+        <tocitem target="service.smdiscoveryproviderresourceidmapadd" text="ÀÚ¿ø ¾ÆÀÌµð ¸ÅÆÛ ±¸¼º" expand="false"></tocitem>
+        <tocitem target="authresponsemessage" text="ÀÀ´ä ¸Þ½ÃÁö ÀÎÁõ" expand="false"></tocitem>
+        <tocitem target="generatesessioncontext" text="ºÎÆ®½ºÆ®·¦¿ë ¼¼¼Ç ÄÁÅØ½ºÆ® ¹®" expand="false"></tocitem>
+        <tocitem target="encryptnameidentifier" text="ºÎÆ®½ºÆ®·¦¿ë ¼¼¼Ç ÄÁÅØ½ºÆ®¿¡¼­ NameIdentifier ¾ÏÈ£È­" expand="false"></tocitem>
+        <tocitem target="useimpliedresource" text="ÇÔÃàµÈ ÀÚ¿ø" expand="false"></tocitem>
+        <tocitem target="resourceofferingsbootstrapping" text="ºÎÆ®½ºÆ®·¦¿ë ÀÚ¿ø ¿ÀÆÛ¸µ" expand="false"></tocitem>
+        <tocitem target="service.smdiscoverybootstraprefoffadd" text="ºÎÆ®½ºÆ®·¦¿ë ÀÚ¿ø ¿ÀÆÛ¸µ ±¸¼º" expand="false"></tocitem>
+        <tocitem target="service.smdiscoverydescriptionadd" text="¼­ºñ½º ¼³¸í ±¸¼º" expand="false"></tocitem></tocitem>
+    <tocitem target="service.scsoapbinding" text="SOAP ¹ÙÀÎµå ¼­ºñ½º" expand="false">
+        <tocitem target="requesthandlerlist" text="¿äÃ» Ã³¸®±â ¸ñ·Ï" expand="false"></tocitem>
+        <tocitem target="service.scsoapbindingrequesthandlerlistadd" text="¿äÃ» Ã³¸®±â ±¸¼º" expand="false"></tocitem>
+        <tocitem target="webserviceauthenticator" text="À¥ ¼­ºñ½º ÀÎÁõÀÚ" expand="false"></tocitem>
+        <tocitem target="soapsuppauthmech" text="Áö¿øµÇ´Â ÀÎÁõ ±â¹ý" expand="false"></tocitem></tocitem>
+    <tocitem target="webservices.wsauthnservices" text="ÀÎÁõ À¥ ¼­ºñ½º" expand="false">
+        <tocitem target="mechanismhandlerslist" text="¸ÞÄ¿´ÏÁò Ã³¸®±â ¸ñ·Ï" expand="false"></tocitem>
+        <tocitem target="webservices.wsauthnserviceshandlersadd" text="»õ ¸ÞÄ¿´ÏÁò Ã³¸®±â ±¸¼º" expand="false"></tocitem></tocitem></tocitem>
+ <tocitem target="service.scconfig" text="±¸¼º ¼Ó¼º" expand="false">
+    <tocitem target="authattrs" text="ÀÎÁõ" expand="false">
+        <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="ÀÍ¸í" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="À¯È¿ÇÑ ÀÍ¸í »ç¿ëÀÚ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="±âº» ÀÍ¸í »ç¿ëÀÚ ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="´ë¼Ò¹®ÀÚ ±¸ºÐ »ç¿ëÀÚ ¾ÆÀÌµð" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthadservice" text="È°¼º µð·ºÅä¸®" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ÁÖ È°¼º µð·ºÅä¸® ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="º¸Á¶ È°¼º µð·ºÅä¸® ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="»ç¿ëÀÚ °Ë»öÀ» ½ÃÀÛÇÒ DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ °Ë»ö ½Ã »ç¿ëµÇ´Â ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ÀÎÁõµÉ »ç¿ëÀÚ °Ë»ö ½Ã »ç¿ëµÇ´Â ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="»ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="°Ë»ö ¹üÀ§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="È°¼º µð·ºÅä¸® ¼­¹ö¿¡ ´ëÇÑ SSL ¾×¼¼½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ÀÎÁõÇÒ »ç¿ëÀÚ DN ¹ÝÈ¯" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="È°¼º µð·ºÅä¸® ¼­¹ö È®ÀÎ °£°Ý" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="»ç¿ëÀÚ ÀÛ¼º ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="authentication.authconfig" text="ÀÎÁõ ±¸¼º " expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÀÎÁõ¼­ " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP¿¡¼­ ÀÎÁõ¼­ ÀÏÄ¡" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP¿¡¼­ ÀÎÁõ¼­ °Ë»ö ½Ã »ç¿ëµÇ´Â ÁÖÁ¦ DN ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="CRL¿¡ ÀÎÁõ¼­ ÀÏÄ¡" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP¿¡¼­ CRL °Ë»ö ½Ã »ç¿ëµÇ´Â ¹ß±ÞÀÚ DN ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="CRL ¾÷µ¥ÀÌÆ®¿ë HTTP ¸Å°³ º¯¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="OCSP °ËÁõ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÀÎÁõ¼­°¡ ÀúÀåµÇ´Â LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP ½ÃÀÛ °Ë»ö DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP ¼­¹ö ±âº» »ç¿ëÀÚ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP ¼­¹ö ±âº» ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP ¼­¹ö ±âº» ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÇÁ·ÎÇÊ ¾ÆÀÌµðÀÇ LDAP ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP ¾×¼¼½º¿¡ SSL »ç¿ë" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ ¾×¼¼½º¿¡ »ç¿ëµÇ´Â ÀÎÁõ¼­ ÇÊµå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ ¾×¼¼½º¿¡ »ç¿ëµÇ´Â ±âÅ¸ ÀÎÁõ¼­ ÇÊµå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="½Å·ÚÇÒ ¼ö ÀÖ´Â ¿ø°Ý È£½ºÆ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="SSL Æ÷Æ® ¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Å¬¶óÀÌ¾ðÆ® ÀÎÁõ¼­ÀÇ HTTP Çì´õ ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÇÙ½É" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÇÃ·¯±× °¡´É ÀÎÁõ ¸ðµâ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Áö¿øµÇ´Â Å¬¶óÀÌ¾ðÆ®¿ë ÀÎÁõ ¸ðµâ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="LDAP ¿¬°á Ç® Å©±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="±âº» LDAP ¿¬°á Ç® Å©±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="°ü¸®ÀÚ ÀÎÁõ ±¸¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ µ¿Àû ÀÛ¼º ±âº» ¿ªÇÒ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="¿µ±¸ ÄíÅ° ¸ðµå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="¿µ±¸ ÄíÅ° ÃÖ´ë ½Ã°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="º°Äª °Ë»ö ¼Ó¼º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="±âº» ÀÎÁõ ·ÎÄÌ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Á¶Á÷ ÀÎÁõ ±¸¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="·Î±×ÀÎ ½ÇÆÐ Àá±Ý ¸ðµå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="·Î±×ÀÎ ½ÇÆÐ Àá±Ý ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="·Î±×ÀÎ ½ÇÆÐ Àá±Ý °£°Ý" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Àá±Ý ¾Ë¸²À» º¸³¾ ÀüÀÚ ¸ÞÀÏ ÁÖ¼Ò" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="NÈ¸ ½ÇÆÐ ÈÄ »ç¿ëÀÚ¿¡°Ô °æ°í" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="·Î±×ÀÎ ½ÇÆÐ Àá±Ý ±â°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Àá±Ý ¼Ó¼º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Àá±Ý ¼Ó¼º °ª" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="±âº» ¼º°ø ·Î±×ÀÎ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="±âº» ½ÇÆÐ ·Î±×ÀÎ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÀÎÁõ »çÈÄ Ã³¸® Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="»ç¿ëÀÚ ¾ÆÀÌµð »ý¼º ¸ðµå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÇÃ·¯±× °¡´É »ç¿ëÀÚ ÀÌ¸§ »ý¼º±â Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Identity À¯Çü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÇÃ·¯±× °¡´É »ç¿ëÀÚ »óÅÂ ÀÌº¥Æ® Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="µ¥ÀÌÅÍ ÀúÀå¼Ò¿¡ Àß¸øµÈ ÀúÀå ½Ãµµ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="¸ðµâ ±â¹Ý ÀÎÁõ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="±âº» ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="µ¥ÀÌÅÍ ÀúÀå¼Ò" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP ±âº»" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="¿¬°á À¯Çü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="¿¬°á Ç® JNDI ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC µå¶óÀÌ¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ÀÌ »ç¿ëÀÚ¸¦ µ¥ÀÌÅÍº£ÀÌ½º¿¡ ¿¬°á" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="µ¥ÀÌÅÍº£ÀÌ½º ¿¬°á¿¡ »ç¿ëÇÒ ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="µ¥ÀÌÅÍº£ÀÌ½º ¿¬°á¿¡ »ç¿ëÇÒ ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ºñ¹Ð¹øÈ£ ¿­ ¹®ÀÚ¿­" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ÁØºñµÈ ¸í·É¹®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ºñ¹Ð¹øÈ£ ±¸¹® º¯È¯¿¡ »ç¿ëÇÒ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="jdbcexample" text="¿¬°á Ç® ±¸¼º â€” ¿¹Á¦" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="±âº» LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="º¸Á¶ LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="»ç¿ëÀÚ °Ë»öÀ» ½ÃÀÛÇÒ DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ °Ë»ö ½Ã »ç¿ëµÇ´Â ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ÀÎÁõµÉ »ç¿ëÀÚ °Ë»ö ½Ã »ç¿ëµÇ´Â ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="»ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="°Ë»ö ¹üÀ§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="SSLÀÌ LDAP ¼­¹ö¿¡ ¾×¼¼½º °¡´É" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ÀÎÁõÇÒ »ç¿ëÀÚ DN ¹ÝÈ¯" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP ¼­¹ö È®ÀÎ °£°Ý" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="»ç¿ëÀÚ ÀÛ¼º ¼Ó¼º ¸ñ·Ï" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="±¸¼º¿ø" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÃÖ¼Ò ºñ¹Ð¹øÈ£ ±æÀÌ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="±âº» »ç¿ëÀÚ ¿ªÇÒ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="µî·Ï ÈÄ »ç¿ëÀÚ »óÅÂ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="±âº» LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="º¸Á¶ LDAP ¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="»ç¿ëÀÚ °Ë»öÀ» ½ÃÀÛÇÒ DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="·çÆ® »ç¿ëÀÚ ¹ÙÀÎµå¿ë ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ °Ë»ö ½Ã »ç¿ëµÇ´Â ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÀÎÁõµÉ »ç¿ëÀÚ °Ë»ö ½Ã »ç¿ëµÇ´Â ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="»ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="°Ë»ö ¹üÀ§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="SSLÀÌ LDAP ¼­¹ö¿¡ ¾×¼¼½º °¡´É" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÀÎÁõÇÒ »ç¿ëÀÚ DN ¹ÝÈ¯" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="½Å·ÚÇÒ ¼ö ÀÖ´Â °ÔÀÌÆ®¿þÀÌ IP ÁÖ¼Ò" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN ¹øÈ£ ÀÎ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP ¼­¹ö ¹× Æ÷Æ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP ½ÃÀÛ °Ë»ö DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP °Ë»ö¿¡ »ç¿ëÇÒ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP ¼­¹ö ±âº» »ç¿ëÀÚ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP ¼­¹ö ±âº» ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP ¼­¹ö ±âº» ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP ¾×¼¼½º¿¡ SSL »ç¿ë" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ °Ë»ö ½Ã »ç¿ëµÇ´Â LDAP ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="ÀÎÁõ ½Ã¿¡ »ç¿ëÀÚ DN ¹ÝÈ¯" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="¼­¹ö 1" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="¼­¹ö 2" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="°øÀ¯ ºñ¹Ð" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="°øÀ¯ ºñ¹Ð È®ÀÎ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Æ÷Æ® ¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="¼­¹ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="¼­¹ö °ËÁõ ÆÄÀÏ µð·ºÅä¸®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="·Î±ë »ç¿ë °¡´É" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="·Î±ë ¼öÁØ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="·Î±× ÆÄÀÏ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ÀÎÁõ ¿¬°á ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Å¬¶óÀÌ¾ðÆ® À¯Çü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="EASSP ¹öÀü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ÃÖ¼Ò ÀÎÁõÀÚ ±ÇÇÑ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ACE/¼­¹ö ±¸¼º °æ·Î" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="µµ¿ì¹Ì ±¸¼º Æ÷Æ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="µµ¿ì¹Ì ÀÎÁõ Æ÷Æ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="±¸¼º Æ÷Æ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="ÀÎÁõ Æ÷Æ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="½º·¹µå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="PAM ¼­ºñ½º ÀÌ¸§" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows µ¥½ºÅ©Å¾ SSO" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="¼­ºñ½º ±âº»" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Å°ÅÇ ÆÄÀÏ ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Ä¿¹ö·Î½º ¿µ¿ª" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Ä¿¹ö·Î½º ¼­¹ö ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="µµ¸ÞÀÎ ÀÌ¸§°ú ÇÔ²² ±âº» ¹ÝÈ¯" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="ÀÎÁõ µµ¸ÞÀÎ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="ÀÎÁõ È£½ºÆ®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Samba ±¸¼º ÆÄÀÏ ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="ÀÎÁõ ¼öÁØ" expand="false"></tocitem></tocitem>
+        <tocitem target="supportedlang" text="Áö¿øµÇ´Â ¾ð¾î ·ÎÄÌ" expand="false"></tocitem></tocitem>
+    <tocitem target="consoleprops" text="ÄÜ¼Ö µî·Ï Á¤º¸" expand="false">
+        <tocitem target="service.scserviceprofile.amadminconsoleservice" text="°ü¸® " expand="false">
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="¿¬ÇÕ °ü¸®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ °ü¸®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Á¶Á÷ ±¸¼º ´ÜÀ§ ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±×·ì ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="°ü¸® ´ë»ó ±×·ì À¯Çü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±âº» ¿ªÇÒ ±ÇÇÑ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="µµ¸ÞÀÎ ±¸¼º ¿ä¼Ò Æ®¸®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="°ü¸® ±×·ì" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="È£È¯ »ç¿ëÀÚ »èÁ¦" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="µ¿Àû °ü¸® ¿ªÇÒ ACI" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ ¼­ºñ½º Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="DC ³ëµå ¼Ó¼º ¸ñ·Ï" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»èÁ¦µÈ °´Ã¼ÀÇ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±âº» »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±âº» ±×·ì ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±âº» ¿¡ÀÌÀüÆ® ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±×·ì ±âº» »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="±×·ì »ç¿ëÀÚ ÄÁÅ×ÀÌ³Ê ¸ñ·Ï" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ µð½ºÇÃ·¹ÀÌ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ÃÖÁ¾ »ç¿ëÀÚ ÇÁ·ÎÇÊ µð½ºÇÃ·¹ÀÌ Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ ÆäÀÌÁö¿¡ ¿ªÇÒ Ç¥½Ã" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ ÆäÀÌÁö¿¡ ±×·ì Ç¥½Ã" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚÀÇ ±×·ì Á÷Á¢ °¡ÀÔ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÇÁ·ÎÇÊ µð½ºÇÃ·¹ÀÌ ¿É¼Ç" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÀÛ¼º ±âº» ¿ªÇÒ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="°ü¸® ÄÜ¼Ö ÅÇ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="°Ë»ö¿¡¼­ ¹ÝÈ¯µÇ´Â ÃÖ´ë °á°ú ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="°Ë»ö ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="JSP µð·ºÅä¸® ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="¿Â¶óÀÎ µµ¿ò¸» ¹®¼­" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ÇÊ¼ö ¼­ºñ½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ °Ë»ö Å°" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ °Ë»ö ¹ÝÈ¯ ¼Ó¼º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ÀÛ¼º ¾Ë¸² ¸ñ·Ï" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ »èÁ¦ ¾Ë¸² ¸ñ·Ï" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ¼öÁ¤ ¾Ë¸² ¸ñ·Ï" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ÆäÀÌÁö´ç Ç¥½ÃµÇ´Â ÃÖ´ë Ç×¸ñ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Event Listener Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»çÀü Ã³¸® ¹× »çÈÄ Ã³¸® Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="¿ÜºÎ ¼Ó¼º ºÒ·¯¿À±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Àß¸øµÈ »ç¿ëÀÚ ¾ÆÀÌµð ¹®ÀÚ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="»ç¿ëÀÚ ¾ÆÀÌµð ¹× ºñ¹Ð¹øÈ£ °ËÁõ ÇÃ·¯±×ÀÎ Å¬·¡½º" expand="false"></tocitem></tocitem>
+        <tocitem target="service.smg11n" text="±¹Á¦È­ ¼³Á¤" expand="false">
+            <tocitem target="service.smg11n" text="°¢ ·ÎÄÌÀÌ Áö¿øÇÏ´Â ¹®ÀÚ ÁýÇÕ" expand="false"></tocitem>
+            <tocitem target="service.smg11n" text="¹®ÀÚ ÁýÇÕ º°Äª" expand="false"></tocitem>
+            <tocitem target="service.smg11n" text="ÀÚµ¿ »ý¼ºµÈ °øÅë ÀÌ¸§ Çü½Ä" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="global" text="Àü¿ª µî·Ï Á¤º¸" expand="false">
+        <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="»ç¿ëÀÚ °ËÁõ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð ¹®Á¦" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="°Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="±âº» DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="¹ÙÀÎµå DN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="¹ÙÀÎµå ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ ¿É¼Ç" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ º¯°æ ¾Ë¸² ¿É¼Ç" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="°³ÀÎ Áú¹®" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ÃÖ´ë Áú¹® ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="´ÙÀ½ ·Î±×ÀÎ ½Ã ¹Ýµå½Ã ºñ¹Ð¹øÈ£ º¯°æ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ ½ÇÆÐ Àá±Ý" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ ½ÇÆÐ Àá±Ý ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ ½ÇÆÐ Àá±Ý °£°Ý" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Àá±Ý ¾Ë¸²À» º¸³¾ ÀüÀÚ ¸ÞÀÏ ÁÖ¼Ò" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="NÈ¸ ½ÇÆÐ ÈÄ »ç¿ëÀÚ¿¡°Ô °æ°í" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ ½ÇÆÐ Àá±Ý ±â°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ Àá±Ý ¼Ó¼º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ºñ¹Ð¹øÈ£ Àç¼³Á¤ Àá±Ý ¼Ó¼º °ª" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scpolicy" text="Á¤Ã¥ ±¸¼º" expand="false">
+            <tocitem target="service.scpolicy" text="Àü¿ª µî·Ï Á¤º¸" expand="false">
+                <tocitem target="service.scpolicy" text="ÀÚ¿ø ºñ±³±â" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="°ÅºÎ °áÁ¤¿¡ ´ëÇÑ Æò°¡ °è¼Ó" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Federated Access Manager¿¡¼­ Ã³¸® °¡´ÉÇÑ ±Ç°í" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Á¶Á÷ º°Äª ÂüÁ¶" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scpolicy" text="¿µ¿ª ¼Ó¼º" expand="false">
+                <tocitem target="service.scpolicy" text="±âº» LDAP ¼­¹ö" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ±âº» DN" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP »ç¿ëÀÚ ±âº» DN" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Federated Access Manager ¿ªÇÒ ±â¹Ý DN" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ¹ÙÀÎµå DN" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ¹ÙÀÎµå ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP Á¶Á÷ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP Á¶Á÷ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ±×·ì °Ë»ö ¹üÀ§" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ±×·ì °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP »ç¿ëÀÚ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP »ç¿ëÀÚ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ¿ªÇÒ °Ë»ö ÇÊÅÍ" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ¿ªÇÒ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Federated Access Manager ¿ªÇÒ °Ë»ö ¹üÀ§" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP Á¶Á÷ °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ±×·ì °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP »ç¿ëÀÚ °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ¿ªÇÒ °Ë»ö ¼Ó¼º" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="°Ë»ö¿¡¼­ ¹ÝÈ¯µÇ´Â ÃÖ´ë °á°ú ¼ö" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="°Ë»ö ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP SSL" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="LDAP ¿¬°á Ç® ÃÖ¼Ò Å©±â" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="¿¬°á Ç® ÃÖ´ë Å©±â" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="¼±ÅÃÇÑ Á¤Ã¥ ÁÖÁ¦" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="¼±ÅÃÇÑ Á¤Ã¥ Á¶°Ç" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="¼±ÅÃÇÑ Á¤Ã¥ ÂüÁ¶" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="ÁÖÁ¦ °á°ú À¯Áö ½Ã°£" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="»ç¿ëÀÚ º°Äª" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="¼±ÅÃÇÑ ÀÀ´ä °ø±ÞÀÚ" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="¼±ÅÃÇÑ µ¿Àû ÀÀ´ä ¼Ó¼º" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.amsessionservice" text="¼¼¼Ç" expand="false">
+            <tocitem target="service.scserviceprofile.amsessionservice" text="º¸Á¶ ±¸¼º ÀÎ½ºÅÏ½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÃÖ´ë °Ë»ö °á°ú ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="°Ë»ö ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="µî·Ï Á¤º¸ º¯°æ ¾Ë¸²" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÇÒ´ç·® Á¦¾à Á¶°Ç" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÇÒ´ç·® Á¦¾à Á¶°ÇÀÇ ÀÐ±â ½Ã°£ ÃÊ°ú" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Á¦¾à Á¶°Ç °Ë»ç¿¡¼­ ÃÖ»óÀ§ °ü¸®ÀÚ Á¦¿Ü " expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="¼¼¼Ç ÇÒ´ç·®ÀÌ ¸ðµÎ »ç¿ëµÈ °æ¿ìÀÇ °á°ú µ¿ÀÛ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="¾Ë¸² µî·Ï Á¤º¸" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÃÖ´ë ¼¼¼Ç ½Ã°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÃÖ´ë À¯ÈÞ ½Ã°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÃÖ´ë Ä³½Ì ½Ã°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="È°¼º »ç¿ëÀÚ ¼¼¼Ç" expand="false"></tocitem></tocitem>
+        <tocitem target="service.subconfigadd" text="ÇÏÀ§ ±¸¼º Ãß°¡" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamuserservice" text="»ç¿ëÀÚ" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="»ç¿ëÀÚ ±âº» ¾ð¾î" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="»ç¿ëÀÚ ±âº» Ç¥ÁØ ½Ã°£´ë" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="»ó¼ÓµÈ ·ÎÄÌ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="°ü¸®ÀÚ ½ÃÀÛ º¸±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="±âº» »ç¿ëÀÚ »óÅÂ" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="systemprops" text="½Ã½ºÅÛ µî·Ï Á¤º¸" expand="false">
+        <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Å¬¶óÀÌ¾ðÆ® °Ë»ö" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Å¬¶óÀÌ¾ðÆ® À¯Çü" expand="false">
+                <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Å¬¶óÀÌ¾ðÆ® °ü¸®ÀÚ" expand="false"></tocitem>
+                <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Å¬¶óÀÌ¾ðÆ® À¯Çü" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="±âº» Å¬¶óÀÌ¾ðÆ® À¯Çü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Å¬¶óÀÌ¾ðÆ® °Ë»ö Å¬·¡½º" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Å¬¶óÀÌ¾ðÆ® °Ë»ö" expand="false"></tocitem></tocitem>
+        <tocitem target="service.mapcreatedevice" text="»õ Å¬¶óÀÌ¾ðÆ® Ãß°¡" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="·Î±ë " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÃÖ´ë ·Î±× Å©±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="³»¿ª ÆÄÀÏ ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="·Î±× ÆÄÀÏ À§Ä¡" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="·Î±ë À¯Çü" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="µ¥ÀÌÅÍº£ÀÌ½º »ç¿ëÀÚ ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="µ¥ÀÌÅÍº£ÀÌ½º »ç¿ëÀÚ ºñ¹Ð¹øÈ£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="µ¥ÀÌÅÍº£ÀÌ½º »ç¿ëÀÚ ºñ¹Ð¹øÈ£(È®ÀÎ)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="µ¥ÀÌÅÍº£ÀÌ½º µå¶óÀÌ¹ö ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="±¸¼º °¡´ÉÇÑ ·Î±× ÇÊµå" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="·Î±× È®ÀÎ ºóµµ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="·Î±× ¼­¸í ½Ã°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="º¸¾È ·Î±ë" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="º¸¾È ·Î±ë ¼­¸í ¾Ë°í¸®Áò" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÃÖ´ë ·¹ÄÚµå ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="¾ÆÄ«ÀÌºê´ç ÆÄÀÏ ¼ö" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="¹öÆÛ Å©±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="DB ½ÇÆÐ ¸Þ¸ð¸® ¹öÆÛ Å©±â" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="¹öÆÛ ½Ã°£" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="½Ã°£ ¹öÆÛ¸µ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÀÌ¸§ ÁöÁ¤ " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÇÁ·ÎÇÊ ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="¼¼¼Ç ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="·Î±ë ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="Á¤Ã¥ ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÀÎÁõ ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML À¥ ÇÁ·ÎÇÊ/¾ÆÆ¼ÆÑÆ® ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML SOAP ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML À¥ ÇÁ·ÎÇÊ/POST ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML ¸íÁ¦ °ü¸®ÀÚ ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="¿¬ÇÕ ¸íÁ¦ °ü¸®ÀÚ ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="º¸¾È ÅäÅ« °ü¸®ÀÚ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="JAXRPC Á¾Á¡ URL" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scplatform" text="ÇÃ·§Æû" expand="false">
+            <tocitem target="service.scplatform" text="»çÀÌÆ® ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="ÀÎ½ºÅÏ½º ÀÌ¸§" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="ÇÃ·§Æû ·ÎÄÌ" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="ÄíÅ° µµ¸ÞÀÎ" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="·Î±×ÀÎ ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="·Î±×¾Æ¿ô ¼­ºñ½º URL" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="»ç¿ë °¡´ÉÇÑ ·ÎÄÌ" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="Å¬¶óÀÌ¾ðÆ® ¹®ÀÚ ÁýÇÕ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scplatformsitelistadd" text="»õ »çÀÌÆ® ÀÌ¸§ ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="service.scplatformserverlistadd" text="»õ ÀÎ½ºÅÏ½º ÀÌ¸§ ¸¸µé±â" expand="false"></tocitem>
+        <tocitem target="service.scplatformclientcharsetsadd" text="»õ ¹®ÀÚ ÁýÇÕ ¸¸µé±â" expand="false"></tocitem></tocitem></tocitem>
+ <tocitem target="sessions" text="¼¼¼Ç" expand="false">
+    <tocitem target="sessionpage" text="¼¼¼Ç ÆäÀÌÁö" expand="false">
+        <tocitem target="sessionsearch" text="°Ë»ö" expand="false"></tocitem>
+        <tocitem target="viewsession" text="º¸±â ¼¼¼Ç" expand="false"></tocitem>
+        <tocitem target="session.smprofile" text="¼¼¼Ç Ã¢" expand="false">
+            <tocitem target="session.smprofile" text="»ç¿ëÀÚ ¾ÆÀÌµð" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="³²Àº ½Ã°£(ºÐ)" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="ÃÖ´ë ¼¼¼Ç ½Ã°£(ºÐ)" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="À¯ÈÞ ½Ã°£(ºÐ)" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="ÃÖ´ë À¯ÈÞ ½Ã°£(ºÐ)" expand="false"></tocitem></tocitem>
+        <tocitem target="invalidatesession" text="¼¼¼Ç ¹«È¿È­" expand="false"></tocitem>
+</tocitem>
+</tocitem>
 </toc>

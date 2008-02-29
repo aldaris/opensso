@@ -1,40 +1,57 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>So f&#252;gen Sie Mitglieder zu einer Partner-Entity hinzu
+  <title>So f&#252;gen Sie Mitglieder zu einer Partner-Entity hinzu - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fsentitydescriptorsaffiliate"></A><h3>So f&#252;gen Sie Mitglieder zu einer Partner-Entity hinzu</h3>
-<A NAME="indexterm-84"></A><A NAME="indexterm-85"></A><p>Nach der Erstellung einer Partner-Entity k&#246;nnen Sie dem Partner Mitglieder hinzuf&#252;gen. Der Ausgangspunkt ist &#8220;Entities&#34; in der Verbindungsschnittstelle. </p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Von diesem Bildschirm aus k&#246;nnen zudem definierte allgemeine Attribute ge&#228;ndert werden.</p>
-<hr size="1" noshade></p><ol><li><p><b>Klicken Sie auf den Namen eines konfigurierten Partners, um dessen Profil zu &#228;ndern.</b></p><p>Die Profilseite der Entity wird angezeigt.</p>
+
+
+<a name="federation.fsentitydescriptorsaffiliate"></a><h4>So f&#252;gen Sie Mitglieder zu einer Partner-Entity hinzu</h4><a name="indexterm-84"></a><a name="indexterm-85"></a><p>Nach der Erstellung einer Partner-Entity k&#246;nnen Sie dem Partner Mitglieder hinzuf&#252;gen. Der
+Ausgangspunkt ist "Entities" in der Verbindungsschnittstelle. </p>
+<hr><p><b>Hinweis &#8211; </b>Von diesem Bildschirm aus k&#246;nnen zudem definierte allgemeine Attribute ge&#228;ndert werden.</p>
+<hr>
+<ol>
+<li><b>Klicken Sie auf den Namen eines konfigurierten Partners, um dessen Profil zu
+&#228;ndern.</b><p>Die Profilseite der Entity wird angezeigt.</p></li>
+<li><b>W&#228;hlen Sie im Men&#252; "Ansicht" die Option "Partner" aus.</b></li>
+<li><b>W&#228;hlen Sie Entities aus, die dem Partner zugewiesen werden sollen.</b></li>
+<li><b>&#196;ndern Sie die Werte f&#252;r die allgemeinen Attribute.</b><p>Allgemeine Attribute enthalten Werte, die den Identity-Anbieter selbst allgemein beschreiben.</p><dl><dt>Name</dt>
+<dd><p>Geben Sie ggf. einen neuen URI f&#252;r die Partnerschaft ein. Der aktuelle Wert dieses Attributs ist der URI, der dem Partner-Namens-Attribut beim Erstellen der Entity zugewiesen wurde. Jeder neue Wert muss unter den Partner-Namen eindeutig sein.</p></dd>
+<dt>Eigent&#252;mer</dt>
+<dd><p>Geben Sie einen neuen URI ein, um einen anderen Eigent&#252;mer oder &#252;bergeordneten Operator f&#252;r die Partnerschaft festzulegen. Der aktuelle Wert dieses Attributs ist der URI, der dem Partner-Eigent&#252;mer-Attribut beim Erstellen der Entity zugewiesen wurde. Der neue Wert dieses Attributs ist ein URI, der mit dem Wert &#252;bereinstimmt, der im Attribut "Entity-Name" der Entity definiert wurde, zu der der Eigent&#252;mer/Anbieter geh&#246;rt. Jeder neue Wert muss unter den Partner-Namen eindeutig sein.</p>
+<hr><p><b>Hinweis &#8211; </b>Wenn ein Anbieter als "Partner-Eigent&#252;mer" definiert wird, wird er damit nicht automatisch als Mitglied der Partnerschaft aufgenommen. Wenn ein Eigent&#252;mer gleichzeitig Mitglied ist, muss der URI hier als Eigent&#252;mer und innerhalb der Partner-Entity selbst als Mitglied definiert werden.</p>
+<hr>
+</dd>
+<dt>Signaturschl&#252;ssel: Schl&#252;sselalias</dt>
+<dd><p>Zertifikate werden in einer Java-Keystore-Datei gespeichert. Jedes Zertifikat in der Datei wird einem Alias zugeordnet, der dazu verwendet wird, das betreffende Zertifikat abzurufen. Geben Sie den Schl&#252;ssel-Alias ein, der dem Zertifikat zugeordnet ist, das zum Signieren von Anforderungen und Antworten verwendet wird.</p></dd>
+<dt>Verschl&#252;sselungsschl&#252;ssel: Schl&#252;sselalias</dt>
+<dd><p>Zertifikate werden in einer Java-Keystore-Datei gespeichert. Jedes Zertifikat in der Datei wird einem Alias zugeordnet, der dazu verwendet wird, das betreffende Zertifikat abzurufen. Geben Sie den Schl&#252;ssel-Alias ein, der dem Sicherheitszertifikat des Anbieters zugeordnet ist.</p></dd>
+<dt>Verschl&#252;sselungsschl&#252;ssel: Schl&#252;sselgr&#246;&#223;e</dt>
+<dd><p>Geben Sie die Schl&#252;ssell&#228;nge ein, die f&#252;r die Interaktion eines Webdienstbenutzers mit einer anderen Entity verwendet wird.</p></dd>
+<dt>Verschl&#252;sselungsschl&#252;ssel: Verschl&#252;sselungsmethode</dt>
+<dd><p>Geben Sie einen URI ein, der auf der Voreinstellung f&#252;r die Verschl&#252;sselungsmethode beruht.</p></dd>
+</dl>
 </li>
-<li><p><b>W&#228;hlen Sie im Men&#252; &#8220;Ansicht&#34; die Option &#8220;Partner&#34; aus.</b></p></li>
-<li><p><b>W&#228;hlen Sie Entities aus, die dem Partner zugewiesen werden sollen.</b></p></li>
-<li><p><b>&#196;ndern Sie die Werte f&#252;r die allgemeinen Attribute.</b></p><p>Allgemeine Attribute enthalten Werte, die den Identity-Anbieter selbst allgemein beschreiben.</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>Name</p></td><td valign="top"><p>Geben Sie ggf. einen neuen URI f&#252;r die Partnerschaft ein. Der aktuelle Wert dieses Attributs ist der URI, der dem Partner-Namens-Attribut beim Erstellen der Entity zugewiesen wurde. Jeder neue Wert muss unter den Partner-Namen eindeutig sein.</p>
-</td></tr><tr><td valign="top"><p>Eigent&#252;mer</p></td><td valign="top"><p>Geben Sie einen neuen URI ein, um einen anderen Eigent&#252;mer oder &#252;bergeordneten Operator f&#252;r die Partnerschaft festzulegen. Der aktuelle Wert dieses Attributs ist der URI, der dem Partner-Eigent&#252;mer-Attribut beim Erstellen der Entity zugewiesen wurde. Der neue Wert dieses Attributs ist ein URI, der mit dem Wert &#252;bereinstimmt, der im Attribut &#8220;Entity-Name&#34; der Entity definiert wurde, zu der der Eigent&#252;mer/Anbieter geh&#246;rt. Jeder neue Wert muss unter den Partner-Namen eindeutig sein.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Wenn ein Anbieter als &#8220;Partner-Eigent&#252;mer&#34; definiert wird, wird er damit nicht automatisch als Mitglied der Partnerschaft aufgenommen. Wenn ein Eigent&#252;mer gleichzeitig Mitglied ist, muss der URI hier als Eigent&#252;mer und innerhalb der Partner-Entity selbst als Mitglied definiert werden.</p>
-<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>Signaturschl&#252;ssel: Schl&#252;sselalias</p></td><td valign="top"><p>Zertifikate werden in einer Java-Keystore-Datei gespeichert. Jedes Zertifikat in der Datei wird einem Alias zugeordnet, der dazu verwendet wird, das betreffende Zertifikat abzurufen. Geben Sie den Schl&#252;ssel-Alias ein, der dem Zertifikat zugeordnet ist, das zum Signieren von Anforderungen und Antworten verwendet wird.</p>
-</td></tr><tr><td valign="top"><p>Verschl&#252;sselungsschl&#252;ssel: Schl&#252;sselalias</p></td><td valign="top"><p>Zertifikate werden in einer Java-Keystore-Datei gespeichert. Jedes Zertifikat in der Datei wird einem Alias zugeordnet, der dazu verwendet wird, das betreffende Zertifikat abzurufen. Geben Sie den Schl&#252;ssel-Alias ein, der dem Sicherheitszertifikat des Anbieters zugeordnet ist.</p>
-</td></tr><tr><td valign="top"><p>Verschl&#252;sselungsschl&#252;ssel: Schl&#252;sselgr&#246;&#223;e</p></td><td valign="top"><p>Geben Sie die Schl&#252;ssell&#228;nge ein, die f&#252;r die Interaktion eines Webdienstbenutzers mit einer anderen Entity verwendet wird.</p>
-</td></tr><tr><td valign="top"><p>Verschl&#252;sselungsschl&#252;ssel: Verschl&#252;sselungsmethode</p></td><td valign="top"><p>Geben Sie einen URI ein, der auf der Voreinstellung f&#252;r die Verschl&#252;sselungsmethode beruht.</p>
-</td></tr></table>
-</li>
-<li><p><b>Klicken Sie auf &#8220;Speichern&#34;.</b></p></li>
-</ol>
-<br />
+<li><b>Klicken Sie auf Speichern.</b></li></ol>
+<br/>
 
 </body>
 </html>

@@ -1,32 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>자원 아이디 매퍼 플러그인 클래스 
+  <title>자원 아이디 매퍼 플러그인 클래스  - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="resourceidmapperpluginclass"></A><h3>자원 아이디 매퍼 플러그인 클래스 </h3>
-<A NAME="indexterm-142"></A><A NAME="indexterm-143"></A><p>이 속성 값은 조직 또는 역할에 대해 구성된 자원 오퍼링의 식별자를 생성하는 클래스 목록입니다. <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt>는 사용자 아이디를 연관된 자원 아이디에 매핑하는 데 사용하는 인터페이스입니다. 검색 서비스는 이 인터페이스에 대한 두 가지 구현을 제공합니다.</p>
-<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper</tt>(형식: <i>providerID</i> + "/" + <i>Base64 인코딩 사용자 아이디</i>)</p>
-</li>
-<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt>(형식: <i>providerID</i> + "/" + <i>사용자 아이디의 16진 문자열</i>)</p>
-</li>
-</ul>
-<p>[새로 만들기]를 누르고 다음 형식을 사용하여 해당 구현 클래스에 서로 다른 구현을 개발할 수 있으며 이 속성의 기본값으로 추가할 수 있습니다.</p>
-<p><tt><b>providerid=</tt><i>providerID<tt></i>|</tt><i> class_name_and_path<tt></i></b></tt></p>
-<p><A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd"> 자원 아이디 매퍼 구성</A>을 참조하십시오.</p>
 
-<br />
+
+<a name="resourceidmapperpluginclass"></a><h4>자원 아이디 매퍼 플러그인 클래스 </h4>
+<a name="indexterm-142"></a><a name="indexterm-143"></a><p>이 속성 값은 조직 또는 역할에 대해 구성된 자원 오퍼링의 식별자를 생성하는
+클래스 목록입니다. <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt>는 사용자 아이디를 연관된 자원 아이디에 매핑하는 데 사용하는 인터페이스입니다.
+검색 서비스는 이 인터페이스에 대한 두 가지 구현을 제공합니다.</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper</tt>(형식: <i>providerID</i> + "/" + <i>Base64 인코딩 사용자 아이디</i>)</p></li>
+<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt>(형식: <i>providerID</i> + "/" + <i>사용자 아이디의 16진 문자열</i>)</p></li></ul>
+<p>[새로 만들기]를 누르고 다음 형식을 사용하여 해당 구현 클래스에 서로 다른 구현을
+개발할 수 있으며 이 속성의 기본값으로 추가할 수 있습니다.</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p><a href="service.smdiscoveryproviderresourceidmapadd.html">자원 아이디 매퍼 구성</a>을 참조하십시오.</p>
+<br/>
 
 </body>
 </html>

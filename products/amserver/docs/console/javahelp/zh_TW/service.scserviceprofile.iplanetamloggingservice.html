@@ -1,128 +1,127 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>記錄
+  <title>記錄 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamloggingservice"></A><h3>記錄</h3>
-<p><A NAME="indexterm-206"></A>記錄服務提供與 Access Manager 管理相關的狀態及錯誤訊息。管理員可以配置如記錄檔大小及位置的值。Access Manager 可以將事件記錄在平型文字檔或關聯式資料庫。記錄服務屬性為全域屬性。這些屬性包括：</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsv">最大記錄大小</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsg">歷史檔案數量</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbzh">記錄檔位置</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwg">記錄類型</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbrd">資料庫使用者名稱</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcdf">資料庫使用者密碼</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcep">資料庫使用者密碼 (確認)</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvb">資料庫驅動程式名稱</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsb">可配置的記錄欄位</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxccb">記錄確認頻率</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxe">記錄簽名時間</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcbz">安全記錄</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxt">最大記錄數</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwp">各歸檔檔案的檔案數</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbyw">緩衝區大小</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvh">DB 失敗記憶體緩衝區大小</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcea">緩衝區時間</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsn">時間緩衝</A></p>
-</li>
-</ul>
-<A NAME="fxbsv"></A><h4>最大記錄大小</h4>
-<p>此屬性接受 Access Manager 記錄檔最大大小的值 (以位元組為單位)。預設值為 1000000。</p>
-<A NAME="fxbsg"></A><h4>歷史檔案數量</h4>
-<p>此屬性的值與用於歷程分析而保留的備份記錄檔數目相等。視本機系統分割區與可用磁碟空間大小而定，可以輸入任何整數。預設值為 3。</p>
-<p>檔案僅套用至 FILE 記錄類型。當記錄類型設為 DB 時，並無歷史檔案及 Access Manager 設定檔案大小的明顯限制。</p>
-<p><hr size="1" noshade><p><b>備註 &#8211; </b>輸入 0 值將被視為與輸入 1 值相同，這表示若您指定 0，將建立歷程記錄檔。</p>
-<hr size="1" noshade></p><A NAME="fxbzh"></A><h4>記錄檔位置</h4>
-<p>基於檔案的記錄功能需要可以儲存記錄檔的位置。此欄位接受該位置的完整目錄路徑。預設位置為：</p>
-<p><tt>/var/opt/SUNWam/logs</tt></p>
-<p>若指定了非預設目錄，若目錄不存在，Access Manager 將建立此目錄。之後，您應對該目錄設定適當的權限 (例如，0700)。</p>
-<p>為 DB (資料庫) 記錄 (如 Oracle 或 MySQL) 配置記錄位置時，記錄位置的某些部分區分大小寫。例如，如果您是記錄至 Oracle 資料庫，則記錄位置應為 (請注意大小寫需相符)：</p>
-<p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p>
-<p>要配置 DB 記錄，將 JDBC 驅動程式檔案加入 Web 容器的 JVM 類別路徑。您必須手動將 JDBC 驅動程式檔案加入 <tt>amadmin</tt> 程序檔的類別路徑，否則 <tt>amadmin</tt> 記錄將無法載入 JDBC 驅動程式。</p>
-<p>對記錄屬性的變更通常於儲存後即生效。這不需要您重新啟動伺服器。若您變更至安全記錄，則您應重新啟動伺服器。</p>
-<A NAME="fxbwg"></A><h4>記錄類型</h4>
-<p>可讓您指定平面檔記錄的檔案或資料庫記錄的 DB。</p>
-<p>若資料庫使用者名稱或資料庫使用者密碼無效，將嚴重地影響 Access Manager 處理。如果 Access Manager 或主控台不穩定，您可以在 <tt>AMConfig.properties</tt> 中設定下列特性：</p>
-<p><i>com.iplanet.am.logstatus=INACTIVE</i></p>
-<p>設定特性後，重新啟動伺服器。之後，您可登入主控台並重新啟動記錄屬性。然後，將 <i>logstatus</i> 特性變更為 <i>ACTIVE</i>，並重新啟動伺服器。</p>
-<A NAME="fxbrd"></A><h4>資料庫使用者名稱</h4>
-<p>在記錄類型屬性設定為 DB 時，此屬性接受將連接至資料庫的使用者名稱。</p>
-<A NAME="fxcdf"></A><h4>資料庫使用者密碼</h4>
-<p>記錄類型屬性設定為 DB 時，此屬性接受資料庫使用者密碼。</p>
-<A NAME="fxcep"></A><h4>資料庫使用者密碼 (確認)</h4>
-<p>確認資料庫密碼。</p>
-<A NAME="fxbvb"></A><h4>資料庫驅動程式名稱</h4>
-<p>此屬性可讓您指定用於記錄實作類別的驅動程式。</p>
-<A NAME="fxbsb"></A><h4>可配置的記錄欄位</h4>
-<p>代表將記錄的欄位清單。依預設，會記錄所有欄位。這些欄位包括：</p>
-<ul><li><p>CONTEXTID</p>
-</li>
-<li><p>DOMAIN</p>
-</li>
-<li><p>HOSTNAME</p>
-</li>
-<li><p>IPADDRESS</p>
-</li>
-<li><p>LOGGED BY</p>
-</li>
-<li><p>LOGLEVEL</p>
-</li>
-<li><p>LOGINID</p>
-</li>
-<li><p>MESSAGEID</p>
-</li>
-<li><p>MODULENAME</p>
-</li>
-</ul>
-<p>您最少需要記錄 [CONTEXTID]、[DOMAIN]、[HOSTNAME]、[LOGINID] 與 [MESSAGEID]。</p>
-<A NAME="fxccb"></A><h4>記錄確認頻率</h4>
-<p>此屬性設定伺服器為偵測竄改而應該驗證記錄的頻率 (以秒計算)。預設時間為 3600 秒。此參數僅適用於安全記錄。</p>
-<A NAME="fxbxe"></A><h4>記錄簽名時間</h4>
-<p>此參數設定要對記錄進行簽名的頻率 (以秒計算)。預設時間為 900 秒。此參數僅適用於安全記錄。</p>
-<A NAME="fxcbz"></A><h4>安全記錄</h4>
-<p>此屬性會啟用或停用安全記錄。依預設，安全記錄是關閉的。啟用安全記錄後，可以偵測對安全記錄進行的未授權變更或竄改。</p>
-<A NAME="fxbxt"></A><h4>最大記錄數</h4>
-<p>此屬性設定 Java <!-- was interface. No mapping rule. --> LogReader 介面傳回的最大記錄數，無論有多少記錄與讀取查詢相符。依預設，設定為 500。記錄 API 的呼叫者可以透過 <i>LogQuery</i> 類別置換此屬性。</p>
-<A NAME="fxbwp"></A><h4>各歸檔檔案的檔案數</h4>
-<p>此屬性僅適用於安全記錄。它指定對於後續的安全記錄，何時需要歸檔記錄檔與鍵值儲存區、何時重新產生安全鍵值儲存區。預設為每個記錄程式有五個檔案。</p>
-<A NAME="fxbyw"></A><h4>緩衝區大小</h4>
-<p>此屬性指定在記錄服務嘗試將其寫入記錄儲存庫前，記錄檔記錄在記憶體中緩衝的最大數目。預設為一條記錄。</p>
-<A NAME="fxbvh"></A><h4>DB 失敗記憶體緩衝區大小</h4>
-<p>此屬性定義當資料庫 (DB) 登入失敗時，記憶體中保存的記錄檔記錄最大數目。只有當 DB 登入指定後，才能使用這個屬性。當 Access Manager 登入服務遺失與 DB 的連線時，將會根據指定的記錄數目進行緩衝。此屬性的預設值為緩衝區大小屬性所定義之數值的兩倍。</p>
-<A NAME="fxcea"></A><h4>緩衝區時間</h4>
-<p>此屬性定義在傳送至記錄服務進行記錄前，記錄檔記錄要在記憶體中緩衝的時間。若 [啟用時間] 緩衝為開啟狀態，則此屬性適用。預設值為 3600 秒。</p>
-<A NAME="fxbsn"></A><h4>時間緩衝</h4>
-<p>選取此屬性，使之處於開啟狀態時，Access Manager 將設定記錄檔記錄要在記憶體中緩衝的時間限制。該時間量會在緩衝區時間屬性中設定。</p>
 
-<br />
+
+<a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>記錄</h4>
+<p><a name="indexterm-206"></a>記錄服務提供與 Federated Access Manager 管理相關的狀態及錯誤訊息。管理員可以配置如記錄檔大小及位置的值。Federated Access Manager 可以將事件記錄在平型文字檔或關聯式資料庫。記錄服務屬性為全域屬性。這些屬性包括：</p>
+<ul><li><p><a href="#fxbsv">最大記錄大小</a></p></li>
+<li><p><a href="#fxbsg">歷史檔案數量</a></p></li>
+<li><p><a href="#fxbzh">記錄檔位置</a></p></li>
+<li><p><a href="#fxbwg">記錄類型</a></p></li>
+<li><p><a href="#fxbrd">資料庫使用者名稱</a></p></li>
+<li><p><a href="#fxcdf">資料庫使用者密碼</a></p></li>
+<li><p><a href="#fxcep">資料庫使用者密碼 (確認)</a></p></li>
+<li><p><a href="#fxbvb">資料庫驅動程式名稱</a></p></li>
+<li><p><a href="#fxbsb">可配置的記錄欄位</a></p></li>
+<li><p><a href="#fxccb">記錄確認頻率</a></p></li>
+<li><p><a href="#fxbxe">記錄簽名時間</a></p></li>
+<li><p><a href="#fxcbz">安全記錄</a></p></li>
+<li><p><a href="#fxbxt">最大記錄數</a></p></li>
+<li><p><a href="#fxbwp">各歸檔檔案的檔案數</a></p></li>
+<li><p><a href="#fxbyw">緩衝區大小</a></p></li>
+<li><p><a href="#fxbvh">DB 失敗記憶體緩衝區大小</a></p></li>
+<li><p><a href="#fxcea">緩衝區時間</a></p></li>
+<li><p><a href="#fxbsn">時間緩衝</a></p></li></ul>
+
+
+<a name="fxbsv"></a><h5>最大記錄大小</h5>
+<p>此屬性接受 Federated Access Manager 記錄檔最大大小的值 (以位元組為單位)。預設值為 1000000。</p>
+
+<a name="fxbsg"></a><h5>歷史檔案數量</h5>
+<p>此屬性的值與用於歷程分析而保留的備份記錄檔數目相等。視本機系統分割區與可用磁碟空間大小而定，可以輸入任何整數。預設值為 3。</p><p>檔案僅套用至 FILE 記錄類型。當記錄類型設為 DB 時，就不會有歷史檔案，Federated Access Manager 也不會明顯設定其大小限制。</p>
+<hr><p><b>備註 &#8211; </b>輸入 0 值將被視為與輸入 1 值相同，這表示若您指定 0，將建立歷程記錄檔。</p>
+<hr>
+
+
+<a name="fxbzh"></a><h5>記錄檔位置</h5>
+<p>基於檔案的記錄功能需要可以儲存記錄檔的位置。此欄位接受該位置的完整目錄路徑。預設位置為：</p><p><tt>/var/opt/SUNWam/logs</tt></p><p>若指定了非預設目錄，若目錄不存在，Federated Access Manager 將建立此目錄。之後，您應對該目錄設定適當的權限 (例如，0700)。</p><p>為 DB (資料庫) 記錄 (如 Oracle 或 MySQL) 配置記錄位置時，記錄位置的某些部分區分大小寫。例如，如果您是記錄至 Oracle 資料庫，則記錄位置應為 (請注意大小寫需相符)：</p><p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p><p>要配置 DB 記錄，將 JDBC 驅動程式檔案加入 Web 容器的 JVM 類別路徑。您必須手動將 JDBC 驅動程式檔案加入 <tt>amadmin</tt>
+程序檔的類別路徑，否則 <tt>amadmin</tt> 記錄將無法載入 JDBC 驅動程式。</p><p>對記錄屬性的變更通常於儲存後即生效。這不需要您重新啟動伺服器。若您變更至安全記錄，則您應重新啟動伺服器。</p>
+
+<a name="fxbwg"></a><h5>記錄類型</h5>
+<p>可讓您指定平面檔記錄的檔案或資料庫記錄的 DB。</p><p>若資料庫使用者名稱或資料庫使用者密碼無效，將嚴重地影響 Federated Access Manager 處理。如果 Federated Access Manager 或主控台不穩定，您可以在 <tt>AMConfig.properties</tt> 中設定下列特性：</p><p><i>com.iplanet.am.logstatus=INACTIVE</i></p><p>設定特性後，重新啟動伺服器。之後，您可登入主控台並重新啟動記錄屬性。然後，將 <i>logstatus</i> 特性變更為 <i>ACTIVE</i>，並重新啟動伺服器。</p>
+
+<a name="fxbrd"></a><h5>資料庫使用者名稱</h5>
+<p>在記錄類型屬性設定為 DB 時，此屬性接受將連接至資料庫的使用者名稱。</p>
+
+<a name="fxcdf"></a><h5>資料庫使用者密碼</h5>
+<p>記錄類型屬性設定為 DB 時，此屬性接受資料庫使用者密碼。</p>
+
+<a name="fxcep"></a><h5>資料庫使用者密碼 (確認)</h5>
+<p>確認資料庫密碼。</p>
+
+<a name="fxbvb"></a><h5>資料庫驅動程式名稱</h5>
+<p>此屬性可讓您指定用於記錄實作類別的驅動程式。</p>
+
+<a name="fxbsb"></a><h5>可配置的記錄欄位</h5>
+<p>代表將記錄的欄位清單。依預設，會記錄所有欄位。這些欄位包括：</p>
+<ul><li><p>CONTEXTID</p></li>
+<li><p>DOMAIN</p></li>
+<li><p>HOSTNAME</p></li>
+<li><p>IPADDRESS</p></li>
+<li><p>LOGGED BY</p></li>
+<li><p>LOGLEVEL</p></li>
+<li><p>LOGINID</p></li>
+<li><p>MESSAGEID</p></li>
+<li><p>MODULENAME</p></li></ul>
+<p>您最少需要記錄 [CONTEXTID]、[DOMAIN]、[HOSTNAME]、[LOGINID] 與 [MESSAGEID]。</p>
+
+<a name="fxccb"></a><h5>記錄確認頻率</h5>
+<p>此屬性設定伺服器為偵測竄改而應該驗證記錄的頻率 (以秒計算)。預設時間為 3600 秒。此參數僅適用於安全記錄。</p>
+
+<a name="fxbxe"></a><h5>記錄簽名時間</h5>
+<p>此參數設定要對記錄進行簽名的頻率 (以秒計算)。預設時間為 900 秒。此參數僅適用於安全記錄。</p>
+
+<a name="fxcbz"></a><h5>安全記錄</h5>
+<p>此屬性會啟用或停用安全記錄。依預設，安全記錄是關閉的。啟用安全記錄後，可以偵測對安全記錄進行的未授權變更或竄改。</p>
+
+<a name="ggdct"></a><h5>安全記錄簽署演算法</h5>
+<p>此屬性會定義 RSA 與 DSA (Digital Signature Algorithm, 數位簽名演算法)，這兩種演算法具有用於簽署的私密金鑰，以及用於驗證的公開金鑰。您可從下列演算法中選擇：</p>
+<ul><li><p>MD2 w/RSA</p></li>
+<li><p>MD5 w/RSA</p></li>
+<li><p>SHA1 w/DSA</p></li>
+<li><p>SHA1 w/RSA</p></li></ul>
+<p>MD2、MD5 與 RSA 是單向雜湊。例如，如果您選擇簽署演算法 MD2 w/RSA，則安全記錄功能會使用 MD2 產生一組訊息，並使用 RSA 私密金鑰對值進行加密。此加密的值是原始日誌記錄的簽名，且會附加於最近簽名的最新記錄。在驗證方面，它會使用 RSA 公開金鑰來解密簽名，並比較已解密的值與日誌記錄群組。接著安全記錄功能會偵測任何對日誌記錄的修改。</p>
+
+<a name="fxbxt"></a><h5>最大記錄數</h5>
+<p>此屬性設定 Java  LogReader 介面傳回的最大記錄數，無論有多少記錄與讀取查詢相符。依預設，設定為 500。記錄 API 的呼叫者可以透過 <i>LogQuery</i> 類別置換此屬性。</p>
+
+<a name="fxbwp"></a><h5>各歸檔檔案的檔案數</h5>
+<p>此屬性僅適用於安全記錄。它指定對於後續的安全記錄，何時需要歸檔記錄檔與鍵值儲存區、何時重新產生安全鍵值儲存區。預設為每個記錄程式有五個檔案。</p>
+
+<a name="fxbyw"></a><h5>緩衝區大小</h5>
+<p>此屬性指定在記錄服務嘗試將其寫入記錄儲存庫前，記錄檔記錄在記憶體中緩衝的最大數目。預設為一條記錄。</p>
+
+<a name="fxbvh"></a><h5>DB 失敗記憶體緩衝區大小</h5>
+<p>此屬性定義當資料庫 (DB) 登入失敗時，記憶體中保存的記錄檔記錄最大數目。只有當 DB 登入指定後，才能使用這個屬性。當 Federated Access Manager 登入服務遺失與 DB 的連線時，將會根據指定的記錄數目進行緩衝。此屬性的預設值為緩衝區大小屬性所定義之數值的兩倍。</p>
+
+<a name="fxcea"></a><h5>緩衝區時間</h5>
+<p>此屬性定義在傳送至記錄服務進行記錄前，記錄檔記錄要在記憶體中緩衝的時間。若 [啟用時間] 緩衝為開啟狀態，則此屬性適用。預設值為 3600 秒。</p>
+
+<a name="fxbsn"></a><h5>時間緩衝</h5>
+<p>選取此屬性，使之處於開啟狀態時，Federated Access Manager 將設定記錄檔記錄要在記憶體中緩衝的時間限制。該時間量會在緩衝區時間屬性中設定。</p>
+<br/>
 
 </body>
 </html>

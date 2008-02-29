@@ -1,36 +1,56 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Servicios Web
+  <title>Servicios web - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="webservices"></A><h1>Servicios Web</h1>
-<p>El m&#243;dulo Servicios Web es la implementaci&#243;n de Access Manager de la especificaciones <b>Marco de servicios Web de identidades Liberty</b> (ID-WSF, Identity Web Services Framework) de Liberty Alliance Project. ID-WSF se basa en el <b>Marco de federaci&#243;n de identidades Liberty</b> (ID-FF) proporcionando especificaciones para crear servicios Web que recuperan, actualizan o realizan una acci&#243;n en los datos de identidad en un entorno de red federado. Las especificaciones definen los componentes t&#233;cnicos necesarios para crear servicios Web como, por ejemplo, el servicio de calendario, de cartera o un servicio de alertas.</p>
-<p><hr size="1" noshade><p><b>Nota &#8211; </b>Entre los <b>datos de identidad</b> se incluyen, pero sin limitarse a, los atributos que definen el nombre, los apellidos, el domicilio, la direcci&#243;n de la empresa y un contacto de emergencia.</p>
-<hr size="1" noshade></p><p>Los servicios Web son la base del c&#225;lculo distribuido en Internet. Un consumidor de servicios Web (WSC) localiza un servicio Web e invoca las operaciones que proporciona mediante la realizaci&#243;n de una solicitud. Un proveedor de servicios Web (WSP, Web Service Provider) es la aplicaci&#243;n que implementa el servicio Web en funci&#243;n de la solicitud; puede encontrarse en la misma m&#225;quina virtual de Java&#8482;, como WSC, o a mucha distancia. Cuando un WSC debe recuperar los atributos de identidad desde un WSP, primero debe ponerse en contacto con un servicio de detecci&#243;n para encontrar la ubicaci&#243;n en la que se almacenan determinados atributos. Cuando se devuelve esta informaci&#243;n, WSC se pone en contacto con WSP (por ejemplo, un servicio de perfil personal) para recuperar los atributos necesarios.</p>
-<p>El m&#243;dulo Servicios Web de la consola de Access Manager proporciona una interfaz para configurar los siguientes elementos:</p>
-<ul><li><p><A HREF="webservices.wspersonalprofileservice.html#webservices.wspersonalprofileservice">Servicio de perfil personal de Liberty</A></p>
-</li>
-<li><p><A HREF="service.smdiscoveryservice.html#service.smdiscoveryservice">Servicio de detecci&#243;n</A></p>
-</li>
-<li><p><A HREF="service.scsoapbinding.html#service.scsoapbinding">Servicio de enlace de SOAP</A></p>
-</li>
-<li><p><A HREF="webservices.wsauthnservices.html#webservices.wsauthnservices">Servicio Web de autenticaci&#243;n</A></p>
-</li>
-</ul>
+<a name="webservices"></a><h3>Servicios web</h3><p>El m&#243;dulo Servicios Web es la implementaci&#243;n de Access Manager de la
+especificaciones <b>Marco de servicios Web de identidades Liberty</b> (ID-WSF, Identity Web Services Framework) de Liberty Alliance Project. ID-WSF
+se basa en el <b>Marco de federaci&#243;n de identidades Liberty</b> (ID-FF) proporcionando especificaciones para crear servicios Web
+que recuperan, actualizan o realizan una acci&#243;n en los datos de identidad
+en un entorno de red federado. Las especificaciones definen los componentes t&#233;cnicos
+necesarios para crear servicios Web como, por ejemplo, el servicio de calendario,
+de cartera o un servicio de alertas.</p>
+<hr><p><b>Nota &#8211; </b>Entre los <b>datos de identidad</b> se incluyen, pero sin limitarse a, los atributos que
+definen el nombre, los apellidos, el domicilio, la direcci&#243;n de la empresa
+y un contacto de emergencia.</p>
+<hr>
+<p>Los servicios Web son la base del c&#225;lculo distribuido en Internet. Un
+consumidor de servicios Web (WSC) localiza un servicio Web e invoca las
+operaciones que proporciona mediante la realizaci&#243;n de una solicitud. Un proveedor de
+servicios Web (WSP, Web Service Provider) es la aplicaci&#243;n que implementa el
+servicio Web en funci&#243;n de la solicitud; puede encontrarse en la misma
+m&#225;quina virtual de Java&#8482;, como WSC, o a mucha distancia. Cuando un
+WSC debe recuperar los atributos de identidad desde un WSP, primero debe
+ponerse en contacto con un servicio de detecci&#243;n para encontrar la ubicaci&#243;n
+en la que se almacenan determinados atributos. Cuando se devuelve esta informaci&#243;n,
+WSC se pone en contacto con WSP (por ejemplo, un servicio de
+perfil personal) para recuperar los atributos necesarios.</p><p>El m&#243;dulo Servicios Web de la consola de Access Manager proporciona una
+interfaz para configurar los siguientes elementos:</p>
+<ul><li><p><a href="webservices.wspersonalprofileservice.html">Servicio de perfil personal de Liberty</a></p></li>
+<li><p><a href="service.smdiscoveryservice.html">Servicio de detecci&#243;n</a></p></li>
+<li><p><a href="service.scsoapbinding.html">Servicio de enlace de SOAP</a></p></li>
+<li><p><a href="webservices.wsauthnservices.html">Servicio Web de autenticaci&#243;n</a></p></li></ul>
 
-<br />
+<br/>
 
 </body>
 </html>

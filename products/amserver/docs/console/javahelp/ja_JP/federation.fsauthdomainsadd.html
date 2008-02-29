@@ -1,36 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-<META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-<title><IMG border="0" alt="手順" src="graphics/procedure-toc.gif">新しい認証ドメインを作成する
+  <title>新しい認証ドメインを作成する - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-<meta name="Copyright" content="Copyright (C) 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fsauthdomainsadd"></A><h3><IMG border="0" alt="手順" src="graphics/procedure.gif">新しい認証ドメインを作成する</h3>
-<A NAME="indexterm-54"></A><p>新しい認証ドメインを作成するには、次の手順に従います。<b>連携</b>モジュールの「<b>認証ドメイン</b>」設定画面から始めます。</p>
-<h5>手順</h5><ol><li><p><b>「新規」をクリックして、認証ドメイン属性を表示します。</b></p></li>
-<li><p><b>認証ドメインの名前を入力します。</b></p><p>このフィールドは必須です。</p>
-</li>
-<li><p><b>「説明」フィールドに認証ドメインの説明を入力します。</b></p></li>
-<li><p><b>「ライタサービス URL」の値を入力します。</b></p><p>「ライタサービス URL」は、共通ドメインからの Cookie を書き込むサーブレットの場所を指定します。URL の形式は <tt><b>http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/writer</b></tt> です。</p>
-</li>
-<li><p><b>「リーダサービス URL」の値を入力します。</b></p><p>「リーダサービス URL」は、共通ドメインからの Cookie を読み込むサーブレットの場所を指定します。URL の形式は <tt><b>http://</tt><i>common-domain-host<tt></i>:</tt><i>port<tt></i>/common/transfer</b></tt> です。</p>
-</li>
-<li><p><b>「<b>アクティブ</b>」または「<b>非アクティブ</b>」を選択します。</b></p><p>デフォルトの状態は「<b>アクティブ</b>」です。「<b>非アクティブ</b>」を選択すると、認証ドメイン内の通信が無効になります。</p>
-</li>
-<li><p><b>「了解」をクリックします。</b></p><p>新しい認証ドメインが「<b>認証ドメイン</b>」設定画面に表示されます。</p>
-</li>
-</ol>
-<br />
+
+
+<a name="federation.fsauthdomainsadd"></a><h4>新しい認証ドメインを作成する</h4><a name="indexterm-59"></a><p>次の手順に従って、新しい認証ドメインを作成します。連携インタフェースの「認証ドメイン」から作業を始めます。</p><ol>
+<li><b>「新規」をクリックして、認証ドメイン属性を表示します。</b><p>「新規認証ドメイン」プロファイルページが表示されます。</p></li>
+<li><b>認証ドメインの名前を入力します。</b></li>
+<li><b>「説明」フィールドに認証ドメインの説明を入力します。</b></li>
+<li><b>「ライターサービス URL」の値を入力します。</b><p>「ライタサービス URL」は、共通ドメインからの Cookie を書き込むサーブレットの場所を指定します。指定可能な形式は <tt>http://</tt><i>common-domain-host </i><tt>:</tt><i>port</i><tt>/common/writer</tt> です。</p></li>
+<li><b>「リーダーサービス URL」の値を入力します。</b><p>「リーダーサービス URL」は、共通ドメインからの Cookie を読み込むサーブレットの場所を指定します。指定可能な形式は <tt>http://</tt><i>common-domain-host </i><tt>:</tt><i>port</i><tt>/common/transfer</tt> です。</p></li>
+<li><b>「アクティブ」または「非アクティブ」を選択します。</b><p>デフォルトの状態は「アクティブ」です。「非アクティブ」を選択すると、認証ドメイン内の通信が無効になります。</p></li>
+<li><b>「了解」をクリックして設定を完了します。</b><p>新しい認証ドメインが「認証ドメイン」画面に表示されます。</p></li></ol>
+<br/>
 
 </body>
 </html>

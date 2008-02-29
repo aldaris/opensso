@@ -1,34 +1,47 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>「セッション」ウィンドウ
+  <title>「セッション」ウィンドウ - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="session.smprofile"></A><h3>「セッション」ウィンドウ</h3>
-<p><A NAME="indexterm-215"></A>現在 Access Manager にログイン中のユーザー、および各ログインのセッション時間が表示されます。表示フィールドは次のとおりです。</p>
-<A NAME="ftywh"></A><h4>ユーザ ID</h4>
-<p>現在ログイン中のユーザー ID が表示されます。</p>
-<A NAME="ftzbu"></A><h4>残り時間 (分)</h4>
-<p>ユーザーの再認証までの、セッションの残り時間 (分単位) が表示されます。</p>
-<A NAME="ftysy"></A><h4>最大セッション時間 (分)</h4>
-<p>セッションが期限切れになって再度認証を受ける必要がでてくるまでの、ユーザーがログインしていられる最大時間 (分単位) が表示されます。</p>
-<A NAME="ftzhl"></A><h4>アイドル時間 (分)</h4>
-<p>ユーザーがアイドル状態であった時間 (分単位) が表示されます。</p>
-<A NAME="ftzbp"></A><h4>最大アイドル時間 (分)</h4>
-<p>ユーザーの再認証までの、セッションの残りの最大アイドル時間 (分単位) が表示されます。時間の制限値は、管理者がセッションサービスに定義します。セッションの属性定義については、<A HREF="service.scserviceprofile.amsessionservice.html#service.scserviceprofile.amsessionservice">「セッション」</A>を参照してください。</p>
 
-<br />
+
+<a name="session.smprofile"></a><h4>「セッション」ウィンドウ</h4>
+<p><a name="indexterm-215"></a>現在 Federated Access Manager にログイン中のユーザー、および各ログインのセッション時間が表示されます。表示フィールドは次のとおりです。</p>
+
+<a name="ftywh"></a><h5>ユーザー ID</h5>
+<p>現在ログイン中のユーザー ID が表示されます。</p>
+
+<a name="ftzbu"></a><h5>残り時間 (分)</h5>
+<p>ユーザーの再認証までの、セッションの残り時間 (分単位) が表示されます。</p>
+
+<a name="ftysy"></a><h5>最大セッション時間 (分)</h5>
+<p>セッションが期限切れになって再度認証を受ける必要がでてくるまでの、ユーザーがログインしていられる最大時間 (分単位) が表示されます。</p>
+
+<a name="ftzhl"></a><h5>アイドル時間 (分)</h5>
+<p>ユーザーがアイドル状態であった時間 (分単位) が表示されます。</p>
+
+<a name="ftzbp"></a><h5>最大アイドル時間 (分)</h5>
+<p>ユーザーの再認証までの、セッションの残りの最大アイドル時間 (分単位) が表示されます。時間の制限値は、管理者がセッションサービスに定義します。セッションの属性定義については、<a href="service.scserviceprofile.amsessionservice.html">「セッション」</a>を参照してください。</p>
+<br/>
 
 </body>
 </html>

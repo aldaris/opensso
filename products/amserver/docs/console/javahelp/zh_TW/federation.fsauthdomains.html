@@ -1,36 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>認證網域
+  <title>認證網域 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fsauthdomains"></A><h2>認證網域</h2>
-<A NAME="indexterm-58"></A><p><b>認證網域</b>是任意數目的服務提供者 (並且至少有一個識別提供者) 的聯合，主體可與其中的服務提供者在安全而且明顯緊密整合的環境中處理商務。若要建立及寫入認證網域，可以先建立一個<b>實體</b>以保留即將成為認證網域成員的每一個提供者的<b>中介資料</b> (即配置資訊，用於定義特定識別服務架構)。然後，配置並儲存認證網域。最後，若要將實體 (配置的提供者) 新增至認證網域，可以編輯該實體的特性。</p>
-<p><hr size="1" noshade><p><b>備註 &#8211; </b>如需實體的詳細資訊，請參閱<A HREF="federation.fsentitydescriptors.html#federation.fsentitydescriptors">實體：提供者及附屬提供者</A>。</p>
-<hr size="1" noshade></p><p>所有配置的認證網域均列在認證網域之下。以下的作業與認證網域相關聯：</p>
-<ul><li><p><A HREF="federation.fsauthdomainsadd.html#federation.fsauthdomainsadd">建立新的認證網域</A></p>
-</li>
-<li><p><A HREF="federation.fsauthdomainsedit.html#federation.fsauthdomainsedit">修改認證網域設定檔</A></p>
-</li>
-<li><p><A HREF="federation.fsauthdomainsselectprovider.html#federation.fsauthdomainsselectprovider">新增提供者至認證網域</A></p>
-</li>
-<li><p><A HREF="deleteauthdomain.html#deleteauthdomain">刪除認證網域設定檔</A></p>
-</li>
-</ul>
-<p><hr size="1" noshade><p><b>備註 &#8211; </b>認證網域中的成員必須預先根據 <A target="_blank" HREF="http://www.projectliberty.org/specs/liberty-trust-models-guidelines-v1.0.pdf">Liberty Trust Model Guidelines</A> 建立<b>信任圈</b>作業協定。</p>
-<hr size="1" noshade></p>
-<br />
+
+
+<a name="federation.fsauthdomains"></a><h3>認證網域</h3>
+<a name="indexterm-58"></a><p><b>認證網域</b>是任意數目的服務提供者 (並且至少有一個識別提供者) 的聯合，主體可與其中的服務提供者在安全而且明顯緊密整合的環境中處理商務。若要建立及寫入認證網域，可以先建立一個<b>實體</b>以保留即將成為認證網域成員的每一個提供者的<b>中介資料</b> (即配置資訊，用於定義特定識別服務架構)。然後，配置並儲存認證網域。最後，若要將實體 (配置的提供者) 新增至認證網域，可以編輯該實體的特性。</p>
+<hr><p><b>備註 &#8211; </b>如需實體的詳細資訊，請參閱<a href="federation.fsentitydescriptors.html">實體：提供者及附屬提供者</a>。</p>
+<hr>
+<p>所有配置的認證網域均列在認證網域之下。以下的作業與認證網域相關聯：</p>
+<ul><li><p><a href="federation.fsauthdomainsadd.html">建立新的認證網域</a></p></li>
+<li><p><a href="federation.fsauthdomainsedit.html">修改認證網域設定檔</a></p></li>
+<li><p><a href="federation.fsauthdomainsselectprovider.html">新增提供者至認證網域</a></p></li>
+<li><p><a href="deleteauthdomain.html">刪除認證網域設定檔</a></p></li></ul>
+
+<hr><p><b>備註 &#8211; </b>認證網域中的成員必須預先根據 Liberty Trust Model Guidelines 建立<b>信任圈</b>作業協定。</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

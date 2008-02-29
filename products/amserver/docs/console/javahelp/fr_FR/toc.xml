@@ -2,195 +2,707 @@
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "toc_1_0.dtd">
 <toc version="2.0">
-<tocitem target="aawelcome" text="Aide en ligne de Sun Java System Access Manager 7.1" expand="false"><tocitem target="intro" text="Introduction" expand="false"></tocitem>
-</tocitem>
-<tocitem target="accesscontrol" text="Contr&#244;le d'acc&#232;s" expand="false"><tocitem target="realm.rmrealm" text="Domaines" expand="false"><tocitem target="realm.rmrealmadd" text="Cr&#233;ation d'un domaine" expand="false"></tocitem>
-<tocitem target="realm.realmproperties" text="Propri&#233;t&#233;s g&#233;n&#233;rales" expand="false"></tocitem>
-</tocitem>
-<tocitem target="authentication.authproperties" text="Authentification" expand="false"><tocitem target="authentication.newauthinstance" text="Cr&#233;ation d'une instance de module d'authentification" expand="false"></tocitem>
-<tocitem target="authentication.newauthconfig" text="Cr&#233;ation d'une cha&#238;ne d'authentification" expand="false"></tocitem>
-</tocitem>
-<tocitem target="realm.services" text="Services" expand="false"><tocitem target="realm.servicesadd" text="Ajout d'un service &#224; un domaine" expand="false"></tocitem>
-</tocitem>
-<tocitem target="realm.idrepo" text="Magasins de donn&#233;es" expand="false"><tocitem target="realm.idreposelecttype" text="Cr&#233;ation d'un magasin de donn&#233;es" expand="false"></tocitem>
-<tocitem target="idrepoadd" text="Types de magasins de donn&#233;es Access Manager" expand="false"></tocitem>
-<tocitem target="amrepoattrs" text="Attributs du r&#233;f&#233;rentiel d'Access Manager" expand="false"></tocitem>
-<tocitem target="adattrs" text="Attributs Active Directory" expand="false"></tocitem>
-<tocitem target="flatfileattr" text="Attributs du r&#233;f&#233;rentiel fichiers plats" expand="false"></tocitem>
-<tocitem target="gdoto" text="Attributs LDAPv3 g&#233;n&#233;rique" expand="false"></tocitem>
-<tocitem target="sundirattrs" text="Attributs Sun Directory Server avec Access Manager Schema" expand="false"></tocitem>
-</tocitem>
-<tocitem target="delegation.delegation" text="Privil&#232;ges" expand="false"></tocitem>
-<tocitem target="policy.policy" text="Strat&#233;gies" expand="false"><tocitem target="normalpolicy" text="Strat&#233;gies normales" expand="false"><tocitem target="policy.policynormaladd" text="Cr&#233;ation d'une strat&#233;gie normale" expand="false"></tocitem>
-</tocitem>
-<tocitem target="normalrule" text="R&#232;gles" expand="false"><tocitem target="policy.ruleadd" text="Ajout d'une r&#232;gle &#224; une strat&#233;gie" expand="false"></tocitem>
-</tocitem>
-<tocitem target="normalsubject" text="Objets" expand="false"><tocitem target="policy.subjectadd" text="Ajout d'un objet &#224; une strat&#233;gie" expand="false"></tocitem>
-</tocitem>
-<tocitem target="policyconditions" text="Conditions" expand="false"><tocitem target="policy.conditionadd" text="Ajout d'une condition &#224; une strat&#233;gie" expand="false"></tocitem>
-</tocitem>
-<tocitem target="policy.pmdefaultsessioncondtionadd" text="Dur&#233;e de session active" expand="false"></tocitem>
-<tocitem target="policy.authtoserviceadd" text="Cha&#238;ne d'authentification" expand="false"></tocitem>
-<tocitem target="policy.pmdefaultauthlevelconditionadd" text="Niveau d'authentification (sup&#233;rieur ou &#233;gal &#224;)" expand="false"></tocitem>
-<tocitem target="gdovl" text="Niveau d'authentification (inf&#233;rieur ou &#233;gal &#224;)" expand="false"></tocitem>
-<tocitem target="policy.pmdefaultauthschemeconditionadd" text="Instance du module d'authentification" expand="false"></tocitem>
-<tocitem target="policy.sessionpropertyconditionadd" text="Propri&#233;t&#233;s de session active" expand="false"></tocitem>
-<tocitem target="policy.pmdefaultipcondition" text="Adresse IP/Nom DNS" expand="false"></tocitem>
-<tocitem target="gdkmp" text="Condition de filtre LDAP" expand="false"></tocitem>
-<tocitem target="policy.authtorealmadd" text="Authentification de domaine" expand="false"></tocitem>
-<tocitem target="policy.pmdefaulttimeconditionadd" text="Temps (jour, date, heure et fuseau horaire)" expand="false"></tocitem>
-<tocitem target="responseprovider" text="Fournisseurs de r&#233;ponses" expand="false"><tocitem target="policy.responseprovideradd" text="Ajout d'un fournisseur de r&#233;ponses &#224; une strat&#233;gie" expand="false"></tocitem>
-</tocitem>
-<tocitem target="fyfby" text="Strat&#233;gies d'orientation" expand="false"><tocitem target="policy.policyreferraladd" text="Cr&#233;ation d'une strat&#233;gie d'orientation" expand="false"></tocitem>
-</tocitem>
-<tocitem target="referrals" text="R&#233;f&#233;rences" expand="false"><tocitem target="policy.selectreferraltype" text="Ajout d'orientations &#224; une strat&#233;gie" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="idm.entities" text="Objets" expand="false"><tocitem target="subjectuser" text="Utilisateur" expand="false"><tocitem target="subjectcreateuser" text="Cr&#233;ation ou modification d'un utilisateur" expand="false"></tocitem>
-<tocitem target="addusertogroup" text="Ajout d'un utilisateur aux r&#244;les et groupes" expand="false"></tocitem>
-<tocitem target="idm.entityservices" text="Ajout de services &#224; une identit&#233; " expand="false"></tocitem>
-</tocitem>
-<tocitem target="subjectagents" text="Agents" expand="false"><tocitem target="subjectcreateagent" text="Cr&#233;ation ou modification d'un agent" expand="false"></tocitem>
-</tocitem>
-<tocitem target="subject.filteredrole" text="R&#244;le filtr&#233; " expand="false"><tocitem target="subject.createfiltrole" text="Cr&#233;ation d'un r&#244;le filtr&#233; " expand="false"></tocitem>-->
-</tocitem>
-<tocitem target="subject.role" text="R&#244;le" expand="false"><tocitem target="subject.createrole" text="Cr&#233;ation ou modification d'un r&#244;le" expand="false"></tocitem>
-<tocitem target="idm.entitymembers" text="Ajout d'utilisateurs &#224; un r&#244;le ou &#224; un groupe" expand="false"></tocitem>
-</tocitem>
-<tocitem target="subject.group" text="Groupe" expand="false"><tocitem target="subject.creategroup" text="Cr&#233;ation ou modification d'un groupe" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="dirmang" text="Gestion d'annuaire" expand="false"><tocitem target="dm.home" text="Gestion d'annuaire" expand="false"></tocitem>
-</tocitem>
-<tocitem target="federation" text="F&#233;d&#233;ration" expand="false"><tocitem target="federation.fsauthdomains" text="Domaines d'authentification" expand="false"><tocitem target="federation.fsauthdomainsadd" text="Cr&#233;ation d'un domaine d'authentification" expand="false"></tocitem>
-<tocitem target="federation.fsauthdomainsedit" text="Modification d'un profil de domaine d'authentification" expand="false"></tocitem>
-<tocitem target="federation.fsauthdomainsselectprovider" text="Ajout de fournisseurs &#224; un domaine d'authentification" expand="false"></tocitem>
-<tocitem target="deleteauthdomain" text="Suppression d'un profil de domaine d'authentification" expand="false"></tocitem>
-</tocitem>
-<tocitem target="federation.fsentitydescriptors" text="Entit&#233;s : fournisseur et filiale" expand="false"><tocitem target="federation.fsentitydescriptorsadd" text="Cr&#233;ation d'une entit&#233; fournisseur ou d'une entit&#233; filiale" expand="false"></tocitem>
-<tocitem target="federation.fsentitydescriptorsprofile" text="Modification des attributs g&#233;n&#233;raux d'une entit&#233; fournisseur ou d'une entit&#233; filiale" expand="false"></tocitem>
-<tocitem target="federation.fsidentityprovider" text="Ajout d'un fournisseur d'identit&#233;s &#224; une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderhostedadd" text="Ajout d'un nouveau fournisseur d'identit&#233;s h&#233;berg&#233; &#224; une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderremoteadd" text="Ajout d'un nouveau fournisseur d'identit&#233;s distant &#224; une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsserviceprovider" text="Ajout d'un fournisseur de services &#224; une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderhostedadd" text="Ajout d'un nouveau fournisseur de services h&#233;berg&#233; &#224; une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderremoteadd" text="Ajout d'un nouveau fournisseur de services distant &#224; une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderhostedprofile" text="Modification des attributs d'un fournisseur d'identit&#233;s h&#233;berg&#233; dans une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsidentityproviderremoteprofile" text="Modification des attributs d'un fournisseur d'identit&#233;s distant dans une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderhostedprofile" text="Modification des attributs d'un fournisseur de services h&#233;berg&#233; dans une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsserviceproviderremoteprofile" text="Modification des attributs d'un fournisseur de services distant dans une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fscreatecontactperson" text="Ajout d'un contact &#224; un fournisseur dans une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fseditcontactperson" text="Modification du profil d'un contact dans une entit&#233; fournisseur" expand="false"></tocitem>
-<tocitem target="federation.fsentitydescriptorsaffiliate" text="Ajout de membres &#224; une entit&#233; filiale" expand="false"></tocitem>
-</tocitem>
-<tocitem target="federation.fssamlservice" text="SAML" expand="false"><tocitem target="targetspecifier" text="Indicateur cible" expand="false"></tocitem>
-<tocitem target="siteidentifiers" text="Identificateurs de site" expand="false"><tocitem target="federation.fssamlsiteidadd" text="Configuration d'un identificateur de site " expand="false"></tocitem>
-</tocitem>
-<tocitem target="trustedpartners" text="Partenaires de confiance" expand="false"><tocitem target="federation.fssamlselecttrustedpartnertype" text="Partenaires de confiance : s&#233;lection du type et du profil de partenaire" expand="false"></tocitem>
-<tocitem target="federation.fssamltrustedpartnersadd" text="Partenaires de confiance : configuration des attributs du partenaire de confiance" expand="false"></tocitem>
-</tocitem>
-<tocitem target="targeturl" text="URL cibles" expand="false"><tocitem target="federation.fssamltargeturlsadd" text="Configuration d'un URL cible" expand="false"></tocitem>
-</tocitem>
-<tocitem target="assertiontimeout" text="D&#233;lai d'assertion" expand="false"></tocitem>
-<tocitem target="assertionskew" text="Facteur d'inclinaison de l'assertion pour la dur&#233;e notBefore" expand="false"></tocitem>
-<tocitem target="artifacttimeout" text="D&#233;lai d'art&#233;fact" expand="false"></tocitem>
-<tocitem target="samlartifactname" text="Nom de l'art&#233;fact SAML" expand="false"></tocitem>
-<tocitem target="signsamlassertion" text="Signer l'assertion SAML" expand="false"></tocitem>
-<tocitem target="signsamlrequest" text="Signer la demande SAML" expand="false"></tocitem>
-<tocitem target="signsamlresponse" text="Signer la r&#233;ponse SAML" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="webservices" text="Services Web" expand="false"><tocitem target="webservices.wspersonalprofileservice" text="Service de profil personnel Liberty" expand="false"><tocitem target="resourceidmapper" text="Mappeur d'ID de ressource" expand="false"></tocitem>
-<tocitem target="authorizer" text="Agent d'autorisation" expand="false"></tocitem>
-<tocitem target="attributemapper" text="Mappeur d'attribut" expand="false"></tocitem>
-<tocitem target="ppproviderid" text="ID fournisseur" expand="false"></tocitem>
-<tocitem target="namescheme" text="Sch&#233;ma de noms" expand="false"></tocitem>
-<tocitem target="namespaceprefix" text="Pr&#233;fixe d' espace de noms" expand="false"></tocitem>
-<tocitem target="supportedcontainers" text="Conteneurs pris en charge" expand="false"><tocitem target="webservices.wsppservicesupportedcontaineradd" text="Configuration d'un conteneur pris en charge" expand="false"></tocitem>
-</tocitem>
-<tocitem target="ppldapattributemaplist" text="Liste de mappages d'attributs PPLDAP" expand="false"><tocitem target="webservices.wsppservicedsattributemaplistadd" text="Configuration d'un mappage d'attributs" expand="false"></tocitem>
-</tocitem>
-<tocitem target="requirequery" text="Requ&#234;te de PolicyEval n&#233;cessaire :" expand="false"></tocitem>
-<tocitem target="requiremodify" text="Modification de PolicyEval n&#233;cessaire :" expand="false"></tocitem>
-<tocitem target="extensioncontainerattributes" text="Attributs de conteneur d'extension" expand="false"></tocitem>
-<tocitem target="extensionattributesnamespaceprefix" text="Pr&#233;fixe NameSpace des attributs d'extension" expand="false"></tocitem>
-<tocitem target="serviceupdateenabled" text="Mise &#224; jour de service" expand="false"></tocitem>
-<tocitem target="serviceinstanceupdateclass" text="Classe de mise &#224; jour de l'instance du service" expand="false"></tocitem>
-<tocitem target="alternateendpoint" text="Extr&#233;mit&#233; secondaire" expand="false"></tocitem>
-<tocitem target="alternatesecuritymechanisms" text="Autres m&#233;canismes de s&#233;curit&#233; " expand="false"></tocitem>
-</tocitem>
-<tocitem target="service.smdiscoveryservice" text="Service de d&#233;couverte" expand="false"><tocitem target="dsproviderid" text="ID fournisseur" expand="false"></tocitem>
-<tocitem target="supportedauthmechanisms" text="M&#233;canismes d'authentification pris en charge" expand="false"></tocitem>
-<tocitem target="supporteddirectives" text="Directives prises en charge" expand="false"></tocitem>
-<tocitem target="policyevaldiscolookup" text="&#201;valuation de strat&#233;gie pour la recherche de d&#233;couverte" expand="false"></tocitem>
-<tocitem target="policyevaldiscoupdate" text="&#201;valuation de strat&#233;gie pour la mise &#224; jour de d&#233;couverte" expand="false"></tocitem>
-<tocitem target="authorizerpluginclass" text="Classe de plug-in du module d'autorisation" expand="false"></tocitem>
-<tocitem target="entryhandlerpluginclass" text="Classe de plug-in du gestionnaire d'entr&#233;es" expand="false"></tocitem>
-<tocitem target="resourceidmapperpluginclass" text="Classes de plug-in de mappage d'ID de ressource " expand="false"><tocitem target="service.smdiscoveryproviderresourceidmapadd" text="Configuration d'un mappeur d'ID de ressource" expand="false"></tocitem>
-</tocitem>
-<tocitem target="authresponsemessage" text="Authentifier le message de r&#233;ponse" expand="false"></tocitem>
-<tocitem target="generatesessioncontext" text="Instructions comportant la session pour l'amor&#231;age" expand="false"></tocitem>
-<tocitem target="encryptnameidentifier" text="Cryptez l'identificateur de nom dans le contexte de session pour l'amor&#231;age." expand="false"></tocitem>
-<tocitem target="useimpliedresource" text="Ressource impliqu&#233;e" expand="false"></tocitem>
-<tocitem target="resourceofferingsbootstrapping" text="Offres de ressources pour l'amor&#231;age" expand="false"><tocitem target="service.smdiscoverybootstraprefoffadd" text="Configuration d'une offre de ressource pour l'amor&#231;age" expand="false"></tocitem>
-<tocitem target="service.smdiscoverydescriptionadd" text="Configuration d'une description de service" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="service.scsoapbinding" text="Service de liaison SOAP" expand="false"><tocitem target="requesthandlerlist" text="Liste de gestionnaires de demandes" expand="false"><tocitem target="service.scsoapbindingrequesthandlerlistadd" text="Configuration d'un gestionnaire de demandes" expand="false"></tocitem>
-</tocitem>
-<tocitem target="webserviceauthenticator" text="Authentificateur de service Web" expand="false"></tocitem>
-<tocitem target="soapsuppauthmech" text="M&#233;canismes d'authentification pris en charge" expand="false"></tocitem>
-</tocitem>
-<tocitem target="webservices.wsauthnservices" text="Service Web d'authentification" expand="false"><tocitem target="mechanismhandlerslist" text="Liste des gestionnaires de m&#233;canismes" expand="false"><tocitem target="webservices.wsauthnserviceshandlersadd" text="Configuration d'un nouveau gestionnaire de m&#233;canismes" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="service.scconfig" text="Attributs de configuration" expand="false"><tocitem target="authattrs" text="Authentification" expand="false"><tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Anonyme" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory" expand="false"></tocitem>
-<tocitem target="authentication.authconfig" text="Configuration de l'authentification " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificat " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthservice" text="Core" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="Magasin de donn&#233;es" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false"><tocitem target="jdbcexample" text="Configuration d'un pool de connexions &#8212; Exemple" expand="false"></tocitem>
-</tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Appartenance" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="SSO Bureau Windows" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false"></tocitem>
-<tocitem target="supportedlang" text="Environnements linguistiques pris en charge" expand="false"></tocitem>
-</tocitem>
-<tocitem target="consoleprops" text="Propri&#233;t&#233;s de la console" expand="false"><tocitem target="service.scserviceprofile.amadminconsoleservice" text="Administration " expand="false"></tocitem>
-<tocitem target="service.smg11n" text="Param&#232;tres de globalisation" expand="false"></tocitem>
-</tocitem>
-<tocitem target="global" text="Propri&#233;t&#233;s g&#233;n&#233;rales" expand="false"><tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="R&#233;initialisation du mot de passe" expand="false"></tocitem>
-<tocitem target="service.scpolicy" text="Configuration des strat&#233;gies" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.amsessionservice" text="Session" expand="false"></tocitem>
-<tocitem target="service.subconfigadd" text="Ajout d'une configuration secondaire" expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamuserservice" text="Utilisateur" expand="false"></tocitem>
-</tocitem>
-<tocitem target="systemprops" text="Propri&#233;t&#233;s du syst&#232;me" expand="false"><tocitem target="service.scserviceprofile.iplanetamclientdetection" text="D&#233;tection de client" expand="false"></tocitem>
-<tocitem target="service.mapcreatedevice" text="Ajout d'un nouveau client " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Journalisation " expand="false"></tocitem>
-<tocitem target="service.scserviceprofile.iplanetamnamingservice" text="Attribution de nom " expand="false"></tocitem>
-<tocitem target="service.scplatform" text="Plate-forme" expand="false"></tocitem>
-<tocitem target="service.scplatformsitelistadd" text="Cr&#233;ation d'un nom de site" expand="false"></tocitem>
-<tocitem target="service.scplatformserverlistadd" text="Cr&#233;ation d'un nom d'isntance" expand="false"></tocitem>
-<tocitem target="service.scplatformclientcharsetsadd" text="Cr&#233;ation d'un jeu de caract&#232;res" expand="false"></tocitem>
-</tocitem>
-</tocitem>
-<tocitem target="sessions" text="Sessions" expand="false"><tocitem target="sessionpage" text="Page Sessions" expand="false"><tocitem target="sessionsearch" text="Rechercher" expand="false"></tocitem>
-<tocitem target="viewsession" text="Afficher la session" expand="false"></tocitem>
-<tocitem target="session.smprofile" text="Fen&#234;tre de session" expand="false"></tocitem>
-<tocitem target="invalidatesession" text="Annulation de la validit&#233; d'une session" expand="false"></tocitem>
-</tocitem>
-</tocitem>
 
+ <tocitem target="aawelcome" text="Aide en ligne de Sun Java System Federated Access Manager 8.0" expand="false">
+    <tocitem target="intro" text="Introduction" expand="false"></tocitem></tocitem>
+ <tocitem target="accesscontrol" text="Contrôle d'accès" expand="false">
+    <tocitem target="realm.rmrealm" text="Domaines" expand="false">
+        <tocitem target="realm.rmrealmadd" text="Création d'un domaine" expand="false"></tocitem>
+        <tocitem target="realm.realmproperties" text="Propriétés générales" expand="false"></tocitem></tocitem>
+    <tocitem target="authentication.authproperties" text="Authentification" expand="false">
+        <tocitem target="authentication.newauthinstance" text="Création d'une instance de module d'authentification" expand="false"></tocitem>
+        <tocitem target="authentication.newauthconfig" text="Création d'une chaîne d'authentification" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.services" text="Services" expand="false">
+        <tocitem target="realm.servicesadd" text="Ajout d'un service à un domaine" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.idrepo" text="Magasins de données" expand="false">
+        <tocitem target="realm.idreposelecttype" text="Création d'un magasin de données" expand="false"></tocitem>
+        <tocitem target="idrepoadd" text="Types de magasins de données Federated Access Manager" expand="false">
+            <tocitem target="idrepoadd" text="Plug-in de référentiel Federated Access Manager" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="Active Directory" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="Référentiel fichiers plats" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="LDAPv3 générique" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="Sun Directory Server avec Federated Access Manager Schema" expand="false"></tocitem></tocitem>
+        <tocitem target="amrepoattrs" text="Attributs de référentiel Federated Access Manager" expand="false">
+            <tocitem target="amrepoattrs" text="Nom de la classe" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Types et opérations pris en charge du plug-in de Federated Access Manager" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Valeur DN d'organisation" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Attribut d'affectation de nom du conteneur de personnes" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Valeur du conteneur de personnes" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Attribut d'affectation de nom du conteneur d'agents" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Valeur du conteneur d'agents" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Recherche récursive" expand="false"></tocitem>
+            <tocitem target="amrepoattrs" text="Copier la configuration du domaine" expand="false"></tocitem></tocitem>
+        <tocitem target="adattrs" text="Attributs Active Directory" expand="false">
+            <tocitem target="adattrs" text="Serveur LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="DN de la liaison LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Mot de passe pour la liaison LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Mot de passe pour la liaison LDAP (confirmer)" expand="false"></tocitem>
+            <tocitem target="adattrs" text="DN de l'organisation LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="SSL LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Taille minimale de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Taille maximale de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Maximum de résultats renvoyés par la recherche" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Délai de recherche" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Orientation suivie par LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Nom de la classe pour le plug-in du référentiel LDAPv3" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Mappages de nom d'attributs globaux" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Types et opérations pris en charge pour le plug-in LDAPv3" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Étendue de la recherche de plug-in LDAPv3" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Filtre de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Classe d'objet utilisateur LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attributs utilisateur LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Mappages d'attributs de création utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut statut utilisateur" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Valeur active du statut de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Valeur inactive du statut de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut de recherche de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Filtre de recherche de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut d'affectation de nom du conteneur de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Valeur du conteneur de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Classes d'objets de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attributs des groupes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attributs d'appartenance à un groupe" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attributs de membre unique" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attributs URL de membre d'un groupe" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut d'affectation de nom du conteneur de personnes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Valeur du conteneur de personnes LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut de recherche d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attribut d'affectation de nom du conteneur d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Valeur du conteneur d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Filtre de recherche d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Classe d'objet d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Attributs d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Types d'identités pouvant être authentifiés" expand="false"></tocitem>
+            <tocitem target="adattrs" text="DN de base de la recherche persistante" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Filtre de recherche persistant" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Délai d'inactivité maximal de la recherche persistante avant redémarrage" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Nombre maximal de nouvelles tentatives après réception d'un code d'erreur" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Le délai entre les nouvelles tentatives" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Codes d'erreur LDAPException suite auxquels une nouvelle tentative doit avoir lieu" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Mise en mémoire cache" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Âge maximum d'éléments mis en cache" expand="false"></tocitem>
+            <tocitem target="adattrs" text="Taille maximum du cache" expand="false"></tocitem></tocitem>
+        <tocitem target="flatfileattr" text="Attributs du référentiel fichiers plats" expand="false">
+            <tocitem target="flatfileattr" text="Nom de classe de plug-in du référentiel de fichiers" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Répertoire référentiel de fichiers" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Cache" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Heure de mise à jour du cache" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Classes d'objets utilisateur de fichier" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Attribut du mot de passe" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Attribut du statut" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Attributs hachés" expand="false"></tocitem>
+            <tocitem target="flatfileattr" text="Attributs chiffrés" expand="false"></tocitem></tocitem>
+        <tocitem target="gdoto" text="Attributs LDAPv3 générique" expand="false">
+            <tocitem target="gdoto" text="Serveur LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="DN de la liaison LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Mot de passe pour la liaison LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Mot de passe pour la liaison LDAP (confirmer)" expand="false"></tocitem>
+            <tocitem target="gdoto" text="DN de l'organisation LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="SSL LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Taille minimale de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Taille maximale de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Maximum de résultats renvoyés par la recherche" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Délai de recherche" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Orientation suivie par LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Nom de la classe pour le plug-in du référentiel LDAPv3" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Mappages de nom d'attributs globaux" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Types et opérations pris en charge pour le plug-in LDAPv3" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Étendue de la recherche de plug-in LDAPv3" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Filtre de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Classe d'objet utilisateur LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attributs utilisateur LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Mappages d'attributs de création utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut statut utilisateur" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Valeur active du statut de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Valeur inactive du statut de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut de recherche de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Filtre de recherche de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut d'affectation de nom du conteneur de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Valeur du conteneur de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Classes d'objets de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attributs des groupes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attributs d'appartenance à un groupe" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attributs de membre unique" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attributs URL de membre d'un groupe" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut d'affectation de nom du conteneur de personnes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Valeur du conteneur de personnes LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut de recherche d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attribut d'affectation de nom du conteneur d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Valeur du conteneur d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Filtre de recherche d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Classe d'objet d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Attributs d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Types d'identités pouvant être authentifiés" expand="false"></tocitem>
+            <tocitem target="gdoto" text="DN de base de la recherche persistante" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Filtre de recherche persistant" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Délai d'inactivité maximal de la recherche persistante avant redémarrage" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Nombre maximal de nouvelles tentatives après réception d'un code d'erreur" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Le délai entre les nouvelles tentatives" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Codes d'erreur LDAPException suite auxquels une nouvelle tentative doit avoir lieu" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Mise en mémoire cache" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Âge maximum d'éléments mis en cache" expand="false"></tocitem>
+            <tocitem target="gdoto" text="Taille maximum du cache" expand="false"></tocitem></tocitem>
+        <tocitem target="sundirattrs" text="Attributs Sun Directory Server avec Federated Access Manager Schema" expand="false">
+            <tocitem target="sundirattrs" text="Serveur LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="DN de la liaison LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Mot de passe pour la liaison LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Mot de passe pour la liaison LDAP (confirmer)" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="DN de l'organisation LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="SSL LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Taille minimale de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Taille maximale de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Maximum de résultats renvoyés par la recherche" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Délai de recherche" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Orientation suivie par LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Nom de la classe pour le plug-in du référentiel LDAPv3" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Mappages de nom d'attributs globaux" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Types et opérations pris en charge pour le plug-in LDAPv3" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Étendue de la recherche de plug-in LDAPv3" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Filtre de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Classe d'objet utilisateur LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attributs utilisateur LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Mappages d'attributs de création utilisateurs LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut statut utilisateur" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Valeur active du statut de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Valeur inactive du statut de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut de recherche de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Filtre de recherche de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut d'affectation de nom du conteneur de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Valeur du conteneur de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Classes d'objets de groupes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attributs des groupes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attributs d'appartenance à un groupe" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attributs de membre unique" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attributs URL de membre d'un groupe" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut d'affectation de nom du conteneur de personnes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Valeur du conteneur de personnes LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut de recherche d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attribut d'affectation de nom du conteneur d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Valeur du conteneur d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Filtre de recherche d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Classe d'objet d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Attributs d'agents LDAP" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Types d'identités pouvant être authentifiés" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="DN de base de la recherche persistante" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Filtre de recherche persistant" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Délai d'inactivité maximal de la recherche persistante avant redémarrage" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Nombre maximal de nouvelles tentatives après réception d'un code d'erreur" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Le délai entre les nouvelles tentatives" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Codes d'erreur LDAPException suite auxquels une nouvelle tentative doit avoir lieu" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Mise en mémoire cache" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Âge maximum d'éléments mis en cache" expand="false"></tocitem>
+            <tocitem target="sundirattrs" text="Taille maximum du cache" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="delegation.delegation" text="Privilèges" expand="false"></tocitem>
+    <tocitem target="policy.policy" text="Stratégies" expand="false">
+        <tocitem target="normalpolicy" text="Stratégies normales" expand="false"></tocitem>
+        <tocitem target="policy.policynormaladd" text="Création d'une stratégie normale" expand="false"></tocitem>
+        <tocitem target="normalrule" text="Règles" expand="false"></tocitem>
+        <tocitem target="policy.ruleadd" text="Ajout d'une règle à une stratégie" expand="false"></tocitem>
+        <tocitem target="normalsubject" text="Objets" expand="false"></tocitem>
+        <tocitem target="policy.subjectadd" text="Ajout d'un objet à une stratégie" expand="false"></tocitem>
+        <tocitem target="policyconditions" text="Conditions" expand="false"></tocitem>
+        <tocitem target="policy.conditionadd" text="Ajout d'une condition à une stratégie" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultsessioncondtionadd" text="Durée de session active" expand="false"></tocitem>
+        <tocitem target="policy.authtoserviceadd" text="Chaîne d'authentification" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthlevelconditionadd" text="Niveau d'authentification (supérieur ou égal à)" expand="false"></tocitem>
+        <tocitem target="gdovl" text="Niveau d'authentification (inférieur ou égal à)" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthschemeconditionadd" text="Instance du module d'authentification" expand="false"></tocitem>
+        <tocitem target="policy.sessionpropertyconditionadd" text="Propriétés de session active" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultipcondition" text="Adresse IP/Nom DNS" expand="false"></tocitem>
+        <tocitem target="gdkmp" text="Condition de filtre LDAP" expand="false"></tocitem>
+        <tocitem target="policy.authtorealmadd" text="Authentification de domaine" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaulttimeconditionadd" text="Temps (jour, date, heure et fuseau horaire)" expand="false"></tocitem>
+        <tocitem target="responseprovider" text="Fournisseurs de réponses" expand="false"></tocitem>
+        <tocitem target="policy.responseprovideradd" text="Ajout d'un fournisseur de réponses à une stratégie" expand="false"></tocitem>
+        <tocitem target="fyfby" text="Stratégies d'orientation" expand="false"></tocitem>
+        <tocitem target="policy.policyreferraladd" text="Création d'une stratégie d'orientation" expand="false"></tocitem>
+        <tocitem target="referrals" text="Références" expand="false"></tocitem>
+        <tocitem target="policy.selectreferraltype" text="Ajout d'orientations à une stratégie" expand="false"></tocitem></tocitem>
+    <tocitem target="idm.entities" text="Objets" expand="false">
+        <tocitem target="subjectuser" text="Utilisateur" expand="false"></tocitem>
+        <tocitem target="subjectcreateuser" text="Création ou modification d'un utilisateur" expand="false"></tocitem>
+        <tocitem target="addusertogroup" text="Ajout d'un utilisateur aux rôles et groupes" expand="false"></tocitem>
+        <tocitem target="idm.entityservices" text="Ajout de services à une identité" expand="false"></tocitem>
+        <tocitem target="subjectagents" text="Agents" expand="false"></tocitem>
+        <tocitem target="subjectcreateagent" text="Création ou modification d'un agent" expand="false"></tocitem>
+        <tocitem target="subject.filteredrole" text="Rôle filtré" expand="false"></tocitem>
+        <tocitem target="subject.createfiltrole" text="Création d'un rôle filtré" expand="false"></tocitem>
+        <tocitem target="subject.role" text="Rôle" expand="false"></tocitem>
+        <tocitem target="subject.createrole" text="Création ou modification d'un rôle" expand="false"></tocitem>
+        <tocitem target="idm.entitymembers" text="Ajout d'utilisateurs à un rôle ou à un groupe" expand="false"></tocitem>
+        <tocitem target="subject.group" text="Groupe" expand="false"></tocitem>
+        <tocitem target="subject.creategroup" text="Création ou modification d'un groupe" expand="false"></tocitem>
+        <tocitem target="ggdbu" text="Service de configuration de stratégie " expand="false">
+            <tocitem target="ggdbu" text="Durée des résultats d'objets" expand="false"></tocitem>
+            <tocitem target="ggdbu" text="Attributs dynamiques" expand="false"></tocitem>
+            <tocitem target="ggdbu" text="Définition d'amldapuser" expand="false"></tocitem></tocitem></tocitem></tocitem>
+ <tocitem target="dirmang" text="Gestion d'annuaire" expand="false">
+    <tocitem target="dm.home" text="Gestion d'annuaire" expand="false"></tocitem></tocitem>
+ <tocitem target="federation" text="Fédération" expand="false">
+    <tocitem target="federation.fsauthdomains" text="Domaines d'authentification" expand="false">
+        <tocitem target="federation.fsauthdomainsadd" text="Création d'un domaine d'authentification" expand="false"></tocitem>
+        <tocitem target="federation.fsauthdomainsedit" text="Modification d'un profil de domaine d'authentification" expand="false"></tocitem>
+        <tocitem target="federation.fsauthdomainsselectprovider" text="Ajout de fournisseurs à un domaine d'authentification" expand="false"></tocitem>
+        <tocitem target="deleteauthdomain" text="Suppression d'un profil de domaine d'authentification" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.fsentitydescriptors" text="Entités : fournisseur et filiale" expand="false">
+        <tocitem target="federation.fsentitydescriptorsadd" text="Création d'une entité fournisseur ou d'une entité filiale" expand="false"></tocitem>
+        <tocitem target="federation.fsentitydescriptorsprofile" text="Modification des attributs généraux d'une entité fournisseur ou d'une entité filiale" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityprovider" text="Ajout d'un fournisseur d'identités à une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderhostedadd" text="Ajout d'un nouveau fournisseur d'identités hébergé à une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderremoteadd" text="Ajout d'un nouveau fournisseur d'identités distant à une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceprovider" text="Ajout d'un fournisseur de services à une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderhostedadd" text="Ajout d'un nouveau fournisseur de services hébergé à une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderremoteadd" text="Ajout d'un nouveau fournisseur de services distant à une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderhostedprofile" text="Modification des attributs d'un fournisseur d'identités hébergé dans une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsidentityproviderremoteprofile" text="Modification des attributs d'un fournisseur d'identités distant dans une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderhostedprofile" text="Modification des attributs d'un fournisseur de services hébergé dans une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsserviceproviderremoteprofile" text="Modification des attributs d'un fournisseur de services distant dans une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fscreatecontactperson" text="Ajout d'un contact à un fournisseur dans une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fseditcontactperson" text="Modification du profil d'un contact dans une entité fournisseur" expand="false"></tocitem>
+        <tocitem target="federation.fsentitydescriptorsaffiliate" text="Ajout de membres à une entité filiale" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.fssamlservice" text="SAML" expand="false">
+        <tocitem target="targetspecifier" text="Indicateur cible" expand="false"></tocitem>
+        <tocitem target="siteidentifiers" text="Identificateurs de site" expand="false"></tocitem>
+        <tocitem target="federation.fssamlsiteidadd" text="Configuration d'un identificateur de site " expand="false"></tocitem>
+        <tocitem target="trustedpartners" text="Partenaires de confiance" expand="false"></tocitem>
+        <tocitem target="federation.fssamlselecttrustedpartnertype" text="Partenaires de confiance : sélection du type et du profil de partenaire" expand="false"></tocitem>
+        <tocitem target="federation.fssamltrustedpartnersadd" text="Partenaires de confiance : configuration des attributs du partenaire de confiance" expand="false"></tocitem>
+        <tocitem target="targeturl" text="URL cibles" expand="false"></tocitem>
+        <tocitem target="federation.fssamltargeturlsadd" text="Configuration d'un URL cible" expand="false"></tocitem>
+        <tocitem target="assertiontimeout" text="Délai d'assertion" expand="false"></tocitem>
+        <tocitem target="assertionskew" text="Facteur d'inclinaison de l'assertion pour la durée notBefore" expand="false"></tocitem>
+        <tocitem target="artifacttimeout" text="Délai d'artéfact" expand="false"></tocitem>
+        <tocitem target="samlartifactname" text="Nom de l'artéfact SAML" expand="false"></tocitem>
+        <tocitem target="signsamlassertion" text="Signer l'assertion SAML" expand="false"></tocitem>
+        <tocitem target="signsamlrequest" text="Signer la demande SAML" expand="false"></tocitem>
+        <tocitem target="signsamlresponse" text="Signer la réponse SAML" expand="false"></tocitem></tocitem></tocitem>
+ <tocitem target="webservices" text="Services Web" expand="false">
+    <tocitem target="webservices.wspersonalprofileservice" text="Service de profil personnel Liberty" expand="false">
+        <tocitem target="resourceidmapper" text="Mappeur d'ID de ressource" expand="false"></tocitem>
+        <tocitem target="authorizer" text="Agent d'autorisation" expand="false"></tocitem>
+        <tocitem target="attributemapper" text="Mappeur d'attribut" expand="false"></tocitem>
+        <tocitem target="ppproviderid" text="ID fournisseur" expand="false"></tocitem>
+        <tocitem target="namescheme" text="Schéma de noms" expand="false"></tocitem>
+        <tocitem target="namespaceprefix" text="Préfixe d' espace de noms" expand="false"></tocitem>
+        <tocitem target="supportedcontainers" text="Conteneurs pris en charge" expand="false"></tocitem>
+        <tocitem target="webservices.wsppservicesupportedcontaineradd" text="Configuration d'un conteneur pris en charge" expand="false"></tocitem>
+        <tocitem target="ppldapattributemaplist" text="Liste de mappages d'attributs PPLDAP" expand="false"></tocitem>
+        <tocitem target="webservices.wsppservicedsattributemaplistadd" text="Configuration d'un mappage d'attributs" expand="false"></tocitem>
+        <tocitem target="requirequery" text="Requête de PolicyEval nécessaire :" expand="false"></tocitem>
+        <tocitem target="requiremodify" text="Modification de PolicyEval nécessaire :" expand="false"></tocitem>
+        <tocitem target="extensioncontainerattributes" text="Attributs de conteneur d'extension" expand="false"></tocitem>
+        <tocitem target="extensionattributesnamespaceprefix" text="Préfixe NameSpace des attributs d'extension" expand="false"></tocitem>
+        <tocitem target="serviceupdateenabled" text="Mise à jour de service" expand="false"></tocitem>
+        <tocitem target="serviceinstanceupdateclass" text="Classe de mise à jour de l'instance du service" expand="false"></tocitem>
+        <tocitem target="alternateendpoint" text="Extrémité secondaire" expand="false"></tocitem>
+        <tocitem target="alternatesecuritymechanisms" text="Autres mécanismes de sécurité" expand="false"></tocitem></tocitem>
+    <tocitem target="service.smdiscoveryservice" text="Service de découverte" expand="false">
+        <tocitem target="dsproviderid" text="ID fournisseur" expand="false"></tocitem>
+        <tocitem target="supportedauthmechanisms" text="Mécanismes d'authentification pris en charge" expand="false"></tocitem>
+        <tocitem target="supporteddirectives" text="Directives prises en charge" expand="false"></tocitem>
+        <tocitem target="policyevaldiscolookup" text="Évaluation de stratégie pour la recherche de découverte" expand="false"></tocitem>
+        <tocitem target="policyevaldiscoupdate" text="Évaluation de stratégie pour la mise à jour de découverte" expand="false"></tocitem>
+        <tocitem target="authorizerpluginclass" text="Classe de plug-in du module d'autorisation" expand="false"></tocitem>
+        <tocitem target="entryhandlerpluginclass" text="Classe de plug-in du gestionnaire d'entrées" expand="false"></tocitem>
+        <tocitem target="resourceidmapperpluginclass" text="Classes de plug-in de mappage d'ID de ressource " expand="false"></tocitem>
+        <tocitem target="service.smdiscoveryproviderresourceidmapadd" text="Configuration d'un mappeur d'ID de ressource" expand="false"></tocitem>
+        <tocitem target="authresponsemessage" text="Authentifier le message de réponse" expand="false"></tocitem>
+        <tocitem target="generatesessioncontext" text="Instructions comportant la session pour l'amorçage" expand="false"></tocitem>
+        <tocitem target="encryptnameidentifier" text="Cryptez l'identificateur de nom dans le contexte de session pour l'amorçage." expand="false"></tocitem>
+        <tocitem target="useimpliedresource" text="Ressource impliquée" expand="false"></tocitem>
+        <tocitem target="resourceofferingsbootstrapping" text="Offres de ressources pour l'amorçage" expand="false"></tocitem>
+        <tocitem target="service.smdiscoverybootstraprefoffadd" text="Configuration d'une offre de ressource pour l'amorçage" expand="false"></tocitem>
+        <tocitem target="service.smdiscoverydescriptionadd" text="Configuration d'une description de service" expand="false"></tocitem></tocitem>
+    <tocitem target="service.scsoapbinding" text="Service de liaison SOAP" expand="false">
+        <tocitem target="requesthandlerlist" text="Liste de gestionnaires de demandes" expand="false"></tocitem>
+        <tocitem target="service.scsoapbindingrequesthandlerlistadd" text="Configuration d'un gestionnaire de demandes" expand="false"></tocitem>
+        <tocitem target="webserviceauthenticator" text="Authentificateur de service Web" expand="false"></tocitem>
+        <tocitem target="soapsuppauthmech" text="Mécanismes d'authentification pris en charge" expand="false"></tocitem></tocitem>
+    <tocitem target="webservices.wsauthnservices" text="Service Web d'authentification" expand="false">
+        <tocitem target="mechanismhandlerslist" text="Liste des gestionnaires de mécanismes" expand="false"></tocitem>
+        <tocitem target="webservices.wsauthnserviceshandlersadd" text="Configuration d'un nouveau gestionnaire de mécanismes" expand="false"></tocitem></tocitem></tocitem>
+ <tocitem target="service.scconfig" text="Attributs de configuration" expand="false">
+    <tocitem target="authattrs" text="Authentification" expand="false">
+        <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Anonyme" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Utilisateurs anonymes valides" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Nom d'utilisateur anonyme par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="ID utilisateur avec distinction des majuscules et des minuscules" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Serveur Active Directory principal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Serveur Active Directory secondaire" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="DN où démarrer recherche util." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="DN pour liaison utilisateur root" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Mot de passe pour liaison utilisateur root" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Mot de passe pour liaison utilisateur root (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Attribut utilisé pour récupérer le profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Attributs utilisés pour rechercher un utilisateur à authentifier" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Filtre de recherche d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Étendue de la recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Accès SSL au serveur Active Directory" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Renvoyer DN utilisateur à authentifier" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Intervalle de recherche du serveur Active Directory" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Attributs de création d'utilisateurs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="authentication.authconfig" text="Configuration de l'authentification " expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificat " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Faire correspondre le certificat avec LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Attribut DN de l'objet utilisé pour une recherche LDAP des certificats" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Faire correspondre le certificat avec CRL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Attribut DN de l'émetteur utilisé pour une recherche LDAP des CRL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Paramètres HTTP pour la mise à jour des CRL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Validation OCSP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Serveur LDAP où les certificats sont conservés" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Démarrage recherche de nom de domaine LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Utilisateur principal du serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Mot de passe principal du serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Mot de passe principal du serveur LDAP (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Attribut LDAP pour l'ID de profil" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Utiliser SSL pour l'accès LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Champ de certificat utilisé pour accéder au profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Autre champ de certificat utilisé pour accéder au profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Hôtes distants approuvés" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Numéro du port SSL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Nom d'en-tête HTTP pour le certificat du client" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Noyau" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Classes du module d'authentification enfichable" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Module d'authentification pris en charge pour les clients" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Taille de pool de connexion LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Taille de pool de connexions LDAP par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Configuration d'authentification des administrateurs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Rôles par défaut de création dynamique de profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Mode de cookie permanent" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Délai maximal de cookie permanent" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Nom d'attribut de recherche du pseudo" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Langue d'authentification par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Configuration de l'authentification des organisations" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Mode de verrouillage d'échec de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Comptage des verrouillages d'échec de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Intervalle de verrouillage d'échec de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Adresse électronique où envoyer la notification de verrouillage" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Avertir utilisateur après N échecs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Durée de verrouillage d'échec de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Nom d'attribut de verrouillage" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Valeur d'attribut de verrouillage" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="URL par défaut de connexion réussie" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="URL par défaut d'échec de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Classe de post-traitement de l'authentification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Générer le mode ID utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Classe du générateur de nom d'utilisateur enfichable" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Types d'identité" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Classes d'événement de l'état de l'utilisateur enfichable" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Stocker les tentatives non valides dans le magasin de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Authentification sur module" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Niveau d'authentification par défaut" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="Magasin de données" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Type de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Nom JNDI de pool de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Pilote JBDC" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="URL JDBC" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Connecter cet utilisateur à la base de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Mot de passe pour la connexion à la base de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Mot de passe pour la connexion à la base de données (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Chaîne de colonne de mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Instruction préparée" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Classe permettant de transformer la syntaxe du mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="jdbcexample" text="Configuration d'un pool de connexions — Exemple" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Serveur LDAP principal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Serveur LDAP secondaire" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="DN où démarrer recherche util." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="DN pour liaison utilisateur root" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Mot de passe pour liaison utilisateur root" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Mot de passe pour liaison utilisateur root (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Attribut utilisé pour récupérer le profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Attributs utilisés pour rechercher un utilisateur à authentifier" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Filtre de recherche d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Étendue de la recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Activer SSL pour accéder au serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Renvoyer DN utilisateur à authentifier" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Intervalle de recherche de serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Liste des attributs de création d'utilisateurs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Appartenance" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Longueur minimale du mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Rôles utilisateur par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Statut de l'utilisateur après enregistrement" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Serveur LDAP principal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Serveur LDAP secondaire" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="DN où démarrer recherche util." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="DN pour liaison utilisateur root" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Mot de passe pour liaison utilisateur root" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Mot de passe pour liaison utilisateur root (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Attribut utilisé pour récupérer le profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Attributs utilisés pour rechercher un utilisateur à authentifier" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Filtre de recherche d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Étendue de la recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Activer SSL pour accéder au serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Renvoyer DN utilisateur à authentifier" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Adresse IP de la passerelle approuvée" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Argument de numéro MSISDN" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Serveur et port LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Démarrage recherche de nom de domaine LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Attribut à utiliser pour la recherche LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Utilisateur principal du serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Mot de passe principal du serveur LDAP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Mot de passe principal du serveur LDAP (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Activez SSL pour l'accès LDAP." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Attribut LDAP utilisé pour récupérer profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Renvoyez le DN utilisateur pour authentification." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Serveur 1" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Serveur 2" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Secret partagé" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Secret partagé (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Numéro de port" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="DÃ©lai d'attente" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Serveur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Répertoire de fichiers de vérification du serveur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Activation de la journalisation" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="niveaux de journalisation." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Fichier journal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Délai d'attente de connexion d'authentification." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Type de client" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Version EASSP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Puissance minimale de l'authentificateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="Chemin d'accès à la configuration de ACE/Serveur." expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="Port de configuration de l'assistant" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="Port d'authentification de l'assistant" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="Port de configuration" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="Port d'authentification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="DÃ©lai d'attente" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="Threads" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="Niveau d'authentification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="Nom du service PAM" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="SSO Bureau Windows" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Principe de service" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Nom de fichier keytab" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Domaine Kerberos" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Nom du serveur Kerberos" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Principe de retour avec nom de domaine" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Domaine d'authentification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Hôte d'authentification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Nom du fichier de configuration Samba" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Niveau d'authentification" expand="false"></tocitem></tocitem>
+        <tocitem target="supportedlang" text="Environnements linguistiques pris en charge" expand="false"></tocitem></tocitem>
+    <tocitem target="consoleprops" text="Propriétés de la console" expand="false">
+        <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Administration " expand="false">
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Gestion des fédérations" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Gestion des utilisateurs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneurs de personnes" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneurs d'unités d'organisation" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneurs de groupes" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Type de groupe géré" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Autorisations de rôles par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Arborescence des composants du domaine" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Groupes administratifs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Suppression de l'utilisateur conforme" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ACI de rôles administratifs dynamiques" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Classes de service de profils utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Liste des attributs du noeud de composant d'annuaire" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Filtres de la recherche portant sur les objets supprimés" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneur de personnes par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneur de groupes par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneur d'agents par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Conteneur de personnes par défaut du groupe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Liste des conteneurs de personnes du groupe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Classe d'affichage du profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Classe d'affichage du profil utilisateur final" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Afficher les rôles sur la page du profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Afficher les groupes sur la page du profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Abonnement automatique d'un utilisateur à un groupe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Options d'affichage du profil utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Rôles par défaut lors de la création d'utilisateurs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Onglets de la console d'administration" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Maximum de résultats renvoyés par la recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Délai d'attente de recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Nom du répertoire JSP" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Documents de l'Aide en ligne" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Services requis" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Clé de recherche d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Attribut de retour de la recherche d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Liste de notification de la création d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Liste de notification de la suppression d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Liste de notification de la modification d'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Maximum d'éléments affichés par page" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Classes du module d'écoute des événements" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Classes de pré et post-traitement" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Récupération des attributs externes" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Caractères de l'ID utilisateur non valides :" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="Classe de plug-in de validation du mot de passe et de l'ID utilisateur" expand="false"></tocitem></tocitem>
+        <tocitem target="service.smg11n" text="Paramètres de globalisation" expand="false">
+            <tocitem target="service.smg11n" text="Jeux de caractères compatibles par version des paramètres locaux" expand="false"></tocitem>
+            <tocitem target="service.smg11n" text="Désignation des jeux de caractères" expand="false"></tocitem>
+            <tocitem target="service.smg11n" text="Format de nom commun généré automatiquement" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="global" text="Propriétés générales" expand="false">
+        <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Réinitialisation du mot de passe" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Validation de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Question secrète" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Filtre de recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="DN base" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="DN de liaison" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Mot de passe de liaison" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Option de réinitialisation du mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Option de notification de changement du mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Réinitialisation du mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Question personnelle" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Nombre max. de questions" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Forcer le changement de mot de passe à la connexion suivante" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Verrouillage d'échec de réinitialisation de mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Nombre de verrouillages d'échec de réinitialisation de mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Intervalle de verrouillage d'échec de réinitialisation de mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Adresse électronique où envoyer la notification de verrouillage" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Avertir utilisateur après N échecs" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Durée de verrouillage d'échec de réinitialisation du mot de passe " expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Nom d'attribut du verrouillage de réinitialisation du mot de passe" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Valeur de l'attribut de verrouillage de réinitialisation du mot de passe" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scpolicy" text="Configuration de règles" expand="false">
+            <tocitem target="service.scpolicy" text="Propriétés générales" expand="false">
+                <tocitem target="service.scpolicy" text="Comparateur de ressources" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Continuer l'évaluation de la décision de refus" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Conseils gérables par Federated Access Manager" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Orientations de l'alias de l'organisation" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scpolicy" text="Attributs du domaine" expand="false">
+                <tocitem target="service.scpolicy" text="Serveur LDAP principal" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="DN de base du serveur LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="DN de base des utilisateurs LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="DN de base des rôles Federated Access Manager" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="DN de la liaison LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Mot de passe pour la liaison LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Filtre de recherche d'organisations LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Étendue de la recherche d'organisations LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Étendue de la recherche de groupes LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Filtre de recherche de groupes LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Filtre de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Étendue de la recherche d'utilisateurs LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Filtre de recherche de rôles LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Étendue de la recherche de rôles LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Étendue de la recherche des rôles Federated Access Manager" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Attribut de la recherche d'organisation LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Attribut de recherche de groupes LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Attribut de recherche d'utilisateurs LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Attribut de la recherche de rôles LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Maximum de résultats renvoyés par la recherche" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Délai de recherche" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="SSL LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Taille minimale de pool de connexion LDAP" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Taille maximale de pool de connexion" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Objets de modalité sélectionnés" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Conditions de modalité sélectionnées" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Orientations de modalité sélectionnées" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Durée de vie du résultat des objets" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Alias utilisateur" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Fournisseurs de réponse sélectionnés" expand="false"></tocitem>
+                <tocitem target="service.scpolicy" text="Attributs de réponse dynamiques sélectionnés" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.amsessionservice" text="Session" expand="false">
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Instance de configuration secondaire" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Nombre maximal de résultats renvoyés par la recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Délai d'attente de recherche" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Avis de changement de propriété" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Contraintes de quota" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Expiration du délai de lecture de la contrainte liée aux quotas" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Exempter les administrateurs de niveau supérieur de la vérification des contraintes " expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Comportement observé en cas d'épuisement du quota de sessions" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Propriétés de notification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Durée maximale de session" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Durée maximale d'inactivité" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Durée maximale de mise en cache" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="Sessions utilisateur actives" expand="false"></tocitem></tocitem>
+        <tocitem target="service.subconfigadd" text="Ajout d'une configuration secondaire" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamuserservice" text="Utilisateur" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="Langue de préférence de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="Fuseau horaire favori de l'utilisateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="Langue héritée" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="Vue initiale de l'administrateur" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="Statut utilisateur par défaut" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="systemprops" text="Propriétés du système" expand="false">
+        <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Détection de client" expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Types de client" expand="false">
+                <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Gestionnaire de clients" expand="false"></tocitem>
+                <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Type de client" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Type de client par défaut" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Classe de détection de client" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="Détection de client" expand="false"></tocitem></tocitem>
+        <tocitem target="service.mapcreatedevice" text="Ajout d'un nouveau client " expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Journalisation " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Taille maximale du journal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Nombre de fichiers d'historique" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Emplacement du fichier journal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Type de connexion" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Nom d'utilisateur de la base de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Mot de passe de la base de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Mot de passe de la base de données (confirmer)" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Nom du pilote de la base de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Champs de journal configurables" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Fréquence de vérification du journal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Durée de signature du journal" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Connexion sécurisée" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Algorithme de signature de journalisation sécurisée" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Nombre max. d'enregistrements" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Nombre de fichiers par archive" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Taille du tampon" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Taille de la mémoire tampon pour échec de base de données" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Durée de la mémoire tampon" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Durée de la mise en mémoire tampon" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="Attribution de nom " expand="false">
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service de profil" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service de session" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service de journalisation" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service de modalité" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service d'authentification" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service profil Web SAML/artéfact SAML" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service SOAP SAML" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service profil Web SAML/POST SAML" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service du gestionnaire d'assertions SAML" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du service du gestionnaire d'assertions de fédérations" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL du gestionnaire de jeton de sécurité" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="URL d'arrivée JAXRPC" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scplatform" text="Plate-forme" expand="false">
+            <tocitem target="service.scplatform" text="Nom du site" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="Nom d'instance" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="Paramètre régional de la plate-forme" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="Domaines de cookies" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="URL du service de connexion" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="URL du service de déconnexion" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="Paramètres régionaux disponibles" expand="false"></tocitem>
+            <tocitem target="service.scplatform" text="Jeux de caractères client" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scplatformsitelistadd" text="Création d'un nom de site" expand="false"></tocitem>
+        <tocitem target="service.scplatformserverlistadd" text="Création d'un nom d'isntance" expand="false"></tocitem>
+        <tocitem target="service.scplatformclientcharsetsadd" text="Création d'un jeu de caractères" expand="false"></tocitem></tocitem></tocitem>
+ <tocitem target="sessions" text="Sessions" expand="false">
+    <tocitem target="sessionpage" text="Page Sessions" expand="false">
+        <tocitem target="sessionsearch" text="Recherche" expand="false"></tocitem>
+        <tocitem target="viewsession" text="Afficher la session" expand="false"></tocitem>
+        <tocitem target="session.smprofile" text="Fenêtre de session" expand="false">
+            <tocitem target="session.smprofile" text="ID d'utilisateur ;" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="Temps restant (en minutes)" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="Durée max. de la session (en minutes)" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="Durée d'inactivité (en minutes)" expand="false"></tocitem>
+            <tocitem target="session.smprofile" text="Durée max. d'inactivité (en minutes)" expand="false"></tocitem></tocitem>
+        <tocitem target="invalidatesession" text="Annulation de la validité d'une session" expand="false"></tocitem>
+</tocitem>
+</tocitem>
 </toc>

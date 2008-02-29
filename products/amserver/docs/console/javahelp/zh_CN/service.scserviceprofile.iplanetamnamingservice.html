@@ -1,98 +1,81 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>命名
+  <title>命名 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamnamingservice"></A><h3>命名</h3>
-<p><A NAME="indexterm-207"></A>“命名”服务用于获取和设置 URL、插件和配置，以及其他各种 Access Manager 服务（如会话、验证、日志记录、SAML 和联合）的请求通知。</p>
-<p>如果平台运行了多个 Access Manager，该服务可以使客户机找到正确的服务 URL。找到命名 URL 时，命名服务将对用户会话进行解码，并使用会话中的参数动态替换协议、主机和端口。这将确保服务返回的 URL 是创建了用户会话的主机。命名属性包括：</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgc">配置服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgg">会话服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgf">日志服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgh">策略服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfge">验证服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgl">SAML 网络概要文件/附件服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgm">SAML SOAP 服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgk">SAML 网络概要文件/POST 服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgi">SAML 声明管理器服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgn">联合声明管理器服务 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgp">安全令牌管理器 URL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamnamingservice.html#fwfgo">JAXRPC 端点 URL</A></p>
-</li>
-</ul>
-<A NAME="fwfgc"></A><h4>配置服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p>
-<p>该语法允许基于特定会话参数动态替换配置 URL。</p>
-<A NAME="fwfgg"></A><h4>会话服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt></p>
-<p>该语法允许动态替换基于特定会话参数的会话 URL。</p>
-<A NAME="fwfgf"></A><h4>日志服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p>
-<p>该语法允许动态替换基于特定会话参数的日志 URL。</p>
-<A NAME="fwfgh"></A><h4>策略服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p>
-<p>该语法允许动态替换基于特定会话参数的策略 URL。</p>
-<A NAME="fwfge"></A><h4>验证服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt></p>
-<p>该语法允许动态替换基于特定会话参数的验证 URL。</p>
-<A NAME="fwfgl"></A><h4>SAML 网络概要文件/附件服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet </tt></p>
-<p>该语法允许动态替换基于特定会话参数的 SAML 网络概要文件/附件 URL。</p>
-<A NAME="fwfgm"></A><h4>SAML SOAP 服务 URL</h4>
-<p>该字段采用的值为</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver </tt></p>
-<p>该语法允许动态替换基于特定会话参数的 SAML SOAP URL。</p>
-<A NAME="fwfgk"></A><h4>SAML 网络概要文件/POST 服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet </tt></p>
-<p>该语法允许动态替换基于特定会话参数的 SAML 网络概要文件/POST URL。</p>
-<A NAME="fwfgi"></A><h4>SAML 声明管理器服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionM anagerIF</tt></p>
-<p>该语法允许动态替换基于特定会话参数的 SAML 声明管理器服务 URL。</p>
-<A NAME="fwfgn"></A><h4>联合声明管理器服务 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p>
-<p>该语法允许动态替换基于特定会话参数的联合声明管理器服务 URL。</p>
-<A NAME="fwfgp"></A><h4>安全令牌管理器 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken ManagerIF/</tt></p>
-<p>该语法允许基于特定会话参数动态替换安全令牌管理器的 URL。</p>
-<A NAME="fwfgo"></A><h4>JAXRPC 端点 URL</h4>
-<p>该字段采用的值为：</p>
-<p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p>
-<p>该语法允许基于特定会话参数动态替换 JAXRPC 端点的 URL。</p>
 
-<br />
+
+<a name="service.scserviceprofile.iplanetamnamingservice"></a><h4>命名</h4>
+<p><a name="indexterm-207"></a>“命名”服务用于获取和设置 URL、插件和配置，以及其他各种 Federated Access Manager 服务（如会话、验证、日志记录、SAML 和联合）的请求通知。</p><p>如果平台运行了多个 Federated Access Manager，该服务可以使客户机找到正确的服务 URL。找到命名 URL 时，命名服务将对用户会话进行解码，并使用会话中的参数动态替换协议、主机和端口。这将确保服务返回的 URL 是创建了用户会话的主机。命名属性包括：</p>
+<ul><li><p><a href="#fwfgc">配置服务 URL</a></p></li>
+<li><p><a href="#fwfgg">会话服务 URL</a></p></li>
+<li><p><a href="#fwfgf">日志服务 URL</a></p></li>
+<li><p><a href="#fwfgh">策略服务 URL</a></p></li>
+<li><p><a href="#fwfge">验证服务 URL</a></p></li>
+<li><p><a href="#fwfgl">SAML 网络概要文件/附件服务 URL</a></p></li>
+<li><p><a href="#fwfgm">SAML SOAP 服务 URL</a></p></li>
+<li><p><a href="#fwfgk">SAML 网络概要文件/POST 服务 URL</a></p></li>
+<li><p><a href="#fwfgi">SAML 声明管理器服务 URL</a></p></li>
+<li><p><a href="#fwfgn">联合声明管理器服务 URL</a></p></li>
+<li><p><a href="#fwfgp">安全令牌管理器 URL</a></p></li>
+<li><p><a href="#fwfgo">JAXRPC 端点 URL</a></p></li></ul>
+
+
+<a name="fwfgc"></a><h5>配置服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p><p>该语法允许基于特定会话参数动态替换配置 URL。</p>
+
+<a name="fwfgg"></a><h5>会话服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/sessionservice</tt></p><p>该语法允许动态替换基于特定会话参数的会话 URL。</p>
+
+<a name="fwfgf"></a><h5>日志服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p><p>该语法允许动态替换基于特定会话参数的日志 URL。</p>
+
+<a name="fwfgh"></a><h5>策略服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p><p>该语法允许动态替换基于特定会话参数的策略 URL。</p>
+
+<a name="fwfge"></a><h5>验证服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/authservice</tt></p><p>该语法允许动态替换基于特定会话参数的验证 URL。</p>
+
+<a name="fwfgl"></a><h5>SAML 网络概要文件/附件服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLAwareServlet </tt></p><p>该语法允许动态替换基于特定会话参数的 SAML 网络概要文件/附件 URL。</p>
+
+<a name="fwfgm"></a><h5>SAML SOAP 服务 URL</h5>
+<p>该字段采用的值为</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLSOAPReceiver </tt></p><p>该语法允许动态替换基于特定会话参数的 SAML SOAP URL。</p>
+
+<a name="fwfgk"></a><h5>SAML 网络概要文件/POST 服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/SAMLPOSTProfileServlet </tt></p><p>该语法允许动态替换基于特定会话参数的 SAML 网络概要文件/POST URL。</p>
+
+<a name="fwfgi"></a><h5>SAML 声明管理器服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/AssertionM anagerIF</tt></p><p>该语法允许动态替换基于特定会话参数的 SAML 声明管理器服务 URL。</p>
+
+<a name="fwfgn"></a><h5>联合声明管理器服务 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p><p>该语法允许动态替换基于特定会话参数的联合声明管理器服务 URL。</p>
+
+<a name="fwfgp"></a><h5>安全令牌管理器 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/amserver/SecurityTokenManagerServlet/SecurityToken ManagerIF/</tt></p><p>该语法允许基于特定会话参数动态替换安全令牌管理器的 URL。</p>
+
+<a name="fwfgo"></a><h5>JAXRPC 端点 URL</h5>
+<p>该字段采用的值为：</p><p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p><p>该语法允许基于特定会话参数动态替换 JAXRPC 端点的 URL。</p>
+<br/>
 
 </body>
 </html>

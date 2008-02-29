@@ -1,36 +1,39 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Web 服務
+  <title>Web 服務 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="webservices"></A><h1>Web 服務</h1>
-<p>Web 服務模組是 Liberty Alliance Project <b>識別 Web 服務架構</b> (Identity Web Services Framework, ID-WSF) 規格的 Access Manager 實作。ID-WSF 建立在 <b>Liberty 識別聯合架構</b> (Identity Federation Framework, ID-FF) 之上，方法為提供規格以建立對聯合網路環境中的識別資料進行擷取、更新或執行動作之服務。這些規格概述了建立 Web 服務所需的技術元件，如行事曆服務、錢包服務或警示服務。</p>
-<p><hr size="1" noshade><p><b>備註 &#8211; </b><b>識別資料</b>包括定義名字、姓氏、家庭住址、公司地址及緊急連絡人的屬性，但不限於此。</p>
-<hr size="1" noshade></p><p>Web 服務是跨網際網路的分散式運算的基礎。Web 服務使用者 (WSC) 會提出請求，尋找 Web 服務的位置並呼叫它提供的作業。Web 服務提供者 (WSP) 是實作基於請求的 Web 服務的應用程式；它可以位於與 WSC 相同的 Java&#8482; 虛擬機器，也可以在數千英哩以外。當 WSC 需要從 WSP 擷取識別屬性時，首先必須連絡探索服務，以尋找儲存特殊屬性的位置。當傳回此資訊時，WSC 隨後會連絡 WSP (例如，個人設定檔服務) 以擷取必需的屬性。</p>
-<p>Access Manager 主控台中的 Web 服務模組提供了用於配置下列各項的介面：</p>
-<ul><li><p><A HREF="webservices.wspersonalprofileservice.html#webservices.wspersonalprofileservice">Liberty 個人設定檔服務</A></p>
-</li>
-<li><p><A HREF="service.smdiscoveryservice.html#service.smdiscoveryservice">探索服務</A></p>
-</li>
-<li><p><A HREF="service.scsoapbinding.html#service.scsoapbinding">SOAP 連結服務</A></p>
-</li>
-<li><p><A HREF="webservices.wsauthnservices.html#webservices.wsauthnservices">認證 Web 服務</A></p>
-</li>
-</ul>
+<a name="webservices"></a><h3>Web 服務</h3><p>Web 服務模組是 Liberty Alliance Project <b>識別 Web 服務架構</b> (Identity Web Services Framework, ID-WSF) 規格的
+Access Manager 實作。ID-WSF 建立在 <b>Liberty 識別聯合架構</b> (Identity Federation Framework, ID-FF) 之上，方法為提供規格以建立對聯合網路環境中的識別資料進行擷取、更新或執行動作之服務。這些規格概述了建立 Web 服務所需的技術元件，如行事曆服務、錢包服務或警示服務。</p>
+<hr><p><b>備註 &#8211; </b><b>識別資料</b>包括定義名字、姓氏、家庭住址、公司地址及緊急連絡人的屬性，但不限於此。</p>
+<hr>
+<p>Web 服務是跨網際網路的分散式運算的基礎。Web 服務使用者 (WSC) 會提出請求，尋找 Web 服務的位置並呼叫它提供的作業。Web 服務提供者 (WSP) 是實作基於請求的 Web 服務的應用程式；它可以位於與
+WSC 相同的 Java&#8482; 虛擬機器，也可以在數千英哩以外。當 WSC 需要從 WSP 擷取識別屬性時，首先必須連絡探索服務，以尋找儲存特殊屬性的位置。當傳回此資訊時，WSC 隨後會連絡 WSP (例如，個人設定檔服務) 以擷取必需的屬性。</p><p>Access Manager 主控台中的 Web 服務模組提供了用於配置下列各項的介面：</p>
+<ul><li><p><a href="webservices.wspersonalprofileservice.html">Liberty 個人設定檔服務</a></p></li>
+<li><p><a href="service.smdiscoveryservice.html">探索服務</a></p></li>
+<li><p><a href="service.scsoapbinding.html">SOAP 連結服務</a></p></li>
+<li><p><a href="webservices.wsauthnservices.html">認證 Web 服務</a></p></li></ul>
 
-<br />
+<br/>
 
 </body>
 </html>

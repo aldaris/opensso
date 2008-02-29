@@ -1,38 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>구성 속성
+  <title>구성 속성 - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scconfig"></A><h1>구성 속성</h1>
-<p><A NAME="indexterm-172"></A>구성 페이지에는 Access Manager의 기본 서비스를 구성하는 모든 속성이 포함되어 있습니다. Access Manager 서비스를 구성하는 속성은 다음 유형 중 하나로 분류됩니다(둘 이상의 유형을 갖는 서비스도 있음).</p>
-<p><b>전역</b> &#8211; Access Manager 구성 전체에 적용됩니다. 전역 속성의 목표는 Identity Server 응용 프로그램을 사용자 정의하는 것이므로 이러한 값은 사용자, 역할 또는 영역에 적용할 수 없습니다.</p>
-<p><b>영역</b> &#8211; 영역 속성은 영역에만 할당됩니다. 또한 영역 속성에는 객체 클래스가 연결되지 않습니다. 인증은 하위 트리 또는 사용자 수준이 아니라 영역 수준으로 수행되기 때문에 인증 서비스에 나열된 속성은 영역 속성으로 정의됩니다.</p>
-<p><b>동적</b> &#8211; 구성된 Access Manager 역할이나 영역에 할당됩니다. 역할이 사용자에게 할당되거나 영역에서 사용자가 만들어질 때 동적 속성이 사용자의 특징이 됩니다.</p>
-<p><b>사용자</b> &#8211; 각 사용자에게 직접 할당됩니다. 이 속성은 역할이나 영역으로부터 상속되지 않으며 일반적으로 각 사용자마다 다릅니다.</p>
-<p>수정할 수 있는 구성 등록 정보는 다음과 같습니다.</p>
-<ul><li><p><A HREF="authattrs.html#authattrs"> 인증</A></p>
-</li>
-<li><p><A HREF="consoleprops.html#consoleprops"> 콘솔 등록 정보</A></p>
-</li>
-<li><p><A HREF="global.html#global"> 전역 등록 정보</A></p>
-</li>
-<li><p><A HREF="systemprops.html#systemprops"> 시스템 등록 정보</A></p>
-</li>
-</ul>
+<a name="service.scconfig"></a><h3>구성 속성</h3><p><a name="indexterm-172"></a>구성 페이지에는 Federated Access Manager의 기본 서비스를 구성하는 모든 속성이 포함되어 있습니다.
+Federated Access Manager 서비스를 구성하는 속성은 다음 유형 중 하나로 분류됩니다(둘 이상의
+유형을 갖는 서비스도 있음).</p><p><b>전역</b> &#8211; Federated Access Manager 구성 전체에 적용됩니다. 전역 속성의 목표는 Identity
+Server 응용 프로그램을 사용자 정의하는 것이므로 이러한 값은 사용자, 역할 또는 영역에
+적용할 수 없습니다.</p><p><b>영역</b> &#8211; 영역 속성은 영역에만 할당됩니다. 또한 영역 속성에는 객체 클래스가 연결되지
+않습니다. 인증은 하위 트리 또는 사용자 수준이 아니라 영역 수준으로 수행되기 때문에
+인증 서비스에 나열된 속성은 영역 속성으로 정의됩니다.</p><p><b>동적</b> &#8211; 구성된 Federated Access Manager 역할이나 영역에 할당됩니다. 역할이 사용자에게 할당되거나
+영역에서 사용자가 만들어질 때 동적 속성이 사용자의 특징이 됩니다.</p><p><b>사용자</b> &#8211; 각 사용자에게 직접 할당됩니다. 이 속성은 역할이나 영역으로부터 상속되지 않으며
+일반적으로 각 사용자마다 다릅니다.</p><p>수정할 수 있는 구성 등록 정보는 다음과 같습니다.</p>
+<ul><li><p><a href="authattrs.html">인증</a></p></li>
+<li><p><a href="consoleprops.html">콘솔 등록 정보</a></p></li>
+<li><p><a href="global.html">전역 등록 정보</a></p></li>
+<li><p><a href="systemprops.html">시스템 등록 정보</a></p></li></ul>
 
-<br />
+<br/>
 
 </body>
 </html>

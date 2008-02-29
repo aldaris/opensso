@@ -1,49 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>承認
+  <title>承認 - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="authorizer"></A><h3>承認</h3>
-<A NAME="indexterm-97"></A><A NAME="indexterm-98"></A><p>要求を処理する前に、Liberty 個人プロファイルサービスは要求を行っている WSC の承認を検証します。実行できる認証チェックには、次の 2 つのレベルがあります。</p>
-<ol Type="1"><li><p>要求元のエンティティーは、要求しているリソースのプロファイル情報へのアクセスを許可されているかどうか</p>
-</li>
-<li><p>要求されたリソースが要求者に公開されているかどうか</p>
-</li>
-</ol>
-<p>承認は Liberty 個人プロファイルサービスへのプラグインを介して行われます。このプラグインは、<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> インタフェースの実装です。新しい実装を作成できますが、Access Manager ではデフォルトの <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt> が提供されます。このプラグインは、クエリー操作と変更操作のための 4 つのポリシーアクション値を定義します。</p>
-<ul><li><p>許可</p>
-</li>
-<li><p>拒否</p>
-</li>
-<li><p>同意を求める対話プロトコルの呼び出し</p>
-</li>
-<li><p>値を求める対話プロトコルの呼び出し</p>
-</li>
-</ul>
-<p>ルールのリソース値は、Liberty 個人プロファイルサービスで定義されている <tt>x-path</tt> 式に似ています。</p>
-<pre style="font-family:arial,helvetica,sans-serif">/PP/CommonName/AnalyzedName/FN 	クエリー 	同意を求める対話プロトコルの呼び出し
-/PP/CommonName/*                      	変更 	値を求める対話プロトコルの呼び出し
-/PP/InformalName                        	クエリー 	拒否</pre>
-<p>認証は、次の属性のいずれかまたは両方を選択解除することによって無効にできます。これらの属性も Liberty 個人プロファイルサービスに定義されています。</p>
-<ul><li><p><A HREF="requirequery.html#requirequery">「ポリシー評価のクエリーが必要:」</A></p>
-</li>
-<li><p><A HREF="requiremodify.html#requiremodify">「ポリシー評価の変更が必要:」</A></p>
-</li>
-</ul>
 
-<br />
+
+<a name="authorizer"></a><h4>承認</h4>
+<a name="indexterm-97"></a><a name="indexterm-98"></a><p>要求を処理する前に、Liberty 個人プロファイルサービスは要求を行っている WSC の承認を検証します。実行できる認証チェックには、次の 2 つのレベルがあります。</p>
+<ol><li><p>要求元のエンティティーは、要求しているリソースのプロファイル情報へのアクセスを許可されているかどうか</p></li>
+<li><p>要求されたリソースが要求者に公開されているかどうか</p></li></ol>
+<p>承認は Liberty 個人プロファイルサービスへのプラグインを介して行われます。このプラグインは、<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> インタフェースの実装です。新しい実装を作成できますが、Access Manager ではデフォルトの <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt> が提供されます。このプラグインは、クエリー操作と変更操作のための 4 つのポリシーアクション値を定義します。</p>
+<ul><li><p>許可</p></li>
+<li><p>拒否</p></li>
+<li><p>同意を求める対話プロトコルの呼び出し</p></li>
+<li><p>値を求める対話プロトコルの呼び出し</p></li></ul>
+<p>ルールのリソース値は、Liberty 個人プロファイルサービスで定義されている <tt>x-path</tt> 式に似ています。</p>/PP/CommonName/AnalyzedName/FN     クエリー     同意を求める対話プロトコルの呼 び出し /PP/CommonName/*                          変更     値を求める対話プロトコルの呼び出し /PP/InformalName                            クエリー     拒否<p>認証は、次の属性のいずれかまたは両方を選択解除することによって無効にできます。これらの属性も Liberty 個人プロファイルサービスに定義されています。</p>
+<ul><li><p><a href="requirequery.html">「ポリシー評価のクエリーが必要:」</a></p></li>
+<li><p><a href="requiremodify.html">「ポリシー評価の変更が必要:」</a></p></li></ul>
+
+<br/>
 
 </body>
 </html>

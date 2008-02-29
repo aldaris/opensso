@@ -1,32 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>配置服务说明
+  <title>配置服务说明 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.smdiscoverydescriptionadd"></A><h4>配置服务说明</h4>
-<A NAME="indexterm-156"></A><A NAME="indexterm-157"></A><p>“服务说明”属性用于在不同的协议端点定义正在运行的 Web 服务。 它在配置<A HREF="resourceofferingsbootstrapping.html#resourceofferingsbootstrapping">用于引导的资源提供</A>时进行定义。有关服务实例的信息需要在各种语境中进行传送。例如，定义的搜索服务是身份服务，它用于枚举资源提供（每个资源提供都包含一个服务实例说明）。</p>
-<ol><li><p><b>单击“添加说明”以显示新的服务说明属性，或单击“编辑”修改现有说明。</b></p></li>
-<li><p><b>基于以下信息，为属性提供值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>安全机制 ID</p></td><td valign="top"><p>搜索服务支持的验证方法可添加到该属性中。这些安全机制指的是 Web 服务使用方向 Web 服务提供者进行验证或提供消息级安全的方法。默认情况下，服务实例支持的所有可用方法都处于选定状态。如果 Web 服务使用方使用未选定的验证方法发送请求，则系统将拒绝该请求。参见<A HREF="supportedauthmechanisms.html#supportedauthmechanisms">支持的验证机制</A>。</p>
-</td></tr><tr><td valign="top"><p>端点 URL</p></td><td valign="top"><p>该属性的值为 SOAP-over-HTTP 端点的 URL。URI 方案必须为类似 <tt>https://soap.profile-provider.com/soap </tt> 中的 HTTP 或 HTTPS。</p>
-</td></tr><tr><td valign="top"><p>SOAP 操作</p></td><td valign="top"><p>该可选属性的值与服务基于 WSDL 的具体说明中 <tt>wsdlsoap:operation </tt> 元素的 <tt>wsdlsoap:soapAction</tt> 属性相同。</p>
-</td></tr></table>
+
+
+<a name="service.smdiscoverydescriptionadd"></a><h5>配置服务说明</h5>
+<a name="indexterm-156"></a><a name="indexterm-157"></a><p>“服务说明”属性用于在不同的协议端点定义正在运行的 Web 服务。 它在配置<a href="resourceofferingsbootstrapping.html">用于引导的资源提供</a>时进行定义。有关服务实例的信息需要在各种语境中进行传送。例如，定义的搜索服务是身份服务，它用于枚举资源提供（每个资源提供都包含一个服务实例说明）。</p><ol>
+<li><b>单击“添加说明”以显示新的服务说明属性，或单击“编辑”修改现有说明。</b></li>
+<li><b>基于以下信息，为属性提供值：</b><dl><dt>安全机制 ID</dt>
+<dd><p>搜索服务支持的验证方法可添加到该属性中。这些安全机制指的是 Web 服务使用方向 Web 服务提供者进行验证或提供消息级安全的方法。默认情况下，服务实例支持的所有可用方法都处于选定状态。如果 Web 服务使用方使用未选定的验证方法发送请求，则系统将拒绝该请求。参见<a href="supportedauthmechanisms.html">支持的验证机制</a>。</p></dd>
+<dt>端点 URL</dt>
+<dd><p>该属性的值为 SOAP-over-HTTP 端点的 URL。URI 方案必须为类似 <tt>https://soap.profile-provider.com/soap </tt> 中的 HTTP 或 HTTPS。</p></dd>
+<dt>SOAP 操作</dt>
+<dd><p>该可选属性的值与服务基于 WSDL 的具体说明中 <tt>wsdlsoap:operation </tt> 元素的 <tt>wsdlsoap:soapAction</tt> 属性相同。</p></dd>
+</dl>
 </li>
-<li><p><b>单击“确定”完成服务的配置操作。</b></p></li>
-<li><p><b>单击“搜索服务”页面上的“保存”完成服务的配置操作。</b></p></li>
-</ol>
-<br />
+<li><b>单击“确定”完成服务的配置操作。</b></li>
+<li><b>单击“搜索服务”页面上的“保存”完成服务的配置操作。</b></li></ol>
+<br/>
 
 </body>
 </html>

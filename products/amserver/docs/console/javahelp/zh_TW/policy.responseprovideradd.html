@@ -1,32 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>將回應新增至策略
+  <title>將回應提供者新增至策略 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="policy.responseprovideradd"></A><h4>將回應新增至策略</h4>
-<ol><li><p><b><A NAME="indexterm-42"></A>若您已建立策略，按一下您要新增回應提供者的策略名稱。如果尚未建立策略，請參閱<A HREF="policy.policynormaladd.html#policy.policynormaladd">建立新的一般策略</A>。</b></p></li>
-<li><p><b>於 [回應提供者] 清單下，按一下 [新建]。</b></p></li>
-<li><p><b>輸入回應提供者的名稱。</b></p></li>
-<li><p><b>定義下列值：</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>StaticAttribute</p></td><td valign="top"><p>這些是格式為屬性值的靜態屬性，定義在儲存於策略中的 <tt>IDResponseProvider</tt> 的實例內。</p>
-</td></tr><tr><td valign="top"><p>DynamicAttribute</p></td><td valign="top"><p>此處所選擇的回應屬性首先需要於對應之範圍的「策略配置服務」中定義。定義的屬性名稱應該是那些存在於所配置資料存放區 (IDReposotories) 中的屬性名稱的子集。如需如何定義屬性的詳細資料，請參閱「策略配置」屬性定義。若要選取特定或多個屬性，請按住 Control 鍵，並按一下滑鼠左鍵。</p>
-</td></tr></table>
+
+
+<a name="policy.responseprovideradd"></a><h5>將回應提供者新增至策略</h5>
+<ol>
+<li><b><a name="indexterm-42"></a>若您已建立策略，按一下您要新增回應提供者的策略名稱。如果尚未建立策略，請參閱<a href="policy.policynormaladd.html">建立新的一般策略</a>。</b></li>
+<li><b>於 [回應提供者] 清單下，按一下 [新建]。</b></li>
+<li><b>輸入回應提供者的名稱。</b></li>
+<li><b>定義下列值：</b><dl><dt>StaticAttribute</dt>
+<dd><p>這些是格式為屬性值的靜態屬性，定義在儲存於策略中的 <tt>IDResponseProvider</tt> 的實例內。</p></dd>
+<dt>DynamicAttribute</dt>
+<dd><p>此處所選擇的回應屬性首先需要於對應之範圍的<a href="ggdbu.html#ggdcj">策略配置服務</a>中定義。定義的屬性名稱應該是那些存在於所配置資料存放區 (IDReposotories) 中的屬性名稱的子集。如需如何定義屬性的詳細資料，請參閱「策略配置」屬性定義。若要選取特定或多個屬性，請按住 Control 鍵，並按一下滑鼠左鍵。</p></dd>
+</dl>
 </li>
-<li><p><b>按一下 [完成]。</b></p></li>
-<li><p><b>若要從策略中移除回應提供者，請選取主體，然後按一下 [刪除]。按一下名稱可以編輯任何回應提供者定義。</b></p></li>
-</ol>
-<br />
+<li><b>按一下 [完成]。</b></li>
+<li><b>若要從策略中移除回應提供者，請選取主體，然後按一下 [刪除]。按一下名稱可以編輯任何回應提供者定義。</b></li></ol>
+<br/>
 
 </body>
 </html>

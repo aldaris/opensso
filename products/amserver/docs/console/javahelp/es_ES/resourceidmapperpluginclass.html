@@ -1,32 +1,41 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Clases de complemento del asignador de Id. de recursos
+  <title>Clases de complemento del asignador de Id. de recursos - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="resourceidmapperpluginclass"></A><h3>Clases de complemento del asignador de Id. de recursos</h3>
-<A NAME="indexterm-142"></A><A NAME="indexterm-143"></A><p>El valor de este atributo es una lista de las clases que generan identificadores para una oferta de recursos configurada para una organizaci&#243;n o rol. <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> es una interfaz utilizada para asignar un identificador de usuario al identificador de recurso asociado a &#233;l. El Servicio de detecci&#243;n proporciona dos implementaciones para esta interfaz:</p>
-<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper </tt> (formato: <i>providerID</i> + "/" + <i>the Base64 encoded userIDs</i>)</p>
-</li>
-<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper </tt> (formato: <i>providerID</i> + "/" + <i>the hex string of userID</i>)</p>
-</li>
-</ul>
-<p>Se pueden desarrollar distintas implementaciones con la clase de implementaci&#243;n y agregarlas como valor de este atributo. Para ello, haga clic en Nuevo y utilice el siguiente formato:</p>
-<p><tt><b>providerid=</tt><i>providerID<tt></i>|</tt><i> class_name_and_path<tt></i></b></tt></p>
-<p>Consulte <A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">Para configurar un asignador de Id. de recursos</A>.</p>
 
-<br />
+
+<a name="resourceidmapperpluginclass"></a><h4>Clases de complemento del asignador de Id. de recursos</h4>
+<a name="indexterm-142"></a><a name="indexterm-143"></a><p>El valor de este atributo es una lista de las clases que
+generan identificadores para una oferta de recursos configurada para una organizaci&#243;n o
+rol. <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> es una interfaz utilizada para asignar un identificador de usuario
+al identificador de recurso asociado a &#233;l. El Servicio de detecci&#243;n proporciona
+dos implementaciones para esta interfaz:</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper </tt> (formato: <i>providerID</i> + "/" + <i>the Base64 encoded userIDs</i>)</p></li>
+<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper </tt> (formato: <i>providerID</i> + "/" + <i>the hex string of userID</i>)</p></li></ul>
+<p>Se pueden desarrollar distintas implementaciones con la clase de implementaci&#243;n y agregarlas
+como valor de este atributo. Para ello, haga clic en Nuevo y
+utilice el siguiente formato:</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p>Consulte <a href="service.smdiscoveryproviderresourceidmapadd.html">Para configurar un asignador de Id. de recursos</a>.</p>
+<br/>
 
 </body>
 </html>

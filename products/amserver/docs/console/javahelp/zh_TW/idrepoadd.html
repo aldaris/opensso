@@ -1,39 +1,49 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Access Manager 資料存放區類型
+  <title>Federated Access Manager 資料存放區類型 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="idrepoadd"></A><h3>Access Manager 資料存放區類型</h3>
-<p>在 [Access Manager 資料存放區選取] 畫面中，可以建立下列資料存放區類型：</p>
-<A NAME="gdlnj"></A><h4>Access Manager 儲存庫外掛程式</h4>
-<p>此資料存放區類型位於 Sun Java System Directory Server 實例中，並擁有 Access Manager 資訊樹狀結構。此資料存放區類型使用不屬於 LDAP 版本 3 規格的 Directory Server 功能 (如角色及服務類別)，並與先前版本的 Access Manager 相容。</p>
-<p>如需屬性定義的相關資訊，請參閱<A HREF="amrepoattrs.html#amrepoattrs">Access Manager 儲存庫屬性</A>。</p>
-<A NAME="gdlmv"></A><h4>Active Directory</h4>
-<p>此資料存放區類型使用 LDAP 版本 3 規格向 Microsoft Active Directory 的實例寫入識別資料。</p>
-<p>如需屬性定義的相關資訊，請參閱<A HREF="adattrs.html#adattrs">Active Directory 屬性</A>。</p>
-<A NAME="gdlml"></A><h4>平面檔案儲存庫</h4>
-<p>此儲存庫可讓您在 Access Manager 的本機安裝實例上以平面 DIT 結構儲存資料及識別，而不必建立個別的資料存放區。它通常用來測試或驗證概念部署。</p>
-<p>如需屬性定義的相關資訊，請參閱<A HREF="flatfileattr.html#flatfileattr">平面檔案儲存庫屬性</A>。</p>
-<A NAME="gdlmr"></A><h4>通用 LDAPv3</h4>
-<p>此資料存放區類型可讓您向任何與 LDAPv3 相容的資料庫寫入識別資料。如果您使用的 LDAPv3 資料庫不支援持續搜尋，則無法使用快取功能。</p>
-<p>如需屬性定義的相關資訊，請參閱<A HREF="gdoto.html#gdoto">通用 LDAPv3 屬性</A>。</p>
-<A NAME="gdlnw"></A><h4>具有 Access Manager 模式的 Sun Directory Server</h4>
-<p>此資料存放區類型位於 Sun Java System Directory Server 實例中，並擁有 Access Manager 資訊樹狀結構。它與 Access Manager 儲存庫外掛程式的不同之處在於，它有更多配置屬性可讓您更好地自訂資料存放區。</p>
-<p>如需屬性定義的相關資訊，請參閱<A HREF="sundirattrs.html#sundirattrs">具有 Access Manager 模式的 Sun Directory Server 屬性</A>。</p>
 
-<br />
+
+<a name="idrepoadd"></a><h4>Federated Access Manager 資料存放區類型</h4>
+<p>在 [Federated Access Manager 資料存放區選取] 畫面中，可以建立下列資料存放區類型：</p>
+
+<a name="gdlnj"></a><h5>Federated Access Manager 儲存庫外掛程式</h5>
+<p>此資料存放區類型位於 Sun Java System Directory Server 實例中，並擁有 Federated Access Manager 資訊樹狀結構。此資料存放區類型使用不屬於 LDAP
+版本 3 規格的 Directory Server 功能 (如角色及服務類別)，並與先前版本的 Federated Access Manager 相容。</p><p>如需屬性定義的相關資訊，請參閱<a href="amrepoattrs.html">Federated Access Manager 儲存庫屬性</a>。</p>
+
+<a name="gdlmv"></a><h5>Active Directory</h5>
+<p>此資料存放區類型使用 LDAP 版本 3 規格向 Microsoft Active Directory 的實例寫入識別資料。</p><p>如需屬性定義的相關資訊，請參閱<a href="adattrs.html">Active Directory 屬性</a>。</p>
+
+<a name="gdlml"></a><h5>平面檔案儲存庫</h5>
+<p>此儲存庫可讓您在 Federated Access Manager 的本機安裝實例上，以平面 DIT 結構儲存資料及識別，而不必建立個別的資料存放區。它通常用來測試或驗證概念部署。</p><p>如需屬性定義的相關資訊，請參閱<a href="flatfileattr.html">平面檔案儲存庫屬性</a>。</p>
+
+<a name="gdlmr"></a><h5>通用 LDAPv3</h5>
+<p>此資料存放區類型可讓您向任何與 LDAPv3 相容的資料庫寫入識別資料。如果您使用的 LDAPv3 資料庫不支援持續搜尋，則無法使用快取功能。</p><p>如需屬性定義的相關資訊，請參閱<a href="gdoto.html">通用 LDAPv3 屬性</a>。</p>
+
+<a name="gdlnw"></a><h5>具有 Federated Access Manager 模式的 Sun Directory Server</h5>
+<p>此資料存放區類型位於 Sun Java System Directory Server 實例中，並擁有 Federated Access Manager 資訊樹狀結構。它與 Federated
+Access Manager 儲存庫外掛程式的不同之處在於，它有更多配置屬性可讓您更好地自訂資料存放區。</p><p>如需屬性定義的相關資訊，請參閱<a href="sundirattrs.html">具有 Federated Access Manager 模式的 Sun Directory Server 屬性</a>。</p>
+<br/>
 
 </body>
 </html>

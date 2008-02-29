@@ -1,38 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Magasins de donn&#233;es
+  <title>Magasins de donn&#233;es - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="realm.idrepo"></A><h2>Magasins de donn&#233;es</h2>
-<p><A NAME="indexterm-10"></A><A NAME="indexterm-11"></A>Un magasin de donn&#233;es est une base de donn&#233;es dans laquelle vous pouvez stocker des attributs utilisateur et des donn&#233;es de configuration utilisateur.</p>
-<p>Access Manager fournit des plug-ins du r&#233;f&#233;rentiel d'identit&#233;s qui se connectent &#224; une structure de r&#233;f&#233;rentiel d'identit&#233;s LDAPv3. Ceci vous permet de consulter et de r&#233;cup&#233;rer les informations utilisateur Access Manager sans apporter de modification &#224; votre base de donn&#233;es utilisateur existante. La structure Access Manager int&#232;gre les donn&#233;es du plug-in du r&#233;f&#233;rentiel d'identit&#233;s avec les donn&#233;es d'autres plug-ins Access Manager afin de constituer une identit&#233; virtuelle pour chaque utilisateur. Access Manager peut alors utiliser cette identit&#233; universelle dans les processus d'authentification et d'autorisation au sein de plusieurs r&#233;f&#233;rentiels d'identit&#233;s. L'identit&#233; d'utilisateur virtuelle est d&#233;truite lorsque la session de l'utilisateur prend fin.</p>
-<p>Access Manager prend en charge les magasins de donn&#233;es suivants :</p>
-<ul><li><p>Plug-in du r&#233;f&#233;rentiel d'Access Manager</p>
-</li>
-<li><p>Active Directory</p>
-</li>
-<li><p>R&#233;f&#233;rentiel fichiers plats</p>
-</li>
-<li><p>LDAPv3 g&#233;n&#233;rique</p>
-</li>
-<li><p>Sun Directory Server avec Access Manager Schema</p>
-</li>
-</ul>
-<p>Pour plus d'informations sur la cr&#233;ation d'un magasin de donn&#233;es et sur la configuration de plug-ins du r&#233;f&#233;rentiel, reportez-vous &#224; <A HREF="realm.idreposelecttype.html#realm.idreposelecttype">Cr&#233;ation d'un magasin de donn&#233;es</A>.</p>
 
-<br />
+
+<a name="realm.idrepo"></a><h3>Magasins de donn&#233;es</h3>
+<p><a name="indexterm-10"></a><a name="indexterm-11"></a>Un magasin de donn&#233;es est une base de donn&#233;es dans laquelle vous
+pouvez stocker des attributs utilisateur et des donn&#233;es de configuration utilisateur.</p><p>Federated Access Manager fournit des plug-ins du r&#233;f&#233;rentiel d'identit&#233;s qui se connectent
+&#224; une structure de r&#233;f&#233;rentiel d'identit&#233;s LDAPv3. Ceci vous permet de consulter
+et de r&#233;cup&#233;rer les informations utilisateur Federated Access Manager sans apporter de
+modification &#224; votre base de donn&#233;es utilisateur existante. La structure Federated Access
+Manager int&#232;gre les donn&#233;es du plug-in du r&#233;f&#233;rentiel d'identit&#233;s avec les donn&#233;es
+d'autres plug-ins Federated Access Manager afin de constituer une identit&#233; virtuelle pour
+chaque utilisateur. Federated Access Manager peut alors utiliser cette identit&#233; universelle dans
+les processus d'authentification et d'autorisation au sein de plusieurs r&#233;f&#233;rentiels d'identit&#233;s. L'identit&#233;
+d'utilisateur virtuelle est d&#233;truite lorsque la session de l'utilisateur prend fin.</p><p>Federated Access Manager prend en charge les magasins de donn&#233;es suivants :</p>
+<ul><li><p>Plug-in de r&#233;f&#233;rentiel Federated Access Manager</p></li>
+<li><p>Active Directory</p></li>
+<li><p>R&#233;f&#233;rentiel fichiers plats</p></li>
+<li><p>LDAPv3 g&#233;n&#233;rique</p></li>
+<li><p>Sun Directory Server avec Federated Access Manager Schema</p></li></ul>
+<p>Pour plus d'informations sur la cr&#233;ation d'un magasin de donn&#233;es et sur
+la configuration de plug-ins du r&#233;f&#233;rentiel, reportez-vous &#224; <a href="realm.idreposelecttype.html">Cr&#233;ation d'un magasin de donn&#233;es</a>.</p>
+<br/>
 
 </body>
 </html>

@@ -2,113 +2,227 @@
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "index_1_0.dtd">
 <index version="2.0">
-<indexitem target="serviceupdateenabled" text="actualizaci&#243;n del servicio"></indexitem>
-<indexitem target="dirmang" text="Administraci&#243;n de directorios"></indexitem>
-<indexitem text="Administraci&#243;n de identidades"><indexitem text="Usuarios"><indexitem target="addusertogroup" text="Adici&#243;n a servicios, roles y grupos"></indexitem>
-</indexitem>
-</indexitem>
-<indexitem target="dm.home" text="Administraci&#243;n de usuarios"></indexitem>
-<indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Administrador de cliente"></indexitem>
-<indexitem target="adattrs" text="Almac&#233;n de datos, atributos de Active Directory"></indexitem>
-<indexitem target="realm.idrepo" text="Almacenes de datos"><indexitem target="amrepoattrs" text="atributos de complemento de repositorio de Access Manager"></indexitem><indexitem target="flatfileattr" text="atributos de repositorio de archivos sin formato"></indexitem><indexitem target="gdoto" text="Atributos del complemento de repositorio LDAPv3"></indexitem><indexitem target="realm.idreposelecttype" text="Para crear un nuevo almac&#233;n de datos"></indexitem><indexitem target="sundirattrs" text="Sun Directory Server con atributos de esquema de AM"></indexitem>
-</indexitem>
-<indexitem target="attributemapper" text="asignador de atributos"></indexitem>
-<indexitem target="resourceidmapper" text="asignador de Id. de recursos"></indexitem>
-<indexitem target="normalsubject" text="Asuntos"></indexitem>
-<indexitem target="idm.entities" text="Asuntos"><indexitem target="subjectagents" text="Agentes"></indexitem><indexitem target="subject.group" text="Grupos"></indexitem><indexitem target="subject.role" text="Roles"></indexitem><indexitem target="subject.filteredrole" text="Roles filtrados"></indexitem><indexitem target="subjectuser" text="Usuario"></indexitem>
-</indexitem>
-<indexitem text="Atributos de autenticaci&#243;n"><indexitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></indexitem><indexitem target="service.scserviceprofile.sunamauthdatastoreservice" text="Almac&#233;n de datos"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="An&#243;nimo"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificado"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Condici&#243;n de miembro"></indexitem><indexitem target="authentication.authconfig" text="Configuraci&#243;n de autenticaci&#243;n"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP b&#225;sico"></indexitem><indexitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP"></indexitem><indexitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthservice" text="Principal"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord"></indexitem><indexitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="SSO de Windows Desktop"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></indexitem><indexitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT"></indexitem>
-</indexitem>
-<indexitem target="extensioncontainerattributes" text="atributos de contenedor de extensiones"></indexitem>
-<indexitem target="webserviceauthenticator" text="autenticador de servicio Web"></indexitem>
-<indexitem target="authorizer" text="autorizador"></indexitem>
-<indexitem target="encryptnameidentifier" text="cifrar el identificador de nombre en el contexto de sesi&#243;n para Bootstrapping"></indexitem>
-<indexitem target="serviceinstanceupdateclass" text="clase de actualizaci&#243;n de Service Instance"></indexitem>
-<indexitem target="entryhandlerpluginclass" text="clase de complemento del administrador de entradas"></indexitem>
-<indexitem target="resourceidmapperpluginclass" text="clase de complemento del asignador de Id. de recursos"></indexitem>
-<indexitem target="authorizerpluginclass" text="clase de complemento del autorizador"></indexitem>
-<indexitem target="policyconditions" text="Condiciones"><indexitem target="policy.authtorealmadd" text="Autenticaci&#243;n en un dominio"></indexitem><indexitem target="policy.authtoserviceadd" text="Autenticaci&#243;n mediante cadena del m&#243;dulo"></indexitem><indexitem target="policy.pmdefaultauthschemeconditionadd" text="Autenticaci&#243;n mediante instancia del m&#243;dulo"></indexitem><indexitem target="policy.pmdefaultipcondition" text="Direcci&#243;n IP/nombre DNS"></indexitem><indexitem target="gdkmp" text="Filtro LDAP"></indexitem><indexitem target="policy.pmdefaultauthlevelconditionadd" text="Nivel de autenticaci&#243;n"></indexitem><indexitem target="policy.sessionpropertyconditionadd" text="Propiedades de sesi&#243;n"></indexitem><indexitem target="policy.pmdefaultsessioncondtionadd" text="Sesi&#243;n"></indexitem><indexitem target="policy.pmdefaulttimeconditionadd" text="Tiempo"></indexitem>
-</indexitem>
-<indexitem target="service.scconfig" text="Configuraci&#243;n"><indexitem target="authattrs" text="Autenticaci&#243;n"></indexitem><indexitem target="consoleprops" text="Propiedades de la consola"></indexitem><indexitem target="systemprops" text="Propiedades del sistema"></indexitem><indexitem target="global" text="Propiedades globales"></indexitem>
-</indexitem>
-<indexitem target="supportedlang" text="Configuraciones regionales de idiomas admitidas"></indexitem>
-<indexitem target="supportedcontainers" text="contenedores admitidos"></indexitem>
-<indexitem target="accesscontrol" text="Control de acceso, Introducci&#243;n"></indexitem>
-<indexitem target="service.smdiscoverydescriptionadd" text="descripci&#243;n de servicio, configurar"></indexitem>
-<indexitem target="service.mapcreatedevice" text="Detecci&#243;n de cliente, Para agregar un cliente nuevo"></indexitem>
-<indexitem target="supporteddirectives" text="directivas admitidas (servicio de detecci&#243;n)"></indexitem>
-<indexitem target="realm.rmrealm" text="Dominios"><indexitem target="realm.idrepo" text="Almacenes de datos"></indexitem><indexitem target="idm.entities" text="Asuntos"></indexitem><indexitem target="authentication.authproperties" text="Autenticaci&#243;n"></indexitem><indexitem target="realm.servicesadd" text="Para agregar un servicio a"></indexitem><indexitem target="authentication.newauthconfig" text="Para crear un nuevo encadenamiento de autenticaci&#243;n"></indexitem><indexitem target="authentication.newauthinstance" text="Para crear un nuevo m&#243;dulo de autenticaci&#243;n"></indexitem><indexitem target="realm.rmrealmadd" text="Para crear uno nuevo"></indexitem><indexitem target="policy.policy" text="Pol&#237;ticas"></indexitem><indexitem target="delegation.delegation" text="Privilegios"></indexitem><indexitem target="realm.realmproperties" text="Propiedades generales"></indexitem><indexitem target="realm.services" text="Servicios"></indexitem>
-</indexitem>
-<indexitem target="federation.fsauthdomains" text="dominios de autenticaci&#243;n"><indexitem target="federation.fsauthdomainsselectprovider" text="agregar proveedores"></indexitem><indexitem target="federation.fsauthdomainsadd" text="crear"></indexitem><indexitem target="deleteauthdomain" text="eliminar"></indexitem><indexitem target="federation.fsauthdomainsedit" text="modificar"></indexitem>
-</indexitem>
-<indexitem target="federation.fsentitydescriptors" text="entidad de afiliaci&#243;n"><indexitem target="federation.fsentitydescriptorsprofile" text="atributos generales"></indexitem><indexitem target="federation.fsentitydescriptorsadd" text="crear"></indexitem><indexitem target="federation.fsentitydescriptorsaffiliate" text="y afiliados"></indexitem>
-</indexitem>
-<indexitem target="federation.fsentitydescriptors" text="entidad de proveedor"></indexitem>
-<indexitem text="entidad de proveedores"><indexitem target="federation.fsentitydescriptorsadd" text="crear"></indexitem><indexitem target="federation.fsidentityprovider" text="y proveedores de identidades"></indexitem><indexitem target="federation.fsserviceprovider" text="y proveedores de servicios"></indexitem>
-</indexitem>
-<indexitem text="entidades"><indexitem target="federation.fsentitydescriptors" text="afiliado"></indexitem><indexitem target="federation.fscreatecontactperson" text="agregar persona de contacto"></indexitem><indexitem target="federation.fsidentityprovider" text="agregar un proveedor de identidades a una entidad de proveedores"></indexitem><indexitem target="federation.fsserviceprovider" text="agregar un proveedor de servicios a una entidad de proveedores"></indexitem><indexitem target="federation.fsentitydescriptorsadd" text="crear afiliado"></indexitem><indexitem target="federation.fsentitydescriptorsadd" text="crear proveedor"></indexitem><indexitem target="federation.fsentitydescriptorsaffiliate" text="crear un afiliado en una entidad de afiliaci&#243;n"></indexitem><indexitem target="federation.fsidentityproviderhostedprofile" text="modificar atributos de un proveedor de identidades alojado en una entidad de proveedores"></indexitem><indexitem target="federation.fsidentityproviderremoteprofile" text="modificar atributos de un proveedor de identidades remoto en una entidad de proveedores"></indexitem><indexitem target="federation.fsserviceproviderhostedprofile" text="modificar atributos de un proveedor de servicios alojado en una entidad de proveedores"></indexitem><indexitem target="federation.fsserviceproviderremoteprofile" text="modificar atributos de un proveedor de servicios remoto en una entidad de proveedores"></indexitem><indexitem target="federation.fsentitydescriptorsprofile" text="modificar atributos generales"></indexitem><indexitem target="federation.fseditcontactperson" text="modificar persona de contacto"></indexitem><indexitem target="federation.fsentitydescriptors" text="proveedor"></indexitem>
-</indexitem>
-<indexitem target="federation.fsentitydescriptorsprofile" text="entidades de proveedores, atributos generales"></indexitem>
-<indexitem target="namescheme" text="esquema de nombres"></indexitem>
-<indexitem target="policyevaldiscoupdate" text="evaluaci&#243;n de directivas para actualizaci&#243;n de detecci&#243;n"></indexitem>
-<indexitem target="policyevaldiscolookup" text="evaluaci&#243;n de directivas para b&#250;squeda de detecci&#243;n"></indexitem>
-<indexitem target="ppproviderid" text="Id. de proveedor"></indexitem>
-<indexitem target="dsproviderid" text="Id. de proveedor (servicio de detecci&#243;n)"></indexitem>
-<indexitem target="federation.fssamlsiteidadd" text="identificadores de sitio"></indexitem>
-<indexitem target="generatesessioncontext" text="instrucci&#243;n de contexto de sesi&#243;n de bootstrapping"></indexitem>
-<indexitem target="invalidatesession" text="Invalidaci&#243;n de una sesi&#243;n"></indexitem>
-<indexitem target="mechanismhandlerslist" text="lista de administradores de mecanismos"><indexitem target="webservices.wsauthnserviceshandlersadd" text="configurar"></indexitem>
-</indexitem>
-<indexitem target="requesthandlerlist" text="lista de administradores de solicitudes"><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="configurar"></indexitem>
-</indexitem>
-<indexitem target="ppldapattributemaplist" text="lista de asignaci&#243;n de atributos PPLDAP"></indexitem>
-<indexitem target="sessions" text="m&#243;dulo Sesiones"></indexitem>
-<indexitem target="soapsuppauthmech" text="mecanismos de autenticaci&#243;n admitidos (enlace de SOAP)"></indexitem>
-<indexitem target="supportedauthmechanisms" text="mecanismos de autenticaci&#243;n admitidos (servicio de detecci&#243;n)"></indexitem>
-<indexitem target="alternatesecuritymechanisms" text="mecanismos de seguridad alternativos"></indexitem>
-<indexitem target="authresponsemessage" text="mensaje de respuesta de autenticaci&#243;n"></indexitem>
-<indexitem target="resourceofferingsbootstrapping" text="ofertas de recursos para bootstrapping"><indexitem target="service.smdiscoverybootstraprefoffadd" text="configurar"></indexitem>
-</indexitem>
-<indexitem target="serviceinstanceupdateclass" text="personal profile service, clase de actualizaci&#243;n de Service Instance"></indexitem>
-<indexitem text="Plataforma"><indexitem target="service.scplatformclientcharsetsadd" text="Para crear un conjunto de caracteres nuevo"></indexitem><indexitem target="service.scplatformserverlistadd" text="Para crear un nombre de instancia nuevo"></indexitem><indexitem target="service.scplatformsitelistadd" text="Para crear un nombre de sitio nuevo"></indexitem>
-</indexitem>
-<indexitem text="Pol&#237;tica"><indexitem target="policy.selectreferraltype" text="Para agregar referencias a"></indexitem><indexitem target="policy.policyreferraladd" text="Para crear una nueva pol&#237;tica de referencia"></indexitem>
-</indexitem>
-<indexitem target="policy.policy" text="Pol&#237;ticas"><indexitem target="normalsubject" text="Asuntos"></indexitem><indexitem target="policyconditions" text="Condiciones"></indexitem><indexitem target="policy.subjectadd" text="Para agregar un asunto a"></indexitem><indexitem target="policy.responseprovideradd" text="Para agregar un proveedor de respuesta a"></indexitem><indexitem target="policy.conditionadd" text="Para agregar una condici&#243;n a"></indexitem><indexitem target="policy.ruleadd" text="Para agregar una regla a"></indexitem><indexitem target="fyfby" text="Pol&#237;ticas de referencia"></indexitem><indexitem target="normalpolicy" text="Pol&#237;ticas normales"></indexitem><indexitem target="responseprovider" text="Proveedores de respuesta"></indexitem><indexitem target="normalrule" text="Reglas"></indexitem>
-</indexitem>
-<indexitem target="fyfby" text="Pol&#237;ticas de referencia"></indexitem>
-<indexitem target="namespaceprefix" text="prefijo de espacio de nombre"></indexitem>
-<indexitem target="extensionattributesnamespaceprefix" text="prefijo de espacio de nombre de atributos de extensi&#243;n"></indexitem>
-<indexitem target="delegation.delegation" text="Privilegios"></indexitem>
-<indexitem text="Propiedades de la consola"><indexitem target="service.scserviceprofile.amadminconsoleservice" text="Administraci&#243;n"></indexitem><indexitem target="service.smg11n" text="Preferencias de globalizaci&#243;n"></indexitem>
-</indexitem>
-<indexitem target="service.subconfigadd" text="Propiedades de la sesi&#243;n, Para agregar una configuraci&#243;n secundaria"></indexitem>
-<indexitem text="Propiedades del sistema"><indexitem target="service.scserviceprofile.iplanetamnamingservice" text="Asignaci&#243;n de nombres"></indexitem><indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Detecci&#243;n de cliente"></indexitem><indexitem target="service.scplatform" text="Plataforma"></indexitem><indexitem target="service.scserviceprofile.iplanetamloggingservice" text="Registro"></indexitem>
-</indexitem>
-<indexitem text="Propiedades globales"><indexitem target="service.scpolicy" text="Configuraci&#243;n de pol&#237;ticas"></indexitem><indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Restablecimiento de contrase&#241;a"></indexitem><indexitem target="service.scserviceprofile.amsessionservice" text="Sesi&#243;n"></indexitem><indexitem target="service.scserviceprofile.iplanetamuserservice" text="Usuario"></indexitem>
-</indexitem>
-<indexitem target="alternateendpoint" text="punto final alternativo"></indexitem>
-<indexitem target="useimpliedresource" text="recurso impl&#237;cito"></indexitem>
-<indexitem target="normalrule" text="Reglas"></indexitem>
-<indexitem target="requirequery" text="requerir evaluaci&#243;n de pol&#237;ticas de consultas"></indexitem>
-<indexitem target="requiremodify" text="requerir evaluaci&#243;n de pol&#237;ticas de modificaciones"></indexitem>
-<indexitem target="federation.fssamlservice" text="SAML"><indexitem text="identificadores de sitio"><indexitem target="federation.fssamlsiteidadd" text="configurar"></indexitem>
-</indexitem>
-<indexitem text="socio de confianza"><indexitem target="federation.fssamlselecttrustedpartnertype" text="paso de configuraci&#243;n 1"></indexitem><indexitem target="federation.fssamltrustedpartnersadd" text="paso de configuraci&#243;n 2"></indexitem>
-</indexitem>
-<indexitem target="federation.fssamltargeturlsadd" text="URL de destino"></indexitem>
-</indexitem>
-<indexitem target="sessionsearch" text="Search"></indexitem>
-<indexitem target="service.smdiscoveryservice" text="servicio de detecci&#243;n"><indexitem target="encryptnameidentifier" text="cifrar el identificador de nombre en el contexto de sesi&#243;n para Bootstrapping"></indexitem><indexitem target="entryhandlerpluginclass" text="clase de complemento del administrador de entradas"></indexitem><indexitem target="resourceidmapperpluginclass" text="clase de complemento del asignador de Id. de recursos"></indexitem><indexitem target="authorizerpluginclass" text="clase de complemento del autorizador"></indexitem><indexitem target="service.smdiscoverydescriptionadd" text="descripci&#243;n de servicio"></indexitem><indexitem target="supporteddirectives" text="directivas admitidas"></indexitem><indexitem target="policyevaldiscoupdate" text="evaluaci&#243;n de directivas para la actualizaci&#243;n de detecci&#243;n"></indexitem><indexitem target="policyevaldiscolookup" text="evaluaci&#243;n de directivas para la b&#250;squeda de detecci&#243;n"></indexitem><indexitem target="dsproviderid" text="Id. de proveedor"></indexitem><indexitem target="generatesessioncontext" text="instrucci&#243;n de contexto de sesi&#243;n de bootstrapping"></indexitem><indexitem target="supportedauthmechanisms" text="mecanismos de autenticaci&#243;n admitidos"></indexitem><indexitem target="authresponsemessage" text="mensaje de respuesta de autenticaci&#243;n"></indexitem><indexitem target="resourceofferingsbootstrapping" text="ofertas de recursos para bootstrapping"></indexitem><indexitem target="service.smdiscoverybootstraprefoffadd" text="ofertas de recursos para bootstrapping"></indexitem><indexitem target="useimpliedresource" text="recurso impl&#237;cito"></indexitem>
-</indexitem>
-<indexitem target="service.scsoapbinding" text="servicio de enlace de SOAP"><indexitem target="webserviceauthenticator" text="autenticador de servicio Web"></indexitem><indexitem target="mechanismhandlerslist" text="lista de administradores de mecanismos"></indexitem><indexitem target="webservices.wsauthnserviceshandlersadd" text="lista de administradores de mecanismos"></indexitem><indexitem target="requesthandlerlist" text="lista de administradores de solicitudes"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="lista de administradores de solicitudes"></indexitem><indexitem target="soapsuppauthmech" text="mecanismos de autenticaci&#243;n admitidos"></indexitem>
-</indexitem>
-<indexitem target="webservices.wspersonalprofileservice" text="servicio de perfil personal"><indexitem target="serviceupdateenabled" text="actualizaci&#243;n del servicio"></indexitem><indexitem target="attributemapper" text="asignador de atributos"></indexitem><indexitem target="resourceidmapper" text="asignador de Id. de recursos"></indexitem><indexitem target="extensioncontainerattributes" text="atributos de contenedor de extensiones"></indexitem><indexitem target="authorizer" text="autorizador"></indexitem><indexitem target="supportedcontainers" text="contenedores admitidos"></indexitem><indexitem target="namescheme" text="esquema de nombres"></indexitem><indexitem target="ppproviderid" text="Id. de proveedor"></indexitem><indexitem target="ppldapattributemaplist" text="lista de asignaci&#243;n de atributos PPLDAP"></indexitem><indexitem target="alternatesecuritymechanisms" text="mecanismos de seguridad alternativos"></indexitem><indexitem target="namespaceprefix" text="prefijo de espacio de nombre"></indexitem><indexitem target="extensionattributesnamespaceprefix" text="prefijo de espacio de nombre de atributos de extensi&#243;n"></indexitem><indexitem target="alternateendpoint" text="punto final alternativo"></indexitem><indexitem target="requirequery" text="requerir evaluaci&#243;n de pol&#237;ticas de consultas"></indexitem><indexitem target="requiremodify" text="requerir evaluaci&#243;n de pol&#237;ticas de modificaciones"></indexitem>
-</indexitem>
-<indexitem target="webservices.wsauthnservices" text="servicio Web de autenticaci&#243;n"></indexitem>
-<indexitem target="federation.fssamlselecttrustedpartnertype" text="socios de confianza"></indexitem>
-<indexitem target="federation.fssamltargeturlsadd" text="URL de destino"></indexitem>
-<indexitem target="addusertogroup" text="Usuarios, Adici&#243;n a servicios, roles y grupos"></indexitem>
-<indexitem target="session.smprofile" text="Ventana de sesi&#243;n"></indexitem>
-<indexitem target="viewsession" text="Ver sesi&#243;n"></indexitem>
+
+ <indexitem target="serviceupdateenabled" text="actualización del servicio"></indexitem>
+ <indexitem target="dirmang" text="Administración de directorio"></indexitem>
+ <indexitem text="Administración de identidades">
+    <indexitem text="Usuarios">
+        <indexitem target="addusertogroup" text="Adición a servicios, roles y grupos"></indexitem></indexitem></indexitem>
+ <indexitem target="dm.home" text="Administración de usuarios"></indexitem>
+ <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Administrador de cliente"></indexitem>
+ <indexitem target="adattrs" text="Almacén de datos, atributos de Active Directory"></indexitem>
+ <indexitem target="realm.idrepo" text="Almacenes de datos">
+    <indexitem target="amrepoattrs" text="atributos de complemento de repositorio de Federated Access Manager"></indexitem>
+    <indexitem target="flatfileattr" text="atributos de repositorio de archivos sin formato"></indexitem>
+    <indexitem target="gdoto" text="Atributos del complemento de repositorio LDAPv3"></indexitem>
+    <indexitem target="realm.idreposelecttype" text="Para crear un nuevo almacén de datos"></indexitem>
+    <indexitem target="sundirattrs" text="Sun Directory Server con atributos de esquema de AM"></indexitem></indexitem>
+ <indexitem target="attributemapper" text="asignador de atributos"></indexitem>
+ <indexitem target="resourceidmapper" text="asignador de Id. de recursos"></indexitem>
+ <indexitem target="normalsubject" text="Asuntos"></indexitem><indexitem target="idm.entities" text="Asuntos">
+    <indexitem target="subjectagents" text="Agentes"></indexitem>
+    <indexitem target="subject.group" text="Grupos"></indexitem>
+    <indexitem target="subject.role" text="Roles"></indexitem>
+    <indexitem target="subject.filteredrole" text="Roles filtrados"></indexitem>
+    <indexitem target="subjectuser" text="Usuario"></indexitem></indexitem>
+ <indexitem text="Atributos de autenticación">
+    <indexitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></indexitem>
+    <indexitem target="service.scserviceprofile.sunamauthdatastoreservice" text="Almacén de datos"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Anónimo"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificado"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Condición de miembro"></indexitem>
+    <indexitem target="authentication.authconfig" text="Configuración de autenticación"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP básico"></indexitem>
+    <indexitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP"></indexitem>
+    <indexitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthservice" text="Principal"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord"></indexitem>
+    <indexitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="SSO de Windows Desktop"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT"></indexitem></indexitem>
+ <indexitem target="extensioncontainerattributes" text="atributos de contenedor de extensiones"></indexitem>
+ <indexitem target="webserviceauthenticator" text="autenticador de servicio Web"></indexitem>
+ <indexitem target="authorizer" text="autorizador"></indexitem>
+ <indexitem target="sessionsearch" text="Buscar"></indexitem>
+ <indexitem target="encryptnameidentifier" text="cifrar el identificador de nombre en el contexto de sesión para Bootstrapping"></indexitem>
+ <indexitem target="serviceinstanceupdateclass" text="clase de actualización de Service Instance"></indexitem>
+ <indexitem target="entryhandlerpluginclass" text="clase de complemento del administrador de entradas"></indexitem>
+ <indexitem target="resourceidmapperpluginclass" text="clase de complemento del asignador de Id. de recursos"></indexitem>
+ <indexitem target="authorizerpluginclass" text="clase de complemento del autorizador"></indexitem>
+ <indexitem target="policyconditions" text="Condiciones">
+    <indexitem target="policy.authtorealmadd" text="Autenticación en un dominio"></indexitem>
+    <indexitem target="policy.authtoserviceadd" text="Autenticación mediante cadena del módulo"></indexitem>
+    <indexitem target="policy.pmdefaultauthschemeconditionadd" text="Autenticación mediante instancia del módulo"></indexitem>
+    <indexitem target="policy.pmdefaultipcondition" text="Dirección IP/nombre DNS"></indexitem>
+    <indexitem target="gdkmp" text="Filtro LDAP"></indexitem>
+    <indexitem target="policy.pmdefaultauthlevelconditionadd" text="Nivel de autenticación"></indexitem>
+    <indexitem target="policy.sessionpropertyconditionadd" text="Propiedades de sesión"></indexitem>
+    <indexitem target="policy.pmdefaultsessioncondtionadd" text="Sesión"></indexitem>
+    <indexitem target="policy.pmdefaulttimeconditionadd" text="Tiempo"></indexitem></indexitem>
+ <indexitem target="service.scconfig" text="Configuración">
+    <indexitem target="authattrs" text="Autenticación"></indexitem>
+    <indexitem target="consoleprops" text="Propiedades de la consola"></indexitem>
+    <indexitem target="systemprops" text="Propiedades del sistema"></indexitem>
+    <indexitem target="global" text="Propiedades globales"></indexitem></indexitem>
+ <indexitem target="supportedlang" text="Configuraciones regionales de idiomas admitidas"></indexitem>
+ <indexitem target="supportedcontainers" text="contenedores admitidos"></indexitem>
+ <indexitem target="accesscontrol" text="Control de acceso, Introducción"></indexitem>
+ <indexitem target="service.smdiscoverydescriptionadd" text="descripción de servicio, configurar"></indexitem>
+ <indexitem target="service.mapcreatedevice" text="Detección de cliente, Para agregar un cliente nuevo"></indexitem>
+ <indexitem target="supporteddirectives" text="directivas admitidas (servicio de detección)"></indexitem>
+ <indexitem target="realm.rmrealm" text="Dominios">
+    <indexitem target="realm.idrepo" text="Almacenes de datos"></indexitem>
+    <indexitem target="idm.entities" text="Asuntos"></indexitem>
+    <indexitem target="authentication.authproperties" text="Autenticación"></indexitem>
+    <indexitem target="realm.servicesadd" text="Para agregar un servicio a"></indexitem>
+    <indexitem target="authentication.newauthconfig" text="Para crear un nuevo encadenamiento de autenticación"></indexitem>
+    <indexitem target="authentication.newauthinstance" text="Para crear un nuevo módulo de autenticación"></indexitem>
+    <indexitem target="realm.rmrealmadd" text="Para crear uno nuevo"></indexitem>
+    <indexitem target="policy.policy" text="Políticas"></indexitem>
+    <indexitem target="delegation.delegation" text="Privilegios"></indexitem>
+    <indexitem target="realm.realmproperties" text="Propiedades generales"></indexitem>
+    <indexitem target="realm.services" text="Servicios"></indexitem></indexitem>
+ <indexitem target="federation.fsauthdomains" text="dominios de autenticación">
+    <indexitem target="federation.fsauthdomainsselectprovider" text="agregar proveedores"></indexitem>
+    <indexitem target="federation.fsauthdomainsadd" text="crear"></indexitem>
+    <indexitem target="deleteauthdomain" text="eliminar"></indexitem>
+    <indexitem target="federation.fsauthdomainsedit" text="modificar"></indexitem></indexitem>
+ <indexitem target="federation.fsentitydescriptors" text="entidad de afiliación">
+    <indexitem target="federation.fsentitydescriptorsprofile" text="atributos generales"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsadd" text="crear"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsaffiliate" text="y afiliados"></indexitem></indexitem>
+ <indexitem target="federation.fsentitydescriptors" text="entidad de proveedores">
+    <indexitem target="federation.fsentitydescriptorsadd" text="crear"></indexitem>
+    <indexitem target="federation.fsidentityprovider" text="y proveedores de identidades"></indexitem>
+    <indexitem target="federation.fsserviceprovider" text="y proveedores de servicios"></indexitem></indexitem>
+ <indexitem text="entidades">
+    <indexitem target="federation.fsentitydescriptors" text="afiliado"></indexitem>
+    <indexitem target="federation.fscreatecontactperson" text="agregar persona de contacto"></indexitem>
+    <indexitem target="federation.fsidentityprovider" text="agregar proveedor de identidades a entidad de proveedores"></indexitem>
+    <indexitem target="federation.fsserviceprovider" text="agregar proveedor de servicios a entidad de proveedores"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsadd" text="crear afiliación"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsaffiliate" text="crear afiliación en entidad de afiliación"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsadd" text="crear proveedor"></indexitem>
+    <indexitem target="federation.fsidentityproviderhostedprofile" text="modificar atributos de un proveedor de identidades alojado en una entidad de proveedores"></indexitem>
+    <indexitem target="federation.fsidentityproviderremoteprofile" text="modificar atributos de un proveedor de identidades remoto en una entidad de proveedores"></indexitem>
+    <indexitem target="federation.fsserviceproviderhostedprofile" text="modificar atributos de un proveedor de servicios alojado en una entidad de proveedores"></indexitem>
+    <indexitem target="federation.fsserviceproviderremoteprofile" text="modificar atributos de un proveedor de servicios remoto en una entidad de proveedores"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsprofile" text="modificar atributos generales"></indexitem>
+    <indexitem target="federation.fseditcontactperson" text="modificar persona de contacto"></indexitem>
+    <indexitem target="federation.fsentitydescriptors" text="proveedor"></indexitem></indexitem>
+ <indexitem target="federation.fsentitydescriptorsprofile" text="entidades de proveedores, atributos generales"></indexitem>
+ <indexitem target="namescheme" text="esquema de nombres"></indexitem>
+ <indexitem target="policyevaldiscoupdate" text="evaluación de directivas para actualización de detección"></indexitem>
+ <indexitem target="policyevaldiscolookup" text="evaluación de directivas para búsqueda de detección"></indexitem>
+ <indexitem target="ppproviderid" text="Id. de proveedor"></indexitem>
+ <indexitem target="dsproviderid" text="Id. de proveedor (servicio de detección)"></indexitem>
+ <indexitem target="federation.fssamlsiteidadd" text="identificadores de sitio"></indexitem>
+ <indexitem target="generatesessioncontext" text="instrucción de contexto de sesión de bootstrapping"></indexitem>
+ <indexitem target="invalidatesession" text="Invalidación de una sesión"></indexitem>
+ <indexitem target="mechanismhandlerslist" text="lista de administradores de mecanismos">
+    <indexitem target="webservices.wsauthnserviceshandlersadd" text="configurar"></indexitem></indexitem>
+ <indexitem target="requesthandlerlist" text="lista de administradores de solicitudes">
+    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="configurar"></indexitem></indexitem>
+ <indexitem target="ppldapattributemaplist" text="lista de asignación de atributos PPLDAP"></indexitem>
+ <indexitem target="sessions" text="módulo Sesiones"></indexitem>
+ <indexitem target="soapsuppauthmech" text="mecanismos de autenticación admitidos (enlace de SOAP)"></indexitem>
+ <indexitem target="supportedauthmechanisms" text="mecanismos de autenticación admitidos (servicio de detección)"></indexitem>
+ <indexitem target="alternatesecuritymechanisms" text="mecanismos de seguridad alternativos"></indexitem>
+ <indexitem target="authresponsemessage" text="mensaje de respuesta de autenticación"></indexitem>
+ <indexitem target="resourceofferingsbootstrapping" text="ofertas de recursos para bootstrapping">
+    <indexitem target="service.smdiscoverybootstraprefoffadd" text="configurar"></indexitem></indexitem>
+ <indexitem target="serviceinstanceupdateclass" text="personal profile service, clase de actualización de Service Instance"></indexitem>
+ <indexitem text="Plataforma">
+    <indexitem target="service.scplatformclientcharsetsadd" text="Para crear un conjunto de caracteres nuevo"></indexitem>
+    <indexitem target="service.scplatformserverlistadd" text="Para crear un nombre de instancia nuevo"></indexitem>
+    <indexitem target="service.scplatformsitelistadd" text="Para crear un nombre de sitio nuevo"></indexitem></indexitem>
+ <indexitem target="policy.selectreferraltype" text="Política, Para agregar referencias a"></indexitem>
+ <indexitem target="policy.policy" text="Políticas">
+    <indexitem target="normalsubject" text="Asuntos"></indexitem>
+    <indexitem target="policyconditions" text="Condiciones"></indexitem>
+    <indexitem target="policy.subjectadd" text="Para agregar un asunto a"></indexitem>
+    <indexitem target="policy.responseprovideradd" text="Para agregar un proveedor de respuesta a"></indexitem>
+    <indexitem target="policy.conditionadd" text="Para agregar una condición a"></indexitem>
+    <indexitem target="policy.ruleadd" text="Para agregar una regla a"></indexitem>
+    <indexitem target="policy.policyreferraladd" text="Para crear una nueva política de referencia"></indexitem>
+    <indexitem target="fyfby" text="Políticas de referencia"></indexitem>
+    <indexitem target="normalpolicy" text="Políticas normales"></indexitem>
+    <indexitem target="responseprovider" text="Proveedores de respuesta"></indexitem>
+    <indexitem target="normalrule" text="Reglas"></indexitem></indexitem>
+ <indexitem target="fyfby" text="Políticas de referencia"></indexitem>
+ <indexitem target="namespaceprefix" text="prefijo de espacio de nombre"></indexitem>
+ <indexitem target="extensionattributesnamespaceprefix" text="prefijo de espacio de nombre de atributos de extensión"></indexitem>
+ <indexitem target="delegation.delegation" text="Privilegios"></indexitem>
+ <indexitem text="Propiedades de la consola">
+    <indexitem target="service.scserviceprofile.amadminconsoleservice" text="Administración"></indexitem>
+    <indexitem target="service.smg11n" text="Preferencias de globalización"></indexitem></indexitem>
+ <indexitem target="service.subconfigadd" text="Propiedades de la sesión, Para agregar una configuración secundaria"></indexitem>
+ <indexitem text="Propiedades del sistema">
+    <indexitem target="service.scserviceprofile.iplanetamnamingservice" text="Asignación de nombres"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Detección de cliente"></indexitem>
+    <indexitem target="service.scplatform" text="Plataforma"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamloggingservice" text="Registro"></indexitem></indexitem>
+ <indexitem text="Propiedades globales">
+    <indexitem target="service.scpolicy" text="Configuración de políticas"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Restablecimiento de contraseña"></indexitem>
+    <indexitem target="service.scserviceprofile.amsessionservice" text="Sesión"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamuserservice" text="Usuario"></indexitem></indexitem>
+ <indexitem target="alternateendpoint" text="punto final alternativo"></indexitem>
+ <indexitem target="useimpliedresource" text="recurso implícito"></indexitem>
+ <indexitem target="normalrule" text="Reglas"></indexitem>
+ <indexitem target="requirequery" text="requerir evaluación de políticas de consultas"></indexitem>
+ <indexitem target="requiremodify" text="requerir evaluación de políticas de modificaciones"></indexitem>
+ <indexitem target="federation.fssamlservice" text="SAML">
+    <indexitem text="identificadores de sitio">
+        <indexitem target="federation.fssamlsiteidadd" text="configure"></indexitem></indexitem>
+    <indexitem text="socio de confianza">
+        <indexitem target="federation.fssamlselecttrustedpartnertype" text="paso de configuración 1"></indexitem>
+        <indexitem target="federation.fssamltrustedpartnersadd" text="paso de configuración 2"></indexitem></indexitem>
+    <indexitem target="federation.fssamltargeturlsadd" text="URL de destino"></indexitem></indexitem>
+ <indexitem target="service.smdiscoveryservice" text="servicio de detección">
+    <indexitem target="encryptnameidentifier" text="cifrar el identificador de nombre en el contexto de sesión para Bootstrapping"></indexitem>
+    <indexitem target="entryhandlerpluginclass" text="clase de complemento del administrador de entradas"></indexitem>
+    <indexitem target="resourceidmapperpluginclass" text="clase de complemento del asignador de Id. de recursos"></indexitem>
+    <indexitem target="authorizerpluginclass" text="clase de complemento del autorizador"></indexitem>
+    <indexitem target="service.smdiscoverydescriptionadd" text="descripción de servicio"></indexitem>
+    <indexitem target="supporteddirectives" text="directivas admitidas"></indexitem>
+    <indexitem target="policyevaldiscoupdate" text="evaluación de directivas para la actualización de detección"></indexitem>
+    <indexitem target="policyevaldiscolookup" text="evaluación de directivas para la búsqueda de detección"></indexitem>
+    <indexitem target="dsproviderid" text="Id. de proveedor"></indexitem>
+    <indexitem target="generatesessioncontext" text="instrucción de contexto de sesión de bootstrapping"></indexitem>
+    <indexitem target="supportedauthmechanisms" text="mecanismos de autenticación admitidos"></indexitem>
+    <indexitem target="authresponsemessage" text="mensaje de respuesta de autenticación"></indexitem>
+    <indexitem target="resourceofferingsbootstrapping" text="ofertas de recursos para bootstrapping"></indexitem><indexitem target="service.smdiscoverybootstraprefoffadd" text="ofertas de recursos para bootstrapping"></indexitem>
+    <indexitem target="useimpliedresource" text="recurso implícito"></indexitem></indexitem>
+ <indexitem target="service.scsoapbinding" text="servicio de enlace de SOAP">
+    <indexitem target="webserviceauthenticator" text="autenticador de servicio Web"></indexitem>
+    <indexitem target="mechanismhandlerslist" text="lista de administradores de mecanismos"></indexitem><indexitem target="webservices.wsauthnserviceshandlersadd" text="lista de administradores de mecanismos"></indexitem>
+    <indexitem target="requesthandlerlist" text="lista de administradores de solicitudes"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="lista de administradores de solicitudes"></indexitem>
+    <indexitem target="soapsuppauthmech" text="mecanismos de autenticación admitidos"></indexitem></indexitem>
+ <indexitem target="webservices.wspersonalprofileservice" text="servicio de perfil personal">
+    <indexitem target="serviceupdateenabled" text="actualización del servicio"></indexitem>
+    <indexitem target="attributemapper" text="asignador de atributos"></indexitem>
+    <indexitem target="resourceidmapper" text="asignador de Id. de recursos"></indexitem>
+    <indexitem target="extensioncontainerattributes" text="atributos de contenedor de extensiones"></indexitem>
+    <indexitem target="authorizer" text="autorizador"></indexitem>
+    <indexitem target="supportedcontainers" text="contenedores admitidos"></indexitem>
+    <indexitem target="namescheme" text="esquema de nombres"></indexitem>
+    <indexitem target="ppproviderid" text="Id. de proveedor"></indexitem>
+    <indexitem target="ppldapattributemaplist" text="lista de asignación de atributos PPLDAP"></indexitem>
+    <indexitem target="alternatesecuritymechanisms" text="mecanismos de seguridad alternativos"></indexitem>
+    <indexitem target="namespaceprefix" text="prefijo de espacio de nombre"></indexitem>
+    <indexitem target="extensionattributesnamespaceprefix" text="prefijo de espacio de nombre de atributos de extensión"></indexitem>
+    <indexitem target="alternateendpoint" text="punto final alternativo"></indexitem>
+    <indexitem target="requirequery" text="requerir evaluación de políticas de consultas"></indexitem>
+    <indexitem target="requiremodify" text="requerir evaluación de políticas de modificaciones"></indexitem></indexitem>
+ <indexitem target="webservices.wsauthnservices" text="servicio Web de autenticación"></indexitem>
+ <indexitem target="federation.fssamlselecttrustedpartnertype" text="socios de confianza"></indexitem>
+ <indexitem target="federation.fssamltargeturlsadd" text="URL de destino"></indexitem>
+ <indexitem target="addusertogroup" text="Usuarios, Adición a servicios, roles y grupos"></indexitem>
+ <indexitem target="session.smprofile" text="Ventana de sesión"></indexitem>
+ <indexitem target="viewsession" text="Ver sesión"></indexitem>
 </index>

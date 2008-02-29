@@ -1,32 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>领域
+  <title>领域 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="realm.rmrealm"></A><h2>领域</h2>
-<p><A NAME="indexterm-2"></A>访问控制领域是可以与用户或用户组关联的一组验证属性和授权策略。领域数据存储于专有信息树中，该信息树由 Access Manager 在您指定的数据存储库中创建。Access Manager 框架聚集了 Access Manager 信息树中每个领域所包含的策略和属性。默认情况下，Access Manager 7 会将 Access Manager 信息树作为 Sun Java Enterprise System Directory Server 的特殊分支自动插入，但用户数据除外。您可以在使用任何 LDAPv3 数据库的同时使用访问控制领域。</p>
-<p>在“领域”选项卡中，可以为访问控制配置以下属性：</p>
-<ul><li><p><A HREF="realm.realmproperties.html#realm.realmproperties">常规属性</A></p>
-</li>
-<li><p><A HREF="authentication.authproperties.html#authentication.authproperties">验证</A></p>
-</li>
-<li><p><A HREF="realm.services.html#realm.services">服务</A></p>
-</li>
-</ul>
 
-<br />
+
+<a name="realm.rmrealm"></a><h3>领域</h3>
+<p><a name="indexterm-2"></a>访问控制领域是可以与用户或用户组关联的一组验证属性和授权策略。领域数据存储于专有信息树中，该信息树由 Federated Access Manager 在您指定的数据存储库中创建。Federated Access Manager 框架聚集了 Federated Access Manager 信息树中每个领域所包含的策略和属性。默认情况下，Federated
+Access Manager 8.0 会将 Federated Access Manager 信息树作为 Sun Java Enterprise System
+Directory Server 的特殊分支自动插入，但用户数据除外。您可以在使用任何 LDAPv3 数据库的同时使用访问控制领域。</p><p>在“领域”选项卡中，可以为访问控制配置以下属性：</p>
+<ul><li><p><a href="realm.realmproperties.html">常规属性</a></p></li>
+<li><p><a href="authentication.authproperties.html">验证</a></p></li>
+<li><p><a href="realm.services.html">服务</a></p></li></ul>
+
+<br/>
 
 </body>
 </html>

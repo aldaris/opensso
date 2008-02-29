@@ -1,49 +1,73 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Benutzer
+  <title>Benutzer - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamuserservice"></A><h3>Benutzer</h3>
-<p><A NAME="indexterm-201"></A>Die Standard-Benutzereinstellungen sind &#252;ber den Benutzerdienst vordefiniert. Dazu z&#228;hlen Zeitzone, L&#228;ndereinstellung und DN-Startansicht. Die Benutzerdienstattribute sind dynamische Attribute.</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxckn">Von Benutzer bevorzugte Sprache</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxcnb">Von Benutzer bevorzugte Zeitzone</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxcte">Vererbte L&#228;ndereinstellungen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxcpk">Admin-DN-Startansicht</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamuserservice.html#fxciz">Standard-Benutzerstatus</A></p>
-</li>
-</ul>
-<A NAME="fxckn"></A><h4>Von Benutzer bevorzugte Sprache</h4>
-<p>Dieses Feld gibt die vom Benutzer ausgew&#228;hlte Sprache f&#252;r die in der Access Manager-Konsole angezeigten Text an. Der Standardwert ist &#8220;en&#34;. Mit diesem Wert wird der Benutzersitzung ein Lokalisierungsschl&#252;sselsatz zugeordnet, so dass der am Bildschirm angezeigten Text in der vom Benutzer bevorzugten Sprache angzeigt wird.</p>
-<A NAME="fxcnb"></A><h4>Von Benutzer bevorzugte Zeitzone</h4>
-<p>Dieses Feld gibt die Zeitzone an, in der sich der Benutzer befindet, wenn er auf die Access Manager-Konsole zugreift. Es gibt keinen Standardwert.</p>
-<A NAME="fxcte"></A><h4>Vererbte L&#228;ndereinstellungen</h4>
-<p>Dieses Feld gibt die L&#228;ndereinstellung f&#252;r den Benutzer an. Der Standardwert ist en_US. Eine Liste der L&#228;ndereinstellungen finden Sie unter  <A HREF="supportedlang.html#supportedlang">Unterst&#252;tzte Sprach- bzw. L&#228;ndereinstellungen</A>.</p>
-<A NAME="fxcpk"></A><h4>Admin-DN-Startansicht</h4>
-<p>Wenn der Benutzer ein Access Manager-Administrator ist, gibt dieses Feld den Knoten an, der bei der Benutzeranmeldung als Startpunkt f&#252;r die Anzeige in der Access Manager-Konsole verwendet wird. Es gibt keinen Standardwert. Es kann ein g&#252;ltiger DN verwendet werden, auf den der Benutzer mindestens Lesezugriff haben muss.</p>
-<A NAME="fxciz"></A><h4>Standard-Benutzerstatus</h4>
-<p>Diese Option gibt den Standardstatus f&#252;r alle neu erstellten Benutzer an. Dieser Status wird durch den Status des Benutzereintrags ersetzt. Nur aktive Benutzer k&#246;nnen durch Access Manager authentifiziert werden. Der Standardwert ist &#8220;Aktiv&#34;. W&#228;hlen Sie eine der folgenden Optionen aus dem Pulldown-Men&#252; aus:</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>Aktiv</p></td><td valign="top"><p>Der Benutzer kann durch Access Manager authentifiziert werden.</p>
-</td></tr><tr><td valign="top"><p>Inaktiv</p></td><td valign="top"><p>Der Benutzer kann nicht durch Access Manager authentifiziert werden, das Benutzerprofil verbleibt jedoch im Verzeichnis.</p>
-</td></tr></table>
-<p>Der individuelle Benutzerstatus wird in vier Schritten eingerichtet: Zun&#228;chst wird der Benutzerdienst registriert und der zu verwendende Wert ausgew&#228;hlt. Anschlie&#223;end wird dieser Wert auf eine Rolle bezogen und diese wiederum dem Benutzerprofil hinzugef&#252;gt.</p>
 
-<br />
+
+<a name="service.scserviceprofile.iplanetamuserservice"></a><h4>Benutzer</h4>
+<p><a name="indexterm-201"></a>Die Standard-Benutzereinstellungen sind &#252;ber den Benutzerdienst vordefiniert. Dazu z&#228;hlen Zeitzone, L&#228;ndereinstellung und
+DN-Startansicht. Die Benutzerdienstattribute sind dynamische Attribute.</p>
+<ul><li><p><a href="#fxckn">Von Benutzer bevorzugte Sprache</a></p></li>
+<li><p><a href="#fxcnb">Von Benutzer bevorzugte Zeitzone</a></p></li>
+<li><p><a href="#fxcte">Vererbte L&#228;ndereinstellungen</a></p></li>
+<li><p><a href="#fxcpk">Admin-DN-Startansicht</a></p></li>
+<li><p><a href="#fxciz">Standard-Benutzerstatus</a></p></li></ul>
+
+
+<a name="fxckn"></a><h5>Von Benutzer bevorzugte Sprache</h5>
+<p>Dieses Feld gibt die vom Benutzer ausgew&#228;hlte Sprache f&#252;r den in der
+Federated Access Manager-Konsole angezeigten Text an. Der Standardwert ist ";en". Mit diesem
+Wert wird der Benutzersitzung ein Lokalisierungsschl&#252;sselsatz zugeordnet, so dass der am Bildschirm
+angezeigten Text in der vom Benutzer bevorzugten Sprache angzeigt wird.</p>
+
+<a name="fxcnb"></a><h5>Von Benutzer bevorzugte Zeitzone</h5>
+<p>Dieses Feld gibt die Zeitzone an, in der sich der Benutzer befindet,
+wenn er auf die Federated Access Manager-Konsole zugreift. Es gibt keinen Standardwert.</p>
+
+<a name="fxcte"></a><h5>Vererbte L&#228;ndereinstellungen</h5>
+<p>Dieses Feld gibt die L&#228;ndereinstellung f&#252;r den Benutzer an. Der Standardwert ist
+en_US. Eine Liste der L&#228;ndereinstellungen finden Sie unter  <a href="supportedlang.html">Unterst&#252;tzte Sprach- bzw. L&#228;ndereinstellungen</a>.</p>
+
+<a name="fxcpk"></a><h5>Admin-DN-Startansicht</h5>
+<p>Wenn der Benutzer ein Federated Access Manager-Administrator ist, gibt dieses Feld den
+Knoten an, der bei der Benutzeranmeldung als Startpunkt f&#252;r die Anzeige in
+der Federated Access Manager-Konsole verwendet wird. Es gibt keinen Standardwert. Es kann
+ein g&#252;ltiger DN verwendet werden, auf den der Benutzer mindestens Lesezugriff haben
+muss.</p>
+
+<a name="fxciz"></a><h5>Standard-Benutzerstatus</h5>
+<p>Diese Option gibt den Standardstatus f&#252;r alle neu erstellten Benutzer an. Dieser
+Status wird durch den Status des Benutzereintrags ersetzt. Nur aktive Benutzer k&#246;nnen
+durch Federated Access Manager authentifiziert werden. Der Standardwert ist ";Aktiv". W&#228;hlen Sie
+eine der folgenden Optionen aus dem Pulldown-Men&#252; aus:</p><dl><dt>Aktiv</dt>
+<dd><p>Der Benutzer kann durch Federated Access Manager authentifiziert werden.</p></dd>
+<dt>Inaktiv</dt>
+<dd><p>Der Benutzer kann nicht durch Federated Access Manager authentifiziert werden, das Benutzerprofil verbleibt jedoch im Verzeichnis.</p></dd>
+</dl>
+<p>Der individuelle Benutzerstatus wird in vier Schritten eingerichtet: Zun&#228;chst wird der Benutzerdienst
+registriert und der zu verwendende Wert ausgew&#228;hlt. Anschlie&#223;end wird dieser Wert auf
+eine Rolle bezogen und diese wiederum dem Benutzerprofil hinzugef&#252;gt.</p>
+<br/>
 
 </body>
 </html>

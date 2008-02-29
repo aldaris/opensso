@@ -1,29 +1,41 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>時間 (曜日、日付、時刻、タイムゾーン)
+  <title>時間 (曜日、日付、時刻、タイムゾーン) - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="policy.pmdefaulttimeconditionadd"></A><h3>時間 (曜日、日付、時刻、タイムゾーン)</h3>
-<p><A NAME="indexterm-40"></A>時間の制約に基づいて条件を設定します。フィールドは次のとおりです。</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>日付 (開始/終了)</p></td><td valign="top"><p>日付の範囲を指定します。</p>
-</td></tr><tr><td valign="top"><p>時刻</p></td><td valign="top"><p>1 日の時刻の範囲を指定します。</p>
-</td></tr><tr><td valign="top"><p>曜日</p></td><td valign="top"><p>曜日の範囲を指定します。</p>
-</td></tr><tr><td valign="top"><p>タイムゾーン</p></td><td valign="top"><p>標準またはカスタムのタイムゾーンを指定します。カスタムタイムゾーンとしては、Java で認識されるタイムゾーン ID だけを使用できます (PST など)。値が指定されていない場合のデフォルト値は、Access Manager JVM で設定されているタイムゾーンです。</p>
-</td></tr></table>
 
-<br />
+
+<a name="policy.pmdefaulttimeconditionadd"></a><h4>時間 (曜日、日付、時刻、タイムゾーン)</h4>
+<p><a name="indexterm-40"></a>時間の制約に基づいて条件を設定します。フィールドは次のとおりです。</p><dl><dt>日付 (開始/終了)</dt>
+<dd><p>日付の範囲を指定します。</p></dd>
+<dt>時刻</dt>
+<dd><p>1 日の時刻の範囲を指定します。</p></dd>
+<dt>曜日</dt>
+<dd><p>曜日の範囲を指定します。</p></dd>
+<dt>タイムゾーン</dt>
+<dd><p>標準またはカスタムのタイムゾーンを指定します。カスタムタイムゾーンとしては、Java で認識されるタイムゾーン ID だけを使用できます (PST など)。値が指定されていない場合のデフォルト値は、Federated Access Manager JVM で設定されているタイムゾーンです。</p></dd>
+</dl>
+
+<br/>
 
 </body>
 </html>

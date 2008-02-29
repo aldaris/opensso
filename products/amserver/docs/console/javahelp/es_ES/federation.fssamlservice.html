@@ -1,58 +1,60 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SAML
+  <title>SAML - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamlservice"></A><h2>SAML</h2>
-<A NAME="indexterm-86"></A><p>El protocolo de est&#225;ndares abiertos Lenguaje de marcado de aserci&#243;n de seguridad (SAML, Security Assertion Markup Language) utiliza un marco XML para intercambiar informaci&#243;n de seguridad entre una <b>autoridad</b> y un sitio de socio de <b>confianza</b>  La informaci&#243;n de seguridad se ocupa de la informaci&#243;n de atributos, la autorizaci&#243;n de accesos y el estado de autenticaci&#243;n del sujeto. (Una persona identificada por una direcci&#243;n de correo electr&#243;nico es un sujeto, como tambi&#233;n lo puede ser una impresora.) Una autoridad SAML (que tambi&#233;n recibe el nombre de <b>parte de aserci&#243;n</b>) es una plataforma o aplicaci&#243;n integrada en la API de SAML, que le permite transmitir informaci&#243;n de seguridad. Por ejemplo, afirmando que un asunto se ha autenticado en el sistema mediante la transferencia de los atributos necesarios. Los sitios de socios de confianza reciben informaci&#243;n de seguridad y dependen de su autenticidad.</p>
-<p>Los siguientes atributos de SAML pueden configurarse para su implementaci&#243;n: </p>
-<ul><li><p><A HREF="targetspecifier.html#targetspecifier">Especificador de destino</A></p>
-</li>
-<li><p><A HREF="siteidentifiers.html#siteidentifiers">Identificadores de sitio</A></p>
-</li>
-<li><p><A HREF="trustedpartners.html#trustedpartners">Socios de confianza</A></p>
-</li>
-<li><p><A HREF="targeturl.html#targeturl">URL de destino</A></p>
-</li>
-<li><p><A HREF="assertiontimeout.html#assertiontimeout">Tiempo de espera de aserci&#243;n</A></p>
-</li>
-<li><p><A HREF="assertionskew.html#assertionskew">Factor de contracci&#243;n de aserci&#243;n para hora <tt>notBefore</tt></A></p>
-</li>
-<li><p><A HREF="artifacttimeout.html#artifacttimeout">Tiempo de espera de artefacto</A></p>
-</li>
-<li><p><A HREF="samlartifactname.html#samlartifactname">Nombre de artefacto SAML</A></p>
-</li>
-<li><p><A HREF="signsamlassertion.html#signsamlassertion">Firmar aserci&#243;n SAML</A></p>
-</li>
-<li><p><A HREF="signsamlrequest.html#signsamlrequest">Firmar solicitud SAML</A></p>
-</li>
-<li><p><A HREF="signsamlresponse.html#signsamlresponse">Firmar respuesta SAML</A></p>
-</li>
-</ul>
-<p>A continuaci&#243;n, se muestran distintas tareas asociadas con la configuraci&#243;n de SAML:</p>
-<ul><li><p><A HREF="federation.fssamlsiteidadd.html#federation.fssamlsiteidadd">Para configurar un identificador de sitio </A></p>
-</li>
-<li><p><A HREF="federation.fssamlselecttrustedpartnertype.html#federation.fssamlselecttrustedpartnertype">Socios de confianza: selecci&#243;n del tipo de socio y el perfil</A></p>
-</li>
-<li><p><A HREF="federation.fssamltrustedpartnersadd.html#federation.fssamltrustedpartnersadd">Socios de confianza: configuraci&#243;n de los atributos de socios de confianza.</A></p>
-</li>
-<li><p><A HREF="federation.fssamltargeturlsadd.html#federation.fssamltargeturlsadd">Para configurar una URL de destino</A></p>
-</li>
-</ul>
 
-<br />
+
+<a name="federation.fssamlservice"></a><h3>SAML</h3>
+<a name="indexterm-86"></a><p>El protocolo de est&#225;ndares abiertos Lenguaje de marcado de aserci&#243;n de seguridad
+(SAML, Security Assertion Markup Language) utiliza un marco XML para intercambiar informaci&#243;n
+de seguridad entre una <b>autoridad</b> y un sitio de socio de <b>confianza</b>
+ La informaci&#243;n de seguridad se ocupa de la informaci&#243;n de atributos,
+la autorizaci&#243;n de accesos y el estado de autenticaci&#243;n del sujeto. (Una
+persona identificada por una direcci&#243;n de correo electr&#243;nico es un sujeto, como
+tambi&#233;n lo puede ser una impresora.) Una autoridad SAML (que tambi&#233;n recibe
+el nombre de <b>parte de aserci&#243;n</b>) es una plataforma o aplicaci&#243;n integrada en la
+API de SAML, que le permite transmitir informaci&#243;n de seguridad. Por ejemplo,
+afirmando que un asunto se ha autenticado en el sistema mediante la
+transferencia de los atributos necesarios. Los sitios de socios de confianza reciben
+informaci&#243;n de seguridad y dependen de su autenticidad.</p><p>Los siguientes atributos de SAML pueden configurarse para su implementaci&#243;n: </p>
+<ul><li><p><a href="targetspecifier.html">Especificador de destino</a></p></li>
+<li><p><a href="siteidentifiers.html">Identificadores de sitio</a></p></li>
+<li><p><a href="trustedpartners.html">Socios de confianza</a></p></li>
+<li><p><a href="targeturl.html">URL de destino</a></p></li>
+<li><p><a href="assertiontimeout.html">Tiempo de espera de aserci&#243;n</a></p></li>
+<li><p><a href="assertionskew.html">Factor de contracci&#243;n de aserci&#243;n para hora <tt>notBefore</tt></a></p></li>
+<li><p><a href="artifacttimeout.html">Tiempo de espera de artefacto</a></p></li>
+<li><p><a href="samlartifactname.html">Nombre de artefacto SAML</a></p></li>
+<li><p><a href="signsamlassertion.html">Firmar aserci&#243;n SAML</a></p></li>
+<li><p><a href="signsamlrequest.html">Firmar solicitud SAML</a></p></li>
+<li><p><a href="signsamlresponse.html">Firmar respuesta SAML</a></p></li></ul>
+<p>A continuaci&#243;n, se muestran distintas tareas asociadas con la configuraci&#243;n de SAML:</p>
+<ul><li><p><a href="federation.fssamlsiteidadd.html">Para configurar un identificador de sitio </a></p></li>
+<li><p><a href="federation.fssamlselecttrustedpartnertype.html">Socios de confianza: selecci&#243;n del tipo de socio y el perfil</a></p></li>
+<li><p><a href="federation.fssamltrustedpartnersadd.html">Socios de confianza: configuraci&#243;n de los atributos de socios de confianza.</a></p></li>
+<li><p><a href="federation.fssamltargeturlsadd.html">Para configurar una URL de destino</a></p></li></ul>
+
+<br/>
 
 </body>
 </html>

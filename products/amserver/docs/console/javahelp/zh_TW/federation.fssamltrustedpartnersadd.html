@@ -1,68 +1,92 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>可信任的合作夥伴：配置可信任的合作夥伴屬性
+  <title>可信任的合作夥伴：配置可信任的合作夥伴屬性 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamltrustedpartnersadd"></A><h4>可信任的合作夥伴：配置可信任的合作夥伴屬性</h4>
-<A NAME="indexterm-91"></A><p>以下是配置信任夥伴第二部份的程序。起點是<A HREF="federation.fssamlselecttrustedpartnertype.html#federation.fssamlselecttrustedpartnertype">可信任的合作夥伴：選取夥伴類型及設定檔</A>。根據第一部份選取的角色，可能需要定義在以下區段列出的任何子屬性。</p>
-<p><hr size="1" noshade><p><b>備註 &#8211; </b>如果您在聯合下的 SAML 配置畫面上按一下 [編輯] 或 [複製] 而進入此頁面，請根據以下的步驟修改可信任的合作夥伴設定檔，然後按一下 [儲存] 以變更這些值。按一下 [SAML 設定檔 ] 頁面上的 [儲存] 以完成修改。</p>
-<hr size="1" noshade></p><ol><li><p><b>鍵入 [共用設定] 子屬性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>來源 ID</p></td><td valign="top"><p>這是來自合作夥伴網站的 20 個位元組序號 (使用 Base64 格式來編碼)。該值通常與配置 [網站識別碼] 屬性時使用的 [網站 ID] 屬性值相同。</p>
-</td></tr><tr><td valign="top"><p>目標</p></td><td valign="top"><p>這是夥伴網站的網域 (包含或不包含連接埠號)。如果想要連絡代管於此網域的網頁，須從「可信任的合作夥伴」屬性內定義的值中挑選重新導向 URL。</p>
-<p><hr size="1" noshade><p><b>備註 &#8211; </b>如果同一網域有兩個已定義的項目 (一個包含連接埠號，一個未包含連接埠號)，則會優先選擇包含連接埠號的項目。例如，假設以下兩個信任夥伴的定義：<tt>target=sun.com</tt> 及 <tt>target=sun.com:8080</tt>。如果主體要尋找 <tt>http://machine.sun.com:8080/index.html</tt>，則會選擇第二個定義。</p>
-<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>網站屬性對映程式</p></td><td valign="top"><p>此類別用來傳回認證指定中定義為 <tt>AttributeStatements</tt> 元素的屬性值清單。網站屬性對映程式需要透過 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt> 介面實作。</p>
-<p>如果未定義任何類別，則指定中將不會包含任何屬性。</p>
-</td></tr><tr><td valign="top"><p>版本</p></td><td valign="top"><p>用來傳送 SAML 請求的 SAML 版本 (<tt>1.0</tt> 或 <tt>1.1</tt>)。如果此參數沒有任何值，將使用以下預設值 (於 <tt>AMConfig.properties</tt> 中定義)：</p>
-<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p>
+
+
+<a name="federation.fssamltrustedpartnersadd"></a><h5>可信任的合作夥伴：配置可信任的合作夥伴屬性</h5>
+<a name="indexterm-91"></a><p>以下是配置信任夥伴第二部份的程序。起點是<a href="federation.fssamlselecttrustedpartnertype.html">可信任的合作夥伴：選取夥伴類型及設定檔</a>。根據第一部份選取的角色，可能需要定義在以下區段列出的任何子屬性。</p>
+<hr><p><b>備註 &#8211; </b>如果您在聯合下的 SAML 配置畫面上按一下 [編輯] 或 [複製] 而進入此頁面，請根據以下的步驟修改可信任的合作夥伴設定檔，然後按一下 [儲存] 以變更這些值。按一下 [SAML 設定檔 ]
+頁面上的 [儲存] 以完成修改。</p>
+<hr>
+<ol>
+<li><b>鍵入 [共用設定] 子屬性的值。</b><dl><dt>來源 ID</dt>
+<dd><p>這是來自合作夥伴網站的 20 個位元組序號 (使用 Base64 格式來編碼)。該值通常與配置 [網站識別碼] 屬性時使用的 [網站 ID] 屬性值相同。</p></dd>
+<dt>目標</dt>
+<dd><p>這是夥伴網站的網域 (包含或不包含連接埠號)。如果想要連絡代管於此網域的網頁，須從「可信任的合作夥伴」屬性內定義的值中挑選重新導向 URL。</p>
+<hr><p><b>備註 &#8211; </b>如果同一網域有兩個已定義的項目 (一個包含連接埠號，一個未包含連接埠號)，則會優先選擇包含連接埠號的項目。例如，假設以下兩個信任夥伴的定義：<tt>target=sun.com</tt> 及 <tt>target=sun.com:8080</tt>。如果主體要尋找 <tt>http://machine.sun.com:8080/index.html</tt>，則會選擇第二個定義。</p>
+<hr>
+</dd>
+<dt>網站屬性對映程式</dt>
+<dd><p>此類別用來傳回認證指定中定義為 <tt>AttributeStatements</tt> 元素的屬性值清單。網站屬性對映程式需要透過 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt> 介面實作。</p><p>如果未定義任何類別，則指定中將不會包含任何屬性。</p></dd>
+<dt>版本</dt>
+<dd><p>用來傳送 SAML 請求的 SAML 版本 (<tt>1.0</tt> 或 <tt>1.1</tt>)。如果此參數沒有任何值，將使用以下預設值 (於 <tt>AMConfig.properties</tt> 中定義)：</p>
+<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
+<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
+</dd>
+<dt>帳號對映程式</dt>
+<dd><p>該類別定義指定的主體如何與目標網站中的識別相關聯。需要從 <tt>com.sun.identity.saml.plugins.</tt> <tt>PartnerAccountMapper</tt> 介面實作帳號對應程式。預設值為 <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>。</p><p>如果未定義任何類別，則指定中將不會包含任何屬性。</p></dd>
+<dt>憑證</dt>
+<dd><p>當指定中的簽名是由夥伴所簽署，並且在已簽署指定的 <tt>KeyInfo</tt> 部份找不到憑證時，用來驗證該簽名的憑證別名。</p></dd>
+<dt>主機清單</dt>
+<dd><p>合作夥伴所使用的用戶端認證憑證的 IP 位址、DNS 主機名稱或別名的清單。這是為了合作夥伴網站內所有可以向此授權組織傳送請求的主機而配置的。此清單可協助確保請求者真的是工件的預期接收者。如果在這個清單內定義請求者，則交互作用將會繼續。如果請求者的資訊不符合任何一個在主機清單內定義的主機，則請求將會遭到拒絕。</p></dd>
+<dt>發行者</dt>
+<dd><p>所產生的指定的建立者。預設語法為 <i>hostname</i><tt>:</tt><i>port</i>。</p></dd>
+</dl>
 </li>
-<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p>
+<li><b>鍵入 [目標] 子屬性的值。</b><dl><dt>工件：SAML URL</dt>
+<dd><p>指向實作「Web 瀏覽器工件設定檔」之 Servlet 的 URL。</p></dd>
+<dt>Post：Post URL</dt>
+<dd><p>指向實作「Web 瀏覽器 POST 設定檔」之 Servlet 的 URL。</p></dd>
+<dt>SOAP 查詢：屬性對映程式</dt>
+<dd><p>用來從查詢取得單次登入資訊的類別。您需要在併入的介面中實作一個屬性對映程式。如果未指定類別，將使用 <tt>DefaultAttributeMapper</tt>。</p></dd>
+<dt>SOAP 查詢：動作對映程式</dt>
+<dd><p>用來取得單次登入資訊，並將合作夥伴動作對映至授權決策的類別。您需要在併入的介面中實作一個動作對映程式。如果未指定類別，將使用 <tt>DefaultActionMapper</tt>。</p></dd>
+</dl>
 </li>
-</ul>
-</td></tr><tr><td valign="top"><p>帳號對映程式</p></td><td valign="top"><p>該類別定義指定的主體如何與目標網站中的識別相關聯。需要從 <tt>com.sun.identity.saml.plugins.</tt> <tt>PartnerAccountMapper</tt> 介面實作帳號對應程式。預設值為 <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>。</p>
-<p>如果未定義任何類別，則指定中將不會包含任何屬性。</p>
-</td></tr><tr><td valign="top"><p>憑證</p></td><td valign="top"><p>當指定中的簽名是由夥伴所簽署，並且在已簽署指定的 <tt>KeyInfo</tt> 部份找不到憑證時，用來驗證該簽名的憑證別名。</p>
-</td></tr><tr><td valign="top"><p>主機清單</p></td><td valign="top"><p>合作夥伴所使用的用戶端認證憑證的 IP 位址、DNS 主機名稱或別名的清單。這是為了合作夥伴網站內所有可以向此授權組織傳送請求的主機而配置的。此清單可協助確保請求者真的是工件的預期接收者。如果在這個清單內定義請求者，則交互作用將會繼續。如果請求者的資訊不符合任何一個在主機清單內定義的主機，則請求將會遭到拒絕。</p>
-</td></tr><tr><td valign="top"><p>發行者</p></td><td valign="top"><p>所產生的指定的建立者。預設語法為 <i>hostname</i><tt>:</tt><i>port</i>。</p>
-</td></tr></table>
+<li><b>鍵入 [來源] 子屬性的值。</b><dl><dt>工件：SOAP URL</dt>
+<dd><p>SAML SOAP 收件者的 URL。</p></dd>
+<dt>認證類型</dt>
+<dd><p>可以搭配 SAML 使用的認證類型：</p>
+<ul><li><p>如果使用 HTTP 存取 SAML SOAP 收件者的 URL，並且沒有透過 HTTP 基本認證保護 SAML SOAP 收件者，則可指定 <tt>NOAUTH</tt>。</p></li>
+<li><p>如果使用 HTTP 存取 SAML SOAP 收件者的 URL，並且透過 HTTP 基本認證保護 SAML SOAP 收件者，則可指定 <tt>BASICAUTH</tt>。</p></li>
+<li><p>如果使用 HTTPS 存取 SAML SOAP 收件者的 URL，並且沒有透過 HTTP 基本認證保護 SAML SOAP 收件者，則可指定 <tt>SSL</tt>。</p></li>
+<li><p>如果使用 HTTPS 存取 SAML SOAP 收件者的 URL，並且透過 HTTP 基本認證保護 SAML SOAP 收件者，則可指定 <tt>SSLWITHBASICAUTH</tt>。</p></li></ul>
+
+<hr><p><b>備註 &#8211; </b>如果您正在使用 HTTP 基本認證保護 SAML SOAP 收件者的 URL，則需要在 Web 容器配置而非 Access Manager 配置中執行此操作。然而，您還是要在 Access Manager 配置中提供 HTTP 基本認證使用者 ID 與密碼。</p>
+<hr>
+<p>此為選用屬性。如果未指定，預設值為 <tt>NOAUTH</tt>。如果指定 <tt>BASICAUTH</tt> 或 <tt>SSLWITHBASICAUTH</tt>，則需要 [可信任的合作夥伴] 屬性，而且此屬性應為 <tt>HTTPS</tt>。</p></dd>
+<dt>使用者</dt>
+<dd><p>將 <tt>BASICAUTH</tt> 選為認證類型時，此屬性的值將定義用來保護合作夥伴 SOAP 收件者之合作夥伴的使用者識別碼。</p></dd>
+<dt>使用者密碼</dt>
+<dd><p>將 <tt>BASICAUTH</tt> 選為認證類型時，此屬性的值將為用來保護合作夥伴 SOAP 收件者之合作夥伴的使用者識別碼定義密碼。</p></dd>
+<dt>使用者密碼 (重新輸入)</dt>
+<dd><p>重新輸入先前定義的密碼。</p></dd>
+</dl>
 </li>
-<li><p><b>鍵入 [目標] 子屬性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>工件：SAML URL</p></td><td valign="top"><p>指向實作「Web 瀏覽器工件設定檔」之 Servlet 的 URL。</p>
-</td></tr><tr><td valign="top"><p>Post：Post URL</p></td><td valign="top"><p>指向實作「Web 瀏覽器 POST 設定檔」之 Servlet 的 URL。</p>
-</td></tr><tr><td valign="top"><p>SOAP 查詢：屬性對映程式</p></td><td valign="top"><p>用來從查詢取得單次登入資訊的類別。您需要在併入的介面中實作一個屬性對映程式。如果未指定類別，將使用 <tt>DefaultAttributeMapper</tt>。</p>
-</td></tr><tr><td valign="top"><p>SOAP 查詢：動作對映程式</p></td><td valign="top"><p>用來取得單次登入資訊，並將合作夥伴動作對映至授權決策的類別。您需要在併入的介面中實作一個動作對映程式。如果未指定類別，將使用 <tt>DefaultActionMapper</tt>。</p>
-</td></tr></table>
-</li>
-<li><p><b>鍵入 [來源] 子屬性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>工件：SOAP URL</p></td><td valign="top"><p>SAML SOAP 收件者的 URL。</p>
-</td></tr><tr><td valign="top"><p>認證類型</p></td><td valign="top"><p>可以搭配 SAML 使用的認證類型：</p>
-<ul><li><p><tt>NOAUTH</tt></p>
-</li>
-<li><p><tt>BASICAUTH</tt></p>
-</li>
-<li><p><tt>SSL</tt></p>
-</li>
-<li><p><tt>SSLWITHBASICAUTH</tt></p>
-</li>
-</ul>
-<p>此為選用屬性。如果未指定，預設值為 <tt>NOAUTH</tt>。如果指定 <tt>BASICAUTH</tt> 或 <tt>SSLWITHBASICAUTH</tt>，則需要 [可信任的合作夥伴] 屬性，而且此屬性應為 <tt>HTTPS</tt>。</p>
-</td></tr><tr><td valign="top"><p>使用者</p></td><td valign="top"><p>將 <tt>BASICAUTH</tt> 選為認證類型時，此屬性的值將定義用來保護合作夥伴 SOAP 收件者之合作夥伴的使用者識別碼。</p>
-</td></tr><tr><td valign="top"><p>使用者密碼</p></td><td valign="top"><p>將 <tt>BASICAUTH</tt> 選為認證類型時，此屬性的值將為用來保護合作夥伴 SOAP 收件者之合作夥伴的使用者識別碼定義密碼。</p>
-</td></tr><tr><td valign="top"><p>使用者密碼 (重新輸入)</p></td><td valign="top"><p>重新輸入先前定義的密碼。</p>
-</td></tr></table>
-</li>
-<li><p><b>按一下 [完成]。</b></p></li>
-<li><p><b>按一下 [SAML 設定檔 ] 頁面上的 [儲存] 以完成配置。</b></p></li>
-</ol>
-<br />
+<li><b>按一下 [完成]。</b></li>
+<li><b>按一下 [SAML 設定檔 ] 頁面上的 [儲存] 以完成配置。</b></li></ol>
+<br/>
 
 </body>
 </html>

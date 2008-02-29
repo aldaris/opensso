@@ -1,52 +1,74 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>So konfigurieren Sie einen Verbindungspool &#8211; Beispiel
+  <title>So konfigurieren Sie einen Verbindungspool &#8211; Beispiel - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="jdbcexample"></A><h4>So konfigurieren Sie einen Verbindungspool &#8211; Beispiel</h4>
-<p>Das folgende Beispiel zeigt, wie Sie einen Verbindungspool f&#252;r Web Server und MySQL 4.0 einrichten:</p>
-<ol><li><p><b>Erstellen Sie auf der Web Server-Konsole einen JDBC-Verbindungspool mit den folgenden Attributen:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>poolName</p></td><td valign="top"><p><tt>samplePool</tt></p>
-</td></tr><tr><td valign="top"><p>DataSource-Klassenname</p></td><td valign="top"><p><tt>com.mysql.jdbc.jdbc2.optional.MysqlDatacSource</tt> </p>
-</td></tr><tr><td valign="top"><p>serverName</p></td><td valign="top"><p>Servername des mySQL-Servers</p>
-</td></tr><tr><td valign="top"><p>Port</p></td><td valign="top"><p>Anschlussnummer des mySQL-Servers</p>
-</td></tr><tr><td valign="top"><p>Benutzer</p></td><td valign="top"><p>Benutzername des Datenbankpassworts:</p>
-</td></tr><tr><td valign="top"><p>Passwort</p></td><td valign="top"><p>Das Passwort des Benutzers.</p>
-</td></tr><tr><td valign="top"><p>databaseName</p></td><td valign="top"><p>Name der Datenbank</p>
-</td></tr></table>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Die jar-Datei, die die DataSource-Klasse und die in den n&#228;chsten Schritten erw&#228;hnte JDBC-Treiber-Klasse enth&#228;lt, sollte dem Anwendungsklassenpfad hinzugef&#252;gt werden.</p>
-<hr size="1" noshade></p></li>
-<li><p><b>Konfigurieren Sie die JDBC-Ressourcen. Erstellen Sie auf der Web Server-Konsole eine JDBC-Ressource mit den folgenden Attributen:</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>JNDI-Name</p></td><td valign="top"><p><i>jdbc/samplePool</i></p>
-</td></tr><tr><td valign="top"><p>Poolname</p></td><td valign="top"><p><i>samplePool</i></p>
-</td></tr><tr><td valign="top"><p>Dataenressource aktiviert</p></td><td valign="top"><p><i>Aktiviert</i></p>
-</td></tr></table>
+
+
+<a name="jdbcexample"></a><h5>So konfigurieren Sie einen Verbindungspool &#8211; Beispiel</h5>
+<p>Das folgende Beispiel zeigt, wie Sie einen Verbindungspool f&#252;r Web Server und
+MySQL 4.0 einrichten:</p><ol>
+<li><b>Erstellen Sie auf der Web Server-Konsole einen JDBC-Verbindungspool mit den folgenden Attributen:</b><dl><dt>poolName</dt>
+<dd><p><tt>samplePool</tt></p></dd>
+<dt>DataSource-Klassenname</dt>
+<dd><p><tt>com.mysql.jdbc.jdbc2.optional.MysqlDatacSource</tt> </p></dd>
+<dt>serverName</dt>
+<dd><p>Servername des mySQL-Servers</p></dd>
+<dt>Port</dt>
+<dd><p>Anschlussnummer des mySQL-Servers</p></dd>
+<dt>Benutzer</dt>
+<dd><p>Benutzername des Datenbankpassworts:</p></dd>
+<dt>Passwort</dt>
+<dd><p>Das Passwort des Benutzers.</p></dd>
+<dt>databaseName</dt>
+<dd><p>Name der Datenbank</p></dd>
+</dl>
+
+<hr><p><b>Hinweis &#8211; </b>Die jar-Datei, die die DataSource-Klasse und die in den n&#228;chsten Schritten erw&#228;hnte
+JDBC-Treiber-Klasse enth&#228;lt, sollte dem Anwendungsklassenpfad hinzugef&#252;gt werden.</p>
+<hr>
 </li>
-<li><p><b>F&#252;gen Sie der Datei <tt>sun-web.xml</tt>der Anwendung folgende Zeilen hinzu:</b></p><table cellpadding="4" border="1" cols="1" width="100%"><td><pre>&#60;resource-ref>
+<li><b>Konfigurieren Sie die JDBC-Ressourcen. Erstellen Sie auf der Web Server-Konsole eine JDBC-Ressource
+mit den folgenden Attributen:</b><dl><dt>JNDI-Name</dt>
+<dd><p><i>jdbc/samplePool</i></p></dd>
+<dt>Poolname</dt>
+<dd><p><i>samplePool</i></p></dd>
+<dt>Dataenressource aktiviert</dt>
+<dd><p><i>Aktiviert</i></p></dd>
+</dl>
+</li>
+<li><b>F&#252;gen Sie der Datei <tt>sun-web.xml</tt>der Anwendung folgende Zeilen hinzu:</b><pre>&#60;resource-ref>
       &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
       &#60;jndi-name>jdbc/samplePool&#60;/jndi-name>
-&#60;/resource-ref></pre>
-</td></table><br></li>
-<li><p><b>F&#252;gen Sie der Datei web.xml der Anwendung folgende Zeilen hinzu:</b></p><table cellpadding="4" border="1" cols="1" width="100%"><td><pre>&#60;resource-ref>
+&#60;/resource-ref></pre></li>
+<li><b>F&#252;gen Sie der Datei web.xml der Anwendung folgende Zeilen hinzu:</b><pre>&#60;resource-ref>
        &#60;description>mySQL Database&#60;/description>
        &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
        &#60;res-type>javax.sql.DataSource&#60;/res-type>
        &#60;res-auth>Container&#60;/res-auth>
-&#60;/resource-ref></pre>
-</td></table><br></li>
-<li><p><b>Nachdem Sie diese Einstellungen vorgenommen haben, lautet der Wert dieses Attributs wie folgt:  <i>java:comp/env/jdbc/mySQL</i>.</b></p></li>
-</ol>
-<br />
+&#60;/resource-ref></pre></li>
+<li><b>Nachdem Sie diese Einstellungen vorgenommen haben, lautet der Wert dieses Attributs wie
+folgt:  <i>java:comp/env/jdbc/mySQL</i>.</b></li></ol>
+<br/>
 
 </body>
 </html>

@@ -1,32 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>範圍
+  <title>範圍 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="realm.rmrealm"></A><h2>範圍</h2>
-<p><A NAME="indexterm-2"></A>存取控制範圍是一組可與使用者或使用者群組產生關聯的認證特性與授權策略。範圍資料儲存於一個專有權資訊樹狀結構中，其為 Access Manager 於您指定的資料存放區中所建立。Access Manager 架構於 Access Manager 資訊樹狀結構中聚集每一個範圍中的策略與特性。依預設，Access Manager 7.1 會將 Access Manager 資訊樹狀結構做為特殊分支插入到 Sun Java Enterprise System Directory Server 中，但使用者資料除外。當使用任何 LDAPv3 資料庫時，您可以使用存取控制範圍。</p>
-<p>於 [範圍] 標籤中，您可為存取控制配置下列特性：</p>
-<ul><li><p><A HREF="realm.realmproperties.html#realm.realmproperties">一般特性</A></p>
-</li>
-<li><p><A HREF="authentication.authproperties.html#authentication.authproperties">認證</A></p>
-</li>
-<li><p><A HREF="realm.services.html#realm.services">服務</A></p>
-</li>
-</ul>
 
-<br />
+
+<a name="realm.rmrealm"></a><h3>範圍</h3>
+<p><a name="indexterm-2"></a>存取控制範圍是一組可與使用者或使用者群組產生關聯的認證特性與授權策略。範圍資料儲存於一個專用資訊樹狀結構中，其為 Federated Access Manager 於您指定的資料存放區中所建立。Federated Access Manager 架構於 Federated Access Manager 資訊樹狀結構中聚集每一個範圍中的策略與特性。依預設，Federated
+Access Manager 8.0 會將 Federated Access Manager 資訊樹狀結構做為特殊分支插入到 Sun Java Enterprise System
+Directory Server 中，但使用者資料除外。當使用任何 LDAPv3 資料庫時，您可以使用存取控制範圍。</p><p>於 [範圍] 標籤中，您可為存取控制配置下列特性：</p>
+<ul><li><p><a href="realm.realmproperties.html">一般特性</a></p></li>
+<li><p><a href="authentication.authproperties.html">認證</a></p></li>
+<li><p><a href="realm.services.html">服務</a></p></li></ul>
+
+<br/>
 
 </body>
 </html>

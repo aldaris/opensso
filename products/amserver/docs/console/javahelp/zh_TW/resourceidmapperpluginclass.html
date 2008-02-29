@@ -1,32 +1,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>ResourceID 對映程式外掛程式類別
+  <title>ResourceID 對映程式外掛程式類別 - Sun Java System Federated Access Manager 8.0 主控台線上說明
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="resourceidmapperpluginclass"></A><h3>ResourceID 對映程式外掛程式類別</h3>
-<A NAME="indexterm-142"></A><A NAME="indexterm-143"></A><p>此屬性的值是一個類別清單，其中列出為針對組織或角色而配置的資源提供產生識別碼的類別。<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> 是用來將使用者識別碼對映至與其相關聯之資源識別碼的介面。探索服務為此介面提供兩種實作：</p>
-<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper</tt> (格式：<i>providerID</i> + "/" + <i>Base64 編碼的使用者 ID</i>)</p>
-</li>
-<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt> (格式：<i>providerID</i> + "/" + <i>使用者 ID 的十六進位字串</i>)</p>
-</li>
-</ul>
-<p>可以利用實作類別開發不同的實作，然後按一下 [新建] 並使用下列格式，將這些實作新增為此屬性的值：</p>
-<p><tt><b>providerid=</tt><i>providerID<tt></i>|</tt><i> class_name_and_path<tt></i></b></tt></p>
-<p>請參閱<A HREF="service.smdiscoveryproviderresourceidmapadd.html#service.smdiscoveryproviderresourceidmapadd">配置 ResourceID 對映程式</A>。</p>
 
-<br />
+
+<a name="resourceidmapperpluginclass"></a><h4>ResourceID 對映程式外掛程式類別</h4>
+<a name="indexterm-142"></a><a name="indexterm-143"></a><p>此屬性的值是一個類別清單，其中列出為針對組織或角色而配置的資源提供產生識別碼的類別。<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> 是用來將使用者識別碼對映至與其相關聯之資源識別碼的介面。探索服務為此介面提供兩種實作：</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper</tt> (格式：<i>providerID</i> + "/" + <i>Base64 編碼的使用者 ID</i>)</p></li>
+<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt> (格式：<i>providerID</i> + "/" + <i>使用者 ID 的十六進位字串</i>)</p></li></ul>
+<p>可以利用實作類別開發不同的實作，然後按一下 [新建] 並使用下列格式，將這些實作新增為此屬性的值：</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p>請參閱<a href="service.smdiscoveryproviderresourceidmapadd.html">配置 ResourceID 對映程式</a>。</p>
+<br/>
 
 </body>
 </html>

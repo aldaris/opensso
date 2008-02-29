@@ -1,106 +1,190 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Mitgliedschaft
+  <title>Mitgliedschaft - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamauthmembershipservice"></A><h3>Mitgliedschaft</h3>
-<p><A NAME="indexterm-183"></A>Das Authentifizierungsmodul &#8220;Mitgliedschaft&#34; wird f&#252;r personalisierte Sites implementiert. Wenn die Mitgliedschaftsauthentifizierung aktiviert ist, kann sich ein Benutzer selbst registrieren. Das bedeutet, dass ein Benutzer ein Konto ohne die Hilfe eines Administrators erstellen und anpassen kann und als registrierter Benutzer darauf zugreifen kann. Bei diesen Attributen handelt es sich um Bereichsattribute. Es existieren folgende Attribute:</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumys">Minimale Passwortl&#228;nge</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyr">Standard-Benutzerrollen</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyt">Benutzerstatus nach Registrierung</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzt">Prim&#228;rer LDAP-Server</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumza">Sekund&#228;rer LDAP-Server</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumyz">DN zum Starten von Benutzersuche</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzb">DN f&#252;r Root-Benutzer-BIND</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumze">Passwort f&#252;r Root-Benutzer-BIND</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzd">Passwort f&#252;r Root-Benutzer-Bind (Best&#228;tigung)</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzc">Zum Abrufen des Benutzerprofils verwendetes Attribut</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzh">Zum Suchen nach einem zu authentifizierenden Benutzer verwendete Attribute</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzg">Benutzer-Suchfilter</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzj">Suchbereich</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzi">SSL-Zugriff auf LDAP-Server aktivieren</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzk">Benutzer-DN zur Authentifizierung zur&#252;ckgeben</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthmembershipservice.html#fumzm">Authentifizierungsebene</A></p>
-</li>
-</ul>
-<A NAME="fumys"></A><h4>Minimale Passwortl&#228;nge</h4>
-<p>Gibt die Mindestl&#228;nge (in Zeichen) der bei der Selbstregistrierung eingerichteten Passw&#246;rter an. Der Standardwert ist 8.</p>
-<p>Wird dieser Wert ge&#228;ndert, sollte er auch im Registrierungs- und Fehlertext in der folgenden Datei ge&#228;ndert werden:</p>
-<p><tt></tt><i>AcessManager-base<tt></i>/locale/amAuthMembership.properties </tt> (<i>PasswdMinChars</i>-Eintrag)</p>
-<A NAME="fumyr"></A><h4>Standard-Benutzerrollen</h4>
-<p>Gibt an, welche Rollen neuen Benutzern zugewiesen werden, deren Profil durch die Selbstregistrierung erstellt wurde. Es gibt keinen Standardwert. Der Administrator muss die DNs der Rollen angeben, die selbst-registrierten Benutzer zugewiesen werden sollen.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Die angegebene Rolle muss unter dem Bereich liegen, f&#252;r den die Authentifizierung konfiguriert wird. Bei der Selbstregistrierung werden nur Rollen hinzugef&#252;gt, die dem Benutzer zugewiesen werden k&#246;nnen. Alle anderen DNs werden ignoriert. Es k&#246;nnen sowohl Access Manager- als auch LDAP-Rollen, jedoch keine gefilterten Rollen hinzugef&#252;gt werden.</p>
-<hr size="1" noshade></p><A NAME="fumyt"></A><h4>Benutzerstatus nach Registrierung</h4>
-<p>Gibt an, ob ein Benutzer, der sich selbst registriert, sofort Zugriff auf die Dienste erh&#228;lt. Der Standardwert ist &#8220;Aktiv&#34;, sodass der neue Benutzer standardm&#228;&#223;ig Zugriff auf die Dienste erh&#228;lt. Durch die Auswahl von &#8220;Inaktiv&#34; legt der Administrator fest, dass neue Benutzer keinen Zugriff auf Dienste erhalten sollen.</p>
-<A NAME="fumzt"></A><h4>Prim&#228;rer LDAP-Server</h4>
-<p>Gibt den Hostnamen und die Anschlussnummer des w&#228;hrend der Access Manager-Installation festgelegten prim&#228;ren LDAP-Servers an. Es handelt sich hierbei um den Server, auf den bei der Authentifizierung zuerst zugegriffen wird. Das Format lautet <tt></tt><i> hostname:port<tt></i></tt>. Wenn keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt> verwendet werden.</p>
-<p>Wenn Sie Access Manager in meheren Dom&#228;nen bereitstellen, k&#246;nnen Sie den Kommunikationslink zwischen bestimmten Instanzen von Access Manager und Directory Server in folgendem Format angeben (bei Mehrfacheingaben muss der lokale Servername vorangestellt werden):</p>
-<p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p>
-<p>Wenn beispielsweise zwei Access Manager-Instanzen an unterschiedlichen Standorten bereitgestellt wurden (L1-machine1-IS und L2- machine2-IS), die mit unterschiedlichen Instanzen von Directory Server kommunizieren (L1-machine1-DS und L2-machine2-DS), w&#252;rde es wie folgt aussehen:</p>
-<p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p>
-<p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
-<A NAME="fumza"></A><h4>Sekund&#228;rer LDAP-Server</h4>
-<p>Gibt den Hostnamen und die Anschlussnummer eines zweiten f&#252;r die Access Manager-Plattform verf&#252;gbaren LDAP-Servers an. Wenn der prim&#228;re LDAP-Server nicht auf eine Authentifizierungsanforderung reagiert, wird auf den zweiten Server zugegriffen. Sobald der prim&#228;re Server wieder l&#228;uft, kehrt Access Manager zu diesem Server zur&#252;ck. Das Format lautet ebenfalls <tt></tt><i> hostname:port<tt></i></tt>. Bei Mehrfacheingaben muss der lokale Servername vorangestellt werden.</p>
-<hr size="1" noshade><p><IMG ALT="Achtung" src="graphics/caution.gif">  <b>Achtung &#8211; </b>Bei einer Authentifizierung von Benutzern an einem Directory Server, der sich als Remote-Server an einem anderen Standort als das Access Manager-Unternehmen befindet, ist es wichtig, dass sowohl die prim&#228;ren als auch die sekund&#228;ren LDAP-Server-Ports &#252;ber Werte verf&#252;gen. Die Wert f&#252;r einen Directory Server-Standort kann f&#252;r beide Felder verwendet werden.</p><hr size="1" noshade><A NAME="fumyz"></A><h4>DN zum Starten von Benutzersuche</h4>
-<p>Gibt den DN des Knotens an, bei dem die Suche nach einem Benutzer beginnen soll. (Um die Systemleistung nicht zu beeintr&#228;chtigen, sollte dieser DN den Startpunkt so genau wie m&#246;glich angeben.) Der Standardwert ist die Root-Ebene des Verzeichnisbaums. Es wird jeder g&#252;ltige DN erkannt. Wenn im Suchbereich-Attribut &#8220;OBJECT&#34; ausgew&#228;hlt ist, sollte der DN die Ebene angeben, die unmittelbar &#252;ber der Ebene liegt, in der sich das Profil befindet. Bei Mehrfacheingaben muss der lokale Servername vorangestellt werden. Das Format lautet <tt></tt><i>servername|search dn<tt></i></tt>.</p>
-<p>F&#252;r Mehrfacheingaben:</p>
-<p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn<tt></i>...</tt></p>
-<p>Wenn unter der Root-Organisation mehrere Eintr&#228;ge mit derselben Benutzer-ID vorhanden sind, sollte dieser Parameter so festgelegt werden, dass nur nach einem einzigen Eintrag zur Authentifizierung gesucht bzw. nur ein einziger gefunden werden kann. Wenn beispielsweise die Agenten-ID und die Benutzer-ID unter der Root-Organisation identisch sind, sollte dieser Parameter <tt>ou=Agents</tt> (f&#252;r die Authentifizierung der Root-Organisation mithilfe der Agenten-ID) und <tt>ou=People, </tt> (f&#252;r die Authentifizierung der Root-Organisation mithilfe der Benutzer-ID) lauten.</p>
-<A NAME="fumzb"></A><h4>DN f&#252;r Root-Benutzer-BIND</h4>
-<p>Gibt den DN des Benutzers an, der als Administrator den BIND-Vorgang mit dem im Feld &#8220;Primary LDAP-Server und -Anschluss&#34; angegebenen Directory Server durchf&#252;hren soll. Der BIND-Vorgang f&#252;r den Authentifizierungsdienst muss mit diesem DN erfolgen, um die Suche nach einem mit der Anmeldungs-ID &#252;bereinstimmenden Benutzer-DN zu erm&#246;glichen. Der Standardwert lautet <tt>amldapuser.</tt> Jeder g&#252;ltige DN wird erkannt.</p>
-<A NAME="fumze"></A><h4>Passwort f&#252;r Root-Benutzer-BIND</h4>
-<p>Gibt das Passwort des im Feld &#8220;DN f&#252;r Root-Benutzer-BIND&#34; festgelegten Administratorprofils an. Es gibt keinen Standardwert. Nur das g&#252;ltige LDAP-Passwort des Administrators ist zul&#228;ssig.</p>
-<A NAME="fumzd"></A><h4>Passwort f&#252;r Root-Benutzer-Bind (Best&#228;tigung)</h4>
+
+
+<a name="service.scserviceprofile.iplanetamauthmembershipservice"></a><h4>Mitgliedschaft</h4>
+<p><a name="indexterm-183"></a>Das Authentifizierungsmodul "Mitgliedschaft" wird f&#252;r personalisierte Sites implementiert. Wenn die Mitgliedschaftsauthentifizierung aktiviert
+ist, kann sich ein Benutzer selbst registrieren. Das bedeutet, dass ein Benutzer
+ein Konto ohne die Hilfe eines Administrators erstellen und anpassen kann und
+als registrierter Benutzer darauf zugreifen kann. Bei diesen Attributen handelt es sich
+um Bereichsattribute. Es existieren folgende Attribute:</p>
+<ul><li><p><a href="#fumys">Minimale Passwortl&#228;nge</a></p></li>
+<li><p><a href="#fumyr">Standard-Benutzerrollen</a></p></li>
+<li><p><a href="#fumyt">Benutzerstatus nach Registrierung</a></p></li>
+<li><p><a href="#fumzt">Prim&#228;rer LDAP-Server</a></p></li>
+<li><p><a href="#fumza">Sekund&#228;rer LDAP-Server</a></p></li>
+<li><p><a href="#fumyz">DN zum Starten von Benutzersuche</a></p></li>
+<li><p><a href="#fumzb">DN f&#252;r Root-Benutzer-BIND</a></p></li>
+<li><p><a href="#fumze">Passwort f&#252;r Root-Benutzer-BIND</a></p></li>
+<li><p><a href="#fumzd">Passwort f&#252;r Root-Benutzer-Bind (Best&#228;tigung)</a></p></li>
+<li><p><a href="#fumzc">Zum Abrufen des Benutzerprofils verwendetes Attribut</a></p></li>
+<li><p><a href="#fumzh">Zum Suchen nach einem zu authentifizierenden Benutzer verwendete Attribute</a></p></li>
+<li><p><a href="#fumzg">Benutzer-Suchfilter</a></p></li>
+<li><p><a href="#fumzj">Suchbereich</a></p></li>
+<li><p><a href="#fumzi">SSL-Zugriff auf LDAP-Server aktivieren</a></p></li>
+<li><p><a href="#fumzk">Benutzer-DN zur Authentifizierung zur&#252;ckgeben</a></p></li>
+<li><p><a href="#fumzm">Authentifizierungsebene</a></p></li></ul>
+
+
+<a name="fumys"></a><h5>Minimale Passwortl&#228;nge</h5>
+<p>Gibt die Mindestl&#228;nge (in Zeichen) der bei der Selbstregistrierung eingerichteten Passw&#246;rter an.
+Der Standardwert ist 8.</p><p>Wird dieser Wert ge&#228;ndert, sollte er auch im Registrierungs- und Fehlertext in
+der folgenden Datei ge&#228;ndert werden:</p><p><tt></tt><i>AcessManager-base</i><tt>/locale/amAuthMembership.properties </tt> (<i>PasswdMinChars</i>-Eintrag)</p>
+
+<a name="fumyr"></a><h5>Standard-Benutzerrollen</h5>
+<p>Gibt an, welche Rollen neuen Benutzern zugewiesen werden, deren Profil durch die
+Selbstregistrierung erstellt wurde. Es gibt keinen Standardwert. Der Administrator muss die DNs
+der Rollen angeben, die selbst-registrierten Benutzer zugewiesen werden sollen.</p>
+<hr><p><b>Hinweis &#8211; </b>Die angegebene Rolle muss unter dem Bereich liegen, f&#252;r den die Authentifizierung
+konfiguriert wird. Bei der Selbstregistrierung werden nur Rollen hinzugef&#252;gt, die dem Benutzer
+zugewiesen werden k&#246;nnen. Alle anderen DNs werden ignoriert. Es k&#246;nnen sowohl Federated
+Access Manager- als auch LDAP-Rollen, jedoch keine gefilterten Rollen hinzugef&#252;gt werden.</p>
+<hr>
+
+
+<a name="fumyt"></a><h5>Benutzerstatus nach Registrierung</h5>
+<p>Gibt an, ob ein Benutzer, der sich selbst registriert, sofort Zugriff auf
+die Dienste erh&#228;lt. Der Standardwert ist ";Aktiv", sodass der neue Benutzer standardm&#228;&#223;ig
+Zugriff auf die Dienste erh&#228;lt. Durch die Auswahl von ";Inaktiv" legt der
+Administrator fest, dass neue Benutzer keinen Zugriff auf Dienste erhalten sollen.</p>
+
+<a name="fumzt"></a><h5>Prim&#228;rer LDAP-Server</h5>
+<p>Gibt den Hostnamen und die Anschlussnummer des w&#228;hrend der Federated Access Manager-Installation
+festgelegten prim&#228;ren LDAP-Servers an. Es handelt sich hierbei um den Server, auf
+den bei der Authentifizierung zuerst zugegriffen wird. Das Format lautet <tt></tt><i> hostname:port</i><tt></tt>. Wenn
+keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt> verwendet werden.</p><p>Wenn Sie Federated Access Manager in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den
+Kommunikationslink zwischen bestimmten Instanzen von Federated Access Manager und Directory Server in
+folgendem Format angeben (bei Mehrfacheingaben muss der lokale Servername vorangestellt werden):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Wenn beispielsweise zwei Federated Access Manager-Instanzen an unterschiedlichen Standorten bereitgestellt wurden (L1-machine1-IS
+und L2- machine2-IS), die mit unterschiedlichen Instanzen von Directory Server kommunizieren (L1-machine1-DS
+und L2-machine2-DS), w&#252;rde dies wie folgt aussehen:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+
+<a name="fumza"></a><h5>Sekund&#228;rer LDAP-Server</h5>
+<p>Gibt den Hostnamen und die Anschlussnummer eines zweiten f&#252;r die Federated Access
+Manager-Plattform verf&#252;gbaren LDAP-Servers an. Wenn der prim&#228;re LDAP-Server nicht auf eine Authentifizierungsanforderung
+reagiert, wird auf den zweiten Server zugegriffen. Sobald der prim&#228;re Server wieder
+l&#228;uft, kehrt Federated Access Manager zu diesem Server zur&#252;ck. Das Format lautet
+ebenfalls <tt></tt><i>hostname:port</i><tt></tt>. Bei Mehrfacheingaben muss der lokale Servername vorangestellt werden.</p>
+<hr><p><b>Achtung &#8211; </b>Bei einer Authentifizierung von Benutzern an einem Directory Server, der sich als
+Remote-Server an einem anderen Standort als das Federated Access Manager-Unternehmen befindet, ist
+es wichtig, dass sowohl die prim&#228;ren als auch die sekund&#228;ren LDAP-Server-Anschl&#252;sse &#252;ber
+Werte verf&#252;gen. Die Wert f&#252;r einen Directory Server-Standort kann f&#252;r beide Felder
+verwendet werden.</p>
+<hr>
+
+
+<a name="fumyz"></a><h5>DN zum Starten von Benutzersuche</h5>
+<p>Gibt den DN des Knotens an, bei dem die Suche nach einem
+Benutzer beginnen soll. (Um die Systemleistung nicht zu beeintr&#228;chtigen, sollte dieser DN
+den Startpunkt so genau wie m&#246;glich angeben.) Der Standardwert ist die Root-Ebene
+des Verzeichnisbaums. Es wird jeder g&#252;ltige DN erkannt. Wenn im Suchbereich-Attribut ";OBJECT"
+ausgew&#228;hlt ist, sollte der DN die Ebene angeben, die unmittelbar &#252;ber der
+Ebene liegt, in der sich das Profil befindet. Bei Mehrfacheingaben muss der
+lokale Servername vorangestellt werden. Das Format lautet <tt></tt><i>servername|search dn</i><tt></tt>.</p><p>F&#252;r Mehrfacheingaben:</p><p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn</i><tt>...</tt></p><p>Wenn unter der Root-Organisation mehrere Eintr&#228;ge mit derselben Benutzer-ID vorhanden sind, sollte
+dieser Parameter so festgelegt werden, dass nur nach einem einzigen Eintrag zur
+Authentifizierung gesucht bzw. nur ein einziger gefunden werden kann. Wenn beispielsweise die
+Agenten-ID und die Benutzer-ID unter der Root-Organisation identisch sind, sollte dieser Parameter
+<tt>ou=Agents</tt> (f&#252;r die Authentifizierung der Root-Organisation mithilfe der Agenten-ID) und <tt>ou=People, </tt> (f&#252;r
+die Authentifizierung der Root-Organisation mithilfe der Benutzer-ID) lauten.</p>
+
+<a name="fumzb"></a><h5>DN f&#252;r Root-Benutzer-BIND</h5>
+<p>Gibt den DN des Benutzers an, der als Administrator den BIND-Vorgang mit
+dem im Feld ";Primary LDAP-Server und -Anschluss" angegebenen Directory Server durchf&#252;hren soll.
+Der BIND-Vorgang f&#252;r den Authentifizierungsdienst muss mit diesem DN erfolgen, um die
+Suche nach einem mit der Anmeldungs-ID &#252;bereinstimmenden Benutzer-DN zu erm&#246;glichen. Der Standardwert
+lautet <tt>amldapuser.</tt> Jeder g&#252;ltige DN wird erkannt.</p>
+
+<a name="fumze"></a><h5>Passwort f&#252;r Root-Benutzer-BIND</h5>
+<p>Gibt das Passwort des im Feld ";DN f&#252;r Root-Benutzer-BIND" festgelegten Administratorprofils an.
+Es gibt keinen Standardwert. Nur das g&#252;ltige LDAP-Passwort des Administrators ist zul&#228;ssig.</p>
+
+<a name="fumzd"></a><h5>Passwort f&#252;r Root-Benutzer-Bind (Best&#228;tigung)</h5>
 <p>Hier wird das Passwort zur Best&#228;tigung erneut eingegeben.</p>
-<A NAME="fumzc"></A><h4>Zum Abrufen des Benutzerprofils verwendetes Attribut</h4>
-<p>Gibt das zur Benennung von Benutzereintr&#228;gen verwendete Attribut an. In Access Manager wird standardm&#228;&#223;ig davon ausgegangen, dass Benutzereintr&#228;ge durch das Attribut &#8220;uid&#34; identifiziert werden. Wenn auf Ihrem Directory Server ein anderes Attribut verwendet wird (z. B. <i>givenname</i>), geben Sie den Namen des verwendeten Attributs in diesem Feld ein.</p>
-<A NAME="fumzh"></A><h4>Zum Suchen nach einem zu authentifizierenden Benutzer verwendete Attribute</h4>
-<p>Listet die Attribute auf, die vom Suchfilter f&#252;r einen zu authentifizierenden Benutzer zu verwenden sind und die es dem Benutzer erm&#246;glichen, eine Authentifizierung mit mehreren Attributen im Benutzereintrag durchzuf&#252;hren. Wird dieses Feld beispielsweise auf  <i>uid</i>, <i>employeenumber </i> und <i>mail</i> eingestellt, kann der Benutzer jeden dieser Namen f&#252;r die Authentifizierung verwenden.</p>
-<A NAME="fumzg"></A><h4>Benutzer-Suchfilter</h4>
-<p>Gibt ein Attribut an, das f&#252;r die Suche nach dem im Feld &#8220;DN zum Starten von Benutzersuche&#34; festgelegten Benutzer verwendet wird. Dieses Feld wird gemeinsam mit dem Benutzer-Namensattribut eingesetzt. Es gibt keinen Standardwert. Alle g&#252;ltigen Benutzereintragsattribute werden erkannt.</p>
-<A NAME="fumzj"></A><h4>Suchbereich</h4>
-<p>Gibt an, wie viele Ebenen des Directory Servers bei der Suche nach einem &#252;bereinstimmenden Benutzerprofil durchsucht werden sollen. Die Suche beginnt bei dem auf Seite 315 im Attribut &#8220;DN zum Starten von Benutzersuche&#34; angegebenen Knoten. Der Standardwert ist SUBTREE. In der Liste stehen folgende Auswahlm&#246;glichkeiten zur Verf&#252;gung:</p>
-<table border="0" cellspacing="5"><tr><td valign="top"><p>OBJEKT</p></td><td valign="top"><p>Die Suche beschr&#228;nkt sich auf den angegebenen Knoten.</p>
-</td></tr><tr><td valign="top"><p>EINEEBENE</p></td><td valign="top"><p>Die Suche beginnt auf der Ebene des angegebenen Knotens und wird auf die unmittelbar darunter liegende Ebene ausgeweitet.</p>
-</td></tr><tr><td valign="top"><p>UNTERSTRUKTUR</p></td><td valign="top"><p>Die Suche umfasst den angegebenen Knoten sowie alle Ebenen unterhalb dieses Knotens.</p>
-</td></tr></table>
-<A NAME="fumzi"></A><h4>SSL-Zugriff auf LDAP-Server aktivieren</h4>
-<p>Aktiviert den SSL-Zugriff auf die in den Feldern &#8220;Primary LDAP-Server und -Anschluss&#34; und &#8220;Secondary LDAP-Server und -Anschluss&#34; angegebenen Directory Server. Das Kontrollk&#228;stchen ist standardm&#228;&#223;ig nicht markiert und das SSL-Protokoll wird f&#252;r den Zugriff auf den Directory Server nicht verwendet.</p>
-<p>Wenn der LDAP-Server mit aktiviertem SSL (LDAPS) ausgef&#252;hrt wird, muss Access Manager mit den entsprechenden vertrauensw&#252;rdigen SSL-Zertifikaten konfiguriert sein, damit Access Manager &#252;ber das LDAPS-Protokoll eine Verbindung zum Directory Server herstellen kann.</p>
-<A NAME="fumzk"></A><h4>Benutzer-DN zur Authentifizierung zur&#252;ckgeben</h4>
-<p>Wenn das Access Manager-Verzeichnis mit dem f&#252;r LDAP konfigurierten Verzeichnis &#252;bereinstimmt, ist diese Option m&#246;glicherweise aktiviert. Wenn diese Option aktiviert ist, l&#228;sst das LDAP-Authentifizierungsmodul die R&#252;ckgabe des DN anstelle der Benutzer-ID zu, sodass kein Suchlauf erforderlich ist. Normalerweise gibt ein Authentifizierungsmodul nur die Benutzer-ID zur&#252;ck und der Authentifizierungsdienst sucht nach dem Benutzer in dem lokalen Access Manager-LDAP. Bei Verwendung eines externen LDAP-Verzeichnisses wird diese Option normalerweise nicht aktiviert.</p>
-<A NAME="fumzm"></A><h4>Authentifizierungsebene</h4>
-<p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird angegeben, wie stark einem Authentifizierungsmechanismus vertraut wird. Sobald ein Benutzer authentifiziert wurde, wird der Wert im SSO-Token der aktuellen Sitzung gespeichert. Wird der SSO-Token einer Anwendung, auf die der Benutzer zugreifen m&#246;chte, vorgelegt, bestimmt die Anwendung anhand des gespeicherten Werts, ob die Ebene ausreicht, um den Benutzer Zugriff zu gew&#228;hren. Wenn die im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Mindestwert aufweist, wird der Benutzer aufgefordert, sich erneut &#252;ber einen Dienst mit einer h&#246;heren Authentifizierungsebene zu authentifizieren. Der Standardwert ist 0.</p>
-<p><hr size="1" noshade><p><b>Hinweis &#8211; </b>Hinweis: Wenn keine Authentifizierungsebene angegeben wird, wird im SSO-Token der im Kern-Authentifizierungsattribut <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Standard-Authentifizierungsebene</A> angegebene Wert verwendet.</p>
-<hr size="1" noshade></p>
-<br />
+
+<a name="fumzc"></a><h5>Zum Abrufen des Benutzerprofils verwendetes Attribut</h5>
+<p>Gibt das zur Benennung von Benutzereintr&#228;gen verwendete Attribut an. In Federated Access
+Manager wird standardm&#228;&#223;ig davon ausgegangen, dass Benutzereintr&#228;ge durch das Attribut "uid" identifiziert
+werden. Wenn auf Ihrem Directory Server ein anderes Attribut verwendet wird (z.
+B. <i>givenname</i>), geben Sie den Namen des verwendeten Attributs in diesem Feld
+ein.</p>
+
+<a name="fumzh"></a><h5>Zum Suchen nach einem zu authentifizierenden Benutzer verwendete Attribute</h5>
+<p>Listet die Attribute auf, die vom Suchfilter f&#252;r einen zu authentifizierenden Benutzer
+zu verwenden sind und die es dem Benutzer erm&#246;glichen, eine Authentifizierung mit
+mehreren Attributen im Benutzereintrag durchzuf&#252;hren. Wird dieses Feld beispielsweise auf  <i>uid</i>,
+<i>employeenumber </i> und <i>mail</i> eingestellt, kann der Benutzer jeden dieser Namen f&#252;r die
+Authentifizierung verwenden.</p>
+
+<a name="fumzg"></a><h5>Benutzer-Suchfilter</h5>
+<p>Gibt ein Attribut an, das f&#252;r die Suche nach dem im Feld
+";DN zum Starten von Benutzersuche" festgelegten Benutzer verwendet wird. Dieses Feld wird
+gemeinsam mit dem Benutzer-Namensattribut eingesetzt. Es gibt keinen Standardwert. Alle g&#252;ltigen Benutzereintragsattribute
+werden erkannt.</p>
+
+<a name="fumzj"></a><h5>Suchbereich</h5>
+<p>Gibt an, wie viele Ebenen des Directory Servers bei der Suche nach
+einem &#252;bereinstimmenden Benutzerprofil durchsucht werden sollen. Die Suche beginnt bei dem auf
+Seite 315 im Attribut ";DN zum Starten von Benutzersuche" angegebenen Knoten. Der
+Standardwert ist SUBTREE. In der Liste stehen folgende Auswahlm&#246;glichkeiten zur Verf&#252;gung:</p><dl><dt>OBJEKT</dt>
+<dd><p>Die Suche beschr&#228;nkt sich auf den angegebenen Knoten.</p></dd>
+<dt>EINEEBENE</dt>
+<dd><p>Die Suche beginnt auf der Ebene des angegebenen Knotens und wird auf die unmittelbar darunter liegende Ebene ausgeweitet.</p></dd>
+<dt>UNTERSTRUKTUR</dt>
+<dd><p>Die Suche umfasst den angegebenen Knoten sowie alle Ebenen unterhalb dieses Knotens.</p></dd>
+</dl>
+
+
+<a name="fumzi"></a><h5>SSL-Zugriff auf LDAP-Server aktivieren</h5>
+<p>Aktiviert den SSL-Zugriff auf die in den Feldern ";Primary LDAP-Server und -Anschluss"
+und "Secondary LDAP-Server und -Anschluss" angegebenen Directory Server. Das Kontrollk&#228;stchen ist standardm&#228;&#223;ig
+nicht markiert und das SSL-Protokoll wird f&#252;r den Zugriff auf den Directory
+Server nicht verwendet.</p><p>Wenn der LDAP-Server mit aktiviertem SSL (LDAPS) ausgef&#252;hrt wird, muss Federated Access
+Manager mit den entsprechenden vertrauensw&#252;rdigen SSL-Zertifikaten konfiguriert sein, damit Access Manager &#252;ber
+das LDAPS-Protokoll eine Verbindung zum Directory Server herstellen kann.</p>
+
+<a name="fumzk"></a><h5>Benutzer-DN zur Authentifizierung zur&#252;ckgeben</h5>
+<p>Wenn das Federated Access Manager-Verzeichnis mit dem f&#252;r LDAP konfigurierten Verzeichnis &#252;bereinstimmt,
+ist diese Option m&#246;glicherweise aktiviert. Wenn diese Option aktiviert ist, l&#228;sst das
+LDAP-Authentifizierungsmodul die R&#252;ckgabe des DN anstelle der Benutzer-ID zu, sodass kein Suchlauf
+erforderlich ist. Normalerweise gibt ein Authentifizierungsmodul nur die Benutzer-ID zur&#252;ck, und der
+Authentifizierungsdienst sucht nach dem Benutzer in dem lokalen Federated Access Manager-LDAP. Bei
+Verwendung eines externen LDAP-Verzeichnisses wird diese Option normalerweise nicht aktiviert.</p>
+
+<a name="fumzm"></a><h5>Authentifizierungsebene</h5>
+<p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird
+angegeben, wie stark einem Authentifizierungsmechanismus vertraut wird. Sobald ein Benutzer authentifiziert wurde,
+wird der Wert im SSO-Token der aktuellen Sitzung gespeichert. Wird der SSO-Token
+einer Anwendung, auf die der Benutzer zugreifen m&#246;chte, vorgelegt, bestimmt die Anwendung
+anhand des gespeicherten Werts, ob die Ebene ausreicht, um den Benutzer Zugriff
+zu gew&#228;hren. Wenn die im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Mindestwert
+aufweist, wird der Benutzer aufgefordert, sich erneut &#252;ber einen Dienst mit einer
+h&#246;heren Authentifizierungsebene zu authentifizieren. Der Standardwert ist 0.</p>
+<hr><p><b>Hinweis &#8211; </b>Hinweis: Wenn keine Authentifizierungsebene angegeben wird, wird im SSO-Token der im Kern-Authentifizierungsattribut
+<a href="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Standard-Authentifizierungsebene</a> angegebene Wert verwendet.</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

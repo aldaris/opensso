@@ -1,32 +1,54 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>サポートされているディレクティブ
+  <title>サポートされているディレクティブ - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="supporteddirectives"></A><h3>サポートされているディレクティブ</h3>
-<A NAME="indexterm-132"></A><A NAME="indexterm-133"></A><p>この属性により、リソースに対してポリシー関連のディレクティブを指定できます。サポートされていないディレクティブは、サービスプロバイダが使用しようとしても、その要求は失敗します。次の表に、利用可能なオプションの詳細を示します。</p>
 
-<table cellspacing="5" border="1">
-<tr><th scope="col"><p>ディレクティブ</p></th><th scope="col"><p>目的</p></th></tr>
-<tr><td><p><tt>AuthenticateRequester</tt></p></td><td><p>ディスカバリサービスでは、リソースをホストしているサービスインスタンスに対するクライアントの認証を有効にするため、応答に SAML 表明 (<tt>AuthenticationStatement</tt> を含む) が含まれている必要があります。</p></td></tr>
-<tr><td><p><tt>AuthenticateSessionContext</tt></p></td><td><p>ディスカバリサービスでは、セッションの状態を示す応答に SAML 表明 (<tt>SessionContextStatement</tt> を含む) が含まれている必要があります。</p></td></tr>
-<tr><td><p><tt>AuthorizeRequestor</tt></p></td><td><p>ディスカバリサービスでは、クライアントがリソースにアクセス可能かどうかを示す応答に SAML 表明 (<tt>ResourceAccessStatement</tt> を含む) が含まれる必要があります。</p></td></tr>
-<tr><td><p><tt>EncryptResourceID</tt></p></td><td><p>ディスカバリサービスは、すべてのクライアント宛ての応答に含まれるリソース ID を暗号化する必要があります。</p></td></tr>
-<tr><td><p><tt>GenerateBearerToken</tt></p></td><td><p>ベアラトークン認証と組み合わせて使用するため、ディスカバリサービスは、リソースへのベアラのアクセス権を与えるトークンを生成する必要があります。</p></td></tr>
-</table><hr size="1" noshade><p><IMG ALT="注意" src="graphics/caution.gif">  <b>注意 &#8211; </b><tt>AuthorizeRequestor</tt> ディレクティブと <tt>EncryptResourceID</tt> ディレクティブは組み合わせて使用できません。</p><hr size="1" noshade>
-<br />
+
+<a name="supporteddirectives"></a><h4>サポートされているディレクティブ</h4>
+<a name="indexterm-132"></a><a name="indexterm-133"></a><p>この属性により、リソースに対してポリシー関連のディレクティブを指定できます。サポートされていないディレクティブは、サービスプロバイダが使用しようとしても、その要求は失敗します。次の表に、利用可能なオプションの詳細を示します。</p><table><col width="50*"><col width="50*"><tr><th align="left" valign="top" scope="column"><p>ディレクティブ</p></th>
+<th align="left" valign="top" scope="column"><p>目的</p></th>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>AuthenticateRequester</tt></p></td>
+<td align="left" valign="top" scope="row"><p>ディスカバリサービスでは、リソースをホストしているサービスインスタンスに対するクライアントの認証を有効にするため、応答に SAML 表明 (<tt>AuthenticationStatement</tt> を含む) が含まれている必要があります。</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>AuthenticateSessionContext</tt></p></td>
+<td align="left" valign="top" scope="row"><p>ディスカバリサービスでは、セッションの状態を示す応答に SAML 表明 (<tt>SessionContextStatement</tt> を含む) が含まれている必要があります。</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>AuthorizeRequestor</tt></p></td>
+<td align="left" valign="top" scope="row"><p>ディスカバリサービスでは、クライアントがリソースにアクセス可能かどうかを示す応答に SAML
+表明 (<tt>ResourceAccessStatement</tt> を含む) が含まれる必要があります。</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>EncryptResourceID</tt></p></td>
+<td align="left" valign="top" scope="row"><p>ディスカバリサービスは、すべてのクライアント宛ての応答に含まれるリソース ID を暗号化する必要があります。</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>GenerateBearerToken</tt></p></td>
+<td align="left" valign="top" scope="row"><p>ベアラトークン認証と組み合わせて使用するため、ディスカバリサービスは、リソースへのベアラのアクセス権を与えるトークンを生成する必要があります。</p></td>
+</tr>
+</table>
+<hr><p><b>注意 &#8211; </b><tt>AuthorizeRequestor</tt> ディレクティブと <tt>EncryptResourceID</tt> ディレクティブは組み合わせて使用できません。</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

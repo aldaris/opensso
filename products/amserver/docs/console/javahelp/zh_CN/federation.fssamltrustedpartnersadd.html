@@ -1,68 +1,91 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@15714-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>可信赖的伙伴：配置可信赖的伙伴属性
+  <title>可信赖的伙伴：配置可信赖的伙伴属性 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2006 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="federation.fssamltrustedpartnersadd"></A><h4>可信赖的伙伴：配置可信赖的伙伴属性</h4>
-<A NAME="indexterm-91"></A><p>以下是配置可信赖伙伴的步骤的第二部分。起点是<A HREF="federation.fssamlselecttrustedpartnertype.html#federation.fssamlselecttrustedpartnertype">可信赖的伙伴：选择伙伴类型和配置文件</A>。根据在第一部分选择的角色，可能需要定义以下各部分所列出的任何子属性。</p>
-<p><hr size="1" noshade><p><b>注 &#8211; </b>如果已通过单击联合下的 "SAML" 配置屏幕上的“编辑”或“复制”进入此页面，请根据下面的步骤修改可信赖伙伴配置文件，然后单击“保存”更改这些值。单击“SAML 配置文件”页面上的“保存”完成修改。</p>
-<hr size="1" noshade></p><ol><li><p><b>键入“通用设置”子属性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>源 ID</p></td><td valign="top"><p>这是一个 20 个字节的序列（采用 Base64 格式进行编码），来自伙伴站点。一般而言，它与配置“站点标识符”属性时用于“站点 ID”属性的值相同。</p>
-</td></tr><tr><td valign="top"><p>目标</p></td><td valign="top"><p>这是伙伴站点的域（可带端口号，也可不带）。如果要访问此域中托管的 Web 页面，将从在“可信赖伙伴”属性内定义的值中选取重定向 URL。</p>
-<p><hr size="1" noshade><p><b>注 &#8211; </b>如果同一个域有两个已定义的条目（一个包含端口号，另一个不含端口号），则优先使用含有端口号的条目。例如，假定有以下两个可信赖伙伴定义：<tt>target=sun.com</tt> 和 <tt>target=sun.com:8080</tt>。如果主体要查找 <tt>http://machine.sun.com:8080/index.html</tt>，将会选择第二个定义。</p>
-<hr size="1" noshade></p></td></tr><tr><td valign="top"><p>站点属性映射程序</p></td><td valign="top"><p>该类用于返回“验证声明”中定义为 <tt>AttributeStatements</tt> 元素的属性值列表。站点属性映射程序需要通过 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt> 接口来实现。</p>
-<p>如果未定义类，则声明中将不会包括任何属性。</p>
-</td></tr><tr><td valign="top"><p>版本</p></td><td valign="top"><p>用于发送 SAML 请求的 SAML 版本（<tt>1.0</tt> 或 <tt>1.1</tt>）。如果此参数没有值，则使用以下默认值（在 <tt>AMConfig.properties</tt> 中定义）：</p>
-<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p>
+
+
+<a name="federation.fssamltrustedpartnersadd"></a><h5>可信赖的伙伴：配置可信赖的伙伴属性</h5>
+<a name="indexterm-91"></a><p>以下是配置可信赖伙伴的步骤的第二部分。起点是<a href="federation.fssamlselecttrustedpartnertype.html">可信赖的伙伴：选择伙伴类型和配置文件</a>。根据在第一部分选择的角色，可能需要定义以下各部分所列出的任何子属性。</p>
+<hr><p><b>注 &#8211; </b>如果已通过单击联合下的 "SAML" 配置屏幕上的“编辑”或“复制”进入此页面，请根据下面的步骤修改可信赖伙伴配置文件，然后单击“保存”更改这些值。单击“SAML 配置文件”页面上的“保存”完成修改。</p>
+<hr>
+<ol>
+<li><b>键入“通用设置”子属性的值。</b><dl><dt>源 ID</dt>
+<dd><p>这是一个 20 个字节的序列（采用 Base64 格式进行编码），来自伙伴站点。一般而言，它与配置“站点标识符”属性时用于“站点 ID”属性的值相同。</p></dd>
+<dt>目标</dt>
+<dd><p>这是伙伴站点的域（可带端口号，也可不带）。如果要访问此域中托管的 Web 页面，将从在“可信赖伙伴”属性内定义的值中选取重定向 URL。</p>
+<hr><p><b>注 &#8211; </b>如果同一个域有两个已定义的条目（一个包含端口号，另一个不含端口号），则优先使用含有端口号的条目。例如，假定有以下两个可信赖伙伴定义：<tt>target=sun.com</tt> 和 <tt>target=sun.com:8080</tt>。如果主体要查找 <tt>http://machine.sun.com:8080/index.html</tt>，将会选择第二个定义。</p>
+<hr>
+</dd>
+<dt>站点属性映射程序</dt>
+<dd><p>该类用于返回“验证声明”中定义为 <tt>AttributeStatements</tt> 元素的属性值列表。站点属性映射程序需要通过 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt> 接口来实现。</p><p>如果未定义类，则声明中将不会包括任何属性。</p></dd>
+<dt>版本</dt>
+<dd><p>用于发送 SAML 请求的 SAML 版本（<tt>1.0</tt> 或 <tt>1.1</tt>）。如果此参数没有值，则使用以下默认值（在 <tt>AMConfig.properties</tt> 中定义）：</p>
+<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
+<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
+</dd>
+<dt>帐户映射程序</dt>
+<dd><p>该类定义了声明主题与目标站点处的身份具有怎样的关系。帐户映射程序需要通过 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper</tt> 接口来实现。默认值为 <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>。</p><p>如果未定义类，则声明中将不会包括任何属性。</p></dd>
+<dt>证书</dt>
+<dd><p>即证书别名，当伙伴已签署声明，而在所签署声明的 <tt>KeyInfo</tt> 部分中又找不到该伙伴的证书时，将使用它来验证声明中的签名。</p></dd>
+<dt>主机列表</dt>
+<dd><p>伙伴所使用的 IP 地址、DNS 主机名或客户机验证证书别名的列表。这列表是为伙伴站点内所有可向此授权机构发送请求的主机而配置的。此列表有助于确保请求者确实是辅件的预定接收方。如果请求者在此列表中已定义，将继续进行交互式操作。如果请求者的信息与主机列表中定义的任何主机都不匹配，则请求将被拒绝。</p></dd>
+<dt>发布者</dt>
+<dd><p>所生成声明的创建者。默认语法为 <i>hostname</i><tt>:</tt><i>port</i>。</p></dd>
+</dl>
 </li>
-<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p>
+<li><b>键入“目标”子属性的值。</b><dl><dt>辅件：SAML URL</dt>
+<dd><p>该 URL 指向实现 Web 浏览器辅件配置文件的 servlet。</p></dd>
+<dt>Post：Post URL</dt>
+<dd><p>该 URL 指向实现 Web 浏览器 POST 配置文件的 servlet。</p></dd>
+<dt>SOAP 查询：属性映射程序</dt>
+<dd><p>用于从查询中获取单点登录信息的类。需通过内含接口实现一个属性映射程序。如果未指定类，则将使用 <tt>DefaultAttributeMapper</tt>。</p></dd>
+<dt>SOAP 查询：操作映射程序</dt>
+<dd><p>用于获取单点登录信息并将伙伴操作映射到授权决策的类。需通过内含接口实现一个操作映射程序。如果未指定类，则将使用 <tt>DefaultActionMapper</tt>。</p></dd>
+</dl>
 </li>
-</ul>
-</td></tr><tr><td valign="top"><p>帐户映射程序</p></td><td valign="top"><p>该类定义了声明主题与目标站点处的身份具有怎样的关系。帐户映射程序需要通过 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper</tt> 接口来实现。默认值为 <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>。</p>
-<p>如果未定义类，则声明中将不会包括任何属性。</p>
-</td></tr><tr><td valign="top"><p>证书</p></td><td valign="top"><p>即证书别名，当伙伴已签署声明，而在所签署声明的 <tt>KeyInfo</tt> 部分中又找不到该伙伴的证书时，将使用它来验证声明中的签名。</p>
-</td></tr><tr><td valign="top"><p>主机列表</p></td><td valign="top"><p>伙伴所使用的 IP 地址、DNS 主机名或客户机验证证书别名的列表。这列表是为伙伴站点内所有可向此授权机构发送请求的主机而配置的。此列表有助于确保请求者确实是辅件的预定接收方。如果请求者在此列表中已定义，将继续进行交互式操作。如果请求者的信息与主机列表中定义的任何主机都不匹配，则请求将被拒绝。</p>
-</td></tr><tr><td valign="top"><p>发布者</p></td><td valign="top"><p>所生成声明的创建者。默认语法为 <i>hostname</i><tt>:</tt><i>port</i>。</p>
-</td></tr></table>
+<li><b>键入“源”子属性的值。</b><dl><dt>辅件：SOAP URL</dt>
+<dd><p>指向 SAML SOAP 接收方的 URL。</p></dd>
+<dt>验证类型</dt>
+<dd><p>可与 SAML 一起使用的验证类型：</p>
+<ul><li><p>如果使用 HTTP 访问到 SAML SOAP 接收方的 URL，并且 SAML SOAP 接收方没有由 HTTP 基本验证保护，则指定 <tt>NOAUTH</tt>。 </p></li>
+<li><p>如果使用 HTTP 访问到 SAML SOAP 接收方的 URL，并且 SAML SOAP 接收方由 HTTP 基本验证保护，则指定 <tt>BASICAUTH</tt>。</p></li>
+<li><p>如果使用 HTTPS 访问到 SAML SOAP 接收方的 URL，并且 SAML SOAP 接收方没有由 HTTP 基本验证保护，则指定 <tt>SSL</tt> 。</p></li>
+<li><p>如果使用 HTTPS 访问到 SAML SOAP 接收方的 URL，并且 SAML SOAP 接收方由 HTTP 基本验证保护，则指定 <tt>SSLWITHBASICAUTH</tt>。</p></li></ul>
+
+<hr><p><b>注 &#8211; </b>如果使用 HTTP 基本验证保护 SAML SOAP 接收方 URL，则需要在 Web 容器配置中而不是在 Access Manager 配置中执行此操作。但是，必须在 Access Manager 配置中提供 HTTP 基本验证用户 ID 和密码。</p>
+<hr>
+<p>此属性是可选的。如果未指定，则默认值为 <tt>NOAUTH</tt>。如果指定 <tt>BASICAUTH</tt> 或 <tt>SSLWITHBASICAUTH</tt>，则“可信任的伙伴”属性为必需属性且应当为 <tt>HTTPS</tt>。</p></dd>
+<dt>用户</dt>
+<dd><p>当选择 <tt>BASICAUTH</tt> 作为验证类型时，此属性的值定义了伙伴的用户标识符，将使用该标识符来保护伙伴的 SOAP 接收方。</p></dd>
+<dt>用户密码</dt>
+<dd><p>当选择 <tt>BASICAUTH</tt> 作为验证类型时，此属性的值定义了伙伴用户标识符的密码，将使用该密码来保护伙伴的 SOAP 接收方。</p></dd>
+<dt>用户密码（重新输入）</dt>
+<dd><p>重新输入之前已定义的密码。</p></dd>
+</dl>
 </li>
-<li><p><b>键入“目标”子属性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>辅件：SAML URL</p></td><td valign="top"><p>该 URL 指向实现 Web 浏览器辅件配置文件的 servlet。</p>
-</td></tr><tr><td valign="top"><p>Post：Post URL</p></td><td valign="top"><p>该 URL 指向实现 Web 浏览器 POST 配置文件的 servlet。</p>
-</td></tr><tr><td valign="top"><p>SOAP 查询：属性映射程序</p></td><td valign="top"><p>用于从查询中获取单点登录信息的类。需通过内含接口实现一个属性映射程序。如果未指定类，则将使用 <tt>DefaultAttributeMapper</tt>。</p>
-</td></tr><tr><td valign="top"><p>SOAP 查询：操作映射程序</p></td><td valign="top"><p>用于获取单点登录信息并将伙伴操作映射到授权决策的类。需通过内含接口实现一个操作映射程序。如果未指定类，则将使用 <tt>DefaultActionMapper</tt>。</p>
-</td></tr></table>
-</li>
-<li><p><b>键入“源”子属性的值。</b></p><table border="0" cellspacing="5"><tr><td valign="top"><p>辅件：SOAP URL</p></td><td valign="top"><p>指向 SAML SOAP 接收方的 URL。</p>
-</td></tr><tr><td valign="top"><p>验证类型</p></td><td valign="top"><p>可与 SAML 一起使用的验证类型：</p>
-<ul><li><p><tt>NOAUTH</tt></p>
-</li>
-<li><p><tt>BASICAUTH</tt></p>
-</li>
-<li><p><tt>SSL</tt></p>
-</li>
-<li><p><tt>SSLWITHBASICAUTH</tt></p>
-</li>
-</ul>
-<p>此属性是可选的。如果未指定，则默认值为 <tt>NOAUTH</tt>。如果指定 <tt>BASICAUTH</tt> 或 <tt>SSLWITHBASICAUTH</tt>，则“可信任的伙伴”属性为必需属性且应当为 <tt>HTTPS</tt>。</p>
-</td></tr><tr><td valign="top"><p>用户</p></td><td valign="top"><p>当选择 <tt>BASICAUTH</tt> 作为验证类型时，此属性的值定义了伙伴的用户标识符，将使用该标识符来保护伙伴的 SOAP 接收方。</p>
-</td></tr><tr><td valign="top"><p>用户密码</p></td><td valign="top"><p>当选择 <tt>BASICAUTH</tt> 作为验证类型时，此属性的值定义了伙伴用户标识符的密码，将使用该密码来保护伙伴的 SOAP 接收方。</p>
-</td></tr><tr><td valign="top"><p>用户密码（重新输入）</p></td><td valign="top"><p>重新输入之前已定义的密码。</p>
-</td></tr></table>
-</li>
-<li><p><b>单击&#8220;完成&#8221;。</b></p></li>
-<li><p><b>单击“SAML 配置文件”页面上的“保存”完成配置操作。</b></p></li>
-</ol>
-<br />
+<li><b>单击“完成”。</b></li>
+<li><b>单击“SAML 配置文件”页面上的“保存”完成配置操作。</b></li></ol>
+<br/>
 
 </body>
 </html>
