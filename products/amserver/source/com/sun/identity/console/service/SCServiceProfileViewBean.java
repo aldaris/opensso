@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCServiceProfileViewBean.java,v 1.4 2008-02-05 22:58:41 babysunil Exp $
+ * $Id: SCServiceProfileViewBean.java,v 1.5 2008-02-29 20:38:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import com.sun.identity.console.base.model.AMAdminConstants; 
+import com.sun.identity.console.service.model.SubConfigModel;
+import com.sun.identity.console.service.model.SubConfigModelImpl;
 
 public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
     public static final String DEFAULT_DISPLAY_URL =
@@ -155,6 +157,26 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
             if (createable.isEmpty()) {
                 resetButtonState(
                     AMPropertySheetModel.TBL_SUB_CONFIG_BUTTON_ADD);
+            } else {
+                SubConfigModel scModel = getSubConfigModel(); 
+                boolean canCreate = false;
+                for (Iterator i = createable.keySet().iterator(); 
+                    i.hasNext() && !canCreate;
+                ) {
+                    String name = (String)i.next();
+                    String plugin = scModel.getSelectableSubConfigNamesPlugin(
+                        name);
+                    if (plugin == null) {
+                        canCreate = true;
+                    } else {
+                        Set subconfigNames = scModel.getSelectableConfigNames(
+                            name);
+                        canCreate = (subconfigNames != null) && 
+                            !subconfigNames.isEmpty();
+                    }
+                }
+                disableButton(AMPropertySheetModel.TBL_SUB_CONFIG_BUTTON_ADD,
+                    !canCreate);
             }
         }
     }
@@ -171,6 +193,19 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
         try {
             return new SubSchemaModelImpl(
                 req, serviceName, getPageSessionAttributes());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        }
+        return null;
+    }
+    
+    private SubConfigModel getSubConfigModel() {
+        HttpServletRequest req =
+            RequestManager.getRequestContext().getRequest();
+        try {
+            return new SubConfigModelImpl(
+                req, serviceName, "/", getPageSessionAttributes());
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
@@ -299,7 +334,7 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
         AMModel model = (AMModel)getModel();
         String serviceName = (String)getPageSessionAttribute(
             AMServiceProfile.SERVICE_NAME);
-        String[] arg = {model.getLocalizedServiceName(serviceName)};
+        Object[] arg = {model.getLocalizedServiceName(serviceName)};
         return MessageFormat.format(model.getLocalizedString(
             "breadcrumbs.services.edit"), arg);
     }
@@ -338,9 +373,5 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
         } catch (ClassNotFoundException e) {
             debug.warning("SCServiceProfileViewBean.handleButton3Request:", e);
         }
-        
     }
-
-
-
 }

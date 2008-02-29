@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubConfigAddViewBean.java,v 1.1 2007-02-07 20:26:41 jonnelson Exp $
+ * $Id: SubConfigAddViewBean.java,v 1.2 2008-02-29 20:38:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPostViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
@@ -41,9 +42,11 @@ import com.sun.identity.console.service.model.SubConfigModel;
 import com.sun.identity.console.service.model.SubConfigModelImpl;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.html.CCDropDownMenu;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 public class SubConfigAddViewBean
@@ -155,11 +158,11 @@ public class SubConfigAddViewBean
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException {
         super.beginDisplay(event);
+        SubConfigModel model = (SubConfigModel)getModel();
+        String schemaName = (String)getPageSessionAttribute(
+            AMServiceProfile.PG_SESSION_SUB_SCHEMA_NAME);
 
         if (!submitCycle) {
-            SubConfigModel model = (SubConfigModel)getModel();
-            String schemaName = (String)getPageSessionAttribute(
-                AMServiceProfile.PG_SESSION_SUB_SCHEMA_NAME);
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
             propertySheetModel.clear();
 
@@ -170,6 +173,13 @@ public class SubConfigAddViewBean
                 setInlineAlertMessage(CCAlert.TYPE_WARNING,
                     "message.warning", "noproperties.message");
             }
+        }
+
+        Set subconfigNames = model.getSelectableConfigNames(schemaName);
+        if ((subconfigNames != null) && !subconfigNames.isEmpty()) {
+            CCDropDownMenu menu = (CCDropDownMenu)getChild(ATTR_SUBCONFIG_NAME);
+            OptionList optList = this.createOptionList(subconfigNames);
+            menu.setOptions(optList);
         }
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.15 2008-01-15 22:12:43 ww203982 Exp $
+ * $Id: SessionService.java,v 1.16 2008-02-29 20:38:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,8 @@ import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
-import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
@@ -77,6 +78,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.stats.Stats;
+import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchema;
@@ -1614,15 +1616,15 @@ public class SessionService {
                 sessionServerID = WebtopNaming.getSiteID(sessionServerProtocol,
                         sessionServer, sessionServerPort, sessionServerURI);
 
-                sessionServiceID = new URL(WebtopNaming
-                        .getServerFromID(sessionServerID));
+                sessionServiceID = new URL(WebtopNaming.getServerFromID(
+                    sessionServerID));
                 sessionServerProtocol = sessionServiceID.getProtocol();
                 sessionServer = sessionServiceID.getHost();
-                sessionServerPort = Integer
-                        .toString(sessionServiceID.getPort());
+                sessionServerPort = Integer.toString(
+                    sessionServiceID.getPort());
             } else {
-                sessionServiceID = new URL(WebtopNaming
-                        .getServerFromID(sessionServerID));
+                sessionServiceID = new URL(WebtopNaming.getServerFromID(
+                    sessionServerID));
             }
 
             // Obtain the secureRandom instance
@@ -1878,7 +1880,7 @@ public class SessionService {
     private void postInit() {
         try {
             ServiceSchemaManager ssm = new ServiceSchemaManager(
-                    amSessionService, getAdminToken());
+                amSessionService, getAdminToken());
 
             ServiceSchema schema = ssm.getGlobalSchema();
             Map attrs = schema.getAttributeDefaults();
@@ -1900,9 +1902,8 @@ public class SessionService {
                         + isSessionConstraintEnabled);
             }
 
-            String denyLoginStr =
-                CollectionHelper.getMapAttr(attrs,
-                    DENY_LOGIN_IF_DB_IS_DOWN, "NO");
+            String denyLoginStr = CollectionHelper.getMapAttr(attrs,
+                DENY_LOGIN_IF_DB_IS_DOWN, "NO");
             if (denyLoginStr.equalsIgnoreCase("YES")) {
                 denyLoginIfDBIsDown = true;
             }
@@ -1941,10 +1942,17 @@ public class SessionService {
                     MAX_WAIT_TIME_FOR_CONSTARINT, "6000"));
 
             ServiceConfigManager scm = new ServiceConfigManager(
-                    amSessionService, getAdminToken());
+                amSessionService, getAdminToken());
             ServiceConfig serviceConfig = scm.getGlobalConfig(null);
-            ServiceConfig subConfig = serviceConfig
-                    .getSubConfig(sessionServiceID.toString());
+            
+            /* in FAM 8.0, we have switched to create sub configuration with
+             * site name. hence we need to lookup the site name based on the URL
+             */
+            String subCfgName = (ServerConfiguration.isLegacy(adminToken)) ?
+                sessionServiceID.toString() :
+                SiteConfiguration.getSiteIdByURL(adminToken, 
+                    sessionServiceID.toString());
+            ServiceConfig subConfig = serviceConfig.getSubConfig(subCfgName);
 
             if (subConfig != null) {
                 isSessionFailoverEnabled = true;
@@ -2099,7 +2107,7 @@ public class SessionService {
                             
                         } catch (Exception e) {
                             sessionService.sessionDebug.error(
-                                    "Local Individual notification to " + url, e);
+                                "Local Individual notification to " + url, e);
                         }
 
                     }
@@ -2138,7 +2146,7 @@ public class SessionService {
                         }
                     } catch (Exception e) {
                         sessionService.sessionDebug.error(
-                                "Remote Global notification to " + url, e);
+                            "Remote Global notification to " + url, e);
                     }
                 }
             }    
@@ -2165,7 +2173,7 @@ public class SessionService {
                             PLLServer.send(parsedUrl, set);
                         } catch (Exception e) {
                             sessionService.sessionDebug.error(
-                                    "Remote Individual notification to " + url, e);
+                                "Remote Individual notification to " + url, e);
                         }
                     }
                 }

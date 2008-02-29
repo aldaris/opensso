@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubConfigModelImpl.java,v 1.1 2007-02-07 20:26:49 jonnelson Exp $
+ * $Id: SubConfigModelImpl.java,v 1.2 2008-02-29 20:38:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.console.service.model;
 
 import com.iplanet.sso.SSOException;
+import com.sun.identity.common.configuration.ISubConfigNames;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -40,7 +41,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 /* - LOG COMPLETE - */
@@ -93,8 +97,13 @@ public class SubConfigModelImpl
             xmlBuilder = new SubConfigPropertyXMLBuilder(serviceName, 
                 subConfigMeta.getServiceSchema(name), this);
             String xml = xmlBuilder.getXML();
-            String attributeNameXML = AMAdminUtils.getStringFromInputStream(
-                getClass().getClassLoader().getResourceAsStream(
+            String attributeNameXML = 
+                (getSelectableSubConfigNamesPlugin(name) != null) ?
+                AMAdminUtils.getStringFromInputStream(
+                    getClass().getClassLoader().getResourceAsStream(
+              "com/sun/identity/console/propertySubConfigSelectableName.xml")) :
+                AMAdminUtils.getStringFromInputStream(
+                    getClass().getClassLoader().getResourceAsStream(
                     "com/sun/identity/console/propertySubConfigName.xml"));
             xml = SubConfigPropertyXMLBuilder.prependXMLProperty(
                 xml, attributeNameXML);
@@ -250,5 +259,48 @@ public class SubConfigModelImpl
     public void deleteSubConfigurations(Set names)
         throws AMConsoleException {
         subConfigMeta.deleteSubConfigurations(names);
+    }
+
+    /**
+     * Returns plugin name for returning possible sub configuration names.
+     * 
+     * @param subSchemaName Name of sub schema.
+     * @return plugin name for returning possible sub configuration names.
+     */
+    public String getSelectableSubConfigNamesPlugin(String subSchemaName) {
+        String plugin = null;
+        ResourceBundle rb = ResourceBundle.getBundle("subConfigNamesPlugin");
+        try {
+            plugin = rb.getString(serviceName + "." + subSchemaName);
+        } catch (MissingResourceException e) {
+            //ignore, ok if no plugin is configured
+        }
+        return plugin;
+    }
+    
+    /**
+     * Returns a set of possible names of sub configuration.
+     * 
+     * @param subSchemaName Name of sub schema
+     * @return a set of possible names of sub configuration.
+     */
+    public Set getSelectableConfigNames(String subSchemaName) {
+        Set names = null;
+        String plugin = getSelectableSubConfigNamesPlugin(subSchemaName);
+        if (plugin != null) {
+            try {
+                Class clazz = Class.forName(plugin);
+                ISubConfigNames instance = (ISubConfigNames)clazz.newInstance();
+                names = new TreeSet();
+                names.addAll(instance.getNames());
+            } catch (InstantiationException ex) {
+                debug.error("SubConfigModelImpl.getSelectableConfigNames", ex);
+            } catch (IllegalAccessException ex) {
+                debug.error("SubConfigModelImpl.getSelectableConfigNames", ex);
+            } catch (ClassNotFoundException ex) {
+                debug.error("SubConfigModelImpl.getSelectableConfigNames", ex);
+            }
+        }
+        return names;
     }
 }

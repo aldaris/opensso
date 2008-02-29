@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubConfigModel.java,v 1.1 2007-02-07 20:26:48 jonnelson Exp $
+ * $Id: SubConfigModel.java,v 1.2 2008-02-29 20:38:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,4 +131,20 @@ public interface SubConfigModel
      */
     void deleteSubConfigurations(Set names)
         throws AMConsoleException;
+
+    /**
+     * Returns plugin name for returning possible sub configuration names.
+     * 
+     * @param subSchemaName Name of sub schema.
+     * @return plugin name for returning possible sub configuration names.
+     */
+    String getSelectableSubConfigNamesPlugin(String subSchemaName);
+        
+    /**
+     * Returns a set of possible names of sub configuration.
+     * 
+     * @param subSchemaName Name of sub schema
+     * @return a set of possible names of sub configuration.
+     */
+    Set getSelectableConfigNames(String subSchemaName);
 }
