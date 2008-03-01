@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.16 2008-02-27 01:41:48 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.17 2008-03-01 02:31:38 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,8 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
 import com.sun.identity.agents.util.AgentRemoteConfigUtils;
+import com.sun.identity.agents.util.ResourceReader;
+
 import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -107,6 +109,8 @@ public class AgentConfiguration implements
     private static final String AGENT_CONFIG_CENTRALIZED = "centralized";
     private static final String AGENT_CONFIG_LOCAL = "local";
     public static final String ROOT_REALM_NAME = "/";
+    /**name of the .version file for an agent **/
+    public static final String AGENT_VERSION_FILE_NAME = ".version";
     
     
    /**
@@ -1035,14 +1039,31 @@ public class AgentConfiguration implements
             //read in all properties, save all props & values in map to use 
             //later and push some to JVM system for clientsdk
             bootStrapClientConfiguration();  
-            registerAgentNotificationHandler();
-            
+            registerAgentNotificationHandler();          
             //now set some class fields with property values         
             setHotSwappableConfigProps();          
             //set some fields as some clientsdk props also used by agent code
             setSSOTokenName();   
-            setHotSwappableClientSDKProps();                      
+            setHotSwappableClientSDKProps();     
+            logAgentVersion();
             markInitialized(); 
+        }
+    }
+    
+    /**
+     * Logs the version information for the running agent.
+     */
+    private static void logAgentVersion() {
+        ResourceReader rr = new ResourceReader(getDebug());
+        String version = null;
+        try {
+            version = rr.getTextFromFile(AGENT_VERSION_FILE_NAME);
+        } catch (AgentException ae) {
+            version = null;
+        }
+        version = (version == null) ?  "Unknown Agent Version." : version; 
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.logAgentVersion: \n" + version);
         }
     }
     
