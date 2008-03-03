@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.45 2008-02-26 01:21:23 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.46 2008-03-03 22:53:37 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -377,6 +377,12 @@ public class AMSetupServlet extends HttpServlet {
                     EmbeddedOpenDS.setup(map, servletCtx);
                     // Now create the AMSetupDSConfig instance.Abort on failure
                     AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+                    // wait for at most 10 seconds for OpenDS to come up
+                    int sleepTime = 10;
+                    while (!dsConfig.isDServerUp() && (sleepTime-- > 0)) {
+                        // sleep one second a time
+                        Thread.sleep(1000);
+                    }
                     if (!dsConfig.isDServerUp()) {
                         Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                          "AMSetupServlet.processRequest:OpenDS conn failed.");
