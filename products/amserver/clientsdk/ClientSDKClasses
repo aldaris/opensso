@@ -362,6 +362,7 @@ com/sun/identity/security/DecryptAction.class
 com/sun/identity/security/SecurityDebug.class
 com/sun/identity/security/cert/*.class
 com/sun/identity/security/keystore/*.class
+com/sun/identity/security/keystore/v_14/*.class
 com/sun/identity/util/*.class
 com/sun/identity/util/impl/*.class
 com/sun/identity/shared/xml/ValidationErrorHandler.class

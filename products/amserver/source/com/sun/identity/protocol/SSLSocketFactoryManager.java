@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSLSocketFactoryManager.java,v 1.1 2007-10-25 05:51:03 beomsuk Exp $
+ * $Id: SSLSocketFactoryManager.java,v 1.2 2008-03-03 18:59:07 beomsuk Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 
 import com.sun.identity.security.keystore.AMX509KeyManager;
+import com.sun.identity.security.keystore.AMX509KeyManagerFactory;
 import com.sun.identity.security.keystore.AMX509TrustManager;
 import com.sun.identity.security.SecurityDebug;
 
@@ -42,7 +43,8 @@ import com.sun.identity.security.SecurityDebug;
 
 public class SSLSocketFactoryManager {
     static private String keyStore = null;
-    static private KeyManager[] amKeyMgr = null;
+    static private AMX509KeyManager amKeyMgr = null;
+    static private KeyManager[] keyMgr = null;
     static private TrustManager[] amTrustMgr = null;
     static private SSLContext ctx = null;
 	
@@ -51,13 +53,14 @@ public class SSLSocketFactoryManager {
 
     	try {
     	    if (keyStore != null) {
-        	amKeyMgr = new KeyManager[] { new AMX509KeyManager() };
+                amKeyMgr = AMX509KeyManagerFactory.createAMX509KeyManager();
+        	keyMgr = new KeyManager[] { amKeyMgr };
     	    }
     	    
     	    amTrustMgr = new TrustManager[] { new AMX509TrustManager() };
 	
     	    ctx = SSLContext.getInstance("SSL");
-    	    ctx.init(amKeyMgr, amTrustMgr, null);
+    	    ctx.init(keyMgr, amTrustMgr, null);
 	} catch (Exception e) {
 	    SecurityDebug.debug.error(
                 "Exception in SSLSocketFactoryManager.init()" + e.toString());
@@ -70,5 +73,9 @@ public class SSLSocketFactoryManager {
             sf = ctx.getSocketFactory();
 	}
         return sf;
+    }
+
+    static public AMX509KeyManager getKeyStoreMgr() {
+        return amKeyMgr;
     }
 }

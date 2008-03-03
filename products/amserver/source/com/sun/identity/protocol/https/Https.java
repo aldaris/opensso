@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Https.java,v 1.1 2007-10-25 05:51:04 beomsuk Exp $
+ * $Id: Https.java,v 1.2 2008-03-03 18:59:07 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ public class Https {
     }
 	
     static public void init(String alias) {
-	AMX509KeyManager.setAlias(alias);
+	SSLSocketFactoryManager.getKeyStoreMgr().setAlias(alias);
     }
 }
 

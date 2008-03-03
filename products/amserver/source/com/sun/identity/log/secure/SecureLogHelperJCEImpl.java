@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureLogHelperJCEImpl.java,v 1.4 2007-05-04 21:49:54 bigfatrat Exp $
+ * $Id: SecureLogHelperJCEImpl.java,v 1.5 2008-03-03 18:57:31 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,9 @@ import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.security.keystore.AMPassword;
+import com.sun.identity.security.keystore.AMCallbackHandler;
 import com.sun.identity.security.keystore.AMX509KeyManager;
+import com.sun.identity.security.keystore.AMX509KeyManagerFactory;
 
 /**
  * A helper class for secure logging that generates the MAC and maintaining 
@@ -60,7 +62,8 @@ public class SecureLogHelperJCEImpl extends SecureLogHelper {
         throws Exception {
         String keystore = LogManagerUtil.getLogManager().
             getProperty(LogConstants.LOGGER_CERT_STORE);
-        ksManager = new AMX509KeyManager("JKS", keystore, (String)null, passwd);
+        ksManager = AMX509KeyManagerFactory.createAMX509KeyManager(
+                    "JKS", keystore, (String)null, (AMCallbackHandler)passwd);
     }    
     
     /**
