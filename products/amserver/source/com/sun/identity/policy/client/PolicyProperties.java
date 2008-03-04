@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.3 2007-12-15 08:54:57 dillidorai Exp $
+ * $Id: PolicyProperties.java,v 1.4 2008-03-04 19:26:04 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,8 @@ import java.util.StringTokenizer;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.services.naming.URLNotFoundException;
 
 import com.sun.identity.policy.PolicyConfig;
 import com.sun.identity.policy.PolicyException;
@@ -61,9 +63,6 @@ class PolicyProperties {
 
     private final static String NOTIFICATION_ENABLED 
             = "com.sun.identity.agents.notification.enabled";
-
-    private final static String NOTIFICATION_URL 
-            = "com.sun.identity.agents.notification.url";
 
     private final static String BOOLEAN_ACTION_VALUES 
             = "com.sun.identity.policy.client.booleanActionValues";
@@ -217,7 +216,14 @@ class PolicyProperties {
         }
 	if(notificationEnabledFlag == true) {
             //initialize notification url
-	    notificationURL = SystemProperties.get(NOTIFICATION_URL);
+            try {
+                notificationURL = WebtopNaming.getNotificationURL().toString();
+            } catch(URLNotFoundException e) {
+                if (debug.messageEnabled()) {
+                    debug.message("PolicyProperties:notificationURL not found",
+                            e);
+                }
+            }
 	    if ((notificationURL == null) || (notificationURL.length() == 0)) {
 		throw new PolicyException(ResBundleUtils.rbName,
                 "invalid.notificationurl", null, null);

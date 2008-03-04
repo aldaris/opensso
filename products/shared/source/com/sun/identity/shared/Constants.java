@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.17 2008-03-04 00:27:46 beomsuk Exp $
+ * $Id: Constants.java,v 1.18 2008-03-04 19:26:04 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,9 +116,9 @@ public interface Constants {
     String AM_NAMING_URL = "com.iplanet.am.naming.url";
 
     /**
-     * Property string for notification URL.
+     * Property string for client notification URL.
      */
-    String AM_NOTIFICATION_URL = "com.iplanet.am.notification.url";
+    String CLIENT_NOTIFICATION_URL = "com.sun.identity.client.notification.url";
 
     /**
      * Property string for load balancer.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.12 2007-12-19 21:52:23 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.13 2008-03-04 19:26:04 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -657,8 +657,8 @@ public class WebtopNaming {
     public synchronized static URL getNotificationURL()
             throws URLNotFoundException {
         try {
-            String url = System.getProperty(Constants.AM_NOTIFICATION_URL,
-                    SystemProperties.get(Constants.AM_NOTIFICATION_URL));
+            String url = System.getProperty(Constants.CLIENT_NOTIFICATION_URL,
+                    SystemProperties.get(Constants.CLIENT_NOTIFICATION_URL));
             if (url == null) {
                 throw new URLNotFoundException(NamingBundle
                         .getString("noNotificationURL"));
