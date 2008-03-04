@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.9 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: SPCache.java,v 1.10 2008-03-04 01:20:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -193,7 +193,7 @@ public class SPCache {
                         authContextHash.remove(key);
                 }
                 if (isDefault && key.endsWith("|/")) {
-                    authCtxObjHash.remove(key);
+                    authContextHash.remove(key);
                 }
             }
         }
