@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.18 2008-02-21 23:17:58 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.19 2008-03-04 23:40:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,6 +88,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
@@ -913,28 +914,58 @@ public class SAML2Utils extends SAML2SDKUtils {
      * @param nameID <code>NameID</code> object.
      * @param hostEntityID hosted <code>EntityID</code>.
      * @param remoteEntityID remote <code>EntityID</code>.
+     * @param hostEntityRole the role of hosted entity.
      * @exception <code>SAML2Exception</code> if any failure.
      */
-    public static Map getNameIDKeyMap(NameID nameID, 
-         String hostEntityID, String remoteEntityID) throws SAML2Exception {
+    public static Map getNameIDKeyMap(NameID nameID, String hostEntityID,
+        String remoteEntityID, String realm, String hostEntityRole)
+        throws SAML2Exception {
 
-         if(nameID == null) {
+        if (nameID == null) {
             throw new SAML2Exception(bundle.getString(
                   "nullNameID"));
-         }
+        }
 
-         NameIDInfoKey infoKey = new NameIDInfoKey(nameID.getValue(),
-                hostEntityID, remoteEntityID); 
-         HashSet set = new HashSet();
-         set.add(infoKey.toValueString()); 
+        NameIDInfoKey infoKey = null;
+        String affiliationID = nameID.getSPNameQualifier();
+        if (affiliationID != null) {
+            AffiliationDescriptorType affiDesc =
+                saml2MetaManager.getAffiliationDescriptor(realm, affiliationID);
+            if (affiDesc == null) {
+                infoKey = new NameIDInfoKey(nameID.getValue(), hostEntityID,
+                    remoteEntityID); 
+            } else {
+                if (SAML2Constants.SP_ROLE.equals(hostEntityRole)) {
+                    if (!affiDesc.getAffiliateMember().contains(hostEntityID)){
+                        throw new SAML2Exception(SAML2Utils.bundle.getString(
+                            "spNotAffiliationMember"));
+                    }
+                    infoKey = new NameIDInfoKey(nameID.getValue(),
+                        affiliationID, remoteEntityID);
+                } else {
+                    if (!affiDesc.getAffiliateMember().contains(
+                        remoteEntityID)) {
+                        throw new SAML2Exception(SAML2Utils.bundle.getString(
+                            "spNotAffiliationMember"));
+                    }
+                    infoKey = new NameIDInfoKey(nameID.getValue(),
+                        hostEntityID, affiliationID);
+                }
+            }
+        } else { 
+            infoKey = new NameIDInfoKey(nameID.getValue(), hostEntityID,
+                remoteEntityID); 
+        }
+        HashSet set = new HashSet();
+        set.add(infoKey.toValueString()); 
 
-         Map keyMap = new HashMap();  
-         keyMap.put(AccountUtils.getNameIDInfoKeyAttribute(), set);
+        Map keyMap = new HashMap();  
+        keyMap.put(AccountUtils.getNameIDInfoKeyAttribute(), set);
 
-         if(debug.messageEnabled()) {
+        if (debug.messageEnabled()) {
             debug.message("SAML2Utils.getNameIDKeyMap: " + keyMap);
-         }
-         return keyMap;
+        }
+        return keyMap;
     }
 
     /**
@@ -1296,6 +1327,20 @@ public class SAML2Utils extends SAML2SDKUtils {
             List list = new ArrayList();
             list.add(authLevel);
             paramsMap.put(SAML2Constants.AUTH_LEVEL,list);
+        }
+
+        String reqBinding = request.getParameter(SAML2Constants.REQ_BINDING);
+        if (reqBinding != null) {
+            List list = new ArrayList();
+            list.add(reqBinding);
+            paramsMap.put(SAML2Constants.REQ_BINDING,list);
+        }
+
+        String affiID = request.getParameter(SAML2Constants.AFFILIATION_ID);
+        if (affiID != null) {
+            List list = new ArrayList();
+            list.add(affiID);
+            paramsMap.put(SAML2Constants.AFFILIATION_ID,list);
         }
         return paramsMap;
     }

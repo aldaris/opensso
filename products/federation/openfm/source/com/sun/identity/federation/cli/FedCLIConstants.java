@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedCLIConstants.java,v 1.6 2008-01-16 04:42:24 hengming Exp $
+ * $Id: FedCLIConstants.java,v 1.7 2008-03-04 23:42:16 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,6 +104,16 @@ public interface FedCLIConstants {
     String ARGUMENT_PEP = "xacmlpep";
 
     /**
+     * Affiliation.
+     */
+    String ARGUMENT_AFFILIATION = "affiliation";
+
+    /**
+     * Affiliation Members.
+     */
+    String ARGUMENT_AFFI_MEMBERS = "affimembers";
+
+    /**
      * Service Provider Signing Certificate Alias.
      */
     String ARGUMENT_SP_S_CERT_ALIAS = "spscertalias";
@@ -127,6 +137,11 @@ public interface FedCLIConstants {
      * Authentication Authority Signing Certificate Alias.
      */
     String ARGUMENT_AUTHNA_S_CERT_ALIAS = "authnascertalias";
+
+    /**
+     * Affiliation Signing Certificate Alias.
+     */
+    String ARGUMENT_AFFI_S_CERT_ALIAS = "affiscertalias";
 
     /**
      * Policy Decision Point Signing Certificate Alias.
@@ -162,6 +177,11 @@ public interface FedCLIConstants {
      * Authentication Authority Encryption Certificate Alias.
      */
     String ARGUMENT_AUTHNA_E_CERT_ALIAS = "authnaecertalias";
+
+    /**
+     * Affiliation Encryption Certificate Alias.
+     */
+    String ARGUMENT_AFFI_E_CERT_ALIAS = "affiecertalias";
 
     /**
      * Policy Decision Point Encryption Certificate Alias.

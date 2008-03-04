@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.23 2008-01-16 04:42:24 hengming Exp $
+ * $Id: FederationManager.java,v 1.24 2008-03-04 23:42:16 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,11 +68,14 @@ public class FederationManager {
             "authnauthority|C|s|Specify metaAlias for hosted authentication authority to be created. The format must be <realm name>/<identifier>.",
             "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
             "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
+            "affiliation|F|s|Specify metaAlias for hosted affiliation. to be created. The format must be <realm name>/<identifier>",
+            "affimembers|M|m|Affiliation members",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
             "attrqscertalias|A|s|Attribute query provider signing certificate alias",
             "attrascertalias|B|s|Attribute authority signing certificate alias",
             "authnascertalias|D|s|Authentication authority signing certificate alias",
+            "affiscertalias|J|s|Affiliation signing certificate alias",
             "xacmlpdpscertalias|t|s|Policy decision point signing certificate alias",
             "xacmlpepscertalias|k|s|Policy enforcement point signing certificate alias",
             "specertalias|r|s|Service provider encryption certificate alias",
@@ -80,11 +83,15 @@ public class FederationManager {
             "attrqecertalias|R|s|Attribute query provider encryption certificate alias",
             "attraecertalias|G|s|Attribute authority encryption certificate alias.",
             "authnaecertalias|E|s|Authentication authority encryption certificate alias.",
+            "affiecertalias|K|s|Affiliation encryption certificate alias",
             "xacmlpdpecertalias|j|s|Policy decision point encryption certificate alias",
             "xacmlpepecertalias|z|s|Policy enforcement point encryption certificate alias",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point are required.",
+            "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point or Attribute Query Provider or Attribute Authority or Authentication Authority or Affiliation are required.",
+            "create-meta-template-exception-affi-conflict=Affiliation and other providers can't coexist.",
+            "create-meta-template-exception-affi-members-empty=Affiliation members is required.",
+            "create-meta-template-exception-affi-null-with-cert-alias=Affiliation Certificate Alias is provided without Affiliation Name.",
             "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias is provided without Identity Provider Name.",
             "create-meta-template-exception-sp-null-with-cert-alias=Service Provider Certificate Alias is provided without Service Provider Name.",
             "create-meta-template-exception-attra-null-with-cert-alias=Attribute Authority Certificate Alias is provided without Attribute Authority Name.",

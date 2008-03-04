@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.15 2008-03-04 17:50:14 exu Exp $
+ * $Id: SPACSUtils.java,v 1.16 2008-03-04 23:40:09 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,6 +75,7 @@ import com.sun.identity.saml2.ecp.ECPFactory;
 import com.sun.identity.saml2.ecp.ECPRelayState;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.ArtifactResolutionServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.key.KeyUtil;
@@ -1157,10 +1158,22 @@ public class SPACSUtils {
                 SAML2ServiceProviderAdapter.SSO_FAILED_SESSION_ERROR, se2);
             throw se2;
         }
-                    
-        NameIDInfo info = new NameIDInfo(
-            hostEntityId, remoteHostId, nameId,
-            SAML2Constants.SP_ROLE, true);
+
+        NameIDInfo info = null;
+        String affiID = nameId.getSPNameQualifier();
+        AffiliationDescriptorType affiDesc =
+            metaManager.getAffiliationDescriptor(realm, affiID);
+        if (affiDesc != null) {
+            if (!affiDesc.getAffiliateMember().contains(hostEntityId)) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "spNotAffiliationMember"));
+            }
+            info = new NameIDInfo(affiID, remoteHostId, nameId,
+                SAML2Constants.SP_ROLE, true);
+        } else {
+            info = new NameIDInfo(hostEntityId, remoteHostId, nameId,
+                SAML2Constants.SP_ROLE, false);
+        }
         Map props = new HashMap();
         String nameIDValueString = info.getNameIDValue();
         props.put(LogUtil.NAME_ID, info.getNameIDValue());

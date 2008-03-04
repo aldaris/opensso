@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.28 2008-02-11 23:48:42 superpat7 Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.29 2008-03-04 23:42:16 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,7 @@ import java.io.Writer;
 import java.security.cert.CertificateEncodingException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -99,6 +100,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String spECertAlias;
     private String attrqSCertAlias;
     private String attrqECertAlias;
+    private String affiAlias;
+    private List   affiMembers;
+    private String affiSCertAlias;
+    private String affiECertAlias;
     private String pepSCertAlias;
     private String pepECertAlias;
     private String protocol;
@@ -107,7 +112,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String deploymentURI;
     private String realm;
     private boolean isWebBased;
-    
+
     /**
      * Creates Meta Data Template.
      *
@@ -118,7 +123,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        getOptions();
+        getOptions(rc);
         validateOptions();
         normalizeOptions();
         
@@ -170,7 +175,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
     
-    private void getOptions() {
+    private void getOptions(RequestContext rc) {
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
         idpAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_IDENTITY_PROVIDER);
@@ -184,6 +189,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_AUTHN_AUTHORITY);
         pdpAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PDP);
         pepAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PEP);
+        affiAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AFFILIATION);
+        affiMembers = (List)rc.getOption(
+            FedCLIConstants.ARGUMENT_AFFI_MEMBERS);
         
         metadata = getStringOptionValue(FedCLIConstants.ARGUMENT_METADATA);
         extendedData = getStringOptionValue(
@@ -213,6 +222,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_AUTHNA_S_CERT_ALIAS);
         authnaECertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_AUTHNA_E_CERT_ALIAS);
+
+        affiSCertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AFFI_S_CERT_ALIAS);
+        affiECertAlias = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AFFI_E_CERT_ALIAS);
 
         pdpSCertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_PDP_S_CERT_ALIAS);
@@ -288,6 +302,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if (authnaECertAlias == null) {
             authnaECertAlias = "";
         }
+        if (affiSCertAlias == null) {
+            affiSCertAlias = "";
+        }
+        if (affiECertAlias == null) {
+            affiECertAlias = "";
+        }
         if (pdpSCertAlias == null) {
             pdpSCertAlias = "";
         }
@@ -306,13 +326,40 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         if ((idpAlias == null) && (spAlias == null) && (pdpAlias == null) && 
             (pepAlias == null) && (attraAlias == null) &&
-            (attrqAlias == null) && (authnaAlias == null)) {
+            (attrqAlias == null) && (authnaAlias == null) &&
+            (affiAlias == null)) {
 
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-role-null"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-        
+
+        if ((affiAlias != null) && ((idpAlias != null) ||
+            (spAlias != null) || (pdpAlias != null) || (pepAlias != null) ||
+            (attraAlias != null) || (attrqAlias != null) ||
+            (authnaAlias != null))) {
+
+            throw new CLIException(getResourceString(
+                "create-meta-template-exception-affi-conflict"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
+        if ((affiAlias != null) &&
+            ((affiMembers == null) || affiMembers.isEmpty())) {
+
+            throw new CLIException(getResourceString(
+                "create-meta-template-exception-affi-members-empty"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
+        if ((affiAlias == null) &&
+            ((affiSCertAlias != null) || (affiECertAlias != null))
+            ) {
+            throw new CLIException(getResourceString(
+                    "create-meta-template-exception-affi-null-with-cert-alias"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
         if ((idpAlias == null) &&
             ((idpSCertAlias != null) || (idpECertAlias != null))
             ) {
@@ -1225,6 +1272,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER,
             attrqAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY, authnaAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AFFILIATION, affiAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AFFI_MEMBERS, affiMembers);
         map.put(CreateSAML2HostedProviderTemplate.P_PDP, pdpAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PEP, pepAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT, idpECertAlias);
@@ -1243,6 +1292,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             authnaECertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY_S_CERT,
             authnaSCertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AFFI_E_CERT,
+            affiECertAlias);
+        map.put(CreateSAML2HostedProviderTemplate.P_AFFI_S_CERT,
+            affiSCertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PDP_E_CERT, pdpECertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PDP_S_CERT, pdpSCertAlias);
         map.put(CreateSAML2HostedProviderTemplate.P_PEP_E_CERT, pepECertAlias);

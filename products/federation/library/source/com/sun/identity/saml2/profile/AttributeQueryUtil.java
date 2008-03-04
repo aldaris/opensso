@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.4 2008-02-04 05:01:54 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.5 2008-03-04 23:40:09 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -533,7 +533,8 @@ public class AttributeQueryUtil {
 
         try {
             return dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
-                nameID, attrAuthorityEntityID, requestedEntityID));
+                nameID, attrAuthorityEntityID, requestedEntityID, realm,
+                SAML2Constants.IDP_ROLE));
         } catch (DataStoreProviderException dse) {
             SAML2Utils.debug.error(
                 "AttributeQueryUtil.getIdentityFromDataStore:", dse);

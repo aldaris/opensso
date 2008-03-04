@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.11 2008-01-16 04:34:45 hengming Exp $
+ * $Id: SAML2MetaManager.java,v 1.12 2008-03-04 23:40:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLPDPConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
@@ -309,6 +310,27 @@ public class SAML2MetaManager {
         EntityDescriptorElement eDescriptor = getEntityDescriptor(realm,
                                                                   entityId);
         return SAML2MetaUtils.getIDPSSODescriptor(eDescriptor);
+    }
+
+    /**
+     * Returns affiliation descriptor in an entity under the realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved. 
+     * @return <code>AffiliationDescriptorType</code> for the entity or
+     *     null if not found. 
+     * @throws SAML2MetaException if unable to retrieve the affiliation 
+     *     descriptor.
+     */
+    public AffiliationDescriptorType getAffiliationDescriptor(
+        String realm,
+        String entityId) 
+        throws SAML2MetaException {
+
+        EntityDescriptorElement eDescriptor = getEntityDescriptor(realm,
+            entityId);
+
+        return (eDescriptor == null ? null :
+            eDescriptor.getAffiliationDescriptor());
     }
 
     /**

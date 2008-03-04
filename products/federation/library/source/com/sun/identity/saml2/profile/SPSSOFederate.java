@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.12 2008-02-21 23:18:55 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.13 2008-03-04 23:40:09 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
@@ -190,7 +191,7 @@ public class SPSSOFederate {
                  SAML2Utils.bundle.getString("nullIDPEntityID"));
         }
         
-        String binding = getParameter(paramsMap,"reqBinding");
+        String binding = getParameter(paramsMap,SAML2Constants.REQ_BINDING);
         if (binding == null) {
             binding = SAML2Constants.HTTP_REDIRECT;
         }
@@ -251,7 +252,7 @@ public class SPSSOFederate {
               throw new SAML2Exception(
                         SAML2Utils.bundle.getString("ssoServiceNotfound"));
             }
-        
+
             // create AuthnRequest 
             AuthnRequest authnRequest = createAuthnRequest(realm,spEntityID,
                 paramsMap,spConfigAttrsMap,extensionsList,spsso,
@@ -625,7 +626,7 @@ public class SPSSOFederate {
     /* Create NameIDPolicy Element */
     private static NameIDPolicy createNameIDPolicy(String spEntityID,
             String nameIdentifier,boolean allowCreate,
-            SPSSODescriptorElement spsso)
+            SPSSODescriptorElement spsso, String realm, Map paramsMap)
             throws SAML2Exception {
         
         String nameID = SAML2Constants.PERSISTENT;
@@ -655,7 +656,26 @@ public class SPSSOFederate {
         }
         NameIDPolicy nameIDPolicy =
                 ProtocolFactory.getInstance().createNameIDPolicy();
-        nameIDPolicy.setSPNameQualifier(spEntityID);
+
+
+        String affiliationID = getParameter(paramsMap,
+            SAML2Constants.AFFILIATION_ID);
+        if (affiliationID != null) {
+            AffiliationDescriptorType affiDesc =
+                sm.getAffiliationDescriptor(realm, affiliationID);
+            if (affiDesc == null) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "affiliationNotFound"));
+            }
+            if (!affiDesc.getAffiliateMember().contains(spEntityID)) {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "spNotAffiliationMember"));
+            }
+            nameIDPolicy.setSPNameQualifier(affiliationID);
+        } else {
+            nameIDPolicy.setSPNameQualifier(spEntityID);
+        }
+
         nameIDPolicy.setAllowCreate(allowCreate);
         nameIDPolicy.setFormat(nameID);
         return nameIDPolicy;
@@ -700,9 +720,8 @@ public class SPSSOFederate {
                         getParameter(paramsMap,
                                      SAML2Constants.NAMEID_POLICY_FORMAT);
          // get NameIDPolicy Element 
-         NameIDPolicy nameIDPolicy = 
-                 createNameIDPolicy(spEntityID,nameIdentifier,
-                                    allowCreate,spsso);
+         NameIDPolicy nameIDPolicy = createNameIDPolicy(spEntityID,
+             nameIdentifier, allowCreate, spsso, realmName, paramsMap);
          Issuer issuer = createIssuer(spEntityID);
          Integer acsIndex = getIndex(paramsMap,SAML2Constants.ACS_URL_INDEX);
          Integer attrIndex = getIndex(paramsMap,SAML2Constants.ATTR_INDEX);

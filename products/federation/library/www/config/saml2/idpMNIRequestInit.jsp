@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpMNIRequestInit.jsp,v 1.2 2006-12-05 21:55:51 weisun2 Exp $
+   $Id: idpMNIRequestInit.jsp,v 1.3 2008-03-04 23:41:00 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -60,6 +60,7 @@
     // metaAlias - Hosted Entity Id
     // spEntityID - Service Provider Identifier
     // requestType - the request type of ManageNameIDRequest (Terminate / NewID)
+    // affiliationID - affiliation entity ID
     // Query parameters supported will be documented.
     try {
         String metaAlias = request.getParameter("metaAlias");
@@ -89,6 +90,9 @@
         String binding = DoManageNameID.getMNIBindingInfo(request, metaAlias,
                                         SAML2Constants.IDP_ROLE, spEntityID);
 
+        String affiliationID =
+            request.getParameter(SAML2Constants.AFFILIATION_ID);
+
         HashMap paramsMap = new HashMap();
         paramsMap.put("metaAlias", metaAlias);
         paramsMap.put("spEntityID", spEntityID);
@@ -98,6 +102,10 @@
 
         if (RelayState != null) {
             paramsMap.put(SAML2Constants.RELAY_STATE, RelayState);
+        }
+
+        if (affiliationID != null) {
+            paramsMap.put(SAML2Constants.AFFILIATION_ID, affiliationID);
         }
 
         Object sess = SAML2Utils.checkSession(request,response,

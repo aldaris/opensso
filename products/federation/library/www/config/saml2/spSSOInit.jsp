@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.4 2008-02-21 23:20:43 hengming Exp $
+   $Id: spSSOInit.jsp,v 1.5 2008-03-04 23:41:00 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -144,6 +144,8 @@
 			    The supported values are :
 			    urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
 			    urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+    19.affiliationID	    affiliation entity ID
+
 --%>
 <html>
 

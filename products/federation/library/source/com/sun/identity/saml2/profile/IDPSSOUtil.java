@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.21 2008-03-04 17:50:14 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.22 2008-03-04 23:40:09 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,7 @@ import com.sun.identity.saml2.ecp.ECPResponse;
 import com.sun.identity.saml2.idpdiscovery.IDPDiscoveryConstants;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.ArtifactResolutionServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
@@ -328,9 +329,12 @@ public class IDPSSOUtil {
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("UnableTofindBinding"));
         }
+
+        String affiliationID = request.getParameter(
+            SAML2Constants.AFFILIATION_ID);
         // generate a response for the authn request
-        Response res = IDPSSOUtil.getResponse(session, authnReq, 
-                 spEntityID, idpEntityID,  realm, nameIDFormat, acsURL);
+        Response res = getResponse(session, authnReq, spEntityID, idpEntityID,
+            realm, nameIDFormat, acsURL, affiliationID);
      
         if (res == null) {
             SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
@@ -592,6 +596,7 @@ public class IDPSSOUtil {
      * @param realm the realm name
      * @param nameIDFormat the <code>NameIDFormat</code>
      * @param acsURL the <code>ACS</code> service <code>url</code>
+     * @param affiliationID affiliationID for IDP initiated SSO
      * 
      * @return the <code>SAML Response</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -603,7 +608,8 @@ public class IDPSSOUtil {
         String idpEntityID,
         String realm,
         String nameIDFormat,
-        String acsURL) 
+        String acsURL,
+        String affiliationID) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.getResponse: ";
@@ -612,7 +618,8 @@ public class IDPSSOUtil {
         List assertionList = new ArrayList();
         
         Assertion assertion = getAssertion(session, authnReq, 
-           recipientEntityID, idpEntityID, realm, nameIDFormat, acsURL);
+           recipientEntityID, idpEntityID, realm, nameIDFormat, acsURL,
+           affiliationID);
     
         if (assertion == null) {
             SAML2Utils.debug.error(
@@ -663,6 +670,7 @@ public class IDPSSOUtil {
      * @param realm the realm name
      * @param nameIDFormat the <code>NameIDFormat</code>
      * @param acsURL the <code>ACS</code> service <code>url</code>
+     * @param affiliationID affiliationID for IDP initiated SSO
      * 
      * @return the <code>SAML Assertion</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -674,7 +682,8 @@ public class IDPSSOUtil {
         String idpEntityID,
         String realm,
         String nameIDFormat,
-        String acsURL) 
+        String acsURL,
+        String affiliationID) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.getAssertion: ";
@@ -753,7 +762,7 @@ public class IDPSSOUtil {
         NewBoolean isNewFederation = new NewBoolean();
         Subject subject = getSubject(session, authnReq, acsURL, 
             nameIDFormat, isNewFederation, realm, idpEntityID, 
-            recipientEntityID, effectiveTime);
+            recipientEntityID, effectiveTime, affiliationID);
 
         // register (spEntityID, nameID) with the sso token
         // for later logout use 
@@ -904,21 +913,21 @@ public class IDPSSOUtil {
             if (values != null && values.length != 0 &&
                 values[0] != null && values[0].length() != 0) {
                 authLevel = values[0];
-            }                                                     
+            }
         } catch (Exception e) {
             SAML2Utils.debug.error(classMethod +
                 "exception retrieving auth level info from the session: ", e);
             throw new SAML2Exception(
-                SAML2Utils.bundle.getString("errorGettingAuthnStatement")); 
+                SAML2Utils.bundle.getString("errorGettingAuthnStatement"));
         }
 
         IDPAuthnContextMapper idpAuthnContextMapper = 
             getIDPAuthnContextMapper(realm, idpEntityID);
-        
-        AuthnContext authnContext = 
+
+        AuthnContext authnContext =
             idpAuthnContextMapper.getAuthnContextFromAuthLevel(
                 authLevel, realm, idpEntityID);
-            
+
         authnStatement.setAuthnContext(authnContext);
        
         String sessionIndex = getSessionIndex(session);
@@ -1158,6 +1167,7 @@ public class IDPSSOUtil {
      * @param idpEntityID the entity id of the identity provider
      * @param recipientEntityID the entity id of the response recipient
      * @param effectiveTime the effective time of the assertion
+     * @param affiliationID affiliationID for IDP initiated SSO
      * 
      * @return the <code>SAML Subject</code> object
      * @exception SAML2Exception if the operation is not successful
@@ -1171,7 +1181,8 @@ public class IDPSSOUtil {
                          String realm,
                          String idpEntityID, 
                          String recipientEntityID,
-                         int effectiveTime) 
+                         int effectiveTime,
+                         String affiliationID) 
         throws SAML2Exception {
 
         String classMethod = "IDPSSOUtil.getSubject: ";
@@ -1187,25 +1198,53 @@ public class IDPSSOUtil {
                    SAML2Utils.bundle.getString("invalidSSOToken")); 
         }    
         boolean allowCreate = true; // allow create is the default
-        String spNameQualifier = null;
         String remoteEntityID = null;
+        String spNameQualifier = null;
+        boolean isAffiliation = false;
         if (authnReq != null) {
+            remoteEntityID = authnReq.getIssuer().getValue();
             NameIDPolicy nameIDPolicy = authnReq.getNameIDPolicy();
             if (nameIDPolicy != null) {
                 // this will take care of affiliation
-                spNameQualifier = nameIDPolicy.getSPNameQualifier();
                 allowCreate = nameIDPolicy.isAllowCreate();
+                spNameQualifier = nameIDPolicy.getSPNameQualifier();
+                if (spNameQualifier != null) {
+                    AffiliationDescriptorType affiDesc = metaManager.
+                        getAffiliationDescriptor(realm, spNameQualifier);
+
+                    if (affiDesc != null) {
+                        if (affiDesc.getAffiliateMember().contains(
+                            remoteEntityID)) {
+
+                            isAffiliation = true;
+                            remoteEntityID = spNameQualifier;
+                        } else {
+                            throw new SAML2Exception(SAML2Utils.bundle.
+                                getString("spNotAffiliationMember")); 
+                        }
+                    }
+                }
             }
-            if (spNameQualifier == null) {
-                spNameQualifier = authnReq.getIssuer().getValue();
-            }
-            remoteEntityID = authnReq.getIssuer().getValue();
         } else {
-            // TODO: this will not take care of affiliation
-            // for this IDP initiated case, more needs to
-            // be done
-            spNameQualifier = recipientEntityID;
-            remoteEntityID = recipientEntityID;
+            // IDP initialted SSO
+            if (affiliationID != null) {
+                AffiliationDescriptorType affiDesc = metaManager.
+                    getAffiliationDescriptor(realm, affiliationID);
+                if (affiDesc == null) {
+                    throw new SAML2Exception(SAML2Utils.bundle.getString(
+                        "affiliationNotFound"));
+                }
+                if (affiDesc.getAffiliateMember().contains(recipientEntityID)){
+                    isAffiliation = true;
+                    remoteEntityID = affiliationID;
+                    spNameQualifier = affiliationID;
+                } else {
+                    throw new SAML2Exception(SAML2Utils.bundle.getString(
+                        "spNotAffiliationMember")); 
+                }
+            } else {
+                remoteEntityID = recipientEntityID;
+            }
         }
     
         if ((nameIDFormat == null) || (nameIDFormat.trim().length() == 0)) {
@@ -1238,11 +1277,13 @@ public class IDPSSOUtil {
                 "Unable to get principal name from the session.", se);
             throw new SAML2Exception(
                    SAML2Utils.bundle.getString("invalidSSOToken")); 
-            }   
-            NameIDInfo info = AccountUtils.getAccountFederation(
-                userID, idpEntityID, recipientEntityID);
+            }
+
+            NameIDInfo info = AccountUtils.getAccountFederation(userID,
+                idpEntityID, remoteEntityID);
+
             if (info != null) {
-                nameID = getNameID(info);
+                nameID = info.getNameID();
             }
         }
         if (nameID == null) {
@@ -1260,20 +1301,20 @@ public class IDPSSOUtil {
             // read federation info from the persistent datastore
             IDPAccountMapper idpAccountMapper = 
                 SAML2Utils.getIDPAccountMapper(realm, idpEntityID);
-            nameID = idpAccountMapper.getNameID(
-                         session, idpEntityID, remoteEntityID); 
+            nameID = idpAccountMapper.getNameID(session, idpEntityID,
+                spNameQualifier); 
      
             if (!isTransient && allowCreate) {
                 // write federation info the into persistent datastore
                 nameIDInfo = new NameIDInfo(idpEntityID, remoteEntityID,
-                                    nameID, SAML2Constants.IDP_ROLE, false);
+                    nameID, SAML2Constants.IDP_ROLE, isAffiliation);
                 AccountUtils.setAccountFederation(nameIDInfo, userName);
             }
             if (!isTransient) {
                 isNewFederation.setValue(true);
             } else {
                 isNewFederation.setValue(false);
-            } 
+            }
         } else { 
             // existing federation
             isNewFederation.setValue(false);
@@ -2388,45 +2429,6 @@ public class IDPSSOUtil {
            }
        }
        return writerURL;
-    }
-   
-   /**
-     * Returns the <code>NameID</code> object from the <code>NameIDInfo</code>
-     * object.
-     * @param info the <code>NameIDInfo</code> object.
-     * @return the <code>NameID</code>.
-     * @exception SAML2Exception if any failure.
-     */
-    private static NameID getNameID(NameIDInfo info) throws SAML2Exception {
-        
-        NameID nameID = AssertionFactory.getInstance().createNameID(); 
-
-        String nameIDValue = info.getNameIDValue();
-        if(!NULL.equals(nameIDValue)) {
-            nameID.setValue(nameIDValue);   
-        }
-
-        String nameQualifier = info.getNameQualifier();
-        if(!NULL.equals(nameQualifier)) {
-            nameID.setNameQualifier(nameQualifier);   
-        }
-
-        String format = info.getFormat();
-        if(!NULL.equals(format)) {
-            nameID.setFormat(format);
-        }
-
-        String spNameIDValue = info.getSPNameIDValue();
-        if(!NULL.equals(spNameIDValue)) {
-            nameID.setSPProvidedID(spNameIDValue);
-        }
-
-        String spNameQualifier = info.getSPNameQualifier();
-        if(!NULL.equals(spNameQualifier)) {
-            nameID.setSPNameQualifier(spNameQualifier);
-        }
-
-        return nameID;
     }
 
      /**

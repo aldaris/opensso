@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.23 2008-02-28 18:39:42 asyhuang Exp $
+ * $Id: SAML2Constants.java,v 1.24 2008-03-04 23:40:08 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -475,6 +475,15 @@ public interface SAML2Constants {
      */
     public String BINDING="binding";
 
+    /**
+     * Constant for reqBinding parameter name
+     */
+    public String REQ_BINDING = "reqBinding";
+
+    /**
+     * Constant for affiliationID parameter name
+     */
+    public String AFFILIATION_ID = "affiliationID";
 
     /**
      * Constant for Binding namespace

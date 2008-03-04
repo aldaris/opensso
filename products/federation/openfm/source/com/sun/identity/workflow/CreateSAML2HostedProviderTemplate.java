@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.9 2008-02-29 00:26:35 exu Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.10 2008-03-04 23:42:58 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,6 +56,10 @@ public class CreateSAML2HostedProviderTemplate {
     public static final String P_AUTHN_AUTHORITY = "authna";
     public static final String P_AUTHN_AUTHORITY_E_CERT = "authnaecert";
     public static final String P_AUTHN_AUTHORITY_S_CERT = "authnascert";
+    public static final String P_AFFILIATION = "affiliation";
+    public static final String P_AFFI_MEMBERS = "affimembers";
+    public static final String P_AFFI_E_CERT = "affiecert";
+    public static final String P_AFFI_S_CERT = "affiscert";
     public static final String P_PDP = "pdp";
     public static final String P_PDP_E_CERT = "pdpecert";
     public static final String P_PDP_S_CERT = "pdpscert";
@@ -115,6 +121,13 @@ public class CreateSAML2HostedProviderTemplate {
         if (authnaAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(authnaAlias);
             buildAuthnAuthorityConfigTemplate(buff, authnaAlias, url,
+                mapParams);
+        }
+
+        String affiAlias = (String)mapParams.get(P_AFFILIATION);
+        if (affiAlias != null) {
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(affiAlias);
+            buildAffiliationConfigTemplate(buff, affiAlias, url,
                 mapParams);
         }
 
@@ -541,6 +554,29 @@ public class CreateSAML2HostedProviderTemplate {
         );
     }
 
+    private static void buildAffiliationConfigTemplate(
+        StringBuffer buff,
+        String affiAlias,
+        String url,
+        Map mapParams
+    )  {
+        String affiECertAlias = (String)mapParams.get(P_AFFI_E_CERT);
+        String affiSCertAlias = (String)mapParams.get(P_AFFI_S_CERT);
+
+        buff.append(
+            "    <AffiliationConfig metaAlias=\"" + affiAlias + "\">\n"+
+            "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
+            "\">\n" +
+            "            <Value>" + affiSCertAlias + "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"" +
+            SAML2Constants.ENCRYPTION_CERT_ALIAS + "\">\n" +
+            "            <Value>" + affiECertAlias + "</Value>\n" +
+            "        </Attribute>\n" +
+            "    </AffiliationConfig>\n"
+        );
+    }
+
     private static void buildPDPConfigTemplate(
         StringBuffer buff,
         String pdpAlias,
@@ -662,6 +698,12 @@ public class CreateSAML2HostedProviderTemplate {
         if (authnaAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(authnaAlias);
             addAuthnAuthorityTemplate(buff, authnaAlias, url, mapParams);
+        }
+
+        String affiAlias = (String)mapParams.get(P_AFFILIATION);
+        if (affiAlias != null) {
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(affiAlias);
+            addAffiliationTemplate(buff, entityID, affiAlias, url, mapParams);
         }
 
         String pdpAlias = (String)mapParams.get(P_PDP);
@@ -1109,6 +1151,69 @@ public class CreateSAML2HostedProviderTemplate {
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:URI\"\n" +
             "            Location=\"" + url + "/AIDReqUri/" + SAML2Constants.AUTHN_AUTH_ROLE + maStr + "\"/>\n" +
             "    </AuthnAuthorityDescriptor>\n");
+    }
+
+    private static void addAffiliationTemplate(
+        StringBuffer buff,
+        String entityID,
+        String affiAlias,
+        String url,
+        Map mapParams
+    ) throws SAML2MetaException {
+        String maStr = buildMetaAliasInURI(affiAlias);
+        
+        buff.append(
+            "    <AffiliationDescriptor\n" +
+            "        affiliationOwnerID=\"" + entityID + "\">\n");
+
+        List affiMembers = (List)mapParams.get(P_AFFI_MEMBERS);
+        for(Iterator iter = affiMembers.iterator(); iter.hasNext(); ) {
+            String affiMember = (String)iter.next();
+
+            buff.append(
+                "        <AffiliateMember>" + affiMember + "</AffiliateMember>\n");
+        }
+
+        String affiECertAlias = (String)mapParams.get(P_AFFI_E_CERT);
+        String affiSCertAlias = (String)mapParams.get(P_AFFI_S_CERT);
+
+        String affiSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+            affiSCertAlias);
+        if (affiSX509Cert != null) {
+            buff.append(
+                "        <KeyDescriptor use=\"signing\">\n" +
+                "            <KeyInfo xmlns=\"" +
+                SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                "                <X509Data>\n" +
+                "                    <X509Certificate>\n" + affiSX509Cert +
+                "                    </X509Certificate>\n" +
+                "                </X509Data>\n" +
+                "            </KeyInfo>\n" +
+                "        </KeyDescriptor>\n");
+        }
+        
+        String affiEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
+            affiECertAlias);
+        if (affiEX509Cert != null) {
+            buff.append(
+                "        <KeyDescriptor use=\"encryption\">\n" +
+                "            <KeyInfo xmlns=\"" +
+                SAML2MetaSecurityUtils.NS_XMLSIG + "\">\n" +
+                "                <X509Data>\n" +
+                "                    <X509Certificate>\n" + affiEX509Cert +
+                "                    </X509Certificate>\n" +
+                "                </X509Data>\n" +
+                "            </KeyInfo>\n" +
+                "            <EncryptionMethod Algorithm=" +
+                "\"http://www.w3.org/2001/04/xmlenc#aes128-cbc\">\n" +
+                "                <KeySize xmlns=\"" +
+                SAML2MetaSecurityUtils.NS_XMLENC +"\">" +
+                "128</KeySize>\n" +
+                "            </EncryptionMethod>\n" +
+                "        </KeyDescriptor>\n");
+        }
+        buff.append(
+            "    </AffiliationDescriptor>\n");
     }
 
     private static void addPDPTemplate(

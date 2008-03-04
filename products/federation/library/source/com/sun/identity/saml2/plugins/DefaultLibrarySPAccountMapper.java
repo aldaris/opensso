@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.5 2007-12-15 06:20:42 hengming Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.6 2008-03-04 23:40:09 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -151,7 +151,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
   
            try {
                userID = dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
-                   nameID, hostEntityID, remoteEntityID));
+                   nameID, hostEntityID, remoteEntityID, realm, role));
 
            } catch(DataStoreProviderException dse) {
                debug.error(

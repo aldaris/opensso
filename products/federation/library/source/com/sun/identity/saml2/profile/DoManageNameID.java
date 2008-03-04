@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.9 2008-02-21 23:18:55 hengming Exp $
+ * $Id: DoManageNameID.java,v 1.10 2008-03-04 23:40:09 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,6 +68,7 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.KeyDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.ManageNameIDServiceElement;
@@ -231,9 +232,11 @@ public class DoManageNameID {
             String requestType = (String)paramsMap.get("requestType");
             boolean changeID = "NewID".equals(requestType);
 
+            String affiliationID = SAML2Utils.getParameter(paramsMap,
+                SAML2Constants.AFFILIATION_ID); 
             ManageNameIDRequest mniRequest = createManageNameIDRequest(
                 session, realm, hostEntityID, hostEntityRole, remoteEntityID,
-                mniURL, changeID);
+                mniURL, changeID, affiliationID);
 
             String relayState = SAML2Utils.getParameter(paramsMap,
                              SAML2Constants.RELAY_STATE);
@@ -908,6 +911,144 @@ public class DoManageNameID {
         return success;
     }
 
+    private static Status processManageNameIDRequest(
+        ManageNameIDRequest mniRequest, String realm, String hostEntityID,
+        String remoteEntityID, String hostRole, String userID)
+        throws Exception {
+
+        String method = "processManageNameIDRequest: ";
+        
+        if (debug.messageEnabled()) {
+            debug.message(method + "Host EntityID is : "+ hostEntityID);
+            debug.message(method + "Host role is : " + hostRole);
+            debug.message(method + "Realm  is : " + realm);
+        }
+
+        NameID nameID = getNameIDFromMNIRequest(mniRequest, realm, 
+            hostEntityID, hostRole);
+        NameIDInfo oldNameIDInfo = getNameIDInfo(userID, hostEntityID,
+            remoteEntityID, hostRole, realm, nameID.getSPNameQualifier(),
+            true);
+
+        NameID oldNameID = null;
+        if (oldNameIDInfo != null) {
+            oldNameID = oldNameIDInfo.getNameID();
+        }
+
+        if (oldNameID == null) {
+            return SAML2Utils.generateStatus(SAML2Constants.REQUESTER,
+                SAML2Constants.UNKNOWN_PRINCIPAL, null);
+        }
+
+        List spFedSessions = null;
+
+        // Terminate
+        if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
+            removeIDPFedSession(remoteEntityID);
+        } else {
+            spFedSessions = (List)SPCache.fedSessionListsByNameIDInfoKey.remove(
+                oldNameIDInfo.getNameIDInfoKey().toValueString());
+        }
+                
+        if (!AccountUtils.removeAccountFederation(oldNameIDInfo, userID)) {
+
+            return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
+                SAML2Utils.bundle.getString("unableToTerminate"));
+        }
+
+        if (mniRequest.getTerminate()) {
+            return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
+                SAML2Utils.bundle.getString("requestSuccess"));
+        }
+
+        // newID case
+        NewID newID = getNewIDFromMNIRequest(mniRequest, realm, hostEntityID,
+            hostRole);
+
+        boolean isAffiliation = oldNameIDInfo.isAffiliation();
+        String spNameQualifier = oldNameID.getSPNameQualifier();
+        if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)){
+            NameID newNameID = AssertionFactory.getInstance().createNameID();
+            newNameID.setValue(oldNameID.getValue());
+            newNameID.setNameQualifier(oldNameID.getNameQualifier());
+            newNameID.setSPNameQualifier(spNameQualifier);
+            newNameID.setFormat(oldNameID.getFormat());
+            newNameID.setSPProvidedID(newID.getValue());
+
+            NameIDInfo newNameIDinfo = new NameIDInfo(hostEntityID,
+                (isAffiliation ? spNameQualifier : remoteEntityID), newNameID,
+                SAML2Constants.IDP_ROLE, isAffiliation);
+
+            AccountUtils.setAccountFederation(newNameIDinfo, userID);
+            NameIDandSPpair pair = new NameIDandSPpair(newNameID,
+                remoteEntityID);
+            IDPSession idpSession = getIDPFedSession(remoteEntityID);
+            synchronized(IDPCache.idpSessionsByIndices) {
+                List list = (List)idpSession.getNameIDandSPpairs();
+                list.add(pair);
+            }
+            return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
+                SAML2Utils.bundle.getString("requestSuccess"));
+        }
+
+        // SP ROLE
+        NameID newNameID = AssertionFactory.getInstance().createNameID();
+        newNameID.setValue(newID.getValue());
+        newNameID.setNameQualifier(oldNameID.getNameQualifier());
+        newNameID.setSPProvidedID(oldNameID.getSPProvidedID());
+        newNameID.setSPNameQualifier(spNameQualifier);
+        newNameID.setFormat(oldNameID.getFormat());
+
+        NameIDInfo newNameIDInfo = new NameIDInfo(
+            (isAffiliation ? spNameQualifier : hostEntityID), remoteEntityID,
+            newNameID, hostRole, isAffiliation);
+
+        AccountUtils.setAccountFederation(newNameIDInfo, userID);
+
+        if (spFedSessions != null) {
+            String newInfoKeyStr =
+                newNameIDInfo.getNameIDInfoKey().toValueString();
+
+            String infoKeyAttribute = AccountUtils.getNameIDInfoKeyAttribute();
+
+            synchronized (spFedSessions) {
+                for(Iterator iter = spFedSessions.iterator(); iter.hasNext();){
+                    SPFedSession spFedSession = (SPFedSession)iter.next();
+                    spFedSession.info = newNameIDInfo;
+                    String tokenID = spFedSession.spTokenID;
+                    try {
+                        Object session = sessionProvider.getSession(tokenID);
+                        String[] fromToken = sessionProvider.getProperty(
+                            session, infoKeyAttribute);
+                        if ((fromToken == null) || (fromToken.length == 0) ||
+                            (fromToken[0] == null) ||
+                            (fromToken[0].length() == 0)) {
+
+                            String[] values = { newInfoKeyStr };
+                            sessionProvider.setProperty(session,
+                                infoKeyAttribute, values);
+                        } else {
+                            if (fromToken[0].indexOf(newInfoKeyStr) == -1) {
+                                String[] values = { fromToken[0] +
+                                    SAML2Constants.SECOND_DELIM +
+                                    newInfoKeyStr };
+                                sessionProvider.setProperty(session,
+                                    infoKeyAttribute, values);
+                            }
+                        }
+                    } catch (SessionException ex) {
+                        debug.error("DoManageNameID." +
+                            "processManageNameIDRequest:", ex);
+                    }
+                }
+            }
+            SPCache.fedSessionListsByNameIDInfoKey.put(newInfoKeyStr,
+                spFedSessions);
+        }
+        return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
+            SAML2Utils.bundle.getString("requestSuccess"));
+    }
+
     private static ManageNameIDResponse processManageNameIDRequest(
         ManageNameIDRequest mniRequest,
         String metaAlias,
@@ -918,174 +1059,36 @@ public class DoManageNameID {
         HttpServletRequest request,
         HttpServletResponse response) {
 
-        String method = "processManageNameIDRequest: ";
-        Status status = null;
-        SPAccountMapper spAcctMapper = null;
-        IDPAccountMapper idpAcctMapper = null;
-        ManageNameIDResponse mniResponse = null;
+        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
         String hostEntityID = null;
-        String realm = null;
         String hostRole = null;
-        String userID = null; 
-        
+        Status status = null;
+
+        String userID = null;
         try {
-            realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
             hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
             hostRole = SAML2Utils.getHostEntityRole(paramsMap);
-            if (debug.messageEnabled()) {
-                debug.message(method + "Host EntityID is : "+ hostEntityID);
-                debug.message(method + "Host role is : " + hostRole);
-                debug.message(method + "Realm  is : " + realm);
-            }
-            
-            Issuer reqIssuer = mniRequest.getIssuer();
-            String requestId = mniRequest.getID();
-
-            SAML2Utils.verifyRequestIssuer(realm, hostEntityID, reqIssuer,
-                requestId);
+            SAML2Utils.verifyRequestIssuer(realm, hostEntityID, 
+                mniRequest.getIssuer(), mniRequest.getID());
 
             if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
-                idpAcctMapper = SAML2Utils.getIDPAccountMapper(realm,
-                    hostEntityID);
+                IDPAccountMapper idpAcctMapper = SAML2Utils.getIDPAccountMapper(
+                    realm, hostEntityID);
                 userID = idpAcctMapper.getIdentity(mniRequest, hostEntityID,
                     realm);
             } else if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-                spAcctMapper = SAML2Utils.getSPAccountMapper(realm,
-                    hostEntityID);
+                SPAccountMapper spAcctMapper = SAML2Utils.getSPAccountMapper(
+                    realm, hostEntityID);
                 userID = spAcctMapper.getIdentity(mniRequest, hostEntityID,
                     realm);
             }
 
             if (userID == null) {
-                status = SAML2Utils.generateStatus(SAML2Constants.REQUESTER,
+                status =  SAML2Utils.generateStatus(SAML2Constants.REQUESTER,
                     SAML2Constants.UNKNOWN_PRINCIPAL, null);
-            } else if (mniRequest.getTerminate()) {
-                if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
-                    removeIDPFedSession(remoteEntityID);
-                } else {
-                    NameID nameID = getNameIDFromMNIRequest(mniRequest, realm, 
-                                        hostEntityID, hostRole);
-                    String infoKeyString = 
-                            new NameIDInfoKey(nameID.getValue(), 
-                                    nameID.getSPNameQualifier(), 
-                                    nameID.getNameQualifier()).toValueString();                    SPCache.fedSessionListsByNameIDInfoKey.remove(
-                        infoKeyString);
-                }
-                
-                boolean removed = 
-                        removeFedAccount(userID, hostEntityID, remoteEntityID);
-                if (removed) {
-                    status = 
-                        SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
-                            SAML2Utils.bundle.getString("requestSuccess"));
-                }
             } else {
-                NewID newID = getNewIDFromMNIRequest(mniRequest, realm,
-                    hostEntityID, hostRole);
-                NameID oldNameID = null;
-                NameIDInfo oldNameIDInfo = AccountUtils.getAccountFederation(
-                    userID, hostEntityID, remoteEntityID);
-                if (oldNameIDInfo != null) {
-                    oldNameID = oldNameIDInfo.getNameID();
-                }
-                if (oldNameID == null) {
-                    status = SAML2Utils.generateStatus(SAML2Constants.REQUESTER,
-                        SAML2Constants.UNKNOWN_PRINCIPAL, null);
-                } else if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)){
-                    NameID newNameID = AssertionFactory.getInstance().
-                        createNameID();
-                    newNameID.setValue(oldNameID.getValue());
-                    newNameID.setNameQualifier(oldNameID.getNameQualifier());
-                    newNameID.setSPNameQualifier(
-                        oldNameID.getSPNameQualifier());
-                    newNameID.setFormat(oldNameID.getFormat());
-                    newNameID.setSPProvidedID(newID.getValue());
-
-                    NameIDInfo newNameIDinfo = new NameIDInfo(hostEntityID,
-                        remoteEntityID, newNameID, SAML2Constants.IDP_ROLE,
-                        false);
-                    removeFedAccount(userID, hostEntityID, remoteEntityID);
-                    IDPSession idpSession = getIDPFedSession(remoteEntityID);
-                    removeIDPFedSession(remoteEntityID);
-                    AccountUtils.setAccountFederation(newNameIDinfo, userID);
-                    NameIDandSPpair pair = new NameIDandSPpair(newNameID,
-                        remoteEntityID);
-                    synchronized(IDPCache.idpSessionsByIndices) {
-                        List list = (List)idpSession.getNameIDandSPpairs();
-                        list.add(pair);
-                    }
-                    status = SAML2Utils.generateStatus(
-                        SAML2Constants.SUCCESS,
-                        SAML2Utils.bundle.getString("requestSuccess"));
-
-                } else if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-                    NameID newNameID = AssertionFactory.getInstance().
-                        createNameID();
-                    newNameID.setValue(newID.getValue());
-                    newNameID.setNameQualifier(oldNameID.getNameQualifier());
-                    newNameID.setSPProvidedID(oldNameID.getSPProvidedID());
-                    newNameID.setSPNameQualifier(
-                        oldNameID.getSPNameQualifier());
-                    newNameID.setFormat(oldNameID.getFormat());
-
-                    NameIDInfo newNameIDInfo = new NameIDInfo(hostEntityID,
-                        remoteEntityID, newNameID, hostRole, false);
-                  
-                    removeFedAccount(userID, hostEntityID, remoteEntityID); 
-                    AccountUtils.setAccountFederation(newNameIDInfo, userID);
-
-                    String oldInfoKeyStr =
-                        oldNameIDInfo.getNameIDInfoKey().toValueString();
-
-                    String newInfoKeyStr =
-                        newNameIDInfo.getNameIDInfoKey().toValueString();
-
-                    String infoKeyAttribute =
-                        AccountUtils.getNameIDInfoKeyAttribute();
-                    List list = (List)SPCache.
-                         fedSessionListsByNameIDInfoKey.remove(oldInfoKeyStr);
-                    synchronized (list) {
-                        for(Iterator iter = list.iterator(); iter.hasNext();) {
-                            SPFedSession spFedSession =
-                                (SPFedSession)iter.next();
-                            spFedSession.info = newNameIDInfo;
-                            String tokenID = spFedSession.spTokenID;
-                            try {
-                                Object session =
-                                    sessionProvider.getSession(tokenID);
-                                String[] fromToken = sessionProvider.
-                                    getProperty(session, infoKeyAttribute);
-                                if ((fromToken == null) ||
-                                    (fromToken.length == 0) ||
-                                    (fromToken[0] == null) ||
-                                    (fromToken[0].length() == 0)) {
-
-                                    String[] values = { newInfoKeyStr };
-                                    sessionProvider.setProperty(session,
-                                        infoKeyAttribute, values);
-                                } else {
-                                    if (fromToken[0].indexOf(newInfoKeyStr) ==
-                                        -1){
-                                        String[] values = { fromToken[0] +
-                                            SAML2Constants.SECOND_DELIM +
-                                            newInfoKeyStr };
-                                        sessionProvider.setProperty(session,
-                                            infoKeyAttribute, values);
-                                    }
-                                }
-                            } catch (SessionException ex) {
-                                debug.error("DoManageNameID." +
-                                    "processManageNameIDRequest:", ex);
-                            }
-                        }
-                    }
-                    SPCache.fedSessionListsByNameIDInfoKey.put(
-                        newInfoKeyStr, list);
-                    status = SAML2Utils.generateStatus(
-                        SAML2Constants.SUCCESS,
-                        SAML2Utils.bundle.getString("requestSuccess"));
-                }
-                 
+                status = processManageNameIDRequest(mniRequest, realm,
+                    hostEntityID, remoteEntityID, hostRole, userID);
             }
         } catch (Exception e) {
             if (debug.messageEnabled()) {
@@ -1094,7 +1097,8 @@ public class DoManageNameID {
             status = SAML2Utils.generateStatus(SAML2Constants.RESPONDER,
                 e.toString());
         }
-        
+
+        ManageNameIDResponse mniResponse = null;
         try {
             String responseID = SAML2Utils.generateID();
             if (responseID == null) {
@@ -1199,7 +1203,7 @@ public class DoManageNameID {
     static private ManageNameIDRequest createManageNameIDRequest(
         Object session, String realm, String hostEntityID,
         String hostEntityRole, String remoteEntityID, String destination,
-        boolean changeID) throws SAML2Exception {
+        boolean changeID, String affiliationID) throws SAML2Exception {
 
         String method = "DoManageNameID.createManageNameIDRequest: ";
 
@@ -1208,7 +1212,8 @@ public class DoManageNameID {
         
         try {
             userID = sessionProvider.getPrincipalName(session);
-            nameID = getNameID(userID, hostEntityID, remoteEntityID);
+            nameID = getNameID(userID, hostEntityID, remoteEntityID,
+                hostEntityRole, affiliationID, realm);
              
         } catch (SessionException e) {
             logError("invalidSSOToken", LogUtil.INVALID_SSOTOKEN, null);
@@ -1438,128 +1443,120 @@ public class DoManageNameID {
             }
 
             String userID = sessionProvider.getPrincipalName(session);
+            mniUserId.append(userID);
+
             ManageNameIDRequest origMniReq = reqInfo.getManageNameIDRequest();
             NameID oldNameID = origMniReq.getNameID();
-            if (origMniReq.getTerminate()) {
-                if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-                    String nameIDValue = oldNameID.getValue();
-                    NameIDInfoKey infoKey = new NameIDInfoKey(nameIDValue,
-                        hostEntityID, remoteEntityID);
-                    String infoKeyStr = infoKey.toValueString();
-                    SPCache.fedSessionListsByNameIDInfoKey.remove(infoKeyStr);
-                    removeInfoKeyFromSession(session, infoKeyStr);
-                } else {
-                    removeIDPFedSession(remoteEntityID);
-                }
-                success = removeFedAccount(userID, hostEntityID,
-                    remoteEntityID);
-                mniUserId.append(userID);
+            List spFedSessions = null;
+            NameIDInfo oldNameIDInfo = getNameIDInfo(userID, hostEntityID,
+                remoteEntityID, hostRole, realm,
+                oldNameID.getSPNameQualifier(), true);
+            if (oldNameIDInfo == null) {
+                debug.error("DoManageNameID.checkMNIResponse: NameIDInfo " +
+                    "not found.");
+                return false;
+            }
+            // Terminate
+            if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
+                String infoKeyStr =
+                    oldNameIDInfo.getNameIDInfoKey().toValueString();
+                spFedSessions = (List)SPCache.fedSessionListsByNameIDInfoKey.
+                    remove(infoKeyStr);
+                removeInfoKeyFromSession(session, infoKeyStr);
             } else {
-                NameIDInfoKey oldInfoKey = new NameIDInfoKey(
-                    oldNameID.getValue(), hostEntityID, remoteEntityID);
-                String oldInfoKeyStr= oldInfoKey.toValueString();
+                removeIDPFedSession(remoteEntityID);
+            }
 
-                String newIDValue = origMniReq.getNewID().getValue();
+            if (!AccountUtils.removeAccountFederation(oldNameIDInfo, userID)) {
+                return false;
+            }
 
-                if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
-                    List spFedSession = 
-                        (List) SPCache.fedSessionListsByNameIDInfoKey.get(
-                        oldInfoKeyStr);
+            if (origMniReq.getTerminate()) {
+                return true;
+            }
 
-                    NameID newNameID = AssertionFactory.getInstance().
-                        createNameID();
+            // newID case
+            String newIDValue = origMniReq.getNewID().getValue();
+            boolean isAffiliation = oldNameIDInfo.isAffiliation();
+            String spNameQualifier = oldNameID.getSPNameQualifier();
+            if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
+                NameID newNameID = AssertionFactory.getInstance().
+                    createNameID();
 
-                    newNameID.setValue(oldNameID.getValue());
-                    newNameID.setFormat(oldNameID.getFormat());
-                    newNameID.setSPProvidedID(newIDValue);
-                    if (newNameID.getSPNameQualifier() == null) {
-                        newNameID.setSPNameQualifier(hostEntityID);
-                    }
-                    if (newNameID.getNameQualifier() == null) {
-                        newNameID.setNameQualifier(hostEntityID);
-                    }
+                newNameID.setValue(oldNameID.getValue());
+                newNameID.setFormat(oldNameID.getFormat());
+                newNameID.setSPProvidedID(newIDValue);
+                newNameID.setSPNameQualifier(spNameQualifier);
+                newNameID.setNameQualifier(oldNameID.getNameQualifier());
 
-                    NameIDInfoKey newInfoKey = new NameIDInfoKey(
-                        newNameID.getValue(), hostEntityID, remoteEntityID);
-                    String newInfoKeyStr = newInfoKey.toValueString();
-                    spFedSession = (List)SPCache.
-                        fedSessionListsByNameIDInfoKey.remove(oldInfoKeyStr);
-                    if (spFedSession != null) {
-                        SPCache.fedSessionListsByNameIDInfoKey.put(
-                            newInfoKeyStr, spFedSession);
-                    }
-                    removeInfoKeyFromSession(session, oldInfoKeyStr);
-                    success = removeFedAccount(userID, hostEntityID,
-                        remoteEntityID);
-                    mniUserId.append(userID);
+                NameIDInfo newNameIDInfo = new NameIDInfo(
+                    (isAffiliation ? spNameQualifier : hostEntityID),
+                    remoteEntityID, newNameID, hostRole, isAffiliation);
 
-                    NameIDInfo nameIDInfo = new NameIDInfo(hostEntityID,
-                        remoteEntityID, newNameID, SAML2Constants.SP_ROLE,
-                        false);
-                    AccountUtils.setAccountFederation(nameIDInfo, userID);
+                String newInfoKeyStr =
+                    newNameIDInfo.getNameIDInfoKey().toValueString();
+                if (spFedSessions != null) {
+                    SPCache.fedSessionListsByNameIDInfoKey.put(
+                        newInfoKeyStr, spFedSessions);
+                }
 
-                    try {
-                        String infoKeyAttribute = 
-                            AccountUtils.getNameIDInfoKeyAttribute();
+                AccountUtils.setAccountFederation(newNameIDInfo, userID);
 
-                        String[] fromToken = sessionProvider.getProperty(
-                            session, infoKeyAttribute);
-                        if ((fromToken == null) || (fromToken.length == 0) ||
-                            (fromToken[0] == null) ||
-                            (fromToken[0].length() == 0)) {
+                try {
+                    String infoKeyAttribute = 
+                        AccountUtils.getNameIDInfoKeyAttribute();
 
-                            String[] values = { newInfoKeyStr };
+                    String[] fromToken = sessionProvider.getProperty(
+                        session, infoKeyAttribute);
+                    if ((fromToken == null) || (fromToken.length == 0) ||
+                        (fromToken[0] == null) ||
+                        (fromToken[0].length() == 0)) {
+
+                        String[] values = { newInfoKeyStr };
+                        sessionProvider.setProperty(session,
+                            infoKeyAttribute, values);
+                    } else {
+                        if (fromToken[0].indexOf(newInfoKeyStr) == -1) {
+                            String[] values = { fromToken[0] +
+                                SAML2Constants.SECOND_DELIM +
+                                newInfoKeyStr };
                             sessionProvider.setProperty(session,
                                 infoKeyAttribute, values);
-                        } else {
-                            if (fromToken[0].indexOf(newInfoKeyStr) == -1) {
-                                String[] values = { fromToken[0] +
-                                    SAML2Constants.SECOND_DELIM +
-                                    newInfoKey.toValueString() };
-                                sessionProvider.setProperty(session,
-                                    infoKeyAttribute, values);
-                            }
                         }
-
-                    } catch (Exception e) {
-                        debug.message("DoManageNameID.checkMNIResponse:",e);
-                    }        
-
-                } else if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)){
-                    NameID newNameID = AssertionFactory.getInstance().
-                        createNameID();
-
-                    newNameID.setValue(newIDValue);
-                    newNameID.setFormat(oldNameID.getFormat());
-                    newNameID.setSPProvidedID(oldNameID.getSPProvidedID());
-                    if (newNameID.getSPNameQualifier() == null) {
-                        newNameID.setSPNameQualifier(remoteEntityID);
                     }
-                    if (newNameID.getNameQualifier() == null) {
-                        newNameID.setNameQualifier(hostEntityID);
-                    }
+                } catch (Exception e) {
+                    debug.message("DoManageNameID.checkMNIResponse:",e);
+                }        
 
-                    NameIDInfo newNameIDInfo = new NameIDInfo(hostEntityID,
-                        remoteEntityID, newNameID, SAML2Constants.IDP_ROLE,
-                        false);
+            } else if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)){
+                NameID newNameID = AssertionFactory.getInstance().
+                    createNameID();
 
-                    AccountUtils.setAccountFederation(newNameIDInfo, userID);
-                    removeIDPFedSession(remoteEntityID);
-                    NameIDandSPpair pair = new NameIDandSPpair(newNameID,
-                        remoteEntityID);
-                    IDPSession idpSession =
-                        (IDPSession)IDPCache.idpSessionsBySessionID.
-                        get(sessionProvider.getSessionID(session));
+                newNameID.setValue(newIDValue);
+                newNameID.setFormat(oldNameID.getFormat());
+                newNameID.setSPProvidedID(oldNameID.getSPProvidedID());
+                newNameID.setSPNameQualifier(spNameQualifier);
+                newNameID.setNameQualifier(hostEntityID);
 
-                    if (idpSession != null) {
-                        synchronized(IDPCache.idpSessionsByIndices) {
-                            List list = (List)idpSession.getNameIDandSPpairs();
-                            list.add(pair);
-                        }
+                NameIDInfo newNameIDInfo = new NameIDInfo(hostEntityID,
+                    (isAffiliation ? spNameQualifier : remoteEntityID),
+                    newNameID, SAML2Constants.IDP_ROLE, isAffiliation);
+
+                AccountUtils.setAccountFederation(newNameIDInfo, userID);
+                NameIDandSPpair pair = new NameIDandSPpair(newNameID,
+                    remoteEntityID);
+                IDPSession idpSession =
+                    (IDPSession)IDPCache.idpSessionsBySessionID.
+                    get(sessionProvider.getSessionID(session));
+
+                if (idpSession != null) {
+                    synchronized(IDPCache.idpSessionsByIndices) {
+                        List list = (List)idpSession.getNameIDandSPpairs();
+                        list.add(pair);
                     }
                 }
-                success = true;
             }
+            success = true;
 
         } else {
             logError("mniFailed", LogUtil.INVALID_MNI_RESPONSE , null);
@@ -1582,13 +1579,54 @@ public class DoManageNameID {
 
         return null;
     }
-    
-    static private boolean removeFedAccount(String userID,
-                    String hostEntityID,
-                    String remoteEntityID) throws SAML2Exception {
-        NameIDInfo nameInfo = AccountUtils.getAccountFederation(
-            userID, hostEntityID, remoteEntityID);
 
+    private static NameIDInfo getNameIDInfo(String userID, String hostEntityID,
+        String remoteEntityID, String hostRole, String realm,
+        String affiliationID, boolean invalidAffiIDAllowed)
+        throws SAML2Exception {
+    
+        NameIDInfo nameInfo = null;
+        if (affiliationID != null) {
+            AffiliationDescriptorType affiDesc =
+                metaManager.getAffiliationDescriptor(realm, affiliationID);
+            if (affiDesc != null) {
+                if (hostRole.equals(SAML2Constants.SP_ROLE)) {
+                    if (!affiDesc.getAffiliateMember().contains(hostEntityID)){
+                        throw new SAML2Exception(SAML2Utils.bundle.getString(
+                            "spNotAffiliationMember"));
+                    }
+                    nameInfo = AccountUtils.getAccountFederation(userID,
+                        affiliationID, remoteEntityID);
+                } else {
+                    if (!affiDesc.getAffiliateMember().contains(
+                        remoteEntityID)) {
+                        throw new SAML2Exception(SAML2Utils.bundle.getString(
+                            "spNotAffiliationMember"));
+                    }
+                    nameInfo = AccountUtils.getAccountFederation(userID,
+                        hostEntityID, affiliationID);
+                }
+            } else if (invalidAffiIDAllowed) {
+                nameInfo = AccountUtils.getAccountFederation(userID,
+                    hostEntityID, remoteEntityID);
+            } else {
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "affiliationNotFound"));
+            }
+        } else {
+            nameInfo = AccountUtils.getAccountFederation(userID, hostEntityID,
+                remoteEntityID);
+        }
+
+        return nameInfo;
+    }
+
+    private static boolean removeFedAccount(String userID, String hostEntityID,
+        String remoteEntityID, String hostRole, String realm,
+        String affiliationID) throws SAML2Exception {
+
+        NameIDInfo nameInfo = getNameIDInfo(userID, hostEntityID,
+             remoteEntityID, hostRole, realm, affiliationID, true);
         return AccountUtils.removeAccountFederation(nameInfo, userID);
     }
     
@@ -1619,21 +1657,23 @@ public class DoManageNameID {
         return mniService;
     }
 
-    static private NameID getNameID(String userID, 
-                        String hostEntityID,
-                        String remoteEntityID) throws SAML2Exception {
-        String method = "getNameID: ";
+    static private NameID getNameID(String userID, String hostEntityID,
+        String remoteEntityID, String hostEntityRole, String affiliationID,
+        String realm) throws SAML2Exception {
+
+        NameIDInfo nameIDInfo = getNameIDInfo(userID, hostEntityID,
+            remoteEntityID, hostEntityRole, realm, affiliationID, false);
+
         NameID nameID = null;
-        NameIDInfo nameIDInfo = AccountUtils.getAccountFederation(userID,
-                        hostEntityID, remoteEntityID);
         if (nameIDInfo != null) {
             nameID = nameIDInfo.getNameID();
             if (debug.messageEnabled()) {
-                debug.message(method + "Returned NameID for " + userID + ":");
-                debug.message(nameID.toXMLString());
+                debug.message("DoManageNameID.getNameID: userID = " +
+                    userID + ", nameID = " + nameID.toXMLString());
             }
         } else {
-            debug.error(SAML2Utils.bundle.getString("nullNameID"));
+            debug.error("DoManageNameID.getNameID: " +
+                SAML2Utils.bundle.getString("nullNameID"));
             throw new SAML2Exception(SAML2Utils.bundle.getString("nullNameID"));
         }
         

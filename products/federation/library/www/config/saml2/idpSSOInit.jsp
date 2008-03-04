@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOInit.jsp,v 1.3 2006-12-13 19:03:54 weisun2 Exp $
+   $Id: idpSSOInit.jsp,v 1.4 2008-03-04 23:41:00 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -73,6 +73,7 @@
 			  
 			    NOTE: There are other SAML defined values for these
 				  which are not supported by FM/AM.
+    7. affiliationID	    affiliation entity ID
 --%>
 <html>
 
