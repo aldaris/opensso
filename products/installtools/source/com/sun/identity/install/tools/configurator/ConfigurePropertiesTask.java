@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurePropertiesTask.java,v 1.4 2007-10-12 20:43:49 madan_ranganath Exp $
+ * $Id: ConfigurePropertiesTask.java,v 1.5 2008-03-04 01:59:59 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,6 +148,14 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
                                  
     }
 
+    public String getAgentMigratePropertiesFile(IStateAccess stateAccess,
+            Map properties) {
+        return (String) ConfigUtil.getConfigDirPath() + FILE_SEP
+                + (String) properties.get(
+                  STR_PRODUCT_CONFIG_FILENAME_AGENT_MIGRATE_PROPERTIES_KEY);
+                                 
+    }
+
     public static final String LOC_DR_ERR_TAG_SWAP_CONFIG = 
         "DR_ERR_TAG_SWAP_CONFIG";
 
@@ -161,6 +169,10 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
 
     public static final String STR_PRODUCT_CONFIG_FILENAME_AGENT_CONFIG_KEY = 
         "CONFIG_FILENAME_AGENT_CONFIG";
+
+    public static final String 
+	STR_PRODUCT_CONFIG_FILENAME_AGENT_MIGRATE_PROPERTIES_KEY = 
+        "CONFIG_FILENAME_AGENT_MIGRATE_PROPERTIES";
 
     public static final String 
         STR_PRODUCT_CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE_KEY =

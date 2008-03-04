@@ -192,7 +192,8 @@
                               value="AUDIT_LOG_FILENAME"/>
                 </task>
                 <task name="CONFIGURE_AGENT_PROPS">
-                    <class name="MigrateConfigurePropertiesTask" type="system"/>    
+                    <class name="MigrateWebAgentConfigurePropertiesTask" 
+			   type="system"/>    
                     <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
                               value="AMAgent.template"/>
                     <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
@@ -201,6 +202,8 @@
                               value="AMAgentConfiguration.template"/>
                     <property name="CONFIG_FILENAME_AGENT_CONFIG"
                               value="AMAgentConfiguration.properties"/>
+                    <property name="CONFIG_FILENAME_AGENT_MIGRATE_PROPERTIES"
+                              value="AMAgentMigration.properties"/>
                 </task>
                 <task name="CONFIGURE_MAGNUS_CONF">
                     <class name="ConfigureMagnusConfTask" type="custom"/> 

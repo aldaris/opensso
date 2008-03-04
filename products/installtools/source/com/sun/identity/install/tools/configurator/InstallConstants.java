@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.6 2008-02-05 18:46:11 leiming Exp $
+ * $Id: InstallConstants.java,v 1.7 2008-03-04 01:59:59 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,6 +145,10 @@ public interface InstallConstants extends ICommonToolsConstants {
     /** Field STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG **/
     public static final String STR_CONFIG_AGENT_CONFIG_FILE_PATH_TAG = 
         "AGENT_CONFIG_FILE_PATH";
+
+    /** Field STR_CONFIG_AGENT_MIGRATE_FILE_PATH_TAG **/
+    public static final String STR_CONFIG_AGENT_MIGRATE_FILE_PATH_TAG = 
+        "AGENT_MIGRATE_FILE_PATH";
     
    /**
     * Key to save new agent instance name on the remote server instance.

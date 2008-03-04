@@ -238,32 +238,45 @@ com.sun.identity.agents.config.profile.attribute.fetch.mode = NONE
 #
 # PROFILE ATTRIBUTES MAP
 #   The user profile attributes to be added to the HTTP header.  The 
-#   specification is of the format [ldap_attribute_name] = http_header_name.  
-#   ldap_attribute_name is the attribute in data store to be fetched and 
-#   http_header_name is the name of the header to which the value needs 
+#   specification is of the below format 
+#
+#   com.sun.identity.agents.config.profile.attribute.mapping[ldap_attribute_name] 
+#                                                              = http_header_name
+#
+#   where "ldap_attribute_name" is the attribute in data store to be fetched 
+#   and "http_header_name" is the name of the header to which the value needs 
 #   to be assigned.
+#
+#   Example:
+#    com.sun.identity.agents.config.profile.attribute.mapping[cn] = common-name
 #
 # NOTE: In most cases, in a destination application where a "http_header_name" 
 #       shows up as a request header, it will be prefixed by HTTP_, and all
 #       lower case letters will become upper case, and any - will become _;
 #       For example, "common-name" would become "HTTP_COMMON_NAME"
 #
+#  Other Examples:
+#    com.sun.identity.agents.config.profile.attribute.mapping[ou] = 
+#                                                             organizational-unit
+#    com.sun.identity.agents.config.profile.attribute.mapping[o] = organization
+#    com.sun.identity.agents.config.profile.attribute.mapping[mail] = email
+#    com.sun.identity.agents.config.profile.attribute.mapping[employeenumber] = 
+#                                                             employee-number
+#    com.sun.identity.agents.config.profile.attribute.mapping[c] = country
+#
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.profile.attribute.mapping[cn] = common-name
-com.sun.identity.agents.config.profile.attribute.mapping[ou] = organizational-unit
-com.sun.identity.agents.config.profile.attribute.mapping[o] = organization
-com.sun.identity.agents.config.profile.attribute.mapping[mail] = email
-com.sun.identity.agents.config.profile.attribute.mapping[employeenumber] = employee-number
-com.sun.identity.agents.config.profile.attribute.mapping[c] = country
+com.sun.identity.agents.config.profile.attribute.mapping[] = 
  
 #
 # SESSION ATTRIBUTES MODE 
 #   String attribute mode to specify if additional user session attributes should
 #   be introduced into the request. Possible values are:
 #   NONE - no additional user session attributes will be introduced.
-#   HTTP_HEADER - additional user session attributes will be introduced into HTTP header.
-#   HTTP_COOKIE - additional user session attributes will be introduced through cookies.
+#   HTTP_HEADER - additional user session attributes will be introduced into 
+#                 HTTP header.
+#   HTTP_COOKIE - additional user session attributes will be introduced through 
+#                 cookies.
 #   If not within these values, it will be considered as NONE.
 #
 # Hot-Swap Enabled: Yes
@@ -273,15 +286,23 @@ com.sun.identity.agents.config.session.attribute.fetch.mode = NONE
 #
 # SESSION ATTRIBUTES MAP
 #   The session attributes to be added to the HTTP header.  The specification is
-#   of the format [session_attribute_name] = http_header_name.  
-#   session_attribute_name is the attribute in session to be fetched and 
+#   of the below format
+#
+#   com.sun.identity.agents.config.session.attribute.mapping[session_attrib_name] 
+#                                                              = http_header_name
+#
+#   session_attrib_name is the attribute in session to be fetched and 
 #   http_header_name is the name of the header to which the value needs to be 
 #   assigned.
+#
+#   Example:
+#    com.sun.identity.agents.config.session.attribute.mapping[successURL] = 
+#                                                             success-url
 #
 #   NOTE: In most cases, in a destination application where a "http_header_name" 
 #       shows up as a request header, it will be prefixed by HTTP_, and all
 #       lower case letters will become upper case, and any - will become _;
-#       For example, "common-name" would become "HTTP_COMMON_NAME"
+#       For example, "success-url" would become "HTTP_SUCCESS_URL"
 #
 # Hot-Swap Enabled: Yes
 #
@@ -305,15 +326,22 @@ com.sun.identity.agents.config.response.attribute.fetch.mode = NONE
 #
 # RESPONSE ATTRIBUTES MAP
 #   The response attributes to be added to the HTTP header.  The specification is
-#   of the format response_attribute_name|http_header_name[,...].  
-#   response_attribute_name is the attribute in policy response to be fetched and 
+#   of the format 
+#
+#   com.sun.identity.agents.config.response.attribute.mapping[resp_attrib_name] 
+#                                                              = http_header_name
+#   resp_attrib_name is the attribute in policy response to be fetched and 
 #   http_header_name is the name of the header to which the value needs to be 
 #   assigned.
+#
+#   Example:
+#    com.sun.identity.agents.config.session.attribute.mapping[attr1] = 
+#                                                             response-attr-one
 #
 #   NOTE: In most cases, in a destination application where a "http_header_name" 
 #       shows up as a request header, it will be prefixed by HTTP_, and all
 #       lower case letters will become upper case, and any - will become _;
-#       For example, "common-name" would become "HTTP_COMMON_NAME"
+#       For example, "response-attr-one" would become "HTTP_RESPONSE_ATTR_ONE"
 #
 # Hot-Swap Enabled: Yes
 #

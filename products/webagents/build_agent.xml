@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.7 2007-10-12 21:37:48 madan_ranganath Exp $
+   $Id: build_agent.xml,v 1.8 2008-03-04 02:03:35 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -125,6 +125,13 @@
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.basedir}/conf">
                 <include name="AMAgentConfiguration.template"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy AMAgentMigration.template file -->
+        <copy todir="${container.web_agent.config.dir}">
+            <fileset dir="${webagents.basedir}/conf">
+                <include name="AMAgentMigration.properties"/>
             </fileset>
         </copy>
 
