@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationSender.java,v 1.2 2007-09-18 00:17:57 ericow Exp $
+ * $Id: NotificationSender.java,v 1.3 2008-03-04 00:28:23 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.share.NotificationSet;
 import com.iplanet.services.comm.share.PLLBundle;
 import com.sun.identity.common.HttpURLConnectionManager;
+import com.sun.identity.shared.Constants;
 
 public class NotificationSender {
 
@@ -42,6 +43,9 @@ public class NotificationSender {
 
     private NotificationSet set;
 
+    private static boolean useCache = Boolean.getBoolean(
+        SystemProperties.get(Constants.URL_CONNECTION_USE_CACHE, "false"));
+    
     NotificationSender(URL u, NotificationSet s) {
         url = u;
         set = s;
@@ -53,7 +57,7 @@ public class NotificationSender {
         try {
             conn = HttpURLConnectionManager.getConnection(url);
             conn.setDoOutput(true);
-            conn.setUseCaches(false);
+            conn.setUseCaches(useCache);
             conn.setRequestMethod("POST");
             if (SystemProperties.iasGXId != null) {
                 conn.setRequestProperty("Cookie", "GX_jst="

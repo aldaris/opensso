@@ -17,18 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLClient.java,v 1.6 2007-11-01 17:30:24 ericow Exp $
+ * $Id: PLLClient.java,v 1.7 2008-03-04 00:27:09 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.client;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.share.PLLBundle;
 import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.ResponseSet;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.naming.WebtopNaming.SiteMonitor;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.common.HttpURLConnectionManager;
 import java.io.BufferedReader;
@@ -64,6 +66,11 @@ public class PLLClient {
     private static Hashtable notificationHandlers = new Hashtable();
 
     private static Debug debug = Debug.getInstance("PLLClient");
+    
+    private static boolean useCache = Boolean.getBoolean(
+      SystemProperties.get(Constants.URL_CONNECTION_USE_CACHE, "false"));
+    
+    
 
     /**
      * Translates the Java object to an XML RequestSet document and sends the
@@ -139,7 +146,7 @@ public class PLLClient {
     	    
             conn = HttpURLConnectionManager.getConnection(url);
             conn.setDoOutput(true);
-            conn.setUseCaches(false);
+            conn.setUseCaches(useCache);
             conn.setRequestMethod("POST");
 
             // replay cookies

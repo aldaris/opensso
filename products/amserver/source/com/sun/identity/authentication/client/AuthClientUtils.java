@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.7 2008-02-20 06:42:36 superpat7 Exp $
+ * $Id: AuthClientUtils.java,v 1.8 2008-03-04 00:29:01 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,6 +158,8 @@ public class AuthClientUtils {
         SystemProperties.get(Constants.IDENTITY_WEB_CONTAINER);
     private static String serverURL = null;
     static Debug utilDebug = Debug.getInstance("amAuthClientUtils");
+    private static boolean useCache = Boolean.getBoolean(SystemProperties.get(
+        com.sun.identity.shared.Constants.URL_CONNECTION_USE_CACHE, "false"));
 
     static {
         // Initialzing variables
@@ -1934,7 +1936,7 @@ public class AuthClientUtils {
             }
             conn = HttpURLConnectionManager.getConnection(authURL);
             conn.setDoOutput( true );
-            conn.setUseCaches( false );
+            conn.setUseCaches( useCache );
             conn.setRequestMethod("POST");
             conn.setFollowRedirects(false);
             conn.setInstanceFollowRedirects(false);

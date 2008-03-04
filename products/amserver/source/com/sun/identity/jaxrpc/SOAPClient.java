@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.6 2007-12-10 19:19:21 beomsuk Exp $
+ * $Id: SOAPClient.java,v 1.7 2008-03-04 00:30:12 beomsuk Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.entity.EntityException;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
@@ -111,6 +112,9 @@ public class SOAPClient {
     Exception exception;
     
     boolean isException;
+    
+    private static boolean useCache = Boolean.getBoolean(
+        SystemProperties.get(Constants.URL_CONNECTION_USE_CACHE, "false"));
     
     /**
      * Constructor for applications that would like to dynamically set the SOAP
@@ -180,7 +184,7 @@ public class SOAPClient {
             HttpURLConnection connection = 
                 HttpURLConnectionManager.getConnection(endpoint);
             connection.setDoOutput(true);
-            // connection.setUseCaches(false);
+            connection.setUseCaches(useCache);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
                 "text/xml; charset=\"utf-8\"");

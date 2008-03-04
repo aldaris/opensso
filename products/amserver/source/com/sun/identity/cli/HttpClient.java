@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpClient.java,v 1.1 2006-07-17 18:11:00 veiming Exp $
+ * $Id: HttpClient.java,v 1.2 2008-03-04 00:29:35 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.Constants;
 
 /**
  * A client to make connection to the Web CLI servlet to make CLI request.
@@ -47,6 +49,8 @@ public class HttpClient {
     private static final String PROP_HOST = "host";
     private static final String PROP_PORT = "port";
     private static final String PROP_URI = "deployment-uri";
+    private static boolean useCache = Boolean.getBoolean(
+        SystemProperties.get(Constants.URL_CONNECTION_USE_CACHE, "false"));
 
     /**
      * Creates a URL connection to the Web CLI servlet, create and
@@ -60,7 +64,7 @@ public class HttpClient {
             HttpURLConnection connection = (HttpURLConnection)
                 url.openConnection();
             connection.setDoOutput(true);
-            connection.setUseCaches(false);
+            connection.setUseCaches(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty(
                 "Content-type", "application/x-www-form-urlencoded");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.16 2008-01-09 19:11:20 beomsuk Exp $
+ * $Id: Constants.java,v 1.17 2008-03-04 00:27:46 beomsuk Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -760,4 +760,10 @@ public interface Constants {
      */
     String CLIENT_CERTIFICATE_ALIAS =
         "com.sun.identity.security.keyStore.clientAlias";        
+
+    /**
+     * Certificate Alias name for SSL Client Auth 
+     */
+    String URL_CONNECTION_USE_CACHE =
+        "com.sun.identity.urlconnection.useCache";        
 }
