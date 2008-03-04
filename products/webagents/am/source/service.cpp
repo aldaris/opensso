@@ -1352,7 +1352,7 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
 	throw InternalException(func, "Session query failed.", status);
     }
 
-    if (isNewEntry || refetchPolicy) {
+    if (refetchPolicy) {
         policyUpdated = do_update_policy(ssoTok, resName, actionName, env,
                                          sessionInfo, scope, policyEntry,
                                          attrList, properties);
