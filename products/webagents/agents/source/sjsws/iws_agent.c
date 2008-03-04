@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.9 2008-02-26 19:11:44 madan_ranganath Exp $
+ * $Id: iws_agent.c,v 1.10 2008-03-04 02:05:00 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -293,8 +293,8 @@ static int create_buffer_withpost(const char *key, am_web_postcache_data_t
 
 /**
   * Function Name: append_post_data
-  * This menthod is called when the SAF finds a /dummypost.htm extension to the
-  * the URL that the browser is trying to reach. If it finds "/dummypost.htm", it
+  * This method is called when the SAF finds a /dummypost.htm extension to the
+  * the URL that the browser is trying to reach. If it finds "/dummypost.htm", 
   * the method needs to find the post data from cache and repost it
   *
   * Input:  As defined by a SAF
