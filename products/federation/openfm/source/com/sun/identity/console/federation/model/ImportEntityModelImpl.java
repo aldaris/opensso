@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.5 2007-10-16 22:09:40 exu Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.6 2008-03-04 17:56:04 babysunil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
-
+import com.sun.identity.federation.cli.ImportMetaData;
 /**
  * This class provides import entity provider related functionality. Currently
  * the supported types are SAMLv2, IDFF, and WSFederation.
@@ -220,8 +220,10 @@ public class ImportEntityModelImpl extends AMModelBase
         throws SAML2MetaException, AMConsoleException
     {        
         try {
-            Object obj = SAML2MetaUtils.convertStringToJAXB(standardMetaData);
             Document doc = XMLUtils.toDOMDocument(standardMetaData, debug);
+            ImportMetaData importmetadata = new ImportMetaData();
+                   importmetadata.workaroundAbstractRoleDescriptor(doc);
+            Object obj = SAML2MetaUtils.convertNodeToJAXB(doc); 
 
             if (obj instanceof EntityDescriptorElement) {
                 EntityDescriptorElement descriptor =
