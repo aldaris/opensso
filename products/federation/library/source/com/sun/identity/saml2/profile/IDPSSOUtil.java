@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.20 2008-02-29 00:22:04 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.21 2008-03-04 17:50:14 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1269,7 +1269,11 @@ public class IDPSSOUtil {
                                     nameID, SAML2Constants.IDP_ROLE, false);
                 AccountUtils.setAccountFederation(nameIDInfo, userName);
             }
-            isNewFederation.setValue(true);
+            if (!isTransient) {
+                isNewFederation.setValue(true);
+            } else {
+                isNewFederation.setValue(false);
+            } 
         } else { 
             // existing federation
             isNewFederation.setValue(false);

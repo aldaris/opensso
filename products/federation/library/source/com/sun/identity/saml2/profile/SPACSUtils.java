@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.14 2008-01-25 14:22:21 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.15 2008-03-04 17:50:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1028,7 +1028,6 @@ public class SPACSUtils {
         if (userName == null) {
             userName = existUserName;
         }
-        // TODO: take care of session upgrade and different user case
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(
                 classMethod + "process: userName =[" + userName + "]");
@@ -1398,6 +1397,7 @@ public class SPACSUtils {
                     SPFedSession temp = (SPFedSession) iter.next();
                     if (temp.idpSessionIndex.equals(sessionIndex)) {
                         temp.spTokenID = tokenID;
+                        temp.info = info;
                         found = true;
                         break;
                     }

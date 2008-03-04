@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.3 2008-01-16 04:35:37 hengming Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.4 2008-03-04 17:50:14 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 package com.sun.identity.saml2.plugins;
 
 import java.security.PrivateKey;
+import java.util.List;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -45,7 +46,10 @@ import com.sun.identity.saml2.common.AccountUtils;
 import com.sun.identity.saml2.assertion.EncryptedID;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.assertion.AssertionFactory;
+import com.sun.identity.saml2.profile.IDPCache;
+import com.sun.identity.saml2.profile.IDPSession;
 import com.sun.identity.saml2.profile.IDPSSOUtil;
+import com.sun.identity.saml2.profile.NameIDandSPpair;
 
 /**
  * This class <code>DefaultIDPAccountMapper</code> is the default
@@ -101,9 +105,34 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
         if (nameIDFormat != null &&
             nameIDFormat.equals(SAML2Constants.X509_SUBJECT_NAME)) {
             nameIDValue = userID;
-        } else {
+        } else if (nameIDFormat != null &&
+            nameIDFormat.equals(SAML2Constants.NAMEID_TRANSIENT_FORMAT))
+        {
+            String sessionIndex = IDPSSOUtil.getSessionIndex(session);
+            if (sessionIndex != null) {
+                IDPSession idpSession = 
+                    (IDPSession)IDPCache.idpSessionsByIndices.get(sessionIndex);
+                if (idpSession != null) {
+                    List list = (List)idpSession.getNameIDandSPpairs();
+                    if (list != null && !list.isEmpty()) {
+                        Iterator iter = list.iterator();
+                        while (iter.hasNext()) {
+                            NameIDandSPpair pair =
+                                (NameIDandSPpair) iter.next();
+                            if (pair.getSPEntityID().equals(remoteEntityID)) {
+                                nameIDValue = pair.getNameID().getValue();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (nameIDValue == null) {
             nameIDValue = SAML2Utils.createNameIdentifier();
         }
+
         NameID nameID = AssertionFactory.getInstance().createNameID(); 
         nameID.setValue(nameIDValue);
         nameID.setFormat(nameIDFormat);
