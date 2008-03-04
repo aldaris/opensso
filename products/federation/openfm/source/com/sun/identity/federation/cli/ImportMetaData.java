@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.8 2007-12-15 06:27:23 hengming Exp $
+ * $Id: ImportMetaData.java,v 1.9 2008-03-04 17:57:54 babysunil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -637,7 +637,7 @@ public class ImportMetaData extends AuthenticatedCommand {
         return buff.toString();
     }
 
-    private static void workaroundAbstractRoleDescriptor(
+    public static void workaroundAbstractRoleDescriptor(
         Document doc) {
 
         NodeList nl = doc.getDocumentElement().getElementsByTagNameNS(
