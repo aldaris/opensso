@@ -1,8 +1,15 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<!--
-   The contents of this file are subject to the terms
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Security Token Service Client Sample</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGEDBY" CONTENT="Mrudul Uchil">
+	<META NAME="CHANGED" CONTENT="20080304;13510800">
+	<META NAME="CHANGEDBY" CONTENT="Mrudul Uchil">
+	<META NAME="CHANGEDBY" CONTENT="Mrudul Uchil">
+	<!-- The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
    compliance with the License.
@@ -21,207 +28,176 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.5 2007-11-30 19:08:01 mrudul_uchil Exp $
+   $Id: index.html,v 1.6 2008-03-04 23:42:49 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
-  <title>Security Token Service Client Sample</title>
-  <meta http-equiv="Content-Type"
- content="text/html; charset=iso-8859-1">
-  <link rel="stylesheet" type="text/css"
- href="../com_sun_web_ui/css/css_ns6up.css">
-</head>
-<body class="DefBdy">
-<div class="MstDiv">
-<table class="MstTblTop" title="" border="0" cellpadding="0"
- cellspacing="0" width="100%">
-  <tbody>
-    <tr>
-      <td nowrap="nowrap">&nbsp;</td>
-      <td nowrap="nowrap">&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
-<table class="MstTblBot" title="" border="0" cellpadding="0"
- cellspacing="0" width="100%">
-  <tbody>
-    <tr>
-      <td class="MstTdTtl" width="99%">
-      <div class="MstDivTtl"><img name="ProdName"
- src="../console/images/PrimaryProductName.png" alt=""></div>
-      </td>
-      <td class="MstTdLogo" width="1%"><img
- name="RMRealm.mhCommon.BrandLogo"
- src="../com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo"
- border="0" height="55" width="31"></td>
-    </tr>
-  </tbody>
-</table>
-<table class="MstTblEnd" border="0" cellpadding="0" cellspacing="0"
- width="100%">
-  <tbody>
-    <tr>
-      <td><img name="RMRealm.mhCommon.EndorserLogo"
- src="../com_sun_web_ui/images/masthead/masthead-sunname.gif"
- alt="Sun(TM) Microsystems, Inc." align="right" border="0" height="10"
- width="108"></td>
-    </tr>
-  </tbody>
-</table>
-</div>
-<div class="SkpMedGry1"><a name="SkipAnchor2089" id="SkipAnchor2089"></a></div>
-<div class="SkpMedGry1"><a href="#SkipAnchor4928"><img
- src="../com_sun_web_ui/images/other/dot.gif"
- alt="Jump Over Tab Navigation Area. Current Selection is: Access Control"
- border="0" height="1" width="1"></a></div>
-<table border="0" cellpadding="10" cellspacing="0" width="100%">
-  <tbody>
-    <tr>
-      <td>
-      <p>&nbsp;</p>
-      <a href="../index.html">Client Samples Main Page</a>
-      <p>&nbsp;</p>
-      <h3>Introduction</h3>
-      <p> This sample demonstrates the usage of Security Token Service
-Client API for obtaining security tokens from a Security Token Service
-hosted on Federated Access Manager. <br>
-There are three parties involved in this sample: <br>
-* Web Services Client (WSC) <br>
-* Web Services Provider (WSP) <br>
-* Security Token Service (STS)<br>
-      </p>
-      <p>The security token service issues security tokens for web
-services clients so that web services clients could present it to the
-web services providers for authentication purposes.The Federated
-Access Manager Security Token Service currently issues
-SAML1 security tokens and SAML2 security tokens for web services
-clients. In order to generate SAML Tokens, web services client must
-need to authenticate against
-using it's X509 Certificate. <br>
-      </p>
-      <h3>Setup</h3>
-This sample needs configuration of Security Token Service hosted on
-Federated Access Manager , Security Token Service Client
-Configuration, Web Services Client Configuration and Web Services
-Provider Configuration. The web services security in Federated Access
-Manager requires a JKS KeyStore. Creating a JKS
-Keystore is describes in SAML samples and this samples assumes that you
-have created the keystore and
-the corresponding keypass, storepass files and updated their locations
-in server's Security configuration. You could use different
-private keys for STS, WSC and WSP.<br>
-      <br>
-There
-is client AMConfig.properties file as ${user.home}/AMConfig.properties.
-You need to tag swap values
-of properties which are dynamic such as :<br>
-com.sun.identity.saml.xmlsig.keystore<br>
-com.sun.identity.saml.xmlsig.storepass<br>
-com.sun.identity.saml.xmlsig.keypass<br>
-      <br>
-Then restart the container.<br>
-      <br>
-      <span style="font-weight: bold;">Before you setup STS, deploy the
-stockquote web service client and stock quote web service provider as
-mentioned in the samples/glassfish/README file of web services agent
-samples. This is
-must before running this sample. </span><br style="font-weight: bold;">
-      <br>
-STS Setup:<br>
-      <br>
-Currently the FAM STS requires&nbsp; keystore to be configured in WSDL
-also. By default, the opensso.war does not have this configured as it
-would
-not know the location of keystore. So,this would require re-deploy of
-the FAM war on glassfish if you have
-already deployed FAM. <br>
-      <br>
-&nbsp;&nbsp; 1.&nbsp; Unwar the opensso.war <br>
-&nbsp;&nbsp; 2.&nbsp; Open the famsts.wsdl from WEB-INF/wsdl directory<br>
-&nbsp;&nbsp; 3.&nbsp; Check for TrustStore and KeyStore XML elements,
-uncomment these elements.<br>
-&nbsp;&nbsp; 4.&nbsp; Modify the kestore location, passwords, and
-recreate the war file using jar cvf&nbsp; opensso.war<br>
-&nbsp;&nbsp; 5.&nbsp; Redeploy the war file and make sure that
-FAM&nbsp; STS WSDL is accessible.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/&lt;opensso_deploy_uri&gt;/sts?wsdl<br>
-      <br>
-Agent configurations using "famadm" cli.<br>
-      <ol>
-        <li>Pick up the opensso.zip from the build directory, and unzip
-it into a temp directory. There should be a file famAdminTools.zip.
-Create a directory for CLI and unzip the famAdminTools.zip into the
-directory.</li>
-        <li>In the CLI directory, do "setup -p &lt;FAM config
-directory&gt;".&nbsp; The &lt;FAM config directory&gt; is the config
-directory you specified while configuring the opensso server.</li>
-        <li>The setup will create a directory called
-&lt;opensso_deploy_uri&gt;. cd to &lt;opensso_deploy_uri&gt;/bin to
-find admin tool "famadm".</li>
-        <li>Create Security Token Service agent of type "STSAgent"
-using "famadm" cli :
-          <div style="margin-left: 40px;">famadm create-agent -b
-SecurityTokenService -t STSAgent -u amadmin -f &lt;amadmin user
-password file&gt; -D STSAgentConfiguration.properties</div>
-Create STSAgentConfiguration.properties like :<br>
-&nbsp;&nbsp;&nbsp; <br>
-&nbsp;&nbsp;&nbsp; userpassword=&lt;agent password&gt;<br>
-&nbsp;&nbsp;&nbsp; sunIdentityServerDeviceStatus=Active<br>
-&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:security:null:X509Token<br>
-&nbsp;&nbsp;&nbsp; isRequestSign=true<br>
-&nbsp;&nbsp;&nbsp;
-STSEndpoint=&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/&lt;opensso_deploy_uri&gt;/sts<br>
-&nbsp;&nbsp;&nbsp;
-STSMexEndpoint=&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/&lt;opensso_deploy_uri&gt;/sts/mex
-&nbsp;&nbsp; <br>
-        </li>
-        <li>Create
-StockService Web Service agent of type "WSCAgent" using "famadm" cli :
-          <div style="margin-left: 40px;">famadm create-agent -b
-StockService -t WSCAgent -u amadmin -f &lt;amadmin user password
-file&gt; -D WSCAgentConfiguration.properties</div>
-Create WSCAgentConfiguration.properties like :<br>
-&nbsp;&nbsp;&nbsp; <br>
-&nbsp;&nbsp;&nbsp; userpassword=&lt;agent password&gt;<br>
-&nbsp;&nbsp;&nbsp; sunIdentityServerDeviceStatus=Active<br>
-&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:sts:security<br>
-&nbsp;&nbsp;&nbsp; STS=SecurityTokenService<br>
-&nbsp;&nbsp;&nbsp; isRequestSign=true<br>
-&nbsp;&nbsp;&nbsp;
-WSPEndpoint=&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;/StockService/StockService<br>
-&nbsp;&nbsp;&nbsp; <br>
-        </li>
-        <li>Create
-StockService Web Service Provider agent of type "WSPAgent" using
-"famadm" cli :
-          <div style="margin-left: 40px;">famadm create-agent -b wsp -t
-WSPAgent -u amadmin -f &lt;amadmin user password file&gt; -D
-WSPAgentConfiguration.properties</div>
-        </li>
-      </ol>
-      <div style="margin-left: 40px;">Create
-WSPAgentConfiguration.properties like :<br>
-&nbsp;&nbsp;&nbsp; <br>
-&nbsp;&nbsp;&nbsp; userpassword=&lt;agent password&gt;<br>
-&nbsp;&nbsp;&nbsp; sunIdentityServerDeviceStatus=Active<br>
-&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:security:null:SAMLToken-SV<br>
-&nbsp;&nbsp;&nbsp; SecurityMech=urn:sun:wss:security:null:SAMLToken-HK<br>
-&nbsp;&nbsp;&nbsp; isRequestSign=true<br>
-&nbsp;&nbsp; <br>
-      </div>
-      <h3>How to Run:</h3>
-1. Deploy the fam client samples in glassfish and make sure that you
-have configured as in readme index.html file<br>
-2. Access http://&lt;host&gt;:&lt;port&gt;/fam-client/sts/sts-client.jsp<br>
-3. Enter web service name as "StockService" and click "GetToken"<br>
-4. If successful, this will display SAML Assertion obtained from FAM
-Security Token Service.<br>
-      <br>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-</body>
-</html>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<TR>
+		<TD>
+			<P>&nbsp;</P>
+		</TD>
+		<TD>
+			<P>&nbsp;</P>
+		</TD>
+	</TR>
+</TABLE>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR>
+		<TD WIDTH=99%>
+			<P><IMG SRC="../console/images/PrimaryProductName.png" NAME="ProdName" ALIGN=BOTTOM WIDTH=94 HEIGHT=47 BORDER=0></P>
+		</TD>
+		<TD WIDTH=1%>
+			<P><IMG SRC="../com_sun_web_ui/images/other/javalogo.gif" NAME="RMRealm.mhCommon.BrandLogo" ALT="Java(TM) Logo" ALIGN=BOTTOM WIDTH=31 HEIGHT=55 BORDER=0></P>
+		</TD>
+	</TR>
+</TABLE>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR>
+		<TD>
+			<IMG SRC="../com_sun_web_ui/images/masthead/masthead-sunname.gif" NAME="RMRealm.mhCommon.EndorserLogo" ALT="Sun(TM) Microsystems, Inc." ALIGN=RIGHT WIDTH=108 HEIGHT=10 BORDER=0></TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-bottom: 0in"><A NAME="SkipAnchor2089"></A><A HREF="#SkipAnchor4928"><IMG SRC="../com_sun_web_ui/images/other/dot.gif" NAME="graphics1" ALT="Jump Over Tab Navigation Area. Current Selection is: Access Control" ALIGN=BOTTOM WIDTH=2 HEIGHT=2 BORDER=0></A></P>
+<TABLE WIDTH=1404 BORDER=0 CELLPADDING=10 CELLSPACING=0>
+	<COL WIDTH=1384>
+	<TR>
+		<TD WIDTH=1384>
+			<P STYLE="margin-bottom: 0in">&nbsp;</P>
+			<P STYLE="margin-bottom: 0in"><A HREF="../index.html">Client
+			Samples Main Page</A> 
+			</P>
+			<P STYLE="margin-bottom: 0in">&nbsp;</P>
+			<H3>Introduction</H3>
+			<P STYLE="margin-bottom: 0in">This sample demonstrates the usage
+			of Security Token Service (STS) Client API for obtaining security
+			tokens from a Security Token Service hosted on Federated Access
+			Manager server. STS client API makes WS-Trust request to STS
+			service in order to get Security Token from STS service. The
+			communication between STS client and STS service is secured using
+			Authentication token of STS client. This Authentication token used
+			in the sample is X509 token. STS service authenticates STS client
+			based on its X509 authentication token and issues SAML 1.1 or SAML
+			2.0 token.</P>
+			<H3>Setup</H3>
+			<P STYLE="margin-bottom: 0in">STS service :</P>
+			<OL>
+				<LI><P STYLE="margin-bottom: 0in">Deploy OpenSSO war</P>
+				<LI><P STYLE="margin-bottom: 0in">Configure OpenSSO web
+				application</P>
+				<LI><P STYLE="margin-bottom: 0in">Restart OpenSSO server</P>
+			</OL>
+			<P STYLE="margin-bottom: 0in">STS client :</P>
+			<OL>
+				<LI><P STYLE="margin-bottom: 0in">This FAM client web application</P>
+				<LI><P STYLE="margin-bottom: 0in">This page → &lt;fam client
+				web application protocol://host:port&gt;/sts/index.html</P>
+			</OL>
+			<H3>JSP pages</H3>
+			<P STYLE="margin-bottom: 0in">There are two sample JSP pages
+			included in this STS client sample.</P>
+			<OL>
+				<LI><P STYLE="margin-bottom: 0in">&lt;fam client web application
+				protocol://host:port&gt;/sts/sts-client-user.jsp</P>
+				<P STYLE="margin-bottom: 0in">This will redirect to
+				authentication service of OpenSSO server. 
+				</P>
+				<P STYLE="margin-bottom: 0in">Login with any existing OpenSSO
+				user. 
+				</P>
+				<P STYLE="margin-bottom: 0in">After successful user
+				authentication and valid user's SSOToken, the page will redirect
+				back to sts-client-user.jsp.</P>
+				<P STYLE="margin-bottom: 0in">sts-client-user.jsp will display
+				SAML assertion obtained from OpenSSO Security Token Service, in
+				exchange of end user's SSOToken.</P>
+				<P STYLE="margin-bottom: 0in"><B>Description :</B></P>
+				<P STYLE="margin-bottom: 0in">There are two parties involved in
+				this Sample :</P>
+				<P STYLE="margin-bottom: 0in">1) Security Token Service Client
+				(STS client)</P>
+				<P STYLE="margin-bottom: 0in">2) Security Token Service (STS)</P>
+				<P STYLE="margin-bottom: 0in">The Security Token Service (STS)
+				issues security tokens on behalf of authenticated end user. Here
+				JSP page selects the default STS client profile to talk to STS
+				service. Then STS client makes WS-Trust request to STS service
+				with its X509 certificate as the Authentication token. STS
+				service authenticates this X509 certificate and issues SAML 1.1
+				or SAML 2.0 (this token type of SAML1.1 or SAML 2.0 is dictated
+				by WSP's profile). This WS-Trust request also carries the end
+				user's authenticated SSOToken as “On Behalf Of” token
+				element. The owner of STS service issued SAML token would be the
+				authenticated End user and its identity (name id) would be the
+				End user's user identity.</P>
+				<LI><P STYLE="margin-bottom: 0in">&lt;fam client web application
+				protocol://host:port&gt;/sts/sts-client-wsc.jsp 
+				</P>
+				<P STYLE="margin-bottom: 0in">Login to OpenSSO Administration
+				console &lt;OpenSSO web application
+				protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin”
+				user and its password.</P>
+				<P STYLE="margin-bottom: 0in">Go to Configuration → Agents →
+				Web Service Client → click “wsc” agent profile</P>
+				<P STYLE="margin-bottom: 0in">Select Security Mechanism as
+				“STSSecurity”, STS Configuration as “SecurityTokenService”
+				and Web Service End Point as “default”.</P>
+				<P STYLE="margin-bottom: 0in">Save changes and Logout of OpenSSO
+				Administration console.</P>
+				<P STYLE="margin-bottom: 0in">Access &lt;fam client web
+				application protocol://host:port&gt;/sts/sts-client-wsc.jsp</P>
+				<P STYLE="margin-bottom: 0in">Enter web service name as &quot;wsc&quot;
+				and click &quot;GetToken&quot;.<BR>If successful, this will
+				display SAML Assertion obtained from OpenSSO Security Token
+				Service.</P>
+				<P STYLE="margin-bottom: 0in"><B>Description :</B></P>
+				<P STYLE="margin-bottom: 0in">There are four parties involved in
+				this Sample :</P>
+				<P STYLE="margin-bottom: 0in">1) Web Services Client (WSC) 
+				</P>
+				<P STYLE="margin-bottom: 0in">2) Web Services Provider (WSP) 
+				</P>
+				<P STYLE="margin-bottom: 0in">3) Security Token Service Client
+				(STS client)</P>
+				<P STYLE="margin-bottom: 0in">4) Security Token Service (STS)</P>
+				<P STYLE="margin-bottom: 0in">The Security Token Service (STS)
+				issues security tokens for Web Services Client (WSC) so that WSC
+				could present it to the Web Services Provider (WSP) for
+				authentication purposes. Here WSC selects to get security token
+				from STS, in order to present that token to WSP. When WSC selects
+				the STS issues token, it also selects the STS client profile
+				required to talk to STS service. Then STS client makes WS-Trust
+				request to STS service with its X509 certificate as the
+				Authentication token. STS service authenticates this X509
+				certificate and issues SAML 1.1 or SAML 2.0 (this token type of
+				SAML1.1 or SAML 2.0 is dictated by WSP's profile). The owner of
+				this SAML token would be STS client and its identity (name id)
+				would be certificate subject DN of the STS client's X509
+				certificate.</P>
+			</OL>
+			<H3>NOTEs</H3>
+			<P STYLE="margin-bottom: 0in">1) How to change WSP's profile to
+			dictate SAML 1.1 or SAML 2.0 token ?</P>
+			<OL START=2>
+				<P STYLE="margin-bottom: 0in">Login to OpenSSO Administration
+				console &lt;OpenSSO web application
+				protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin”
+				user and its password.</P>
+				<P STYLE="margin-bottom: 0in">Go to Configuration → Agents →
+				Web Service Provider → click “wsp” agent profile</P>
+				<P STYLE="margin-bottom: 0in">Select Security Mechanism as
+				“SAML2-HolderOfKey” or “SAML2-SenderVouches” for SAML 2.0
+				token type.</P>
+				<P STYLE="margin-bottom: 0in">Select Security Mechanism as
+				“SAML-HolderOfKey” or “SAML-SenderVouches” for SAML 1.1
+				token type.</P>
+				<P>Save changes and Logout of OpenSSO Administration console.</P>
+			</OL>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

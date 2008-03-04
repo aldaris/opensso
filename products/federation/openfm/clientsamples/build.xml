@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2008-02-07 01:27:26 mrudul_uchil Exp $
+   $Id: build.xml,v 1.17 2008-03-04 23:44:44 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -137,14 +137,22 @@
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib">
             <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xmlsec.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
         </copy>
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
+            <fileset dir="${openfm.dir}/wsdl" includes="famsts-client.wsdl"/>
+        </copy>
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
+            <fileset dir="${openfm.dir}/xml/wss" includes="wsit-client.xml"/>
+        </copy>
         
+        <!-- Commented since this hook will not work with classloader
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF"/>
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF/services"/>
        
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF/services">
             <fileset dir="${openfm.dir}/resources/META-INF/services" includes="com.sun.xml.ws.assembler.ClientPipelineHook"/>
         </copy>
-            
+        -->
+        
         <copy todir="${clientsamples.war.packages.dir}">
             <fileset dir="${openfm.clientsamples.dir}/war"
                  excludes="**/CVS build.xml" />

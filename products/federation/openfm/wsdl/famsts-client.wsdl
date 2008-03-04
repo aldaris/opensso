@@ -19,9 +19,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famsts.wsdl,v 1.5 2008-03-04 23:46:46 mrudul_uchil Exp $
+   $Id: famsts-client.wsdl,v 1.1 2008-03-04 23:46:46 mrudul_uchil Exp $
 
-   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 <wsdl:definitions name="SecurityTokenService" targetNamespace="http://localhost:8080/openfm/SecurityTokenService/" 
                                               xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
@@ -37,7 +37,11 @@
                                               xmlns:tns="http://localhost:8080/openfm/SecurityTokenService/" 
                                               xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" 
                                               xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" 
-                                              xmlns:wsa10="http://www.w3.org/2005/08/addressing">
+                                              xmlns:wsa10="http://www.w3.org/2005/08/addressing"
+                                              xmlns:i0="http://xmlsoap.org/DAB"
+                                              xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+                                              xmlns:sc="http://schemas.sun.com/2006/03/wss/client"
+                                              xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy">
 	<wsp:Policy wsu:Id="ISecurityTokenService_policy">
 		<wsp:ExactlyOne>
 			<wsp:All>
@@ -84,9 +88,6 @@
 					</wsp:Policy>
 				</sp:Wss10>
                                 <!--sunsp:DisableStreamingSecurity xmlns:sunsp="http://schemas.sun.com/2006/03/wss/server"/-->
-
-				<sc:KeyStore xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="@KEYSTORE_LOCATION@/keystore.jks" storepass="secret" alias="test"/>
-                                <sc:TrustStore xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="@KEYSTORE_LOCATION@/keystore.jks" storepass="secret"/>
 
 				<wspe:Utf816FFFECharacterEncoding xmlns:wspe="http://schemas.xmlsoap.org/ws/2004/09/policy/encoding"/>
 				<wsap10:UsingAddressing/>
@@ -154,24 +155,33 @@
                 </wsdl:operation>
         </wsdl:portType>
         <wsdl:binding name="ISecurityTokenService_Binding" type="tns:ISecurityTokenService">
-                <wsp:PolicyReference URI="#ISecurityTokenService_policy"/>
+                <wsp:PolicyReference URI="#STSClientKeystorePolicy"/>
                 <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
                 <wsdl:operation name="IssueToken">
                         <soap12:operation soapAction="http://schemas.xmlsoap.org/ws/2005/02/trust
 /RST/Issue" style="document"/>
                         <wsdl:input>
-                                <wsp:PolicyReference URI="#ISecurityTokenService_IssueToken_Input_policy"/>
                                 <soap12:body use="literal"/>
                         </wsdl:input>
                         <wsdl:output>
-                                <wsp:PolicyReference URI="#ISecurityTokenService_IssueToken_Output_policy"/>
                                 <soap12:body use="literal"/>
                         </wsdl:output>
                 </wsdl:operation>
         </wsdl:binding>
 	<wsdl:service name="SecurityTokenService">
                 <wsdl:port name="ISecurityTokenService_Port" binding="tns:ISecurityTokenService_Binding">
-                        <soap12:address location="http://localhost:8080/fam/sts"/>
+                        <soap12:address location="http://localhost:8080/opensso/sts"/>
                 </wsdl:port>
         </wsdl:service>
+        <wsp:Policy wsu:Id="STSClientKeystorePolicy"
+        xmlns:sc="http://schemas.sun.com/2006/03/wss/client"
+        xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy"
+        xmlns:scc="http://schemas.sun.com/ws/2006/05/sc/client" >
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sc:KeyStore wspp:visibility="private" location="@KEYSTORE_LOCATION@/keystore.jks" type="JKS" alias="test" storepass="secret"></sc:KeyStore>
+                <sc:TrustStore wspp:visibility="private" location="@KEYSTORE_LOCATION@/keystore.jks" type="JKS" storepass="secret" peeralias="test"></sc:TrustStore>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
 </wsdl:definitions>

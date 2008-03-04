@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-client.jsp,v 1.3 2008-02-07 01:24:32 mrudul_uchil Exp $
+   $Id: sts-client-wsc.jsp,v 1.1 2008-03-04 23:42:49 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -36,9 +36,9 @@ com.sun.identity.wss.provider.ProviderConfig"
 %>
 
 <html xmlns="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-    <head><title>Security Token Service Client Sample</title></head>
+    <head><title>Security Token Service Client Sample with WSC's Token</title></head>
     <body bgcolor="white">
-        <h1>Security Token Service Client Sample</h1>
+        <h1>Security Token Service Client Sample with WSC's Token</h1>
 <%
         if (request.getMethod().equals("GET")) {
 %>
@@ -46,7 +46,7 @@ com.sun.identity.wss.provider.ProviderConfig"
                 <table>
                     <tr>
                         <td>Web Service Provider Name</td>
-                        <td><input type="text" name="providerName" value="StockService"/></td>
+                        <td><input type="text" name="providerName" value="wsc"/></td>
                     </tr>
                 </table>
                 <input type="submit" value="Get Token" />
@@ -61,7 +61,8 @@ com.sun.identity.wss.provider.ProviderConfig"
                 ProviderConfig pc = ProviderConfig.getProvider(
                                     providerName, ProviderConfig.WSC);
                 //securityToken = client.getSecurityToken(pc, null);
-                securityToken = client.getSecurityToken(pc, null, (getServletConfig()).getServletContext());
+                securityToken = client.getSecurityToken(pc, null,
+                        (getServletConfig()).getServletContext());
                 sToken = com.sun.identity.shared.xml.XMLUtils.print(
                          securityToken.toDocumentElement()); 
             } catch (Exception e) {
@@ -72,7 +73,7 @@ com.sun.identity.wss.provider.ProviderConfig"
 %>
                <h2>Security Token:</h2>
                          Can not obtain security token .
-                        <p><a href="sts-client.jsp">Return to sts-client.jsp</a></p>
+                        <p><a href="sts-client-wsc.jsp">Return to sts-client-wsc.jsp</a></p>
 <%
             } else {
 %>
