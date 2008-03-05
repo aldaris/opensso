@@ -90,6 +90,18 @@ string trimUriOrgEntry(const string& uriString) {
     return retVal;
 }
 
+bool isValidAttrsFetchMode(const std::string &svcName) {
+    bool retValue = false;
+    if (!svcName.empty()) {
+        if ((!strcasecmp(svcName.c_str(), AM_POLICY_SET_ATTRS_AS_HEADER)) ||
+	    (!strcasecmp(svcName.c_str(), AM_POLICY_SET_ATTRS_AS_COOKIE))) {
+	     retValue = true;
+         }
+    }
+    return retValue;
+}
+
+
 /*
  * Throws:
  *	std::invalid_argument if an input argument is invalid.
@@ -335,9 +347,9 @@ Service::initialize(SSOToken ssoToken, Properties& properties) {
    bool do_sso_only = 
          properties.getBool(AM_WEB_DO_SSO_ONLY, false);
    bool fetchProfileAttrs = 
-        properties.getBool(AM_POLICY_PROFILE_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_PROFILE_ATTRS_MODE));
    bool fetchResponseAttrs = 
-        properties.getBool(AM_POLICY_RESPONSE_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_RESPONSE_ATTRS_MODE));
 
    if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
        Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and response attributes fetch mode is set to NONE");
@@ -707,16 +719,16 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
               AM_POLICY_FETCH_FROM_ROOT_RSRC_PROPERTY, true);
     
     // Fetch the profile mode
-    bool fetchProfileAttrs = 
-        properties.getBool(AM_POLICY_PROFILE_ATTRS_MODE, false);
+   bool fetchProfileAttrs = 
+        isValidAttrsFetchMode(properties.get(AM_POLICY_PROFILE_ATTRS_MODE));
 
     // Fetch the session mode
     bool fetchSessionAttrs = 
-        properties.getBool(AM_POLICY_SESSION_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_SESSION_ATTRS_MODE));
 
     // Fetch the response mode
     bool fetchResponseAttrs = 
-        properties.getBool(AM_POLICY_RESPONSE_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_RESPONSE_ATTRS_MODE));
 
     std::string userIdParamType =
 	   properties.get(
@@ -1053,17 +1065,17 @@ Service::getPolicyResult(const char *userSSOToken,
          properties.getBool(AM_WEB_DO_SSO_ONLY, false);
     
     // Fetch the profile mode
-    bool fetchProfileAttrs = 
-        properties.getBool(AM_POLICY_PROFILE_ATTRS_MODE, false);
+   bool fetchProfileAttrs = 
+        isValidAttrsFetchMode(properties.get(AM_POLICY_PROFILE_ATTRS_MODE));
 
     // Fetch the session mode
     bool fetchSessionAttrs = 
-        properties.getBool(AM_POLICY_SESSION_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_SESSION_ATTRS_MODE));
 
     // Fetch the response mode
     bool fetchResponseAttrs = 
-        properties.getBool(AM_POLICY_RESPONSE_ATTRS_MODE, false);
-    
+        isValidAttrsFetchMode(properties.get(AM_POLICY_RESPONSE_ATTRS_MODE));
+
     if (fetchProfileAttrs) {
 	profileAttributesMap.parsePropertyKeyValue(
 		properties.get(AM_POLICY_PROFILE_ATTRS_MAP, ""),
@@ -1392,10 +1404,12 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 
      bool do_sso_only = 
          properties.getBool(AM_WEB_DO_SSO_ONLY, false);
+
      bool fetchProfileAttrs = 
-         properties.getBool(AM_POLICY_PROFILE_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_PROFILE_ATTRS_MODE));
+
      bool fetchResponseAttrs = 
-         properties.getBool(AM_POLICY_RESPONSE_ATTRS_MODE, false);
+        isValidAttrsFetchMode(properties.get(AM_POLICY_RESPONSE_ATTRS_MODE));
           
     if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
         Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and "
