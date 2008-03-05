@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.17 2008-02-26 01:56:38 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.18 2008-03-05 18:00:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -290,7 +290,7 @@ public class ClientConfigCreator {
                             value;
                 } else {
                     value = configDef1.getString(
-                            TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + 
                             value;
                 }
             }
