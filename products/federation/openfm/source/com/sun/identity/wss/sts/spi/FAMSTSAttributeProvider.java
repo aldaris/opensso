@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.4 2007-11-13 19:46:57 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.5 2008-03-05 18:24:25 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,33 +52,37 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         Iterator iter = subject.getPublicCredentials().iterator();
         boolean isFAMTokenFound = false;
         while(iter.hasNext()) {
-        Object  object = iter.next();
-                
-        if(object instanceof Element) {
-           Element credential = (Element)object;
-           STSUtils.debug.message("Credential: " + XMLUtils.print(credential));
-           if(credential.getLocalName().equals("FAMToken")) {           
-              try {
-                  STSClientUserToken userToken = 
-                          new STSClientUserToken(credential);
-                  String tokenId = userToken.getTokenId();
-                  if(userToken.getType().equals(
-                          STSConstants.SSO_TOKEN_TYPE)) {
-                     SSOToken ssoToken = SSOTokenManager.getInstance().
-                             createSSOToken(userToken.getTokenId());
-                     name = ssoToken.getPrincipal().getName();
-                     isFAMTokenFound = true;
-                  }
-                  
-              } catch (FAMSTSException fae) {
-                  STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" +
-                          "Attributes: Error in retrieving user token", fae);
-              } catch (SSOException se) {
-                  STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" +
-                          "Attributes: Error in retrieving user token", se);
-              }              
-           }          
-          }
+            Object  object = iter.next();
+
+            if(object instanceof Element) {
+               Element credential = (Element)object;
+               if(STSUtils.debug.messageEnabled()) {
+                   STSUtils.debug.message("Credential: " 
+                       + XMLUtils.print(credential));
+               }
+               if(credential.getLocalName().equals("FAMToken")) {           
+                  try {
+                      STSClientUserToken userToken = 
+                              new STSClientUserToken(credential);
+                      String tokenId = userToken.getTokenId();
+                      if(userToken.getType().equals(
+                              STSConstants.SSO_TOKEN_TYPE)) {
+                         SSOToken ssoToken = SSOTokenManager.getInstance().
+                                 createSSOToken(userToken.getTokenId());
+                         name = ssoToken.getPrincipal().getName();
+                         isFAMTokenFound = true;
+                         break;
+                      }
+
+                  } catch (FAMSTSException fae) {
+                      STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" +
+                              "Attributes: Error in retrieving user token", fae);
+                  } catch (SSOException se) {
+                      STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" +
+                              "Attributes: Error in retrieving user token", se);
+                  }              
+               }          
+            }
         }
         iter = subject.getPublicCredentials().iterator();
         Object  object = iter.next();

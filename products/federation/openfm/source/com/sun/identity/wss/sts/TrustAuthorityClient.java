@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.7 2008-03-04 23:57:46 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.8 2008-03-05 18:24:25 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -418,7 +418,8 @@ public class TrustAuthorityClient {
             
             Class _handlerclientTokenClass = 
                 cls.loadClass("com.sun.identity.wss.sts.ClientUserToken");
-            Object clientUserToken = _handlerclientTokenClass.cast(stsClientTokenObj);
+            Object clientUserToken = 
+                _handlerclientTokenClass.cast(stsClientTokenObj);
             
             Class clsaM[] = new Class[1];
             clsaM[0] = Class.forName("java.lang.Object");
@@ -427,8 +428,13 @@ public class TrustAuthorityClient {
             Object argsM[] = new Object[1];
             argsM[0] = ssoToken;
             
-            init.invoke(clientUserToken, argsM);
-            return (ClientUserToken) clientUserToken;
+            clientUserToken = init.invoke(clientUserToken, argsM);
+            ClientUserToken clUserToken = (ClientUserToken) clientUserToken;
+            if(debug.messageEnabled()) {
+                debug.message("getClientUserToken:Client User Token : " + 
+                    clUserToken);
+            }
+            return clUserToken;
         } catch (Exception ex) {
             debug.error("TrustAuthorityClient.getClientUserToken: " +
                  "Failed in initialization", ex);
