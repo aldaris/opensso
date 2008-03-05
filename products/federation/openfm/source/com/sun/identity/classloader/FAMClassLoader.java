@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.2 2008-01-31 20:01:40 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.3 2008-03-05 00:00:15 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,32 +49,42 @@ public class FAMClassLoader {
     public FAMClassLoader() {
     }
     
-    public static ClassLoader getFAMClassLoader(ServletContext context) {
+    public static ClassLoader getFAMClassLoader(ServletContext context, 
+        String[] reqJars) {
         if (cl == null) {
             try {
-                URL[] urls = jarFinder(context);
+                URL[] urls = jarFinder(context, reqJars);
 
                 ClassLoader localcc = FAMClassLoader.class.getClassLoader();
 
                 List<String> mask = 
                     new ArrayList<String>(Arrays.asList(maskedPackages));
+                
+                List<String> maskRes =
+                    new ArrayList<String>(Arrays.asList(maskedResouces));
 
                 // first create a protected area so that we load WS 2.1 API
                 // and everything that depends on them, inside FAM classloader.
-                localcc = new MaskingClassLoader(localcc,mask);
+                localcc = new MaskingClassLoader(localcc,mask,maskRes,urls);
 
                 // then this classloader loads the API and tools.jar
                 cl = new URLClassLoader(urls, localcc);
 
-                Thread.currentThread().setContextClassLoader(cl);
+                //Thread.currentThread().setContextClassLoader(cl);
             } catch (Exception ex) {                
                 ex.printStackTrace();
             }
         }
+        if (cl != null) {
+            Thread.currentThread().setContextClassLoader(cl);
+        }
         return (cl);        
     }
     
-    private static URL[] jarFinder(ServletContext context) {
+    private static URL[] jarFinder(ServletContext context, String[] reqJars) {
+        if (reqJars != null) {
+            jars = reqJars;
+        }
         URL[] urls = new URL[jars.length];
         
         try {
@@ -115,9 +125,16 @@ public class FAMClassLoader {
         "com.sun.relaxng.",
         "com.sun.xml.xsom.",
         "com.sun.xml.bind.",
-        "com.sun.xml.messaging",
+        "com.sun.xml.bind.v2.",
+        "com.sun.xml.messaging.",
         "com.sun.xml.ws.",
+        "com.sun.xml.ws.addressing.",
+        "com.sun.xml.ws.api.",
+        "com.sun.xml.ws.api.addressing.",
+        "com.sun.xml.ws.server.",
+        "com.sun.xml.ws.transport.",
         "com.sun.xml.wss.",
+        "com.sun.xml.security.",
         "com.sun.xml.xwss.",
         "javax.xml.bind.",
         "javax.xml.ws.",
@@ -126,6 +143,22 @@ public class FAMClassLoader {
         "javax.xml.soap.",
         "com.sun.istack.",
         "com.sun.identity.wss."
+    };
+    
+    /**
+     * The list of resources we want the
+     * {@link MaskingClassLoader} to prevent the parent
+     * classLoader from loading.
+     */
+    public static String[] maskedResouces = new String[]{
+        "META-INF/services/javax.xml.bind.JAXBContext",
+        "META-INF/services",
+        "/META-INF/services",
+        "javax/xml/bind/",
+        "com/sun/xml/ws/",
+        "com/sun/xml/wss/",
+        "com/sun/xml/bind/",
+        "com/sun/xml/messaging/"
     };
     
     

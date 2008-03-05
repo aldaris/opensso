@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenService.java,v 1.2 2008-01-31 20:01:41 mrudul_uchil Exp $
+ * $Id: SecurityTokenService.java,v 1.3 2008-03-04 23:57:46 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ public class SecurityTokenService extends HttpServlet {
    private static Method doPostMethod;
    private static Method initMethod;
    private Object wsServlet;
+   private static ClassLoader cls;
     
     public void init(ServletConfig config) throws ServletException {
          ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
@@ -46,8 +47,8 @@ public class SecurityTokenService extends HttpServlet {
          try {
              if(jaxwsServlet == null) {
                 ServletContext context = config.getServletContext();
-                ClassLoader cls = FAMClassLoader.getFAMClassLoader(context);
-                
+                cls = FAMClassLoader.getFAMClassLoader(context,null);
+                Thread.currentThread().setContextClassLoader(cls);
                 jaxwsServlet = cls.loadClass(
                         "com.sun.xml.ws.transport.http.servlet.WSServlet");
            
@@ -87,6 +88,7 @@ public class SecurityTokenService extends HttpServlet {
         args[0] = request;
         args[1] = response;
         try {
+            Thread.currentThread().setContextClassLoader(cls);
             doGetMethod.setAccessible(true);
             doGetMethod.invoke(wsServlet, args);
             doGetMethod.setAccessible(false);
@@ -112,6 +114,7 @@ public class SecurityTokenService extends HttpServlet {
         args[0] = request;
         args[1] = response;
         try {
+            Thread.currentThread().setContextClassLoader(cls);
             doPostMethod.setAccessible(true);
             doPostMethod.invoke(wsServlet, args);
             doPostMethod.setAccessible(false);

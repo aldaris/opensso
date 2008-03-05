@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2007-12-14 07:04:40 qcheng Exp $
+   $Id: build.xml,v 1.11 2008-03-04 23:45:51 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -90,6 +90,11 @@
             <fileset dir="${openfm.classes.dir}">
                  <filename name="com/sun/identity/log/messageid/*.xml"/>
             </fileset>
+             
+            <fileset dir="${openfm.dir}/resources">
+                <filename name="META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory"/>    
+            </fileset>
+            
             <manifest>
                <attribute name="Created-On" value="${pstamp}" />
                 <section name="com.sun.identity">

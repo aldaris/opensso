@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.33 2007-12-08 01:18:12 cbasha Exp $
+   $Id: build-war.xml,v 1.34 2008-03-05 00:04:56 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -53,7 +53,7 @@
         <mkdir dir="${war.package.dir}/WEB-INF/classes/META-INF/services"/>
         
         <copy todir="${war.package.dir}/WEB-INF/wsdl">
-            <fileset dir="${openfm.dir}/wsdl" includes="*"/>
+            <fileset dir="${openfm.dir}/wsdl" includes="*" excludes="famsts-client.wsdl"/>
         </copy>
         
         <copy todir="${war.package.dir}/WEB-INF">
@@ -61,7 +61,7 @@
         </copy>
         
         <copy todir="${war.package.dir}/WEB-INF/classes/META-INF/services">
-            <fileset dir="${openfm.dir}/resources/META-INF/services" includes="*"/>
+            <fileset dir="${openfm.dir}/resources/META-INF/services" includes="*" excludes="com.sun.xml.ws.assembler.ClientPipelineHook, com.sun.xml.ws.api.pipe.TransportPipeFactory"/>
         </copy>
         
         <copy todir="${war.package.dir}/WEB-INF/template/openfm">

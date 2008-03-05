@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.5 2008-02-26 20:40:45 mrudul_uchil Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.6 2008-03-04 23:57:46 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -212,20 +212,20 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
             }
            
             if (secMech != null) {
-                if( (secMech.contains(SecurityMechanism.WSS_NULL_SAML_HK_URI))
-                     || (secMech.contains(
-                         SecurityMechanism.WSS_TLS_SAML_HK_URI)) || 
-                    (secMech.contains(
-                        SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI))) {
-
-                    this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
-                } else if( (secMech.contains(
+                if( (secMech.contains(
                     SecurityMechanism.WSS_NULL_SAML2_HK_URI)) ||
                     (secMech.contains(SecurityMechanism.WSS_TLS_SAML2_HK_URI))
                      || (secMech.contains(
                         SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI))) {
 
                     this.tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
+                } else if( (secMech.contains(SecurityMechanism.WSS_NULL_SAML_HK_URI))
+                     || (secMech.contains(
+                         SecurityMechanism.WSS_TLS_SAML_HK_URI)) || 
+                    (secMech.contains(
+                        SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI))) {
+
+                    this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
                 }
             }
 

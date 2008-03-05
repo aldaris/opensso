@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.3 2008-02-07 01:29:03 mrudul_uchil Exp $
+ * $Id: SetupClientWARSamples.java,v 1.4 2008-03-04 23:53:19 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ import com.sun.identity.security.EncodeAction;
 import com.iplanet.am.util.SystemProperties;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -79,13 +81,25 @@ public class SetupClientWARSamples {
             content += TRUST_ALL_CERTS;
         }
 
-        // Setup default client keystore path
+        // Setup default client keystore path.
         URL url = 
             servletContext.getResource("/WEB-INF/lib/openssoclientsdk.jar");
         String keystoreLocation = (url.toString()).substring(5);
         int index = keystoreLocation.indexOf("WEB-INF");
         keystoreLocation = keystoreLocation.substring(0, index-1);
         content = content.replaceAll("@" + "BASE_DIR" + "@", keystoreLocation);
+        
+        // Update famsts-client.wsdl with Keystore location.
+        String contentWSDL = 
+                getFileContent("/WEB-INF/classes/famsts-client.wsdl");
+        createKeystoreFile();
+        contentWSDL = contentWSDL.replaceAll("@KEYSTORE_LOCATION@",
+            System.getProperty("user.home"));
+        BufferedWriter outWSDL = 
+            new BufferedWriter(new FileWriter(keystoreLocation +
+            "/WEB-INF/classes/famsts-client.wsdl"));
+        outWSDL.write(contentWSDL);
+        outWSDL.close();
         
         BufferedWriter out = new BufferedWriter(new FileWriter(configFile));
         out.write(content);
@@ -143,5 +157,24 @@ public class SetupClientWARSamples {
                 }
             } 
         }
+    }
+    
+    /**
+     * Create and copy the keystore file.
+     *
+     * @throws IOException if keystore file cannot be written.
+     */
+    private void createKeystoreFile() throws IOException
+    {
+        String location = 
+        System.getProperty("user.home") + File.separator;
+        InputStream in = servletContext.getResourceAsStream("/keystore.jks");
+        byte[] b = new byte[2007];
+        in.read(b);
+        in.close();
+        FileOutputStream fos = new FileOutputStream(location + "keystore.jks");
+        fos.write(b);
+        fos.flush();
+        fos.close();
     }
 }

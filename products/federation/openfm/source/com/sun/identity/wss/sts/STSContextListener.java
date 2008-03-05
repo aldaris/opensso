@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSContextListener.java,v 1.2 2008-01-31 20:01:41 mrudul_uchil Exp $
+ * $Id: STSContextListener.java,v 1.3 2008-03-04 23:57:46 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,11 @@ import javax.servlet.ServletContext;
 import java.net.URLClassLoader;
 import com.sun.identity.classloader.FAMClassLoader;
 import java.lang.reflect.Method;
+//import com.sun.identity.setup.AMSetupServlet;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 public class STSContextListener
         implements ServletContextAttributeListener, ServletContextListener {
@@ -58,7 +63,8 @@ public class STSContextListener
         ServletContext context = event.getServletContext();
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
-            ClassLoader cls = FAMClassLoader.getFAMClassLoader(context);
+            ClassLoader cls = FAMClassLoader.getFAMClassLoader(context,null);
+            Thread.currentThread().setContextClassLoader(cls);
             stsContextListener = cls.loadClass(
               "com.sun.xml.ws.transport.http.servlet.WSServletContextListener");
             Class clsa[] = new Class[1];
@@ -80,9 +86,21 @@ public class STSContextListener
     
     public void contextInitialized(ServletContextEvent event) {
         ServletContext context = event.getServletContext();
+        try {
+            String contentWSDL = 
+                getFileContent("/WEB-INF/wsdl/famsts.wsdl",context);
+
+            if ((contentWSDL.indexOf("@KEYSTORE_LOCATION@")) != -1) {
+                return;
+            }
+        } catch (Exception e) {
+            // Do nothing
+        }
+        
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
-            ClassLoader cls = FAMClassLoader.getFAMClassLoader(context);
+            ClassLoader cls = FAMClassLoader.getFAMClassLoader(context,null);
+            Thread.currentThread().setContextClassLoader(cls);
             stsContextListener = cls.loadClass(
               "com.sun.xml.ws.transport.http.servlet.WSServletContextListener");
             Class clsa[] = new Class[1];
@@ -101,6 +119,19 @@ public class STSContextListener
         }
     }
     
-    
+    private static String getFileContent(String fileName, 
+        ServletContext context) throws IOException {
+        InputStream in = context.getResourceAsStream(fileName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuffer buff = new StringBuffer();
+        String line = reader.readLine();
+
+        while (line != null) {
+            buff.append(line).append("\n");
+            line = reader.readLine();
+        }
+        reader.close();
+        return buff.toString();      
+    }
     
 }

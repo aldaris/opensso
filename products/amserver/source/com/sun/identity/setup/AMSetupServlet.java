@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.46 2008-03-03 22:53:37 qcheng Exp $
+ * $Id: AMSetupServlet.java,v 1.47 2008-03-05 00:08:42 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,7 @@ import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -72,6 +73,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -516,6 +518,7 @@ public class AMSetupServlet extends HttpServlet {
                 createDemoUser();
                 createIdentitiesForWSSecurity(serverURL, deployuri);
             }
+            updateSTSwsdl(basedir, deployuri);
             isConfiguredFlag = true;
             configured = true;
         } catch (FileNotFoundException e) {
@@ -1311,6 +1314,51 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     /**
+     * Update famsts.wsdl with Keystore location.
+     *
+     * @param basedir the configuration base directory.
+     * @param deployuri the deployment URI. 
+     * @throws IOException if password files cannot be written.
+     */
+    private static void updateSTSwsdl(
+        String basedir, 
+        String deployuri 
+    ) throws IOException {
+        // Get FAM web application base location.
+        URL url = servletCtx.getResource("/WEB-INF/lib/fam.jar");
+        String webAppLocation = (url.toString()).substring(5);
+        int index = webAppLocation.indexOf("WEB-INF");
+        webAppLocation = webAppLocation.substring(0, index-1);
+        
+        // Update famsts.wsdl with Keystore location.
+        String contentWSDL = getFileContent("/WEB-INF/wsdl/famsts.wsdl");
+        contentWSDL = contentWSDL.replaceAll("@KEYSTORE_LOCATION@",
+            basedir + deployuri);
+        BufferedWriter outWSDL = 
+            new BufferedWriter(new FileWriter(webAppLocation +
+            "/WEB-INF/wsdl/famsts.wsdl"));
+        outWSDL.write(contentWSDL);
+        outWSDL.close();
+    }
+    
+    private static String getFileContent(String fileName) throws IOException {
+        InputStream in = servletCtx.getResourceAsStream(fileName);
+        if (in == null) {
+            throw new IOException("Unable to open " + fileName);
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuffer buff = new StringBuffer();
+        String line = reader.readLine();
+
+        while (line != null) {
+            buff.append(line).append("\n");
+            line = reader.readLine();
+        }
+        reader.close();
+        return buff.toString();      
+    }
+    
+    /**
      * Create the storepass and keypass files
      *
      * @param basedir the configuration base directory.
@@ -1534,12 +1582,17 @@ public class AMSetupServlet extends HttpServlet {
         config.put("publicKeyAlias","test");
         config.put("isRequestSign","true");
         config.put("keepSecurityHeaders","true");
+        config.put("WSPEndpoint","default");
         config.put("AgentType","WSCAgent");
         createAgent(idrepo, "wsc", "WSC", "", config);
 
         // Add WSP configuration
         config.remove("AgentType");
         config.put("AgentType","WSPAgent");
+        config.remove("SecurityMech");
+        config.put("SecurityMech","urn:sun:wss:security:null:UserNameToken," +
+                                  "urn:sun:wss:security:null:SAML2Token-HK," +
+                                  "urn:sun:wss:security:null:SAML2Token-SV");
         createAgent(idrepo, "wsp", "WSP", "", config);
 
         // Add localSTS configuration
@@ -1548,10 +1601,12 @@ public class AMSetupServlet extends HttpServlet {
         config.remove("SecurityMech");
         config.remove("UserCredential");
         config.remove("keepSecurityHeaders");
+        config.remove("WSPEndpoint");
         config.put("SecurityMech","urn:sun:wss:security:null:X509Token");
         config.put("STSEndpoint",serverURL + deployuri + "/sts");
         config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
-        createAgent(idrepo, "localSTS", "STS", "", config);
+        createAgent(idrepo, "defaultSTS", "STS", "", config);
+        createAgent(idrepo, "SecurityTokenService", "STS", "", config);
 
         /*
         // Add UsernameToken profile
@@ -1652,7 +1707,14 @@ public class AMSetupServlet extends HttpServlet {
             String key = (String)i.next();
             String value = (String)config.get(key);
             values = new HashSet();
-            values.add(value);
+            if (value.indexOf(",") != -1) {
+                StringTokenizer st = new StringTokenizer(value, ",");
+                while(st.hasMoreTokens()) {
+                    values.add(st.nextToken());
+                }
+            } else {
+                values.add(value);
+            }
             attributes.put(key, values);
         }
         

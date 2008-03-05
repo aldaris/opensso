@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.2 2008-01-31 20:01:40 mrudul_uchil Exp $
+ * $Id: MaskingClassLoader.java,v 1.3 2008-03-05 00:00:15 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,11 @@
 package com.sun.identity.classloader;
 
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.io.IOException;
+import java.net.URL;
+import sun.misc.CompoundEnumeration;
 
 /**
  * {@link ClassLoader} that masks a specified set of classes
@@ -36,24 +41,36 @@ import java.util.Collection;
  */
 public class MaskingClassLoader extends ClassLoader {
 
+    private final ClassLoader parent;
     private final String[] masks;
+    private final String[] maskResources;
+    private final URL[] urls;
+    private final String resource = 
+        "META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory";
 
-    public MaskingClassLoader(String[] masks) {
+    /*public MaskingClassLoader(String[] masks) {
         this.masks = masks;
     }
 
     public MaskingClassLoader(Collection<String> masks) {
         this(masks.toArray(new String[masks.size()]));
-    }
+    }*/
 
-    public MaskingClassLoader(ClassLoader parent, String[] masks) {
+    public MaskingClassLoader(ClassLoader parent, String[] masks, 
+        String[] maskResources,URL[] urls) {
         super(parent);
+        this.parent = parent;
         this.masks = masks;
+        this.maskResources = maskResources;
+        this.urls = urls;
     }
 
     public MaskingClassLoader(ClassLoader parent, 
-                              Collection<String> masks) {
-        this(parent, masks.toArray(new String[masks.size()]));
+                              Collection<String> masks,
+                              Collection<String> maskResources,
+                              URL[] urls) {
+        this(parent, masks.toArray(new String[masks.size()]) , 
+            maskResources.toArray(new String[maskResources.size()]), urls);
     }
 
     @Override
@@ -65,5 +82,35 @@ public class MaskingClassLoader extends ClassLoader {
             }
         }
         return super.loadClass(name, resolve);
+    }
+    
+    @Override
+    public synchronized URL getResource(String name) {
+        for (String mask : maskResources) {
+            if(name.startsWith(mask)) {
+                return null;
+            }
+        }
+        return super.getResource(name);
+    }
+    
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        Enumeration[] tmp = new Enumeration[1];
+	if(name.startsWith(resource)) {
+            Vector vec = new Vector(1);
+            URL jarURL = 
+                new URL("jar:" + (urls[5]).toString() + "!/" + resource);
+            vec.add(jarURL);
+            tmp[0] = vec.elements();
+            return new CompoundEnumeration(tmp);
+        }
+        return super.getResources(name);
+    }
+    
+    @Override
+    public synchronized String toString() {
+        return "com.sun.identity.classloader.MaskingClassLoader : Super is : " 
+            + super.toString();
     }
 }
