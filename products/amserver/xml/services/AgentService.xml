@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.34 2008-03-03 21:22:42 sean_brydon Exp $
+   $Id: AgentService.xml,v 1.35 2008-03-05 22:40:45 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -156,7 +156,7 @@
                     <AttributeSchema
                         name="com.sun.identity.agents.config.notification.enable"
                         type="single"
-                        syntax="string"
+                        syntax="boolean"
                         i18nKey="a405">
                         <BooleanValues>
                             <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
