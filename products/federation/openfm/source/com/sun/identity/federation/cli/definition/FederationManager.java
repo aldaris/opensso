@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.24 2008-03-04 23:42:16 hengming Exp $
+ * $Id: FederationManager.java,v 1.25 2008-03-06 18:19:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,7 +60,7 @@ public class FederationManager {
         macro="authentication",
         optionalOptions={
             "meta-data-file|m|s|c|Specify file name for the standard metadata to be created.",
-            "extended-data-file|x|s|c|Specify file name for the standard metadata to be created.",
+            "extended-data-file|x|s|c|Specify file name for the extended metadata to be created.",
             "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.",
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
             "attrqueryprovider|S|s|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
