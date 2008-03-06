@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.5 2008-02-15 01:54:36 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.6 2008-03-06 18:46:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -176,7 +176,7 @@ public class GenericAgentProfileViewBean
                     String tabName = (String)tabs.get(i);
                     tabModel.addNode(new CCNavNode(
                         Integer.parseInt(TAB_PREFIX + i),
-                    model.getLocalizedServiceName(
+                    model.getLocalizedString(
                         "tab.label." + agentType + "." + tabName), "", ""));
                  }
             } else {
