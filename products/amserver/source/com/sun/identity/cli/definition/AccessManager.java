@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.56 2008-02-03 02:33:39 veiming Exp $
+ * $Id: AccessManager.java,v 1.57 2008-03-06 18:45:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -357,7 +357,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-service-attr-values-of-realm-succeed=Service attribute values is returned.",
+            "get-service-attr-values-of-realm-succeed=Service attribute values were returned.",
             "get-service-attr-values-of-realm-result={0}={1}"})
     private String get_realm_svc_attrs;
 
