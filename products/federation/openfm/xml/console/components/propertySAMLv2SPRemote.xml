@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPRemote.xml,v 1.8 2008-01-17 19:26:45 asyhuang Exp $
+   $Id: propertySAMLv2SPRemote.xml,v 1.9 2008-03-06 20:00:45 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,7 +37,7 @@
                             <label name="lblHttpRedirectLocation" defaultValue="samlv2sp.attribute.label.httpredirectlocation" 
                                    labelFor="slohttpLocation" />
                             <cc name="slohttpLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -46,13 +46,38 @@
                             <label name="lblHttpRedirectRespLocation" defaultValue="samlv2sp.attribute.label.httpredirectresplocation" 
                                    labelFor="slohttpResponseLocation" />
                             <cc name="slohttpResponseLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
                         </property>
                     </ccgroup>
                 </property>
+                
+                  <property>
+                    <label name="lblPostSingleLogout" defaultValue="samlv2sp.attribute.label.postsinglelogout" />
+                    <ccgroup>
+                        <property>
+                            <label name="lblHttpRedirectLocation" defaultValue="samlv2sp.attribute.label.httpredirectlocation" 
+                                   labelFor="slopostLocation" />                            
+                            <cc name="slopostLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                                <attribute name="size" value="105" />
+                                <attribute name="autoSubmit" value="false" />
+                                <attribute name="localizeDisplayFieldValue" value="false" />
+                            </cc>
+                        </property>
+                        <property>
+                            <label name="lblPostRespLocation" defaultValue="samlv2sp.attribute.label.httpredirectresplocation" 
+                                   labelFor="slopostResponseLocation" />
+                            <cc name="slopostResponseLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                                <attribute name="size" value="105" />
+                                <attribute name="autoSubmit" value="false" />
+                                <attribute name="localizeDisplayFieldValue" value="false" />
+                            </cc>
+                        </property>
+                    </ccgroup>
+                </property>
+                
                 <property>
                     <label name="lblSoapSingleLogout" defaultValue="samlv2sp.attribute.label.soapsinglelogout" />
                     <ccgroup>
@@ -60,7 +85,7 @@
                             <label name="lblSoapLocation" defaultValue="samlv2sp.attribute.label.soaplocation" 
                                    labelFor="slosoapLocation" />
                             <cc name="slosoapLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -79,7 +104,7 @@
                             <label name="lblHttpRedirectManagerNameIDServiceLocation" defaultValue="samlv2sp.attribute.label.httpredirectmanagenameidservicelocation" 
                                    labelFor="mnihttpLocation" />
                             <cc name="mnihttpLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -88,7 +113,32 @@
                             <label name="lblHttpRedirectManagerNameIDServiceRespLocation" defaultValue="samlv2sp.attribute.label.httpredirectmanagenameidserviceresplocation"
                                    labelFor="mnihttpResponseLocation" />
                             <cc name="mnihttpResponseLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
+                                <attribute name="autoSubmit" value="false" />
+                                <attribute name="localizeDisplayFieldValue" value="false" />
+                            </cc>
+                        </property>
+                    </ccgroup>
+                </property>
+            </ccgroup>
+              <ccgroup> 
+                <property>
+                    <label name="lblPostManageNameIDService" defaultValue="samlv2sp.attribute.label.postmanagenameidservice" />
+                    <ccgroup>
+                        <property>
+                            <label name="lblHttpRedirectManagerNameIDServiceLocation" defaultValue="samlv2sp.attribute.label.httpredirectmanagenameidservicelocation" 
+                                   labelFor="mnipostLocation" />
+                            <cc name="mnipostLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                                <attribute name="size" value="105" />
+                                <attribute name="autoSubmit" value="false" />
+                                <attribute name="localizeDisplayFieldValue" value="false" />
+                            </cc>
+                        </property>
+                        <property>
+                            <label name="lblHttpRedirectManagerNameIDServiceRespLocation" defaultValue="samlv2sp.attribute.label.httpredirectmanagenameidserviceresplocation"
+                                   labelFor="mnipostResponseLocation" />
+                            <cc name="mnipostResponseLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -104,7 +154,7 @@
                             <label name="lblSoapManagerNameIDServiceLocation" defaultValue="samlv2sp.attribute.label.soapmanagenameidservicelocation"
                                    labelFor="mnisoapLocation" />
                             <cc name="mnisoapLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -113,7 +163,7 @@
                             <label name="lblSoapManagerNameIDServiceRespLocation" defaultValue="samlv2sp.attribute.label.soapmanagenameidserviceresplocation"
                                    labelFor="mnisoapResponseLocation" />
                             <cc name="mnisoapResponseLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -143,7 +193,7 @@
                             <label name="lblHttpArtifactAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicelocation" 
                                    labelFor="httpArtifactLocation" />
                             <cc name="httpArtifactLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="85" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
@@ -167,7 +217,7 @@
                             <label name="lblHttpPostAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.httppostassertconsumerservicelocation" 
                                    labelFor="httpPostLocation" />
                             <cc name="httpPostLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="75" />
+                                <attribute name="size" value="85" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>

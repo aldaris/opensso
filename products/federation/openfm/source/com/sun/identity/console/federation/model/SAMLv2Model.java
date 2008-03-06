@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.13 2008-02-25 21:06:25 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.14 2008-03-06 20:01:41 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,8 +66,12 @@ public interface SAMLv2Model
         "ssohttpLocation";
     public static final String SINGLE_SIGNON_SOAP_LOCATION =
         "ssosoapLocation";
-    public static final String NAME_ID_MAPPPING =
-        "NameIDMappingService";
+    public static final String NAME_ID_MAPPPING = "NameIDMappingService";
+    public static final String SLO_POST_LOC = "slopostLocation";
+    public static final String SLO_POST_RESPLOC = "slopostResponseLocation";
+    public static final String MNI_POST_LOC = "mnipostLocation";
+    public static final String MNI_POST_RESPLOC = "mnipostResponseLocation";
+    public static final String SSO_SOAPS_LOC = "ssosoapsLocation";
     
     //SAMLv2 SP Standard attributes
     public static final String IS_AUTHN_REQ_SIGNED = "AuthnRequestsSigned";
@@ -99,6 +103,10 @@ public interface SAMLv2Model
         "httpPostIndex";
     public static final String HTTP_POST_ASSRT_CONS_SERVICE_LOCATION =
         "httpPostLocation";
+    public static final String SP_SLO_POST_LOC = "slopostLocation";
+    public static final String SP_SLO_POST_RESPLOC = "slopostResponseLocation";
+    public static final String SP_MNI_POST_LOC = "mnipostLocation";
+    public static final String SP_MNI_POST_RESPLOC = "mnipostResponseLocation";
     
     //SAML2 IDP Extended Attributes
     public static final String IDP_SIGN_CERT_ALIAS = 

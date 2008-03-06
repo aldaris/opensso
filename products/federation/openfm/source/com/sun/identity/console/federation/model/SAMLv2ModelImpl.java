@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.18 2008-02-26 20:39:45 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.19 2008-03-06 20:01:52 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -306,8 +306,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(SINGLE_LOGOUT_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             slsElem1.getResponseLocation()));
-                    SingleLogoutServiceElement slsElem2 =
+                    SingleLogoutServiceElement slsElem3 =
                             (SingleLogoutServiceElement)logoutList.get(1);
+                    map.put(SLO_POST_LOC,
+                            returnEmptySetIfValueIsNull(
+                            slsElem3.getLocation()));
+                    map.put(SLO_POST_RESPLOC,
+                            returnEmptySetIfValueIsNull(
+                            slsElem3.getResponseLocation()));
+                    SingleLogoutServiceElement slsElem2 =
+                            (SingleLogoutServiceElement)logoutList.get(2);
                     map.put(SINGLE_LOGOUT_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             slsElem2.getLocation()));
@@ -325,8 +333,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(MANAGE_NAMEID_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             mniElem1.getResponseLocation()));
+                    ManageNameIDServiceElement mniElem3 =
+                        (ManageNameIDServiceElement)manageNameIdList.get(1);
+                    map.put(MNI_POST_LOC,
+                            returnEmptySetIfValueIsNull(
+                            mniElem3.getLocation()));
+                    map.put(MNI_POST_RESPLOC,
+                            returnEmptySetIfValueIsNull(
+                            mniElem3.getResponseLocation()));
                     ManageNameIDServiceElement mniElem2 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(1);
+                            (ManageNameIDServiceElement)manageNameIdList.get(2);
                     map.put(MANAGE_NAMEID_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             mniElem2.getLocation()));
@@ -363,6 +379,11 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(SINGLE_SIGNON_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             signElem2.getLocation()));
+                    SingleSignOnServiceElement signElem3 =
+                            (SingleSignOnServiceElement)signonList.get(2);
+                    map.put(SSO_SOAPS_LOC,
+                            returnEmptySetIfValueIsNull(
+                            signElem3.getLocation()));
                 }
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
@@ -458,10 +479,18 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             spslsElem1.getResponseLocation()));
-                    SingleLogoutServiceElement spslsElem2 =
+                    SingleLogoutServiceElement spslsElem3 =
                             (SingleLogoutServiceElement)splogoutList.get(1);
+                    map.put(SP_SLO_POST_LOC,
+                            returnEmptySetIfValueIsNull(
+                            spslsElem3.getLocation()));
+                    map.put(SP_SLO_POST_RESPLOC,
+                            returnEmptySetIfValueIsNull(
+                            spslsElem3.getResponseLocation()));
+                    SingleLogoutServiceElement spslsElem2 =
+                            (SingleLogoutServiceElement)splogoutList.get(2);
                     map.put(SP_SINGLE_LOGOUT_SOAP_LOCATION,
-                            returnEmptySetIfValueIsNull(spslsElem2.getLocation()));
+                        returnEmptySetIfValueIsNull(spslsElem2.getLocation()));
                 }
                 
                 //retrieve ManageNameIDService
@@ -475,8 +504,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(SP_MANAGE_NAMEID_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
                             mniElem1.getResponseLocation()));
+                    ManageNameIDServiceElement mniElem3 =
+                        (ManageNameIDServiceElement)manageNameIdList.get(1);
+                    map.put(SP_MNI_POST_LOC,
+                            returnEmptySetIfValueIsNull(
+                            mniElem3.getLocation()));
+                    map.put(SP_MNI_POST_RESPLOC,
+                            returnEmptySetIfValueIsNull(
+                            mniElem3.getResponseLocation()));
                     ManageNameIDServiceElement mniElem2 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(1);
+                            (ManageNameIDServiceElement)manageNameIdList.get(2);
                     map.put(SP_MANAGE_NAMEID_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(mniElem2.getLocation()));
                     map.put(SP_MANAGE_NAMEID_SOAP_RESP_LOCATION,
@@ -616,19 +653,28 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         idpStdValues, SINGLE_LOGOUT_HTTP_LOCATION);
                 String lohttpRespLocation = getResult(
                         idpStdValues, SINGLE_LOGOUT_HTTP_RESP_LOCATION);
+                String postLocation = getResult(
+                        idpStdValues, SLO_POST_LOC);
+                String postRespLocation = getResult(
+                        idpStdValues, SLO_POST_RESPLOC);
                 String losoapLocation = getResult(
                         idpStdValues, SINGLE_LOGOUT_SOAP_LOCATION);
                 List logList = idpssoDescriptor.getSingleLogoutService();
                 if (!logList.isEmpty()) {
                     SingleLogoutServiceElement slsElem1 =
                             (SingleLogoutServiceElement)logList.get(0);
-                    SingleLogoutServiceElement slsElem2 =
+                    SingleLogoutServiceElement slsElem3 =
                             (SingleLogoutServiceElement)logList.get(1);
+                    SingleLogoutServiceElement slsElem2 =
+                            (SingleLogoutServiceElement)logList.get(2);
                     slsElem1.setLocation(lohttpLocation);
                     slsElem1.setResponseLocation(lohttpRespLocation);
+                    slsElem3.setLocation(postLocation);
+                    slsElem3.setResponseLocation(postRespLocation);
                     slsElem2.setLocation(losoapLocation);
                     idpssoDescriptor.getSingleLogoutService().clear();
                     idpssoDescriptor.getSingleLogoutService().add(slsElem1);
+                    idpssoDescriptor.getSingleLogoutService().add(slsElem3);
                     idpssoDescriptor.getSingleLogoutService().add(slsElem2);
                 }
                 
@@ -637,6 +683,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         idpStdValues, MANAGE_NAMEID_HTTP_LOCATION);
                 String mnihttpRespLocation = getResult(
                         idpStdValues, MANAGE_NAMEID_HTTP_RESP_LOCATION);
+                String mnipostLocation = getResult(
+                        idpStdValues, MNI_POST_LOC);
+                String mnipostRespLocation = getResult(
+                        idpStdValues, MNI_POST_RESPLOC);                
                 String mnisoapLocation = getResult(
                         idpStdValues, MANAGE_NAMEID_SOAP_LOCATION);
                 List manageNameIdList =
@@ -644,13 +694,18 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 if (!manageNameIdList.isEmpty()) {
                     ManageNameIDServiceElement mniElem1 =
                             (ManageNameIDServiceElement)manageNameIdList.get(0);
-                    ManageNameIDServiceElement mniElem2 =
+                    ManageNameIDServiceElement mniElem3 =
                             (ManageNameIDServiceElement)manageNameIdList.get(1);
+                    ManageNameIDServiceElement mniElem2 =
+                            (ManageNameIDServiceElement)manageNameIdList.get(2);
                     mniElem1.setLocation(mnihttpLocation);
                     mniElem1.setResponseLocation(mnihttpRespLocation);
+                    mniElem3.setLocation(mnipostLocation);
+                    mniElem3.setResponseLocation(mnipostRespLocation);
                     mniElem2.setLocation(mnisoapLocation);
                     idpssoDescriptor.getManageNameIDService().clear();
                     idpssoDescriptor.getManageNameIDService().add(mniElem1);
+                    idpssoDescriptor.getManageNameIDService().add(mniElem3);
                     idpssoDescriptor.getManageNameIDService().add(mniElem2);
                 }
                 
@@ -678,17 +733,23 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         idpStdValues, SINGLE_SIGNON_HTTP_LOCATION);
                 String ssopostLocation = getResult(
                         idpStdValues, SINGLE_SIGNON_SOAP_LOCATION);
+                String ssoSoapLocation = getResult(
+                        idpStdValues, SSO_SOAPS_LOC);
                 List signonList = idpssoDescriptor.getSingleSignOnService();
                 if (!signonList.isEmpty()) {
                     SingleSignOnServiceElement signElem1 =
                             (SingleSignOnServiceElement)signonList.get(0);
                     SingleSignOnServiceElement signElem2 =
                             (SingleSignOnServiceElement)signonList.get(1);
+                    SingleSignOnServiceElement signElem3 =
+                            (SingleSignOnServiceElement)signonList.get(2);
                     signElem1.setLocation(ssohttpLocation);
                     signElem2.setLocation(ssopostLocation);
+                    signElem3.setLocation(ssoSoapLocation);
                     idpssoDescriptor.getSingleSignOnService().clear();
                     idpssoDescriptor.getSingleSignOnService().add(signElem1);
                     idpssoDescriptor.getSingleSignOnService().add(signElem2);
+                    idpssoDescriptor.getSingleSignOnService().add(signElem3);
                 }
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
@@ -798,19 +859,28 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         spStdValues, SP_SINGLE_LOGOUT_HTTP_LOCATION);
                 String lohttpRespLocation = getResult(
                         spStdValues, SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION);
+                String lopostLocation = getResult(
+                        spStdValues, SP_SLO_POST_LOC);
+                String lopostRespLocation = getResult(
+                        spStdValues, SP_SLO_POST_RESPLOC);                
                 String losoapLocation = getResult(
                         spStdValues, SP_SINGLE_LOGOUT_SOAP_LOCATION);
                 List logList = spssoDescriptor.getSingleLogoutService();
                 if (!logList.isEmpty()) {
                     SingleLogoutServiceElement slsElem1 =
                             (SingleLogoutServiceElement)logList.get(0);
-                    SingleLogoutServiceElement slsElem2 =
+                    SingleLogoutServiceElement slsElem3 =
                             (SingleLogoutServiceElement)logList.get(1);
+                    SingleLogoutServiceElement slsElem2 =
+                            (SingleLogoutServiceElement)logList.get(2);
                     slsElem1.setLocation(lohttpLocation);
                     slsElem1.setResponseLocation(lohttpRespLocation);
+                    slsElem3.setLocation(lopostLocation);
+                    slsElem3.setResponseLocation(lopostRespLocation);
                     slsElem2.setLocation(losoapLocation);
                     spssoDescriptor.getSingleLogoutService().clear();
                     spssoDescriptor.getSingleLogoutService().add(slsElem1);
+                    spssoDescriptor.getSingleLogoutService().add(slsElem3);
                     spssoDescriptor.getSingleLogoutService().add(slsElem2);
                 }
                 // save for Manage Name ID Service
@@ -818,6 +888,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         spStdValues, SP_MANAGE_NAMEID_HTTP_LOCATION);
                 String mnihttpRespLocation = getResult(
                         spStdValues, SP_MANAGE_NAMEID_HTTP_RESP_LOCATION);
+                String mnipostLocation = getResult(
+                        spStdValues, SP_MNI_POST_LOC);
+                String mnipostRespLocation = getResult(
+                        spStdValues, SP_MNI_POST_RESPLOC);                
                 String mnisoapLocation = getResult(
                         spStdValues, SP_MANAGE_NAMEID_SOAP_LOCATION);
                 String mnisoapResLocation = getResult(
@@ -827,14 +901,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 if (!manageNameIdList.isEmpty()) {
                     ManageNameIDServiceElement mniElem1 =
                             (ManageNameIDServiceElement)manageNameIdList.get(0);
-                    ManageNameIDServiceElement mniElem2 =
+                    ManageNameIDServiceElement mniElem3 =
                             (ManageNameIDServiceElement)manageNameIdList.get(1);
+                    ManageNameIDServiceElement mniElem2 =
+                            (ManageNameIDServiceElement)manageNameIdList.get(2);
                     mniElem1.setLocation(mnihttpLocation);
                     mniElem1.setResponseLocation(mnihttpRespLocation);
+                    mniElem3.setLocation(mnipostLocation);
+                    mniElem3.setResponseLocation(mnipostRespLocation);
                     mniElem2.setLocation(mnisoapLocation);
                     mniElem2.setResponseLocation(mnisoapResLocation);
                     spssoDescriptor.getManageNameIDService().clear();
                     spssoDescriptor.getManageNameIDService().add(mniElem1);
+                    spssoDescriptor.getManageNameIDService().add(mniElem3);
                     spssoDescriptor.getManageNameIDService().add(mniElem2);
                 }
                 //save for Assertion Consumer Service
