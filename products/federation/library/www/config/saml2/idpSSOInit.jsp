@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOInit.jsp,v 1.4 2008-03-04 23:41:00 hengming Exp $
+   $Id: idpSSOInit.jsp,v 1.5 2008-03-06 23:01:43 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -60,10 +60,10 @@
                             SSO/Federation user will be redirected to the TARGET URL.
 
 
-    5. NameIDFormat	    NameIDPolicy format Identifier Value.
-                            The supported values are :
-			        persistent
-			        transient
+    5. NameIDFormat	    NameID format Identifier Value.
+			    For example,
+                                urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+                                urn:oasis:names:tc:SAML:2.0:nameid-format:transient
 
     6. binding              URI value that identifies a SAML protocol binding to
                             used when returning the Response message.

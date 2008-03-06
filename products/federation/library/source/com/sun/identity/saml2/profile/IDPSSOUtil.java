@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.22 2008-03-04 23:40:09 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.23 2008-03-06 23:03:22 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1250,8 +1250,8 @@ public class IDPSSOUtil {
         if ((nameIDFormat == null) || (nameIDFormat.trim().length() == 0)) {
             nameIDFormat = SAML2Constants.PERSISTENT;
         } else {
-            if (!nameIDFormat.startsWith(
-                  SAML2Constants.NAMEID_FORMAT_NAMESPACE)) {
+            if (nameIDFormat.equals("persistent") ||
+                nameIDFormat.equals("transient")) {
                 // convert nameIDFormat from short format to its long format
                 nameIDFormat = 
                     SAML2Constants.NAMEID_FORMAT_NAMESPACE + nameIDFormat;
