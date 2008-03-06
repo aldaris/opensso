@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.11 2007-10-17 23:00:47 veiming Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.12 2008-03-06 17:26:09 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -389,30 +389,33 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         modDNs.add(modItem);
 
         // If notification URLs are present, send notifications
-        for (Iterator entries = notificationURLs.entrySet().iterator(); entries
-                .hasNext();) {
-            Map.Entry entry = (Map.Entry) entries.next();
-            String id = (String) entry.getKey();
-            URL url = (URL) entry.getValue();
+        synchronized (notificationURLs) {
+            for (Iterator entries = notificationURLs.entrySet().iterator(); 
+                entries.hasNext();) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                String id = (String) entry.getKey();
+                URL url = (URL) entry.getValue();
 
-            // Construct NotificationSet
-            Notification notification = new Notification(modItem);
-            NotificationSet ns = new NotificationSet(JAXRPCUtil.SMS_SERVICE);
-            ns.addNotification(notification);
-            try {
-                PLLServer.send(url, ns);
-                if (debug.messageEnabled()) {
-                    debug.message("SMSJAXRPCObjectImpl:sentNotification "
+                // Construct NotificationSet
+                Notification notification = new Notification(modItem);
+                NotificationSet ns = 
+                    new NotificationSet(JAXRPCUtil.SMS_SERVICE);
+                ns.addNotification(notification);
+                try {
+                    PLLServer.send(url, ns);
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSJAXRPCObjectImpl:sentNotification "
                             + "URL: " + url + " Data: " + ns);
-                }
-            } catch (SendNotificationException ne) {
-                if (debug.warningEnabled()) {
-                    debug.warning("SMSJAXRPCObject: failed sending "
+                    }
+                } catch (SendNotificationException ne) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("SMSJAXRPCObject: failed sending "
                             + "notification to: " + url + "\nRemoving "
                             + "URL from notification list.", ne);
+                    }
+                    // Remove the URL from Notification List
+                    notificationURLs.remove(id);
                 }
-                // Remove the URL from Notification List
-                notificationURLs.remove(id);
             }
         }
     }
@@ -422,13 +425,15 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     }
 
     // Methods to register notification URLs
-    public synchronized String registerNotificationURL(String url)
+    public String registerNotificationURL(String url)
             throws RemoteException {
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
             if (!url.toLowerCase().startsWith(serverURL)) {
-                notificationURLs.put(id, new URL(url));
+                synchronized (notificationURLs) {
+                    notificationURLs.put(id, new URL(url));
+                }
                 if (debug.messageEnabled()) {
                     debug.message("SMSJAXRPCObjectImpl:register for "
                             + "notification URL: " + url);
@@ -450,9 +455,11 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         return (id);
     }
 
-    public synchronized void deRegisterNotificationURL(String id)
+    public void deRegisterNotificationURL(String id)
             throws RemoteException {
-        notificationURLs.remove(id);
+        synchronized (notificationURLs) {
+            notificationURLs.remove(id);
+        }
     }
 
     public void notifyObjectChanged(String name, int type)
