@@ -1862,16 +1862,19 @@ am_web_is_notification(const char *request_url,
 			overrideProtoHostPort(url, agent_config);
 	    }
 
-		url.getURLString(request_url_str);
-		request_url = request_url_str.c_str();
+            url.getURLString(request_url_str);
+            request_url = request_url_str.c_str();
 
-		if (!strcasecmp(request_url, (*agentConfigPtr)->notification_url)) {
-			result = B_TRUE;
-		} else {
-			am_web_log_max_debug("%s, %s is not notification url %s.",
-					 thisfunc, request_url,
-					 (*agentConfigPtr)->notification_url);
-		}
+            if ((*agentConfigPtr)->notification_enable) {
+                if (!strcasecmp(request_url, 
+                               (*agentConfigPtr)->notification_url)) {
+                    result = B_TRUE;
+                } else {
+                    am_web_log_max_debug("%s, %s is not notification url %s.",
+                                         thisfunc, request_url,
+                                        (*agentConfigPtr)->notification_url);
+                }
+            }
 	}
 	catch (std::exception& ex) {
 	    am_web_log_error("%s: Unexpected exception %s encountered "
