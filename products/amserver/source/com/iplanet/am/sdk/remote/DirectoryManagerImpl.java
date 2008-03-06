@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.12 2007-12-03 22:35:10 kenwho Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.13 2008-03-06 17:25:24 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -982,12 +982,15 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         }
     }
     
-    public String registerNotificationURL(String url) throws RemoteException {
+    public String registerNotificationURL(String url) 
+        throws RemoteException {
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
             if (!isClientOnSameServer(url)) {
-                notificationURLs.put(id, new URL(url));
+                synchronized (notificationURLs) {
+                    notificationURLs.put(id, new URL(url));
+                }
                 if (debug.messageEnabled()) {
                     debug.message("DirectoryManagerImpl: " 
                             + "registerNotificationURL register for " 
@@ -1013,7 +1016,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
     
     public void deRegisterNotificationURL(String notificationID)
     throws RemoteException {
-        notificationURLs.remove(notificationID);
+        synchronized (notificationURLs) {
+            notificationURLs.remove(notificationID);
+        }
     }
     
     public void assignService_idrepo(
@@ -1474,10 +1479,12 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
             true);
     }
     
-    public void deRegisterNotificationURL_idrepo(String notificationID)
+    public void deRegisterNotificationURL_idrepo(
+        String notificationID)
     throws RemoteException {
-        notificationURLs.remove(notificationID);
-        
+        synchronized (notificationURLs) {
+            notificationURLs.remove(notificationID);
+        }
     }
     
     public Set objectsChanged_idrepo(int time) throws RemoteException {
@@ -1508,7 +1515,9 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         try {
             // Check URL is not the local server
             if (!isClientOnSameServer(url)) {
-                notificationURLs.put(id, new URL(url));
+                synchronized (notificationURLs) {
+                    notificationURLs.put(id, new URL(url));
+                }
                 if (debug.messageEnabled()) {
                     debug.message("DirectoryManagerImpl:" 
                             + "registerNotificationURL_idrepo() - register " 
@@ -1593,37 +1602,40 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         // If notification URLs are present, send notifications
         Map notifications = new HashMap(notificationURLs); // Make a copy
         NotificationSet ns = null;
-        for (Iterator entries = notificationURLs.entrySet().iterator(); entries
-            .hasNext();) {
-            Map.Entry entry = (Map.Entry) entries.next();
-            String id = (String) entry.getKey();
-            URL url = (URL) entry.getValue();
+        synchronized (notificationURLs) {
+            for (Iterator entries = notificationURLs.entrySet().iterator(); 
+                entries.hasNext();) {
+                Map.Entry entry = (Map.Entry) entries.next();
+                String id = (String) entry.getKey();
+                URL url = (URL) entry.getValue();
             
-            // Construct NotificationSet
-            if (ns == null) {
-                Notification notification = new Notification(sb.toString());
-                ns = amsdk ? new NotificationSet(
-                    com.iplanet.am.sdk.remote.RemoteServicesImpl
-                    .SDK_SERVICE)
-                    : new NotificationSet(
-                    com.iplanet.am.sdk.remote.RemoteServicesImpl
-                    .IDREPO_SERVICE);
-                ns.addNotification(notification);
-            }
-            try {
-                PLLServer.send(url, ns);
-                if (debug.messageEnabled()) {
-                    debug.message("DirectorManagerImpl:sentNotification "
-                        + "URL: " + url + " Data: " + ns);
+                // Construct NotificationSet
+                if (ns == null) {
+                    Notification notification = 
+                        new Notification(sb.toString());
+                    ns = amsdk ? new NotificationSet(
+                        com.iplanet.am.sdk.remote.RemoteServicesImpl
+                        .SDK_SERVICE)
+                        : new NotificationSet(
+                        com.iplanet.am.sdk.remote.RemoteServicesImpl
+                        .IDREPO_SERVICE);
+                    ns.addNotification(notification);
                 }
-            } catch (SendNotificationException ne) {
-                if (debug.warningEnabled()) {
-                    debug.warning("DirectoryManagerImpl: failed sending "
-                        + "notification to: " + url + "\nRemoving "
-                        + "URL from notification list.", ne);
+                try {
+                    PLLServer.send(url, ns);
+                    if (debug.messageEnabled()) {
+                        debug.message("DirectorManagerImpl:sentNotification "
+                            + "URL: " + url + " Data: " + ns);
+                    }
+                } catch (SendNotificationException ne) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("DirectoryManagerImpl: failed sending "
+                            + "notification to: " + url + "\nRemoving "
+                            + "URL from notification list.", ne);
+                    }
+                    // Remove the URL from Notification List
+                    notificationURLs.remove(id);
                 }
-                // Remove the URL from Notification List
-                notificationURLs.remove(id);
             }
         }
     }
