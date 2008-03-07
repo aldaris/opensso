@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.16 2008-02-22 02:31:49 leiming Exp $
+# $Id: AMAgentConfiguration.template,v 1.17 2008-03-07 03:56:25 sean_brydon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -748,17 +748,17 @@ com.iplanet.am.cookie.name=iPlanetDirectoryPro
 
 #
 # SESSION CLIENT PROPERTIES
-#   - com.iplanet.am.notification.url: Specifies the notification URL to be
-#     used by the Agent to receive session notifications.
 #   - com.iplanet.am.session.client.polling.enable: A flag that specifies if
 #     the session client must use polling for updating session information
 #     and not depend upon server notifications.
 #   - com.iplanet.am.session.client.polling.period: Specifies the time in 
 #     seconds after which the session client will request update of cached
 #     session information from the server.
+#
+#     Note: the notification url to be used by the Agent to receive session
+#     notifications is com.sun.identity.client.notification.url
 # Hot-Swap Enabled: No
 #
-com.iplanet.am.notification.url=@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification
 com.iplanet.am.session.client.polling.enable=false
 com.iplanet.am.session.client.polling.period=180
 
@@ -777,8 +777,8 @@ com.iplanet.security.encryptor=com.iplanet.services.util.JCEEncryption
 #   - com.iplanet.am.sdk.remote.pollingTime: Cache update time in minutes for
 #     user management data. If set to '0' no updates happen. This property
 #     takes effect only if no notification url is provided by
-#     'com.iplanet.am.notification.url' or if notifications are disabled.
-#     (i.e., com.sun.identity.idm.remote.notification.enabled=false)
+#     'com.sun.identity.client.notification.url' or if notifications are
+#     disabled. (i.e., com.sun.identity.idm.remote.notification.enabled=false)
 # Hot-Swap Enabled: No
 #
 com.sun.identity.idm.remote.notification.enabled=true
@@ -792,8 +792,8 @@ com.iplanet.am.sdk.remote.pollingTime=1
 #   - com.sun.identity.sm.cacheTime: Cache update time in minutes for service
 #     configuration data. If set to '0' no updates happen. This property
 #     takes effect only if no notification url is provided by
-#     'com.iplanet.am.notification.url' or if notifications are disabled.
-#     (i.e., com.sun.identity.sm.notification.enabled=false).
+#     'com.sun.identity.client.notification.url' or if notifications are
+#      disabled. (i.e., com.sun.identity.sm.notification.enabled=false).
 # Hot-Swap Enabled: No
 #
 com.sun.identity.sm.notification.enabled=true
@@ -816,8 +816,6 @@ com.iplanet.am.server.port=@AM_SERVICES_PORT@
 #     logging level. The valid values for are ALLOW, DENY, BOTH and NONE. 
 #   - com.sun.identity.agents.notification.enabled: A flag that specifies 
 #     if notifications are enabled or disabled for remote policy client.
-#   - com.sun.identity.agents.notification.url: Notification URL for remote 
-#     policy client.
 #   - com.sun.identity.agents.polling.interval: The duration in minutes 
 #     after which the cached entries are refreshed by remote policy client.
 #   - com.sun.identity.policy.client.cacheMode: The mode of caching to be
@@ -832,17 +830,20 @@ com.iplanet.am.server.port=@AM_SERVICES_PORT@
 #   - com.sun.identity.policy.client.clockSkew: Specifies time in seconds
 #     which is allowed to accommodate the time difference between the 
 #     Access Manager machine and the remote policy client machine.
+#
+#     Note: the Notification URL for remote policy client is set by the 
+#     property com.sun.identity.client.notification.url.
 # Hot-Swap Enabled: No
 #
 com.sun.identity.agents.server.log.file.name=amRemotePolicyLog
 com.sun.identity.agents.logging.level=BOTH
 com.sun.identity.agents.notification.enabled=true
-com.sun.identity.agents.notification.url=@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification
 com.sun.identity.agents.polling.interval=3
 com.sun.identity.policy.client.cacheMode=subtree
 com.sun.identity.policy.client.booleanActionValues=iPlanetAMWebAgentService|GET|allow|deny:iPlanetAMWebAgentService|POST|allow|deny
 com.sun.identity.policy.client.resourceComparators=serviceType=iPlanetAMWebAgentService|class=com.sun.identity.policy.plugins.HttpURLResourceName|wildcard=*|delimiter=/|caseSensitive=false
 com.sun.identity.policy.client.clockSkew=10
+
 #
 # URL POLICY ENVIRONMENT VARIABLE PROPERTIES
 #    - com.sun.identity.agents.config.policy.env.get.param: A list of HTTP GET
@@ -879,22 +880,26 @@ com.sun.identity.agents.config.policy.env.post.param[0]=
 com.sun.identity.agents.config.policy.env.jsession.param[0]=
 
 #
-# AGENT CENTRALIZED NOTIFICATIONS PROPERTIES
+# AGENT CENTRALIZED NOTIFICATIONS PROPERTY
 #   -com.sun.identity.agents.config.centralized.notification.enable: allows 
-#    agents to receive ntofication messages from fam server, so that
+#    agents to receive notification messages from opensso/fam server, so that
 #    when a user changes an agents properties configuration on fam server, 
-#    agent can be notified at agent housekeeping application url, and then
-#    agent can go and get the latest configuration and hotswap to use the 
-#    new properties.
+#    agent can be notified at agent housekeeping application url, 
+#    (com.sun.identity.client.notification.url)and then agent can go and get
+#    the latest configuration and hotswap to use the new properties.
 #    Can only be used in centralized mode when agent properties are controlled 
 #    by fam server
-#  -com.sun.identity.client.notification.url: URL to receive agent 
-#   configuration notifications. Soon this will be used for all agent
-#   notifications.
 #
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.centralized.notification.enable=true
+
+# AGENT NOTIFICATION URL PROPERTY
+#  -com.sun.identity.client.notification.url: URL for agent to receive
+#   notifications from the opensso/fam server for session, policy, and
+#   configuration changes.
+# Hot-Swap Enabled: No
+#
 com.sun.identity.client.notification.url=@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGENT_PREF_PORT@@AGENT_APP_URI@/notification
 
 #

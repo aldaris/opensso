@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationTaskHandler.java,v 1.3 2007-12-19 21:04:36 sean_brydon Exp $
+ * $Id: NotificationTaskHandler.java,v 1.4 2008-03-07 03:56:25 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,12 +60,34 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         super(manager);
     }
     
+    /**
+     * Sets the flags for enabling session, policy and agent configuration
+     * notifications. Also sets the notification url, and if notification url
+     * can not be set properly then sets all flags to off so all notifications 
+     * would be disabled.
+     *
+     */
     public void initialize(ISSOContext context, AmFilterMode mode)
     throws AgentException {
         super.initialize(context, mode);
-        initSessionNotificationEnabledFlagAndURI();
-        initPolicyNoticiationEnabledFlagAndURI();
-        initConfigNotificationEnabledFlagAndURI();
+        initSessionNotificationEnabledFlag();
+        initPolicyNotificationEnabledFlag();
+        initConfigNotificationEnabledFlag();
+        initNotificationURI();
+        if (isLogMessageEnabled()) {
+            String message = 
+                   "NotificationTaskHandler.initialize: Session Notifications";
+            message += (isSessionNotificationEnabled()) ? " are enabled" : 
+                                                          " are not enabled";
+
+            message += " and Policy Notifications";
+            message += (isPolicyNotificationEnabled()) ? " are enabled" : 
+                                                         " are not enabled";
+            message += " and Centralized Configuration Notifications";
+            message += (isConfigNotificationEnabled()) ? " are enabled" : 
+                                                         " are not enabled";
+            logMessage(message);
+        }
     }
     
     /**
@@ -84,15 +106,10 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
     public AmFilterResult process(AmFilterRequestContext ctx)
     throws AgentException {
         AmFilterResult result = null;
-        String requestURI = ctx.getHttpServletRequest().getRequestURI();
-        if ((isSessionNotificationEnabled() 
-                && requestURI.equals(getSessionNotificationURI()))
-                || (isPolicyNotificationEnabled() 
-                && requestURI.equals(getPolicyNotificationURI()) )
-                || isConfigNotificationEnabled() 
-                && requestURI.equals(getConfigNotificationURI())) {
+        String requestURI = ctx.getHttpServletRequest().getRequestURI();    
+        if (isActive() && requestURI.equals(getNotificationURI())) {
             result = handleNotification(ctx);
-        }        
+        }   
         return result;
     }
     
@@ -120,8 +137,8 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         String notificationData = getNotificationDataString(
                 ctx.getHttpServletRequest());
         if (isLogMessageEnabled()) {
-            logMessage("NotificationTaskHandler: notification Data: " + NEW_LINE
-                    + notificationData);
+            logMessage("NotificationTaskHandler.handleNotification:"
+                    + " notification Data: " + NEW_LINE + notificationData);
         }
         NotificationSet notificationSet =
                 NotificationSet.parseXML(notificationData);
@@ -129,15 +146,16 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         if (notifications != null && notifications.size() > 0) {
             String serviceID = notificationSet.getServiceID();
             if (isLogMessageEnabled()) {
-                logMessage("NotificationTaskHandler: received " + serviceID
-                        + " notification");
+                logMessage("NotificationTaskHandler.handleNotification:"
+                        + " received " + serviceID + " notification");
             }
             if (serviceID != null) {
                 String response = STR_NOTIFICATION_PROCESSING_FAILED;
                 NotificationHandler handler =
                         PLLClient.getNotificationHandler(serviceID);
                 if (handler == null) {
-                    logError("NotificationTaskHandler: NotificationHandler for "
+                    logError("NotificationTaskHandler.handleNotification:"
+                            + " NotificationHandler for "
                             + serviceID + " not found");
                 } else {
                     handler.process(notifications);
@@ -162,100 +180,43 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
             }
             result = notificationBuffer.toString();
         } catch (UnsupportedEncodingException uex) {
-            logError("Failed to read notification", uex);
+            logError("NotificationTaskHandler.getNotificationDataString:"
+                    + " Failed to read notification", uex);
         } catch (IllegalStateException iex) {
-            logError("Failed to read notification", iex);
+            logError("NotificationTaskHandler.getNotificationDataString:"
+                    + "Failed to read notification", iex);
         } catch (IOException ioex) {
-            logError("Failed to read notification", ioex);
+            logError("NotificationTaskHandler.getNotificationDataString:"
+                    + "Failed to read notification", ioex);
         }
         return result;
     }
     
-    private void initSessionNotificationEnabledFlagAndURI() {
+    private void initSessionNotificationEnabledFlag() {
         boolean flag = AgentConfiguration.isSessionNotificationEnabled();
-        if (flag) {
-            String url = AgentConfiguration.getSessionNotificationURL();
-            String notificationURI = null;
-            if (( url == null) || (url.trim().length() == 0)) {
-                url = null;
-            }
-            if (url != null) {
-                try {
-                    URL notificationURL = new URL(url);
-                    notificationURI = notificationURL.getPath();
-                } catch (MalformedURLException ex) {
-                    logError("Invalid Session Notification URL specified: "
-                            + url, ex);
-                }
-            }
-            if (notificationURI != null) {
-                setSessionNotificationEnabledFlag(true);
-                setSessionNotificationURI(notificationURI);
-                if (isLogMessageEnabled()) {
-                    logMessage(
-                            "NotificationTaskHandler: Session Notification "
-                            + "Enabled, URI => "+ _sessionNotificationURI);
-                }
-            } else {
-                logError("NotificationTaskHandler: Session Notification is "
-                        + "disabled due to errors");
-            }
-        } else {
-            if (isLogMessageEnabled()) {
-                logMessage(
-                   "NotificationTaskHandler: Session Notification is disabled");
-            }
-        }
+        setSessionNotificationEnabledFlag(flag);
     }    
     
-    private void initPolicyNoticiationEnabledFlagAndURI() {
+    private void initPolicyNotificationEnabledFlag() {
         boolean flag = AgentConfiguration.isPolicyNotificationEnabled();
-        
-        if (flag) {
-            String url = AgentConfiguration.getPolicyNotificationURL();
-            String notificationURI = null;
-            if (( url == null) || (url.trim().length() == 0)) {
-                url = null;
-            }
-            if (url != null) {
-                try {
-                    URL notificationURL = new URL(url);
-                    notificationURI = notificationURL.getPath();
-                } catch (MalformedURLException ex) {
-                    logError("Invalid Policy Notification URL specified: "
-                            + url, ex);
-                }
-            }
-            if (notificationURI != null) {
-                setPolicyNotificationEnabledFlag(true);
-                setPolicyNotificationURI(notificationURI);
-                if (isLogMessageEnabled()) {
-                    logMessage("NotificationTaskHandler: Policy Notification "
-                            + "Enabled, URI => "+ _policyNotificationURI);
-                }
-            } else {
-                logError("NotificationTaskHandler: Policy Notification is "
-                        + "disabled due to errors");
-            }
-        } else {
-            if (isLogMessageEnabled()) {
-                logMessage(
-                    "NotificationTaskHandler: Policy Notification is disabled");
-            }
-        }
+        setPolicyNotificationEnabledFlag(flag);
     }
     
     /** 
      * For receiving agent configuration properties changed xml notifications 
      * when in centralized mode.
      */ 
-    private void initConfigNotificationEnabledFlagAndURI() {
+    private void initConfigNotificationEnabledFlag() {
         //uses Manager instead of AgentConfiguration since hotswap property
         boolean flag = getConfigurationBoolean(
                 CONFIG_CENTRALIZED_NOTIFICATION_ENABLE,
-                DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE); 
-        
-        if (flag) {
+                DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE);      
+        setConfigNotificationEnabledFlag(flag);
+    }
+    
+    //URI used for session, policy, and agent configuration notices
+    private void initNotificationURI() {     
+        if (isActive()) {
             String url = AgentConfiguration.getClientNotificationURL();
             String notificationURI = null;
             if (( url == null) || (url.trim().length() == 0)) {
@@ -266,46 +227,41 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                     URL notificationURL = new URL(url);
                     notificationURI = notificationURL.getPath();
                 } catch (MalformedURLException ex) {
-                    logError("Invalid Agent Centralized Configuration" +
-                             " Notification URL specified: " + url, 
-                            ex);
+                    logError("NotificationTaskHandler.initNotificationURI:"
+                            + " Invalid Agent Centralized Configuration" +
+                             " Notification URL specified: " + url, ex);
                 }
             }
             if (notificationURI != null) {
-                setConfigNotificationEnabledFlag(true);
-                setConfigNotificationURI(notificationURI);
+                setNotificationURI(notificationURI);
                 if (isLogMessageEnabled()) {
-                    logMessage("NotificationTaskHandler: Centralized" +
-                            " Configuration Notification Enabled, URI => " + 
-                            _configNotificationURI);
+                    logMessage("NotificationTaskHandler.initNotificationURI:"
+                     + "Notifications URI => "
+                     +  _notificationURI);
                 }
             } else {
-                logError("NotificationTaskHandler: Centralized Configuration" +
-                         " Notification is disabled due to errors");
+                logError("NotificationTaskHandler.initNotificationURI:"
+                    + "Notification URI not set, so disabled due to errors"); 
+                 //since no valid url, ensure flags set to false
+                 setSessionNotificationEnabledFlag(false);
+                 setPolicyNotificationEnabledFlag(false);
+                 setConfigNotificationEnabledFlag(false);
             }
         } else {
             if (isLogMessageEnabled()) {
                 logMessage(
-                    "NotificationTaskHandler: Centralized Configuration" +
-                    " Notifications is disabled");
+                    "NotificationTaskHandler.initNotificationURI:" +
+                    " Notifications are not enabled");
             }
         }
     }
-    
+        
     private void setSessionNotificationEnabledFlag(boolean flag) {
         _sessionNotificationEnabled = flag;
     }
     
     private boolean isSessionNotificationEnabled() {
         return _sessionNotificationEnabled;
-    }
-    
-    private void setSessionNotificationURI(String uri) {
-        _sessionNotificationURI = uri;
-    }
-    
-    private String getSessionNotificationURI() {
-        return _sessionNotificationURI;
     }
     
     private void setPolicyNotificationEnabledFlag(boolean flag) {
@@ -316,14 +272,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         return _policyNotificationEnabled;
     }
     
-    private void setPolicyNotificationURI(String uri) {
-        _policyNotificationURI = uri;
-    }
-    
-    private String getPolicyNotificationURI() {
-        return _policyNotificationURI;
-    }
-    
     private void  setConfigNotificationEnabledFlag(boolean flag) {
         _configNotificationEnabled = flag;
     }
@@ -332,18 +280,18 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         return _configNotificationEnabled;
     }
     
-    private void setConfigNotificationURI(String uri) {
-         _configNotificationURI = uri;
+    //URI used for session, policy, and agent configuration notices
+    private void setNotificationURI(String uri) {
+         _notificationURI = uri;
     }
     
-    private String getConfigNotificationURI() {
-        return _configNotificationURI;
+    //URI used for session, policy, and agent configuration notices
+    private String getNotificationURI() {
+        return _notificationURI;
     }
     
     private boolean                         _sessionNotificationEnabled = false;
-    private String                          _sessionNotificationURI;
     private boolean                         _policyNotificationEnabled  = false;
-    private String                          _policyNotificationURI;
     private boolean                         _configNotificationEnabled  = false;
-    private String                          _configNotificationURI;
+    private String                          _notificationURI;
 }

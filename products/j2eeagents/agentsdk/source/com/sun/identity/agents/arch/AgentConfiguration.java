@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.17 2008-03-01 02:31:38 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.18 2008-03-07 03:56:24 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -159,15 +159,6 @@ public class AgentConfiguration implements
     }
     
    /**
-    * Returns the URL that will be used by the Server to send policy 
-    * notifications.
-    * @return the policy notification URL.
-    */
-    public static String getPolicyNotificationURL() {
-        return _policyNotificationURL;
-    }
-    
-   /**
     * Returns the URL that will be used by the Server to send all 
     * notifications to agents. This will include policy, session, and agent 
     * configuration change notifications.
@@ -186,16 +177,6 @@ public class AgentConfiguration implements
     */
     public static boolean isSessionNotificationEnabled() {
         return _sessionNotificationEnabledFlag;
-    }
-    
-   /**
-    * Returns the URL that will be used by the Server to send session
-    * notifications.
-    * 
-    * @return the session notification URL.
-    */
-    public static String getSessionNotificationURL() {
-        return _sessionNotificationURL;
     }
     
    /**
@@ -930,26 +911,7 @@ public class AgentConfiguration implements
     }
     
     //this property is a hot swappable ClientSDK property
-    private static synchronized void setSessionNotificationURL() {
-        //if (!isInitialized()) {
-            String url = getProperty(SDKPROP_SESSION_NOTIFICATION_URL);
-            if (url != null && url.trim().length() > 0) {
-                _sessionNotificationURL = url;
-            } else {
-                if (isLogWarningEnabled()) {
-                    logWarning(
-                         "AgentConfiguration: No session notification URL set");
-                }
-            }
-            if (isLogMessageEnabled()) {
-                logMessage("AgentConfiguration: Session notification URL: "
-                        + _sessionNotificationURL);
-            }     
-    }
-    
-    //this property is a hot swappable ClientSDK property
     private static synchronized void setSessionNotificationEnabledFlag() {
-        //if (!isInitialized()) {
             _sessionNotificationEnabledFlag = true;
             boolean pollingEnabled = false;
             String flag = getProperty(SDKPROP_SESSION_POLLING_ENABLE);
@@ -964,27 +926,10 @@ public class AgentConfiguration implements
             }        
     }
     
-    //this property is a hot swappable ClientSDK property
-    private static synchronized void setPolicyNotificationURL() {
-        //if (!isInitialized()) {
-            String url = getProperty(SDKPROP_POLICY_NOTIFICATION_URL);
-            if (url != null && url.trim().length() > 0) {
-                _policyNotificationURL = url;
-            } else {
-                if (isLogWarningEnabled()) {
-                    logWarning(
-                         "AgentConfiguration: No policy notification URL set");
-                }
-            }
-            if (isLogMessageEnabled()) {
-                logMessage("AgentConfiguration: Policy notification URL: "
-                        + _policyNotificationURL);
-            }
-    }
+
     
-    //this property is a hot swappable ClientSDK property
+    //this property is a not yet a hot swappable ClientSDK property
     private static synchronized void setClientNotificationURL() {
-        //if (!isInitialized()) {
             String url = getProperty(SDKPROP_CLIENT_NOTIFICATION_URL);
             if (url != null && url.trim().length() > 0) {
                 _clientNotificationURL = url;
@@ -1002,7 +947,6 @@ public class AgentConfiguration implements
     
     //this property is a hot swappable ClientSDK property
     private static synchronized void setPolicyNotificationEnabledFlag() {
-        //if (!isInitialized()) {
             boolean enable = false;
             String flag = getProperty(SDKPROP_POLICY_NOTIFICATION_ENABLE);
             if (flag != null && flag.trim().length() > 0) {
@@ -1087,9 +1031,7 @@ public class AgentConfiguration implements
      * their current values in some fields.
      */
     private static void setHotSwappableClientSDKProps() {
-        setSessionNotificationURL();
         setSessionNotificationEnabledFlag();
-        setPolicyNotificationURL();
         setClientNotificationURL();
         setPolicyNotificationEnabledFlag();
     }
@@ -1381,8 +1323,6 @@ public class AgentConfiguration implements
     private static String _applicationPassword;
     private static String _userIdPropertyName;
     private static AuditLogMode _auditLogMode = AuditLogMode.MODE_BOTH;
-    private static String _sessionNotificationURL;
-    private static String _policyNotificationURL;
     private static String _clientNotificationURL;
     private static boolean _policyNotificationEnabledFlag;
     private static boolean _sessionNotificationEnabledFlag;

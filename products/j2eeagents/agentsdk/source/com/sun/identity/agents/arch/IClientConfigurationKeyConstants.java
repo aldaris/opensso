@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IClientConfigurationKeyConstants.java,v 1.3 2007-12-22 00:52:02 sean_brydon Exp $
+ * $Id: IClientConfigurationKeyConstants.java,v 1.4 2008-03-07 03:56:24 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,20 +47,9 @@ public interface IClientConfigurationKeyConstants {
      public static final String SDKPROP_SSO_COOKIE_NAME =
          "com.iplanet.am.cookie.name";
      
-    /**
-     * Configuration key for Session notification URL.
-     */
-     public static final String SDKPROP_SESSION_NOTIFICATION_URL =
-         "com.iplanet.am.notification.url";
      
      public static final String SDKPROP_SESSION_POLLING_ENABLE =
          "com.iplanet.am.session.client.polling.enable";
-     
-    /**
-     * Configuration key for Policy Notification URL.
-     */
-     public static final String SDKPROP_POLICY_NOTIFICATION_URL =
-         "com.sun.identity.agents.notification.url";
 
     /**
      * Configuration key for Policy notification enabled flag.
