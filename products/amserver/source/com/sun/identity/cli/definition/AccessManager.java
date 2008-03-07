@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.57 2008-03-06 18:45:39 veiming Exp $
+ * $Id: AccessManager.java,v 1.58 2008-03-07 23:41:10 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ public class AccessManager {
 
     @ResourceStrings(
         string={"resourcebundle-not-found=Resource Bundle not found.",
-            "realm-does-not-exist=Cannot process the request because realm {0} does not exist.",
+            "realm-does-not-exist=Could not process the request because realm {0} did not exist.",
         "missing-attributevalues=attributevalues and datafile options are missing.",
         "missing-choicevalues=choicevalues and datafile options are missing.",
         "serverconfig-no-supported=This sub command is not supported because platform service is not upgraded."}
@@ -64,9 +64,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "batchstatus|b|s|Name of status file.",
-            "continue|c|u|Continue processing the rest of the request when preceeding request is erroneous."},
+            "continue|c|u|Continue processing the rest of the request when preceeding request was erroneous."},
         resourceStrings={
-            "bulk-op-empty-datafile=Batch file, {0} is empty.",
+            "bulk-op-empty-datafile=Batch file, {0} was empty.",
             "unmatch-quote=Unmatched '.",
             "unmatch-doublequote=Unmatched \"."})
     private String do_batch;
@@ -83,10 +83,10 @@ public class AccessManager {
             "filter|x|s|Filter (Pattern).",
             "quiet|q|s|Do not prompt for session invalidation."},
         resourceStrings={
-            "session-invalid-host-name=Invalid Host Name {0}. Expected format is <protocol>://<host>:<port>.",
+            "session-invalid-host-name=Invalid Host Name {0}. Expected format was <protocol>://<host>:<port>.",
             "sizeLimitExceeded=Search size limit exceeded. Please refine your search.",
             "timeLimitExceeded=Search time limit exceeded. Please refine your search.",
-            "session-no-sessions=There are no valid sessions.",
+            "session-no-sessions=There were no valid sessions.",
             "session-current-session=[Current Session]",
             "session-index=Index:",
             "session-userId=User Id:",
@@ -96,7 +96,7 @@ public class AccessManager {
             "session-max-idle-time=Max Idle Time:",
             "session-to-invalidate=To invalidate sessions, enter the index numbers",
             "session-cr-to-exit=[CR without a number to exit]:",
-            "session-selection-not-in-list=Your selection is not in the session list.",
+            "session-selection-not-in-list=Your selection was not in the session list.",
             "session-io-exception-reading-input=IO Exception reading input:",
             "session-destroy-session-succeeded=Destroy Session Succeeded."})
     private String list_sessions;
@@ -113,7 +113,7 @@ public class AccessManager {
         optionalOptions={
             "bundlelocale|o|s|Locale of the resource bundle."},
         resourceStrings={
-            "resourcebundle-added=Resource Bundle is added."})
+            "resourcebundle-added=Resource Bundle was added."})
     private String add_res_bundle;
 
     @SubCommandInfo(
@@ -127,7 +127,7 @@ public class AccessManager {
         optionalOptions={
             "bundlelocale|o|s|Locale of the resource bundle."},
         resourceStrings={
-            "resourcebundle-returned=Resource Bundle is returned."})
+            "resourcebundle-returned=Resource Bundle was returned."})
     private String list_res_bundle;
     
  
@@ -142,7 +142,7 @@ public class AccessManager {
         optionalOptions={
             "bundlelocale|o|s|Locale of the resource bundle."},
         resourceStrings={
-            "resourcebundle-deleted=Resource Bundle is deleted."})
+            "resourcebundle-deleted=Resource Bundle was deleted."})
     private String remove_res_bundle;
 
     @SubCommandInfo(
@@ -156,8 +156,8 @@ public class AccessManager {
         optionalOptions={
             "continue|c|u|Continue adding service if one or more previous service cannot be added."},
         resourceStrings={
-            "schema-added=Service is added.",
-            "schema-failed=Service is not added."})
+            "schema-added=Service was added.",
+            "schema-failed=Service was not added."})
     private String create_svc;
 
     @SubCommandInfo(
@@ -172,10 +172,10 @@ public class AccessManager {
             "continue|c|u|Continue deleting service if one or more previous services cannot be deleted.",
             "deletepolicyrule|r|u|Delete policy rule."},
         resourceStrings={
-            "service-deleted=Service is deleted.",
-            "service-deletion-failed=Service is not deleted.",
-            "delete-service-no-policy-rules=There are no policy rules.",
-            "delete-service-no-policy-schema=There are no policy schema.",
+            "service-deleted=Service was deleted.",
+            "service-deletion-failed=Service was not deleted.",
+            "delete-service-no-policy-rules=There were no policy rules.",
+            "delete-service-no-policy-schema=There were no policy schema.",
             "delete-service-delete-policy-rules=Delete policy rules."})
     private String delete_svc;
 
@@ -190,8 +190,8 @@ public class AccessManager {
         optionalOptions={
             "continue|c|u|Continue updating service if one or more previous services cannot be updated."},
         resourceStrings={
-            "service-updated=Schema is updated.",
-            "service-updated-failed=Schema is not updated."})
+            "service-updated=Schema was updated.",
+            "service-updated-failed=Schema was not updated."})
     private String update_svc;
 
     @SubCommandInfo(
@@ -207,8 +207,8 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-added=Attribute schema is added.",
-            "add-attribute-schema-failed=Attribute schema is not added."})
+            "attribute-schema-added=Attribute schema was added.",
+            "add-attribute-schema-failed=Attribute schema was not added."})
     private String add_attrs;
 
     @SubCommandInfo(
@@ -234,7 +234,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "create-realm-succeed=Realm is created."})
+            "create-realm-succeed=Realm was created."})
     private String create_realm;
 
     @SubCommandInfo(
@@ -248,7 +248,7 @@ public class AccessManager {
         optionalOptions={
             "recursive|r|u|Delete descendent realms recursively."},
         resourceStrings={
-            "delete-realm-succeed=Realm is deleted."})
+            "delete-realm-succeed=Realm was deleted."})
     private String delete_realm;
 
     @SubCommandInfo(
@@ -264,7 +264,7 @@ public class AccessManager {
             "recursive|r|u|Search recursively"},
         resourceStrings={
             "search-realm-succeed=Search completed.",
-            "search-realm-no-results=There are no realms.",
+            "search-realm-no-results=There were no realms.",
             "search-realm-results={0}"})
     private String list_realms;
 
@@ -281,7 +281,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "assign-service-to-realm-succeed=Service, {1} is added to realm, {0}."})
+            "assign-service-to-realm-succeed=Service, {1} was added to realm, {0}."})
     private String add_svc_realm;
 
     @SubCommandInfo(
@@ -295,7 +295,7 @@ public class AccessManager {
         optionalOptions={
             "mandatory|y|u|Include Mandatory services."},
         resourceStrings={
-            "realm-get-assigned-services-succeed=Services are returned.",
+            "realm-get-assigned-services-succeed=Services were returned.",
             "realm-get-assigned-services-no-services=There no services in this realm.",
             "realm-get-assigned-services-results={0}"})
     private String show_realm_svcs;
@@ -310,8 +310,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "realm-getassignable-services-succeed=Assignable Services are returned.",
-            "realm-getassignable-services-no-services=There no assignable services for this realm.",
+            "realm-getassignable-services-succeed=Assignable Services were returned.",
+            "realm-getassignable-services-no-services=There were no assignable services for this realm.",
             "realm-getassignable-services-result={0}"})
     private String list_realm_assignable_svcs;
 
@@ -326,8 +326,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "unassign-service-from-realm-succeed=Service, {1} is removed from realm, {0}.",
-            "unassign-service-from-realm-service-not-assigned=Service, {1} is not added to realm, {0}."})
+            "unassign-service-from-realm-succeed=Service, {1} was removed from realm, {0}.",
+            "unassign-service-from-realm-service-not-assigned=Service, {1} was not added to realm, {0}."})
     private String remove_svc_realm;
 
     @SubCommandInfo(
@@ -341,8 +341,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-attr-values-of-realm-succeed={0} has the following attribute values.",
-            "get-attr-values-of-realm-no-values={0} has no attributes.",
+            "get-attr-values-of-realm-succeed={0} had the following attribute values.",
+            "get-attr-values-of-realm-no-values={0} had no attributes.",
             "get-attr-values-of-realm-result={0}={1}"})
     private String get_realm;
     
@@ -373,7 +373,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "remove-attribute-from-realm-succeed=Attribute is removed."})
+            "remove-attribute-from-realm-succeed=Attribute was removed."})
     private String delete_realm_attr;
 
     @SubCommandInfo(
@@ -389,8 +389,8 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "modify-service-of-realm-succeed={1} under {0} is modified.",
-            "modify-service-of-realm-not-assigned=Service, {1} is not modified because it is not added to {0}."})
+            "modify-service-of-realm-succeed={1} under {0} was modified.",
+            "modify-service-of-realm-not-assigned=Service, {1} was not modified because it was not added to {0}."})
     private String set_svc_attrs;
 
     @SubCommandInfo(
@@ -407,7 +407,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values to be removed."},
         resourceStrings={
             "realm-remove-service-attributes-succeed=The following attributes were removed.",
-            "realm-remove-service-attributes-not-assigned=Service, {1} is not modified because it is not added to {0}."})
+            "realm-remove-service-attributes-not-assigned=Service, {1} was not modified because it was not added to {0}."})
     private String remove_svc_attrs;
 
     @SubCommandInfo(
@@ -424,7 +424,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values to be added."},
         resourceStrings={
             "realm-add-service-attributes-succeed=The following attributes were added.",
-            "realm-add-service-attributes-not-assigned=Service, {1} is not modified because it is not added to {0}."})
+            "realm-add-service-attributes-not-assigned=Service, {1} was not modified because it was not added to {0}."})
     private String add_svc_attrs;
 
     @SubCommandInfo(
@@ -441,8 +441,8 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "add-attribute-values-realm-succeed=Attribute values are added.",
-            "set-attribute-values-realm-succeed=Attribute values are set."})
+            "add-attribute-values-realm-succeed=Attribute values were added.",
+            "set-attribute-values-realm-succeed=Attribute values were set."})
     private String set_realm_attrs;
 
     @SubCommandInfo(
@@ -456,7 +456,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "create-policy-in-realm-succeed=Policies are created under realm, {0}."})
+            "create-policy-in-realm-succeed=Policies were created under realm, {0}."})
     private String create_policies;
 
     @SubCommandInfo(
@@ -470,7 +470,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "delete-policy-in-realm-succeed=Policies are deleted under realm, {0}."})
+            "delete-policy-in-realm-succeed=Policies were deleted under realm, {0}."})
     private String delete_policies;
 
     @SubCommandInfo(
@@ -485,8 +485,8 @@ public class AccessManager {
             "policynames|p|m|Names of policy. This can be an wildcard. All policy definition in the realm will be returned if this option is not provided.",
             "outfile|o|s|Filename where policy definition will be printed to. Definition will be printed in standard output if this option is not provided."},
         resourceStrings={
-            "get-policy-in-realm-succeed=Policy definitions are returned under realm, {0}.",
-            "get-policy-in-realm-no-policies=There are not matching policies under realm, {0}."})
+            "get-policy-in-realm-succeed=Policy definitions were returned under realm, {0}.",
+            "get-policy-in-realm-no-policies=There were not matching policies under realm, {0}."})
     private String list_policies;
 
     @SubCommandInfo(
@@ -502,8 +502,8 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "schema-remove-attribute-defaults-succeed=Schema attribute defaults are removed.",
-            "schema-sub-schema-does-not-exists=Sub Schema does not exist, {0}.",
+            "schema-remove-attribute-defaults-succeed=Schema attribute defaults were removed.",
+            "schema-sub-schema-does-not-exists=Sub Schema did not exist, {0}.",
             "supported-schema-type=Unsupported Schema Type, {0}."})
     private String remove_attr_defs;
 
@@ -521,7 +521,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data.",
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "schema-add-attribute-defaults-succeed=Schema attribute defaults are added."})
+            "schema-add-attribute-defaults-succeed=Schema attribute defaults were added."})
     private String add_attr_defs;
 
     @SubCommandInfo(
@@ -537,8 +537,8 @@ public class AccessManager {
             "subschemaname|c|s|Name of sub schema.",
             "attributenames|a|m|Attribute name(s)."},
         resourceStrings={
-            "schema-get-attribute-defaults-succeed=Schema attribute defaults are returned.",
-            "schema-get-attribute-defaults-no-matching-attr=There are no attribute values.",
+            "schema-get-attribute-defaults-succeed=Schema attribute defaults were returned.",
+            "schema-get-attribute-defaults-no-matching-attr=There were no attribute values.",
             "schema-get-attribute-defaults-result={0}={1}"})
     private String get_attr_defs;
 
@@ -556,7 +556,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "schema-set-attribute-defaults-succeed=Schema attribute defaults are set."})
+            "schema-set-attribute-defaults-succeed=Schema attribute defaults were set."})
     private String set_attr_defs;
 
     @SubCommandInfo(
@@ -575,7 +575,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data.",
             "choicevalues|k|m|Choice value e.g. o102=Inactive."},
         resourceStrings={
-            "attribute-schema-set-choice-value-succeed=Choice Values are set."})
+            "attribute-schema-set-choice-value-succeed=Choice Values were set."})
     private String set_attr_choicevals;
 
     @SubCommandInfo(
@@ -595,7 +595,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-set-boolean-values-succeed=Boolean Values are set."})
+            "attribute-schema-set-boolean-values-succeed=Boolean Values were set."})
     private String set_attr_bool_values;
     
     @SubCommandInfo(
@@ -612,7 +612,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-remove-choice-value-succeed=Choice Values are removed."})
+            "attribute-schema-remove-choice-value-succeed=Choice Values were removed."})
     private String remove_attr_choicevals;
 
     @SubCommandInfo(
@@ -629,7 +629,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-modify-type-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-modify-type-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_type;
     
     @SubCommandInfo(
@@ -646,7 +646,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-modify-ui-type-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-modify-ui-type-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_ui_type;
 
    @SubCommandInfo(
@@ -663,7 +663,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-modify-syntax-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-modify-syntax-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_syntax;
    
     @SubCommandInfo(
@@ -680,7 +680,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-modify-i18n-key-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-modify-i18n-key-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_i18n_key;
 
     @SubCommandInfo(
@@ -697,7 +697,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-modify-properties-view-bean-url-key-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-modify-properties-view-bean-url-key-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_view_bean_url;
 
     @SubCommandInfo(
@@ -714,7 +714,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-modify-any-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-modify-any-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_any;
 
     @SubCommandInfo(
@@ -731,7 +731,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-remove-default-values-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-remove-default-values-succeed=Attribute Schema, {3} was modified."})
     private String delete_attr_def_values;
 
     @SubCommandInfo(
@@ -748,7 +748,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-set-validator-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-set-validator-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_validator;
     
     @SubCommandInfo(
@@ -765,7 +765,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-set-start-range-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-set-start-range-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_start_range;
     
     @SubCommandInfo(
@@ -782,7 +782,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "attribute-schema-set-end-range-succeed=Attribute Schema, {3} is modified."})
+            "attribute-schema-set-end-range-succeed=Attribute Schema, {3} was modified."})
     private String set_attr_end_range;
      
     @SubCommandInfo(
@@ -798,7 +798,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "remove-attribute-schema-succeed=Attribute schema, {3} is removed."})
+            "remove-attribute-schema-succeed=Attribute schema, {3} was removed."})
     private String delete_attr;
 
     @SubCommandInfo(
@@ -812,7 +812,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "service-schema-set-i18n-key-succeed=Service Schema, {0} is modified."})
+            "service-schema-set-i18n-key-succeed=Service Schema, {0} was modified."})
     private String set_svc_i18n_key;
 
      @SubCommandInfo(
@@ -826,7 +826,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "service-schema-set-properties-view-bean-url-succeed=Service Schema, {0} is modified."})
+            "service-schema-set-properties-view-bean-url-succeed=Service Schema, {0} was modified."})
     private String set_svc_view_bean_url;
 
      @SubCommandInfo(
@@ -840,7 +840,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "service-schema-set-revision-number-succeed=Service Schema, {0} is modified."})
+            "service-schema-set-revision-number-succeed=Service Schema, {0} was modified."})
     private String set_revision_number;
      
     @SubCommandInfo(
@@ -853,7 +853,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "service-schema-get-revision-number-succeed=Revision number of service {0} is {1}."})
+            "service-schema-get-revision-number-succeed=Revision number of service {0} was {1}."})
     private String get_revision_number;
      
     @SubCommandInfo(
@@ -875,7 +875,7 @@ public class AccessManager {
             "add-sub-configuration-succeed=Sub Configuration {1} was added.",
             "add-sub-configuration-priority-no-integer=Priority needs to be an integer.",
             "add-sub-configuration-to-realm-succeed=Sub Configuration {1} was added to realm {0}",
-            "add-sub-configuration-no-global-config=There are no global configurations for service, {0}"})
+            "add-sub-configuration-no-global-config=There were no global configurations for service, {0}"})
     private String create_sub_cfg;
 
     @SubCommandInfo(
@@ -909,9 +909,9 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data.",
             "realm|e|s|Name of realm (Sub Configuration shall be added to global configuration if this option is not provided)."},
         resourceStrings={
-            "modify-sub-configuration-succeed=Sub Configuration, {0} is modified.",
-            "modify-sub-configuration-to-realm-succeed=Sub Configuration, {1} is modify in realm, {0}",
-            "modify-sub-configuration-invalid-operation=Invalid operation, supported operation are 'add', 'delete' and 'set'."})
+            "modify-sub-configuration-succeed=Sub Configuration, {0} was modified.",
+            "modify-sub-configuration-to-realm-succeed=Sub Configuration, {1} was modify in realm, {0}",
+            "modify-sub-configuration-invalid-operation=Invalid operation, supported operation were 'add', 'delete' and 'set'."})
     private String set_sub_cfg;
 
     @SubCommandInfo(
@@ -927,7 +927,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
-            "add-subschema-succeed=Sub Schema, {2} of type, {1} is added to service {0}."})
+            "add-subschema-succeed=Sub Schema, {2} of type, {1} was added to service {0}."})
     private String add_sub_schema;
 
     @SubCommandInfo(
@@ -943,7 +943,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of parent sub schema."},
         resourceStrings={
-            "remove-subschema-succeed={3} of Sub Schema, {2} of type, {1} is removed from service {0}."})
+            "remove-subschema-succeed={3} of Sub Schema, {2} of type, {1} was removed from service {0}."})
     private String remove_sub_schema;
 
     @SubCommandInfo(
@@ -959,7 +959,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "modify-inheritance-succeed=Inheritance of Sub Schema, {2} of type, {1} in service {0} is modified."})
+            "modify-inheritance-succeed=Inheritance of Sub Schema, {2} of type, {1} in service {0} was modified."})
     private String set_inheritance;
 
     @SubCommandInfo(
@@ -975,7 +975,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "add-plugin-interface-succeed=Plug-in interface, {1} is add to service, {0}."})
+            "add-plugin-interface-succeed=Plug-in interface, {1} was add to service, {0}."})
     private String add_plugin_interface;
 
     @SubCommandInfo(
@@ -991,7 +991,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "set-properties-viewbean-url-plugin-schema-succeed=Properties View Bean of Plug-in schema, {1} of service, {0} is set."})
+            "set-properties-viewbean-url-plugin-schema-succeed=Properties View Bean of Plug-in schema, {1} of service, {0} was set."})
     private String set_plugin_viewbean_url;
 
     @SubCommandInfo(
@@ -1008,11 +1008,11 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. sunIdentityServerDeviceStatus=Active.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "create-identity-succeed=Identity, {2} of type {1} is created in realm, {0}.",
+            "create-identity-succeed=Identity, {2} of type {1} was created in realm, {0}.",
             "multi-identity-failed=Multiple identities of name, {2} of type {1} in realm, {0} found.",
-            "identity-not-found=Cannot find identity of name, {2} of type {1} in realm, {0}.",
+            "identity-not-found=Could not find identity of name, {2} of type {1} in realm, {0}.",
             "invalid-identity-type=Invalid identity type.",
-            "does-not-support-creation={0} does not support identity creation of type, {1}."})
+            "does-not-support-creation={0} did not support identity creation of type, {1}."})
     private String create_identity;
 
     @SubCommandInfo(
@@ -1044,7 +1044,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "search-identities-succeed=Search of Identities of type {1} in realm, {0} succeeded.",
-            "search-identities-no-entries=There are no entries.",
+            "search-identities-no-entries=There were no entries.",
             "format-search-identities-results={0} ({1})"})
     private String list_identities;
 
@@ -1059,8 +1059,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-allowed-ops-succeed=The following operations are allowed for {1} under {0}.",
-            "get-allowed-ops-no-ops=No operations are allowed for {1} under {0}.",
+            "get-allowed-ops-succeed=The following operations were allowed for {1} under {0}.",
+            "get-allowed-ops-no-ops=No operations were allowed for {1} under {0}.",
             "allowed-ops-result={0}"})
     private String show_identity_ops;
 
@@ -1074,8 +1074,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-datatypes-succeed=The followings are the supported data types.",
-            "get-supported-no-supported-datatype=There are no supported data type."})
+            "get-supported-datatypes-succeed=The followings were the supported data types.",
+            "get-supported-no-supported-datatype=There were no supported data type."})
     private String show_data_types;
 
     @SubCommandInfo(
@@ -1088,9 +1088,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-idtypes-succeed=The following identity types are supported in realm {0}.",
+            "get-supported-idtypes-succeed=The following identity types were supported in realm {0}.",
             "supported-type-result={0}",
-            "no-supported-idtype=There are no supported identity types."})
+            "no-supported-idtype=There were no supported identity types."})
     private String show_identity_types;
 
     @SubCommandInfo(
@@ -1105,10 +1105,10 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-assignable-services-succeed=Assignable services of identity, {2} of type, {1} in realm, {0} is printed.",
+            "get-assignable-services-succeed=Assignable services of identity, {2} of type, {1} in realm, {0} was printed.",
             "assignable-service-result={0}",
-            "realm-does-not-support-service=realm, {0} does not support services.",
-            "no-service-assignable=There are no assignable services."})
+            "realm-does-not-support-service=realm, {0} did not support services.",
+            "no-service-assignable=There were no assignable services."})
     private String list_identity_assignable_svcs;
 
     @SubCommandInfo(
@@ -1123,9 +1123,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-assigned-services-succeed=Services of identity, {2} of type, {1} in realm, {0} is printed.",
+            "get-assigned-services-succeed=Services of identity, {2} of type, {1} in realm, {0} was printed.",
             "assigned-service-result={0}",
-            "no-service-assigned=There are no services."})
+            "no-service-assigned=There were no services."})
     private String get_identity_svcs;
 
     @SubCommandInfo(
@@ -1141,9 +1141,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-service-attributes-succeed={3}, services attribute values of identity, {2} of type, {1} in realm, {0} is printed.",
+            "get-service-attributes-succeed={3}, services attribute values of identity, {2} of type, {1} in realm, {0} was printed.",
             "idrepo-service-attribute-result={0}={1}",
-            "idrepo-no-service-attributes=There are no service attribute values."})
+            "idrepo-no-service-attributes=There were no service attribute values."})
     private String show_identity_svc_attrs;
 
     @SubCommandInfo(
@@ -1159,9 +1159,9 @@ public class AccessManager {
         optionalOptions={
             "attributenames|a|m|Attribute name(s). All attribute values shall be returned if the option is not provided."},
         resourceStrings={
-            "idrepo-get-attributes-succeed={0} has the following attribute values.",
+            "idrepo-get-attributes-succeed={0} had the following attribute values.",
             "idrepo-attribute-result={0}={1}",
-            "idrepo-no-attributes={0} has no attributes."})
+            "idrepo-no-attributes={0} had no attributes."})
     private String get_identity;
 
     @SubCommandInfo(
@@ -1179,8 +1179,8 @@ public class AccessManager {
         resourceStrings={
             "idrepo-get-memberships-succeed=The following {3} memberships for {2} were found.",
             "idrepo-memberships-result={0} ({1})",
-            "idrepo-no-memberships=Identity {2} does not have any {3} memberships.",
-            "idrepo-cannot-be-member={0} cannot have {1} membership."})
+            "idrepo-no-memberships=Identity {2} did not have any {3} memberships.",
+            "idrepo-cannot-be-member={0} could not have {1} membership."})
     private String show_memberships;
 
     @SubCommandInfo(
@@ -1198,8 +1198,8 @@ public class AccessManager {
         resourceStrings={
             "idrepo-get-members-succeed=The following {3} members for {2} were found.",
             "idrepo-members-result={0} ({1})",
-            "idrepo-no-members={2} does not have any {3} members.",
-            "idrepo-cannot-be-member={0} cannot have {1} members."})
+            "idrepo-no-members={2} did not have any {3} members.",
+            "idrepo-cannot-be-member={0} could not have {1} members."})
     private String show_members;
 
     @SubCommandInfo(
@@ -1216,7 +1216,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-addmember-succeed={0} has been added to {1}."})
+            "idrepo-get-addmember-succeed={0} had been added to {1}."})
     private String add_member;
 
     @SubCommandInfo(
@@ -1233,7 +1233,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-removemember-succeed={0} has been removed from {1}."})
+            "idrepo-get-removemember-succeed={0} had been removed from {1}."})
     private String remove_member;
 
     @SubCommandInfo(
@@ -1251,7 +1251,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "idrepo-assign-service-succeed={3} is added to identity {2} of type, {1} in realm, {0}."})
+            "idrepo-assign-service-succeed={3} was added to identity {2} of type, {1} in realm, {0}."})
     private String add_svc_identity;
 
     @SubCommandInfo(
@@ -1267,7 +1267,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-unassign-service-succeed={3} is removed from identity {2} of type, {1} in realm, {0}."})
+            "idrepo-unassign-service-succeed={3} was removed from identity {2} of type, {1} in realm, {0}."})
     private String remove_svc_identity;
 
     @SubCommandInfo(
@@ -1285,7 +1285,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "idrepo-modify-service-succeed=Attribute values of service, {3} of identity {2} of type, {1} in realm, {0} is modified."})
+            "idrepo-modify-service-succeed=Attribute values of service, {3} of identity {2} of type, {1} in realm, {0} was modified."})
     private String set_identity_svc_attrs;
 
     @SubCommandInfo(
@@ -1302,7 +1302,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "idrepo-set-attribute-values-succeed=Attribute values of identity, {2} of type, {1} in realm, {0} is modified."})
+            "idrepo-set-attribute-values-succeed=Attribute values of identity, {2} of type, {1} in realm, {0} was modified."})
     private String set_identity_attrs;
 
     @SubCommandInfo(
@@ -1317,9 +1317,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-privileges-succeed=Privileges of identity, {2} of type, {1} in realm, {0} is printed.",
+            "idrepo-get-privileges-succeed=Privileges of identity, {2} of type, {1} in realm, {0} was printed.",
             "privilege-result={0}",
-            "no-privileges=There are no privileges."})
+            "no-privileges=There were no privileges."})
     private String show_privileges;
 
     @SubCommandInfo(
@@ -1335,8 +1335,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-add-privileges-succeed=Privileges are add to identity, {2} of type, {1} in realm, {0}.",
-            "delegation-already-has-privilege={0} already has privilege, {1}"})
+            "idrepo-add-privileges-succeed=Privileges were add to identity, {2} of type, {1} in realm, {0}.",
+            "delegation-already-has-privilege={0} already had privilege, {1}"})
     private String add_privileges;
 
     @SubCommandInfo(
@@ -1352,8 +1352,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-remove-privileges-succeed=Privileges are removed from identity, {2} of type, {1} in realm, {0}.",
-            "delegation-does-not-have-privilege={0} does not have privilege, {1}"})
+            "idrepo-remove-privileges-succeed=Privileges were removed from identity, {2} of type, {1} in realm, {0}.",
+            "delegation-does-not-have-privilege={0} did not have privilege, {1}"})
     private String remove_privileges;
     
     @SubCommandInfo(
@@ -1367,7 +1367,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "authentication-list-auth-instance=Authentication Instances:",
-            "authentication-list-auth-instance-empty=There are no authentication instances.",
+            "authentication-list-auth-instance-empty=There were no authentication instances.",
             "authentication-list-auth-instance-entry={0}, [type={1}]"}
     )
     private String list_auth_instances;
@@ -1384,7 +1384,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "authentication-created-auth-instance-succeeded=Authentication Instance is created."}
+            "authentication-created-auth-instance-succeeded=Authentication Instance was created."}
     )
     private String create_auth_instance;
 
@@ -1399,8 +1399,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "authentication-delete-auth-instance-succeeded=Authentication Instance is deleted.",
-            "authentication-delete-auth-instances-succeeded=Authentication Instances are deleted."
+            "authentication-delete-auth-instance-succeeded=Authentication Instance was deleted.",
+            "authentication-delete-auth-instances-succeeded=Authentication Instances were deleted."
         }
     )
     private String delete_auth_instances;
@@ -1418,8 +1418,8 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "authentication-update-auth-instance-succeeded=Authentication Instance is updated.",
-            "authentication-update-auth-instance-not-found=Authentication Instance is not found."}
+            "authentication-update-auth-instance-succeeded=Authentication Instance was updated.",
+            "authentication-update-auth-instance-not-found=Authentication Instance was not found."}
     )
     private String update_auth_instance;
 
@@ -1436,8 +1436,8 @@ public class AccessManager {
         resourceStrings={
             "authentication-get-auth-instance-succeeded=Authentication Instance profile:",
             "authentication-get-auth-instance-result={0}={1}",
-            "authentication-get-auth-instance-no-values=There are no attribute values.",
-            "authentication-get-auth-instance-not-found=Authentication Instance is not found."}
+            "authentication-get-auth-instance-no-values=There were no attribute values.",
+            "authentication-get-auth-instance-not-found=Authentication Instance was not found."}
     )
     private String get_auth_instance;
 
@@ -1452,7 +1452,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "authentication-list-auth-configurations-succeeded=Authentication Configurations:",
-            "authentication-list-auth-configurations-no-configurations=There are no configurations."
+            "authentication-list-auth-configurations-no-configurations=There were no configurations."
         }
     )
     private String list_auth_cfgs;
@@ -1468,7 +1468,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "authentication-created-auth-configuration-succeeded=Authentication Configuration is created."}
+            "authentication-created-auth-configuration-succeeded=Authentication Configuration was created."}
     )
     private String create_auth_cfg;
 
@@ -1483,8 +1483,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "authentication-delete-auth-configuration-succeeded=Authentication Configuration is deleted.",
-            "authentication-delete-auth-configurations-succeeded=Authentication Configurations are deleted."
+            "authentication-delete-auth-configuration-succeeded=Authentication Configuration was deleted.",
+            "authentication-delete-auth-configurations-succeeded=Authentication Configurations were deleted."
         }
     )
     private String delete_auth_cfgs;
@@ -1502,8 +1502,8 @@ public class AccessManager {
         resourceStrings={
             "authentication-get-auth-config-entries-succeeded=Authentication Configuration's entries:",
             "authentication-get-auth-config-entries-entry=[name={0}] [flag={1}] [options={2}]",
-            "authentication-get-auth-config-entries-no-values=There are no entries.",
-            "authentication-get-auth-config-entries-not-found=Authentication Configuration is not found."}
+            "authentication-get-auth-config-entries-no-values=There were no entries.",
+            "authentication-get-auth-config-entries-not-found=Authentication Configuration was not found."}
     )
     private String get_auth_cfg_entr;
     
@@ -1520,9 +1520,9 @@ public class AccessManager {
             "entries|a|m|formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.",
             "datafile|D|s|Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options."},
         resourceStrings={
-            "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries is updated",
-            "authentication-set-auth-config-entries-not-found=Authentication Configuration is not found.",
-            "authentication-set-auth-config-entries-missing-data=Entries and datafile are missing."}
+            "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries was updated",
+            "authentication-set-auth-config-entries-not-found=Authentication Configuration was not found.",
+            "authentication-set-auth-config-entries-missing-data=Entries and datafile were missing."}
     )
     private String update_auth_cfg_entr;
 
@@ -1538,7 +1538,7 @@ public class AccessManager {
             "datastore-list-datastore-types-desc=Description",
             "datastore-list-datastore-types-type=Type",
             "datastore-list-datastore-types-succeeded=Supported Datastore Types:",
-            "datastore-list-datastore-types-no-entries=There are no supported datastore types."
+            "datastore-list-datastore-types-no-entries=There were no supported datastore types."
         }
     )
     private String list_datastore_types;
@@ -1554,7 +1554,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "datastore-list-datastores-succeeded=Datastore:",
-            "datastore-list-datastores-no-entries=There are no datastores."
+            "datastore-list-datastores-no-entries=There were no datastores."
         }
     )
     private String list_datastores;
@@ -1573,8 +1573,8 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "datastore-create-datastore-succeeded=Datastore is created.",
-            "datastore-create-datastore-missing-data=Attribute values and datafile are missing."
+            "datastore-create-datastore-succeeded=Datastore was created.",
+            "datastore-create-datastore-missing-data=Attribute values and datafile were missing."
         }
     )
     private String create_datastore;
@@ -1590,9 +1590,9 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "datastore-delete-datastore-not-found=Datastores are not found.",
-            "datastore-delete-datastore-succeeded=Datastore is deleted.",
-            "datastore-delete-datastores-succeeded=Datastores are deleted."
+            "datastore-delete-datastore-not-found=Datastores were not found.",
+            "datastore-delete-datastore-succeeded=Datastore was deleted.",
+            "datastore-delete-datastores-succeeded=Datastores were deleted."
         }
     )
     private String delete_datastores;
@@ -1610,9 +1610,9 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. sunIdRepoClass=com.sun.identity.idm.plugins.files.FilesRepo.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "datastore-update-datastore-succeeded=Datastore profile is updated.",
-            "datastore-update-datastore-not-found=Datastore is not found.",
-            "datastore-update-datastore-missing-data=Attribute values and datafile are missing."
+            "datastore-update-datastore-succeeded=Datastore profile was updated.",
+            "datastore-update-datastore-not-found=Datastore was not found.",
+            "datastore-update-datastore-missing-data=Attribute values and datafile were missing."
         }
     )
     private String update_datastore;
@@ -1625,9 +1625,9 @@ public class AccessManager {
             "encryptsecret|e|s|Secret key for encrypting password."},
         optionAliases={},
         macro="authentication",
-        optionalOptions={"outfile|o|s|Filename where configuration is written."},
+        optionalOptions={"outfile|o|s|Filename where configuration was written."},
         resourceStrings={
-            "export-service-configuration-succeeded=Service Configuration is exported."
+            "export-service-configuration-succeeded=Service Configuration was exported."
         }
     )
     private String export_svc_cfg;
@@ -1644,13 +1644,13 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "import-service-configuration-succeeded=Service Configuration is imported.",
+            "import-service-configuration-succeeded=Service Configuration was imported.",
             "import-service-configuration-invalid-ds-type=Invalid datastore type.",
             "import-service-configuration-invalid-port=Invalid port number.",
             "import-service-configuration-not-connect-to-ds=Unable to connect to directory server.",
             "import-service-configuration-connecting-to-ds=Connecting to directory server.",
             "import-service-configuration-connected-to-ds=Connected to directory server.",
-            "import-service-configuration-cannot-load-lidf=Cannot locate LDIF, {0}."
+            "import-service-configuration-cannot-load-lidf=Could not locate LDIF, {0}."
         }
     )
     private String import_svc_cfg;
@@ -1671,7 +1671,7 @@ public class AccessManager {
             "outfile|o|s|File name where serverconfig XML is written."
         },
         resourceStrings={
-            "create-serverconfig-xml-succeeded=Server Configuration XML is created."
+            "create-serverconfig-xml-succeeded=Server Configuration XML was created."
         }
     )
     private String create_svrcfg_xml;
@@ -1688,8 +1688,8 @@ public class AccessManager {
             "outfile|o|s|File name where serverconfig XML is written."
         },
         resourceStrings={
-            "get-server-config-xml-no-result-no-results=Cannot locate server configuration XML for this server.",
-            "get-serverconfig-xml-succeeded=Server Configuration XML is returned."
+            "get-server-config-xml-no-result-no-results=Could not locate server configuration XML for this server.",
+            "get-serverconfig-xml-succeeded=Server Configuration XML was returned."
         }
     )
     private String get_svrcfg_xml;
@@ -1707,7 +1707,7 @@ public class AccessManager {
             "outfile|o|s|File name where serverconfig XML is written."
         },
         resourceStrings={
-            "set-serverconfig-xml-succeeded=Server Configuration XML is set."
+            "set-serverconfig-xml-succeeded=Server Configuration XML was set."
         }
     )
     private String set_svrcfg_xml;
@@ -1727,8 +1727,8 @@ public class AccessManager {
             "attributevalues|a|m|properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
-            "does-not-support-agent-creation={0} does not support agent creation.",
-            "create-agent-succeeded=Agent configuration is created."
+            "does-not-support-agent-creation={0} did not support agent creation.",
+            "create-agent-succeeded=Agent configuration was created."
         }
     )
     private String create_agent;
@@ -1743,7 +1743,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "delete-agent-succeeded=The following agents are deleted."
+            "delete-agent-succeeded=The following agents were deleted."
         }
     )
     private String delete_agents;
@@ -1761,7 +1761,7 @@ public class AccessManager {
             "attributevalues|a|m|properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
-            "update-agent-succeeded=Agent configuration is updated."
+            "update-agent-succeeded=Agent configuration was updated."
         }
     )
     private String update_agent;
@@ -1792,8 +1792,8 @@ public class AccessManager {
             "filter|x|s|Filter (Pattern).",
             "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
         resourceStrings={
-            "list-agent-succeeded=The followings are the agent names.",
-            "search-agent-no-entries=There are no agents.",
+            "list-agent-succeeded=The followings were the agent names.",
+            "search-agent-no-entries=There were no agents.",
             "format-search-agent-results={0} ({1})"
         }
     )
@@ -1811,9 +1811,9 @@ public class AccessManager {
             "outfile|o|s|Filename where configuration is written to.",
             "inherit|i|u|Set this to inherit properties from parent group."},
         resourceStrings={
-            "show-agent-succeeded=The followings are the agent properties.",
-            "show-agent-to-file=Agent properties are written to file.",
-            "show-agent-no-attributes=There are no attribute values."
+            "show-agent-succeeded=The followings were the agent properties.",
+            "show-agent-to-file=Agent properties were written to file.",
+            "show-agent-no-attributes=There were no attribute values."
         }
     )
     private String show_agent;
@@ -1827,8 +1827,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "show-agent-type-succeeded=The followings are the supported agent types.",
-            "show-agent-type-no-results=There are no supported agent types."
+            "show-agent-type-succeeded=The followings were the supported agent types.",
+            "show-agent-type-no-results=There were no supported agent types."
         }
     )
     private String show_agent_types;
@@ -1844,9 +1844,9 @@ public class AccessManager {
         optionalOptions={
             "outfile|o|s|Filename where configuration is written to."},
         resourceStrings={
-            "show-agent-group-succeeded=The followings are the agent group properties.",
-            "show-agent-group-to-file=Agent group properties are written to file.",
-            "show-agent-group-no-attributes=There are no attribute values."
+            "show-agent-group-succeeded=The followings were the agent group properties.",
+            "show-agent-group-to-file=Agent group properties were written to file.",
+            "show-agent-group-no-attributes=There were no attribute values."
         }
     )
     private String show_agent_grp;
@@ -1864,8 +1864,8 @@ public class AccessManager {
             "attributevalues|a|m|properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
-            "does-not-support-agent-group-creation={0} does not support agent group creation.",
-            "create-agent-group-succeeded=Agent group is created."
+            "does-not-support-agent-group-creation={0} did not support agent group creation.",
+            "create-agent-group-succeeded=Agent group was created."
         }
     )
     private String create_agent_grp;
@@ -1880,7 +1880,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "delete-agent-group-succeeded=The following agent groups are deleted."
+            "delete-agent-group-succeeded=The following agent groups were deleted."
         }
     )
     private String delete_agent_grps;
@@ -1896,8 +1896,8 @@ public class AccessManager {
             "filter|x|s|Filter (Pattern).",
             "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
         resourceStrings={
-            "list-agent-group-succeeded=The followings are the agent group names.",
-            "search-agent-group-no-entries=There are no agent groups.",
+            "list-agent-group-succeeded=The followings were the agent group names.",
+            "search-agent-group-no-entries=There were no agent groups.",
             "format-search-agent-group-results={0} ({1})"
         }
     )
@@ -1914,8 +1914,8 @@ public class AccessManager {
         optionalOptions={
             "filter|x|s|Filter (Pattern)."},
         resourceStrings={
-            "list-agent-group-members-succeeded=The followings are the agents in the group.",
-            "list-agent-group-members-no-members=There are no members.",
+            "list-agent-group-members-succeeded=The followings were the agents in the group.",
+            "list-agent-group-members-no-members=There were no members.",
              "format-list-agent-group-members-results={0} ({1})"
         }
     )
@@ -1932,7 +1932,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "list-agent-membership-succeeded=Agent belongs to {0} ({1}).",
-            "list-agent-membership-no-members=Agent has no memberships."
+            "list-agent-membership-no-members=Agent had no memberships."
         }
     )
     private String show_agent_membership;
@@ -1948,8 +1948,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "add-agent-to-group-succeeded=Agent is added to group.",
-            "add-agent-to-group-succeeded-pural=Agents are added to group."
+            "add-agent-to-group-succeeded=Agent was added to group.",
+            "add-agent-to-group-succeeded-pural=Agents were added to group."
         }
     )
     private String add_agent_to_grp;
@@ -1965,8 +1965,8 @@ public class AccessManager {
         macro="authentication",
           optionalOptions={},
           resourceStrings={
-            "remove-agent-to-group-succeeded=Agent is removed from group.",
-            "remove-agent-to-group-succeeded-pural=Agents are removed from group."
+            "remove-agent-to-group-succeeded=Agent was removed from group.",
+            "remove-agent-to-group-succeeded-pural=Agents were removed from group."
           }
       )
     private String remove_agent_from_grp;
@@ -1984,7 +1984,7 @@ public class AccessManager {
             "attributevalues|a|m|properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
-            "update-agent-group-succeeded=Agent group configuration is updated."
+            "update-agent-group-succeeded=Agent group configuration was updated."
         }
     )
     private String update_agent_grp;
@@ -2003,8 +2003,8 @@ public class AccessManager {
             "withdefaults|w|u|Set this flag to get default configuration."
             },
         resourceStrings={
-            "list-server-config-succeeded=The followings are the configuration of {0}.",
-            "list-server-config-no-results=There are no configuration."
+            "list-server-config-succeeded=The followings were the configuration of {0}.",
+            "list-server-config-no-results=There were no configuration."
         }
     )
     private String list_server_cfg;
@@ -2022,8 +2022,8 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "update-server-config-succeeded=The configuration of {0} is updated.",
-            "update-server-config-does-not-exists={0} does not exist."
+            "update-server-config-succeeded=The configuration of {0} was updated.",
+            "update-server-config-does-not-exists={0} did not exist."
         }
     )
     private String update_server_cfg;
@@ -2039,8 +2039,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "remove-server-config-succeeded=Properties are removed.",
-            "remove-server-config-does-not-exists={0} does not exist."
+            "remove-server-config-succeeded=Properties were removed.",
+            "remove-server-config-does-not-exists={0} did not exist."
         }
     )
     private String remove_server_cfg;
@@ -2058,8 +2058,8 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains attribute values data."},
         macro="authentication",
         resourceStrings={
-            "create-server-config-succeeded=Server is created.",
-            "create-server-config-already-exists=Server already exists."
+            "create-server-config-succeeded=Server was created.",
+            "create-server-config-already-exists=Server already existed."
         }
     )
     private String create_server;
@@ -2074,8 +2074,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "delete-server-config-succeeded=Server is deleted.",
-            "delete-server-config-dont-exists=Server does not exist."
+            "delete-server-config-succeeded=Server was deleted.",
+            "delete-server-config-dont-exists=Server did not exist."
         }
     )
     private String delete_server;
@@ -2089,8 +2089,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "list-servers-succeeded=The followings are the servers",
-            "list-servers-no-instances=There are no servers."
+            "list-servers-succeeded=The followings were the servers",
+            "list-servers-no-instances=There were no servers."
         }
     )
     private String list_servers;
@@ -2106,8 +2106,8 @@ public class AccessManager {
         optionalOptions={"secondaryurls|a|m|Secondary URLs"},
         macro="authentication",
         resourceStrings={
-            "create-site-succeeded=Site is created.",
-            "create-site-already-exists=Site already exists."
+            "create-site-succeeded=Site was created.",
+            "create-site-already-exists=Site already existed."
         }
     )
     private String create_site;
@@ -2122,8 +2122,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "delete-site-succeeded=Site is deleted.",
-            "delete-site-no-exists=Site does not exist."
+            "delete-site-succeeded=Site was deleted.",
+            "delete-site-no-exists=Site did not exist."
         }
     )
     private String delete_site;
@@ -2137,8 +2137,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "list-sites-succeeded=The followings are the sites",
-            "list-sites-no-instances=There are no sites."
+            "list-sites-succeeded=The followings were the sites",
+            "list-sites-no-instances=There were no sites."
         }
     )
     private String list_sites;
@@ -2152,8 +2152,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "show-site-members-succeeded=The followings are the members",
-            "show-site-members-no-members=There are no members."
+            "show-site-members-succeeded=The followings were the members",
+            "show-site-members-no-members=There were no members."
         }
     )
     private String show_site_members;
@@ -2168,8 +2168,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "add-site-members-succeeded=Servers are added to site",
-            "add-site-members-site-not-exist=Site does not exist."
+            "add-site-members-succeeded=Servers were added to site",
+            "add-site-members-site-not-exist=Site did not exist."
         }
     )
     private String add_site_members;
@@ -2184,8 +2184,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "remove-site-members-succeeded=Servers are removed from site",
-            "remove-site-members-site-not-exist=Site does not exist."
+            "remove-site-members-succeeded=Servers were removed from site",
+            "remove-site-members-site-not-exist=Site did not exist."
         }
     )
     private String remove_site_members;
@@ -2201,8 +2201,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "set-site-primary-url-succeeded=Site primary URL is modified.",
-            "set-site-primary-url-no-exists=Site does not exists."
+            "set-site-primary-url-succeeded=Site primary URL was modified.",
+            "set-site-primary-url-no-exists=Site did not exist."
         }
     )
     private String set_site_pri_url;
@@ -2218,9 +2218,9 @@ public class AccessManager {
         macro="authentication",
         resourceStrings={
             "show-site-primaryURL=Site primary URL: {0}.",
-            "show-site-no-secondaryURL=There are no secondary URLs.",
+            "show-site-no-secondaryURL=There were no secondary URLs.",
             "show-site-secondaryURL=Site secondary URLs:",
-            "show-site-no-exists=Site does not exists."
+            "show-site-no-exists=Site did not exist."
         }
     )
     private String show_site;
@@ -2236,8 +2236,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "set-site-secondary-urls-succeeded=Site secondary URLs are set.",
-            "set-site-secondary-urls-no-exists=Site does not exists."
+            "set-site-secondary-urls-succeeded=Site secondary URLs were set.",
+            "set-site-secondary-urls-no-exists=Site did not exist."
         }
     )
     private String set_site_sec_urls;
@@ -2253,8 +2253,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "add-site-secondary-urls-succeeded=Site secondary URLs are added.",
-            "add-site-secondary-urls-no-exists=Site does not exists."
+            "add-site-secondary-urls-succeeded=Site secondary URLs were added.",
+            "add-site-secondary-urls-no-exists=Site did not exist."
         }
     )
     private String add_site_sec_urls;
@@ -2270,8 +2270,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "remove-site-secondary-urls-succeeded=Site secondary URLs are removed.",
-            "remove-site-secondary-urls-no-exists=Site does not exists."
+            "remove-site-secondary-urls-succeeded=Site secondary URLs were removed.",
+            "remove-site-secondary-urls-no-exists=Site did not exist."
         }
     )
     private String remove_site_sec_urls;
@@ -2287,9 +2287,9 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "clone-server-succeeded=Server is cloned.",
-            "clone-server-exists=Clone server already exists.",
-            "clone-server-no-exists=Server does not exists."
+            "clone-server-succeeded=Server was cloned.",
+            "clone-server-exists=Clone server already existed.",
+            "clone-server-no-exists=Server did not exist."
         }
     )
     private String clone_server;
@@ -2301,11 +2301,11 @@ public class AccessManager {
         mandatoryOptions={
             "servername|s|s|Server name"},
         optionAliases={},
-        optionalOptions={"outfile|o|s|Filename where configuration is written."},
+        optionalOptions={"outfile|o|s|Filename where configuration was written."},
         macro="authentication",
         resourceStrings={
-            "export-server-succeeded=Server is exported.",
-            "export-server-no-exists=Server does not exists."
+            "export-server-succeeded=Server was exported.",
+            "export-server-no-exists=Server did not exist."
         }
     )
     private String export_server;
@@ -2321,8 +2321,8 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "import-server-succeeded=Server is imported.",
-            "import-server-already-exists=Server already exists."
+            "import-server-succeeded=Server was imported.",
+            "import-server-already-exists=Server already existed."
         }
     )
     private String import_server;
@@ -2337,8 +2337,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-authtypes-succeed=The following authenticated modules are supported.",
-            "get-supported-no-supported-authtype=There are no supported authentication modules."})
+            "get-supported-authtypes-succeed=The following authenticated modules were supported.",
+            "get-supported-no-supported-authtype=There were no supported authentication modules."})
     private String show_auth_modules;
 
     @SubCommandInfo(
@@ -2351,7 +2351,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "register-auth-module-succeeded=Authentication module is registered."
+            "register-auth-module-succeeded=Authentication module was registered."
         }
     )
     private String register_auth_module;
@@ -2366,8 +2366,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "unregister-auth-module-succeeded=Authentication module is unregistered.",
-            "unregister-auth-module-notfound=Authentication module is not registered."
+            "unregister-auth-module-succeeded=Authentication module was unregistered.",
+            "unregister-auth-module-notfound=Authentication module was not registered."
         }
     )
     private String unregister_auth_module;

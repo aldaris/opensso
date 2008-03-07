@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.25 2008-03-06 18:19:33 veiming Exp $
+ * $Id: FederationManager.java,v 1.26 2008-03-07 23:41:10 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,18 +91,18 @@ public class FederationManager {
             "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point or Attribute Query Provider or Attribute Authority or Authentication Authority or Affiliation are required.",
             "create-meta-template-exception-affi-conflict=Affiliation and other providers can't coexist.",
             "create-meta-template-exception-affi-members-empty=Affiliation members is required.",
-            "create-meta-template-exception-affi-null-with-cert-alias=Affiliation Certificate Alias is provided without Affiliation Name.",
-            "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias is provided without Identity Provider Name.",
-            "create-meta-template-exception-sp-null-with-cert-alias=Service Provider Certificate Alias is provided without Service Provider Name.",
-            "create-meta-template-exception-attra-null-with-cert-alias=Attribute Authority Certificate Alias is provided without Attribute Authority Name.",
-            "create-meta-template-exception-attrq-null-with-cert-alias=Attribute Query Provider Certificate Alias is provided without Attribute Query Provider Name.",
-            "create-meta-template-exception-authna-null-with-cert-alias=Authentication Authority Certificate Alias is provided without Authentication Authority Name.",
-            "create-meta-template-exception-pdp-null-with-cert-alias=Policy Decision Point Certificate Alias is provided without Policy Decision Point Name",
-            "create-meta-template-exception-pep-null-with-cert-alias=Policy Enforcement Point Certificate Alias is provided without Policy Enforcement Point Name",
-            "create-meta-template-exception-protocol-not-found=Protocol is not found in configuration file.",
-            "create-meta-template-exception-host-not-found=Host is not found in configuration file.",
-            "create-meta-template-exception-port-not-found=Port is not found in configuration file.",
-            "create-meta-template-exception-deploymentURI-not-found=Deployment URI is not found in configuration file.",
+            "create-meta-template-exception-affi-null-with-cert-alias=Affiliation Certificate Alias was provided without Affiliation Name.",
+            "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias was provided without Identity Provider Name.",
+            "create-meta-template-exception-sp-null-with-cert-alias=Service Provider Certificate Alias was provided without Service Provider Name.",
+            "create-meta-template-exception-attra-null-with-cert-alias=Attribute Authority Certificate Alias was provided without Attribute Authority Name.",
+            "create-meta-template-exception-attrq-null-with-cert-alias=Attribute Query Provider Certificate Alias was provided without Attribute Query Provider Name.",
+            "create-meta-template-exception-authna-null-with-cert-alias=Authentication Authority Certificate Alias was provided without Authentication Authority Name.",
+            "create-meta-template-exception-pdp-null-with-cert-alias=Policy Decision Point Certificate Alias was provided without Policy Decision Point Name",
+            "create-meta-template-exception-pep-null-with-cert-alias=Policy Enforcement Point Certificate Alias was provided without Policy Enforcement Point Name",
+            "create-meta-template-exception-protocol-not-found=Protocol was not found in configuration file.",
+            "create-meta-template-exception-host-not-found=Host was not found in configuration file.",
+            "create-meta-template-exception-port-not-found=Port was not found in configuration file.",
+            "create-meta-template-exception-deploymentURI-not-found=Deployment URI was not found in configuration file.",
             "create-meta-template-created-descriptor-template=Hosted entity descriptor for realm, {1} was written to file, {0}.",
             "create-meta-template-created-configuration-template=Hosted entity configuration for realm, {1} was written to file, {0}."})
     private String create_metadata_templ;
@@ -122,9 +122,9 @@ public class FederationManager {
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "import-entity-exception-no-datafile=metadata or extended data file is required.",
-            "import-entity-exception-invalid-descriptor-file=Entity descriptor in file, {0} has invalid syntax.",
+            "import-entity-exception-invalid-descriptor-file=Entity descriptor in file, {0} had invalid syntax.",
             "import-entity-succeeded=Import file, {0}.",
-            "import-entity-exception-invalid-config-file=Entity config in file, {0} has invalid syntax."})
+            "import-entity-exception-invalid-config-file=Entity config in file, {0} had invalid syntax."})
     private String import_entity;
     
     @SubCommandInfo(
@@ -143,12 +143,12 @@ public class FederationManager {
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "export-entity-exception-no-datafile=Missing export files, metadata or extended option needs to be set.",
-            "export-entity-exception-entity-descriptor-not-exist=Entity descriptor, {0} under realm, {1} does not exist.",
-            "export-entity-exception-invalid_descriptor=Entity descriptor, {0} under realm, {1} has invalid syntax.",
+            "export-entity-exception-entity-descriptor-not-exist=Entity descriptor, {0} under realm, {1} did not exist.",
+            "export-entity-exception-invalid_descriptor=Entity descriptor, {0} under realm, {1} had invalid syntax.",
             "export-entity-export-descriptor-succeeded=Entity descriptor was exported to file, {0}.",
             "export-entity-export-config-succeeded=Entity configuration was exported to file, {0}.",
-            "export-entity-exception-entity-config-not-exist=Entity configuration, {0} does not exist under realm, {1}",
-            "export-entity-exception-invalid-config=Entity configuration, {0} under realm, {1} has invalid syntax."})
+            "export-entity-exception-entity-config-not-exist=Entity configuration, {0} did not exist under realm, {1}",
+            "export-entity-exception-invalid-config=Entity configuration, {0} under realm, {1} had invalid syntax."})
     private String export_entity;
 
     @SubCommandInfo(
@@ -164,9 +164,9 @@ public class FederationManager {
             "extendedonly|x|u|Set to flag to delete only extended data.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "delete-entity-entity-not-exist=Entity, {0} does not exist.",
-            "delete-entity-config-deleted=Configuration is deleted for entity, {0}.",
-            "delete-entity-descriptor-deleted=Descriptor is deleted for entity, {0}."})
+            "delete-entity-entity-not-exist=Entity, {0} did not exist.",
+            "delete-entity-config-deleted=Configuration was deleted for entity, {0}.",
+            "delete-entity-descriptor-deleted=Descriptor was deleted for entity, {0}."})
     private String delete_entity;
 
     @SubCommandInfo(
@@ -197,7 +197,7 @@ public class FederationManager {
             "trustedproviders|k|m|Trusted Providers",
             "prefix|p|s|Prefix URL for idp discovery reader and writer URL."},
         resourceStrings={
-            "create-circle-of-trust-succeeded=Circle of trust, {0} is created."})
+            "create-circle-of-trust-succeeded=Circle of trust, {0} was created."})
     private String create_cot;
 
     @SubCommandInfo(
@@ -211,7 +211,7 @@ public class FederationManager {
         optionalOptions={
             "realm|e|s|Realm where circle of trust resides"},
         resourceStrings={
-            "delete-circle-of-trust-succeeded=Circle of trust, {0} is deleted."})
+            "delete-circle-of-trust-succeeded=Circle of trust, {0} was deleted."})
     private String delete_cot;
 
     @SubCommandInfo(
@@ -241,7 +241,7 @@ public class FederationManager {
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
             "list-circle-of-trust-members-no-members=There are no trusted entities in the circle of trust, {0}.",
-            "list-circle-of-trust-members-cot-does-not-exists=Circle of trust, {0} does not exist.",
+            "list-circle-of-trust-members-cot-does-not-exists=Circle of trust, {0} did not exist.",
             "list-circle-of-trust-members-members=List of trusted entities (entity IDs) in the circle of trust, {0}:"})
     private String list_cot_members;
 
@@ -258,7 +258,7 @@ public class FederationManager {
             "realm|e|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "remove-circle-of-trust-member-succeeded=Entity, {1} is removed from the circle of trust, {0}."})
+            "remove-circle-of-trust-member-succeeded=Entity, {1} was removed from the circle of trust, {0}."})
     private String remove_cot_member;
 
     @SubCommandInfo(
@@ -274,7 +274,7 @@ public class FederationManager {
             "realm|e|s|Realm where circle of trust resides",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "add-circle-of-trust-member-succeeded=Entity, {2} is added to the circle of trust, {1}, in realm {3}."})
+            "add-circle-of-trust-member-succeeded=Entity, {2} was added to the circle of trust, {1}, in realm {3}."})
     private String add_cot_member;
 
     @SubCommandInfo(
@@ -291,14 +291,14 @@ public class FederationManager {
         optionalOptions={
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "bulk-federation-succeeded=Bulk Federation for this host is completed. To complete the federation, name Id mapping file should be loaded to remote provider.",
-            "bulk-federation-infile-do-not-exists=User Id Mapping file, {0} does not exist.",
+            "bulk-federation-succeeded=Bulk Federation for this host was completed. To complete the federation, name Id mapping file should be loaded to remote provider.",
+            "bulk-federation-infile-do-not-exists=User Id Mapping file, {0} did not exist.",
             "bulk-federation-outfile-exists=Name Id mapping file, {0} already exists.",
-            "bulk-federation-outfile-cannot-write=Name Id mapping file, {0} is not writable.",
+            "bulk-federation-outfile-cannot-write=Name Id mapping file, {0} was not writable.",
             "bulk-federation-wrong-format=Wrong format, {0} in User Id Mapping file, {1}.",
-            "bulk-federation-cannot-generate-name-id=Cannot generate name identifier.",
-            "bulk-federation-unknown-metaalias=Meta Alias, {0} is unknown.",
-            "bulk-federation-cannot-federate=Cannot federate user, {0}"
+            "bulk-federation-cannot-generate-name-id=Could not generate name identifier.",
+            "bulk-federation-unknown-metaalias=Meta Alias, {0} was unknown.",
+            "bulk-federation-cannot-federate=Could not federate user, {0}"
             })
     private String do_bulk_federation;
 
@@ -314,14 +314,14 @@ public class FederationManager {
         optionalOptions={
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
-            "import-bulk-federation-data-succeeded=Bulk Federation for this host is completed.",
-            "import-bulk-federation-data-unknown-metaalias=Meta Alias, {0} is unknown.",
-            "import-bulk-federation-data-incorrect-entity-id=Entity Id in data file does not match with the entity Id of given meta alias.",
+            "import-bulk-federation-data-succeeded=Bulk Federation for this host was completed.",
+            "import-bulk-federation-data-unknown-metaalias=Meta Alias, {0} was unknown.",
+            "import-bulk-federation-data-incorrect-entity-id=Entity Id in data file did not match with the entity Id of given meta alias.",
             "import-bulk-federation-data-incorrect-file-format=Incorrect file format.",
             "import-bulk-federation-data-incorrect-data-format=Incorrect data format, {0}.",
             "import-bulk-federation-data-incorrect-role=Incorrect role. The role in data file differs from the role of provider metaalias.",
             "import-bulk-federation-data-incorrect-spec=Incorrect specification. The specification in data file differs from the entered specification",
-            "import-bulk-federation-data-cannot-federate=Cannot federate user, {0}"
+            "import-bulk-federation-data-cannot-federate=Could not federate user, {0}"
             })
     private String import_bulk_fed_data;
 }
