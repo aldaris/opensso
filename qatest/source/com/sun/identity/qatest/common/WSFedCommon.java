@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedCommon.java,v 1.1 2007-10-05 18:24:05 mrudulahg Exp $
+ * $Id: WSFedCommon.java,v 1.2 2008-03-07 23:18:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,7 +76,7 @@ public class WSFedCommon extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/WSFederationServlet/metaAlias/" + sp_alias
+                + "/WSFederationServlet/metaAlias" + sp_alias
                 + "?goto=" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri);
         out.write("\">");
@@ -120,7 +120,7 @@ public class WSFedCommon extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/WSFederationServlet/metaAlias/" + sp_alias
+                + "/WSFederationServlet/metaAlias" + sp_alias
                 + "?wa=wsignout1.0");
         out.write("\">");
         out.write(newline);
@@ -156,7 +156,7 @@ public class WSFedCommon extends TestCommon {
         
         out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
                 + idp_port + idp_deployment_uri
-                + "/WSFederationServlet/metaAlias/" + idp_alias
+                + "/WSFederationServlet/metaAlias" + idp_alias
                 + "?wa=wsignout1.0");
         out.write("\">");
         out.write(newline);

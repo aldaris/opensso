@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.7 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: MultiProtocolCommon.java,v 1.8 2008-03-07 23:18:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -408,7 +408,7 @@ public class MultiProtocolCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + "/config/federation/default/Federate.jsp?metaAlias="
                 + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -455,7 +455,7 @@ public class MultiProtocolCommon extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/saml2/jsp/spSSOInit.jsp?metaAlias=/" + sp_alias
+                + "/saml2/jsp/spSSOInit.jsp?metaAlias=" + sp_alias
                 + "&amp;idpEntityID=" + idp_entity_name );
         if (bindingType == "post") {
             out.write("&amp;binding=HTTP-POST");

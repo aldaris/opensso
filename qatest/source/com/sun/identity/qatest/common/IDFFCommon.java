@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCommon.java,v 1.7 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: IDFFCommon.java,v 1.8 2008-03-07 23:18:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + "/config/federation/default/Federate.jsp?metaAlias="
                 + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -139,7 +139,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + "/config/federation/default/Federate.jsp?metaAlias="
                 + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -182,7 +182,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/Federate.jsp?metaAlias=/"
+                + "/config/federation/default/Federate.jsp?metaAlias="
                 + spMetaalias + "&amp;idpEntityID=" + idpEntityName );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -221,7 +221,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/liberty-logout?metaAlias=/" + spMetaalias);
+                + "/liberty-logout?metaAlias=" + spMetaalias);
         out.write("\">");
         out.write(System.getProperty("line.separator"));
         out.write("<form>");
@@ -258,7 +258,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/Termination.jsp?metaAlias=/"
+                + "/config/federation/default/Termination.jsp?metaAlias="
                 + spMetaalias );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -291,7 +291,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + idpProto +"://" + idpHost + ":"
                 + idpPort + idpDeploymentURI
-                + "/liberty-logout?metaAlias=/" + idpMetaalias);
+                + "/liberty-logout?metaAlias=" + idpMetaalias);
         out.write("\">");
         out.write(System.getProperty("line.separator"));
         out.write("<form>");
@@ -323,7 +323,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + idpProto +"://" + idpHost + ":"
                 + idpPort + idpDeploymentURI
-                + "/config/federation/default/Termination.jsp?metaAlias=/"
+                + "/config/federation/default/Termination.jsp?metaAlias="
                 + idpMetaalias );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -356,7 +356,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + spProto +"://" + spHost + ":"
                 + spPort + spDeploymentURI
-                + "/config/federation/default/NameRegistration.jsp?metaAlias=/"
+                + "/config/federation/default/NameRegistration.jsp?metaAlias="
                 + spMetaalias );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -389,7 +389,7 @@ public class IDFFCommon extends TestCommon {
         
         out.write("<url href=\"" + idpProto +"://" + idpHost + ":"
                 + idpPort + idpDeploymentURI
-                + "/config/federation/default/NameRegistration.jsp?metaAlias=/"
+                + "/config/federation/default/NameRegistration.jsp?metaAlias="
                 + idpMetaalias );
         out.write("\">");
         out.write(System.getProperty("line.separator"));
@@ -575,12 +575,12 @@ public class IDFFCommon extends TestCommon {
             if (extMetadataOnly) {
                 spDeleteEntityPage = fmSP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_SP_REALM), true, 
+                        (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), true, 
                         "idff");
             } else {
                 spDeleteEntityPage = fmSP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_SP_REALM),
+                        (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         false, "idff");
             }
             if (FederationManager.getExitCode(spDeleteEntityPage) == 0) {
@@ -598,12 +598,12 @@ public class IDFFCommon extends TestCommon {
             if (extMetadataOnly) {
                 idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                        (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
                         true, "idff");
             } else {
                 idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                        (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
                         false, "idff");
             }
             if (FederationManager.getExitCode(idpDeleteEntityPage) == 0) {
@@ -619,7 +619,7 @@ public class IDFFCommon extends TestCommon {
 
             Thread.sleep(9000);
             HtmlPage importSPMeta = fmSP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
                     metadata, metadataext, null, "idff");
             if (FederationManager.getExitCode(importSPMeta) != 0) {
                 log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
@@ -640,7 +640,7 @@ public class IDFFCommon extends TestCommon {
                     (String)configMap.get(TestConstants.KEY_SP_COT),
                     (String)configMap.get(TestConstants.KEY_IDP_COT));
             importSPMeta = fmIDP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
                     metadata, metadataext, null, "idff");
             if (FederationManager.getExitCode(importSPMeta) != 0) {
                 log(Level.SEVERE, "loadSPMetadata", "Couldn't import SP " +
@@ -698,12 +698,12 @@ public class IDFFCommon extends TestCommon {
             if (extMetadataOnly) {
                 idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), true, 
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), true, 
                     "idff");
             } else {
                 idpDeleteEntityPage = fmIDP.deleteEntity(webClient, 
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME), 
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), false, 
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, 
                     "idff");
             }
             if (FederationManager.getExitCode(idpDeleteEntityPage) == 0) {
@@ -722,13 +722,15 @@ public class IDFFCommon extends TestCommon {
                  spDeleteEntityPage = fmSP.deleteEntity(webClient, 
                         (String)configMap.get(
                         TestConstants.KEY_IDP_ENTITY_NAME),
-                        (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                        (String)configMap.get(
+                        TestConstants.KEY_SP_EXECUTION_REALM), 
                         true, "idff");
             } else {
                  spDeleteEntityPage = fmSP.deleteEntity(webClient, 
                         (String)configMap.get(
                         TestConstants.KEY_IDP_ENTITY_NAME),
-                        (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                        (String)configMap.get(
+                         TestConstants.KEY_SP_EXECUTION_REALM), 
                         false, "idff");
             }
             if (FederationManager.getExitCode(spDeleteEntityPage) == 0) {
@@ -744,7 +746,7 @@ public class IDFFCommon extends TestCommon {
 
             Thread.sleep(9000);
             HtmlPage importIDPMeta = fmIDP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM), 
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
                     metadata, metadataext, null, "idff");
             if (FederationManager.getExitCode(importIDPMeta) != 0) {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP " +
@@ -765,7 +767,7 @@ public class IDFFCommon extends TestCommon {
                     (String)configMap.get(TestConstants.KEY_IDP_COT),
                     (String)configMap.get(TestConstants.KEY_SP_COT));
             importIDPMeta = fmSP.importEntity(webClient,
-                    (String)configMap.get(TestConstants.KEY_SP_REALM), 
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
                     metadata, metadataext, null, "idff");
             if (FederationManager.getExitCode(importIDPMeta) != 0) {
                 log(Level.SEVERE, "loadIDPMetadata", "Couldn't import IDP " +
