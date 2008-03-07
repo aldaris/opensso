@@ -88,18 +88,6 @@
 					</validation>
 				</validations>
 			</interaction>	
-			<interaction lookupkey="AGENT_APP_URI">
-				<i18n key="INT_AGENT_APP_URI" group="amToolsMessages"/>
-				<default-value-finder>
-					<class name="StaticDefaultValueFinder" type="system"/>
-					<static value="/agentapp"/>
-				</default-value-finder>
-				<validations>
-					<validation name="VALID_URI">
-						<class name="NetworkValidator" type="system"/>
-					</validation>
-				</validations>
-			</interaction>
 		    <interaction lookupkey="AGENT_ENCRYPT_KEY" persistent="false">
 				<i18n key="INT_AGENT_ENCRYPT_KEY" group="amToolsMessages"/>
 				<default-value-finder>
