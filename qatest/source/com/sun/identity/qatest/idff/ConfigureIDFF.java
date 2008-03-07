@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.6 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: ConfigureIDFF.java,v 1.7 2008-03-07 23:19:34 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDFFCommon;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
@@ -106,47 +107,25 @@ public class ConfigureIDFF extends TestCommon {
             + "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            
-            url = new URL(spurl);
-            page = (HtmlPage)spWebClient.getPage(url);
-            spConfigMap = MultiProtocolCommon.getSPConfigurationMap(configMap);
-            boolean spConfigResult = configureProduct(spConfigMap);
-            if (spConfigResult) {
-                log(Level.FINEST, "ConfigureIDFF", spurl + "is configured. " +
-                        "Proceed with IDFF SP configuration");
-            } else {
-                log(Level.FINEST, "ConfigureIDFF", spurl + "is not " +
-                        "configured successfully. " +
-                        "Exiting the IDFF configuration");
-                assert false;
-            }
-            
-            url = new URL(idpurl);
-            page = (HtmlPage)idpWebClient.getPage(url);
-            idpConfigMap =
-                    MultiProtocolCommon.getIDPConfigurationMap(configMap);
-            boolean idpConfigResult = configureProduct(idpConfigMap);
-            if (idpConfigResult) {
-                log(Level.FINEST, "ConfigureIDFF", idpurl + "is configured. " +
-                        "Proceed with IDFF IDP configuration");
-            } else {
-                log(Level.FINEST, "ConfigureIDFF", idpurl + "is not " +
-                        "configured successfully. " +
-                        "Exiting the IDFF configuration");
-                assert false;
-            }
-            
+                        
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);
             
-            //on sp side create cot, load sp metadata
             consoleLogin(spWebClient, spurl + "/UI/Login",
                     (String)configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
+            IDMCommon idmC = new IDMCommon();
+            
+            //If execution_realm is different than root realm (/) 
+            //then create the realm
+            idmC.createSubRealms(spWebClient, spfm, configMap.get(
+                       TestConstants.KEY_SP_EXECUTION_REALM));
+            
+            //on sp side create cot, load sp metadata
             HtmlPage spcotPage = spfm.listCots(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM));
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM));
             if (FederationManager.getExitCode(spcotPage) != 0) {
                 log(Level.SEVERE, "ConfigureIDFF", "listsCot famadm command" +
                         " failed");
@@ -156,7 +135,7 @@ public class ConfigureIDFF extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 if (FederationManager.getExitCode(spfm.createCot(spWebClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_REALM),
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureIDFF", "Couldn't create " +
                             "COT at SP side ");
@@ -170,7 +149,7 @@ public class ConfigureIDFF extends TestCommon {
             
             String spMetadata[]= {"",""};
             HtmlPage spEntityPage = spfm.listEntities(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "idff");
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "idff");
             if (FederationManager.getExitCode(spEntityPage) != 0) {
                 log(Level.SEVERE, "ConfigureIDFF", "listsEntities famadm" +
                         " command failed");
@@ -197,7 +176,7 @@ public class ConfigureIDFF extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage spExportEntityPage = spfm.exportEntity(spWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false, true,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false, true,
                         true, "idff");
                 if (FederationManager.getExitCode(spExportEntityPage) != 0) {
                     log(Level.SEVERE, "ConfigureIDFF", "exportEntity famadm" +
@@ -221,8 +200,13 @@ public class ConfigureIDFF extends TestCommon {
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             
+            //If execution_realm is different than root realm (/) 
+            //then create the realm
+            idmC.createSubRealms(idpWebClient, idpfm, configMap.get(
+                       TestConstants.KEY_IDP_EXECUTION_REALM));
+
             HtmlPage idpcotPage = idpfm.listCots(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM));
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM));
             if (FederationManager.getExitCode(idpcotPage) != 0) {
                log(Level.SEVERE, "ConfigureIDFF", "listCots famadm command" +
                        " failed");
@@ -234,7 +218,7 @@ public class ConfigureIDFF extends TestCommon {
             } else {
                 if (FederationManager.getExitCode(idpfm.createCot(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_REALM),
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureIDFF", "Couldn't create " +
                             "COT at IDP side");
@@ -246,7 +230,7 @@ public class ConfigureIDFF extends TestCommon {
             
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "idff");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "idff");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "ConfigureIDFF", "listEntities famadm" +
                        " command failed");
@@ -279,7 +263,7 @@ public class ConfigureIDFF extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage idpExportEntityPage = idpfm.exportEntity(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false, true,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, true,
                         true, "idff");
                 if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
                    log(Level.SEVERE, "ConfigureIDFF", "exportEntities famadm" +
@@ -306,7 +290,7 @@ public class ConfigureIDFF extends TestCommon {
                 if (FederationManager.getExitCode(idpfm.deleteEntity(
                         idpWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
                         "idff")) == 0) {
                     log(Level.FINEST, "ConfigureIDFF", "Delete sp entity on " +
                             "IDP side");
@@ -323,7 +307,7 @@ public class ConfigureIDFF extends TestCommon {
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), spMetadata[0],
                     spMetadata[1],
                     (String)configMap.get(TestConstants.KEY_IDP_COT), "idff"))
                     != 0) {
@@ -341,7 +325,7 @@ public class ConfigureIDFF extends TestCommon {
                         "Delete & load the metadata ");
                 if (FederationManager.getExitCode(spfm.deleteEntity(spWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                         "idff")) == 0) {
                     log(Level.FINEST, "ConfigureIDFF", "Delete idp entity on " +
                             "SP side");
@@ -358,7 +342,7 @@ public class ConfigureIDFF extends TestCommon {
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(spfm.importEntity(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idpMetadata[0],
                     idpMetadata[1],
                     (String)configMap.get(TestConstants.KEY_SP_COT), "idff"))
                     != 0) {

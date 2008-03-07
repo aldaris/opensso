@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFDefaultURLsTests.java,v 1.3 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: IDFFDefaultURLsTests.java,v 1.4 2008-03-07 23:19:34 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -153,7 +153,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), "User", list))
                     != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -170,7 +170,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
             if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM),
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list))
                     != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
@@ -182,7 +182,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             //get sp & idp extended metadata
             HtmlPage spmetaPage = fmSP.exportEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_SP_REALM),
+                    (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     false, false, true, "idff");
             if (FederationManager.getExitCode(spmetaPage) != 0) {
                 log(Level.SEVERE, "setup", "exportEntity famadm command" +
@@ -192,7 +192,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
             HtmlPage idpmetaPage = fmIDP.exportEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_IDP_REALM),
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     false, false, true, "idff");
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
                 log(Level.SEVERE, "setup", "exportEntity famadm command" +
@@ -533,7 +533,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             log(Level.FINE, "cleanup", "sp users to delete :" +
                     configMap.get(TestConstants.KEY_SP_USER));
             if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), idList,
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idList,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
@@ -550,7 +550,7 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
             if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), idList,
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idList,
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");

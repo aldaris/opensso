@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureWSFed.java,v 1.5 2008-02-12 05:46:04 mrudulahg Exp $
+ * $Id: UnconfigureWSFed.java,v 1.6 2008-03-07 23:19:56 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
@@ -249,6 +250,20 @@ public class UnconfigureWSFed extends TestCommon {
                             "at SP side");                    
                 }
             }
+
+            IDMCommon idmC = new IDMCommon();
+            //If execution_realm is different than root realm (/) 
+            //then delete the realm at SP side
+            idmC.deleteSubRealms(webClient, spfm, configMap.get(TestConstants.
+                    KEY_SP_EXECUTION_REALM), configMap.get(TestConstants.
+                    KEY_SP_SUBREALM_RECURSIVE_DELETE));
+             
+            //If execution_realm is different than root realm (/) 
+            //then create the realm at IDP side
+            idmC.deleteSubRealms(webClient, idpfm, configMap.get(TestConstants.
+                    KEY_IDP_EXECUTION_REALM), configMap.get(TestConstants.
+                    KEY_IDP_SUBREALM_RECURSIVE_DELETE));
+
         } catch(Exception e) {
             log(Level.SEVERE, "UnconfigureWSFed", e.getMessage());
             e.printStackTrace();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWSFed.java,v 1.4 2008-01-31 22:06:30 rmisra Exp $
+ * $Id: ConfigureWSFed.java,v 1.5 2008-03-07 23:19:56 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.WSFedCommon;
@@ -110,8 +111,15 @@ public class ConfigureWSFed extends WSFedCommon {
                     (String)configMap.get(
                     TestConstants.KEY_SP_AMADMIN_PASSWORD));
             
+            IDMCommon idmC = new IDMCommon();
+            
+            //If execution_realm is different than root realm (/) 
+            //then create the realm
+            idmC.createSubRealms(webClient, spfm, configMap.get(
+                       TestConstants.KEY_SP_EXECUTION_REALM));
+            
             HtmlPage spcotPage = spfm.listCots(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM));
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM));
             if (FederationManager.getExitCode(spcotPage) != 0) {
                log(Level.SEVERE, "ConfigureWSFed", "listCots famadm command" +
                        " failed");
@@ -121,7 +129,7 @@ public class ConfigureWSFed extends WSFedCommon {
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 if (FederationManager.getExitCode(spfm.createCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_REALM),
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureWSFed", "Couldn't create " +
                             "COT at SP side");
@@ -135,7 +143,7 @@ public class ConfigureWSFed extends WSFedCommon {
             
             String spMetadata[] = {"", ""};
             HtmlPage spEntityPage = spfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "wsfed");
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "wsfed");
             if (FederationManager.getExitCode(spEntityPage) != 0) {
                log(Level.SEVERE, "ConfigureWSFed", "listEntities famadm" +
                        " command failed");
@@ -162,7 +170,7 @@ public class ConfigureWSFed extends WSFedCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage spExportEntityPage = spfm.exportEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false, true,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false, true,
                         true, "wsfed");
                 if (FederationManager.getExitCode(spExportEntityPage) != 0) {
                    log(Level.SEVERE, "ConfigureWSFed", "exportEntity famadm" +
@@ -185,8 +193,13 @@ public class ConfigureWSFed extends WSFedCommon {
                     (String)configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     (String)configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_PASSWORD));
+            //If execution_realm is different than root realm (/) 
+            //then create the realm
+            idmC.createSubRealms(webClient, idpfm, configMap.get(
+                       TestConstants.KEY_IDP_EXECUTION_REALM));
+            
             HtmlPage idpcotPage = idpfm.listCots(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM));
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM));
             if (FederationManager.getExitCode(idpcotPage) != 0) {
                log(Level.SEVERE, "ConfigureWSFed", "listCots famadm" +
                        " command failed");
@@ -198,7 +211,7 @@ public class ConfigureWSFed extends WSFedCommon {
             } else {
                 if (FederationManager.getExitCode(idpfm.createCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_REALM),
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         null, null)) != 0) {
                     log(Level.SEVERE, "ConfigureWSFed", "Couldn't create " +
                             "COT at IDP side");
@@ -210,7 +223,7 @@ public class ConfigureWSFed extends WSFedCommon {
             
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "wsfed");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "wsfed");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "ConfigureWSFed", "listEntities famadm" +
                        " command failed");
@@ -243,7 +256,7 @@ public class ConfigureWSFed extends WSFedCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage idpExportEntityPage = idpfm.exportEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false, true,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, true,
                         true, "wsfed");
                 if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
                    log(Level.SEVERE, "ConfigureWSFed", "exportEntity famadm" +
@@ -269,7 +282,7 @@ public class ConfigureWSFed extends WSFedCommon {
                         " idp. Delete & load the metadata ");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                         "wsfed")) == 0) {
                     log(Level.FINEST, "ConfigureWSFed", "Delete sp entity on " +
                             "IDP side");
@@ -286,7 +299,7 @@ public class ConfigureWSFed extends WSFedCommon {
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(idpfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), spMetadata[0],
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), spMetadata[0],
                     spMetadata[1],
                     (String)configMap.get(TestConstants.KEY_IDP_COT), "wsfed"))
                     != 0) {
@@ -304,7 +317,7 @@ public class ConfigureWSFed extends WSFedCommon {
                         " sp. Delete & load the metadata ");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
                         "wsfed")) == 0) {
                     log(Level.FINEST, "ConfigureWSFed", "Delete idp entity" +
                             " on SP side");
@@ -321,7 +334,7 @@ public class ConfigureWSFed extends WSFedCommon {
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(spfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), idpMetadata[0],
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idpMetadata[0],
                     idpMetadata[1],
                     (String)configMap.get(TestConstants.KEY_SP_COT), "wsfed"))
                     != 0) {

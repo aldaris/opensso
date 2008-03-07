@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.7 2008-02-12 05:28:58 mrudulahg Exp $
+ * $Id: UnconfigureIDFF.java,v 1.8 2008-03-07 23:19:34 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
@@ -110,7 +111,7 @@ public class UnconfigureIDFF extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "idff");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "idff");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listEntities famadm" +
                        " command failed");
@@ -124,7 +125,7 @@ public class UnconfigureIDFF extends TestCommon {
                         " IDP.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
                         "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Delete IDP entity" +
                             " on IDP side");
@@ -143,7 +144,7 @@ public class UnconfigureIDFF extends TestCommon {
                         " IDP.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_REALM), false,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
                         "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted SP entity on " +
                             "IDP side");
@@ -158,7 +159,7 @@ public class UnconfigureIDFF extends TestCommon {
             
             //Delete COT on IDP side.
             HtmlPage idpcotPage = idpfm.listCots(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM));
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM));
             if (FederationManager.getExitCode(idpcotPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listCots famadm command" +
                        " failed");
@@ -169,7 +170,7 @@ public class UnconfigureIDFF extends TestCommon {
                 log(Level.FINEST, "UnconfigureIDFF", "COT exists at IDP side");
                 if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_REALM))) == 0) {
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM))) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Couldn't delete " +
                             "COT at IDP side");
                 } else {
@@ -181,7 +182,7 @@ public class UnconfigureIDFF extends TestCommon {
             }
             
             HtmlPage spEntityPage = spfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM), "idff");
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "idff");
             if (FederationManager.getExitCode(spEntityPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listEntities famadm" +
                        " command failed");
@@ -194,7 +195,7 @@ public class UnconfigureIDFF extends TestCommon {
                         " SP.");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                         "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted SP entity" +
                             " on SP side");
@@ -214,7 +215,7 @@ public class UnconfigureIDFF extends TestCommon {
                         " SP.");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_REALM), false,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
                         "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted IDP entity" +
                             " on SP side");
@@ -229,7 +230,7 @@ public class UnconfigureIDFF extends TestCommon {
             
             //Delete COT on sp side.
             HtmlPage spcotPage = spfm.listCots(webClient,
-                    configMap.get(TestConstants.KEY_SP_REALM));
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM));
             if (FederationManager.getExitCode(spcotPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listCots famadm" +
                        " command failed");
@@ -239,7 +240,7 @@ public class UnconfigureIDFF extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 if (FederationManager.getExitCode(spfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_REALM))) != 0) {
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM))) != 0) {
                     log(Level.SEVERE, "UnconfigureIDFF", "Couldn't delete " +
                             "COT at SP side");
                     log(Level.SEVERE, "UnconfigureIDFF", "deleteCot famadm" +
@@ -249,6 +250,19 @@ public class UnconfigureIDFF extends TestCommon {
                             "at SP side");                    
                 }
             }
+
+            IDMCommon idmC = new IDMCommon();
+            //If execution_realm is different than root realm (/) 
+            //then delete the realm at SP side
+            idmC.deleteSubRealms(webClient, spfm, configMap.get(TestConstants.
+                    KEY_SP_EXECUTION_REALM), configMap.get(TestConstants.
+                    KEY_SP_SUBREALM_RECURSIVE_DELETE));
+            
+            //If execution_realm is different than root realm (/) 
+            //then create the realm at IDP side
+            idmC.deleteSubRealms(webClient, idpfm, configMap.get(TestConstants.
+                    KEY_IDP_EXECUTION_REALM), configMap.get(TestConstants.
+                    KEY_IDP_SUBREALM_RECURSIVE_DELETE));
         } catch(Exception e) {
             log(Level.SEVERE, "UnconfigureIDFF", e.getMessage());
             e.printStackTrace();

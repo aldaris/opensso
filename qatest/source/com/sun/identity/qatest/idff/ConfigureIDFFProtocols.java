@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFFProtocols.java,v 1.4 2008-01-31 22:06:27 rmisra Exp $
+ * $Id: ConfigureIDFFProtocols.java,v 1.5 2008-03-07 23:19:34 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,7 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
                 fmIDP = new FederationManager(idpurl);
                 HtmlPage spmetaPage = fmSP.exportEntity(webClient,
                         (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME), 
-                        (String)configMap.get(TestConstants.KEY_SP_REALM),
+                        (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         false, true, true, "idff");
                 if (FederationManager.getExitCode(spmetaPage) != 0) {
                     log(Level.SEVERE, "setup", "exportEntity famadm command" +
