@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentToolsResolver.java,v 1.1 2006-09-28 23:40:49 huacui Exp $
+ * $Id: AgentToolsResolver.java,v 1.2 2008-03-07 23:21:15 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 import com.sun.identity.agents.install.handler.EncryptionHandler;
 import com.sun.identity.agents.install.handler.GetEncryptionKeyHandler;
-import com.sun.identity.agents.install.handler.GetUniversalIdHandler;
 import com.sun.identity.install.tools.admin.BaseToolsResolver;
 import com.sun.identity.install.tools.admin.ToolsOptionsInfo;
 import com.sun.identity.install.tools.handler.ListProductsHandler;
@@ -60,10 +59,6 @@ public class AgentToolsResolver extends BaseToolsResolver {
        	        STR_GEN_ENCRYPT_OPTION,
                 LocalizedMessage.get(LOC_HR_MSG_GET_ENCRYPT_KEY_SHORT_HELP)));
         
-        result.add(new ToolsOptionsInfo(GetUniversalIdHandler.class.getName(),
-                STR_GET_UUID_OPTION,
-                LocalizedMessage.get(LOC_HR_MSG_GET_UUID_SHORT_HELP),false));
-        
         return result;
     }
 
@@ -72,7 +67,6 @@ public class AgentToolsResolver extends BaseToolsResolver {
     public static final String STR_AGENTINFO_OPTION = "--agentInfo";
     public static final String STR_ENCRYPT_OPTION = "--encrypt";
     public static final String STR_GEN_ENCRYPT_OPTION = "--getEncryptKey";
-    public static final String STR_GET_UUID_OPTION = "--getUuid";
     
     public static final String LOC_HR_MSG_LISTPRODUCTS_SHORT_HELP = 
         "HR_MSG_LISTPRODUCTS_SHORT_HELP";
@@ -82,6 +76,4 @@ public class AgentToolsResolver extends BaseToolsResolver {
         "HR_MSG_ENCRYPT_SHORT_HELP";
     public static final String LOC_HR_MSG_GET_ENCRYPT_KEY_SHORT_HELP =
         "HR_MSG_GET_ENCRYPT_KEY_SHORT_HELP";
-    public static final String LOC_HR_MSG_GET_UUID_SHORT_HELP =
-        "HR_MSG_GET_UUID_SHORT_HELP";
 }
