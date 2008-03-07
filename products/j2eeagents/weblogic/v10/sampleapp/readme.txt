@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.5 2008-02-22 02:31:51 leiming Exp $
+   $Id: readme.txt,v 1.6 2008-03-07 23:24:40 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -121,7 +121,7 @@ Configure the agent AMAgent.properties file
     under default realm "dc=opensso,dc=java,dc=net". If the realm for the
     deployment scenario is different from the default root suffix, the Universal
     Id (UUID) for the role/principal mappings should be changed accordingly. The
-    Universal Id can be obtained by using the agentadmin --getUuid command.
+    Universal Id can be obtained from the OpenSSO/FAM server console.
 
     For WebLogic 10.0, a UUID has to be mapped to a value of type NMTOKEN, 
     and then the mapped value is used in weblogic-ejb-jar.xml and weblogic.xml 

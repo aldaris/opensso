@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.4 2008-02-22 02:31:45 leiming Exp $
+   $Id: readme.txt,v 1.5 2008-03-07 23:23:48 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,8 +65,8 @@ To build the entire application from scratch, follow these steps:
       that the OpenSSO Server product was installed under default Org/Realm 
       "dc=opensso,dc=java,dc=net". If the Org/Realm for the deployment scenario is 
       different from the default root suffix, the Universal Id(uuid) for the role/principal 
-      mappings should be changed accordingly.  The Universal Id can be obtained by
-      using the agentadmin --getUuid command.
+      mappings should be changed accordingly.  The Universal Id can be obtained 
+      from the OpenSSO/FAM server console.
    4. Deploy the application. After you have re-created the sample application from scratch, you may 
       proceed directly to Deploying the Sample Application, or optionally perform step 3.
    5. Optionally you can run 'ant rebuild' to clean the application project area and run a 
