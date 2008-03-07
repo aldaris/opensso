@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.13 2008-02-22 22:14:48 huacui Exp $
+$Id: README,v 1.14 2008-03-07 19:44:31 sean_brydon Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ each available target for quick reference.
 The appserver_v9 target first invokes the build target and then 
 delegates the further processing to the build.xml files present under 
 the appserver and appserver/v9 directories.  Upon successful execution,
-a zip file appserver_v9_agent.zip will be created under built/appserver_v9/dist 
+a zip file appserver_v9_agent_3.zip will be created under built/appserver_v9/dist 
 directory, and it can be used later to install the agent.
 
 %% 3.5 weblogic_v10 target
@@ -202,7 +202,7 @@ directory, and it can be used later to install the agent.
 The weblogic_v10 target first invokes the build target and then 
 delegates the further processing to the build.xml files present under 
 the weblogic and weblogic/v10 directories.  Upon successful execution,
-a zip file weblogic_v10_agent.zip will be created under built/weblogic_v10/dist 
+a zip file weblogic_v10_agent_3.zip will be created under built/weblogic_v10/dist 
 directory, and it can be used later to install the agent.
 
 

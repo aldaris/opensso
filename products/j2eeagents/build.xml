@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2007-12-10 21:34:19 huacui Exp $
+   $Id: build.xml,v 1.18 2008-03-07 19:44:31 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,6 +36,9 @@
    
     <!-- generated directory structure -->
     <property name="j2eeagents.built.dir" location="${j2eeagents.basedir}/built"/>
+    
+     <!-- agent version number appended to end of agent zip file name -->   
+    <property name="agentversion" value="3"/>
     
     <!-- overridable properties -->
     <property name="build.debug" value="on"/>
