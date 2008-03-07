@@ -11,7 +11,7 @@
         <table cellpadding="2" width="100%"> 
             <tbody>
               <tr> 
-                <td align="center" valign="top" width="99%"> <h2>OpenSSO Change/Patch Request Template (v1.0)</h2> </td> 
+                <td align="center" valign="top" width="99%"> <h2>OpenSSO Change/Patch Request Template (v1.1)</h2> </td> 
               </tr> 
             </tbody>
         </table> 
@@ -151,6 +151,10 @@
               <tr>
                 <td>&nbsp;</td>
                 <td colspan="2"><textarea name="testing" cols="80" rows="5" CRTtesting></textarea></td>
+              </tr>
+              <tr>
+                <td><font color="red">*</font></td>
+                <td>SQE Approver(s):&nbsp;<input size="30" name="qareviewer" type="text" valuel="CRTqareviewer" value=""> <a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById('CRT').qareviewer)">Lookup users</a> </td>
               </tr>
             </tbody>
         </table>
