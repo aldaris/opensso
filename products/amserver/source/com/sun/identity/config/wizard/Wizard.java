@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.7 2008-02-26 21:17:15 jonnelson Exp $
+ * $Id: Wizard.java,v 1.8 2008-03-07 23:27:58 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,18 +155,28 @@ public class Wizard extends AjaxPage {
             SetupConstants.CONFIG_VAR_DS_UM_SCHEMA, tmp);
                 
         // user store repository
-        LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute( 
-            Step4.LDAP_STORE_SESSION_KEY);
-        if (userStore != null) {                       
-            Map store = new HashMap();            
-            store.put(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST,
-                userStore.getHostName());
-            store.put(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT, 
-                Integer.toString(userStore.getHostPort()));
-            store.put(
-                SetupConstants.CONFIG_VAR_DS_MGR_DN, userStore.getUsername());
-            store.put(
-                SetupConstants.CONFIG_VAR_DS_MGR_PWD, userStore.getPassword());                       
+        tmp = (String)getContext().getSessionAttribute(
+            SetupConstants.USER_STORE_HOST);        
+        if (tmp != null) {                       
+            Map store = new HashMap(12);  
+            store.put(SetupConstants.USER_STORE_HOST, tmp);
+
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_PORT);
+            store.put(SetupConstants.USER_STORE_PORT, tmp);
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_ROOT_SUFFIX);
+            store.put(SetupConstants.USER_STORE_ROOT_SUFFIX, tmp);
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_LOGIN_ID);
+            store.put(SetupConstants.USER_STORE_LOGIN_ID, tmp);      
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_LOGIN_PWD);
+            store.put(SetupConstants.USER_STORE_LOGIN_PWD, tmp);      
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_TYPE);
+            store.put(SetupConstants.USER_STORE_TYPE, tmp);                        
+                                  
             request.addParameter("UserStore", store);
         }
         

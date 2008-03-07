@@ -17,58 +17,43 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.9 2008-02-26 21:17:15 jonnelson Exp $
+ * $Id: Step6.java,v 1.10 2008-03-07 23:27:58 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
-import com.sun.identity.config.pojos.LDAPStore;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
 import net.sf.click.Page;
-
 
 public class Step6 extends AjaxPage {
 
     public Step6(){}
 
     public void onInit() {
-        String hostName = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
-        if (hostName != null) {                    
-            add("hostName", hostName);            
-            add("hostPort", (String)getContext().getSessionAttribute(
-                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
-            add("userDN", (String)getContext().getSessionAttribute(
-                SetupConstants.CONFIG_VAR_DS_MGR_DN));
-            add("baseDN", (String)getContext().getSessionAttribute(
-                SetupConstants.CONFIG_VAR_ROOT_SUFFIX));
-        }
         
+        // Config Store Properties
         String tmp =(String)getContext().getSessionAttribute("configDirectory");
-        add("configDirectory", tmp);
-        
+        add("configDirectory", tmp);        
         tmp = getAttribute("configStoreHost", getHostName());
         add("configStoreHost", tmp);
-
         tmp = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
         add("rootSuffix", tmp);
-
         tmp = getAttribute("configStorePort", getAvailablePort(50389));
         add("configStorePort", tmp);
-
         tmp = getAttribute("configStoreLoginId", Wizard.defaultUserName);
         add("configStoreLoginId", tmp);
 
-        LDAPStore configStore = (LDAPStore)getContext().getSessionAttribute(
-            Step3.LDAP_STORE_SESSION_KEY);
-        add("configStore", configStore);
-
-        LDAPStore userStore = (LDAPStore)getContext().getSessionAttribute(
-            Step4.LDAP_STORE_SESSION_KEY);
-        add( "userStore", userStore);
-
+        // User Config Store Properties
+        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_HOST);
+        add("userHostName", tmp);
+        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_PORT);
+        add("userHostPort", tmp);
+        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX);        
+        add("userRootSuffix", tmp);
+        
+        // Load Balancer Properties
         add("loadBalancerHost", 
             (String)getContext().getSessionAttribute(SetupConstants.LB_SITE_NAME));
         add("loadBalancerPort", 

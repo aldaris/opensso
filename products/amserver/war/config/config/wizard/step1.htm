@@ -53,34 +53,34 @@
     YAHOO.util.Event.onDOMReady(initStep1);
 </script>
 
-
-<h1>$page.getLocalizedString("step1.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>$page.getLocalizedString("step1.description")</p>
-
-<div class="summaryPanel" style="width:570px">
-    <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
+<div style="margin-left:10px;">
+    <h1>$page.getLocalizedString("step1.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+    <p>$page.getLocalizedString("step1.description")</p>
+    
+    <div class="summaryPanel" style="width:570px">
+        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
         <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
         <div class="headerBox">$page.getLocalizedString("step1.subtitle")</div>
         <div class="bodyBox"  style="height:230px">
             <span>
                 <table class="temp">
                     <tr>
-		        <td colspan="2"><b>$page.getLocalizedString("step1.admin.user.name")</b></td></tr>
+                    <td colspan="2"><b>$page.getLocalizedString("step1.admin.user.name")</b></td></tr>
                     <tr>
                         <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("password.label")</td>
                         <td>
                             <input id="adminPassword" name="adminPassword" 
-                                type="password" value="" class="text"
-                                onkeyup="APP.callDelayed(this,validateAdminPasswords)">
-                                <span id="adminPasswordStatus"></span>
+                                   type="password" value="" class="text"
+                                   onkeyup="APP.callDelayed(this,validateAdminPasswords)">
+                            <span id="adminPasswordStatus"></span>
                         </td>
                     </tr>
                     <tr>
                         <td><em>&nbsp;*&nbsp;</em>$page.getLocalizedString("confirm.label")</td>
                         <td>
                             <input id="adminConfirm" name="adminConfirm" 
-                            type="password" value="" class="text" 
-                            onkeyup="APP.callDelayed(this,validateAdminPasswords)">                            
+                                   type="password" value="" class="text" 
+                                   onkeyup="APP.callDelayed(this,validateAdminPasswords)">                            
                         </td>
                     </tr>
                 </table>      
@@ -96,9 +96,9 @@
                         </td>
                         <td>
                             <input id="agentPassword" name="agentPassword" 
-                                type="password" value="" class="text"
-                                onkeyup="APP.callDelayed(this,validateAgentPasswords)">                            
-                                <span id="agentPasswordStatus"></span>
+                                   type="password" value="" class="text"
+                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)">                            
+                            <span id="agentPasswordStatus"></span>
                         </td>
                     </tr>
                     <tr>
@@ -107,8 +107,8 @@
                         </td>
                         <td>
                             <input id="agentConfirm" name="agentConfirm" 
-                                type="password" value="" class="text" 
-                                onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>                            
+                                   type="password" value="" class="text" 
+                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>                            
                         </td>
                     </tr>
                 </table>      
@@ -116,4 +116,4 @@
         </div>
         <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
     </div>
-
+</div>

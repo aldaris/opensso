@@ -1,86 +1,214 @@
 <script type="text/javascript">
 
-    function ${type}StoreServerValidated( response ) {
-        storeServerValidated( '$type', response );
-    }
-    function ${type}StoreBaseDNValidated( response ) {
-        storeBaseDNValidated('$type', response );
-    }
-    function ${type}StoreLoginIdValidated( response ) {
-        storeLoginIdValidated( '$type', response );
-    }
-
-    function validate${type}StoreServer() {
-        validateStoreServer('$type');
-    }
-    function validate${type}StoreBaseDN() {
-        validateStoreBaseDN('$type');
-    }
-    function validate${type}StoreLoginId() {
-        validateStoreLoginId('$type');
-    }
-
-    function step${pageNum}Init() {
-        if ( $usingCustomStore ) {
-            enableCustomConfig('$type');
-            validateStore('$type');
+    var statusField;
+    function validated(response) {
+        if (response.responseText == "ok") {
+            $(statusField).innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
+                  '<small>ok</small>';               
+        } else {
+            $(statusField).innerHTML = response.responseText;
         }
     }
-    YAHOO.util.Event.onDOMReady(step${pageNum}Init);
+    
+    function validateUserStoreHost() {
+        statusField = "userStoreHostStatus";
+        var callUrl = "$context$path?actionLink=setHost";
+        var param = "&host=" + $('userStoreHost').value;
+        AjaxUtils.call(callUrl+param, validated);
+    }         
+    
+    function validateUserStorePort() {
+        statusField = "userStorePortStatus";
+        var callUrl = "$context$path?actionLink=setPort";
+        var param = "&port=" + $('userStorePort').value;
+        AjaxUtils.call(callUrl+param, validated);
+    }       
 
+    function validateUserStoreRootSuffix() {
+        statusField = "userStoreRootSuffixStatus";
+        var callUrl = "$context$path?actionLink=setRootSuffix";
+        var param = "&rootsuffix=" + $('userStoreRootSuffix').value;
+        AjaxUtils.call(callUrl+param, validated);
+    }
+    
+    function validateUserStoreLoginId() {
+        statusField = "userStoreLoginIdStatus";
+        var callUrl = "$context$path?actionLink=setLoginID";
+        var param = "&dn=" + $('userStoreLoginId').value;
+        AjaxUtils.call(callUrl+param, validated);
+    }    
+
+    function validateUserStorePassword() {
+        statusField = "userStoreLoginIdStatus";
+        var callUrl = "$context$path?actionLink=setPassword";
+        var param = "&password=" + $('userStorePassword').value;
+        AjaxUtils.call(callUrl+param, validated);
+    }   
+    
+    function setAMDS() {
+        setType(document.getElementById("ldapv3amds").value)
+	setType
+    }
+
+    function setGeneric() {
+        setType(document.getElementById("ldapv3").value);
+    }
+
+    function setType(type) {
+        var callUrl = "$context$path?actionLink=setStoreType";
+        AjaxUtils.call(callUrl + "&type=" + type);
+    }
+    
+    var copyUserStoreSettings = false;
+    function copyConfigStoreFieldsToUserStoreFields() {
+        var checked = document.getElementById("userStoreSameAsConfigStore").checked;
+        copyUserStoreSettings = checked;
+        disableUserSettings(checked);
+        if (checked == true) {
+            $('userStoreHost').value = $('configStoreHost').value;
+            $('userStorePort').value = $('configStorePort').value;
+            $('userStoreLoginId').value = $('configStoreLoginId').value;
+            $('userStorePassword').value = $('configStorePassword').value;
+            $('userStoreRootSuffix').value = $('rootSuffix').value;          
+	} 
+
+        // the data store is the same as the config store so we don't 
+        // need to pass in the data.
+        AjaxUtils.call("$context$path?actionLink=clearData");                     
+    }
+    
+    <!-- when embedded user config is selected -->
+    function disableUserConfig() {
+        document.getElementById("userStoreSameAsConfigStore").disabled = true;
+        disableUserSettings(true);
+        
+        AjaxUtils.call("$context$path?actionLink=clearData");
+    }
+    
+    <!-- when external config is selected -->
+    function enableUserConfig() {
+        if (userStore == "external") {
+            document.getElementById("userStoreSameAsConfigStore").disabled = false;
+        }
+        disableUserSettings(copyUserStoreSettings);
+        
+        //AjaxUtils.call("$context$path?actionLink=loadSchema&schema="+value);
+    }
+    
+    function disableUserSettings(checked) {
+        document.getElementById("userStoreHost").disabled = checked;
+        document.getElementById("userStorePort").disabled = checked;
+        document.getElementById("userStoreRootSuffix").disabled = checked;
+        document.getElementById("userStoreLoginId").disabled = checked;
+        document.getElementById("userStorePassword").disabled = checked;
+        document.getElementById("ldapv3").disabled = checked;
+        document.getElementById("ldapv3amds").disabled = checked;
+    }
+
+    function initUserStorePage() {
+        disableUserSettings(true);
+        if (userStore == "embedded") {
+            document.getElementById("userStoreSameAsConfigStore").disabled = true;
+            document.getElementById("userStoreDefault").checked = true;
+        } else {
+            document.getElementById("userStoreDefault").disabled = true;
+            document.getElementById("userStoreCustom").checked = true;
+            copyConfigStoreFieldsToUserStoreFields();
+        }
+    }
+    
+
+    
+    YAHOO.util.Event.onDOMReady(initUserStorePage);
 </script>
 
-<h1>Step 4: User Store Settings<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>Select the configuration option you would like to use. Choose external to use an existing user source.</p>
-
-<input type="radio" id="${type}StoreDefault" name="${type}StoreCustom" style="margin-left:1em" value="false" #if ( !$usingCustomStore ) checked="checked" #{end} onclick="disableCustomConfig('$type');"/>
-<span>Embeded</span><br/>
-<input type="radio" id="${type}StoreCustom" name="${type}StoreCustom" style="margin-left:1em" value="true" #if ( $usingCustomStore ) checked="checked" #{end}onclick="enableCustomConfig('$type');"/>
-<span>External Store</span>
-
-<div id="userStoreSameAsConfigStoreDiv" style="display:none">
-    <input type="checkbox" name="userStoreSameAsConfigStore" style="margin-left:2em" onclick="copyConfigStoreFieldsToUserStoreFields();"/><span style="font-size:smaller">Same as the Configuration Store</span>
-</div>
-
-
-<div id="${type}StoreModule" style="width:570px; display:none">
-    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
-    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox" style="margin-left:10px">User Store Details</div>
-    <div class="bodyBox" style="height:230px;margin-left:10px">	
-        <fieldset id="${type}StoreFieldset" style="padding:0px; margin-top:-60px">
-            <ol>
-                <li class="beginChunk">
-                    <label for="${type}StoreHost">Directory Host Name<em>*</em></label>
-                    <input id="${type}StoreHost" name="${type}StoreHost" type="text" class="text" style="width:150px" value="#if($store.hostName)$store.hostName#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreServer )"/>
-                    <span id="${type}StoreHostStatus"></span>
-                </li>
-                <li>
-                    <label for="${type}StorePort">Port<em>*</em></label>
-                    <input id="${type}StorePort" name="${type}StorePort" type="text" class="text" style="width:40px" value="$store.hostPort" onkeyup="APP.callDelayed(this, validate${type}StoreServer )"/>
-                </li>
-                <li class="endChunk">
-                    <label for="${type}StoreSecurePort">Is this a secure port?<em>*</em></label>
-                    <input id="${type}StoreSecurePortNo" name="${type}StoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('$type'); validate${type}StoreServer();"/><span>No</span>
-                    <input id="${type}StoreSecurePortYes" name="${type}StoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('$type'); validate${type}StoreServer();"/><span>Yes</span>
-                </li>
-                <li class="singleChunk">
-                    <label for="${type}StoreBaseDN">Directory Base DN<em>*</em></label>
-                    <input id="${type}StoreBaseDN" name="${type}StoreBaseDN" type="text" class="text" style="width:150px" value="#if($store.baseDN)$store.baseDN#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreBaseDN )"/>
-                    <span id="${type}StoreBaseDNStatus"></span>
-                </li>
-                <li class="beginChunk">
-                    <label for="${type}StoreLoginId">Directory Login ID<em>*</em></label>
-                    <input id="${type}StoreLoginId" name="${type}StoreLoginId" type="text" class="text" style="width:150px" value="#if($store.username)$store.username#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreLoginId )"/>
-                    <span id="${type}StoreLoginIdStatus"></span>
-                </li>
-                <li>
-                    <label for="${type}StorePassword">Directory Password<em>*</em></label>
-                    <input id="${type}StorePassword" name="${type}StorePassword" type="password" class="text" style="width:150px" value="#if($store.password)$store.password#{end}" onkeyup="APP.callDelayed(this, validate${type}StoreLoginId )"/>
-                </li>
-            </ol>
-        </fieldset>
+<div style="margin-left:10px;">
+    <h1>$page.getLocalizedString("step4.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+    <p>$page.getLocalizedString("step4.description")</p>
+    
+    <input type="radio" id="userStoreDefault" name="userStoreCustom" style="margin-left:1em" value="false" onclick="disableUserConfig();"/>
+    <span>$page.getLocalizedString("configurator.embedded")</span><br/>
+    <input type="radio" id="userStoreCustom" name="userStoreCustom" style="margin-left:1em" value="true" onclick="enableUserConfig();"/>
+    <span>$page.getLocalizedString("configurator.remote")
+        <input type="checkbox" id="userStoreSameAsConfigStore" checked="checked"
+               name="userStoreSameAsConfigStore" style="margin-left:2em" 
+               onclick="copyConfigStoreFieldsToUserStoreFields();"/>
+        <span style="font-size:smaller">$page.getLocalizedString("copy.config.settings")</span>
+    </span>
+    
+    <div id="userStoreModule" style="width:570px;">
+        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
+        <b class="xtop">
+            <b class="xt1"></b>
+            <b class="xt2"></b>
+            <b class="xt3"></b>
+            <b class="xt4"></b>
+        </b>
+        <div class="headerBox">$page.getLocalizedString("step4.sub.title")</div>
+        <div class="bodyBox" style="height:200px;">	
+            <span>
+                <table class="temp">
+                    <tr>
+                        <td><label for="userStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("directory.name.label")</label></td>
+                        <td>
+                            <input id="userStoreHost" name="userStoreHost" type="text" 
+                                   class="text" style="width:150px"  
+                                   onkeyup="APP.callDelayed(this, validateUserStoreHost)"/>
+                            <span id="userStoreHostStatus"></span>                       
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="userStorePort"><em>*&nbsp;</em>$page.getLocalizedString("port.label")</label></td>
+                        <td>
+                            <input id="userStorePort" name="userStorePort" 
+                                   type="text" class="text" size="5" maxLength="5" 
+                                   onkeyup="APP.callDelayed(this, validateUserStorePort)"/>
+                            <span id="userStorePortStatus"></span>         
+                        </td>
+                    </tr>  
+                    <tr>
+                        <td><label for="userStoreRootSuffix"><em>*&nbsp;</em>$page.getLocalizedString("root.suffix.label")</label></td>
+                        <td>
+                            <input id="userStoreRootSuffix" name="userStoreRootSuffix" 
+                                   type="text" class="text" style="width:200px"  
+                                   onkeyup="APP.callDelayed(this, validateUserStoreRootSuffix)"/>
+                            <span id="userStoreRootSuffixStatus"></span>    
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="userStoreLoginId"><em>*&nbsp;</em>$page.getLocalizedString("login.id.label")</label></td>
+                        <td>
+                            <input id="userStoreLoginId" name="userStoreLoginId" 
+                                   type="text" class="text" style="width:150px" 
+                                   onkeyup="APP.callDelayed(this, validateUserStoreLoginId )"/>
+                            <span id="userStoreLoginIdStatus"></span>                             
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="userStorePassword"><em>*&nbsp;</em>$page.getLocalizedString("password.label")</label></td>
+                        <td>
+                            <input id="userStorePassword" name="userStorePassword" 
+                                   type="password" class="text" style="width:100px" 
+                                   onkeyup="APP.callDelayed(this, validateUserStorePassword )"/>        
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top"><label for="userStoreType"><em>*&nbsp;</em>$page.getLocalizedString("store.type.label")</label></td>
+                        <td>
+                            <input type="radio" id="ldapv3amds" name="userStoreType" value="LDAPv3ForAMDS" checked="checked" onclick="setAMDS();"/>&nbsp;$page.getLocalizedString("am.ldap.schema")<br>
+                            <input type="radio" id="ldapv3" name="userStoreType" value="LDAPv3" onclick="setGeneric();"/>&nbsp;$page.getLocalizedString("generic.ldap.schema")
+                        </td>
+                    </tr>            
+                </table>
+            </span>
+        </div>
+        <div>
+            <b class="xbottom">
+                <b class="xbGray1"></b>
+                <b class="xbGray2"></b>
+                <b class="xbGray3"></b>
+                <b class="xbGray4"></b>
+            </b>
+        </div>
     </div>
-	<div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
 </div>
-

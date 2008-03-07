@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.20 2008-02-04 21:02:10 jonnelson Exp $
+ * $Id: SetupConstants.java,v 1.21 2008-03-07 23:27:58 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -481,4 +481,34 @@ public interface SetupConstants {
       * OpenDS Replication : remote OpenDS server port.
       */
     final String DS_EMB_REPL_PORT2 = "DS_EMB_REPL_PORT2";
+    
+    /**
+     * Type of IDRepo entry to create for user data store.
+     */
+    String USER_STORE_TYPE = "userStoreType";
+    
+    /**
+     * Host name for the ldap store being used.
+     */
+    String USER_STORE_HOST = "userStoreHostName";
+    
+    /**
+     * Port number of the ldap server.
+     */
+    String USER_STORE_PORT = "userStorePort";
+    
+    /**
+     * Root suffix for the user data store.
+     */
+    String USER_STORE_ROOT_SUFFIX = "userStoreRootSuffix";
+    
+    /**
+     * Login ID of the use with access rights to the data store.
+     */
+    String USER_STORE_LOGIN_ID = "userStoreLoginID";
+    
+    /**
+     * Password for the user login ID.
+     */
+    String USER_STORE_LOGIN_PWD = "userStoreLoginPassword";
 }

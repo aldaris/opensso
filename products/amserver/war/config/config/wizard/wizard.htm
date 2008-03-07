@@ -267,16 +267,7 @@
         }
     }
 
-    function copyConfigStoreFieldsToUserStoreFields() {
-        //$('userStoreName').value = $('configStoreName').value;
-        $('userStoreHost').value = $('configStoreHost').value;
-        $('userStoreSecurePortNo').checked = $('configStoreSecurePortNo').checked;
-        $('userStorePort').value = $('configStorePort').value;
-        $('userStoreLoginId').value = $('configStoreLoginId').value;
-        $('userStorePassword').value = $('configStorePassword').value;
-        $('userStoreBaseDN').value = $('configStoreBaseDN').value;
-        validateStore('user');
-    }
+
 
     function enableStandardPort( storeType ) {
         $(storeType + 'StoreSecurePortNo').checked = true;
@@ -501,10 +492,8 @@
         <div class="header">Configuration Complete</div>
         <div class="bd">
             <div class="bodyPopup borderPopUpGray" align="center" style="background:#FFFFFF">
-                <br/>
-                <br/>
-                <br/>
-
+                
+                <br>
                 <h1>Configuration Complete!</h1>
                 <br/>
 

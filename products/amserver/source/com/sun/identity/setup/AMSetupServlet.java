@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.47 2008-03-05 00:08:42 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.48 2008-03-07 23:27:58 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -259,9 +260,12 @@ public class AMSetupServlet extends HttpServlet {
         Map siteMap = (Map)map.remove(
             SetupConstants.CONFIG_VAR_SITE_CONFIGURATION);
 
+        Map userRepo = (Map)map.remove("UserStore");
+        
         try {
             isConfiguredFlag = configure(map);
             if (isConfiguredFlag) {
+                //postInitialize was called at the end of configure????
                 postInitialize(getAdminSSOToken());
             }
             LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
@@ -300,6 +304,10 @@ public class AMSetupServlet extends HttpServlet {
                     ServerConfiguration.setServerInstance(adminToken,
                         serverInstanceName, mapBootstrap);
 
+                    if ((userRepo != null) && !userRepo.isEmpty()) {
+                        createUserRepo(userRepo);
+                    }
+                    
                     // setup site configuration information
                     if ((siteMap != null) && !siteMap.isEmpty()) {
                         String site = (String)siteMap.get(
@@ -332,6 +340,62 @@ public class AMSetupServlet extends HttpServlet {
             e.printStackTrace();
         }
         return isConfiguredFlag;
+    }
+    
+    private static void createUserRepo(Map userRepo) {
+        
+        try {
+            ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
+                IdConstants.REPO_SERVICE, adminToken);
+            ServiceConfig cfg = svcCfgMgr.getOrganizationConfig("", null);
+            Map values = new HashMap();
+            if (cfg == null) {
+                OrganizationConfigManager orgCfgMgr = 
+                    new OrganizationConfigManager(adminToken, "/");
+                ServiceSchemaManager schemaMgr = new ServiceSchemaManager(IdConstants.REPO_SERVICE, adminToken);
+                ServiceSchema orgSchema = schemaMgr.getOrganizationSchema();
+                Set attrs = orgSchema.getAttributeSchemas();
+
+                for (Iterator iter = attrs.iterator(); iter.hasNext(); ) {
+                    AttributeSchema as = (AttributeSchema)iter.next();
+                    values.put(as.getName(), as.getDefaultValues());
+                }    
+                cfg = orgCfgMgr.addServiceConfig(IdConstants.REPO_SERVICE, values);
+            }
+            Set dns = new HashSet(2);
+            String value = (String)userRepo.get(
+                SetupConstants.USER_STORE_LOGIN_ID);
+            dns.add(value);
+            values.put("sun-idrepo-ldapv3-config-authid",dns);
+
+            value = (String)userRepo.get(SetupConstants.USER_STORE_LOGIN_PWD);
+            Set pwdSet = new HashSet(2);
+            pwdSet.add(value);
+            values.put("sun-idrepo-ldapv3-config-authpw", pwdSet);
+
+            value = (String)userRepo.get(SetupConstants.USER_STORE_ROOT_SUFFIX);
+            Set orgSet = new HashSet(2);
+            orgSet.add(value);
+            values.put("sun-idrepo-ldapv3-config-organization_name",orgSet);
+
+            String host = (String)userRepo.get(SetupConstants.USER_STORE_HOST);
+            String port = (String)userRepo.get(SetupConstants.USER_STORE_PORT);
+            Set portSet = new HashSet(2);
+            portSet.add(host+":"+port);
+            values.put("sun-idrepo-ldapv3-config-ldap-server", portSet);
+            
+            String type = (String)userRepo.get(SetupConstants.USER_STORE_TYPE);
+            if (type == null) {
+                type = "LDAPv3ForAMDS";
+            }
+            cfg.addSubConfig(host, type, 0, values);
+        } catch (SMSException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.processRequest: error " +
+                "creating user idrepo", e);
+        } catch (SSOException e) {
+            //tbd
+        }
     }
     
     private static boolean configure(Map map) {
@@ -1418,8 +1482,10 @@ public class AMSetupServlet extends HttpServlet {
     /**
       * Update Embedded Idrepo instance with new embedded opends isntance.
       */
-    private static void  updateEmbeddedIdRepo(String orgName, 
-                         String configName, String entry
+    private static void  updateEmbeddedIdRepo(
+        String orgName, 
+        String configName, 
+        String entry
     ) throws SMSException, SSOException 
     {
         SSOToken token = (SSOToken) AccessController

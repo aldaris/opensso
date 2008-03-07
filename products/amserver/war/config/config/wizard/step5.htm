@@ -3,7 +3,6 @@
     var loadBalancerValid = #if((!$host && !$port) || ($host && $port))true#{else}false#{end};
 
     function disableLoadBalancer() {
-        $('loadBalancerModule').style.display = "none";
         $('loadBalancerEnable').checked = false;
         $('loadBalancerDisable').checked = true;
         $('loadBalancerHostName').value = null;
@@ -11,17 +10,18 @@
         $('loadBalancerStatus').innerHTML = "";
         loadBalancerValid = false;
         $('nextTabButton').disabled = false;
+        $('loadBalancerHostName').disabled = true;
+        $('loadBalancerPort').disabled = true;
         AjaxUtils.call("$context$path?actionLink=clear");
     }
 
     function enableLoadBalancer() {
-        $('loadBalancerModule').style.display = "";
         $('loadBalancerEnable').checked = true;
         $('loadBalancerDisable').checked = false;
         $('nextTabButton').disabled = true;
+        $('loadBalancerHostName').disabled = false;
+        $('loadBalancerPort').disabled = false;
     }
-
-
 
     function urlValidated( body ) {
         $('nextTabButton').disabled = eval(loadBalancerValid);
@@ -67,8 +67,13 @@
         if ( loadBalancerValid ) {
             $('nextTabButton').disabled = false;
             if( $('loadBalancerEnable').checked ) {
+                $('loadBalancerHostName').disabled = false;
+                $('loadBalancerPort').disabled = false;
                 validateSiteName();
                 validatePrimaryURL();
+            } else {
+                $('loadBalancerHostName').disabled = true;
+                $('loadBalancerPort').disabled = true;
             }
         } else {
             $('nextTabButton').disabled = true;
@@ -79,31 +84,44 @@
 
 </script>
 
-<h1>Step 5: Load Balancing<img class="pointer" alt="info" src="$context/assets/images/message.gif"/></h1>
-<p>Will this instance be deployed behind a load balancer as part of a site configuration?</p>
-<input type="radio" id="loadBalancerDisable" #if (!$host && !$port) checked="checked"#{end}/><span>&nbsp;No</span><br/>
-<input type="radio" id="loadBalancerEnable" #if ($host || $port) checked="checked"#{end}/><span>&nbsp;Yes</span>
+<div style="margin-left:10px;">
+    <h1>$page.getLocalizedString("step5.title")<img class="pointer" alt="info" src="$context/assets/images/message.gif"/></h1>
+    <p>$page.getLocalizedString("step5.description")</p>
+    <input type="radio" id="loadBalancerDisable" #if (!$host && !$port) checked="checked"#{end}/><span>&nbsp;$page.getLocalizedString("no.label")</span><br/>
+    <input type="radio" id="loadBalancerEnable" #if ($host || $port) checked="checked"#{end}/><span>&nbsp;$page.getLocalizedString("yes.label")</span>
 
-<div id="loadBalancerModule" style="width:500px;#if(!$host && !$port)display:none#{end}">
-    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
-    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox" style="margin-left:10px">Site Configuration Details</div>
-    <div class="bodyBox" style="height:100px;margin-left:10px">
-        This is the first instance of a new installation and there are no site configurations to use. You can create a new site by entering the name of the site and the URL of the load balancer below. 
-        <fieldset id="loadBalancerFieldset" style="padding:0px; margin-top:-40px">
-            <ol>
-                <li>
-                    <label for="loadBalancerHostName">Site Name<em>*</em></label>
-                    <input id="loadBalancerHostName" name="loadBalancerHostName" type="text" value="#if($host)$host#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validateSiteName)"/>
-                    <span id="siteNameStatus"></span>
-                </li>
-                <li>
-                    <label for="loadBalancerPort">Primary URL<em>*</em></label>
-                    <input id="loadBalancerPort" name="loadBalancerPort" type="text" value="#if($port)$port#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validatePrimaryURL)"/>
-                    <span id="loadBalancerStatus"></span>
-                </li>
-            </ol>
-        </fieldset>
+    <div id="loadBalancerModule" style="width:500px;">
+        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
+        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+            <div class="headerBox">$page.getLocalizedString("step5.sub.title")</div>
+        <div class="bodyBox" style="height:100px">
+            $page.getLocalizedString("step5.help.message")
+            <span>
+                <table class="temp">
+                    <tr>
+                        <td><label for="loadBalancerHostName"><em>*&nbsp;</em>$page.getLocalizedString("site.name.label")</label></td>
+                        <td>
+                            <input id="loadBalancerHostName" name="loadBalancerHostName" type="text" value="#if($host)$host#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validateSiteName)"/>
+                            <span id="siteNameStatus"></span>                    
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="loadBalancerPort"><em>*&nbsp;</em>$page.getLocalizedString("primary.url.label")</label></td>
+                        <td>
+                            <input id="loadBalancerPort" name="loadBalancerPort" type="text" value="#if($port)$port#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validatePrimaryURL)"/>
+                            <span id="loadBalancerStatus"></span>                  
+                        </td>
+                    </tr>
+                </table>
+            </span>                 
+        </div>
+        <div>
+            <b class="xbottom">
+                <b class="xbGray1"></b>
+                <b class="xbGray2"></b>
+                <b class="xbGray3"></b>
+                <b class="xbGray4"></b>
+            </b>
+        </div>
     </div>
-    <div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
 </div>

@@ -1,5 +1,8 @@
 <script type="text/javascript">
 
+    var userStore = "embedded";
+    var multiServer = "false";
+    
     function configStoreServerValidated( response ) {
         storeServerValidated( '$type', response );
     }
@@ -79,11 +82,13 @@
     }
     
     function enableExisting() {
+        multiServer = "true";
         document.getElementById("existingInstance").style.display = "";
 	AjaxUtils.call("$context$path?actionLink=setReplication&multi=enable");
     }
 
     function disableExisting() {
+        multiServer = "false";
         document.getElementById("existingInstance").style.display = "none";
 	AjaxUtils.call("$context$path?actionLink=setReplication&multi=disable");
     }
@@ -91,13 +96,20 @@
     function enableRemote() {
         document.getElementById("configStoreModule").style.display = "";
         document.getElementById("embeddedModule").style.display = "none";
+        document.getElementById("existingInstance").style.display = "none";
 	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote");
+        userStore = "external";
     }
 
     function disableRemote() {
         document.getElementById("configStoreModule").style.display = "none";
         document.getElementById("embeddedModule").style.display = "";
+        if (multiServer == "true") {
+            document.getElementById("existingInstance").style.display = "";        
+        } 
+        
 	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded");
+        userStore = "embedded";
     }
 
     function initialize() {
@@ -109,123 +121,167 @@
     YAHOO.util.Event.onDOMReady(initialize);
 </script>
 
-<h1>Step 3: Configuration Store Settings<img class="pointer" src="$context/assets/images/message.gif"/></h1>
-<p>Federated Access Manager requires a data store for the configuration 
-data. The supported configuration data stores are Embedded (OpenDS) or 
-External (Sun Java System Directory Server). </p> 
-
-<input type="radio" id="configStoreDefault" name="configStoreCustom" 
-    style="margin-left:1em" value="false" checked="checked" 
-    onclick="disableRemote();"/> Embedded (Open DS)
-<input type="radio" id="configStoreCustom" name="configStoreCustom" 
-    style="margin-left:1em" value="true" onclick="enableRemote();"/>
-    External (Sun Java System DS)
-
-<!-- EMBEDDED STORE PROPERTIES -->
-<div id="configStoreProperties" style="width:570px;" >
-    <p id="allfields"><em>*</em>&nbsp;Indicates Required Fields</p>
-    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-    <div class="headerBox" style="margin-left:10px">
-	Configuration Store Details
-    </div>
-    <div class="bodyBox" style="height:230px;margin-left:10px">	
-        <fieldset id="configStoreFieldset" style="padding:0px; margin-top:-60px">
-                <li>
-                    <label for="rootSuffix">Root Suffix<em>*</em></label>
+<div style="margin-left:10px;">
+    <h1>$page.getLocalizedString("step3.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+    <p>$page.getLocalizedString("step3.description")</p> 
+    
+    <input type="radio" id="configStoreDefault" name="configStoreCustom" 
+       style="margin-left:1em" value="false" checked="checked" 
+       onclick="disableRemote();"/> 
+        $page.getLocalizedString("step3.embedded.option")
+    <input type="radio" id="configStoreCustom" name="configStoreCustom" 
+       style="margin-left:1em" value="true" 
+       onclick="enableRemote();"/>
+        $page.getLocalizedString("step3.external.option");
+    
+    <!-- EMBEDDED STORE PROPERTIES -->
+    <div id="configStoreProperties" style="width:570px;" >
+        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
+        <b class="xtop">
+            <b class="xt1"></b>
+            <b class="xt2"></b>
+            <b class="xt3"></b>
+            <b class="xt4"></b>
+        </b>
+        <div class="headerBox">
+            $page.getLocalizedString("step3.sub.title")
+        </div>
+        <div class="bodyBox" style="height:230px;">	
+             <span>
+             <table class="temp">
+             <tr>
+                <td><label for="rootSuffix"><em>*&nbsp;</em>$page.getLocalizedString("root.suffix.label")</label></td>
+                <td>
                     <input id="rootSuffix" name="rootSuffix" 
-			type="text" class="text" style="width:150px" 
-			value="$rootSuffix" 
-			onkeyup="APP.callDelayed(this, validateRootSuffix)"/>
-                    <span id="rootSuffixStatus"></span>
-                </li>
-                <li>
-                    <label for="configStorePort">Port<em>*</em></label>
+                           type="text" class="text" style="width:200px" 
+                           value="$rootSuffix" 
+                           onkeyup="APP.callDelayed(this, validateRootSuffix)"/>
+                    <span id="rootSuffixStatus"></span>                       
+                </td>
+            </tr>
+            
+            <tr>
+                <td><label for="configStorePort"><em>*&nbsp;</em>$page.getLocalizedString("port.label")</label></td>
+                <td>
                     <input id="configStorePort" name="configStorePort" 
-			type="text" size="5" maxLength="5" 
-			value="$configStorePort" 
-			onkeyup="APP.callDelayed(this, validatePort)"/>
-                    	<span id="configStorePortStatus"></span>
-                </li>
-		<div id="embeddedModule">
-		<li>
-		    <label>Add to Exising Instance? </label>
-			<input type="radio" id="existingNo" name="existingInstance" value="false" checked="checked" onclick="disableExisting();"/>No
-			<input type="radio" id="existingYes" name="existingInstance" value="true" onclick="enableExisting();"/>Yes
-		</li>
-		<div id="existingInstance" style="display:none">
-                <li>
-                    <label for="localRepPort">Local Replication Port<em>*</em></label>
-                    <input id="localRepPort" name="localRepPort" type="text" 
-			class="text" size="5" maxLength="5" 
-			value="$localRepPort" 
-                        onkeyup="APP.callDelayed(this, validateLocalRepPort)"/>
-                    <span id="localRepPortStatus"></span>
-                </li>
-                <li>
-                    <label for="existingHost">
-                        Existing Host Name <em>*</em>
-                    </label>
-                    <input id="existingHost" name="existingHost" type="text" 
-                        class="text" style="width:150px" 
-                        onkeyup="APP.callDelayed(this, validateHostName)"/>
-                    <span id="existingHostStatus"></span>
-                <li>
-                    <label for="existingPort">Existing Port<em>*</em></label>
-                    <input id="existingPort" name="existingPort" type="text" 
-			class="text" size="5" maxLength="5" 
-			value="$existingPort" 
-                        onkeyup="APP.callDelayed(this, validateExistingPort)"/>
-                    <span id="existingPortStatus"></span>
-                </li>
-                <li>
-                    <label for="existingRepPort">Existing Replication Port<em>*</em></label>
-                    <input id="existingRepPort" name="existingRepPort" 
-			type="text" class="text" size="5" maxLength="5"
-			value="$existingRepPort" 
-                        onkeyup="APP.callDelayed(this, validateExistingRepPort)"/>
-                    <span id="existingRepPortStatus"></span>
-                </li>
-		</div> <!-- Existing Instance -->
-		</div> <!-- Embedded Store -->
-
-		<!-- EXTERNAL STORE PROPERTIES -->
-		<div id="configStoreModule" style="display:none">
-                <li> 
-                    <label for="configStoreHost">Host Name<em>*</em></label>
-                    <input id="configStoreHost" name="configStoreHost" type="text" 
-                        class="text" style="width:150px" 
-			value="$configStoreHost"
-                        onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
-                    <span id="configStoreHostStatus"></span>
-                </li>
-                <li> 
-                    <label for="configStoreLoginId">Login ID<em>*</em></label>
-                    <input id="configStoreLoginId" name="configStoreLoginId" type="text" 
-                        class="text" style="width:150px" 
-			value="$configStoreLoginId"
-                        onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"/>
-                    <span id="configStoreLoginIdStatus"></span>
-                </li>
-                <li>
-                    <label for="configStorePassword">Password<em>*</em></label>
-                    <input id="configStorePassword" name="configStorePassword" 
-                        type="password" class="text" style="width:150px" 
-                        value="#if($store.password)$store.password#{end}" 
-                        onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
-                    <span id="configStorePasswordStatus"></span>
-                </li>
-                <li>
-                    <label for="enableUMSchema">Load User Schema<em>*</em></label>
-                    <input type="checkbox" id="enableUMSchema" 
-                        name="enableUMSchema" value="sdkSchema" 
-                        onclick="loadUMSchema();"/>
-                </li>
-		</div>
-            </ol>
-        </fieldset>
-    </div>
-    <div style="margin-left:10px">
-	<b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+                           type="text" size="5" maxLength="5" 
+                           value="$configStorePort" 
+                           onkeyup="APP.callDelayed(this, validatePort)"/>
+                    <span id="configStorePortStatus"></span>
+                </td>
+            </tr>
+            </table>
+            
+            <div id="embeddedModule">            
+                <table class="temp">
+                    <tr>
+                        <td><label for="existingInstance">$page.getLocalizedString("existing.instance.label")</label></td>
+                        <td>
+                            <input type="radio" id="existingNo" name="existingInstance" value="false" checked="checked" onclick="disableExisting();"/>$page.getLocalizedString("no.label")
+                            <input type="radio" id="existingYes" name="existingInstance" value="true" onclick="enableExisting();"/>$page.getLocalizedString("yes.label")
+                        </td>
+                    </tr>
+                </table>
+            </div> <!-- Embedded Store -->
+        
+            <div id="existingInstance" style="display:none">
+                <table class="temp">
+                    <tr>
+                        <td><label for="localRepPort"><em>*&nbsp;</em>$page.getLocalizedString("replication.port.label")</label></td>
+                        <td>
+                            <input id="localRepPort" name="localRepPort" 
+                                   type="text" class="text" size="5" maxLength="5" 
+                                   value="$localRepPort" 
+                                   onkeyup="APP.callDelayed(this, validateLocalRepPort)"/>
+                            <span id="localRepPortStatus"></span>                       
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="existingHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
+                        <td>
+                            <input id="existingHost" name="existingHost" type="text" 
+                                   class="text" style="width:150px" 
+                                   onkeyup="APP.callDelayed(this, validateHostName)"/>
+                            <span id="existingHostStatus"></span>                        
+                        </td>
+                    </tr>      
+                    <tr>
+                        <td><label for="existingPort"><em>*&nbsp;</em>$page.getLocalizedString("existing.port.label")</label></td>
+                        <td>
+                            <input id="existingPort" name="existingPort" type="text" 
+                                   class="text" size="5" maxLength="5" 
+                                   value="$existingPort" 
+                                   onkeyup="APP.callDelayed(this, validateExistingPort)"/>
+                            <span id="existingPortStatus"></span>                        
+                        </td>
+                    </tr>      
+                    <tr>
+                        <td><label for="existingRepPort"><em>*&nbsp;</em>$page.getLocalizedString("existing.replication.port")</label></td>
+                        <td>
+                            <input id="existingRepPort" name="existingRepPort" 
+                                   type="text" class="text" size="5" maxLength="5"
+                                   value="$existingRepPort" 
+                                   onkeyup="APP.callDelayed(this, validateExistingRepPort)"/>
+                            <span id="existingRepPortStatus"></span>
+                        </td>
+                    </tr>   
+                </table>
+            </div> <!-- Existing Instance -->
+                
+            <!-- EXTERNAL STORE PROPERTIES -->
+            <div id="configStoreModule" style="display:none">
+                <table class="temp">
+                    <tr>
+                        <td><label for="configStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
+                        <td>
+                            <input id="configStoreHost" name="configStoreHost" 
+                                   type="text" class="text" style="width:150px" 
+                                   value="$configStoreHost"
+                                   onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
+                            <span id="configStoreHostStatus"></span>
+                        </td>
+                    </tr>  
+                    <tr>
+                        <td><label for="configStoreLoginId"><em>*&nbsp;</em>$page.getLocalizedString("login.id.label")</label></td>
+                        <td>
+                            <input id="configStoreLoginId" name="configStoreLoginId" 
+                                   type="text" class="text" style="width:150px" 
+                                   value="$configStoreLoginId"
+                                   onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"/>
+                            <span id="configStoreLoginIdStatus"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="configStorePassword"><em>*&nbsp;</em>$page.getLocalizedString("password.label")</label></td>
+                        <td>
+                            <input id="configStorePassword" 
+                                   name="configStorePassword" 
+                                   type="password" class="text" style="width:100px" 
+                                   value="#if($store.password)$store.password#{end}" 
+                                   onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
+                            <span id="configStorePasswordStatus"></span>                        
+                        </td>
+                    </tr>  
+                    <tr>
+                        <td><label for="enableUMSchema"><em>*&nbsp;</em>$page.getLocalizedString("load.schema.label")</label></td>
+                        <td>
+                            <input type="checkbox" id="enableUMSchema" 
+                                   name="enableUMSchema" value="sdkSchema" 
+                                   onclick="loadUMSchema();"/>
+                        </td>
+                    </tr>                                 
+                </table>
+            </div>
+            </span>
+        </div>
+        <div>
+            <b class="xbottom">
+                <b class="xbGray1"></b>
+                <b class="xbGray2"></b>
+                <b class="xbGray3"></b>
+                <b class="xbGray4"></b>
+            </b>
+        </div>
     </div>
 </div>
 
