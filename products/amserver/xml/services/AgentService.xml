@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.35 2008-03-05 22:40:45 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.36 2008-03-08 03:01:55 mallas Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2756,6 +2756,41 @@
                             <Value>UserName:test|UserPassword:test</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="SAMLAttributeMapping"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a334">                        
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="NameIDMapper"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a335">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="AttributeNamespace"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a336">
+                        <DefaultValues>
+                            <Value>http://www.sun.com</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="includeMemberships"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a337">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
                 </SubSchema>
                 
                 <SubSchema name="STSAgent" inheritance="multiple">
