@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.19 2008-03-04 23:55:58 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.20 2008-03-08 03:03:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,6 +96,11 @@ public class AgentProvider extends ProviderConfig {
      private static final String FORCE_AUTHENTICATION = "forceUserAuthn";
      private static final String KEEP_SECURITY_HEADERS = "keepSecurityHeaders";
      private static final String AUTHENTICATION_CHAIN = "authenticationChain";  
+     private static final String SAML_ATTRIBUTE_MAPPING = 
+                                 "SAMLAttributeMapping";
+     private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
+     private static final String SAML_ATTRIBUTE_NS = "AttributeNamespace";
+     private static final String NAMEID_MAPPER = "NameIDMapper"; 
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -128,6 +133,10 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(FORCE_AUTHENTICATION);
          attrNames.add(KEEP_SECURITY_HEADERS);
          attrNames.add(AUTHENTICATION_CHAIN);
+         attrNames.add(INCLUDE_MEMBERSHIPS);
+         attrNames.add(SAML_ATTRIBUTE_MAPPING);
+         attrNames.add(SAML_ATTRIBUTE_NS);
+         attrNames.add(NAMEID_MAPPER);
      }
 
      public void init (String providerName, 
@@ -218,7 +227,8 @@ public class AgentProvider extends ProviderConfig {
         } else if(attr.equals(REQUEST_ENCRYPT)) {
            this.isRequestEncrypted = Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(REQUEST_HEADER_ENCRYPT)) {
-           this.isRequestHeaderEncrypted = Boolean.valueOf(value).booleanValue();
+           this.isRequestHeaderEncrypted = 
+                       Boolean.valueOf(value).booleanValue();
         } else if(attr.equals(KEY_ALIAS)) {
            this.privateKeyAlias = value;
         } else if(attr.equals(PUBLIC_KEY_ALIAS)) {
@@ -236,7 +246,8 @@ public class AgentProvider extends ProviderConfig {
                     taconfig = TrustAuthorityConfig.getConfig(value, 
                         TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);                                              
                 } catch (ProviderException pe) {
-                    ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
+                    ProviderUtils.debug.error("AgentProvider.setAttribute: " +
+                         "error",pe);
                 }
             }
         } else if (attr.equals(STS_TRUST_AUTHORITY)) {
@@ -247,7 +258,8 @@ public class AgentProvider extends ProviderConfig {
                         TrustAuthorityConfig.STS_TRUST_AUTHORITY);
            
                 } catch (ProviderException pe) {
-                    ProviderUtils.debug.error("AgentProvider.setAttribute:error",pe);
+                    ProviderUtils.debug.error("AgentProvider.setAttribute: " +
+                          "error",pe);
                 }
             }
         } else if(attr.startsWith(PROPERTY)) {
@@ -302,6 +314,21 @@ public class AgentProvider extends ProviderConfig {
                 && (!value.equals("[Empty]"))) {
                 this.authenticationChain = value;
             }
+        } else if(attr.equals(SAML_ATTRIBUTE_MAPPING)) {
+            if(samlAttributes == null) {
+               samlAttributes = new HashSet();
+            }
+            if((value != null) && !(value.equals(""))) {                
+               samlAttributes.add(value);
+            }
+        } else if(attr.equals(INCLUDE_MEMBERSHIPS)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.includeMemberships = Boolean.valueOf(value).booleanValue();
+            }
+        } else if(attr.equals(SAML_ATTRIBUTE_NS)) {
+           this.attributeNS = value;
+        } else if(attr.equals(NAMEID_MAPPER)) {
+           this.nameIDMapper = value;
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -427,7 +454,19 @@ public class AgentProvider extends ProviderConfig {
            config.put(DISCOVERY_TRUST_AUTHORITY, discoTA); 
         }
         
-
+        if(attributeNS != null) {
+           config.put(SAML_ATTRIBUTE_NS, attributeNS); 
+        }
+        
+        if(nameIDMapper != null) {
+           config.put(NAMEID_MAPPER, nameIDMapper);
+        }
+        
+        if(includeMemberships) {
+           config.put(INCLUDE_MEMBERSHIPS,
+                       Boolean.toString(includeMemberships));
+        }
+        
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
@@ -442,6 +481,10 @@ public class AgentProvider extends ProviderConfig {
             }
             if (secMechSet != null) {
                 attributes.put(SEC_MECH, secMechSet);
+            }
+            
+            if(samlAttributes != null && !samlAttributes.isEmpty()) {
+               attributes.put(SAML_ATTRIBUTE_MAPPING,samlAttributes); 
             }
 
             if (profilePresent) {

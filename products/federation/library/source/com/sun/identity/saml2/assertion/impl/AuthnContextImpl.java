@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnContextImpl.java,v 1.1 2006-10-30 23:16:05 qcheng Exp $
+ * $Id: AuthnContextImpl.java,v 1.2 2008-03-08 03:04:35 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -264,7 +264,8 @@ public class AuthnContextImpl implements AuthnContext {
             }
         }
 
-        validateData();
+        // Commenting this until we get a fix from WSIT
+        // validateData();
         if (authenticatingAuthority != null) {
             authenticatingAuthority =
                 Collections.unmodifiableList(authenticatingAuthority);

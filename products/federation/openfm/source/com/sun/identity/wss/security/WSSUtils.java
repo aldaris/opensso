@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.6 2007-09-13 07:24:21 mrudul_uchil Exp $
+ * $Id: WSSUtils.java,v 1.7 2008-03-08 03:03:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -503,7 +503,7 @@ public class WSSUtils {
         }  
     }
     
-    private static List getMemberShips(String pattern) {
+    public static List getMemberShips(String pattern) {
         List roles = new ArrayList();
         try {
             SSOToken adminToken = getAdminToken();

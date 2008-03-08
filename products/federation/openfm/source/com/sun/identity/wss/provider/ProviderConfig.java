@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.14 2007-11-29 08:25:22 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.15 2008-03-08 03:03:18 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Set;
 
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.services.util.Crypt;
@@ -98,6 +99,10 @@ public abstract class ProviderConfig {
      protected boolean preserveSecHeaders = false;
      protected String authenticationChain = null;    
      protected TrustAuthorityConfig taconfig = null;
+     protected Set samlAttributes = null;
+     protected boolean includeMemberships = false;
+     protected String nameIDMapper = null;
+     protected String attributeNS = null; 
 
      private static Class adapterClass;
 
@@ -399,6 +404,73 @@ public abstract class ProviderConfig {
      */
     public void setDefaultKeyStore(boolean set) {
         this.isDefaultKeyStore = set;
+    }
+
+    /**
+     * Returns the SAML Attribute Mapping list. This method is used by the
+     * WSP configuration when enabled for SAML.
+     */
+    public Set getSAMLAttributeMapping() {
+        return samlAttributes;
+    }
+
+    /**
+     * Sets the list of SAML attribute mappings. This method is used by the
+     * WSP configuration when enabled for SAML.
+     * @param attributeMap the list of SAML attribute mapping
+     */
+    public void setSAMLAttributeMapping(Set attributeMap) {
+        this.samlAttributes = attributeMap;
+    }
+
+    /**
+     * Checks if the memberships should be included in the SAML attribute
+     * mapping.
+     * @return true if the  memberships are included.
+     */
+    public boolean shouldIncludeMemberships() {
+        return includeMemberships;
+    }
+
+    /**
+     * Sets a flag to include memberships for SAML attribute mapping.
+     * @param include boolean flag to indicate if the memberships needs to 
+     *                be included.
+     */
+    public void setIncludeMemberships(boolean include) {
+        this.includeMemberships = include;
+    }
+
+    /**
+     * Returns the NameID mapper class
+     * @return returns the nameid mapper class.
+     */
+    public String getNameIDMapper() {
+        return nameIDMapper;
+    }
+
+    /**
+     * Sets the NameID Mapper class.
+     * @param nameIDMapper NameID Mapper class.
+     */
+    public void setNameIDMapper(String nameIDMapper){
+        this.nameIDMapper = nameIDMapper;
+    }
+
+    /**
+     * Returns SAML attribute namespace.
+     * @return returns SAML attribute namespace.
+     */
+    public String getSAMLAttributeNamespace() {
+        return attributeNS;
+    }
+
+    /**
+     * Sets SAML attribute namespace.
+     * @param attributeNS SAML attribute namespace.
+     */
+    public void setSAMLAttributeNamespace(String attributeNS) {
+        this.attributeNS = attributeNS;
     }
   
     /**

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.2 2007-11-13 19:46:25 mallas Exp $
+ * $Id: STSClientUserToken.java,v 1.3 2008-03-08 03:03:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,12 +91,22 @@ public class STSClientUserToken implements ClientUserToken {
     }
     
     public Element getTokenValue() {        
-        Document document = XMLUtils.toDOMDocument(toString(), STSUtils.debug);        
+        Document document = XMLUtils.toDOMDocument(toString(), STSUtils.debug);
         return document.getDocumentElement();
     }     
     
     public String getTokenId() {
         return tokenId;
+    }
+
+    public String getPrincipalName() throws FAMSTSException {
+        try {
+            SSOToken ssoToken = 
+                 SSOTokenManager.getInstance().createSSOToken(tokenId);
+            return ssoToken.getPrincipal().getName(); 
+        } catch (SSOException se) {
+            throw new FAMSTSException(se.getMessage()); 
+        }
     }
     
     public String toString() {

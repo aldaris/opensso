@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientUserToken.java,v 1.1 2007-11-13 19:46:25 mallas Exp $
+ * $Id: ClientUserToken.java,v 1.2 2008-03-08 03:03:19 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,25 @@ import com.sun.xml.ws.security.Token;
  */
 public interface ClientUserToken extends Token {
     
+    /**
+     * Initializes client user token
+     * @param obj credential object to initialize the user token     
+     * @throws com.sun.identity.wss.sts.FAMSTSException
+     */
     public void init(Object obj) throws FAMSTSException;
 
+    /**
+     * Returns the principal name that the client user token carries
+     * @return the principal name that the client user token carries
+     * @throws com.sun.identity.wss.sts.FAMSTSException
+     */     
+    public String getPrincipalName() throws FAMSTSException;
+
+    /**
+     * Returns the <code>java.lang.String</code> representation of
+     * this client user token.
+     * @return the string format for this client user token.
+     */
     public String toString();
+
 }
