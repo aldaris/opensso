@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyTests.java,v 1.7 2007-11-30 18:48:11 rmisra Exp $
+ * $Id: PolicyTests.java,v 1.8 2008-03-10 05:34:06 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,7 @@ public class PolicyTests extends TestCommon {
                     mpc.createIdentities(strLocRB, polIdx,  strPeAtOrg );
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
                             ".xml", strPeAtOrg);
-                    mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
+                    assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
                     Thread.sleep(notificationSleepTime);
                 } else {
                     mpc.createRealm("/" + strPeAtOrg);
@@ -107,7 +107,8 @@ public class PolicyTests extends TestCommon {
                                 strLocRB, polIdx, strRefRB +  ".xml");
                         strReferringOrg = rbr.getString(strLocRB + polIdx +
                                 ".referringOrg");
-                        mpc.createPolicy(strRefRB + ".xml", strReferringOrg );
+                        assert (mpc.createPolicy(strRefRB + ".xml", 
+                                strReferringOrg ));
                         Thread.sleep(notificationSleepTime);
                     } else {
                         strDynamicRefValue = "true";
@@ -118,7 +119,7 @@ public class PolicyTests extends TestCommon {
                     }
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
-                    mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
+                    assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
                     Thread.sleep(notificationSleepTime);
                 }
             }
@@ -183,7 +184,7 @@ public class PolicyTests extends TestCommon {
             if (strCleanup.equals("true")) {
                 if (peAtOrg.equals(realm)) {
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
-                    mpc.deletePolicies(strLocRB, polIdx, peAtOrg);
+                    assert (mpc.deletePolicies(strLocRB, polIdx, peAtOrg));
                 } else {
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
                     mpc.deleteRealm(peAtOrg);

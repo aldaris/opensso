@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRespTest.java,v 1.4 2007-11-30 18:48:11 rmisra Exp $
+ * $Id: PolicyRespTest.java,v 1.5 2008-03-10 05:34:05 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,7 @@ public class PolicyRespTest extends TestCommon {
                     mpc.createIdentities(strLocRB, polIdx,  strPeAtOrg );
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
                             ".xml", strPeAtOrg);
-                    mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
+                    assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
                     Thread.sleep(notificationSleepTime);
                 } else {
                     mpc.createRealm("/" + strPeAtOrg);
@@ -111,7 +111,8 @@ public class PolicyRespTest extends TestCommon {
                                 strLocRB, polIdx, strRefRB +  ".xml");
                         strReferringOrg = rbr.getString(strLocRB + polIdx +
                                 ".referringOrg");
-                        mpc.createPolicy(strRefRB + ".xml", strReferringOrg );
+                        assert (mpc.createPolicy(strRefRB + ".xml", 
+                                strReferringOrg ));
                         Thread.sleep(notificationSleepTime);
                     } else {
                         strDynamicRefValue = "true";
@@ -122,7 +123,7 @@ public class PolicyRespTest extends TestCommon {
                     }
                     mpc.createPolicyXML(strGblRB, strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
-                    mpc.createPolicy(strLocRB + ".xml", strPeAtOrg);
+                    assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
                     Thread.sleep(notificationSleepTime);
                 }
             }
@@ -205,7 +206,7 @@ public class PolicyRespTest extends TestCommon {
             if (strCleanup.equals("true")) {
                 if (peAtOrg.equals(realm)) {
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
-                    mpc.deletePolicies(strLocRB, polIdx, peAtOrg);
+                    assert (mpc.deletePolicies(strLocRB, polIdx, peAtOrg));
                     mpc.deleteDynamicAttr(strLocRB, polIdx, peAtOrg);                    
                 } else {
                     mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
