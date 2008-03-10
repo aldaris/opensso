@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.18 2008-03-07 03:56:24 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.19 2008-03-10 20:16:05 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -990,6 +990,7 @@ public class AgentConfiguration implements
             setSSOTokenName();   
             setHotSwappableClientSDKProps();     
             logAgentVersion();
+            logServerVersion();
             markInitialized(); 
         }
     }
@@ -1008,6 +1009,30 @@ public class AgentConfiguration implements
         version = (version == null) ?  "Unknown Agent Version." : version; 
         if (isLogMessageEnabled()) {
             logMessage("AgentConfiguration.logAgentVersion: \n" + version);
+        }
+    }
+    
+    /**
+     * Logs the version of FAM Server.
+     */
+    private static void logServerVersion() {
+        String version = null;
+        try {
+            Vector attrServiceURLs = getAttributeServiceURLs();
+            version = AgentRemoteConfigUtils.getServerVersion(attrServiceURLs,
+                    getDebug());
+            if (version == null || version.length() == 0) {
+                version  = "Access Manager 7.x Server";
+            }
+        } catch (AgentException ex) {
+            version = "Unknown Server Version due to: " + ex.getMessage();
+        }
+        
+        if (isLogMessageEnabled()) {
+            logMessage("AgentConfiguration.logServerVersion() - \n\n" +
+                    "------------------------------------------------\n" +
+                    "FAM Server Version:" + version + "\n" +
+                    "------------------------------------------------\n");
         }
     }
     

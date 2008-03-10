@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentRemoteConfigUtils.java,v 1.2 2008-02-05 02:16:53 huacui Exp $
+ * $Id: AgentRemoteConfigUtils.java,v 1.3 2008-03-10 20:16:05 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ public class AgentRemoteConfigUtils {
     static final String FREE_FORM_PROPERTY =
                         "com.sun.identity.agents.config.freeformproperties";
     static final String ATTRIBUTE_SERVICE = "/xml/attributes?subjectid=";
+    static final String VERSION_SERVICE = "/SMSServlet?method=version";
     
     /**
      * Returns <code>Properties</code> object constructed from XML.
@@ -135,6 +136,71 @@ public class AgentRemoteConfigUtils {
             }
         }
         return result;
+    }
+    
+    /**
+     * get FAM server's version by calling servlet SMSServlet?method=version.
+     *
+     * @param urls Vector of FAM URLs.
+     * @return the version of FAM Server
+     */
+    public static String getServerVersion(Vector urls, Debug debug) {
+        String version = null;
+        
+        if (urls == null || urls.size() == 0) {
+            return null;
+        }
+        int size = urls.size();
+        URL url = null;
+        for (int i=0; i<size; i++) {
+            url = (URL)urls.get(i);
+            String path = url.getPath();
+            String appContext = null;
+            
+            int index = path.indexOf("/", 1);
+            if (index > 0) {
+                appContext = path.substring(1,index);
+            } else {
+                appContext = path.substring(1);
+            }
+            String urlString = url.getProtocol() + "://" + url.getHost() + ":" +
+                    url.getPort() + "/" + appContext + VERSION_SERVICE;
+            debug.message("AgentRemoteConfigUtils.getServerVersion() - " +
+                    "Service URL: " +
+                    urlString);
+            version = callServerService(urlString, debug);
+            if (version != null || version.trim().length() > 0) {
+                break;
+            }
+        }
+        
+        return version;
+    }
+    
+    /*
+     * call FAM service URL and return its content.
+     *
+     * @param urlSring FAM URL to be called
+     * @return String of content returned by FAM URL.
+     */
+    private static String callServerService(String urlString, Debug debug) {
+        StringBuffer stringBuffer = new StringBuffer();
+        try {
+            URL url = new URL(urlString);
+            
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            String line = null;
+            while((line = br.readLine()) != null) {
+                stringBuffer.append(line).append("\n");
+            }
+            
+        } catch (Exception ex) {
+            debug.message("AgentRemoteConfigUtils.callServerService() - ", ex);
+        }
+        
+        return stringBuffer.toString();
     }
 
     private static void setProp(Properties prop, 
