@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMServlet.java,v 1.2 2006-08-25 21:21:28 veiming Exp $
+ * $Id: SMServlet.java,v 1.3 2008-03-10 19:33:29 leiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.Constants;
 
 /**
  * The <code>SMServlet</code> provides`simple http interface to obtain service
@@ -44,6 +46,7 @@ public class SMServlet extends HttpServlet {
 
     // Supported operations
     static final String METHOD = "method";
+    static final String VERSION = "version";
 
     static final String IS_REALM_ENABLED = "isRealmEnabled";
 
@@ -62,6 +65,8 @@ public class SMServlet extends HttpServlet {
             } else {
                 answer = "false";
             }
+        } else if (method != null && method.equalsIgnoreCase(VERSION)) {
+            answer = SystemProperties.get(Constants.AM_VERSION);
         }
 
         // Send the response
