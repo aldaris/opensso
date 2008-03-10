@@ -17,6 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: DelegationConstants.java,v 1.2 2008-03-10 05:59:08 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,5 +93,15 @@ public interface DelegationConstants extends IDMConstants {
      * Key to hold privileges <code>privileges<code>
      */
     static final String IDM_KEY_IDENTITY_PRIVILEGES = "privileges";
+    
+    /**
+     * Property that specifies if the test case is negative
+     */
+    static final String SHOULD_FAIL = "should_fail";
+    
+    /**
+     * Schema type
+     */
+    static final String SCHEMA_TYPE = "schema_type";
     
 }

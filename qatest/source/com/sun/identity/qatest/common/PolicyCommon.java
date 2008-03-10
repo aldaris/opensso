@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.14 2008-02-08 08:30:47 kanduls Exp $
+ * $Id: PolicyCommon.java,v 1.15 2008-03-10 05:53:09 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -518,9 +518,10 @@ public class PolicyCommon extends TestCommon {
      * @param fileName Policy file name.
      * @param strLocRealm Realm in which policy has to be created.
      */
-    public void createPolicy(String fileName, String strLocRealm)
+    public boolean createPolicy(String fileName, String strLocRealm)
     throws Exception {
-        createPolicy(fileName, strLocRealm, loginURL, adminUser, adminPassword);
+        return createPolicy(fileName, strLocRealm, loginURL, adminUser, 
+                adminPassword);
     }
     
     /**
@@ -532,11 +533,12 @@ public class PolicyCommon extends TestCommon {
      * @param userName User name to be used for famadm.jsp login
      * @param userPassword password to be used for famadm.jsp login
      */
-    public void createPolicy(String fileName, String strLocRealm, 
+    public boolean createPolicy(String fileName, String strLocRealm, 
             String loginURL, 
             String userName, 
             String userPassword)
     throws Exception {
+        boolean status = false;
         try{
             webClient = new WebClient();
             consoleLogin(webClient, loginURL, userName, userPassword);
@@ -555,11 +557,14 @@ public class PolicyCommon extends TestCommon {
                     input.close();
                 policyXML = contents.toString();
                 log(Level.FINEST, "createPolicy", newline + policyXML);
-                if (FederationManager.getExitCode(fmadm.createPolicies(
-                        webClient, realm, policyXML)) != 0) {
+                HtmlPage policyCreationPage = fmadm.createPolicies(
+                        webClient, realm, policyXML);
+                if (FederationManager.getExitCode(policyCreationPage) != 0) {
                     log(Level.SEVERE, "createPolicy", "createPolicies famadm" +
-                            " command failed");
-                    assert false;
+                            " command failed ");
+                    status = false;
+                } else {
+                    status = true;
                 }
             }
         } catch(Exception e) {
@@ -569,6 +574,7 @@ public class PolicyCommon extends TestCommon {
         } finally {
             consoleLogout(webClient, logoutURL);
         }
+        return status;
     }
     
     /**
@@ -615,10 +621,11 @@ public class PolicyCommon extends TestCommon {
      * @param gPolIdx Policy index in policy file.
      * @param strLocRealm realm from which policy need to be removed.
      */
-    public void deletePolicies(String strLocRB, int gPolIdx, String strLocRealm)
+    public boolean deletePolicies(String strLocRB, int gPolIdx, 
+            String strLocRealm)
     throws Exception {
-        deletePolicies(strLocRB, gPolIdx, strLocRealm, loginURL, adminUser, 
-                adminPassword);
+        return deletePolicies(strLocRB, gPolIdx, strLocRealm, loginURL, 
+                adminUser, adminPassword);
     }
     
     /**
@@ -630,11 +637,13 @@ public class PolicyCommon extends TestCommon {
      * @param userName Login user name
      * @param userPassword Login user password
      */
-    public void deletePolicies(String strLocRB, int gPolIdx, String strLocRealm,
+    public boolean deletePolicies(String strLocRB, int gPolIdx, 
+            String strLocRealm,
             String loginURL,
             String userName, 
             String userPassword)
     throws Exception {
+        boolean status = false;
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
             String glbPolIdx = strLocRB + gPolIdx;
@@ -650,11 +659,14 @@ public class PolicyCommon extends TestCommon {
                 name = rb.getString(locPolIdx + i + ".name");
                 list.add(name);
             }
-            if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
-                    realm, list)) != 0) {
+            HtmlPage deletePolicyPage = fmadm.deletePolicies(webClient,
+                    realm, list);
+            if (FederationManager.getExitCode(deletePolicyPage) != 0) {
                 log(Level.SEVERE, "deletePolicies", "deletePolicies famadm" +
-                        " command failed");
-                assert false;
+                        " command failed ");
+                status = false;
+            } else {
+                status = true;
             }
         } catch(Exception e) {
             log(Level.SEVERE, "deletePolicies", e.getMessage());
@@ -663,6 +675,7 @@ public class PolicyCommon extends TestCommon {
         } finally {
             consoleLogout(webClient, logoutURL);
         }
+        return status;
     }
     
     /**

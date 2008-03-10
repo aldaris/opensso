@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.1 2007-12-18 23:49:44 rmisra Exp $
+ * $Id: AMSamples.java,v 1.2 2008-03-10 05:55:27 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,7 +155,7 @@ public class AMSamples extends TestCommon {
         resourceName = rb_ams.getString("policy_resource");
         String xmlFile = "client-samples-policy-test.xml";
         createPolicyXML(xmlFile);
-        pc.createPolicy(xmlFile, realm);
+        assert(pc.createPolicy(xmlFile, realm));
 
         exiting("setup");
     }

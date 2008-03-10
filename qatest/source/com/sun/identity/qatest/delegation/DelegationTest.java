@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id:
+ * $Id: DelegationTest.java,v 1.2 2008-03-10 05:59:08 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,9 +30,11 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.DelegationCommon;
 import com.sun.identity.qatest.common.PolicyCommon;
 import com.sun.identity.qatest.common.SMSCommon;
+import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -154,25 +156,24 @@ public class DelegationTest extends DelegationCommon {
             cfgMap = getDataFromCfgFile(prefixTestName, testName);
             testCount = Integer.parseInt(getParams(
                     DelegationConstants.IDM_KEY_COUNT));
-            log(Level.FINEST, "DelegationTest", "Count = " + testCount);
+            log(Level.FINEST, "setup", "Count = " + testCount);
             testDescription = getParams(
                     DelegationConstants.IDM_KEY_DESCRIPTION);
-            log(Level.FINEST, "DelegationTest", "Description = " +
+            log(Level.FINEST, "setup", "Description = " +
                     testDescription);
             delegationRealm = getParams(DelegationConstants.IDM_KEY_REALM_NAME);
             int dsConfIdx = Integer.parseInt(
                     getParams(DelegationConstants.DS_CONF_IDX));
-            log(Level.FINEST, "DelegationTest", "Realm = " + delegationRealm);
-
+            log(Level.FINEST, "setup", "Realm = " + delegationRealm);
             ssoToken = getToken(adminUser, adminPassword, basedn);
             if (!validateToken(ssoToken)) {
-                log(Level.SEVERE, "DelegationTest", "Sso token is invalid");
+                log(Level.SEVERE, "setup", "Sso token is invalid");
                 assert false;
             } else {
                 assert(createRealm(ssoToken, delegationRealm, dsConfIdx));
             }
         } catch (Exception e) {
-            log(Level.SEVERE, "DelegationTest", "Setup Failed.");
+            log(Level.SEVERE, "setup", "Setup Failed.");
             e.getStackTrace();
             destroyToken(ssoToken);
             throw e;
@@ -187,14 +188,15 @@ public class DelegationTest extends DelegationCommon {
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void testDelegation()
     throws Exception {
+        entering("testDelegation", null);
         try {
-            entering("testDelegation", null);
             boolean success = false;
             Reporter.log("Test Name: " + prefixTestName);
             Reporter.log("Description: " + testDescription);
             Reporter.log("Realm: " + delegationRealm);
             Reporter.log("Number of Items: " + testCount);
             for (int i = 0; i < testCount; i++) {
+                boolean status = false;
                 testAction = getParams(DelegationConstants.IDM_KEY_ACTION, i);
                 testIdName =
                         getParams(DelegationConstants.IDM_KEY_IDENTITY_NAME, i);
@@ -211,6 +213,13 @@ public class DelegationTest extends DelegationCommon {
                 testMemberName =
                         getParams(
                         DelegationConstants.IDM_KEY_IDENTITY_MEMBER_NAME, i);
+                String failCase = getParams(DelegationConstants.SHOULD_FAIL, i);
+                boolean shouldFail;
+                if (failCase != null && failCase.equals("true")) {
+                    shouldFail = true;
+                } else {
+                    shouldFail = false;
+                }
                 String strLocRB = getParams(
                         DelegationConstants.POLICY_FILE_NAME, i);
                 String strGblRB = getParams(
@@ -221,6 +230,8 @@ public class DelegationTest extends DelegationCommon {
                         getParams(DelegationConstants.SERVICE_NAME, i);
                 String attrValPair =
                         getParams(DelegationConstants.ATTR_VALUE_PAIR, i);
+                String schema_type = getParams(DelegationConstants.SCHEMA_TYPE,
+                        i);
                 log(Level.FINEST, "testDelegation", "Action = " + testAction);
                 log(Level.FINEST, "testDelegation", "ID Name = " + testIdName);
                 log(Level.FINEST, "testDelegation", "ID Type = " + testIdType);
@@ -232,26 +243,41 @@ public class DelegationTest extends DelegationCommon {
                 Reporter.log("TestMemberName : " + testMemberName);
                 if (testAction.equals("create")) {
                     try {
-                        assert(createID(testIdName, testIdType, testIdAttr,
-                                ssoToken,
-                                delegationRealm));
+                        status = createID(testIdName, testIdType, testIdAttr,
+                                ssoToken, delegationRealm);
                     } catch (IdRepoException idre) {
                         log(Level.SEVERE, "testDelegation", "Create error " +
                                 idre.getMessage() + " " + idre.getErrorCode());
-                        idre.printStackTrace();
-                        throw idre;
+                        if (!shouldFail) {
+                            idre.printStackTrace();
+                            throw idre;
+                        }
                     } catch (Exception e) {
                         log(Level.SEVERE, "testDelegation", e.getMessage());
-                        throw e;
+                        if (!shouldFail) {
+                            throw e;
+                        }
+                    }
+                    if ((shouldFail && !status) || (!shouldFail && status)) {
+                        assert true;
+                    } else {
+                        assert false;
                     }
                 } else if (testAction.equals("delete")) {
                     try {
-                        assert(deleteID(testIdName, testIdType, ssoToken,
-                                delegationRealm));
+                        status = deleteID(testIdName, testIdType, ssoToken,
+                                delegationRealm);
                     } catch (Exception e) {
                         log(Level.SEVERE, "testDelegation", "Delete error " +
                                 e.getMessage());
-                        throw e;
+                        if (!shouldFail) {
+                            throw e;
+                        }
+                    }
+                    if ((shouldFail && !status) || (!shouldFail && status)) {
+                        assert true;
+                    } else {
+                        assert false;
                     }
                 } else if (testAction.equals("addmember")) {
                     try {
@@ -267,9 +293,8 @@ public class DelegationTest extends DelegationCommon {
                         assert(removeMembers(testIdName, testIdType,
                                 testMemberName, ssoToken, delegationRealm));
                     } catch (Exception e) {
-                        log(Level.SEVERE, "testDelegation", 
-                                "Removemember error " +
-                                e.getMessage());
+                        log(Level.SEVERE, "testDelegation",
+                                "Removemember error " + e.getMessage());
                         throw e;
                     }
                 } else if (testAction.equals("addprivileges")) {
@@ -309,19 +334,18 @@ public class DelegationTest extends DelegationCommon {
                         }
                         orgName = orgName + "ou=services," + basedn;
                     }
-                    log(Level.FINEST, "testDelegation", "org name = " + 
+                    log(Level.FINEST, "testDelegation", "org name = " +
                             orgName);
                     try {
-                        ssoToken = getToken(testIdName, testIdPassword, 
+                        ssoToken = getToken(testIdName, testIdPassword,
                                 orgName);
-                        log(Level.FINEST, "testDelegation", 
+                        log(Level.FINEST, "testDelegation",
                                 ssoToken.toString());
                         if (ssoToken == null) {
                             assert false;
                         } else {
-                            log(Level.FINEST, "testDelegation", 
-                                    "Present Login " +
-                                    "user " + testIdName);
+                            log(Level.FINEST, "testDelegation",
+                                    "Present Login " + "user " + testIdName);
                             assert true;
                         }
                     } catch (Exception e) {
@@ -342,7 +366,7 @@ public class DelegationTest extends DelegationCommon {
                                 testPrivileges, ssoToken, delegationRealm));
                     } catch (Exception ex) {
                         log(Level.SEVERE, "testDelegation", "Error removing " +
-                                "privileges from " + testIdName + 
+                                "privileges from " + testIdName +
                                 ex.getMessage());
                         throw ex;
                     }
@@ -353,15 +377,13 @@ public class DelegationTest extends DelegationCommon {
                         Reporter.log("Policy File Name :" + strLocRB);
                         Reporter.log("Global Policy File Name :" + strGblRB);
                         String parentRealm = getParentRealm(delegationRealm);
-                        
                         int policyIdx =
                                 Integer.parseInt(
-                                getParams(DelegationConstants.POLICY_CONFIG_NO, 
+                                getParams(DelegationConstants.POLICY_CONFIG_NO,
                                 i));
                         Reporter.log("Policy index :" + policyIdx);
-                        log(Level.FINE, "testDelegation", 
-                                "Creating policy file"+
-                                strLocRB + ".xml");
+                        log(Level.FINE, "testDelegation",
+                                "Creating policy file" + strLocRB + ".xml");
                         mpc.createPolicyXML(strGblRB, strLocRB, policyIdx,
                                 strLocRB + ".xml", realmName);
                         log(Level.FINE, "testDelegation", "Creating policy in "+
@@ -370,17 +392,19 @@ public class DelegationTest extends DelegationCommon {
                         String subOrg = delegationRealm.substring(
                                 delegationRealm.lastIndexOf("/") + 1);
                         String subOrgLoginUrl = loginURL + "?org=" + subOrg;
-                        mpc.createPolicy(strLocRB + ".xml", realmName,
-                                subOrgLoginUrl,
-                                testIdName,
-                                testIdPassword);
+                        status = mpc.createPolicy(strLocRB + ".xml", realmName,
+                                subOrgLoginUrl, testIdName, testIdPassword);
                     } catch (Exception ex) {
                         log(Level.SEVERE, "testDelegation",
-                                "Error creating Policy");
+                                "Error creating Policy " + ex.getMessage());
                         assert false;
                         throw ex;
                     }
-                    assert true;
+                    if ((shouldFail && !status) || (!shouldFail && status)) {
+                        assert true;
+                    } else {
+                        assert false;
+                    }
                 } else if (testAction.equals("createreferralpolicy")) {
                     try {
                         Reporter.log("Policy File Name :" + strLocRB);
@@ -394,26 +418,31 @@ public class DelegationTest extends DelegationCommon {
                                 getParams(
                                 DelegationConstants.REF_POLICY_CONFIG_NO, i));
                         Reporter.log("Referral policy index :" + policyIdx);
-                        log(Level.FINE, "testDelegation", 
+                        log(Level.FINE, "testDelegation",
                                 "Creating ref policy "+
                                 "xml " + strRefRB + ".xml");
                         mpc.createReferralPolicyXML(strGblRB, strRefRB,
                                 strLocRB, policyIdx, strRefRB + ".xml");
-                        log(Level.FINE, "testDelegation", 
+                        log(Level.FINE, "testDelegation",
                                 "Creating ref policy "+
                                 "in " + parentRealm + " using file " +
                                 strRefRB + ".xml");
-                        String subOrgLoginUrl = loginURL + "?org=" + 
+                        String subOrgLoginUrl = loginURL + "?org=" +
                                 parentRealm;
-                        mpc.createPolicy(strRefRB + ".xml", parentRealm,
-                                subOrgLoginUrl, testIdName, testIdPassword);
+                        status = mpc.createPolicy(strRefRB + ".xml",
+                                parentRealm, subOrgLoginUrl, testIdName,
+                                testIdPassword);
                     } catch (Exception ex) {
                         log(Level.SEVERE, "testDelegation",
-                                "Error creating referral Policy");
-                        assert false;
+                                "Error creating referral Policy " +
+                                ex.getMessage());
                         throw ex;
                     }
-                    assert true;
+                    if ((shouldFail && !status) || (!shouldFail && status)) {
+                        assert true;
+                    } else {
+                        assert false;
+                    }
                 } else if (testAction.equals("deletepolicy")) {
                     try {
                         String realmName = delegationRealm.substring(
@@ -440,51 +469,94 @@ public class DelegationTest extends DelegationCommon {
                                 Integer.parseInt(
                                 getParams(DelegationConstants.POLICY_CONFIG_NO,
                                 i));
-                        mpc.deletePolicies(strLocRB, policyIdx, realmName,
-                                subOrgLoginUrl, testIdName, testIdPassword);
+                        status = mpc.deletePolicies(strLocRB, policyIdx,
+                                realmName, subOrgLoginUrl, testIdName,
+                                testIdPassword);
                     } catch (Exception ex) {
                         log(Level.SEVERE, "testDelegation",
-                                "Error Deleting Policy");
+                                "Error Deleting Policy " + ex.getMessage());
                         assert false;
                         throw ex;
                     }
-                    assert true;
+                    if ((shouldFail && !status) || (!shouldFail && status)) {
+                        assert true;
+                    } else {
+                        assert false;
+                    }
                 } else if (testAction.equals("createsubrealm")) {
                     try {
                         int dsConfIdx = Integer.parseInt(
                                 getParams(DelegationConstants.DS_CONF_IDX, i));
                         assert(createRealm(ssoToken, testIdName, dsConfIdx));
                     } catch (Exception ex) {
-                        log(Level.SEVERE, "testDelegation", 
-                                "Error creating realm");
+                        log(Level.SEVERE, "testDelegation",
+                                "Error creating realm " + ex.getMessage());
                         throw ex;
                     }
                 } else if (testAction.equals("addservice")) {
                     try {
                         Reporter.log("Service Name : " + serviceName);
                         Reporter.log("Attribute value pair : " + attrValPair);
-                        smsObj = new SMSCommon(ssoToken);
                         Map attrMap = attributesToMap(attrValPair);
-                        assert(smsObj.assignDynamicServiceRealm(serviceName,
-                                delegationRealm, attrMap));
+                        if (testIdType.equals("realm")) {
+                            smsObj = new SMSCommon(ssoToken);
+                            assert(smsObj.assignDynamicServiceRealm(serviceName,
+                                    delegationRealm, attrMap));
+                        } else if (testIdType.equals("user")) {
+                            assert(assignServiceToUser(ssoToken, testIdName,
+                                    serviceName, attrMap, delegationRealm));
+                        } else {
+                            log(Level.SEVERE, "testDelegation",
+                                    "Invalid test id for addservice action, " +
+                                    testIdType);
+                            assert false;
+                        }
                     } catch (Exception ex) {
                         log(Level.SEVERE, "testDelegation",
-                                "Error assigning service");
+                                "Error assigning service " + ex.getMessage());
                         throw ex;
                     }
                 } else if (testAction.equals("unassignservice")) {
                     try {
                         Reporter.log("Service Name : " + serviceName);
-                        smsObj = new SMSCommon(ssoToken);
-                        assert(smsObj.unassignDynamicServiceRealm(serviceName,
-                                delegationRealm));
+                        if (testIdType.equals("realm")) {
+                            smsObj = new SMSCommon(ssoToken);
+                            assert(smsObj.unassignDynamicServiceRealm(
+                                    serviceName, delegationRealm));
+                        } else if (testIdType.equals("user")) {
+                            assert(unAssignServiceFromUser(ssoToken, testIdName,
+                                    serviceName, delegationRealm));
+                        } else {
+                            log(Level.SEVERE, "testDelegation",
+                                    "Invalid test id for unassignservice " +
+                                    "action, " + testIdType);
+                            assert false;
+                        }
                     } catch (Exception ex) {
                         log(Level.SEVERE, "testDelegation",
-                                "Error unassigning service");
+                                "Error unassigning service " + ex.getMessage());
                         throw ex;
                     }
+                } else if (testAction.equals("modifyservice")) {
+                    Reporter.log("Service Name : " + serviceName);
+                    Reporter.log("Attribute value pair : " + attrValPair);
+                    Reporter.log("Schema Type : "+ schema_type);
+                    Map attrMap = attributesToMap(attrValPair);
+                    if (testIdType.equals("realm")) {
+                        smsObj = new SMSCommon(ssoToken);
+                        if (schema_type != null) {
+                            assert(smsObj.updateSvcSchemaAttribute(serviceName,
+                                    attrMap, schema_type));
+                        } else {
+                            assert(smsObj.updateGlobalServiceDynamicAttributes(
+                                    serviceName, attrMap));
+                        }
+                    } else {
+                        assert(modifyUsersAssignedService(ssoToken, testIdName,
+                                serviceName, attrMap, delegationRealm));
+                    }
                 } else {
-                    log(Level.SEVERE, "testDelegation", 
+                    log(Level.SEVERE, "testDelegation",
                             "Invalid test action, " +
                             testAction + ", for test index " + i);
                     assert false;
@@ -507,10 +579,14 @@ public class DelegationTest extends DelegationCommon {
     @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void deleteRealms()
     throws Exception {
+        entering("deleteRealms", null);
         try {
-            entering("deleteRealms", null);
+            //Because of exception token gets destroyed recreate it
+            //so that it will not create issue for deleting the realms.
+            if (!validateToken(ssoToken)) {
+                ssoToken =  getToken(adminUser, adminPassword, basedn);
+            }
             assert(deleteRealmsRecursively(ssoToken));
-            exiting("deleteRealms");
         } catch (Exception ex) {
             log(Level.SEVERE, "deleteRealms",
                     "Error in deleting realms " + ex.getMessage());
@@ -518,6 +594,7 @@ public class DelegationTest extends DelegationCommon {
         } finally {
             destroyToken(ssoToken);
         }
+        exiting("deleteRealms");
     }
     
     /**
@@ -531,6 +608,10 @@ public class DelegationTest extends DelegationCommon {
     private boolean createRealm(SSOToken ssoToken, String realm, int dsConfIdx)
     throws Exception {
         try {
+            ResourceBundle amconfigInfo = ResourceBundle.getBundle(
+                    TestConstants.TEST_PROPERTY_AMCONFIG);
+            String defaultDataStore = amconfigInfo.getString(
+                    TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
             if ((realm != null) && !realm.equals("/")) {
                 String childRealm =
                         realm.substring(realm.lastIndexOf("/") + 1);
@@ -549,9 +630,12 @@ public class DelegationTest extends DelegationCommon {
                     String dataStoreName;
                     while (iterSet.hasNext()) {
                         dataStoreName = (String)iterSet.next();
-                        log(Level.FINE, "createRealm",
-                                "Deleting existing datastore " + dataStoreName);
-                        smsObj.deleteDataStore(realm, dataStoreName);
+                        if (!dataStoreName.equals(defaultDataStore)) {
+                            log(Level.FINE, "createRealm",
+                                    "Deleting existing datastore " +
+                                    dataStoreName);
+                            smsObj.deleteDataStore(realm, dataStoreName);
+                        }
                     }
                     log(Level.FINE, "createRealm", "Creating datastore...");
                     smsObj.createDataStore(dsCfgMap);

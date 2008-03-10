@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.37 2008-02-23 01:39:22 rmisra Exp $
+ * $Id: TestCommon.java,v 1.38 2008-03-10 05:53:09 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1090,5 +1090,32 @@ public class TestCommon implements TestConstants {
             throw new RuntimeException("Attributes value pair cannot be null");
         }
         return attrMap;
+    }
+    
+    /**
+     * Compares two maps returns true if both are equal else false
+     * @param newValMap Atrribute values this should be subset of updateValMap
+     * @param updateValMap Atrribute values
+     * @return true if bothe the maps are equal.
+     */
+    protected static boolean isAttrValuesEqual(Map newValMap, Map updateValMap) 
+    throws Exception {
+        boolean equal;
+        if (newValMap != null && updateValMap != null){
+            Set updatedKeys = newValMap.keySet();
+            Iterator itr1 = updatedKeys.iterator();
+            while (itr1.hasNext()) {
+                String key = (String)itr1.next();
+                Set val1Set = (Set)newValMap.get(key);
+                Set val2Set = (Set)updateValMap.get(key);
+                equal = val1Set.equals(val2Set);
+                if (!equal) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 }

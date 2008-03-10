@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.12 2008-02-23 00:11:51 mrudulahg Exp $
+ * $Id: SMSCommon.java,v 1.13 2008-03-10 05:53:09 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,6 +162,43 @@ public class SMSCommon extends TestCommon {
      * Method updates a given attribute in any sepcified service.
      * This is only valid for Global, Organization, Dynamic, User and Policy
      * attributes. This directly updates the schema entry for these services.
+     * Returns true if the update is successfull else false.
+     */
+    public boolean updateSvcSchemaAttribute(String serviceName,
+            Map attrMap, String type)
+    throws Exception {
+        log(Level.FINEST, "updateSvcSchemaAttribute", "Update " + type +
+                " values " + " in service " + serviceName + " to " + attrMap);
+        Set keySet = attrMap.keySet();
+        Iterator attrItr = keySet.iterator();
+        while (attrItr.hasNext()) {
+            String key = (String)attrItr.next();
+            updateSvcSchemaAttribute(serviceName, key, (Set)attrMap.get(key),
+                    type);
+        }
+        ServiceManager sm = new ServiceManager(admintoken);
+        ServiceSchemaManager ssm = sm.getSchemaManager(serviceName, "1.0");
+        ServiceSchema ss = null;
+        if (type.equals("Global"))
+            ss = ssm.getGlobalSchema();
+        else if (type.equals("Organization"))
+            ss = ssm.getOrganizationSchema();
+        else if (type.equals("Dynamic"))
+            ss = ssm.getDynamicSchema();
+        else if (type.equals("User"))
+            ss = ssm.getUserSchema();
+        else if (type.equals("Policy"))
+            ss = ssm.getPolicySchema();
+        Map updatedMap = ss.getAttributeDefaults();
+        log(Level.FINEST, "updateSvcSchemaAttribute", "Updated values " + 
+                updatedMap);
+        return isAttrValuesEqual(attrMap, updatedMap);
+    }
+    
+    /**
+     * Method updates a given attribute in any sepcified service.
+     * This is only valid for Global, Organization, Dynamic, User and Policy
+     * attributes. This directly updates the schema entry for these services.
      */
     public void updateSvcSchemaAttribute(String serviceName,
             String attributeName, Set set, String type)
@@ -288,13 +325,19 @@ public class SMSCommon extends TestCommon {
     /**
      * Sets dynamic attributes for a service at the global leval
      */
-    public void updateGlobalServiceDynamicAttributes(String serviceName,
+    public boolean updateGlobalServiceDynamicAttributes(String serviceName,
             Map map)
             throws Exception {
         ServiceManager sm = new ServiceManager(admintoken);
         ServiceSchemaManager ssm = sm.getSchemaManager(serviceName , "1.0");
         ServiceSchema ss = ssm.getDynamicSchema();
+        log(Level.FINEST, "updateGlobalServiceDynamicAttributes", 
+                "Setting dynamic attributes of " + serviceName + " to " + map);
         ss.setAttributeDefaults(map);
+        Map attrMap = ss.getAttributeDefaults();
+        log(Level.FINEST, "updateGlobalServiceDynamicAttributes", 
+                "Dynamic attributes after update " + attrMap);
+        return isAttrValuesEqual(map, attrMap);
     }
     
     /**

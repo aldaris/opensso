@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCommon.java,v 1.1 2008-02-08 08:22:44 kanduls Exp $
+ * $Id: DelegationCommon.java,v 1.2 2008-03-10 05:53:09 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,13 @@ package com.sun.identity.qatest.common;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.delegation.DelegationConstants;
 import com.sun.identity.sm.OrganizationConfigManager;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -106,15 +109,15 @@ public class DelegationCommon extends IDMCommon {
                 if (getHtmlPageStringIndex(addPrivilegesPage,
                         "Privileges are add to identity") != -1) {
                     status = true;
-                    log(Level.FINE, "addPrivileges", "Privilege " +
+                    log(Level.FINEST, "addPrivileges", "Privilege " +
                             privileges.toString() + " are added successfully");
                 } else if (getHtmlPageStringIndex(addPrivilegesPage,
                         "already has privilege") != -1) {
                     status = true;
-                    log(Level.FINE, "addPrivileges", "Privilege " +
+                    log(Level.FINEST, "addPrivileges", "Privilege " +
                             privileges.toString() + " already exists");
                 } else {
-                    log(Level.FINE, "addPrivileges",
+                    log(Level.SEVERE, "addPrivileges",
                             "Failed to add privilege " + privileges.toString());
                 }
             } else {
@@ -159,11 +162,11 @@ public class DelegationCommon extends IDMCommon {
                 if (getHtmlPageStringIndex(removePrivilegesPage,
                         "Privileges are removed from identity") != -1) {
                     status = true;
-                    log(Level.FINE, "removePrivileges", "Privilege " +
+                    log(Level.FINEST, "removePrivileges", "Privilege " +
                             privileges.toString() +
                             " are removed successfully");
                 } else {
-                    log(Level.FINE, "removePrivileges",
+                    log(Level.SEVERE, "removePrivileges",
                             "Failed to remove privilege " +
                             privileges.toString());
                 }
@@ -273,7 +276,7 @@ public class DelegationCommon extends IDMCommon {
             OrganizationConfigManager ocm = new OrganizationConfigManager(
                     adminSSOToken, realm);
             Set results = ocm.getSubOrganizationNames("*", recursive);
-            log(logLevel, "deleteRealmsRecursively", "Found realms: "
+            log(Level.FINEST, "deleteRealmsRecursively", "Found realms: "
                     + results);
             Object[] realms = results.toArray();
             webClient = new WebClient();
@@ -285,10 +288,10 @@ public class DelegationCommon extends IDMCommon {
                         fmadm.deleteRealm(webClient, delRealmName, recursive);
                 if (FederationManager.getExitCode(deleteRealmsPage) != 0) {
                     log(Level.SEVERE, "deleteRealms",
-                            "deleteRealms famadm command failed");
-                    assert false;
+                            "deleteRealms famadm command failed ");
+                    status = false;
                 }
-                log(logLevel, "deleteRealmsRecursively", "Realm: " +
+                log(Level.FINE, "deleteRealmsRecursively", "Realm: " +
                         delRealmName);
                 if (getHtmlPageStringIndex(deleteRealmsPage,
                         "Realm is deleted") != -1) {
@@ -306,5 +309,179 @@ public class DelegationCommon extends IDMCommon {
             consoleLogout(webClient, logoutURL);
         }
         return status;
+    }
+    
+    /**
+     * This method assigns service to the User
+     * @param adminSSOToken Admin user ssotoken
+     * @param userName User Name
+     * @param serviceName Service Name
+     * @param attrMap Attribute value pair
+     * @param delegationReal User realm name
+     * @return true if service is assigned else return false.
+     */
+    public boolean assignServiceToUser(SSOToken adminSSOToken,
+            String userName,
+            String serviceName,
+            Map attrMap,
+            String delegationRealm) 
+    throws Exception {
+        boolean status = false;
+        try {
+            AMIdentity amId = new AMIdentity(adminSSOToken, userName,
+                    IdType.USER, delegationRealm, null);
+            log(Level.FINE, "assignServiceToUser", "Assign " + serviceName +
+                    " to user " + userName);
+            amId.assignService(serviceName, attrMap);
+            status = isServiceAssigned(amId, serviceName);
+            if (status) {
+                log(Level.FINE, "assignServiceToUser", "Service assigned " +
+                        "successfully ");
+            } else {
+                log(Level.SEVERE, "assignServiceToUser", "Assigning service " +
+                        " failed.");
+            }
+        } catch (Exception ex) {
+            log(Level.SEVERE, "assignServiceToUser",
+                    "Error assigning services to Id " + ex.getMessage());
+            throw ex;
+        }
+        return status;
+    }
+    
+    /**
+     * This method finds if the service is assigned to user or not
+     * @param amId AMIdentity
+     * @param serviceName Service Name
+     * @return true if service is assigned else false.
+     */
+    public boolean isServiceAssigned(AMIdentity amId, String serviceName) 
+    throws Exception {
+        Set assignedServices = amId.getAssignedServices();
+        log(Level.FINEST, "isServiceAssigned", "List of services for " +
+                amId.getName() + " : " + assignedServices.toString());
+        Iterator serviceItr = assignedServices.iterator();
+        String avServiceName = null;
+        boolean status = false;
+        while (serviceItr.hasNext()) {
+            avServiceName = (String)serviceItr.next();
+            if (avServiceName.equals(serviceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * This method removes service from the given user
+     * @param adminSSOToken Admin user ssotoken
+     * @param userName User Name
+     * @param serviceName Service Name
+     * @param delegationRealm User realm name
+     * @return true if service is removed else return false.
+     */
+    public boolean unAssignServiceFromUser(SSOToken adminSSOToken,
+            String userName,
+            String serviceName,
+            String delegationRealm) 
+    throws Exception {
+        boolean status = true;    
+        try {
+            AMIdentity amId = new AMIdentity(adminSSOToken, userName, 
+                    IdType.USER, delegationRealm, null);
+            log(Level.FINE, "unAssignServiceFromUser", "Unassign " + 
+                    serviceName + " from user " + userName);
+            amId.unassignService(serviceName);
+            status = isServiceAssigned(amId, serviceName);
+            if (!status) {
+                log(Level.FINE, "unAssignServiceFromUser", 
+                        "Service unassigned successfully ");
+            } else {
+                log(Level.SEVERE, "unAssignServiceFromUser", 
+                        "Unassigning service failed.");
+            }
+        } catch (Exception ex) {
+            log(Level.SEVERE, "unAssignServiceFromUser",
+                    "Error unassigning services from Id " + ex.getMessage());
+            throw ex;
+        }
+        return (!status);
+    }
+    
+    /**
+     * This method modifys service attributes for the given user
+     * @param adminSSOToken Admin user ssotoken
+     * @param userName User Name
+     * @param serviceName Service Name
+     * @param attrMap Service attribute value map.
+     * @param delegationRealm Parent Realm
+     * @return true if service is removed else return false.
+     */
+    public boolean modifyUsersAssignedService(SSOToken adminSSOToken,
+            String userName,
+            String serviceName,
+            Map attrMap,
+            String delegationRealm) 
+    throws Exception {
+        boolean status = false;
+        try {
+            AMIdentity amId = new AMIdentity(adminSSOToken, userName,
+                    IdType.USER, delegationRealm, null);
+            log(Level.FINEST, "modifyUsersAssignedService", "Modify " +
+                    serviceName + " for user " + userName + " with values " +
+                    attrMap);
+            amId.modifyService(serviceName, attrMap);
+            status = isServiceValuesEqual(amId, serviceName, attrMap);
+            if (status) {
+                log(Level.FINE, "modifyUsersAssignedService", "Service " +
+                        "modified successfully ");
+            } else {
+                log(Level.SEVERE, "modifyUsersAssignedService",
+                        "Service Modification failed.");
+            }
+        } catch (Exception ex) {
+            log(Level.SEVERE, "modifyUsersAssignedService",
+                    "Error modfifying service. " + ex.getMessage());
+            throw ex;
+        }
+        return status;
+    }
+    
+    /**
+     * This method finds if the service have the same values as attrMap
+     * @param amId AMIdentity
+     * @param serviceName Service Name
+     * @param attrMAp Service attribute value map
+     * @return true if the service have the same values as attrMap
+     */
+    public boolean isServiceValuesEqual(AMIdentity amId, String serviceName,
+            Map attrMap)
+    throws Exception {
+        try {
+            Map attValMap = amId.getServiceAttributes(serviceName);
+            log(Level.FINEST, "isServiceValuesEqual",
+                    "Service attributes after update " + attValMap);
+            boolean equal;
+            if ((attValMap != null) && (attrMap != null)) {
+                Set updatedKeys = attrMap.keySet();
+                Iterator itr1 = updatedKeys.iterator();
+                while (itr1.hasNext()) {
+                    String key = (String)itr1.next();
+                    Set val1Set = (Set)attrMap.get(key);
+                    Set val2Set = (Set)attValMap.get(key);
+                    equal = val1Set.equals(val2Set);
+                    if (!equal) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+        } catch (Exception ex) {
+            log(Level.SEVERE, "isServiceValuesEqual",
+                    "Error validating attribute values " + ex.getMessage());
+            throw ex;
+        }
+        return true;
     }
 }
