@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoEntryHandlerImplUtils.java,v 1.2 2008-02-26 22:21:08 mallas Exp $
+ * $Id: DiscoEntryHandlerImplUtils.java,v 1.3 2008-03-10 18:19:41 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -470,7 +470,12 @@ public class DiscoEntryHandlerImplUtils {
      *  
      * This is used by the global disocvery service handler to register
      * the resource offerings to the realm, org, role etc.
-     * @param 
+     * @param amIdentity the idrepo object that the resource offerings are 
+     *                   being set.
+     * @param attrName the discovery service attribute name where the disco
+     *                 entries are being stored.
+     * @param entries the list of discovery services that needs to be set. 
+     * @return true if successfully set the entries.
      */
     public static boolean setGlobalDiscoEntries(
           AMIdentity amIdentity, String attrName, Collection entries) {
