@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsSOAP.java,v 1.1 2008-01-22 23:50:01 rmisra Exp $
+ * $Id: IdSvcsSOAP.java,v 1.2 2008-03-10 05:45:59 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,7 +121,7 @@ public class IdSvcsSOAP extends TestCommon {
 
         String xmlFile = "idsvcs-soap-policy-test.xml";
         createPolicyXML(xmlFile);
-        pc.createPolicy(xmlFile, realm);
+        assert (pc.createPolicy(xmlFile, realm));
 
         stMgr = SSOTokenManager.getInstance();
         service = new IdentityServicesImplService_Impl();

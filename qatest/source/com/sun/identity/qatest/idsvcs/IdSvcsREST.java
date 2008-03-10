@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.2 2008-01-22 23:50:01 rmisra Exp $
+ * $Id: IdSvcsREST.java,v 1.3 2008-03-10 05:45:59 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,7 @@ public class IdSvcsREST extends TestCommon {
 
         String xmlFile = "idsvcs-rest-policy-test.xml";
         createPolicyXML(xmlFile);
-        pc.createPolicy(xmlFile, realm);
+        assert(pc.createPolicy(xmlFile, realm));
 
         exiting("setup");
     }
