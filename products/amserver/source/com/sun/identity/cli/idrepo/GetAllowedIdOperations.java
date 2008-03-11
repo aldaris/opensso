@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAllowedIdOperations.java,v 1.2 2007-07-30 20:33:50 veiming Exp $
+ * $Id: GetAllowedIdOperations.java,v 1.3 2008-03-11 02:28:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,10 +73,6 @@ public class GetAllowedIdOperations extends IdentityCommand {
             String[] arg = {""};
 
             if ((ops != null) && !ops.isEmpty()) {
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("get-allowed-ops-succeed"),
-                        (Object[])params));
-                outputWriter.printlnMessage("");
                 for (Iterator i = ops.iterator(); i.hasNext(); ) {
                     arg[0] = ((IdOperation)i.next()).getName();
                     outputWriter.printlnMessage(

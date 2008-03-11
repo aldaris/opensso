@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetSupportedDataTypes.java,v 1.1 2007-09-29 04:29:50 veiming Exp $
+ * $Id: GetSupportedDataTypes.java,v 1.2 2008-03-11 02:28:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,9 +70,6 @@ public class GetSupportedDataTypes extends AuthenticatedCommand {
             Set names = orgSchema.getSubSchemaNames();
             
             if ((names != null) && !names.isEmpty()) {
-                outputWriter.printlnMessage(getResourceString(
-                    "get-supported-datatypes-succeed"));
-
                 for (Iterator iter = names.iterator(); iter.hasNext(); ) {
                     String name = (String)iter.next();
                     outputWriter.printlnMessage(name);

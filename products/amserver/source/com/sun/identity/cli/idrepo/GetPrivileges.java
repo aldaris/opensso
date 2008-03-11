@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetPrivileges.java,v 1.1 2006-05-31 21:49:51 veiming Exp $
+ * $Id: GetPrivileges.java,v 1.2 2008-03-11 02:28:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,9 +92,6 @@ public class GetPrivileges extends IdentityCommand {
                 outputWriter.printlnMessage(getResourceString("no-privileges"));
             }
 
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("idrepo-get-privileges-succeed"), 
-                (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_IDREPO_GET_PRIVILEGES", params);
         } catch (DelegationException e) {

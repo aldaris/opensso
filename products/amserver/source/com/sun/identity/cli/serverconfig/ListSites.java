@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListSites.java,v 1.1 2007-10-17 23:00:28 veiming Exp $
+ * $Id: ListSites.java,v 1.2 2008-03-11 02:28:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,8 +67,6 @@ public class ListSites extends AuthenticatedCommand {
             Set sites = SiteConfiguration.getSites(adminSSOToken);
 
             if ((sites != null) && !sites.isEmpty()) {
-                outputWriter.printlnMessage(
-                    getResourceString("list-sites-succeeded"));
                 for (Iterator i = sites.iterator(); i.hasNext(); ) {
                     outputWriter.printlnMessage((String)i.next());
                 }

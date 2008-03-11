@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListServers.java,v 1.1 2007-10-17 23:00:28 veiming Exp $
+ * $Id: ListServers.java,v 1.2 2008-03-11 02:28:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,8 +70,6 @@ public class ListServers extends AuthenticatedCommand {
             Set servers = ServerConfiguration.getServers(adminSSOToken);
 
             if ((servers != null) && !servers.isEmpty()) {
-                outputWriter.printlnMessage(
-                    getResourceString("list-servers-succeeded"));
                 for (Iterator i = servers.iterator(); i.hasNext(); ) {
                     outputWriter.printlnMessage((String)i.next());
                 }

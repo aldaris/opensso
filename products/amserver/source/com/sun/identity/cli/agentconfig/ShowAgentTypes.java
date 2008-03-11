@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgentTypes.java,v 1.1 2007-11-05 21:44:08 veiming Exp $
+ * $Id: ShowAgentTypes.java,v 1.2 2008-03-11 02:28:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,8 +65,6 @@ public class ShowAgentTypes extends AuthenticatedCommand {
             Set agentTypes = AgentConfiguration.getAgentTypes();
 
             if (!agentTypes.isEmpty()) {
-                outputWriter.printlnMessage(getResourceString(
-                    "show-agent-type-succeeded"));
                 for (Iterator i = agentTypes.iterator(); i.hasNext();) {
                     outputWriter.printlnMessage((String)i.next());
                 }

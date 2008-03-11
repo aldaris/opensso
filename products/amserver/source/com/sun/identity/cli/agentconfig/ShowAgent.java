@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgent.java,v 1.4 2008-01-15 03:42:18 veiming Exp $
+ * $Id: ShowAgent.java,v 1.5 2008-03-11 02:28:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,8 +108,6 @@ public class ShowAgent extends AuthenticatedCommand {
                     }
                 }
                 if (outfile == null) {
-                    outputWriter.printlnMessage(getResourceString(
-                        "show-agent-succeeded"));
                     outputWriter.printlnMessage(buff.toString());
                 } else {
                     writeToFile(outfile, buff.toString());

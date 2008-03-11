@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowSiteMembers.java,v 1.1 2007-10-17 23:00:29 veiming Exp $
+ * $Id: ShowSiteMembers.java,v 1.2 2008-03-11 02:28:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,8 +72,6 @@ public class ShowSiteMembers extends AuthenticatedCommand {
             Set members = SiteConfiguration.listServers(adminSSOToken, 
                 siteName);
             if ((members != null) && !members.isEmpty()) {
-                outputWriter.printlnMessage(
-                    getResourceString("show-site-members-succeeded"));
                 for (Iterator i = members.iterator(); i.hasNext(); ) {
                     outputWriter.printlnMessage((String)i.next());
                 }

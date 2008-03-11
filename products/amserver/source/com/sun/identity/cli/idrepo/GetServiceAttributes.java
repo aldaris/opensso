@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetServiceAttributes.java,v 1.1 2006-05-31 21:49:52 veiming Exp $
+ * $Id: GetServiceAttributes.java,v 1.2 2008-03-11 02:28:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,9 +99,6 @@ public class GetServiceAttributes extends IdentityCommand {
                 outputWriter.printlnMessage(getResourceString(
                     "idrepo-no-service-attributes"));
             }
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("get-service-attributes-succeed"), 
-                (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_IDREPO_GET_SERVICE_ATTRIBUTES", params);
         } catch (IdRepoException e) {

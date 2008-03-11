@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetSupportedAuthModules.java,v 1.1 2007-09-29 04:32:14 veiming Exp $
+ * $Id: GetSupportedAuthModules.java,v 1.2 2008-03-11 02:28:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,8 +68,6 @@ public class GetSupportedAuthModules extends AuthenticatedCommand {
             Set types = mgr.getAuthenticationTypes();
 
             if ((types != null) && !types.isEmpty()) {
-                outputWriter.printlnMessage(getResourceString(
-                    "get-supported-authtypes-succeed"));
                 Set sorted = new TreeSet();
                 sorted.addAll(types);
 

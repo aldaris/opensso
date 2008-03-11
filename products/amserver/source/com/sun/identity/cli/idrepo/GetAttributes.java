@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.5 2008-01-08 21:56:22 veiming Exp $
+ * $Id: GetAttributes.java,v 1.6 2008-03-11 02:28:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,9 +96,6 @@ public class GetAttributes extends IdentityCommand {
             Object[] args = {idName};
 
             if ((values != null) && !values.isEmpty()) {
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("idrepo-get-attributes-succeed"), args));
-                outputWriter.printlnMessage("");
                 String msg = getResourceString("idrepo-attribute-result");
                 String[] arg = {"", ""};
                 for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {

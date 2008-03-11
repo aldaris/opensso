@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.58 2008-03-07 23:41:10 veiming Exp $
+ * $Id: AccessManager.java,v 1.59 2008-03-11 02:28:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,7 +341,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-attr-values-of-realm-succeed={0} had the following attribute values.",
             "get-attr-values-of-realm-no-values={0} had no attributes.",
             "get-attr-values-of-realm-result={0}={1}"})
     private String get_realm;
@@ -1059,7 +1058,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-allowed-ops-succeed=The following operations were allowed for {1} under {0}.",
             "get-allowed-ops-no-ops=No operations were allowed for {1} under {0}.",
             "allowed-ops-result={0}"})
     private String show_identity_ops;
@@ -1074,7 +1072,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-datatypes-succeed=The followings were the supported data types.",
             "get-supported-no-supported-datatype=There were no supported data type."})
     private String show_data_types;
 
@@ -1088,7 +1085,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-idtypes-succeed=The following identity types were supported in realm {0}.",
             "supported-type-result={0}",
             "no-supported-idtype=There were no supported identity types."})
     private String show_identity_types;
@@ -1105,7 +1101,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-assignable-services-succeed=Assignable services of identity, {2} of type, {1} in realm, {0} was printed.",
             "assignable-service-result={0}",
             "realm-does-not-support-service=realm, {0} did not support services.",
             "no-service-assignable=There were no assignable services."})
@@ -1123,7 +1118,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-assigned-services-succeed=Services of identity, {2} of type, {1} in realm, {0} was printed.",
             "assigned-service-result={0}",
             "no-service-assigned=There were no services."})
     private String get_identity_svcs;
@@ -1141,7 +1135,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-service-attributes-succeed={3}, services attribute values of identity, {2} of type, {1} in realm, {0} was printed.",
             "idrepo-service-attribute-result={0}={1}",
             "idrepo-no-service-attributes=There were no service attribute values."})
     private String show_identity_svc_attrs;
@@ -1159,7 +1152,6 @@ public class AccessManager {
         optionalOptions={
             "attributenames|a|m|Attribute name(s). All attribute values shall be returned if the option is not provided."},
         resourceStrings={
-            "idrepo-get-attributes-succeed={0} had the following attribute values.",
             "idrepo-attribute-result={0}={1}",
             "idrepo-no-attributes={0} had no attributes."})
     private String get_identity;
@@ -1177,7 +1169,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-memberships-succeed=The following {3} memberships for {2} were found.",
             "idrepo-memberships-result={0} ({1})",
             "idrepo-no-memberships=Identity {2} did not have any {3} memberships.",
             "idrepo-cannot-be-member={0} could not have {1} membership."})
@@ -1196,7 +1187,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-members-succeed=The following {3} members for {2} were found.",
             "idrepo-members-result={0} ({1})",
             "idrepo-no-members={2} did not have any {3} members.",
             "idrepo-cannot-be-member={0} could not have {1} members."})
@@ -1317,7 +1307,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-privileges-succeed=Privileges of identity, {2} of type, {1} in realm, {0} was printed.",
             "privilege-result={0}",
             "no-privileges=There were no privileges."})
     private String show_privileges;
@@ -1792,7 +1781,6 @@ public class AccessManager {
             "filter|x|s|Filter (Pattern).",
             "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
         resourceStrings={
-            "list-agent-succeeded=The followings were the agent names.",
             "search-agent-no-entries=There were no agents.",
             "format-search-agent-results={0} ({1})"
         }
@@ -1811,7 +1799,6 @@ public class AccessManager {
             "outfile|o|s|Filename where configuration is written to.",
             "inherit|i|u|Set this to inherit properties from parent group."},
         resourceStrings={
-            "show-agent-succeeded=The followings were the agent properties.",
             "show-agent-to-file=Agent properties were written to file.",
             "show-agent-no-attributes=There were no attribute values."
         }
@@ -1827,7 +1814,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "show-agent-type-succeeded=The followings were the supported agent types.",
             "show-agent-type-no-results=There were no supported agent types."
         }
     )
@@ -1844,7 +1830,6 @@ public class AccessManager {
         optionalOptions={
             "outfile|o|s|Filename where configuration is written to."},
         resourceStrings={
-            "show-agent-group-succeeded=The followings were the agent group properties.",
             "show-agent-group-to-file=Agent group properties were written to file.",
             "show-agent-group-no-attributes=There were no attribute values."
         }
@@ -1896,7 +1881,6 @@ public class AccessManager {
             "filter|x|s|Filter (Pattern).",
             "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
         resourceStrings={
-            "list-agent-group-succeeded=The followings were the agent group names.",
             "search-agent-group-no-entries=There were no agent groups.",
             "format-search-agent-group-results={0} ({1})"
         }
@@ -1914,7 +1898,6 @@ public class AccessManager {
         optionalOptions={
             "filter|x|s|Filter (Pattern)."},
         resourceStrings={
-            "list-agent-group-members-succeeded=The followings were the agents in the group.",
             "list-agent-group-members-no-members=There were no members.",
              "format-list-agent-group-members-results={0} ({1})"
         }
@@ -2003,7 +1986,6 @@ public class AccessManager {
             "withdefaults|w|u|Set this flag to get default configuration."
             },
         resourceStrings={
-            "list-server-config-succeeded=The followings were the configuration of {0}.",
             "list-server-config-no-results=There were no configuration."
         }
     )
@@ -2089,7 +2071,6 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "list-servers-succeeded=The followings were the servers",
             "list-servers-no-instances=There were no servers."
         }
     )
@@ -2137,7 +2118,6 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "list-sites-succeeded=The followings were the sites",
             "list-sites-no-instances=There were no sites."
         }
     )
@@ -2152,7 +2132,6 @@ public class AccessManager {
         optionalOptions={},
         macro="authentication",
         resourceStrings={
-            "show-site-members-succeeded=The followings were the members",
             "show-site-members-no-members=There were no members."
         }
     )
@@ -2337,7 +2316,6 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "get-supported-authtypes-succeed=The following authenticated modules were supported.",
             "get-supported-no-supported-authtype=There were no supported authentication modules."})
     private String show_auth_modules;
 

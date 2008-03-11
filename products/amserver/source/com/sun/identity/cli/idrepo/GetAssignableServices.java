@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAssignableServices.java,v 1.1 2006-05-31 21:49:50 veiming Exp $
+ * $Id: GetAssignableServices.java,v 1.2 2008-03-11 02:28:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,9 +93,6 @@ public class GetAssignableServices extends IdentityCommand {
                 outputWriter.printlnMessage(getResourceString(
                     "no-service-assignable"));
             }
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("get-assignable-services-succeed"), 
-                    (Object[])params));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEED_GET_ASSIGNABLE_SERVICES", params);
         } catch (IdRepoException e) {

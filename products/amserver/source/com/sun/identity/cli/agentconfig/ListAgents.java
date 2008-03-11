@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAgents.java,v 1.1 2007-10-26 17:15:17 veiming Exp $
+ * $Id: ListAgents.java,v 1.2 2008-03-11 02:28:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,9 +98,6 @@ public class ListAgents extends AuthenticatedCommand {
             }
 
             if ((results != null) && !results.isEmpty()) {
-                outputWriter.printlnMessage(getResourceString(
-                    "list-agent-succeeded"));
-
                 for (Iterator i = results.iterator(); i.hasNext(); ) {
                     AMIdentity amid = (AMIdentity)i.next();
                     Object[] args = {amid.getName(), amid.getUniversalId()};

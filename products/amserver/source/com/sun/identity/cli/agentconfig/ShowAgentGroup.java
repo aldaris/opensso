@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgentGroup.java,v 1.1 2007-11-10 06:14:02 veiming Exp $
+ * $Id: ShowAgentGroup.java,v 1.2 2008-03-11 02:28:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,8 +103,6 @@ public class ShowAgentGroup extends AuthenticatedCommand {
                     }
                 }
                 if (outfile == null) {
-                    outputWriter.printlnMessage(getResourceString(
-                        "show-agent-group-succeeded"));
                     outputWriter.printlnMessage(buff.toString());
                 } else {
                     writeToFile(outfile, buff.toString());

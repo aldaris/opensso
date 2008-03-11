@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListServerConfig.java,v 1.2 2008-01-10 22:15:26 veiming Exp $
+ * $Id: ListServerConfig.java,v 1.3 2008-03-11 02:28:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,9 +80,6 @@ public class ListServerConfig extends AuthenticatedCommand {
                     defProp.putAll(prop);
                     prop = defProp;
                 }
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("list-server-config-succeeded"), 
-                    (Object[])params));
                 outputWriter.printlnMessage(
                     FormatUtils.formatProperties(prop));
             } else {
