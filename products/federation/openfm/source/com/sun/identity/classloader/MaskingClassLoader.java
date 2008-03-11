@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.3 2008-03-05 00:00:15 mrudul_uchil Exp $
+ * $Id: MaskingClassLoader.java,v 1.4 2008-03-11 20:13:34 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ public class MaskingClassLoader extends ClassLoader {
     private final URL[] urls;
     private final String resource = 
         "META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory";
+    private final String resource2 = 
+        "META-INF/services/com.sun.xml.ws.policy.spi.PolicyAssertionValidator";
 
     /*public MaskingClassLoader(String[] masks) {
         this.masks = masks;
@@ -97,10 +99,20 @@ public class MaskingClassLoader extends ClassLoader {
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
         Enumeration[] tmp = new Enumeration[1];
-	if(name.startsWith(resource)) {
+        if(name.startsWith(resource)) {
             Vector vec = new Vector(1);
+            // Read the "resource" from fam.jar OR openssoclientsdk.jar
             URL jarURL = 
                 new URL("jar:" + (urls[5]).toString() + "!/" + resource);
+            vec.add(jarURL);
+            tmp[0] = vec.elements();
+            return new CompoundEnumeration(tmp);
+        }
+        if(name.startsWith(resource2)) {
+            Vector vec = new Vector(1);
+            // Read the "resource2" from webservices-rt.jar
+            URL jarURL = 
+                new URL("jar:" + (urls[1]).toString() + "!/" + resource2);
             vec.add(jarURL);
             tmp[0] = vec.elements();
             return new CompoundEnumeration(tmp);

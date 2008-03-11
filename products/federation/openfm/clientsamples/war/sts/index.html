@@ -1,15 +1,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>Security Token Service Client Sample</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
-	<META NAME="CREATED" CONTENT="0;0">
-	<META NAME="CHANGEDBY" CONTENT="Mrudul Uchil">
-	<META NAME="CHANGED" CONTENT="20080304;13510800">
-	<META NAME="CHANGEDBY" CONTENT="Mrudul Uchil">
-	<META NAME="CHANGEDBY" CONTENT="Mrudul Uchil">
-	<!-- The contents of this file are subject to the terms
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+  <title>Security Token Service Client Sample</title>
+  <meta name="GENERATOR" content="OpenOffice.org 2.4  (Unix)">
+  <meta name="CREATED" content="0;0">
+  <meta name="CHANGEDBY" content="Mrudul Uchil">
+  <meta name="CHANGED" content="20080304;13510800">
+  <meta name="CHANGEDBY" content="Mrudul Uchil">
+  <meta name="CHANGEDBY" content="Mrudul Uchil">
+<!-- The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
    compliance with the License.
@@ -28,176 +28,197 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.6 2008-03-04 23:42:49 mrudul_uchil Exp $
+   $Id: index.html,v 1.7 2008-03-11 20:16:32 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
-</HEAD>
-<BODY LANG="en-US" DIR="LTR">
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
-	<TR>
-		<TD>
-			<P>&nbsp;</P>
-		</TD>
-		<TD>
-			<P>&nbsp;</P>
-		</TD>
-	</TR>
-</TABLE>
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<TR>
-		<TD WIDTH=99%>
-			<P><IMG SRC="../console/images/PrimaryProductName.png" NAME="ProdName" ALIGN=BOTTOM WIDTH=94 HEIGHT=47 BORDER=0></P>
-		</TD>
-		<TD WIDTH=1%>
-			<P><IMG SRC="../com_sun_web_ui/images/other/javalogo.gif" NAME="RMRealm.mhCommon.BrandLogo" ALT="Java(TM) Logo" ALIGN=BOTTOM WIDTH=31 HEIGHT=55 BORDER=0></P>
-		</TD>
-	</TR>
-</TABLE>
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<TR>
-		<TD>
-			<IMG SRC="../com_sun_web_ui/images/masthead/masthead-sunname.gif" NAME="RMRealm.mhCommon.EndorserLogo" ALT="Sun(TM) Microsystems, Inc." ALIGN=RIGHT WIDTH=108 HEIGHT=10 BORDER=0></TD>
-	</TR>
-</TABLE>
-<P STYLE="margin-bottom: 0in"><A NAME="SkipAnchor2089"></A><A HREF="#SkipAnchor4928"><IMG SRC="../com_sun_web_ui/images/other/dot.gif" NAME="graphics1" ALT="Jump Over Tab Navigation Area. Current Selection is: Access Control" ALIGN=BOTTOM WIDTH=2 HEIGHT=2 BORDER=0></A></P>
-<TABLE WIDTH=1404 BORDER=0 CELLPADDING=10 CELLSPACING=0>
-	<COL WIDTH=1384>
-	<TR>
-		<TD WIDTH=1384>
-			<P STYLE="margin-bottom: 0in">&nbsp;</P>
-			<P STYLE="margin-bottom: 0in"><A HREF="../index.html">Client
-			Samples Main Page</A> 
-			</P>
-			<P STYLE="margin-bottom: 0in">&nbsp;</P>
-			<H3>Introduction</H3>
-			<P STYLE="margin-bottom: 0in">This sample demonstrates the usage
-			of Security Token Service (STS) Client API for obtaining security
-			tokens from a Security Token Service hosted on Federated Access
-			Manager server. STS client API makes WS-Trust request to STS
-			service in order to get Security Token from STS service. The
-			communication between STS client and STS service is secured using
-			Authentication token of STS client. This Authentication token used
-			in the sample is X509 token. STS service authenticates STS client
-			based on its X509 authentication token and issues SAML 1.1 or SAML
-			2.0 token.</P>
-			<H3>Setup</H3>
-			<P STYLE="margin-bottom: 0in">STS service :</P>
-			<OL>
-				<LI><P STYLE="margin-bottom: 0in">Deploy OpenSSO war</P>
-				<LI><P STYLE="margin-bottom: 0in">Configure OpenSSO web
-				application</P>
-				<LI><P STYLE="margin-bottom: 0in">Restart OpenSSO server</P>
-			</OL>
-			<P STYLE="margin-bottom: 0in">STS client :</P>
-			<OL>
-				<LI><P STYLE="margin-bottom: 0in">This FAM client web application</P>
-				<LI><P STYLE="margin-bottom: 0in">This page → &lt;fam client
-				web application protocol://host:port&gt;/sts/index.html</P>
-			</OL>
-			<H3>JSP pages</H3>
-			<P STYLE="margin-bottom: 0in">There are two sample JSP pages
-			included in this STS client sample.</P>
-			<OL>
-				<LI><P STYLE="margin-bottom: 0in">&lt;fam client web application
-				protocol://host:port&gt;/sts/sts-client-user.jsp</P>
-				<P STYLE="margin-bottom: 0in">This will redirect to
-				authentication service of OpenSSO server. 
-				</P>
-				<P STYLE="margin-bottom: 0in">Login with any existing OpenSSO
-				user. 
-				</P>
-				<P STYLE="margin-bottom: 0in">After successful user
-				authentication and valid user's SSOToken, the page will redirect
-				back to sts-client-user.jsp.</P>
-				<P STYLE="margin-bottom: 0in">sts-client-user.jsp will display
-				SAML assertion obtained from OpenSSO Security Token Service, in
-				exchange of end user's SSOToken.</P>
-				<P STYLE="margin-bottom: 0in"><B>Description :</B></P>
-				<P STYLE="margin-bottom: 0in">There are two parties involved in
-				this Sample :</P>
-				<P STYLE="margin-bottom: 0in">1) Security Token Service Client
-				(STS client)</P>
-				<P STYLE="margin-bottom: 0in">2) Security Token Service (STS)</P>
-				<P STYLE="margin-bottom: 0in">The Security Token Service (STS)
-				issues security tokens on behalf of authenticated end user. Here
-				JSP page selects the default STS client profile to talk to STS
-				service. Then STS client makes WS-Trust request to STS service
-				with its X509 certificate as the Authentication token. STS
-				service authenticates this X509 certificate and issues SAML 1.1
-				or SAML 2.0 (this token type of SAML1.1 or SAML 2.0 is dictated
-				by WSP's profile). This WS-Trust request also carries the end
-				user's authenticated SSOToken as “On Behalf Of” token
-				element. The owner of STS service issued SAML token would be the
-				authenticated End user and its identity (name id) would be the
-				End user's user identity.</P>
-				<LI><P STYLE="margin-bottom: 0in">&lt;fam client web application
-				protocol://host:port&gt;/sts/sts-client-wsc.jsp 
-				</P>
-				<P STYLE="margin-bottom: 0in">Login to OpenSSO Administration
-				console &lt;OpenSSO web application
-				protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin”
-				user and its password.</P>
-				<P STYLE="margin-bottom: 0in">Go to Configuration → Agents →
-				Web Service Client → click “wsc” agent profile</P>
-				<P STYLE="margin-bottom: 0in">Select Security Mechanism as
-				“STSSecurity”, STS Configuration as “SecurityTokenService”
-				and Web Service End Point as “default”.</P>
-				<P STYLE="margin-bottom: 0in">Save changes and Logout of OpenSSO
-				Administration console.</P>
-				<P STYLE="margin-bottom: 0in">Access &lt;fam client web
-				application protocol://host:port&gt;/sts/sts-client-wsc.jsp</P>
-				<P STYLE="margin-bottom: 0in">Enter web service name as &quot;wsc&quot;
-				and click &quot;GetToken&quot;.<BR>If successful, this will
-				display SAML Assertion obtained from OpenSSO Security Token
-				Service.</P>
-				<P STYLE="margin-bottom: 0in"><B>Description :</B></P>
-				<P STYLE="margin-bottom: 0in">There are four parties involved in
-				this Sample :</P>
-				<P STYLE="margin-bottom: 0in">1) Web Services Client (WSC) 
-				</P>
-				<P STYLE="margin-bottom: 0in">2) Web Services Provider (WSP) 
-				</P>
-				<P STYLE="margin-bottom: 0in">3) Security Token Service Client
-				(STS client)</P>
-				<P STYLE="margin-bottom: 0in">4) Security Token Service (STS)</P>
-				<P STYLE="margin-bottom: 0in">The Security Token Service (STS)
-				issues security tokens for Web Services Client (WSC) so that WSC
-				could present it to the Web Services Provider (WSP) for
-				authentication purposes. Here WSC selects to get security token
-				from STS, in order to present that token to WSP. When WSC selects
-				the STS issues token, it also selects the STS client profile
-				required to talk to STS service. Then STS client makes WS-Trust
-				request to STS service with its X509 certificate as the
-				Authentication token. STS service authenticates this X509
-				certificate and issues SAML 1.1 or SAML 2.0 (this token type of
-				SAML1.1 or SAML 2.0 is dictated by WSP's profile). The owner of
-				this SAML token would be STS client and its identity (name id)
-				would be certificate subject DN of the STS client's X509
-				certificate.</P>
-			</OL>
-			<H3>NOTEs</H3>
-			<P STYLE="margin-bottom: 0in">1) How to change WSP's profile to
-			dictate SAML 1.1 or SAML 2.0 token ?</P>
-			<OL START=2>
-				<P STYLE="margin-bottom: 0in">Login to OpenSSO Administration
-				console &lt;OpenSSO web application
-				protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin”
-				user and its password.</P>
-				<P STYLE="margin-bottom: 0in">Go to Configuration → Agents →
-				Web Service Provider → click “wsp” agent profile</P>
-				<P STYLE="margin-bottom: 0in">Select Security Mechanism as
-				“SAML2-HolderOfKey” or “SAML2-SenderVouches” for SAML 2.0
-				token type.</P>
-				<P STYLE="margin-bottom: 0in">Select Security Mechanism as
-				“SAML-HolderOfKey” or “SAML-SenderVouches” for SAML 1.1
-				token type.</P>
-				<P>Save changes and Logout of OpenSSO Administration console.</P>
-			</OL>
-		</TD>
-	</TR>
-</TABLE>
-<P><BR><BR>
-</P>
-</BODY>
-</HTML>
+</head>
+<body dir="ltr" lang="en-US">
+<table style="page-break-before: always;" border="0" cellpadding="0"
+ cellspacing="0" width="100%">
+  <tbody>
+    <tr>
+      <td>
+      <p>&nbsp;</p>
+      </td>
+      <td>
+      <p>&nbsp;</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody>
+    <tr>
+      <td width="99%">
+      <p><img style="width: 28px; height: 30px;"
+ src="../console/images/PrimaryProductName.png" name="ProdName"
+ align="bottom" border="0"></p>
+      </td>
+      <td width="1%">
+      <p><img src="../com_sun_web_ui/images/other/javalogo.gif"
+ name="RMRealm.mhCommon.BrandLogo" alt="Java(TM) Logo" align="bottom"
+ border="0" height="55" width="31"></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody>
+    <tr>
+      <td> <img
+ src="../com_sun_web_ui/images/masthead/masthead-sunname.gif"
+ name="RMRealm.mhCommon.EndorserLogo" alt="Sun(TM) Microsystems, Inc."
+ align="right" border="0" height="10" width="108"></td>
+    </tr>
+  </tbody>
+</table>
+<p style="margin-bottom: 0in;"><a name="SkipAnchor2089"></a><a
+ href="#SkipAnchor4928"><img
+ src="../com_sun_web_ui/images/other/dot.gif" name="graphics1"
+ alt="Jump Over Tab Navigation Area. Current Selection is: Access Control"
+ align="bottom" border="0" height="2" width="2"></a></p>
+<table border="0" cellpadding="10" cellspacing="0" width="1404">
+  <col width="1384"> <tbody>
+    <tr>
+      <td width="1384">
+      <p style="margin-bottom: 0in;">&lt; <a href="../index.html">Client
+Samples Main Page</a> </p>
+      <p style="margin-bottom: 0in;">&nbsp;</p>
+      <h3>Introduction</h3>
+      <p style="margin-bottom: 0in;">This sample demonstrates the usage
+of Security Token Service (STS) Client API for obtaining security
+tokens from a Security Token Service hosted on Federated Access Manager
+server. STS client API makes WS-Trust request to STS service in order
+to get Security Token from STS service. The communication between STS
+client and STS service is secured using Authentication token of STS
+client. This Authentication token used in the sample is X509 token. STS
+service authenticates STS client based on its X509 authentication token
+and issues SAML 1.1 or SAML 2.0 token.</p>
+      <h3>Setup</h3>
+      <p style="margin-bottom: 0in;">STS service :</p>
+      <ol>
+        <li>
+          <p style="margin-bottom: 0in;">Deploy OpenSSO war</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">Configure OpenSSO web
+application</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">Restart OpenSSO server</p>
+        </li>
+      </ol>
+      <p style="margin-bottom: 0in;">STS client :</p>
+      <ol>
+        <li>
+          <p style="margin-bottom: 0in;">This FAM client web application</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">This page → &lt;fam client web
+application protocol://host:port&gt;/sts/index.html</p>
+        </li>
+      </ol>
+      <h3>JSP pages</h3>
+      <p style="margin-bottom: 0in;">There are two sample JSP pages
+included in this STS client sample.</p>
+      <ol>
+        <li>
+          <p style="margin-bottom: 0in;">&lt;fam client web application
+protocol://host:port&gt;/sts/sts-client-user.jsp</p>
+          <p style="margin-bottom: 0in;">This will redirect to
+authentication service of OpenSSO server. </p>
+          <p style="margin-bottom: 0in;">Login with any existing
+OpenSSO user. </p>
+          <p style="margin-bottom: 0in;">After successful user
+authentication and valid user's SSOToken, the page will redirect back
+to sts-client-user.jsp.</p>
+          <p style="margin-bottom: 0in;">sts-client-user.jsp will
+display SAML assertion obtained from OpenSSO Security Token Service, in
+exchange of end user's SSOToken.</p>
+          <p style="margin-bottom: 0in;"><b>Description :</b></p>
+          <p style="margin-bottom: 0in;">There are two parties involved
+in this Sample :</p>
+          <p style="margin-bottom: 0in;">1) Security Token Service
+Client (STS client)</p>
+          <p style="margin-bottom: 0in;">2) Security Token Service (STS)</p>
+          <p style="margin-bottom: 0in;">The Security Token Service
+(STS) issues security tokens on behalf of authenticated end user. Here
+JSP page selects the default STS client profile to talk to STS service.
+Then STS client makes WS-Trust request to STS service with its X509
+certificate as the Authentication token. STS service authenticates this
+X509 certificate and issues SAML 1.1 or SAML 2.0 (this token type of
+SAML1.1 or SAML 2.0 is dictated by WSP's profile). This WS-Trust
+request also carries the end user's authenticated SSOToken as “On
+Behalf Of” token element. The owner of STS service issued SAML token
+would be the authenticated End user and its identity (name id) would be
+the End user's user identity.</p>
+        </li>
+        <li>
+          <p style="margin-bottom: 0in;">&lt;fam client web application
+protocol://host:port&gt;/sts/sts-client-wsc.jsp </p>
+          <p style="margin-bottom: 0in;">Login to OpenSSO
+Administration console &lt;OpenSSO web application
+protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin” user
+and its password.</p>
+          <p style="margin-bottom: 0in;">Go to Configuration → Agents →
+Web Service Client → click “wsc” agent profile</p>
+          <p style="margin-bottom: 0in;">Select Security Mechanism as
+“STSSecurity”, STS Configuration as “SecurityTokenService” and Web
+Service End Point as “default”.</p>
+          <p style="margin-bottom: 0in;">Save changes and Logout of
+OpenSSO Administration console.</p>
+          <p style="margin-bottom: 0in;">Access &lt;fam client web
+application protocol://host:port&gt;/sts/sts-client-wsc.jsp</p>
+          <p style="margin-bottom: 0in;">Enter web service name as
+"wsc" and click "GetToken".<br>
+If successful, this will display SAML Assertion obtained from OpenSSO
+Security Token Service.</p>
+          <p style="margin-bottom: 0in;"><b>Description :</b></p>
+          <p style="margin-bottom: 0in;">There are four parties
+involved in this Sample :</p>
+          <p style="margin-bottom: 0in;">1) Web Services Client (WSC) </p>
+          <p style="margin-bottom: 0in;">2) Web Services Provider (WSP)
+          </p>
+          <p style="margin-bottom: 0in;">3) Security Token Service
+Client (STS client)</p>
+          <p style="margin-bottom: 0in;">4) Security Token Service (STS)</p>
+          <p style="margin-bottom: 0in;">The Security Token Service
+(STS) issues security tokens for Web Services Client (WSC) so that WSC
+could present it to the Web Services Provider (WSP) for authentication
+purposes. Here WSC selects to get security token from STS, in order to
+present that token to WSP. When WSC selects the STS issues token, it
+also selects the STS client profile required to talk to STS service.
+Then STS client makes WS-Trust request to STS service with its X509
+certificate as the Authentication token. STS service authenticates this
+X509 certificate and issues SAML 1.1 or SAML 2.0 (this token type of
+SAML1.1 or SAML 2.0 is dictated by WSP's profile). The owner of this
+SAML token would be STS client and its identity (name id) would be
+certificate subject DN of the STS client's X509 certificate.</p>
+        </li>
+      </ol>
+      <h3>NOTEs</h3>
+      <p style="margin-bottom: 0in;">1) How to change WSP's profile to
+dictate SAML 1.1 or SAML 2.0 token ?</p>
+      <ol start="2">
+        <p style="margin-bottom: 0in;">Login to OpenSSO Administration
+console &lt;OpenSSO web application
+protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin” user
+and its password.</p>
+        <p style="margin-bottom: 0in;">Go to Configuration → Agents →
+Web Service Provider → click “wsp” agent profile</p>
+        <p style="margin-bottom: 0in;">Select Security Mechanism as
+“SAML2-HolderOfKey” or “SAML2-SenderVouches” for SAML 2.0 token type.</p>
+        <p style="margin-bottom: 0in;">Select Security Mechanism as
+“SAML-HolderOfKey” or “SAML-SenderVouches” for SAML 1.1 token type.</p>
+        <p>Save changes and Logout of OpenSSO Administration console.</p>
+      </ol>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><br>
+<br>
+</p>
+</body>
+</html>

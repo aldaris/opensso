@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientConfiguration.java,v 1.4 2008-03-04 23:57:46 mrudul_uchil Exp $
+ * $Id: STSClientConfiguration.java,v 1.5 2008-03-11 20:12:15 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wss.sts;
 
+import com.sun.xml.ws.api.security.trust.Claims;
 import java.util.List;
 import com.sun.xml.ws.api.security.trust.client.STSIssuedTokenConfiguration;
 import com.sun.xml.ws.security.Token;
@@ -53,7 +54,11 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
     
     private Token userToken = null;
     
+    private Claims claims = null;
     
+    private String signWith = null;
+    
+    private String encryptWith = null;
     
     public STSClientConfiguration(String stsEndpoint, String stsMEXAddress){
         super(stsEndpoint, stsMEXAddress);
@@ -78,34 +83,7 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
         this.userToken = userToken;
     }
         
-    public String getTokenType() {
-        // This is temp till WSIT trust client code is corrected to 
-        // not set token type as SAML 1.1 by default.
-        try {
-            ProviderConfig pc = 
-                ProviderConfig.getProvider("wsp", ProviderConfig.WSP);
-            List secMech = pc.getSecurityMechanisms();
-            if (secMech != null) {
-                if( (secMech.contains(
-                    SecurityMechanism.WSS_NULL_SAML2_HK_URI)) ||
-                    (secMech.contains(SecurityMechanism.WSS_TLS_SAML2_HK_URI))
-                     || (secMech.contains(
-                        SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI))) {
-
-                    this.tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
-                } else if( (secMech.contains(SecurityMechanism.WSS_NULL_SAML_HK_URI))
-                     || (secMech.contains(
-                         SecurityMechanism.WSS_TLS_SAML_HK_URI)) || 
-                    (secMech.contains(
-                        SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI))) {
-
-                    this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
-                }
-            }
-        } catch (Exception e) {
-            // Ignore Exception.
-        }
-        
+    public String getTokenType() {    
         return tokenType;
     }
     
@@ -137,4 +115,18 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
         return userToken;
     }
     
+    public Claims getClaims() {
+        return claims;
+    }
+
+    @Override
+    public String getSignWith() {
+        return signWith;
+    }
+
+    @Override
+    public String getEncryptWith() {
+        return encryptWith;
+    }
+
 }

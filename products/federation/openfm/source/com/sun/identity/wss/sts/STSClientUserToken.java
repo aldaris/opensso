@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.3 2008-03-08 03:03:19 mallas Exp $
+ * $Id: STSClientUserToken.java,v 1.4 2008-03-11 20:12:16 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,6 +109,7 @@ public class STSClientUserToken implements ClientUserToken {
         }
     }
     
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<fam:FAMToken xmlns:fam=\"")

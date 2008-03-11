@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-client-wsc.jsp,v 1.1 2008-03-04 23:42:49 mrudul_uchil Exp $
+   $Id: sts-client-wsc.jsp,v 1.2 2008-03-11 20:15:44 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -60,9 +60,9 @@ com.sun.identity.wss.provider.ProviderConfig"
                 TrustAuthorityClient client = new TrustAuthorityClient();
                 ProviderConfig pc = ProviderConfig.getProvider(
                                     providerName, ProviderConfig.WSC);
-                //securityToken = client.getSecurityToken(pc, null);
-                securityToken = client.getSecurityToken(pc, null,
-                        (getServletConfig()).getServletContext());
+                securityToken = 
+                    client.getSecurityToken(pc, (java.lang.Object)null,
+                    (getServletConfig()).getServletContext());
                 sToken = com.sun.identity.shared.xml.XMLUtils.print(
                          securityToken.toDocumentElement()); 
             } catch (Exception e) {

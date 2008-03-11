@@ -19,6 +19,7 @@ com/sun/identity/wss/sts/STSClientConfiguration.class
 com/sun/identity/wss/sts/STSConstants.class
 com/sun/identity/wss/sts/STSUtils.class
 com/sun/identity/wss/sts/TrustAuthorityClient.class
+com/sun/identity/wss/sts/TrustAuthorityClientImpl.class
 com/sun/identity/wss/sts/STSClientUserToken.class
 com/sun/identity/wss/sts/ClientUserToken.class
 com/sun/identity/wss/sts/spi/FAMTransportPipeFactory.class

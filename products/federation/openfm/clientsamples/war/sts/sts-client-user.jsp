@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-client-user.jsp,v 1.1 2008-03-04 23:42:49 mrudul_uchil Exp $
+   $Id: sts-client-user.jsp,v 1.2 2008-03-11 20:15:44 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -97,7 +97,7 @@ com.iplanet.services.naming.WebtopNaming"
             
             securityToken = 
                 client.getSecurityToken("default", endpointURL, mexEndpointURL, 
-                ssoToken, SecurityMechanism.STS_SECURITY_URI,
+                (java.lang.Object)ssoToken, SecurityMechanism.STS_SECURITY_URI,
                 (getServletConfig()).getServletContext());
             sToken = com.sun.identity.shared.xml.XMLUtils.print(
                      securityToken.toDocumentElement()); 
