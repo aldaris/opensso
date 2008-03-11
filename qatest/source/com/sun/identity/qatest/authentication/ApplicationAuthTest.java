@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationAuthTest.java,v 1.2 2008-02-06 18:50:21 cmwesley Exp $
+ * $Id: ApplicationAuthTest.java,v 1.3 2008-03-11 19:59:06 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,22 +27,25 @@ package com.sun.identity.qatest.authentication;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.logging.Level;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 /**
@@ -55,12 +58,14 @@ import org.testng.annotations.Test;
 
 public class ApplicationAuthTest extends TestCommon {
     
-    private SSOToken admintoken;
+    private SSOToken adminToken;
     private SSOToken ssoToken;
     private ResourceBundle rbg;
     private IDMCommon idmc;
     private String agentId;
     private String agentPassword;
+    private AMIdentity amid;
+    private AMIdentityRepository idrepo;
     private String strGblRB = "ApplicationAuthTest";
 
     /**
@@ -88,23 +93,37 @@ public class ApplicationAuthTest extends TestCommon {
                     + agentPassword);
             Reporter.log("AgentID: " + agentId);
             Reporter.log("AgentPassword: " + agentPassword);
+            adminToken = getToken(adminUser, adminPassword, realm);
+            idrepo = new AMIdentityRepository(adminToken, realm);            
             Map map = new HashMap();
             Set set = new HashSet();
+
             set.add(agentPassword);
             map.put("userpassword", set);
             set = new HashSet();
             set.add("Active");
             map.put("sunIdentityServerDeviceStatus", set);
-            admintoken = getToken(adminUser, adminPassword, basedn);
-            log(Level.FINE, "createAgentProfile", 
-                    "Creating the agent identity " + agentId + " ...");
-            idmc.createIdentity(admintoken, realm, IdType.AGENT, agentId, map);
+            set = new HashSet();
+            SMSCommon smsC = new SMSCommon(adminToken);
+            if ((smsC.isAMDIT())) {
+                 idmc.createIdentity(adminToken, realm, IdType.AGENT, agentId, 
+                         map);
+            } else {
+                log(Level.FINE, "createAgentProfile", "This is FAM " +
+                        "DIT, Agents are part of SM node");
+                set.add("webagent");
+                map.put("AgentType", set);
+                idmc.createIdentity(adminToken, realm, IdType.AGENTONLY, 
+                        agentId, map);
+            }
+            amid = idmc.getFirstAMIdentity(adminToken, agentId, 
+                    IdType.AGENTONLY, realm);
         } catch (Exception e) {
             log(Level.SEVERE, "createAgentProfile", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            destroyToken(admintoken);
+            destroyToken(adminToken);
         }
         exiting("createAgentProfile");
     }
@@ -193,16 +212,19 @@ public class ApplicationAuthTest extends TestCommon {
     throws Exception {
         entering("deleteAgentProfile", null);
         try {
-            admintoken = getToken(adminUser, adminPassword, basedn);
             log(Level.FINE, "deleteAgentProfile", 
                     "Deleting the agent identity " + agentId + " ...");            
-            idmc.deleteIdentity(admintoken, realm, IdType.AGENT, agentId);           
+            adminToken = getToken(adminUser, adminPassword, realm);
+            idrepo = new AMIdentityRepository(adminToken, realm);     
+            Set idDelete = new HashSet();
+            idDelete.add(amid);
+            idrepo.deleteIdentities(idDelete);            
         } catch (Exception e) {
             log(Level.SEVERE, "deleteAgentProfile", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            destroyToken(admintoken);
+            destroyToken(adminToken);
         }
         exiting("deleteAgentProfile");
     }
