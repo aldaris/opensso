@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.5 2008-02-26 01:24:11 jonnelson Exp $
+   $Id: Home.jsp,v 1.6 2008-03-11 21:41:29 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -78,7 +78,7 @@
     <td>&nbsp;</td>
     <td valign="top">
 
-    <span class="TskPgeSbHdr">SAMLv2</span>
+    <span class="TskPgeSbHdr"><cc:text name="txtSectionSAMLv2" defaultValue="page.title.common.tasks.section.SAML2" bundleID="amConsole" /></span>
 
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="TskPgeBtmSpc">
     <tr><td class="TskPgeBckgrTd">
@@ -142,7 +142,7 @@
 
     <td>&nbsp;</td>
     <td valign="top">
-    <span class="TskPgeSbHdr">Documentation</span>
+    <span class="TskPgeSbHdr"><cc:text name="txtSectionDocumentation" defaultValue="page.title.common.tasks.section.documentation" bundleID="amConsole" /></span>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="TskPgeBtmSpc">
     <tr><td class="TskPgeBckgrTd">
         <table id="button2" width="100%"  border="0" cellspacing="0" cellpadding="0">
