@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IAgentConfigurationConstants.java,v 1.2 2007-10-13 00:08:34 huacui Exp $
+ * $Id: IAgentConfigurationConstants.java,v 1.3 2008-03-11 23:13:30 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,8 +32,8 @@ public interface IAgentConfigurationConstants {
    /**
     * The configuration file name to be used by the Agent.
     */
-    public static final String CONFIG_FILE_NAME = "AMAgent.properties";
+    public static final String CONFIG_FILE_NAME = "FAMAgentBootstrap.properties";
     public static final String LOCAL_CONFIG_FILE_NAME = 
-                                       "AMAgentConfiguration.properties";
+                                       "FAMAgentConfiguration.properties";
     
 }

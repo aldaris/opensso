@@ -78,7 +78,7 @@ boolean_t Verbose_On = B_FALSE; /* verbose is off by default */
 int
 main (int argc, char *argv[])
 {
-    const char* prop_file = "../../config/AMAgent.properties";
+    const char* prop_file = "../../config/FAMAgentBootstrap.properties";
     am_status_t status = AM_FAILURE;
     am_auth_status_t auth_status = AM_AUTH_STATUS_FAILED;
     am_properties_t prop = AM_PROPERTIES_NULL;

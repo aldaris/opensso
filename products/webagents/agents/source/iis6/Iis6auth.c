@@ -612,7 +612,7 @@ DWORD init_filter(PHTTP_FILTER_CONTEXT pfc)
            status = FAILED;
 	}
 
-	// Get the location of the AMAgent.properties file from the registry
+	// Get the location of the FAMAgentBootstrap.properties file from the registry
 	if (status == SUCCESS) {
            if (iisaPropertiesFilePathGet(&propertiesFileFullPath, instanceId) 
                                                    == FALSE) {
@@ -654,7 +654,7 @@ BOOL iisaPropertiesFilePathGet(CHAR** propertiesFileFullPath,char *instanceId)
 {
     // Max WINAPI path
     const DWORD dwPropertiesFileFullPathSize = MAX_PATH + 1;
-    const CHAR  szPropertiesFileName[]       = "AMAgent.properties";
+    const CHAR  szPropertiesFileName[]       = "FAMAgentBootstrap.properties";
     CHAR agentApplicationSubKey[1000] = "";
     const CHAR agentDirectoryKeyName[]       = "Path";
     DWORD dwPropertiesFileFullPathLen        = dwPropertiesFileFullPathSize;

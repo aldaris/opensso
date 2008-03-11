@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionHandler.java,v 1.1 2006-09-28 23:42:08 huacui Exp $
+ * $Id: EncryptionHandler.java,v 1.2 2008-03-11 23:13:31 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -275,6 +275,6 @@ public class EncryptionHandler implements IToolsOptionHandler, ICommonToolsConst
     
     public static final String STR_ENCRYPT_LOCAL_FUNCTION = "encryptLocal";
     public static final String STR_ENCRYPT_FUNCTION = "encrypt";
-    public static final String AGENT_CONFIG_FILE_NAME = "AMAgent.properties";
+    public static final String AGENT_CONFIG_FILE_NAME = "FAMAgentBootstrap.properties";
 
 }

@@ -109,7 +109,7 @@ $(DEST_PACKAGE_SCRATCH_DIR)/$(ZIP_DIR): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_H
 	$(RM) -r $(ZIP_DIR)
 	$(MKDIR) $(patsubst %, $(ZIP_DIR)/%, $(ZIP_SUB_DIRS))
 	$(CP) $(filter %$(SO_EXT).$(AGENT_MAJOR_VER), $^) $(ZIP_DIR)/lib
-	$(CP) $(USERX_ROOT)/conf/AMAgent.properties $(ZIP_DIR)/config/AMAgent.properties.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.properties $(ZIP_DIR)/config/FAMAgentBootstrap.properties.orig
 	$(CP) $(filter %.h, $^) $(ZIP_DIR)/include
 	$(CP) $(filter %THIRD_PARTY_LICENSE.TXT, $^) $(ZIP_DIR)
 	$(CP) $(filter %README.TXT, $^) $(ZIP_DIR)/samples
@@ -129,7 +129,7 @@ $(ZIP_FILE): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_HEADERS) $(EXPORTED_LIBS) $(
 	$(MKDIR) $(patsubst %, $(PKG_DIR)/%, $(ZIP_DIRS))
 	$(CP) $(filter %.exe, $^) $(PKG_DIR)/bin
 	$(CP) $(filter %$(SO_EXT), $^) $(PKG_DIR)/bin
-	$(CP) $(USERX_ROOT)/conf/AMAgent.properties $(PKG_DIR)/config/AMAgent.properties.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.properties $(PKG_DIR)/config/FAMAgentBootstrap.properties.orig
 	$(CP) $(filter %.h, $^) $(PKG_DIR)/include
 	$(CP) $(filter %THIRD_PARTY_LICENSE.TXT, $^) $(PKG_DIR)
 	$(CP) $(filter %.lib, $^) $(PKG_DIR)/bin
@@ -154,7 +154,7 @@ $(ZIP_FILE): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_HEADERS) $(EXPORTED_LIBS) $(
 	$(CP) comlib_HP-UX $(PKG_DIR)/lib/comlib
 	$(CP) $(filter %$(SO_EXT), $^) $(PKG_DIR)/lib
 	$(CP) THIRD_PARTY_LICENSE.TXT $(PKG_DIR)
-	$(CP) $(USERX_ROOT)/conf/AMAgent.properties $(PKG_DIR)/config/AMAgent.properties.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.properties $(PKG_DIR)/config/FAMAgentBootstrap.properties.orig
 	$(CP) $(filter %.h, $^) $(PKG_DIR)/include
 	$(CP) $(filter %README.TXT, $^) $(PKG_DIR)/samples
 	$(CP) $(filter %.c, $^) $(PKG_DIR)/samples
@@ -189,7 +189,7 @@ $(RPM):
 	$(CP) $(NSS_LIB_DIR)/libssl3.so $(BUILDROOT_LIB_DIR)
 	$(CP) THIRD_PARTY_LICENSE.TXT $(BUILDROOT_LIB_DIR)/..
 	$(CP) $(LIBXML_LIB_DIR)/libxml2.so.2 $(BUILDROOT_LIB_DIR)
-	$(CP) $(USERX_ROOT)/conf/AMAgent.properties $(BUILDROOT_CONF_DIR)/AMAgent.properties.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.properties $(BUILDROOT_CONF_DIR)/FAMAgentBootstrap.properties.orig
 	$(CP) $(USERX_ROOT)/am/source/crypt_util $(BUILDROOT_BIN_DIR)
 	$(CP) comlib_linux $(BUILDROOT_LIB_DIR)
 	$(CP) $(DEST_SAMPLES_DIR)/README.TXT $(BUILDROOT_SAMPLES_DIR)

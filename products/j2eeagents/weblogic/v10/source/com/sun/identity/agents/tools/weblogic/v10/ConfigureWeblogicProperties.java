@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWeblogicProperties.java,v 1.1 2007-08-07 01:47:44 sean_brydon Exp $
+ * $Id: ConfigureWeblogicProperties.java,v 1.2 2008-03-11 23:13:35 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,8 @@ import com.sun.identity.install.tools.util.ConfigUtil;
 import com.sun.identity.install.tools.util.FileUtils;
 
 /**
- * This task will configure AMAgent.properties for Weblogic Portal.
+ * This task will configure Agents configuration properties file for 
+ * Weblogic Portal.
  */
 public class ConfigureWeblogicProperties implements ITask, IConfigKeys,
         InstallConstants {

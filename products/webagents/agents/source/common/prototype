@@ -21,7 +21,7 @@
  *
  */ 
 
-#pragma ident  "$Id: prototype,v 1.1 2006-05-03 22:39:24 madan_ranganath Exp $ Sun Microsystems"
+#pragma ident  "$Id: prototype,v 1.2 2008-03-11 23:13:36 sean_brydon Exp $ Sun Microsystems"
 #
 
 i copyright
@@ -37,7 +37,7 @@ i preremove
 !include $ws_dir/am/prototype
 
 d none $PRODUCT_DIR/config $def_dir_perm
-f none $PRODUCT_DIR/config/AMAgent.properties.orig=$ws_dir/conf/AMAgent.properties
+f none $PRODUCT_DIR/config/FAMAgentBootstrap.properties.orig=$ws_dir/conf/FAMAgentBootstrap.properties
 
 f none $PRODUCT_DIR/lib/comlib=comlib $def_exe_perm
 # libxml_license.txt

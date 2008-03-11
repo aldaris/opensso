@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.1 2007-06-05 19:36:43 subbae Exp $
+# $Id: INSTALL.txt,v 1.2 2008-03-11 23:13:42 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -38,7 +38,7 @@ make sure that the IIS 6 Agent is compiled with steps indicated in README.txt.
 Installation does the following:
 
     - Creates the IIS 6 Agent Instance Directory
-    - Tag Swapping in AMAgent.properties file
+    - Tag Swapping in FAMAgentBootstrap.properties file
     - Updating IIS 6 web site: adds agent filter
 
 %% 1.1 Steps
@@ -95,7 +95,7 @@ Archive:  iis_v6_WINNT_agent.zip
   inflating: web_agents/iis6_agent/bin/softokn3.chk  
   inflating: web_agents/iis6_agent/bin/softokn3.dll  
   inflating: web_agents/iis6_agent/bin/ssl3.dll  
-  inflating: web_agents/iis6_agent/config/AMAgent.template  
+  inflating: web_agents/iis6_agent/config/FAMAgentBootstrap.template  
   inflating: web_agents/iis6_agent/license.txt  
 
 [C:]> cd web_agents\iis6_agent\bin\
@@ -170,7 +170,7 @@ Use is subject to license terms
 Enter the Agent Resource File Name [IIS6Resource.en] :
 
 Creating the Agent Config Directory
-Creating the AMAgent.properties File
+Creating the FAMAgentBootstrap.properties File
 Updating the Windows Product Registry
 Loading the IIS 6.0 Agent
 Completed Configuring the IIS 6.0 Agent

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.5 2008-03-07 23:23:48 huacui Exp $
+   $Id: readme.txt,v 1.6 2008-03-11 23:13:33 sean_brydon Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -150,7 +150,8 @@ configured with the subjects and policies required by the sample application.
 
 
 
-4. Modify the following properties in the AMAgent.properties file:
+4. Modify the following properties in the agent configuration with using the 
+   FAM/opensso server or the FAMAgentConfiguration.properties file:
 
     * Not enforced List:
           o com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*

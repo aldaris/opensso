@@ -18,6 +18,6 @@ BASE_PRODUCT_NAME Access Manager Agent for Apache
 /opt/agents/apache/lib/libamapc2.so
 /opt/agents/apache/lib/libxml2.so.2
 /opt/agents/apache/bin/comlib_linux
-/opt/agents/config/AMAgent.properties.orig
+/opt/agents/config/FAMAgentBootstrap.properties.orig
 /opt/agents/bin/crypt_util
 

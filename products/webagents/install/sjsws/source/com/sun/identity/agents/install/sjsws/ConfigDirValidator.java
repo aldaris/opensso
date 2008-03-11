@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigDirValidator.java,v 1.1 2007-01-17 23:15:24 subbae Exp $
+ * $Id: ConfigDirValidator.java,v 1.2 2008-03-11 23:13:44 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,11 +101,11 @@ public class ConfigDirValidator extends ValidatorBase
                            STR_KEY_SWS_MAGNUS_FILE, sjswsMagnusFile);
 
                 // store SWS agent specific value for notification
-                // enable property in AMAgent.properties 
+                // enable property in agent's configuration properties file
                 state.put(STR_KEY_NOTIFICATION_ENABLE, STR_TRUE);
 
                 // store SWS agent specific value for log
-                // rotation property in AMAgent.properties 
+                // rotation property in agent's configuration properties file 
                 state.put(STR_KEY_LOG_ROTATION, STR_TRUE);
    
                 returnMessage =

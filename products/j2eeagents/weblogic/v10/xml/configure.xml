@@ -201,13 +201,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                      value="AMAgent.template"/>
+                                      value="FAMAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                      value="AMAgent.properties"/>
+                                      value="FAMAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                      value="AMAgentConfiguration.template"/>
+                                      value="FAMAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                                      value="AMAgentConfiguration.properties"/>
+                                      value="FAMAgentConfiguration.properties"/>
             </task>
             <task name="CONFIGURE_STARTUP_SCRIPT">
                 <class name="ConfigureStartupScriptTask" type="custom"/>
@@ -270,13 +270,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="MigrateConfigurePropertiesTask" type="system"/>    
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                      value="AMAgent.template"/>
+                                      value="FAMAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                      value="AMAgent.properties"/>
+                                      value="FAMAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                      value="AMAgentConfiguration.template"/>
+                                      value="FAMAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                                      value="AMAgentConfiguration.properties"/>
+                                      value="FAMAgentConfiguration.properties"/>
             </task>
             <task name="CONFIGURE_STARTUP_SCRIPT">
                 <class name="ConfigureStartupScriptTask" type="custom"/>

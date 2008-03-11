@@ -21,7 +21,7 @@ BASE_PRODUCT_NAME Access Manager C Development Kit
 /opt/agents/lib/libssl3.so
 /opt/agents/bin/crypt_util
 /opt/agents/lib/comlib_linux
-/opt/agents/config/AMAgent.properties.orig
+/opt/agents/config/FAMAgentBootstrap.properties.orig
 /opt/agents/include/am.h
 /opt/agents/include/am_auth.h
 /opt/agents/include/am_log.h

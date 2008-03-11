@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseHeadersTaskHandler.java,v 1.1 2006-09-28 23:34:59 huacui Exp $
+ * $Id: ResponseHeadersTaskHandler.java,v 1.2 2008-03-11 23:13:30 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,7 @@ import java.util.Iterator;
 /**
  * <p>
  * This task handler class provides necessary functionality to process
- * any custom HTTP header(s) defined in <code>AMAgent.properties</code> 
+ * any custom HTTP header(s) defined in agent configuration 
  * file and adds them to the <code>HttpServletResponse</code> object
  * </p>
  */
@@ -62,7 +62,7 @@ implements IResponseHeadersTaskHandler {
     }
 
     /**
-      * Sets custom headers defined in <code>AMAgent.properties</code> file 
+      * Sets custom headers defined in agent configuration file 
       * to the <code>HttpServletResponse</code> object
       *
       * @param ctx an <code>AmFilterRequestContext</code> object that 

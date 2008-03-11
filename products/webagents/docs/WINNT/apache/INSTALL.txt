@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.9 2007-04-30 17:29:26 subbae Exp $
+# $Id: INSTALL.txt,v 1.10 2008-03-11 23:13:42 sean_brydon Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -38,7 +38,7 @@ make sure that the Apache Agent is compiled with steps indicated in README.txt.
 Installation does the following:
 
     - Creates the Apache Agent Instance Directory
-    - Tag Swapping in AMAgent.properties file
+    - Tag Swapping in FAMAgentBootstrap.properties file
     - Updating Apache Server httpd.conf file
 
 %% 1.1 Steps
@@ -81,7 +81,7 @@ Here is the sample of the above steps:
   inflating: web_agents/apache_agent/bin/agentadmin.bat
   inflating: web_agents/apache_agent/bin/certutil.exe
   inflating: web_agents/apache_agent/bin/cryptit.exe
-  inflating: web_agents/apache_agent/config/AMAgent.template
+  inflating: web_agents/apache_agent/config/FAMAgentBootstrap.template
   inflating: web_agents/apache_agent/config/AMToolsConfig.properties
   inflating: web_agents/apache_agent/config/configure.xml
   inflating: web_agents/apache_agent/etc/dsame.template
@@ -204,7 +204,7 @@ Reading data from file C:\password and encrypting it ...DONE.
 
 Generating audit log file name ...DONE.
 
-Creating tag swapped AMAgent.properties file for instance Agent_001 ...DONE.
+Creating tag swapped FAMAgentBootstrap.properties file for instance Agent_001 ...DONE.
 
 Creating a backup for file C:\apache2\conf\httpd.conf ...DONE.
 
@@ -217,7 +217,7 @@ SUMMARY OF AGENT INSTALLATION
 -----------------------------
 Agent instance name: Agent_001
 Agent Configuration file location:
-C:\web_agents\apache_agent\Agent_001\config\AMAgent.properties
+C:\web_agents\apache_agent\Agent_001\config\FAMAgentBootstrap.properties
 Agent Audit directory location:
 C:\web_agents\apache_agent\Agent_001\logs\audit
 Agent Debug directory location:

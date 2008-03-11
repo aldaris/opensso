@@ -22,5 +22,5 @@
  */ 
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
-rm -fr ${BASEDIR}/${PRODUCT_DIR}/config/AMAgent.properties
+rm -fr ${BASEDIR}/${PRODUCT_DIR}/config/FAMAgentBootstrap.properties
 exit 0

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.19 2008-03-10 20:16:05 leiming Exp $
+ * $Id: AgentConfiguration.java,v 1.20 2008-03-11 23:13:30 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -437,7 +437,7 @@ public class AgentConfiguration implements
     }
     
     /**
-     * Load from AMAgent.properties for start up properties.
+     * Load from FAMAgentBootstrap.properties for start up properties.
      * This method should only be called once at start up time
      * since bootstrap properties are not hot swappable by editting the
      * properties file without a restart.
@@ -563,9 +563,9 @@ public class AgentConfiguration implements
     }
     /**
      * Collect all configuration info. Store all config properties, including 
-     * AMAgent.properties bootstrap small set of props and also agent config
+     * FAMAgentBootstrap.properties bootstrap small set of props and also agent config
      * props (from fam server or if local config file 
-     * AMAgentConfiguration.properties) and store ALL the properties in a 
+     * FAMAgentConfiguration.properties) and store ALL the properties in a 
      * class field for later use, plus set a few fields on this class for some
      * props that are used throughout agent code and accessed from this class.
      * Also, for any clientsdk properties, push them into the JVM system 
@@ -586,9 +586,9 @@ public class AgentConfiguration implements
                 properties.clear();
                 properties.putAll(getPropertiesFromConfigFile());
                
-                //debug level can optionally be set in AMAgent.properties
+                //debug level can optionally be set in FAMAgentBootstrap.properties
                 //but by default is not set, so we provide default if no value
-                //This debug level(either default or prop in AmAgent.properties)
+                //This debug level(either default or prop in FAMAgentBootstrap.properties)
                 //file is only used for bootup time logging.
                 //Real runtime debug level value is later retrieved with rest of 
                 //agent config from fam server

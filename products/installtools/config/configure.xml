@@ -333,9 +333,9 @@ modified/added/deleted:
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
             	<property name="CONFIG_FILENAME_TEMPLATE"
-        				  value="AMAgent.template"/>
+        				  value="FAMAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME"
-                          value="AMAgent.properties"/>            	                          
+                          value="FAMAgentBootstrap.properties"/>            	                          
             </task>
             <task name="BACKUP_FILE">
            	 	<class name="BackupFileTask" type="system"/>

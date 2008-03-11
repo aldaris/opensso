@@ -130,7 +130,7 @@ init_variables() {
 
     init_common_pkg_variables $3
 
-    AGENT_PROPERTIES_FILE_NAME=AMAgent.properties
+    AGENT_PROPERTIES_FILE_NAME=FAMAgentBootstrap.properties
     AGENT_PROPERTIES_FILE_ORIG=$COMMON_PKG_DIR/config/$AGENT_PROPERTIES_FILE_NAME.orig
 
     agent_init_variables

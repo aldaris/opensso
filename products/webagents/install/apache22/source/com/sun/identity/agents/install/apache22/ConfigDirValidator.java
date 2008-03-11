@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigDirValidator.java,v 1.1 2007-04-30 17:29:26 subbae Exp $
+ * $Id: ConfigDirValidator.java,v 1.2 2008-03-11 23:13:43 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,11 +93,11 @@ public class ConfigDirValidator extends ValidatorBase
                            apcHomeDir + FILE_SEP + STR_APC22_BIN_DIR);
 
                 // store Apache agent specific value for notification
-                // enable property in AMAgent.properties 
+                // enable property in agent's configuration properties 
                 state.put(STR_KEY_NOTIFICATION_ENABLE, STR_FALSE);
 
                 // store Apache agent specific value for log
-                // rotation property in AMAgent.properties 
+                // rotation property in agent's configuration properties 
                 state.put(STR_KEY_LOG_ROTATION, STR_FALSE);
 
                 returnMessage =

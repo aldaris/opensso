@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.10 2008-03-04 02:05:00 madan_ranganath Exp $
+ * $Id: iws_agent.c,v 1.11 2008-03-11 23:13:37 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -52,8 +52,8 @@
 #define snprintf        _snprintf
 #endif
 
-#define AGENT_BOOTSTRAP_FILE "/AMAgent.properties"
-#define AGENT_CONFIG_FILE "/AMAgentConfiguration.properties"
+#define AGENT_BOOTSTRAP_FILE "/FAMAgentBootstrap.properties"
+#define AGENT_CONFIG_FILE "/FAMAgentConfiguration.properties"
 #define DSAME_CONF_DIR "dsameconfdir"
 
 #define	MAGIC_STR		"sunpostpreserve"

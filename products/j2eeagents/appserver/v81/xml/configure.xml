@@ -223,13 +223,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                      value="AMAgent.template"/>
+                                      value="FAMAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                      value="AMAgent.properties"/>
+                                      value="FAMAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                      value="AMAgentConfiguration.template"/>
+                                      value="FAMAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                                      value="AMAgentConfiguration.properties"/>
+                                      value="FAMAgentConfiguration.properties"/>
             </task>
             <task name="BACKUP_FILE">
            	 	<class name="BackupFileTask" type="system"/>
@@ -355,13 +355,13 @@
                 <task name="CONFIGURE_AGENT_PROPS">
                     <class name="MigrateConfigurePropertiesTask" type="system"/>    
                     <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                              value="AMAgent.template"/>
+                              value="FAMAgentBootstrap.template"/>
                     <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                              value="AMAgent.properties"/>
+                              value="FAMAgentBootstrap.properties"/>
                     <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                              value="AMAgentConfiguration.template"/>
+                              value="FAMAgentConfiguration.template"/>
                     <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                              value="AMAgentConfiguration.properties"/>
+                              value="FAMAgentConfiguration.properties"/>
                 </task>
                 <task name="CONFIGURE_DOMAIN_XML">                  
                     <class name="ConfigureDomainXMLTask" type="custom"/>                                

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurePropertiesTask.java,v 1.5 2008-03-04 01:59:59 madan_ranganath Exp $
+ * $Id: ConfigurePropertiesTask.java,v 1.6 2008-03-11 23:13:29 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
             // Copy the Config File location to the state
             stateAccess.put(STR_CONFIG_FILE_PATH_TAG, instanceConfigFile);
 
-            // Generate the AMAgentConfiguration.properties file 
+            // Generate the FAMAgentConfiguration.properties file 
             String agentConfigTemplate = (String) properties.get(
                         STR_PRODUCT_CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE_KEY);
             String agentConfigTemplateFile = ConfigUtil.getConfigDirPath()

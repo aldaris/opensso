@@ -140,16 +140,16 @@ am_policy_test
       am_policy_test <property file> <agent_config_file> <ssoToken> <resource name> <action>
 
    <property file> 
-       is the path to the AMAgent.properties bootstrap file. For example:
-       ../config/AMAgent.properties
+       is the path to the FAMAgentBootstrap.properties bootstrap file. For example:
+       ../config/FAMAgentBootstrap.properties
 
    <agent config file> 
-       is the path to the AMAgentConfiguration.properties file. Even if the
+       is the path to the FAMAgentConfiguration.properties file. Even if the
        repository type is "centralized", the user still needs to provide
        a value for this property (just a file name is enough). If the 
        repository type is "local", user needs to provide a location of the
-       AMAgentConfiguration.properties.
-       For example: ../config/AMAgentConfiguration.properties
+       FAMAgentConfiguration.properties.
+       For example: ../config/FAMAgentConfiguration.properties
 
    <ssoToken> 
        is a valid SSO Token issued by Access Manager. You can get this
@@ -194,7 +194,7 @@ am_auth_test
    line to override the value specified in the properties files. Other values
    affecting certificate based login are taken from the properties file.
 
-   The default properties file is ../../config/AMAgent.properties. Check to
+   The default properties file is ../../config/FAMAgentBootstrap.properties. Check to
    make sure the appropriate properties and values are set in the properties
    file before calling this program. The following properties are specific
    to authentication:
@@ -209,7 +209,7 @@ am_sso_test
    Description: am_sso_test logs into an Access Manager using the given user 
    and password using the LDAP authentication module, and performs sso token 
    operations on the session. Also please note that the internal ldap password
-   should not be encrypted in AMAgent.properties.
+   should not be encrypted in FAMAgentBootstrap.properties.
    
 
    Usage: 
@@ -224,7 +224,7 @@ am_sso_test
 
    <properties_file> 
        the path to the properties file. If not set, the default properties 
-       file ../../config/AMAgent.properties is used. Check to make sure 
+       file ../../config/FAMAgentBootstrap.properties is used. Check to make sure 
        appropriate values are set in the properties file before calling 
        this program. See the Agents documentation for more information on the 
        properties file.
@@ -267,7 +267,7 @@ am_log_test
 
    <properties_file>
       path to the properties file. If not set, the default properties 
-      file ../../config/AMAgent.properties is used. Check to make sure 
+      file ../../config/FAMAgentBootstrap.properties is used. Check to make sure 
       appropriate values are set in the properties file before calling 
       this program. See the Agents documentation for more information on the 
       properties file.

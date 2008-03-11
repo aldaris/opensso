@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.6 2008-03-07 23:24:40 huacui Exp $
+   $Id: readme.txt,v 1.7 2008-03-11 23:13:34 sean_brydon Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,7 +32,7 @@ with the Application Server.
 
     * Overview
     * Configure the Access Manager server
-    * Configure the agent AMAgent.properties file
+    * Configure the agent configuration properties
     * Deploying the Sample Application
     * Running the Sample Application
     * Troubleshooting
@@ -112,10 +112,11 @@ configured with the subjects and policies required by the sample application.
 
 
 
-Configure the agent AMAgent.properties file
+Configure the agent configuaration using FAM/opensso server UI (or if using
+local configuraton then using FAMAgentConfiguration.properties)
 --------------------------------------------
 
-1. UUID to principal mapping in AMAgent.properties file:
+1. UUID to principal mapping in agent's configuration:
 
     By default, the installation assumes that the Access Manager product was
     under default realm "dc=opensso,dc=java,dc=net". If the realm for the
@@ -126,7 +127,7 @@ Configure the agent AMAgent.properties file
     For WebLogic 10.0, a UUID has to be mapped to a value of type NMTOKEN, 
     and then the mapped value is used in weblogic-ejb-jar.xml and weblogic.xml 
     files as <principal-name> element value. The mapping is specified in 
-    AMAgent.properties file by the property 
+    agent's configuration by the property 
 
                 com.sun.identity.agents.config.privileged.attribute.mapping[].
 
@@ -135,7 +136,7 @@ Configure the agent AMAgent.properties file
     out the mappings because by default they are commented out.
 
 
-2. Modify the following properties in the AMAgent.properties file:
+2. Modify the following properties in the agent's configuration:
 
     * Not enforced List:
           com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*

@@ -1315,7 +1315,7 @@ create_authn_request_query_string(string requestID, string providerID,
 
 /**
  * Overrides url with the agent uri prefix's protocol host or port
- * if configured in AMAgent.properties.
+ * if configured in FAMAgentBootstrap.properties.
  * Returns true if something in url was overridden, false otherwise.
  */
 static bool

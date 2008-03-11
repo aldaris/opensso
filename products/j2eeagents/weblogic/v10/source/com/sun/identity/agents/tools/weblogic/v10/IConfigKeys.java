@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigKeys.java,v 1.5 2007-12-10 21:38:05 huacui Exp $
+ * $Id: IConfigKeys.java,v 1.6 2008-03-11 23:13:35 sean_brydon Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,8 +141,8 @@ public interface IConfigKeys {
     public static final String STR_J2EE_WL_PORTAL_VER_HANDLER
         = "com.sun.identity.agents.weblogic.v10.AmWLPortalVerificationHandler";
     
-    /** Field AMAgent file name **/
-    public static final String STR_AMAGENT_FILE = "AMAgent.properties";
+    /** Field FAMAgentBootstrap file name **/
+    public static final String STR_AMAGENT_FILE = "FAMAgentBootstrap.properties";
     
     /** Field auth handler **/
     public static final String STR_AUTH_HANDLER =

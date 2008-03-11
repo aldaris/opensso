@@ -398,7 +398,7 @@ test_listeners(am_sso_token_handle_t sso_handle,
 int
 main(int argc, char *argv[])
 {
-    const char* prop_file = "../../config/AMAgent.properties";
+    const char* prop_file = "../../config/FAMAgentBootstrap.properties";
     am_status_t status = AM_FAILURE;
     am_properties_t prop = AM_PROPERTIES_NULL;
     am_auth_context_t auth_ctx = NULL;

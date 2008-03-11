@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6admin.vbs,v 1.1 2007-06-05 19:36:44 subbae Exp $
+' $Id: IIS6admin.vbs,v 1.2 2008-03-11 23:13:43 sean_brydon Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -129,7 +129,7 @@ Function Init()
       newIdentifier = "Identifier_" + identifier
   end if
 
-  ' Generate the location of AMAgent.properties file
+  ' Generate the location of FAMAgentBootstrap.properties file
   iis6InstanceDir = installDir + "\" + newIdentifier 
   iis6ConfigDir = iis6InstanceDir + "\config"
   iis6DebugDir = iis6InstanceDir + "\debug"
@@ -201,14 +201,14 @@ End Function
 ' Input : WshShell, FSO, responseFile, objWebRoot, dict1
 ' Output : None
 ' Description : The AgentConfigure() function performs the following tasks:
-' 1. Opens the AMAgent.properties file 
-' 2. Perfoms token replacement in AMAgent.properties file using the agent
+' 1. Opens the FAMAgentBootstrap.properties file 
+' 2. Perfoms token replacement in FAMAgentBootstrap.properties file using the agent
 '    configuration file created from IIS6CreateConfig.vbs
 ' 3. Under "Sun\Access_Manager\Agents\2.2\iis6\config directory, creates a 
 '    sub-directory "InstanceId_<id number>"
 ' 4. Under "Sun\Access_Manager\Agents\2.2\debug" directory, creates a 
 '    sub-directory "InstanceId_<id number>"
-' 5. Updates the windows registry with the location of AMAgent.properties file
+' 5. Updates the windows registry with the location of FAMAgentBootstrap.properties file
 ' 6. Adds the wild card application map to the web site for which the agent
 '    is configured.
 '----------------------------------------------------------------------------
@@ -227,11 +227,11 @@ Function AgentConfigure(WshShell, FSO, responseFile, objWebRoot, dict1)
    end if
 
    WScript.Echo dict1("130")
-   origPropertyFile = installDir + "\config\AMAgent.template"
-   newConfigFile = newConfigDir + "\AMAgent.properties"
+   origPropertyFile = installDir + "\config\FAMAgentBootstrap.template"
+   newConfigFile = newConfigDir + "\FAMAgentBootstrap.properties"
    FSO.CopyFile origPropertyFile, newConfigFile
 
-   'Perform token replacement in AMAgent.properties
+   'Perform token replacement in FAMAgentBootstrap.properties
    With New RegExp
      .Pattern = "^(.*?) = (.*?)$"
      .Multiline = True
@@ -281,16 +281,16 @@ End Function
 ' Input : WshShell, FSO, dict1
 ' Output : None
 ' Description : The AgentUnConfigure() function performs the following tasks:
-' 1.Removes both the AMAgent.properties file under the "InstanceId_<id number>"
+' 1.Removes both the FAMAgentBootstrap.properties file under the "InstanceId_<id number>"
 '   and the "InstanceId_<id number>" directory itself
 ' 2.Removes the windows registry entry which had information about the 
-'   location of AMAgent.properties file
+'   location of FAMAgentBootstrap.properties file
 ' 3.Removes the wild card application map to the web site for which the agent
 '   was configured.
 '----------------------------------------------------------------------------
 Function AgentUnConfigure(WshShell, FSO, dict1)
    'Remove the Agent Config Directory
-   delConfigFile = newConfigDir + "\AMAgent.properties"
+   delConfigFile = newConfigDir + "\FAMAgentBootstrap.properties"
 
    if (FSO.FileExists(delConfigFile)) then
       WScript.Echo dict1("134")

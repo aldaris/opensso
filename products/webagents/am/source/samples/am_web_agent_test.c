@@ -57,7 +57,7 @@ void fail_on_error(am_status_t status, const char *method_name)
 void Usage(char **argv) {
     printf("Usage: %s"
            " -u url"
-           " [-f properties_file (default: ./AMAgent.properties)]"
+           " [-f properties_file (default: ./FAMAgentBootstrap.properties)]"
 	   " [-m method (default: GET)]"
 	   " [-p path info]"
 	   " [-q query]"
@@ -286,7 +286,7 @@ free_post_data(void **args, char *data)
 int
 main(int argc, char *argv[])
 {
-    const char* prop_file = "../../config/AMAgent.properties";
+    const char* prop_file = "../../config/FAMAgentBootstrap.properties";
     am_status_t status = AM_FAILURE;
     char *ssoTokenID = NULL;
     char *url = NULL;

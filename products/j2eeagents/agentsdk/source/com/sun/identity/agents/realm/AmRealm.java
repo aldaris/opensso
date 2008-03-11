@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.5 2008-01-16 00:55:51 sean_brydon Exp $
+ * $Id: AmRealm.java,v 1.6 2008-03-11 23:13:31 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -283,9 +283,9 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
     }
     
     /**
-     * maps original Attribute to the one defined in AMAgent.properties.
-     * It helps with some cases like handling special characters in original
-     * attribute.
+     * maps original Attribute to the one defined in agent configuration
+     * properties. It helps with some cases like handling special characters
+     * in original attribute.
      */
     private String getPrivilegedMappedAttribute(String originalAttribute) {
         String mappedAttribute = originalAttribute;

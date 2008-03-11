@@ -17,18 +17,19 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMAgentConfiguration.template,v 1.17 2008-03-07 03:56:25 sean_brydon Exp $
+# $Id: FAMAgentConfiguration.template,v 1.1 2008-03-11 23:13:32 sean_brydon Exp $
 #
-# Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
 
 #------------------------------------------------------------------------------
 # Configuration Property File
 #
 # Sun Java(TM) System Access Manager Policy Agent for:
-# BEA WebLogic 10.0 Server/Portal
+# Sun Java(TM) System Application Server 8.1/8.2/9.0/9.1
 #
 # Version: 3.0
+
 #------------------------------------------------------------------------------
 #
 # THIS FILE PROVIDES THE CONFIGURATION SETTINGS NECESSARY FOR THE AGENT
@@ -472,10 +473,6 @@ com.sun.identity.agents.config.cookie.reset.path[] =
 #     Server/ID providers that should be trusted by the agent, when evaluating
 #     the CDC Liberty Responses. Used when a Load Balancer/Firewall is between 
 #     the agent & server.
-#   - cdsso.secure.enable: A flag that specifies if the SSO Token cookie
-#     set by the agent in the different domains in CDSSO mode will be marked
-#     secure. When the property is set to true the SSO Token cookie will only
-#     be transmitted if the communications channel with the host is a secure one.
 #   - cdsso.domain: This property specifies the domains for which cookies have
 #     to be set in a CDSSO scenario. If this property is left blank then the 
 #     fully qualified cookie domain for the agent server will be used for 
@@ -490,8 +487,7 @@ com.sun.identity.agents.config.cdsso.redirect.uri = @AGENT_APP_URI@/sunwCDSSORed
 com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
 com.sun.identity.agents.config.cdsso.clock.skew = 0
 com.sun.identity.agents.config.cdsso.trusted.id.provider[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet
-com.sun.identity.agents.config.cdsso.secure.enable = false
-#com.sun.identity.agents.config.cdsso.domain[0] = 
+#com.sun.identity.agents.config.cdsso.domain[0] =
 
 # 
 # LOGOUT PROCESSING PROPERTIES
@@ -714,30 +710,17 @@ com.sun.identity.agents.config.bypass.principal[0] =
 #     privileged attribute types should be converted to lowercase.
 #   - privileged.session.attribute: A list of session property names which 
 #     hold privileged attributes for the authenticated user.
-#   - privileged.attribute.mapping.enable: A flag to specify whether 
-#     a mapping from an attibute's original value to another value is
-#     enabled. This mapping may be necessary to satisfy container-specific
-#     restrictions on character set being used in certain configuration files.
-#   - privileged.attribute.mapping: A map property that specifies the above
-#     mentioned mapping; Note that if a key contains "=" or ":", then these
-#     special character needs to be escaped by "\".
-#
 # Hot-Swap Enabled: Yes
 # Examples:
 #   com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
 #   com.sun.identity.agents.config.privileged.attribute.type[0] = Group
 #   com.sun.identity.agents.config.privileged.attribute.tolowercase[Group] = false
 #   com.sun.identity.agents.config.privileged.session.attribute[0] = UserToken
-#   com.sun.identity.agents.config.privileged.attribute.mapping.enable=true
-#   com.sun.identity.agents.config.privileged.attribute.mapping[id\=manager,ou\=group,dc\=opensso,dc\=java,dc\=net] = am_manager_role
-#   com.sun.identity.agents.config.privileged.attribute.mapping[id\=employee,ou\=group,dc\=opensso,dc\=java,dc\=net] = am_employee_role
-
+#
 com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
 com.sun.identity.agents.config.privileged.attribute.type[0] = Group
 com.sun.identity.agents.config.privileged.attribute.tolowercase[Group] = false
 com.sun.identity.agents.config.privileged.session.attribute[0] = 
-com.sun.identity.agents.config.privileged.attribute.mapping.enable = true
-com.sun.identity.agents.config.privileged.attribute.mapping[] =
 
 #
 # SSO TOKEN COOKIE NAME
@@ -793,7 +776,7 @@ com.iplanet.am.sdk.remote.pollingTime=1
 #     configuration data. If set to '0' no updates happen. This property
 #     takes effect only if no notification url is provided by
 #     'com.sun.identity.client.notification.url' or if notifications are
-#      disabled. (i.e., com.sun.identity.sm.notification.enabled=false).
+#     disabled. (i.e., com.sun.identity.sm.notification.enabled=false).
 # Hot-Swap Enabled: No
 #
 com.sun.identity.sm.notification.enabled=true
@@ -849,17 +832,17 @@ com.sun.identity.policy.client.clockSkew=10
 #    - com.sun.identity.agents.config.policy.env.get.param: A list of HTTP GET
 #      request parameters whose names and values will be set in the environment
 #      map for URL policy evaluation at AM server. The key in the map is in the
-#      format of GET.<parameter-name>, the map value is a set of string values
+#      format of GET.<parameter-name>, the map value is a set of string values 
 #      of the parameter.
 #    - com.sun.identity.agents.config.policy.env.post.param: A list of HTTP POST
 #      request parameters whose names and values will be set in the environment
-#      map for URL policy evaluation at AM server. The key in the map is in the
+#      map for URL policy evaluation at AM server. The key in the map is in the 
 #      format of POST.<parameter-name>, the map value is a set of string values
 #      of the parameter.
-#    - com.sun.identity.agents.config.policy.env.jsession.param: A list of
-#      HTTP SESSION attributes whose names and values will be set in the
-#      environment map for URL policy evaluation at AM server. The key in the
-#      map is in the format of JSESSION.<parameter-name>, the map value is a
+#    - com.sun.identity.agents.config.policy.env.jsession.param: A list of 
+#      HTTP SESSION attributes whose names and values will be set in the 
+#      environment map for URL policy evaluation at AM server. The key in the 
+#      map is in the format of JSESSION.<parameter-name>, the map value is a 
 #      set that contains the string value of the parameter.
 # Hot-Swap Enabled: Yes
 #
@@ -871,8 +854,8 @@ com.sun.identity.policy.client.clockSkew=10
 #   values as "bob" and "1-800-123-4567" respectively. There is a HTTP Session
 #   attribute "cardnumber" with its value as "12345678".
 #   In the map, the following will be set:
-#     GET.name => [bob]
-#     GET.phonenumber => [1-800-123-4567]
+#     GET.name => [bob]    
+#     GET.phonenumber => [1-800-123-4567]    
 #     JSESSION.cardnumber => [12345678]
 #
 com.sun.identity.agents.config.policy.env.get.param[0]=
@@ -909,3 +892,4 @@ com.sun.identity.client.notification.url=@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGEN
 # Hot-Swap Enabled: Yes
 #
 com.iplanet.services.debug.level=@DEBUG_LEVEL@
+

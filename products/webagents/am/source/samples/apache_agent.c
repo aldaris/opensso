@@ -60,7 +60,7 @@ static const command_rec dsame_auth_cmds[]=
 
 /*
  * The next group of routines are used to capture the path to the
- * AMAgent.properties file and the directory where the shared libraries
+ * FAMAgentBootstrap.properties file and the directory where the shared libraries
  * needed by the DSAME agent are stored during module configuration.
  */
 static const char *set_properties_file(cmd_parms *cmd,
