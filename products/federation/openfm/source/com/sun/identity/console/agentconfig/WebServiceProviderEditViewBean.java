@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.2 2008-03-11 21:33:44 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,6 +96,7 @@ public class WebServiceProviderEditViewBean
         attrToChildNames.put("isRequestEncrypt", "isrequestencrypted");
         attrToChildNames.put("SecurityMech", "SecurityMech");
         attrToChildNames.put("UserCredential", "UserCredential");
+        attrToChildNames.put("SAMLAttributeMapping", "SAMLAttributeMapping");
     }
     
     /**
@@ -398,5 +399,18 @@ public class WebServiceProviderEditViewBean
             disableButton(TBL_BUTTON_DELETE, true);
         }
         return xml;
+    }
+    
+    public String endPropertyAttributesDisplay(
+        ChildContentDisplayEvent event
+    ) {
+        String html = event.getContent();
+        int idx = html.indexOf("<a name=\"lblsaml\"");
+        html = html.substring(0, idx) + 
+            "<div id=\"samlconf\" style=\"display:none\">" + 
+            html.substring(idx);
+        idx = html.indexOf("<a name=\"lblsignencrypt\"");
+        html = html.substring(0, idx) + "</div>" +  html.substring(idx);
+        return html;
     }
 } 

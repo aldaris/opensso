@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.2 2008-03-11 21:33:44 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.console.agentconfig;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
-import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMAdminUtils;
@@ -70,8 +69,6 @@ public abstract class WebServiceEditViewBean
     
     protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     
-    private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
-
     private Set externalizeUIProperties = parseExternalizeUIProperties(
         "webServiceUI");
     private boolean isWebClient;
@@ -298,7 +295,7 @@ public abstract class WebServiceEditViewBean
             Set set = (Set)values.get(elm.attrName);
             String value = ((set != null) && !set.isEmpty()) ? 
                 (String)set.iterator().next() : "";
-            setExternalizedUIValue(value, elm.childName);
+            propertySheetModel.setValue(elm.childName, value); 
         }
     }
     
@@ -376,12 +373,6 @@ public abstract class WebServiceEditViewBean
         }
     }
     
-    protected void setExternalizedUIValue(String value, String childName) {
-        if ((value != null) && (value.length() > 0)) {
-            propertySheetModel.setValue(childName, value); 
-        }
-    }
-
     protected Map getFormValues()
         throws AMConsoleException, ModelControlException {
         AgentsModel model = (AgentsModel)getModel();
@@ -695,7 +686,7 @@ public abstract class WebServiceEditViewBean
         "<cc name=\"{0}\" tagclass=\"com.sun.web.ui.taglib.html.CCStaticTextFieldTag\"/>";
     
     private static final String PROPERTY_CHECKBOX_TEMPLATE =
-"<property><cc name=\"{0}\" tagclass=\"com.sun.web.ui.taglib.html.CCCheckBoxTag\"><attribute name=\"label\" value=\"{1}\" /></cc></property>";
+"<property><cc name=\"{0}\" tagclass=\"com.sun.web.ui.taglib.html.CCCheckBoxTag\"><attribute name=\"label\" value=\"{1}\" /><attribute name=\"extraHtml\" value=\"onclick=&quot;return showSAMLConfig();&quot;\" /></cc></property>";
     private static final String PROPERTY_OPTION_TEMPLATE =
         "<option label=\"{0}\" value=\"{1}\" />";
 }

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.1 2007-12-17 19:42:45 veiming Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.2 2008-03-11 21:33:44 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -50,6 +50,25 @@
         frm.elements['WebServiceProviderEdit.keystorepassword'].disabled =
             disable;
         frm.elements['WebServiceProviderEdit.keypassword'].disabled = disable;
+    }
+
+    function showSAMLConfig() {
+        var frm = document.forms['WebServiceProviderEdit'];
+        var visible = 'none';
+        for (var i = 0; i <frm.elements.length && (visible == 'none'); i++) {
+            var elt = frm.elements[i];
+            if (elt.name.indexOf('WebServiceProviderEdit.securitymech') == 0) {
+                if (((elt.name.indexOf('SAMLToken-') != -1) ||
+                    (elt.name.indexOf('SAML2Token-') != -1)) &&
+                    (elt.name.indexOf('jato_boolean') == -1)) {
+                    if (elt.checked) {
+                        visible = '';
+                    }
+                }
+            }
+        }
+        document.getElementById('samlconf').style.display = visible;
+        return true;
     }
 </script>
 
@@ -92,6 +111,7 @@
         disabled = frm.elements['WebServiceProviderEdit.keystoreusage'][0].checked;
     }
     disableCustomKeyStoreFields(frm, disabled);
+    showSAMLConfig();
 </script>
 
 </cc:header>

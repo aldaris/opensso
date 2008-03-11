@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceUIElement.java,v 1.1 2007-12-17 19:42:48 veiming Exp $
+ * $Id: WebServiceUIElement.java,v 1.2 2008-03-11 21:33:45 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,5 +51,4 @@ public class WebServiceUIElement {
         this.attrName = attrName;
         this.attrType = attrType;
     }
-    
 }
