@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalLdapAuthModule.java,v 1.3 2007-12-14 00:07:28 dillidorai Exp $
+ * $Id: LocalLdapAuthModule.java,v 1.4 2008-03-12 22:17:01 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,11 +67,11 @@ public class LocalLdapAuthModule implements LoginModule {
 
     private static Debug debug = Debug.getInstance("amAuthInternalLDAPModule");
 
-    private static boolean readServerConfiguration = false;
+    private boolean readServerConfiguration = false;
 
-    private static String baseDN = null;
+    private String baseDN = null;
 
-    private static LDAPConnection conn = null;
+    private LDAPConnection conn = null;
 
     private CallbackHandler cbHandler;
 
@@ -316,8 +316,14 @@ public class LocalLdapAuthModule implements LoginModule {
             if (!readServerConfiguration) {
                 readServerConfig();
             }
-            results = conn.search(baseDN, LDAPv2.SCOPE_SUB, filter.toString(),
-                    attrs, false);
+            if (conn == null) {
+                debug.warning(
+                        "LocalLdapAuthModule.getDN(): lda connection is null");
+                throw (new LoginException("INVALID_USER_NAME")); 
+            } else {
+                results = conn.search(baseDN, LDAPv2.SCOPE_SUB, filter.toString(),
+                        attrs, false);
+            }
         } catch (LDAPException ex) {
             throw (new LoginException(ex.getMessage()));
         } finally {
