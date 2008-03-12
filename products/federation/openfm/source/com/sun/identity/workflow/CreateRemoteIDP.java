@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteIDP.java,v 1.2 2008-02-02 03:32:16 veiming Exp $
+ * $Id: CreateRemoteIDP.java,v 1.3 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,7 @@ public class CreateRemoteIDP
         }
         return getMessage("idp.configured", locale);
     }
-
+    
     private void validateParameters(Map params)
         throws WorkflowException {
         String metadata = getString(params, ParameterKeys.P_META_DATA);

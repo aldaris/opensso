@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportSAML2MetaData.java,v 1.2 2008-01-31 04:08:02 veiming Exp $
+ * $Id: ImportSAML2MetaData.java,v 1.3 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,12 +102,8 @@ public class ImportSAML2MetaData {
         return results;
     }
 
-    private static String importMetaData(
-        SAML2MetaManager metaManager,
-        String realm,
-        String metadata
-    ) throws SAML2MetaException, JAXBException, WorkflowException {
-        String entityID = null;
+    static EntityDescriptorElement getEntityDescriptorElement(String metadata)
+        throws SAML2MetaException, JAXBException, WorkflowException {
         Debug debug = Debug.getInstance("workflow");
         Document doc = XMLUtils.toDOMDocument(metadata, debug);
 
@@ -130,8 +126,19 @@ public class ImportSAML2MetaData {
         workaroundAbstractRoleDescriptor(doc);
         Object obj = SAML2MetaUtils.convertNodeToJAXB(doc);
 
-        if (obj instanceof EntityDescriptorElement) {
-            EntityDescriptorElement descriptor = (EntityDescriptorElement)obj;
+        return (obj instanceof EntityDescriptorElement) ?
+            (EntityDescriptorElement)obj : null;
+    }
+    
+    private static String importMetaData(
+        SAML2MetaManager metaManager,
+        String realm,
+        String metadata
+    ) throws SAML2MetaException, JAXBException, WorkflowException {
+        String entityID = null;       
+        EntityDescriptorElement descriptor = getEntityDescriptorElement(
+            metadata); 
+        if (descriptor != null) {
             entityID = descriptor.getEntityID();
             metaManager.createEntityDescriptor(realm, descriptor);
         }

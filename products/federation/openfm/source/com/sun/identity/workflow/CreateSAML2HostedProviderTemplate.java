@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.10 2008-03-04 23:42:58 hengming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.11 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,6 @@ import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -84,12 +83,20 @@ public class CreateSAML2HostedProviderTemplate {
         String entityID,
         Map mapParams
     )  {
+        return createExtendedDataTemplate(entityID, mapParams, true);
+    }
+    public static String createExtendedDataTemplate(
+        String entityID,
+        Map mapParams,
+        boolean hosted
+    )  {
         String url = getHostURL();
         StringBuffer buff = new StringBuffer();
+        String strHosted = (hosted) ? "1" : "0";
         buff.append(
             "<EntityConfig xmlns=\"urn:sun:fm:SAML:2.0:entityconfig\"\n"+
             "    xmlns:fm=\"urn:sun:fm:SAML:2.0:entityconfig\"\n" +
-            "    hosted=\"1\"\n" +
+            "    hosted=\"" + strHosted + "\"\n" +
             "    entityID=\"" + entityID + "\">\n\n");
 
         String idpAlias = (String)mapParams.get(P_IDP);
@@ -226,7 +233,7 @@ public class CreateSAML2HostedProviderTemplate {
             "        </Attribute>\n" +
             "        <Attribute name=\"" + SAML2Constants.ATTRIBUTE_MAP +
             "\">\n" +
-            "            <Value></Value>\n" +
+            "            <Value />\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
             SAML2Constants.WANT_NAMEID_ENCRYPTED + "\">\n" +

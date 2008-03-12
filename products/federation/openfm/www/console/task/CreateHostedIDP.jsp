@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.3 2008-01-31 04:08:04 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.4 2008-03-12 15:14:09 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -40,7 +40,8 @@
 <script language="javascript" src="../console/js/am.js"></script>
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
-<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
+<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:1000">
+
 <cc:form name="CreateHostedIDP" method="post">
 <jato:hidden name="szCache" />
 <script language="javascript">
@@ -137,6 +138,7 @@
             return;
         }
 
+        document.getElementById('dlg').style.top = '400px';
         fade();
         document.getElementById('dlg').innerHTML = '<center>' + 
             msgGetCOTs + '</center>';
@@ -187,6 +189,8 @@
 
     var msgGetCOTs = "<cc:text name="txtConfigured" defaultValue="configure.provider.get.cots" bundleID="amConsole" escape="false" />";
 
+    var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultValue="configure.provider.missing.attribute.mapping.values" bundleID="amConsole" escape="false" />" + "<p>" + closeBtn + "</p>";
+
     var hasMetaData = 'no';
     var frm = document.forms['CreateHostedIDP'];
     var btn1 = frm.elements['CreateHostedIDP.button1'];
@@ -195,9 +199,11 @@
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var data = '';
+    var selectOptionCache;
     var userLocale = "<% viewBean.getUserLocale().toString(); %>";
 
     function submitPage() {
+        document.getElementById('dlg').style.top = '300px';
         fade();
         if (document.getElementById('cotsection').style.display != 'block') {
             var extended = getExtendedData();
@@ -241,7 +247,8 @@
 
             return "&metadata=" + escape(meta) +
                 "&extendeddata=" + escape(extended) +
-                "&cot=" + escape(cot);
+                "&cot=" + escape(cot) +
+                "&attributemappings=" + escape(getNameAttributeMapping());
         } else {
             var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
             return "&entityId=" +
@@ -251,8 +258,21 @@
             escape(frm.elements['CreateHostedIDP.tfEncKey'].value) +
             "&idpscert=" +
             escape(frm.elements['CreateHostedIDP.tfSigningKey'].value) +
-            "&cot=" + escape(cot);
+            "&cot=" + escape(cot) +
+            "&attributemappings=" + escape(getNameAttributeMapping());
         }
+    }
+
+    function getNameAttributeMapping() {
+        var attrMappings = '';
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            attrMappings += cb.getAttribute("value") + '|';
+        }
+        return attrMappings;
     }
 
     function getCircleOfTrust(realm) {
@@ -332,9 +352,100 @@
         }
     }
 
+    function addAttrMapping() {
+        var name = frm.elements['CreateHostedIDP.tfAttrMappingName'].value;
+        var assertn = frm.elements['CreateHostedIDP.tfAttrMappingAssertion'].value;
+        name = name.replace(/^\s+/, '');
+        name = name.replace(/\s+$/, '');
+        assertn = assertn.replace(/^\s+/, '');
+        assertn = assertn.replace(/\s+$/, '');
+        if ((name == '') || (assertn == '')) {
+            document.getElementById('dlg').style.top = '600px';
+            fade();
+            document.getElementById('dlg').innerHTML = '<center>' + 
+                msgMissingAttrMappingValues  + '</center>';
+        } else {
+            addPropertyRow(name, assertn);
+            frm.elements['CreateHostedIDP.tfAttrMappingName'].value = '';
+            frm.elements['CreateHostedIDP.tfAttrMappingAssertion'].value = '';
+            var userAttrs = frm.elements['CreateHostedIDP.menuUserAttributes'];
+            if (userAttrs.options[0].values != '') {
+                var cache = new Array();
+                for (var i = 0; i < userAttrs.options.length; i++) {
+                    cache[i] = userAttrs.options[i];
+                }
+                userAttrs.options[0] = selectOptionCache;
+                for (var i = 0; i < cache.length; i++) {
+                    userAttrs.options[i+1] = cache[i];
+                }
+            }
+            userAttrs.selectedIndex = 0;
+        }
+    }
+
+    function addPropertyRow(name, assertn) {
+        var table = getActionTable();
+        var tBody = table.getElementsByTagName("TBODY").item(0);
+        var row = document.createElement("TR");
+        var cell1 = document.createElement("TD");
+        var cell2 = document.createElement("TD");
+        var cell3 = document.createElement("TD");
+
+        cell1.setAttribute("align", "center");
+        cell1.setAttribute("valign", "top");
+
+        var cb = document.createElement("input");
+        var textnode1 = document.createTextNode(assertn);
+        var textnode2 = document.createTextNode(name);
+        cb.setAttribute("type", "checkbox");
+        cb.setAttribute("value", assertn + "=" + name);
+        cb.setAttribute("onclick", "toggleTblButtonState('CreateHostedIDP', 'CreateHostedIDP.tblattrmapping', 'tblButton', 'CreateHostedIDP.deleteAttrMappingBtn', this)");
+        cell1.appendChild(cb);
+        cell2.appendChild(textnode1);
+        cell3.appendChild(textnode2);
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
+        tBody.appendChild(row);
+    }
+
+    function getActionTable() {
+        var nodes = document.getElementsByTagName("table");
+        var len = nodes.length;
+        for (var i = 0; i < len; i++) {
+            if (nodes[i].className == 'Tbl') {
+                return nodes[i];
+            }
+        }
+     } 
+
+    function deletePropertyRow() {
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            if (cb.checked) {
+                table.deleteRow(i-1);
+            }
+        }
+        tblBtnCounter['tblButton'] = 0;
+        ccSetButtonDisabled('CreateHostedIDP.deleteAttrMappingBtn', 'CreateHostedIDP', true);
+        return false;
+    }
+
+    function userAttrSelect(menu) {
+        if (menu.options[0].value == '') {
+            selectOptionCache = menu.options[0];
+            menu.options[0] = null;
+        }
+        frm.elements['CreateHostedIDP.tfAttrMappingName'].value = menu.value;
+    }
+
     frm.elements['CreateHostedIDP.tfMetadataFileURL'].style.display = 'none';
     frm.elements['CreateHostedIDP.tfExtendedFileURL'].style.display = 'none';
     getCircleOfTrust('/');
+    getActionTable().deleteRow(2);
 </script>
 
 </jato:useViewBean>

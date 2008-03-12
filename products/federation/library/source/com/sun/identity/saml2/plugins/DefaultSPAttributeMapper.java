@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAttributeMapper.java,v 1.2 2007-08-17 22:48:11 exu Exp $
+ * $Id: DefaultSPAttributeMapper.java,v 1.3 2008-03-12 15:14:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,9 +118,15 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
                 values.addAll(attribute.getAttributeValueString());
                 String attributeName = attribute.getName();
 
-                String localAttribute = (String)configMap.get(attributeName);
-                if(localAttribute != null && localAttribute.length() > 0) {
-                   map.put(localAttribute, values);  
+                if (SAML2Constants.ATTR_WILD_CARD.equals((String)
+                    configMap.get(SAML2Constants.ATTR_WILD_CARD))) {
+                    // this is the including all attributes as it is case
+                    map.put(attributeName, values);
+                } else {
+                    String localAttribute = (String)configMap.get(attributeName);
+                    if (localAttribute != null && localAttribute.length() > 0) {
+                        map.put(localAttribute, values);  
+                    }
                 }
              }
              return map;

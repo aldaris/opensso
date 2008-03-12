@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
-* $Id: AMAdminUtils.java,v 1.4 2008-01-15 01:18:04 asyhuang Exp $
+* $Id: AMAdminUtils.java,v 1.5 2008-03-12 15:14:07 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,15 +28,11 @@ import com.iplanet.jato.view.html.Option;
 import com.iplanet.jato.view.html.OptionList;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
-import com.iplanet.am.util.AdminUtils;
 import com.sun.identity.shared.debug.Debug;
-import com.iplanet.services.util.Crypt;
-import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.SearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.security.ISSecurityPermission;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -58,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.security.AccessController;
+import java.util.TreeSet;
 import netscape.ldap.util.DN;
 
 /* - NEED NOT LOG - */
@@ -725,5 +722,42 @@ public class AMAdminUtils {
             contain = d.equals(dn);
         }
         return contain;
+    }
+
+    public static Set getUserAttributeNames() {
+        Set userAttributeNames = new TreeSet();
+        SSOToken token = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        try {
+            ServiceSchemaManager mgr = new ServiceSchemaManager(
+                Constants.SVC_NAME_USER, token);
+            ServiceSchema ss = mgr.getSchema(SchemaType.USER);
+            Set attributeSchemas = ss.getAttributeSchemas();
+            if ((attributeSchemas != null) && !attributeSchemas.isEmpty()) {
+                for (Iterator i = attributeSchemas.iterator(); i.hasNext();) {
+                    AttributeSchema as = (AttributeSchema) i.next();
+                    String i18nKey = as.getI18NKey();
+                    if ((i18nKey != null) && (i18nKey.length() > 0)) {
+                        AttributeSchema.Type type = as.getType();
+
+                        if (type.equals(AttributeSchema.Type.SINGLE)) {
+                            AttributeSchema.UIType uiType = as.getUIType();
+                            AttributeSchema.Syntax syntax = as.getSyntax();
+
+                            if ((uiType == null) && 
+                                !syntax.equals(AttributeSchema.Syntax.PASSWORD)
+                            ) {
+                                userAttributeNames.add(as.getName());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SSOException e) {
+            debug.error("AMAdminUtil.getUserAttributeNames", e);
+        } catch (SMSException e) {
+            debug.error("AMAdminUtil.getUserAttributeNames", e);
+        }
+        return userAttributeNames;
     }
 }

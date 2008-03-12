@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.24 2008-03-04 23:40:08 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.25 2008-03-12 15:14:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1344,4 +1344,10 @@ public interface SAML2Constants {
      */
     public static final String CHECK_SAML2_CA_STATUS =
         "com.sun.identity.saml2.crl.check.ca";
+
+    /**
+     * Wild card to indicate mapping any attribute name as it is in
+     * the Assertion
+     */
+    public String ATTR_WILD_CARD = "*";
 } 

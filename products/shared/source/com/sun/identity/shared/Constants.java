@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.18 2008-03-04 19:26:04 dillidorai Exp $
+ * $Id: Constants.java,v 1.19 2008-03-12 15:14:10 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -753,6 +753,9 @@ public interface Constants {
     String CRL_CACHE_DIR_SEARCH_ATTR =
         "com.sun.identity.crl.cache.directory.searchattr";        
 
+    /**
+     * Naming service name.
+     */
     String SVC_NAME_NAMING = "iPlanetAMNamingService";
 
     /**
@@ -760,6 +763,11 @@ public interface Constants {
      */
     String CLIENT_CERTIFICATE_ALIAS =
         "com.sun.identity.security.keyStore.clientAlias";        
+
+    /**
+     * User service name.
+     */
+    String SVC_NAME_USER = "iPlanetAMUserService";
 
     /**
      * Certificate Alias name for SSL Client Auth 

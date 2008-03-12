@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.3 2008-01-31 04:08:04 veiming Exp $
+   $Id: CreateRemoteSP.jsp,v 1.4 2008-03-12 15:14:10 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,7 +39,8 @@
 <script language="javascript" src="../console/js/am.js"></script>
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
-<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
+<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:800;">
+
 <cc:form name="CreateRemoteSP" method="post">
 <jato:hidden name="szCache" />
 <script language="javascript">
@@ -131,15 +132,19 @@
     var msgConfigured = '<p>&nbsp;</p><input name="btnOK" type="submit" class="Btn1" value="<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
     var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
 
+var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultValue="configure.provider.missing.attribute.mapping.values" bundleID="amConsole" escape="false" />" + "<p>" + closeBtn + "</p>";
+
     var frm = document.forms['CreateRemoteSP'];
     var btn1 = frm.elements['CreateRemoteSP.button1'];
     btn1.onclick = submitPage;
     var btn2 = frm.elements['CreateRemoteSP.button2'];
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
+    var selectOptionCache;
     var userLocale = "<% viewBean.getUserLocale().toString(); %>";
 
     function submitPage() {
+        document.getElementById('dlg').style.top = '300px';
         fade();
         document.getElementById('dlg').innerHTML = '<center>' + 
             msgConfiguring + '</center>';
@@ -167,8 +172,22 @@
 
         return "&metadata=" + escape(meta) +
             "&realm=" + escape(realm) +
-            "&cot=" + escape(cot);
+            "&cot=" + escape(cot) +
+            "&attributemappings=" + escape(getNameAttributeMapping());
     }
+
+    function getNameAttributeMapping() {
+        var attrMappings = '';
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            attrMappings += cb.getAttribute("value") + '|';
+        }
+        return attrMappings;
+    }
+
 
     function configured() {
         if (ajaxObj.readyState == 4) {
@@ -234,6 +253,96 @@
         }
     }
 
+    function addAttrMapping() {
+        var name = frm.elements['CreateRemoteSP.tfAttrMappingName'].value;
+        var assertn = frm.elements['CreateRemoteSP.tfAttrMappingAssertion'].value;
+        name = name.replace(/^\s+/, '');
+        name = name.replace(/\s+$/, '');
+        assertn = assertn.replace(/^\s+/, '');
+        assertn = assertn.replace(/\s+$/, '');
+        if ((name == '') || (assertn == '')) {
+            document.getElementById('dlg').style.top = '450px';
+            fade();
+            document.getElementById('dlg').innerHTML = '<center>' + 
+                msgMissingAttrMappingValues  + '</center>';
+        } else {
+            addPropertyRow(name, assertn);
+            frm.elements['CreateRemoteSP.tfAttrMappingName'].value = '';
+            frm.elements['CreateRemoteSP.tfAttrMappingAssertion'].value = '';
+            var userAttrs = frm.elements['CreateRemoteSP.menuUserAttributes'];
+            if (userAttrs.options[0].values != '') {
+                var cache = new Array();
+                for (var i = 0; i < userAttrs.options.length; i++) {
+                    cache[i] = userAttrs.options[i];
+                }
+                userAttrs.options[0] = selectOptionCache;
+                for (var i = 0; i < cache.length; i++) {
+                    userAttrs.options[i+1] = cache[i];
+                }
+            }
+            userAttrs.selectedIndex = 0;
+        }
+    }
+
+    function addPropertyRow(name, assertn) {
+        var table = getActionTable();
+        var tBody = table.getElementsByTagName("TBODY").item(0);
+        var row = document.createElement("TR");
+        var cell1 = document.createElement("TD");
+        var cell2 = document.createElement("TD");
+        var cell3 = document.createElement("TD");
+
+        cell1.setAttribute("align", "center");
+        cell1.setAttribute("valign", "top");
+
+        var cb = document.createElement("input");
+        var textnode1 = document.createTextNode(assertn);
+        var textnode2 = document.createTextNode(name);
+        cb.setAttribute("type", "checkbox");
+        cb.setAttribute("value", assertn + "=" + name);
+        cb.setAttribute("onclick", "toggleTblButtonState('CreateRemoteSP', 'CreateRemoteSP.tblattrmapping', 'tblButton', 'CreateRemoteSP.deleteAttrMappingBtn', this)");
+        cell1.appendChild(cb);
+        cell2.appendChild(textnode1);
+        cell3.appendChild(textnode2);
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
+        tBody.appendChild(row);
+    }
+
+    function getActionTable() {
+        var nodes = document.getElementsByTagName("table");
+        var len = nodes.length;
+        for (var i = 0; i < len; i++) {
+            if (nodes[i].className == 'Tbl') {
+                return nodes[i];
+            }
+        }
+     } 
+
+    function deletePropertyRow() {
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            if (cb.checked) {
+                table.deleteRow(i-1);
+            }
+        }
+        tblBtnCounter['tblButton'] = 0;
+        ccSetButtonDisabled('CreateRemoteSP.deleteAttrMappingBtn', 'CreateRemoteSP', true);
+        return false;
+    }
+
+    function userAttrSelect(menu) {
+        if (menu.options[0].value == '') {
+            selectOptionCache = menu.options[0];
+            menu.options[0] = null;
+        }
+        frm.elements['CreateRemoteSP.tfAttrMappingName'].value = menu.value;
+    }
+
     frm.elements['CreateRemoteSP.btnMetadata'].style.display = 'none';
     var presetcot = frm.elements['CreateRemoteSP.tfCOT'].value;
 
@@ -247,6 +356,7 @@
     }
     
 %>
+    getActionTable().deleteRow(2);
 </script>
 
 </jato:useViewBean>

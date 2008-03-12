@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateHostedSP.xml,v 1.2 2008-02-02 03:32:17 veiming Exp $
+   $Id: propertyCreateHostedSP.xml,v 1.3 2008-03-12 15:14:07 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -140,5 +140,50 @@
 	    <attribute name="size" value="25" />
 	</cc>
     </property>
+    </section>
+    <section name="attrmapping" defaultValue="configure.provider.section.attributesmapping">
+        <property span="true">
+            <label name="lblDefaultAttrMapping" defaultValue="configure.provider.attributesmapping.default" labelFor="tfDefaultAttrMapping" />
+            <cc name="tfDefaultAttrMapping" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+                <attribute name="onChange" value="toggleUseDefaultAttrMapping(this);" />
+            </cc>
+        </property>
+
+        <property span="true">
+            <cc name="tblattrmapping"
+                tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
+                <attribute name="title" value="configure.provider.attributesmapping.title" />
+                <attribute name="empty" value="configure.provider.attributesmapping.title.empty" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="selectionType" value="multiple" />
+                <attribute name="selectionJavascript" value="toggleTblButtonState('CreateHostedIDP', 'CreateHostedIDP.tblattrmapping', 'tblButton', 'CreateHostedIDP.deleteAttrMappingBtn', this)"/>
+                <attribute name="showAdvancedSortingIcon" value="false" />
+                <attribute name="showLowerActions" value="false" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showPaginationIcon" value="false" />
+                <attribute name="showSelectionIcons" value="false" />
+                <attribute name="showSelectionSortIcon" value="false" />
+                <attribute name="showSortingRow" value="false" />
+            </cc>
+        </property>
+        <property span="true">
+            <cc name="tfAttrMappingAssertion" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="localizeDisplayFieldValue" value="false" />
+                <attribute name="size" value="50" />
+            </cc>
+            <cc name="tfAttrMappingName" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="localizeDisplayFieldValue" value="false" />
+                <attribute name="size" value="50" />
+            </cc>
+            <cc name="btnAddAttrMapping"
+                tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+                <attribute name="OnClick" value="addAttrMapping(); return false;" />
+                <attribute name="defaultValue" value="configure.provider.attributesmapping.add.button" />
+            </cc>
+            <cc name="menuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+                <attribute name="onChange" value="userAttrSelect(this);" />
+            </cc>
+            <fieldhelp name="helpMenuUserAttributes" defaultValue="configure.provider.help.user.attributes.choices" />
+        </property>
     </section>
 </propertysheet>

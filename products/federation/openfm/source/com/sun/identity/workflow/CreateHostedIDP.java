@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDP.java,v 1.4 2008-02-02 03:32:15 veiming Exp $
+ * $Id: CreateHostedIDP.java,v 1.5 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,13 +25,20 @@
 package com.sun.identity.workflow;
 
 import com.sun.identity.cot.COTException;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Creates Hosted Identity Provider.
@@ -51,53 +58,84 @@ public class CreateHostedIDP
         throws WorkflowException {
         validateParameters(params);
         String metadataFile = getString(params, ParameterKeys.P_META_DATA);
-        boolean hasMetaData = (metadataFile != null) &&
+        boolean hasMetaData = (metadataFile != null) && 
             (metadataFile.trim().length() > 0);
         String metadata = null;
         String extendedData = null;
-            
+
         if (hasMetaData) {
-            String extendedDataFile = getString(params,
+            String extendedDataFile = getString(params, 
                 ParameterKeys.P_EXENDED_DATA);
             metadata = getContent(metadataFile, locale);
             extendedData = getContent(extendedDataFile, locale);
         } else {
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
-            String metaAlias = generateMetaAlias(
-                getString(params, ParameterKeys.P_REALM));
+            String metaAlias = generateMetaAlias(getString(params, 
+                ParameterKeys.P_REALM));
             Map map = new HashMap();
             map.put(CreateSAML2HostedProviderTemplate.P_IDP, metaAlias);
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT,
+            map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT, 
                 getString(params, ParameterKeys.P_IDP_E_CERT));
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP_S_CERT,
+            map.put(CreateSAML2HostedProviderTemplate.P_IDP_S_CERT, 
                 getString(params, ParameterKeys.P_IDP_S_CERT));
-                
+
             try {
-                metadata =
-                    CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityId, map);
-                extendedData =
-                   CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    entityId, map);
+                metadata = CreateSAML2HostedProviderTemplate.
+                    buildMetaDataTemplate(entityId, map);
+                extendedData = CreateSAML2HostedProviderTemplate.
+                    createExtendedDataTemplate(entityId, map);
             } catch (SAML2MetaException e) {
                 return e.getMessage();
             }
         }
-            
-        String[] results = ImportSAML2MetaData.importData(null, metadata,
-            extendedData);
+
+        String[] results = ImportSAML2MetaData.importData(
+            null, metadata, extendedData);
         String realm = results[0];
-            
+        String entityId = results[1];
+
         String cot = getString(params, ParameterKeys.P_COT);
         if ((cot != null) && (cot.length() > 0)) {
             try {
-                String entityId = results[1];
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
             } catch (COTException e) {
                 throw new WorkflowException(e.getMessage());
             }
         }
+        try {
+            List attrMapping = getAttributeMapping(params);
+            if (!attrMapping.isEmpty()) {
+                SAML2MetaManager manager = new SAML2MetaManager();
+                EntityConfigElement config = 
+                    manager.getEntityConfig(realm, entityId);
+                IDPSSOConfigElement ssoConfig = 
+                    manager.getIDPSSOConfig(realm, entityId);
+
+                Map attribConfig = SAML2MetaUtils.getAttributes(ssoConfig);
+                List mappedAttributes = (List)attribConfig.get(
+                    SAML2Constants.ATTRIBUTE_MAP);
+                mappedAttributes.addAll(attrMapping);
+                manager.setEntityConfig(realm, config);
+            }
+        } catch (SAML2MetaException e) {
+            throw new WorkflowException(e.getMessage());
+        }
         return getMessage("idp.configured", locale) + "|||realm=" + realm;
+    }
+    
+    private List getAttributeMapping(Map params) {
+        List list = new ArrayList();
+        String strAttrMapping = getString(params, ParameterKeys.P_ATTR_MAPPING);
+        if ((strAttrMapping != null) && (strAttrMapping.length() > 0)) {
+            StringTokenizer st = new StringTokenizer(strAttrMapping, "|");
+            while (st.hasMoreTokens()) {
+                String s = st.nextToken();
+                if (s.length() > 0) {
+                    list.add(s);
+                }
+            }
+        }
+        return list;
     }
     
     private String generateMetaAlias(String realm)

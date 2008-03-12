@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSPViewBean.java,v 1.3 2008-01-31 04:08:01 veiming Exp $
+ * $Id: CreateRemoteSPViewBean.java,v 1.4 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,13 +27,16 @@ package com.sun.identity.console.task;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.ChildContentDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
+import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
+import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.task.model.TaskModel;
 import com.sun.identity.console.task.model.TaskModelImpl;
+import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCDropDownMenu;
@@ -61,6 +64,7 @@ public class CreateRemoteSPViewBean
     private static final String SELECT_COT  = "radioCOT";
     
     private CCPageTitleModel ptModel;
+    private CCActionTableModel tableModel;
     private AMPropertySheetModel propertySheetModel;
     
     public CreateRemoteSPViewBean() {
@@ -68,6 +72,7 @@ public class CreateRemoteSPViewBean
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
         createPageTitleModel();
         createPropertyModel();
+        createAttrMappingTable();
         registerChildren();
     }
 
@@ -110,6 +115,26 @@ public class CreateRemoteSPViewBean
             "com/sun/identity/console/propertyCreateRemoteSP.xml"));
         propertySheetModel.clear();
     }
+
+    private void createAttrMappingTable() {
+        tableModel = new CCActionTableModel(
+            getClass().getClassLoader().getResourceAsStream(
+            "com/sun/identity/console/attributesMappingTable.xml"));
+        tableModel.setTitleLabel("label.items");
+        tableModel.setActionValue("deleteAttrMappingBtn",
+            "configure.provider.attributesmapping.delete.button");
+        tableModel.setActionValue("NameColumn",
+            "configure.provider.attributesmapping.column.name");
+        tableModel.setActionValue("AssertionColumn",
+            "configure.provider.attributesmapping.column.assertion");
+        propertySheetModel.setModel("tblattrmapping", tableModel);
+    }
+
+    private void populateTableModel() {
+        tableModel.clearAll();
+        tableModel.setValue("NameValue", "");
+        tableModel.setValue("AssertionValue", "");
+    }
     
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
@@ -138,7 +163,15 @@ public class CreateRemoteSPViewBean
         if ((value == null) || value.equals("")){
             setDisplayFieldValue(SELECT_COT, "no");
         }
-        
+        populateTableModel();
+
+        Set userAttrNames = AMAdminUtils.getUserAttributeNames();
+        CCDropDownMenu menuUserAttribute = (CCDropDownMenu) getChild(
+            "menuUserAttributes");
+        OptionList optList = createOptionList(userAttrNames);
+        optList.add(0, "name.attribute.mapping.select", "");
+        menuUserAttribute.setOptions(optList);
+
         try {
             TaskModel model = (TaskModel)getModel();
             Set realms = model.getRealms();
@@ -200,6 +233,12 @@ public class CreateRemoteSPViewBean
         idx = html.indexOf("</table>", idx + 4);
         html = html.substring(0, idx + 8) + "</div></div>" +
             html.substring(idx + 8);
+        
+        idx = html.indexOf("menuUserAttributes");
+        idx = html.lastIndexOf("<select ", idx);
+        html = html.substring(0, idx) + "<br /><br />" +
+            html.substring(idx);
+
         return html;
     }
 }

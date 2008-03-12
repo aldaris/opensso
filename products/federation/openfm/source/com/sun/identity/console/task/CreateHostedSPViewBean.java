@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSPViewBean.java,v 1.2 2008-02-02 03:32:15 veiming Exp $
+ * $Id: CreateHostedSPViewBean.java,v 1.3 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,13 +31,16 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
+import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.task.model.TaskModel;
 import com.sun.identity.console.task.model.TaskModelImpl;
+import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.html.CCCheckBox;
 import com.sun.web.ui.view.html.CCDropDownMenu;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import java.util.Set;
@@ -58,7 +61,6 @@ public class CreateHostedSPViewBean
 
     private static final String ENTITY_ID = "tfEntityId";
     private static final String META_DATA_FILE = "tfMetadataFile";
-    private static final String EXT_DATA_FILE = "tfExtendedFile";
     private static final String ENC_KEY = "tfEncKey";
     private static final String HAS_META_DATA = "radioHasMetaData";
     private static final String SELECT_COT  = "radioCOT";
@@ -67,6 +69,7 @@ public class CreateHostedSPViewBean
     private static final String REALM = "tfRealm";
     
     private CCPageTitleModel ptModel;
+    private CCActionTableModel tableModel;
     private AMPropertySheetModel propertySheetModel;
     
     public CreateHostedSPViewBean() {
@@ -74,6 +77,7 @@ public class CreateHostedSPViewBean
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
         createPageTitleModel();
         createPropertyModel();
+        createAttrMappingTable();
         registerChildren();
     }
 
@@ -116,7 +120,27 @@ public class CreateHostedSPViewBean
             "com/sun/identity/console/propertyCreateHostedSP.xml"));
         propertySheetModel.clear();
     }
-    
+
+    private void createAttrMappingTable () {
+        tableModel = new CCActionTableModel (
+            getClass ().getClassLoader ().getResourceAsStream (
+            "com/sun/identity/console/attributesMappingTable.xml"));
+        tableModel.setTitleLabel ("label.items");
+        tableModel.setActionValue ("deleteAttrMappingBtn",
+            "configure.provider.attributesmapping.delete.button");
+        tableModel.setActionValue ("NameColumn",
+            "configure.provider.attributesmapping.column.name");
+        tableModel.setActionValue ("AssertionColumn",
+            "configure.provider.attributesmapping.column.assertion");
+        propertySheetModel.setModel("tblattrmapping", tableModel);
+    }
+ 
+    private void populateTableModel() {
+        tableModel.clearAll();
+        tableModel.setValue("NameValue", "");
+        tableModel.setValue("AssertionValue", "");
+    }
+
     public String endPropertyAttributesDisplay(
         ChildContentDisplayEvent event
     ) {
@@ -187,6 +211,21 @@ public class CreateHostedSPViewBean
                 html = html.substring(0, idx) +
                     "<span id=\"extendedfilename\"></span>" +
                     html.substring(idx);
+                idx = html.indexOf("menuUserAttributes");
+                idx = html.lastIndexOf("<select ", idx);
+                html = html.substring(0, idx) + "<br /><br />" +
+                    html.substring(idx);
+                
+                idx = html.indexOf("<div class=\"TblMgn\">");
+                html = html.substring(0, idx+4) + 
+                    " id=\"tblAttrMappingDiv\" style=\"display:none\"" +
+                    html.substring(idx+4);
+                
+                idx = html.indexOf("tfAttrMappingAssertion");
+                idx = html.lastIndexOf("<div ", idx);
+                html = html.substring(0, idx+4) + 
+                    " id=\"tblAttrMappingDivEx\" style=\"display:none\"" +
+                    html.substring(idx+4);
             }
         }
         return html;
@@ -221,6 +260,17 @@ public class CreateHostedSPViewBean
         
         setDisplayFieldValue(ENTITY_ID,
             SystemProperties.getServerInstanceName());
+        populateTableModel();
+        
+        Set userAttrNames = AMAdminUtils.getUserAttributeNames();
+        CCDropDownMenu menuUserAttribute = (CCDropDownMenu)getChild(
+            "menuUserAttributes");
+        OptionList optList = createOptionList(userAttrNames);
+        optList.add(0, "name.attribute.mapping.select", "");
+        menuUserAttribute.setOptions(optList);
+        
+        CCCheckBox cbAttrDefault = (CCCheckBox)getChild("tfDefaultAttrMapping");
+        cbAttrDefault.setChecked(true);
 
         try {
             TaskModel model = (TaskModel)getModel();

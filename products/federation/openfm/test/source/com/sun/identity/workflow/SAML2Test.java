@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.1 2008-01-17 06:36:25 veiming Exp $
+ * $Id: SAML2Test.java,v 1.2 2008-03-12 15:14:09 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,6 +88,8 @@ public class SAML2Test extends TestBase {
         map.put(ParameterKeys.P_META_DATA, meta);
         map.put(ParameterKeys.P_EXENDED_DATA, extended);
         map.put(ParameterKeys.P_COT, "cottest");
+        map.put(ParameterKeys.P_ATTR_MAPPING,
+            "samplesasset1=localattr1|samplesasset2=localattr2");
         task.execute(Locale.getDefault(), map);
     } 
 

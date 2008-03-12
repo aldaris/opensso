@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.2 2008-02-02 03:32:16 veiming Exp $
+   $Id: CreateHostedSP.jsp,v 1.3 2008-03-12 15:14:10 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -40,7 +40,7 @@
 <script language="javascript" src="../console/js/am.js"></script>
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
-<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
+<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:1000;">
 <cc:form name="CreateHostedSP" method="post">
 <jato:hidden name="szCache" />
 <script language="javascript">
@@ -137,6 +137,7 @@
             return;
         }
 
+        document.getElementById('dlg').style.top = '400px';
         fade();
         document.getElementById('dlg').innerHTML = '<center>' + 
             msgGetCOTs + '</center>';
@@ -187,6 +188,8 @@
 
     var msgGetCOTs = "<cc:text name="txtConfigured" defaultValue="configure.provider.get.cots" bundleID="amConsole" escape="false" />";
 
+    var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultValue="configure.provider.missing.attribute.mapping.values" bundleID="amConsole" escape="false" />" + "<p>" + closeBtn + "</p>";
+
     var hasMetaData = 'no';
     var frm = document.forms['CreateHostedSP'];
     var btn1 = frm.elements['CreateHostedSP.button1'];
@@ -195,9 +198,11 @@
     btn2.onclick = cancelOp;
     var ajaxObj = getXmlHttpRequestObject();
     var data = '';
+    var selectOptionCache;
     var userLocale = "<% viewBean.getUserLocale().toString(); %>";
 
     function submitPage() {
+        document.getElementById('dlg').style.top = '300px';
         fade();
         if (document.getElementById('cotsection').style.display != 'block') {
             var extended = getExtendedData();
@@ -229,6 +234,9 @@
         } else {
             cot = frm.elements['CreateHostedSP.tfCOT'].value;
         }
+        var defAttrMapping = frm.elements['CreateHostedSP.tfDefaultAttrMapping'];
+        var defaultAttrMapping = (defAttrMapping.checked == true) ? "true" : 
+            "false";
         if (hasMetaData == "yes") {
             var metaRadio = getRadioVal(frm, 'CreateHostedSP.radioMeta');
             var meta = (metaRadio == 'url') ?
@@ -241,7 +249,9 @@
 
             return "&metadata=" + escape(meta) +
                 "&extendeddata=" + escape(extended) +
-                "&cot=" + escape(cot);
+                "&cot=" + escape(cot) +
+                "&attributemappings=" + escape(getNameAttributeMapping()) +
+                "&defaultattributemappings=" + defaultAttrMapping;
         } else {
             var realm = frm.elements['CreateHostedSP.tfRealm'].value;
             return "&entityId=" +
@@ -249,8 +259,27 @@
             "&realm=" + escape(realm) +
             "&specert=" +
             escape(frm.elements['CreateHostedSP.tfEncKey'].value) +
-            "&cot=" + escape(cot);
+            "&cot=" + escape(cot) +
+            "&attributemappings=" + escape(getNameAttributeMapping()) +
+            "&defaultattributemappings=" + defaultAttrMapping;
         }
+    }
+
+    function getNameAttributeMapping() {
+        var defAttrMapping = frm.elements['CreateHostedSP.tfDefaultAttrMapping'];
+        if (defAttrMapping.checked == true) {
+            return '';
+        }
+
+        var attrMappings = '';
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            attrMappings += cb.getAttribute("value") + '|';
+        }
+        return attrMappings;
     }
 
     function getCircleOfTrust(realm) {
@@ -330,9 +359,112 @@
         }
     }
 
+    function addAttrMapping() {
+        var name = frm.elements['CreateHostedSP.tfAttrMappingName'].value;
+        var assertn = frm.elements['CreateHostedSP.tfAttrMappingAssertion'].value;
+        name = name.replace(/^\s+/, '');
+        name = name.replace(/\s+$/, '');
+        assertn = assertn.replace(/^\s+/, '');
+        assertn = assertn.replace(/\s+$/, '');
+        if ((name == '') || (assertn == '')) {
+            document.getElementById('dlg').style.top = '600px';
+            fade();
+            document.getElementById('dlg').innerHTML = '<center>' +
+                msgMissingAttrMappingValues  + '</center>';
+        } else {
+            addPropertyRow(name, assertn);
+            frm.elements['CreateHostedSP.tfAttrMappingName'].value = '';
+            frm.elements['CreateHostedSP.tfAttrMappingAssertion'].value = '';
+            var userAttrs = frm.elements['CreateHostedSP.menuUserAttributes'];
+            if (userAttrs.options[0].values != '') {
+                var cache = new Array();
+                for (var i = 0; i < userAttrs.options.length; i++) {
+                    cache[i] = userAttrs.options[i];
+                }
+                userAttrs.options[0] = selectOptionCache;
+                for (var i = 0; i < cache.length; i++) {
+                    userAttrs.options[i+1] = cache[i];
+                }
+            }
+            userAttrs.selectedIndex = 0;
+        }
+    }
+
+    function addPropertyRow(name, assertn) {
+        var table = getActionTable();
+        var tBody = table.getElementsByTagName("TBODY").item(0);
+        var row = document.createElement("TR");
+        var cell1 = document.createElement("TD");
+        var cell2 = document.createElement("TD");
+        var cell3 = document.createElement("TD");
+
+        cell1.setAttribute("align", "center");
+        cell1.setAttribute("valign", "top");
+
+        var cb = document.createElement("input");
+        var textnode1 = document.createTextNode(assertn);
+        var textnode2 = document.createTextNode(name);
+        cb.setAttribute("type", "checkbox");
+        cb.setAttribute("value", assertn + "=" + name);
+        cb.setAttribute("onclick", "toggleTblButtonState('CreateHostedSP', 'CreateHostedSP.tblattrmapping', 'tblButton', 'CreateHostedSP.deleteAttrMappingBtn', this)");
+        cell1.appendChild(cb);
+        cell2.appendChild(textnode1);
+        cell3.appendChild(textnode2);
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
+        tBody.appendChild(row);
+    }
+
+    function getActionTable() {
+        var nodes = document.getElementsByTagName("table");
+        var len = nodes.length;
+        for (var i = 0; i < len; i++) {
+            if (nodes[i].className == 'Tbl') {
+                return nodes[i];
+            }
+        }
+     } 
+
+    function deletePropertyRow() {
+        var table = getActionTable();
+        var rows = table.getElementsByTagName('TR');
+        for (var i = rows.length-1; i >=3; --i) {
+            var inputs = rows[i].getElementsByTagName('input');
+            var cb = inputs[0];
+            if (cb.checked) {
+                table.deleteRow(i-1);
+            }
+        }
+        tblBtnCounter['tblButton'] = 0;
+        ccSetButtonDisabled('CreateHostedSP.deleteAttrMappingBtn', 'CreateHostedSP', true);
+        return false;
+    }
+
+    function userAttrSelect(menu) {
+        if (menu.options[0].value == '') {
+            selectOptionCache = menu.options[0];
+            menu.options[0] = null;
+        }
+        frm.elements['CreateHostedSP.tfAttrMappingName'].value = menu.value;
+    }
+
+    function toggleUseDefaultAttrMapping(cb) {
+        var divElt = document.getElementById("tblAttrMappingDiv");
+        var divEltEx = document.getElementById("tblAttrMappingDivEx");
+        if (cb.checked == true) {
+            divElt.style.display = 'none';
+            divEltEx.style.display = 'none';
+        } else {
+            divElt.style.display = '';
+            divEltEx.style.display = '';
+        }
+    }
+
     frm.elements['CreateHostedSP.tfMetadataFileURL'].style.display = 'none';
     frm.elements['CreateHostedSP.tfExtendedFileURL'].style.display = 'none';
     getCircleOfTrust('/');
+    getActionTable().deleteRow(2);
 </script>
 
 </jato:useViewBean>
