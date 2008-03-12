@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.10 2008-02-29 00:26:01 exu Exp $
+ * $Id: FMSessionProvider.java,v 1.11 2008-03-12 16:51:07 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -422,7 +422,10 @@ public class FMSessionProvider implements SessionProvider {
     public Object getSession(String sessionID)
         throws SessionException {
         try {
-            return SSOTokenManager.getInstance().createSSOToken(sessionID);
+            SSOToken session = SSOTokenManager.getInstance().createSSOToken(
+                sessionID);
+            SSOTokenManager.getInstance().refreshSession(session);
+            return session;
         } catch (Throwable e) {
             throw new SessionException(e);
         }
@@ -439,7 +442,10 @@ public class FMSessionProvider implements SessionProvider {
     public Object getSession(HttpServletRequest request)
         throws SessionException {
         try {
-            return SSOTokenManager.getInstance().createSSOToken(request);
+            SSOToken session = SSOTokenManager.getInstance().createSSOToken(
+                request);
+            SSOTokenManager.getInstance().refreshSession(session);
+            return session;
         } catch (Throwable e) {
             throw new SessionException(e);
         }
