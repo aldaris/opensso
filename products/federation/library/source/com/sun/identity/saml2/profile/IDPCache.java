@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.10 2008-02-04 05:01:54 hengming Exp $
+ * $Id: IDPCache.java,v 1.11 2008-03-12 16:54:07 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,9 @@
 package com.sun.identity.saml2.profile;
 
 import com.sun.identity.common.PeriodicCleanUpMap;
+import com.sun.identity.saml2.common.SAML2Utils;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Set;
@@ -232,4 +234,43 @@ public class IDPCache {
       *         spEntityID and idpEntityID. 
       */
     public static Hashtable logoutResponseCache = new Hashtable();  
+
+    /**
+     * Hashtable saves AuthnContextClassRef to auth schems mapping
+     * key  : hostEntityID + "|" + realmName
+     * value: Map containing AuthnContext class ref as Key and 
+     *            Set of auth schemes as value.
+     */
+    public static Hashtable classRefSchemesHash = new Hashtable();
+
+    /**
+     * Hashtable saves AuthnContextClassRef to AuthLevel mapping
+     * key  : hostEntityID + "|" + realmName
+     * value: Map containing AuthnContext class ref as Key and 
+     *            authLevel as value.
+     */
+    public static Hashtable classRefLevelHash = new Hashtable();
+
+    /**
+     * Hashtable saves AuthLevel to AuthnContextClassRef mapping
+     * key  : hostEntityID + "|" + realmName
+     * value: String default AuthnContext Class Ref.
+     */
+    public static Hashtable defaultClassRefHash = new Hashtable();
+
+    /**
+     * Clears the authn context mapping hash tables.
+     * @param realmName Organization or Realm
+     */
+    public static void clear(String realmName) {
+        if (classRefSchemesHash != null && !classRefSchemesHash.isEmpty()) {
+            classRefSchemesHash.clear();
+        }
+        if (classRefLevelHash != null && !classRefLevelHash.isEmpty()) {
+            classRefLevelHash.clear();
+        }
+        if (defaultClassRefHash != null && !defaultClassRefHash.isEmpty()) {
+            defaultClassRefHash.clear();
+        }
+    }
 }

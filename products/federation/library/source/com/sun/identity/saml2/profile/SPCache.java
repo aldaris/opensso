@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.10 2008-03-04 01:20:27 exu Exp $
+ * $Id: SPCache.java,v 1.11 2008-03-12 16:54:07 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -172,39 +172,6 @@ public class SPCache {
      * @param realmName Organization or Realm
      */
     public static void clear(String realmName) {
-        boolean isDefault = isDefaultOrg(realmName);
-        if ((authCtxObjHash != null) && (!authCtxObjHash.isEmpty())) {
-            Enumeration keys = authCtxObjHash.keys();
-            while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
-                if (key.indexOf("|"+realmName) != -1) {
-                        authCtxObjHash.remove(key);
-                }
-                if (isDefault && key.endsWith("|/")) {
-                    authCtxObjHash.remove(key);
-                }
-            }
-        }
-        if ((authContextHash != null) && (!authContextHash.isEmpty())) {
-            Enumeration keys = authContextHash.keys();
-            while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
-                if (key.indexOf("|"+realmName) != -1) {
-                        authContextHash.remove(key);
-                }
-                if (isDefault && key.endsWith("|/")) {
-                    authContextHash.remove(key);
-                }
-            }
-        }
-
-    }
-
-
-    /**
-     * Clears the auth context object hash table.
-     */
-    public static void clear() {
         if ((authCtxObjHash != null) &&
                         (!authCtxObjHash.isEmpty())) {
             authCtxObjHash.clear();
@@ -214,16 +181,4 @@ public class SPCache {
             authContextHash.clear();
         }
    }
-
-
-    /**
-     * Returns <code>true</code> if the realm is root.
-     *
-     * @param orgName the organization name
-     * @return <code>true</code> if realm is root.
-     */
-    public static boolean isDefaultOrg(String orgName) {
-        return (orgName !=null) || orgName.equals("/");
-    }
-
 }

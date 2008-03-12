@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAuthnContextMapper.java,v 1.4 2008-02-29 00:22:04 exu Exp $
+ * $Id: DefaultIDPAuthnContextMapper.java,v 1.5 2008-03-12 16:54:07 exu Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,12 +34,14 @@ import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.IDPSSOUtil;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,25 +86,10 @@ public class DefaultIDPAuthnContextMapper
         String classMethod = 
             "DefaultIDPAuthnContextMapper.getIDPAuthnContextInfo: ";
 
-        Map attrs = null;
-        Set authTypeAndValues = null;
-        IDPAuthnContextInfo info = null;
         RequestedAuthnContext requestedAuthnContext = null;
-        AuthnContext authnContext = null;
         List requestedClassRefs = null;
         String requestedClassRef = null;
-        List classRefs = null;
-        String classRef = null;
 
-        try {
-            IDPSSOConfigElement config = metaManager.getIDPSSOConfig(
-                                          realm, idpEntityID);
-            attrs = SAML2MetaUtils.getAttributes(config);
-        } catch (SAML2MetaException sme) {
-            SAML2Utils.debug.error(classMethod +
-                   "get IDPSSOConfig failed:", sme);
-            throw new SAML2Exception(sme.getMessage());
-        }
         if (authnRequest != null) {
             requestedAuthnContext = authnRequest.getRequestedAuthnContext();
             if (requestedAuthnContext != null) {
@@ -115,87 +102,46 @@ public class DefaultIDPAuthnContextMapper
                 }
             }
         }   
-        List values = (List) attrs.get(
-                    SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING);
-        if ((values != null) && (values.size() != 0)) {
-            String defaultValue = null;
-            if (requestedClassRef != null) {
-                for (int i = 0; i < values.size(); i++) {
-                    String value = ((String) values.get(i)).trim();
-                    if (SAML2Utils.debug.messageEnabled()) {
-                        SAML2Utils.debug.message(classMethod +
-                            "configured mapping=" + value); 
-                    }
-                    if (value.endsWith("|"+ DEFAULT)) {
-                        value = value.substring(
-                            0, value.length()-DEFAULT.length());
-                        defaultValue = value;
-                    }
-                    StringTokenizer st = new StringTokenizer(value, "|");
-                    if (st.hasMoreTokens()) {
-                        // the first element is an AuthnContextClassRef 
-                        classRef = ((String)st.nextToken()).trim();
-                        if (classRef.equals(requestedClassRef)) {
-                            authTypeAndValues = new HashSet();
-                            if (st.hasMoreTokens()) {
-                                String level = st.nextToken().trim();
-                                // check if level is realy authLevel
-                                if (level.indexOf("=") != -1) {
-                                    authTypeAndValues.add(level);
-                                }
-                                
-                                while (st.hasMoreTokens()) {
-                                    String authTypeAndValue = 
-                                        st.nextToken().trim();
-                                    if (authTypeAndValue.length() != 0) {
-                                        authTypeAndValues.add(authTypeAndValue);
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                    } 
-                }
+        Map classRefSchemesMap = null;
+        if (IDPCache.classRefSchemesHash != null) {
+            classRefSchemesMap = (Map) IDPCache.classRefSchemesHash.get(
+                idpEntityID + "|" + realm);
+        }
+        if (classRefSchemesMap == null || classRefSchemesMap.isEmpty()) {
+            updateAuthnContextMapping(realm, idpEntityID);
+            classRefSchemesMap = (Map) IDPCache.classRefSchemesHash.get(
+                idpEntityID + "|" + realm);
+            if (classRefSchemesMap == null) {
+                classRefSchemesMap = new HashMap();
             }
-            if (authTypeAndValues == null) {
-                // no matching authnContextClassRef found in config, or
-                // no valid requested authn class ref, use the default
-                if (defaultValue != null) {
-                    StringTokenizer st = new StringTokenizer(defaultValue, "|");
-                    if (st.hasMoreTokens()) {
-                        // the first element is an AuthnContextClassRef 
-                        classRef = ((String)st.nextToken()).trim();
-                        authTypeAndValues = new HashSet();
-                        if (st.hasMoreTokens()) {
-                            String level = st.nextToken().trim();
-                            // check if level is realy authLevel
-                            if (level.indexOf("=") != -1) {
-                                authTypeAndValues.add(level);
-                            }
-                            while (st.hasMoreTokens()) {
-                                String authTypeAndValue = st.nextToken().trim();
-                                if (authTypeAndValue.length() != 0) {
-                                    authTypeAndValues.add(authTypeAndValue);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    classRef = 
-                        SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT;
-                }
-            }
-            authnContext = 
-                AssertionFactory.getInstance().createAuthnContext();
-            authnContext.setAuthnContextClassRef(classRef);
-            info = new IDPAuthnContextInfo(authnContext, authTypeAndValues); 
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod +
-                    "requested AuthnContextClassRef=" + requestedClassRef + 
-                    "\nreturned AuthnContextClassRef=" + classRef + 
-                    "\nauthTypeAndValues=" + authTypeAndValues);
-            }
-        } 
+        }
+        Set authTypeAndValues = null;
+        String classRef = null;
+        if (requestedClassRef != null) {
+            classRef = requestedClassRef;
+            authTypeAndValues = (Set) classRefSchemesMap.get(requestedClassRef);
+        }
+        if (authTypeAndValues == null) {
+            // no matching authnContextClassRef found in config, or
+            // no valid requested authn class ref, use the default
+            authTypeAndValues = (Set) classRefSchemesMap.get(DEFAULT);
+            classRef = (String) IDPCache.defaultClassRefHash.get(
+                idpEntityID + "|" + realm);
+        }
+        if (classRef == null) {
+            classRef = SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT;
+        }
+        AuthnContext authnContext = 
+            AssertionFactory.getInstance().createAuthnContext();
+        authnContext.setAuthnContextClassRef(classRef);
+        IDPAuthnContextInfo info = new IDPAuthnContextInfo(
+            authnContext, authTypeAndValues); 
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(classMethod +
+                "requested AuthnContextClassRef=" + requestedClassRef + 
+                "\nreturned AuthnContextClassRef=" + classRef + 
+                "\nauthTypeAndValues=" + authTypeAndValues);
+        }
         return info;
     } 
 
@@ -215,15 +161,51 @@ public class DefaultIDPAuthnContextMapper
     {
         String classRef = null;
         
-        Map levelAcClassRefMap = getLevelACClassRefMap(realm, idpEntityID);
+        Map classRefLevelMap = null;
+        if (IDPCache.classRefLevelHash != null) {
+            classRefLevelMap = (Map) IDPCache.classRefLevelHash.get(
+                idpEntityID + "|" + realm);
+        }
+        if (classRefLevelMap == null || classRefLevelMap.isEmpty()) {
+            updateAuthnContextMapping(realm, idpEntityID);
+            classRefLevelMap = (Map) IDPCache.classRefLevelHash.get(
+                idpEntityID + "|" + realm);
+            if (classRefLevelMap == null) {
+                classRefLevelMap = new HashMap();
+            }
+        }
         if ((authLevel != null) && (authLevel.length() != 0)) {
-            classRef = (String)levelAcClassRefMap.get(authLevel);
+            try {
+                int level = Integer.parseInt(authLevel);
+                Iterator iter = classRefLevelMap.keySet().iterator();
+                while (iter.hasNext()) {
+                    String key = (String) iter.next();
+                    Integer value = (Integer) classRefLevelMap.get(key);
+                    if (value != null && (level == value.intValue())) {
+                        classRef = key;
+                        break;
+                    }
+                }
+            } catch (NumberFormatException ne) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(
+                        "DefaultIDPAuthnContextMapper.getAuthnContextFromLevel:"
+                        + " input authLevel is not valid.", ne);
+                }
+            }
         }
         if (classRef == null) {
-            classRef = (String)levelAcClassRefMap.get(DEFAULT);
+            classRef = (String)IDPCache.defaultClassRefHash.get(
+                idpEntityID + "|" + realm);
             if (classRef == null) {
                 classRef = SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT;
             }
+        }
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(
+                "DefaultIDPAuthnContext.getClassRefFromLevel: authLevel=" +
+                authLevel + ", classRef=" + classRef +
+                ", classRefLevelMap=" + classRefLevelMap);
         }
         AuthnContext result = 
             AssertionFactory.getInstance().createAuthnContext();
@@ -261,7 +243,19 @@ public class DefaultIDPAuthnContextMapper
             return false;
         }
 
-        Map acClassRefLevelMap = getACClassRefLevelMap(realm, idpEntityID);
+        Map acClassRefLevelMap = null;
+        if (IDPCache.classRefLevelHash != null) {
+            acClassRefLevelMap = (Map) IDPCache.classRefLevelHash.get(
+                idpEntityID + "|" + realm);
+        }
+        if (acClassRefLevelMap == null || acClassRefLevelMap.isEmpty()) {
+            updateAuthnContextMapping(realm, idpEntityID);
+            acClassRefLevelMap = (Map) IDPCache.classRefLevelHash.get(
+                idpEntityID + "|" + realm);
+            if (acClassRefLevelMap == null) {
+                acClassRefLevelMap = new HashMap();
+            }
+        }
         Integer levelInt = (Integer)acClassRefLevelMap.get(acClassRef);
         int level = (levelInt == null) ? 0 : levelInt.intValue();
 
@@ -338,13 +332,14 @@ public class DefaultIDPAuthnContextMapper
         return false;
     }
 
-    private Map getACClassRefLevelMap(String realm, String idpEntityID) {
+    private void updateAuthnContextMapping(String realm, String idpEntityID) {
 
         List values = SAML2Utils.getAllAttributeValueFromSSOConfig(realm,
             idpEntityID, SAML2Constants.IDP_ROLE,
             SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING);
-
-        Map resultMap = new HashMap();
+        Map classRefLevelMap = new LinkedHashMap();
+        String defaultClassRef = null;
+        Map classRefSchemesMap = new LinkedHashMap();
 
         if ((values != null) && (values.size() != 0)) {
             for (int i = 0; i < values.size(); i++) {
@@ -359,64 +354,58 @@ public class DefaultIDPAuthnContextMapper
 
                 if (st.hasMoreTokens()) {
                     String classRef = st.nextToken().trim();
+                    Set authTypeAndValues = new HashSet();
                     if (st.hasMoreTokens()) {
                         String level = st.nextToken();
-                        try {
-                            Integer authLevel = new Integer(level);
-                            resultMap.put(classRef, authLevel);
-                            if (isDefault && !resultMap.containsKey(DEFAULT)) {
-                                resultMap.put(DEFAULT, authLevel);
+                        if (level.indexOf("=") == -1) {
+                            try {
+                                Integer authLevel = new Integer(level);
+                                classRefLevelMap.put(classRef, authLevel);
+                                if (isDefault && 
+                                    !classRefLevelMap.containsKey(DEFAULT)) 
+                                {
+                                    classRefLevelMap.put(DEFAULT, authLevel);
+                                    defaultClassRef = classRef;
+                                }
+                            } catch (NumberFormatException nfe) {
+                                if (SAML2Utils.debug.messageEnabled()) {
+                                    SAML2Utils.debug.message(
+                                       "DefaultIDPAuthnContextMapper." +
+                                       "getACClassRefLevelMap:", nfe);
+                                }
                             }
-                        } catch (NumberFormatException nfe) {
-                            if (SAML2Utils.debug.messageEnabled()) {
-                                SAML2Utils.debug.message(
-                                   "DefaultIDPAuthnContextMapper." +
-                                   "getACClassRefLevelMap:", nfe);
+                        } else {
+                            // this is not a level, but a auth scheme def.
+                            if (level.trim().length() != 0) {
+                                authTypeAndValues.add(level);
                             }
                         }
+                        while (st.hasMoreTokens()) {
+                            String authTypeAndValue = st.nextToken().trim();
+                            if (authTypeAndValue.length() != 0) {
+                                authTypeAndValues.add(authTypeAndValue);
+                            }
+                        }
+                    }
+                    classRefSchemesMap.put(classRef, authTypeAndValues);
+                    if (isDefault) {
+                        classRefSchemesMap.put(DEFAULT, authTypeAndValues);
                     }
                 }
             }
         }
 
-        return resultMap;
-    }
+        String key = idpEntityID + "|" + realm;
 
-    private Map getLevelACClassRefMap(String realm, String idpEntityID) {
-
-        List values = SAML2Utils.getAllAttributeValueFromSSOConfig(realm,
-            idpEntityID, SAML2Constants.IDP_ROLE,
-            SAML2Constants.IDP_AUTHNCONTEXT_CLASSREF_MAPPING);
-
-        Map resultMap = new HashMap();
-
-        if ((values != null) && (values.size() != 0)) {
-            for (int i = 0; i < values.size(); i++) {
-                boolean isDefault = false;
-                String value = ((String) values.get(i)).trim();
-                if (value.endsWith("|" + DEFAULT)) {
-                    value = value.substring(0, value.length()-DEFAULT.length());
-                    isDefault = true;
-                }
-
-                StringTokenizer st = new StringTokenizer(value, "|");
-                String classRef = null;
-                String authLevel = null;
-                if (st.hasMoreTokens()) {
-                    classRef = st.nextToken().trim();
-                    if (st.hasMoreTokens()) {
-                        String secondToken = st.nextToken().trim();
-                        if (secondToken.indexOf("=") == -1) {
-                            resultMap.put(secondToken, classRef);
-                        }
-                    }
-                    if (isDefault && !resultMap.containsKey(DEFAULT)) {
-                        resultMap.put(DEFAULT, classRef);
-                    }
-                }
-            }
+        if (!classRefSchemesMap.isEmpty()) {
+            IDPCache.classRefSchemesHash.put(key, classRefSchemesMap);
         }
-
-        return resultMap;
+        if (!classRefLevelMap.isEmpty()) {
+            IDPCache.classRefLevelHash.put(key, classRefLevelMap);
+        }
+        if (defaultClassRef != null) {
+            IDPCache.defaultClassRefHash.put(key, defaultClassRef);
+        }
     }
+
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaServiceListener.java,v 1.2 2007-08-15 01:34:10 qcheng Exp $
+ * $Id: SAML2MetaServiceListener.java,v 1.3 2008-03-12 16:54:07 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 package com.sun.identity.saml2.meta;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.plugin.configuration.ConfigurationListener;
 import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
@@ -55,10 +56,8 @@ class SAML2MetaServiceListener implements ConfigurationListener
                 e.getComponentName());
         }
         SAML2MetaCache.clear();
-        if (e.getRealm() == null) {
-            SPCache.clear();
-        } else {
-            SPCache.clear(e.getRealm());
-        }
+        String realm = e.getRealm();
+        SPCache.clear(realm);
+        IDPCache.clear(realm);
     }
 }

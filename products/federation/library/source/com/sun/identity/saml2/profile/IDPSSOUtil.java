@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.23 2008-03-06 23:03:22 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.24 2008-03-12 16:54:07 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1244,6 +1244,7 @@ public class IDPSSOUtil {
                 }
             } else {
                 remoteEntityID = recipientEntityID;
+                spNameQualifier = recipientEntityID;
             }
         }
     
