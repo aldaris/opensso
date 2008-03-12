@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.36 2008-02-25 23:29:09 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.37 2008-03-12 00:14:24 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1215,11 +1215,7 @@ public class LDAPv3Repo extends IdRepo {
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: removeListener called ");
         }
-
-        synchronized (listOfPS) {
-        // keep a count with eventsMgr.ldapServerName of number of listener.
-        // when the count reaches 0. remove the ldapServerName entry.
-        // see if we already have an event service for this server.
+        HashSet tobeRemoveListener = new HashSet();
         if (ldapServerName == null) {
             ldapServerName = getLDAPServerName(myConfigMap);
         }
@@ -1227,7 +1223,13 @@ public class LDAPv3Repo extends IdRepo {
             debug.error("LDAPv3Repo: removeListener failed. missing ldap " +
                     "server name.");
         }
-        LDAPv3EventService eventService = (LDAPv3EventService) _eventsMgr
+        LDAPv3EventService eventService;
+
+        synchronized (listOfPS) {
+        // keep a count with eventsMgr.ldapServerName of number of listener.
+        // when the count reaches 0. remove the ldapServerName entry.
+        // see if we already have an event service for this server.
+        eventService = (LDAPv3EventService) _eventsMgr
                 .get(ldapServerName);
         if (eventService != null) {
             if (hasListener) {
@@ -1243,7 +1245,7 @@ public class LDAPv3Repo extends IdRepo {
                     listOfDS.remove(this);
                     if (listOfDS.isEmpty()) { 
                         listOfPS.remove(psIdKey);
-                        eventService.removeListener(psIdKey);
+                        tobeRemoveListener.add(psIdKey);
                         Integer requestNum = (Integer) _numRequest.get(ldapServerName);
                         if (requestNum != null) {
                             int requestInt = requestNum.intValue();
@@ -1270,6 +1272,12 @@ public class LDAPv3Repo extends IdRepo {
             }
         }
         }
+        Iterator iter = tobeRemoveListener.iterator();
+        while (iter.hasNext()) {
+            String psIdKeyToRemove = (String) iter.next();
+            eventService.removeListener(psIdKeyToRemove);
+        }
+
     }
 
 
