@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.6 2008-03-08 03:03:19 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.7 2008-03-12 22:30:49 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import java.security.cert.X509Certificate;
 import org.w3c.dom.Element;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.wss.sts.STSUtils;
 import com.sun.identity.wss.sts.STSClientUserToken;
@@ -85,9 +86,9 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
     public Map<QName, List<String>> getClaimedAttributes(Subject subject, 
             String appliesTo, String tokenType, Claims claims) {
 
-        String subjectName = getAuthenticatedSubject(subject);
+        String subjectName = getSubjectNameFromCustomToken(subject);
         if(subjectName == null) {
-           subjectName = getSubjectNameFromCustomToken(subject);
+           subjectName = getAuthenticatedSubject(subject);
            if(STSUtils.debug.messageEnabled()) {
               STSUtils.debug.message("FAMSTSAttributeProvider.getClaimed" +
               "Attributes: subject is null from authenticated subject");
@@ -141,7 +142,10 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         }
 
         Set tmp = (Set)agentConfig.get(ATTR_NAMESPACE);
-        String namespace = (String)tmp.iterator().next();
+        String namespace = null;
+        if (tmp != null && !tmp.isEmpty()) {
+            namespace = (String)tmp.iterator().next();
+        }
         if(namespace == null) {
            if(STSUtils.debug.messageEnabled()) {
               STSUtils.debug.message("FAMSTSAttributeProvider.getClaimed" +
@@ -187,7 +191,9 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         }
 
         try {
-            Class nameIDImplClass = Class.forName(nameIDImpl);
+            Class nameIDImplClass = 
+                (Thread.currentThread().getContextClassLoader()).
+                loadClass(nameIDImpl);
             NameIdentifierMapper niMapper = 
                     (NameIdentifierMapper)nameIDImplClass.newInstance(); 
             return niMapper.getUserPsuedoName(userName);
@@ -284,15 +290,19 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
     private String getSubjectNameFromCustomToken(Subject subject) {
         Iterator iter = subject.getPublicCredentials().iterator();
         while(iter.hasNext()) {
-            Object  object = iter.next();
+            Object object = iter.next();
             if(object instanceof Element) {
                Element credential = (Element)object;
                if(credential.getLocalName().equals(FAM_TOKEN)) {
                   try {
-                      ssoToken = (SSOToken)credential;
                       STSClientUserToken userToken =
                           new STSClientUserToken(credential);
                       String tokenId = userToken.getTokenId();
+                      SSOTokenManager manager = SSOTokenManager.getInstance();
+                      SSOToken currentToken = manager.createSSOToken(tokenId);
+                      if (manager.isValidToken(currentToken)) {
+                          ssoToken = currentToken;
+                      }
                       if(userToken.getType().equals(
                                      STSConstants.SSO_TOKEN_TYPE)) {
                          return userToken.getPrincipalName();
@@ -302,13 +312,20 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                          STSUtils.debug.message("FAMSTSAttributeProvider.get" +
                          "SubjectNameFromCustomToken: FAMException", fae);
                       }
+                  } catch (SSOException se) {
+                      if(STSUtils.debug.messageEnabled()) {
+                         STSUtils.debug.message("FAMSTSAttributeProvider.get" +
+                         "SubjectNameFromCustomToken: SSOException", se);
+                      }
                   }
                } else {
                   String customToken = SystemConfigurationUtil.getProperty(
                              STSConstants.STS_CLIENT_USER_TOKEN_PLUGIN); 
                   if(customToken != null) {
                      try {
-                         Class customTokenClass = Class.forName(customToken);  
+                         Class customTokenClass = 
+                             (Thread.currentThread().getContextClassLoader()).
+                             loadClass(customToken);  
                          ClientUserToken userToken = (ClientUserToken)
                                       customTokenClass.newInstance();
                          return userToken.getPrincipalName();
