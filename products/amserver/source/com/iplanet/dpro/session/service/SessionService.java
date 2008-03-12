@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.16 2008-02-29 20:38:30 veiming Exp $
+ * $Id: SessionService.java,v 1.17 2008-03-12 21:36:04 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -201,6 +201,9 @@ public class SessionService {
     private static final String TOP_LEVEL_ADMIN_ROLE = 
         "Top-level Admin Role";
 
+    private static final String IS_SFO_ENABLED = 
+        "iplanet-am-session-sfo-enabled";
+    
     private static final String SESSION_STORE_USERNAME = 
         "iplanet-am-session-store-username";
 
@@ -241,7 +244,7 @@ public class SessionService {
     static int minPoolSize = 8;
 
     static int maxPoolSize = 32;
-
+    
     static int maxWaitTimeForConstraint = 6000; // in milli-second
 
     private static boolean isPropertyNotificationEnabled = false;
@@ -1955,31 +1958,36 @@ public class SessionService {
             ServiceConfig subConfig = serviceConfig.getSubConfig(subCfgName);
 
             if (subConfig != null) {
-                isSessionFailoverEnabled = true;
-
+                
                 Map sessionAttrs = subConfig.getAttributes();
-                sessionStoreUserName = CollectionHelper.getMapAttr(
-                    sessionAttrs, SESSION_STORE_USERNAME, "amsvrusr");
-                sessionStorePassword = CollectionHelper.getMapAttr(sessionAttrs,
-                        SESSION_STORE_PASSWORD, "password");
+                boolean sfoEnabled = Boolean.valueOf(
+                        CollectionHelper.getMapAttr(
+                        sessionAttrs, IS_SFO_ENABLED, "false")
+                        ).booleanValue();
+                
+                if(sfoEnabled) {
+                    isSessionFailoverEnabled = true;
+                    sessionStoreUserName = CollectionHelper.getMapAttr(
+                        sessionAttrs, SESSION_STORE_USERNAME, "amsvrusr");
+                    sessionStorePassword = CollectionHelper.getMapAttr(
+                        sessionAttrs, SESSION_STORE_PASSWORD, "password");
+                    Set serverIDs = WebtopNaming.getSiteNodes(sessionServerID);
+                    initClusterMemberMap(serverIDs);
 
-                Set serverIDs = WebtopNaming.getSiteNodes(sessionServerID);
-                initClusterMemberMap(serverIDs);
-
-                connectionMaxWaitTime = Integer.parseInt(
-                    CollectionHelper.getMapAttr(
+                    connectionMaxWaitTime = Integer.parseInt(
+                                          CollectionHelper.getMapAttr(
                         sessionAttrs, CONNECT_MAX_WAIT_TIME, "5000"));
-                jdbcDriverClass = CollectionHelper.getMapAttr(
-                    sessionAttrs, JDBC_DRIVER_CLASS, "");
-                jdbcURL = CollectionHelper.getMapAttr(
-                    sessionAttrs, JDBC_URL, "");
-                minPoolSize = Integer.parseInt(CollectionHelper.getMapAttr(
-                    sessionAttrs, MIN_POOL_SIZE, "8"));
-                maxPoolSize = Integer.parseInt(CollectionHelper.getMapAttr(
-                    sessionAttrs, MAX_POOL_SIZE, "32"));
+                    jdbcDriverClass = CollectionHelper.getMapAttr(
+                        sessionAttrs, JDBC_DRIVER_CLASS, "");
+                    jdbcURL = CollectionHelper.getMapAttr(
+                        sessionAttrs, JDBC_URL, "");
+                    minPoolSize = Integer.parseInt(CollectionHelper.getMapAttr(
+                        sessionAttrs, MIN_POOL_SIZE, "8"));
+                    maxPoolSize = Integer.parseInt(CollectionHelper.getMapAttr(
+                        sessionAttrs, MAX_POOL_SIZE, "32"));
 
-                if (sessionDebug.messageEnabled()) {
-                    sessionDebug.message("UserName=" + sessionStoreUserName
+                    if (sessionDebug.messageEnabled()) {
+                        sessionDebug.message("UserName=" + sessionStoreUserName
                             + " : " + "clusterServerList="
                             + getClusterServerList() + ": "
                             + "connectionMaxWaitTime=" + connectionMaxWaitTime
@@ -1987,6 +1995,7 @@ public class SessionService {
                             + " : " + "jdcbURL=" + jdbcURL + " : "
                             + "minPoolSize=" + minPoolSize + " : "
                             + "maxPoolSize=" + maxPoolSize);
+                    }
                 }
             }
 
