@@ -155,28 +155,32 @@ public class ValidateURL extends ValidatorBase {
                 }
             }
             String sPortNum = new Integer(portNum).toString();           
+            Map tokens = state.getData();
+                
+            tokens.put("AGENT_PREF_PROTO", protocol);
+            tokens.put("AGENT_HOST", hostName);
+            tokens.put("AGENT_PREF_PORT", sPortNum);     
             
-            String deploymentURI = agentUrl.getPath();           
-            if (deploymentURI.length() > 0) {
-                Map tokens = state.getData();
-                
-                tokens.put("AGENT_PREF_PROTO", protocol);
-                tokens.put("AGENT_HOST", hostName);
-                tokens.put("AGENT_PREF_PORT", sPortNum);     
-                tokens.put("AGENT_APP_URI", deploymentURI);
-                
-                 // Need to extract protocol, host, port and uri from the url
-                 // and save it in the state
+	    String agentType = (String) props.get(STR_AGENT_TYPE);
+	    if (agentType != null && agentType.equals("webagent")) {
                 state.putData(tokens);
                 validRes = ValidationResultStatus.STATUS_SUCCESS;
-            } else {
-                invalidDeploymentURI = true;
-                validRes = ValidationResultStatus.STATUS_FAILED;
-                returnMessage = LocalizedMessage.get(
-                                LOC_VA_MSG_IN_VAL_DEPLOYMENT_URI,
-                                new Object[] { url });  
+	    } else {
+                String deploymentURI = agentUrl.getPath();           
+                Debug.log("deploymentURI ==> " + deploymentURI);
+                if (deploymentURI.length() > 1) {
+                    tokens.put("AGENT_APP_URI", deploymentURI);
+                
+                    state.putData(tokens);
+                    validRes = ValidationResultStatus.STATUS_SUCCESS;
+                } else {
+                    invalidDeploymentURI = true;
+                    validRes = ValidationResultStatus.STATUS_FAILED;
+                    returnMessage = LocalizedMessage.get(
+                                    LOC_VA_MSG_IN_VAL_DEPLOYMENT_URI,
+                                    new Object[] { url });
+                }
             }
-
          } catch (MalformedURLException mfe) {
                 Debug.log("ValidateURL.isAgentUrlValid threw exception :",
                                 mfe);
@@ -224,6 +228,7 @@ public class ValidateURL extends ValidatorBase {
 
     }
 
+    public static String STR_AGENT_TYPE = "AGENT_TYPE";
     /*
      * Localized messages
      */

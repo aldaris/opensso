@@ -53,6 +53,7 @@
 				<validations>	
 					<validation name="VALID_AGENT_URL">
 						<class name="ValidateURL" type="system"/>
+						<property name="AGENT_TYPE" value="webagent"/>
 					</validation>
 				</validations>
 			</interaction>	
