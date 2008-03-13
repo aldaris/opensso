@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.10 2008-01-15 17:43:29 dlarson Exp $
+ * $Id: SecureSOAPMessage.java,v 1.11 2008-03-13 20:21:43 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -799,7 +799,7 @@ public class SecureSOAPMessage {
              }
 
              XMLEncryptionManager encManager = 
-                 XMLEncryptionManager.getInstance();
+                                  WSSUtils.getXMLEncryptionManager();                 
              encryptedDoc = encManager.encryptAndReplaceWSSElements(
                  doc, 
                  elmMap,
@@ -885,9 +885,11 @@ public class SecureSOAPMessage {
                  }
              }
 
+             
              soapMessage =  
-                 WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
+                 WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());             
              this.soapMessage.saveChanges();
+             
 
              if(debug.messageEnabled()) {
                  debug.message("SecureSOAPMessage.encrypt:*** SOAP PART ***"); 
@@ -929,7 +931,7 @@ public class SecureSOAPMessage {
              XMLSignatureManager sigManager = 
                  XMLSignatureManager.getInstance();
              XMLEncryptionManager encManager = 
-                 XMLEncryptionManager.getInstance();
+                     WSSUtils.getXMLEncryptionManager();                 
              String certAlias = null;
              if(messageCertificate != null) {
                  certAlias = sigManager.getKeyProvider().
@@ -1014,10 +1016,10 @@ public class SecureSOAPMessage {
                  }
 
              }
-
+             
              soapMessage =  
                  WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
-             this.soapMessage.saveChanges();
+             this.soapMessage.saveChanges();             
 
              if(debug.messageEnabled()) {
                  debug.message("SecureSOAPMessage.decrypt:*** SOAP PART ***"); 

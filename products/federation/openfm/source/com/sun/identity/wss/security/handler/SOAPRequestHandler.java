@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.11 2008-02-26 22:21:09 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.12 2008-03-13 20:21:43 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,8 +203,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if ((config.isRequestEncryptEnabled()) ||
                 (config.isRequestHeaderEncryptEnabled())) {
             secureMsg.decrypt((config.isRequestEncryptEnabled()),
-                    (config.isRequestHeaderEncryptEnabled()));
+                    (config.isRequestHeaderEncryptEnabled()));            
             soapRequest = secureMsg.getSOAPMessage();
+            secureMsg = new SecureSOAPMessage(soapRequest, false);
+            secureMsg.parseSecurityHeader(
+                    (Node)secureMsg.getSecurityHeaderElement());
         }
 
         if (config.isRequestSignEnabled()) {
