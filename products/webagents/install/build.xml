@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2007-03-02 17:32:21 subbae Exp $
+   $Id: build.xml,v 1.5 2008-03-13 18:47:34 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -78,8 +78,23 @@
             </fileset>
         </copy>
         <copy todir="${container.web_agent.bin.dir}">
-            <fileset dir="${webagents.basedir}/extlib/Linux/nss/bin">
+            <fileset dir="${webagents.basedir}/extlib/Linux/nss${build.type.suffix}/bin">
                     <include name="certutil"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/Linux/nss${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/Linux/nspr${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/Linux/libxml2${build.type.suffix}/lib">
+                    <include name="libxml2.so.2"/>
             </fileset>
         </copy>
     </target>
@@ -96,8 +111,23 @@
             </fileset>
         </copy>
         <copy todir="${container.web_agent.bin.dir}">
-            <fileset dir="${webagents.basedir}/extlib/SunOS/nss/bin">
+            <fileset dir="${webagents.basedir}/extlib/SunOS/nss${build.type.suffix}/bin">
                     <include name="certutil"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/SunOS/nss${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/SunOS/nspr${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/SunOS/libxml2${build.type.suffix}/lib">
+                    <include name="libxml2.so.2"/>
             </fileset>
         </copy>
     </target>
@@ -114,8 +144,23 @@
             </fileset>
         </copy>
         <copy todir="${container.web_agent.bin.dir}">
-            <fileset dir="${webagents.basedir}/extlib/SunOS_i86pc/nss/bin">
+            <fileset dir="${webagents.basedir}/extlib/SunOS_i86pc/nss${build.type.suffix}/bin">
                     <include name="certutil"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib//SunOS_i86pc/nss${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib//SunOS_i86pc/nspr${build.type.suffix}/lib">
+                    <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.basedir}/extlib/SunOS_i86pc/libxml2${build.type.suffix}/lib">
+                    <include name="libxml2.so.2"/>
             </fileset>
         </copy>
     </target>

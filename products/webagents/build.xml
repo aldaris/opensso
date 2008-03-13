@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-01-16 01:26:45 madan_ranganath Exp $
+   $Id: build.xml,v 1.7 2008-03-13 18:47:33 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,6 +65,11 @@
     <condition property="iis.build.ok" value="true">
         <os family="windows"/>
     </condition>
+
+    <condition property="build.type.suffix" value="_64" else="">
+        <equals arg1="${build.type}" arg2="64"/>
+    </condition>
+
 
     <!-- overridable properties -->
     <!-- build.debug is used for c code. valid values are: optimize, full -->

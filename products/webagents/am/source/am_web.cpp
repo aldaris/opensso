@@ -309,7 +309,7 @@ void mbyte_to_wchar(const char * orig_str,char *dest_str,int dest_len)
 #else
     const char *origstr = orig_str;
 #endif
-#if defined(HPUX) || defined(AIX)
+#if defined(HPUX) || defined(AIX) || defined(SOLARIS_64)
     unsigned long len = strlen(origstr);
     unsigned long size=0 ;
 #else
