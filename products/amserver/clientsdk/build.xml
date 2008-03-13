@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2006-11-09 20:15:17 veiming Exp $
+   $Id: build.xml,v 1.8 2008-03-13 18:50:15 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -53,7 +53,7 @@
     <target name="package-clientsdk" depends="preparebuild">
         <echo message="Building clientSDK"/>
 
-        <jar destfile="${amserver.dist.dir}/amclientsdk.jar">
+        <jar destfile="${amserver.dist.dir}/.amclientsdk.jar">
             <fileset dir="${amserver.classes.dir}">
                 <includesfile name="${amserver.clientsdkbase.dir}/ClientSDKClasses"/>
             </fileset>
@@ -82,15 +82,13 @@
             </manifest>
         </jar>
 
-        <jar destfile="${amserver.dist.dir}/amclientsdkcopy.jar"
+        <jar destfile="${amserver.dist.dir}/amclientsdk.jar"
              filesetmanifest="merge">
                 <zipfileset src="${extlib.dir}/ldapjdk.jar" includes="netscape/ldap/LDAPDN.class,netscape/ldap/util/DN.class,netscape/ldap/LDAPException.class,netscape/ldap/util/RDN.class,netscape/ldap/LDAPMessage.class,netscape/ldap/LDAPSearchResult.class,netscape/ldap/LDAPConstraints.class,netscape/ldap/LDAPSearchConstraints.class"/>
-                <zipfileset src="${amserver.dist.dir}/amclientsdk.jar"/>
+                <zipfileset src="${amserver.dist.dir}/.amclientsdk.jar"/>
         </jar>
 
-        <copy file="${amserver.dist.dir}/amclientsdkcopy.jar" 
-            tofile="${amserver.dist.dir}/amclientsdk.jar"/>
-        <delete file="${amserver.dist.dir}/amclientsdkcopy.jar"/>
+        <delete file="${amserver.dist.dir}/.amclientsdk.jar" />
         <checksum file="${amserver.dist.dir}/amclientsdk.jar"
             algorithm="SHA" fileext=".sha" />
     </target>

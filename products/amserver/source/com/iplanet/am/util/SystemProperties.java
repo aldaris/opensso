@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.10 2008-01-04 21:00:07 veiming Exp $
+ * $Id: SystemProperties.java,v 1.11 2008-03-13 18:50:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -250,23 +250,18 @@ public class SystemProperties {
      * @return the value if the key exists; otherwise returns <code>null</code>
      */
     public static String get(String key) {
-        AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
         String answer = null;
-        
-        if (ast != null) {
-            answer = PropertiesFinder.getProperty(key, ast);
+
+        // look up values in SMS services only if in server mode.
+        if (isServerMode()) {
+            AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
+            if (ast != null) {
+                answer = PropertiesFinder.getProperty(key, ast);
+            }
         }
         
         if (answer == null) {
-            answer = System.getProperty(key);
-            if (answer == null) {
-                answer = props.getProperty(key);
-            }
-            if (answer == null) {
-                if (cacheServerDefaults != null) {
-                    answer = (String)cacheServerDefaults.get(key);
-                }
-            }
+            answer = getProp(key);
 
             if ((answer != null) && (tagswapValues != null)) {
                 Set set = new HashSet();
@@ -286,6 +281,19 @@ public class SystemProperties {
         }
         
         return (answer);
+    }
+
+    private static String getProp(String key, String def) {
+        String value = getProp(key);
+        return ((value == null) ? def : value);
+    }
+
+    private static String getProp(String key) {
+        String answer = System.getProperty(key);
+        if (answer == null) {
+            answer = props.getProperty(key);
+        }
+        return answer;
     }
     
     /**
@@ -517,7 +525,8 @@ public class SystemProperties {
      * @return <code>true</code> if instance is running in server mode.
      */
     public static boolean isServerMode() {
-        return Boolean.valueOf(get(
+        // use getProp and not get method to avoid infinite loop
+        return Boolean.valueOf(getProp(
             Constants.SERVER_MODE, "false")).booleanValue();
     }
     

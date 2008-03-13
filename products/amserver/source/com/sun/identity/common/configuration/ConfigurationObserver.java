@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationObserver.java,v 1.2 2007-11-07 19:13:58 veiming Exp $
+ * $Id: ConfigurationObserver.java,v 1.3 2008-03-13 18:50:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,11 @@ public class ConfigurationObserver implements ServiceListener {
     }
     
     private void createAttributeMapping() {
-        if (!ServerConfiguration.isLegacy()) {
+        // this does not apply client mode because client's property
+        // never get store in SMS services
+        if (SystemProperties.isServerMode() &&
+            !ServerConfiguration.isLegacy()
+        ) {
             Map attributeMap = SystemProperties.getAttributeMap();
             for (Iterator i = attributeMap.values().iterator(); i.hasNext(); ) {
                 AttributeStruct a = (AttributeStruct)i.next();

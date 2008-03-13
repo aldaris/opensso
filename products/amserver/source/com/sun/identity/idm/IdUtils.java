@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.18 2008-01-27 08:01:10 veiming Exp $
+ * $Id: IdUtils.java,v 1.19 2008-03-13 18:50:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -761,11 +761,13 @@ public final class IdUtils {
     }
 
     private static void loadDefaultTypes() {
+        supportedTypes.add(IdType.REALM);
         supportedTypes.add(IdType.AGENT);
         supportedTypes.add(IdType.USER);
         supportedTypes.add(IdType.ROLE);
         supportedTypes.add(IdType.GROUP);
         supportedTypes.add(IdType.FILTEREDROLE);
+        mapSupportedTypes.put(IdType.REALM.getName(), IdType.REALM);        
         mapSupportedTypes.put(IdType.USER.getName(), IdType.USER);
         mapSupportedTypes.put(IdType.ROLE.getName(), IdType.ROLE);
         mapSupportedTypes.put(IdType.FILTEREDROLE.getName(),

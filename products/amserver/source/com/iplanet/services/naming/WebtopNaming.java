@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.13 2008-03-04 19:26:04 dillidorai Exp $
+ * $Id: WebtopNaming.java,v 1.14 2008-03-13 18:50:15 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -246,10 +246,10 @@ public class WebtopNaming {
     ) throws URLNotFoundException {
         try {
             // check before the first naming table update to avoid deadlock
+            // uri can be empty string for pre-FAM 8.0 releases
             if ((protocol == null) || (host == null) || (port == null) ||
                 (uri == null) || (protocol.length() == 0) ||
-                (host.length() == 0) || (port.length() == 0) ||
-                (uri.length() == 0)
+                (host.length() == 0) || (port.length() == 0)
             ) {
                 throw new Exception(NamingBundle.getString("noServiceURL")
                         + service);
@@ -456,18 +456,31 @@ public class WebtopNaming {
                 throw new Exception(NamingBundle.getString("noServerID"));
             }
 
+            String serverWithoutURI = protocol + ":" + "//" + host + ":" + port;
             String server = (uri != null) ?
-                protocol + ":" + "//" + host + ":" + port + uri :
-                protocol + ":" + "//" + host + ":" + port;
+                protocol + ":" + "//" + host + ":" + port + uri : 
+                serverWithoutURI;
+            
             String serverID = null;
             if (serverIdTable != null) {
                 serverID = getValueFromTable(serverIdTable, server);
+                
+                if (serverID == null) {
+                    //try without URI, this is for prior release of FAM 8.0
+                    serverID = getValueFromTable(serverIdTable, 
+                        serverWithoutURI);
+                }
             }
             //update the naming table and as well as server id table
             //if it can not find it
             if (( serverID == null ) && (updatetbl == true)) {
                 getNamingProfile(true);
                 serverID = getValueFromTable(serverIdTable, server);
+                if (serverID == null) {
+                    //try without URI, this is for prior release of FAM 8.0
+                    serverID = getValueFromTable(serverIdTable, 
+                        serverWithoutURI);
+                }
             }
 
             if (serverID == null) {
