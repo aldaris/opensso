@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigFinder.java,v 1.2 2007-03-29 20:38:13 subbae Exp $
+ * $Id: ConfigFinder.java,v 1.3 2008-03-14 00:23:21 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ public class ConfigFinder implements IDefaultValueFinder,
         }
 
         if (OSChecker.isWindows()) {
-                result = "C:\\Program Files\\Sun\\JavaES5\\WebServer7\\"
+                result = "C:\\Program Files\\Sun\\WebServer7\\"
                 + "https-" + localHost + "\\config";
         } else {
             result = "/var/opt/SUNWwbsvr7/"
