@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.11 2008-03-11 23:13:37 sean_brydon Exp $
+ * $Id: iws_agent.c,v 1.12 2008-03-14 00:12:41 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -310,8 +310,9 @@ NSAPI_PUBLIC int append_post_data(pblock *param, Session *sn, Request *rq)
     const char *postdata_cache    = NULL;
     const char *actionurl	    = NULL;
 
+    void* agent_config = NULL;
     uri = pblock_findval("uri", rq->reqpb);
-    void* agent_config = am_web_get_agent_configuration();
+    agent_config = am_web_get_agent_configuration();
 
 
     if (uri != NULL){
@@ -858,6 +859,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     const char *query = pblock_findval(REQUEST_QUERY, rq->reqpb);
     const char *uri = pblock_findval(REQUEST_URI, rq->reqpb);
     const char *protocol = pblock_findval(REQUEST_PROTOCOL, rq->reqpb); 
+    void* agent_config = NULL;
 
     // check if agent is initialized.
     // if not initialized, then call agent init function
@@ -899,7 +901,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     path_info = pblock_findval(PATH_INFO, rq->headers);
     method = pblock_findval(REQUEST_METHOD, rq->reqpb);
     
-    void* agent_config = am_web_get_agent_configuration();
+    agent_config = am_web_get_agent_configuration();
 
     status = get_request_url(sn, rq, &request_url, &orig_req, agent_config);
     am_web_log_debug("validate_session_policy(): "

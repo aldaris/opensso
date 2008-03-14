@@ -147,6 +147,11 @@ static int initialized = AM_FALSE;
 #define INSTANCE_NAME  "unused"
 
 
+#if defined(WINNT)
+HINSTANCE hInstance;
+#endif
+
+
 extern "C" int decrypt_base64(const char *, char *);
 extern "C" int decode_base64(const char *, char *);
 
@@ -256,7 +261,7 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
 void get_string(UINT key, char *buf, size_t buflen) {
 
     if (buf != NULL) {
-	if (LoadString(agentConfig->hInst, key, buf, buflen) == 0) {
+	if (LoadString(hInstance, key, buf, buflen) == 0) {
 	    buf[0] = '\0';
 	    return;
 	}
@@ -1315,7 +1320,7 @@ create_authn_request_query_string(string requestID, string providerID,
 
 /**
  * Overrides url with the agent uri prefix's protocol host or port
- * if configured in FAMAgentBootstrap.properties.
+ * if configured in FAMAgentConfiguration.properties.
  * Returns true if something in url was overridden, false otherwise.
  */
 static bool
@@ -5897,7 +5902,7 @@ am_web_is_cdsso_enabled(void* agent_config) {
 AM_BEGIN_EXTERN_C
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID lpvReserved) {
         if(fdwReason == DLL_PROCESS_ATTACH) {
-                agentConfig->hInst = hInst;
+		hInstance = hInst;
         }
         return TRUE;
 }

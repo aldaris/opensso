@@ -30,6 +30,9 @@
 #include "utils.h"
 #include "url.h"
 
+#if defined(WINNT)
+#define strtok_r(s1, s2, p) strtok(s1, s2);
+#endif
 using std::string;
 using namespace Utils;
 USING_PRIVATE_NAMESPACE;

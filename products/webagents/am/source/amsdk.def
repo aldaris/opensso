@@ -196,6 +196,5 @@ EXPORTS
 	am_web_set_cookie;
 
 	am_web_build_advice_response;
-	am_web_get_am_revision_number;
 	am_web_get_request_url;
 

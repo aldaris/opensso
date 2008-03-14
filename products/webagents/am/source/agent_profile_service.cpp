@@ -29,28 +29,6 @@
 * 4. Agent logout
 */
 
-#if	defined(WINNT)
-#define _X86_
-#include <windef.h>
-#include <winbase.h>
-#include <winuser.h>
-#include <winnls.h>
-#include <windows.h>
-#if	!defined(strncasecmp)
-#define	strncasecmp	strnicmp
-#define	strcasecmp	stricmp
-#endif
-
-#if     !defined(snprintf)
-#define snprintf        _snprintf
-#endif
-#else /* WINNT */
-#include <unistd.h>
-#endif /* WINNT */
-
-//--------------------
-
-
 #include <prlock.h>
 #include <prnetdb.h>
 #include <prmem.h>
