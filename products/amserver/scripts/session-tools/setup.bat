@@ -19,15 +19,15 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.3 2007-12-13 20:17:38 ww203982 Exp $
+: $Id: setup.bat,v 1.4 2008-03-14 17:49:51 ww203982 Exp $
 :
 : Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
 SETLOCAL
 IF "%1" == "-h" SET help_print=yes
 IF "%1" == "--help" SET help_print=yes
-IF "%1" == "-p" SET path_dest=%2
-IF "%1" == "-p" SET path_dest=%2
+IF "%1" == "-p" SET path_dest=%~2
+IF "%1" == "-p" SET path_dest=%~2
 
 "%JAVA_HOME%/bin/java.exe" -version:"1.4+" -D"help.print=%help_print%" -D"path.dest=%path_dest%" -jar "lib/am_session_setup.jar"
 SETLOCAL
