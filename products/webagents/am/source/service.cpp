@@ -318,7 +318,7 @@ Service::initialize(SSOToken ssoToken, Properties& properties) {
     Log::log(logID, Log::LOG_MAX_DEBUG,
 	     "Service communication with server started.");
     am_status_t status;
-    mPolicyEntry = new PolicyEntry(rsrcTraits, init_profileAttributesMap);
+    mPolicyEntry = new PolicyEntry(rsrcTraits);
     SSOToken& ssoTok = mPolicyEntry->getSSOToken();
     ssoTok = ssoToken;
 

@@ -51,8 +51,7 @@ PolicyDecision::~PolicyDecision() {
 PDRefCntPtr
 PolicyDecision::construct_policy_decision(const ResourceName &resName,
 					  XMLElement &rr,
-					  const KVMRefCntPtr env_param,
-					  const Properties &attrMap)
+					  const KVMRefCntPtr env_param)
 {
     XMLElement actnD;
     // Construct the policy decision object using the
@@ -178,22 +177,22 @@ PolicyDecision::construct_policy_decision(const ResourceName &resName,
 			std::string ldapAttrName;
 			if((attr.getAttributeValue(ATTRIBUTE_NAME,
 						   ldapAttrName))) {
-			    std::string attrName = attrMap.get(ldapAttrName,
-							       "");
-			    KeyValueMap::mapped_type attrVals;
+                            if (ldapAttrName.size() > 0) {
+			        KeyValueMap::mapped_type attrVals;
 
-			    XMLElement values;
-			    for(attrValuePair.getSubElement(VALUE, values);
-				values.isValid();
-				values.nextSibling(VALUE)) {
-				    std::string value;
-				    if(values.getValue(value)) {
-					attrVals.push_back(value);
-				    }
-			     }
-			     if(attrVals.size() > 0) {
+			        XMLElement values;
+			        for(attrValuePair.getSubElement(VALUE, values);
+				    values.isValid();
+				    values.nextSibling(VALUE)) {
+				        std::string value;
+				        if(values.getValue(value)) {
+					    attrVals.push_back(value);
+				        }
+			         }
+			         if(attrVals.size() > 0) {
 				    retVal->responses[ldapAttrName] = attrVals;
-			     }
+			         }
+                            }
 			}
 		    }
 		}

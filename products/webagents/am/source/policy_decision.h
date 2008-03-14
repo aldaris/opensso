@@ -60,8 +60,7 @@ class PolicyDecision:public RefCntObj {
 	/* Throws InternalException upon error */
 	construct_policy_decision(const ResourceName &,
 				  XMLElement &,
-				  const KVMRefCntPtr,
-				  const Properties &);
+				  const KVMRefCntPtr);
 
     PolicyDecision(const ResourceName &resName) :RefCntObj(), refetch(true),
 						 resourceName(resName) {

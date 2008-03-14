@@ -21,7 +21,6 @@
  *
  */ 
 #include "tree.h"
-#include "properties.h"
 #include "am_policy.h"
 
 using std::string;
@@ -59,10 +58,8 @@ void Node::destroyNode() {
 // Tree
 ///////////////
 Tree::Tree(PDRefCntPtr &root,
-	   am_resource_traits_t rTraits,
-	   const Properties &attr_map): rsrcTraits(rTraits),
-					rootNode(new Node(Node::NULL_NODE, root)),
-					attrMap(attr_map) {
+	   am_resource_traits_t rTraits): rsrcTraits(rTraits),
+            rootNode(new Node(Node::NULL_NODE, root)) {
 }
 
 Tree::~Tree() {
@@ -72,11 +69,9 @@ Tree::~Tree() {
 /* Throws std::invalid_argument if any argument is invalid */
 Tree::Tree(XMLElement &elem,
 	   am_resource_traits_t rTraits,
-	   KVMRefCntPtr env,
-	   const Properties &attr_map)
+	   KVMRefCntPtr env)
     : rsrcTraits(rTraits),
-      rootNode(Node::NULL_NODE),
-      attrMap(attr_map)
+      rootNode(Node::NULL_NODE)
 {
     if(elem.isNamed(RESOURCE_RESULT)) {
 	try {
@@ -105,7 +100,7 @@ Tree::addSubNodes(NodeRefPtr parent, XMLElement &thisNode,
 	if(thisNode.getSubElement(POLICY_DECISION, decn)) {
 	    PDRefCntPtr decision =
 		PolicyDecision::construct_policy_decision(resName, decn,
-							  env, attrMap);
+							  env);
 
 	    newNode = new Node(parent, decision);
 

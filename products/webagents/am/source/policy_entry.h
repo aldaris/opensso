@@ -51,7 +51,6 @@ class PolicyEntry:public RefCntObj {
     Http::CookieList cookies;
     bool dirty;
     KeyValueMap map;
-    const Properties &attrMap;
     SSOToken ssoToken;
 
     Tree *getTree(const ResourceName &, bool usePatterns) const;
@@ -61,11 +60,9 @@ class PolicyEntry:public RefCntObj {
     bool append_policy_to_tree(Tree &, XMLElement &, KVMRefCntPtr);
 
     void addPolicyDecision(PolicyDecision *, bool);
-    PolicyEntry(am_resource_traits_t rTraits,
-	     const Properties &attr_map): RefCntObj(),
+    PolicyEntry(am_resource_traits_t rTraits): RefCntObj(),
 				  rsrcTraits(rTraits), lock(),
-				  cookies(), dirty(true), map(),
-				  attrMap(attr_map) {
+				  cookies(), dirty(true), map() {
     }
 
  public:

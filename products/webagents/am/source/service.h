@@ -71,7 +71,6 @@ class Service {
     bool notificationEnabled;
     std::string notificationURL;
     HashTable<PolicyEntry> policyTable;
-    Properties init_profileAttributesMap;  
     PolicyEntryRefCntPtr mPolicyEntry;
     SessionInfo mAppSessionInfo;
     am_resource_traits_t rsrcTraits;

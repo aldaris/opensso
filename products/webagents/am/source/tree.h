@@ -35,7 +35,6 @@
 #include "scope_lock.h"
 
 BEGIN_PRIVATE_NAMESPACE
-class Properties;
 
 class Node;
 typedef RefCntPtr<Node> NodeRefPtr;
@@ -169,7 +168,6 @@ private:
     am_resource_traits_t rsrcTraits;
     Mutex treeLock;
     NodeRefPtr rootNode;
-    const Properties &attrMap;
     SearchResult find(NodeRefPtr,  const ResourceName &, bool);
 
     /**
@@ -194,12 +192,10 @@ public:
 			  const ResourceName &, bool) const;
 
     /* The constructors throw std::invalid_argument if any argument is invalid*/
-    Tree(PDRefCntPtr &, am_resource_traits_t rTraits,
-	 const Properties &);
+    Tree(PDRefCntPtr &, am_resource_traits_t rTraits);
     Tree(XMLElement &,
 	 am_resource_traits_t,
-	 KVMRefCntPtr,
-	 const Properties &);
+	 KVMRefCntPtr);
     bool insert(PDRefCntPtr &);
     PDRefCntPtr dfsearch(const ResourceName &, bool usePatterns=true);
 

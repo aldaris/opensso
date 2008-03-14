@@ -53,7 +53,6 @@ class SSOEntry:public RefCntObj {
     Http::CookieList cookies;
     bool dirty;
     KeyValueMap map;
-    const Properties &attrMap;
 
     Tree *getTree(const ResourceName &, bool usePatterns) const;
 
@@ -65,8 +64,7 @@ class SSOEntry:public RefCntObj {
     SSOEntry(am_resource_traits_t rTraits,
 	     const Properties &attr_map): RefCntObj(),
 				  rsrcTraits(rTraits), lock(),
-				  cookies(), dirty(true), map(),
-				  attrMap(attr_map) {
+				  cookies(), dirty(true), map() {
     }
 
  public:

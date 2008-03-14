@@ -35,8 +35,8 @@ SSOEntry::SSOEntry(const SSOToken &ssoTok,
 						     rsrcTraits(rTraits),
 						     lock(), cookies(),
 						     dirty(false),
-						     map(env),
-						     attrMap(attr_map) {
+						     map(env) {
+						     
 }
 
 SSOEntry::~SSOEntry() {
@@ -101,7 +101,7 @@ SSOEntry::create_policy_tree(XMLElement& resultNode, KVMRefCntPtr env) {
     if(!resultNode.isNamed(RESOURCE_RESULT))
 	return false;
 
-    Tree *newTree = new Tree(resultNode, rsrcTraits, env, attrMap);
+    Tree *newTree = new Tree(resultNode, rsrcTraits, env);
     forest.push_back(newTree);
     return true;
 }
@@ -123,8 +123,7 @@ SSOEntry::append_policy_to_tree(Tree &tree, XMLElement &elem,
 	PDRefCntPtr pDec =
 	    PolicyDecision::construct_policy_decision(resName,
 						      policyDec,
-						      env,
-						      attrMap);
+						      env);
 	tree.insert(pDec);
     }
 
