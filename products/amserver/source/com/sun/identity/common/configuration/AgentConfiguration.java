@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.18 2008-02-29 20:35:28 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.19 2008-03-14 16:50:20 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,9 +65,9 @@ public class AgentConfiguration {
     public final static String ATTR_NAME_PWD = "userpassword";
     public final static String ATTR_NAME_FREE_FORM =
         "com.sun.identity.agents.config.freeformproperties";
-    private final static String ATTR_CONFIG_REPO =
+    public final static String ATTR_CONFIG_REPO =
         "com.sun.identity.agents.config.repository.location";
-    private final static String VAL_CONFIG_REPO_LOCAL = "local";
+    public final static String VAL_CONFIG_REPO_LOCAL = "local";
 
     private static final String AGENT_LOCAL_PROPERTIES = "agentlocaleprop";
     private static Map localAgentProperties;

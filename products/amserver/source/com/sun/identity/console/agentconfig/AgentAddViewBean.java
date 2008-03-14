@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentAddViewBean.java,v 1.3 2008-01-07 20:38:49 veiming Exp $
+ * $Id: AgentAddViewBean.java,v 1.4 2008-03-14 16:51:48 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.web.ui.view.html.CCTextField;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import com.iplanet.jato.view.event.DisplayEvent;
 
 /**
  * View Bean to create new agent.
@@ -58,6 +59,7 @@ public class AgentAddViewBean
     private static final String TF_AGENT_URL = "tfAgentURL";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
+    private static final String RADIO_CHOICE  = "radioChoice";
 
     private CCPageTitleModel ptModel;
     private AMPropertySheetModel propertySheetModel;
@@ -143,6 +145,13 @@ public class AgentAddViewBean
             RequestManager.getRequestContext().getRequest();
         return new AgentsModelImpl(req, getPageSessionAttributes());
     }
+    
+    public void beginDisplay(DisplayEvent e) {
+       String value = (String)getDisplayFieldValue(RADIO_CHOICE);
+       if ((value == null) || value.equals("")){
+           setDisplayFieldValue(RADIO_CHOICE, AgentsViewBean.PROP_CENTRAL);
+       }
+    } 
 
     /**
      * Handles create request.
@@ -162,28 +171,36 @@ public class AgentAddViewBean
             TF_PASSWORD_CONFIRM);
         password = password.trim();
         passwordConfirm = passwordConfirm.trim();
+        String choice = (String)propertySheetModel.getValue(RADIO_CHOICE); 
 
         if (password.length() > 0) {
             if (password.equals(passwordConfirm)) {
                 try {
                     if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
-                        agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
-                    ) {
-                        String serverURL = (String)propertySheetModel.getValue(
-                            TF_SERVER_URL);
-                        serverURL = serverURL.trim();
-                        String agentURL = (String)propertySheetModel.getValue(
-                            TF_AGENT_URL);
-                        agentURL = agentURL.trim();
-                        model.createAgent(agentName, agentType, password,
-                            serverURL, agentURL);
+                            agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
+                            ) {
+                        
+                        if (choice.equals(AgentsViewBean.PROP_LOCAL)) {
+                            model.createAgent(
+                                    agentName, agentType, password, choice);
+                        } else {
+                            String serverURL = (String)propertySheetModel.getValue(
+                                    TF_SERVER_URL);
+                            serverURL = serverURL.trim();
+                            String agentURL = (String)propertySheetModel.getValue(
+                                    TF_AGENT_URL);
+                            agentURL = agentURL.trim();
+                            model.createAgent(agentName, agentType, password,
+                                    serverURL, agentURL);
+                        }
                     } else {
-                        model.createAgent(agentName, agentType, password);
+                        model.createAgent(
+                                agentName, agentType, password, choice);
                     }
                     forwardToAgentsViewBean();
                 } catch (AMConsoleException e) {
                     setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                        e.getMessage());
+                            e.getMessage());
                     forwardTo();
                 }
             } else {

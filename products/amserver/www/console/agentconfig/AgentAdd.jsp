@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentAdd.jsp,v 1.1 2007-12-17 19:42:45 veiming Exp $
+   $Id: AgentAdd.jsp,v 1.2 2008-03-14 16:47:46 babysunil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -43,6 +43,16 @@
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
+    function SelectLocal(radio) {
+       var formElement = document.forms["AgentAdd"];
+       if(radio.value=="local") {
+           formElement.elements[7].disabled = true;
+           formElement.elements[8].disabled = true;
+       } else if (radio.value=="centralized") {
+           formElement.elements[7].disabled = false;
+           formElement.elements[8].disabled = false;
+       } 
+    } 
 </script>
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();"/>
 <cc:breadcrumbs name="breadCrumb" bundleID="amConsole" />

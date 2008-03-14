@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.4 2008-02-01 23:56:23 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.5 2008-03-14 16:54:39 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -223,19 +223,31 @@ public class AgentsModelImpl
      * @param name Name of agent.
      * @param type Type of agent.
      * @param password Password of agent.
+     * @param choice Choice of type of configuartion.
      * @throws AMConsoleException if agent cannot be created.
      */
-    public void createAgent(String name, String type, String password) 
-        throws AMConsoleException {
+    public void createAgent(
+            String name,
+            String type,
+            String password,
+            String choice)
+            throws AMConsoleException {
         String realmName = "/";
         String[] params = {realmName, name, type};
-
+        
         try {
             logEvent("ATTEMPT_CREATE_AGENT", params);
             Map map = AgentConfiguration.getDefaultValues(type);
             Set set = new HashSet(2);
             map.put(AgentConfiguration.ATTR_NAME_PWD, set);
             set.add(password);
+            if ((choice != null) && (choice.equalsIgnoreCase(
+                    AgentConfiguration.VAL_CONFIG_REPO_LOCAL))) 
+            {
+                Set newset = new HashSet(2);
+                newset.add(AgentConfiguration.VAL_CONFIG_REPO_LOCAL);
+                map.put(AgentConfiguration.ATTR_CONFIG_REPO, newset);
+            }
             AgentConfiguration.createAgent(getUserSSOToken(), name, type, map);
             logEvent("SUCCEED_CREATE_AGENT", params);
         } catch (ConfigurationException e) {

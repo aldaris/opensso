@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.6 2008-03-06 18:46:34 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.7 2008-03-14 16:53:09 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,13 +100,22 @@ public class GenericAgentProfileViewBean
             AgentsViewBean.PG_SESSION_AGENT_TYPE);
         AgentsModel model = (AgentsModel)getModel();
         String tabName = (String)getPageSessionAttribute(PS_TABNAME);
+        String choice = (String)getPageSessionAttribute(
+                AgentsViewBean.LOCAL_OR_NOT);
+        AgentPropertyXMLBuilder blder = null;
         
         try {
-            AgentPropertyXMLBuilder blder = new AgentPropertyXMLBuilder(
+            if (isLocalConfig(agentType)) {
+                agentType = AgentsViewBean.AGENT_2_2;  
+                blder = new AgentPropertyXMLBuilder(
+                agentType, isGroup, true, tabName, model);
+            } else {
+                blder = new AgentPropertyXMLBuilder(
                 agentType, isGroup, is2dot2Agent(), tabName, model);
+            }
             attributeSchemas = blder.getAttributeSchemas();
             return new AMPropertySheetModel(blder.getXML(
-                inheritedPropertyNames));
+                inheritedPropertyNames, choice));
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
@@ -154,17 +163,26 @@ public class GenericAgentProfileViewBean
     }
     
     protected HashSet getPropertyNames() {
+        String agentType = (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_AGENT_TYPE);
         HashSet names = new HashSet();
         for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
             AttributeSchema as = (AttributeSchema)i.next();
             names.add(as.getName());
         }
+        if (isLocalConfig(agentType)) {
+            names.remove(AgentsViewBean.DEVICE_KEY);
+            names.remove(AgentsViewBean.DESCRIPTION);
+         }
         return names;        
     }
 
     protected void createTabModel() {
         String agentType = (String)getPageSessionAttribute(
             AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        if (isLocalConfig(agentType)) {
+            agentType = AgentsViewBean.AGENT_2_2;
+        }
         
         if (agentType != null) {
             super.createTabModel();
@@ -193,7 +211,12 @@ public class GenericAgentProfileViewBean
     }
     
     public boolean beginBtnInheritDisplay(ChildDisplayEvent event) {
-        return super.beginBtnInheritDisplay(event) && !is2dot2Agent();
+        String choice = (String)getPageSessionAttribute(
+                AgentsViewBean.LOCAL_OR_NOT);
+        String agentType = (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        return super.beginBtnInheritDisplay(event) && !is2dot2Agent() 
+            && !isLocalConfig(agentType);
     }
 
      /**
@@ -264,5 +287,14 @@ public class GenericAgentProfileViewBean
     
     protected boolean handleRealmNameInTabSwitch(RequestContext rc) {
         return false;
+    }
+    
+    private boolean isLocalConfig(String agentType) {
+        String choice = (String)getPageSessionAttribute(
+                AgentsViewBean.LOCAL_OR_NOT);
+        
+        return (choice != null && choice.equals(AgentsViewBean.PROP_LOCAL) &&
+                (agentType.equals(AgentsViewBean.AGENT_WEB) ||
+                agentType.equals(AgentsViewBean.DEFAULT_ID_TYPE)));
     }
 }

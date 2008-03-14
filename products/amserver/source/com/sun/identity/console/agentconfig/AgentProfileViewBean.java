@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.3 2008-02-15 01:54:36 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.4 2008-03-14 16:52:18 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,8 +62,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Base class for all agent profile view bean.
  */
-public abstract class AgentProfileViewBean 
-    extends AMPrimaryMastHeadViewBean {
+public abstract class AgentProfileViewBean
+        extends AMPrimaryMastHeadViewBean {
     
     protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
@@ -81,7 +81,7 @@ public abstract class AgentProfileViewBean
     protected Set inheritedPropertyNames;
     protected boolean isGroup;
     protected boolean rcSet;
-
+    
     AgentProfileViewBean(String pageName) {
         super(pageName);
     }
@@ -94,7 +94,7 @@ public abstract class AgentProfileViewBean
             String key = (String)i.next();
             bTab = key.endsWith("tabCommon.TabHref");
         }
-
+        
         if (bTab) {
             if (!rcSet) {
                 rcSet = true;
@@ -105,11 +105,11 @@ public abstract class AgentProfileViewBean
             initialize();
         }
     }
-
+    
     protected void initialize() {
         if (!initialized) {
             String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-       
+            
             if ((universalId != null) && (universalId.length() > 0)) {
                 isGroup = ((AgentsModel)getModel()).isAgentGroup(universalId);
             }
@@ -119,7 +119,7 @@ public abstract class AgentProfileViewBean
                 setPageSessionAttribute(IS_GROUP, "false");
             }
             initialized = createPropertyModel();
-
+            
             if (initialized) {
                 super.initialize();
                 createPageTitleModel();
@@ -128,18 +128,27 @@ public abstract class AgentProfileViewBean
             }
         }
     }
-
+    
     protected boolean createPropertyModel() {
         boolean created = false;
         String type = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
-
+                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        
         if ((type != null) && (type.trim().length() > 0)) {
             AgentsModel model = (AgentsModel)getModel();
             String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-            inheritedPropertyNames = (!isGroup && !is2dot2Agent()) ?
-                model.getInheritedPropertyNames(universalId) :
-                Collections.EMPTY_SET;
+            String choice = (String) getPageSessionAttribute(
+                    AgentsViewBean.LOCAL_OR_NOT);
+            if (checkAgentType(type)) {
+                inheritedPropertyNames = (!isGroup && !is2dot2Agent() &&
+                        !choice.equals(AgentsViewBean.PROP_LOCAL)) ?
+                            model.getInheritedPropertyNames(universalId) :
+                            Collections.EMPTY_SET;
+            } else {
+                inheritedPropertyNames = (!isGroup && !is2dot2Agent()) ?
+                    model.getInheritedPropertyNames(universalId) :
+                    Collections.EMPTY_SET;
+            }
             AMPropertySheetModel psModel = createPropertySheetModel(type);
             if (psModel != null) {
                 propertySheetModel = psModel;
@@ -147,17 +156,17 @@ public abstract class AgentProfileViewBean
             }
             created = true;
         }
-
+        
         return created;
     }
-
+    
     protected AMModel getModelInternal() {
         HttpServletRequest req =
-            RequestManager.getRequestContext().getRequest();
+                RequestManager.getRequestContext().getRequest();
         return new AgentsModelImpl(req, getPageSessionAttributes());
     }
-
-
+    
+    
     protected void registerChildren() {
         super.registerChildren();
         
@@ -176,13 +185,13 @@ public abstract class AgentProfileViewBean
     protected View createChild(String name) {
         View view = null;
         
-        if ((ptModel != null) && ptModel.isChildSupported(name)) { 
+        if ((ptModel != null) && ptModel.isChildSupported(name)) {
             view = ptModel.createChild(this, name);
         } else if (name.equals(PROPERTY_ATTRIBUTE)) {
             view = new AMPropertySheet(this, propertySheetModel, name);
         } else if ((propertySheetModel != null) &&
-            propertySheetModel.isChildSupported(name)
-        ) {
+                propertySheetModel.isChildSupported(name)
+                ) {
             view = propertySheetModel.createChild(this, name, getModel());
         } else if (name.equals(AMAdminConstants.DYN_LINK_COMPONENT_NAME)) {
             view = new HREF(this, name, "");
@@ -193,10 +202,10 @@ public abstract class AgentProfileViewBean
         }
         return view;
     }
-
+    
     protected void createPageTitleModel() {
         ptModel = new CCPageTitleModel(
-            getClass().getClassLoader().getResourceAsStream(
+                getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/threeBtnsPageTitle.xml"));
         ptModel.setValue("button1", "button.save");
         ptModel.setValue("button2", "button.reset");
@@ -206,7 +215,7 @@ public abstract class AgentProfileViewBean
     protected String getBackButtonLabel() {
         return getModel().getLocalizedString("agentconfig.btn.back");
     }
-
+    
     /**
      * Sets the property sheet values and agent title.
      *
@@ -214,50 +223,64 @@ public abstract class AgentProfileViewBean
      * @throws ModelControlException if cannot access to framework model.
      */
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException {
+    throws ModelControlException {
         super.beginDisplay(event);
         setPropertySheetValues();
         setAgentTitle();
     }
-
+    
     protected void setPropertySheetValues(){
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
         String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+                AgentsViewBean.PG_SESSION_AGENT_TYPE);
         AgentsModel model = (AgentsModel)getModel();
         try {
             setDefaultValues(agentType);
             
-            if (!isGroup && !is2dot2Agent() && isFirstTab()) {
-                Set groups = new HashSet();
-                model.getAgentGroupNames(agentType, "*", groups);
-                CCDropDownMenu menu = (CCDropDownMenu)getChild(
-                    CHILD_AGENT_GROUP);
-                Set groupNames = new TreeSet();
-                for (Iterator i = groups.iterator(); i.hasNext(); ) {
-                    AMIdentity amid = (AMIdentity)i.next();
-                    groupNames.add(amid.getName());
+            String choice = (String) getPageSessionAttribute(
+                    AgentsViewBean.LOCAL_OR_NOT);
+            if (checkAgentType(agentType)) {
+                if (choice != null && !choice.equals(AgentsViewBean.PROP_LOCAL)
+                && !isGroup && !is2dot2Agent() && isFirstTab()) {
+                    setProperty(model, agentType, universalId);
                 }
-                OptionList optList = createOptionList(groupNames);
-                optList.add(0, model.getLocalizedString("agentgroup.none"), "");
-                menu.setOptions(optList);
-                
-                String group = model.getAgentGroup(universalId);
-                if (group != null) {
-                    menu.setValue(group);
+            } else {
+                if ( !isGroup && !is2dot2Agent() && isFirstTab()) {
+                    setProperty(model, agentType, universalId);
                 }
             }
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
         propertySheetModel.setValue(PROPERTY_UUID, universalId);
+    }
+    
+    private void setProperty(AgentsModel model, String type, String universalId)
+    throws AMConsoleException {
+        Set groups = new HashSet();
+        model.getAgentGroupNames(type, "*", groups);
+        CCDropDownMenu menu = (CCDropDownMenu)getChild(
+                CHILD_AGENT_GROUP);
+        Set groupNames = new TreeSet();
+        for (Iterator i = groups.iterator(); i.hasNext(); ) {
+            AMIdentity amid = (AMIdentity)i.next();
+            groupNames.add(amid.getName());
+        }
+        OptionList optList = createOptionList(groupNames);
+        optList.add(0, model.getLocalizedString("agentgroup.none"), "");
+        menu.setOptions(optList);
+        
+        String group = model.getAgentGroup(universalId);
+        if (group != null) {
+            menu.setValue(group);
+        }
     }
     
     protected void setAgentTitle() {
         AgentsModel model = (AgentsModel)getModel();
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-
+        
         try {
             String title = model.getLocalizedString("edit.agentconfig.title");
             String displayName = model.getDisplayName(universalId);
@@ -265,13 +288,13 @@ public abstract class AgentProfileViewBean
             ptModel.setPageTitleText(MessageFormat.format(title, param));
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
     }
     
     protected static String getValueFromMap(Map attrValues, String name) {
         Set set = (Set)attrValues.get(name);
-        return ((set != null) && !set.isEmpty()) ? 
+        return ((set != null) && !set.isEmpty()) ?
             (String)set.iterator().next() : "";
     }
     
@@ -280,7 +303,7 @@ public abstract class AgentProfileViewBean
         set.add(value);
         return set;
     }
-
+    
     /**
      * Handles Save button click.
      *
@@ -288,38 +311,62 @@ public abstract class AgentProfileViewBean
      * @throws ModelControlException if cannot access to framework model.
      */
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException {
+    throws ModelControlException {
         submitCycle = true;
         AgentsModel model = (AgentsModel)getModel();
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
+        String type = (String)getPageSessionAttribute(
+                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String choice = (String) getPageSessionAttribute(
+                AgentsViewBean.LOCAL_OR_NOT);
         try {
             Map values = getFormValues();
-            if (!isGroup && !is2dot2Agent()) {
-                for (Iterator i = inheritedPropertyNames.iterator();
-                    i.hasNext(); )
-                {
-                    values.remove(i.next());
+            if (checkAgentType(type)) {
+                if (!isGroup && !is2dot2Agent() && choice != null && 
+                        !choice.equals(AgentsViewBean.PROP_LOCAL)) {
+                    for (Iterator i = inheritedPropertyNames.iterator();
+                    i.hasNext(); ) {
+                        values.remove(i.next());
+                    }
                 }
+            } else {
+                if (!isGroup && !is2dot2Agent()) {
+                    for (Iterator i = inheritedPropertyNames.iterator();
+                    i.hasNext(); ) {
+                        values.remove(i.next());
+                    }
+                }
+                
             }
             model.setAttributeValues(universalId, values);
-
-            if (!isGroup && !is2dot2Agent() && isFirstTab()) {
-                String agentGroup = getDisplayFieldStringValue(
-                    CHILD_AGENT_GROUP);
-                model.setGroup(universalId, agentGroup);
+            
+            if (checkAgentType(type)) {
+                if (!isGroup && !is2dot2Agent() && isFirstTab() 
+                    && choice != null && 
+                    !choice.equals(AgentsViewBean.PROP_LOCAL)) {
+                    String agentGroup = getDisplayFieldStringValue(
+                            CHILD_AGENT_GROUP);
+                    model.setGroup(universalId, agentGroup);
+                }
+            } else {
+                if (!isGroup && !is2dot2Agent() && isFirstTab()) {
+                    String agentGroup = getDisplayFieldStringValue(
+                            CHILD_AGENT_GROUP);
+                    model.setGroup(universalId, agentGroup);
+                }
             }
-           
+            
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                "message.updated");
+                    "message.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
         forwardTo();
     }
-
+    
     /**
-     * Disables inheritance setting button if the agent does not belong 
+     * Disables inheritance setting button if the agent does not belong
      * a group.
      *
      * @param event Child Display Event.
@@ -347,19 +394,19 @@ public abstract class AgentProfileViewBean
      * @throws ModelControlException if cannot access to framework model.
      */
     public void handleBtnInheritRequest(RequestInvocationEvent event)
-        throws ModelControlException {
+    throws ModelControlException {
         AgentConfigInheritViewBean vb =(AgentConfigInheritViewBean)
-            getViewBean(AgentConfigInheritViewBean.class);
+        getViewBean(AgentConfigInheritViewBean.class);
         vb.setPageSessionAttribute(
-            AgentConfigInheritViewBean.PG_ATTR_CONFIG_PAGE, 
-            getClass().getName());
+                AgentConfigInheritViewBean.PG_ATTR_CONFIG_PAGE,
+                getClass().getName());
         vb.setPageSessionAttribute(
-            AgentConfigInheritViewBean.PG_ATTR_PROPERTY_NAMES, 
-            getPropertyNames());
+                AgentConfigInheritViewBean.PG_ATTR_PROPERTY_NAMES,
+                getPropertyNames());
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
-        
+    
     /**
      * Handles reset button click.
      *
@@ -382,31 +429,36 @@ public abstract class AgentProfileViewBean
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
-
+    
     protected void createTabModel() {
         tabModel = new CCTabsModel();
     }
-
+    
     protected String getTrackingTabIDName() {
         return PG_SESSION_AGENT_TAB;
     }
-
+    
     protected boolean is2dot2Agent() {
         String agentType = (String) getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+                AgentsViewBean.PG_SESSION_AGENT_TYPE);
         return agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
     }
     
+    protected boolean checkAgentType(String type) {
+        return (type.equals(AgentsViewBean.AGENT_WEB) ||
+                type.equals(AgentsViewBean.DEFAULT_ID_TYPE));
+    }
+    
     protected abstract boolean isFirstTab();
-        
+    
     protected abstract void setDefaultValues(String type)
-        throws AMConsoleException;
+    throws AMConsoleException;
     
     protected abstract AMPropertySheetModel createPropertySheetModel(
-        String type);
+            String type);
     
     protected abstract Map getFormValues()
-        throws AMConsoleException, ModelControlException;
+    throws AMConsoleException, ModelControlException;
     
     protected abstract HashSet getPropertyNames();
 }

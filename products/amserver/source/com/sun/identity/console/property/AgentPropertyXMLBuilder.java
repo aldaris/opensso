@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentPropertyXMLBuilder.java,v 1.3 2008-02-01 23:56:23 veiming Exp $
+ * $Id: AgentPropertyXMLBuilder.java,v 1.4 2008-03-14 16:51:06 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.idm.IdConstants;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.console.agentconfig.AgentsViewBean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -99,12 +100,13 @@ public class AgentPropertyXMLBuilder
      * Returns a XML for displaying attribute in property sheet.
      *
      * @param readonly Set of readonly attribute names.
+     * @param choice Choice of type of configuration.
      * @throws SMSException if attribute schema cannot obtained.
      * @throws SSOException if single sign on token is invalid.
      * @throws AMConsoleException if there are no attribute to display.
      * @return XML for displaying attribute in property sheet.
      */
-    public String getXML(Set readonly)
+    public String getXML(Set readonly, String  choice)
         throws SMSException, SSOException, AMConsoleException {
         StringBuffer xml = new StringBuffer(1000);
 
@@ -114,6 +116,15 @@ public class AgentPropertyXMLBuilder
 
         if ((order == null) || order.isEmpty()) {
             Set attrSchemas = (Set)mapTypeToAttributeSchema.get(DUMMY_SECTION);
+            if (choice != null && choice.equals("local")) {
+                for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
+                    AttributeSchema as = (AttributeSchema)i.next();
+                    if ((as.getName().equals(AgentsViewBean.DEVICE_KEY))
+                        || (as.getName().equals(AgentsViewBean.DESCRIPTION))) {          
+                        i.remove();
+                    }
+                }
+            }
             String display = model.getLocalizedString("blank.header");
             buildSchemaTypeXML(display, attrSchemas, xml, model,
                 serviceBundle, readonly);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.3 2008-02-01 23:56:23 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.4 2008-03-14 16:52:46 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,9 @@ import com.sun.web.ui.view.html.CCButton;
 import com.sun.web.ui.view.html.CCTextField;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import com.sun.web.ui.view.table.CCActionTable;
+import com.sun.identity.idm.IdRepoException;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.idm.IdType;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
@@ -70,6 +73,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 /**
  * Main page of agent configuration.
@@ -113,9 +117,19 @@ public class AgentsViewBean
         "tblDataActionGroupHref";
 
     private static final String PAGETITLE = "pgtitle";
-    private static final String DEFAULT_ID_TYPE = "J2EEAgent";
+    public static final String DEFAULT_ID_TYPE = "J2EEAgent";
     static final String ATTR_NAME_AGENT_TYPE = "Type=";
     static final String TAB_AGENT_PREFIX = "46";
+    
+    public static String DEVICE_KEY = "sunIdentityServerDeviceKeyValue";
+    public static String DESCRIPTION = "description";
+    public static final String LOCAL_OR_NOT = "localornot";
+    private final static String ATTR_CONFIG_REPO =
+        "com.sun.identity.agents.config.repository.location";
+    public static final String PROP_LOCAL="local";
+    public static final String PROP_CENTRAL="centralized";
+    public static final String AGENT_2_2 = "2.2_Agent";
+    public static final String AGENT_WEB = "WebAgent";
 
     private CCActionTableModel tblModel;
     private CCActionTableModel tblGroupModel;
@@ -574,13 +588,38 @@ public class AgentsViewBean
             TBL_DATA_ACTION_HREF);
         setPageSessionAttribute(AgentProfileViewBean.UNIVERSAL_ID, 
             universalId);
-
+        SSOToken ssoToken = model.getUserSSOToken();
+        String realm = "/";
+        StringTokenizer st = new StringTokenizer(universalId, "=,");
+        st.nextToken();
+        String agentName = st.nextToken();
+        String agentType = (String) getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_AGENT_TYPE);
         try {
+            if (agentType.equals(AgentsViewBean.AGENT_WEB) || 
+                    (agentType.equals(AgentsViewBean.DEFAULT_ID_TYPE))) 
+            { 
+                AMIdentity amid = new AMIdentity(ssoToken, agentName,
+                        IdType.AGENTONLY, realm, null);
+                if (isPropertiesLocallyStored(amid)) {
+                    setPageSessionAttribute(LOCAL_OR_NOT, PROP_LOCAL);
+                } else {
+                    setPageSessionAttribute(LOCAL_OR_NOT, PROP_CENTRAL);
+                }
+            }
             Class clazz = getAgentCustomizedViewBean(idType);
             AMViewBeanBase vb = (AMViewBeanBase)getViewBean(clazz);
             removePageSessionAttribute(GenericAgentProfileViewBean.PS_TABNAME);
             passPgSessionMap(vb);
             vb.forwardTo(getRequestContext());
+        }  catch (IdRepoException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                model.getErrorString(e));
+            forwardTo();
+        } catch (SSOException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                model.getErrorString(e));
+            forwardTo();
         } catch (ClassNotFoundException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 model.getErrorString(e));
@@ -747,5 +786,16 @@ public class AgentsViewBean
             AgentsViewBean.PG_SESSION_AGENT_TYPE);
         return (agentType != null) && 
             agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
+    }
+    
+    private static boolean isPropertiesLocallyStored(AMIdentity amid)
+    throws IdRepoException, SSOException {
+        boolean isLocal = false;
+        Set setRepo = (Set)amid.getAttribute(ATTR_CONFIG_REPO);
+        if ((setRepo != null) && !setRepo.isEmpty()) {
+            String repo = (String) setRepo.iterator().next();
+            isLocal = (repo.equalsIgnoreCase(PROP_LOCAL));
+        }
+        return isLocal;
     }
 }
