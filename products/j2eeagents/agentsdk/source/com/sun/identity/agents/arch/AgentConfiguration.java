@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.20 2008-03-11 23:13:30 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.21 2008-03-14 23:05:42 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -991,6 +991,7 @@ public class AgentConfiguration implements
             setHotSwappableClientSDKProps();     
             logAgentVersion();
             logServerVersion();
+            logAgentEnv();
             markInitialized(); 
         }
     }
@@ -1009,6 +1010,19 @@ public class AgentConfiguration implements
         version = (version == null) ?  "Unknown Agent Version." : version; 
         if (isLogMessageEnabled()) {
             logMessage("AgentConfiguration.logAgentVersion: \n" + version);
+        }
+    }
+    /**
+     * Logs some of the system env information for the running agent.
+     */
+    private static void logAgentEnv() {  
+        if (isLogMessageEnabled()) {
+            logMessage("Agent Env information:");
+            logMessage("Java version=" + System.getProperty("java.version"));
+            logMessage("Java vendor=" + System.getProperty("java.vendor"));
+            logMessage("OS arch info=" + System.getProperty("os.arch"));
+            logMessage("OS name=" + System.getProperty("os.name"));
+            logMessage("OS version=" + System.getProperty("os.version"));
         }
     }
     
