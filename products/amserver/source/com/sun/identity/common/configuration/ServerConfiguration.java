@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.3 2008-02-26 01:21:22 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.4 2008-03-15 01:14:41 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -267,7 +268,13 @@ public class ServerConfiguration extends ConfigurationBase {
             
             for (Enumeration i = res.getKeys(); i.hasMoreElements(); ) {
                 String key = (String)i.nextElement();
-                values.add(key + "=" + (String)res.getString(key));
+                String val = (String)res.getString(key);
+                if (val.equals(
+                    "@" + SetupConstants.CONFIG_VAR_PLATFORM_LOCALE + "@")
+                ) {
+                    val = Locale.getDefault().toString();
+                }
+                values.add(key + "=" + val);
             }
 
             try {
