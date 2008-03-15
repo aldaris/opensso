@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.6 2008-02-26 01:27:05 jonnelson Exp $
+ * $Id: AMSetupFilter.java,v 1.7 2008-03-15 01:17:39 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.setup;
 
 import com.sun.identity.authentication.UI.LoginLogoutMapping;
+import java.io.File;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -47,6 +48,7 @@ public final class AMSetupFilter implements Filter {
     private boolean initialized;
     private boolean passthrough;
     private static final String SETUPURI = "/config/options.htm";
+    private static final String NOWRITE_PERMISSION = "/nowritewarning.jsp";
 
     private static String[] fList = { 
         ".htm", ".css", ".js", ".jpg", ".gif", ".png", "SMSObjectIF" 
@@ -81,9 +83,14 @@ public final class AMSetupFilter implements Filter {
                     filterChain.doFilter(httpRequest, httpResponse);
                 } else {
                     String url = httpRequest.getScheme() + "://" +
-                         httpRequest.getServerName() + ":" +
-                         httpRequest.getServerPort() +
-                         httpRequest.getContextPath() + SETUPURI;
+                        httpRequest.getServerName() + ":" +
+                        httpRequest.getServerPort() +
+                        httpRequest.getContextPath();
+                    if ((new File(System.getProperty("user.home"))).canWrite()){
+                        url += SETUPURI;
+                    } else {
+                        url += NOWRITE_PERMISSION;
+                    }
                     httpResponse.sendRedirect(url);
                     markPassthrough();
                 }
