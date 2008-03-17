@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ECPUtils.java,v 1.1 2007-10-04 16:55:28 hengming Exp $
+ * $Id: ECPUtils.java,v 1.2 2008-03-17 03:11:05 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ public class ECPUtils {
 
     public static String PAOS_MIME_TYPE_VAL = "application/vnd.paos+xml";
     public static String PAOS_HEADER_TYPE = "PAOS";
-    public static String PAOS_HEADER_VAL = "ver=\"urn:liberty:paos:2003-08\";\"urn:oasis:names:tc:SAML:2.0:profiles:SSO:ecp\"";
+    public static String PAOS_HEADER_VAL = "ver='urn:liberty:paos:2003-08'; 'urn:oasis:names:tc:SAML:2.0:profiles:SSO:ecp'";
 
     public static String COOKIE_NAME = "iPlanetDirectoryPro";
 }

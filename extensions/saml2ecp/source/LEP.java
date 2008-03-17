@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LEP.java,v 1.1 2007-10-04 16:55:29 hengming Exp $
+ * $Id: LEP.java,v 1.2 2008-03-17 03:11:05 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,6 @@ import org.w3c.dom.*;
 import com.sun.identity.federation.message.*;
 import com.sun.identity.federation.services.*;
 
-import com.sun.identity.liberty.ws.paos.*;
-import com.sun.identity.liberty.ws.soapbinding.*;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.ecp.ECPFactory;
@@ -56,18 +54,10 @@ public class LEP extends Thread {
     private static String HTTP_HEADERS_FILE = "config/httpHeaders.properties";
     private static Properties idpsConfig = new Properties();
     private static Properties httpHeadersConfig = new Properties();
-    private Socket clientSocket = null;
-    private String PROVIDER_URL = "/amserver/ssosoap";
-    private String VND_PAOS = "application/vnd.paos+xml";
+    private static String PROVIDER_URL = "/amserver/ssosoap";
+    private static String VND_PAOS = "application/vnd.paos+xml";
 
-    public LEP (Socket sock) {
-        clientSocket = sock;
-        if(cookieCache == null) {
-            cookieCache = new Hashtable();
-        }
-        if(ecpCache == null) {
-            ecpCache = new Hashtable();
-        }
+    static {
         try {
             idpsConfig.load(new FileInputStream(IDPS_FILE));
             httpHeadersConfig.load(new FileInputStream(HTTP_HEADERS_FILE));
@@ -78,96 +68,29 @@ public class LEP extends Thread {
         }
     }
 
-    public void run () {
+    public static void processURL(String url) {
         HttpURLConnection conn = null;
-        BufferedOutputStream outAgent = null;
-        BufferedOutputStream outServer = null;
-        BufferedInputStream inAgent = null;
-        BufferedInputStream inServer = null;
         try {
-            HttpRequestHdr request = new HttpRequestHdr();
-            inAgent = new BufferedInputStream(clientSocket.getInputStream());
-            request.parse(inAgent);
-            URL url = new URL(request.getURL());
-            System.out.println("METHOD:" + request.getMethod() + " URL:" + url);
-            
-            int b1 = 0;
-            outAgent = new BufferedOutputStream(clientSocket.getOutputStream());
+            System.out.println("URL: " + url);
 
-            request.addHeader("Accept", ECPUtils.PAOS_MIME_TYPE_VAL);
-            request.addHeader(ECPUtils.PAOS_HEADER_TYPE,
-                ECPUtils.PAOS_HEADER_VAL);
-            
-            conn = openConnection(url);
+            conn = openConnection(new URL(url));
             conn.setFollowRedirects(false);
             conn.setInstanceFollowRedirects(false);
-            Hashtable h = request.getHeaders();
-            for(Enumeration e = h.keys(); e.hasMoreElements() ;) {
-                String k = (String) e.nextElement();
-                Set vals = (Set) h.get(k);
-                if ((vals != null) && (!vals.isEmpty())) {
-                    for(Iterator iter = vals.iterator(); iter.hasNext();) {
-                        String val = (String)iter.next();
-                        System.out.println("Request Header = " + k + ": " +
-                            val);
-                        conn.addRequestProperty(k, val);
-                    }
-                }
-            }
+            conn.addRequestProperty("Accept", "test/html; " +
+                ECPUtils.PAOS_MIME_TYPE_VAL);
+            conn.addRequestProperty(ECPUtils.PAOS_HEADER_TYPE,
+                ECPUtils.PAOS_HEADER_VAL);
 
-            if(request.getMethod().equals("POST")) {
-                conn.setDoOutput(true);
-                conn.connect();
-                outServer = new BufferedOutputStream(conn.getOutputStream());
-                writeContent(outServer, inAgent, request.getContentLength());
-            } else {
-                conn.setDoOutput(false);
-                conn.connect();
-            }
+            conn.setDoOutput(false);
+            conn.connect();
 
-            inServer = new BufferedInputStream(conn.getInputStream());
-            sendResponse(inServer, outAgent, conn);
+            sendRequestToSP(conn);
         } catch (Exception e) {
             e.printStackTrace ();
         } finally {
-            if (outAgent != null) {
-                try {
-                    outAgent.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (outServer != null) {
-                try {
-                    outServer.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (inAgent != null) {
-                try {
-                    inAgent.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (inServer != null) {
-                try {
-                    inServer.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
             if (conn != null) {
                 try {
                     conn.disconnect();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (clientSocket != null) {
-                try {
-                    clientSocket.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -176,13 +99,13 @@ public class LEP extends Thread {
     }
 
 
-    private String findIDPEndpoint(String spEntityID, IDPList idpList)
+    private static String findIDPEndpoint(String spEntityID, IDPList idpList)
         throws Exception {
 
         String idpEndpoint = null;
         idpEndpoint = (String)idpsConfig.get(spEntityID);
         if (idpEndpoint != null) {
-            System.out.print("Got idp endpoint from idps.properties = " +
+            System.out.println("Got idp endpoint from idps.properties = " +
                 idpEndpoint);
             return idpEndpoint;
         }
@@ -209,8 +132,8 @@ public class LEP extends Thread {
      * Forward the <AuthnRequest> SOAP message received from the SP to the
      * IDP.
      */
-    private SOAPMessage sendAuthnRequestToIDP (String idpEndpoint,
-        OutputStream out, SOAPMessage msg) throws Exception {
+    private static SOAPMessage sendAuthnRequestToIDP (String idpEndpoint,
+        SOAPMessage msg) throws Exception {
 
         SOAPMessage response = null;
         // remove SOAP headers received from SP before forwarding.
@@ -219,12 +142,14 @@ public class LEP extends Thread {
 
         System.out.println("Sending the following MSG to provider:" + idpEndpoint);
         msg.writeTo(System.out);
-        response = postSOAPMsgToProvider(idpEndpoint, msg, out);
+        System.out.println("");
+
+        response = postSOAPMsgToProvider(idpEndpoint, msg);
         if(response != null) {
-            System.out.println("Response from IDP:" );
+            System.out.println("Got Response from IDP: " );
             response.writeTo(System.out);
         } else {
-            System.out.println("RESPONSE FROM IDP IS NON SOAP");
+            throw new Exception("Response from IDP is not a SOAP message.");
         }
             
         return response;
@@ -235,220 +160,168 @@ public class LEP extends Thread {
      * and processes either a SOAP response or a non-SOAP response in case
      * the IDP requires a login.
      */
-    public SOAPMessage postSOAPMsgToProvider(String provider, SOAPMessage msg, 
-        OutputStream out) throws IOException, SOAPException {
+    public static SOAPMessage postSOAPMsgToProvider(String providerEndpoint,
+        SOAPMessage msg)
+        throws IOException, SOAPException {
+
         SOAPMessage response = null;
 
         URL url = null;
         try {
-            url = new URL(provider);
+            url = new URL(providerEndpoint);
         } catch (MalformedURLException me) {
             throw new IOException(me.getMessage());
         }
 
         HttpURLConnection conn = openConnection(url);
-        conn.setFollowRedirects(false);
-        conn.setInstanceFollowRedirects(false);
+        conn.setInstanceFollowRedirects(true);
         conn.setRequestProperty("Content-type", "text/xml");
+        conn.setRequestProperty("SOAPAction", "\"\"");
+
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         msg.writeTo(baos);
         StringBuffer postBody  = new StringBuffer(baos.toString());
+
+        System.out.println("\n\nSending SOAPMessage to " + providerEndpoint);
+        System.out.println(postBody.toString());
+        System.out.println("\n\n");
 
         conn.setDoOutput(true);
         conn.connect();
         PrintWriter writer = new PrintWriter(conn.getOutputStream());
         writer.print(postBody);
         writer.close();
-        InputStream is = conn.getInputStream();
+
+        BufferedInputStream bin =
+            new BufferedInputStream(conn.getInputStream());
+
         String contentType = conn.getContentType();
         if(contentType.startsWith("text/xml"))  {
             // SOAP message response
             MessageFactory mf = MessageFactory.newInstance();
             MimeHeaders mimeHdrs = new MimeHeaders();
             mimeHdrs.addHeader("Content-type", "text/xml");
-            response = mf.createMessage(mimeHdrs, is);
+            response = mf.createMessage(mimeHdrs, bin);
         } else {
             // Non-SOAP message response
-            System.out.println("CONTENT TYPE:" + contentType);
-            forwardResponse(is, conn, out);
+            printContent(conn, bin);
         }
         return response;
     }
 
     
-    private void sendResponse(InputStream in, OutputStream out, 
-        HttpURLConnection conn) throws Exception {
+    private static void sendRequestToSP(HttpURLConnection conn)
+        throws Exception {
+
+        BufferedInputStream bin =
+            new BufferedInputStream(conn.getInputStream());
 
         String contentType = conn.getContentType();
         System.out.println("Response content type = " + contentType);
         if (contentType == null) {
-            forwardResponse(in, conn, out);
-        } else if(contentType.startsWith("text/xml")) {
-            try {
-                String acURL = null;
-                Message message = new Message(in);
-                List soapHeaders = message.getOtherSOAPHeaders();
-                if (soapHeaders != null) {
-                    for(Iterator iter=soapHeaders.iterator();iter.hasNext();) {
-                        Element e = (Element)iter.next();
-                        String tagName = e.getLocalName();
-                        String namespace = e.getNamespaceURI();
-                        System.out.println("TAG NAME:" + tagName);
-                        System.out.println("NAMESPACE:" + namespace);
-                        if (ECPUtils.ECPNAMESPACE.equals(namespace) && 
-                            tagName.equals("Response")) {
+            printContent(conn, bin);
+        } else if(contentType.startsWith(VND_PAOS)) {
+            String authnMsgId = null;
+            String msgId = null;
+            String acURL = null;
+            AuthnRequest ar = null;
+            PAOSRequest pr = null;
+            ECPRelayState ers = null;
 
+            SOAPMessage m = readSOAPMessageFromStream(bin);
+            SOAPHeader hdrs = m.getSOAPHeader();
 
-                            ECPResponse ecpResp =
-                                ECPFactory.getInstance().createECPResponse(e);
-                            acURL = ecpResp.getAssertionConsumerServiceURL();
-                            break;
-                        }
-                    }
+            SOAPBody body = m.getSOAPBody();
+            Iterator it = body.getChildElements();
+            while(it.hasNext()) {
+                SOAPElement se = (SOAPElement) it.next();
+                Name n = se.getElementName();
+                String localName = n.getLocalName();
+                System.out.println("LOCAL NAME:" + localName);
+                if(localName.equals("AuthnRequest")) {
+                    ar = ProtocolFactory.getInstance()
+                        .createAuthnRequest(se);
+                    authnMsgId = ar.getID();
+                    System.out.println("AUTHN MESSAGE ID:" + authnMsgId);
                 }
-
-                List soapBodies = message.getBodies();
-                if ((soapBodies == null) || (soapBodies.isEmpty())) {
-                    throw new Exception("SAML Response not found.");
-                }
-                Element elem = (Element)soapBodies.get(0);
-
-                Response samlResp = 
-                    ProtocolFactory.getInstance().createResponse(elem);
-                
-                String inRespTo = samlResp.getInResponseTo();
-                CacheEntry ce = (CacheEntry)ecpCache.remove(inRespTo);
-                if (ce == null) {
-                    throw new Exception("SAML Response ID doesn't match any " +
-                        "AuthnRequest ID.");
-                }
-
-
-                SOAPMessage resp = postToSP(acURL, soapBodies,
-                    ce.getPAOSRequest(), ce.getECPRelayState(), out);
-                if(resp != null) {
-                    System.out.println("GOT SOAP RESPONSE BACK");
-                }
-            } catch(Exception se) {
-                se.printStackTrace();
-                throw new Exception(se.getMessage());
             }
 
-        } else if(contentType.startsWith(VND_PAOS)) {
-            try {
-                String authnMsgId = null;
-                String msgId = null;
-                String acURL = null;
-                AuthnRequest ar = null;
-                PAOSRequest pr = null;
-                ECPRelayState ers = null;
+            if (ar == null) {
+                throw new Exception("AuthnRequest not found.");
+            }
 
-                SOAPMessage m = readSOAPMessageFromStream(in);
-                SOAPHeader hdrs = m.getSOAPHeader();
+            Iterator li = hdrs.examineAllHeaderElements();
 
-                SOAPBody body = m.getSOAPBody();
-                Iterator it = body.getChildElements();
-                while(it.hasNext()) {
-                    SOAPElement se = (SOAPElement) it.next();
-                    Name n = se.getElementName();
-                    String localName = n.getLocalName();
-                    System.out.println("LOCAL NAME:" + localName);
-                    if(localName.equals("AuthnRequest")) {
+            IDPList idpList = null;
+            String spEntityID = null;
+            while(li.hasNext()) {
+                SOAPHeaderElement e = (SOAPHeaderElement) li.next();
+                String tagName = e.getLocalName();
+                String namespace = e.getNamespaceURI();
+                if(namespace.equals(ECPUtils.PAOSNAMESPACE) && 
+                        tagName.equals("Request")) {
+                    pr = new PAOSRequest(e);
+                    msgId = pr.getMessageID();
+                    System.out.println("PAOSRequest:" +
+                        pr.toXMLString(true, true));
 
-                        ar = ProtocolFactory.getInstance()
-                            .createAuthnRequest(se);
-                        authnMsgId = ar.getID();
-                        System.out.println("AUTHN MESSAGE ID:" + authnMsgId);
-                    }
+                } else if(namespace.equals(ECPUtils.ECPNAMESPACE) && 
+                            tagName.equals("Request")) {
+                    ECPRequest ecpReq =
+                        ECPFactory.getInstance().createECPRequest(e);
+                    idpList = ecpReq.getIDPList();
+                    spEntityID = ecpReq.getIssuer().getValue();
+                    System.out.println("ECPRequest:" +
+                        ecpReq.toXMLString(true, true));
+                } else if(namespace.equals(ECPUtils.ECPNAMESPACE) && 
+                        tagName.equals("RelayState")) {
+                    ers = ECPFactory.getInstance().createECPRelayState(e);
+                    System.out.println("ECPRelayState:" +
+                        ers.toXMLString(true, true));
                 }
+            }
 
-                if (ar == null) {
-                    throw new Exception("AuthnRequest not found.");
-                }
+            System.out.println("SP Provider:" + spEntityID);
+            System.out.println("IDP Providers from IDPList:" + idpList);
+            String idpEndpoint = findIDPEndpoint(spEntityID, idpList);
+            SOAPMessage response = sendAuthnRequestToIDP(idpEndpoint, m);
 
-                Iterator li = hdrs.examineAllHeaderElements();
-
-                IDPList idpList = null;
-                String spEntityID = null;
-                while(li.hasNext()) {
-                    SOAPHeaderElement e = (SOAPHeaderElement) li.next();
+            SOAPHeader soapHeaders = response.getSOAPHeader();
+            if (soapHeaders != null) {
+                for(Iterator iter= soapHeaders.examineAllHeaderElements();
+                    iter.hasNext();) {
+                    Element e = (Element)iter.next();
                     String tagName = e.getLocalName();
                     String namespace = e.getNamespaceURI();
-                    if(namespace.equals(ECPUtils.PAOSNAMESPACE) && 
-                            tagName.equals("Request")) {
-                        pr = new PAOSRequest(e);
-                        msgId = pr.getMessageID();
-                        System.out.println("PAOSRequest:" +
-                            pr.toXMLString(true, true));
+                    if (namespace.equals(ECPUtils.ECPNAMESPACE) && 
+                        tagName.equals("Response")) {
 
-                    } else if(namespace.equals(ECPUtils.ECPNAMESPACE) && 
-                                tagName.equals("Request")) {
-                        ECPRequest ecpReq =
-                            ECPFactory.getInstance().createECPRequest(e);
-                        idpList = ecpReq.getIDPList();
-                        spEntityID = ecpReq.getIssuer().getValue();
-                        System.out.println("ECPRequest:" +
-                            ecpReq.toXMLString(true, true));
-                    } else if(namespace.equals(ECPUtils.ECPNAMESPACE) && 
-                            tagName.equals("RelayState")) {
-                        ers = ECPFactory.getInstance().createECPRelayState(e);
-                        System.out.println("ECPRelayState:" +
-                            ers.toXMLString(true, true));
+                        ECPResponse ecpResp =
+                            ECPFactory.getInstance().createECPResponse(e);
+                        acURL = ecpResp.getAssertionConsumerServiceURL();
                     }
                 }
-
-                System.out.println("SP Provider:" + spEntityID);
-                System.out.println("IDP Providers from IDPList:" + idpList);
-                String idpEndpoint = findIDPEndpoint(spEntityID, idpList);
-                SOAPMessage response = sendAuthnRequestToIDP(idpEndpoint, out,
-                    m);
-                if(response == null) {
-                    CacheEntry ce = new CacheEntry(pr, ers);
-                    ecpCache.put(authnMsgId, ce);
-                    System.out.println("Not a SOAP response. Add " +
-                        "AuthnRequest ID " + authnMsgId + " to cache.");
-                    return;
-                } else {
-                    System.out.println("SOAP RESPONSE:");
-                    response.writeTo(System.out);
-                }
-
-                Message message = new Message(response);
-                List soapHeaders = message.getOtherSOAPHeaders();
-                if (soapHeaders != null) {
-                    for(Iterator iter=soapHeaders.iterator();iter.hasNext();) {
-                        Element e = (Element) iter.next();
-                        String tagName = e.getLocalName();
-                        String namespace = e.getNamespaceURI();
-                        if (namespace.equals(ECPUtils.ECPNAMESPACE) && 
-                            tagName.equals("Response")) {
-
-                            ECPResponse ecpResp =
-                                ECPFactory.getInstance().createECPResponse(e);
-                            acURL = ecpResp.getAssertionConsumerServiceURL();
-                        }
-                    }
-                }
-                List soapBodies = message.getBodies();
-                SOAPMessage respMsg = postToSP(acURL, soapBodies, pr, ers,
-                    out);
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
             }
+
+            body = response.getSOAPBody();
+            List soapBodies = new ArrayList();
+            for(Iterator iter = body.getChildElements();iter.hasNext();) {
+                soapBodies.add(iter.next());
+            }
+
+            postSAMLResponseToSP(acURL, soapBodies, pr, ers);
         } else {
             // Plain HTML response. Send back to browser.
-            forwardResponse(in, conn, out);
+            printContent(conn, bin);
         }
     }
 
     /**
      * Post a SOAP message to the service provider.
      */
-    private SOAPMessage postToSP(String acURL, List soapBodies,
-        PAOSRequest pr, ECPRelayState ers, OutputStream out) throws Exception {
+    private static void postSAMLResponseToSP(String acURL, List soapBodies,
+        PAOSRequest pr, ECPRelayState ers) throws Exception {
         // Send PAOS response header in message to SP.
         SOAPMessage respMsg = null;
         if (acURL != null) {
@@ -468,21 +341,17 @@ public class LEP extends Thread {
             System.out.println("Sending following msg to SP");
             SOAPMessage msg = createSOAPMessage(header, bodySB.toString());
             msg.writeTo(System.out);
-            respMsg = postSOAPMsgToProvider(acURL, msg, out);
+            respMsg = postSOAPMsgToProvider(acURL, msg);
         } else {
-            System.out.println("No SP info found");
+            throw new Exception("Unable to post SAML response. " +
+                "No SP info found");
         }
-        if(respMsg != null) {
-            System.out.println("RESP FROM SP");
-            respMsg.writeTo(System.out);
-        }
-        return respMsg;
     }
 
     /**
      * Read the contents of the SOAP message from the specified input stream.
      */
-    private SOAPMessage readSOAPMessageFromStream(InputStream is) 
+    private static SOAPMessage readSOAPMessageFromStream(InputStream is) 
         throws SOAPException, IOException {
         MessageFactory mf = MessageFactory.newInstance();
         MimeHeaders mimeHdrs = new MimeHeaders();
@@ -495,34 +364,58 @@ public class LEP extends Thread {
      * Read the contents of the response from the URL connection
      * and return to browser.
      */
-    private void forwardResponse(InputStream in, HttpURLConnection conn,
-        OutputStream out) throws IOException {
+    private static void printContent(HttpURLConnection conn,
+        BufferedInputStream bin) throws IOException {
 
-        Map headerFields = conn.getHeaderFields();
-        Set headerKeys = headerFields.keySet();
-        Iterator itr = headerKeys.iterator();
-        StringBuffer headersSB = new StringBuffer();
-        headersSB.append("HTTP/1.1 ").
-            append(conn.getResponseCode()).
-            append(" ").
-            append(conn.getResponseMessage()).
-            append("\r\n");
+        System.out.println("URL = " + conn.getURL());
+        System.out.println("Response code = " + conn.getResponseCode());
+        System.out.println("Response message = " + conn.getResponseMessage());
+        int contentLength = conn.getContentLength();
+        System.out.println("Content length = " + contentLength);
+        String contentType = conn.getContentType();
+        System.out.println("Content type = " + contentType);
 
-        while(itr.hasNext()) {
-            String hdr = (String) itr.next();
-            if(hdr != null && !hdr.equalsIgnoreCase("Transfer-encoding")) {
-                List vals = (List)headerFields.get(hdr);
-                for(int i=0; i<vals.size(); i++) {
-                    String val = (String)vals.get(i);
-                    headersSB.append(hdr + ": " + val).append("\r\n");
-                    System.out.println("Header = " + hdr + ": " + val);
+        if (!contentType.startsWith("text/html")) {
+            return;
+        }
+
+        StringBuffer contentSB = new StringBuffer();
+        byte content[] = new byte[2048];
+
+        if (contentLength != -1) {
+            int read = 0, totalRead = 0;
+            int left;
+            while (totalRead < contentLength) {
+                left = contentLength - totalRead;
+                read = bin.read(content, 0,
+                    left < content.length ? left : content.length);
+                if (read == -1) {
+                    // We need to close connection !!
+                    break;
+                } else {
+                    if (read > 0) {
+                        totalRead += read;
+                        contentSB.append(new String(content, 0, read));
+                    }
                 }
             }
-        }
-        headersSB.append("\r\n");
-        out.write(headersSB.toString().getBytes());
+        } else {
+            int numbytes;
+            int totalRead = 0;
 
-        writeContent(out, in, conn.getContentLength());
+            while (true) {
+                numbytes = bin.read(content);
+                if (numbytes == -1) {
+                    break;
+                }
+
+                totalRead += numbytes;
+
+                contentSB.append(new String(content, 0, numbytes));
+            }
+        }
+
+        System.out.println("Content = \n" + contentSB.toString());
     }
 
     /**
@@ -545,61 +438,26 @@ public class LEP extends Thread {
         } 
     }
 
-    private HttpURLConnection openConnection(URL url) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    private static HttpURLConnection openConnection(URL url)
+        throws IOException {
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // Add addtional HTTP headers, for example, X-MSISDN header
         for(Enumeration e = httpHeadersConfig.keys(); e.hasMoreElements() ;) {
             String key = (String) e.nextElement();
             String val = (String) httpHeadersConfig.get(key);
+            if (key.equals("Cookie")) {
+                int index = val.indexOf("=");
+                if (index != -1) {
+                    val = val.substring(0, index + 1) +
+                    val.substring(index + 1).replaceAll("\\+", "%2B");
+                    // URLEncoder.encode(val.substring(index + 1), "UTF-8");
+                }
+            }
             System.out.println("Setting HTTP request header:" + key + ":" +
                 val);
             conn.setRequestProperty(key, val);
         }
         return conn;
-    }
-
-    private static int writeContent(OutputStream out, InputStream in,
-        int contentLength) throws IOException {
-
-        byte content[] = new byte[2048];
-
-        if (contentLength != -1) {
-            int read = 0, totalRead = 0;
-            int left;
-            while (totalRead < contentLength) {
-                left = contentLength - totalRead;
-                read = in.read(content, 0,
-                    left < content.length ? left : content.length);
-                if (read == -1) {
-                    // We need to close connection !!
-                    break;
-                } else {
-                    if (read > 0) {
-                        totalRead += read;
-                        out.write(content, 0, read);
-                        out.flush();
-                    }
-                }
-            }
-
-            return totalRead;
-        } else {
-            int numbytes;
-            int totalRead = 0;
-
-            while (true) {
-                numbytes = in.read(content);
-                if (numbytes == -1) {
-                    break;
-                }
-
-                totalRead += numbytes;
-
-                out.write(content, 0, numbytes);
-                out.flush();
-            }//while loop
-            return totalRead;
-        }//if/else
     }
 
     /**
@@ -647,24 +505,6 @@ public class LEP extends Thread {
         return MessageFactory.newInstance().createMessage(mimeHeaders,
             new ByteArrayInputStream(sb.toString().getBytes(
             SAML2Constants.DEFAULT_ENCODING)));
-    }
-    
-    class CacheEntry {
-        private PAOSRequest pr = null;
-        private ECPRelayState ers = null;
-
-        CacheEntry(PAOSRequest pr, ECPRelayState ers) {
-            this.pr = pr;
-            this.ers = ers;
-        }
-
-        PAOSRequest getPAOSRequest() {
-            return pr;
-        }
-
-        ECPRelayState getECPRelayState() {
-            return ers;
-        }
     }
 }
 

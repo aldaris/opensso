@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.1 2007-10-04 16:55:27 hengming Exp $
+# $Id: README.txt,v 1.2 2008-03-17 03:12:07 hengming Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
@@ -29,16 +29,16 @@ To build this project, first build openfm. Then run
    ant build
 
 To start ECP, 
-   ant ecp
+   $SAML2ECP_HOME/startecp <url>
 
 To test SAML2 ECP profile, you need at least one SP and one IDP.
 
 Setup SP and IDP as usual with the following extra steps:
 For SP:
 1. Instead of deploying 
-$SAML2ECP_HOME/../../product/federation/openfm/built/dist/fam.war,
-deploy $SAML2ECP_HOME/built/dist/fam.war.
-This fam.war contains a filter ECPFilter. ECPFilter will let any request pass
+$SAML2ECP_HOME/../../product/federation/openfm/built/dist/opensso.war,
+deploy $SAML2ECP_HOME/built/dist/opensso.war.
+This opensso.war contains a filter ECPFilter. ECPFilter will let any request pass
 through except the request that accesses ecp/*. When processing these requests,
 ECPFilter will check if the user has valid session. If yes, it lets the request
 throught. If not, it will forward request to "/SPECP" which is SP sso init
@@ -75,13 +75,19 @@ SP to send IDPLIst):
 2. Customize $SAML2ECP_HOME/config/httpHeaders.properties (optional):
    key is HTTP header name, value is HTTP header value.
    ECP will add these HTTP headers to HTTPRequest before forwarding it.
-   For example, you can add HTTP header X-MSISDN.
+   For example, you can add HTTP header X-MSISDN or Cookie.
 
 To test ECP profile:
-1. Start IDP, SP and ECP.
-2. Open browser and set proxy host to be ECP hostname and proxy port to be ECP
-   port (when you start ECP, it will tell you the port #);
-3. Access URL http://<SP host>:<SP port>/<deploy URI>/ecp/index.html.
+1. Start IDP, SP. and ECP.
+2. $SAML2ECP_HOME/startecp http://<SP host>:<SP port>/<deploy URI>/ecp/index.html.
    If the user doesn't have SP session, ECP profile will be triggered.
+   If idpECPSessionMapper is default implementation, you need to change
+   $SAML2ECP_HOME/config/httpHeaders.properties to add Cookie header using
+   correct IDP session ID. If everything is set up correctly, startecp will
+   print the content of the url at the end. In above case, it will print
+
+Content =
+ECP test file
+
  
 
