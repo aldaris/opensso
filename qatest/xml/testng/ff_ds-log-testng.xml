@@ -1,0 +1,255 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: ff_ds-log-testng.xml,v 1.1 2008-03-17 05:46:15 kanduls Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+
+<suite name="ff_ds-log" verbose="1">
+    <test name="Modify_log_config">
+        <parameter name="testName" value="LogToFileTest0"/>
+        <parameter name="createUser" value="false"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest">
+                <methods>
+                    <exclude name="logMessage"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_1">
+        <parameter name="testName" value="LogToFileTest1"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_2">
+        <parameter name="testName" value="LogToFileTest2"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_3">
+        <parameter name="testName" value="LogToFileTest3"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_4">
+        <parameter name="testName" value="LogToFileTest4"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_5">
+        <parameter name="testName" value="LogToFileTest5"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_6">
+        <parameter name="testName" value="LogToFileTest6"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_7">
+        <parameter name="testName" value="LogToFileTest7"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_file_8">
+        <parameter name="testName" value="LogToFileTest8"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="true"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToFileTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_0">
+        <parameter name="testName" value="LogToDBTest0"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_1">
+        <parameter name="testName" value="LogToDBTest1"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_2">
+        <parameter name="testName" value="LogToDBTest2"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_3">
+        <parameter name="testName" value="LogToDBTest3"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_4">
+        <parameter name="testName" value="LogToDBTest4"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_5">
+        <parameter name="testName" value="LogToDBTest5"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_6">
+        <parameter name="testName" value="LogToDBTest6"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="false"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+    <test name="Write_log_to_db_7">
+        <parameter name="testName" value="LogToDBTest7"/>
+        <parameter name="createUser" value="true"/>
+        <parameter name="restore" value="true"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.log.LogToDBTest"/>
+        </classes>
+    </test>
+</suite>
