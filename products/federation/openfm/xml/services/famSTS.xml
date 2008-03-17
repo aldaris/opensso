@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.4 2008-02-01 21:06:59 mrudul_uchil Exp $
+   $Id: famSTS.xml,v 1.5 2008-03-17 22:14:04 mrudul_uchil Exp $
                                                                                 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -88,7 +88,7 @@
                    syntax="string"
                    i18nKey="a106">
                    <DefaultValues>
-                       <Value>com.sun.xml.ws.security.trust.impl.IssueSamlTokenContractImpl</Value>
+                       <Value>com.sun.xml.ws.security.trust.impl.WSTrustContractImpl</Value>
                    </DefaultValues>
                </AttributeSchema>
                
