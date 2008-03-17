@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.6 2008-03-11 20:12:16 mrudul_uchil Exp $
+ * $Id: STSConstants.java,v 1.7 2008-03-17 22:16:45 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,10 +59,28 @@ public class STSConstants {
     public static final String SSO_TOKEN_TYPE = "FAMSSOToken";
     
     public static final String FAM_TOKEN_NS = 
-                              "http://www.sun.com/identity/famtoken";
+        "http://www.sun.com/identity/famtoken";
         
     public static final String STS_CLIENT_USER_TOKEN_PLUGIN =
-                               "com.sun.identity.wss.sts.clientusertoken";            
+        "com.sun.identity.wss.sts.clientusertoken";
+    
+    public static final String SAML_HOLDER_OF_KEY_1_0 = 
+        "urn:oasis:names:tc:SAML:1.0:cm:holder-of-key";
+    public static final String SAML_HOLDER_OF_KEY_2_0 = 
+        "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key";
+    public static final String SAML_BEARER_1_0 = 
+        "urn:oasis:names:tc:SAML:1.0:cm:bearer";
+    public static final String SAML_BEARER_2_0 = 
+        "urn:oasis:names:tc:SAML:2.0:cm:bearer";
+    public static final String SAML_SENDER_VOUCHES_1_0 = 
+        "urn:oasis:names:tc:SAML:1.0:cm::sender-vouches";
+    public static final String SAML_SENDER_VOUCHES_2_0 = 
+        "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches";
+    
+    // Jar files path at FAM client, for FAM classloader to 
+    // load those jar files. 
+    public static final String FAM_CLASSLOADER_DIR_PATH = 
+        "com.sun.identity.classloader.client.jarsPath";
 
 }
 
