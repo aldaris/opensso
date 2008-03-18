@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.6 2007-11-08 06:16:36 goodearth Exp $
+ * $Id: ServiceConfigImpl.java,v 1.7 2008-03-18 19:46:34 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -467,6 +467,41 @@ class ServiceConfigImpl implements ServiceListener {
             debug.message("ServiceConfigImpl::getInstance: return: " + dn);
         }
         return (answer);
+    }
+
+    // Method called by ServiceConfig to delete sub-service configuration
+    // key from the cache when removeSubConfig is called.
+    static void deleteInstance(SSOToken token,
+        ServiceConfigManagerImpl scm, ServiceSchemaImpl ss, String dn,
+        String oName, String groupName, String compName,
+        boolean globalConfig, ServiceSchemaImpl parentSS)
+        throws SSOException, SMSException {
+
+        if (debug.messageEnabled()) {
+            debug.message("ServiceConfigImpl::deleteInstance: called: dn: " 
+                + dn + " Org Name: " + oName + " Group Name: " + groupName
+                + " Component Name: "+ compName);
+        }
+
+        // Get required parameters
+        String orgName = DNMapper.orgNameToDN(oName);
+        String cacheName = getCacheName(scm.getName(), scm.getVersion(),
+            orgName, groupName, compName, globalConfig);
+
+        if (debug.messageEnabled()) {
+            debug.message("ServiceConfigImpl::deleteInstance: cacheName: " + 
+                    cacheName);
+        }
+        synchronized(configMutex) {
+            // Check if the cachename/key to be removed is in the configImpls 
+            // cache and delete from cache if it exists.
+            if (configImpls.containsKey(cacheName)) {
+                configImpls.remove(cacheName);
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("ServiceConfigImpl::deleteInstance: deleted: " + dn);
+        }
     }
 
     // This function is executed after obtaining "configMutex" lock

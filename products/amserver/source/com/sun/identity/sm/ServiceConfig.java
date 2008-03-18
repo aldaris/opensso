@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.9 2007-11-08 06:16:36 goodearth Exp $
+ * $Id: ServiceConfig.java,v 1.10 2008-03-18 19:46:34 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -333,11 +333,31 @@ public class ServiceConfig {
         // "http:&amp;#47;&amp;#47;abc.east.sun.com:58080"
 
         subConfigName = SMSSchema.unescapeName(subConfigName);
-        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, ("ou="
-            + subConfigName + "," + sc.getDN()), null);
+
+        // First remove the entry from ServiceConfigImpl Cache.
+
+        // Construct subconfig DN
+        String sdn = "ou=" + subConfigName + "," + sc.getDN();
+
+        // Construct ServiceConfigManagerImpl
+        ServiceConfigManagerImpl scmImpl = ServiceConfigManagerImpl.
+            getInstance(token, getServiceName(), getVersion());
+
+        // Construct ServiceConfigImpl of the removed subconfig.
+        ServiceConfigImpl sConfigImpl =
+            sc.getSubConfig(token, subConfigName);
+        
+        // Call ServiceConfigImpl's deleteInstance() to remove from cache.
+        sConfigImpl.deleteInstance(token, scmImpl, null, sdn, "/", 
+            sConfigImpl.getGroupName(), (getComponentName() + "/" 
+            + SMSSchema.escapeSpecialCharacters(subConfigName)), false, ss);
+
+        // Remove this entry from smsentry.
+        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sdn, null);
         SMSEntry entry = cEntry.getClonedSMSEntry();
         entry.delete(token);
         cEntry.refresh(entry);
+
         // Remove the entry from CachedSubEntries
         CachedSubEntries cse = CachedSubEntries.getInstance(token, sc.getDN());
         cse.remove(subConfigName);
