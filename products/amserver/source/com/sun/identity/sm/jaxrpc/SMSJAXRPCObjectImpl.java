@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.12 2008-03-06 17:26:09 goodearth Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.13 2008-03-18 19:51:39 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -392,29 +392,31 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         synchronized (notificationURLs) {
             for (Iterator entries = notificationURLs.entrySet().iterator(); 
                 entries.hasNext();) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String id = (String) entry.getKey();
-                URL url = (URL) entry.getValue();
+                synchronized (entries) {
+                    Map.Entry entry = (Map.Entry) entries.next();
+                    String id = (String) entry.getKey();
+                    URL url = (URL) entry.getValue();
 
-                // Construct NotificationSet
-                Notification notification = new Notification(modItem);
-                NotificationSet ns = 
-                    new NotificationSet(JAXRPCUtil.SMS_SERVICE);
-                ns.addNotification(notification);
-                try {
-                    PLLServer.send(url, ns);
-                    if (debug.messageEnabled()) {
-                        debug.message("SMSJAXRPCObjectImpl:sentNotification "
+                    // Construct NotificationSet
+                    Notification notification = new Notification(modItem);
+                    NotificationSet ns = 
+                        new NotificationSet(JAXRPCUtil.SMS_SERVICE);
+                    ns.addNotification(notification);
+                    try {
+                        PLLServer.send(url, ns);
+                        if (debug.messageEnabled()) {
+                            debug.message("SMSJAXRPCObjectImpl:sentNotification "
                             + "URL: " + url + " Data: " + ns);
+                        }
+                    } catch (SendNotificationException ne) {
+                        if (debug.warningEnabled()) {
+                            debug.warning("SMSJAXRPCObject: failed sending "
+                                + "notification to: " + url + "\nRemoving "
+                                + "URL from notification list.", ne);
+                        }
+                        // Remove the URL from Notification List
+                        notificationURLs.remove(id);
                     }
-                } catch (SendNotificationException ne) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("SMSJAXRPCObject: failed sending "
-                            + "notification to: " + url + "\nRemoving "
-                            + "URL from notification list.", ne);
-                    }
-                    // Remove the URL from Notification List
-                    notificationURLs.remove(id);
                 }
             }
         }
