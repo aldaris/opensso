@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.2 2007-11-21 19:00:24 rmisra Exp $
+ * $Id: GeneralAgentTests.java,v 1.3 2008-03-18 04:59:09 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,12 +77,13 @@ public class GeneralAgentTests extends TestCommon {
     private SSOToken usertoken;
     private SSOToken admintoken;
     private HtmlPage page;
+    private String strAgentType;
 
     /**
      * Instantiated different helper class objects
      */
     public GeneralAgentTests() 
-    throws Exception{
+    throws Exception {
         super("GeneralAgentTests");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
@@ -113,7 +114,8 @@ public class GeneralAgentTests extends TestCommon {
         strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
         log(Level.FINEST, "setup", "Header Script URL: " + strScriptURL);
         url = new URL(strScriptURL);
-
+        strAgentType = rbg.getString(strGblRB + ".agentType");
+        log(Level.FINEST, "setup", "Agent Type - "+strAgentType );        
         int resPIdx = new Integer(resourcePIdx).intValue();
         int resNPIdx = new Integer(resourceNPIdx).intValue();
         int resCaseIdx = new Integer(resourceCaseIdx).intValue();
@@ -121,7 +123,6 @@ public class GeneralAgentTests extends TestCommon {
         resourceProtected = rbg.getString(strGblRB + ".resource" + resPIdx);
         resourceNotProtected = rbg.getString(strGblRB + ".resource" + resNPIdx);
         resourceCase = rbg.getString(strGblRB + ".resource" + resCaseIdx);
-
         log(Level.FINEST, "setup", "Protected Resource Name: " +
                 resourceProtected);
         log(Level.FINEST, "setup", "Unprotected Resource Name: " +
@@ -134,7 +135,7 @@ public class GeneralAgentTests extends TestCommon {
         if (executeAgainstOpenSSO) {
             mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB + ".xml");
             log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB + ".xml");
-            mpc.createPolicy(strLocRB + ".xml");
+           mpc.createPolicy(strLocRB + ".xml");
         } else
             log(Level.FINE, "setup", "Executing against non OpenSSO Install");
 
@@ -157,7 +158,7 @@ public class GeneralAgentTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "REMOTE_USER : generalagenttests");
+                    "REMOTE_USER:generalagenttests");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluetRemoteUser", e.getMessage());
@@ -167,7 +168,7 @@ public class GeneralAgentTests extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
 
-        exiting("evaluetRemoteUser");
+        exiting("evaluateRemoteUser");
     }
 
     /**
@@ -177,24 +178,27 @@ public class GeneralAgentTests extends TestCommon {
     public void evaluateAnonymous()
     throws Exception {
         entering("evaluateAnonymous", null);
-
-        webClient = new WebClient();
-        try {
-            URL urlLoc = new URL(resourceNotProtected);
-            page = (HtmlPage)webClient.getPage(urlLoc);
-            log(Level.FINEST, "evaluateAnonymous", "Resource Page :\n" +
-                    page.asXml());
-            page = (HtmlPage)webClient.getPage(url);
-            iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "REMOTE_USER : anonymous");
-            assert (iIdx != -1);
-        } catch (Exception e) {
-            log(Level.SEVERE, "evaluateAnonymous", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-        exiting("evaluateAnonymous");
+        if (!(strAgentType.contains("J2EE"))){
+            webClient = new WebClient();
+            try {
+                URL urlLoc = new URL(resourceNotProtected);
+                page = (HtmlPage)webClient.getPage(urlLoc);
+                log(Level.FINEST, "evaluateAnonymous", "Resource Page :\n" +
+                        page.asXml());
+                page = (HtmlPage)webClient.getPage(url);
+                iIdx = -1;
+                iIdx = getHtmlPageStringIndex(page, "REMOTE_USER:anonymous");
+                assert (iIdx != -1);
+            } catch (Exception e) {
+                log(Level.SEVERE, "evaluateAnonymous", e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
+        } else
+            log(Level.FINEST, "evaluateAnonymous",
+                        "REMOTE_USER test for anonymous user not " +
+                        "valid for J2EE Agents");
+            exiting("evaluateAnonymous");
     }
 
     /**
@@ -204,7 +208,6 @@ public class GeneralAgentTests extends TestCommon {
     public void evaluateNotEnforced()
     throws Exception {
         entering("evaluateNotEnforced", null);
-
         webClient = new WebClient();
         try {
             URL urlLoc = new URL(resourceNotProtected);
@@ -231,10 +234,9 @@ public class GeneralAgentTests extends TestCommon {
     public void evaluateCaseSensitive()
     throws Exception {
         entering("evaluateCaseSensitive", null);
-
         webClient = new WebClient();
         try {
-            page = consoleLogin(webClient, resourceProtected,
+             page = consoleLogin(webClient, resourceProtected,
                     "generalagenttests", "generalagenttests");
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
@@ -243,8 +245,7 @@ public class GeneralAgentTests extends TestCommon {
             URL urlLoc = new URL(resourceCase);
             page = (HtmlPage)webClient.getPage(urlLoc);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page,
-                    "Access Denied");
+            iIdx = getHtmlPageStringIndex(page,"Access Denied");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateCaseSensitive", e.getMessage());
@@ -265,7 +266,6 @@ public class GeneralAgentTests extends TestCommon {
     public void evaluateSessionTermination()
     throws Exception {
         entering("evaluateSessionTermination", null);
-
         webClient = new WebClient();
         try {
             page = consoleLogin(webClient, resourceProtected,
@@ -277,7 +277,7 @@ public class GeneralAgentTests extends TestCommon {
             SSOToken ssotoken = getUserToken(admintoken, "generalagenttests");
             destroyToken(admintoken, ssotoken);
             Thread.sleep(pollingTime);
-            HtmlPage page = consoleLogin(webClient, resourceProtected,
+            page = consoleLogin(webClient, resourceProtected,
                     "generalagenttests",
                     "generalagenttests");
             iIdx = -1;
@@ -303,7 +303,6 @@ public class GeneralAgentTests extends TestCommon {
     public void evaluateSessionLogout()
     throws Exception {
         entering("evaluateSessionLogout", null);
-
         webClient = new WebClient();
         try {
             page = consoleLogin(webClient, resourceProtected,

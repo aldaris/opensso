@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.5 2008-02-20 19:28:53 inthanga Exp $
+ * $Id: HeaderAttributeTests.java,v 1.6 2008-03-18 04:58:13 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.agents;
 
-import com.gargoylesoftware.htmlunit.ImmediateRefreshHandler;
+import com.gargoylesoftware.htmlunit.WaitingRefreshHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
@@ -49,6 +49,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+///jsxFunction_reload(true)
 /**
  * This class tests Header attributes related to Session, Profile
  * and Response. Attributes are tested using a webapp or a cgi script
@@ -76,6 +77,7 @@ public class HeaderAttributeTests extends TestCommon {
     private SSOToken admintoken;
     private int sleepTime = 2000;
     private int pollingTime;
+    private WaitingRefreshHandler refresh;
 
     /**
      * Instantiated different helper class objects
@@ -129,6 +131,7 @@ public class HeaderAttributeTests extends TestCommon {
                 log(Level.FINE, "setup", "Executing against non OpenSSO" +
                         " Install");
             Thread.sleep(15000);
+            refresh = new WaitingRefreshHandler();
         } catch (Exception e) {
             cleanup();
             log(Level.SEVERE, "setup", e.getMessage());
@@ -155,7 +158,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_STATSINGLE : 10");
+                    "HTTP_RESPONSE_STATSINGLE:10");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewSingleValuedStaticResponseAttribute",
@@ -186,7 +189,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_STATMULTIPLE : 20|30");
+                    "HTTP_RESPONSE_STATMULTIPLE:20|30");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewMultiValuedStaticResponseAttribute",
@@ -216,7 +219,7 @@ public class HeaderAttributeTests extends TestCommon {
                     "rauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_RESPONSE_CN : rauser");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_RESPONSE_CN:rauser");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateDynamicResponseAttribute",
@@ -245,7 +248,7 @@ public class HeaderAttributeTests extends TestCommon {
                     "rauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_RESPONSE_CN : rauser");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_RESPONSE_CN:rauser");
             assert (iIdx != -1);
 
             Set set = new HashSet();
@@ -268,7 +271,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_CN : rauserupdated");
+                    "HTTP_RESPONSE_CN:rauserupdated");
             assert (iIdx != -1);
 
         } catch (Exception e) {
@@ -304,7 +307,7 @@ public class HeaderAttributeTests extends TestCommon {
                     "evaluateUniversalIdSessionAttribute", "strUniveraslId: " +
                     strUniveraslId);
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_SESSION_UNIVERSALIDENTIFIER : " + strUniveraslId);
+                    "HTTP_SESSION_UNIVERSALIDENTIFIER:" + strUniveraslId);
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUniversalIdSessionAttribute",
@@ -348,8 +351,22 @@ public class HeaderAttributeTests extends TestCommon {
             log(Level.FINEST, "evaluateCustomSessionAttribute", "s3: " + s3);
 
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
-            usertoken = stMgr.createSSOToken(s3);
-            //usertoken = stMgr.createSSOToken(URLDecoder.decode(s3));
+            String s3_decoded;
+            log(Level.FINEST, "evaluateCustomSessionAttribute", 
+                    "User token before decode: " + s3);
+            if (s3.indexOf("%") != -1) {
+                s3_decoded = URLDecoder.decode(s3);
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "User token after decode: " + s3_decoded);
+                if ((s3_decoded.indexOf("%") != -1)) {
+                    log(Level.FINEST, "evaluateCustomSessionAttribute", 
+                        "User token after decode has %");
+                    assert (s3_decoded.indexOf("%") != -1);   
+                }
+                usertoken = stMgr.createSSOToken(s3_decoded);
+            } else {
+                usertoken = stMgr.createSSOToken(s3);
+            }
             String strProperty;
             if (validateToken(usertoken)) {
                 log(Level.FINEST, "evaluateCustomSessionAttribute",
@@ -371,7 +388,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_SESSION_MYPROPERTY : val1");
+                    "HTTP_SESSION_MYPROPERTY:val1");
             assert (iIdx != -1);
 
             usertoken.setProperty("MyProperty", "val2");
@@ -386,7 +403,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_SESSION_MYPROPERTY : val2");
+                    "HTTP_SESSION_MYPROPERTY:val2");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedSessionAttribute",
@@ -414,19 +431,17 @@ public class HeaderAttributeTests extends TestCommon {
             idmc.createIdentity(admintoken, realm, IdType.ROLE, "parole1",
                     new HashMap());
             idmc.addUserMember(admintoken, "pauser", "parole1", IdType.ROLE);
-
             Map map = new HashMap();
             Set set = new HashSet();
             set.add("(objectclass=person)");
             map.put("nsRoleFilter", set);
             idmc.createIdentity(admintoken, realm, IdType.FILTEREDROLE,
                     "filparole1", map);
-
             HtmlPage page = consoleLogin(webClient, resource, "pauser",
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN : pauser");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN:pauser");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewSingleValuedProfileAttribute",
@@ -455,7 +470,7 @@ public class HeaderAttributeTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page
-                    , "HTTP_PROFILE_ALIAS : pauseralias1|pauseralias2");
+                    , "HTTP_PROFILE_ALIAS:pauseralias1|pauseralias2");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewMultiValuedProfileAttribute",
@@ -484,8 +499,8 @@ public class HeaderAttributeTests extends TestCommon {
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            String strNsrole = "HTTP_PROFILE_NSROLE :" +
-                    " cn=containerdefaulttemplaterole," + basedn +
+            String strNsrole = "HTTP_PROFILE_NSROLE:" +
+                    "cn=containerdefaulttemplaterole," + basedn +
                     "|cn=filparole1," + basedn + "|cn=parole1," + basedn;
             log(Level.FINEST, "evaluateNewNsRoleProfileAttribute",
                     "NSROLE: " + strNsrole);
@@ -521,8 +536,8 @@ public class HeaderAttributeTests extends TestCommon {
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            String strNsrole = "HTTP_PROFILE_NSROLE :" +
-                    " cn=containerdefaulttemplaterole," + basedn +
+            String strNsrole = "HTTP_PROFILE_NSROLE:" +
+                    "cn=containerdefaulttemplaterole," + basedn +
                     "|cn=filparole1," + basedn + "|cn=parole1," + basedn;
             log(Level.FINEST, "evaluateNewFilteredRoleProfileAttribute",
                     "NSROLE: " + strNsrole);
@@ -558,7 +573,7 @@ public class HeaderAttributeTests extends TestCommon {
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN : pauser");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN:pauser");
             assert (iIdx != -1);
 
             Map map = new HashMap();
@@ -576,11 +591,13 @@ public class HeaderAttributeTests extends TestCommon {
             set = idmc.getIdentityAttribute(usertoken, "iPlanetAMUserService",
                     "cn");
             assert (set.contains("pauserupdated"));
-
             page = (HtmlPage)webClient.getPage(url);
+            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN:" +
+                    "pauserupdated");
+            Thread.sleep(pollingTime);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN :" +
-                    " pauserupdated");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_CN:" +
+                    "pauserupdated");
             assert (iIdx != -1);
 
         } catch (Exception e) {
@@ -610,8 +627,8 @@ public class HeaderAttributeTests extends TestCommon {
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_ALIAS :" +
-                    " pauseralias1|pauseralias2");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_ALIAS:" +
+                    "pauseralias1|pauseralias2");
             assert (iIdx != -1);
 
             Map map = new HashMap();
@@ -622,13 +639,11 @@ public class HeaderAttributeTests extends TestCommon {
                     "Update Attribute List: " + map);
             idmc.modifyIdentity(idmc.getFirstAMIdentity(admintoken, "pauser",
                     IdType.USER, realm), map);
-
             Thread.sleep(pollingTime);
-
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_ALIAS :" +
-                    " pauseralias3");
+            iIdx = getHtmlPageStringIndex(page, "HTTP_PROFILE_ALIAS:" +
+                    "pauseralias3");
             assert (iIdx != -1);
 
         } catch (Exception e) {
@@ -658,8 +673,8 @@ public class HeaderAttributeTests extends TestCommon {
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            String strNsrole = "HTTP_PROFILE_NSROLE :" +
-                    " cn=containerdefaulttemplaterole," + basedn +
+            String strNsrole = "HTTP_PROFILE_NSROLE:" +
+                    "cn=containerdefaulttemplaterole," + basedn +
                     "|cn=filparole1," + basedn + "|cn=parole1," + basedn;
             log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
                     "NSROLE: "+ strNsrole);
@@ -675,8 +690,8 @@ public class HeaderAttributeTests extends TestCommon {
             Thread.sleep(pollingTime);
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            strNsrole = "HTTP_PROFILE_NSROLE :" +
-                    " cn=containerdefaulttemplaterole," + basedn +
+            strNsrole = "HTTP_PROFILE_NSROLE:" +
+                    "cn=containerdefaulttemplaterole," + basedn +
                     "|cn=filparole1," + basedn +
                     "|cn=parole1," + basedn + "|cn=parole2," + basedn;
             log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
@@ -768,6 +783,7 @@ public class HeaderAttributeTests extends TestCommon {
             smsc.removeServiceAttributeValues("iPlanetAMPolicyConfigService",
                     "sun-am-policy-dynamic-response-attributes",
                     "Organization");
+ 
             if ((idmc.searchIdentities(admintoken, "pauser",
                     IdType.USER)).size() != 0)
                 idmc.deleteIdentity(admintoken, realm, IdType.USER, "pauser");

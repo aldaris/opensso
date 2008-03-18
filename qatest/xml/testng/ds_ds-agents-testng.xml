@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-agents-testng.xml,v 1.4 2007-09-24 20:31:19 rmisra Exp $: 
+ $Id: ds_ds-agents-testng.xml,v 1.5 2008-03-18 05:00:44 nithyas Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,7 +67,7 @@
         <classes>
             <class name="com.sun.identity.qatest.agents.AgentsTests"/>
         </classes>
-    </test>
+    </test> 
     <test name="AgentsSubjectTests 4">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="3"/>
@@ -81,7 +81,7 @@
         <classes>
             <class name="com.sun.identity.qatest.agents.AgentsTests"/>
         </classes>
-    </test>
+    </test> 
     <test name="AgentsSubjectTests 5">
         <parameter name="policyIdx" value="0"/>
         <parameter name="evaluationIdx" value="4"/>
@@ -374,5 +374,19 @@
             <class name="com.sun.identity.qatest.agents.ConfigureUnconfigure"/>
             <class name="com.sun.identity.qatest.agents.HeaderAttributeTests"/>
         </classes>
-    </test>
-</suite>
+     </test>
+     <test name="AgentsConflictPolicyTest 1">
+                <parameter name="policyIdx" value="5"/>
+                <parameter name="evaluationIdx" value="0"/>
+                <parameter name="setup" value="true"/>
+                <parameter name="cleanup" value="true"/>
+                <groups>
+                    <run>
+                        <include name="ds_ds_sec"/>
+                    </run>
+                </groups>
+                <classes>
+                    <class name="com.sun.identity.qatest.agents.AgentsTests"/>
+                </classes>
+      </test>
+      </suite>

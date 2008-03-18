@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.6 2008-02-26 01:15:41 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.7 2008-03-18 04:54:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,17 +51,19 @@ public class ConfigureUnconfigure extends TestCommon {
     private String agentId;
     private String agentPassword;
     private String strGblRB = "agentsGlobal";
+    private String agentType;
 
     /**
      * Class constructor. Instantiates the ResourceBundles and
      * creates common objects required by tests.
      */
     public ConfigureUnconfigure()
-    throws Exception{
+    throws Exception {
         super("ConfigureUnconfigure");
         rbg = ResourceBundle.getBundle(strGblRB);
         agentId = rbg.getString(strGblRB + ".agentId");
         agentPassword = rbg.getString(strGblRB + ".agentPassword");
+        agentType = rbg.getString(strGblRB + ".agentType");
         idmc = new IDMCommon();
     }
 
@@ -92,8 +94,18 @@ public class ConfigureUnconfigure extends TestCommon {
                             agentId,  map);
             } else {
                 set = new HashSet();
-                set.add("2.2_Agent");
-                map.put("AgentType",set);
+                if (agentType.contains("2.2")) {
+                    set.add("2.2_Agent");
+                    map.put("AgentType",set);
+                } else {
+                    if (agentType.contains("3.0J2EE")) {
+                        set.add("J2EEAgent");
+                        map.put("AgentType",set);
+                    } else if (agentType.contains("3.0WEB")) {
+                        set.add("WebAgent");
+                        map.put("AgentType",set);
+                    }
+                }
                 if (!setValuesHasString(idmc.searchIdentities(admintoken,
                         agentId, IdType.AGENTONLY), agentId))
                     idmc.createIdentity(admintoken, realm, IdType.AGENTONLY,
@@ -120,16 +132,18 @@ public class ConfigureUnconfigure extends TestCommon {
         try {
             admintoken = getToken(adminUser, adminPassword, basedn);
             smsc = new SMSCommon(admintoken);
-            if (smsc.isAMDIT())
+            if (smsc.isAMDIT()) {
                 if (setValuesHasString(idmc.searchIdentities(admintoken,
                 agentId, IdType.AGENT), agentId))
                     idmc.deleteIdentity(admintoken, realm, IdType.AGENT,
                             agentId);
-            else
+            }
+            else {
                 if (setValuesHasString(idmc.searchIdentities(admintoken,
                 agentId, IdType.AGENTONLY), agentId))
                     idmc.deleteIdentity(admintoken, realm, IdType.AGENTONLY,
                             agentId);
+            }
             stopNotificationServer();
         } catch (Exception e) {
             stopNotificationServer();
