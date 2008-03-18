@@ -339,7 +339,11 @@ HashTable<Element>::findEntry(const std::string& key)
     const EntryType &entry = buckets[bucketNumber].find(key);
 
     if (entry && entry->getExpirationTime() < PR_Now()) {
+        #if defined(LINUX) 
+	return (typename HashTable<Element>::EntryType)NULL;
+        #else
 	return (HashTable<Element>::EntryType)NULL;
+        #endif
     }
 
     return entry;

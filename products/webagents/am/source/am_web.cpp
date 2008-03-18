@@ -339,8 +339,8 @@ void mbyte_to_wchar(const char * orig_str,char *dest_str,int dest_len)
 	/* Perform iconv conversion */
 	Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
 		 "i18n b4 convlen = %d  size = %d", len, size);
-#if defined(X86_64)
-	int ret = iconv(encoder, &origstr, &(size_t)len, &dest_str, &(size_t)size);
+#if defined(LINUX_64)
+	int ret = iconv(encoder, &origstr, (size_t*)&len, &dest_str, (size_t*)&size);
 #else
 	int ret = iconv(encoder, &origstr, &len, &dest_str, &size);
 #endif

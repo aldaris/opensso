@@ -102,7 +102,7 @@ private:
 
     am_status_t parseAgentResponse( const std::string xmlResponse,  
                            am_properties_t properties);
-    void AgentProfileService::parseURL(std::string serviceURL, 
+    void parseURL(std::string serviceURL, 
                                        bool isRestURL,
                                        std::string &parsedServiceURL);
     bool isListMapProperty(const char* propName); 

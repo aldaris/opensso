@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.3 2007-08-08 00:39:46 subbae Exp $
+# $Id: Makefile,v 1.4 2008-03-18 00:51:59 subbae Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -92,12 +92,6 @@ endif
 SRCS := iws_agent.c
 ES6_OBJS := $(patsubst %.c, %_$(ES6_LIB_NAME).o, $(SRCS))
 OBJS := $(ES6_OBJS)
-
-ifeq ($(OS_ARCH), Linux)
-     ifeq ($(MC_ARCH), x86_64)
-          INCLUDE_FLAGS += -fPIC
-     endif
-endif
 
 INCLUDE_FLAGS += -I$(DEST_INC_DIR)
 

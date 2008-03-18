@@ -214,7 +214,7 @@ ThreadPool::~ThreadPool() {
 	     "ThreadPool::~ThreadPool(): ThreadPool destroyed.");
 }
 
-#ifdef HPUX
+#if defined(HPUX) || defined(LINUX)
 void
 spin(void *args) {
 #else

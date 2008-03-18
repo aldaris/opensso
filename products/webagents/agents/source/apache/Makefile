@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.3 2007-08-08 00:39:46 subbae Exp $
+# $Id: Makefile,v 1.4 2008-03-18 00:51:58 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -76,12 +76,6 @@ ifeq ($(OS_ARCH), Linux)
    endif
 endif
 
-
-ifeq ($(OS_ARCH), Linux)
-     ifeq ($(MC_ARCH), x86_64)
-          APACHE2_CFLAGS += -DX86_64
-      endif
-endif
 
 APACHE2_CFLAGS += -DAPACHE2 -DEAPI -DMOD_PERL -DUSE_EXPAT -DXP_UNIX $(PIC_FLAG) -DCORE_PRIVATE $(APACHE2_INCLUDE_FLAGS) -I$(APACHE_DIR)/include
 

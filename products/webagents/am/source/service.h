@@ -52,6 +52,7 @@
 #include "ht_cleaner.h"
 #include "agent_config_fetch.h"
 #include "agent_config_cache_cleanup.h"
+#include "sso_token_service.h"
 
 BEGIN_PRIVATE_NAMESPACE
 

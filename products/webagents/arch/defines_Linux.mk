@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines_Linux.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
+# $Id: defines_Linux.mk,v 1.3 2008-03-18 00:52:00 subbae Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -87,6 +87,11 @@ endif
 SHELL_EXEC_EXTENSION :=
 
 LN_s := ln -s
+
+ifeq ($(BUILD_TYPE), 64)
+CFLAGS += -fPIC
+CXXFLAGS += -DLINUX_64
+endif
 
 #
 # the following is the name of the tar ball for dsame drop,.

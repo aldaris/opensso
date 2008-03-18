@@ -2,7 +2,7 @@ Summary: BASE_PRODUCT_NAME Access Manager C Development Kit
 Name: common
 Version: 2.2
 Release: 0
-Copyright: Commercial
+License: CDDL 
 Group: Applications/Internet
 Prefix: /opt
 AutoReqProv: no 
