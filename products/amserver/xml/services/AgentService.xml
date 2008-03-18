@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.36 2008-03-08 03:01:55 mallas Exp $
+   $Id: AgentService.xml,v 1.37 2008-03-18 18:47:17 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2013,15 +2013,6 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.iplanet.am.notification.url"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a217">
-                        <DefaultValues>
-                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@@AGENT_APP_URI@/notification</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
                         name="com.iplanet.am.session.client.polling.enable"
                         type="single"
                         syntax="boolean"
@@ -2152,15 +2143,6 @@
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.notification.url"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a236">
-                        <DefaultValues>
-                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@@AGENT_APP_URI@/notification</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
