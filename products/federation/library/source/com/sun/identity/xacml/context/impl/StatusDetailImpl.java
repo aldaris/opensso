@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusDetailImpl.java,v 1.1 2007-08-29 23:40:52 dillidorai Exp $
+ * $Id: StatusDetailImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,8 @@ public class StatusDetailImpl implements StatusDetail {
         } else {
             XACMLSDKUtils.debug.error(
                 "StatusDetailImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -107,19 +108,20 @@ public class StatusDetailImpl implements StatusDetail {
     public void setElement(Element element) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
 
         if (element == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
 
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
         this.element = element;
@@ -150,10 +152,10 @@ public class StatusDetailImpl implements StatusDetail {
         String nsPrefix = "";
         String nsDeclaration = "";
         if (includeNSPrefix) {
-            nsPrefix = XACMLConstants.CONTEXT_PREFIX;
+            nsPrefix = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         if (declareNS) {
-            nsDeclaration = XACMLConstants.CONTEXT_DECLARE_STR;
+            nsDeclaration = XACMLConstants.CONTEXT_NS_DECLARATION;
         }
         if (element != null) {
             if (includeNSPrefix && (element.getPrefix() == null)) {
@@ -171,13 +173,13 @@ public class StatusDetailImpl implements StatusDetail {
         } else {
             StringBuffer sb = new StringBuffer(2000);
             sb.append("<").append(nsPrefix)
-                    .append(XACMLConstants.STATUS_DETAIL_ELEMENT)
+                    .append(XACMLConstants.STATUS_DETAIL)
                     .append(" ")
                     .append(nsDeclaration)
                     .append(">")
                     .append("</")
                     .append(nsPrefix)
-                    .append(XACMLConstants.STATUS_DETAIL_ELEMENT)
+                    .append(XACMLConstants.STATUS_DETAIL)
                     .append(">\n");
             xmlString = sb.toString();
         }
@@ -205,22 +207,25 @@ public class StatusDetailImpl implements StatusDetail {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(XACMLConstants.STATUS_DETAIL_ELEMENT)) {
+        if (!elemName.equals(XACMLConstants.STATUS_DETAIL)) {
             XACMLSDKUtils.debug.error(
                     "StatusMessageImpl.processElement(): invalid local name " 
                     + elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_local_name"));
         }
         this.element = element;

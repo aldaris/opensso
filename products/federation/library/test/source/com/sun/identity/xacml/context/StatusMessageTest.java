@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class StatusMessageTest extends UnitTestBase {
 
     public StatusMessageTest() {
-        super("OpenFed-xacml-StatusMessageTest");
+        super("FedLibrary-XACML-StatusMessageTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

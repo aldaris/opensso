@@ -3,6 +3,7 @@ package com.sun.identity.xacml.context;
 import com.sun.identity.shared.test.UnitTestBase;
 import com.sun.identity.shared.xml.XMLUtils;
 
+import com.sun.identity.xacml.common.XACMLConstants;
 import com.sun.identity.xacml.common.XACMLException;
 import com.sun.identity.xacml.common.XACMLSDKUtils;
 import com.sun.identity.xacml.context.ContextFactory;
@@ -12,8 +13,14 @@ import com.sun.identity.xacml.context.Status;
 import com.sun.identity.xacml.context.StatusCode;
 import com.sun.identity.xacml.context.StatusMessage;
 import com.sun.identity.xacml.context.StatusDetail;
+import com.sun.identity.xacml.policy.PolicyFactory;
+import com.sun.identity.xacml.policy.Obligation;
+import com.sun.identity.xacml.policy.Obligations;
 
+import java.net.URI;
 import java.util.logging.Level;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.testng.annotations.Test;
 
@@ -23,12 +30,12 @@ import org.w3c.dom.Element;
 public class ResultTest extends UnitTestBase {
 
     public ResultTest() {
-        super("OpenFed-xacml-ResultTest");
+        super("FedLibrary-XACML-ResultTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})
     @Test(groups={"xacml"})
-    public void getResult() throws XACMLException {
+    public void getResult() throws XACMLException, Exception {
 
         entering("getResult()", null);
         log(Level.INFO, "getResult()","\n");
@@ -96,6 +103,36 @@ public class ResultTest extends UnitTestBase {
         log(Level.INFO, "getResult()","decision-xml:" + decision1.toXMLString());
         log(Level.INFO, "getResult()","\n");
 
+        log(Level.INFO, "getResult()","create obligation1");
+        Obligation obligation1 = PolicyFactory.getInstance().createObligation();
+        log(Level.INFO, "getResult()","set obligationId");
+        obligation1.setObligationId(new URI("obligation-10"));
+        log(Level.INFO, "getResult()","set fulfillOn");
+        obligation1.setFulfillOn("Permit");
+
+        log(Level.INFO, "getResult()","create obligation2");
+        Obligation obligation2 = PolicyFactory.getInstance().createObligation();
+        obligation2.setObligationId(new URI("obligation-20"));
+        obligation2.setFulfillOn("Permit");
+        List list = new ArrayList();
+        Document doc = XMLUtils.newDocument();
+        Element elem = doc.createElementNS(XACMLConstants.XACML_NS_URI, 
+                "xacml:AttributeAssignment");
+        elem.setAttribute("AttributeId", "a-120");
+        elem.setAttribute("DataType", "f-120");
+        list.add(elem);
+        log(Level.INFO, "getResult()","setting attributeAssignments");
+        obligation2.setAttributeAssignments(list);
+        log(Level.INFO, "getResult()","obligation xml:" 
+                + obligation2.toXMLString(true, true));
+
+        log(Level.INFO, "getResult()","create obligations");
+        Obligations obligations = PolicyFactory.getInstance().createObligations();
+        obligations.addObligation(obligation1);
+        obligations.addObligation(obligation2);
+        log(Level.INFO, "getResult()","obligations xml:" 
+                + obligation2.toXMLString(true, true));
+
         log(Level.INFO, "getResult()","create empty result");
         Result result = ContextFactory.getInstance().createResult();
         log(Level.INFO, "getResult()","result-xml:" + result.toXMLString());
@@ -110,6 +147,8 @@ public class ResultTest extends UnitTestBase {
         log(Level.INFO, "getResult()","result-xml:" + result.toXMLString());
         log(Level.INFO, "getResult()","set status");
         result.setStatus(status1);
+        log(Level.INFO, "getResult()","set obligations");
+        result.setObligations(obligations);
         log(Level.INFO, "getResult()","result-xml:" + result.toXMLString());
         log(Level.INFO, "getResult()","result-xml, with nsDeclaration:" 
                 + result.toXMLString(true, true));

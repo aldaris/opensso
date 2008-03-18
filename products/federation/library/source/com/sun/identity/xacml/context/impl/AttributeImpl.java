@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeImpl.java,v 1.1 2007-08-29 23:40:27 dillidorai Exp $
+ * $Id: AttributeImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,8 +91,9 @@ public class AttributeImpl implements Attribute {
         } else {
             XACMLSDKUtils.debug.error(
                 "AttributeImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
-                "errorObtainingElement"));
+            throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "errorObtainingElement"));
         }
     }
     
@@ -114,7 +115,8 @@ public class AttributeImpl implements Attribute {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "AttributeImpl.processElement(): invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
 
@@ -122,7 +124,8 @@ public class AttributeImpl implements Attribute {
       if (! element.getLocalName().equals(XACMLConstants.ATTRIBUTE)) {
             XACMLSDKUtils.debug.error(
                 "AttributeImpl.processElement(): invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
       }
       NamedNodeMap attrs = element.getAttributes();
@@ -131,29 +134,27 @@ public class AttributeImpl implements Attribute {
           id = new URI(attrs.getNamedItem(XACMLConstants.ATTRIBUTE_ID)
                 .getNodeValue());
       } catch (Exception e) {
-          throw new XACMLException("AttributeImpl.processElement():"
-              + "Error parsing required attribute "
-              + XACMLConstants.ATTRIBUTE_ID +"in "
-              + "AttributeType"); // TODO add i18n
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "attribute_not_uri"));
       }
       if (id == null) {
-          throw new XACMLException("AttributeImpl.processElement():Attribute "
-              +"must contain AttributeId ");
-          // TODO add 118n debug
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "missing_attribute"));
       }
       try {
           type = new URI(attrs.getNamedItem(XACMLConstants.DATATYPE)
                 .getNodeValue());
       } catch (Exception e) {
-          throw new XACMLException("AttributeImpl.processElement():"
-              + "Error parsing required attribute "
-              + XACMLConstants.DATATYPE +"in "
-              + "DataType:"+e.getMessage()); // TODO add i18n
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "attribute_not_uri"));
       }
       if (type == null) {
-          throw new XACMLException("AttributeImpl.processElement():Attribute "
-              +"must contain DataType ");
-          // TODO add 118n debug
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "missing_attribute"));
       }
       try {
           Node issuerNode = attrs.getNamedItem(XACMLConstants.ISSUER);
@@ -161,10 +162,9 @@ public class AttributeImpl implements Attribute {
               issuer = issuerNode.getNodeValue();
   
       } catch (Exception e) {
-          throw new XACMLException("AttributeImpl.processElement():"
-              + "Error parsing optional attribute "
-              + XACMLConstants.ISSUER +"in "
-              + "AttributeType:"+e.getMessage()); // TODO add i18n
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "attribute_parsing_error"));
       }
  
       // now we get the attribute value
@@ -183,9 +183,10 @@ public class AttributeImpl implements Attribute {
       }
 
       // make sure we got a value
-      if (values.isEmpty()) {
-          throw new XACMLException("AttributeImpl.processElement():Attribute "
-              +"must contain a value"); // TODO add i18n
+      if (values ==null || values.isEmpty()) {
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "missing_attribute_value"));
       }
     }
 
@@ -210,7 +211,8 @@ public class AttributeImpl implements Attribute {
      */
     public void setIssuer(String issuer) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         this.issuer=issuer;
@@ -221,25 +223,27 @@ public class AttributeImpl implements Attribute {
      * which the attribute identifier.
      * @return the <code>URI</code> representing the data type.
      */
-    public URI getAttributeID() {
+    public URI getAttributeId() {
         return id;
     }
 
     /**
      * Sets the attribiteId of the <code>>Attribute</code>
-     * @param attributeID <code>URI</code> representing the attribite id.
+     * @param attributeId <code>URI</code> representing the attribite id.
      * @exception XACMLException if the object is immutable
      */
-    public void setAttributeID(URI attributeID) throws XACMLException {
+    public void setAttributeId(URI attributeId) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
-        if (attributeID == null) {
+        if (attributeId == null) {
                 throw new XACMLException(
-                    XACMLSDKUtils.bundle.getString("null_not_valid")); 
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "null_not_valid")); 
         }
-        id = attributeID;
+        id = attributeId;
     }
       
     /**
@@ -261,12 +265,14 @@ public class AttributeImpl implements Attribute {
      */
     public void setDataType(URI dataType) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (dataType == null) {
                 throw new XACMLException(
-                    XACMLSDKUtils.bundle.getString("null_not_valid"));
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "null_not_valid"));
         }
         type = dataType;
     }
@@ -295,7 +301,8 @@ public class AttributeImpl implements Attribute {
      */
     public void setAttributeValues(List values) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (this.values == null) {
@@ -303,16 +310,20 @@ public class AttributeImpl implements Attribute {
         }
         if (values == null || values.isEmpty()) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "null_not_valid")); 
 
         }
         for (int i=0; i < values.size(); i++) {
             Element value = (Element)values.get(i);
             String elemName = value.getLocalName();
-            if (elemName == null) {
+            if (elemName == null 
+                    || !elemName.equals(XACMLConstants.ATTRIBUTE_VALUE)) {
                 XACMLSDKUtils.debug.error(
-                    "StatusMessageImpl.processElement(): local name missing");
-                throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                    "StatusMessageImpl.processElement():"
+                    + "local name missing or incorrect");
+                throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                         "missing_local_name"));
             }
             this.values.add(value);
@@ -333,7 +344,8 @@ public class AttributeImpl implements Attribute {
     public void setAttributeStringValues(List stringValues) 
             throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (this.values == null) {
@@ -341,7 +353,8 @@ public class AttributeImpl implements Attribute {
         }
         if (stringValues == null || stringValues.isEmpty()) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "null_not_valid")); 
 
         }
         for (int i=0; i < stringValues.size(); i++) {
@@ -384,13 +397,13 @@ public class AttributeImpl implements Attribute {
 
         String appendNS = "";
         if (declareNS) {
-            NS.append(XACMLConstants.CONTEXT_DECLARE_STR)
+            NS.append(XACMLConstants.CONTEXT_NS_DECLARATION)
             .append(XACMLConstants.SPACE);
-            NS.append(XACMLConstants.NS_XML).append(XACMLConstants.SPACE)
+            NS.append(XACMLConstants.XSI_NS_URI).append(XACMLConstants.SPACE)
             .append(XACMLConstants.CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            appendNS = XACMLConstants.CONTEXT_PREFIX;
+            appendNS = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         sb.append("<").append(appendNS).append(XACMLConstants.ATTRIBUTE)
                 .append(NS);
@@ -410,7 +423,7 @@ public class AttributeImpl implements Attribute {
                     .append(issuer).
                     append("\"");
         }
-        sb.append(XACMLConstants.END_TAG);
+        sb.append(">");
         int length = 0;
         String xmlString = null;
         if (values != null && !values.isEmpty()) {
@@ -433,12 +446,15 @@ public class AttributeImpl implements Attribute {
                 sb.append(XMLUtils.print(value));
              }
         } else { // values are empty put empty tags
+            // This should not happen, not schema compliant
+            /*
              sb.append("<").append(appendNS)
                      .append(XACMLConstants.ATTRIBUTE_VALUE);
              sb.append(NS).append(">").append("\n"); 
              sb.append("</").append(appendNS)
                      .append(XACMLConstants.ATTRIBUTE_VALUE);
              sb.append(">").append("\n");
+             */
         }
         sb.append("\n</").append(appendNS).append(XACMLConstants.ATTRIBUTE);
         sb.append(">\n");

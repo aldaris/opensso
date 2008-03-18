@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSubjectMapperTest.java,v 1.2 2007-12-20 18:49:31 veiming Exp $
+ * $Id: FMSubjectMapperTest.java,v 1.3 2008-03-18 19:48:48 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ public class FMSubjectMapperTest extends UnitTestBase {
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:subject:subject-id
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"));
 
         //supported data type for id

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestTest.java,v 1.1 2007-08-29 23:41:59 dillidorai Exp $
+ * $Id: RequestTest.java,v 1.2 2008-03-18 19:48:42 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.sun.identity.xacml.context.Attribute;
 import com.sun.identity.xacml.context.Subject;
 import com.sun.identity.xacml.context.Resource;
 import com.sun.identity.xacml.context.ContextFactory;
+import com.sun.identity.xacml.common.XACMLConstants;
 import com.sun.identity.xacml.common.XACMLException;
 import javax.xml.parsers.ParserConfigurationException;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -44,6 +45,7 @@ import org.xml.sax.SAXException;
 import java.net.URI;
 
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,129 +56,160 @@ import java.util.List;
 public class RequestTest extends UnitTestBase {
     
     public RequestTest() {
-        super("FedLibrary-XACML");
+        super("FedLibrary-XACML-RequestTest");
     }
     
-    /**
-     * Validates the <code>Request</code> object.
-     *
-     * @param xmlFile the file containing the Request XML.
-     * @throws XACMLException if there is creating the <code>Request</code>
-     *         object or the XML String does not conform to the XML Schema
-     * @throws ParserConfigurationException if there is an error parsing the
-     *         Request XML string.
-     * @throws IOException if there is an error reading the file.
-     * @throws SAXException if there is an error during XML parsing.
-     */
-    @Parameters({"request-filename"})
-    @Test(groups = {"xacml"})
-    public void validateRequest(String xmlFile) throws XACMLException,
-            ParserConfigurationException, IOException,
-            SAXException {
-        entering("validateRequest",null);
-        try {
-            log(Level.INFO, "validateRequest",xmlFile);
-            FileInputStream fis = new FileInputStream(new File(xmlFile));
-            Document doc = XMLUtils.toDOMDocument(fis, null);
-            Element elt = doc.getDocumentElement();
-            Request request =
-                    ContextFactory.getInstance().createRequest(elt);
-            
-            // object to xml string
-            String xmlString = request.toXMLString(true,true);
-            System.out.println("xmlString:"+ xmlString);
-            assert (xmlString != null) :
-                "Error creating XML String from Request object";
-            log(Level.INFO, "validateRequest",xmlString);
-            
-            validateAction(request.getAction());
-            validateEnvironment(request.getEnvironment());
-            // recreate Request from xml
-            request = ContextFactory.getInstance().createRequest(xmlString);
-            validateSubjects(request.getSubjects());
-            validateResources(request.getResources());
-            validateAction(request.getAction());
-            validateEnvironment(request.getEnvironment());
+    @Test(groups={"xacml"})
+    public void getResult() throws XACMLException, Exception {
 
-            
-            log(Level.INFO, "createRequest",xmlString);
-        } finally {
-            exiting("createRequest");
-        }
-    }
-    
-    /**
-     * Validates the <code>Action</code> element in the Request.
-     *
-     * @param actions the <code>Action</code> in the request.
-     */
-    private void validateAction(Action action) throws XACMLException {
-        List attributes = action.getAttributes();
-        System.out.println("Action XML :"+action.toXMLString(true, true));
-        for (int i = 0; i < attributes.size(); i++) {
-	    Attribute attribute = (Attribute)attributes.get(i);
-            System.out.println("attribute string:"+attribute.toXMLString(true, true));
-            System.out.println("issuer:"+attribute.getIssuer());
-            System.out.println("attributId:"+attribute.getAttributeID());
-            System.out.println("datatype:"+attribute.getDataType());
-            for (int j=0; j < attribute.getAttributeValues().size(); j++) {
-                Element value = (Element)attribute.getAttributeValues().get(j);
-                System.out.println("value:"
-                    +XMLUtils.print(value));
-            }
-        }
-    }
-             
-    /**
-     * Validates the <code>Resource</code> element in the Request.
-     *
-     * @param actions the <code>Resource</code> in the request.
-     */
-    private void validateResources(List resources) throws XACMLException {
-        for (int i = 0 ; i < resources.size(); i++) {
-	    Resource resource = (Resource)resources.get(i);
-            List resAttrs = resource.getAttributes();
-            for (int j = 0; j< resAttrs.size(); j++) {
-                Attribute attr = (Attribute)resAttrs.get(j);
-                System.out.println("issuer:"+attr.getIssuer());
-                System.out.println("attributId:"+attr.getAttributeID());
-                System.out.println("datatype:"+attr.getDataType());
-            }
-        }
-    }
-             
-    /**
-     * Validates the <code>Subject</code> element in the Request.
-     *
-     * @param actions the <code>Subject</code> in the request.
-     */
-    private void validateSubjects(List subjects) throws XACMLException {
-        for (int i = 0; i < subjects.size(); i++) {
-	    Subject subject = (Subject)subjects.get(i);
-            System.out.println("subjectCategory:"+subject.getSubjectCategory());
-            List subAttrs = subject.getAttributes();
-            for (int j = 0; j< subAttrs.size(); j++) {
-                Attribute attr = (Attribute)subAttrs.get(j);
-                System.out.println("issuer:"+attr.getIssuer());
-                System.out.println("attributId:"+attr.getAttributeID());
-                System.out.println("datatype:"+attr.getDataType());
-            }
-        }
-    }
-             
-    /**
-     * Validates the <code>Environment</code> element in the Request.
-     *
-     * @param env the <code>Environment</code> in the request.
-     */
-    private void validateEnvironment(Environment environment) throws XACMLException {
-        List attributes = environment.getAttributes();
-        System.out.println("Environment XML :"+environment.toXMLString(true, true));
-        for (int i = 0; i < attributes.size(); i++) {
-	    Attribute attribute = (Attribute)attributes.get(i);
-            System.out.println("issuer:"+attribute.getIssuer());
-            System.out.println("attributId:"+attribute.getAttributeID());
-            System.out.println("datatype:"+attribute.getDataType());
-        }
+        Request request = ContextFactory.getInstance().createRequest();
+
+        Subject subject1 =
+                ContextFactory.getInstance().createSubject();
+        subject1.setSubjectCategory(new URI(XACMLConstants.ACCESS_SUBJECT));
+        List<Attribute> s1attrs = new ArrayList<Attribute>();
+        Attribute s1attr1 = ContextFactory.getInstance().createAttribute();
+        s1attr1.setAttributeId(new URI("testid1"));
+        s1attr1.setDataType(new URI("testDataType1"));
+        List s1values1 = new ArrayList();
+        s1values1.add("value-1");
+        s1attr1.setAttributeStringValues(s1values1);
+        Attribute s1attr2 = ContextFactory.getInstance().createAttribute();
+        s1attr2.setAttributeId(new URI("testid2"));
+        s1attr2.setDataType(new URI("testDataType2"));
+        s1attr2.setIssuer("Bhavna");
+        List s1values2 = new ArrayList();
+        s1values2.add("value-2");
+        s1attr2.setAttributeStringValues(s1values2);
+        s1attrs.add(s1attr1);
+        s1attrs.add(s1attr2);
+        subject1.setAttributes(s1attrs);
+
+        Subject subject2 =
+                ContextFactory.getInstance().createSubject();
+        subject1.setSubjectCategory(new URI(XACMLConstants.ACCESS_SUBJECT));
+        List<Attribute> s2attrs = new ArrayList<Attribute>();
+        Attribute s2attr1 = ContextFactory.getInstance().createAttribute();
+        s2attr1.setAttributeId(new URI("testid1"));
+        s2attr1.setDataType(new URI("testDataType1"));
+        List s2values1 = new ArrayList();
+        s2values1.add("value-1");
+        s2attr1.setAttributeStringValues(s2values1);
+        Attribute s2attr2 = ContextFactory.getInstance().createAttribute();
+        s2attr2.setAttributeId(new URI("testid2"));
+        s2attr2.setDataType(new URI("testDataType2"));
+        s2attr2.setIssuer("Dilli");
+        List s2values2 = new ArrayList();
+        s2values2.add("value-2");
+        s2attr2.setAttributeStringValues(s2values2);
+        s2attrs.add(s2attr1);
+        s2attrs.add(s2attr2);
+        subject2.setAttributes(s2attrs);
+
+        List subjects = new ArrayList();
+        subjects.add(subject1);
+        subjects.add(subject2);
+        request.setSubjects(subjects);
+
+        Resource resource1 =
+                ContextFactory.getInstance().createResource();
+        List<Attribute> r1attrs = new ArrayList<Attribute>();
+        Attribute r1attr1 = ContextFactory.getInstance().createAttribute();
+        r1attr1.setAttributeId(new URI("testid1"));
+        r1attr1.setDataType(new URI("testDataType1"));
+        List r1values1 = new ArrayList();
+        r1values1.add("value");
+        r1attr1.setAttributeStringValues(r1values1);
+        Attribute r1attr2 = ContextFactory.getInstance().createAttribute();
+        r1attr2.setAttributeId(new URI("testid2"));
+        r1attr2.setDataType(new URI("testDataType2"));
+        r1attr2.setIssuer("Bhavna");
+        List r1values2 = new ArrayList();
+        r1values2.add("value-1");
+        r1attr2.setAttributeStringValues(r1values2);
+        r1attrs.add(r1attr1);
+        r1attrs.add(r1attr2);
+        resource1.setAttributes(r1attrs);
+
+        Resource resource2 =
+                ContextFactory.getInstance().createResource();
+        List<Attribute> r2attrs = new ArrayList<Attribute>();
+        Attribute r2attr1 = ContextFactory.getInstance().createAttribute();
+        r2attr1.setAttributeId(new URI("testid1"));
+        r2attr1.setDataType(new URI("testDataType1"));
+        List r2values1 = new ArrayList();
+        r2values1.add("value-1");
+        r2attr1.setAttributeStringValues(r2values1);
+        Attribute r2attr2 = ContextFactory.getInstance().createAttribute();
+        r2attr2.setAttributeId(new URI("testid2"));
+        r2attr2.setDataType(new URI("testDataType2"));
+        r2attr2.setIssuer("Bhavna");
+        List r2values2 = new ArrayList();
+        r2values2.add("value-2");
+        r2attr2.setAttributeStringValues(r2values2);
+        r2attrs.add(r2attr1);
+        r2attrs.add(r2attr2);
+        resource2.setAttributes(r1attrs);
+
+        List resources = new ArrayList();
+        resources.add(resource1);
+        resources.add(resource2);
+        request.setResources(resources);
+
+        Action action1 =
+                ContextFactory.getInstance().createAction();
+        List<Attribute> a1attrs = new ArrayList<Attribute>();
+        Attribute a1attr1 = ContextFactory.getInstance().createAttribute();
+        a1attr1.setAttributeId(new URI("testid1"));
+        a1attr1.setDataType(new URI("testDataType1"));
+        List a1values1 = new ArrayList();
+        a1values1.add("value-1");
+        a1attr1.setAttributeStringValues(a1values1);
+        Attribute a1attr2 = ContextFactory.getInstance().createAttribute();
+        a1attr2.setAttributeId(new URI("testid2"));
+        a1attr2.setDataType(new URI("testDataType2"));
+        a1attr2.setIssuer("Bhavna");
+        List a1values2 = new ArrayList();
+        a1values2.add("value-1");
+        a1attr2.setAttributeStringValues(a1values2);
+        a1attrs.add(a1attr1);
+        a1attrs.add(a1attr2);
+        action1.setAttributes(a1attrs);
+        request.setAction(action1);
+
+        Environment environment1 =
+                ContextFactory.getInstance().createEnvironment();
+        List<Attribute> e1attrs = new ArrayList<Attribute>();
+        Attribute e1attr1 = ContextFactory.getInstance().createAttribute();
+        e1attr1.setAttributeId(new URI("testid1"));
+        e1attr1.setDataType(new URI("testDataType1"));
+        List e1values1 = new ArrayList();
+        e1values1.add("value-1");
+        e1attr1.setAttributeStringValues(e1values1);
+        Attribute e1attr2 = ContextFactory.getInstance().createAttribute();
+        e1attr2.setAttributeId(new URI("testid2"));
+        e1attr2.setDataType(new URI("testDataType2"));
+        e1attr2.setIssuer("Bhavna");
+        List e1values2 = new ArrayList();
+        e1values2.add("value-2");
+        e1attr2.setAttributeStringValues(e1values2);
+        e1attrs.add(e1attr1);
+        e1attrs.add(e1attr2);
+        environment1.setAttributes(e1attrs);
+        request.setEnvironment(environment1);
+
+        log(Level.INFO, "getRequest", 
+             "query xml:\n" + request.toXMLString());
+        log(Level.INFO, "getRequest", 
+             "query xml, with ns declaration:\n" + request.toXMLString(true, true));
+
+        log(Level.INFO, "getRequest", 
+             "create query from xml sring");
+        request = ContextFactory.getInstance().createRequest(
+                request.toXMLString(true, true));
+        log(Level.INFO, "getRequest", 
+             "xml of  request created from xml sring" 
+             + request.toXMLString(true, true));
+
     }
 }

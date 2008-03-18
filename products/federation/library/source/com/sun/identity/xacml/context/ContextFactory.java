@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ContextFactory.java,v 1.1 2007-08-29 23:39:37 dillidorai Exp $
+ * $Id: ContextFactory.java,v 1.2 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -435,7 +435,7 @@ public class ContextFactory {
      */
     public XACMLAuthzDecisionQuery createXACMLAuthzDecisionQuery() {
         Object obj = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.XACMLAUTHZDECISIONQUERY);
+                XACMLConstants.XACML_AUTHZ_DECISION_QUERY);
         if (obj == null) {
             return new XACMLAuthzDecisionQueryImpl();
         } else {
@@ -460,7 +460,7 @@ public class ContextFactory {
                 throws XACMLException, SAML2Exception
     {
         Object obj = XACMLSDKUtils.getObjectInstance(
-            XACMLConstants.XACMLAUTHZDECISIONQUERY, elem);
+            XACMLConstants.XACML_AUTHZ_DECISION_QUERY, elem);
         if (obj == null) {
             return new XACMLAuthzDecisionQueryImpl(elem);
         } else {
@@ -484,7 +484,7 @@ public class ContextFactory {
                 throws XACMLException, SAML2Exception
     {
         Object obj = XACMLSDKUtils.getObjectInstance(
-            XACMLConstants.XACMLAUTHZDECISIONQUERY, xml);
+            XACMLConstants.XACML_AUTHZ_DECISION_QUERY, xml);
         if (obj == null) {
             return new XACMLAuthzDecisionQueryImpl(xml);
         } else {
@@ -560,7 +560,7 @@ public class ContextFactory {
      */
     public Response createResponse() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.RESPONSE_ELEMENT);
+                XACMLConstants.RESPONSE);
         if (object == null) {
             return new ResponseImpl();
         } else {
@@ -580,7 +580,7 @@ public class ContextFactory {
      */
     public Response createResponse(Element elem)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.RESPONSE_ELEMENT, elem);
+                XACMLConstants.RESPONSE, elem);
         if (object == null) {
             return new ResponseImpl(elem);
         } else {
@@ -600,7 +600,7 @@ public class ContextFactory {
      */
     public Response createResponse(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.RESPONSE_ELEMENT, xml);
+                XACMLConstants.RESPONSE, xml);
         if (object == null) {
             return new ResponseImpl(xml);
         } else {
@@ -616,7 +616,7 @@ public class ContextFactory {
      */
     public Result createResult() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.RESULT_ELEMENT);
+                XACMLConstants.RESULT);
         if (object == null) {
             return new ResultImpl();
         } else {
@@ -636,7 +636,7 @@ public class ContextFactory {
      */
     public Result createResult(Element elem)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.RESULT_ELEMENT, elem);
+                XACMLConstants.RESULT, elem);
         if (object == null) {
             return new ResultImpl(elem);
         } else {
@@ -656,7 +656,7 @@ public class ContextFactory {
      */
     public Result createResult(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.RESULT_ELEMENT, xml);
+                XACMLConstants.RESULT, xml);
         if (object == null) {
             return new ResultImpl(xml);
         } else {
@@ -672,7 +672,7 @@ public class ContextFactory {
      */
     public Decision createDecision() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.DECISION_ELEMENT);
+                XACMLConstants.DECISION);
         if (object == null) {
             return new DecisionImpl();
         } else {
@@ -692,7 +692,7 @@ public class ContextFactory {
      */
     public Decision createDecision(Element elem)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.DECISION_ELEMENT, elem);
+                XACMLConstants.DECISION, elem);
         if (object == null) {
             return new DecisionImpl(elem);
         } else {
@@ -712,7 +712,7 @@ public class ContextFactory {
      */
     public Decision createDecision(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.DECISION_ELEMENT, xml);
+                XACMLConstants.DECISION, xml);
         if (object == null) {
             return new DecisionImpl(xml);
         } else {
@@ -728,7 +728,7 @@ public class ContextFactory {
      */
     public Status createStatus() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_ELEMENT);
+                XACMLConstants.STATUS);
         if (object == null) {
             return new StatusImpl();
         } else {
@@ -748,7 +748,7 @@ public class ContextFactory {
      */
     public Status createStatus(Element elem)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_ELEMENT, elem);
+                XACMLConstants.STATUS, elem);
         if (object == null) {
             return new StatusImpl(elem);
         } else {
@@ -768,7 +768,7 @@ public class ContextFactory {
      */
     public Status createStatus(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_ELEMENT, xml);
+                XACMLConstants.STATUS, xml);
         if (object == null) {
             return new StatusImpl(xml);
         } else {
@@ -784,7 +784,7 @@ public class ContextFactory {
      */
     public StatusCode createStatusCode() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_CODE_ELEMENT);
+                XACMLConstants.STATUS_CODE);
         if (object == null) {
             return new StatusCodeImpl();
         } else {
@@ -804,7 +804,7 @@ public class ContextFactory {
      */
     public StatusCode createStatusCode(Element elem)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_CODE_ELEMENT, elem);
+                XACMLConstants.STATUS_CODE, elem);
         if (object == null) {
             return new StatusCodeImpl(elem);
         } else {
@@ -824,7 +824,7 @@ public class ContextFactory {
      */
     public StatusCode createStatusCode(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_CODE_ELEMENT, xml);
+                XACMLConstants.STATUS_CODE, xml);
         if (object == null) {
             return new StatusCodeImpl(xml);
         } else {
@@ -840,7 +840,7 @@ public class ContextFactory {
      */
     public StatusMessage createStatusMessage() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_MESSAGE_ELEMENT);
+                XACMLConstants.STATUS_MESSAGE);
         if (object == null) {
             return new StatusMessageImpl();
         } else {
@@ -861,7 +861,7 @@ public class ContextFactory {
     public StatusMessage createStatusMessage(Element elem)
             throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_MESSAGE_ELEMENT, elem);
+                XACMLConstants.STATUS_MESSAGE, elem);
         if (object == null) {
             return new StatusMessageImpl(elem);
         } else {
@@ -881,7 +881,7 @@ public class ContextFactory {
      */
     public StatusMessage createStatusMessage(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_MESSAGE_ELEMENT, xml);
+                XACMLConstants.STATUS_MESSAGE, xml);
         if (object == null) {
             return new StatusMessageImpl(xml);
         } else {
@@ -897,7 +897,7 @@ public class ContextFactory {
      */
     public StatusDetail createStatusDetail() throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_DETAIL_ELEMENT);
+                XACMLConstants.STATUS_DETAIL);
         if (object == null) {
             return new StatusDetailImpl();
         } else {
@@ -916,7 +916,7 @@ public class ContextFactory {
      */
     public StatusDetail createStatusDetail(Element elem)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_DETAIL_ELEMENT, elem);
+                XACMLConstants.STATUS_DETAIL, elem);
         if (object == null) {
             return new StatusDetailImpl(elem);
         } else {
@@ -936,7 +936,7 @@ public class ContextFactory {
      */
     public StatusDetail createStatusDetail(String xml)throws XACMLException {
         Object object = XACMLSDKUtils.getObjectInstance(
-                XACMLConstants.STATUS_DETAIL_ELEMENT, xml);
+                XACMLConstants.STATUS_DETAIL, xml);
         if (object == null) {
             return new StatusDetailImpl(xml);
         } else {

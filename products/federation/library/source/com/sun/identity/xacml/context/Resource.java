@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Resource.java,v 1.1 2007-08-29 23:39:54 dillidorai Exp $
+ * $Id: Resource.java,v 1.2 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.xacml.context;
 import com.sun.identity.xacml.common.XACMLException;
 
 import java.util.List;
+import org.w3c.dom.Element;
 
 /**
  * The <code>Resource</code> element specifies information about the
@@ -54,7 +55,7 @@ public interface Resource {
      * @return <code>String</code> representing the contents
      * of the <code>Resource</code>.
      */
-    public String getResourceContent();
+    public Element getResourceContent();
 
     /**
      * Sets the resource content of this object
@@ -67,7 +68,7 @@ public interface Resource {
      * makeImmutable()</code> has been invoked on it. It can
      * be determined by calling <code>isMutable</code> on the object.
      */
-    public void setResourceContent(String resourceContent) 
+    public void setResourceContent(Element resourceContent) 
         throws XACMLException;
 
     /**

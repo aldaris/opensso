@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectImpl.java,v 1.1 2007-08-29 23:41:02 dillidorai Exp $
+ * $Id: SubjectImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,7 @@ public class SubjectImpl implements Subject {
         } else {
             XACMLSDKUtils.debug.error(
                 "SubjectImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -110,14 +110,14 @@ public class SubjectImpl implements Subject {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "SubjectImpl.processElement(): invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName(); 
         if (elemName == null) {
              XACMLSDKUtils.debug.error(
                 "SubjectImpl.processElement(): local name missing");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
@@ -125,7 +125,7 @@ public class SubjectImpl implements Subject {
             XACMLSDKUtils.debug.error(
                 "SubjectImpl.processElement(): invalid local name " +
                  elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_local_name"));
         }
         // starts processing subelements
@@ -152,14 +152,16 @@ public class SubjectImpl implements Subject {
                         try {
                             subjectCategory = new URI (child.getNodeValue());
                         } catch ( Exception e) {
-                            throw new XACMLException(e);
+                            throw new XACMLException(
+                                XACMLSDKUtils.xacmlResourceBundle.getString( 
+                                    "attribute_not_uri"));
                         }
                     } else {
                         XACMLSDKUtils.debug.error("RequestImpl."
                             +"processElement(): Invalid element :"
                             +attrChildName);
                         throw new XACMLException(
-                            XACMLSDKUtils.bundle.getString( 
+                            XACMLSDKUtils.xacmlResourceBundle.getString( 
                                 "invalid_element"));
                     }
                 }
@@ -194,7 +196,7 @@ public class SubjectImpl implements Subject {
      */
     public void setAttributes(List attributes) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (attributes != null &&  !attributes.isEmpty()) {
@@ -243,7 +245,7 @@ public class SubjectImpl implements Subject {
         XACMLException 
     {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (subjectCategory != null) {
@@ -284,13 +286,14 @@ public class SubjectImpl implements Subject {
 
         String appendNS = "";
         if (declareNS) {
-            NS.append(XACMLConstants.CONTEXT_DECLARE_STR)
+            NS.append(XACMLConstants.CONTEXT_NS_DECLARATION)
                     .append(XACMLConstants.SPACE);
-            NS.append(XACMLConstants.NS_XML).append(XACMLConstants.SPACE)
+            NS.append(XACMLConstants.XSI_NS_URI)
+                    .append(XACMLConstants.SPACE)
                     .append(XACMLConstants.CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            appendNS = XACMLConstants.CONTEXT_PREFIX;
+            appendNS = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         sb.append("<").append(appendNS).append(XACMLConstants.SUBJECT)
                 .append(NS);
@@ -298,7 +301,7 @@ public class SubjectImpl implements Subject {
             sb.append(" ").append(XACMLConstants.SUBJECT_CATEGORY).append("=");
             sb.append("\"").append(subjectCategory.toString()).append("\"");
         }
-        sb.append(XACMLConstants.END_TAG);
+        sb.append(">");
         int length = 0;
         if (attributes != null) {
             sb.append("\n");

@@ -14,3 +14,4 @@ libSessionProvider.properties
 libSOAPBinding.properties
 libSAML2.properties
 libSAML2Meta.properties
+libXACML.properties

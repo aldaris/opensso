@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseImpl.java,v 1.1 2007-08-29 23:40:43 dillidorai Exp $
+ * $Id: ResponseImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,7 +86,8 @@ public class ResponseImpl implements Response {
         } else {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -123,7 +124,8 @@ public class ResponseImpl implements Response {
     public void setResults(List values) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "objectImmutable"));
         }
         if (values != null) {
             Iterator iter = values.iterator();
@@ -148,7 +150,7 @@ public class ResponseImpl implements Response {
     public void addResult(Result result) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
         if (results == null) {
             results = new ArrayList();
@@ -181,13 +183,13 @@ public class ResponseImpl implements Response {
         StringBuffer sb = new StringBuffer(2000);
         String nsPrefix = "";
         String nsDeclaration = "";
-        if (declareNS) {
-            nsDeclaration = XACMLConstants.CONTEXT_DECLARE_STR;
-        }
         if (includeNSPrefix) {
-            nsPrefix = XACMLConstants.CONTEXT_PREFIX;
+            nsPrefix = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
-        sb.append("<").append(nsPrefix).append(XACMLConstants.RESPONSE_ELEMENT).
+        if (declareNS) {
+            nsDeclaration = XACMLConstants.CONTEXT_NS_DECLARATION;
+        }
+        sb.append("<").append(nsPrefix).append(XACMLConstants.RESPONSE).
             append(nsDeclaration).append(">\n");
         int length = 0;
         if (results != null) {
@@ -198,7 +200,7 @@ public class ResponseImpl implements Response {
             }
         }
         sb.append("</").append(nsPrefix)
-                .append(XACMLConstants.RESPONSE_ELEMENT).append(">\n");
+                .append(XACMLConstants.RESPONSE).append(">\n");
         return sb.toString();
     }
 
@@ -243,21 +245,24 @@ public class ResponseImpl implements Response {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(XACMLConstants.RESPONSE_ELEMENT)) {
+        if (!elemName.equals(XACMLConstants.RESPONSE)) {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): invalid local name " + elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_local_name"));
         }
 
@@ -271,7 +276,7 @@ public class ResponseImpl implements Response {
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 String childName = child.getLocalName();
                 if (childName != null) {
-                    if (childName.equals(XACMLConstants.RESULT_ELEMENT)) {
+                    if (childName.equals(XACMLConstants.RESULT)) {
                         results.add(
                             ContextFactory.getInstance().createResult(
                                     (Element)child));
@@ -280,7 +285,8 @@ public class ResponseImpl implements Response {
                         XACMLSDKUtils.debug.error(
                             "ResponseImpl.processElement(): "
                             + " invalid child element: " + elemName);
-                        throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                        throw new XACMLException(
+                            XACMLSDKUtils.xacmlResourceBundle.getString(
                             "invalid_child_name")); //FIXME: add i18n key
                     }
                 }

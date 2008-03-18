@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMResourceMapper.java,v 1.1 2007-08-29 23:42:55 dillidorai Exp $
+ * $Id: FMResourceMapper.java,v 1.2 2008-03-18 19:48:47 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,7 @@ public class FMResourceMapper implements ResourceMapper {
             for (int count = 0; count < attributes.size(); count++) {
                 Attribute attr = (Attribute) attributes.get(count);
                 if (attr != null) {
-                    URI tmpURI = attr.getAttributeID();
+                    URI tmpURI = attr.getAttributeId();
                     if (tmpURI.toString().equals(XACMLConstants.
                         RESOURCE_ID)) {
                         tmpURI = attr.getDataType();

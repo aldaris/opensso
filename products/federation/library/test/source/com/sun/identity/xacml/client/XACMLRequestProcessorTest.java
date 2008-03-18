@@ -17,7 +17,7 @@
  *                 * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLRequestProcessorTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
+ * $Id: XACMLRequestProcessorTest.java,v 1.3 2008-03-18 19:48:46 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
 public class XACMLRequestProcessorTest extends UnitTestBase {
 
     public XACMLRequestProcessorTest() {
-        super("OpenFed-xacml-XACMLReuestProcessorTest");
+        super("FedLibrary-XACML-XACMLReuestProcessorTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})
@@ -91,7 +91,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:subject:subject-id
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"));
 
         //supported data type for id
@@ -114,7 +114,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
             new URI("urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"));
         attribute = ContextFactory.getInstance().createAttribute();
         attribute.setIssuer("sampleIssuer2");
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI("urn:oasis:names:tc:xacml:1.0:subject:subject-id"));
         attribute.setDataType(
             new URI("urn:sun:names:xacml:2.0:data-type:openfm-sp-nameid"));
@@ -138,7 +138,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         //urn:oasis:names:tc:xacml:1.0:resource:resource-id
         //additional attribute id
         //urn:opensso:names:xacml:2.0:resource:target-service
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"));
 
         //supported data type
@@ -153,7 +153,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         attribute = ContextFactory.getInstance().createAttribute();
         attribute.setIssuer("sampleIssuer4");
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI("urn:oasis:names:tc:xacml:1.0:resource:resource-id"));
         attribute.setDataType(
             new URI("http://www.w3.org/2001/XMLSchema#string"));
@@ -173,7 +173,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:action:action-id
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI("urn:oasis:names:tc:xacml:1.0:action:action-id"));
 
         //supported data type

@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class DecisionTest extends UnitTestBase {
 
     public DecisionTest() {
-        super("OpenFed-xacml-DecisionTest");
+        super("FedLibrary-XACML-DecisionTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

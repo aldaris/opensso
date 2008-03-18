@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: xacml-testng.xml,v 1.1 2007-08-29 23:37:58 dillidorai Exp $
+   $Id: xacml-testng.xml,v 1.2 2008-03-18 19:48:48 dillidorai Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,8 +28,8 @@
 
 <suite name="xacml" verbose="1" parallel="false">
 
-    <parameter name="pdp.entityId" value="xacmlPdpEntity"/>
-    <parameter name="pep.entityId" value="xacmlPepEntity"/>
+    <parameter name="pdp.entityId" value="sunPdp"/>
+    <parameter name="pep.entityId" value="vaPep"/>
     <parameter name="login.id" value="uid=user1"/>
     <parameter name="login.password" value="user1"/>
     <parameter name="subject.id" value="uid=user1,ou=users,dc=opensso1,dc=java,dc=net"/>
@@ -42,13 +42,13 @@
     <parameter name="action.id" value="GET"/>
     <parameter name="action.id.datatype" value="http://www.w3.org/2001/XMLSchema#string"/>
 
-    <test name="xacml-d11" parallel="false">
+    <test name="request-processor-test" parallel="false">
         <classes>
             <class name="com.sun.identity.xacml.client.XACMLRequestProcessorTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d12" parallel="false">
+    <test name="fm-subject-mapper-test" parallel="false">
         <classes>
             <class name="com.sun.identity.xacml.plugins.FMSubjectMapperTest"/>
         </classes>

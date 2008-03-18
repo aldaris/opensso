@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSubjectMapper.java,v 1.1 2007-08-29 23:43:02 dillidorai Exp $
+ * $Id: FMSubjectMapper.java,v 1.2 2008-03-18 19:48:47 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -138,7 +138,7 @@ public class FMSubjectMapper implements SubjectMapper {
                 for (int count = 0; count < attributes.size(); count++) {
                     Attribute attr = (Attribute) attributes.get(count);
                     if (attr != null) {
-                        URI tmpURI = attr.getAttributeID();
+                        URI tmpURI = attr.getAttributeId();
                         if (tmpURI.toString().equals(XACMLConstants.
                             SUBJECT_ID)) {
                             tmpURI = attr.getDataType();
@@ -170,7 +170,6 @@ public class FMSubjectMapper implements SubjectMapper {
                             "FMSubjectMapper.mapToNativeSubject()"
                             + ":caught SSOException:", ssoExp);
                 }
-                //throw  new XACMLException(ssoExp); TODO:log message
             }
         } 
 
@@ -184,7 +183,6 @@ public class FMSubjectMapper implements SubjectMapper {
                             "FMSubjectMapper.mapToNativeSubject()"
                             + ":caught SessionException:", se);
                 }
-               //throw new XACMLException(se); TODO: log message
            }
         }
         return ssoToken;

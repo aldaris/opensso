@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: xacml-testng.xml,v 1.1 2007-08-29 23:42:38 dillidorai Exp $
+   $Id: xacml-testng.xml,v 1.2 2008-03-18 19:48:46 dillidorai Exp $
  
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,80 +28,109 @@
 
 <suite name="xacml" verbose="1" parallel="false">
 
-    <test name="xacml-1" parallel="false">
-        <parameter name="request-filename" value="mock/xacml/sampleRequest.xml" />
-        <classes>
-            <class name="com.sun.identity.xacml.context.RequestTest"/>
-        </classes>
-    </test>
-
-    <test name="xacml-2" parallel="false">
-        <classes>
-            <class name="com.sun.identity.xacml.context.SubjectTest"/>
-        </classes>
-    </test>
-
-    <test name="xacml-3" parallel="false">
-        <classes>
-            <class name="com.sun.identity.xacml.context.ResourceTest"/>
-        </classes>
-    </test>
-
-    <test name="xacml-d1" parallel="false">
+    <test name="xacml-sdk-utils-test" parallel="false">
         <classes>
             <class name="com.sun.identity.xacml.common.XACMLSDKUtilsTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d2" parallel="false">
+    <test name="xacml-obligation-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.DecisionTest"/>
+            <class name="com.sun.identity.xacml.policy.ObligationTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d3" parallel="false">
+    <test name="xacml-obligations-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.StatusMessageTest"/>
+            <class name="com.sun.identity.xacml.policy.ObligationsTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d4" parallel="false">
+    <test name="xacml-attribute-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.StatusCodeTest"/>
+            <class name="com.sun.identity.xacml.context.AttributeTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d5" parallel="false">
+    <test name="xacml-subject-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.StatusDetailTest"/>
+            <class name="com.sun.identity.xacml.context.SubjectTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d6" parallel="false">
+    <test name="xacml-resource-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.StatusTest"/>
+            <class name="com.sun.identity.xacml.context.ResourceTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d7" parallel="false">
+    <test name="xacml-action-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.ResultTest"/>
+            <class name="com.sun.identity.xacml.context.ActionTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d8" parallel="false">
+    <test name="xacml-environment-test" parallel="false">
         <classes>
-            <class name="com.sun.identity.xacml.context.ResponseTest"/>
+            <class name="com.sun.identity.xacml.context.EnvironmentTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d9" parallel="false">
+    <test name="xacml-request-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.RequestTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-authz-decision-query-test" parallel="false">
         <classes>
             <class name="com.sun.identity.xacml.saml2.XACMLAuthzDecisionQueryTest"/>
         </classes>
     </test>
 
-    <test name="xacml-d10" parallel="false">
+    <test name="xacml-decision-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.DecisionTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-status-code-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusCodeTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-status-message-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusMessageTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-status-detail-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusDetailTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-status-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.StatusTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-result-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.ResultTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-response-test" parallel="false">
+        <classes>
+            <class name="com.sun.identity.xacml.context.ResponseTest"/>
+        </classes>
+    </test>
+
+    <test name="xacml-authz-decision-statement-test" parallel="false">
         <classes>
             <class name="com.sun.identity.xacml.saml2.XACMLAuthzDecisionStatementTest"/>
         </classes>

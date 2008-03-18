@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceTest.java,v 1.3 2008-03-18 19:48:42 dillidorai Exp $
+ * $Id: EnvironmentTest.java,v 1.1 2008-03-18 19:48:42 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,10 +35,10 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import com.sun.identity.shared.test.UnitTestBase;
 import com.sun.identity.xacml.context.Attribute;
-import com.sun.identity.xacml.context.Resource;
-import com.sun.identity.xacml.context.ResourceContent;
+import com.sun.identity.xacml.context.Environment;
 import com.sun.identity.xacml.context.ContextFactory;
 import com.sun.identity.xacml.common.XACMLException;
+import com.sun.identity.xacml.common.XACMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import com.sun.identity.shared.xml.XMLUtils;
 import org.xml.sax.SAXException;
@@ -50,32 +50,33 @@ import java.util.ArrayList;
 
 /**
  * Unit Test Cases to test
- * <code>com.sun.identity.xacml.context.Resource</code> class.
+ * <code>com.sun.identity.xacml.context.Environment</code> class.
  */
 
-public class ResourceTest extends UnitTestBase {
+public class EnvironmentTest extends UnitTestBase {
+    private static XACMLConstants xc;
     
-    public ResourceTest() {
-        super("FedLibrary-XACML-ResourceTest");
+    public EnvironmentTest() {
+        super("FedLibrary-XACML-EnvironmentTest");
     }
     
     /**
-     * Validates the <code>Resource</code> object.
+     * Validates the <code>Environment</code> object.
      *
-     * @param xmlFile the file containing the Resource XML.
-     * @throws XACMLException if there is creating the <code>Resource</code>
+     * @param xmlFile the file containing the Environment XML.
+     * @throws XACMLException if there is creating the <code>Environment</code>
      *         object or the XML String does not conform to the XML Schema
      * @throws ParserConfigurationException if there is an error parsing the
-     *         Resource XML string.
+     *         Environment XML string.
      * @throws IOException if there is an error reading the file.
      * @throws SAXException if there is an error during XML parsing.
      */
     @Test(groups = {"xacml"})
-    public void testResource() throws XACMLException, URISyntaxException {
-        entering("testResource",null);
+    public void testEnvironment() throws XACMLException, URISyntaxException {
+        entering("testEnvironment",null);
         try {
-            Resource resource =
-                    ContextFactory.getInstance().createResource();
+            Environment environment =
+                    ContextFactory.getInstance().createEnvironment();
             List<Attribute> attrs = new ArrayList<Attribute>();
             Attribute attr = ContextFactory.getInstance().createAttribute();
             attr.setAttributeId(new URI("testid1"));
@@ -92,18 +93,18 @@ public class ResourceTest extends UnitTestBase {
             values1.add("value-1");
             attr1.setAttributeStringValues(values1);
             attrs.add(attr1);
-            resource.setAttributes(attrs);
+            environment.setAttributes(attrs);
             // object to xml string
-            String xmlString = resource.toXMLString(true,true);
-            System.out.println("resource xmlString:"+ xmlString);
+            String xmlString = environment.toXMLString(true,true);
+            System.out.println("environment xmlString:"+ xmlString);
             assert (xmlString != null) :
-                "Error creating XML String from Resource object";
-            // create Resource again from the String
-            resource = ContextFactory.getInstance().createResource(xmlString);
-            System.out.println("resource string:"
-                +resource.toXMLString(true, true));
-            for (int j= 0; j < resource.getAttributes().size(); j++) {
-                attr = (Attribute)resource.getAttributes().get(j);
+                "Error creating XML String from Environment object";
+            // create Environment again from the String
+            environment = ContextFactory.getInstance().createEnvironment(xmlString);
+            System.out.println("environment string:"
+                + environment.toXMLString(true, true));
+            for (int j= 0; j < environment.getAttributes().size(); j++) {
+                attr = (Attribute)environment.getAttributes().get(j);
                 System.out.println("issuer:"+attr.getIssuer());
                 System.out.println("attributId:"+attr.getAttributeId());
                 System.out.println("datatype:"+attr.getDataType());
@@ -111,7 +112,7 @@ public class ResourceTest extends UnitTestBase {
                     +attr.getAttributeValues().toString());
             }
         } finally {
-            exiting("testResource");
+            exiting("testEnvironment");
         }
     }
 }

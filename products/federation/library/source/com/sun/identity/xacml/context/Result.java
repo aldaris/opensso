@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Result.java,v 1.1 2007-08-29 23:40:03 dillidorai Exp $
+ * $Id: Result.java,v 1.2 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@
 package com.sun.identity.xacml.context;
 
 import com.sun.identity.xacml.common.XACMLException;
-
+import com.sun.identity.xacml.policy.Obligations;
 import java.util.List;
 
 /**
@@ -88,6 +88,21 @@ public interface Result {
      * @exception XACMLException if the object is immutable
      */
     public void setStatus(Status status) throws XACMLException;
+
+    /**
+     * Returns the <code>Obligations</code> of this object
+     *
+     * @return the <code>Obligations</code> of this object
+     */
+    public Obligations getObligations();
+
+    /**
+     * Sets the <code>Obligations</code> of this object
+     * @param obligations <code>Obligations</code> to set
+     *
+     * @exception XACMLException if the object is immutable
+     */
+    public void setObligations(Obligations obligations) throws XACMLException;
 
 
    /**

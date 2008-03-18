@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestImpl.java,v 1.1 2007-08-29 23:40:37 dillidorai Exp $
+ * $Id: RequestImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,8 @@ public class RequestImpl implements Request {
         } else {
             XACMLSDKUtils.debug.error(
                 "RequestImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -124,14 +125,16 @@ public class RequestImpl implements Request {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "RequestImpl.processElement(): invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName(); 
         if (elemName == null) {
              XACMLSDKUtils.debug.error(
                 "RequestImpl.processElement(): local name missing");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
@@ -139,7 +142,8 @@ public class RequestImpl implements Request {
             XACMLSDKUtils.debug.error(
                 "RequestImpl.processElement(): invalid local name " +
                  elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_local_name"));
         }
 
@@ -149,7 +153,8 @@ public class RequestImpl implements Request {
         if (numOfNodes < 1) {
             XACMLSDKUtils.debug.error(
                 "RequestImpl.processElement(): request has no subelements");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_subelements"));
         }
    
@@ -167,7 +172,8 @@ public class RequestImpl implements Request {
         if (children.isEmpty()) {
             XACMLSDKUtils.debug.error("RequestImpl.processElement():"
                 + " request has no subelements");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_subelements"));
         }
         child = (Node)children.get(0);
@@ -177,7 +183,8 @@ public class RequestImpl implements Request {
             equals(XACMLConstants.SUBJECT))) {
             XACMLSDKUtils.debug.error("RequestImpl.processElement():"+
                 " the first element is not <Subject>");
-        throw new XACMLException(XACMLSDKUtils.bundle.getString(
+        throw new XACMLException(
+            XACMLSDKUtils.xacmlResourceBundle.getString(
             "missing_subelement_subject"));
         }
         Subject subject = factory.getInstance().createSubject((Element)child);
@@ -186,8 +193,9 @@ public class RequestImpl implements Request {
         {
             XACMLSDKUtils.debug.error("RequestImpl.processElement():subject "
                 +"category in subject not supported");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
-                "unsupported_subject_category")); //TODO add i18n string
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "unsupported_subject_category")); 
         }
         subjects.add(subject);
         boolean resourceFound = false;
@@ -209,8 +217,8 @@ public class RequestImpl implements Request {
                                 +"processElement(): <Subject> should be "
                                 + "before <Resource>");
                             throw new XACMLException(
-                                XACMLSDKUtils.bundle.getString(
-                                    "element_out_of_place")); //TODO i18n string
+                                XACMLSDKUtils.xacmlResourceBundle.getString(
+                                    "element_out_of_place"));
                         } else { // found another resource
                             Resource resource = factory.getInstance()
                                     .createResource((
@@ -235,8 +243,8 @@ public class RequestImpl implements Request {
                         +"processElement(): <Resource> should be "
                         + "before <Action>");
                     throw new XACMLException(
-                        XACMLSDKUtils.bundle.getString(
-                            "element_out_of_place")); //TODO i18n string
+                        XACMLSDKUtils.xacmlResourceBundle.getString(
+                            "element_out_of_place"));
                 } else {
                     actionFound = true;
                     action = factory.createAction((Element)child);                                     
@@ -248,8 +256,8 @@ public class RequestImpl implements Request {
                         +"processElement(): <Resource> and "
                         +"Action should be before <Environment>");
                         throw new XACMLException(
-                            XACMLSDKUtils.bundle.getString(
-                                "element_out_of_place")); //TODO i18n string
+                            XACMLSDKUtils.xacmlResourceBundle.getString(
+                                "element_out_of_place"));
                 } else {
                     envFound = true;
                     env = factory.createEnvironment((Element) child);
@@ -265,7 +273,8 @@ public class RequestImpl implements Request {
             XACMLSDKUtils.debug.error("RequestImpl.processElement(): Some"
                 +"of required elements are missing");
             throw new XACMLException(
-            XACMLSDKUtils.bundle.getString("missing_subelements"));
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "missing_subelements"));
         }
     }
         
@@ -292,12 +301,14 @@ public class RequestImpl implements Request {
      */
     public void setSubjects(List subjects) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (subjects == null || subjects.isEmpty()) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid"));
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "null_not_valid"));
         }
         this.subjects.addAll(subjects);
     }
@@ -325,12 +336,13 @@ public class RequestImpl implements Request {
      */
     public void setResources(List resources) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         } 
         if (resources == null || resources.isEmpty()) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
         this.resources.addAll(resources);
     }
@@ -356,13 +368,14 @@ public class RequestImpl implements Request {
      */
     public void setAction(Action argAction) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         
         if (argAction == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); 
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid")); 
         }
         action = argAction;
         
@@ -389,12 +402,13 @@ public class RequestImpl implements Request {
      */
     public void setEnvironment(Environment argEnv) throws XACMLException {
         if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         } 
         if (argEnv == null ) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); 
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid")); 
         }
         env = argEnv;
     }
@@ -414,14 +428,14 @@ public class RequestImpl implements Request {
         StringBuffer namespaceBuffer = new StringBuffer(100);
         String nsDeclaration = "";
         if (declareNS) {
-            namespaceBuffer.append(XACMLConstants.CONTEXT_DECLARE_STR).
+            namespaceBuffer.append(XACMLConstants.CONTEXT_NS_DECLARATION).
                 append(XACMLConstants.SPACE);
-            namespaceBuffer.append(XACMLConstants.NS_XML).
+            namespaceBuffer.append(XACMLConstants.XSI_NS_URI).
                 append(XACMLConstants.SPACE).append(XACMLConstants.
                 CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            nsDeclaration = XACMLConstants.CONTEXT_PREFIX;
+            nsDeclaration = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         sb.append("\n<").append(nsDeclaration).append(XACMLConstants.REQUEST).
             append(namespaceBuffer).append(">\n");

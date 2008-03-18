@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class StatusCodeTest extends UnitTestBase {
 
     public StatusCodeTest() {
-        super("OpenFed-xacml-StatusCodeTest");
+        super("FedLibrary-XACML-StatusCodeTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

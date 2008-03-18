@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionStatementImpl.java,v 1.1 2007-08-29 23:41:15 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionStatementImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,7 +109,7 @@ public class XACMLAuthzDecisionStatementImpl
         } else {
             XACMLSDKUtils.debug.error(
                 "DecisionImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -150,12 +150,12 @@ public class XACMLAuthzDecisionStatementImpl
         throws XACMLException {
            if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
 
         if (response == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
 
         this.response = response; 
@@ -182,7 +182,7 @@ public class XACMLAuthzDecisionStatementImpl
         throws XACMLException {
            if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
         this.request = request; 
    }
@@ -260,14 +260,14 @@ public class XACMLAuthzDecisionStatementImpl
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "DecisionImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "DecisionImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
@@ -275,7 +275,7 @@ public class XACMLAuthzDecisionStatementImpl
             XACMLSDKUtils.debug.error(
                     "DecisionImpl.processElement(): invalid local name " 
                     + elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_local_name"));
         }
         //TODO: add a check for xsi:type
@@ -296,27 +296,27 @@ public class XACMLAuthzDecisionStatementImpl
             XACMLSDKUtils.debug.error(
                 "ResultImpl.processElement(): invalid child element count: " 
                         + childCount);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_child_count")); //FIXME: add i18n key
         } else if (childCount > 2) {
             XACMLSDKUtils.debug.error(
                 "ResultImpl.processElement(): invalid child element count: " 
                         + childCount);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_child_count")); //FIXME: add i18n key
         }
 
         //process Response element
         Element firstChild = (Element)childElements.get(0);
         String firstChildName = firstChild.getLocalName();
-        if (firstChildName.equals(XACMLConstants.RESPONSE_ELEMENT)) {
+        if (firstChildName.equals(XACMLConstants.RESPONSE)) {
             response =  ContextFactory.getInstance()
                     .createResponse(firstChild);
         } else {
             XACMLSDKUtils.debug.error(
                 "ResultImpl.processElement(): invalid first child element: " 
                         + firstChildName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_first_child")); //FIXME: add i18n key
         }
 
@@ -332,7 +332,7 @@ public class XACMLAuthzDecisionStatementImpl
                 XACMLSDKUtils.debug.error(
                     "ResultImpl.processElement(): invalid second child element: " 
                             + secondChildName);
-                throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_second_child")); //FIXME: add i18n key
             }
             if (childCount > 2) {
@@ -341,7 +341,7 @@ public class XACMLAuthzDecisionStatementImpl
                 XACMLSDKUtils.debug.error(
                     "ResultImpl.processElement(): invalid third child element: " 
                             + thirdChildName);
-                throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_third_child")); //FIXME: add i18n key
             }
         }

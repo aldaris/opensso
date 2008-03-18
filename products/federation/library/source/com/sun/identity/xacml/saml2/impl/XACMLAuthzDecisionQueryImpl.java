@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.2 2008-01-16 04:40:48 hengming Exp $
+ * $Id: XACMLAuthzDecisionQueryImpl.java,v 1.3 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,7 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
             XACMLSDKUtils.debug.error(
                     "XACMLAuthzDecisionQueryImpl.processElement(): invalid XML "
                      +"input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                     "errorObtainingElement"));
         }
     }
@@ -262,8 +262,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
     public void setRequest(Request request) throws XACMLException {
         if (request == null) {
             throw new XACMLException(
-                    //TODO i18n string
-                    XACMLSDKUtils.bundle.getString("null_not_valid")); 
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "null_not_valid")); 
         }
         this.request = request;
     }
@@ -307,18 +307,18 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
 
         sb.append("\n<")
                 .append(XACMLConstants.SAMLP_NS_PREFIX)
-                .append(XACMLConstants.SAMLP_REQUEST_ABSTRACT)
+                .append(XACMLConstants.REQUEST_ABSTRACT)
                 .append(XACMLConstants.SAMLP_NS_DECLARATION)
                 .append(XACMLConstants.XSI_TYPE_XACML_AUTHZ_DECISION_QUERY)
                 .append(XACMLConstants.XSI_NS_DECLARATION)
                 .append(XACMLConstants.XACML_SAMLP_NS_DECLARATION)
             .append(XACMLConstants.SPACE)
             .append(XACMLConstants.XACML_SAMLP_NS_PREFIX)
-            .append(XACMLConstants.INPUTCONTEXTONLY).append("=")
+            .append(XACMLConstants.INPUT_CONTEXT_ONLY).append("=")
             .append(XACMLSDKUtils.quote(Boolean.toString(inputContextOnly)))
             .append(XACMLConstants.SPACE)
             .append(XACMLConstants.XACML_SAMLP_NS_PREFIX)
-            .append(XACMLConstants.RETURNCONTEXT).append("=")
+            .append(XACMLConstants.RETURN_CONTEXT).append("=")
             .append(XACMLSDKUtils.quote(Boolean.toString(returnContext)))
             .append(XACMLConstants.SPACE)
             .append("ID").append("=")
@@ -357,7 +357,7 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
 
         sb.append("\n</")
                 .append(XACMLConstants.SAMLP_NS_PREFIX)
-                .append(XACMLConstants.SAMLP_REQUEST_ABSTRACT)
+                .append(XACMLConstants.REQUEST_ABSTRACT)
                 .append(">\n");
         return  sb.toString();
     }
@@ -370,17 +370,17 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
             XACMLSDKUtils.debug.error(
                     "XACMLAuthzDecisionQueryImpl.processElement(): "
                     + "invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_element"));
         }
         
         // First check that we're really parsing an XACMLAuthzDecisionQuery
         if (! element.getLocalName().equals(
-            XACMLConstants.SAMLP_REQUEST_ABSTRACT)) {
+            XACMLConstants.REQUEST_ABSTRACT)) {
             XACMLSDKUtils.debug.error(
                     "XACMLAuthzDecisionQueryImpl.processElement(): "
                     + "invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( XACMLSDKUtils.xacmlResourceBundle.getString(
                     "missing_local_name"));
         }
         
@@ -407,25 +407,26 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
         // make sure we got a request
         if (request == null) {
             //throw new XACMLException(
-             //       XACMLSDKUtils.bundle.getString("null_not_valid"));
+             //       XACMLSDKUtils.xacmlResourceBundle.getString(
+             //       "null_not_valid"));
         }
         
         System.out.println("ReturnContex:" + element.getAttributeNS(
-                XACMLConstants.XACML_SAMLP_NS,
-                XACMLConstants.RETURNCONTEXT));
+                XACMLConstants.XACML_SAMLP_NS_URI,
+                XACMLConstants.RETURN_CONTEXT));
         System.out.println("InputContextOnly:" + element.getAttributeNS(
-                XACMLConstants.XACML_SAMLP_NS,
-                XACMLConstants.INPUTCONTEXTONLY));
+                XACMLConstants.XACML_SAMLP_NS_URI,
+                XACMLConstants.INPUT_CONTEXT_ONLY));
         String returnContextString = element.getAttributeNS(
-                XACMLConstants.XACML_SAMLP_NS,
-                XACMLConstants.RETURNCONTEXT);
+                XACMLConstants.XACML_SAMLP_NS_URI,
+                XACMLConstants.RETURN_CONTEXT);
         if (returnContextString != null) {
             returnContext = Boolean.valueOf(returnContextString).booleanValue();
         }
 
         String inputContextOnlyString = element.getAttributeNS(
-                XACMLConstants.XACML_SAMLP_NS,
-                XACMLConstants.INPUTCONTEXTONLY);
+                XACMLConstants.XACML_SAMLP_NS_URI,
+                XACMLConstants.INPUT_CONTEXT_ONLY);
         if (inputContextOnlyString != null) {
             inputContextOnly = Boolean.valueOf(inputContextOnlyString)
                     .booleanValue();
@@ -475,7 +476,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
                                 + "Element: included more than one Issuer.");
                         }
                         throw new XACMLException(
-                            XACMLSDKUtils.bundle.getString("moreElement"));
+                            XACMLSDKUtils.xacmlResourceBundle.getString(
+                            "invalid_duplicate_element"));
 		    }
 		    if (signatureString != null ||
 			extensions != null )
@@ -486,7 +488,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
                                     + "Element:wrong sequence.");
 			}
 			throw new XACMLException(
-			    XACMLSDKUtils.bundle.getString("schemaViolation"));
+			    XACMLSDKUtils.xacmlResourceBundle.getString(
+                            "schemaViolation"));
 		    }
 		    nameID = AssertionFactory.getInstance().createIssuer(
 			(Element) child);
@@ -498,7 +501,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
                                 + "Element:included more than one Signature.");
                         }
                         throw new XACMLException(
-                            XACMLSDKUtils.bundle.getString("moreElement"));
+                            XACMLSDKUtils.xacmlResourceBundle.getString(
+                            "invalid_duplicate_element"));
 		    }
 		    if (extensions != null ) {
 			if (XACMLSDKUtils.debug.messageEnabled()) {
@@ -507,7 +511,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
                                     + "Element:wrong sequence.");
 			}
 			throw new XACMLException(
-			    XACMLSDKUtils.bundle.getString("schemaViolation"));
+			    XACMLSDKUtils.xacmlResourceBundle.getString(
+                            "schemaViolation"));
 		    }
 		    signatureString = XMLUtils.print((Element) child);
 		    isSigned = true;
@@ -519,7 +524,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
                                 + "Element:included more than one Extensions.");
                         }
                         throw new XACMLException(
-                            XACMLSDKUtils.bundle.getString("moreElement"));
+                            XACMLSDKUtils.xacmlResourceBundle.getString(
+                            "invalid_duplicate_element"));
 		    }
 		    extensions = ProtocolFactory.getInstance().createExtensions(
 			(Element) child);
@@ -532,7 +538,8 @@ public class XACMLAuthzDecisionQueryImpl extends RequestAbstractImpl
                             + "Element: Invalid element:" + childName);
                     }
                     throw new XACMLException(
-                        XACMLSDKUtils.bundle.getString("invalidElement"));
+                        XACMLSDKUtils.xacmlResourceBundle.getString(
+                        "invalidElement"));
 		}
 	    }
 	}

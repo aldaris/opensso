@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionStatementTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
+ * $Id: XACMLAuthzDecisionStatementTest.java,v 1.3 2008-03-18 19:48:46 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ import org.w3c.dom.Element;
 public class XACMLAuthzDecisionStatementTest extends UnitTestBase {
 
     public XACMLAuthzDecisionStatementTest() {
-        super("OpenFed-xacml-XACMLAuthzDecisionStatementTest");
+        super("FedLibrary-XACML-XACMLAuthzDecisionStatementTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

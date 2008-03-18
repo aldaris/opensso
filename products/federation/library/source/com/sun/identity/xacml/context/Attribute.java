@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.2 2007-11-05 06:16:16 qcheng Exp $
+ * $Id: Attribute.java,v 1.3 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,14 +56,14 @@ public interface Attribute {
      * which the attribute identifier.
      * @return the <code>URI</code> representing the data type.
      */
-    public URI getAttributeID() ;
+    public URI getAttributeId() ;
 
     /**
-     * Sets the attribiteId of the <code>>Attribute</code>
-     * @param attributeID <code>URI</code> representing the attribite id.
+     * Sets the attribiteId of the <code>Attribute</code>
+     * @param attributeId <code>URI</code> representing the attribite id.
      * @exception XACMLException if the object is immutable
      */
-    public void setAttributeID(URI attributeID) throws XACMLException;
+    public void setAttributeId(URI attributeID) throws XACMLException;
 
     /**
      * Returns the issuer of the <code>Attribute</code>.

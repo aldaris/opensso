@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLRequestProcessorTest.java,v 1.2 2007-12-20 18:49:31 veiming Exp $
+ * $Id: XACMLRequestProcessorTest.java,v 1.3 2008-03-18 19:48:48 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,6 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
         if ((subjectId == null) || (subjectId.length() == 0)) {
             SSOToken ssoToken 
                     = TokenUtils.getSessionToken("/", loginId, loginPassword);
-                    //= TokenUtils.getLocalToken("/", loginId, loginPassword);
             subjectId = ssoToken.getTokenID().toString();
             subjectIdType = XACMLConstants.OPENSSO_SESSION_ID;
         }
@@ -129,7 +128,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:subject:subject-id
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI(XACMLConstants.SUBJECT_ID));
 
         //supported data type for id
@@ -156,7 +155,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         attribute = ContextFactory.getInstance().createAttribute();
 
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI(XACMLConstants.SUBJECT_ID));
 
         //supported data type for id
@@ -189,7 +188,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:resource:resource-id
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI(XACMLConstants.RESOURCE_ID));
 
         //supported data type
@@ -213,7 +212,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         //additional attribute id
         //urn:sun:names:xacml:2.0:resource:target-service
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI(XACMLConstants.TARGET_SERVICE));
 
         //supported data type
@@ -244,7 +243,7 @@ public class XACMLRequestProcessorTest extends UnitTestBase {
 
         //key attribute id
         //urn:oasis:names:tc:xacml:1.0:action:action-id
-        attribute.setAttributeID(
+        attribute.setAttributeId(
             new URI(XACMLConstants.ACTION_ID));
 
         //supported data type

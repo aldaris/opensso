@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.4 2008-01-25 01:55:58 dillidorai Exp $
+ * $Id: XACMLAuthzDecisionQueryHandler.java,v 1.5 2008-03-18 19:48:47 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -209,7 +209,8 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
                 if (serviceName == null) {
                     //TODO: log message and fill missing attribute details
                     throw new SAML2Exception(
-                        "missing or incorrect attribute, can not find service name");
+                        XACMLSDKUtils.xacmlResourceBundle.getString(
+                        "missing_attribute"));
                 }
             }
 
@@ -309,7 +310,7 @@ public class XACMLAuthzDecisionQueryHandler implements RequestHandler {
                     for (int count = 0; count < attributes.size(); count++) {
                         Attribute attr = (Attribute) attributes.get(count);
                         if (attr != null) {
-                            URI tmpURI = attr.getAttributeID();
+                            URI tmpURI = attr.getAttributeId();
                             if (tmpURI.toString().equals(XACMLConstants.
                                 RESOURCE_ID)) {
                                     Element element 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
+ * $Id: SubjectTest.java,v 1.3 2008-03-18 19:48:42 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ public class SubjectTest extends UnitTestBase {
     private static XACMLConstants xc;
     
     public SubjectTest() {
-        super("FedLibrary-XACML");
+        super("FedLibrary-XACML-SubjectTest");
     }
     
     /**
@@ -80,13 +80,19 @@ public class SubjectTest extends UnitTestBase {
             subject.setSubjectCategory(new URI(xc.ACCESS_SUBJECT));
             List<Attribute> attrs = new ArrayList<Attribute>();
             Attribute attr = ContextFactory.getInstance().createAttribute();
-            attr.setAttributeID(new URI("testid1"));
+            attr.setAttributeId(new URI("testid1"));
             attr.setDataType(new URI("testDataType1"));
+            List values = new ArrayList();
+            values.add("value");
+            attr.setAttributeStringValues(values);
             attrs.add(attr);
             Attribute attr1 = ContextFactory.getInstance().createAttribute();
-            attr1.setAttributeID(new URI("testid2"));
+            attr1.setAttributeId(new URI("testid2"));
             attr1.setDataType(new URI("testDataType2"));
             attr1.setIssuer("Bhavna");
+            List values1 = new ArrayList();
+            values1.add("value-1");
+            attr1.setAttributeStringValues(values1);
             attrs.add(attr1);
             subject.setAttributes(attrs);
             // object to xml string
@@ -103,7 +109,7 @@ public class SubjectTest extends UnitTestBase {
             for (int j= 0; j < subject.getAttributes().size(); j++) {
                 attr = (Attribute)subject.getAttributes().get(j);
                 System.out.println("issuer:"+attr.getIssuer());
-                System.out.println("attributId:"+attr.getAttributeID());
+                System.out.println("attributId:"+attr.getAttributeId());
                 System.out.println("datatype:"+attr.getDataType());
                 System.out.println("attrValue:"
                     +attr.getAttributeValues().toString());

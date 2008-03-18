@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 public class XACMLSDKUtilsTest extends UnitTestBase {
 
     public XACMLSDKUtilsTest() {
-        super("OpenFed-xacml-XACMLSDKUtilsTest");
+        super("FedLibrary-XACML-XACMLSDKUtilsTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

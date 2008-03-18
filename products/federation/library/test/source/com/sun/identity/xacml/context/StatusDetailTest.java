@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 public class StatusDetailTest extends UnitTestBase {
 
     public StatusDetailTest() {
-        super("OpenFed-xacml-StatusDetailTest");
+        super("FedLibrary-XACML-StatusDetailTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

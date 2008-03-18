@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionQueryTest.java,v 1.2 2007-12-20 18:49:30 veiming Exp $
+ * $Id: XACMLAuthzDecisionQueryTest.java,v 1.3 2008-03-18 19:48:46 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,7 +54,7 @@ import org.testng.annotations.Test;
 public class XACMLAuthzDecisionQueryTest extends UnitTestBase {
 
     public XACMLAuthzDecisionQueryTest() {
-        super("OpenFed-xacml-XAMLAuthzDescisionQueryTest");
+        super("FedLibrary-XACML-XAMLAuthzDescisionQueryTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

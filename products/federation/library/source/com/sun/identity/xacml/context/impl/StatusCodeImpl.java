@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusCodeImpl.java,v 1.1 2007-08-29 23:40:49 dillidorai Exp $
+ * $Id: StatusCodeImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,8 @@ public class StatusCodeImpl implements StatusCode {
         } else {
             XACMLSDKUtils.debug.error(
                 "StatusCodeImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -119,17 +120,18 @@ public class StatusCodeImpl implements StatusCode {
     public void setValue(String value) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                "objectImmutable"));
         }
 
         if (value == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
 
         if (!XACMLSDKUtils.isValidStatusCode(value)) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("invalid_value")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("invalid_value"));
         }
         this.value = value;
     }
@@ -152,17 +154,17 @@ public class StatusCodeImpl implements StatusCode {
             throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
 
         if (value == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
 
         if (!XACMLSDKUtils.isValidMinorStatusCode(value)) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("invalid_value")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("invalid_value"));
         }
         this.minorCodeValue = minorCodeValue;
     }
@@ -192,35 +194,35 @@ public class StatusCodeImpl implements StatusCode {
         String nsPrefix = "";
         String nsDeclaration = "";
         if (includeNSPrefix) {
-            nsPrefix = XACMLConstants.CONTEXT_PREFIX;
+            nsPrefix = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         if (declareNS) {
-            nsDeclaration = XACMLConstants.CONTEXT_DECLARE_STR;
+            nsDeclaration = XACMLConstants.CONTEXT_NS_DECLARATION;
         }
         sb.append("<").append(nsPrefix)
-                .append(XACMLConstants.STATUS_CODE_ELEMENT)
+                .append(XACMLConstants.STATUS_CODE)
                 .append(" ")
                 .append(nsDeclaration);
         if (value != null) {
-            sb.append(XACMLConstants.VALUE_ATTRIBUTE)
+            sb.append(XACMLConstants.VALUE)
             .append("=")
             .append(XACMLSDKUtils.quote(value));
         }
         sb.append(">");
         if (minorCodeValue != null) {
             sb.append("<").append(nsPrefix)
-                    .append(XACMLConstants.STATUS_CODE_ELEMENT)
+                    .append(XACMLConstants.STATUS_CODE)
                     .append(" ")
                     .append(nsDeclaration)
-                    .append(XACMLConstants.VALUE_ATTRIBUTE)
+                    .append(XACMLConstants.VALUE)
                     .append("=")
                     .append(XACMLSDKUtils.quote(minorCodeValue))
                     .append(">");
                     sb.append("</").append(nsPrefix)
-                            .append(XACMLConstants.STATUS_CODE_ELEMENT)
+                            .append(XACMLConstants.STATUS_CODE)
                             .append(">");
         }
-        sb.append("</").append(nsPrefix).append(XACMLConstants.STATUS_CODE_ELEMENT)
+        sb.append("</").append(nsPrefix).append(XACMLConstants.STATUS_CODE)
                 .append(">\n");
         return sb.toString();
     }
@@ -246,34 +248,35 @@ public class StatusCodeImpl implements StatusCode {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(XACMLConstants.STATUS_CODE_ELEMENT)) {
+        if (!elemName.equals(XACMLConstants.STATUS_CODE)) {
             XACMLSDKUtils.debug.error(
                     "StatusMessageImpl.processElement(): invalid local name " 
                     + elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_local_name"));
         }
-        String attrValue = element.getAttribute(XACMLConstants.VALUE_ATTRIBUTE);
+        String attrValue = element.getAttribute(XACMLConstants.VALUE);
         if ((attrValue == null) || (attrValue.length() == 0)) {
             XACMLSDKUtils.debug.error(
                 "StatusCodeImpl.processElement(): statuscode missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_status_code")); //i18n
         } 
         if (!XACMLSDKUtils.isValidStatusMessage(attrValue.trim())) {
             throw new XACMLException(
-                    XACMLSDKUtils.bundle.getString("invalid_value")); //i18n
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "invalid_value"));
         } else {
             this.value = attrValue;
         }
@@ -294,8 +297,8 @@ public class StatusCodeImpl implements StatusCode {
             XACMLSDKUtils.debug.error(
                 "ResultImpl.processElement(): invalid child element count: " 
                         + childCount);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
-                "invalid_child_count")); //FIXME: add i18n key
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
+                "invalid_child_count"));
         }
         if (childCount == 1) {
             Element childElement = (Element)childElements.get(0);
@@ -303,27 +306,31 @@ public class StatusCodeImpl implements StatusCode {
             if (elemName == null) {
                 XACMLSDKUtils.debug.error(
                     "StatusMessageImpl.processElement(): local name missing");
-                throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "missing_local_name"));
             }
 
-            if (!elemName.equals(XACMLConstants.STATUS_CODE_ELEMENT)) {
+            if (!elemName.equals(XACMLConstants.STATUS_CODE)) {
                 XACMLSDKUtils.debug.error(
                         "StatusMessageImpl.processElement(): invalid local name " 
                         + elemName);
-                throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                         "invalid_local_name"));
             }
-            attrValue = childElement.getAttribute(XACMLConstants.VALUE_ATTRIBUTE);
+            attrValue = childElement.getAttribute(XACMLConstants.VALUE);
             if ((attrValue == null) || (attrValue.length() == 0)) {
                 XACMLSDKUtils.debug.error(
                     "StatusCodeImpl.processElement(): minor statuscode missing");
-                throw new XACMLException(XACMLSDKUtils.bundle.getString(
-                    "missing_minor_status_code")); //i18n
+                throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "missing_minor_status_code"));
             } 
             if (!XACMLSDKUtils.isValidStatusMessage(attrValue.trim())) {
                 throw new XACMLException(
-                        XACMLSDKUtils.bundle.getString("invalid_value")); //i18n
+                        XACMLSDKUtils.xacmlResourceBundle.getString(
+                        "invalid_value"));
             } else {
                 this.minorCodeValue = attrValue;
             }

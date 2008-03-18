@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusMessageImpl.java,v 1.1 2007-08-29 23:40:59 dillidorai Exp $
+ * $Id: StatusMessageImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class StatusMessageImpl implements StatusMessage {
         } else {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -107,17 +107,17 @@ public class StatusMessageImpl implements StatusMessage {
     public void setValue(String value) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
 
         if (value == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid")); //i18n
         }
 
         if (!XACMLSDKUtils.isValidStatusMessage(value)) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("invalid_value")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("invalid_value")); //i18n
         }
         this.value = value;
     }
@@ -147,17 +147,17 @@ public class StatusMessageImpl implements StatusMessage {
         String nsDeclaration = "";
         String nsPrefix = "";
         if (declareNS) {
-            nsDeclaration = XACMLConstants.CONTEXT_DECLARE_STR;
+            nsDeclaration = XACMLConstants.CONTEXT_NS_DECLARATION;
         }
         if (includeNSPrefix) {
-            nsPrefix = XACMLConstants.CONTEXT_PREFIX;
+            nsPrefix = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         sb.append("<").append(nsPrefix)
-                .append(XACMLConstants.STATUS_MESSAGE_ELEMENT)
+                .append(XACMLConstants.STATUS_MESSAGE)
                 .append(nsDeclaration).append(">")
                 .append(value)
                 .append("</").append(nsPrefix)
-                .append(XACMLConstants.STATUS_MESSAGE_ELEMENT)
+                .append(XACMLConstants.STATUS_MESSAGE)
                 .append(">\n");
         return sb.toString();
     }
@@ -183,32 +183,32 @@ public class StatusMessageImpl implements StatusMessage {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "StatusMessageImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(XACMLConstants.STATUS_MESSAGE_ELEMENT)) {
+        if (!elemName.equals(XACMLConstants.STATUS_MESSAGE)) {
             XACMLSDKUtils.debug.error(
                     "StatusMessageImpl.processElement(): invalid local name " 
                     + elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_local_name"));
         }
         String elementValue = element.getTextContent();
         if (elementValue == null) {
             throw new XACMLException(
-                    XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                    XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
         if (!XACMLSDKUtils.isValidStatusMessage(elementValue.trim())) {
             throw new XACMLException(
-                    XACMLSDKUtils.bundle.getString("invalid_value")); //i18n
+                    XACMLSDKUtils.xacmlResourceBundle.getString("invalid_value"));
         } else {
             this.value = elementValue;
         }

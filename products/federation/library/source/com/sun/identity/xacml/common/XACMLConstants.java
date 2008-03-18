@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.1 2007-08-29 23:39:21 dillidorai Exp $
+ * $Id: XACMLConstants.java,v 1.2 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,42 +30,183 @@ package com.sun.identity.xacml.common;
  * @supported.all.api
  */
 public class  XACMLConstants {
+      
+    /**
+     * Constant for SAML namespace URI 
+     */
+    public static String SAML_NS_URI
+            = "urn:oasis:names:tc:SAML:2.0:assertion";
 
     /**
-     * Constant for Request element
+     * Constant for SAML namespace prefix
+     */
+    public static String SAML_NS_PREFIX = "saml:";
+
+    /**
+     * Constant for SAML namespace declaration URI
+     */
+    public static String SAML_NS_DECLARATION 
+            = " xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" ";
+
+    /**
+     * Constant for SAML2 protocol namespace URI
+     */
+    public static String SAMLP_NS_URI =
+        "urn:oasis:names:tc:SAML:2.0:protocol";
+    
+    /**
+     * Constant for SAML2 Protocol namespace prefix
+     */
+    public static String SAMLP_NS_PREFIX = "samlp:";
+    
+    /**
+     * Constant for SAML2 protocol namespace declaration
+     */
+    public static String SAMLP_NS_DECLARATION =
+        " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"";
+    
+    /**
+     * Constant for xacml-saml namespace  URI
+     */
+    public final static String XACML_SAML_NS_URI
+            = "urn:oasis:names:tc:xacml:2.0:saml:assertion:schema:os";
+    /**
+     * Constant for xacml-saml namespace prefix
+     */
+    public final static String XACML_SAML_NS_PREFIX
+            = " xacml-saml:";
+
+    /**
+     * Constant for xacml-saml namespace declaration
+     */
+    public final static String XACML_SAML_NS_DECLARATION
+            = " xmlns:xacml-saml=\"urn:oasis:names:tc:xacml:2.0:saml:assertion:schema:os\" ";
+
+    /**
+     * Constant for XACML SAML2 protocol namespace URI
+     */
+    public static String XACML_SAMLP_NS_URI =
+        "urn:oasis:xacml:2.0:saml:protocol:schema:os";
+
+    /**
+     * Constant for XACML SAML2 Protocol namespace prefix.
+     */
+    public static String XACML_SAMLP_NS_PREFIX = "xacml-samlp:";
+    
+    /**
+     * Constant for XACML SAML2 protocol namespace declaration
+     */
+    public static String XACML_SAMLP_NS_DECLARATION =
+        " xmlns:xacml-samlp=\"urn:oasis:xacml:2.0:saml:protocol:schema:os\" ";
+
+    /**
+     * Constant for XACML policy namespace URI
+     */
+    public static String XACML_NS_URI =
+        "urn:oasis:names:tc:xacml:2.0:policy:schema:os";
+
+    /**
+     * Constant for XACML policy namespace prefix
+     */
+    public static String XACML_NS_PREFIX = "xacml";
+
+    /**
+     * Constant for XACML policy namespace declaration
+     */
+    public static String XACML_NS_DECLARATION =
+        " xmlns:xacml=\"urn:oasis:names:tc:xacml:2.0:policy:schema:os\" ";
+
+    /**
+     * Constant for XACML context namespace URI
+     */
+    public static String CONTEXT_NS_URI =
+    "urn:oasis:names:tc:xacml:2.0:context:schema:os";
+    
+    /**
+     * Constant for XACML context namespace prefix
+     */
+    public static String CONTEXT_NS_PREFIX = "xacml-context";
+
+    /**
+     * Constant for XACML context namespace declaration
+     */
+    public static String CONTEXT_NS_DECLARATION =
+    " xmlns:xacml-context=\"urn:oasis:names:tc:xacml:2.0:context:schema:os\" ";
+    
+    /*
+     * Constant for XMLSchema-instance URI
+     */
+    public static String XSI_NS_URI = 
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance/\"";
+    
+    /**
+     * Constant for xsi name space delcaration
+     */
+    public final static String XSI_NS_DECLARATION
+            = " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
+
+    /**
+     * Constant for xsi:type="xacml-samlp:XACMLAuthzDecisionQuery
+     */
+    public final static String XSI_TYPE_XACML_AUTHZ_DECISION_QUERY
+            = " xsi:type=\"xacml-samlp:XACMLAuthzDecisionQuery\"";
+
+    /**
+     * XACML context schema location 
+     */
+    public static String CONTEXT_SCHEMA_LOCATION=
+    "xsi:schemaLocation=\"urn:oasis:names:tc:xacml:2.0:context:schema:os http:"
+        +"//docs.oasis-open.org/xacml/access_control-xacml"
+        +"-2.0-context-schema-os.xsd\"";
+        
+    /**
+     * Constant for RequestAbstract
+     */
+    public static String REQUEST_ABSTRACT =
+        "RequestAbstract";
+
+    /**
+     * Constant for XACMLAuthzDecisionQuery 
+     */
+    public static String XACML_AUTHZ_DECISION_QUERY =
+            "XACMLAuthzDecisionQuery";
+
+    /**
+     * Constant for xsi:type
+     */
+    public final static String XSI_TYPE_XACML_AUTHZ_DECISION_STATEMENT
+            = " xsi:type=\"xacml-saml:XACMLAuthzDecisionStatement\"";
+
+    /**
+     * Constant for Request 
      */
     public  static String REQUEST = "Request";
 
     /**
-     * Constant for Subject element
+     * Constant for Subject 
      */
     public static String SUBJECT = "Subject";
 
     /**
-     * Constant for Attribute element
+     * Constant for SubjectCategory element
      */
-    public static String ATTRIBUTE = "Attribute";
+    public static  String SUBJECT_CATEGORY = "SubjectCategory";
 
     /**
      * Constant for AttributeValue element
      */
-
-    /**
-     * Constant for AttributeValue element
-     */
-    public static String ATTRIBUTE_VALUE = "AttributeValue";
-
-    /**
-     * Constant for ResourceContent element
-     */
-    public static String RESOURCE_CONTENT = "ResourceContent";
       
-     /**
+    /**
      * Constant for Resource element
      */
     public static String RESOURCE = "Resource";
     
-       /**
+    /**
+     * Constant for ResourceContent element
+     */
+    public static String RESOURCE_CONTENT = "ResourceContent";
+
+    /**
      * Constant for Action element
      */
     public static String ACTION = "Action";
@@ -77,10 +218,10 @@ public class  XACMLConstants {
     public static String ENVIRONMENT = "Environment";
       
     /**
-     * Constant for SubjectCategory element
+     * Constant for Attribute element
      */
-    public static  String SUBJECT_CATEGORY = "SubjectCategory";
-      
+    public static String ATTRIBUTE = "Attribute";
+
     /**
      * Constant for AttributeId element
      */
@@ -97,349 +238,225 @@ public class  XACMLConstants {
     public  static  String ISSUER ="Issuer";
  
     /**
-     * Constant for ReturnContext attribute
+     * Constant for AttributeValue element
      */
-    public  static  String RETURNCONTEXT ="ReturnContext";
-      
+    public static String ATTRIBUTE_VALUE = "AttributeValue";
+
+    /**
+     * Constant for SAML Statement 
+     */
+    public final static String SAML_STATEMENT
+            = "Statement";
+
+    /*
+     * Constant for XACMLAuthzDecisionStatementElement
+     */
+    public final static String XACML_AUTHZ_DECISION_STATEMENT
+            = "XACMLAuthzDecisionStatement";
+
    /**
      * Constant for InputContextOnly attribute
      */
-    public  static  String INPUTCONTEXTONLY ="InputContextOnly";
+    public  static  String INPUT_CONTEXT_ONLY ="InputContextOnly";
+
+    /**
+     * Constant for ReturnContext attribute
+     */
+    public  static  String RETURN_CONTEXT ="ReturnContext";
+
+    /**
+     * Constant for Response element
+     */
+    public static final String RESPONSE = "Response";
+
+    /**
+     * Constant for Result element
+     */
+    public static final String RESULT = "Result";
+
+    /**
+     * Constant for ResourceId attribute
+     */
+    public static final String RESOURCE_ID = "ResourceId";
+
+    /**
+     * Constant for Decision element
+     */
+    public static final String DECISION = "Decision";
+
+    /**
+     * Constant for Status element
+     */
+    public static final String STATUS = "Status";
+
+    /**
+     * Constant for StatusCode element
+     */
+    public static final String STATUS_CODE = "StatusCode";
+
+    /**
+     * Constant for Value attribute
+     */
+    public static final String VALUE = "Value";
+
+    /**
+     * Constant for StatusMessage element
+     */
+    public static final String STATUS_MESSAGE = "StatusMessage";
+
+    /**
+     * Constant for StatusDetail element
+     */
+    public final static String STATUS_DETAIL = "StatusDetail";
+
+    /**
+     * Constant for Permit
+     */
+    public static final String PERMIT = "Permit";
+
+    /**
+     * Constant for Deny
+     */
+    public static final String DENY = "Deny";
+
+    /**
+     * Constant for Indeterminate
+     */
+    public static final String INDETERMINATE = "Indeterminate";
+
+    /**
+     * Constant for NotApplicable
+     */
+    public static final String NOT_APPLICABLE = "NotApplicable";
+
+    /**
+     * Constant for Obligations
+     */
+    public  static  String OBLIGATIONS = "Obligations";
+
+    /**
+     * Constant for Obligation
+     */
+    public  static  String OBLIGATION = "Obligation";
+
+    /**
+     * Constant for ObligationId
+     */
+    public  static  String OBLIGATION_ID = "ObligationId";
+
+    /**
+     * Constant for AttributeAssignment
+     */
+    public  static  String ATTRIBUTE_ASSIGNMENT = "AttributeAssignment";
+
+    /**
+     * Constant for FulfillOn
+     */
+    public  static  String FULFILL_ON = "FulfillOn";
+
+    /**
+     * Constant for DataType
+     */
+    public  static  String DATA_TYPE = "DataType";
+
+    /**
+     * Constant for EffectType
+     */
+    public  static  String EFFECT_TYPE = "EffectType";
       
     /**
-     * Constant for XACMLAuthzDecisionQuery element
-     */
-    public static String XACMLAUTHZDECISIONQUERY =
-            "XACMLAuthzDecisionQuery";
-    
-    /**
-     * The standard URI for the default subject category value
+     * Constant for access-subject URI
      */
     public static String ACCESS_SUBJECT =
         "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
 
     /**
-     * The URI for the intermediary subject category value
+     * Constant for intemediray-subject URI
      */
     public static String INTERMEDIARY_SUBJECT =
         "urn:oasis:names:tc:xacml:1.0:subject-category:intermediary-subject";
 
    /**
-    * The URI for the subject-id value
+    * Constant for subject-id URI
     */
    public static String SUBJECT_ID =
       "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
 
    /**
-    * The URI for the resource-id value
+    * Constant for resource-id URI
     */
-   public static String RESOURCE_ID =
+   public static String RESOURCE_ID_URI =
       "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
 
    /**
-    * The URI for the target-service value
-    */
-   public static String TARGET_SERVICE =
-      "urn:sun:names:xacml:2.0:resource:target-service";
-
-   /**
-    * The URI for the action-id value
+    * Constant for action-id URI
     */
    public static String ACTION_ID =
       "urn:oasis:names:tc:xacml:1.0:action:action-id";
 
    /**
-    * The URI for the opensso-session-id value
+    * Constant for opensso-session-id URI
     */
    public static String OPENSSO_SESSION_ID =
       "urn:sun:names:xacml:2.0:data-type:opensso-session-id";
 
    /**
-    * The URI for the x500Name value
+    * Constant for resource:target-service URI
+    */
+   public static String TARGET_SERVICE =
+      "urn:sun:names:xacml:2.0:resource:target-service";
+
+   /**
+    * Constant for x500name URI
     */
    public static String X500NAME =
       "urn:oasis:names:tc:xacml:1.0:data-type:x500Name";
 
    /**
-    * The URI for XMLSchema#string datatype
+    * Constant for XMLSchema#String URI
     */
    public static String XS_STRING =
       "http://www.w3.org/2001/XMLSchema#string";
 
-
     /**
-     * XML name space URI
-     */
-    public static String NS_XML = 
-        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance/\"";
-    
-    /**
-     * String used to declare XACML context namespace prefix.
-     */
-    public static String CONTEXT_PREFIX = "xacml-context:";
-    
-    /**
-     * String used to declare XACML context namespace.
-     */
-    public static String CONTEXT_DECLARE_STR =
-    " xmlns:xacml-context=\"urn:oasis:names:tc:xacml:2.0:context:schema:os\" ";
-    
-    /**
-     * XACML context schema location 
-     */
-    public static String CONTEXT_SCHEMA_LOCATION=
-    "xsi:schemaLocation=\"urn:oasis:names:tc:xacml:2.0:context:schema:os http:"
-        +"//docs.oasis-open.org/xacml/access_control-xacml"
-        +"-2.0-context-schema-os.xsd\"";
-
-    
-    /**
-     * String used for SAML namespac prefix
-     */
-    public static String SAML_NS_PREFIX = "saml:";
-
-    /**
-     * String used for SAML namespac declaration
-     */
-    public static String SAML_NS_DECLARATION 
-            = " xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" ";
-
-    /**
-     * XACML SAML schema location 
-     */
-    public static String SAML_SCHEMA_LOCATION=
-    "xsi:schemaLocation=\"urn:oasis:names:tc:xacml:2.0:context:schema:os http:"
-        +"//docs.oasis-open.org/xacml/access_control-xacml"
-        +"-2.0-saml-assertion-schema-cd-os.xsd\"";
-
-    /**
-     * String used to declare SAML2 Protocol namespace prefix.
-     */
-    public static String SAMLP_NS_PREFIX = "samlp:";
-    
-    /**
-     * String used to declare SAML2 protocol namespace.
-     */
-    public static String SAMLP_NS_DECLARATION =
-        " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"";
-    
-    /**
-     * String used to declare XACML SAML2 Protocol namespace prefix.
-     */
-    public static String XACML_SAMLP_NS_PREFIX = "xacml-samlp:";
-    
-    /**
-     * String used for XACML SAML2 protocol namespace.
-     */
-    public static String XACML_SAMLP_NS =
-        "urn:oasis:xacml:2.0:saml:protocol:schema:os";
-
-    /**
-     * String used to declare XACML SAML2 protocol namespace.
-     */
-    public static String XACML_SAMLP_NS_DECLARATION =
-        " xmlns:xacml-samlp=\"urn:oasis:xacml:2.0:saml:protocol:schema:os\" ";
-
-    /**
-     * String used to declare samlp:RequestAbstract
-     */
-    public static String SAMLP_REQUEST_ABSTRACT =
-        "RequestAbstract";
-
-
-    /**
-     * constant for xsi:type="xacml-samlp:XACMLAuthzDecisionQuery
-     */
-    public final static String XSI_TYPE_XACML_AUTHZ_DECISION_QUERY
-            = " xsi:type=\"xacml-samlp:XACMLAuthzDecisionQuery\"";
-
-    /** 
-     * Start Tag for XML String
-     */
-
-    public static String START_TAG="<";
-    /**
-     * End Tag for XML String
-     */
-
-    public static String END_TAG =">";
-    
-    /**
-     * Constant for space
-     */
-    public static  String SPACE=" ";
-    /**
-     * Constant for equal
-     */
-    public static  String EQUAL= "=";
-    
-    /**
-     * Constant for quote
-     */
-    public static  String QUOTE = "\"";
-    
-    /**
-     * Constant for newline
-     */
-    public static String NEWLINE= "\n";
-    
-    /**
-     * Constant for xml name space
-     */
-    public static  String NAMESPACE_PREFIX="xmlns";
-    
-    /**
-     *  key for XACML SDK class mapping
+     * Constant key for XACML SDK class mapping
      */
     public static  String SDK_CLASS_MAPPING = 
         "com.sun.identity.xacml.sdk.mapping.";
 
     /**
-     * constant for String DataType
-     */
-    public static  String STRING_DATATYPE = 
-        "http://www.w3.org/2001/XMLSchema#string";
-
-    /**
-     * constant for URI DataType
-     **/
-    public static String URI_DATATYPE = 
-        "http://www.w3.org/2001/XMLSchema#anyURI";
-
-    /**
-     * constant for subject category
+     * Constant for subject-category URI
      */
     public static String SUBJECT_CATEGORY_ID =
         "urn:oasis:names:tc:xacml:1.0:subject-category";
 
-    /*
-     * constant for XACMLAuthzDecisionStatementElement
-     */
-    public final static String XACML_AUTHZ_DECISION_STATEMENT
-            = "XACMLAuthzDecisionStatement";
-
-    
-
     /**
-     * constant for SAML Statement 
-     */
-    public final static String SAML_STATEMENT
-            = "Statement";
-
-    /**
-     * constant for xsi:type
-     */
-    public final static String XSI_TYPE_XACML_AUTHZ_DECISION_STATEMENT
-            = " xsi:type=\"xacml-saml:XACMLAuthzDecisionStatement\"";
-
-    /**
-     * constant for xsi name space delcaration
-     */
-    public final static String XSI_NS_DECLARATION
-            = " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
-
-    /**
-     * constant for xacml-saml namespace prefix
-     */
-    public final static String XACML_SAML_NS_PREFIX
-            = " xacml-saml:";
-
-    /**
-     * constant for xacml-saml namespace declaration
-     */
-    public final static String XACML_SAML_NS_DECLARATION
-            = " xmlns:xacml-saml=\"urn:oasis:names:tc:xacml:2.0:saml:assertion:schema:os\" ";
-
-
-    /**
-    /**
-     * constant for Response element
-     */
-    public static final String RESPONSE_ELEMENT = "Response";
-
-    /**
-     * constant for Result element
-     */
-    public static final String RESULT_ELEMENT = "Result";
-
-    /**
-     * constant for ResourceId attribute
-     */
-    public static final String RESOURCE_ID_ATTRIBUTE = "ResourceId";
-
-    /**
-     * constant for Decision element
-     */
-    public static final String DECISION_ELEMENT = "Decision";
-
-    /**
-     * constant for Status element
-     */
-    public static final String STATUS_ELEMENT = "Status";
-
-    /**
-     * constant for StatusCode element
-     */
-    public static final String STATUS_CODE_ELEMENT = "StatusCode";
-
-    /**
-     * constant for Value attribute
-     */
-    public static final String VALUE_ATTRIBUTE = "Value";
-
-    /**
-     * constant for StatusMessage element
-     */
-    public static final String STATUS_MESSAGE_ELEMENT = "StatusMessage";
-
-    /**
-     * constant for StatusDetail element
-     */
-    public final static String STATUS_DETAIL_ELEMENT = "StatusDetail";
-
-
-    /**
-     * constant for Permit
-     */
-    public static final String PERMIT = "Permit";
-
-    /**
-     * constant for Deny
-     */
-    public static final String DENY = "Deny";
-
-    /**
-     * constant for Indeterminate
-     */
-    public static final String INDETERMINATE = "Indeterminate";
-
-    /**
-     * constant for NotApplicable
-     */
-    public static final String NOT_APPLICABLE = "NotApplicable";
-
-    /**
-     * constant for status code: ok
+     * Constant for status code: ok URI
      */
     public static final String STATUS_CODE_OK 
             = "urn:oasis:names:tc:xacml:1.0:status:ok";
 
     /**
-     * constant for status code: missing attribute
+     * Constant for status code: missing-attribute URI
      */
     public static final String STATUS_CODE_MISSING_ATTRIBUTE 
             = "urn:oasis:names:tc:xacml:1.0:status:missing-attribute";
     
     /**
-     * constant for status code: syntax error
+     * Constant for status code: syntax-error URI
      */
     public static final String STATUS_CODE_SYNTAX_ERROR 
             = "urn:oasis:names:tc:xacml:1.0:status:syntax-error";
 
     /**
-     * constant for status code: processing error
+     * Constant for status code: processing-error URI
      */
     public static final String STATUS_CODE_PROCESSING_ERROR 
             = "urn:oasis:names:tc:xacml:1.0:status:processing-error";
+
+    /**
+     * Constant for space
+     */
+    public static  String SPACE= " ";
 
 }

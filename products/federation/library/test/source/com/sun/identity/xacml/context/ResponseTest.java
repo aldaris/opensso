@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 public class ResponseTest extends UnitTestBase {
 
     public ResponseTest() {
-        super("OpenFed-xacml-ResponseTest");
+        super("FedLibrary-XACML-ResponseTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

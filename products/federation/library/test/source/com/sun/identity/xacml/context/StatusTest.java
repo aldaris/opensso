@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 public class StatusTest extends UnitTestBase {
 
     public StatusTest() {
-        super("OpenFed-xacml-StatusTest");
+        super("FedLibrary-XACML-StatusTest");
     }
 
     //@Test(groups={"xacml"}, expectedExceptions={XACMLException.class})

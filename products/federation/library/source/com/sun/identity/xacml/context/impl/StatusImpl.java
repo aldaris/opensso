@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StatusImpl.java,v 1.1 2007-08-29 23:40:56 dillidorai Exp $
+ * $Id: StatusImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,8 @@ public class StatusImpl implements Status {
         } else {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -124,12 +125,12 @@ public class StatusImpl implements Status {
     public void setStatusCode(StatusCode statusCode) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
 
         if (statusCode == null) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("null_not_valid")); //i18n
+                XACMLSDKUtils.xacmlResourceBundle.getString("null_not_valid"));
         }
         this.statusCode = statusCode;
     }
@@ -151,7 +152,7 @@ public class StatusImpl implements Status {
     public void setStatusMessage(StatusMessage statusMessage) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
         this.statusMessage = statusMessage;
     }
@@ -173,7 +174,7 @@ public class StatusImpl implements Status {
     public void setStatusDetail(StatusDetail statusDetail) throws XACMLException {
         if (!mutable) {
             throw new XACMLException(
-                XACMLSDKUtils.bundle.getString("objectImmutable"));
+                XACMLSDKUtils.xacmlResourceBundle.getString("objectImmutable"));
         }
         this.statusDetail = statusDetail;
     }
@@ -205,12 +206,12 @@ public class StatusImpl implements Status {
         String nsPrefix = "";
         String nsDeclaration = "";
         if (includeNSPrefix) {
-            nsPrefix = XACMLConstants.CONTEXT_PREFIX;
+            nsPrefix = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         if (declareNS) {
-            nsDeclaration = XACMLConstants.CONTEXT_DECLARE_STR;
+            nsDeclaration = XACMLConstants.CONTEXT_NS_DECLARATION;
         }
-        sb.append("<").append(nsPrefix).append(XACMLConstants.STATUS_ELEMENT).
+        sb.append("<").append(nsPrefix).append(XACMLConstants.STATUS).
                 append(nsDeclaration).append(">\n");
         if (statusCode != null) {
             sb.append(statusCode.toXMLString(includeNSPrefix, false)); 
@@ -221,7 +222,7 @@ public class StatusImpl implements Status {
         if (statusDetail != null) {
             sb.append(statusDetail.toXMLString(includeNSPrefix, false));
         }
-        sb.append("</").append(nsPrefix).append(XACMLConstants.STATUS_ELEMENT)
+        sb.append("</").append(nsPrefix).append(XACMLConstants.STATUS)
                 .append(">\n");
         return sb.toString();
     }
@@ -258,21 +259,21 @@ public class StatusImpl implements Status {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
-        if (!elemName.equals(XACMLConstants.STATUS_ELEMENT)) {
+        if (!elemName.equals(XACMLConstants.STATUS)) {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): invalid local name " + elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_local_name"));
         }
 
@@ -292,25 +293,25 @@ public class StatusImpl implements Status {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): invalid child element count: " 
                         + childCount);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_child_count")); //FIXME: add i18n key
         } else if (childCount > 3) {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): invalid child element count: " 
                         + childCount);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_child_count")); //FIXME: add i18n key
         }
         Element firstChild = (Element)childElements.get(0);
         String firstChildName = firstChild.getLocalName();
-        if (firstChildName.equals(XACMLConstants.STATUS_CODE_ELEMENT)) {
+        if (firstChildName.equals(XACMLConstants.STATUS_CODE)) {
             statusCode =  ContextFactory.getInstance()
                     .createStatusCode(firstChild);
         } else {
             XACMLSDKUtils.debug.error(
                 "StatusImpl.processElement(): invalid first child element: " 
                         + firstChildName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_first_child")); //FIXME: add i18n key
         }
         //process statusMessage element
@@ -318,12 +319,12 @@ public class StatusImpl implements Status {
             Element secondChild = (Element)childElements.get(1);
             String secondChildName = secondChild.getLocalName();
             if (secondChildName.equals(
-                        XACMLConstants.STATUS_MESSAGE_ELEMENT)) {
+                        XACMLConstants.STATUS_MESSAGE)) {
                 statusMessage =  ContextFactory.getInstance()
                         .createStatusMessage(secondChild);
 
             } else if (secondChildName.equals(
-                    XACMLConstants.STATUS_DETAIL_ELEMENT)) {
+                    XACMLConstants.STATUS_DETAIL)) {
                 if (childCount == 2) {
                     statusDetail =  ContextFactory.getInstance()
                             .createStatusDetail(secondChild);
@@ -332,7 +333,8 @@ public class StatusImpl implements Status {
                         "StatusImpl.processElement(): "
                                 + "invalid second child element: " 
                                 + secondChildName);
-                    throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                    throw new XACMLException(
+                        XACMLSDKUtils.xacmlResourceBundle.getString(
                         "invalid_second_child")); //FIXME: add i18n key
                 }
             }
@@ -340,14 +342,15 @@ public class StatusImpl implements Status {
                 Element thirdChild = (Element)childElements.get(2);
                 String thirdChildName = thirdChild.getLocalName();
                 if (thirdChildName.equals(
-                            XACMLConstants.STATUS_DETAIL_ELEMENT)) {
+                            XACMLConstants.STATUS_DETAIL)) {
                     statusDetail =  ContextFactory.getInstance()
                             .createStatusDetail(thirdChild);
                 } else {
                     XACMLSDKUtils.debug.error(
                         "StatusImpl.processElement(): invalid third child element: " 
                                 + thirdChildName);
-                    throw new XACMLException(XACMLSDKUtils.bundle.getString(
+                    throw new XACMLException(
+                        XACMLSDKUtils.xacmlResourceBundle.getString(
                         "invalid_third_child")); //FIXME: add i18n key
                 }
             }

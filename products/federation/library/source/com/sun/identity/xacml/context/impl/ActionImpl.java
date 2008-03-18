@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ActionImpl.java,v 1.1 2007-08-29 23:40:24 dillidorai Exp $
+ * $Id: ActionImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,8 @@ public class ActionImpl implements Action {
         } else {
             XACMLSDKUtils.debug.error(
                     "ActionImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "errorObtainingElement"));
         }
     }
@@ -107,14 +108,16 @@ public class ActionImpl implements Action {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                     "ActionImpl.processElement(): invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                     "ActionImpl.processElement(): local name missing");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "missing_local_name"));
         }
         
@@ -122,7 +125,8 @@ public class ActionImpl implements Action {
             XACMLSDKUtils.debug.error(
                     "ActionImpl.processElement(): invalid local name " +
                     elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "invalid_local_name"));
         }
         // starts processing subelements
@@ -147,7 +151,7 @@ public class ActionImpl implements Action {
                                 +"processElement(): Invalid element :"
                                 +attrChildName);
                         throw new XACMLException(
-                                XACMLSDKUtils.bundle.getString(
+                                XACMLSDKUtils.xacmlResourceBundle.getString(
                                 "invalid_element"));
                     }
                 }
@@ -174,7 +178,8 @@ public class ActionImpl implements Action {
     public void setAttributes(java.util.List attributes) throws 
         XACMLException {
         if (!mutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                    XACMLSDKUtils.xacmlResourceBundle.getString(
                     "objectImmutable"));
         }
         if (attributes != null &&  !attributes.isEmpty()) {
@@ -200,14 +205,14 @@ public class ActionImpl implements Action {
         StringBuffer namespaceBuffer = new StringBuffer(100);
         String nsDeclaration = "";
         if (declareNS) {
-            namespaceBuffer.append(XACMLConstants.CONTEXT_DECLARE_STR).
+            namespaceBuffer.append(XACMLConstants.CONTEXT_NS_DECLARATION).
                 append(XACMLConstants.SPACE);
-            namespaceBuffer.append(XACMLConstants.NS_XML).
+            namespaceBuffer.append(XACMLConstants.XSI_NS_URI).
                 append(XACMLConstants.SPACE).append(XACMLConstants.
                 CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            nsDeclaration = XACMLConstants.CONTEXT_PREFIX;
+            nsDeclaration = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         sb.append("<").append(nsDeclaration).append(XACMLConstants.ACTION).
             append(namespaceBuffer);

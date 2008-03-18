@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: xacml-test.xml,v 1.2 2007-12-11 01:59:58 qcheng Exp $
+   $Id: xacml-test.xml,v 1.3 2008-03-18 19:48:47 dillidorai Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -101,8 +101,19 @@
 
     <path id="plugins.class.path">
         <pathelement location="${shared.classes.dir}"/>
-        <pathelement location="${amserver.classes.dir}"/>
         <pathelement location="${fedlib.classes.dir}"/>
+        <pathelement location="${amserver.classes.dir}"/>
+        <pathelement location="${openfm.classes.dir}"/>
+        <fileset dir="${opensso.home}/products/extlib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="compile.test.class.path">
+        <pathelement location="${openfm.test.classes.dir}"/>
+        <pathelement location="${shared.classes.dir}"/>
+        <pathelement location="${fedlib.classes.dir}"/>
+        <pathelement location="${amserver.classes.dir}"/>
         <pathelement location="${openfm.classes.dir}"/>
         <fileset dir="${opensso.home}/products/extlib">
             <include name="**/*.jar"/>
@@ -148,7 +159,7 @@
                 debug = "true"
                 debuglevel = "lines,vars,source"
                 fork="yes"
-                classpathref="test.class.path"
+                classpathref="compile.test.class.path"
                 srcdir="${openfm.test.src.dir}"
                 destdir="${openfm.test.classes.dir}">
             <include name="com/sun/identity/xacml/**" />

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLRequestProcessor.java,v 1.1 2007-08-29 23:39:18 dillidorai Exp $
+ * $Id: XACMLRequestProcessor.java,v 1.2 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,8 @@ import java.util.List;
  * XACML context Response includes the xacml context Result with 
  * the XACML context authorization Decision
  *
+ * @supported.all.api
+ *
  */
 public class XACMLRequestProcessor {
     
@@ -94,8 +96,6 @@ public class XACMLRequestProcessor {
             String pdpEntityId, String pepEntityId) 
             throws XACMLException, SAML2Exception {
 
-        //TODO: clean up logic, add logging, i18n
-
         if (XACMLSDKUtils.debug.messageEnabled()) {
             XACMLSDKUtils.debug.message(
                     "XACMLRequestProcessor.processRequest(), entering"
@@ -119,23 +119,6 @@ public class XACMLRequestProcessor {
                     + "samlpQuery=\n" + samlpQuery.toXMLString(true, true));
         }
 
-        /*
-        //TODO: remove after saml2 layer intergartion is tested
-        RequestHandler xacmlQueryHandler = null;
-        try {
-            xacmlQueryHandler = (RequestHandler)(Class.forName(
-                    "com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler")
-                    .newInstance());
-        } catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        } catch (InstantiationException ie) {
-            ie.printStackTrace();
-        } catch (IllegalAccessException ie) {
-            ie.printStackTrace();
-        }
-        */
-
-        //TODO:, use saml2 QueryClient after it is available
         com.sun.identity.saml2.protocol.Response samlpResponse 
                 = QueryClient.processXACMLQuery(samlpQuery,
                 pepEntityId, pdpEntityId); //hostedEntityId, remoteEntityId

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceImpl.java,v 1.1 2007-08-29 23:40:40 dillidorai Exp $
+ * $Id: ResourceImpl.java,v 1.2 2008-03-18 19:48:45 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ import org.w3c.dom.NodeList;
  */
 public class ResourceImpl implements Resource {
     private List  attributes;
-    private ResourceContent resourceContent;
+    private Element resourceContent;
     private boolean isMutable = true;
 
    /** 
@@ -87,7 +87,8 @@ public class ResourceImpl implements Resource {
         } else {
             XACMLSDKUtils.debug.error(
                 "SubjectImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
@@ -109,14 +110,16 @@ public class ResourceImpl implements Resource {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "ResourceImpl.processElement(): invalid root element");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_element"));
         }
         String elemName = element.getLocalName(); 
         if (elemName == null) {
              XACMLSDKUtils.debug.error(
                 "ResourceImpl.processElement(): local name missing");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
@@ -124,7 +127,8 @@ public class ResourceImpl implements Resource {
             XACMLSDKUtils.debug.error(
                 "ResourceImpl.processElement(): invalid local name " +
                  elemName);
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_local_name"));
         }
 
@@ -148,49 +152,60 @@ public class ResourceImpl implements Resource {
                         attributes.add(attribute);
                     } else if (childName.equals(
                             XACMLConstants.RESOURCE_CONTENT)) {
-                        // do nothing for time being TODO
+                        resourceContent = (Element)child;
                     }
                 }
             }
          } else {
-             /*
+             /* not a schema violation
              XACMLSDKUtils.debug.error(
                 "ResourceImpl.processElement(): no attributes or resource "
                 +"content");
-            throw new XACMLException( XACMLSDKUtils.bundle.getString(
+            throw new XACMLException( 
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_subelements"));
             */
          }
     }
 
     /**
-     * Returns the resource content of the <code>Resource</code>
+     * Returns the ResourceConent
      *
-     * @return <code>String</code> representing the contents
-     * of the <code>Resource</code>.
+     * @return the ResourceContent of the Resource
      */
-    public String getResourceContent() {
-        return null ; //TODO
+    public Element getResourceContent() {
+        return resourceContent;
     }
 
     /**
-     * Sets the resource content of this object
+     * Sets the ResourceContent of this Resource
      *
-     * @param resourceContent  Resource Content of this resource
-     * resource content  is optional so could be null.
+     * @param resourceContent  ResourceContent of this Resource. 
+     * ResourceContent  is optional, so could be null.
      *
      * @exception XACMLException if the object is immutable
      * An object is considered <code>immutable</code> if <code>
      * makeImmutable()</code> has been invoked on it. It can
      * be determined by calling <code>isMutable</code> on the object.
      */
-    public void setResourceContent(String resourceContent) 
+    public void setResourceContent(Element resourceContent) 
         throws XACMLException {
           if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
-         //TODO currently do nothing
+        String elemName = resourceContent.getLocalName();
+        if (elemName == null 
+                || !elemName.equals(XACMLConstants.RESOURCE_CONTENT)) {
+            XACMLSDKUtils.debug.error(
+                "StatusMessageImpl.processElement():"
+                + "local name missing or incorrect");
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
+                    "missing_local_name"));
+        }
+        this.resourceContent = resourceContent;
     }
 
     /**
@@ -224,7 +239,8 @@ public class ResourceImpl implements Resource {
      */
     public void setAttributes(List attributes) throws XACMLException {
          if (!isMutable) {
-            throw new XACMLException(XACMLSDKUtils.bundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "objectImmutable"));
         }
         if (attributes != null &&  !attributes.isEmpty()) {
@@ -251,17 +267,18 @@ public class ResourceImpl implements Resource {
         StringBuffer NS = new StringBuffer(100);
         String appendNS = "";
         if (declareNS) {
-            NS.append(XACMLConstants.CONTEXT_DECLARE_STR)
+            NS.append(XACMLConstants.CONTEXT_NS_DECLARATION)
                     .append(XACMLConstants.SPACE);
-            NS.append(XACMLConstants.NS_XML).append(XACMLConstants.SPACE)
+            NS.append(XACMLConstants.XSI_NS_URI)
+                    .append(XACMLConstants.SPACE)
                     .append(XACMLConstants.CONTEXT_SCHEMA_LOCATION);
         }
         if (includeNSPrefix) {
-            appendNS = XACMLConstants.CONTEXT_PREFIX;
+            appendNS = XACMLConstants.CONTEXT_NS_PREFIX + ":";
         }
         sb.append("<").append(appendNS).append(XACMLConstants.RESOURCE)
                 .append(NS);
-        sb.append(XACMLConstants.END_TAG);
+        sb.append(">");
         int length = 0;
         if (attributes != null) {
             sb.append("\n");
@@ -272,7 +289,21 @@ public class ResourceImpl implements Resource {
             }
         }
         if (resourceContent != null) {
-                // do nothing , TODO later
+            sb.append("\n");
+            // ignore trailing ":"
+            if (includeNSPrefix && (resourceContent.getPrefix() == null)) {
+                resourceContent.setPrefix(appendNS.substring(0, appendNS.length()-1));
+            }
+            if(declareNS) {
+                int index = NS.indexOf("=");
+                String namespaceName = NS.substring(0, index);
+                String namespaceURI = NS.substring(index+1);
+                if (resourceContent.getNamespaceURI() == null) {
+                    resourceContent.setAttribute(namespaceName, namespaceURI);
+                    // does not seem to work to append namespace TODO
+                }
+            }
+            sb.append(XMLUtils.print(resourceContent));
         }
         sb.append("</").append(appendNS).append(XACMLConstants.RESOURCE);
         sb.append(">\n");

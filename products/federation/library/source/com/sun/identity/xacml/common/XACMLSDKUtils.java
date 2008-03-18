@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLSDKUtils.java,v 1.1 2007-08-29 23:39:28 dillidorai Exp $
+ * $Id: XACMLSDKUtils.java,v 1.2 2008-03-18 19:48:44 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,6 +56,13 @@ public class XACMLSDKUtils extends SAML2SDKUtils {
 
     // The deugging instance
     public static Debug debug = Debug.getInstance("libXACML");
+
+    // XACML resource bundle name
+    public static final String XACML_RESOURCE_BUNDLE_NAME = "libXACML";
+
+    // The resource bundle for XACML implementation.
+    public static ResourceBundle xacmlResourceBundle = Locale.
+        getInstallResourceBundle(XACML_RESOURCE_BUNDLE_NAME);
     
     /**
      * Defines mapping between interface and implementation class,
@@ -67,17 +74,18 @@ public class XACMLSDKUtils extends SAML2SDKUtils {
     private static Map classMapping = new HashMap();
 
     /**
-     * Constants class
-     */
-    private static XACMLConstants xc;
-
-    /**
      * List of Interfaces in context package which could have 
      * customized implementation
      */
     private static String[] interfaceNames = {
-        xc.REQUEST, xc.SUBJECT, xc.RESOURCE, xc.ACTION, xc.ATTRIBUTE, 
-        xc.ATTRIBUTE_VALUE, xc.RESOURCE_CONTENT, xc.XACMLAUTHZDECISIONQUERY };
+        XACMLConstants.REQUEST, 
+        XACMLConstants.SUBJECT, 
+        XACMLConstants.RESOURCE, 
+        XACMLConstants.ACTION, 
+        XACMLConstants.ATTRIBUTE, 
+        XACMLConstants.ATTRIBUTE_VALUE,
+        XACMLConstants.RESOURCE_CONTENT, 
+        XACMLConstants.XACML_AUTHZ_DECISION_QUERY };
 
     static {
         // initialize class mapper
@@ -114,7 +122,7 @@ public class XACMLSDKUtils extends SAML2SDKUtils {
          ContextFactory factory = ContextFactory.getInstance();
          Attribute attr = null;
          attr = factory.getInstance().createAttribute();
-         attr.setAttributeID(attributeId);
+         attr.setAttributeId(attributeId);
          attr.setDataType(dataType);
          attr.setAttributeValues(values);;
          attr.setIssuer(issuer);
