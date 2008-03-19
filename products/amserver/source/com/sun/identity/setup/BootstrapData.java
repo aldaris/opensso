@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.2 2008-02-26 01:21:23 veiming Exp $
+ * $Id: BootstrapData.java,v 1.3 2008-03-19 17:00:47 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,7 @@ public class BootstrapData {
     static final String BASE_DIR = "basedir";
     static final String DS_HOST = "dshost";
     static final String DS_PORT = "dsport";
+    static final String DS_PROTO_TYPE = "dsprototype";
     static final String DS_PWD = "dspwd";
     static final String DS_MGR = "dsmgr";
     static final String DS_BASE_DN = "dsbasedn";
@@ -66,6 +67,9 @@ public class BootstrapData {
     static final String PROT_LDAP = "ldap";
     static final String PROTOCOL_FILE = "file://";
     static final String PROTOCOL_LDAP = "ldap://";
+    static final String PROTOCOL_LDAPS = "ldaps://";
+    static final String DS_PROTO_LDAPS = "SSL";
+    static final String DS_PROTO_LDAP = "SIMPLE";
     private static final String BOOTSTRAPCONFIG = "bootstrapConfig.properties";
     
     private String basedir;
@@ -186,17 +190,22 @@ public class BootstrapData {
         
         for (Iterator i = data.iterator(); i.hasNext(); ) {
             String info = (String)i.next();
+            boolean ldaps = false;
             // need to do this because URL class does not understand ldap://
             if (info.startsWith(BootstrapData.PROTOCOL_LDAP)) {
                 info = "http://" +  info.substring(7);
             }
+            if (info.startsWith(BootstrapData.PROTOCOL_LDAPS)) {
+                info = "http://" +  info.substring(8);
+                ldaps = true;
+            }
             URL url = new URL(info);
             if (first) {
-                buff.append(getServerConfigXMLUserBlob(url));
-                serverBlob = getServerConfigXMLServerBlob(url);
+                buff.append(getServerConfigXMLUserBlob(url, ldaps));
+                serverBlob = getServerConfigXMLServerBlob(url, ldaps);
                 first = false;
             }
-            serverBuff.append(getServerEntryXMLBlob(url, counter++));
+            serverBuff.append(getServerEntryXMLBlob(url, ldaps, counter++));
         }
 
         String servers = serverBlob.replaceAll("@SERVER_ENTRY@",
@@ -207,7 +216,7 @@ public class BootstrapData {
         return buff.toString();
     }
 
-    private String getServerConfigXMLUserBlob(URL url)
+    private String getServerConfigXMLUserBlob(URL url, boolean ldaps)
         throws UnsupportedEncodingException {
         Map mapQuery = queryStringToMap(url.getQuery());
         String dshost = url.getHost();
@@ -225,6 +234,15 @@ public class BootstrapData {
         }
 
         String template= BOOTSTRAP_SERVER_CONFIG_USER;
+
+        if (ldaps) {
+            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
+                DS_PROTO_LDAPS);
+        } else {
+            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
+                DS_PROTO_LDAP);
+        }
+
         template = template.replaceAll("@" + DS_HOST + "@", dshost);
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
         template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
@@ -249,7 +267,7 @@ public class BootstrapData {
         return map;
     }
 
-    private String getServerConfigXMLServerBlob(URL url) 
+    private String getServerConfigXMLServerBlob(URL url, boolean ldaps) 
         throws UnsupportedEncodingException {
         Map mapQuery = queryStringToMap(url.getQuery());
         String pwd = (String)mapQuery.get(BootstrapData.PWD);
@@ -259,6 +277,15 @@ public class BootstrapData {
         String dsmgr = (String)mapQuery.get(DS_MGR);
         String dspwd = (String)mapQuery.get(DS_PWD);
         String template = BOOTSTRAP_SERVER_CONFIG_LDAP_SVR;
+
+        if (ldaps) {
+            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
+                DS_PROTO_LDAPS);
+        } else {
+            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
+                DS_PROTO_LDAP);
+        }
+
         template = template.replaceAll("@" + DS_HOST + "@", dshost);
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
         template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
@@ -269,13 +296,20 @@ public class BootstrapData {
         return template;    
     }
 
-    private String getServerEntryXMLBlob(URL url, int counter) 
+    private String getServerEntryXMLBlob(URL url, boolean ldaps, int counter) 
         throws UnsupportedEncodingException {
         Map mapQuery = queryStringToMap(url.getQuery());
         String dshost = url.getHost();
         String dsport = Integer.toString(url.getPort());
 
         String template = BOOTSTRAP_SERVER_CONFIG_LDAP_SVR_ENTRY;
+        if (ldaps) {
+            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
+                DS_PROTO_LDAPS);
+        } else {
+            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
+                DS_PROTO_LDAP);
+        } 
         template = template.replaceAll("@" + DS_HOST + "@", dshost);
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
         template = template.replaceAll("@counter@", Integer.toString(counter));
@@ -388,7 +422,7 @@ public class BootstrapData {
     private static final String BOOTSTRAP_SERVER_CONFIG_USER =
         "<ServerGroup name=\"default\" minConnPool=\"1\" maxConnPool=\"1\">" +
         "<Server name=\"Server1\" host=\"@" + DS_HOST + "@\" " +
-        "port=\"@" + DS_PORT + "@\" type=\"SIMPLE\" />" +
+        "port=\"@" + DS_PORT + "@\" type=\"@" + DS_PROTO_TYPE + "@\" />" +
         "<User name=\"User1\" type=\"admin\">" +
         "<DirDN>cn=dsameuser,ou=DSAME Users,@" + DS_BASE_DN + "@</DirDN>" +
         "<DirPassword>@" + PWD + "@</DirPassword>" +
@@ -407,6 +441,6 @@ public class BootstrapData {
         "</ServerGroup>";
     private static final String BOOTSTRAP_SERVER_CONFIG_LDAP_SVR_ENTRY = 
         "<Server name=\"Server@counter@\" host=\"@" + DS_HOST + "@\" " +
-        "port=\"@" + DS_PORT + "@\" type=\"SIMPLE\" />";
+        "port=\"@" + DS_PORT + "@\" type=\"@" + DS_PROTO_TYPE + "@\" />";
 }
 

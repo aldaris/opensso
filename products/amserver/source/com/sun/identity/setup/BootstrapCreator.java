@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.1 2008-02-26 01:21:23 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.2 2008-03-19 17:00:47 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.iplanet.services.ldap.DSConfigMgrBase;
 import com.iplanet.services.ldap.IDSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.ldap.LDAPUser;
+import com.iplanet.services.ldap.Server;
 import com.iplanet.services.ldap.ServerGroup;
 import com.iplanet.services.ldap.ServerInstance;
 import com.iplanet.services.util.Crypt;
@@ -39,6 +40,8 @@ import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
@@ -49,7 +52,7 @@ public class BootstrapCreator {
     private static BootstrapCreator instance = new BootstrapCreator();
     
     private static final String template =
-        "ldap://@DS_HOST@/@INSTANCE_NAME@" +
+        "@DS_PROTO@://@DS_HOST@/@INSTANCE_NAME@" +
         "?pwd=@DSAMEUSER_PWD@" +
         "&dsbasedn=@BASE_DN@" +
         "&dsmgr=@BIND_DN@" +
@@ -90,18 +93,16 @@ public class BootstrapCreator {
         throws ConfigurationException {
         try {
             ServerGroup sg = dsCfg.getServerGroup("sms");
-            String hostNames;
+            ServerGroup defaultGroup = dsCfg.getServerGroup("default");
             ServerInstance svrCfg;
 
             if (sg == null) {
-                hostNames = dsCfg.getHostName("default");
+                sg = defaultGroup;
                 svrCfg = dsCfg.getServerInstance(LDAPUser.Type.AUTH_ADMIN);
             } else {
-                hostNames = dsCfg.getHostName("sms");
                 svrCfg = sg.getServerInstance(LDAPUser.Type.AUTH_ADMIN);
             }
 
-            ServerGroup defaultGroup = dsCfg.getServerGroup("default");
             ServerInstance userInstance = defaultGroup.getServerInstance(
                 LDAPUser.Type.AUTH_ADMIN);
             String dsameUserPwd = Crypt.encode(userInstance.getPasswd(),
@@ -112,13 +113,19 @@ public class BootstrapCreator {
                 Crypt.getHardcodedKeyEncryptor());
             String rootSuffix = svrCfg.getBaseDN();
 
-            StringTokenizer st = new StringTokenizer(hostNames);
+            Collection serverList = sg.getServersList();
             StringBuffer bootstrap = new StringBuffer();
 
-            while (st.hasMoreElements()) {
-                String token = st.nextToken();
-                token = token.trim();
-                String url = template.replaceAll("@DS_HOST@", token);
+            for (Iterator i = serverList.iterator(); i.hasNext(); ) {
+                Server serverObj = (Server)i.next();
+                Server.Type connType = serverObj.getConnectionType();
+                String proto = (connType.equals(Server.Type.CONN_SIMPLE)) ?
+                    "ldap" : "ldaps";
+                String url = template.replaceAll("@DS_PROTO@", proto);
+
+                String host = serverObj.getServerName() + ":" +
+                    serverObj.getPort();
+                url = url.replaceAll("@DS_HOST@", host);
                 url = url.replaceAll("@INSTANCE_NAME@",
                     URLEncoder.encode(SystemProperties.getServerInstanceName(),
                     "UTF-8"));

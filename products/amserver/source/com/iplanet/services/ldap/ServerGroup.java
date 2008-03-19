@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerGroup.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
+ * $Id: ServerGroup.java,v 1.3 2008-03-19 17:00:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -211,7 +211,7 @@ public class ServerGroup implements ParseOutput {
     /**
      * The list of servers that are defined in this server group.
      */
-    Collection getServersList() {
+    public Collection getServersList() {
         return servers;
     }
 
