@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:36:17 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:12 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,13 +51,14 @@ public class Migrate implements MigrateTasks {
         try {
             String fileName =
                     UpgradeUtils.getNewServiceNamePath(SCHEMA_FILE);
-            UpgradeUtils.createService(SERVICE_NAME);
+            UpgradeUtils.createService(fileName);
             Set moduleSet = new HashSet();
             moduleSet.add(MODULE_NAME);
             UpgradeUtils.updateAuthenticatorsList(moduleSet);
             isSuccess = true;
         } catch (UpgradeException e) {
-        // log error
+            UpgradeUtils.debug.error("Error loading service schema " 
+                + SCHEMA_FILE);
         }
         return isSuccess;
     }

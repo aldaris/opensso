@@ -50,11 +50,11 @@
 		<Value>EmergencyContact=sunIdentityServerPPEmergencyContact</Value>
             </AttributeValuePair>
         </AddDefaultValues>
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerLibertyPPService/10_20/data/amLibertyPersonalProfile_addGlobalAttr.xml" />
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_sunIdentityServerLibertyPPService/10_20/data/amLibertyPersonalProfile_addGlobalAttr.xml" />
     </SchemaRequests>
 
     <SchemaRequests serviceName="sunIdentityServerLibertyPPService"
         SchemaType="User">
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerLibertyPPService/10_20/data/amLibertyPersonalProfile_addUserAttr.xml" />
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_sunIdentityServerLibertyPPService/10_20/data/amLibertyPersonalProfile_addUserAttr.xml" />
     </SchemaRequests>
 </Requests>

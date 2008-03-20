@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:10:59 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:50 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 import com.sun.identity.upgrade.MigrateTasks;
 import com.sun.identity.upgrade.UpgradeException;
 import com.sun.identity.upgrade.UpgradeUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Updates <code>iPlanetAMAuthLDAPService</code> service schema.
@@ -50,7 +52,9 @@ public class Migrate implements MigrateTasks {
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE1);
             String file2 =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE2);
-            String[] fileList = {file1, file2};
+            List fileList = new ArrayList();
+            fileList.add(file1);
+            fileList.add(file2);
             UpgradeUtils.importServiceData(fileList);
             isSuccess = true;
         } catch (UpgradeException e) {

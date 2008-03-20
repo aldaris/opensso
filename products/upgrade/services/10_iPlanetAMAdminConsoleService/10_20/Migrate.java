@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-23 23:44:59 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:45 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,6 @@ public class Migrate implements MigrateTasks {
             }
         } catch (UpgradeException ue) {
             UpgradeUtils.debug.error("Error loading schema ", ue);
-            UpgradeUtils.log("Error loading schema " + ue.getMessage());
         }
         return isSuccess;
     }

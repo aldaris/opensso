@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:12:04 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:51 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,8 +33,8 @@ import com.sun.identity.upgrade.UpgradeUtils;
  */
 public class Migrate implements MigrateTasks {
 
-    final String SERVICE_NAME = "iPlanetamAuthMembershipService";
-    final String SERVICE_DIR = "50_iPlanetamAuthMembershipService/20_30";
+    final String SERVICE_NAME = "iPlanetAMAuthMembershipService";
+    final String SERVICE_DIR = "50_iPlanetAMAuthMembershipService/20_30";
     final String SCHEMA_FILE1 = "amAuthMembership_mod.xml";
     final String SCHEMA_FILE2 = "amAuthMembership_setBooleanValues.xml";
 

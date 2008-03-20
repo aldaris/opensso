@@ -18,24 +18,23 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famAuthnSvc_addAttrs.xml,v 1.1 2008-01-24 00:42:38 bina Exp $
+   $Id: famAuthnSvc_addAttrs.xml,v 1.2 2008-03-20 17:24:15 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<AttributeSchema name="ChallengeCleanupInterval"
-     type="single"
-     syntax="number"
-     i18nKey="a102">
-    <DefaultValues>
-	<Value>60000</Value>
-    </DefaultValues>
-</AttributeSchema>
-
-<AttributeSchema name="TransformClasses"
-    type="single"
-    syntax="string"
-    i18nKey="a103">
-</AttributeSchema>
-
-
+<Requests>
+    <AttributeSchema name="ChallengeCleanupInterval"
+         type="single"
+         syntax="number"
+         i18nKey="a102">
+         <DefaultValues>
+	    <Value>60000</Value>
+         </DefaultValues>
+    </AttributeSchema>
+    <AttributeSchema name="TransformClasses"
+        type="single"
+        syntax="string"
+        i18nKey="a103">
+    </AttributeSchema>
+</Requests>

@@ -23,7 +23,7 @@
 	SchemaType="Global"
 	SubSchema="ManagedObjects">
 	    <ModifyInheritanceAttribute inheritance="multiple" />
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/00_DAI/10_20/data/ums_add1.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/00_DAI/10_20/data/ums_add1.xml"/>
     </SchemaRequests>
 
     <SchemaRequests serviceName="DAI"

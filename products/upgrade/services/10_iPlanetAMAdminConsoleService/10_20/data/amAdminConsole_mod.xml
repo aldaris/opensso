@@ -69,6 +69,6 @@
     </SchemaRequests>
     <SchemaRequests serviceName="iPlanetAMAdminConsoleService"
 	SchemaType="Organization">
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/10_iPlanetAMAdminConsoleService/10_20/data/amAdminConsole_addAttr.xml"/>
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/10_iPlanetAMAdminConsoleService/10_20/data/amAdminConsole_addAttr.xml"/>
     </SchemaRequests>
 </Requests>   

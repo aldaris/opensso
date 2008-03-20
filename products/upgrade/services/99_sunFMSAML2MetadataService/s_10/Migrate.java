@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:39:52 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:14 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,9 @@ import com.sun.identity.upgrade.UpgradeUtils;
 public class Migrate implements MigrateTasks {
 
     static final String SCHEMA_FILE = "fmSAML2.xml";
+    static final String SERVICE_DIR = "99_sunFMSAML2MetadataService/s_10";
+    static final String LDIF_FILE = "famSAML2.ldif";
+    static final String INDEX_LDIF = "famSAML2Index.ldif";
 
     /**
      * Creates sevice schema for <code>sunFMSAML2MetadataService</code>.
@@ -43,6 +46,12 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
+             // load ldif file
+            String ldifPath =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, LDIF_FILE);
+            UpgradeUtils.loadLdif(ldifPath);
+            ldifPath = UpgradeUtils.getAbsolutePath(SERVICE_DIR,INDEX_LDIF);
+            UpgradeUtils.loadLdif(ldifPath);
             String fileName = UpgradeUtils.getNewServiceNamePath(SCHEMA_FILE);
             UpgradeUtils.createService(fileName);
             isSuccess = true;

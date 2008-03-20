@@ -56,7 +56,7 @@
         
         <ModifyInheritanceAttribute inheritance="multiple" />
 
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthADService/10_20/data/amAuthAD_addAttrs.xml" />
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthADService/10_20/data/amAuthAD_addAttrs.xml" />
 	
         <RemoveAttributeSchema>
 	    <Attribute name="iplanet-am-auth-ldap-auth-level"/>

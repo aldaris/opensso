@@ -21,6 +21,6 @@
     <SchemaRequests serviceName="iPlanetAMProviderConfigService"
 	SchemaType="Organization"
 	SubSchema="/EntityDescriptor/Provider/LocalConfiguration">
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMProviderConfigService/20_30/data/amProviderConfig_addAttr.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMProviderConfigService/20_30/data/amProviderConfig_addAttr.xml"/>
     </SchemaRequests>
 </Requests>

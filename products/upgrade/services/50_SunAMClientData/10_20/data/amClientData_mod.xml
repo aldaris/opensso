@@ -21,7 +21,7 @@
 
     <SchemaRequests serviceName="SunAMClientData"
         SchemaType="Global" SubSchema="/clientDBStore/clientData">
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_SunAMClientData/10_20/data/amClientData_add.xml" />
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_SunAMClientData/10_20/data/amClientData_add.xml" />
     </SchemaRequests>
 
     <SchemaRequests serviceName="SunAMClientData"

@@ -32,7 +32,7 @@
 
     <SchemaRequests serviceName="iPlanetAMUserService"
         SchemaType="User">
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/20_iPlanetAMUserService/20_30/data/amUser_addAttrs.xml" />
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/20_iPlanetAMUserService/20_30/data/amUser_addAttrs.xml" />
     </SchemaRequests>
 
     <SchemaRequests serviceName="iPlanetAMUserService"

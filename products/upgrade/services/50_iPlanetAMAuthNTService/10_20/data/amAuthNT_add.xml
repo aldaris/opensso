@@ -20,6 +20,6 @@
 <Requests>
     <SchemaRequests serviceName="iPlanetAMAuthNTService"
         SchemaType="Organization">
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthNTService/10_20/data/amAuthNT_addAttrs.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthNTService/10_20/data/amAuthNT_addAttrs.xml"/>
     </SchemaRequests>
 </Requests>

@@ -21,6 +21,6 @@
     <SchemaRequests serviceName="iPlanetAMSessionService"
 	SchemaType="Global"
 	SubSchema="/">
-            <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMSessionService/10_20/data/amSession_addGlobal.xml"/>
+            <AddSubSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMSessionService/10_20/data/amSession_addGlobal.xml"/>
     </SchemaRequests>
 </Requests>

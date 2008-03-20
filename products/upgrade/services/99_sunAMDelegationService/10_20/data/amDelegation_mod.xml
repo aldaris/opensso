@@ -28,24 +28,24 @@
 
     <SchemaRequests serviceName="sunAMDelegationService"
         SchemaType="Global">
-        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema.xml"/>
+        <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema.xml"/>
     </SchemaRequests>
 
     <SchemaRequests serviceName="sunAMDelegationService"
         SchemaType="Organization">
-        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema.xml"/>
+        <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema.xml"/>
     </SchemaRequests>
 
     <SchemaRequests serviceName="sunAMDelegationService"
         SchemaType="Global"
         SubSchema="/Privileges">
-        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema1.xml"/>
+        <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema1.xml"/>
     </SchemaRequests>
 
     <SchemaRequests serviceName="sunAMDelegationService"
         SchemaType="Organization"
         SubSchema="/Privileges">
-        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema1.xml"/>
+        <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunAMDelegationService/10_20/data/amDelegation_addSubSchema1.xml"/>
     </SchemaRequests>
 
     <ServiceConfigurationRequests serviceName="sunAMDelegationService">

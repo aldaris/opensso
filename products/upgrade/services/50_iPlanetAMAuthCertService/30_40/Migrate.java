@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:08:11 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:48 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,9 @@ import com.sun.identity.upgrade.MigrateTasks;
 import com.sun.identity.upgrade.UpgradeUtils;
 import com.sun.identity.upgrade.UpgradeException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Updates <code>iPlanetAMAuthCertService</code> service schema.
@@ -40,6 +42,10 @@ public class Migrate implements MigrateTasks {
     static final String SCHEMA_TYPE = "Organization";
     static final String SUB_SCHEMA = "serverconfig";
     static final String SCHEMA_FILE = "amAuthCert_addAttrs.xml";
+    static final String ATTR_NAME1 = "iplanet-am-auth-cert-user-profile-mapper";
+    static final String ATTR_NAME2 = "iplanet-am-auth-cert-ldap-profile-id";
+    static final String NONE = "none";
+    static final String CHOICE_NONE = "choiceNone";
 
     /**
      * Updates <code>iPlanetAMAuthCertService</code> service schema.
@@ -57,15 +63,27 @@ public class Migrate implements MigrateTasks {
                     SCHEMA_TYPE, fileName);
 
             // update attribute choice values
-            String attributeName = "iplanet-am-auth-cert-user-profile-mapper";
             Map choiceValMap = new HashMap();
-            choiceValMap.put("choiceNone", "none");
+            Set valSet = new HashSet();
+            valSet.add(NONE);
+            choiceValMap.put(CHOICE_NONE, valSet);
+            // change for organization schema
+            UpgradeUtils.addAttributeChoiceValues(SERVICE_NAME, null,
+                    SCHEMA_TYPE, ATTR_NAME1, choiceValMap);
+            // change for serverconfig subschema in organization schema
             UpgradeUtils.addAttributeChoiceValues(SERVICE_NAME, SUB_SCHEMA,
-                    SCHEMA_TYPE, attributeName, choiceValMap);
+                    SCHEMA_TYPE, ATTR_NAME1, choiceValMap);
 
-            // TODO : iterate thru subrealms to remove 
             // attribute iplanet-am-auth-cert-ldap-profile-id from all
             // subrealms
+            UpgradeUtils.removeAttributeFromRealms(SERVICE_NAME, ATTR_NAME2);
+
+            // remove from subschema serverconfig
+            UpgradeUtils.removeAttributeSchema(SERVICE_NAME, SCHEMA_TYPE,
+                    ATTR_NAME2, SUB_SCHEMA);
+            // remove from schema 
+            UpgradeUtils.removeAttributeSchema(SERVICE_NAME, SCHEMA_TYPE,
+                    ATTR_NAME2, null);
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);
@@ -79,11 +97,6 @@ public class Migrate implements MigrateTasks {
      * @return true if successful else error.
      */
     public boolean postMigrateTask() {
-        // remove attribute schema - TODO , this would also
-        // required deleting this attribute in all instances
-        // before doing this.
-        //String attrName = "iplanet-am-auth-cert-ldap-profile-id";
-        //UpgradeUtils.removeAttributeSchema(attrName);
         return true;
     }
 

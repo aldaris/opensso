@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:31:21 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:10 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import com.sun.identity.upgrade.UpgradeUtils;
 public class Migrate implements MigrateTasks {
 
     static final String SERVICE_NAME = "sunIdentityServerSOAPBinding";
-    static final String SERVICE_DIR = "sunIdentityServerSOAPBinding/30_40";
+    static final String SERVICE_DIR = "50_sunIdentityServerSOAPBinding/30_40";
     final String SCHEMA_FILE = "famSOAPBinding_addAttrs.xml";
     final String i18nFileName = "fmSOAPBindingConfiguration";
     final String schemaType = "Global";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:20:01 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:00 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,12 @@ public class Migrate implements MigrateTasks {
     final static String BUFF_STATUS_ATTR =
             "iplanet-am-logging-time-buffering-status";
 
+    final static String FILE_DB_TYPE = "File";
+    final static String OFF_TIMER_STAT = "OFF";
+    final static String BUFF_SIZE_ONE = "1";
+    final static String BUFF_TIME = "3600";
+    final static String SCHEMA_FILE = "modLogging.xml";
+
     /**
      * Updates the <code>iPlanetAMLoggingService<code> service schema.
      *
@@ -67,13 +73,13 @@ public class Migrate implements MigrateTasks {
                     UpgradeUtils.getAttributeValueString(SERVICE_NAME,
                     BUFF_STATUS_ATTR, schemaType);
             int i = 0;
-            if ((dbLogging != null && dbLogging.equals("File")) &&
-                    (timerStat != null && timerStat.equals("OFF")) &&
-                    (buffSize != null && buffSize.equals("1")) &&
-                    (buffTime != null && buffTime.equals("3600"))) {
+            if ((dbLogging != null && dbLogging.equals(FILE_DB_TYPE)) &&
+                    (timerStat != null && timerStat.equals(OFF_TIMER_STAT)) &&
+                    (buffSize != null && buffSize.equals(BUFF_SIZE_ONE)) &&
+                    (buffTime != null && buffTime.equals(BUFF_TIME))) {
                 fileList = new String[3];
                 fileList[0] = UpgradeUtils.getAbsolutePath(
-                        SERVICE_DIR, "modLogging.xml");
+                        SERVICE_DIR, SCHEMA_FILE);
                 i++;
             } else {
                 fileList = new String[2];

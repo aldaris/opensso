@@ -21,6 +21,6 @@
 
     <SchemaRequests serviceName="iPlanetAMNamingService"
         SchemaType="Global"> 
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMNamingService/10_20/data/amNaming_addAttr.xml"/>
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMNamingService/10_20/data/amNaming_addAttr.xml"/>
     </SchemaRequests>
 </Requests>

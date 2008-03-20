@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:30:53 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:09 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,6 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_NAME = "sunIdentityServerSOAPBinding";
     final static String SERVICE_DIR = "50_sunIdentityServerSOAPBinding/10_20";
     final static String SCHEMA_FILE = "amSOAPBinding_mod.xml";
-    final static String schemaType = "Global";
 
     /**
      * Updates the <code>sunIdentityServerSOAPBinding<code> service schema.

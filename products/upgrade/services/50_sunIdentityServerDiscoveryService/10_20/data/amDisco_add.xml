@@ -43,6 +43,6 @@
 		I18NKey=""
 		value="GenerateBearerToken"/>
 	</AddChoiceValues>
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerDiscoveryService/10_20/data/amDisco_addAttr.xml" />
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_sunIdentityServerDiscoveryService/10_20/data/amDisco_addAttr.xml" />
     </SchemaRequests>
 </Requests>   

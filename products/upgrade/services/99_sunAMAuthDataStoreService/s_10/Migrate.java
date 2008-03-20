@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:34:10 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:11 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public class Migrate implements MigrateTasks {
 
-    static final String SERVICE_NAME = "amAuthDataStore.xml";
+    static final String SCHEMA_FILE = "amAuthDataStore.xml";
     static final String AUTH_PREFIX = 
             "com.sun.identity.authentication.modules.";
     static final String MODULE_NAME = AUTH_PREFIX + "DataStore";
@@ -48,13 +48,14 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
-            UpgradeUtils.createService(SERVICE_NAME);
+            String fileName =  UpgradeUtils.getNewServiceNamePath(SCHEMA_FILE);
+            UpgradeUtils.createService(fileName);
             Set moduleName = new HashSet();
             moduleName.add(MODULE_NAME);
             UpgradeUtils.updateAuthenticatorsList(moduleName);
             isSuccess = true;
         } catch (UpgradeException e) {
-        //log error
+            UpgradeUtils.debug.error("Error loading service schema " + SCHEMA_FILE,e);
         }
         return isSuccess;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:36:45 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:13 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import com.sun.identity.upgrade.UpgradeUtils;
 public class Migrate implements MigrateTasks {
 
     final static String SERVICE_NAME = "sunAMDelegationService";
-    final static String SERVICE_DIR = "99_sunAMDelegationService";
+    final static String SERVICE_DIR = "99_sunAMDelegationService/s_10";
     final static String SCHEMA_FILE = "amDelegation.xml";
     final static String SCHEMA_FILE1 = "defaultDelegationPolicies.xml";
 
@@ -48,8 +48,9 @@ public class Migrate implements MigrateTasks {
         try {
             String fileName = UpgradeUtils.getNewServiceNamePath(SCHEMA_FILE);
             UpgradeUtils.createService(fileName);
-            fileName = UpgradeUtils.getServiceTemplateDir(SCHEMA_FILE1);
+            fileName = UpgradeUtils.getAbsolutePath(SERVICE_DIR,SCHEMA_FILE1);
             UpgradeUtils.importServiceData(fileName);
+            UpgradeUtils.loadSubRealmDelegationPolicies();
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);

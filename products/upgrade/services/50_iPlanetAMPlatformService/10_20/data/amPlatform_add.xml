@@ -25,6 +25,6 @@
     <SchemaRequests serviceName="iPlanetAMPlatformService"
 	SchemaType="Global"
     >
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMPlatformService/10_20/data/amPlatform_addGlobal.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMPlatformService/10_20/data/amPlatform_addGlobal.xml"/>
     </SchemaRequests>
 </Requests>

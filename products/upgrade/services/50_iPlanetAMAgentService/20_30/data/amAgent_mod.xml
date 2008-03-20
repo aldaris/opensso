@@ -21,7 +21,7 @@
 
     <SchemaRequests serviceName="iPlanetAMAgentService"
         SchemaType="User">
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAgentService/20_30/data/amAgent_add.xml" />
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAgentService/20_30/data/amAgent_add.xml" />
     </SchemaRequests>
 
     <SchemaRequests serviceName="iPlanetAMAgentService"

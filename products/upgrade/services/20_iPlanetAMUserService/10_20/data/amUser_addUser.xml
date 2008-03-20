@@ -23,7 +23,7 @@
                     syntax="string"
                     any="display"
                     uitype="link"
-                    propertiesViewBeanURL="CONSOLE_DEPLOY_URI/user/UMChangeUserPassword"
+                    propertiesViewBeanURL="DEPLOY_URI/console/user/UMChangeUserPassword"
                     i18nKey="u1051">
 	</AttributeSchema>
 	<AttributeSchema name="sunIdentityMSISDNNumber"

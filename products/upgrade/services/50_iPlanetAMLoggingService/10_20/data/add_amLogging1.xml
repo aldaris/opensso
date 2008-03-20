@@ -21,7 +21,7 @@
 <Requests>
     <SchemaRequests serviceName="iPlanetAMLoggingService"
 	SchemaType="Global">
-	    <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMLoggingService/10_20/data/amLogging_addGlobal1.xml"/>
+	    <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMLoggingService/10_20/data/amLogging_addGlobal1.xml"/>
     </SchemaRequests>
 </Requests>
 

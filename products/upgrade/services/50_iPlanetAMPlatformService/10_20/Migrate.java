@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:21:55 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:03 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ public class Migrate implements MigrateTasks {
 
     final static String SERVICE_NAME = "iPlanetAMPlatformService";
     final static String SERVICE_DIR = "50_iPlanetAMPlatformService/10_20";
-    final static String SCHEMA_FILE = "amPlatform_mod.xml";
+    final static String SCHEMA_FILE = "amPlatform_add.xml";
 
     /**
      * Updates the <code>iPlanetAMPlatformService<code> service schema.

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:30:21 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:09 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,8 +33,11 @@ import com.sun.identity.upgrade.UpgradeUtils;
  */
 public class Migrate implements MigrateTasks {
 
+    final static String SERVICE_DIR = 
+            "50_sunIdentityServerLibertyPPService/20_30";
     final static String SERVICE_NAME = "sunIdentityServerLibertyPPService";
     final static String i18nFileName = "fmLibertyPersonalProfileConfiguration";
+    final static String LDIF_FILE = "fmLibertyPersonalProfile.ldif";
 
     /**
      * Updates the <code>sunIdentityServerLibertyPPService<code> service schema.
@@ -44,6 +47,10 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
+            // load ldif file
+            String ldifPath =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, LDIF_FILE);
+            UpgradeUtils.loadLdif(ldifPath);
             UpgradeUtils.seti18NFileName(SERVICE_NAME, i18nFileName);
             isSuccess = true;
         } catch (UpgradeException e) {

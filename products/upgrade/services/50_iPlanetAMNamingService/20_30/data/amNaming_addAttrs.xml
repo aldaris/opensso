@@ -18,10 +18,11 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amNaming_addAttrs.xml,v 1.1 2008-01-24 00:21:03 bina Exp $
+    $Id: amNaming_addAttrs.xml,v 1.2 2008-03-20 17:24:02 bina Exp $
 
     Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
+<Requests>
 <AttributeSchema name="sun-naming-idsvcs-jaxws-url"
      type="single"
      syntax="url"
@@ -54,4 +55,4 @@
         <Value>%protocol://%host:%port%uri/sts/mex</Value>
     </DefaultValues>
 </AttributeSchema>
-
+</Requests>

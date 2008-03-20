@@ -37,6 +37,6 @@
 		<Value>a110</Value>
             </AttributeValuePair>
 	</Modifyi18nKey>
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthSafeWordService/10_20/data/amAuthSafeWord_addAttrs.xml" />
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthSafeWordService/10_20/data/amAuthSafeWord_addAttrs.xml" />
     </SchemaRequests>
 </Requests>

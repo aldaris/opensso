@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:42:38 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:14 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,8 +34,8 @@ import com.sun.identity.upgrade.UpgradeUtils;
 public class Migrate implements MigrateTasks {
 
     final static String SERVICE_NAME = "sunIdentityServerAuthnService";
-    final static String SERVICE_DIR = "50_sunIdentityServerAuthnService/20_30";
-    final static String SCHEMA_FILE = "famAuthnSvcaddAttrs.xml";
+    final static String SERVICE_DIR = "99_sunIdentityServerAuthnService/20_30";
+    final static String SCHEMA_FILE = "famAuthnSvc_addAttrs.xml";
     final static String schemaType = "Global";
 
     /**

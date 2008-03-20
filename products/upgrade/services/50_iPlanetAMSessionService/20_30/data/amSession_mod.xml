@@ -32,6 +32,6 @@
     </SchemaRequests>
     <SchemaRequests serviceName="iPlanetAMSessionService"
         SchemaType="Dynamic">
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMSessionService/20_30/data/amSession_modDynamic.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMSessionService/20_30/data/amSession_modDynamic.xml"/>
     </SchemaRequests>
 </Requests>

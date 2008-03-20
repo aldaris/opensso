@@ -37,7 +37,7 @@
 	<ModifyDefaultValues>
             <AttributeValuePair>
                 <Attribute name="iplanet-am-auth-login-success-url"/>
-                <Value>CONSOLE_DEPLOY_URI</Value>
+                <Value>DEPLOY_URI/console</Value>
             </AttributeValuePair>
         </ModifyDefaultValues>
 	<AddChoiceValues>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:18:38 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:57 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,10 +33,10 @@ import com.sun.identity.upgrade.UpgradeException;
  */
 public class Migrate implements MigrateTasks {
 
-    static final String SERVICE_NAME = "iPlanetAMAuthWindowsDesktopService";
+    static final String SERVICE_NAME = "iPlanetAMAuthWindowsDesktopSSOService";
     static final String SERVICE_DIR =
-            "50_iPlanetAMAuthWindowsDesktopService/10_20";
-    static final String SCHEMA_FILE = "amAuthWindowsDesktop_mod.xml";
+            "50_iPlanetAMAuthWindowsDesktopSSOService/10_20";
+    static final String SCHEMA_FILE = "amAuthWindowsDesktopSSO_mod.xml";
 
     /**
      * Updates the <code>iPlanetAMAuthWindowsDesktopService<code> 

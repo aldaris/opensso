@@ -22,7 +22,7 @@
     <SchemaRequests serviceName="iPlanetAMAuthRadiusService"
         SchemaType="Organization"
 	SubSchema="/">
-            <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthRadiusService/10_20/data/amAuthRadius_addSubSchema.xml"/>
+            <AddSubSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthRadiusService/10_20/data/amAuthRadius_addSubSchema.xml"/>
     </SchemaRequests>
 
 </Requests>

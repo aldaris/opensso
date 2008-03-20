@@ -29,12 +29,12 @@
     <SchemaRequests serviceName="iPlanetAMAuthUnixService"
         SchemaType="Organization"
 	i18nKey="">
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthUnixService/10_20/data/amAuthUnix_addAttrs.xml" />
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthUnixService/10_20/data/amAuthUnix_addAttrs.xml" />
     </SchemaRequests>
 
     <SchemaRequests serviceName="iPlanetAMAuthUnixService"
         SchemaType="Organization"
 	SubSchema="/">
-	<AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthUnixService/10_20/data/amAuthUnix_addSubSchema.xml" />
+	<AddSubSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthUnixService/10_20/data/amAuthUnix_addSubSchema.xml" />
     </SchemaRequests>
 </Requests>

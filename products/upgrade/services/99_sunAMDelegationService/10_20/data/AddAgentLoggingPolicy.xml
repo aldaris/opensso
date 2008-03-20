@@ -23,7 +23,7 @@
 
 <RealmRequests>
     <RealmCreatePolicy realm="/sunamhiddenrealmdelegationservicepermissions">
-        <Policy name="ROOT_SUFFIX_HAT^^AgentLogging" referralPolicy="false" active="true" >
+        <Policy name="RSUFFIX_HAT^^AgentLogging" referralPolicy="false" active="true" >
 	    <Rule name="delegation-rule1">
 	        <ServiceName name="sunAMDelegationService" />
                 <ResourceName name="sms://*ROOT_SUFFIX/iPlanetAMLoggingService/1.0/application/*" />

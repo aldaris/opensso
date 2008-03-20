@@ -22,7 +22,7 @@
     <SchemaRequests serviceName="sunAMAuthJDBCService"
         SchemaType="Organization"
 	SubSchema="/">
-            <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunAMAuthJDBCService/10_20/data/amAuthJDBC_addSubSchema.xml"/>
+            <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunAMAuthJDBCService/10_20/data/amAuthJDBC_addSubSchema.xml"/>
     </SchemaRequests>
 
 </Requests>

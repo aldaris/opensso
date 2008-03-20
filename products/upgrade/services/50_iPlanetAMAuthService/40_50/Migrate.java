@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:17:36 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:54 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,6 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_NAME = "iPlanetAMAuthService";
     final static String SERVICE_DIR = "50_iPlanetAMAuthService/40_50";
     final static String SCHEMA_TYPE = "Organization";
-    final static String SUB_SCHEMA = "serverconfig";
     final static String SCHEMA_FILE = "amAuth_addAttr.xml";
 
     /**

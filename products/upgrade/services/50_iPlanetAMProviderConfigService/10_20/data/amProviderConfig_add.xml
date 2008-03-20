@@ -85,12 +85,12 @@
     <SchemaRequests serviceName="iPlanetAMProviderConfigService"
         SchemaType="Organization"
 	SubSchema="/EntityDescriptor/Provider">
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMProviderConfigService/10_20/data/amProviderConfig_addAttr.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMProviderConfigService/10_20/data/amProviderConfig_addAttr.xml"/>
     </SchemaRequests>
 
     <SchemaRequests serviceName="iPlanetAMProviderConfigService"
 	SchemaType="Organization"
 	SubSchema="/EntityDescriptor/AffiliationDescriptor">
-            <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMProviderConfigService/10_20/data/amProviderConfig_addAttr1.xml"/>
+            <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMProviderConfigService/10_20/data/amProviderConfig_addAttr1.xml"/>
     </SchemaRequests>
 </Requests>

@@ -21,11 +21,11 @@
     <SchemaRequests serviceName="iPlanetAMAuthCertService"
 	SchemaType="Organization"
 	i18nKey="">
-	<AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthCertService/10_20/data/amAuthCert_addAttrs.xml" />
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthCertService/10_20/data/amAuthCert_addAttrs.xml" />
     </SchemaRequests>
     <SchemaRequests serviceName="iPlanetAMAuthCertService"
         SchemaType="Organization"
 	SubSchema="/">
-            <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthCertService/10_20/data/amAuthCert_addSubSchema.xml"/>
+            <AddSubSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthCertService/10_20/data/amAuthCert_addSubSchema.xml"/>
     </SchemaRequests>
 </Requests>

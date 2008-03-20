@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-18 08:10:19 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:44 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,8 +36,7 @@ public class Migrate implements MigrateTasks {
     static final String SERVICE_NAME = "DAI";
     static final String SERVICE_DIR = "00_DAI/20_30/";
     static final String SCHEMA_FILE = "ums_addschema.xml";
-    //static final String LDIF_FILE = "DAI_ds_remote_schema.ldif";
-    static final String LDIF_FILE = "DAI.ldif";
+    static final String LDIF_FILE = "DAI_ds_remote_schema.ldif";
 
     /**
      * Loads the ldif and service changes for the DAI Service
@@ -48,23 +47,16 @@ public class Migrate implements MigrateTasks {
         // Add Attribute Schema
         boolean isSuccess = false;
         try {
-        //load ldif file 
-        UpgradeUtils.log("servicedir is :" + SERVICE_DIR);
-        UpgradeUtils.log("servicename is :" + SERVICE_NAME);
-        String ldifPath =
-                UpgradeUtils.getAbsolutePath(SERVICE_DIR, LDIF_FILE);
-        UpgradeUtils.log("ldifPath is :" + ldifPath);
-        UpgradeUtils.loadLdif(ldifPath);
-        String fileName =
-                UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
-        UpgradeUtils.log("fileName is :" + fileName);
-        UpgradeUtils.log("Calling importServiceData");
-        UpgradeUtils.importServiceData(fileName);
-        isSuccess = true;
+            //load ldif file 
+            String ldifPath =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, LDIF_FILE);
+            UpgradeUtils.loadLdif(ldifPath);
+            String fileName =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
+            UpgradeUtils.importServiceData(fileName);
+            isSuccess = true;
         } catch (UpgradeException e) {
-        UpgradeUtils.debug.message("Error loading data :" + SERVICE_NAME,e);
-        UpgradeUtils.log("Error loading data :" + 
-        SERVICE_NAME+e.getMessage());
+            UpgradeUtils.debug.error("Error loading data :" + SERVICE_NAME, e);
         }
         return isSuccess;
     }

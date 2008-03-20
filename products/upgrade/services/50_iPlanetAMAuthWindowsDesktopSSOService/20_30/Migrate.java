@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:18:56 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:58 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 import com.sun.identity.upgrade.MigrateTasks;
 import com.sun.identity.upgrade.UpgradeException;
 import com.sun.identity.upgrade.UpgradeUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Updates <code>iPlanetAMAuthWindowsDesktopSSOService</code> service schema.
@@ -35,8 +37,8 @@ public class Migrate implements MigrateTasks {
 
     final static String SERVICE_NAME = "iPlanetAMAuthWindowsDesktopSSOService";
     final static String SERVICE_DIR =
-            "iPlanetAMAuthWindowsDesktopSSOService/20_30/";
-    final static String SERVICE_XML1 = "amAuthWindowsDesktopSSO_mod.xml ";
+            "50_iPlanetAMAuthWindowsDesktopSSOService/20_30";
+    final static String SERVICE_XML1 = "amAuthWindowsDesktopSSO_mod.xml";
     final static String SERVICE_XML2 =
             "amAuthWindowsDesktopSSO_setBooleanValues.xml";
 
@@ -49,11 +51,13 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
-            String[] fileList = new String[2];
-            fileList[0] =
+            List fileList = new ArrayList();
+            String fileList1 =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SERVICE_XML1);
-            fileList[1] =
+            String fileList2 =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SERVICE_XML2);
+            fileList.add(fileList1);
+            fileList.add(fileList2);
             UpgradeUtils.importServiceData(fileList);
             isSuccess = true;
         } catch (UpgradeException e) {

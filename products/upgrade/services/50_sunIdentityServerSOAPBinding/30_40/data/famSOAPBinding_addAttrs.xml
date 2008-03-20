@@ -18,11 +18,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famSOAPBinding_addAttrs.xml,v 1.1 2008-01-24 00:31:22 bina Exp $
+   $Id: famSOAPBinding_addAttrs.xml,v 1.2 2008-03-20 17:24:10 bina Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 
+<Requests>
 <AttributeSchema name="EnforceOnlyKnownProvider"
     type="single"
     syntax="boolean"
@@ -85,3 +86,4 @@
         <Value>1.0</Value>
     </DefaultValues>
  </AttributeSchema>
+</Requests>

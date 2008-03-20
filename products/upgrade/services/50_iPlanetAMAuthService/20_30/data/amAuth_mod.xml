@@ -48,7 +48,7 @@
     <SchemaRequests serviceName="iPlanetAMAuthService"
         SchemaType="Organization"
         i18nKey="">
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthService/20_30/data/amAuth_addAttrs.xml" />
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthService/20_30/data/amAuth_addAttrs.xml" />
     </SchemaRequests>
 
 </Requests>

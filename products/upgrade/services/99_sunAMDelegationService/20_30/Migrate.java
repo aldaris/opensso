@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:37:22 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:13 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_DIR = "99_sunAMDelegationService/20_30";
     final static String ATTR_NAME = "SubjectIdTypes";
     final static String schemaType = "Global";
+    final static String FILTERED_ROLE = "FILTERED_ROLE";
 
     /**
      * Updates the <code>sunAMDelegationService<code> service schema.
@@ -48,9 +49,8 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
-            //TODO add constant
             Set defaultValues = new HashSet();
-            defaultValues.add("FILTEREDROLE");
+            defaultValues.add(FILTERED_ROLE);
             UpgradeUtils.addAttributeDefaultValues(
                     SERVICE_NAME, null, schemaType,
                     ATTR_NAME, defaultValues);

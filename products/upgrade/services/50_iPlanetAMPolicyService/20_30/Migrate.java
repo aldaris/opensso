@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:24:16 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:04 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_DIR = "50_iPlanetAMPolicyService/20_30";
     final static String[] SCHEMA_FILE_LIST =
             {"amPolicy_mod.xml", "SetPVUForAU.xml", "SetPVUrls.xml"};
+
     final static String[] NEW_SCHEMA_FILE_LIST = {"AddAMIdentitySubject.xml",
         "AddIDResponseProvider.xml",
         "AddUserSelfCheckCondition.xml",
@@ -50,23 +51,22 @@ public class Migrate implements MigrateTasks {
         try {
             List schemaList = new ArrayList();
             String fileName = null;
-            String[] fileList = new String[SCHEMA_FILE_LIST.length];
-            for (int i = 0; i < SCHEMA_FILE_LIST.length; i++) {
+            //String[] fileList = new String[3];
+            for (int i = 0; i < 3 ; i++) {
                 fileName =
                         UpgradeUtils.getAbsolutePath(
                         SERVICE_DIR, SCHEMA_FILE_LIST[i]);
-                fileList[i] = fileName;
+                schemaList.add(fileName);
             }
-            UpgradeUtils.importServiceData(fileList);
+            UpgradeUtils.importServiceData(schemaList);
             List newSchemaList = new ArrayList();
-            int numFiles = NEW_SCHEMA_FILE_LIST.length;
-            fileList = new String[numFiles];
-            for (int i = 0; i < numFiles; i++) {
+            //fileList = new String[4];
+            for (int i = 0; i < 4 ; i++) {
                 fileName = UpgradeUtils.getAbsolutePath(
                         SERVICE_DIR, NEW_SCHEMA_FILE_LIST[i]);
-                fileList[i] = fileName;
+                newSchemaList.add(fileName);
             }
-            UpgradeUtils.importNewServiceSchema(fileList);
+            UpgradeUtils.importNewServiceSchema(newSchemaList);
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);

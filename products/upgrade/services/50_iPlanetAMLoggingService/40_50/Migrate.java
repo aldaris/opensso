@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:20:18 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:01 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,7 +44,7 @@ public class Migrate implements MigrateTasks {
     final static String LOG_ATTR_NAME = "iplanet-am-logging-logfields";
     final static String LOG_ALL_FIELDS_ATTR_NAME =
             "iplanet-am-logging-allfields";
-    final static String LOG_STATUS_ATTR = "logStatus";
+    final static String LOG_STATUS_ATTR = "logstatus";
     final static String RESOLVE_HOSTNAME_ATTR = "resolveHostName";
     final static String schemaType = "Global";
 
@@ -92,7 +92,7 @@ public class Migrate implements MigrateTasks {
                     SERVICE_NAME, null, schemaType,
                     LOG_STATUS_ATTR, defaultValues);
             defaultValues.clear();
-            defaultValues.add(logStatus);
+            defaultValues.add(resolveHostName);
             UpgradeUtils.setAttributeDefaultValues(
                     SERVICE_NAME, null, schemaType,
                     RESOLVE_HOSTNAME_ATTR, defaultValues);

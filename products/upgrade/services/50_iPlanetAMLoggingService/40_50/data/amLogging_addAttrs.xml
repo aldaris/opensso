@@ -18,11 +18,12 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging_addAttrs.xml,v 1.1 2008-01-24 00:20:18 bina Exp $
+    $Id: amLogging_addAttrs.xml,v 1.2 2008-03-20 17:24:01 bina Exp $
 
     Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 
+<Requests>
 <AttributeSchema name="logstatus"
     type="single_choice"
     syntax="string"
@@ -97,4 +98,4 @@
              <Value>%Y-%m-%d %H:%i:%s</Value>
          </DefaultValues>
      </AttributeSchema>
-
+</Requests>

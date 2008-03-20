@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-29 20:09:02 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:23:46 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ public class Migrate implements MigrateTasks {
     final String SERVICE_DIR = "20_iPlanetAMUserService/30_40";
     final String SERVICE_NAME = "iPlanetAMUserService";
     final String SCHEMA_FILE = "amUser_mod.xml";
+    final String SCHEMA_LDIF_FILE = "amUser_schema.ldif";
 
     /**
      * Upgrades <code>iPlanetAMUserService</code> service schema.
@@ -45,6 +46,11 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
+             //load ldif file
+             String ldifFile =
+                     UpgradeUtils.getAbsolutePath(SERVICE_DIR,SCHEMA_LDIF_FILE);
+             UpgradeUtils.loadLdif(ldifFile);
+
             String fileName =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
             UpgradeUtils.importServiceData(fileName);

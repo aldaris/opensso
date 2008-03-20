@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="XML_ENCODING"?>
+
+<!--
+    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
+    Use is subject to license terms.
+-->
+
+
+<!DOCTYPE Requests
+    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+"jar://com/iplanet/am/admin/cli/amAdmin.dtd"
+>
+<!--
+  apply this file by:
+
+  amadmin -u "xxx" -w "yyy" -t amAuthConfig_add.xml
+
+-->
+
+<Requests>
+    <SchemaRequests serviceName="iPlanetAMAuthConfiguration"
+        SchemaType="Dynamic"
+	i18nKey="">	
+	<AddAttributeSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthConfiguration/10_20/data/amAuthConfig_addAttrs.xml" />
+    </SchemaRequests>
+    <OrganizationRequests DN="NORMALIZED_ORGBASE">
+    <RegisterServices>
+    <Service_Name>iPlanetAMAuthConfiguration</Service_Name>
+    </RegisterServices>
+    </OrganizationRequests>
+</Requests>

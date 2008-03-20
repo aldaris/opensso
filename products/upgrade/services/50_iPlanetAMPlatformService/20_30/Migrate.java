@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:22:07 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:04 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_DIR = "50_iPlanetAMPlatformService/20_30";
     final static String SCHEMA_FILE = "amPlatform_addSubSchema.xml";
     final static String SCHEMA_FILE1 = "amPlatform_addAttrs.xml";
+    final static String SCHEMA_FILE2 = "amPlatform_addConfig.xml";
     final static String schemaType = "Global";
     final static String SVCCONFIG_NAME = "server-default";
     final static String SITE_ATTR = "com-sun-identity-sites";
@@ -59,6 +60,8 @@ public class Migrate implements MigrateTasks {
     final static String ATTR_SERVER_VALIDATOR = "ServerIDValidator";
     final static String ATTR_SITE_VALIDATOR = "SiteIDValidator";
     final static String ATTR_LOCALES = "iplanet-am-platform-available-locales";
+    final static String INSTANCE_NAME = "serverid";
+    final static String INSTANCE_ID = "00";
 
     /**
      * Updates the <code>iPlanetAMPlatformService<code> service schema.
@@ -68,20 +71,17 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
-            // add subschema 
             String fileName =
-                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
-            UpgradeUtils.addSubSchema(SERVICE_NAME, null, schemaType, fileName);
-            // add subconfiguration site-list & server-list
-            UpgradeUtils.addSubConfiguration(
-                    SERVICE_NAME, null, SERVER_ATTR, null, null, 0);
-            UpgradeUtils.addSubConfiguration(
-                    SERVICE_NAME, null, SITE_ATTR, null, null, 0);
-
-            fileName =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE1);
             UpgradeUtils.addAttributeToSchema(
                     SERVICE_NAME, schemaType, fileName);
+            // add subschema 
+            fileName =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
+            UpgradeUtils.addSubSchema(SERVICE_NAME, null, schemaType, fileName);
+            fileName =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE2);
+            UpgradeUtils.createService(fileName);
 
             UpgradeUtils.removeAttributeSchema(SERVICE_NAME, schemaType,
                     ATTR_LOGIN_URL, null);
@@ -103,18 +103,16 @@ public class Migrate implements MigrateTasks {
             } catch (IOException ioe) {
                 System.out.println("Error loading properties");
             }
-            Map propertyMap = new HashMap();
+            Set vSet = new HashSet();
             Enumeration propertiesNames = properties.propertyNames();
             while (propertiesNames.hasMoreElements()) {
                 String propertyName = (String) propertiesNames.nextElement();
                 String value = (String) properties.get(propertyName);
-                propertyMap.put(propertyName, value);
+                vSet.add(propertyName + "=" + value);
             }
-            propertyMap.put("serverid", "00");
             // add to server-default subconfig
-            UpgradeUtils.addSubConfiguration(
-                    SERVICE_NAME, SVCCONFIG_NAME, SITE_ATTR,
-                    null, propertyMap, 0);
+            UpgradeUtils.addServerDefaults(SERVICE_NAME, SERVER_ATTR,
+                    INSTANCE_NAME, INSTANCE_ID, vSet);
 
             // get the values of site list.
             Set attrValueSet = UpgradeUtils.getAttributeValue(SERVICE_NAME,
@@ -130,14 +128,17 @@ public class Migrate implements MigrateTasks {
                     remStr = attrVal.substring(index + 1);
                 }
                 index = remStr.indexOf("|");
-                String siteId = remStr.substring(0, index);
-                String accessPointStr = remStr.substring(index + 1);
-                StringTokenizer st = new StringTokenizer(accessPointStr, "|");
-                Set accessPoints = new HashSet();
-                while (st.hasMoreTokens()) {
-                    accessPoints.add((String) st.nextToken());
+                if (index != -1) {
+                    String siteId = remStr.substring(0, index);
+                    String accessPointStr = remStr.substring(index + 1);
+                    StringTokenizer st = 
+                            new StringTokenizer(accessPointStr, "|");
+                    Set accessPoints = new HashSet();
+                    while (st.hasMoreTokens()) {
+                        accessPoints.add((String) st.nextToken());
+                    }
+                    UpgradeUtils.createSite(siteURL, accessPoints);
                 }
-                UpgradeUtils.createSite(siteURL, accessPoints);
             }
 
             // get value of iplanet-am-platform-server-list attribute

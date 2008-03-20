@@ -30,7 +30,7 @@
 	    </AttributeValuePair>
         </AddDefaultValues>    
 
-        <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_iPlanetAMAuthMembershipService/10_20/data/amAuthMembership_addSubSchema.xml"/>
+        <AddSubSchema fileName="BASEDIR/upgrade/services/50_iPlanetAMAuthMembershipService/10_20/data/amAuthMembership_addSubSchema.xml"/>
     </SchemaRequests>
 
 </Requests>

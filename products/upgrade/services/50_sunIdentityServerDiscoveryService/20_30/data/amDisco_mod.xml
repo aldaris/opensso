@@ -64,6 +64,6 @@
     <SchemaRequests serviceName="sunIdentityServerDiscoveryService"
         SchemaType="User"
         i18nKey="">
-        <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/50_sunIdentityServerDiscoveryService/20_30/data/amDisco_addAttr.xml" />
+        <AddAttributeSchema fileName="BASEDIR/upgrade/services/50_sunIdentityServerDiscoveryService/20_30/data/amDisco_addAttr.xml" />
     </SchemaRequests>
 </Requests>   

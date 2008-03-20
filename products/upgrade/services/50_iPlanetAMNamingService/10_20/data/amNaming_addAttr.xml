@@ -23,7 +23,7 @@
         syntax="url"
         i18nKey="a114">
         <DefaultValues>
-	    <Value>%protocol://%host:%portSERVER_DEPLOY_URI/jaxrpc/</Value>
+	    <Value>%protocol://%host:%port%uri/jaxrpc/</Value>
         </DefaultValues>
      </AttributeSchema>
 </Requests> 

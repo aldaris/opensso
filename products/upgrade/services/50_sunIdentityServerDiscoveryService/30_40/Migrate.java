@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:29:23 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:08 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,9 +39,11 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_DIR =
             "50_sunIdentityServerDiscoveryService/30_40";
     final static String SCHEMA_FILE = "famDisco_addAttrs.xml";
+    final static String LDIF_FILE = "famDisco.ldif";
     final static String i18nFileName = "fmDiscoConfiguration";
     final static String ATTR_NAME = "serviceObjectClasses";
     final static String schemaType = "Global";
+    final static String FM_DATA_STORE = "sunFederationManagerDataStore";
 
     /**
      * Updates the <code>sunIdentityServerDiscoveryService<code> service schema.
@@ -51,6 +53,10 @@ public class Migrate implements MigrateTasks {
     public boolean migrateService() {
         boolean isSuccess = false;
         try {
+            //load ldif file 
+            String ldifPath =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, LDIF_FILE);
+            UpgradeUtils.loadLdif(ldifPath);
             String fileName =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
             UpgradeUtils.addAttributeToSchema(
@@ -59,8 +65,7 @@ public class Migrate implements MigrateTasks {
             UpgradeUtils.seti18NFileName(SERVICE_NAME, i18nFileName);
             // change attribute default value
             Set defaultValues = new HashSet();
-            //TODO - add constant.
-            defaultValues.add("sunFederationManagerDataStore");
+            defaultValues.add(FM_DATA_STORE);
             UpgradeUtils.setAttributeDefaultValues(SERVICE_NAME, null,
                     schemaType, ATTR_NAME, defaultValues);
             isSuccess = true;

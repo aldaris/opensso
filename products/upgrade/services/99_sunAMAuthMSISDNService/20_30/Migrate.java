@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:35:49 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-03-20 17:24:12 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,8 +51,8 @@ public class Migrate implements MigrateTasks {
             UpgradeUtils.importServiceData(fileName);
             isSuccess = true;
         } catch (UpgradeException e) {
-            UpgradeUtils.debug.message(
-                    "Error loading data :" + SERVICE_NAME, e);
+            UpgradeUtils.debug.message("Error loading data :" + SCHEMA_FILE 
+                + "for Service " + SERVICE_NAME, e);
         }
         return isSuccess;
     }
