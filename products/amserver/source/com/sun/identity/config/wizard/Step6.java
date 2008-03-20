@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.10 2008-03-07 23:27:58 jonnelson Exp $
+ * $Id: Step6.java,v 1.11 2008-03-20 20:50:21 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,46 +25,57 @@ package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
-import net.sf.click.Page;
+import net.sf.click.control.ActionLink;
+import net.sf.click.Context;
 
+/**
+ * This is the first step in the advanced configuration flow.
+ * The user will be required to add the default admin password and
+ * the agent passwords.
+ */
 public class Step6 extends AjaxPage {
-
-    public Step6(){}
-
-    public void onInit() {
+    
+    // this links required for client side validation calls
+    public ActionLink validateAgent = 
+        new ActionLink("checkAgentPassword", this, "checkAgentPassword" );
+    
+    public void onInit() {     
+        String agentPwd = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+        if (agentPwd != null) {
+            addModel("agentPassword",agentPwd);
+        }
         
-        // Config Store Properties
-        String tmp =(String)getContext().getSessionAttribute("configDirectory");
-        add("configDirectory", tmp);        
-        tmp = getAttribute("configStoreHost", getHostName());
-        add("configStoreHost", tmp);
-        tmp = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
-        add("rootSuffix", tmp);
-        tmp = getAttribute("configStorePort", getAvailablePort(50389));
-        add("configStorePort", tmp);
-        tmp = getAttribute("configStoreLoginId", Wizard.defaultUserName);
-        add("configStoreLoginId", tmp);
-
-        // User Config Store Properties
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_HOST);
-        add("userHostName", tmp);
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_PORT);
-        add("userHostPort", tmp);
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX);        
-        add("userRootSuffix", tmp);
+        String confirmPwd = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
+        if (confirmPwd != null) {
+            addModel("agentConfirm", confirmPwd);
+        }
         
-        // Load Balancer Properties
-        add("loadBalancerHost", 
-            (String)getContext().getSessionAttribute(SetupConstants.LB_SITE_NAME));
-        add("loadBalancerPort", 
-            (String)getContext().getSessionAttribute(SetupConstants.LB_PRIMARY_URL));
-
         super.onInit();
     }
-
-    protected void add(String key, Object value) {
-        if (value != null) {
-            addModel(key, value);
+      
+    public boolean checkAgentPassword() {
+        String agentPassword = toString("agent");
+        String agentConfirm = toString("agentConfirm");
+        String tmpadmin = (String)getContext().getSessionAttribute(
+            SetupConstants.CONFIG_VAR_ADMIN_PWD);
+         
+        if (agentPassword == null || agentConfirm == null) {        
+            writeInvalid(getLocalizedString("missing.required.field"));
+        } else if (agentPassword.equals(tmpadmin)) {
+            writeInvalid(getLocalizedString("agent.admin.passwords.match"));
+        } else if (agentPassword.length() < 8) {
+            writeInvalid(getLocalizedString("invalid.password.length"));
+        } else if (!agentPassword.equals(agentConfirm)) {
+            writeInvalid(getLocalizedString("passwords.do.not.match"));             
+        } else {
+            writeValid("OK");
+            getContext().setSessionAttribute(
+                SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);              
         }
-    }
+        setPath(null);
+        return false;
+    }    
 }
+

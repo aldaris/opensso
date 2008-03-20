@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.6 2008-02-21 22:35:44 jonnelson Exp $
+ * $Id: Step2.java,v 1.7 2008-03-20 20:50:21 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,13 +33,7 @@ public class Step2 extends AjaxPage {
     }
     
     public void onInit() {
-        String val = (String)getContext().getSessionAttribute("encryptionKey");
-        if (val == null) {
-            val = AMSetupServlet.getRandomString();
-        }
-        add("encryptionKey", val);
-
-        val = (String)getContext().getSessionAttribute("serverURL");
+        String val = (String)getContext().getSessionAttribute("serverURL");
         if (val == null) {
             val = getServerURL();
         }

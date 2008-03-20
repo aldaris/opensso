@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.13 2008-02-29 19:32:01 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.14 2008-03-20 20:50:22 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,7 @@ public abstract class AjaxPage extends Page {
     public ActionLink validateInputLink =
         new ActionLink("validateInput", this, "validateInput" );
 
-    public static final String RESPONSE_TEMPLATE = "{\"valid\":${valid}, \"body\":\"${body}\"}";
+    public static final String RESPONSE_TEMPLATE = "{\"valid\":\"${valid}\", \"body\":\"${body}\"}";
     public static final String OLD_RESPONSE_TEMPLATE = "{\"isValid\":${isValid}, \"errorMessage\":\"${errorMessage}\"}";
    
     private Configurator configurator = null;
@@ -121,7 +121,13 @@ public abstract class AjaxPage extends Page {
         writeJsonResponse( false, out );
     }
 
-    protected void writeJsonResponse( boolean valid, String responseBody ) {
+    protected void writeJsonResponse(String valid, String responseBody) {
+        String response = RESPONSE_TEMPLATE;
+        response = response.replaceFirst("\\$\\{" + "valid" +  "\\}", valid);
+        response = response.replaceFirst("\\$\\{" + "body" +  "\\}", responseBody);
+        writeToResponse(response);
+    }
+    protected void writeJsonResponse(boolean valid, String responseBody) {
         String response = RESPONSE_TEMPLATE;
         response = response.replaceFirst("\\$\\{" + "valid" +  "\\}", String.valueOf(valid));
         response = response.replaceFirst("\\$\\{" + "body" +  "\\}", responseBody);
@@ -137,13 +143,6 @@ public abstract class AjaxPage extends Page {
         }
     }
 
-    protected void writeToResponse(boolean isValid, String errorMessage) {
-        String response = OLD_RESPONSE_TEMPLATE;
-        response = response.replaceFirst("\\$\\{" + "isValid" +  "\\}", String.valueOf(isValid));
-        response = response.replaceFirst("\\$\\{" + "errorMessage" +  "\\}", errorMessage);
-        writeToResponse(response);
-    }
-    
     public void initializeResourceBundle() {
         HttpServletRequest req = 
             (HttpServletRequest)getContext().getRequest();
@@ -257,12 +256,12 @@ public abstract class AjaxPage extends Page {
         String value = toString("value");
 
         if (value == null) {
-            writeToResponse(getLocalizedString("missing.required.field"));
+            responseString = "missing.required.field";
         } else {
-            getContext().setSessionAttribute(key, value);
-            writeToResponse("OK");
+            getContext().setSessionAttribute(key, value);            
         }
-
+        
+        writeToResponse(getLocalizedString(responseString));
         setPath(null);
         return false;
     }

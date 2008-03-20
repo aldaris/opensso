@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.8 2008-03-07 23:27:58 jonnelson Exp $
+ * $Id: Wizard.java,v 1.9 2008-03-20 20:50:21 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,9 +59,6 @@ public class Wizard extends AjaxPage {
     public String defaultPort = Integer.toString(
         AMSetupServlet.getUnusedPort(hostName, 50389, 1000));
     
-    public void onInit() {       
-    }
-        
     /**
      * This is the 'execute' operation for the entire wizard.  This method 
      * aggregates all data submitted across the wizard pages here in one lump 
@@ -85,7 +82,7 @@ public class Wizard extends AjaxPage {
             SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);
         request.addParameter(
             SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, adminPassword);
-        
+            
         /*
          * Get the agent password. same value used for password and confirm
          * because they were validated in the input screen.

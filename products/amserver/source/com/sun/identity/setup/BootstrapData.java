@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.3 2008-03-19 17:00:47 veiming Exp $
+ * $Id: BootstrapData.java,v 1.4 2008-03-20 20:50:20 jonnelson Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,20 +56,30 @@ public class BootstrapData {
     static final String SERVER_INSTANCE = "serverinstance";
     static final String FF_BASE_DIR = "ffbasedir";
     static final String BASE_DIR = "basedir";
-    static final String DS_HOST = "dshost";
-    static final String DS_PORT = "dsport";
+    
+    public static final String DS_HOST = "dshost";
+    public static final String DS_PORT = "dsport";
+    public static final String DS_PROTOCOL = "dsprotocol";
+    public static final String DS_PWD = "dspwd";
+    public static final String DS_MGR = "dsmgr";
+    public static final String DS_BASE_DN = "dsbasedn";
+    public static final String DS_REPLICATIONPORT = "dsreplport";
+    public static final String DS_REPLICATIONPORT_AVAILABLE = "dsreplportavailable";
+    public static final String DS_ISEMBEDDED = "dsisembedded";
+    public static final String ENCKEY = "enckey";
+
     static final String DS_PROTO_TYPE = "dsprototype";
-    static final String DS_PWD = "dspwd";
-    static final String DS_MGR = "dsmgr";
-    static final String DS_BASE_DN = "dsbasedn";
+
     static final String PWD = "pwd";
     static final String PROT_FILE = "file";
     static final String PROT_LDAP = "ldap";
     static final String PROTOCOL_FILE = "file://";
     static final String PROTOCOL_LDAP = "ldap://";
+
     static final String PROTOCOL_LDAPS = "ldaps://";
     static final String DS_PROTO_LDAPS = "SSL";
     static final String DS_PROTO_LDAP = "SIMPLE";
+
     private static final String BOOTSTRAPCONFIG = "bootstrapConfig.properties";
     
     private String basedir;
@@ -113,6 +123,35 @@ public class BootstrapData {
 
     public String getDsameUserPassword() {
         return dsameUserPwd;
+    }
+   
+    /**
+      * Gets attributes in a given row as a <code>Map</code>.
+      * @param idx row (starting with 0)
+      * @return Map of attributes
+      */
+    public Map getDataAsMap(int idx) 
+           throws MalformedURLException, UnsupportedEncodingException
+    {
+        String  info = (String) data.get(idx);
+        // need to do this because URL class does not understand ldap://
+        String dsprotocol = "unknown";
+        if (info.startsWith(BootstrapData.PROTOCOL_LDAPS)) {
+            info = "http://" +  info.substring(8);
+            dsprotocol = "ldaps";
+        } else
+        if (info.startsWith(BootstrapData.PROTOCOL_LDAP)) {
+            info = "http://" +  info.substring(7);
+            dsprotocol = "ldap";
+        }
+        URL url = new URL(info);
+        Map mapQuery = queryStringToMap(url.getQuery());
+        String dshost = url.getHost();
+        mapQuery.put(DS_HOST, dshost);
+        String dsport = Integer.toString(url.getPort());
+        mapQuery.put(DS_PORT, dsport);
+        mapQuery.put(DS_PROTOCOL, dsprotocol);
+        return mapQuery;
     }
 
     public void initSMS() 
@@ -192,6 +231,9 @@ public class BootstrapData {
             String info = (String)i.next();
             boolean ldaps = false;
             // need to do this because URL class does not understand ldap://
+            if (info.startsWith(BootstrapData.PROTOCOL_LDAPS)) {
+                info = "http://" +  info.substring(8);
+            } else
             if (info.startsWith(BootstrapData.PROTOCOL_LDAP)) {
                 info = "http://" +  info.substring(7);
             }
@@ -253,7 +295,7 @@ public class BootstrapData {
         return template;    
     }
     
-    private static Map queryStringToMap(String str)
+    public static Map queryStringToMap(String str)
         throws UnsupportedEncodingException {
         Map map = new HashMap();
         StringTokenizer st = new StringTokenizer(str, "&");

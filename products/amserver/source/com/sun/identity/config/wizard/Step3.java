@@ -17,15 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.6 2008-02-25 19:36:45 jonnelson Exp $
+ * $Id: Step3.java,v 1.7 2008-03-20 20:50:21 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.setup.AMSetupServlet;
+import java.util.Iterator;
 import net.sf.click.control.ActionLink;
 import com.sun.identity.setup.SetupConstants;
+import com.sun.identity.setup.BootstrapData;
+import java.util.Map;
+import java.util.HashMap;
+import com.sun.identity.setup.ConfiguratorException;
 
 /**
  * Step 3 is for selecting the embedded or external configuration store 
@@ -37,27 +42,36 @@ public class Step3 extends LDAPStoreWizardPage {
         new ActionLink("validateRootSuffix", this, "validateRootSuffix");
     public ActionLink setReplicationLink = 
         new ActionLink("setReplication", this, "setReplication");
+    public ActionLink validateHostNameLink = 
+        new ActionLink("validateHostName", this, "validateHostName");
     public ActionLink setConfigType = 
         new ActionLink("setConfigType", this, "setConfigType");
     public ActionLink loadSchemaLink = 
         new ActionLink("loadSchema", this, "loadSchema");
     
+    private static final String QUOTE = "\"";
+    private static final String SEPARATOR = "\" : \"";
+    private String localRepPort;
+    
     public Step3() {
         setType("config");
         setTypeTitle("Configuration");
         setPageNum(3);
-        setStoreSessionName( LDAP_STORE_SESSION_KEY );
+        setStoreSessionName(LDAP_STORE_SESSION_KEY);
     }
     
     public void onInit() {
         String val = getAttribute("rootSuffix", Wizard.defaultRootSuffix);        
         addModel("rootSuffix", val);
 
+        val = getAttribute("encryptionKey", AMSetupServlet.getRandomString());
+        addModel("encryptionKey", val);
+        
         val = getAttribute("configStorePort", getAvailablePort(50389));
         addModel("configStorePort", val);
 
-        val = getAttribute("localRepPort", getAvailablePort(58989));
-        addModel("localRepPort", val);
+        localRepPort = getAttribute("localRepPort", getAvailablePort(58989));
+        addModel("localRepPort", localRepPort);
 
         val = getAttribute("existingPort", getAvailablePort(50389));        
         addModel("existingPort", val);
@@ -116,6 +130,150 @@ public class Step3 extends LDAPStoreWizardPage {
         }
         setPath(null);        
         return false;    
+    }
+        
+    /*
+     * a call is made to the fam url entered in the browser. If the FAM server
+     * exists a <code>Map</code> of data will be returned which contains the
+     * information about the existing servers data store, including any 
+     * replication ports if its embedded.
+     * Information to control the UI is returned in a JSON object of the form
+     * { 
+     *   "param1" : "value1", 
+     *   "param2" : "value2"
+     * }
+     * The JS on the browser will interpret the above and make the necessary
+     * changes to prompt the user for any more details required.
+     */
+    public boolean validateHostName() {
+        StringBuffer sb = new StringBuffer();
+        String hostName = toString("hostName");
+        
+        if (hostName == null) {            
+            addObject(sb, "code", "100");
+            addObject(sb, "message", getLocalizedString("missing.required.field"));
+        } else {
+            // try to retrieve the remote FAM information
+            String admin = "amadmin";
+            String password = (String)getContext().getSessionAttribute(
+                SetupConstants.CONFIG_VAR_ADMIN_PWD);
+            
+            try { 
+                String dsType;
+                Map data = AMSetupServlet.getRemoteServerInfo(
+                    hostName, admin, password);
+                
+                // data returned from existing FAM server
+                if (data != null && !data.isEmpty()) {                    
+                    addObject(sb, "code", "100");
+                    addObject(sb, "message", getLocalizedString("ok.string"));
+                    
+                    setupDSParams(data);
+                    
+                    String key = (String)data.get("enckey");
+                    getContext().setSessionAttribute("encryptionKey",key);                   
+                    
+                    // true for embedded, false for sunds
+                    String embedded = 
+                        (String)data.get(BootstrapData.DS_ISEMBEDDED);
+                    addObject(sb, "embedded", embedded);                                                            
+                    if (embedded.equals("true")) {                                                
+                        // set the multi embedded flag 
+                        getContext().setSessionAttribute(
+                            SetupConstants.CONFIG_VAR_DATA_STORE, 
+                            SetupConstants.SMS_EMBED_DATASTORE); 
+                       
+                        getContext().setSessionAttribute(
+                            SetupConstants.DS_EMB_REPL_FLAG,
+                            SetupConstants.DS_EMP_REPL_FLAG_VAL); 
+                        
+                        // get the existing replication ports if any
+                        String replAvailable = (String)data.get(
+                            BootstrapData.DS_REPLICATIONPORT_AVAILABLE);
+                        addObject(sb, "replication", replAvailable);                   
+                        
+                        // set the replication ports pulled from the remote
+                        // server
+                        String existing = (String)data.get(BootstrapData.DS_PORT);
+                        getContext().setSessionAttribute(
+                            "existingPort", existing);
+
+                        String existingRep = (String)data.get(BootstrapData.DS_REPLICATIONPORT);
+                        getContext().setSessionAttribute(
+                            "existingRepPort", existingRep);
+
+                        String host = (String)data.get(BootstrapData.DS_HOST);
+                        getContext().setSessionAttribute(
+                            "existingHost",host);
+
+                        getContext().setSessionAttribute(
+                            "localRepPort", localRepPort);      
+                               
+                        // dsmgr password is same as amadmin for embedded
+                        getContext().setSessionAttribute(
+                            "configStorePassword", password);
+                    }                                                               
+                }
+                
+            } catch (ConfiguratorException c) {
+                String code = c.getErrorCode();
+                String message = getLocalizedString(code);
+                if (code == null) {
+                    code = "999";
+                    message = c.getMessage();
+                }
+                addObject(sb, "code", code);
+                addObject(sb, "message", message);                                                       
+            }
+        }
+        sb.append(" }");           
+        writeToResponse(sb.toString());
+        setPath(null);
+        return false;
+    }
+        
+    private void addObject(StringBuffer sb, String key, String value) {
+        if (sb.length() < 1) {
+            // add first object
+            sb.append("{ ");
+        } else {
+            sb.append(",");
+        }
+        sb.append(QUOTE)
+          .append(key)
+          .append(SEPARATOR)
+          .append(value)
+          .append(QUOTE);                         
+    }
+    
+    /*
+     * the following value have been pulled from an existing fam server
+     * which was configured to use an external DS. We need to set the DS 
+     * values in the request so they can be used to configure the exisiting
+     * FAM server.
+     */
+    private void setupDSParams(Map data) {
+        String tmp = (String)data.get("dshost");
+        getContext().setSessionAttribute("configStoreHost", tmp);
+        
+        tmp = (String)data.get("dsport");
+        getContext().setSessionAttribute("configStorePort", tmp);        
+        
+        tmp = (String)data.get("dsbasedn");
+        getContext().setSessionAttribute("rootSuffix", tmp);        
+        
+        tmp = (String)data.get("dsmgr");
+        getContext().setSessionAttribute("configStoreLoginId", tmp);        
+        
+        tmp = (String)data.get("dsmgrpwd");
+        getContext().setSessionAttribute("configStorePassword", tmp);
+       
+        getContext().setSessionAttribute(
+            SetupConstants.CONFIG_VAR_DS_UM_SCHEMA,"");
+                                        
+        getContext().setSessionAttribute(
+            SetupConstants.CONFIG_VAR_DATA_STORE, 
+            SetupConstants.SMS_DS_DATASTORE);    
     }
     
     public boolean loadSchema() {

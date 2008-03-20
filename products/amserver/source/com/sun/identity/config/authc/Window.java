@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Window.java,v 1.3 2008-01-15 19:58:59 jefberpe Exp $
+ * $Id: Window.java,v 1.4 2008-03-20 20:50:21 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,7 @@ public class Window extends AjaxPage {
     protected boolean validateRequiredField(String fieldName) {
         String servicePrincipal = toString(fieldName);
         boolean isValid = (servicePrincipal != null);
-        writeToResponse(isValid, (isValid) ? "" : "Field required.");
+        writeJsonResponse(isValid, (isValid) ? "" : "Field required.");
         setPath(null);
         return false;
     }

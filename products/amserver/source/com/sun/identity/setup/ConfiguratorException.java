@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguratorException.java,v 1.3 2007-01-12 21:29:44 veiming Exp $
+ * $Id: ConfiguratorException.java,v 1.4 2008-03-20 20:50:20 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.MissingResourceException;
 
 
 public class ConfiguratorException extends RuntimeException 
@@ -127,13 +128,16 @@ public class ConfiguratorException extends RuntimeException
             if (locale == null) {
                 locale = Locale.getDefault();
             }
-
-            bundle = ResourceBundle.getBundle(bundleName, locale);
-            String mid = bundle.getString (errorCode);
-            if ((args == null) || (args.length == 0)) {
-                result = mid;
-            } else {
-                result = MessageFormat.format (mid,args);
+            try {
+                bundle = ResourceBundle.getBundle(bundleName, locale);            
+                String mid = bundle.getString (errorCode);
+                if ((args == null) || (args.length == 0)) {
+                    result = mid;
+                } else {
+                    result = MessageFormat.format (mid,args);
+                }
+            } catch (MissingResourceException mre) {
+                result = errorCode;
             }
         }
 

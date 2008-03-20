@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.8 2008-02-25 22:35:12 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.9 2008-03-20 20:50:19 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,11 +34,17 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Enumeration;
 import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ServletContext;
+
+import netscape.ldap.LDAPAttribute;
+import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPEntry;
+import netscape.ldap.LDAPException;
 
 import org.opends.server.core.DirectoryServer;
 import org.opends.server.extensions.ConfigFileHandler;
@@ -297,6 +303,7 @@ public class EmbeddedOpenDS {
                     "configurator.embreplfailed");
         }
     }
+    
     /**
       * Setups replication between two opends sms and user stores.
       * $ dsreplication enable
@@ -358,14 +365,17 @@ public class EmbeddedOpenDS {
 
         SetupProgress.reportStart("emb.replcommand",concat(enableCmd));
 
-        int ret = ReplicationCliMain.mainCLI(enableCmd, false, 
-                                            SetupProgress.getOutputStream(), 
-                                            SetupProgress.getOutputStream(), 
-                                            null); 
-        if (ret == 0)
+        int ret = ReplicationCliMain.mainCLI(
+            enableCmd, false, 
+            SetupProgress.getOutputStream(), 
+            SetupProgress.getOutputStream(), 
+            null);         
+
+        if (ret == 0) {
             SetupProgress.reportEnd("emb.success", null);
-        else
+        } else {
             SetupProgress.reportEnd("emb.failed", null);
+        }
         return ret;
     }
     /**
@@ -429,11 +439,13 @@ public class EmbeddedOpenDS {
         }
         return false;
     }
-    private static String concat(String[] args)
+    
+    private static String concat(String[] args) 
     {
         String ret = "";
         for (int i = 0; i < args.length; i++)
-           ret += args[i]+" ";
+           ret += args[i]+" ";        
+        
         return ret;
     }
 
@@ -445,7 +457,7 @@ public class EmbeddedOpenDS {
      *  @param ldif Full path of the ldif file to be loaded.
      *
      */
-    public static void loadLDIF(String odsRoot, String ldif)
+    public static void loadLDIF(String odsRoot, String ldif) 
     {
         Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
         try {
@@ -483,5 +495,89 @@ public class EmbeddedOpenDS {
         }
         return str;
     }
+
+    /**
+     *  Get replication port 
+     *  @param map Map of properties collected by the configurator.
+     *  @return port number if replication is setup, null if not or on error.
+     */
+    public static String getReplicationPort(
+        String username, 
+        String password, 
+        String hostname, 
+        String port
+    ) {
+        final String replDN = 
+           "cn=replication server,cn=Multimaster Synchronization,cn=Synchronization Providers,cn=config";
+        final String[] attrs = { "ds-cfg-replication-port" };
+        String replPort = null;
+        LDAPConnection ld = null;
+        try {
+            // We'll use Directory Manager
+            username = "cn=Directory Manager";
+            LDAPConnection lc = getLDAPConnection(
+                hostname,
+                port,
+                username,
+                password
+            );
+            if (lc != null) {
+                LDAPEntry le = lc.read(replDN, attrs);
+                if (le != null) {
+                    LDAPAttribute la = le.getAttribute(attrs[0]);
+                    if (la != null) {
+                        Enumeration en = la.getStringValues();
+                        if (en != null && en.hasMoreElements()) {
+                             replPort = (String) en.nextElement();
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+            "EmbeddedOpenDS.getReplicationPort(). Error getting replication port:", ex);
+             
+        } finally {
+            disconnectDServer(ld);
+        }
+        return replPort;
+       
+    }
+    
+    /**
+     * Helper method to return Ldap connection to a embedded opends
+     * server.
+     * @return Ldap connection 
+     */
+    private static LDAPConnection getLDAPConnection(
+        String dsHostName,
+        String dsPort,
+        String dsManager,
+        String dsAdminPwd
+    ) {
+        LDAPConnection ld = null;
+        try {
+            int dsPortInt = Integer.parseInt(dsPort);
+            ld = new LDAPConnection();
+            ld.setConnectTimeout(300);
+            ld.connect(3, dsHostName, dsPortInt, dsManager, dsAdminPwd);
+        } catch (LDAPException ex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "EmbeddedOpenDS.setup(). Error getting LDAPConnection:", ex);
+        }
+        return ld;
+    }
+
+    /**
+     * Helper method to disconnect from Directory Server. 
+     */
+    private static void disconnectDServer(LDAPConnection ld) {
+        if ((ld != null) && ld.isConnected()) {
+            try {
+                ld.disconnect();
+            } catch (LDAPException e) {
+            }
+        }
+    } 
 
 }

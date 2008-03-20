@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.48 2008-03-07 23:27:58 jonnelson Exp $
+ * $Id: AMSetupServlet.java,v 1.49 2008-03-20 20:50:20 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -474,7 +478,8 @@ public class AMSetupServlet extends HttpServlet {
                         "AMSetupServlet.configure: embedded = true", ex);
                     ex.printStackTrace();
                     throw new ConfiguratorException(
-                        "Error setting up embedded ds:ex="+ex);
+                        "Error setting up Embedded Directory Server: " + 
+                        ex.getLocalizedMessage());
                 }
             }
 
@@ -1236,6 +1241,107 @@ public class AMSetupServlet extends HttpServlet {
         return canUseAsPort;
     }
 
+    /**
+      * Obtains misc config data from a remote FAM server :
+      *     opends port
+      *     config basedn
+      *     flag to indicate replication is already on or not
+      *     opends replication port or opends sugested port
+      *
+      * @param server - URL string representing the remote fam server
+      * @param userid - admin userid on remote server (only amdmin)
+      * @param password - admin password
+      * @return Map of confif params.
+      * @throws <code>ConfiguratonException</code>
+      *   errorCodes :
+      *     400=Bad Request - userid/passwd param missing
+      *     401=Unauthorized - invalid credentials
+      *     405=Method Not Allowed - only POST is honored
+      *     408=Request Timeout - requested timed out
+      *     500=Internal Server Error 
+      *     701=File Not Found - incorrect deployuri/server
+      *     702=Connection Error - failed to connect
+      */
+    public static Map getRemoteServerInfo(
+                      String server, String userid, String pwd)
+    {
+        HttpURLConnection conn = null;
+        try {
+            // Construct data
+            String data = "IDToken1=" + URLEncoder.encode(userid, "UTF-8")+
+                          "&IDToken2="+ URLEncoder.encode(pwd, "UTF-8");
+            // Send data
+            URL url = new URL(server+"/getServerInfo.jsp");
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = 
+                       new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            wr.flush();
+            // Get the response
+            BufferedReader rd = 
+                new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            Map info = null;
+            while ((line = rd.readLine()) != null) {
+                if (line.length() == 0)
+                    continue;
+                info = BootstrapData.queryStringToMap(line);
+            }
+            wr.close();
+            rd.close();
+            return info;
+        } catch (javax.net.ssl.SSLHandshakeException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw new ConfiguratorException("702", null, 
+                         java.util.Locale.getDefault());
+        } catch (IllegalArgumentException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw new ConfiguratorException("702", null, 
+                         java.util.Locale.getDefault());
+        } catch (java.net.MalformedURLException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw new ConfiguratorException("702", null, 
+                         java.util.Locale.getDefault());
+        } catch (java.net.UnknownHostException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw new ConfiguratorException("702", null, 
+                         java.util.Locale.getDefault());
+        } catch (FileNotFoundException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw new ConfiguratorException("701", null, 
+                         java.util.Locale.getDefault());
+        } catch (java.net.ConnectException e) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw new ConfiguratorException("702", null, 
+                         java.util.Locale.getDefault());
+        } catch (IOException e) {
+            ConfiguratorException cex = null;
+            int status = 0;
+            if (conn != null) {
+                try {
+                   status = conn.getResponseCode();
+                } catch (Exception ig) {}
+            }
+  
+            if (status == 401 || status == 400 || status == 405 ||
+                status == 408 ) {
+                 cex = new ConfiguratorException(""+status, null, 
+                         java.util.Locale.getDefault());
+            } else  {
+                 cex = new ConfiguratorException(e.getMessage());
+            }
+            Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
+                    "AMSetupServlet.getRemoteServerInfo()", e);
+            throw cex;
+        }
+    }
 
     /**
      * Returns schema file names.
