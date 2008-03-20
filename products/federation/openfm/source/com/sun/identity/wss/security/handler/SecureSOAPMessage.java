@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.11 2008-03-13 20:21:43 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.12 2008-03-20 05:35:11 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -535,13 +535,12 @@ public class SecureSOAPMessage {
 
          if( (SecurityMechanism.WSS_NULL_SAML_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML_HK_URI.equals(uri)) ||
-             (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri)) ||
-             (SecurityMechanism.STS_SECURITY_URI.equals(uri))) {
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI.equals(uri))) {
              cert = WSSUtils.getCertificate(securityToken);
              
          } else if( (SecurityMechanism.WSS_NULL_SAML2_HK_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML2_HK_URI.equals(uri)) ||
-             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri)) ) {
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI.equals(uri))) {
              cert = SAML2TokenUtils.getCertificate(securityToken);
              
          } else if( (SecurityMechanism.WSS_NULL_SAML_SV_URI.equals(uri)) ||
@@ -549,8 +548,20 @@ public class SecureSOAPMessage {
              (SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_NULL_SAML2_SV_URI.equals(uri)) ||
              (SecurityMechanism.WSS_TLS_SAML2_SV_URI.equals(uri)) ||
-             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri)) ) {
+             (SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI.equals(uri))) {
              cert =  keyProvider.getX509Certificate(certAlias);
+             
+         } else if (SecurityMechanism.STS_SECURITY_URI.equals(uri)) {
+             if(SecurityToken.WSS_SAML_TOKEN.equals(
+                 securityToken.getTokenType())) {
+                 cert = WSSUtils.getCertificate(securityToken);
+             } else if(SecurityToken.WSS_SAML2_TOKEN.equals(
+                 securityToken.getTokenType())) {
+                 cert = SAML2TokenUtils.getCertificate(securityToken);
+             } 
+             if (cert == null) {
+                 cert =  keyProvider.getX509Certificate(certAlias);
+             }
              
          } else {
              debug.error("SecureSOAPMessage.signWithSAMLAssertion:: " +
@@ -569,7 +580,7 @@ public class SecureSOAPMessage {
                 SAML2Token saml2Token = (SAML2Token)securityToken;
                 assertionID = saml2Token.getAssertion().getID();
              }
-                          
+
              sigElement = sigManager.signWithSAMLToken(doc,
                    cert, assertionID, "", getSigningIds());
 

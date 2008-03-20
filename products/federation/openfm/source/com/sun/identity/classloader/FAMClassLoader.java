@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.3 2008-03-05 00:00:15 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.4 2008-03-20 05:35:10 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,16 +26,12 @@ package com.sun.identity.classloader;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.File;
-import java.io.FileFilter;
 import javax.servlet.ServletContext;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.wss.sts.STSConstants;
 
 /**
  * Federated Access Mananger class loader to overcome the class loading
@@ -53,7 +49,12 @@ public class FAMClassLoader {
         String[] reqJars) {
         if (cl == null) {
             try {
-                URL[] urls = jarFinder(context, reqJars);
+                URL[] urls = null;
+                if (context != null) {
+                    urls = jarFinder(context, reqJars);
+                } else {
+                    urls = getJarsFromConfigFile(reqJars);
+                }
 
                 ClassLoader localcc = FAMClassLoader.class.getClassLoader();
 
@@ -90,6 +91,31 @@ public class FAMClassLoader {
         try {
             for (int i=0; i < jars.length; i++) {
                 urls[i] = context.getResource("/WEB-INF/lib/" + jars[i]);
+                System.out.println("FAM urls[" + i + "] : " + 
+                                   (urls[i]).toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return urls;
+    }
+    
+    private static URL[] getJarsFromConfigFile(String[] reqJars) {
+        if (reqJars != null) {
+            jars = reqJars;
+        }
+        URL[] urls = new URL[jars.length];
+        String FILE_BEGIN = "file:";
+        String FILE_SEPARATOR = "/";
+        String installRoot = System.getProperty("com.sun.aas.installRoot");
+        String defaultJarsPath = installRoot + FILE_SEPARATOR + "addons" 
+            + FILE_SEPARATOR + "accessmanager";
+        String jarsPath = FILE_BEGIN + SystemConfigurationUtil.getProperty(
+            STSConstants.FAM_CLASSLOADER_DIR_PATH, defaultJarsPath) 
+            + FILE_SEPARATOR;
+        try {
+            for (int i=0; i < jars.length; i++) {
+                urls[i] = new URL(jarsPath + jars[i]);
                 System.out.println("FAM urls[" + i + "] : " + 
                                    (urls[i]).toString());
             }
