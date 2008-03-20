@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.8 2007-07-27 05:56:19 veiming Exp $
+ * $Id: SubCommand.java,v 1.9 2008-03-20 02:06:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -492,8 +492,14 @@ public class SubCommand {
             }
         }
 
-        return (desc != null) ? desc : rb.getString(
-            CLIConstants.PREFIX_SUBCMD_RES + this.name + "-" + name);
+        if (desc == null) {
+            desc = rb.getString(
+                CLIConstants.PREFIX_SUBCMD_RES + this.name + "-" + name);
+        }
+
+        desc = desc.replaceAll("&pipe;", "|");
+        desc = desc.replaceAll("&amp;", "&");
+        return desc;
     }
 
     private void parseOptions(
