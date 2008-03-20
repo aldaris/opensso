@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.37 2008-03-12 00:14:24 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.38 2008-03-20 22:27:43 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -5118,10 +5118,20 @@ public class LDAPv3Repo extends IdRepo {
         throws IdRepoException, IdRepoFatalException {
         int resultCode = lde.getLDAPResultCode();
         String ldapError = Integer.toString(resultCode);
-        Object[] args = { CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
+        String errorMessage = lde.getLDAPErrorMessage();
+
+        Object[] args = { CLASS_NAME, LDAPv3Bundle.getString(ldapError), ""};
         if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)) {
             IdRepoFatalException ide = new IdRepoFatalException(
                     IdRepoBundle.BUNDLE_NAME, "311", args);
+            ide.setLDAPErrorCode(ldapError);
+            throw ide;
+        } else if (errorMessage !=null && errorMessage.length() > 0 ) {
+            args[0] = CLASS_NAME;
+            args[1] = ldapError;
+            args[2] = errorMessage;
+            IdRepoException ide = new IdRepoException(
+                IdRepoBundle.BUNDLE_NAME, "313", args);
             ide.setLDAPErrorCode(ldapError);
             throw ide;
         } else if (resultCode == LDAPException.NO_SUCH_OBJECT) {
@@ -5131,7 +5141,7 @@ public class LDAPv3Repo extends IdRepo {
             }
             args[1]  = eDN;
             IdRepoException ide = new IdRepoException(
-                    IdRepoBundle.BUNDLE_NAME, "220", args);
+                IdRepoBundle.BUNDLE_NAME, "220", args);
             ide.setLDAPErrorCode(ldapError);
             throw ide;
         } else {
