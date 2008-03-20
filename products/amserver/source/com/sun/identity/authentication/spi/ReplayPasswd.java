@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReplayPasswd.java,v 1.3 2008-02-20 06:42:37 superpat7 Exp $
+ * $Id: ReplayPasswd.java,v 1.4 2008-03-20 21:50:50 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,14 @@ import sun.misc.BASE64Decoder;
  * the key that is to be used for DES Encryption. Once the password is 
  * encrypted, it assigns a session property "sunIdentityUserPassword" with 
  * this value.
+ * This class is also used to set "sharepoint_login_attr_value" as a session
+ * property to support Sharepoint. It reads the value of the property 
+ * "com.sun.am.sharepoint_login_attr_name" which indicates the user token that
+ * Sharepoint uses for authentication and gets its corresponding attribute 
+ * value from the user datastore.It will then put this as a value of 
+ * "sharepoint_login_attr_value" session property.
+ * This class also sets the "owaAuthCookie" for the all the domains for which
+ * "iPlanetdirectoryPro" cookie is set.  
  */
 public class ReplayPasswd implements AMPostAuthProcessInterface {
 
@@ -85,6 +93,9 @@ public class ReplayPasswd implements AMPostAuthProcessInterface {
 
     private static final String OWA_AUTH_COOKIE =
         "owaAuthCookie";
+
+    private static final String OWA_AUTH_COOKIE_VALUE =
+        "amOwaValue";
 
     private static final String SHAREPOINT_LOGIN_ATTR_NAME =
         "com.sun.am.sharepoint_login_attr_name";  
@@ -140,10 +151,11 @@ public class ReplayPasswd implements AMPostAuthProcessInterface {
                ssoToken.setProperty(SUN_IDENTITY_USER_PASSWORD, encodedpasswd);
             }
 
-            if(iisOwaEnabled != null && !iisOwaEnabled.trim().equals("")) {
+            if(iisOwaEnabled != null && 
+		iisOwaEnabled.trim().equalsIgnoreCase("true")) {
 	        // Set OWA Auth Cookie
 	        Cookie owaAuthCookie = new Cookie(OWA_AUTH_COOKIE, 
-                                                  OWA_AUTH_COOKIE);
+                                                  OWA_AUTH_COOKIE_VALUE);
 	        Set domains = AuthUtils.getCookieDomains();
 	        if (!domains.isEmpty()) {
 		    for (Iterator it = domains.iterator(); it.hasNext(); ) {
@@ -152,7 +164,7 @@ public class ReplayPasswd implements AMPostAuthProcessInterface {
 		         owaAuthCookie.setPath("/");
                          response.addCookie(owaAuthCookie);
                     }
-                }
+                } 
             }
 
             if(strAttributeName != null && !strAttributeName.trim().equals("")){
