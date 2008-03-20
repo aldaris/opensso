@@ -18,21 +18,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpArtifactResolution.jsp,v 1.1 2006-10-30 23:17:20 qcheng Exp $
+   $Id: idpArtifactResolution.jsp,v 1.2 2008-03-20 16:51:24 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
---%>
-
-
-
-
-
-<%@page
+--%><%@page
 import="com.sun.identity.saml2.profile.IDPArtifactResolution,
 com.sun.identity.saml2.common.SAML2Utils"
-%>
-
-<%
+%><%
     // check request, response
     if ((request == null) || (response == null)) {
 	response.sendError(response.SC_BAD_REQUEST,
