@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentAdd.jsp,v 1.2 2008-03-14 16:47:46 babysunil Exp $
+   $Id: AgentAdd.jsp,v 1.3 2008-03-20 06:14:42 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -54,7 +54,7 @@
        } 
     } 
 </script>
-<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();"/>
+<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
 <cc:breadcrumbs name="breadCrumb" bundleID="amConsole" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">

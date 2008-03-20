@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Entities.jsp,v 1.1 2006-05-04 06:56:15 veiming Exp $
+   $Id: Entities.jsp,v 1.2 2008-03-20 06:18:54 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -54,7 +54,7 @@
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
 </script>
-<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();"/>
+<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
 <cc:breadcrumbs name="breadCrumb" bundleID="amConsole" />
 <cc:tabs name="tabCommon" bundleID="amConsole" submitFormData="true" />
 

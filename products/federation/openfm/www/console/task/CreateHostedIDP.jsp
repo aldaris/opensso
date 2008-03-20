@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.4 2008-03-12 15:14:09 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.5 2008-03-20 06:25:36 asyhuang Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -159,7 +159,7 @@
     }
 </script>
 
-<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();"/>
+<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
         <td>
