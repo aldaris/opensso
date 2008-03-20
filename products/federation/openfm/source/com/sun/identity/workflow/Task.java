@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.3 2008-02-02 03:32:16 veiming Exp $
+ * $Id: Task.java,v 1.4 2008-03-20 02:18:46 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,9 @@ public abstract class Task
 
     protected String getContent(String resName, Locale locale)
         throws WorkflowException {
-        if (resName.startsWith("http://")) {
+        if (resName.startsWith("http://") ||
+            resName.startsWith("https://")
+        ) {
             return getWebContent(resName, locale);
         } else {
             return resName;
