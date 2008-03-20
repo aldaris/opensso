@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.4 2008-03-15 01:14:41 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.5 2008-03-20 04:48:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.RemoteServiceAttributeValidator;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
@@ -435,7 +436,7 @@ public class ServerConfiguration extends ConfigurationBase {
                 Set existingSet = (Set)map.get(ATTR_SERVER_CONFIG);
                 Set newSet = getPropertiesSet(newValues);
                 try {
-                    ServerPropertyValidator.validate(newSet);
+                    validateProperty(ssoToken, newSet);
                     map.put(ATTR_SERVER_CONFIG,
                         combineProperties(existingSet, newSet));
                     cfg.setAttributes(map);
@@ -450,6 +451,19 @@ public class ServerConfiguration extends ConfigurationBase {
         }
     }
     
+    private static void validateProperty(SSOToken token, Set properties)
+        throws UnknownPropertyNameException, ConfigurationException {
+        if (SystemProperties.isServerMode()) {
+            ServerPropertyValidator.validateProperty(properties);
+        } else {
+            if (!RemoteServiceAttributeValidator.validate(token, 
+                "com.sun.identity.common.configuration.ServerPropertyValidator",
+                properties)
+            ) {
+                throw new ConfigurationException("invalid.properties");
+            }
+        }
+    }
     /**
      * Removes server configuration. This will result in inheriting from
      * default server configuration.
@@ -560,7 +574,7 @@ public class ServerConfiguration extends ConfigurationBase {
         UnknownPropertyNameException {
         boolean created = false;
         if (!instanceName.equals(DEFAULT_SERVER_CONFIG)) {
-            ServerPropertyValidator.validate(values);
+            validateProperty(ssoToken, values);
         }
         ServiceConfig sc = getRootServerConfig(ssoToken);
         

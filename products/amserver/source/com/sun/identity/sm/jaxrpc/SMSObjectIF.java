@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObjectIF.java,v 1.2 2006-12-15 01:19:53 goodearth Exp $
+ * $Id: SMSObjectIF.java,v 1.3 2008-03-20 04:48:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,4 +90,21 @@ public interface SMSObjectIF extends Remote {
     // Interface to receive object changed notifications
     public void notifyObjectChanged(String name, int type)
             throws RemoteException;
+
+    /**
+     * Validates service configuration attributes.
+     *
+     * @param token Single Sign On token.
+     * @param validatorClass validator class name.
+     * @param values Values to be validated.
+     * @return <code>true</code> of values are valid.
+     * @throws SMSException if value is not valid.
+     * @throws SSOException if single sign on token is in valid.
+     * @throws RemoteException if remote method cannot be invoked.
+     */
+    public boolean validateServiceAttributes(
+        String token,
+        String validatorClass,
+        Set values
+    ) throws SMSException, SSOException, RemoteException;
 }

@@ -1,0 +1,50 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: RemoteServiceAttributeValidator.java,v 1.1 2008-03-20 04:48:37 veiming Exp $
+ *
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.sm;
+
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
+import java.util.Set;
+
+public class RemoteServiceAttributeValidator {
+    private RemoteServiceAttributeValidator() {
+    }
+
+    public static boolean validate(
+        SSOToken token, 
+        String clazz,
+        Set values) {
+        try {
+            SMSJAXRPCObject smsObj = new SMSJAXRPCObject();
+            return smsObj.validateServiceAttributes(token,
+                clazz, values);
+        } catch (SSOException e) {
+            return false;
+        } catch (SMSException e) {
+            return false;
+        }
+    }
+}

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.14 2007-11-14 18:54:19 ww203982 Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.15 2008-03-20 04:48:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimerPool;
-import com.sun.identity.common.TimerPool;
 import com.sun.identity.jaxrpc.JAXRPCUtil;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -459,6 +458,39 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         }
         return (amsdkbaseDN);
     }
+
+    /**
+     * Validates service configuration attributes.
+     *
+     * @param token Single Sign On token.
+     * @param validatorClass validator class name.
+     * @return <code>true</code> of values are valid.
+     * @param values Values to be validated.
+     * @throws SSOException if single sign on token is in valid.
+     * @throws SMSException if value is invalid.
+     */
+    public boolean validateServiceAttributes(
+        SSOToken token,
+        String validatorClass, 
+        Set values
+    ) throws SMSException, SSOException {
+        try {
+            Object[] objs = {token.getTokenID().toString(), validatorClass, 
+                values};
+            Boolean b = (Boolean)client.send(client.encodeMessage(
+                "validateServiceAttributes", objs), null, null);
+            return b.booleanValue();
+        } catch (SSOException e) {
+            throw e;
+        } catch (SMSException smse) {
+            throw smse;
+        } catch (Exception re) {
+            debug.error("SMSJAXRPCObjectvalidateServiceAttributes", re);
+            throw new SMSException(re,
+                "sms-JAXRPC-attribute-values-validation-failed");
+        }
+    }
+
 
     /**
      * Registration of Notification Callbacks

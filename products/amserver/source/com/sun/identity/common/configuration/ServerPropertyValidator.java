@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerPropertyValidator.java,v 1.1 2007-10-17 23:00:32 veiming Exp $
+ * $Id: ServerPropertyValidator.java,v 1.2 2008-03-20 04:48:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common.configuration;
 
+import com.sun.identity.sm.ServiceAttributeValidator;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -38,7 +39,7 @@ import java.util.StringTokenizer;
 /**
  * Validates the values of server configuration properties.
  */
-public class ServerPropertyValidator {
+public class ServerPropertyValidator implements ServiceAttributeValidator{
     private static Map keyToPossibleValues = new HashMap();
     private static Set arrayKeys = new HashSet();
     private static Set mapKeys = new HashSet();
@@ -82,9 +83,25 @@ public class ServerPropertyValidator {
         }
     }
 
-    private ServerPropertyValidator() {
+    public ServerPropertyValidator() {
     }
     
+    /**
+     * Validates a set of server configuration properties.
+     *
+     * @param properties Set of String of this format name=value.
+     */    
+    public boolean validate(Set properties)  {
+        try {
+            validateProperty(properties);
+            return true;
+        } catch (UnknownPropertyNameException ex) {
+            return false;
+        } catch (ConfigurationException ex) {
+            return false;
+        }
+    }
+        
     /**
      * Validates a set of server configuration properties.
      *
@@ -92,7 +109,7 @@ public class ServerPropertyValidator {
      * @throws UnknownPropertyNameException if property name is not valid.
      * @throws ConfigurationException if properties is not in proper format.
      */
-    public static void validate(Set properties)
+    public static void validateProperty(Set properties)
         throws UnknownPropertyNameException, ConfigurationException {
         try {
             validate(ServerConfiguration.getProperties(properties));

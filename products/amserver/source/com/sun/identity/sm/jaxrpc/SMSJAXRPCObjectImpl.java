@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.13 2008-03-18 19:51:39 goodearth Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.14 2008-03-20 04:48:38 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,7 @@ import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SMSUtils;
+import com.sun.identity.sm.ServiceAttributeValidator;
 
 public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
 
@@ -339,6 +340,38 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         }
         return (amsdkbaseDN);
     }
+
+    /**
+     * Validates service configuration attributes.
+     *
+     * @param token Single Sign On token.
+     * @param validatorClass validator class name.
+     * @param values Values to be validated.
+     * @return <code>true</code> of values are valid.
+     * @throws SMSException if value is not valid.
+     * @throws SSOException if single sign on token is in valid.
+     * @throws RemoteException if remote method cannot be invoked.
+     */
+    public boolean validateServiceAttributes(
+        String token,
+        String validatorClass,
+        Set values
+    ) throws SMSException, SSOException, RemoteException {
+        try {
+            Class clazz = Class.forName(validatorClass);
+            ServiceAttributeValidator v = (ServiceAttributeValidator)
+                clazz.newInstance();
+            return v.validate(values);
+        } catch (InstantiationException ex) {
+            throw new SMSException("sms-validator_cannot_instantiate_class");
+        } catch (IllegalAccessException ex) {
+            throw new SMSException("sms-validator_cannot_instantiate_class");
+        } catch (ClassNotFoundException ex) {
+            throw new SMSException("sms-validator_cannot_instantiate_class");
+        }
+
+    }
+
 
     // Implementation to receive requests from clients
     // Returns changes in the past <i>time</i> minutes

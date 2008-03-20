@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaImpl.java,v 1.4 2007-11-02 21:59:39 pawand Exp $
+ * $Id: ServiceSchemaImpl.java,v 1.5 2008-03-20 04:48:37 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.shared.Constants;
@@ -478,13 +479,15 @@ class ServiceSchemaImpl {
             av.validate(values, i18nFileName, encodePassword);
         }
 
-        validatePlugin(attrName, values);
+        validatePlugin(ssoToken, attrName, values);
     }
 
     /**
      * Validates the attribute with the validation plugin if a plugin has been
      * registered for this attribute in the service schema.
      * 
+     * @param token 
+     *            Single Sign On token.
      * @param attrName
      *            the name of the attribute to validate
      * @param values
@@ -496,8 +499,8 @@ class ServiceSchemaImpl {
      * @throws InvalidAttributeNameException
      *             the attribute does not appear in the schema
      */
-    boolean validatePlugin(String attrName, Set values) throws SMSException,
-            InvalidAttributeNameException {
+    boolean validatePlugin(SSOToken token, String attrName, Set values
+    ) throws SMSException, InvalidAttributeNameException {
 
         AttributeSchemaImpl as = getAttributeSchema(attrName);
         if (as == null) {
@@ -514,75 +517,107 @@ class ServiceSchemaImpl {
         }
 
         AttributeSchemaImpl validatorAttrSchema = 
-            getAttributeSchema(validatorName);
-        if (validatorAttrSchema == null) {
-            // no validator definition found
-            if (debug.warningEnabled()) {
-                debug.warning("ServiceConfigValidator.validatePlugin: "
-                        + "no definition found for the validator "
-                        + validatorName);
+           getAttributeSchema(validatorName);
+        if (validatorAttrSchema != null) {
+            boolean isServerMode = SystemProperties.isServerMode();
+            Set javaClasses = validatorAttrSchema.getDefaultValues();
+            for (Iterator it = javaClasses.iterator(); it.hasNext();) {
+                String javaClass = (String) it.next();
+                try {
+                    serverEndAttrValidation(as, attrName, values, javaClass);
+                } catch (SMSException e) {
+                    if (isServerMode) {
+                        clientEndAttrValidation(
+                            token, as, attrName, values, javaClass);
+
+                    }
+                }
             }
-            return true;
-        }
-
-        Set javaClasses = validatorAttrSchema.getDefaultValues();
-        Iterator it = javaClasses.iterator();
-
-        while (it.hasNext()) {
-            String javaClass = (String) it.next();
-
-            if (debug.messageEnabled()) {
-                debug.message("ServiceConfigValidator.validatePlugin: "
-                        + "validate the attribute " + attrName
-                        + " by the validator " + javaClass);
-            }
-
-            ServiceAttributeValidator validator = null;
-            try {
-                // instantiate the Java class
-                Class theClass = Class.forName(javaClass);
-                validator = (ServiceAttributeValidator) theClass.newInstance();
-
-            } catch (Exception e) {
-                debug.error("ServiceConfigValidator.validatePlugin: "
-                        + "unable to instantiate the validator class "
-                        + javaClass);
-                String args[] = { javaClass };
-                throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                        IUMSConstants.SMS_VALIDATOR_CANNOT_INSTANTIATE_CLASS,
-                        args);
-            }
-
-            validatePlugin(validator, as, attrName, values);
         }
 
         return true;
     }
 
-    private void validatePlugin(ServiceAttributeValidator validator,
-            AttributeSchemaImpl as, String attrName, Set values)
-            throws InvalidAttributeValueException {
+    private void clientEndAttrValidation(
+        SSOToken token,
+        AttributeSchemaImpl as,
+        String attrName,
+        Set values,
+        String javaClass
+    ) throws SMSException {
+        if (!RemoteServiceAttributeValidator.validate(
+            token, javaClass, values)
+        ) {
+            throwInvalidAttributeValuesException(
+                javaClass.equals("com.sun.identity.sm.RequiredValueValidator"),
+                attrName, as);
+        }
+    }
+    
+    private void serverEndAttrValidation(
+        AttributeSchemaImpl as,
+        String attrName,
+        Set values,
+        String javaClass
+    ) throws SMSException {
+        try {
+            Class clazz = Class.forName(javaClass);
+            ServiceAttributeValidator validator = (ServiceAttributeValidator)
+                clazz.newInstance();
+            validatePlugin(validator, as, attrName, values);
+        } catch (InstantiationException ex) {
+            debug.error("ServiceSchemaImpl.serverEndAttrValidation", ex);
+            String args[] = {javaClass};
+            throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                IUMSConstants.SMS_VALIDATOR_CANNOT_INSTANTIATE_CLASS,
+                args);
+        } catch (IllegalAccessException ex) {
+            debug.error("ServiceSchemaImpl.serverEndAttrValidation", ex);
+            String args[] = {javaClass};
+            throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                IUMSConstants.SMS_VALIDATOR_CANNOT_INSTANTIATE_CLASS,
+                args);
+        } catch (ClassNotFoundException ex) {
+            debug.error("ServiceSchemaImpl.serverEndAttrValidation", ex);
+            String args[] = {javaClass};
+            throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                IUMSConstants.SMS_VALIDATOR_CANNOT_INSTANTIATE_CLASS,
+                args);
+        }
+    }
+
+    private void validatePlugin(
+        ServiceAttributeValidator validator,
+        AttributeSchemaImpl as, 
+        String attrName, 
+        Set values
+    ) throws InvalidAttributeValueException {
         if (!validator.validate(values)) {
-            if (debug.messageEnabled()) {
-                debug.message("ServiceSchemaImpl.validatePlugin: "
-                        + "validation failed for the the attribute: "
-                        + attrName + " and its values: " + values);
-            }
-            String i18nFileName = (ssm != null) ? ssm.getI18NFileName() : null;
+            throwInvalidAttributeValuesException(
+                (validator instanceof RequiredValueValidator),
+                attrName, as);
+        }
+    }
+    
+    private void throwInvalidAttributeValuesException(
+        boolean isRequiredValue,
+        String attrName,
+        AttributeSchemaImpl as)
+        throws InvalidAttributeValueException {
+        String i18nFileName = (ssm != null) ? ssm.getI18NFileName() : null;
 
-            String message = (validator instanceof RequiredValueValidator) 
-                    ? "sms-attribute-values-missing"
-                    : "sms-attribute-values-does-not-match-schema";
+        String message = (isRequiredValue)
+            ? "sms-attribute-values-missing"
+            : "sms-attribute-values-does-not-match-schema";
 
-            if (i18nFileName != null) {
-                String[] args = { attrName, i18nFileName, as.getI18NKey() };
-                throw new InvalidAttributeValueException(
-                        IUMSConstants.UMS_BUNDLE_NAME, message, args);
-            } else {
-                String[] args = { attrName };
-                throw new InvalidAttributeValueException(
-                        IUMSConstants.UMS_BUNDLE_NAME, message, args);
-            }
+        if (i18nFileName != null) {
+            String[] args = {attrName, i18nFileName, as.getI18NKey()};
+            throw new InvalidAttributeValueException(
+                IUMSConstants.UMS_BUNDLE_NAME, message, args);
+        } else {
+            String[] args = {attrName};
+            throw new InvalidAttributeValueException(
+                IUMSConstants.UMS_BUNDLE_NAME, message, args);
         }
     }
 }
