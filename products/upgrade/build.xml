@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-01-31 21:50:42 bina Exp $
+   $Id: build.xml,v 1.6 2008-03-20 17:21:09 bina Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,6 +28,7 @@
     <description>Upgrade Open Web Single Sign-On </description>
 
     <import file="../products.xml" />
+    <import file="../federation/library/library.xml" />
     <import file="../federation/openfm/openfm.xml" />
     <import file="../amserver/amserver.xml" />
     <import file="./upgrade.xml" />
@@ -44,6 +45,8 @@
     <property name="build.debuglevel" value="lines,vars,source"/>
 
     <path id="build.class.path">
+         <pathelement location="${library.classes.dir}"/>
+         <pathelement location="${openfm.classes.dir}"/>
          <pathelement location="${sharedlib.classes.dir}"/>
          <pathelement location="${amserver.classes.dir}"/>
          <pathelement location="${upgrade.classes.dir}"/>
@@ -62,6 +65,7 @@
         <mkdir dir="${upgrade.dist.dir}/upgrade/lib"/>
         <mkdir dir="${upgrade.dist.dir}/upgrade/scripts"/>
         <mkdir dir="${upgrade.dist.dir}/upgrade/config"/>
+        <mkdir dir="${upgrade.dist.dir}/upgrade/locale"/>
     </target>
 
     <target name="clean">
@@ -148,6 +152,8 @@
             todir="${upgrade.dist.dir}/upgrade/config"  />
          <copy file="${tools.built.dir}/amadm_setup.jar"
             todir="${upgrade.dist.dir}/upgrade/lib"  />
+         <copy file="${legacy.src.dir}/resources/locale/amAdminCLI.properties"
+	    todir="${upgrade.dist.dir}/upgrade/locale" />
     </target>
 
      <target name="build-jar">

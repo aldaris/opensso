@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.5 2008-01-17 01:44:20 bina Exp $
+ * $Id: Main.java,v 1.6 2008-03-20 17:21:09 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -288,6 +288,11 @@ public class Main
     }
 
     public void parseCommandLine(String[] argv) throws AdminException {
+	if (bundle == null) {
+	    AdminResourceBundle.setLocale(null);
+	    bundle = AdminResourceBundle.getResources();
+	}
+
         if (!ArgumentValidator.validateArguments(argv, bundle)) {
             System.err.println(bundle.getString("usage"));
             System.exit(1);

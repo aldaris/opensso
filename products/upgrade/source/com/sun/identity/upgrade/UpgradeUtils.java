@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.1 2008-01-18 08:03:12 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.2 2008-03-20 17:21:08 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.upgrade;
 
+import com.sun.identity.federation.jaxb.entityconfig.AttributeType;
+import netscape.ldap.util.DN;
 import com.iplanet.am.admin.cli.Main;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
@@ -34,13 +36,12 @@ import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdType;
+import com.sun.identity.federation.meta.IDFFMetaException;
+import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
-import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -49,12 +50,13 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.SMSMigration70;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,23 +66,43 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Properties;
 import javax.security.auth.login.LoginException;
 import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPException;
 import netscape.ldap.util.LDIF;
+import com.sun.identity.policy.Policy;
+import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.policy.Rule;
+import com.sun.identity.policy.SubjectTypeManager;
+import com.sun.identity.policy.interfaces.Subject;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import netscape.ldap.LDAPAttribute;
+import netscape.ldap.LDAPAttributeSet;
+import netscape.ldap.LDAPDN;
+import netscape.ldap.LDAPEntry;
+import netscape.ldap.LDAPModification;
+import netscape.ldap.LDAPModificationSet;
+import netscape.ldap.LDAPSearchResults;
+import netscape.ldap.LDAPv2;
 
 /**
  * This class contains utilities to upgrade the service schema
  * configuration to be compatible with FAM.
  * 
- * TODO: 
- * 1.add localization 
- * 2. logs
- * 3. use constants where possible.
- * 
  */
 public class UpgradeUtils {
 
+    static Properties configTags;
     final static String SCHEMA_TYPE_GLOBAL = "global";
     final static String SCHEMA_TYPE_ORGANIZATION = "organization";
     final static String SCHEMA_TYPE_DYNAMIC = "dynamic";
@@ -88,8 +110,39 @@ public class UpgradeUtils {
     final static String SCHEMA_TYPE_POLICY = "policy";
     final static String AUTH_SERVICE_NAME = "iPlanetAMAuthService";
     final static String AUTH_ATTR_NAME = "iplanet-am-auth-authenticators";
+    final static String ATTR_ADMIN_AUTH_MODULE =
+            "iplanet-am-auth-admin-auth-module";
+    final static String ATTR_ORG_AUTH_MODULE = "iplanet-am-auth-org-config";
     final static int AUTH_SUCCESS =
             com.sun.identity.authentication.internal.AuthContext.AUTH_SUCCESS;
+    final static String ORG_NAMING_ATTR = "o";
+    final static String OU = "ou";
+    final static String SERVICE_DN = "ou=services";
+    final static String COMMA = ",";
+    final static String EQUAL = "=";
+    final static String AUTH_CONFIG_SERVICE = "iPlanetAMAuthConfiguration";
+    final static String CONFIG_DN =
+            "ou=Configurations,ou=default,ou=OrganizationConfig,ou=1.0,";
+    final static String NAMED_CONFIG = "Configurations";
+    final static String SUB_NAMED_CONFIG = "NamedConfiguration";
+    final static String AUTH_ATTR_PREFIX = "iplanet-am-auth";
+    final static String ATTR_AUTH_CONFIG = "iplanet-am-auth-configuration";
+    final static String ATTR_AUTH_SUCCESS_URL =
+            "iplanet-am-auth-login-success-url";
+    final static String ATTR_AUTH_FAIL_URL =
+            "iplanet-am-auth-login-failure-url";
+    final static String ATTR_AUTH_POST_CLASS =
+            "iplanet-am-auth-post-login-process-class";
+    final static String START_VALUE = "<Value>";
+    final static String END_VALUE = "</Value>";
+    final static String ATTR_START_VALUE = "<AttributeValuePair>";
+    final static String ATTR_END_VALUE = "</AttributeValuePair>";
+    final static String HIDDEN_REALM =
+            "/sunamhiddenrealmdelegationservicepermissions";
+    final static String IDREPO_SERVICE = "sunIdentityRepositoryService";
+    final static String IDFF_PROVIDER_SERVICE = 
+        "iPlanetAMProviderConfigService";
+    final static String IDFF_SERVICE_VERSION = "1.1";
     static SSOToken ssoToken;
     public static Debug debug = Debug.getInstance("famUpgrade");
     private static String dsHostName;
@@ -101,17 +154,47 @@ public class UpgradeUtils {
     private static LDAPConnection ld = null;
     private static String basedir;
     private static String stagingDir;
-    private static String rootSuffix;
-
+    private static String configDir;
+    private static String rootSuffix = SMSEntry.getRootSuffix();
+    private static ResourceBundle bundle;
+    static Map entityDescriptors = new HashMap();
+    static Map entityConfigs = new HashMap();
     // will be passed on from the main upgrade class
     static String adminDN = null;
     static String adminPasswd = null;
     // the following value will be passed down from the Main Upgrade program.
     // default dsMnanager dn.
     static String dsManager = "cn=Directory Manager";
+    static String RESOURCE_BUNDLE_NAME = "famUpgrade";
+    static String PRINCIPAL = "Principal";
+    static String REALM_MODE = "realmMode";
+    static String SERVER_DEFAULTS_FILE = "serverdefaults.properties";
+    static String AUTH_CONFIG_SEARCH_FILTER =
+            "(&(objectclass=LDAPsubentry) (cn=iplanetamauthconfiguration))";
+    final static String COS_TEMPL_FILTER = "objectclass=costemplate";
+    final static String DELEGATION_SERVICE = "sunAMDelegationService";
+    final static String ORG_ADMIN_ROLE = "Organization Admin Role";
+    final static String DELEGATION_SUBJECT = "delegation-subject";
+    final static String POLICY_SERVICE = "iPlanetAMPolicyService";
+    final static String ORG_POLICY_ADMIN_ROLE =
+            "Organization Policy Admin Role";
+    final static String REALM_SERVICE = "sunAMRealmService";
+    final static String REALM_READ_ONLY = "RealmReadOnly";
+    final static String DATA_STORE_READ_ONLY = "DatastoresReadOnly";
+    final static String AM_ID_SUBJECT = "AMIdentitySubject";
+    final static String ATTR_SERVER_CONFIG = "serverconfig";
+    final static String ATTR_SERVER_CONFIG_XML = "serverconfigxml";
+    final static String CONFIG_SERVER_DEFAULT = "serverdefaults";
+    final static String SUB_SCHEMA_SERVER = "server";
+    final static String SERVER_CONFIG_XML = "serverconfig.xml";
 
     static {
-        // TODO change this 
+        //bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
+        // TODO change this , the properties should be 
+        // read from AMConfig.properties. Currently
+        // properties from AMConfig.properties are not
+        // being picked up.
+        System.setProperty("com.iplanet.services.debug.level", "message");
         System.setProperty("com.iplanet.am.version", "8.0");
         System.setProperty("installTime", "true");
         System.setProperty("donotIncludeSMSAuthModule", "true");
@@ -123,101 +206,126 @@ public class UpgradeUtils {
      * @return Admin Token.
      */
     public static SSOToken getSSOToken() {
-        String classMethod = "UpgradeUtils:getSSOToken";
+        String classMethod = "UpgradeUtils:getSSOToken: ";
         if (ssoToken == null) {
             ssoToken = ldapLoginInternal(bindDN, bindPasswd);
         }
         if (ssoToken != null) {
             try {
-                String principal = ssoToken.getProperty("Principal");
+                String principal = ssoToken.getProperty(PRINCIPAL);
                 if (debug.messageEnabled()) {
                     debug.message(classMethod +
                             "Principal in SSOToken :" + principal);
                 }
             } catch (Exception e) {
-                debug.error("Error creating SSOToken ", e);
+                debug.error(classMethod + "Error creating SSOToken ", e);
             }
         }
         return ssoToken;
     }
 
     /**
-     * Create a new service in server.
+     * Creates a new service schema in the configuration store.
+     * The service xml file passed should follow the SMS
+     * DTD.
      *
-     * @param xmlfileName Name of the schema XML file to be loaded.
+     * @param fileName Name of the service schema XML to be loaded.
+     * @throws UpgradeException if there is an error creating a service.
+     * @supported.api
      */
     public static void createService(String fileName) throws UpgradeException {
-        String classMethod = "UpgradeUtils:createService";
-        log("Creating Service" + fileName);
+        String classMethod = "UpgradeUtils:createService : ";
+        replaceTag(fileName, configTags);
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + fileName);
+        }
         FileInputStream fis = null;
         try {
             ServiceManager ssm = getServiceManager();
             fis = new FileInputStream(fileName);
             ssm.registerServices(fis);
         } catch (FileNotFoundException fe) {
-            throw new UpgradeException("File Not found");
+            debug.error(classMethod + "File not found: " + fileName, fe);
+            throw new UpgradeException(fe.getMessage());
         } catch (SSOException ssoe) {
-            throw new UpgradeException("Invalid SSOToken");
-        } catch (SMSException e) {
-            throw new UpgradeException("Unable to load service schema ");
+            debug.error(classMethod + "SSOToken is not valid", ssoe);
+            throw new UpgradeException(ssoe.getMessage());
+        } catch (SMSException sme) {
+            debug.error(classMethod + "Invalid service schema xml" + fileName);
+            throw new UpgradeException(sme.getMessage());
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException ie) {
-                //igore if file input stream cannot be closed.
+                //ignore if file input stream cannot be closed.
                 }
             }
         }
     }
 
     /**
-     * Add attribute schema to an existing service.
-     *
-     * @param servicename Service Name.
-     * @param schematype Schema Type.
-     * @param attributeschemafile
-     *        XML file containing attribute schema definition.
-     * @param subschemaname Name of sub schema.
+     * Adds new attribute schema to an existing service.
+     * 
+     * @param serviceName the service name.
+     * @param schemaType the schema type.
+     * @param attributeSchemafile 
+     *         XML file containing attribute schema definition.
+     * @throws UpgradeException if there is an error adding the 
+     *         attribute schema.
+     * @supported.api
      */
     public static void addAttributeToSchema(
             String serviceName,
             String schemaType,
             String attributeSchemaFile) throws UpgradeException {
-        String classMethod = "UpgradeUtils:addAttributeToSchema";
-        log("Adding attributeschema" + attributeSchemaFile +
-                "for service" + serviceName);
+        String classMethod = "UpgradeUtils:addAttributeToSchema: ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Adding attributeschema :" 
+                    + attributeSchemaFile + "for service :" + serviceName);
+        }
         FileInputStream fis = null;
         ServiceSchema ss = getServiceSchema(serviceName, null, schemaType);
         try {
             fis = new FileInputStream(attributeSchemaFile);
             ss.addAttributeSchema(fis);
         } catch (IOException ioe) {
-            throw new UpgradeException("Incorrect file name");
+            debug.error(classMethod + "File not found " + attributeSchemaFile);
+            throw new UpgradeException(ioe.getMessage());
         } catch (SMSException sme) {
-            throw new UpgradeException("Cannot add attribute exception");
+            debug.error(classMethod + "Cannot add attribute schema for " 
+                    + serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
         } catch (SSOException ssoe) {
-            throw new UpgradeException("invalid sso token");
+            debug.error(classMethod + "Invalid SSOToken : ", ssoe);
+            throw new UpgradeException(ssoe.getMessage());
         }
     }
 
     /**
-     * Add attribute schema to an existing service.
+     * Adds new attribute schema to a sub schema in an existing service.
      *
-     * @param servicename Service Name.
-     * @param schematype Schema Type.
-     * @param attributeschemafile XML file containing attribute schema 
-     * definition.
-     * @param subschemaname Name of sub schema.
+     * @param serviceName the service name.
+     * @param subSchemaName the sub schema name.
+     * @param schemaType the schema type.
+     * @param attributeSchemafile 
+     *         XML file containing attribute schema definition.
+     * @throws UpgradeException if there is an error adding the 
+     *         attribute schema.
+     * @supported.api
      */
     public static void addAttributeToSubSchema(
             String serviceName,
             String subSchemaName,
             String schemaType,
             String attributeSchemaFile) throws UpgradeException {
-        String classMethod = "UpgradeUtils:addAttributeSchema";
-        log(classMethod + "Adding attribute schema : " + attributeSchemaFile);
-        log(" to subSchema " + subSchemaName + " to service " + serviceName);
+        String classMethod = "UpgradeUtils:addAttributeToSubSchema : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Adding attribute schema : " 
+                    + attributeSchemaFile);
+            debug.message(" to subSchema " + subSchemaName + 
+                    " to service " + serviceName);
+        }
         FileInputStream fis = null;
         ServiceSchema ss =
                 getServiceSchema(serviceName, subSchemaName, schemaType);
@@ -225,11 +333,18 @@ public class UpgradeUtils {
             fis = new FileInputStream(attributeSchemaFile);
             ss.addAttributeSchema(fis);
         } catch (IOException ioe) {
-            throw new UpgradeException("Incorrect file name");
+            debug.error(classMethod + "File not found " + attributeSchemaFile);
+            throw new UpgradeException(ioe.getMessage());
         } catch (SMSException sme) {
-            throw new UpgradeException("Cannot add attribute exception");
+            debug.error(classMethod + "Cannot add attribute schema to : " 
+                    + serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
         } catch (SSOException ssoe) {
-            throw new UpgradeException("invalid sso token");
+            debug.error(classMethod + "Invalid SSOToken : ", ssoe);
+            throw new UpgradeException(ssoe.getMessage());
+        } catch (Exception e ) {
+            debug.error(classMethod + "Error setting attribute schema : ", e);
+            throw new UpgradeException(e.getMessage());
         }
     }
 
@@ -239,10 +354,11 @@ public class UpgradeUtils {
      *
      * @param serviceName name of the service
      * @param subSchemaName name of the subschema
-     * @param schemaType the schemaType
+     * @param schemaType the type of schema.
      * @param attributeName name of the attribute
      * @param defaultValues a set of values to be added to the attribute
-     * @exception <code>UpgradeException</code> if there is an error.
+     * @throws UpgradeException if there is an error.
+     * @supported.api
      */
     public static void setAttributeDefaultValues(
             String serviceName,
@@ -250,30 +366,36 @@ public class UpgradeUtils {
             String schemaType,
             String attributeName,
             Set defaultValues) throws UpgradeException {
-        String classMethod = "UpgradeUtils:setAttributeDefaultValues";
+        String classMethod = "UpgradeUtils:setAttributeDefaultValues : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + " for attribute :" + attributeName +
+                    "in service :" + serviceName);
+        }
         ServiceSchema ss =
                 getServiceSchema(serviceName, subSchemaName, schemaType);
         try {
-            Map attributeDefaults = ss.getAttributeDefaults();
             ss.setAttributeDefaults(attributeName, defaultValues);
         } catch (SSOException ssoe) {
-            throw new UpgradeException("Invalid SSOToken");
+            debug.error(classMethod + "Invalid SSOToken", ssoe);
+            throw new UpgradeException(bundle.getString("invalidSSOToken"));
         } catch (SMSException sme) {
-            throw new UpgradeException(
-                    "Unable to set attribute default values");
+            debug.error("Unable to set default values for attribute " +
+                    attributeName + " in service :" + serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
         }
     }
 
     /*
-     * Add attribute default values to an existing attribute.
-     * The existing attribute values will be updated with new values.
+     * Adds default values to an existing attribute.
+     * The existing values in the attribute will be updated with new values.
      *
      * @param serviceName name of the service
      * @param subSchemaName name of the subschema
      * @param schemaType the schemaType
      * @param attributeName name of the attribute
      * @param defaultValues a set of values to be added to the attribute
-     * @exception <code>UpgradeException</code> if there is an error.
+     * @throws <code>UpgradeException</code> if there is an error.
+     * @supported.api
      */
     public static void addAttributeDefaultValues(
             String serviceName,
@@ -281,9 +403,12 @@ public class UpgradeUtils {
             String schemaType,
             String attributeName,
             Set defaultValues) throws UpgradeException {
-        String classMethod = "UpgradeUtils:addAttributeDefaultValues";
-        log(classMethod + "Updating attribute default values");
-        log("in :" + serviceName + "for attribute: " + attributeName);
+        String classMethod = "UpgradeUtils:addAttributeDefaultValues : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Updating attribute default values");
+            debug.message("in :" + serviceName +
+                    "for attribute: " + attributeName);
+        }
         ServiceSchema ss =
                 getServiceSchema(serviceName, subSchemaName, schemaType);
         try {
@@ -345,8 +470,6 @@ public class UpgradeUtils {
             String i18nKey = (String) i.next();
             Set valueSet = (Set) choiceValMap.get(i18nKey);
             String value = (String) valueSet.iterator().next();
-            /*String value = 
-            (String)(((Set) choiceValMap.get(i18nKey)).iterator().next());*/
             attrSchema.addChoiceValue(value, i18nKey);
         }
     }
@@ -364,8 +487,11 @@ public class UpgradeUtils {
             String serviceName,
             String attributeName,
             Set attrVals) throws UpgradeException {
-        String classMethod = "UpgradeUtils:removeAttributeValuesFromRealms";
-        log(classMethod + "Removing attribute values from :" + attributeName);
+        String classMethod = "UpgradeUtils:removeAttributeValuesFromRealms : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod +
+                    "Removing attribute values from :" + attributeName);
+        }
         try {
             // get a list of realms - recursively.
             OrganizationConfigManager ocm =
@@ -378,7 +504,8 @@ public class UpgradeUtils {
                 ocm.removeAttributeValues(serviceName, attributeName, attrVals);
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Error updating attribute values ");
+            throw new UpgradeException("Error updating attribute values " 
+                    +  sme.getMessage());
         }
     }
 
@@ -466,12 +593,48 @@ public class UpgradeUtils {
         }
     }
 
-    /**
-     * Migrate organization to realm.
-     * TODO
+    /*
+     * Remove attribute from sub realms.
+     *
+     * @param serviceName name of the service
+     * @param attributeName name of the attribute
+     * @exception <code>UpgradeException</code> if there is an error.
      */
-    public static void doMigration70() throws Exception {
-    //TODO
+    public static void removeAttributeFromRealms(
+            String serviceName,
+            String attributeName) throws UpgradeException {
+        String classMethod = "UpgradeUtils:removeAttributeFromRealms : ";
+        if (debug.messageEnabled()) {
+            UpgradeUtils.debug.message(classMethod + "Removing attribute :" +
+                    attributeName + "service : " + serviceName);
+        }
+        try {
+            // get a list of realms - recursively.
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            Iterator i = realms.iterator();
+            while (i.hasNext()) {
+                String realm = (String) i.next();
+                ocm = new OrganizationConfigManager(ssoToken, realm);
+                ocm.removeAttribute(serviceName, attributeName);
+            }
+        } catch (SMSException sme) {
+            throw new UpgradeException("Error removing attribute");
+        }
+    }
+
+    /**
+     * Migrates services from Legacy to Realm
+     */
+    public static void doMigration70() {
+        String classMethod = "UpgradeUtils:doMigration70";
+        try {
+            SMSMigration70.migrate63To70(ssoToken, rootSuffix);
+        } catch (Exception e) {
+            debug.error(classMethod +
+                    "Error migrating from Legacy to Realm", e);
+        }
     }
 
     /** 
@@ -484,10 +647,14 @@ public class UpgradeUtils {
     public static void seti18NFileName(
             String serviceName,
             String value) throws UpgradeException {
+        String classMethod = "UpgradeUtils:seti18NFileName : ";
         try {
             ServiceSchemaManager ssm = getServiceSchemaManager(serviceName);
             ssm.setI18NFileName(value);
-            log(serviceName + " :Setting I18NFileName " + value);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + serviceName + 
+                    " :Setting I18NFileName " + value);
+            }
         } catch (SSOException ssoe) {
             throw new UpgradeException("Invalid SSOToken ");
         } catch (SMSException sme) {
@@ -505,11 +672,20 @@ public class UpgradeUtils {
     public static void setServiceRevision(
             String serviceName,
             String revisionNumber) throws UpgradeException {
+        String classMethod = "UpgradeUtils:setServiceRevision : ";
         try {
+            System.out.println("Service Name :" + serviceName);
+            System.out.println("revisionNumber :" + revisionNumber);
+            if (debug.messageEnabled()) {
+                debug.message("Setting service revision for :" + serviceName
+                    + "to : " + revisionNumber);
+            }
             ServiceSchemaManager ssm = getServiceSchemaManager(serviceName);
             ssm.setRevisionNumber(Integer.parseInt(revisionNumber));
-            log(serviceName +
-                    ":Setting Service Revision Number" + revisionNumber);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + serviceName +
+                        ":Setting Service Revision Number" + revisionNumber);
+            }
         } catch (SSOException ssoe) {
             throw new UpgradeException("Invalid SSOToken ");
         } catch (SMSException sme) {
@@ -563,28 +739,28 @@ public class UpgradeUtils {
 
     /**
      * Returns true if the value of realmMode attribute is true.
-     * If there is an error retreiving the attribute a false will be
+     * If there is an error retrieving the attribute a false will be
      * assumed.
      * 
      * @return true if realmMode attribute value is true otherwise false.
      */
     public static boolean isRealmMode() {
+        String classMethod = "UpgradeUtils:isRealmMode";
         boolean isRealmMode = false;
         getSSOToken();
         try {
-            //TODO define constants.
-            String serviceName = "sunIdentityRepositoryService";
-            ServiceSchemaManager sm = getServiceSchemaManager(serviceName);
+            ServiceSchemaManager sm = getServiceSchemaManager(IDREPO_SERVICE);
             ServiceSchema ss = sm.getSchema(SCHEMA_TYPE_GLOBAL);
             Map attributeDefaults = ss.getAttributeDefaults();
-            if (attributeDefaults.containsKey("realmMode")) {
-                HashSet hashSet = (HashSet) attributeDefaults.get("realmMode");
+            if (attributeDefaults.containsKey(REALM_MODE)) {
+                HashSet hashSet = (HashSet) attributeDefaults.get(REALM_MODE);
                 String value = (String) (hashSet.iterator().next());
-                log("realmMode is : " + value);
+                if (debug.messageEnabled()) {
+                    debug.message("realmMode is : " + value);
+                }
             }
-        //TODO catch the specific exception
         } catch (Exception e) {
-            log("Error retreiving the attribute");
+            debug.error(classMethod + "Error retreiving the attribute", e);
         }
         return isRealmMode;
     }
@@ -667,6 +843,11 @@ public class UpgradeUtils {
             String subSchema,
             String schemaType,
             String fileName) throws UpgradeException {
+        String classMethod = "UpgradeUtils:addSubSchema : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Adding subschema :" + 
+                fileName + "for service : " + serviceName);
+        }
         try {
             ServiceSchema ss =
                     getServiceSchema(serviceName, subSchema, schemaType);
@@ -698,19 +879,23 @@ public class UpgradeUtils {
             String subConfigName,
             String subConfigID,
             Map attrValues, int priority) throws UpgradeException {
+        String classMethod = "UpgradeUtils:addSubConfiguration";
         try {
             ServiceConfigManager scm =
                     new ServiceConfigManager(serviceName, ssoToken);
-            ServiceConfig sc = scm.getGlobalConfig(svcConfigName);
+            ServiceConfig sc = scm.getGlobalConfig(null);
             if (sc != null) {
-                sc.addSubConfig(subConfigName, subConfigID,
+                sc.addSubConfig(subConfigName, subConfigName,
                         priority, attrValues);
             } else {
-                throw new UpgradeException("error adding subconfig");
+                debug.error(classMethod + 
+                        "Error adding sub cofiguration" + subConfigName);
+                throw new UpgradeException("Error adding subconfig");
             }
         } catch (SSOException ssoe) {
             throw new UpgradeException("invalid sso token");
-        } catch (SMSException ssoe) {
+        } catch (SMSException sm) {
+            debug.error(classMethod + "Error loading subconfig", sm);
             throw new UpgradeException("error adding subconfig");
         }
     }
@@ -719,17 +904,19 @@ public class UpgradeUtils {
      * Loads the ldif changes to the directory server.
      * 
      * @param ldifFileName the name of the ldif file.
-     * TODO: change the method to throw exception 
      */
     public static void loadLdif(String ldifFileName) {
+        String classMethod = "UpgradeUtils:loadLdif : ";
         try {
+            System.out.println("Loading LDIF File :" + ldifFileName);
             LDIF ldif = new LDIF(ldifFileName);
             ld = getLDAPConnection();
             LDAPUtils.createSchemaFromLDIF(ldif, ld);
         } catch (IOException ioe) {
-            log("cannot find file . Error loading ldif");
+            debug.error(classMethod +
+                    "Cannot find file . Error loading ldif"+ldifFileName,ioe);
         } catch (LDAPException le) {
-            log("Error loading ldif");
+            debug.error(classMethod + "Error loading ldif" +ldifFileName,le);
         }
     }
 
@@ -739,10 +926,12 @@ public class UpgradeUtils {
      * @return Ldap connection
      */
     private static LDAPConnection getLDAPConnection() {
-        log("DSHOST : " + dsHostName);
-        log("DSPORT : " + dsPort);
-        log("dsManager: " + dsManager);
-        log("dsAdminPwd : " + dsAdminPwd);
+        String classMethod = "UpgradeUtils:getLDAPConnection : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Directory Server Host: " + dsHostName);
+            debug.message(classMethod + "Directory Server Port: " + dsPort);
+            debug.message(classMethod + "Direcotry Server DN: " + dsManager);
+        }
         if (ld == null) {
             try {
                 ld = new LDAPConnection();
@@ -751,7 +940,7 @@ public class UpgradeUtils {
             } catch (LDAPException e) {
                 disconnectDServer();
                 ld = null;
-                log("Error getting LDAP Connection");
+                debug.error(classMethod + " Error getting LDAP Connection");
             }
         }
         return ld;
@@ -766,7 +955,7 @@ public class UpgradeUtils {
                 ld.disconnect();
                 ld = null;
             } catch (LDAPException e) {
-                debug.message("Error disconnecting ", e);
+                debug.error("Error disconnecting ", e);
             }
         }
     }
@@ -775,84 +964,21 @@ public class UpgradeUtils {
 // Legacy code to support older upgrade data based on amAdmin dtd.
 // These should not be used for the new data since these will be
 // deprecated along with amAdmin.
-// therefore not adding javadocs for these.
-
-    // import service data
+// therefore not adding public javadocs for these.
+    /**
+     * Imports service data.
+     * @param fileName the file containing the data in xml format.
+     * @throws com.sun.identity.upgrade.UpgradeException on error
+     */
     public static void importServiceData(
             String fileName)
             throws UpgradeException {
+        System.out.println("Import Service data : " + fileName);
         String[] args = new String[8];
         args[0] = "--runasdn";
-        args[1] = adminDN;
+        args[1] = bindDN;
         args[2] = "-w";
-        args[3] = adminPasswd;
-        args[4] = "-c";
-        args[5] = "-v";
-        args[6] = "-t";
-        args[7] = fileName;
-        invokeAdminCLI(args);
-    }
-
-    // import service data multiple files
-    public static void importServiceData(
-            String[] fileList) throws UpgradeException {
-        int len = fileList.length;
-        String[] args = new String[7 + len];
-        args[0] = "--runasdn";
-        args[1] = adminDN;
-        args[2] = "-w";
-        args[3] = adminPasswd;
-        args[4] = "-c";
-        args[5] = "-v";
-        args[6] = "-t";
-        for (int i = 0; i < len; i++) {
-            args[7 + i] = fileList[i];
-        }
-        invokeAdminCLI(args);
-    }
-
-    // import new service schema multiple files
-    public static void importNewServiceSchema(
-            String[] fileList) throws UpgradeException {
-
-        int len = fileList.length;
-        String[] args = new String[8 + len];
-        args[0] = "--runasdn";
-        args[1] = adminDN;
-        args[2] = "-w";
-        args[3] = adminPasswd;
-        args[4] = "-c";
-        args[5] = "-v";
-        args[6] = "-s";
-        for (int i = 0; i < len; i++) {
-            args[7 + i] = fileList[i];
-        }
-        invokeAdminCLI(args);
-    }
-    // import new service schema for a single file.
-    public static void importNewServiceSchema(
-            String fileList) throws UpgradeException {
-
-        String[] args = new String[8];
-        args[0] = "--runasdn";
-        args[1] = adminDN;
-        args[2] = "-w";
-        args[3] = adminPasswd;
-        args[4] = "-c";
-        args[5] = "-v";
-        args[6] = "-s";
-        args[7] = fileList;
-        invokeAdminCLI(args);
-    }
-
-
-    // getAttributeValue - retrieve attribute value
-    public void getAttributeValue(String fileName) throws UpgradeException {
-        String[] args = new String[8];
-        args[0] = "--runasdn";
-        args[1] = adminDN;
-        args[2] = "-w";
-        args[3] = adminPasswd;
+        args[3] = bindPasswd;
         args[4] = "-c";
         args[5] = "-v";
         args[6] = "-t";
@@ -861,12 +987,137 @@ public class UpgradeUtils {
     }
 
     /**
-     * TODO:
-     * Logs messages to standard out and debug file.
-     * @param message the message to be logged
+     * Imports service data
+     * 
+     * @param fileList list of files to be imported.
+     * @throws com.sun.identity.upgrade.UpgradeException on error.
      */
-    public static void log(String message) {
-    //TODO
+    public static void importServiceData(
+            String[] fileList) throws UpgradeException {
+        System.out.println("Import Service data : " + fileList);
+        int len = fileList.length;
+        String[] args = new String[7 + len];
+        args[0] = "--runasdn";
+        args[1] = bindDN;
+        args[2] = "-w";
+        args[3] = bindPasswd;
+        args[4] = "-c";
+        args[5] = "-v";
+        args[6] = "-t";
+        for (int i = 0; i < len; i++) {
+            args[7 + i] = fileList[i];
+        }
+        invokeAdminCLI(args);
+    }
+    
+    /**
+     * Imports service data
+     * 
+     * @param fileList list of files to be imported.
+     * @throws com.sun.identity.upgrade.UpgradeException
+     */
+    public static void importServiceData(List fileList)
+            throws UpgradeException {
+        String classMethod = "UpgradeUtils:importServiceData : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Import Service Data :" + fileList);
+        }
+        System.out.println("Import Service data : " + fileList);
+        int len = fileList.size();
+        String[] args = new String[7 + len];
+        args[0] = "--runasdn";
+        args[1] = bindDN;
+        args[2] = "-w";
+        args[3] = bindPasswd;
+        args[4] = "-c";
+        args[5] = "-v";
+        args[6] = "-t";
+
+        for (int i = 0; i < len; i++) {
+            args[7 + i] = (String) fileList.get(i);
+        }
+        invokeAdminCLI(args);
+    }
+
+    /**
+     * Imports new service schema.
+     * 
+     * @param fileList list of files to be imported.
+     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     */
+    public static void importNewServiceSchema(
+            String[] fileList) throws UpgradeException {
+
+        int len = fileList.length;
+        String[] args = new String[7 + len];
+        args[0] = "--runasdn";
+        args[1] = bindDN;
+        args[2] = "-w";
+        args[3] = bindPasswd;
+        args[4] = "-c";
+        args[5] = "-v";
+        args[6] = "-s";
+        for (int i = 0; i < len; i++) {
+            args[7 + i] = fileList[i];
+        }
+        invokeAdminCLI(args);
+    }
+
+    /**
+     * Import new service schema
+     * 
+     * @param fileName name of the file to be imported.
+     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     */
+    public static void importNewServiceSchema(
+            String fileName) throws UpgradeException {
+        String[] args = new String[8];
+        args[0] = "--runasdn";
+        args[1] = bindDN;
+        args[2] = "-w";
+        args[3] = bindPasswd;
+        args[4] = "-c";
+        args[5] = "-v";
+        args[6] = "-s";
+        args[7] = fileName;
+        invokeAdminCLI(args);
+    }
+
+    /**
+     * Imports new service schema.
+     * 
+     * @param fileList list of files
+     * @throws com.sun.identity.upgrade.UpgradeException
+     */
+    public static void importNewServiceSchema(
+            List fileList) throws UpgradeException {
+        int len = fileList.size();
+        String[] args = new String[7 + len];
+        args[0] = "--runasdn";
+        args[1] = bindDN;
+        args[2] = "-w";
+        args[3] = bindPasswd;
+        args[4] = "-c";
+        args[5] = "-v";
+        args[6] = "-s";
+        for (int i = 0; i < len; i++) {
+            args[7 + i] = (String) fileList.get(i);
+        }
+        invokeAdminCLI(args);
+    }
+
+    // getAttributeValue - retrieve attribute value
+    public void getAttributeValue(String fileName) throws UpgradeException {
+        String[] args = new String[8];
+        args[0] = "--runasdn";
+        args[1] = bindDN;
+        args[2] = "-w";
+        args[3] = bindPasswd;
+        args[4] = "-c";
+        args[5] = "-v";
+        args[6] = "-t";
+        args[7] = fileName;
+        invokeAdminCLI(args);
     }
 
     /**
@@ -877,11 +1128,12 @@ public class UpgradeUtils {
      */
     public static String getNewServiceNamePath(String fileName) {
         StringBuffer sb = new StringBuffer();
-        sb.append(basedir).append(File.separator).
+        sb.append(basedir).append(File.separator).append("upgrade").
+                append(File.separator).
                 append("xml").append(File.separator).
                 append(fileName);
+        String path = sb.toString();
         return sb.toString();
-
     }
 
     /**
@@ -897,7 +1149,7 @@ public class UpgradeUtils {
         sb.append(stagingDir).append(File.separator).
                 append("WEB-INF").append(File.separator).
                 append("classes").append(File.separator).
-                append(File.separator).append("serverdefaults.properties");
+                append(File.separator).append(SERVER_DEFAULTS_FILE);
 
         return sb.toString();
     }
@@ -913,7 +1165,10 @@ public class UpgradeUtils {
 
         StringBuffer sb = new StringBuffer();
         sb.append(stagingDir).append(File.separator).
-                append("WEB-INF/template/sms").append(SCHEMA_FILE);
+                append("WEB-INF").append(File.separator).
+                append("template").append(File.separator).
+                append("sms").append(File.separator).
+                append(SCHEMA_FILE);
 
         return sb.toString();
     }
@@ -928,9 +1183,12 @@ public class UpgradeUtils {
      * @return the absolute path of the file.
      */
     public static String getAbsolutePath(String serviceName, String fileName) {
-        //TODO add constant for static part.
         StringBuffer sb = new StringBuffer();
-        sb.append(basedir).append(File.separator).append("upgrade").append(File.separator).append("services").append(File.separator).append(serviceName).append(File.separator).append("data").append(File.separator).append(fileName);
+        sb.append(basedir).append(File.separator).append("upgrade")
+                .append(File.separator).append("services")
+                .append(File.separator).append(serviceName)
+                .append(File.separator).append("data")
+                .append(File.separator).append(fileName);
 
         return sb.toString();
     }
@@ -938,6 +1196,7 @@ public class UpgradeUtils {
     /**
      * Returns the ssoToken used for admin operations.
      * NOTE: this might be replaced later.
+     * 
      * @param bindUser the user distinguished name.
      * @param bindPwd the user password
      * @return the <code>SSOToken</code>
@@ -946,6 +1205,7 @@ public class UpgradeUtils {
             String bindUser,
             String bindPwd) {
 
+        String classMethod = "UpgradeUtils:ldapLoginInternal : ";
         SSOToken ssoToken = null;
         try {
             com.sun.identity.authentication.internal.AuthContext ac =
@@ -956,20 +1216,26 @@ public class UpgradeUtils {
                 ssoToken = null;
             }
         } catch (LoginException le) {
-            log("Error creating SSOToken" + le.getMessage());
+            debug.error(classMethod + "Error creating SSOToken", le);
 
         } catch (InvalidAuthContextException iace) {
             ssoToken = null;
-            log("Error creating SSOToken" + iace.getMessage());
+            debug.error(classMethod + "Error creating SSOToken", iace);
         }
         return ssoToken;
     }
 
-    // return the authcontext
+    /**
+     * Returns the <code>AuthContext</code>.
+     * 
+     * @param bindUser the user distinguished name.
+     * @param bindPwd the user password.
+     * @return <code>AuthContext</code> object
+     * @throws javax.security.auth.login.LoginException on error.
+     */
     private static com.sun.identity.authentication.internal.AuthContext 
-    getLDAPAuthContext(
-            String bindUser,
-            String bindPwd) throws LoginException {
+            getLDAPAuthContext(String bindUser, String bindPwd)
+            throws LoginException {
         com.sun.identity.authentication.internal.AuthPrincipal principal =
                 new com.sun.identity.authentication.internal.AuthPrincipal(
                 bindUser);
@@ -995,22 +1261,22 @@ public class UpgradeUtils {
         try {
             dpa.parseCommandLine(args);
             dpa.runCommand();
-            log("successful");
         } catch (Exception eex) {
-            throw new UpgradeException("operation failed");
+            throw new UpgradeException(eex.getMessage());
         }
     }
 
     // return the properties
     public static Properties getProperties(String file) {
 
+        String classMethod = "UpgradeUtils:getProperties : ";
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(file));
         } catch (FileNotFoundException fe) {
-            log("File Not found" + file);
+            debug.error(classMethod + "File Not found" + file, fe);
         } catch (IOException ie) {
-            log("Error reading file" + file);
+            debug.error(classMethod + "Error reading file" + file, ie);
         }
         return properties;
     }
@@ -1038,7 +1304,6 @@ public class UpgradeUtils {
                 HashSet hashSet =
                         (HashSet) attributeDefaults.get(attributeName);
                 String value = (String) (hashSet.iterator().next());
-                log("Attribute Value : " + value);
                 isExists = true;
             }
         } catch (SMSException sme) {
@@ -1073,7 +1338,8 @@ public class UpgradeUtils {
                 value = (String) (hashSet.iterator().next());
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Error getting attr value");
+            throw new UpgradeException("Error getting attr value : " 
+                    + sme.getMessage());
         }
         return value;
     }
@@ -1101,7 +1367,8 @@ public class UpgradeUtils {
                 attrValues = (HashSet) attributeDefaults.get(attributeName);
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Unable to get attribute value");
+            throw new UpgradeException("Unable to get attribute value : " 
+                    + sme.getMessage());
         }
         return attrValues;
     }
@@ -1136,7 +1403,7 @@ public class UpgradeUtils {
      * @return the server instance name.
      */
     public static String getServerInstance(String serverName) {
-        return serverName + File.separator + deployURI;
+        return serverName + File.separator + configTags.get("DEPLOY_URI");
     }
 
     /** 
@@ -1183,44 +1450,124 @@ public class UpgradeUtils {
         }
     }
 
-    // TODO ADD JAVADICS for the following later.
+    /**
+     * Adds attributes to service sub configuration.
+     * 
+     * @param serviceName the service name
+     * @param subConfigName the sub configuration name
+     * @param attrValues Map of attributes key is the attribute name and
+     *        value a set of attribute values.
+     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     */
+    public static void addAttributeToSubConfiguration(
+            String serviceName,
+            String subConfigName,
+            Map attrValues) throws UpgradeException {
+        try {
+            ServiceConfigManager scm = getServiceConfigManager(serviceName);
+            ServiceConfig sc = scm.getGlobalConfig(null);
+            sc = sc.getSubConfig(subConfigName);
+            for (Iterator i = attrValues.keySet().iterator(); i.hasNext();) {
+                String attrName = (String) i.next();
+                sc.addAttribute(attrName, (Set) attrValues.get(attrName));
+            }
+        } catch (SMSException sme) {
+            throw new UpgradeException("Unable to add attribute to subconfig");
+        } catch (SSOException ssoe) {
+            throw new UpgradeException("invalid SSOToken");
+        }
+    }
+
     // the following methods might change.
+    /**
+     * Sets the distinguished name of the admin user.
+     * 
+     * @param dn the dn of the admin user.
+     */
     public static void setBindDN(String dn) {
         bindDN = dn;
     }
 
+    /**
+     * Sets the deploy uri of fam instance.
+     * 
+     * @param dn the dn of the admin user.
+     */
     public static void setDeployURI(String uri) {
         deployURI = uri;
     }
 
-    public static void setBindPass(String pass) {
-        bindPasswd = pass;
+    /**
+     * Sets the password of the admin user.
+     * 
+     * @param password the password the admin user.
+     */
+    public static void setBindPass(String password) {
+        bindPasswd = password;
     }
 
+    /**
+     * Sets the Directory Server host name.
+     * 
+     * @param dsHost the directory server host name.
+     */
     public static void setDSHost(String dsHost) {
         dsHostName = dsHost;
     }
 
+    /**
+     * Sets the directory server port.
+     * 
+     * @param port the directory server port number.
+     */
     public static void setDSPort(int port) {
         dsPort = port;
     }
 
+    /**
+     * Sets the distinguished name of the directory server manager.
+     * 
+     * @param dn the dn of the directory server manager.
+     */
     public static void setDirMgrDN(String dn) {
         dsManager = dn;
     }
 
+    /**
+     * Sets the password of the directory server manager user.
+     * 
+     * @param password the password the directory server manager.
+     */
     public static void setdirPass(String pass) {
         dsAdminPwd = pass;
     }
 
+    /**
+     * Sets the location of the upgrade base directory.
+     * 
+     * @param dir the name of the upgrade base directory.
+     */
     public static void setBaseDir(String dir) {
         basedir = dir;
     }
 
+    /**
+     * Sets the location of the staging directory.
+     * 
+     * @param dir the name of the staging directory.
+     */
     public static void setStagingDir(String dir) {
         stagingDir = dir;
     }
-    // END TODO 
+
+    /**
+     * Sets the configuration directory location
+     * 
+     * @param configDir the location of the config directory
+     */
+    public static void setConfigDir(String dir) {
+        configDir = dir;
+    }
     /**
      * Returns the <code>ServiceSchemaManager</code> for a service.
      * 
@@ -1242,14 +1589,24 @@ public class UpgradeUtils {
     protected static ServiceSchemaManager getServiceSchemaManager(
             String serviceName,
             SSOToken ssoToken) {
+        String classMethod = "UpgradeUtils:getServiceSchemaManager : ";
         ServiceSchemaManager mgr = null;
         if (serviceName != null) {
             try {
-                mgr = new ServiceSchemaManager(serviceName, ssoToken);
+                if (serviceName.equals(IDFF_PROVIDER_SERVICE)) {
+                    mgr = new ServiceSchemaManager(ssoToken,
+                         serviceName,IDFF_SERVICE_VERSION);
+                } else {
+                    mgr = new ServiceSchemaManager(serviceName, ssoToken);
+                }
             } catch (SSOException e) {
-                log("SchemaCommand.getServiceSchemaManager" + e.getMessage());
+                debug.error(classMethod +
+                        "SchemaCommand.getServiceSchemaManager", e);
             } catch (SMSException e) {
-                log("SchemaCommand.getServiceSchemaManager" + e.getMessage());
+                debug.error(classMethod +
+                        "SchemaCommand.getServiceSchemaManager", e);
+            } catch (Exception e) {
+                debug.error(classMethod + "Error : ", e);
             }
         }
         return mgr;
@@ -1276,7 +1633,8 @@ public class UpgradeUtils {
                 ss = ss.getSubSchema(subSchemaName);
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Cannot get service schema");
+            throw new UpgradeException("Cannot get service schema : " 
+                    + sme.getMessage());
         }
         return ss;
     }
@@ -1332,5 +1690,937 @@ public class UpgradeUtils {
             throws UpgradeException {
         addAttributeDefaultValues(AUTH_SERVICE_NAME, null, SCHEMA_TYPE_GLOBAL,
                 AUTH_ATTR_NAME, moduleName);
+    }
+
+    /**
+     * Returns the <code>ServiceConfigManager</code> for a service.
+     *
+     * @param serviceName the service name
+     * @return the <code>ServiceConfigManager</code> of the service.
+     */
+    protected static ServiceConfigManager getServiceConfigManager(
+            String serviceName) {
+        return getServiceConfigManager(serviceName, ssoToken);
+    }
+
+    /**
+     * Returns the <code>ServiceConfigManager</code> for a service.
+     *
+     * @param serviceName the service name
+     * @param the admin SSOToken.
+     * @return the <code>ServiceConfigManager</code> of the service.
+     */
+    protected static ServiceConfigManager getServiceConfigManager(
+            String serviceName,
+            SSOToken ssoToken) {
+        String classMethod = "UpgradeUtils:getServiceConfigManager : ";
+        ServiceConfigManager scm = null;
+        if (serviceName != null) {
+            try {
+                scm = new ServiceConfigManager(serviceName, ssoToken);
+            } catch (SSOException e) {
+                debug.error(classMethod, e);
+            } catch (SMSException e) {
+                debug.error(classMethod, e);
+            }
+        }
+        return scm;
+    }
+
+    /**
+     * Returns a list of assigned services for sub organizatons
+     * 
+     * @param orgName name of the organization to start.
+     * @param serviceName name of the service
+     * @return a map of assigned services where key is the realm name and 
+     * values are a Set of assigned services.
+     */
+    public static Map getAssignedServices(String orgName, String serviceName) {
+        String classMethod = "UpgradeUtils:getAssignedServices : ";
+        Map map = new HashMap();
+        try {
+            getSSOToken();
+            // get a list of realms - recursively.
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, orgName);
+            Set as = ocm.getAssignedServices();
+            Set serviceSet = new HashSet();
+            if (as.contains(AUTH_CONFIG_SERVICE)) {
+                serviceSet.add(getServiceDN(serviceName, orgName));
+                map.put(orgName, serviceSet);
+            }
+
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            Iterator i = realms.iterator();
+            while (i.hasNext()) {
+                String realm = (String) i.next();
+                ocm = new OrganizationConfigManager(ssoToken, realm);
+                serviceSet = new HashSet();
+                as = ocm.getAssignedServices();
+                if (as.contains(serviceName)) {
+                    serviceSet.add(getServiceDN(serviceName, realm));
+                    map.put(realm, serviceSet);
+                }
+            }
+        } catch (Exception e) {
+            debug.error(classMethod + "Error retrieving assigned services", e);
+        }
+        return map;
+    }
+
+    /**
+     * Returns the service dn
+     * @param serviceName name of the service
+     * @param orgName the organization name 
+     * @return the distinguished name of the service.
+     */
+    static String getServiceDN(String serviceName, String orgName) {
+        if (orgName.equals(rootSuffix)) {
+            return OU + EQUAL + serviceName +
+                    COMMA + SERVICE_DN + COMMA + rootSuffix;
+        } else {
+            return OU + EQUAL + serviceName + COMMA + SERVICE_DN +
+                    COMMA + ORG_NAMING_ATTR + EQUAL 
+                    + orgName + COMMA + rootSuffix;
+        }
+    }
+
+    /**
+     * Modifies the value of the attribute iplanet-am-auth-configuration
+     * 
+     * The value of module name is changed from fully qualified class name to 
+     * the module name. 
+     */
+    public static void modifyAuthConfig() {
+        String classMethod = "UpgradeUtils:modifyAuthConfig : ";
+        try {
+            String orgName = rootSuffix;
+            OrganizationConfigManager org =
+                    new OrganizationConfigManager(ssoToken, orgName);
+            ServiceConfig orgConfig = org.getServiceConfig(AUTH_CONFIG_SERVICE);
+            ServiceConfig s = orgConfig.getSubConfig(NAMED_CONFIG);
+            if (s != null) {
+                Iterator aa = s.getSubConfigNames().iterator();
+                while (aa.hasNext()) {
+                    String ss = (String) aa.next();
+                    ServiceConfig sa = s.getSubConfig(ss);
+                    Map map = sa.getAttributes();
+                    Set valSet = map.keySet();
+                    if (valSet.contains(ATTR_AUTH_CONFIG)) {
+                        String attrName = ATTR_AUTH_CONFIG;
+                        Set vals = (Set) map.get(attrName);
+                        Set newValSet = new HashSet();
+                        if (!vals.isEmpty()) {
+                            Iterator vali = vals.iterator();
+                            while (vali.hasNext()) {
+                                String xml = (String) vali.next();
+                                int idx = xml.indexOf(START_VALUE);
+                                int ydx = xml.lastIndexOf(END_VALUE);
+                                String val = xml.substring(idx + 7, ydx);
+                                idx = val.lastIndexOf(".");
+                                if (idx != -1) {
+                                    String newVal = val.substring(idx + 1);
+                                    newValSet.add(ATTR_START_VALUE +
+                                            START_VALUE + newVal +
+                                            END_VALUE + ATTR_END_VALUE);
+                                }
+                            }
+                        }
+                        map.put(attrName, newValSet);
+                    }
+                    sa.setAttributes(map);
+                }
+            }
+        } catch (Exception e) {
+            debug.error(classMethod +
+                    "Error modifying auth configuration attribute", e);
+        }
+    }
+
+    /**
+     * Migrates auth configuration defined at role level.
+     */
+    public static void migrateRoleAuthConfigs() {
+        String classMethod = "UpgradeUtils:migrateRoleAuthConfigs : ";
+        try {
+            ld = getLDAPConnection();
+            String baseDN = rootSuffix;
+            LDAPSearchResults res =
+                    ld.search(baseDN, LDAPv2.SCOPE_SUB,
+                    AUTH_CONFIG_SEARCH_FILTER, null, false);
+            Set attrSet = new HashSet();
+            Set cosDNSet = new HashSet();
+            Map dnAttrMap = new HashMap();
+            while (res.hasMoreElements()) {
+                LDAPEntry ent = res.next();
+                String dn = ent.getDN();
+                String[] myAttrs =
+                        {ATTR_AUTH_CONFIG, ATTR_AUTH_SUCCESS_URL,
+                    ATTR_AUTH_FAIL_URL, ATTR_AUTH_POST_CLASS
+                };
+                LDAPSearchResults res1 =
+                        ld.search(dn, LDAPv2.SCOPE_SUB,
+                        COS_TEMPL_FILTER, myAttrs, false);
+                while (res1.hasMoreElements()) {
+                    LDAPEntry ent1 = res1.next();
+                    String dn1 = ent1.getDN();
+                    // get attributes.
+                    cosDNSet.add(dn1);
+                    LDAPAttributeSet attrs = ent1.getAttributeSet();
+                    Enumeration attrsInSet = attrs.getAttributes();
+                    Map attrMap = new HashMap();
+                    while (attrsInSet.hasMoreElements()) {
+                        LDAPAttribute nextAttr =
+                                (LDAPAttribute) attrsInSet.nextElement();
+                        String attrName = nextAttr.getName();
+                        if (attrName.startsWith(AUTH_ATTR_PREFIX)) {
+                            Enumeration valsInAttr = nextAttr.getStringValues();
+                            attrSet = new HashSet();
+                            while (valsInAttr.hasMoreElements()) {
+                                String nextValue =
+                                        (String) valsInAttr.nextElement();
+                                attrSet.add(nextValue);
+                            }
+                            attrMap.put(attrName, attrSet);
+                        }
+                    }
+                    dnAttrMap.put(dn1, attrMap);
+                }
+            }
+            // ldapmodify
+            Iterator i = cosDNSet.iterator();
+            Map orgRoleMap = new HashMap();
+            while (i.hasNext()) {
+                String dn = (String) i.next();
+                Map attrMap1 = (HashMap) dnAttrMap.get(dn);
+                int rcn = dn.indexOf("=\"cn=");
+                int end = dn.indexOf(",");
+                String roleName = dn.substring(rcn + 5, end);
+                String remStr = dn.substring(end + 1);
+                String orgName = remStr.substring(0, remStr.indexOf("\""));
+                String rolConfigName = roleName + "-roleauthconfig";
+                Set rSet;
+                if (!orgRoleMap.containsKey(orgName)) {
+                    rSet = new HashSet();
+                } else {
+                    rSet = (HashSet) orgRoleMap.get(orgName);
+                }
+                Map roleMap = new HashMap();
+                roleMap.put(rolConfigName, attrMap1);
+                rSet.add(roleMap);
+                orgRoleMap.put(orgName, rSet);
+                Collection modifications = new ArrayList();
+                LDAPModificationSet lds = new LDAPModificationSet();
+                if (attrMap1.containsKey(ATTR_AUTH_CONFIG)) {
+                    lds.add(LDAPModification.REPLACE,
+                            new LDAPAttribute(ATTR_AUTH_CONFIG, rolConfigName));
+                }
+                if (attrMap1.containsKey(ATTR_AUTH_SUCCESS_URL)) {
+                    lds.add(LDAPModification.DELETE,
+                            new LDAPAttribute(ATTR_AUTH_SUCCESS_URL));
+                }
+                if (attrMap1.containsKey(ATTR_AUTH_FAIL_URL)) {
+                    lds.add(LDAPModification.DELETE,
+                            new LDAPAttribute(ATTR_AUTH_FAIL_URL));
+                }
+                if (attrMap1.containsKey(ATTR_AUTH_POST_CLASS)) {
+                    lds.add(LDAPModification.DELETE,
+                            new LDAPAttribute(ATTR_AUTH_POST_CLASS));
+                }
+                ld.modify(dn, lds);
+            }
+            // iterate thru orgs to create configs.
+            Set orgSet = orgRoleMap.keySet();
+            Iterator orgI = orgSet.iterator();
+            while (orgI.hasNext()) {
+                String oName = (String) orgI.next();
+                OrganizationConfigManager org =
+                        new OrganizationConfigManager(ssoToken, oName);
+                ServiceConfig s = org.getServiceConfig(AUTH_CONFIG_SERVICE);
+                ServiceConfig authConfig = s.getSubConfig(NAMED_CONFIG);
+                if (authConfig == null) {
+                    s.addSubConfig(NAMED_CONFIG, null, 0, null);
+                    authConfig = s.getSubConfig(NAMED_CONFIG);
+                }
+                Set roleMapSet = (HashSet) orgRoleMap.get(oName);
+                Iterator c = roleMapSet.iterator();
+                while (c.hasNext()) {
+                    Map rMap = (HashMap) c.next();
+                    Set keySet = rMap.keySet();
+                    String cName = (String) keySet.iterator().next();
+                    Map aMap = (HashMap) rMap.get(cName);
+                    authConfig.addSubConfig(cName, SUB_NAMED_CONFIG, 0, aMap);
+                }
+            }
+        } catch (Exception e) {
+            debug.error(classMethod + "Error migrating role auth config", e);
+            disconnectDServer();
+            ld = null;
+        }
+    }
+
+    /**
+     * Migrates Core Auth Service auth module configuration.
+     */
+    public static void migrateAuthServiceConfigs() {
+        String classMethod = "UpgradeUtils:migrateAuthServiceConfigs : ";
+        try {
+            OrganizationConfigManager org =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realms = org.getSubOrganizationNames("*", true);
+            realms.add(rootSuffix);
+
+            Iterator i = realms.iterator();
+            while (i.hasNext()) {
+                String realmName = (String) i.next();
+                createOrgAuthConfig(realmName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            debug.error(classMethod + "Error migrating role auth config", e);
+            disconnectDServer();
+            ld = null;
+        }
+    }
+
+    /**
+     * Creates auth configurations for auth modules configuration in
+     * core auth service.
+     */
+    private static void createOrgAuthConfig(String realmName) throws Exception {
+
+        String classMethod = "UpgradeUtils:createOrgAuthConfig: ";
+        OrganizationConfigManager org =
+                new OrganizationConfigManager(ssoToken, realmName);
+        ServiceConfig orgConfig = org.getServiceConfig(AUTH_SERVICE_NAME);
+        if (orgConfig != null) {
+            Map aa = orgConfig.getAttributes();
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "Org is :" + realmName);
+                debug.message(classMethod + "Attribute Map is :" + aa);
+            }
+            String orgName = realmName;
+            if (DN.isDN(realmName)) {
+                orgName = LDAPDN.explodeDN(realmName, true)[0];
+            }
+            String authConfigName = orgName + "-authconfig";
+            String adminAuthConfigName = orgName + "-admin-authconfig";
+            Set authConfigAttrValue =
+                    (Set) aa.get(ATTR_ORG_AUTH_MODULE);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "authConfigAttrValue : " 
+                        + authConfigAttrValue);
+            }
+            Set newVal = new HashSet();
+            if (authConfigAttrValue.size() != 1 &&
+                    !authConfigAttrValue.contains(authConfigName)) {
+                newVal.add(authConfigName);
+                orgConfig.replaceAttributeValues(
+                        ATTR_ORG_AUTH_MODULE, authConfigAttrValue, newVal);
+            }
+            Set adminConfigAttrValue = (Set) aa.get(ATTR_ADMIN_AUTH_MODULE);
+            if (debug.messageEnabled()) {
+                debug.message("adminauthConfigAttrValue : " 
+                        + adminConfigAttrValue);
+            }
+            if (adminConfigAttrValue.size() != 1 &&
+                    !adminConfigAttrValue.contains(adminAuthConfigName)) {
+                newVal.clear();
+                newVal.add(adminAuthConfigName);
+                orgConfig.replaceAttributeValues(ATTR_ADMIN_AUTH_MODULE,
+                        adminConfigAttrValue, newVal);
+            }
+            aa = orgConfig.getAttributes();
+            ServiceConfig s = org.getServiceConfig(AUTH_CONFIG_SERVICE);
+            ServiceConfig authConfig = s.getSubConfig(NAMED_CONFIG);
+            if (authConfig == null) {
+                s.addSubConfig(NAMED_CONFIG, null, 0, null);
+                authConfig = s.getSubConfig(NAMED_CONFIG);
+            }
+            Map aMap = new HashMap();
+            aMap.put(ATTR_AUTH_CONFIG, authConfigAttrValue);
+            authConfig.addSubConfig(authConfigName, SUB_NAMED_CONFIG, 0, aMap);
+            aMap.clear();
+            aMap.put(ATTR_AUTH_CONFIG, adminConfigAttrValue);
+            authConfig.addSubConfig(adminAuthConfigName,
+                    SUB_NAMED_CONFIG, 0, aMap);
+        }
+    }
+
+    /**
+     * Creates Delegation Policies.
+     */
+    public static void loadSubRealmDelegationPolicies() {
+        String classMethod = "UpgradeUtils:loadSubRealmDelegationPolicies : ";
+        try {
+            // get a list of realms - recursively.
+            PolicyManager pm = new PolicyManager(ssoToken, HIDDEN_REALM);
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            Iterator i = realms.iterator();
+            while (i.hasNext()) {
+                String realm = (String) i.next();
+                String orgDN = DNMapper.orgNameToDN(realm);
+                String orgID = orgDN.replaceAll(",", "^");
+                if (debug.messageEnabled()) {
+                    System.out.println("OrgName is :" + realm);
+                    System.out.println("OrgDN : " + orgDN);
+                    System.out.println("OrgID : " + orgID);
+                }
+                createRealmAdminPolicy(pm, orgDN, orgID);
+                createPolicyAdminPolicy(pm, orgDN, orgID);
+                createRealmReadOnlyPolicy(pm, orgDN, orgID);
+                createDatastoresReadOnlyPolicy(pm, orgDN, orgID);
+            }
+
+        } catch (Exception e) {
+            debug.error(classMethod +
+                    "Error loading sub realm delegation polices", e);
+        }
+    }
+
+    /**
+     * Returns <code>AttributeType</code> object represent an 
+     * <code>Attribute</code> and <code>Value</code> in the IDFF meta data
+     * 
+     * @param attrElement <code>AttributeType</code> object
+     * @param attrName the attribute name.
+     * @param attrValue the attribute value.
+     * @return <code>AttributeType</code> object.
+     */
+    public static AttributeType getAttribute(AttributeType attrElement,
+            String attrName, String attrValue) {
+        attrElement.setName(attrName);
+        attrElement.getValue().add(attrValue);
+        return attrElement;
+    }
+
+    /**
+     * Returns value of an attribute.
+     * @param attrName name of the attribute.
+     * @param attrs Map of attributes where key is the attribute name
+     *        and values are a set of attributes.
+     * @return the value of attribute if it is found else null.
+     */
+    public static String getAttributeString(String attrName, Map attrs) {
+        return getAttributeString(attrName, attrs, null);
+    }
+
+    /**
+     * Returns value of an attribute.
+     * 
+     * @param attrName name of the attribute.
+     * @param attrs Map of attributes where key is the attribute name
+     *          and values are a set of attributes.
+     * @param defaultValue the default value to be returned if value 
+     *          is not found.
+     * @return the value of attribute if it is found else returns 
+     *          the defaultValue.
+     */
+    public static String getAttributeString(String attrName, Map attrs,
+            String defaultValue) {
+        String attrValue = defaultValue;
+        Set attrValSet = (Set) attrs.get(attrName);
+        if (attrValSet != null && !attrValSet.isEmpty()) {
+            attrValue = (String) (attrValSet.toArray())[0];
+        }
+        return attrValue;
+    }
+
+    /**
+     * Creates Realm Admin Policy.
+     * 
+     * @param policyManager the policy manager object.
+     * @param orgDN the organization dn.
+     * @param orgID the organization identifier.
+     */
+    private static void createRealmAdminPolicy(PolicyManager policyManager,
+            String orgDN, String orgID) {
+        String classMethod = "UpgradeUtils:createRealmAdminPolicy";
+        try {
+            String policyName = orgID + "^^RealmAdmin";
+            Policy realmPolicy = new Policy(policyName, null, false, true);
+            // create Rule
+            String resourceName = "sms://*" + orgDN + "/*";
+
+            Rule rule = getRule(DELEGATION_SERVICE, resourceName);
+
+            if (rule != null) {
+                realmPolicy.addRule(rule);
+            }
+
+            String universalID = getUniversalID(orgDN, ORG_ADMIN_ROLE);
+            Subject subject = getSubject(policyManager, universalID);
+            if (subject != null) {
+                realmPolicy.addSubject(DELEGATION_SUBJECT, subject, false);
+            }
+            policyManager.addPolicy(realmPolicy);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating realm admin policy", e);
+        }
+    }
+
+    /**
+     * Creates Policy Admin Policy.
+     * 
+     * @param policyManager the policy manager object.
+     * @param orgDN the organization dn.
+     * @param orgID the organization identifier.
+     */
+    private static void createPolicyAdminPolicy(PolicyManager policyManager,
+            String orgDN, String orgID) {
+        String classMethod = "UpgradeUtils:createRealmReadOnlyPolicy";
+        try {
+            String policyName = orgID + "^^PolicyAdmin";
+            Policy realmPolicy = new Policy(policyName, null, false, true);
+            // create Rule
+            String resourceName = "sms://*" + orgDN + "/" + POLICY_SERVICE;
+            Rule rule = getRule(DELEGATION_SERVICE, resourceName);
+            if (rule != null) {
+                realmPolicy.addRule(rule);
+            }
+            // add subjects
+            String policyAdminRoleUniversalID =
+                    getUniversalID(orgDN, ORG_POLICY_ADMIN_ROLE);
+            Subject subject =
+                    getSubject(policyManager, policyAdminRoleUniversalID);
+            if (subject != null) {
+                realmPolicy.addSubject(DELEGATION_SUBJECT, subject, false);
+            }
+            policyManager.addPolicy(realmPolicy);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating policy admin policy", e);
+        }
+    }
+
+    /**
+     * Creates Realm Read Only Policy
+     * 
+     * @param policyManager the policy manager object.
+     * @param orgDN the organization dn.
+     * @param orgID the organization identifier.
+     */
+    private static void createRealmReadOnlyPolicy(PolicyManager policyManager,
+            String orgDN, String orgID) {
+        String classMethod = "UpgradeUtils:createRealmReadOnlyPolicy";
+        try {
+            String policyName = orgID + "^^" + REALM_READ_ONLY;
+            Policy realmPolicy = new Policy(policyName, null, false, true);
+            // create Rule
+            String serviceName = DELEGATION_SERVICE;
+            String resourceName = "sms://*" + orgDN + "/" + REALM_SERVICE;
+            Rule rule = getRule(serviceName, resourceName);
+            if (rule != null) {
+                realmPolicy.addRule(rule);
+            }
+            // add subjects
+            String policyAdminRoleUniversalID =
+                    getUniversalID(orgDN, ORG_POLICY_ADMIN_ROLE);
+            Subject subject =
+                    getSubject(policyManager, policyAdminRoleUniversalID);
+            if (subject != null) {
+                realmPolicy.addSubject(DELEGATION_SUBJECT, subject, false);
+            }
+            policyManager.addPolicy(realmPolicy);
+        } catch (Exception e) {
+            debug.error(classMethod +
+                    "Error creating realm read only policy", e);
+        }
+    }
+
+    /**
+     * Creates DataStores Read Only Policy
+     * 
+     * @param policyManager the policy manager object.
+     * @param orgDN the organization dn.
+     * @param orgID the organization identifier.
+     */
+    private static void createDatastoresReadOnlyPolicy(
+            PolicyManager policyManager, String orgDN, String orgID) {
+        String classMethod = "UpgradeUtils:createDatastoresReadOnlyPolicy";
+        try {
+            String policyName = orgID + "^^" + DATA_STORE_READ_ONLY;
+            Policy realmPolicy = new Policy(policyName, null, false, true);
+            // create Rule
+            String serviceName = DELEGATION_SERVICE;
+            String resourceName = "sms://*" + orgDN + "/" + IDREPO_SERVICE;
+            Rule rule = getRule(serviceName, resourceName);
+            if (rule != null) {
+                realmPolicy.addRule(rule);
+            }
+            // add subjects
+            String policyAdminRoleUniversalID =
+                    getUniversalID(orgDN, ORG_POLICY_ADMIN_ROLE);
+            Subject subject =
+                    getSubject(policyManager, policyAdminRoleUniversalID);
+            if (subject != null) {
+                realmPolicy.addSubject(DELEGATION_SUBJECT, subject, false);
+            }
+            policyManager.addPolicy(realmPolicy);
+        } catch (Exception e) {
+            debug.error(classMethod +
+                    "Error creating datastores readonly policy", e);
+        }
+    }
+
+    /**
+     * Returns the policy <code>Rule</code> object.
+     * 
+     * @param serviceName name of the service.
+     * @param resourceName name of the resource
+     * @return <code>Rule</code> object.
+     */
+    private static Rule getRule(String serviceName, String resourceName) {
+        String classMethod = "UpgradeUtils:getRule : ";
+        Rule rule = null;
+        try {
+            Map actionsMap = new HashMap();
+            Set values = new HashSet();
+            values.add("allow");
+            actionsMap.put("MODIFY", values);
+            actionsMap.put("DELEGATE", values);
+            actionsMap.put("READ", values);
+            rule = new Rule(serviceName, resourceName, actionsMap);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating rule ", e);
+        }
+        return rule;
+    }
+
+    /**
+     * Returns the policy <code>Subject</code>
+     * 
+     */
+    private static Subject getSubject(PolicyManager policyManager,
+            String universalID) {
+        String classMethod = "UpgradeUtils:getSubject : ";
+        Subject subject = null;
+        try {
+            SubjectTypeManager stm = policyManager.getSubjectTypeManager();
+            subject = stm.getSubject(AM_ID_SUBJECT);
+            Set subjectValues = new HashSet(1);
+            subjectValues.add(universalID);
+            subject.setValues(subjectValues);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating subject", e);
+        }
+        return subject;
+    }
+
+    /**
+     * Returns the universal identifier of an identity
+     */
+    private static String getUniversalID(String orgDN, String idName) {
+        return new StringBuffer().append("id=").append(idName)
+                .append(",ou=role,").append(orgDN).append(",amsdkdn=cn=")
+                .append(idName).append(",").append(orgDN).toString();
+    }
+
+    /*
+     * Return sub configurations in a service.
+     */
+    static Set getOrgSubConfigs(String serviceName, String serviceVersion) {
+        String classMethod = "UpgradeUtils:getOrgSubConfigs : ";
+        Set subConfigs;
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(
+                    ssoToken, serviceName, serviceVersion);
+            ServiceConfig orgConfig =
+                    scm.getOrganizationConfig(rootSuffix, null);
+            subConfigs = orgConfig.getSubConfigNames();
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "Org subConfigs : " + subConfigs);
+            }
+        } catch (Exception e) {
+            subConfigs = Collections.EMPTY_SET;
+        }
+        return subConfigs;
+    }
+
+    /**
+     * Returns a map of attributes in a subconfig. 
+     * The key is subconfig name and the values a map of of attribute name
+     * and values.
+     */
+    public static Map getSubConfigAttributes(
+            String serviceName, String serviceVersion) {
+        String classMethod = "UpgradeUtils:getSubConfigAttributes : ";
+        Map attributesMap = new HashMap();
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(
+                    ssoToken, serviceName, serviceVersion);
+            ServiceConfig orgConfig =
+                    scm.getOrganizationConfig(rootSuffix, null);
+            Set subConfigs = orgConfig.getSubConfigNames();
+            Iterator i = subConfigs.iterator();
+            while (i.hasNext()) {
+                try {
+                    String subConfigName = (String) i.next();
+                    ServiceConfig svcConfig =
+                            orgConfig.getSubConfig(subConfigName);
+                    Map attributes = svcConfig.getAttributes();
+                    if (debug.messageEnabled()) {
+                        debug.message("subConfigName is :" + subConfigName);
+                        debug.message("attribtues are  " + attributes);
+                    }
+                    attributesMap.put(subConfigName, attributes);
+                } catch (Exception e) {
+                    debug.error(classMethod + "Error get attributes", e);
+                }
+            }
+        } catch (Exception e) {
+            debug.error(classMethod + "Error get attributes", e);
+        }
+        return attributesMap;
+    }
+
+    /**
+     * Creates organization sub configuration.
+     * @param serviceName name of the service
+     * @param serviceVersion name of the service version
+     * @param subConfigID the subconfig name
+     * @param configName the config name
+     * @param attributes Map of attribute , where key is attribute name and
+     * a <code>Set</code> of values.
+     */
+    public static void createOrgSubConfig(String serviceName,
+            String serviceVersion, String subConfigID,
+            String configName, Map attributes) {
+        String classMethod = "UpgradeUtils:createOrgSubConfig : ";
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(ssoToken,
+                    serviceName, serviceVersion);
+            ServiceConfig orgConfig =
+                    scm.getOrganizationConfig(rootSuffix, null);
+            orgConfig.addSubConfig(configName, subConfigID, 0, attributes);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating subconfig", e);
+        }
+    }
+
+    /** 
+     * Returns subconfigs in a service sub configuration.
+     * 
+     * @param serviceName name of the service
+     * @param serviceVersion the service revision
+     * @param subConfigName the name of the subconfig
+     * 
+     * @return a set containing sub configs 
+     */
+    public static Set getProviderIds(String serviceName, String serviceVersion,
+            String subConfigName) {
+        String classMethod = "UpgradeUtils:getProviderIds : ";
+        Set providerids = new HashSet();
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(ssoToken,
+                    serviceName, serviceVersion);
+            ServiceConfig orgConfig =
+                    scm.getOrganizationConfig(rootSuffix, null);
+            ServiceConfig providerSC =
+                    orgConfig.getSubConfig(subConfigName);
+            providerids = providerSC.getSubConfigNames();
+            System.out.println("providerids :" + providerids);
+        } catch (Exception e) {
+            UpgradeUtils.debug.error(classMethod +
+                    "Error retrieving sub configs", e);
+        }
+        return providerids;
+    }
+
+    /**
+     * Returns the organization service config for a service
+     * @param serviceName the service name
+     * @param serviceVersion the service version 
+     * 
+     * @return <code>ServiceConfig</code> object
+     */
+    public static ServiceConfig getOrganizationServiceConfig(String serviceName,
+            String serviceVersion) {
+        ServiceConfig orgConfig = null;
+        String classMethod = "UpgradeUtils:getOrganizationServiceConfig :";
+        try {
+            ServiceConfigManager scm = new ServiceConfigManager(
+                    ssoToken, serviceName, serviceVersion);
+            orgConfig =
+                    scm.getOrganizationConfig(rootSuffix, null);
+        } catch (Exception e) {
+            UpgradeUtils.debug.error(classMethod +
+                    "Error getting org config for " + serviceName +
+                    "," + serviceVersion);
+        }
+        return orgConfig;
+    }
+
+    /**
+     * Returns <code>IDFFMetaManager</code> object
+     * 
+     * @return  <code>IDFFMetaManager</code> object.
+     */
+    public static IDFFMetaManager getIDFFMetaManager() throws
+            IDFFMetaException {
+        IDFFMetaManager idffMetaMgr = new IDFFMetaManager(ssoToken);
+        return idffMetaMgr;
+    }
+
+    /**
+     * Replace tags in the upgrade services xmls
+     */
+    static void replaceTags(File dir, Properties p) {
+        try {
+            LinkedList fileList = new LinkedList();
+            getFiles(dir, fileList);
+            ListIterator srcIter = fileList.listIterator();
+            while (srcIter.hasNext()) {
+                File file = (File) srcIter.next();
+                String fname = file.getAbsolutePath();
+                if (fname.endsWith("xml") || fname.endsWith("ldif")) {
+                    replaceTag(fname, p);
+                }
+            }
+        } catch (Exception e) {
+        // do nothing
+        }
+    }
+    // replace tags
+    static void replaceTag(String fname, Properties p) {
+        String line;
+        StringBuffer sb = new StringBuffer();
+        try {
+            FileInputStream fis = new FileInputStream(fname);
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(fis));
+            while ((line = reader.readLine()) != null) {
+                Enumeration e = p.propertyNames();
+                while (e.hasMoreElements()) {
+                    String oldPattern = (String) e.nextElement();
+                    String newPattern = (String) p.getProperty(oldPattern);
+                    line = line.replaceAll(oldPattern, newPattern);
+                }
+                sb.append(line + "\n");
+            }
+            reader.close();
+            BufferedWriter out = new BufferedWriter(new FileWriter(fname));
+            out.write(sb.toString());
+            out.close();
+        } catch (Exception e) {
+        // do nothing
+        }
+    }
+
+    protected static void setProperties(Properties p) {
+        configTags = p;
+    }
+
+    /**
+     * Returns a list of files in a directory.
+     *
+     * @param dirName the directory name
+     * @param fileList the file list to be retrieved.
+     */
+    public static void getFiles(File dirName,
+            LinkedList fileList) {
+        File[] fromFiles = dirName.listFiles();
+        for (int i = 0; i < fromFiles.length; i++) {
+            fileList.addLast(fromFiles[i]);
+            if (fromFiles[i].isDirectory()) {
+                getFiles(fromFiles[i], fileList);
+            }
+        }
+    }
+
+    /**
+     * Returns the root suffix dn.
+     * 
+     * @return the root suffix string.
+     */
+    protected static String getRootSuffix() {
+        return rootSuffix;
+    }
+
+    /**
+     * Returns the Normalized Root Suffix DN.
+     * 
+     * @return the normalized root suffix.
+     */
+    public static String getNormalizedRootSuffix() {
+        return (new DN(rootSuffix)).toRFCString().toLowerCase();
+    }
+
+    /**
+     * Returns the People Container Root Suffix DN.
+     * 
+     * @return the People Containger root suffix.
+     */
+    public static String getPeopleOrgRootSuffix() {
+        String rootOrg = rootSuffix.replaceAll(",", "_");
+        return "People" + "_" + rootOrg;
+    }
+
+    /**
+     * Creates the default server configuration .
+     * The values are read from the AMConfig.properties and for each server
+     * instance a subconfig is created under 
+     * <code>com-sun-identity-servers</code>
+     * 
+     * @param serviceName the service name 
+     * @param subConfigName the sub configuration name.
+     * @param instanceName the instance name
+     * @param instanceID the instance identifier
+     * @param values a Set of values to be set.
+     * @throws com.sun.identity.upgrade.UpgradeException if there is an error.
+     */
+    public static void addServerDefaults(String serviceName,
+            String subConfigName, String instanceName, String instanceID,
+            Set values) throws UpgradeException {
+        String classMethod = "UpgradeUtils:addServerDefaults : ";
+        try {
+            ServiceConfigManager scm =
+                    new ServiceConfigManager(serviceName, getSSOToken());
+            ServiceConfig globalSvcConfig = scm.getGlobalConfig(null);
+            ServiceConfig gConfig = globalSvcConfig.getSubConfig(subConfigName);
+
+            Map serverValues = new HashMap(4);
+            Set setServerId = new HashSet(2);
+            setServerId.add(instanceID);
+            serverValues.put(instanceName, setServerId);
+
+            Set setServerConfigXML = new HashSet(2);
+            String file = configDir + File.separator + SERVER_CONFIG_XML;
+            String serverConfigXML = readFile(file);
+            setServerConfigXML.add(serverConfigXML);
+            serverValues.put(ATTR_SERVER_CONFIG, values);
+            serverValues.put(ATTR_SERVER_CONFIG_XML, setServerConfigXML);
+            gConfig.addSubConfig(CONFIG_SERVER_DEFAULT,
+                    SUB_SCHEMA_SERVER, 0, serverValues);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error adding server instance :", e);
+            throw new UpgradeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Reads a file into a string.
+     */
+    private static String readFile(String fileName) {
+        String classMethod = "UpgradeUtils:readFile : ";
+        StringBuffer fileData = new StringBuffer();
+        String fileString = "";
+        try {
+             BufferedReader reader = new BufferedReader(
+                 new FileReader(fileName));
+             char[] buf = new char[1024];
+             int numRead=0;
+             while((numRead=reader.read(buf)) != -1){
+                 String readData = String.valueOf(buf, 0, numRead);
+                 fileData.append(readData);
+                 buf = new char[1024];
+             }
+             reader.close();
+             fileString = fileData.toString();
+        } catch (Exception e) {
+             debug.error(classMethod + "Error reading file : " + fileName);
+        }
+        return fileString;
     }
 }

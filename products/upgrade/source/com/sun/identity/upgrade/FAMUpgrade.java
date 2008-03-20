@@ -17,33 +17,31 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.1 2008-01-18 08:03:12 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.2 2008-03-20 17:21:08 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.upgrade;
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.debug.Debug;
-import java.io.File;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -53,6 +51,11 @@ import java.util.Properties;
 public class FAMUpgrade {
 
     final static String UPGRADE_CONFIG_FILE = "famUpgradeConfig.properties";
+    final static String AMADMIN_USER_PROPERTY = 
+        "com.sun.identity.authentication.super.user";
+    final static String NEW_DIR = "s_10";
+    final static String DEFAULT_VERSION = "10";
+    final static String CONFIG_DIR = "configDir";
     static BufferedReader inbr = null;
     static String dsHost = "";
     static String dsPort = "";
@@ -89,6 +92,7 @@ public class FAMUpgrade {
             UpgradeUtils.setdirPass(dirMgrPass);
             UpgradeUtils.setBaseDir(basedir);
             UpgradeUtils.setStagingDir(stagingDir);
+            UpgradeUtils.setConfigDir(configDir);
             if (UpgradeUtils.isRealmMode()) {
                 System.out.println("This is Realm Mode");
             //invoke migrateToRealm
@@ -104,8 +108,11 @@ public class FAMUpgrade {
                     UpgradeUtils.getProperties(basedir +
                     File.separator + "upgrade" + File.separator +
                     "config" + File.separator + UPGRADE_CONFIG_FILE);
+            updateProperties(properties);
+            UpgradeUtils.setProperties(properties);
             String dir = getDir();
-            replaceTags(new File(dir), properties);
+            UpgradeUtils.replaceTags(new File(dir), properties);
+            copyNewXMLFiles();
             famUpgrade.startUpgrade();
             // Migrate to realms
             if (enableRealms) {
@@ -137,8 +144,7 @@ public class FAMUpgrade {
     void bootStrapNow() {
         try {
             if (configDir == null) {
-                //TODO make constant
-                configDir = System.getProperty("configDir");
+                configDir = System.getProperty(CONFIG_DIR);
             }
             Bootstrap.load(configDir);
         } catch (Exception e) {
@@ -147,10 +153,9 @@ public class FAMUpgrade {
         }
     }
 
-    // TODO
-    // some of the variables need not be
-    // accepted as input , need to change this
-    // later
+   /**
+    * Intializes required input parameters.
+    */
     public void initVariables() {
         inbr = new BufferedReader(new InputStreamReader(System.in));
         // directory where fam.zip is unzipped
@@ -159,12 +164,14 @@ public class FAMUpgrade {
         getConfigDir();
         // the staging directory
         getStagingDir();
-        getAMAdminUser();
         getDSInfo();
         getDirManagerInfo();
         getAMAdminInfo();
     }
 
+    /**
+     * Gets the default FAM configuration directory.
+     */
     void getConfigDir() {
         System.out.print("Enter the FAM config directory : ");
         String temp = readInput();
@@ -173,6 +180,9 @@ public class FAMUpgrade {
         }
     }
 
+    /**
+     * Gets the location of the base directory.
+     */
     void getBaseDir() {
         System.out.print("Enter the Upgrade Base Directory : ");
         String temp = readInput();
@@ -181,6 +191,9 @@ public class FAMUpgrade {
         }
     }
 
+    /**
+     * Gets the location of the Staging directory.
+     */
     void getStagingDir() {
         System.out.print("Enter the FAM staging directory : ");
         String temp = readInput();
@@ -189,8 +202,11 @@ public class FAMUpgrade {
         }
     }
 
+    /**
+     * Gets the Directory Server hostname.
+     */
     void getDSInfo() {
-        System.out.print("Directory Server fully-qualified hostname[");
+        System.out.print("Directory Server fully-qualified hostname [");
         System.out.print(dsHost);
         System.out.print("] :");
         String temp = readInput();
@@ -205,27 +221,33 @@ public class FAMUpgrade {
     }
 
     /**
-     * get Directory Manager DN password
+     * Gets Directory Manager DN password
      */
     private void getDirManagerInfo() {
-        System.out.print("Directory Manager DN[");
+        System.out.print("Directory Manager DN [");
         System.out.print(dirMgrDN);
         System.out.print("] : ");
+        String temp = dirMgrDN;
         dirMgrDN = readInput();
-        System.out.print("Directory Manager Password :");
+        if (dirMgrDN != null && dirMgrDN.length() == 0) {
+            dirMgrDN = temp;
+        }
         try {
             char[] dirMgrPassChar =
-                    getPassword(System.in, "Directory Manager Password : ");
+            getPassword(System.in, "Directory Manager Password : ");
             dirMgrPass = String.valueOf(dirMgrPassChar);
         } catch (IOException ioe) {
             System.out.println("Error " + ioe.getMessage());
         }
     }
 
+    /**
+     * Gets the amAdmin user and password.
+     */
     private void getAMAdminInfo() {
-        String classMethod = "FAMUpgrade:getAMAdminInfo";
-        amAdminUser = "uid=amAdmin,ou=People,dc=red,dc=iplanet,dc=com";
-        System.out.print("Enter FAM Admin User[");
+        String classMethod = "FAMUpgrade:getAMAdminInfo :";
+        amAdminUser = SystemProperties.get(AMADMIN_USER_PROPERTY);
+        System.out.print("Enter FAM Admin User DN [");
         System.out.print(amAdminUser);
         System.out.print("] :");
         String temp = readInput();
@@ -235,18 +257,13 @@ public class FAMUpgrade {
 
         try {
             char[] amAdminPassChar =
-                    getPassword(System.in, "Enter amAdmin Password : ");
+                    getPassword(System.in, "Enter FAM Admin User Password : ");
             amAdminPass = String.valueOf(amAdminPassChar);
         } catch (IOException ioe) {
             debug.error(classMethod + "Error : " ,ioe);
         }
     }
 
-    // TODO
-    // read the admin user default value from AMConfig.properties.
-    private void getAMAdminUser() {
-    // read the config properties to get the user.
-    }
 
     /** 
      * Upgrades the services schema for different services .
@@ -270,8 +287,9 @@ public class FAMUpgrade {
                 serviceName = value.substring(in + 1);
             }
             // serviceName
+            System.out.println("*********************************************");
             System.out.println("Migrating Service Name: " + serviceName);
-            File fileL = new File(servicesDir + "/" + value);
+            File fileL = new File(servicesDir + File.separator + value);
             String[] ll = fileL.list();
             List lArray = Arrays.asList(ll);
             Collections.sort(lArray, String.CASE_INSENSITIVE_ORDER);
@@ -295,15 +313,18 @@ public class FAMUpgrade {
                     if (lArray.size() == 1) {
                         newService = true;
                     }
+                    migrateList.remove(NEW_DIR);
                     break;
                 }
             }
             Collections.sort(migrateList);
+            boolean isNew = false;
             if (currentVersion != -1) {
-                System.out.println("Current Service Revision : " + 
-                    currentVersion);
+                System.out.println(serviceName + " :Current Service Revision :"+
+                        currentVersion);
             } else {
-                System.out.println(serviceName + "New Service");
+                System.out.println("New Service : " + serviceName );
+                isNew = true;
             }
 
             Iterator fileIterator = migrateList.iterator();
@@ -311,13 +332,21 @@ public class FAMUpgrade {
             String fromVer = "";
             String endVer = "";
             try {
-                while (fileIterator.hasNext()) {
-                    String dirName = (String) fileIterator.next();
-                    System.out.println("Directory is : " + dirName);
-                    int index = dirName.indexOf("_");
-                    if (index != -1) {
-                        fromVer = dirName.substring(0, index);
-                        endVer = dirName.substring(index + 1, dirName.length());
+                while (fileIterator.hasNext() || isNew) {
+                    String dirName = null;
+                    if (isNew) {
+                        dirName = NEW_DIR;
+                        endVer = DEFAULT_VERSION;
+                        isNew = false;
+                    } else {
+                        isNew = false;
+                        dirName = (String) fileIterator.next();
+                        int index = dirName.indexOf("_");
+                        if (index != -1) {
+                            fromVer = dirName.substring(0, index);
+                            endVer = dirName.substring(
+                                    index + 1, dirName.length());
+                        }
                     }
                     isSuccess = false;
                     String urlString = new StringBuffer().append("file:///")
@@ -331,7 +360,12 @@ public class FAMUpgrade {
                     urlString = new StringBuffer()
                             .append("file:///")
                             .append(basedir)
-                            .append("/upgrade/lib/upgrade.jar").toString();
+                            .append(File.separator)
+                            .append("upgrade")
+                            .append(File.separator)
+                            .append("lib")
+                            .append(File.separator)
+                            .append("upgrade.jar").toString();
                     URL url2 = new URL(urlString);
                     URL[] urls = {url1, url2};
                     URLClassLoader cLoader = new URLClassLoader(urls);
@@ -385,51 +419,74 @@ public class FAMUpgrade {
         }
     }
 
+    
     /**
-     * Replace tags in the upgrade services xmls
+     * Makes a copy of new xml files for tag swapping.
      */
-    static void replaceTags(File dir, Properties p) {
+    static void copyNewXMLFiles() {
+        String classMethod = "FAMUgprade:copyNewXMLFiles";
+        String upgradeNewXMLDir =
+                basedir + File.separator + "upgrade" + File.separator + "xml";
+
         try {
-            LinkedList fileList = new LinkedList();
-            getFiles(dir, fileList);
-            ListIterator srcIter = fileList.listIterator();
-            while (srcIter.hasNext()) {
-                File file = (File) srcIter.next();
-                String fname = file.getAbsolutePath();
-                if (fname.endsWith("xml")) {
-                    replaceTag(fname, p);
-                }
+            // create directory upgrade/xml
+            File f = new File(upgradeNewXMLDir);
+            f.mkdir();
+            // copy all files from xml directory to upgrade/xml directory.
+            File xmlF = new File(basedir + File.separator + "xml");
+            String[] xmlfileList = xmlF.list();
+            for (int i = 0; i < xmlfileList.length; i++) {
+                File source = new File(basedir + File.separator +
+                        "xml" + File.separator + xmlfileList[i]);
+                String name = source.getName();
+                File target =
+                        new File(upgradeNewXMLDir + File.separator + name);
+                copyFile(source, target);
             }
         } catch (Exception e) {
-
+            UpgradeUtils.debug.error(classMethod + 
+                    "Error copying new xmls" ,e );
         }
     }
-    // replace tags
-    static void replaceTag(String fname, Properties p) {
-        String line;
-        StringBuffer sb = new StringBuffer();
+
+    /**
+     * Makes a copy of a file.
+     */
+    static void copyFile(File in, File out) throws Exception {
         try {
-            Enumeration e = p.propertyNames();
-            FileInputStream fis = new FileInputStream(fname);
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(fis));
-            while ((line = reader.readLine()) != null) {
-                while (e.hasMoreElements()) {
-                    String oldPattern = (String) e.nextElement();
-                    String newPattern = (String) p.getProperty(oldPattern);
-                    line = line.replaceAll(oldPattern, newPattern);
-                }
-                sb.append(line + "\n");
+            FileInputStream fis = new FileInputStream(in);
+            FileOutputStream fos = new FileOutputStream(out);
+            byte[] buf = new byte[1024];
+            int i = 0;
+            while ((i = fis.read(buf)) != -1) {
+                fos.write(buf, 0, i);
             }
-            reader.close();
-            BufferedWriter out = new BufferedWriter(new FileWriter(fname));
-            out.write(sb.toString());
-            out.close();
-        } catch (Throwable e) {
-        //ignore do nothing
+            fis.close();
+            fos.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Properties to be tagswapped.
+     */
+    private static void updateProperties(Properties p) {
+        p.put("@XML_COMMENT_START@","");
+        p.put("@XML_COMMENT_END@","");
+        p.put("ROOT_SUFFIX",UpgradeUtils.getRootSuffix());
+        p.put("SM_CONFIG_BASEDN",UpgradeUtils.getRootSuffix());
+        p.put("NORMALIZED_ORGBASE",UpgradeUtils.getNormalizedRootSuffix());
+        p.put("NORMALIZED_RS",UpgradeUtils.getNormalizedRootSuffix());
+        p.put("DIRECTORY_SERVER",dsHost);
+        p.put("DIRECTORY_PORT",dsPort);
+        p.put("People_NM_ORG_ROOT_SUFFIX",
+                UpgradeUtils.getPeopleOrgRootSuffix());
+        p.put("ORG_ROOT_SUFFIX",UpgradeUtils.getNormalizedRootSuffix());
+        p.put("RSUFFIX_HAT",UpgradeUtils.getRootSuffix().replaceAll(",", "^"));
+    }
+    
     /**
      * Returns the password .
      * 
