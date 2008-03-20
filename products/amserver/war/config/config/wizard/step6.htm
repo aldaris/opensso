@@ -1,38 +1,74 @@
+<script type="text/javascript">
+    
+    function agentPasswordResponse(response) {
+	if (response.responseText == "true") {
+            $('agentPasswordStatus').innerHTML = okImage + 
+                '<small>$page.getLocalizedString("ok.string")</small>';
+            $('nextTabButton').disabled = false;
+	} else {
+            $('agentPasswordStatus').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
+            $('nextTabButton').disabled = true;
+	}      
+    }
+        
+    function validateAgentPasswords() {        
+        var link = "?actionLink=checkPasswords";        
+        var aValue = "&password=" + $('agentPassword').value;  
+        var cValue = "&confirm=" + $('agentConfirm').value;
+        var oValue = "&otherPassword=" + $('adminConfirm').value;
+        var type = "&type=agent";
+
+        AjaxUtils.call(
+            "$context$path"+link+cValue+aValue+oValue+type, 
+            agentPasswordResponse);          
+    } 
+
+    function initStep6() {
+        $('nextTabButton').disabled = true;
+    }
+    YAHOO.util.Event.onDOMReady(initStep6);
+</script>
 
 <div style="margin-left:10px;">
-    <h1>$page.getLocalizedString("step6.title")</h1>
-    <p>$page.getLocalizedString("step6.description")</p>
+    <h1>$page.getLocalizedString("agent.step.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+    <p>$page.getLocalizedString("agent.step.description")</p>
     
-    <div class="summaryPanel">
+    <div class="summaryPanel" style="width:570px">
+        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
         <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-        <div class="headerBox">$page.getLocalizedString("step3.sub.title")</div>
-        <div class="bodyBox">
-            <ol>
-                <li>
-                    <label>Host:</label>
-                    <span>$configStoreHost</span>
-                </li>
-                <li>
-                    <label>Port:</label>
-                    <span>$configStorePort</span>
-                </li>
-                <li>
-                    <label>Root Suffix:</label>
-                    <span>$rootSuffix</span>
-                </li>
-                <li>
-                    <label>User Name:</label>
-                    <span>$configStoreLoginId</span>
-                </li>
-                <li>
-                    <label>Credentials:</label>
-                    <span>Provided</span>
-                </li>
-                <li>
-                    <label>Directory:</label>
-                    <span>$configDirectory</span>
-                </li>
-            </ol>
+        <div class="headerBox">$page.getLocalizedString("agent.step.subtitle")</div>
+        <div class="bodyBox"  style="height:180px">
+            <span>
+                <table class="temp">
+                    <tr>
+                        <td colspan="2">
+                            <b>$page.getLocalizedString("agent.user.name")</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <em>&nbsp;*&nbsp;</em>$page.getLocalizedString("password.label")
+                        </td>
+                        <td>
+                            <input id="agentPassword" name="agentPassword" 
+                                   type="password" value="" class="text"
+                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)">                            
+                            <span id="agentPasswordStatus"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <em>&nbsp;*&nbsp;</em>$page.getLocalizedString("confirm.label")
+                        </td>
+                        <td>
+                            <input id="agentConfirm" name="agentConfirm" 
+                                   type="password" value="" class="text" 
+                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>                            
+                        </td>
+                    </tr>
+                </table> 
+            </span>
         </div>
         <b class="xbottom">
             <b class="xbGray1"></b>
@@ -40,59 +76,5 @@
             <b class="xbGray3"></b>
             <b class="xbGray4"></b>
         </b>
-    </div>
-    
-    <div class="summaryPanel">
-        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-        <div class="headerBox">$page.getLocalizedString("step4.sub.title")</div>
-        <div class="bodyBox">
-            #if ( $userHostName )
-            <ol>
-                <li>
-                    <label>Host:</label>
-                    <span>$userHostName</span>
-                </li>
-                <li>
-                    <label>Port:</label>
-                    <span>$userHostPort</span>
-                </li>
-                <li>
-                    <label>Base DN:</label>
-                    <span>$userRootSuffix</span>
-                </li>
-                <li>
-                    <label>Credentials:</label>
-                    <span>Provided</span>
-                </li>
-            </ol>
-            #else
-            <span>Default Configuration</span>
-            #end
-        </div>
-        <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
-    </div>
-    
-    <div class="summaryPanel" style="margin-right:0;width:140px">
-        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-        <div class="headerBox">$page.getLocalizedString("step5.sub.title")</div>
-        <div id="loadBalancingSummary" class="bodyBox">
-            #if ( $newInstanceUrl )
-            <span>Previously configured</span>
-            #elseif ( $loadBalancerHost )
-            <ol>
-                <li>
-                    <label>Host:</label>
-                    <span>$loadBalancerHost</span>
-                </li>
-                <li>
-                    <label>Port:</label>
-                    <span>$loadBalancerPort</span>
-                </li>
-            </ol>
-            #else
-            <span>This instance will not be deployed behind a load balancer.</span>
-            #end
-        </div>
-        <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
     </div>
 </div>

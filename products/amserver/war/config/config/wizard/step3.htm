@@ -2,6 +2,8 @@
 
     var userStore = "embedded";
     var multiServer = "false";
+    var validServerURL = "true";
+    var remoteDSHost = "localhost";
     
     function configStoreServerValidated( response ) {
         storeServerValidated( '$type', response );
@@ -34,6 +36,7 @@
 
     function validateConfigStoreHost() {
 	field = "configStoreHost";
+	remoteDSHost = document.getElementById("configStoreHost").value;
  	validate();
     }
 
@@ -52,9 +55,35 @@
  	validate();
     }
 
+    function validateServerURL(response) {        
+        var resp = eval('('+response.responseText+')');
+        var image = okImage;   
+
+        if (resp.code == "100") {
+            // url was a valid fam server
+            validServerURL = true;  
+            if (resp.embedded == "true") {
+                if (resp.replication == "true") {
+                    document.getElementById("replicationPorts").style.display = "none";
+                } else {
+                    document.getElementById("replicationPorts").style.display = "";
+                }   
+            }
+        } else{
+            // error handling
+            validServerURL = false;  
+            image = errorImage;        
+            document.getElementById("replicationPorts").style.display = "none";                                  
+        }
+        $('existingHostStatus').innerHTML = image +
+            '<small>' + resp.message + '</small>';
+    }
+    
     function validateHostName() {
-        field = "existingHost";
-        validate();
+        $('existingHostStatus').innerHTML = "validating url...";
+        var call = "$context$path?actionLink=validateHostName";
+        var hostname = "&hostName=" + $('existingHost').value;
+        AjaxUtils.call(call+hostname, validateServerURL);
     }
 
     function validateLocalRepPort() {
@@ -83,57 +112,73 @@
     
     function enableExisting() {
         multiServer = "true";
-        document.getElementById("existingInstance").style.display = "";
+        // controls for displaying step6
+        firstFAMInstance = false;
+        //$('tab6').style.color = "#D3D3D3";
+        document.getElementById("newInstanceOptions").style.display = "none";
+        document.getElementById("existingInstanceURL").style.display = "";
+        document.getElementById("replicationPorts").style.display = "none";
 	AjaxUtils.call("$context$path?actionLink=setReplication&multi=enable");
     }
 
     function disableExisting() {
         multiServer = "false";
-        document.getElementById("existingInstance").style.display = "none";
+        // controls for displaying step6
+        firstFAMInstance = true;
+        //$('tab6').style.color = "";
+        document.getElementById("newInstanceOptions").style.display = "";
+        document.getElementById("existingInstanceURL").style.display = "none";
+        document.getElementById("replicationPorts").style.display = "none";
 	AjaxUtils.call("$context$path?actionLink=setReplication&multi=disable");
     }
 
+    function setExternalFieldsDisplay(display) {
+        document.getElementById("login").style.display = display;
+        document.getElementById("password").style.display = display;
+        document.getElementById("schema").style.display = display;      
+        
+        if (display == "none") {
+            document.getElementById("configStoreHost").disabled = true;
+            document.getElementById("configStoreHost").value = "localhost";
+        } else {
+            document.getElementById("configStoreHost").disabled = false;
+            document.getElementById("configStoreHost").value = remoteDSHost;               
+        }
+    }
+
     function enableRemote() {
-        document.getElementById("configStoreModule").style.display = "";
-        document.getElementById("embeddedModule").style.display = "none";
-        document.getElementById("existingInstance").style.display = "none";
+	setExternalFieldsDisplay("");
 	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote");
         userStore = "external";
     }
 
     function disableRemote() {
-        document.getElementById("configStoreModule").style.display = "none";
-        document.getElementById("embeddedModule").style.display = "";
-        if (multiServer == "true") {
-            document.getElementById("existingInstance").style.display = "";        
-        } 
-        
+	setExternalFieldsDisplay("none");
 	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded");
         userStore = "embedded";
     }
 
-    function initialize() {
+    function initConfig() {
+        setExternalFieldsDisplay("none");
+        document.getElementById("replicationPorts").style.display = "none";
         if ( $usingCustomStore ) {
             disableRemote('config');
         }
     }
 
-    YAHOO.util.Event.onDOMReady(initialize);
+    YAHOO.util.Event.onDOMReady(initConfig);
 </script>
 
 <div style="margin-left:10px;">
     <h1>$page.getLocalizedString("step3.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
     <p>$page.getLocalizedString("step3.description")</p> 
-    
-    <input type="radio" id="configStoreDefault" name="configStoreCustom" 
-       style="margin-left:1em" value="false" checked="checked" 
-       onclick="disableRemote();"/> 
-        $page.getLocalizedString("step3.embedded.option")
-    <input type="radio" id="configStoreCustom" name="configStoreCustom" 
-       style="margin-left:1em" value="true" 
-       onclick="enableRemote();"/>
-        $page.getLocalizedString("step3.external.option");
-    
+    <input type="radio" id="existingNo" name="existingInstance" 
+        value="false" checked="checked" onclick="disableExisting();"/>
+        $page.getLocalizedString("create.new.instance")
+    <input type="radio" id="existingYes" name="existingInstance" 
+        value="true" onclick="enableExisting();"/>
+        $page.getLocalizedString("add.existing.instance")
+       
     <!-- EMBEDDED STORE PROPERTIES -->
     <div id="configStoreProperties" style="width:570px;" >
         <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
@@ -146,46 +191,123 @@
         <div class="headerBox">
             $page.getLocalizedString("step3.sub.title")
         </div>
-        <div class="bodyBox" style="height:230px;">	
-             <span>
-             <table class="temp">
-             <tr>
-                <td><label for="rootSuffix"><em>*&nbsp;</em>$page.getLocalizedString("root.suffix.label")</label></td>
-                <td>
-                    <input id="rootSuffix" name="rootSuffix" 
-                           type="text" class="text" style="width:200px" 
-                           value="$rootSuffix" 
-                           onkeyup="APP.callDelayed(this, validateRootSuffix)"/>
-                    <span id="rootSuffixStatus"></span>                       
-                </td>
-            </tr>
-            
-            <tr>
-                <td><label for="configStorePort"><em>*&nbsp;</em>$page.getLocalizedString("port.label")</label></td>
-                <td>
-                    <input id="configStorePort" name="configStorePort" 
-                           type="text" size="5" maxLength="5" 
-                           value="$configStorePort" 
-                           onkeyup="APP.callDelayed(this, validatePort)"/>
-                    <span id="configStorePortStatus"></span>
-                </td>
-            </tr>
-            </table>
-            
-            <div id="embeddedModule">            
+        <div class="bodyBox" style="height:250px;">	
+             <span>  
+             <!-- New Instances -->
+             <div id="newInstanceOptions">            
                 <table class="temp">
                     <tr>
-                        <td><label for="existingInstance">$page.getLocalizedString("existing.instance.label")</label></td>
+                        <td><label for="configStoreCustom">$page.getLocalizedString("existing.instance.label")</label></td>
                         <td>
-                            <input type="radio" id="existingNo" name="existingInstance" value="false" checked="checked" onclick="disableExisting();"/>$page.getLocalizedString("no.label")
-                            <input type="radio" id="existingYes" name="existingInstance" value="true" onclick="enableExisting();"/>$page.getLocalizedString("yes.label")
+                        <input type="radio" id="configStoreDefault" name="configStoreCustom" 
+                           style="margin-left:1em" value="false" checked="checked" 
+                           onclick="disableRemote();"/> 
+                            $page.getLocalizedString("step3.embedded.option")
+                        <input type="radio" id="configStoreCustom" name="configStoreCustom" 
+                           style="margin-left:1em" value="true" 
+                           onclick="enableRemote();"/>
+                            $page.getLocalizedString("step3.external.option")
                         </td>
                     </tr>
                 </table>
-            </div> <!-- Embedded Store -->
-        
-            <div id="existingInstance" style="display:none">
+            
+                <!-- Embedded Store -->
+                <table class="temp">                    
+                    <tr id="host">
+                        <td><label for="configStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
+                        <td>
+                            <input id="configStoreHost" name="configStoreHost" 
+                               type="text" class="text" style="width:150px" 
+                               value="$configStoreHost"
+                               onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
+                            <span id="configStoreHostStatus"></span>
+                        </td>
+                    </tr>  
+                    <tr>
+			<td><label for="configStorePort"><em>*&nbsp;</em>$page.getLocalizedString("port.label")</label></td>
+                        <td>
+                            <input id="configStorePort" name="configStorePort" 
+                                   type="text" size="5" maxLength="5" 
+                                   value="$configStorePort" 
+                                   onkeyup="APP.callDelayed(this, validatePort)"/>
+                            <span id="configStorePortStatus"></span>
+                        </td>
+                    </tr>
+                    <tr>                    
+                        <td><label for="encryptionKey"><em>*&nbsp;</em>$page.getLocalizedString("step2.encr.key")</label></td>
+                        <td>
+                            <input id="encryptionKey" name="encryptionKey" type="text" class="text" style="width:200px" value="$encryptionKey" onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
+                            <span id="encryptionKeyStatus"></span>
+                        </td>
+                    <ar>   
+                    <tr>
+                        <td><label for="rootSuffix"><em>*&nbsp;</em>$page.getLocalizedString("root.suffix.label")</label></td>
+                        <td>
+                            <input id="rootSuffix" name="rootSuffix" 
+                                   type="text" class="text" style="width:200px" 
+                                   value="$rootSuffix" 
+                                   onkeyup="APP.callDelayed(this, validateRootSuffix)"/>
+                            <span id="rootSuffixStatus"></span>                       
+                        </td>
+                    </tr>
+
+                    <tr id="login">
+                        <td><label for="configStoreLoginId"><em>*&nbsp;</em>$page.getLocalizedString("login.id.label")</label></td>
+                        <td>
+                            <input id="configStoreLoginId" name="configStoreLoginId" 
+                               type="text" class="text" style="width:150px" 
+                               value="$configStoreLoginId"
+                               onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"/>
+                            <span id="configStoreLoginIdStatus"></span>
+                        </td>
+                    </tr>
+                    <tr id="password">
+                        <td><label for="configStorePassword"><em>*&nbsp;</em>$page.getLocalizedString("password.label")</label></td>
+                        <td>
+                            <input id="configStorePassword" 
+                               name="configStorePassword" 
+                               type="password" class="text" style="width:100px" 
+                               value="#if($store.password)$store.password#{end}" 
+                               onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
+                            <span id="configStorePasswordStatus"></span>                        
+                        </td>
+                    </tr>  
+                    <tr id="schema">
+                        <td><label for="enableUMSchema"><em>*&nbsp;</em>$page.getLocalizedString("load.schema.label")</label></td>
+                        <td>
+                            <input type="checkbox" id="enableUMSchema" 
+                               name="enableUMSchema" value="sdkSchema" 
+                               onclick="loadUMSchema();"/>
+                        </td>
+                    </tr>                                 
+                </table>
+            </div> 
+                
+            <!-- Existing -->
+            <div id="existingInstanceURL" style="display:none">
                 <table class="temp">
+                    <tr>
+                        <td><label for="existingHost"><em>*&nbsp;</em>$page.getLocalizedString("host.url.label")</label></td>
+                        <td>
+                            <input id="existingHost" name="existingHost" type="text" 
+                                   class="text" size="60" 
+                                   onkeyup="APP.callDelayed(this, validateHostName)"/>
+                            <span id="existingHostStatus"></span>                        
+                        </td>
+                    </tr>  
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>
+                            <small>URL of the existing FAM server. ex: http://server.co.com:8080/opensso</small>                    
+                        </td>
+                    </tr>              
+                </table>
+            </div>
+            
+            <!-- replication ports -->
+            <div id="replicationPorts" style="display:none">
+                <small>The existing FAM server is not setup for replication. Please confirm the following port values:</small>
+                <table class="temp">                    
                     <tr>
                         <td><label for="localRepPort"><em>*&nbsp;</em>$page.getLocalizedString("replication.port.label")</label></td>
                         <td>
@@ -195,16 +317,7 @@
                                    onkeyup="APP.callDelayed(this, validateLocalRepPort)"/>
                             <span id="localRepPortStatus"></span>                       
                         </td>
-                    </tr>
-                    <tr>
-                        <td><label for="existingHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
-                        <td>
-                            <input id="existingHost" name="existingHost" type="text" 
-                                   class="text" style="width:150px" 
-                                   onkeyup="APP.callDelayed(this, validateHostName)"/>
-                            <span id="existingHostStatus"></span>                        
-                        </td>
-                    </tr>      
+                    </tr>  
                     <tr>
                         <td><label for="existingPort"><em>*&nbsp;</em>$page.getLocalizedString("existing.port.label")</label></td>
                         <td>
@@ -226,51 +339,6 @@
                         </td>
                     </tr>   
                 </table>
-            </div> <!-- Existing Instance -->
-                
-            <!-- EXTERNAL STORE PROPERTIES -->
-            <div id="configStoreModule" style="display:none">
-                <table class="temp">
-                    <tr>
-                        <td><label for="configStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
-                        <td>
-                            <input id="configStoreHost" name="configStoreHost" 
-                                   type="text" class="text" style="width:150px" 
-                                   value="$configStoreHost"
-                                   onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
-                            <span id="configStoreHostStatus"></span>
-                        </td>
-                    </tr>  
-                    <tr>
-                        <td><label for="configStoreLoginId"><em>*&nbsp;</em>$page.getLocalizedString("login.id.label")</label></td>
-                        <td>
-                            <input id="configStoreLoginId" name="configStoreLoginId" 
-                                   type="text" class="text" style="width:150px" 
-                                   value="$configStoreLoginId"
-                                   onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"/>
-                            <span id="configStoreLoginIdStatus"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="configStorePassword"><em>*&nbsp;</em>$page.getLocalizedString("password.label")</label></td>
-                        <td>
-                            <input id="configStorePassword" 
-                                   name="configStorePassword" 
-                                   type="password" class="text" style="width:100px" 
-                                   value="#if($store.password)$store.password#{end}" 
-                                   onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
-                            <span id="configStorePasswordStatus"></span>                        
-                        </td>
-                    </tr>  
-                    <tr>
-                        <td><label for="enableUMSchema"><em>*&nbsp;</em>$page.getLocalizedString("load.schema.label")</label></td>
-                        <td>
-                            <input type="checkbox" id="enableUMSchema" 
-                                   name="enableUMSchema" value="sdkSchema" 
-                                   onclick="loadUMSchema();"/>
-                        </td>
-                    </tr>                                 
-                </table>
             </div>
             </span>
         </div>
@@ -284,4 +352,3 @@
         </div>
     </div>
 </div>
-

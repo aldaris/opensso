@@ -1,149 +1,98 @@
-<script type="text/javascript">
-    function configStoreServerValidated( response ) {
-        storeServerValidated( 'config', response );
-    }
-    function configStoreBaseDNValidated( response ) {
-        storeBaseDNValidated('config', response );
-    }
-    function configStoreLoginIdValidated( response ) {
-        storeLoginIdValidated( 'config', response );
-    }
 
-    function validateconfigStoreServer() {
-        validateStoreServer('config');
-    }
-    function validateconfigStoreBaseDN() {
-        validateStoreBaseDN('config');
-    }
-    function validateconfigStoreLoginId() {
-        validateStoreLoginId('config');
-    }
-
-
-    function validateEncKey() {
-        var callUrl = "$context$path?actionLink=validateEncKey&encKey=" + $('configEncKey').value
-        AjaxUtils.call(callUrl, encKeyValidated);
-    }
-    function encKeyValidated(response) {
-        if ( response.responseText == "true" ) {
-            $('conifgEncKeyStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                  '<small>ok</small>';
-                $('nextTabButton').disabled = false;
-        } else {
-            $('configEncKeyStatus').innerHTML = response.responseText;
-        }
-    }
-
-
-    function validateConfigBaseDir() {
-        var callUrl = "$context$path?actionLink=validateConfigBaseDir&configBaseDir=" + $('configBaseDir').value
-        AjaxUtils.call(callUrl, baseDirValidated);
-    }
-    function baseDirValidated(response) {
-        if ( response.responseText == "true" ) {
-            $('configBaseDirStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-		  '<small>ok</small>';
- 		$('nextTabButton').disabled = false;
-        } else {
-            $('configBaseDirStatus').innerHTML = response.responseText;
-        }
-    }
-
-
-    function enableFirstFAMInstance() {
-        firstFAMInstance = true;
-        $('famAssociationDiv').style.display = "none";
-        $('firstFAMInstanceTrue').checked = true;
-        $('firstFAMInstanceFalse').checked = false;
-        nextTab = rangeCheck(currentTab + 1);
-        previousTab = rangeCheck(currentTab - 1);
-        $('tab3').style.color = "";
-        $('tab4').style.color = "";
-        $('tab5').style.color = "";
-        $('tab6').style.color = "";
-        $('nextTabButton').disabled = false;
-       
-        AjaxUtils.call("$context$path?actionLink=clear");
-    }
-
-    function disableFirstFAMInstance() {
-        firstFAMInstance = false;
-        $('famAssociationDiv').style.display = "";
-        $('firstFAMInstanceTrue').checked = false;
-        $('firstFAMInstanceFalse').checked = true;
-        $('tab3').style.color = "#D3D3D3";
-        $('tab4').style.color = "#D3D3D3";
-        $('tab5').style.color = "#D3D3D3";
-        $('tab6').style.color = "#D3D3D3";
-        nextTab = 6;
-        previousTab = 7;
-        $('nextTabButton').disabled = true;
-    }
-
-    function initialize() {
-    }
-
-    YAHOO.util.Event.onDOMReady(initialize);
-
-</script>
-
-<h1>Step 6: Associations</h1>
-<p>Would you like to add this instance to an existing deployment?</p>
-<input type="radio" id="firstFAMInstanceTrue" name="firstFamInstance" style="margin-left:1em" value="true" checked="checked" onclick="enableFirstFAMInstance();"/>
-<span>No, this is the first FAM instance of a new deployment</span><br/>
-<input type="radio" id="firstFAMInstanceFalse" name="firstFamInstance" style="margin-left:1em" value="false" onclick="disableFirstFAMInstance();"/>
-<span>Yes, add this instance to the existing deployment</span>
-<div id="famAssociationDiv" style="width:570px; display:none">
-    <p id="allfields" class="OrangeVerySmall">*&nbsp;ALL Fields are Required</p>
-    <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
-	<div class="headerBox" style="margin-left:10px">$typeTitle Store Details</div>
-    <div class="bodyBox" style="height:260px;margin-left:10px">	
-Enter the server and directory information for the existing configuration which you would like to use for the configuration store. The encryption key entered on this page must match the encryption key used on the existing configuration store.
-        <fieldset id="configStoreFieldset" style="padding:0px; margin-top:-40px">
+<div style="margin-left:10px;">
+    <h1>$page.getLocalizedString("step6.title")</h1>
+    <p>$page.getLocalizedString("step6.description")</p>
+    
+    <div class="summaryPanel">
+        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+        <div class="headerBox">$page.getLocalizedString("step3.sub.title")</div>
+        <div class="bodyBox">
             <ol>
-                <li class="beginChunk">
-                    <label for="configStoreHost">Directory Host Name<em>*</em></label>
-                    <input id="configStoreHost" name="configStoreHost" type="text" class="text" style="width:150px" value="#if($store.hostName)$store.hostName#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreServer )"/>
-                    <span id="configStoreHostStatus"></span>
+                <li>
+                    <label>Host:</label>
+                    <span>$configStoreHost</span>
                 </li>
                 <li>
-                    <label for="configStorePort">Port<em>*</em></label>
-		    <input id="configStorePort" name="configStorePort" type="text" class="text" style="width:40px" onkeyup="APP.callDelayed(this, validateconfigStoreServer )"/>
-                </li>
-<!--
-                <li class="endChunk">
-                    <label for="configStoreSecurePort">Is this a secure port?<em>*</em></label>
-                    <input id="configStoreSecurePortNo" name="configStoreSecurePort" type="radio" value="false" #if ( !$store.hostPortSecure ) checked="checked" #{end}onclick="enableStandardPort('config'); validateconfigStoreServer();"/><span>No</span>
-                    <input id="configStoreSecurePortYes" name="configStoreSecurePort" type="radio" value="true" #if ( $store.hostPortSecure ) checked="checked" #{end}onclick="enableSecurePort('config'); validateconfigStoreServer();"/><span>Yes</span>
-                </li>
--->
-                <li>
-                    <label for="configStoreBaseDN">Directory Base DN<em>*</em></label>
-                    <input id="configStoreBaseDN" name="configStoreBaseDN" type="text" class="text" style="width:150px" value="#if($store.baseDN)$store.baseDN#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreBaseDN )"/>
-                    <span id="configStoreBaseDNStatus"></span>
-                </li>
-                <li> 
-                    <label for="configStoreLoginId">Directory Login ID<em>*</em></label>
-                    <input id="configStoreLoginId" name="configStoreLoginId" type="text" class="text" style="width:150px" value="#if($store.username)$store.username#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreLoginId )"/>
-                    <span id="configStoreLoginIdStatus"></span>
+                    <label>Port:</label>
+                    <span>$configStorePort</span>
                 </li>
                 <li>
-                    <label for="configStorePassword">Directory Password<em>*</em></label>
-                    <input id="configStorePassword" name="configStorePassword" type="password" class="text" style="width:100px" value="#if($store.password)$store.password#{end}" onkeyup="APP.callDelayed(this, validateconfigStoreLoginId )"/>
+                    <label>Root Suffix:</label>
+                    <span>$rootSuffix</span>
                 </li>
-		<li>
-                    <label for="configBaseDir">Configuration Directory<em>*</em></label>
-                    <input id="configBaseDir" name="configBaseDir" type="text" class="text" style="width:150px" value="$configBaseDir" onkeyup="APP.callDelayed(this, validateConfigBaseDir)"/>
-                    <span id="configBaseDirStatus"></span>
-		</li>
-		<li>
-                    <label for="configEncKey">Encryption Key<em>*</em></label>
-                    <input id="configEncKey" name="configEncKey" type="text" class="text" style="width:200px" onkeyup="APP.callDelayed(this, validateEncKey)"/>
-                    <span id="configEncKeyStatus"></span>
-		</li>
+                <li>
+                    <label>User Name:</label>
+                    <span>$configStoreLoginId</span>
+                </li>
+                <li>
+                    <label>Credentials:</label>
+                    <span>Provided</span>
+                </li>
+                <li>
+                    <label>Directory:</label>
+                    <span>$configDirectory</span>
+                </li>
             </ol>
-        </fieldset>
+        </div>
+        <b class="xbottom">
+            <b class="xbGray1"></b>
+            <b class="xbGray2"></b>
+            <b class="xbGray3"></b>
+            <b class="xbGray4"></b>
+        </b>
     </div>
-    <div style="margin-left:10px"><b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b></div>
+    
+    <div class="summaryPanel">
+        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+        <div class="headerBox">$page.getLocalizedString("step4.sub.title")</div>
+        <div class="bodyBox">
+            #if ( $userHostName )
+            <ol>
+                <li>
+                    <label>Host:</label>
+                    <span>$userHostName</span>
+                </li>
+                <li>
+                    <label>Port:</label>
+                    <span>$userHostPort</span>
+                </li>
+                <li>
+                    <label>Base DN:</label>
+                    <span>$userRootSuffix</span>
+                </li>
+                <li>
+                    <label>Credentials:</label>
+                    <span>Provided</span>
+                </li>
+            </ol>
+            #else
+            <span>Default Configuration</span>
+            #end
+        </div>
+        <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+    </div>
+    
+    <div class="summaryPanel" style="margin-right:0;width:140px">
+        <b class="xtop"><b class="xt1"></b><b class="xt2"></b><b class="xt3"></b><b class="xt4"></b></b>
+        <div class="headerBox">$page.getLocalizedString("step5.sub.title")</div>
+        <div id="loadBalancingSummary" class="bodyBox">
+            #if ( $newInstanceUrl )
+            <span>Previously configured</span>
+            #elseif ( $loadBalancerHost )
+            <ol>
+                <li>
+                    <label>Host:</label>
+                    <span>$loadBalancerHost</span>
+                </li>
+                <li>
+                    <label>Port:</label>
+                    <span>$loadBalancerPort</span>
+                </li>
+            </ol>
+            #else
+            <span>This instance will not be deployed behind a load balancer.</span>
+            #end
+        </div>
+        <b class="xbottom"><b class="xbGray1"></b><b class="xbGray2"></b><b class="xbGray3"></b><b class="xbGray4"></b></b>
+    </div>
 </div>
-

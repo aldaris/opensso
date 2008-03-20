@@ -27,10 +27,13 @@
     
     function defaultAdminPasswordResponse(response) {
 	if (response.responseText == "true") {
-	   $('defaultAdminPasswordStatus').innerHTML = '$page.getLocalizedString("ok.string")';
-           defaultAdminFieldsValid = true;
+	    $('defaultAdminPasswordStatus').innerHTML = okImage +
+                '<small>$page.getLocalizedString("ok.string")</small>';
+            defaultAdminFieldsValid = true;
 	} else {
-	   $('defaultAdminPasswordStatus').innerHTML = response.responseText;
+	    $('defaultAdminPasswordStatus').innerHTML = errorImage +
+		'<small>' + response.responseText + '</small>';
+			
            defaultAdminFieldsValid = false;
 	}
         $('createDefaultConfig').disabled = !defaultFieldsValid();
@@ -40,17 +43,20 @@
         var link = "?actionLink=checkPasswords";
         var cValue = "&confirm=" + $('defaultAdminConfirm').value;
         var aValue = "&password=" + $('defaultAdminPassword').value;        
+	var oValue = "&otherPassword=" + $('defaultAgentPassword').value;
         var type = "&type=admin";
         AjaxUtils.call(
-            "$context$path"+link+cValue+aValue+type, defaultAdminPasswordResponse);
+            "$context$path"+link+cValue+aValue+oValue+type, defaultAdminPasswordResponse);
     }
 
     function defaultAgentPasswordResponse(response) {
 	if (response.responseText == "true") {
-	   $('defaultAgentPasswordStatus').innerHTML = '$page.getLocalizedString("ok.string")';
+	    $('defaultAgentPasswordStatus').innerHTML = okImage +
+                '<small>$page.getLocalizedString("ok.string")</small>';
 	   defaultAgentFieldsValid = true;
 	} else {
-	   $('defaultAgentPasswordStatus').innerHTML = response.responseText;
+	   $('defaultAgentPasswordStatus').innerHTML = errorImage +
+		'<small>' + response.responseText + '</small>';
 	   defaultAgentFieldsValid = false;
 	}
         $('createDefaultConfig').disabled = !defaultFieldsValid();
@@ -60,9 +66,10 @@
         var link = "?actionLink=checkPasswords";
         var cValue = "&confirm=" + $('defaultAgentConfirm').value;
         var aValue = "&password=" + $('defaultAgentPassword').value;
+	var oValue = "&otherPassword=" + $('defaultAdminPassword').value;
         var type = "&type=agent";
         AjaxUtils.call( 
-            "$context$path"+link+cValue+aValue+type, defaultAgentPasswordResponse)
+            "$context$path"+link+cValue+aValue+oValue+type, defaultAgentPasswordResponse)
     }
     
     
@@ -80,7 +87,7 @@
         <div id="title">$page.getLocalizedString("default.config.title")</div>
     </div>
     <div style="margin-left: 5%; margin-top: 5%; margin-bottom:5%; margin-right: 5%;">
-        $page.getLocalizedString("default.config.description");
+        $page.getLocalizedString("default.config.description")
         <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
         <table class="temp">
             <tr>

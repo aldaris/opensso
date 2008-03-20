@@ -1,28 +1,63 @@
 <script type="text/javascript">
 
+    var serverURLValid = true;
+    var platformLocaleValid = true;
+    var configDirectoryValid = true;
+    var encryptionKeyValid = true;
+    var cookieDomainValid = true;
+    
+    function serverFieldsValid() {
+        $('nextTabButton').disabled =
+           !(serverURLValid &&
+             platformLocaleValid &&
+             configDirectoryValid &&
+             encryptionKeyValid &&
+             cookieDomainValid);
+    }
+
+    function validateServerFields() {
+        var callUrl = "$context$path?actionLink=validateInput";
+        var key = "&key=" + field;
+        var value = "&value=" + $(field).value;
+        AjaxUtils.call(callUrl+key+value, serverFieldValidated);
+    }       
+    function serverFieldValidated(response) {
+        if (response.responseText == "true") { 
+            eval(field + "Valid = true;" );
+            $(field + 'Status').innerHTML = okImage +
+                  '<small>$page.getLocalizedString("ok.string")</small>';
+        } else {
+            eval(field + "Valid = false;" );
+            $(field + 'Status').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
+        }                
+        serverFieldsValid();
+        field = "";
+    }  
+    
     function validateServerURL() {
 	field = "serverURL";
-        validate();
+        validateServerFields();
     }
 
     function validateLocale() {
 	field = "platformLocale";
-        validate();
+        validateServerFields();
     } 
 
     function validateConfigDir() {
 	field = "configDirectory";
-        validate();
+        validateServerFields();       
     } 
 
     function validateEncryptionKey() {
 	field = "encryptionKey";
-        validate();
+        validateServerFields();     
     } 
 
     function validateCookieDomain() {
 	field = "cookieDomain";
-        validate();
+        validateServerFields();     
     } 
 
 </script>
@@ -65,17 +100,13 @@
                         <span id="platformLocaleStatus"></span>
                     </td>
                 </tr> 
-                <tr>                    
-                    <td><label for="encryptionKey"><em>*&nbsp;</em>$page.getLocalizedString("step2.encr.key")</label></td>
-                    <td>
-                        <input id="encryptionKey" name="encryptionKey" type="text" class="text" style="width:200px" value="$encryptionKey" onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
-                        <span id="encryptionKeyStatus"></span>
-                    </td>
-                </tr>    
+ 
                 <tr>                    
                     <td><label for="configDirectory"><em>*&nbsp;</em>$page.getLocalizedString("step2.config.directory")</label></td>
                     <td>
-                        <input id="configDirectory" name="configDirectory" type="text" class="text" style="width:150px" value="$configDirectory" onkeyup="APP.callDelayed(this, validateConfigDir)"/>
+                        <input id="configDirectory" name="configDirectory" 
+                        type="text" class="text" size="60" 
+                        value="$configDirectory" onkeyup="APP.callDelayed(this, validateConfigDir)"/>
                         <span id="configDirectoryStatus"></span>
                     </td>
                 </tr> 

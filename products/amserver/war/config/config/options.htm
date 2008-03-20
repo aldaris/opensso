@@ -1,6 +1,9 @@
 <script type="text/javascript">
     YAHOO.namespace("sun.identity.config.options");
 
+    var okImage = '<img class="pointer" src="$context/assets/images/ok.jpg">';
+    var errorImage = '<img class="pointer" src="$context/assets/images/error.jpg">';
+
     //convenient alias:
     var $ = YAHOO.util.Dom.get;
 
@@ -102,7 +105,7 @@
         alert("configuration failed");
         document.location = "$context/config/options.htm";
     }
-    
+        
     function submitDefaultSummaryForm() {
         YAHOO.sun.identity.config.options.defaultSummary.hide(); 
         YAHOO.sun.identity.config.options.inProgress.show();
@@ -323,8 +326,6 @@
 
                 <br>
                 <h1>$page.getLocalizedString("configuration.option1.complete.message")</h1>
-                <br/>
-		$page.getLocalizedString("next.step.message")
                 <br/>
                 <p align="center" class="blueSmall">
                     <a class="pointer" href="#" onclick="launchConsole(); return false">$page.getLocalizedString("go.to.login.screen")</a>
