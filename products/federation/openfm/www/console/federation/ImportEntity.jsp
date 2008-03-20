@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ImportEntity.jsp,v 1.1 2007-06-29 19:50:53 jonnelson Exp $
+   $Id: ImportEntity.jsp,v 1.2 2008-03-20 05:00:17 veiming Exp $
    
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -36,31 +36,52 @@
 
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
 
-<script language="javascript" src="../console/js/am.js">
-</script>
+<link rel="stylesheet" type="text/css" href="../console/css/opensso.css" />
+<script language="javascript" src="../console/js/am.js"></script>
+<script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 <cc:form name="ImportEntity" method="post" >
     
 <%-- HEADER --%>
 <script language="javascript">
-    var selectWin = null;
-    <%-- 
-       this creates a popup window that lets the user select 
-       a file which contains the entity provider metadata to import.
-    --%>
-    function openWindow(fieldName) {
-	selectWin = window.open('../federation/FileChooser', fieldName,
-	    'height=650,width=650,top=' +
-	    ((screen.height-(screen.height/2))-(500/2)) +
-	    ',left=' +
-	    ((screen.width-650)/2) +
-	    ',scrollbars,resizable');
-	selectWin.focus();
-        
-    }    
-    
+
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
+
+    function openWindow(fieldName) {
+        selectWin = window.open('../federation/FileUploader', fieldName,
+            'height=300,width=650,top=' +
+            ((screen.height-(screen.height/2))-(500/2)) +
+            ',left=' + ((screen.width-650)/2));
+        selectWin.focus();
+    }
+
+    function metaOptionSelect(radio) {
+        var frm = document.forms['ImportEntity'];
+        if (radio.value == 'url') {
+            frm.elements['ImportEntity.tfMetadataFileURL'].style.display = '';
+            frm.elements['ImportEntity.btnMetadata'].style.display = 'none';
+            document.getElementById('metadatafilename').style.display = 'none';
+        } else {
+            frm.elements['ImportEntity.tfMetadataFileURL'].style.display = 'none';
+            frm.elements['ImportEntity.btnMetadata'].style.display = '';
+            document.getElementById('metadatafilename').style.display = '';
+        }
+    }
+
+    function extendedOptionSelect(radio) {
+        var frm = document.forms['ImportEntity'];
+        if (radio.value == 'url') {
+            frm.elements['ImportEntity.tfExtendeddataFileURL'].style.display = '';
+            frm.elements['ImportEntity.btnExtendeddata'].style.display = 'none';
+            document.getElementById('extendeddatafilename').style.display = 'none';
+        } else {
+            frm.elements['ImportEntity.tfExtendeddataFileURL'].style.display = 'none';
+            frm.elements['ImportEntity.btnExtendeddata'].style.display = '';
+            document.getElementById('extendeddatafilename').style.display = '';
+        }
+    }
+
 </script>
 
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
@@ -83,11 +104,19 @@
     pageTitleHelpMessage="" 
     showPageButtonsTop="true" 
     showPageButtonsBottom="true" >
+
+<table border="0" cellpadding="0" cellspacing="0" title="">
+<tr>
+<td valign="top" colspan="2"><div class="ConTblCl1Div">
+<cc:text name="txtInfo" defaultValue="import.entity.information.message"
+    bundleID="amConsole"/>
+</div></td></tr>
+</table>
     
     <cc:propertysheet 
         name="propertyAttributes" 
         bundleID="amConsole" 
-        showJumpLinks="true" />
+        showJumpLinks="false" />
     
 </cc:pagetitle>
 
@@ -95,4 +124,11 @@
 <%-- END CONTENT --%>
 
 </cc:header>
+
+<script language="javascript">
+    var frm = document.forms['ImportEntity'];
+    frm.elements['ImportEntity.btnMetadata'].style.display = 'none'; 
+    frm.elements['ImportEntity.btnExtendeddata'].style.display = 'none'; 
+</script>
+
 </jato:useViewBean>

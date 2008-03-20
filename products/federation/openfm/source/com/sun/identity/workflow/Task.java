@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.4 2008-03-20 02:18:46 veiming Exp $
+ * $Id: Task.java,v 1.5 2008-03-20 05:00:16 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -46,7 +47,7 @@ import java.util.Set;
 public abstract class Task
     implements ITask 
 {
-    private ResourceBundle rb;
+    private static Map resMap = new HashMap();
 
     protected String getString(Map params, String key) {
         Object values = params.get(key);
@@ -61,19 +62,21 @@ public abstract class Task
         }
     }
 
-    protected ResourceBundle getResourceBundle(Locale locale) {
+    protected static ResourceBundle getResourceBundle(Locale locale) {
+        ResourceBundle rb = (ResourceBundle)resMap.get(locale);
         if (rb == null){
             rb = ResourceBundle.getBundle("workflowMessages" ,locale);
+            resMap.put(locale, rb);
         }
         return rb;
     }
 
-    protected String getMessage(String key, Locale locale) {
+    protected static String getMessage(String key, Locale locale) {
         ResourceBundle resBundle = getResourceBundle(locale);
         return resBundle.getString(key);
     }
 
-    protected String getContent(String resName, Locale locale)
+    public static String getContent(String resName, Locale locale)
         throws WorkflowException {
         if (resName.startsWith("http://") ||
             resName.startsWith("https://")
@@ -101,7 +104,7 @@ public abstract class Task
         }
     }
     
-    private String getWebContent(String url, Locale locale)
+    private static String getWebContent(String url, Locale locale)
         throws WorkflowException {
         try {
             StringBuffer content = new StringBuffer();

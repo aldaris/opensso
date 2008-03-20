@@ -17,19 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.6 2008-03-04 17:56:04 babysunil Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.7 2008-03-20 05:00:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation.model;
 
-import com.sun.identity.cli.AuthenticatedCommand;
-import com.sun.identity.cli.RequestContext;
-import com.sun.identity.common.DisplayUtils;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.federation.jaxb.entityconfig.IDPDescriptorConfigElement;
 import com.sun.identity.federation.jaxb.entityconfig.SPDescriptorConfigElement;
 import com.sun.identity.federation.meta.IDFFMetaException;
@@ -44,29 +40,20 @@ import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.xml.XMLUtils;
-import com.sun.identity.sm.OrganizationConfigManager;
-import com.sun.identity.sm.SMSException;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
+import com.sun.identity.workflow.WorkflowException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.servlet.http.HttpServletRequest;
 import org.w3c.dom.Document;
 
-import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import com.sun.identity.federation.cli.ImportMetaData;
+import com.sun.identity.workflow.Task;
 /**
  * This class provides import entity provider related functionality. Currently
  * the supported types are SAMLv2, IDFF, and WSFederation.
@@ -99,40 +86,44 @@ public class ImportEntityModelImpl extends AMModelBase
     public void importEntity(Map requestData) 
         throws AMConsoleException 
     {   
-        // standardFile is the name of the file containing the metada. This
-        // is a required parameter. If we don't find it in the request throw
-        // an exception.
-        String standardFile = (String)requestData.get(STANDARD_META);
-        if (standardFile == null){            
-            throw new AMConsoleException("missing.metadata");
-        }
-        standardMetaData = loadMetaDataFile(standardFile);
-        String protocol = getProtocol(standardMetaData);
-        
-        // try loading the extended metadata, which is optional
-        String extendedFile = (String)requestData.get(EXTENDED_META);
-        if ((extendedFile != null) && (extendedFile.length() > 0)) {
-            extendedMetaData = loadMetaDataFile(extendedFile);
-            String tmp = getProtocol(standardMetaData);
-            
-            // the protocols defined in the standard and extended metadata
-            // must be the same.
-            if (!protocol.equals(tmp)) {
-                throw new AMConsoleException("protocol.mismatch");
+        try {
+            // standardFile is the name of the file containing the metada. This
+            // is a required parameter. If we don't find it in the request throw
+            // an exception.
+            String standardFile = (String) requestData.get(STANDARD_META);
+            if (standardFile == null) {
+                throw new AMConsoleException("missing.metadata");
             }
-        }
+            standardMetaData = Task.getContent(standardFile, getUserLocale());
+            String protocol = getProtocol(standardMetaData);
 
-        // the realm is used by the createXXX commands for storing the entity
-        realm = (String)requestData.get(REALM_NAME);
-        if (realm == null) {
-            realm = DEFAULT_ROOT;
-        }
-        if (protocol.equals(SAML2Constants.PROTOCOL_NAMESPACE)) {
-            createSAMLv2Entity();
-        } else if (protocol.equals(IDFF)) {
-            createIDFFEntity();
-        } else {      
-            createWSFedEntity();
+            // try loading the extended metadata, which is optional
+            String extendedFile = (String) requestData.get(EXTENDED_META);
+            if ((extendedFile != null) && (extendedFile.length() > 0)) {
+                extendedMetaData = Task.getContent(extendedFile, getUserLocale());
+                String tmp = getProtocol(standardMetaData);
+
+                // the protocols defined in the standard and extended metadata
+                // must be the same.
+                if (!protocol.equals(tmp)) {
+                    throw new AMConsoleException("protocol.mismatch");
+                }
+            }
+
+            // the realm is used by the createXXX commands for storing the entity
+            realm = (String) requestData.get(REALM_NAME);
+            if (realm == null) {
+                realm = DEFAULT_ROOT;
+            }
+            if (protocol.equals(SAML2Constants.PROTOCOL_NAMESPACE)) {
+                createSAMLv2Entity();
+            } else if (protocol.equals(IDFF)) {
+                createIDFFEntity();
+            } else {
+                createWSFedEntity();
+            }
+        } catch (WorkflowException ex) {
+            throw new AMConsoleException(ex.getMessage());
         }
     }
     
@@ -388,33 +379,6 @@ public class ImportEntityModelImpl extends AMModelBase
         }
     }
 
-    private static String loadMetaDataFile(String fileName)
-        throws AMConsoleException 
-    {
-        BufferedReader br = null;
-        StringBuffer buff = new StringBuffer();
-        try {
-            br = new BufferedReader(new FileReader(fileName));
-            String line = br.readLine();
-            while (line != null) {
-                buff.append(line).append("\n");
-                line = br.readLine();
-            }
-        } catch(IOException e){
-            debug.error("ImportEnityModel.loadMetaDataFile", e);
-            throw new AMConsoleException(e.getMessage());
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch(IOException e){
-                    debug.error("ImportEnityModel.loadMetaDataFile", e);
-                    throw new AMConsoleException(e.getMessage());
-                }                
-            }
-        }
-        return buff.toString();
-    }
     
     // returns the type provider defined by the meta data.
     private String getProtocol(String metaData) {       

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: importEntityPropertySheet.xml,v 1.1 2007-06-29 19:51:13 jonnelson Exp $
+   $Id: importEntityPropertySheet.xml,v 1.2 2008-03-20 05:00:17 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,87 +27,58 @@
 
 <propertysheet>
     <section name="dummy" defaultValue="">
-        <property>
-            <label name="lblInformation" 
-                defaultValue="import.entity.information.message" />
-        </property>
-        
         <property name="realmProperty" required="true">
             <label name="lblName" 
                 defaultValue="import.entity.realm.name.label" 
                 labelFor="realmName" />
             <cc name="realmName" 
-                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />                         
+                tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
+         </property>
+
+        <property>
+            <label name="lblMetaRadio" defaultValue="configure.provider.label.meta.question" labelFor="radioMeta" />
+            <cc name="radioMeta" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+                <option label="configure.provider.option.url" value="url" />
+                <option label="configure.provider.option.uploadfile" value="file" />
+                <attribute name="layout" value="horizontal" />
+                <attribute name="onChange" value="metaOptionSelect(this);" />
+            </cc>
         </property>
-        
-       <subsection name="standardMeta" defaultValue="" >
-            <property required="true">
-                <label name="importExtended" 
-                    defaultValue="import.standard.metadata.label" />
-                <ccgroup>
-                    <property name="standardFileNameProperty">
-                        <label name="standardFileNameLabel" 
-                            defaultValue="import.standard.filename.label" 
-                            labelFor="standardFileName"/>
-                        <cc name="standardFileName" 
-                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                            <attribute name="size" value="75"/>
-                            <attribute name="autoSubmit" value="false"/>
-                        </cc>
-                        <cc name="standardButton"
-                            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-                            <attribute name="OnClick" value="openWindow('standardFileName'); return false;" />
-                            <attribute name="defaultValue" value="button.browse" />
-                        </cc>
-                    </property>
-                    <property name="standardURLProperty">
-                        <label name="standardURLLabel" 
-                            defaultValue="import.standard.url.label" 
-                            labelFor="standardURLName"/>
-                        <cc name="standardURLName" 
-                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                            <attribute name="size" value="75"/>
-                            <attribute name="autoSubmit" value="false"/>
-                        </cc>
-        
-                    </property>
-                </ccgroup>
-            </property>
-        </subsection>
-        
-        <subsection name="extendedMeta" defaultValue="" >
-            <property>
-                <label name="importExtended" 
-                    defaultValue="import.extended.metadata.label" />
-                <ccgroup>
-                    <property name="extendedFileNameProperty">
-                        <label name="lblDescription" 
-                            defaultValue="import.extended.filename.label" 
-                            labelFor="extendedFileName"/>
-                        <cc name="extendedFileName" 
-                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                            <attribute name="size" value="75"/>
-                            <attribute name="autoSubmit" value="false"/>
-                        </cc>
-                        <cc name="extendedButton"
-                            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-                            <attribute name="OnClick" value="openWindow('extendedFileName'); return false;" />
-                            <attribute name="defaultValue" value="button.browse" />
-                        </cc>
-                    </property>
-                    <property name="extendedURLProperty">
-                        <label name="extendedURLLabel" 
-                            defaultValue="import.extended.url.label" 
-                            labelFor="extendedURLName"/>
-                        <cc name="extendedURLName" 
-                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                            <attribute name="size" value="75"/>
-                            <attribute name="autoSubmit" value="false"/>
-                        </cc>
-                    </property>
-                </ccgroup>
-            </property>
-        </subsection>       
-        
+        <property required="true">
+            <label name="lblMetadataFileURL" defaultValue="configure.provider.label.metadata" labelFor="tfMetadataFileURL" />
+            <cc name="tfMetadataFileURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="localizeDisplayFieldValue" value="false" />
+                <attribute name="size" value="70" />
+            </cc>
+            <cc name="btnMetadata"
+                tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+                <attribute name="OnClick" value="openWindow('tfMetadataFile|metadatafilename'); return false;" />
+                    <attribute name="defaultValue" value="button.upload" />
+            </cc>
+            <cc name="tfMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
+        </property>
+
+        <property>
+            <label name="lblExtendedRadio" defaultValue="configure.provider.label.extendeddata.question" labelFor="radioExtended" />
+            <cc name="radioExtended" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+                <option label="configure.provider.option.url" value="url" />
+                <option label="configure.provider.option.uploadfile" value="file" />
+                <attribute name="layout" value="horizontal" />
+                <attribute name="onChange" value="extendedOptionSelect(this);" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblExtendeddataFileURL" defaultValue="configure.provider.label.extendeddata" labelFor="tfExtendeddataFileURL" />
+            <cc name="tfExtendeddataFileURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="localizeDisplayFieldValue" value="false" />
+                <attribute name="size" value="70" />
+            </cc>
+            <cc name="btnExtendeddata"
+                tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
+                <attribute name="OnClick" value="openWindow('tfExtendeddataFile|extendeddatafilename'); return false;" />
+                    <attribute name="defaultValue" value="button.upload" />
+            </cc>
+            <cc name="tfExtendeddataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
+        </property>
     </section>
 </propertysheet>

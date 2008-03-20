@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityViewBean.java,v 1.3 2007-09-28 22:25:05 asyhuang Exp $
+ * $Id: ImportEntityViewBean.java,v 1.4 2008-03-20 05:00:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.event.ChildContentDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.OptionList;
@@ -59,6 +60,9 @@ public class ImportEntityViewBean
     private AMPropertySheetModel psModel;
     private CCPageTitleModel ptModel;
     private static final String PROPERTIES = "propertyAttributes";
+    private static final String RADIO_META = "radioMeta";
+    private static final String RADIO_EXTENDED = "radioExtended";
+
 
     /**
      * Creates a authentication domains view bean.
@@ -101,11 +105,17 @@ public class ImportEntityViewBean
     {
         super.beginDisplay(event);
         populateRealmData();
-        
-        // hide these sections for now. We may enable them later
-        psModel.setVisible("realmProperty", true);     
-        psModel.setVisible("standardURLProperty", false);
-        psModel.setVisible("extendedURLProperty", false);
+
+        String value = (String)getDisplayFieldValue(RADIO_META);
+        if ((value == null) || value.equals("")){
+            setDisplayFieldValue(RADIO_META, "url");
+        }
+
+        value = (String)getDisplayFieldValue(RADIO_EXTENDED);
+        if ((value == null) || value.equals("")){
+            setDisplayFieldValue(RADIO_EXTENDED, "url");
+        }
+
     }    
     
     private void populateRealmData() {
@@ -118,9 +128,8 @@ public class ImportEntityViewBean
              OptionList sortedList = createOptionList(realmNames);
              OptionList optList =  new OptionList();
              int size = sortedList.size();
-             String name;
-             for (int i = 0; i < size; i++ ) {
-                 name = sortedList.getValue(i);
+             for (int i = 0; i < size; i++) {
+                 String name = sortedList.getValue(i);
                  optList.add(getPath(name), name);
              }
              menu.setOptions(optList);
@@ -151,6 +160,24 @@ public class ImportEntityViewBean
         return new ImportEntityModelImpl(req, getPageSessionAttributes());
     }
 
+    public String endPropertyAttributesDisplay(
+        ChildContentDisplayEvent event
+    ) {
+        String html = event.getContent();
+        int idx = html.indexOf("tfMetadataFile\"");
+        idx = html.lastIndexOf("<input ", idx);
+        html = html.substring(0, idx) +
+            "<span id=\"metadatafilename\"></span>" +
+            html.substring(idx);
+
+        idx = html.indexOf("tfExtendeddataFile\"");
+        idx = html.lastIndexOf("<input ", idx);
+        html = html.substring(0, idx) +
+            "<span id=\"extendeddatafilename\"></span>" +
+            html.substring(idx);
+        return html;
+    }
+
     /**
      * Handles upload entity button request. There are two fields on this page:
      * one for standard metadata and the other for extended. The standard is
@@ -168,19 +195,23 @@ public class ImportEntityViewBean
         String realm = (String)getDisplayFieldValue(model.REALM_NAME);
         data.put(model.REALM_NAME, realm);
         
-        String standard = (String)getDisplayFieldValue("standardFileName");   
-
-        // TBD add check on URL field as well when it is enabled
-        if ((standard == null) || (standard.length() < 1)) {            
+        String radioMeta = (String)getDisplayFieldValue("radioMeta");
+        String meta = (radioMeta.equals("url")) ? 
+            (String)getDisplayFieldValue("tfMetadataFileURL") :
+            (String)getDisplayFieldValue("tfMetadataFile");
+        
+        String radioExtended = (String)getDisplayFieldValue("radioExtended");
+        String extended = (radioExtended.equals("url")) ? 
+            (String)getDisplayFieldValue("tfExtendeddataFileURL") :
+            (String)getDisplayFieldValue("tfExtendeddataFile");
+        
+        if ((meta == null) || (meta.length() == 0)) {
             psModel.setErrorProperty("standardFileNameProperty", true);            
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.input.error",
-                "import.entity.missing.metadata");  
-            
+                "import.entity.missing.metadata");
             forwardTo();
         } else {
-            data.put(ImportEntityModel.STANDARD_META, standard);
-            
-            String extended = (String)getDisplayFieldValue("extendedFileName");
+            data.put(ImportEntityModel.STANDARD_META, meta);
             if ((extended != null) || (extended.trim().length() > 0)) {
                 data.put(ImportEntityModel.EXTENDED_META, extended);
             }            
@@ -200,7 +231,19 @@ public class ImportEntityViewBean
                     String key = (String)i.next();  
                     String value = (String)data.get(key);
                     if ((value != null) && (value.length() > 0)) {
-                        message.append("<li>").append((String)data.get(key));                       
+                        String val = (String)data.get(key);
+                        if (val.startsWith("http")) {
+                            message.append("<li>").append(val);
+                        } else {
+                            int idx = val.lastIndexOf("<!-- ");
+                            if (idx != -1) {
+                                int idx1 = val.lastIndexOf(" -->");
+                                if (idx1 != -1) {
+                                    val = val.substring(idx+5, idx1);
+                                }
+                            }
+                            message.append("<li>").append(val);
+                        }
                     }
                 }
                 
@@ -234,4 +277,4 @@ public class ImportEntityViewBean
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());       
     }
-} 
+}
