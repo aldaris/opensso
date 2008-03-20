@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2007-12-07 22:20:07 kevinserwin Exp $
+   $Id: build.xml,v 1.9 2008-03-20 05:33:26 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -139,6 +139,9 @@
             <fileset file="${wssagents.dist.dir}/openssowssproviders.jar" />
             <fileset file="${wssagents.src.dir}/com/sun/identity/wssagents/weblogic/famauthprovider.jar" />
         </copy>
+        <copy todir="${zip.temp.dir}/lib">
+            <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xmlsec.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,ldapjdk.jar,j2ee.jar" />
+        </copy>
         <copy todir="${zip.temp.dir}/samples">
             <fileset file="${wssagents.samples.dir}/**" />
         </copy>
@@ -146,9 +149,11 @@
         <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/resources/AMConfig.properties" />
         
         <copy todir="${zip.temp.dir}/resources">
-            <fileset file="${openfm.clientsamples.dir}/war/amclientkeystore.jks" />
+            <fileset file="${openfm.clientsamples.dir}/war/keystore.jks" />
             <fileset file="${openfm.clientsamples.dir}/war/.keypass" />
             <fileset file="${openfm.clientsamples.dir}/war/.storepass" />
+            <fileset file="${openfm.dir}/wsdl/famsts-client.wsdl"/>
+            <fileset file="${openfm.dir}/xml/wss/wsit-client.xml"/>
         </copy>
 
         <zip destfile="${wssagents.dist.dir}/openssowssproviders.zip" whenempty="create">

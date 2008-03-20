@@ -18,19 +18,20 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.4 2007-12-11 02:00:35 qcheng Exp $
+   $Id: README.wssagentszip,v 1.5 2008-03-20 05:33:26 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 Federated Access Manager Web Services Security Agents / Providers - Zip file
 
-famwssproviders.zip
+openssowssproviders.zip
              |____ lib/openssoclientsdk.jar (complete clientsdk jar)
              |____ lib/openssowssproviders.jar (complete WSSAgents jar, including glassfish, weblogic, websphere, proxy plugin code binaries)
-             |____ lib/famauthprovider.jar (for weblogic only) 
+             |____ lib/famauthprovider.jar (for weblogic only)
+             |____ lib/*.jar (other jar files required for OpenSSO client and WSS Providers/Agents)
              |____ resources/AMConfig.properties (complete client properties)
-             |____ resources/amclientkeystore.jks (client keystore file)
+             |____ resources/keystore.jks (client keystore file)
              |____ resources/.keypass (password file for key)
              |____ resources/.storepass (password file for keystore)
              |____ README (this file)

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2008-03-20 05:33:26 mrudul_uchil Exp $
+
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<project name="StandAloneStockClient" default="default" basedir=".">
+    <description>Builds, tests, and runs the project stockclient.</description>
+    <property file="../glassfish.properties"/>
+    <property name="is.java-client.module" value="true"/>
+
+    <target name="default" depends="run"/>
+
+    <target name="build" depends="clean">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src"
+            destdir="build/classes"
+            classpath="xyz.jar"
+            debug="on">
+            <classpath>
+                <pathelement location="${glassfish.home}/lib/appserv-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/webservices-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/openssoclientsdk.jar"/>
+                <pathelement location="${glassfish.home}/domains/domain1/config"/>
+                <pathelement path="build/classes"/>
+            </classpath>
+         </javac>
+    </target>
+
+    <target name="run" depends="build">
+            <echo>java.home=${java.home}</echo>
+        <java classname="com.samples.SecuringWS" fork="true">
+            <classpath>
+                <pathelement location="${glassfish.home}/lib/appserv-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/ldapjdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/webservices-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/accessmanager/openssoclientsdk.jar"/>
+                <pathelement location="${glassfish.home}/domains/domain1/config"/>
+                <pathelement path="build/classes"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="clean">
+        <delete dir="dist"/>
+        <delete dir="build"/>
+    </target>
+</project>
+

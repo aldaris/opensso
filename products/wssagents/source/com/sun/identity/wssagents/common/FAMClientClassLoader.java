@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClientClassLoader.java,v 1.3 2007-12-11 02:00:31 qcheng Exp $
+ * $Id: FAMClientClassLoader.java,v 1.4 2008-03-20 05:33:27 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,11 +63,11 @@ public class FAMClientClassLoader {
                 String configPath = FILE_BEGIN + instanceRoot +
                     FILE_SEPARATOR + "config" + FILE_SEPARATOR;
                 String xmlsecPath = FILE_BEGIN + installRoot +
-                    FILE_SEPARATOR + "lib" + FILE_SEPARATOR +
-                    "webservices-rt.jar";
+                    FILE_SEPARATOR + "addons" + FILE_SEPARATOR +
+                    "accessmanager" + FILE_SEPARATOR + "webservices-rt.jar";
                 
                 if (_logger != null) {
-                    _logger.log(Level.FINE, "FAMHttpAuthModule.initialize:"+
+                    _logger.log(Level.FINE, "FAMClientClassLoader.initialize:"+
                         " clientSDKPath : " + clientSDKPath +
                         " configPath : " + configPath +
                         " xmlsecPath : " + xmlsecPath);

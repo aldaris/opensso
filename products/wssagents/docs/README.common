@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.common,v 1.5 2007-11-30 19:08:02 mrudul_uchil Exp $
+   $Id: README.common,v 1.6 2008-03-20 05:33:26 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,6 +49,8 @@ com.iplanet.am.services.deploymentDescriptor=famserver_deploy_uri
 com.sun.identity.agents.app.username=amadmin
 com.iplanet.am.service.password=<amadmin password>
 
+am.encryption.pwd=<empty or null value>
+
 com.iplanet.am.naming.url=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/namingservice
 
 # Debug information
@@ -65,7 +67,7 @@ com.iplanet.am.cookie.name=iPlanetDirectoryPro
 # (when Download or Download with JDK is selected), and /javaee.home/addons/amserver 
 # for installations of Java Application Platform SDK or Java EE 5 SDK Update 1 
 # (when Download with Tools is selected), and NetBeans Enterprise Pack 5.5 (when Download is selected).
-com.sun.identity.saml.xmlsig.keystore=/path_to_file/amclientkeystore.jks
+com.sun.identity.saml.xmlsig.keystore=/path_to_file/keystore.jks
 com.sun.identity.saml.xmlsig.storepass=/path_to_file/.storepass
 com.sun.identity.saml.xmlsig.keypass=/path_to_file/.keypass
 com.sun.identity.liberty.ws.trustedca.certaliases=amserver:<famserver_host>

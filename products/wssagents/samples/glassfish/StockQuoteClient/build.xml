@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2007-12-20 01:11:34 mrudul_uchil Exp $
+   $Id: build.xml,v 1.4 2008-03-20 05:33:27 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -58,9 +58,6 @@
       <mkdir dir="dist"/>
       <copy todir="web/WEB-INF/classes">
          <fileset dir="build/classes" />
-      </copy>
-      <copy todir="web/WEB-INF/classes/META-INF/services">
-         <fileset dir="web/WEB-INF/classes/META-INF/services" />
       </copy>
       <war destfile="dist/StockQuoteClient.war" webxml="web/WEB-INF/web.xml">
          <zipfileset dir="web" />
