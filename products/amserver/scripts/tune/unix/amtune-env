@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-env,v 1.2 2008-02-14 02:17:27 ykwon Exp $
+# $Id: amtune-env,v 1.3 2008-03-21 06:53:38 ykwon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -539,7 +539,7 @@ ASADMIN_COMMON_PARAMS="$ASADMIN_COMMON_PARAMS_NO_TARGET --target $ASADMIN_TARGET
 #               :  This is a mandatory field to be filled.
 #
 #--------------------------------------------------------------------------------------
-FAMADM_LOCATION=/opt/famadm/opensso/bin
+FAMADM_LOCATION=/famadm/opensso/bin
 FAMSERVER_URL=http://servername.domainname:port/opensso
 FAMADM_USER=amadmin
 FAMADM=$FAMADM_LOCATION/famadm
@@ -1074,12 +1074,6 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
 
    if [ "$FAMADM_LOCATION" = "" ] || [ ! -d $FAMADM_LOCATION ]; then
    
-      if [ "$IS_INSTALL_DIR" = "" ] || [ ! -d $IS_INSTALL_DIR ] || [ ! -d $IS_INSTALL_DIR/bin ]; then
-        $ECHO `$gettext "Please enter AM 6.x's or 7.x's installation directory."`
-        $ECHO `$gettext "For AM 6.x and 7.x, it should be set to "` "IS_INSTALL_DIR."
-        exit $AMTUNE_INVALID_ENVIRON_SETTING
-      fi 
- 
       $ECHO `$gettext "Please enter FAM server's famadm location in amtune-env file."`
       $ECHO `$gettext "It should be set to "` "FAMADM_LOCATION."
       exit $AMTUNE_INVALID_ENVIRON_SETTING
@@ -1088,12 +1082,6 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
 
    if [ "$FAMADM" = "" ] || [ ! -f $FAMADM ]; then
         
-      if [ "$ADMIN_CLIENT" = "" ] || [ ! -f $ADMIN_CLIENT ]; then
-        $ECHO `$gettext "AM 6.x's or 7.x's amadmin is not found."`
-        $ECHO `$gettext "For AM 6.x and 7.x, please set amadmin's location to "` "ADMIN_CLIENT in amtune-env."
-        exit $AMTUNE_INVALID_ENVIRON_SETTING
-      fi
-
       $ECHO `$gettext "FAM server's famadm tool is not found."`
       $ECHO `$gettext "Please set famadm's location to FAMADM_LOCATION in amtune-env."`
       exit $AMTUNE_INVALID_ENVIRON_SETTING
@@ -1130,7 +1118,22 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
 
    $RM $FAMADM_PASSFILE
 
- if [ "$FAMADM_LOCATION" = "" ] || [ ! -d $FAMADM_LOCATION ]; then
+   FAMServerCheck=`getFAMVersion`
+   $ECHO $FAMServerCheck
+
+ if [ "$FAMServerCheck" = "" ]; then
+
+   if [ "$IS_INSTALL_DIR" = "" ] || [ ! -d $IS_INSTALL_DIR ] || [ ! -d $IS_INSTALL_DIR/bin ]; then
+        $ECHO `$gettext "Please enter AM 6.x's or 7.x's installation directory."`
+        $ECHO `$gettext "For AM 6.x and 7.x, it should be set to "` "IS_INSTALL_DIR."
+        exit $AMTUNE_INVALID_ENVIRON_SETTING
+   fi
+
+   if [ "$ADMIN_CLIENT" = "" ] || [ ! -f $ADMIN_CLIENT ]; then
+        $ECHO `$gettext "AM 6.x's or 7.x's amadmin is not found."`
+        $ECHO `$gettext "For AM 6.x and 7.x, please set amadmin's location to "` "ADMIN_CLIENT in amtune-env."
+        exit $AMTUNE_INVALID_ENVIRON_SETTING
+   fi
 
    if [ "$IS_CONFIG_DIR" = "" ] || [ ! -d $IS_CONFIG_DIR ]; then
         $ECHO `$gettext "Please enter "` "AM 6.x's or 7.x's " `$gettext "configuration directory in "` "amtune-env."

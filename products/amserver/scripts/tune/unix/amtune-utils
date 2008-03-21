@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-utils,v 1.2 2008-02-14 02:20:11 ykwon Exp $
+# $Id: amtune-utils,v 1.3 2008-03-21 06:53:38 ykwon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -510,16 +510,22 @@ getEntry() {
     return
 }
 #-------------------------------------------------------------------------------
-# Function      :   getAMVersion
+# Function      :   getAMVersion, getFAMVersion
 # Parameters    :   None
 # Output        :   Returns the version string of Federated Access Manager to be tuned.
 # Description   :   This function runs amadmin to get the version string for 
-#               :   AM 6.x and AM 7.x.  
+#               :   AM 6.x and AM 7.x and famadm for FAM 8.x or later. 
 #-------------------------------------------------------------------------------
 
 getAMVersion() {
 
     $ECHO `$ADMIN_CLIENT --version`
+
+}
+
+getFAMVersion() {
+
+    $ECHO `$FAMADM --version`
 
 }
 #-------------------------------------------------------------------------------
