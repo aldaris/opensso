@@ -17,7 +17,7 @@
 #  your own identifying information:
 #  "Portions Copyrighted [year] [name of copyright owner]"
 #
-#  $Id: amtune-directory.template.po,v 1.2 2008-03-05 23:02:41 ykwon Exp $
+#  $Id: amtune-directory-template.po,v 1.1 2008-03-21 06:58:18 ykwon Exp $
 #
 #  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
