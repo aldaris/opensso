@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.37 2008-03-18 18:47:17 sean_brydon Exp $
+   $Id: AgentService.xml,v 1.38 2008-03-21 02:30:51 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1371,7 +1371,52 @@
                         <DefaultValues>
                             <Value>2000</Value>
                         </DefaultValues>
+                    </AttributeSchema>              
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.logout.url"
+                        type="list"
+                        syntax="string"
+                        validator="ListValueValidator"
+                        i18nKey="a254">
+                        <DefaultValues>
+                            <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Logout</Value>
+                        </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.logout.url.prioritized"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a255">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.logout.url.probe.enabled"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a256">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.logout.url.probe.timeout"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a257">
+                        <DefaultValues>
+                            <Value>2000</Value>
+                        </DefaultValues>
+                    </AttributeSchema>                 
                     <AttributeSchema
                         name="com.sun.identity.agents.config.agent.host"
                         type="single"
