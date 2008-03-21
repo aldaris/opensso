@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: distAuthConfigurator.jsp,v 1.1 2007-12-06 20:44:30 manish_rustagi Exp $
+   $Id: distAuthConfigurator.jsp,v 1.2 2008-03-21 06:28:04 manish_rustagi Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -61,6 +61,7 @@ java.util.Properties"
     String distAuthCookieName = "AMDistAuthCookie";
     String appUser = null;
     String appPassword = null;
+    String confirmAppPassword = null;
 
     File configF = new File(configFile);
     if (configF.exists()) {
@@ -91,6 +92,7 @@ java.util.Properties"
             encryptionKey = request.getParameter("encryptionKey");
             appUser = request.getParameter("appUser");
             appPassword = request.getParameter("appPassword");
+            confirmAppPassword = request.getParameter("confirmAppPassword");
         
             if ((famProt != null) && !famProt.equals("") && 
                 (famHost != null) && !famHost.equals("") && 
@@ -105,7 +107,8 @@ java.util.Properties"
                 (debugDir != null) && !debugDir.equals("") &&
                 (encryptionKey != null) && !encryptionKey.equals("") &&                  
                 (appUser != null) && !appUser.equals("") &&
-                (appPassword != null) && !appPassword.equals("")) {
+                (appPassword != null) && !appPassword.equals("") &&
+                appPassword.equals(confirmAppPassword)){
                 Properties props = new Properties();
                 props.setProperty("SERVER_PROTOCOL", famProt);
                 props.setProperty("SERVER_HOST", famHost);
@@ -147,6 +150,12 @@ java.util.Properties"
                 configured = true;
             } else {
                 errorMsg = "All the fields are required."; 
+                if((appPassword != null) && !appPassword.equals("")){
+                    if(!appPassword.equals(confirmAppPassword)){
+                        errorMsg = "Application user password and confirm " +
+                        "Application user password does not match";
+                    }
+                }
             }
         }
     }
@@ -254,6 +263,10 @@ java.util.Properties"
     <td>Application user password</td>
     <td><input name="appPassword" type="password" size="30" value="<%= appPassword == null ? "" : appPassword %>" /></td>
     </tr>
+    <tr>
+    <td>Confirm Application user password</td>
+    <td><input name="confirmAppPassword" type="password" size="30" value="<%= confirmAppPassword == null ? "" : confirmAppPassword %>" /></td>
+    </tr>    
     <tr>
         <td>  </td>
     </tr>

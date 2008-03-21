@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: AMDistAuthConfig.properties.template,v 1.2 2008-03-04 00:25:52 beomsuk Exp $
+# $Id: AMDistAuthConfig.properties.template,v 1.3 2008-03-21 06:29:29 manish_rustagi Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -131,7 +131,6 @@ com.sun.identity.sm.cacheTime=1
 com.iplanet.am.server.protocol=@SERVER_PROTOCOL@
 com.iplanet.am.server.host=@SERVER_HOST@
 com.iplanet.am.server.port=@SERVER_PORT@
-com.iplanet.am.services.deploymentDescriptor=@DEPLOY_URI@
 
 com.iplanet.am.cookie.name=@AM_COOKIE_NAME@
 

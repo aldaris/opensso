@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DistAuthConfiguratorFilter.java,v 1.1 2007-12-06 20:58:55 manish_rustagi Exp $
+ * $Id: DistAuthConfiguratorFilter.java,v 1.2 2008-03-21 06:30:49 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,9 @@ public final class DistAuthConfiguratorFilter implements Filter {
         System.getProperty("user.home") + File.separator + 
         "AMDistAuthConfig.properties"; 
     private boolean passThrough = false;
+    private static String[] fList = { 
+        ".htm", ".css", ".js", ".jpg", ".gif", ".png" 
+    };    
 
     /**
      * Redirects request to configuration page if the product is not yet
@@ -77,7 +80,7 @@ public final class DistAuthConfiguratorFilter implements Filter {
             if (httpRequest.getRequestURI().endsWith(SETUP_URI)) {
                 passThrough = true;
                 filterChain.doFilter(httpRequest, httpResponse);
-            } else if (passThrough) {
+            } else if (passThrough && validateStream(httpRequest)) {
                 filterChain.doFilter(httpRequest, httpResponse);
             } else if (!isConfigured) {
                 String url = httpRequest.getScheme() + "://" +
@@ -123,6 +126,21 @@ public final class DistAuthConfiguratorFilter implements Filter {
     public void setFilterConfig(FilterConfig fconfig) {
         config = fconfig;
     }
+    
+    /**
+     * Returns <code>true</code> if the request for resources.
+     *
+     * @param httpRequest HTTP Servlet request.
+     * @return <code>true</code> if the request for resources.
+     */
+    private boolean validateStream(HttpServletRequest httpRequest) {
+        String uri =  httpRequest.getRequestURI();
+        boolean ok = false;
+        for (int i = 0; (i < fList.length) && !ok; i++) {
+            ok = (uri.indexOf(fList[i]) != -1);
+        }
+        return ok;     
+    }    
 
     /**
      * Sets properties from AMDistAuthConfig.properties

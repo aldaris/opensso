@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.19 2008-03-12 15:14:10 veiming Exp $
+ * $Id: Constants.java,v 1.20 2008-03-21 06:26:17 manish_rustagi Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -774,4 +774,11 @@ public interface Constants {
      */
     String URL_CONNECTION_USE_CACHE =
         "com.sun.identity.urlconnection.useCache";        
+        
+    /**
+     * Property string for distauth deployment descriptor
+     */
+    String AM_DISTAUTH_DEPLOYMENT_DESCRIPTOR =
+        "com.iplanet.am.distauth.deploymentDescriptor";
+        
 }

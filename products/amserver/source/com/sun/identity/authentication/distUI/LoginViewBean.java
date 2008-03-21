@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.12 2008-02-20 06:42:34 superpat7 Exp $
+ * $Id: LoginViewBean.java,v 1.13 2008-03-21 06:21:47 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 
 package com.sun.identity.authentication.distUI;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
@@ -1965,6 +1966,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     
     static {
+        serviceUri = SystemProperties.get(
+       	           Constants.AM_DISTAUTH_DEPLOYMENT_DESCRIPTOR);
+        AuthClientUtils.setServiceURI(serviceUri);
         LOGINURL = serviceUri + "/UI/Login";
     }
     

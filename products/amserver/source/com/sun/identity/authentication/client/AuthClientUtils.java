@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.8 2008-03-04 00:29:01 beomsuk Exp $
+ * $Id: AuthClientUtils.java,v 1.9 2008-03-21 06:23:18 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2326,5 +2326,19 @@ public class AuthClientUtils {
         }
         return returnForcedAuth;
     }
+    
+    /**
+     *  Sets the service URI
+     */    
+    public static void setServiceURI(String strServiceURI) {
+    	serviceURI =  strServiceURI;  	
+    }
 
+    /** 
+     * Returns the service URI
+     * @return a String the Service URI
+     */
+    public static String getServiceURI(){
+    	return serviceURI;
+    }
 }

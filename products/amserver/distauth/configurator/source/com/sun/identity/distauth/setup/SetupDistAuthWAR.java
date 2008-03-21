@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupDistAuthWAR.java,v 1.1 2007-12-06 20:58:56 manish_rustagi Exp $
+ * $Id: SetupDistAuthWAR.java,v 1.2 2008-03-21 06:30:49 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,7 +97,7 @@ public class SetupDistAuthWAR {
             ((String)properties.get("DISTAUTH_SERVER_PORT"));
         sbDistAuthConfig.append("\n");
         sbDistAuthConfig.append
-            ("\ncom.iplanet.am.services.deploymentDescriptor=");
+            ("\ncom.iplanet.am.distauth.deploymentDescriptor=");
         sbDistAuthConfig.append((String)properties.get("DISTAUTH_DEPLOY_URI"));
         sbDistAuthConfig.append("\n");
         sbDistAuthConfig.append("\ncom.iplanet.am.cookie.secure=");
