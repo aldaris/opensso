@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-prepareDSTuner,v 1.2 2008-02-14 02:19:24 ykwon Exp $
+# $Id: amtune-prepareDSTuner,v 1.3 2008-03-21 18:25:45 ykwon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -69,11 +69,11 @@ prepareDirectoryTuner() {
 
     list_default_am_indexes=`getListDefaultAMIndexes`
     if [ "$list_default_am_indexes" = "" ]; then
-        $ECHO `$gettext "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory.template."`
+        $ECHO `$gettext "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory-template."`
     fi
 
     $CP $AMTUNE_UTILS_SCRIPT /tmp/amtune-utils
-    $CP $SCRIPT_LOCATION/amtune-directory.template $tmp_file
+    $CP $SCRIPT_LOCATION/amtune-directory-template $tmp_file
 
     ###########################################ACI#######################################################
     NormalizeDNandReplaceComma "$ROOT_SUFFIX" "_"
@@ -93,7 +93,7 @@ prepareDirectoryTuner() {
     $ECHO `$gettext "3.  Execute the following script in 'REVIEW' mode : amtune-directory"`
     $ECHO `$gettext "4.  Review carefully the recommended tunings for DS"`
     $ECHO `$gettext "5.  If you are sure of applying these changes to DS, modify the following lines in amtune-directory"`
-    $ECHO `$gettext "    or in amtune-directory.template before running this script."`
+    $ECHO `$gettext "    or in amtune-directory-template before running this script."`
     $ECHO `$gettext "   a.  "` "AMTUNE_MODE="
     $ECHO `$gettext "   These parameters can also be modified or left unchanged to use default values"`
     $ECHO `$gettext "   b.  "` "AMTUNE_LOG_LEVEL="

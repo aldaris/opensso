@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-directory-template,v 1.1 2008-03-21 06:53:37 ykwon Exp $ 
+# $Id: amtune-directory-template,v 1.2 2008-03-21 18:25:09 ykwon Exp $ 
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -528,7 +528,7 @@ SCRIPT_LOCATION=`/usr/bin/dirname $0`
 SCRIPT_BASENAME=`/bin/basename $0`
 SCRIPT_ARG=$1
 TOOLS_HOME="@TOOLS_HOME@"
-TEXTDOMAIN=amtune-directory.template
+TEXTDOMAIN=amtune-directory-template
 TEXTDOMAINDIR=$TOOLS_HOME/locale
 export TEXTDOMAIN
 export TEXTDOMAINDIR
