@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.21 2008-02-20 06:42:36 superpat7 Exp $
+ * $Id: LoginState.java,v 1.22 2008-03-21 06:19:04 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -5611,6 +5611,7 @@ public class LoginState {
      */
     public void setRequestLocale(HttpServletRequest request) {
         localeContext.setLocale(request);
+        isLocaleSet = true; 
     }   
     
     /**
