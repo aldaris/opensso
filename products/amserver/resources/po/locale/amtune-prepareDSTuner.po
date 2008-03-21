@@ -17,7 +17,7 @@
 #  your own identifying information:
 #  "Portions Copyrighted [year] [name of copyright owner]"
 #
-#  $Id: amtune-prepareDSTuner.po,v 1.1 2008-02-14 02:39:17 ykwon Exp $
+#  $Id: amtune-prepareDSTuner.po,v 1.2 2008-03-21 18:44:34 ykwon Exp $
 #
 #  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -35,8 +35,8 @@ msgstr "Determining Current Settings..."
 msgid  "Creating Directory Server Tuner tar file: "
 msgstr "Creating Directory Server Tuner tar file: "
 
-msgid  "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory.template."
-msgstr "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory.template."
+msgid  "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory-template."
+msgstr "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory-template."
 
 msgid  "Directory Server Tuner tar file: "
 msgstr "Directory Server Tuner tar file: "
@@ -59,8 +59,8 @@ msgstr "4.  Review carefully the recommended tunings for DS"
 msgid  "5.  If you are sure of applying these changes to DS, modify the following lines in amtune-directory"
 msgstr "5.  If you are sure of applying these changes to DS, modify the following lines in amtune-directory"
 
-msgid  "    or in amtune-directory.template before running this script."
-msgstr "    or in amtune-directory.template before running this script."
+msgid  "    or in amtune-directory-template before running this script."
+msgstr "    or in amtune-directory-template before running this script."
 
 msgid  "   a.  "
 msgstr "   a.  "
