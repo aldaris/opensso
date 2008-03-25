@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.8 2008-03-07 23:19:34 mrudulahg Exp $
+ * $Id: UnconfigureIDFF.java,v 1.9 2008-03-25 22:46:22 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,9 @@ import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.testng.annotations.AfterSuite;
@@ -69,10 +71,11 @@ public class UnconfigureIDFF extends TestCommon {
      * Configure sp & idp
      * @DocTest: IDFF|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
-    public void UnconfigureIDFF()
+    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void UnconfigureIDFF(String strGroupName)
     throws Exception {
-        entering("UnconfigureIDFF", null);
+        Object[] params = {strGroupName};
+        entering("UnconfigureIDFF", params);
         String spurl;
         String idpurl;
         try {
@@ -249,6 +252,30 @@ public class UnconfigureIDFF extends TestCommon {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted COT " +
                             "at SP side");                    
                 }
+            }
+            
+            if (strGroupName.contains("sec")) {
+                    log(Level.FINEST, "UnconfigureIDFF", "Disable XML signing.");
+                    List<String> arrList = new ArrayList();
+                    arrList.add("XMLSigningOn=false");
+                    if (FederationManager.getExitCode(idpfm.setAttrDefs(
+                            webClient, "sunFAMIDFFConfiguration", 
+                            "Global", "", arrList)) != 0) {
+                        log(Level.SEVERE, "UnconfigureIDFF", "Couldn't set " +
+                                "XMLSigningOn=true on IDP side ");
+                    } else {
+                        log(Level.FINEST, "UnconfigureIDFF", "Successfully " +
+                                "set XMLSigningOn=false on IDP side ");
+                    }
+                    if (FederationManager.getExitCode(spfm.setAttrDefs(
+                            webClient, "sunFAMIDFFConfiguration", 
+                            "Global", "", arrList)) != 0) {
+                        log(Level.SEVERE, "UnconfigureIDFF", "Couldn't set " +
+                                "XMLSigningOn=true on SP side ");
+                    } else {
+                        log(Level.FINEST, "UnconfigureIDFF", "Successfully " +
+                                "set XMLSigningOn=false on SP side ");
+                    }
             }
 
             IDMCommon idmC = new IDMCommon();

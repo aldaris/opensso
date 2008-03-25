@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.7 2008-03-07 23:19:34 mrudulahg Exp $
+ * $Id: ConfigureIDFF.java,v 1.8 2008-03-25 22:46:22 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,9 @@ import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.testng.annotations.BeforeSuite;
@@ -78,7 +80,7 @@ public class ConfigureIDFF extends TestCommon {
      * @DocTest: IDFF|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void ConfigureIDFF(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
@@ -160,6 +162,18 @@ public class ConfigureIDFF extends TestCommon {
                 log(Level.FINEST, "ConfigureIDFF", "sp entity doesnt exist. " +
                         "Get template & create the entity");
                 if (strGroupName.contains("sec")) {
+                    log(Level.FINEST, "ConfigureIDFF", "Enable XML signing.");
+                    List<String> arrList = new ArrayList();
+                    arrList.add("XMLSigningOn=true");
+                    if (FederationManager.getExitCode(spfm.setAttrDefs(
+                            spWebClient, "sunFAMIDFFConfiguration", 
+                            "Global", "", arrList)) != 0) {
+                        log(Level.SEVERE, "ConfigureIDFF", "Couldn't set " +
+                                "XMLSigningOn=true on SP side ");
+                    } else {
+                        log(Level.FINEST, "ConfigureIDFF", "Successfully set " +
+                                "XMLSigningOn=true on SP side ");
+                    }
                     spMetadata = MultiProtocolCommon.configureSP(spWebClient,
                             configMap, "idff", true);
                 } else {
@@ -242,6 +256,18 @@ public class ConfigureIDFF extends TestCommon {
                 log(Level.FINEST, "ConfigureIDFF", "idp entity doesnt exist. " +
                         "Get template & create the entity");
                 if (strGroupName.contains("sec")) {
+                    log(Level.FINEST, "ConfigureIDFF", "Enable XML signing.");
+                    List<String> arrList = new ArrayList();
+                    arrList.add("XMLSigningOn=true");
+                    if (FederationManager.getExitCode(idpfm.setAttrDefs(
+                            idpWebClient, "sunFAMIDFFConfiguration", 
+                            "Global", "", arrList)) !=0) {
+                        log(Level.SEVERE, "ConfigureIDFF", "Couldn't set " +
+                                "XMLSigningOn=true on IDP side ");
+                    } else {
+                        log(Level.FINEST, "ConfigureIDFF", "Successfully set " +
+                                "XMLSigningOn=true on IDP side ");
+                    }
                     idpMetadata = MultiProtocolCommon.configureIDP(idpWebClient,
                             configMap, "idff", true);
                 } else {
