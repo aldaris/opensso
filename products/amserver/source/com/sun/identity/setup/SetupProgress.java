@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProgress.java,v 1.2 2007-12-07 21:25:59 rajeevangal Exp $
+ * $Id: SetupProgress.java,v 1.3 2008-03-25 04:45:08 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,15 +97,20 @@ public class SetupProgress
       */
     public static void reportStart(String str, Object param)
     {
+        
         ResourceBundle bundle = ResourceBundle.getBundle(bundleName, 
                                                    Locale.getDefault());
         String istr = bundle.getString (str);
+        
         if (istr == null)
             istr = str;
         if (param != null)
             istr +=param;
+        
+        System.out.println(istr);
         try {
             if (writer != null) {
+                
                 writer.write("<script>addProgressText('"+istr+"');</script>");
                 writer.flush();
             }
@@ -119,15 +124,20 @@ public class SetupProgress
       */
     public static void reportEnd(String str, Object param)
     {
+        
         ResourceBundle bundle = ResourceBundle.getBundle(bundleName, 
                                                    Locale.getDefault());
         String istr = bundle.getString (str);
+                
         if (istr == null)
             istr = str;
         if (param != null)
             istr +=param;
+        
+        System.out.println(istr);
         try {
             if (writer != null) {
+                
                 writer.write("<script>addProgressText('"+istr+"<br>');</script>");
                 writer.flush();
             }

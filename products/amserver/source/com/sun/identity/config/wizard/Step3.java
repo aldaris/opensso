@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.7 2008-03-20 20:50:21 jonnelson Exp $
+ * $Id: Step3.java,v 1.8 2008-03-25 04:45:08 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,8 @@ public class Step3 extends LDAPStoreWizardPage {
         new ActionLink("setConfigType", this, "setConfigType");
     public ActionLink loadSchemaLink = 
         new ActionLink("loadSchema", this, "loadSchema");
+    public ActionLink validateLocalPortLink = 
+        new ActionLink("validateLocalPort", this, "validateLocalPort");
     
     private static final String QUOTE = "\"";
     private static final String SEPARATOR = "\" : \"";
@@ -69,6 +71,7 @@ public class Step3 extends LDAPStoreWizardPage {
         
         val = getAttribute("configStorePort", getAvailablePort(50389));
         addModel("configStorePort", val);
+        addModel("localConfigPort", val);
 
         localRepPort = getAttribute("localRepPort", getAvailablePort(58989));
         addModel("localRepPort", localRepPort);
@@ -131,6 +134,30 @@ public class Step3 extends LDAPStoreWizardPage {
         setPath(null);        
         return false;    
     }
+    
+    
+    public boolean validateLocalPort() {
+        String port = toString("port");
+        
+        if (port == null) {
+            writeToResponse(getLocalizedString("missing.required.field"));
+        } else {
+            try {
+                int val = Integer.parseInt(port);
+                if (val < 1 || val > 65535 ) {
+                    writeToResponse(getLocalizedString("invalid.port.number"));
+                } else {
+                    getContext().setSessionAttribute("configStorePort", port);
+                    writeToResponse("true");
+                }
+            } catch (NumberFormatException e) {
+                 writeToResponse(getLocalizedString("invalid.port.number"));
+            }
+        }
+        setPath(null);        
+        return false;    
+    }
+        
         
     /*
      * a call is made to the fam url entered in the browser. If the FAM server
@@ -193,15 +220,17 @@ public class Step3 extends LDAPStoreWizardPage {
                         addObject(sb, "replication", replAvailable);                   
                         
                         // set the replication ports pulled from the remote
-                        // server
+                        // server in the session and pass back to the client
                         String existing = (String)data.get(BootstrapData.DS_PORT);
                         getContext().setSessionAttribute(
                             "existingPort", existing);
-
+                        addObject(sb, "existingPort", existing);
+                        
                         String existingRep = (String)data.get(BootstrapData.DS_REPLICATIONPORT);
                         getContext().setSessionAttribute(
                             "existingRepPort", existingRep);
-
+                        addObject(sb, "replicationPort", existingRep);
+                        
                         String host = (String)data.get(BootstrapData.DS_HOST);
                         getContext().setSessionAttribute(
                             "existingHost",host);
@@ -253,19 +282,19 @@ public class Step3 extends LDAPStoreWizardPage {
      * FAM server.
      */
     private void setupDSParams(Map data) {
-        String tmp = (String)data.get("dshost");
+        String tmp = (String)data.get(BootstrapData.DS_HOST);
         getContext().setSessionAttribute("configStoreHost", tmp);
         
-        tmp = (String)data.get("dsport");
-        getContext().setSessionAttribute("configStorePort", tmp);        
+        //tmp = (String)data.get("dsport");
+        //    getContext().setSessionAttribute("configStorePort", tmp);        
         
-        tmp = (String)data.get("dsbasedn");
+        tmp = (String)data.get(BootstrapData.DS_BASE_DN);
         getContext().setSessionAttribute("rootSuffix", tmp);        
         
-        tmp = (String)data.get("dsmgr");
+        tmp = (String)data.get(BootstrapData.DS_MGR);
         getContext().setSessionAttribute("configStoreLoginId", tmp);        
         
-        tmp = (String)data.get("dsmgrpwd");
+        tmp = (String)data.get(BootstrapData.DS_PWD);
         getContext().setSessionAttribute("configStorePassword", tmp);
        
         getContext().setSessionAttribute(

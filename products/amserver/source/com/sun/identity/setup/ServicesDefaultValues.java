@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.23 2008-02-26 21:59:30 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.24 2008-03-25 04:45:08 jonnelson Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -381,13 +381,19 @@ public class ServicesDefaultValues {
             map.put(SetupConstants.HASH_ADMIN_PWD, (String)Hash.hash(adminPwd));
         }
 
-        String urlAccessAgentPwd = ((String)map.get(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD)).trim();
-        String urlAccessAgentPwdConfirm = ((String)map.get(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM)).trim();
-        validateURLAccessAgentPassword(adminPwd, urlAccessAgentPwd,
-            urlAccessAgentPwdConfirm, locale);
-
+        String urlAccessAgentPwd = (String)map.get(
+            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+            
+        if (urlAccessAgentPwd != null) {
+            urlAccessAgentPwd.trim();
+        
+            String urlAccessAgentPwdConfirm = ((String)map.get(
+                SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM)).trim();
+            validateURLAccessAgentPassword(adminPwd, urlAccessAgentPwd,
+                urlAccessAgentPwdConfirm, locale);        
+            map.remove(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
+        }
+        
         String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
         boolean embedded = 
               dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
@@ -412,24 +418,25 @@ public class ServicesDefaultValues {
             if (adminPwd != null) {
                 map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
             }
+        }        
+        
+        String ldapUserPwd = (String)map.get(SetupConstants.LDAP_USER_PWD);
+        if (ldapUserPwd != null) {
+            ldapUserPwd.trim();        
+            map.put(SetupConstants.ENCRYPTED_LDAP_USER_PWD, 
+                (String)Crypt.encrypt(ldapUserPwd));
+            map.put(SetupConstants.HASH_LDAP_USER_PWD, 
+                (String)Hash.hash(ldapUserPwd));
         }
-        String encryptAdminPwd = Crypt.encrypt(adminPwd);
-        String ldapUserPwd = ((String)map.get(
-            SetupConstants.LDAP_USER_PWD)).trim();
-
-        map.put(SetupConstants.ENCRYPTED_LDAP_USER_PWD, 
-            (String)Crypt.encrypt(ldapUserPwd));
-        map.put(SetupConstants.HASH_LDAP_USER_PWD, 
-            (String)Hash.hash(ldapUserPwd));
+                       
         map.put(SetupConstants.SSHA512_LDAP_USERPWD, 
             (String)EmbeddedOpenDS.hash(adminPwd));
-
+        
+        String encryptAdminPwd = Crypt.encrypt(adminPwd);
         map.put(SetupConstants.ENCRYPTED_ADMIN_PWD, encryptAdminPwd);
         map.put(SetupConstants.ENCRYPTED_AD_ADMIN_PWD, encryptAdminPwd);
         map.remove(SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD);
-        map.remove(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
     }
-
 
     /*
      * valid: password greater than 8 characters
@@ -514,24 +521,26 @@ public class ServicesDefaultValues {
         for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
             String key = (String)i.next();
             String value = (String)map.get(key);
-            value = value.replaceAll("[$]", "\\\\\\$");
-            
-            if (preappendSlash.contains(key)) {
-                orig = orig.replaceAll("/@" + key + "@", value);
-                
-                if (trimSlash.contains(key)) {
-                    orig = orig.replaceAll("@" + key + "@", value.substring(1));
+            if (value != null) {                
+                value = value.replaceAll("[$]", "\\\\\\$");
+
+                if (preappendSlash.contains(key)) {
+                    orig = orig.replaceAll("/@" + key + "@", value);
+
+                    if (trimSlash.contains(key)) {
+                        orig = orig.replaceAll("@" + key + "@", value.substring(1));
+                    }
+                } else if (key.equals(SetupConstants.CONFIG_VAR_ROOT_SUFFIX)) {
+                    String normalized = DNUtils.normalizeDN(value);
+                    orig = orig.replaceAll(
+                        "@" + SetupConstants.SM_ROOT_SUFFIX_HAT + "@",
+                        normalized.replaceAll(",", "^"));
+                    String rfced = (new DN(value)).toRFCString();
+                    orig = orig.replaceAll(
+                        "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX + "@", rfced);
+                } else {
+                    orig = orig.replaceAll("@" + key + "@", value);
                 }
-            } else if (key.equals(SetupConstants.CONFIG_VAR_ROOT_SUFFIX)) {
-                String normalized = DNUtils.normalizeDN(value);
-                orig = orig.replaceAll(
-                    "@" + SetupConstants.SM_ROOT_SUFFIX_HAT + "@",
-                    normalized.replaceAll(",", "^"));
-                String rfced = (new DN(value)).toRFCString();
-                orig = orig.replaceAll(
-                    "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX + "@", rfced);
-            } else {
-                orig = orig.replaceAll("@" + key + "@", value);
             }
         }
         return orig;

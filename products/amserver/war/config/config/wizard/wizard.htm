@@ -84,13 +84,13 @@
                 $('tab' + tabNum).className = "currentTab";
                 currentTab = tabNum;
                 $('nextTabButton').disabled = false;
-                if ( !firstFAMInstance && currentTab == 6 ) {
+                if ( !firstFAMInstance && currentTab == 5 ) {
                     nextTab = 7;
                 } else {
                     nextTab = rangeCheck(currentTab + 1);
                 }
                 if ( !firstFAMInstance && currentTab == 7 ) {
-                    previousTab = 6;
+                    previousTab = 5;
                 } else {
                     previousTab = rangeCheck(currentTab - 1);
                 }

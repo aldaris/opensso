@@ -68,6 +68,8 @@
                 } else {
                     document.getElementById("replicationPorts").style.display = "";
                 }   
+                document.getElementById("existingPort").value = resp.existingPort;
+                document.getElementById("existingRepPort").value = resp.replicationPort;
             }
         } else{
             // error handling
@@ -86,6 +88,25 @@
         AjaxUtils.call(call+hostname, validateServerURL);
     }
 
+    function localPortResponse(response) {
+        var image = okImage;
+        var message = response.responseText;
+        if (message == "true") {
+             message = $page.getLocalizedString("ok.string");
+        } else {
+            image = errorImage;
+        }
+        
+        $('localConfigPortStatus').innerHTML = image +
+            '<small>' + message + '</small>';
+    }
+    
+    function validateLocalConfigPort() {        
+        var call = "$context$path?actionLink=validateLocalPort";
+        var portVal = "&port=" + $('localConfigPort').value;
+        AjaxUtils.call(call+portVal, localPortResponse);
+    }
+    
     function validateLocalRepPort() {
         field = "localRepPort";
         validate();
@@ -114,7 +135,8 @@
         multiServer = "true";
         // controls for displaying step6
         firstFAMInstance = false;
-        //$('tab6').style.color = "#D3D3D3";
+        $('tab6').style.color = "#D3D3D3";
+        
         document.getElementById("newInstanceOptions").style.display = "none";
         document.getElementById("existingInstanceURL").style.display = "";
         document.getElementById("replicationPorts").style.display = "none";
@@ -125,7 +147,8 @@
         multiServer = "false";
         // controls for displaying step6
         firstFAMInstance = true;
-        //$('tab6').style.color = "";
+        $('tab6').style.color = "";
+        
         document.getElementById("newInstanceOptions").style.display = "";
         document.getElementById("existingInstanceURL").style.display = "none";
         document.getElementById("replicationPorts").style.display = "none";
@@ -307,7 +330,17 @@
             <!-- replication ports -->
             <div id="replicationPorts" style="display:none">
                 <small>The existing FAM server is not setup for replication. Please confirm the following port values:</small>
-                <table class="temp">                    
+                <table class="temp">       
+                    <tr>
+                        <td><label for="localConfigPort"><em>*&nbsp;</em>$page.getLocalizedString("local.port.label")</label></td>
+                        <td>
+                            <input id="localConfigPort" name="localConfigPort" 
+                                   type="text" class="text" size="5" maxLength="5" 
+                                   value="$localConfigPort" 
+                                   onkeyup="APP.callDelayed(this, validateLocalConfigPort)"/>
+                            <span id="localConfigPortStatus"></span>                       
+                        </td>
+                    </tr> 
                     <tr>
                         <td><label for="localRepPort"><em>*&nbsp;</em>$page.getLocalizedString("replication.port.label")</label></td>
                         <td>
