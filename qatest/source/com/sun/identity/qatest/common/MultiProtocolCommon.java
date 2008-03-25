@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.8 2008-03-07 23:18:06 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.9 2008-03-25 02:29:28 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,17 +66,18 @@ public class MultiProtocolCommon extends TestCommon {
                 spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
-                        null, null, null, null, null,
+                        null, null, null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, null, null,
+                        null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, null, null, spec);
+                        null, null, null, null, null, null, spec);
             } else {
                 spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null, spec);
+                        null, null, null, null, null, null, null, null, null,
+                        null, null, null, null, null, null, spec);
             }
             if (FederationManager.getExitCode(spmetaPage) != 0) {
                assert false;
@@ -129,20 +130,21 @@ public class MultiProtocolCommon extends TestCommon {
             if (signed) {
                 idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
-                        true, null, (String)m.get(
-                        TestConstants.KEY_IDP_METAALIAS),
-                        null, null, null, null, null,
+                        true, null,
+                        (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
+                        null, null, null, null, null, null, null, 
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null, null, null, (String)m.get(
-                        TestConstants.KEY_IDP_CERTALIAS),
-                        null, null, null, null, spec);
+                        null, null, null, null, null, null,
+                        (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
+                        null, null, null, null, null, spec);
             } else {
                 idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, spec);
+                        null, null, null, null, null, null, null, null, null, 
+                        null, null, null, null, spec);
             }
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
                 assert false;

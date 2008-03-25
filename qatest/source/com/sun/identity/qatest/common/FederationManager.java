@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.10 2008-02-23 01:39:21 rmisra Exp $
+ * $Id: FederationManager.java,v 1.11 2008-03-25 02:29:28 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,10 +64,9 @@ public class FederationManager extends TestCommon {
             }
         }
         if (val != 0) {
-            log(Level.SEVERE, "getExitCode", "Non zero exit code:\n" + 
+            log(Level.SEVERE, "getExitCode", "Non zero exit code:\n" +
                     content.substring(start, content.indexOf("</pre>", start)));
         }
-        
         return val;
     }
 
@@ -3515,6 +3514,21 @@ public class FederationManager extends TestCommon {
     }
 
     /**
+     * List the supported data store types
+     *
+     * @param webClient HTML Unit Web Client object.
+     */
+    public HtmlPage listDatastoreTypes(
+        WebClient webClient
+    ) throws Exception {
+        URL cmdUrl = new URL(amadmUrl + "list-datastore-types");
+        HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
+        HtmlForm form = (HtmlForm)page.getForms().get(0);
+
+        return (HtmlPage)form.submit();
+    }
+
+    /**
      * List data stores under a realm
      *
      * @param webClient HTML Unit Web Client object.
@@ -3663,7 +3677,7 @@ public class FederationManager extends TestCommon {
      * Get server configuration XML from centralized data store
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
      */
     public HtmlPage getSvrcfgXml(
         WebClient webClient,
@@ -3685,7 +3699,7 @@ public class FederationManager extends TestCommon {
      * Set server configuration XML to centralized data store
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
      * @param xmlfile XML file that contains configuration.
      */
     public HtmlPage setSvrcfgXml(
@@ -4203,11 +4217,13 @@ public class FederationManager extends TestCommon {
      * List server configuration.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
+     * @param withdefaults Set this flag to get default configuration.
      */
     public HtmlPage listServerCfg(
         WebClient webClient,
-        String servername
+        String servername,
+        boolean withdefaults
     ) throws Exception {
         URL cmdUrl = new URL(amadmUrl + "list-server-cfg");
         HtmlPage page = (HtmlPage)webClient.getPage(cmdUrl);
@@ -4218,6 +4234,9 @@ public class FederationManager extends TestCommon {
             txtservername.setValueAttribute(servername);
         }
 
+        HtmlCheckBoxInput cbwithdefaults = (HtmlCheckBoxInput)form.getInputByName("withdefaults");
+        cbwithdefaults.setChecked(withdefaults);
+
         return (HtmlPage)form.submit();
     }
 
@@ -4225,7 +4244,7 @@ public class FederationManager extends TestCommon {
      * Update server configuration.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
     public HtmlPage updateServerCfg(
@@ -4259,7 +4278,7 @@ public class FederationManager extends TestCommon {
      * Remove server configuration.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
      * @param propertynames Name of properties to be removed.
      */
     public HtmlPage removeServerCfg(
@@ -4293,7 +4312,7 @@ public class FederationManager extends TestCommon {
      * Create a server instance.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
      * @param serverconfigxml Server Configuration XML file name.
      * @param attributevalues Attribute values e.g. homeaddress=here.
      */
@@ -4334,7 +4353,7 @@ public class FederationManager extends TestCommon {
      * Delete a server instance.
      *
      * @param webClient HTML Unit Web Client object.
-     * @param servername Server name, e.g. http://samples.com:8080/fam
+     * @param servername Server name, e.g. http://www.example.com:8080/fam
      */
     public HtmlPage deleteServer(
         WebClient webClient,
@@ -4372,7 +4391,7 @@ public class FederationManager extends TestCommon {
      *
      * @param webClient HTML Unit Web Client object.
      * @param sitename Site name, e.g. mysite
-     * @param siteurl Site's primary URL, e.g. http://site.samples.com:8080
+     * @param siteurl Site's primary URL, e.g. http://www.example.com:8080
      * @param secondaryurls Secondary URLs
      */
     public HtmlPage createSite(
@@ -4472,7 +4491,7 @@ public class FederationManager extends TestCommon {
      *
      * @param webClient HTML Unit Web Client object.
      * @param sitename Site name, e.g. mysite
-     * @param servernames Server names, e.g. http://samples.com:8080/fam
+     * @param servernames Server names, e.g. http://www.example.com:8080/fam
      */
     public HtmlPage addSiteMembers(
         WebClient webClient,
@@ -4506,7 +4525,7 @@ public class FederationManager extends TestCommon {
      *
      * @param webClient HTML Unit Web Client object.
      * @param sitename Site name, e.g. mysite
-     * @param servernames Server names, e.g. http://samples.com:8080/fam
+     * @param servernames Server names, e.g. http://www.example.com:8080/fam
      */
     public HtmlPage removeSiteMembers(
         WebClient webClient,
@@ -4540,7 +4559,7 @@ public class FederationManager extends TestCommon {
      *
      * @param webClient HTML Unit Web Client object.
      * @param sitename Site name, e.g. mysite
-     * @param siteurl Site's primary URL, e.g. http://site.samples.com:8080
+     * @param siteurl Site's primary URL, e.g. http://site.www.example.com:8080
      */
     public HtmlPage setSitePriUrl(
         WebClient webClient,
@@ -4839,24 +4858,31 @@ public class FederationManager extends TestCommon {
      *
      * @param webClient HTML Unit Web Client object.
      * @param entityid Entity ID
-     * @param metadatafile Specify file name for the standard metadata to be created.
-     * @param extendeddatafile Specify file name for the standard metadata to be created.
+     * @param meta-data-file Specify file name for the standard metadata to be created.
+     * @param extended-data-file Specify file name for the extended metadata to be created.
      * @param serviceprovider Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.
      * @param identityprovider Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.
      * @param attrqueryprovider Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.
      * @param attrauthority Specify metaAlias for hosted attribute authority to be created. The format must be <realm name>/<identifier>.
+     * @param authnauthority Specify metaAlias for hosted authentication authority to be created. The format must be <realm name>/<identifier>.
      * @param xacmlpep Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.
      * @param xacmlpdp Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.
+     * @param affiliation Specify metaAlias for hosted affiliation. to be created. The format must be <realm name>/<identifier>
+     * @param affimembers Affiliation members
      * @param spscertalias Service provider signing certificate alias
      * @param idpscertalias Identity provider signing certificate alias
      * @param attrqscertalias Attribute query provider signing certificate alias
      * @param attrascertalias Attribute authority signing certificate alias
+     * @param authnascertalias Authentication authority signing certificate alias
+     * @param affiscertalias Affiliation signing certificate alias
      * @param xacmlpdpscertalias Policy decision point signing certificate alias
      * @param xacmlpepscertalias Policy enforcement point signing certificate alias
      * @param specertalias Service provider encryption certificate alias
      * @param idpecertalias Identity provider encryption certificate alias.
      * @param attrqecertalias Attribute query provider encryption certificate alias
      * @param attraecertalias Attribute authority encryption certificate alias.
+     * @param authnaecertalias Authentication authority encryption certificate alias.
+     * @param affiecertalias Affiliation encryption certificate alias
      * @param xacmlpdpecertalias Policy decision point encryption certificate alias
      * @param xacmlpepecertalias Policy enforcement point encryption certificate alias
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
@@ -4870,18 +4896,25 @@ public class FederationManager extends TestCommon {
         String identityprovider,
         String attrqueryprovider,
         String attrauthority,
+        String authnauthority,
         String xacmlpep,
         String xacmlpdp,
+        String affiliation,
+        String affimembers,
         String spscertalias,
         String idpscertalias,
         String attrqscertalias,
         String attrascertalias,
+        String authnascertalias,
+        String affiscertalias,
         String xacmlpdpscertalias,
         String xacmlpepscertalias,
         String specertalias,
         String idpecertalias,
         String attrqecertalias,
         String attraecertalias,
+        String authnaecertalias,
+        String affiecertalias,
         String xacmlpdpecertalias,
         String xacmlpepecertalias,
         String spec
@@ -4921,6 +4954,11 @@ public class FederationManager extends TestCommon {
             taattrauthority.setText(attrauthority);
         }
 
+        if (authnauthority != null) {
+            HtmlTextArea taauthnauthority = (HtmlTextArea)form.getTextAreasByName("authnauthority").get(0);
+            taauthnauthority.setText(authnauthority);
+        }
+
         if (xacmlpep != null) {
             HtmlTextInput txtxacmlpep = (HtmlTextInput)form.getInputByName("xacmlpep");
             txtxacmlpep.setValueAttribute(xacmlpep);
@@ -4929,6 +4967,16 @@ public class FederationManager extends TestCommon {
         if (xacmlpdp != null) {
             HtmlTextInput txtxacmlpdp = (HtmlTextInput)form.getInputByName("xacmlpdp");
             txtxacmlpdp.setValueAttribute(xacmlpdp);
+        }
+
+        if (affiliation != null) {
+            HtmlTextArea taaffiliation = (HtmlTextArea)form.getTextAreasByName("affiliation").get(0);
+            taaffiliation.setText(affiliation);
+        }
+
+        if (affimembers != null) {
+            HtmlTextArea taaffimembers = (HtmlTextArea)form.getTextAreasByName("affimembers").get(0);
+            taaffimembers.setText(affimembers);
         }
 
         if (spscertalias != null) {
@@ -4949,6 +4997,16 @@ public class FederationManager extends TestCommon {
         if (attrascertalias != null) {
             HtmlTextArea taattrascertalias = (HtmlTextArea)form.getTextAreasByName("attrascertalias").get(0);
             taattrascertalias.setText(attrascertalias);
+        }
+
+        if (authnascertalias != null) {
+            HtmlTextArea taauthnascertalias = (HtmlTextArea)form.getTextAreasByName("authnascertalias").get(0);
+            taauthnascertalias.setText(authnascertalias);
+        }
+
+        if (affiscertalias != null) {
+            HtmlTextArea taaffiscertalias = (HtmlTextArea)form.getTextAreasByName("affiscertalias").get(0);
+            taaffiscertalias.setText(affiscertalias);
         }
 
         if (xacmlpdpscertalias != null) {
@@ -4981,6 +5039,16 @@ public class FederationManager extends TestCommon {
             taattraecertalias.setText(attraecertalias);
         }
 
+        if (authnaecertalias != null) {
+            HtmlTextArea taauthnaecertalias = (HtmlTextArea)form.getTextAreasByName("authnaecertalias").get(0);
+            taauthnaecertalias.setText(authnaecertalias);
+        }
+
+        if (affiecertalias != null) {
+            HtmlTextArea taaffiecertalias = (HtmlTextArea)form.getTextAreasByName("affiecertalias").get(0);
+            taaffiecertalias.setText(affiecertalias);
+        }
+
         if (xacmlpdpecertalias != null) {
             HtmlTextInput txtxacmlpdpecertalias = (HtmlTextInput)form.getInputByName("xacmlpdpecertalias");
             txtxacmlpdpecertalias.setValueAttribute(xacmlpdpecertalias);
@@ -5004,8 +5072,8 @@ public class FederationManager extends TestCommon {
      *
      * @param webClient HTML Unit Web Client object.
      * @param realm Realm where entity resides.
-     * @param metadatafile Standard metadata to be imported.
-     * @param extendeddatafile Extended entity configuration to be imported.
+     * @param meta-data-file Standard metadata to be imported.
+     * @param extended-data-file Extended entity configuration to be imported.
      * @param cot Specify name of the Circle of Trust this entity belongs.
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
@@ -5056,8 +5124,8 @@ public class FederationManager extends TestCommon {
      * @param entityid Entity ID
      * @param realm Realm where data resides
      * @param sign Set this flag to sign the metadata
-     * @param metadatafile Metadata
-     * @param extendeddatafile Extended data
+     * @param meta-data-file Metadata
+     * @param extended-data-file Extended data
      * @param spec Specify metadata specification, either idff or saml2, defaults to saml2
      */
     public HtmlPage exportEntity(

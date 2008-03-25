@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.9 2008-02-26 01:57:48 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.10 2008-03-25 02:29:28 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -893,18 +893,18 @@ public class SAMLv2Common extends TestCommon {
                 spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
-                        null, null, null, null, null,
+                        null, null, null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, null, null,
+                        null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, null, null, "saml2");
+                        null, null, null, null, null, null, "saml2");
             } else {
                 spmetaPage = spfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
                         true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null,
-                        "saml2");
+                        null, null, null, null, null, null, null, null, null,
+                        null, null, null, null, null, null, "saml2");
             }
             if (FederationManager.getExitCode(spmetaPage) != 0) {
                assert false;
@@ -971,18 +971,19 @@ public class SAMLv2Common extends TestCommon {
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
-                        null, null, null, null,
+                        null, null, null, null, null, null, null, 
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null, null, null,
+                        null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null, null, "saml2");
+                        null, null, null, null, null, "saml2");
             } else {
                 idpmetaPage = idpfm.createMetadataTempl(webClient,
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, "saml2");
+                        null, null, null, null, null, null, null, null, null, 
+                        null, null, null, null, "saml2");
             }
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
                assert false;
