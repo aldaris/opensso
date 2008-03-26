@@ -1,0 +1,111 @@
+------------------------------------------------------------------------------
+README file for Open Federation Library
+------------------------------------------------------------------------------
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README.fedlet,v 1.1 2008-03-26 04:29:46 qcheng Exp $
+
+Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+
+
+%% Contents:
+    %% 1. Contents of this directory 
+    %% 2. How to embed Fedlet into existing application
+    %% 3. How to validate Fedlet deployment 
+    %% 4. How to integrate with existing application after Single Sign-on 
+
+
+%% 1. Contents of this directory 
+   <zip root directory>
+     |
+     |- war               Directory containing jar/properties/jsp files
+     |                    to be embedded in the application WAR. 
+     |
+     |- conf              Directory containing IDP/SP standard/extended
+     |                    metadata files, COT and configuration properties. 
+     |
+     |- README            This README file.
+
+%% 2. How to embed Fedlet into existing application
+  Two steps:
+  a) Copy all files under "war" directory to your existing WAR directory.
+     The files under "war" directory are structured as WAR format, you could
+     just overlay them with your existing application WAR structure.
+     For testing purpose, you could create a WAR including all files under "war"
+     directory and deploy in your web container, it could serve as a sample 
+     application to validate Fedlet deployment.
+  b) Copy files under "conf" directory to a sub directory named "fedlet" 
+     under your web container running user's home directory. e.g. 
+     "/home/webservd/fedlet". This is the default directory for Fedlet to read 
+     its configuration files. To change this default directory, set the value
+     of the JVM property "com.sun.identity.fedlet.home" to a desired directory.
+     For example,  -Dcom.sun.identity.fedlet.home=/export/fedlet/conf 
+     this will inform Fedlet to read metadata/COT/configuration files from 
+     "/export/fedlet/conf" directory.
+
+%% 3. How to validate Fedlet deployment 
+     You could run SP or IDP initiated Single Sign-on to verify Fedlet
+     deployment is successful.
+     - To start SP initiated SSO, access URL:
+       SP_PROTOCOL://SP_HOST:SP_PORT/SP_DEPLOY_URI/fedletAssertionConsumer.jsp 
+       where SP_PROTOCOL/SP_HOST/SP_PORT/SP_DEPLOY_URI is the 
+       protocol/host/port/web deployment URI of the web container the 
+       Fedlet/Application is deployed.
+     - To start IDP initiated SSO, access URL:
+       IDP_PROTOCOL://IDP_HOST:IDP_PORT/IDP_DEPLOY_URI/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias=<idp_metaAlias>&spEntityID=<sp_entityID>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST  
+       where IDP_PROTOCOL/IDP_HOST/IDP_PORT/IDP_DEPLOY_URI is the
+       protocol/host/port/web deployment URI of the web container the
+       IDP is deployed, <idp_metaAlias> is the meta alias of the IDP, 
+       <sp_entityID> is the entity ID of the SP.
+     For both cases, you will land on a Fedlet side JSP to show the SAMLv2 SSO 
+     Response, Assertion and AttributeStatement.  
+
+%% 4. How to integrate with existing application after Single Sign-on
+     After Fedlet completes SAMLv2 Single Sign-on, it will set the SAMLv2 
+     Response XML as value for attribute "SAMLResponse" and forward to
+     saml2/jsp/fedletDefault.jsp if no RelayState is specified. 
+     There are two ways you could integrate with your application after
+     Single Sign-on:
+     a) Customize saml2/jsp/fedletDefault.jsp to perform your business
+        specific logics. Right now, fedletDefault.jsp just display the
+        content of the Response/Assertion/Statements.
+     b) Modify the extended metadata of the Service Provider, set the
+        value of "intermediateUrl" attribute to a customer URL which resides
+        in the same web application and performs your business specific logics. 
+        For example:
+           <Attribute name="intermediateUrl">
+               <Value>/application/processing.jsp</Value>
+           </Attribute>
+        The Service Provider side assertion consumer service will forward
+        request to the configured URL with the SAMLv2 Response XML as value 
+        for attribute "SAMLResponse". The Response object could be obtained 
+        using following code in your processing servlet/jsp:
+          // Get the Response XML string
+          String respXML = new String(Base64.decode((String) 
+              request.getAttribute(SAML2Constants.SAML_RESPONSE)));
+          if (respXML != null && respXML.length() != 0) {
+              // obtain the Response object
+              Response samlResp = 
+                  ProtocolFactory.getInstance().createResponse(respXML);
+          }
+        After obtaining the Response object, you could navigate through the
+        object to get Assertion, Authentication Statements, Attribute Statements
+        etc. You could add your own business, such as creating your application 
+        session, setting attributes, make authorization checks etc.

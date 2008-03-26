@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedLibSystemProperties.java,v 1.4 2007-10-17 23:00:54 veiming Exp $
+ * $Id: FedLibSystemProperties.java,v 1.5 2008-03-26 04:29:47 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,14 @@ package com.sun.identity.configuration;
 
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.configuration.ISystemProperties;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
@@ -39,6 +44,9 @@ import java.util.MissingResourceException;
   */
 public class FedLibSystemProperties implements ISystemProperties {
     private static final String SYSTEM_CONFIG_PROPERTY_NAME ="FederationConfig";
+    private static final String FEDLET_HOME_TAG = "@FEDLET_HOME@";
+    private static final String FEDLET_HOME_DIR = 
+        "com.sun.identity.fedlet.home";
     private static Properties systemConfigProps = null;
 
     static {
@@ -87,6 +95,39 @@ public class FedLibSystemProperties implements ISystemProperties {
                 systemConfigProps.put(key, bundle.getString(key));
             }
         } catch (MissingResourceException mrex) {
+            // check if this is the fedlet case, find fedlet home first
+            String fedletHomeDir = System.getProperty(FEDLET_HOME_DIR);
+            if ((fedletHomeDir == null) || 
+                (fedletHomeDir.trim().length() == 0)) {
+                    fedletHomeDir = System.getProperty("user.home") +
+                        File.separator + "fedlet";
+            }
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(fedletHomeDir + File.separator +
+                    SYSTEM_CONFIG_PROPERTY_NAME + ".properties");
+                Properties props = new Properties();
+                props.load(fis);
+                Iterator it = props.keySet().iterator();
+                while (it.hasNext()) {
+                     String key = (String) it.next();
+                     String value = (String) props.get(key);
+                     int loc = value.indexOf(FEDLET_HOME_TAG);
+                     if (loc == 0) {
+                         // dynamically replace TAG
+                         value = fedletHomeDir.trim() + 
+                             value.substring(FEDLET_HOME_TAG.length());
+                     } else if (loc != -1) {
+                         value = value.substring(0, loc) + 
+                             fedletHomeDir.trim() + 
+                             value.substring(loc + FEDLET_HOME_TAG.length());
+                     }
+                     systemConfigProps.put(key, value);
+                }
+            } catch (MissingResourceException ex) {
+            } catch (FileNotFoundException ffe) {
+            } catch (IOException ioe) {
+            }
         }
     }
 
