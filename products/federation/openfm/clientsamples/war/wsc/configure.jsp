@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.3 2007-10-23 22:52:33 qcheng Exp $
+   $Id: configure.jsp,v 1.4 2008-03-26 15:42:26 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -129,7 +129,7 @@ java.util.Properties"
 <h3>Configuring WSC Sample</h3>
 
 <form action="configure.jsp" method="GET">
-    Please provide the Service Provider Information.
+    Please provide the Identity Provider Information.
     <p>&nbsp;</p>    
 
     <table border=0 cellpadding=5 cellspacing=0>
