@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.21 2008-02-21 23:58:41 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.22 2008-03-27 17:17:03 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -736,7 +736,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                              aCfg.setLabeledUri(name);
                              break;
                          case REMOVEMEMBER:
-                             /*
+                             /* NOTE: 
                               * set "  "(empty string) instead of "" to avoid 
                               * this LDAPException(21)
                               * When attempting to modify entry
@@ -747,7 +747,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                               * value to an attribute with the directory 
                               * string syntax.
                               */
-                             aCfg.setLabeledUri("  ");
+                             aCfg.setLabeledUri("");
                          }
                      }
                  }
