@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.39 2008-03-27 20:42:52 rmisra Exp $
+ * $Id: TestCommon.java,v 1.40 2008-03-27 22:48:08 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
@@ -40,7 +39,6 @@ import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.StringBuffer;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -50,6 +48,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.ResourceBundle;
@@ -69,7 +69,7 @@ import org.testng.Reporter;
  * It has commonly used methods.
  */
 public class TestCommon implements TestConstants {
-
+    
     private String className;
     static private ResourceBundle rb_amconfig;
     static protected String adminUser;
@@ -254,7 +254,7 @@ public class TestCommon implements TestConstants {
     throws Exception {
         destroyToken(null, ssotoken);
     }
-
+    
     /**
      * Destroys single sign on token.
      */
@@ -269,7 +269,7 @@ public class TestCommon implements TestConstants {
                 stMgr.destroyToken(ssotoken);
         }
     }
-
+    
     /**
      * Returns the base directory where code base is
      * checked out.
@@ -313,7 +313,7 @@ public class TestCommon implements TestConstants {
             String amUrl,
             String amadmUser,
             String amadmPassword)
-    throws Exception {
+            throws Exception {
         entering("consoleLogin", null);
         log(Level.FINEST, "consoleLogin", "JavaScript Enabled: " +
                 webclient.isJavaScriptEnabled());
@@ -343,9 +343,9 @@ public class TestCommon implements TestConstants {
      */
     protected Map getConfigurationMap(String rb, String strProtocol,
             String strHost, String strPort, String strURI)
-    throws Exception {
+            throws Exception {
         entering("getConfigurationMap", null);
-
+        
         ResourceBundle cfg = ResourceBundle.getBundle(rb);
         Map<String, String> map = new HashMap<String, String>();
         map.put("serverurl", strProtocol + ":" + "//" + strHost + ":" +
@@ -377,12 +377,12 @@ public class TestCommon implements TestConstants {
                 cfg.getString(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
         map.put(TestConstants.KEY_ATT_LOAD_UMS, cfg.getString(
                 TestConstants.KEY_ATT_LOAD_UMS));
-
+        
         exiting("getConfigurationMap");
-
+        
         return map;
     }
-
+    
     /**
      * Creates a map object and adds all the configutaion properties to that.
      */
@@ -431,20 +431,19 @@ public class TestCommon implements TestConstants {
             // CONFIGURATOR PAGE TO LOAD AND WEBCLIENT CALL DOES NOT WAIT
             // FOR SUCH A DURATION.
             while (page == null && pageIter <= 30) {
-               try {
-                   page = (HtmlPage)webclient.getPage(url);
-                   Thread.sleep(10000);
-                   pageIter++;
-               } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
-               }
+                try {
+                    page = (HtmlPage)webclient.getPage(url);
+                    Thread.sleep(10000);
+                    pageIter++;
+                } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+                }
             }
-        } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
-        {
+        } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
             log(Level.SEVERE, "configureProduct", strURL +
                     " cannot be reached.");
             return false;
         }
-
+        
         if (pageIter > 30) {
             log(Level.SEVERE, "configureProduct",
                     "Product Configuration was not" +
@@ -453,7 +452,7 @@ public class TestCommon implements TestConstants {
             exiting("configureProduct");
             return false;
         }
-
+        
         if (getHtmlPageStringIndex(page, "Not Found") != -1) {
             log(Level.SEVERE, "configureProduct",
                     "Product Configuration was not" +
@@ -462,10 +461,10 @@ public class TestCommon implements TestConstants {
             exiting("configureProduct");
             return false;
         }
-
+        
         if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
             log(Level.FINE, "configureProduct", "Inside configurator.");
-
+            
             HtmlForm form = (HtmlForm)page.getForms().get(0);
             
             HtmlTextInput txtServer =
@@ -485,7 +484,7 @@ public class TestCommon implements TestConstants {
                     (HtmlPasswordInput)form.getInputByName("ADMIN_CONFIRM_PWD");
             txtAmadminPasswordR.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_AMADMIN_PASSWORD));
-
+            
             HtmlPasswordInput txtUrlAccessAgentPassword =
                     (HtmlPasswordInput)form.getInputByName("AMLDAPUSERPASSWD");
             txtUrlAccessAgentPassword.setValueAttribute((String)map.get(
@@ -500,38 +499,38 @@ public class TestCommon implements TestConstants {
                     (HtmlTextInput)form.getInputByName("BASE_DIR");
             txtConfigDir.setValueAttribute((String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DIR));
-
+            
             HtmlTextInput txtEncryptionKey =
                     (HtmlTextInput)form.getInputByName("AM_ENC_KEY");
             String strEncryptKey = (String)map.get(
                     TestConstants.KEY_ATT_AM_ENC_KEY);
             if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals("")))
                 txtEncryptionKey.setValueAttribute(strEncryptKey);
-
+            
             String strConfigStore = (String)map.get(
                     TestConstants.KEY_ATT_CONFIG_DATASTORE);
             log(Level.FINE, "configureProduct", "Config store is: " +
                     strConfigStore);
-
+            
             HtmlRadioButtonInput rbDataStore =
                     (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
             rbDataStore.setDefaultValue(strConfigStore);
-
+            
             if (strConfigStore.equals("embedded")) {
                 log(Level.FINE, "configureProduct",
                         "Doing embedded System configuration.");
-
+                
                 HtmlTextInput txtDirServerPort =
                         (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
                 txtDirServerPort.
                         setValueAttribute((String)map.get(
                         TestConstants.KEY_ATT_DIRECTORY_PORT));
-
+                
                 HtmlTextInput txtDirConfigData =
                         (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
                 txtDirConfigData.setValueAttribute((String)map.
                         get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
-
+                
                 HtmlPasswordInput txtDirAdminPassword =
                         (HtmlPasswordInput)form.
                         getInputByName("DS_DIRMGRPASSWD");
@@ -623,23 +622,23 @@ public class TestCommon implements TestConstants {
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
                     "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);;
-            log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
-            url = new URL(strNewURL);
-            page = (HtmlPage)webclient.getPage(url);
-            if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
-                log(Level.FINE, "configureProduct", "Product was already" +
-                        " configured. Super admin login failed.");
-                exiting("configureProduct");
-                return false;
-            } else {
-                log(Level.FINE, "configureProduct", "Product was already" +
-                        " configured. Super admin login successfull.");
-                strNewURL = (String)map.get("serverurl") +
-                        (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strNewURL);
-                exiting("configureProduct");
-                return true;
-            }
+                    log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
+                    url = new URL(strNewURL);
+                    page = (HtmlPage)webclient.getPage(url);
+                    if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
+                        log(Level.FINE, "configureProduct", "Product was already" +
+                                " configured. Super admin login failed.");
+                        exiting("configureProduct");
+                        return false;
+                    } else {
+                        log(Level.FINE, "configureProduct", "Product was already" +
+                                " configured. Super admin login successfull.");
+                        strNewURL = (String)map.get("serverurl") +
+                                (String)map.get("serveruri") + "/UI/Logout";
+                        consoleLogout(webclient, strNewURL);
+                        exiting("configureProduct");
+                        return true;
+                    }
         }
     }
     
@@ -649,7 +648,7 @@ public class TestCommon implements TestConstants {
     protected void consoleLogout(
             WebClient webclient,
             String amUrl)
-    throws Exception {
+            throws Exception {
         entering("consoleLogout", null);
         log(Level.FINEST, "consoleLogout", "JavaScript Enabled: " +
                 webclient.isJavaScriptEnabled());
@@ -669,14 +668,14 @@ public class TestCommon implements TestConstants {
     protected int getHtmlPageStringIndex(
             HtmlPage page,
             String searchStr)
-    throws Exception {
+            throws Exception {
         entering("getHtmlPageStringIndex", null);
         String strPage;
         try {
             strPage = page.asXml();
         } catch (java.lang.NullPointerException npe) {
-           log(Level.FINEST, "getHtmlPageStringIndex", "Page object is NULL");
-           return 0;
+            log(Level.FINEST, "getHtmlPageStringIndex", "Page object is NULL");
+            return 0;
         }
         log(Level.FINEST, "getHtmlPageStringIndex", "Search string: " +
                 searchStr);
@@ -834,21 +833,21 @@ public class TestCommon implements TestConstants {
     throws Exception {
         String testbaseDir = null;
         ResourceBundle rbamconfig = ResourceBundle.getBundle(
-                    TestConstants.TEST_PROPERTY_AMCONFIG);
+                TestConstants.TEST_PROPERTY_AMCONFIG);
         testbaseDir = getBaseDir() + fileseparator
-        + rbamconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
-        + fileseparator + "built"
-        + fileseparator + "classes"
-        + fileseparator ;
-
-        return (testbaseDir);   
+                + rbamconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
+                + fileseparator + "built"
+                + fileseparator + "classes"
+                + fileseparator ;
+        
+        return (testbaseDir);
     }
-
+    
     /**
      * Takes a token separated string and returns each individual
      * token as part of a list.
      */
-    public List getAttributeList(String strList, String token) 
+    public List getAttributeList(String strList, String token)
     throws Exception {
         StringTokenizer stk = new StringTokenizer(strList, token);
         List<String> attList = new ArrayList<String>();
@@ -857,7 +856,7 @@ public class TestCommon implements TestConstants {
         }
         return (attList);
     }
-
+    
     /**
      * Takes a token separated string and returns each individual
      * token as part of a Map.
@@ -877,7 +876,7 @@ public class TestCommon implements TestConstants {
         log(Level.FINEST, "getAttributeMap", map);
         return (map);
     }
-
+    
     /**
      * Returns set of string. This is a convenient method for adding multipe set
      * of string into a map. The value contains the multiple string sepearete by
@@ -889,7 +888,7 @@ public class TestCommon implements TestConstants {
             String value,
             String token
             )
-    throws Exception {
+            throws Exception {
         StringTokenizer stk = new StringTokenizer(value, token);
         Set<String> setValue = new HashSet<String>();
         while (stk.hasMoreTokens()) {
@@ -898,7 +897,7 @@ public class TestCommon implements TestConstants {
         map.put(key, setValue);
         return setValue;
     }
-
+    
     /**
      * Concatenates second set to a first set
      * @param set1 first set
@@ -913,7 +912,7 @@ public class TestCommon implements TestConstants {
             set1.add(item);
         }
     }
-
+    
     /**
      * Returns true if the value set contained in the Set
      * contains the requested string.
@@ -935,7 +934,7 @@ public class TestCommon implements TestConstants {
         }
         return res;
     }
-
+    
     /**
      * Returns protocol, host, port and uri from a given url.
      * Map contains value pairs in the form of:
@@ -950,28 +949,28 @@ public class TestCommon implements TestConstants {
         int iFirstSep = strNamingURL.indexOf(":");
         String strProtocol = strNamingURL.substring(0, iFirstSep);
         map.put("protocol", strProtocol);
-
+        
         int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
         String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
         map.put("host", strHost);
-
+        
         int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
         String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
         map.put("port", strPort);
-
+        
         int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
         String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
         map.put("uri", strURI);
-
+        
         return (map);
     }
     
     /**
-     * Replace all tags in a file with actual value that are defined in a map 
+     * Replace all tags in a file with actual value that are defined in a map
      * @param inFile input file name to be replaced with the tag
      * @param outFile output file name with actual value
-     * @param valMap a map contains tag name and value i.e. 
+     * @param valMap a map contains tag name and value i.e.
      * [ROOT_SUFFIX, dc=sun,dc=com]
      */
     public void replaceStringInFile(String inFile, String outFile, Map valMap)
@@ -996,7 +995,7 @@ public class TestCommon implements TestConstants {
         out.write(sb.toString());
         out.close();
     }
-
+    
     /**
      * Returns the SSOToken of a user.
      */
@@ -1018,7 +1017,7 @@ public class TestCommon implements TestConstants {
         }
         return (stok);
     }
-
+    
     /**
      * Start the notification (jetty) server for getting notifications from the
      * server.
@@ -1029,16 +1028,16 @@ public class TestCommon implements TestConstants {
                 TestConstants.KEY_ATT_NOTIFICATION_URI);
         log(Level.FINEST, "startNotificationServer", "Notification URI: " +
                 strNotURI);
-
+        
         String strPort = strNotURI.substring(0, strNotURI.indexOf("/"));
         log(Level.FINEST, "startNotificationServer", "Notification Port: " +
                 strPort);
-
+        
         String strURI = strNotURI.substring(strNotURI.indexOf("/"),
                 strNotURI.length());
         log(Level.FINEST, "startNotificationServer", "Notification end point: "
                 + strURI);
-
+        
         int port  = new Integer(strPort).intValue();
         server = new Server(port);
         Context root = new Context(server, "/", Context.SESSIONS);
@@ -1049,7 +1048,7 @@ public class TestCommon implements TestConstants {
                 " (jetty) server");
         server.start();
     }
-
+    
     /**
      * Stop the notification (jetty) server for getting notifications from the
      * server.
@@ -1059,7 +1058,7 @@ public class TestCommon implements TestConstants {
         log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
                 " (jetty) server");
         server.stop();
-
+        
         // Time delay required by the jetty server process to die
         Thread.sleep(30000);
     }
@@ -1067,11 +1066,11 @@ public class TestCommon implements TestConstants {
     /**
      * Converts attrValPair into Map containing attrName as key
      * and values as set.
-     * @param attrValPair Attribute value pair in the format 
+     * @param attrValPair Attribute value pair in the format
      * attrval1=val1,val2|attrval2=val11,val12
      * @return Map containing attrName and values as set.
      */
-    protected Map attributesToMap(String attrValPair) 
+    protected Map attributesToMap(String attrValPair)
     throws Exception {
         Map attrMap = new HashMap();
         if ((attrValPair != null) && (attrValPair.length() > 0)) {
@@ -1104,7 +1103,7 @@ public class TestCommon implements TestConstants {
      * @param updateValMap Atrribute values
      * @return true if bothe the maps are equal.
      */
-    protected static boolean isAttrValuesEqual(Map newValMap, Map updateValMap) 
+    protected static boolean isAttrValuesEqual(Map newValMap, Map updateValMap)
     throws Exception {
         boolean equal;
         if (newValMap != null && updateValMap != null){
@@ -1123,5 +1122,23 @@ public class TestCommon implements TestConstants {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Returns set of properties from a given resource file
+     * @param file resource file
+     * @return set of properties
+     */
+    protected Properties getProperties(String file)
+    throws MissingResourceException {
+        Properties properties = new Properties();
+        ResourceBundle bundle = ResourceBundle.getBundle(file);
+        Enumeration e = bundle.getKeys();
+        while (e.hasMoreElements()) {
+            String key = (String) e.nextElement();
+            String value = bundle.getString(key);
+            properties.put(key, value);
+        }
+        return properties;
     }
 }
