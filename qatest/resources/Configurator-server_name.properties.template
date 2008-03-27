@@ -182,3 +182,44 @@ com.sun.identity.liberty.ws.wsc.certalias=
 
 # Enable client side idm caching or not.
 com.sun.identity.idm.cache.enabled=
+
+# Flag for checking the Certificate which is embedded in the
+# KeyInfo against the certificates in the keystore (specified
+# by the "com.sun.identity.saml.xmlsig.keystore" property).
+# Possible values for the key are: on|off. If the flag is "on",
+# the certification must be presented in the keystore for
+# XML signature validation. If the flag is "off", skip
+# the presence checking.
+com.sun.identity.saml.checkcert=off
+
+#
+# XML signature algorithm. Used for SAML XML Signature generation and
+# verification. When not specified, or value is empty, default value will be
+# used. The following is the list of supported algorithms:
+# http://www.w3.org/2000/09/xmldsig#rsa-sha1    (default)
+# http://www.w3.org/2000/09/xmldsig#hmac-sha1
+# http://www.w3.org/2000/09/xmldsig#dsa-sha1
+# http://www.w3.org/2001/04/xmldsig-more#rsa-md5
+# http://www.w3.org/2001/04/xmldsig-more#rsa-ripemd160
+# http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+# http://www.w3.org/2001/04/xmldsig-more#rsa-sha384
+# http://www.w3.org/2001/04/xmldsig-more#rsa-sha512
+# http://www.w3.org/2001/04/xmldsig-more#hmac-md5
+# http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160
+# http://www.w3.org/2001/04/xmldsig-more#hmac-sha256
+# http://www.w3.org/2001/04/xmldsig-more#hmac-sha384
+# http://www.w3.org/2001/04/xmldsig-more#hmac-sha512
+com.sun.identity.saml.xmlsig.xmlSigAlgorithm=
+
+#
+# SAML2 XML Signing Certificate Validation.
+com.sun.identity.saml2.crl.check=false
+
+#
+# SAML2 XML Signing Certificate Validation.
+com.sun.identity.saml2.crl.check.ca=false
+
+
+# Client ceritificate alias that will be used in SSL connection for Liberty
+# SOAP Binding
+com.sun.identity.liberty.ws.soap.certalias=
