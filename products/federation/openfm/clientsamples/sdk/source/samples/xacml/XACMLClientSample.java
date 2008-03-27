@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLClientSample.java,v 1.2 2008-02-29 18:30:46 ww203982 Exp $
+ * $Id: XACMLClientSample.java,v 1.3 2008-03-27 06:08:32 dillidorai Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,7 @@ public class XACMLClientSample {
 
         //set subject id
         Attribute attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setAttributeID(new URI(XACMLConstants.SUBJECT_ID));
+        attribute.setAttributeId(new URI(XACMLConstants.SUBJECT_ID));
         attribute.setDataType(new URI(subjectIdType));
         List valueList = new ArrayList();
         valueList.add(subjectId); 
@@ -148,7 +148,7 @@ public class XACMLClientSample {
 
         //set resource id
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setAttributeID(new URI(XACMLConstants.RESOURCE_ID));
+        attribute.setAttributeId(new URI(XACMLConstants.RESOURCE_ID));
         attribute.setDataType( new URI(resourceIdType));
         valueList = new ArrayList();
         valueList.add(resourceId);
@@ -158,7 +158,7 @@ public class XACMLClientSample {
 
         //set serviceName
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setAttributeID(new URI(XACMLConstants.TARGET_SERVICE));
+        attribute.setAttributeId(new URI(XACMLConstants.TARGET_SERVICE));
         attribute.setDataType(new URI(serviceNameType));
         valueList = new ArrayList();
         valueList.add(serviceName);
@@ -174,7 +174,7 @@ public class XACMLClientSample {
         //Action
         Action action = ContextFactory.getInstance().createAction();
         attribute = ContextFactory.getInstance().createAttribute();
-        attribute.setAttributeID(new URI(XACMLConstants.ACTION_ID));
+        attribute.setAttributeId(new URI(XACMLConstants.ACTION_ID));
         attribute.setDataType(new URI(actionIdType));
 
         //set actionId
