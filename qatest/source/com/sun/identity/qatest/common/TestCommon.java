@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.38 2008-03-10 05:53:09 kanduls Exp $
+ * $Id: TestCommon.java,v 1.39 2008-03-27 20:42:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -583,6 +583,13 @@ public class TestCommon implements TestConstants {
                         page.asXml());
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
             }
+            if ((getHtmlPageStringIndex(page, "Status: Failed") != -1)) {
+                log(Level.SEVERE, "configureProduct",
+                        "Product Configuration was" +
+                        " not successfull. Configuration failed.");
+                exiting("configureProduct");
+                return false;
+            }
             String strNewURL = (String)map.get("serverurl") +
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
                     "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) +
@@ -595,7 +602,6 @@ public class TestCommon implements TestConstants {
             } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
             }
             if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
-                    (getHtmlPageStringIndex(page, "Status: Failed") != -1) ||
                     (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
                 log(Level.SEVERE, "configureProduct",
                         "Product Configuration was" +
