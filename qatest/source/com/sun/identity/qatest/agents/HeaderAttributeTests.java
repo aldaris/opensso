@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.6 2008-03-18 04:58:13 nithyas Exp $
+ * $Id: HeaderAttributeTests.java,v 1.7 2008-03-28 00:11:35 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,11 +43,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Iterator;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import com.sun.identity.qatest.common.FederationManager;
 
 ///jsxFunction_reload(true)
 /**
@@ -77,7 +79,8 @@ public class HeaderAttributeTests extends TestCommon {
     private SSOToken admintoken;
     private int sleepTime = 2000;
     private int pollingTime;
-    private WaitingRefreshHandler refresh;
+    private String strAgentType;
+    private String strHeaderFetchMode;
 
     /**
      * Instantiated different helper class objects
@@ -107,7 +110,20 @@ public class HeaderAttributeTests extends TestCommon {
         entering("setup", params);
 
         try {
-            strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
+            strAgentType = rbg.getString(strGblRB + ".agentType");
+            strHeaderFetchMode = rbg.getString(strGblRB + ".headerFetchMode");
+            if (strAgentType.contains("J2EE")) {
+                strScriptURL = rbg.getString(strGblRB + 
+                        ".headerEvalScriptName");
+                strScriptURL = strScriptURL.substring(0,
+                        strScriptURL.length()-1);
+                strScriptURL = strScriptURL + "?fetch_mode=" + 
+                        strHeaderFetchMode;
+            } else {
+                strScriptURL = rbg.getString(strGblRB 
+                        + ".headerEvalScriptName");
+            }
+            
             log(Level.FINEST, "setup", "Header Script URL: " + strScriptURL);
             url = new URL(strScriptURL);
 
@@ -131,7 +147,6 @@ public class HeaderAttributeTests extends TestCommon {
                 log(Level.FINE, "setup", "Executing against non OpenSSO" +
                         " Install");
             Thread.sleep(15000);
-            refresh = new WaitingRefreshHandler();
         } catch (Exception e) {
             cleanup();
             log(Level.SEVERE, "setup", e.getMessage());
@@ -152,6 +167,7 @@ public class HeaderAttributeTests extends TestCommon {
         entering("evaluateNewSingleValuedStaticResponseAttribute", null);
      
         webClient = new WebClient();
+        //webClient.setCookiesEnabled(true);
         try {
             HtmlPage page = consoleLogin(webClient, resource, "rauser",
                     "rauser");
@@ -238,7 +254,7 @@ public class HeaderAttributeTests extends TestCommon {
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
     dependsOnMethods={"evaluateDynamicResponseAttribute"})
-    public void evaluateUpdatedDynamicResponseAttribute()
+        public void evaluateUpdatedDynamicResponseAttribute()
     throws Exception {
         entering("evaluateUpdatedDynamicResponseAttribute", null);
 
@@ -285,6 +301,7 @@ public class HeaderAttributeTests extends TestCommon {
 
         exiting("evaluateUpdatedDynamicResponseAttribute");
     }
+
 
     /**
      * Evaluates a standard session attribute
@@ -333,37 +350,37 @@ public class HeaderAttributeTests extends TestCommon {
         try {
             HtmlPage page = consoleLogin(webClient, resource, "sauser",
                     "sauser");
-
             page = (HtmlPage)webClient.getPage(url);
-
+            //webClient.setCookiesEnabled(true);
             String strCookie = rbg.getString(strGblRB + ".serverCookieName");
             log(Level.FINEST, "evaluateCustomSessionAttribute", "strCookie: " +
                     strCookie);
             String s0 = page.asXml();
+            int i1;
+            String s3;
             log(Level.FINEST, "evaluateCustomSessionAttribute", "s0:\n" + s0);
-            int i1 = s0.indexOf(strCookie);
+            i1 = s0.indexOf(strCookie + ":");
             log(Level.FINEST, "evaluateCustomSessionAttribute", "i1: " + i1);
             String s1 = s0.substring(i1, s0.length());
             log(Level.FINEST, "evaluateCustomSessionAttribute", "s1:\n" + s1);
-            int i2 = s1.indexOf("$Path");
+            int i2 = s1.indexOf("|");
             log(Level.FINEST, "evaluateCustomSessionAttribute", "i2: " + i2);
-            String s3 = s1.substring(strCookie.length() + 1, i2 - 2);
+            s3 = s1.substring(strCookie.length() + 1, i2);
             log(Level.FINEST, "evaluateCustomSessionAttribute", "s3: " + s3);
-
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             String s3_decoded;
             log(Level.FINEST, "evaluateCustomSessionAttribute", 
-                    "User token before decode: " + s3);
+                    "usertoken before decode=" + s3);
             if (s3.indexOf("%") != -1) {
                 s3_decoded = URLDecoder.decode(s3);
                 log(Level.FINEST, "evaluateCustomSessionAttribute",
-                        "User token after decode: " + s3_decoded);
-                if ((s3_decoded.indexOf("%") != -1)) {
-                    log(Level.FINEST, "evaluateCustomSessionAttribute", 
-                        "User token after decode has %");
+                        "usertoken after decode=" + s3_decoded);
+                if((s3_decoded.indexOf("%") != -1)){
+                log(Level.FINEST, "evaluateCustomSessionAttribute", 
+                        "usertoken after decode has %");
                     assert (s3_decoded.indexOf("%") != -1);   
                 }
-                usertoken = stMgr.createSSOToken(s3_decoded);
+                 usertoken = stMgr.createSSOToken(s3_decoded);
             } else {
                 usertoken = stMgr.createSSOToken(s3);
             }
@@ -405,6 +422,7 @@ public class HeaderAttributeTests extends TestCommon {
             iIdx = getHtmlPageStringIndex(page,
                     "HTTP_SESSION_MYPROPERTY:val2");
             assert (iIdx != -1);
+     
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedSessionAttribute",
                     e.getMessage());
@@ -737,9 +755,12 @@ public class HeaderAttributeTests extends TestCommon {
             map.put("nsRoleFilter", set);
             log(Level.FINEST, "evaluateUpdatedFilteredRoleProfileAttribute",
                     "Update Attribute List: " + map);
+            log(Level.FINEST, "evaluateUpdatedFilteredRoleProfileAttribute", 
+                    "Recreating adminToken");
+            destroyToken(admintoken);
+            admintoken = getToken(adminUser, adminPassword, basedn);
             idmc.modifyIdentity(idmc.getFirstAMIdentity(admintoken,
                     "filparole1", IdType.FILTEREDROLE, realm), map);
-
             Thread.sleep(pollingTime);
 
             page = (HtmlPage)webClient.getPage(url);
@@ -783,7 +804,7 @@ public class HeaderAttributeTests extends TestCommon {
             smsc.removeServiceAttributeValues("iPlanetAMPolicyConfigService",
                     "sun-am-policy-dynamic-response-attributes",
                     "Organization");
- 
+
             if ((idmc.searchIdentities(admintoken, "pauser",
                     IdType.USER)).size() != 0)
                 idmc.deleteIdentity(admintoken, realm, IdType.USER, "pauser");
@@ -792,14 +813,15 @@ public class HeaderAttributeTests extends TestCommon {
                 idmc.deleteIdentity(admintoken, realm, IdType.USER, "sauser");
             if (idmc.searchIdentities(admintoken, "rauser",
                     IdType.USER).size() != 0)
-                idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser");
+               idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser");
             if (idmc.searchIdentities(admintoken, "parole1",
                     IdType.ROLE).size() != 0)
                 idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole1");
             if (idmc.searchIdentities(admintoken, "parole2",
                     IdType.ROLE).size() != 0)
                 idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole2");
-        } catch (Exception e) {
+ 
+             } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
@@ -825,6 +847,7 @@ public class HeaderAttributeTests extends TestCommon {
                     IdType.FILTEREDROLE).size() != 0)
                 idmc.deleteIdentity(locAdminToken, realm, IdType.FILTEREDROLE,
                         "filparole1");
+            
         } catch (Exception e) {
             log(Level.SEVERE, "cleanupForDS", e.getMessage());
             e.printStackTrace();

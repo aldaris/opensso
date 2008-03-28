@@ -18,31 +18,43 @@
  # your own identifying information:
  # "Portions Copyrighted [year] [name of copyright owner]"
  #
- # $Id: headers.cgi,v 1.2 2008-03-18 05:10:12 nithyas Exp $
+ # $Id: headers.cgi,v 1.3 2008-03-28 00:16:46 nithyas Exp $
  #
 
 # Please dont modify the script, the agents tests rely on the
 # white spaces introduced by this script, while looking up the
 # HTTP headers
 print "Content-type: text/html\n\n";
+use CGI::Cookie;
+# retrieve the cookie collection
+my %cookies = fetch CGI::Cookie;
+print "Cookies: EOL is |<BR>\n";
+print "--------------------------------<BR>\n";
+foreach (keys %cookies) {
+        $name = $cookies{$_}->name;
+        $value = $cookies{$_}->value;
+        print "$name:$value|<BR>\n";
+}
+print "Headers <BR>\n";
+print "----------------------------------<BR>\n";
 for my $header ( sort keys %ENV) {
-	# Since the Server send the multivalued attributes in
-	# an unordered manner, this script will sort those multivalued
-	# attributes in ascending order, so that matching 
-	# can be determinstic
-	$value=$ENV{$header};
-	#split the multi values
-	if ($value =~/\|/){
-		@array=split(/\|/,$value);
-		# sort 'em
-		@sorted=sort(@array);
-		# put them back as | separated
-		$sorted_val=join("|",@sorted);
-        	print "$header:$sorted_val<BR>\n";
-	     }
-	else
-	     {
-		# if not multi valued then print them as it is
-		print "$header:$ENV{$header}<BR>\n";
-	     }
+        # Since the Server send the multivalued attributes in
+        # an unordered manner, this script will sort those multivalued
+        # attributes in ascending order, so that matching
+        # can be determinstic
+        $value=$ENV{$header};
+        #split the multi values
+        if ($value =~/\|/){
+                @array=split(/\|/,$value);
+                # sort 'em
+                @sorted=sort(@array);
+                # put them back as | separated
+                $sorted_val=join("|",@sorted);
+                print "$header:$sorted_val<BR>\n";
+             }
+        else
+             {
+                # if not multi valued then print them as it is
+                print "$header:$ENV{$header}<BR>\n";
+             }
  }
