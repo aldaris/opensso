@@ -3,7 +3,7 @@ OpenSSO server for Information Cards (IDP). This server hosts OpenSSO STS
 
 --------------------------------------------------------------------------------
 In order to run the build.xml to compile the jar file, create a directory named
-lib under the Authnicip root containing the following JAR files
+lib under the Authnicip root containing the following JAR files :
 --------------------------------------------------------------------------------
 
 xmldap-1.0.jar:
@@ -34,8 +34,8 @@ servlet.jar:
     implementation from Sun Microsystems.
 
 --------------------------------------------------------------------------------
-To install the module in opensso we need to follow the instructions outlined 
-below
+To install Security Token Service and Information Card issuing servlet
+in opensso we need to follow the instructions outlined below :
 --------------------------------------------------------------------------------
 
 1 - Install OpenSSO (Download from 
@@ -70,9 +70,10 @@ below
 10 - Access http(s)://my.domain.name:port/opensso/GetCard
     This will redirect to OpenSSO Authentication service. Authenticate using
     any existing OpenSSO user. Upon successful authentication, InfoCard for 
-    authenticated user will be issued. Save this card file with .crd extension. 
+    authenticated OpenSSO user will be issued. 
+    Save this card file with .crd extension. 
 
-11 - You can use this saved InfoCard to login to any RP 
+11 - You can use this saved OpenSSO InfoCard to login to any RP 
     (e.g. https://xmldap.org/) which accepts Infocard login.
 
 For further explanations please email dev@opensso.dev.java.net
