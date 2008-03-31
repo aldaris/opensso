@@ -54,6 +54,8 @@ com.sun.identity.classloader.client.jarsPath=<glassfish_home_dir>/addons/accessm
 2. Copy resources/wsit-client.xml and resources/famsts-client.wsdl 
 to <glassfish_home_dir>/domains/<domain-name>/config
 
+3. Update this <glassfish_home_dir>/domains/<domain-name>/config/famsts-client.wsdl 
+to give actual path of keystore.jks for "@KEYSTORE_LOCATION@" 
 
 Deployment of samples:
 ======================
