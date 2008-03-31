@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famsts.wsdl,v 1.2 2008-03-27 17:50:54 mrudul_uchil Exp $
+   $Id: famsts.wsdl,v 1.3 2008-03-31 05:25:08 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -82,8 +82,8 @@
 						<sp:RequireServerEntropy/>
 					</wsp:Policy>
 				</sp:Trust10>
-				<sc:KeyStore wspp:visibility="private"  xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy"  xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="$WSIT_HOME/keystore/famkeystore.jks" storepass="secret" alias="key"/>
-				<sc:TrustStore wspp:visibility="private"  xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy"  xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="$WSIT_HOME/keystore/famkeystore.jks" storepass="secret"/>
+				<sc:KeyStore xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="@KEYSTORE_LOCATION@/keystore.jks" storepass="secret" alias="test"/>
+                                <sc:TrustStore xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="@KEYSTORE_LOCATION@/keystore.jks" storepass="secret"/>
                       
                                 <sc:ValidatorConfiguration xmlns:sc="http://schemas.sun.com/2006/03/wss/server">
                                     <sc:Validator name="usernameValidator"  classname="com.sun.identity.wss.sts.spi.FAMUsernamePasswordValidator"/> 

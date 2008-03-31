@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetCard.java,v 1.1 2008-03-27 17:09:55 mrudul_uchil Exp $
+ * $Id: GetCard.java,v 1.2 2008-03-31 05:25:07 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -338,10 +338,12 @@ public class GetCard extends HttpServlet {
         String mexEndpointURL = null;
         try {
             URL stsService = 
-                    WebtopNaming.getServiceURL("sts", serverProtocol, serverHost, serverPort);
+                    WebtopNaming.getServiceURL(
+                    "sts", serverProtocol, serverHost, serverPort, serviceUri);
             endpointURL = stsService.toString();
             URL stsMexService = 
-                    WebtopNaming.getServiceURL("sts-mex", serverProtocol, serverHost, serverPort);
+                    WebtopNaming.getServiceURL(
+                    "sts-mex", serverProtocol, serverHost, serverPort, serviceUri);
             mexEndpointURL = stsMexService.toString();
         } catch (Exception e) {
             debug.error("Error in retrieving STS service URL : " + e.toString());            

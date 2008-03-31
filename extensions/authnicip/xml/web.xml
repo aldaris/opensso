@@ -18,17 +18,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web.xml,v 1.1 2008-03-27 17:09:56 mrudul_uchil Exp $
+   $Id: web.xml,v 1.2 2008-03-31 05:25:08 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<display-name>sts</display-name>
-<description>sts</description>
-
 <context-param>
     <param-name>com.sun.identity.cardfactory.GetCard.image</param-name>
-    <param-value>/home/beuchelt/resources/sun_logo_rgb.gif</param-value>
+    <param-value>path to sun_logo_rgb.gif</param-value>
     <description>Image for the InfoCard</description>
 </context-param>
 
@@ -47,29 +44,3 @@
     <description>Comma separated list of STS supported claim types</description>
 </context-param>
      
-<listener>
-    <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
-</listener>
-
-<servlet>
-    <servlet-name>sts</servlet-name>
-    <display-name>sts</display-name>
-    <description>JAX-WS endpoint - sts</description>
-    <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-</servlet>
-
-<servlet-mapping>
-    <servlet-name>sts</servlet-name>
-    <url-pattern>/sts</url-pattern>
-</servlet-mapping>
-
-<servlet-mapping>
-      <servlet-name>sts</servlet-name>
-      <url-pattern>/sts/mex</url-pattern>
-</servlet-mapping>
-
-<session-config>
-    <session-timeout>60</session-timeout>
-</session-config>
-

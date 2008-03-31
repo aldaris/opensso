@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.1 2008-03-27 17:09:56 mrudul_uchil Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.2 2008-03-31 05:25:08 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,7 @@ import org.w3c.dom.NodeList;
 
 import org.xmldap.exceptions.TokenIssuanceException;
 import com.sun.identity.cardfactory.PPIDHelper;
+import com.sun.identity.cardfactory.CardSpaceConstants;
 
 public class FAMSTSAttributeProvider implements STSAttributeProvider {
 
@@ -202,78 +203,78 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
             String optional = claimType.getAttribute("Optional");
             debug.message("claimTypes[" + i + "] : " + claimTypes[i]);
             debug.message("optional : " + optional);
-            if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_GIVENNAME))) {
-                QName gnQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_GIVENNAME);
+            if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_GIVENNAME))) {
+                QName gnQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_GIVENNAME);
                 List<String> gnAttrs = new ArrayList<String>();
                 gnAttrs.add(givenname);
                 attrs.put(gnQName, gnAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_SURNAME))) {
-                QName snQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_SURNAME);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_SURNAME))) {
+                QName snQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_SURNAME);
                 List<String> snAttrs = new ArrayList<String>();
                 snAttrs.add(sn);
                 attrs.put(snQName, snAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_EMAILADDRESS))) {
-                QName emailQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_EMAILADDRESS);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_EMAILADDRESS))) {
+                QName emailQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_EMAILADDRESS);
                 List<String> emailAttrs = new ArrayList<String>();
                 emailAttrs.add(mail);
                 attrs.put(emailQName, emailAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_STREETADDRESS))) {
-                QName streetaddressQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_STREETADDRESS);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_STREETADDRESS))) {
+                QName streetaddressQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_STREETADDRESS);
                 List<String> streetadressAttrs = new ArrayList<String>();
                 streetadressAttrs.add(streetaddress);
                 attrs.put(streetaddressQName, streetadressAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_CITY))) {
-                QName cityQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_CITY);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_CITY))) {
+                QName cityQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_CITY);
                 List<String> cityAttrs = new ArrayList<String>();
                 cityAttrs.add(city);
                 attrs.put(cityQName, cityAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_STATE))) {
-                QName stateQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_STATE);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_STATE))) {
+                QName stateQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_STATE);
                 List<String> stateAttrs = new ArrayList<String>();
                 stateAttrs.add(state);
                 attrs.put(stateQName, stateAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_POSTALCODE))) {
-                QName postalcodeQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_POSTALCODE);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_POSTALCODE))) {
+                QName postalcodeQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_POSTALCODE);
                 List<String> postalcodeAttrs = new ArrayList<String>();
                 postalcodeAttrs.add(postalcode);
                 attrs.put(postalcodeQName, postalcodeAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_COUNRTY))) {
-                QName countryQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_COUNTRY);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_COUNRTY))) {
+                QName countryQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_COUNTRY);
                 List<String> countryAttrs = new ArrayList<String>();
                 countryAttrs.add(country);
                 attrs.put(countryQName, countryAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_HOMEPHONE))) {
-                QName homephoneQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_HOMEPHONE);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_HOMEPHONE))) {
+                QName homephoneQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_HOMEPHONE);
                 List<String> homephoneAttrs = new ArrayList<String>();
                 homephoneAttrs.add(homephone);
                 attrs.put(homephoneQName, homephoneAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_WORKPHONE))) {
-                QName workphoneQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_WORKPHONE);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_WORKPHONE))) {
+                QName workphoneQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_WORKPHONE);
                 List<String> workphoneAttrs = new ArrayList<String>();
                 workphoneAttrs.add(workphone);
                 attrs.put(workphoneQName, workphoneAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_MOBILEPHONE))) {
-                QName mobilephoneQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_MOBILEPHONE);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_MOBILEPHONE))) {
+                QName mobilephoneQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_MOBILEPHONE);
                 List<String> mobilephoneAttrs = new ArrayList<String>();
                 mobilephoneAttrs.add(mobilephone);
                 attrs.put(mobilephoneQName, mobilephoneAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_GENDER))) {
-                QName genderQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_GENDER);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_GENDER))) {
+                QName genderQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_GENDER);
                 List<String> genderAttrs = new ArrayList<String>();
                 genderAttrs.add(gender);
                 attrs.put(genderQName, genderAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_DOB))) {
-                QName dobQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_DOB);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_DOB))) {
+                QName dobQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_DOB);
                 List<String> dobAttrs = new ArrayList<String>();
                 dobAttrs.add(dob);
                 attrs.put(dobQName, dobAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_WEBPAGE))) {
-                QName webpageQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_WEBPAGE);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_WEBPAGE))) {
+                QName webpageQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_WEBPAGE);
                 List<String> webpageAttrs = new ArrayList<String>();
                 webpageAttrs.add(webpage);
                 attrs.put(webpageQName, webpageAttrs);
-            } else if (claimTypes[i] != null && (claimTypes[i].equals(STSConstants.IC_NS_PRIVATEPERSONALIDENTIFIER))) {
-                QName ppidQName = new QName(STSConstants.IC_NAMESPACE, STSConstants.IC_PRIVATEPERSONALIDENTIFIER);
+            } else if (claimTypes[i] != null && (claimTypes[i].equals(CardSpaceConstants.IC_NS_PRIVATEPERSONALIDENTIFIER))) {
+                QName ppidQName = new QName(CardSpaceConstants.IC_NAMESPACE, CardSpaceConstants.IC_PRIVATEPERSONALIDENTIFIER);
                 List<String> ppidAttrs = new ArrayList<String>();
 
                 String cardId = null;
@@ -299,7 +300,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                             //
                             //  get value for PPID
                             // 
-                            NodeList nlPpid = ele.getElementsByTagNameNS(STSConstants.INFOCARD_NAMESPACE, "PPID"); 
+                            NodeList nlPpid = ele.getElementsByTagNameNS(CardSpaceConstants.INFOCARD_NAMESPACE, "PPID"); 
                             if (nlPpid.getLength() >0) {
                                 clientPseudonym = nlPpid.item(0).getFirstChild().getNodeValue(); 
                             }

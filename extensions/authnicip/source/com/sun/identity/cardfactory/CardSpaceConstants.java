@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CardSpaceConstants.java,v 1.1 2008-03-27 17:09:55 mrudul_uchil Exp $
+ * $Id: CardSpaceConstants.java,v 1.2 2008-03-31 05:25:07 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,54 @@ public class CardSpaceConstants {
     public static String INFOCARD_05_2005_NS_URI = "http://schemas.xmlsoap.org/ws/2005/05/identity";
     public static String supportedClaimsClass = "com.sun.identity.cardfactory.supportedClaimsClass";
     public static String defaultSupportedClaimsClass = "org.xmldap.sts.db.DbSupportedClaims";
+
+    public final static String INFOCARD_NAMESPACE = "http://schemas.xmlsoap.org/ws/2005/05/identity";
+    public final static String INFOCARD_PREFIX = "ic";
+    public static final String IC_NAMESPACE_PREFIX = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/";
+    public static final String IC_NAMESPACE = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims";
+
+    public static final String IC_GIVENNAME = "givenname";
+    public static final String IC_SURNAME = "surname";
+    public static final String IC_EMAILADDRESS = "emailaddress";
+    public static final String IC_PRIVATEPERSONALIDENTIFIER = "privatepersonalidentifier"; 
+
+    public static final String IC_NS_GIVENNAME = IC_NAMESPACE_PREFIX + IC_GIVENNAME;
+    public static final String IC_NS_SURNAME = IC_NAMESPACE_PREFIX + IC_SURNAME;
+    public static final String IC_NS_EMAILADDRESS = IC_NAMESPACE_PREFIX + IC_EMAILADDRESS;
+    public static final String IC_NS_PRIVATEPERSONALIDENTIFIER = IC_NAMESPACE_PREFIX + IC_PRIVATEPERSONALIDENTIFIER;
+
+    public static final String IC_STREETADDRESS = "streetaddress";
+    public static final String IC_NS_STREETADDRESS = IC_NAMESPACE_PREFIX + IC_STREETADDRESS;    
+
+    public static final String IC_CITY = "locality";
+    public static final String IC_NS_CITY = IC_NAMESPACE_PREFIX + IC_CITY;    
+
+    public static final String IC_STATE = "stateorprovince";
+    public static final String IC_NS_STATE = IC_NAMESPACE_PREFIX + IC_STATE;    
+
+    public static final String IC_POSTALCODE = "postalcode";
+    public static final String IC_NS_POSTALCODE = IC_NAMESPACE_PREFIX + IC_POSTALCODE;    
+
+    public static final String IC_COUNTRY = "country";
+    public static final String IC_NS_COUNRTY = IC_NAMESPACE_PREFIX + IC_COUNTRY;    
+
+    public static final String IC_HOMEPHONE = "homephone";
+    public static final String IC_NS_HOMEPHONE = IC_NAMESPACE_PREFIX + IC_HOMEPHONE;    
+
+    public static final String IC_WORKPHONE = "otherphone";
+    public static final String IC_NS_WORKPHONE = IC_NAMESPACE_PREFIX + IC_WORKPHONE;    
+
+    public static final String IC_MOBILEPHONE = "mobilephone";
+    public static final String IC_NS_MOBILEPHONE = IC_NAMESPACE_PREFIX + IC_MOBILEPHONE;    
+
+    public static final String IC_GENDER = "gender";
+    public static final String IC_NS_GENDER = IC_NAMESPACE_PREFIX + IC_GENDER;    
+
+    public static final String IC_DOB = "dateofbirth";
+    public static final String IC_NS_DOB = IC_NAMESPACE_PREFIX + IC_DOB;    
+
+    public static final String IC_WEBPAGE = "webpage";
+    public static final String IC_NS_WEBPAGE = IC_NAMESPACE_PREFIX + IC_WEBPAGE;
 
     public enum ClaimType {
 
