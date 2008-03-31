@@ -28,7 +28,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.7 2008-03-11 20:16:32 mrudul_uchil Exp $
+   $Id: index.html,v 1.8 2008-03-31 21:19:30 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -116,7 +116,7 @@ application</p>
         </li>
         <li>
           <p style="margin-bottom: 0in;">This page → &lt;fam client web
-application protocol://host:port&gt;/sts/index.html</p>
+application protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/index.html</p>
         </li>
       </ol>
       <h3>JSP pages</h3>
@@ -125,8 +125,9 @@ included in this STS client sample.</p>
       <ol>
         <li>
           <p style="margin-bottom: 0in;">&lt;fam client web application
-protocol://host:port&gt;/sts/sts-client-user.jsp</p>
-          <p style="margin-bottom: 0in;">This will redirect to
+protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/sts-client-user.jsp</p>
+          <p style="margin-bottom: 0in;">Accessing this page will
+redirect to
 authentication service of OpenSSO server. </p>
           <p style="margin-bottom: 0in;">Login with any existing
 OpenSSO user. </p>
@@ -156,7 +157,8 @@ the End user's user identity.</p>
         </li>
         <li>
           <p style="margin-bottom: 0in;">&lt;fam client web application
-protocol://host:port&gt;/sts/sts-client-wsc.jsp </p>
+protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/sts-client-wsc.jsp
+          </p>
           <p style="margin-bottom: 0in;">Login to OpenSSO
 Administration console &lt;OpenSSO web application
 protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin” user
@@ -169,11 +171,12 @@ Service End Point as “default”.</p>
           <p style="margin-bottom: 0in;">Save changes and Logout of
 OpenSSO Administration console.</p>
           <p style="margin-bottom: 0in;">Access &lt;fam client web
-application protocol://host:port&gt;/sts/sts-client-wsc.jsp</p>
-          <p style="margin-bottom: 0in;">Enter web service name as
+application protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/sts-client-wsc.jsp</p>
+          <p style="margin-bottom: 0in;">Enter web service client name
+as
 "wsc" and click "GetToken".<br>
 If successful, this will display SAML Assertion obtained from OpenSSO
-Security Token Service.</p>
+Security Token Service, in exchange of WSC's token.</p>
           <p style="margin-bottom: 0in;"><b>Description :</b></p>
           <p style="margin-bottom: 0in;">There are four parties
 involved in this Sample :</p>

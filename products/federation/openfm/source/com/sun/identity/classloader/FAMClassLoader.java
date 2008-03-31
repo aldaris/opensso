@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.4 2008-03-20 05:35:10 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.5 2008-03-31 21:19:30 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,7 @@ public class FAMClassLoader {
     
     public static ClassLoader getFAMClassLoader(ServletContext context, 
         String[] reqJars) {
+        setSystemProperties();
         if (cl == null) {
             try {
                 URL[] urls = null;
@@ -123,6 +124,18 @@ public class FAMClassLoader {
             e.printStackTrace();
         }
         return urls;
+    }
+    
+    private static void setSystemProperties() {
+        // Fix for Geronimo Application server and WebLogic 10
+        System.setProperty("javax.xml.soap.MetaFactory", 
+            "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
+        System.setProperty("javax.xml.soap.MessageFactory", 
+            "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl");
+        System.setProperty("javax.xml.soap.SOAPConnectionFactory", 
+            "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
+        System.setProperty("javax.xml.soap.SOAPFactory", 
+            "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl");
     }
 
     /**
