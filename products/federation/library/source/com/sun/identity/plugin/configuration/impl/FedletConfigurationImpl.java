@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletConfigurationImpl.java,v 1.1 2008-03-26 04:30:24 qcheng Exp $
+ * $Id: FedletConfigurationImpl.java,v 1.2 2008-03-31 19:53:39 qcheng Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,8 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationListener;
+import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement; 
+import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,25 +46,33 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.bind.JAXBException;
 
 /**
- * <code>FedletConfigurationImpl</code> is the implementation for Fedlet
- * to retrieve configuration from flat files. 
+ * The <code>FedletConfigurationImpl</code> class is the implementation for 
+ * Fedlet to retrieve metadata/COT configuration from flat files. 
  */
 public class FedletConfigurationImpl implements ConfigurationInstance {
 
-    private static String UTF_8 = "UTF-8";
-    private static String EXTENDED_XML_SUFFIX = "-extended.xml";
-    private static String COT_FILE_SUFFIX = ".cot";
-    // fedlet home directory, this is the directory which contains metadata
-    // and COT files
+    // Name of attribute in COT file to contains the COT name
+    private static final String COT_NAME = "cot-name";
+    // Suffix for extended metadata file name.
+    private static final String EXTENDED_XML_SUFFIX = "-extended.xml";
+    // Suffix for COT file name.
+    private static final String COT_FILE_SUFFIX = ".cot";
+    // fedlet home directory which contains metadata/COT/configuration files
     private static String fedletHomeDir; 
     // property name to point to the fedlet home
     // if not defined, default to "$user_home/fedlet"
-    private static String FEDLET_HOME_DIR = "com.sun.identity.fedlet.home"; 
+    private static final String FEDLET_HOME_DIR = 
+        "com.sun.identity.fedlet.home"; 
     private String componentName = null;
     private static final String RESOURCE_BUNDLE = "fmConfigurationService";
     static Debug debug = Debug.getInstance("fedletConfiguration");;
+    // Map to store COT information
+    private static Map cotMap = new HashMap();
+    // Map to store metadata information
+    private static Map entityMap = new HashMap();
 
     /**
      * Initializer.
@@ -87,6 +97,12 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
             debug.message("FedletConfigurationImpl.init: fedlet home=" + 
                 fedletHomeDir);
         }
+        // initialize SAML2 metadata and COT from fedlet home directory
+        initializeMetadataAndCOT();
+        if (debug.messageEnabled()) {
+            debug.message("FedletConfImpl entityMap: =" + entityMap.keySet());
+            debug.message("FedletConfImpl cotMap: =" + cotMap.keySet());
+        } 
     }
 
     /**
@@ -110,63 +126,133 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
                 ", configName = " + configName);
         }
 
-        try {
-            // only need to support SAML2/LIBCOT for now
-            if ("SAML2".equals(componentName)) {
-                return handleSAML2Metadata(configName);
-            } else if ("LIBCOT".equals(componentName)) {
-                return handleCOT(configName);
-            } else {
-                return null;
-            }
-        } catch (FileNotFoundException fnf) {
-            debug.warning("FedletConfigurationImpl.getConfiguration:", fnf);
-            // configuration not found
+        // only need to support SAML2/LIBCOT for now
+        if ("SAML2".equals(componentName)) {
+            return (Map) entityMap.get(configName);
+        } else if ("LIBCOT".equals(componentName)) {
+            return (Map) cotMap.get(configName);
+        } else {
             return null;
-        } catch (IOException ioe) {
-            debug.error("FedletConfigurationImpl.getConfiguration:", ioe);
-            String[] data = { componentName, realm };
-            throw new ConfigurationException(RESOURCE_BUNDLE,
-                "failedGetConfig", data);
         }
     }
 
     /**
-     * Retrieves SAMLv2 standard and extended metadata from falt files.
-     * Standard metadata stored in a file named <configName>.xml
-     * Extended metadata stored in a file named <configName>-extended.xml
+     * Initializes SAMLv2 metadata and COT from flat files under Fedlet
+     * home directory.
+     * The metadata information will be stored in a Map, key is the entity ID,
+     * value is a Map whose key is the standard/extended attribute name, 
+     * value is a String containing the standard/extended metadata XML.
+     * Standard metadata is stored in a file named <fileName>.xml
+     * Extended metadata is stored in a file named <fileName>-extended.xml
+     * 
+     * The COT information will be stored in a Map, key is the COT name, 
+     * value is a Map whose key is the attribute  name, value is a Set of 
+     * values for the attribute.
+     * COT is stored in a file named <filename>.cot
+     *
      */
-    private Map handleSAML2Metadata(String configName) 
-        throws FileNotFoundException, IOException {
-        // standard metadata files ends with .xml
-        String metaFile = fedletHomeDir + File.separator + encode(configName)
-            + ".xml";
+    private void initializeMetadataAndCOT() {
+        try {
+            // read all SAML2 metadata/COT files from fedlet home directory
+            File homeDir = new File(fedletHomeDir); 
+            String[] files = homeDir.list();
+            if ((files == null) || (files.length == 0)) {
+                return;
+            } 
+            for (int i = 0; i < files.length; i++) {
+                String fileName = files[i];  
+                if (debug.messageEnabled()) {
+                    debug.message("FedletConfigImpl.initMetaCOT: " + fileName);
+                }
+                if (fileName.endsWith(EXTENDED_XML_SUFFIX)) {
+                    // processing metadata entry
+                    handleSAML2Metadata(fileName.substring(0, 
+                        fileName.length() - EXTENDED_XML_SUFFIX.length()));
+                } else if (fileName.endsWith(COT_FILE_SUFFIX)) {
+                    handleCOT(fileName.substring(0,
+                        fileName.length() - COT_FILE_SUFFIX.length()));
+                } else {
+                    continue;
+                }
+            }
+        } catch (NullPointerException npe) {
+            debug.error("FedletConfigurationImpl.processSAML2Metadata()", npe);
+        } catch (SecurityException se) {
+            debug.error("FedletConfigurationImpl.processSAML2Metadata()", se);
+        }
+    }
+
+    /**
+     * Gets SAML2 metadata from flat files and stores in entityMap.
+     */
+    private void handleSAML2Metadata(String fileName) {
+        // get standard metadata
+        String metaFile = fedletHomeDir + File.separator + fileName + ".xml";
+        if (debug.messageEnabled()) {
+            debug.message("FedletConfigurationImpl.handleSAML2Metadata: " +
+                "metaFile=" + metaFile);
+        }
         String metaXML = openFile(metaFile);
+        if (metaXML == null) {
+            return;
+        }
+        String entityId = getEntityID(metaXML);
+        if (entityId == null) {
+            return;
+        }
         Map map = new HashMap();
         Set set = new HashSet();
         set.add(metaXML);
         map.put("sun-fm-saml2-metadata", set);
         // get extended metadata files
-        String extFile = fedletHomeDir + File.separator + encode(configName)
+        String extFile = fedletHomeDir + File.separator + fileName
             + EXTENDED_XML_SUFFIX; 
         String extXML = openFile(extFile); 
+        if (extXML == null) {
+            return;
+        }
         set = new HashSet();
         set.add(extXML);
         map.put("sun-fm-saml2-entityconfig", set);
-        return map;
+        // add to entity Map
+        entityMap.put(entityId, map);
+        if (debug.messageEnabled()) {
+            debug.message("FedletConfigurationImpl.handleSAML2Metadata: " +
+                "done processing entity " + entityId);
+        }
+    }
+
+    private String getEntityID(String metaXML) {
+        try {
+            Object obj = SAML2MetaUtils.convertStringToJAXB(metaXML);
+            if (obj instanceof EntityDescriptorElement) {
+                return ((EntityDescriptorElement) obj).getEntityID();
+            }
+        } catch (JAXBException jaxbe) {
+            debug.error("FedletConfigImpl.getEntityID: " + metaXML, jaxbe);
+        }
+        return null;
     }
 
     /**
-     * Returns COT attribute value pair. Key is the attribute name,
-     * value is a Set of values for the attribute.
-     * The COT is stored in a falt file named "<configName>.cot" which contains
+     * Gets COT information from flat file and stores in cotMap.
+     * The COT is stored in a flat file named "<fileName>.cot" which contains
      * list of properties, format like this :
-     * attribute_name=value1,value2,value3...
+     *     <attribute_name>=<value1>,<value2>,<value3>,...
+     * for example:
+     *     cot-name=sample
+     *     sun-fm-cot-status=Active
+     *     sun-fm-trusted-providers=idp,sp
+     * Note : Value which contains "%" and "," need to be escaped to 
+     *        "%25" and "%2c" before saving to the file.
      */
-    private Map handleCOT(String configName) 
-    throws FileNotFoundException, IOException {
-        String cotFile = fedletHomeDir + File.separator + encode(configName)
+    private void handleCOT(String fileName) {
+        String cotFile = fedletHomeDir + File.separator + fileName
             + COT_FILE_SUFFIX;
+        if (debug.messageEnabled()) {
+            debug.message("FedletConfigurationImpl.handleCOT: " +
+                "cotFile=" + cotFile);
+        }
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(cotFile);
@@ -184,7 +270,23 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
                     }
                 }
             }
-            return attrMap;
+            Set cotName = (Set) attrMap.get(COT_NAME);
+            if (cotName == null) {
+                debug.error("FedletConfigImpl.handleCOT: null COT name in "
+                    + cotFile);
+            } else {
+                cotMap.put((String) cotName.iterator().next(), attrMap);
+                if (debug.messageEnabled()) {
+                    debug.message("FedletConfigurationImpl.handleCOT: " +
+                        "done processing cot " + cotName);
+                }
+            }
+        } catch (FileNotFoundException fnf) {
+            debug.error("FedletConfigurationImpl.handleCOT: " + cotFile 
+                + " for component " + componentName, fnf);
+        } catch (IOException ioe) {
+            debug.error("FedletConfigurationImpl.getConfiguration:"  + cotFile 
+                + " for component " + componentName, ioe);
         } finally {
             if (fis != null) {
                 try {
@@ -231,7 +333,7 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
 
 
     /** 
-     * Decodes a value, %2C to comma and %25 to percent.
+     * Decodes a value, %2C to comma and %25 to percent. 
      */
     protected String decodeVal(String v) {
         char[] chars = v.toCharArray();
@@ -262,10 +364,10 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
     }
 
     /**
-     * Returns the contains of a file as String.
+     * Returns the content of a file as String.
+     * Returns null if error occurs.
      */
-    private String openFile(String file) 
-    throws FileNotFoundException, IOException  {
+    private String openFile(String file) {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file)); 
@@ -275,6 +377,14 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
                 sb.append(temp);
             }
             return sb.toString();
+        } catch (FileNotFoundException fnf) {
+            debug.error("FedletConfigurationImpl.getConfiguration: " + file
+                + " for component " + componentName, fnf);
+            return null;
+        } catch (IOException ioe) {
+            debug.error("FedletConfigurationImpl.getConfiguration:"  + file
+                + " for component " + componentName, ioe);
+            return null;
         } finally {
             if (br != null) {
                 try {
@@ -384,52 +494,12 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
                 ": realm = " + realm + ", componentName = " + componentName);
         }
         if ("SAML2".equals(componentName)) {
-            return getSAML2Entities();
+            return entityMap.keySet();
         } else if ("LIBCOT".equals(componentName)) {
-            return getCOTNames();
+            return cotMap.keySet();
         } else {
             return Collections.EMPTY_SET;
         }
-    }
-
-    private Set getSAML2Entities() throws ConfigurationException {
-        File homeDir = new File(fedletHomeDir);
-        String[] files = homeDir.list();
-        Set retSet = new HashSet();
-        if ((files != null) && (files.length != 0)) {
-            for (int i = 0; i < files.length; i++) {
-                String name = files[i];
-                if (name.endsWith(EXTENDED_XML_SUFFIX)) {
-                    retSet.add(decode(name.substring(0, 
-                        name.length() - EXTENDED_XML_SUFFIX.length())));
-                }
-            }
-        }
-        if (debug.messageEnabled()) {
-            debug.message("FedletConfigurationImpl.getSAML2Entities"+
-                " componentName = " + componentName + ", entities=" + retSet);
-        }
-        return retSet;
-    } 
-
-    private Set getCOTNames() {
-        File homeDir = new File(fedletHomeDir);
-        String[] files = homeDir.list();
-        Set retSet = new HashSet();
-        if ((files != null) && (files.length != 0)) {
-            for (int i = 0; i < files.length; i++) {
-                String name = files[i];
-                if (name.endsWith(COT_FILE_SUFFIX)) {
-                    retSet.add(decode(name.substring(0, 
-                        name.length() - COT_FILE_SUFFIX.length())));
-                }
-            }
-        }
-        if (debug.messageEnabled()) {
-            debug.message("FedletConfigurationImpl.getSAML2Entities"+
-                " componentName = " + componentName + ", COTs=" + retSet);
-        }
-        return retSet;
     }
 
     /**
@@ -451,33 +521,5 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
      */
     public void removeListener(String listenerID)
         throws ConfigurationException {
-    }
-
-    /**
-     * Encodes configuration name. 
-     * @param configName Configuration name to be encoded.
-     * @return encoded configuration name.
-     */
-    public String encode(String configName) {
-        try {
-            return URLEncoder.encode(configName, UTF_8);
-        } catch (UnsupportedEncodingException ex) {
-            debug.error("FedletConfigurationImpl.encode", ex);
-            return configName;
-        }
-    }
-
-    /**
-     * Decodes configuration name.
-     * @param configName Configuration name to be decoded.
-     * @return decoded configuration name.
-     */
-    public String decode(String configName) {
-        try {
-            return URLDecoder.decode(configName, UTF_8);
-        } catch (UnsupportedEncodingException ex) {
-            debug.error("FedletConfigurationImpl.decode", ex);
-            return configName;
-        }
     }
 }

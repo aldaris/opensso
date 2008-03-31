@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.35 2008-03-26 04:31:41 qcheng Exp $
+   $Id: build-war.xml,v 1.36 2008-03-31 19:54:11 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -53,8 +53,11 @@
         <mkdir dir="${war.package.dir}/WEB-INF/classes/META-INF/services"/>
         <mkdir dir="${war.package.dir}/WEB-INF/fedlet"/>
         
-        <copy file="${library.dir}/README.fedlet"
+        <copy file="${library.dir}/fedlet/README"
             tofile="${war.package.dir}/WEB-INF/fedlet/README" />
+
+        <copy file="${library.dir}/fedlet/index.jsp"
+            tofile="${war.package.dir}/WEB-INF/fedlet/index.jsp" />
 
         <copy file="${library.res.dir}/FederationConfig.properties"
             tofile="${war.package.dir}/WEB-INF/fedlet/FederationConfig.properties" />

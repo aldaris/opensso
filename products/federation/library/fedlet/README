@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.fedlet,v 1.1 2008-03-26 04:29:46 qcheng Exp $
+$Id: README,v 1.1 2008-03-31 19:53:39 qcheng Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
@@ -49,34 +49,35 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
      The files under "war" directory are structured as WAR format, you could
      just overlay them with your existing application WAR structure.
      For testing purpose, you could create a WAR including all files under "war"
-     directory and deploy in your web container, it could serve as a sample 
-     application to validate Fedlet deployment.
+     directory and deploy in your web container. e.g.
+         % cd war
+         % jar cvf ../fedlet.war * 
+     This could serve as a sample application to validate Fedlet deployment.
   b) Copy files under "conf" directory to a sub directory named "fedlet" 
-     under your web container running user's home directory. e.g. 
-     "/home/webservd/fedlet". This is the default directory for Fedlet to read 
-     its configuration files. To change this default directory, set the value
-     of the JVM property "com.sun.identity.fedlet.home" to a desired directory.
-     For example,  -Dcom.sun.identity.fedlet.home=/export/fedlet/conf 
-     this will inform Fedlet to read metadata/COT/configuration files from 
-     "/export/fedlet/conf" directory.
+     under your web container running user's home directory (pointed by
+     JVM property "user.home"). For example, assume running user's home 
+     directory is "/home/webservd":
+         % mkdir /home/webservd/fedlet 
+         % cd conf
+         % cp * /home/webservd/fedlet 
+     The "fedlet" subdirectory under the web container running user's home 
+     is the default location for Fedlet to read its metadata, COT and 
+     configuration properties. To change this default directory, set the 
+     value of a JVM property "com.sun.identity.fedlet.home" to the desired 
+     location.  For example:  
+         -Dcom.sun.identity.fedlet.home=/export/fedlet/conf 
+     this will tell Fedlet to read metadata/COT/configuration files from 
+     "/export/fedlet/conf" directory instead.
 
 %% 3. How to validate Fedlet deployment 
-     You could run SP or IDP initiated Single Sign-on to verify Fedlet
-     deployment is successful.
-     - To start SP initiated SSO, access URL:
-       SP_PROTOCOL://SP_HOST:SP_PORT/SP_DEPLOY_URI/fedletAssertionConsumer.jsp 
-       where SP_PROTOCOL/SP_HOST/SP_PORT/SP_DEPLOY_URI is the 
-       protocol/host/port/web deployment URI of the web container the 
-       Fedlet/Application is deployed.
-     - To start IDP initiated SSO, access URL:
-       IDP_PROTOCOL://IDP_HOST:IDP_PORT/IDP_DEPLOY_URI/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias=<idp_metaAlias>&spEntityID=<sp_entityID>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST  
-       where IDP_PROTOCOL/IDP_HOST/IDP_PORT/IDP_DEPLOY_URI is the
-       protocol/host/port/web deployment URI of the web container the
-       IDP is deployed, <idp_metaAlias> is the meta alias of the IDP, 
-       <sp_entityID> is the entity ID of the SP.
-     For both cases, you will land on a Fedlet side JSP to show the SAMLv2 SSO 
-     Response, Assertion and AttributeStatement.  
-
+     Access the Fedlet(SP) index.jsp page to validate Fedlet setup, e.g.
+     <SP_PROTOCOL>://<SP_HOST>:<SP_PORT>/<SP_DEPLOY_URI>/index.jsp
+     You will be shown links to start Fedlet(SP) and IDP initiated Single 
+     Sing-on. Click the link, you will be redirected to IDP for login, then 
+     Single Sign-on to Fedlet(SP). Upon successful completion, a Fedlet(SP) 
+     side JSP will be presented to show the SSO Response, Assertion and 
+     AttributeStatement.
+     
 %% 4. How to integrate with existing application after Single Sign-on
      After Fedlet completes SAMLv2 Single Sign-on, it will set the SAMLv2 
      Response XML as value for attribute "SAMLResponse" and forward to
