@@ -108,6 +108,9 @@
         
     function submitDefaultSummaryForm() {
         YAHOO.sun.identity.config.options.defaultSummary.hide(); 
+        if ( window.frames['progressIframe'] ) {
+            window.frames['progressIframe'].location = "$context/config/setSetupProgress.jsp";
+        }
         YAHOO.sun.identity.config.options.inProgress.show();
         AjaxUtils.doPost("defaultSummary", "$context/config/defaultSummary.htm", AjaxUtils.serializeForm("defaultForm"), onDefaultSummarySuccess, onDefaultSummaryFailure);
     }
@@ -201,6 +204,30 @@
     YAHOO.util.Event.onDOMReady(init);
 
 </script>
+    <script language="Javascript">
+        function addProgressText(str) 
+        { 
+            var obj = document.getElementById("progressText"); 
+            obj.innerHTML += str;
+            var obj = document.getElementById("progressP");
+            obj.scrollTop = obj.scrollHeight; 
+        }
+        var isProgressShow = false;
+        function toggleProgressDiv()
+        {
+            var obj = document.getElementById("progressControl"); 
+            var obj1 = document.getElementById("progressDiv"); 
+            if (isProgressShow == true ) {
+                obj.innerHTML = "Show Progress";
+                obj1.style.display ="none";
+                isProgressShow = false;
+            } else {
+                obj.innerHTML = "Hide progress log";
+                obj1.style.display="block";
+                isProgressShow = true;
+            }
+        }
+    </script>
 
 <link rel="stylesheet" type="text/css" href="$context/assets/css/Specific/optionUpgrade.css" />
 
@@ -315,6 +342,10 @@
                 <br/>
                 <h2>$page.getLocalizedString("configurator.progress")</h2>
                 <img src="$context/assets/images/rel_interstitial_loading.gif" />
+                <p><a href="#" onclick="toggleProgressDiv()" id="progressControl">Show progress log</a>
+                <div id="progressDiv" style="display:none">
+                   <iframe id="progressIframe" name="progressIframe"  src="$context/assets/images/rel_interstitial_loading.gif" height=220 width=600 scrolling="no" frameborder="0">This browser cannot dipslay iframes.</iframe>
+                </div>
             </div>
         </div>
     </div>

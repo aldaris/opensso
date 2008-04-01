@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.9 2008-03-20 20:50:21 jonnelson Exp $
+ * $Id: Wizard.java,v 1.10 2008-04-01 15:49:22 rajeevangal Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.HttpServletRequestWrapper;
 import com.sun.identity.setup.HttpServletResponseWrapper;
+import com.sun.identity.setup.SetupProgress;
 import com.sun.identity.setup.SetupConstants;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,6 +103,7 @@ public class Wizard extends AjaxPage {
             SetupConstants.SMS_EMBED_DATASTORE);
         request.addParameter(SetupConstants.CONFIG_VAR_DATA_STORE, tmp);
 
+        boolean isEmbedded = false;
         if (tmp.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
             tmp = getAttribute(SetupConstants.DS_EMB_REPL_FLAG, "false");
 
@@ -109,7 +111,8 @@ public class Wizard extends AjaxPage {
              * set the embedded replication information for local host port
              * and remote host port
              */
-            if (tmp.equals(SetupConstants.DS_EMP_REPL_FLAG_VAL)) {
+            isEmbedded = tmp.equals(SetupConstants.DS_EMP_REPL_FLAG_VAL);
+            if (isEmbedded) {
                 request.addParameter(
                     SetupConstants.DS_EMB_REPL_FLAG,
                     SetupConstants.DS_EMP_REPL_FLAG_VAL);
@@ -135,7 +138,10 @@ public class Wizard extends AjaxPage {
         tmp = getAttribute("rootSuffix", defaultRootSuffix);
         request.addParameter(SetupConstants.CONFIG_VAR_ROOT_SUFFIX, tmp);
        
-        tmp = getAttribute("configStoreHost", hostName);
+        if (isEmbedded)
+            tmp = hostName;
+        else
+            tmp = getAttribute("configStoreHost", hostName);
         request.addParameter(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
 

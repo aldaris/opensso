@@ -153,6 +153,10 @@
 
             function onWriteConfigurationResponse( response ) {            
                 YAHOO.sun.identity.config.options.inProgress.hide();
+                var fr1 = window.frames['progressIframe'];
+                if ( fr1 ) {
+                    fr1.location = "$context/assets/images/rel_interstitial_loading.gif";
+                }
                 if (response.responseText == "true") {
                     YAHOO.sun.identity.config.options.confComplete.show();                    
                 } else {
@@ -162,9 +166,17 @@
                 }
             }
 
+            function writeConfigurationAsync()
+            {
+                AjaxUtils.call( "$context$path?actionLink=createConfig", onWriteConfigurationResponse );
+            }
             function writeConfiguration() {
                 YAHOO.sun.identity.config.options.inProgress.show();
-                AjaxUtils.call( "$context$path?actionLink=createConfig", onWriteConfigurationResponse );
+                var fr1 = window.frames['progressIframe'];
+                if ( fr1 ) {
+                    fr1.location = "$context/config/setSetupProgress.jsp";
+                }
+                setTimeout('writeConfigurationAsync()', 2000); 
             }
 
             /* =============================

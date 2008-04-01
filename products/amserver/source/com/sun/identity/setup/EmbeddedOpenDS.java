@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.9 2008-03-20 20:50:19 jonnelson Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.10 2008-04-01 15:49:22 rajeevangal Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -331,7 +331,7 @@ public class EmbeddedOpenDS {
             "--bindDN1",             // 6
             "cn=Directory Manager",  // 7
             "--bindPassword1",       // 8
-            "password",              // 9
+            "xxxxxxxx",              // 9
             "--replicationPort1",    // 10
             "8989",                  // 11
             "--host2",               // 12
@@ -341,29 +341,31 @@ public class EmbeddedOpenDS {
             "--bindDN2",             // 16
             "cn=Directory Manager",  // 17
             "--bindPassword2",       // 18
-            "password",              // 19
+            "xxxxxxxx",              // 19
             "--replicationPort2",    // 20
             "8989",                  // 21
             "--adminUID",            // 22
             "admin",                 // 23
             "--adminPassword",       // 24
-            "password",              // 25 
+            "xxxxxxxx",              // 25 
             "--baseDN",              // 26
             "dc=example,dc=com"      // 27
         };
         enableCmd[3] = (String) map.get(SetupConstants.DS_EMB_REPL_HOST2);
         enableCmd[5] = (String) map.get(SetupConstants.DS_EMB_REPL_PORT2);
-        enableCmd[9] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         enableCmd[11] = (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT2);
 
-        enableCmd[13] = "localhost";
+        //enableCmd[13] = "localhost";
+        enableCmd[13] = (String) map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
         enableCmd[15] = (String) map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT);
-        enableCmd[19] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         enableCmd[21] = (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT1);
-        enableCmd[25] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         enableCmd[27] = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
 
         SetupProgress.reportStart("emb.replcommand",concat(enableCmd));
+
+        enableCmd[9] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+        enableCmd[19] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+        enableCmd[25] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
 
         int ret = ReplicationCliMain.mainCLI(
             enableCmd, false, 
@@ -398,7 +400,7 @@ public class EmbeddedOpenDS {
             "--adminUID",                 // 4
             "admin",                      // 5
             "--adminPassword",            // 6
-            "password",                   // 7
+            "xxxxxxxx",                   // 7
             "--hostSource",               // 8
             "localhost",                  // 9
             "--portSource",               // 10
@@ -409,13 +411,15 @@ public class EmbeddedOpenDS {
             "51389"                       // 15
         };
         initializeCmd[3] = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
-        initializeCmd[7] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         initializeCmd[9] = (String) map.get(SetupConstants.DS_EMB_REPL_HOST2);
         initializeCmd[11] = (String) map.get(SetupConstants.DS_EMB_REPL_PORT2);
-        initializeCmd[13] = "localhost";
+        //initializeCmd[13] = "localhost";
+        initializeCmd[13] = (String) map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
         initializeCmd[15] = (String) map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT);
 
         SetupProgress.reportStart("emb.replcommand",concat(initializeCmd));
+
+        initializeCmd[7] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         int ret = ReplicationCliMain.mainCLI(initializeCmd, false, 
                                             SetupProgress.getOutputStream(), 
                                             SetupProgress.getOutputStream(), 

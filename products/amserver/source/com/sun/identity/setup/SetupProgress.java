@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProgress.java,v 1.3 2008-03-25 04:45:08 jonnelson Exp $
+ * $Id: SetupProgress.java,v 1.4 2008-04-01 15:49:22 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.setup;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -68,19 +69,19 @@ public class SetupProgress
         out = new OutputStream() {
             public void write(int b) throws IOException {
                 writer.write("<script>addProgressText('");
-                writer.write(String.valueOf((char) b));
+                writer.write(URLEncoder.encode(String.valueOf((char) b), encoding));
                 writer.write("<br>');</script>");
                 writer.flush();
             }
             public void write(byte[] b) throws IOException {
                 writer.write("<script>addProgressText('");
-                writer.write(new String(b, encoding));
+                writer.write(URLEncoder.encode(new String(b, encoding), encoding));
                 writer.write("<br>');</script>");
                 writer.flush();
             }
             public void write(byte[] b, int off, int len) throws IOException {
                 writer.write("<script>addProgressText('");
-                writer.write(new String(b, off, len, encoding));
+                writer.write(URLEncoder.encode(new String(b, off, len, encoding), encoding));
                 writer.write("<br>');</script>");
                 writer.flush();
             }
@@ -88,6 +89,14 @@ public class SetupProgress
                 writer.flush();
             }
         };
+    }
+    /**
+      * Sets setup OututStream.
+      * @param ostr OutputStream  to be used.
+      */
+    public static void setOutputStream(OutputStream  ostr)
+    {
+        out = ostr;
     }
 
     /**
