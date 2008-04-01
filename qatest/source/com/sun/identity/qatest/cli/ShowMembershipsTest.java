@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembershipsTest.java,v 1.3 2007-08-16 19:39:19 cmwesley Exp $
+ * $Id: ShowMembershipsTest.java,v 1.4 2008-04-01 20:23:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,12 +28,7 @@ import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -324,12 +319,7 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                     new Integer(SUCCESS_STATUS).toString())) {
                 Object[] params = {membershipType, idName}; 
                 if (msg.equals("")) {           
-                    if (!useVerboseOption) {
-                        String successString = 
-                                (String) rb.getString("success-message");
-                        expectedMessage = 
-                                MessageFormat.format(successString, params);
-                    } else {
+                    if (useVerboseOption) {
                         String verboseSuccessString = 
                                 (String) rb.getString(
                                 "verbose-success-message");
@@ -363,7 +353,6 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                     membershipsFound = true;
                 }
                 cli.logCommand("testMembershipSearch");
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
@@ -372,11 +361,22 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
                 String usageError = MessageFormat.format(errorMessage, params);
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");                
                 errorFound = cli.findStringsInError(usageError, ";");
             } else {
                 errorFound = cli.findStringsInError(expectedMessage, ";");
             }
+            
+            if (!expectedMessage.equals("")) {
+                if (expectedExitCode.equals(
+                        new Integer(SUCCESS_STATUS).toString()) ||
+                        expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
+                     stringsFound = cli.findStringsInOutput(expectedMessage, 
+                             ";");                    
+                }
+            } else {
+                stringsFound = true;
+            }            
             cli.resetArgList();
                    
             log(Level.FINEST, "testMembershipSearch", "Exit status: " + 
@@ -428,7 +428,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);
@@ -451,16 +452,17 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
 
                             log(Level.FINEST, "testMembershipSearch", 
                                     "Identity realm: " + remainingIdRealm);
-                            log(Level.FINEST, "testMembershipSearch", "Member name: " + 
-                                    remainingMemberName);
-                            log(Level.FINEST, "testMembershipSearch", "Member type: " + 
-                                    remainingMemberType);
-                            log(Level.FINEST, "testMembershipSearch", "Identity name: "
-                                    + remainingIdName);
-                            log(Level.FINEST, "testMembershipSearch", "Identity type: "
-                                    + remainingIdType);  
+                            log(Level.FINEST, "testMembershipSearch", 
+                                    "Member name: " + remainingMemberName);
+                            log(Level.FINEST, "testMembershipSearch", 
+                                    "Member type: " + remainingMemberType);
+                            log(Level.FINEST, "testMembershipSearch", 
+                                    "Identity name: " + remainingIdName);
+                            log(Level.FINEST, "testMembershipSearch", 
+                                    "Identity type: " + remainingIdType);  
 
-                            Reporter.log("RemainingIdRealm: " + remainingIdRealm);
+                            Reporter.log("RemainingIdRealm: " + 
+                                    remainingIdRealm);
                             Reporter.log("RemainingMemberName: " + 
                                     remainingMemberName);
                             Reporter.log("RemainingMemberType: " + 
@@ -469,8 +471,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                             Reporter.log("RemainingIdType: " + remainingIdType);
 
                             log(Level.FINE, "testMembershipSearch", 
-                                    "Removing remaining member " + remainingMemberName +
-                                    ".");
+                                    "Removing remaining member " + 
+                                    remainingMemberName + ".");
                             exitStatus = cli.removeMember(remainingIdRealm, 
                                     remainingMemberName, remainingMemberType, 
                                     remainingIdName, remainingIdType);
@@ -478,20 +480,24 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
-                                        "ERROR: The member " + remainingMemberName + 
-                                        " was not removed from " + remainingIdName + 
-                                        ".");
+                                        "ERROR: The member " + 
+                                        remainingMemberName + 
+                                        " was not removed from " + 
+                                        remainingIdName + ".");
                                 assert false;
                             } else {
                                 log(Level.FINEST, "cleanup", 
-                                        "The member identity " + remainingMemberName
-                                        + " was removed from " + remainingIdName + ".");
+                                        "The member identity " + 
+                                        remainingMemberName + 
+                                        " was removed from " + remainingIdName +
+                                        ".");
                             }
                         } else {
                                 log(Level.SEVERE, "cleanup", "The member " + 
                                         remainingMember + 
-                                        " must have a realm, member name, member type, "
-                                        + "an identity name, and an identity type");
+                                        " must have a realm, member name, " +
+                                        "member type, an identity name, and " +
+                                        "an identity type");
                                 assert false;                          
                         }
                     }
@@ -506,27 +512,30 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                                 cleanupIds[i]);
                         String [] idArgs = cleanupIds[i].split("\\,");
                         if (idArgs.length >= 3) {
-                            String idRealm = idArgs[0];
-                            String idName = idArgs[1];
-                            String idType = idArgs[2];
+                            String cleanupRealm = idArgs[0];
+                            String cleanupName = idArgs[1];
+                            String cleanupType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-				idRealm);
-                            log(Level.FINEST, "cleanup", "idName: " + idName);
-                            log(Level.FINEST, "cleanup", "idType: " + idType);
+				cleanupRealm);
+                            log(Level.FINEST, "cleanup", "idName: " + 
+                                    cleanupName);
+                            log(Level.FINEST, "cleanup", "idType: " + 
+                                    cleanupType);
                             
-                            Reporter.log("IdRealm: " + idRealm);
-                            Reporter.log("IdNameToRemove: " + idName);
-                            Reporter.log("IdentityTypeToRemove: " + idType);
+                            Reporter.log("IdRealm: " + cleanupRealm);
+                            Reporter.log("IdNameToRemove: " + cleanupName);
+                            Reporter.log("IdentityTypeToRemove: " + 
+                                    cleanupType);
                             
                             exitStatus = 
-                                    cli.deleteIdentities(idRealm, idName, 
-                                    idType);
+                                    cli.deleteIdentities(cleanupRealm, 
+                                    cleanupName, cleanupType);
                             cli.logCommand("cleanup");
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
-                                        "Removal of identity " + idName + 
+                                        "Removal of identity " + cleanupName + 
                                         " failed with exit status " + 
                                         exitStatus);
                                 assert false;

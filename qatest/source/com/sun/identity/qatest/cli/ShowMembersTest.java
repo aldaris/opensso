@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembersTest.java,v 1.4 2007-08-16 19:39:19 cmwesley Exp $
+ * $Id: ShowMembersTest.java,v 1.5 2008-04-01 20:23:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,12 +28,7 @@ import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -155,30 +150,30 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
                         log(Level.FINE, "setup", "Creating id " + ids[i]);
                         String [] idArgs = ids[i].split("\\,");
                         if (idArgs.length >= 3) {
-                            String idRealm = idArgs[0];
-                            String idName = idArgs[1];
-                            String idType = idArgs[2];
+                            String setupRealm = idArgs[0];
+                            String setupName = idArgs[1];
+                            String setupType = idArgs[2];
                             log(Level.FINEST, "setup", "Realm for setup id: " + 
-                                    idRealm);
+                                    setupRealm);
                             log(Level.FINEST, "setup", "Name for setup id: " + 
-                                    idName);
+                                    setupName);
                             log(Level.FINEST, "setup", "Type for setup id: " + 
-                                    idType);                            
+                                    setupType);                            
                             String idAttributes = null;
                             if (idArgs.length > 3) {
                                 idAttributes = idArgs[3];
-                                exitStatus = cli.createIdentity(idRealm, idName,
-                                        idType, idAttributes);
+                                exitStatus = cli.createIdentity(setupRealm,
+                                        setupName, setupType, idAttributes);
                             } else {                                
-                                exitStatus = cli.createIdentity(idRealm, idName,
-                                        idType);
+                                exitStatus = cli.createIdentity(setupRealm, 
+                                        setupName, setupType);
                             }
                             cli.logCommand("setup");
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The creation of " + 
-                                        idName + " failed with exit status " +
+                                        setupName + " failed with exit status " +
                                         exitStatus + ".");
                             }
                         } else {
@@ -321,35 +316,20 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
             Reporter.log("MemberType: " + memberType);
             Reporter.log("MembersToFind: " + membersToFind);
             
-            String msg = (String) rb.getString(locTestName + 
+            expectedMessage = (String) rb.getString(locTestName + 
                     "-message-to-find");  
             if (expectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
-                Object[] params = {searchRealm, idName, memberType}; 
-                if (msg.equals("")) {           
-                    if (!useVerboseOption) {
-                        String successString = 
-                                (String) rb.getString("success-message");
-                        expectedMessage = 
-                                MessageFormat.format(successString, params);
-                    } else {
-                        String verboseSuccessString = 
-                                (String) rb.getString(
+                if (expectedMessage.equals("")) {           
+                    if (useVerboseOption) {
+                        expectedMessage = (String) rb.getString(
                                 "verbose-success-message");
-                        expectedMessage = 
-                                MessageFormat.format(verboseSuccessString,
-                                params);
                     }
-                } else {
-                    expectedMessage = 
-                            MessageFormat.format(msg, params);
                 }
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");
-            } else {
-                expectedMessage = msg;                
-            }
+            } 
 
             commandStatus = cli.showMembers(searchRealm, memberType, idName,
                     idType);
@@ -366,7 +346,6 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
                     membersFound = true;
                 }
                 cli.logCommand("testIdentitySearch");
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
@@ -375,11 +354,22 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
                 String usageError = MessageFormat.format(errorMessage, params);
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");                
                 errorFound = cli.findStringsInError(usageError, ";");
             } else {
                 errorFound = cli.findStringsInError(expectedMessage, ";");
             }
+            
+            if (!expectedMessage.equals("")) {
+                if (expectedExitCode.equals(
+                        new Integer(SUCCESS_STATUS).toString()) ||
+                        expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
+                     stringsFound = cli.findStringsInOutput(expectedMessage, 
+                             ";");                    
+                }
+            } else {
+                stringsFound = true;
+            }                     
             cli.resetArgList();
                    
             log(Level.FINEST, "testIdentitySearch", "Exit status: " + 
@@ -505,27 +495,30 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
                                 cleanupIds[i]);
                         String [] idArgs = cleanupIds[i].split("\\,");
                         if (idArgs.length >= 3) {
-                            String idRealm = idArgs[0];
-                            String idName = idArgs[1];
-                            String idType = idArgs[2];
+                            String cleanupRealm = idArgs[0];
+                            String cleanupName = idArgs[1];
+                            String cleanupType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-				idRealm);
-                            log(Level.FINEST, "cleanup", "idName: " + idName);
-                            log(Level.FINEST, "cleanup", "idType: " + idType);
+				cleanupRealm);
+                            log(Level.FINEST, "cleanup", "idName: " + 
+                                    cleanupName);
+                            log(Level.FINEST, "cleanup", "idType: " + 
+                                    cleanupType);
                             
-                            Reporter.log("IdRealm: " + idRealm);
-                            Reporter.log("IdNameToRemove: " + idName);
-                            Reporter.log("IdentityTypeToRemove: " + idType);
+                            Reporter.log("IdRealm: " + cleanupRealm);
+                            Reporter.log("IdNameToRemove: " + cleanupName);
+                            Reporter.log("IdentityTypeToRemove: " + 
+                                    cleanupType);
                             
                             exitStatus = 
-                                    cli.deleteIdentities(idRealm, idName, 
-                                    idType);
+                                    cli.deleteIdentities(cleanupRealm, 
+                                    cleanupName, cleanupType);
                             cli.logCommand("cleanup");
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
-                                        "Removal of identity " + idName + 
+                                        "Removal of identity " + cleanupName + 
                                         " failed with exit status " + 
                                         exitStatus);
                                 assert false;

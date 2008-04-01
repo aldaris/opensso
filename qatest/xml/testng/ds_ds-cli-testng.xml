@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-cli-testng.xml,v 1.8 2008-01-18 15:05:17 cmwesley Exp $
+ $Id: ds_ds-cli-testng.xml,v 1.9 2008-04-01 20:16:54 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2132,30 +2132,6 @@
     <test name="CLI_show-identity-types02">
         <parameter name="testName" value="showidentitytypes-test2"/>
         <parameter name="propFile" value="GenericCLITest_ShowIdentityTypesTest"/>
-        <groups>
-            <run>
-                <include name="ds_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
-        </classes>
-    </test>
-    <test name="CLI_show-identity-operations01">
-        <parameter name="testName" value="showidentityoperations-test1"/>
-        <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
-        <groups>
-            <run>
-                <include name="ds_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
-        </classes>
-    </test>
-    <test name="CLI_show-identity-operations02">
-        <parameter name="testName" value="showidentityoperations-test2"/>
-        <parameter name="propFile" value="GenericCLITest_ShowIdentityOperationsTest"/>
         <groups>
             <run>
                 <include name="ds_ds"/>

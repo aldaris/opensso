@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetIdentityTest.java,v 1.2 2008-01-18 15:03:02 cmwesley Exp $
+ * $Id: GetIdentityTest.java,v 1.3 2008-04-01 20:23:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,12 +28,7 @@ import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -63,7 +58,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
     private String setupIdentities;
     private String attributesToFind;
     private String attributesNotFound;
-    private String realm;
+    private String idRealm;
     private String idName;
     private String idType;
     private String attributeNames;
@@ -172,7 +167,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                     "-message-to-find");
             expectedExitCode = (String) rb.getString(locTestName + 
                     "-expected-exit-code");
-            realm = (String) rb.getString(locTestName + 
+            idRealm = (String) rb.getString(locTestName + 
                     "-get-identity-realm");
             idName = (String) rb.getString(locTestName + 
                     "-get-identity-name");
@@ -197,7 +192,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
             log(Level.FINEST, "testGetIdentityAttributes", 
                     "expected-exit-code: " + expectedExitCode);
             log(Level.FINEST, "testGetIdentityAttributes", 
-                    "get-identity-realm: " + realm);
+                    "get-identity-realm: " + idRealm);
             log(Level.FINEST, "testGetIdentityAttributes", "get-identity-name: "
                     + idName);
             log(Level.FINEST, "testGetIdentityAttributes", "get-identity-type: "
@@ -230,12 +225,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                     new Integer(SUCCESS_STATUS).toString())) {
                 Object[] params = {idName}; 
                 if (msg.equals("")) {           
-                    if (!useVerboseOption) {
-                        String successString = 
-                                (String) rb.getString("success-message");
-                        expectedMessage = 
-                                MessageFormat.format(successString, params);
-                    } else {
+                    if (useVerboseOption) {
                         String verboseSuccessString = 
                                 (String) rb.getString(
                                 "verbose-success-message");
@@ -255,19 +245,18 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
             }
 
             cli.resetArgList();
-            commandStatus = cli.getIdentity(realm, idName, idType, 
+            commandStatus = cli.getIdentity(idRealm, idName, idType, 
                     attributeNames);
             cli.logCommand("testGetIdentityAttributes");
             cli.resetArgList();
             
             if (expectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";"); 
                 FederationManagerCLI searchCLI = 
                         new FederationManagerCLI(useDebugOption, 
                         useVerboseOption, useLongOptions);
                 if (attributesToFind.length() > 0) {
-                    attributesFound = searchCLI.findIdentityAttributes(realm, 
+                    attributesFound = searchCLI.findIdentityAttributes(idRealm, 
                             idName, idType, attributeNames, attributesToFind);
                 }
                 searchCLI.logCommand("testGetIdentityAttributes");
@@ -278,12 +267,12 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                         log(Level.FINE, "testGetIdentityAttributes", 
                                 "Searching for attribute " + attributes[i] +
                                 "which should not appear.");
-                        if (searchCLI.findIdentityAttributes(realm, idName, 
+                        if (searchCLI.findIdentityAttributes(idRealm, idName, 
                                  idType, attributeNames, attributes[i])) {
                              log(Level.SEVERE, "testGetIdentityAttributes", 
                                      "Found unexpected attirbute " + 
                                      attributes[i]);
-                             otherAttributesFound=true;
+                             otherAttributesFound = true;
                          }
                     }
                 }
@@ -295,10 +284,21 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
                 String usageError = MessageFormat.format(errorMessage, params);
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");                
                 errorFound = cli.findStringsInError(usageError, ";");
             } else {
                 errorFound = cli.findStringsInError(expectedMessage, ";");
+            }
+            
+            if (!expectedMessage.equals("")) {
+                if (expectedExitCode.equals(
+                        new Integer(SUCCESS_STATUS).toString()) ||
+                        expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
+                     stringsFound = cli.findStringsInOutput(expectedMessage, 
+                             ";");                    
+                }
+            } else {
+                stringsFound = true;
             }
             cli.resetArgList();
                    
@@ -368,28 +368,30 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                                 cleanupIds[i]);
                         String [] idArgs = cleanupIds[i].split("\\,");
                         if (idArgs.length >= 3) {
-                            String idRealm = idArgs[0];
-                            String idName = idArgs[1];
-                            String idType = idArgs[2];
+                            String cleanupRealm = idArgs[0];
+                            String cleanupName = idArgs[1];
+                            String cleanupType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-				idRealm);
-                            log(Level.FINEST, "cleanup", "idName: " + idName);
-                            log(Level.FINEST, "cleanup", "idType: " + idType);
+				cleanupRealm);
+                            log(Level.FINEST, "cleanup", "idName: " + 
+                                    cleanupName);
+                            log(Level.FINEST, "cleanup", "idType: " + 
+                                    cleanupType);
                             
-                            Reporter.log("IdRealm: " + idRealm);
-                            Reporter.log("IdNameToRemove: " + idName);
-                            Reporter.log("IdentityTypeToRemove: " + idType);
+                            Reporter.log("IdRealm: " + cleanupRealm);
+                            Reporter.log("IdNameToRemove: " + cleanupName);
+                            Reporter.log("IdentityTypeToRemove: " + cleanupType);
                             
                             exitStatus = 
-                                    cli.deleteIdentities(idRealm, idName, 
-                                    idType);
+                                    cli.deleteIdentities(cleanupRealm, 
+                                    cleanupName, cleanupType);
                             cli.logCommand("cleanup");
                             cli.resetArgList();
                             if (exitStatus != new Integer(SUCCESS_STATUS).
                                     intValue()) {
                                 log(Level.SEVERE, "cleanup", 
-                                        "Removal of identity " + idName + 
+                                        "Removal of identity " + cleanupName + 
                                         " failed with exit status " + 
                                         exitStatus);
                                 assert false;

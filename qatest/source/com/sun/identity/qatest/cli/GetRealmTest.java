@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetRealmTest.java,v 1.1 2007-08-16 17:45:42 cmwesley Exp $
+ * $Id: GetRealmTest.java,v 1.2 2008-04-01 20:23:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,12 +228,7 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
                     new Integer(SUCCESS_STATUS).toString())) {
                 Object[] params = {realm}; 
                 if (msg.equals("")) {           
-                    if (!useVerboseOption) {
-                        String successString = 
-                                (String) rb.getString("success-message");
-                        expectedMessage = 
-                                MessageFormat.format(successString, params);
-                    } else {
+                    if (useVerboseOption) {
                         String verboseSuccessString = 
                                 (String) rb.getString(
                                 "verbose-success-message");
@@ -258,7 +253,6 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
             
             if (expectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";"); 
                 FederationManagerCLI searchCLI = 
                         new FederationManagerCLI(useDebugOption, 
                         useVerboseOption, useLongOptions);
@@ -273,10 +267,21 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
                 String usageError = MessageFormat.format(errorMessage, params);
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");                
                 errorFound = cli.findStringsInError(usageError, ";");
             } else {
                 errorFound = cli.findStringsInError(expectedMessage, ";");
+            }
+            
+            if (!expectedMessage.equals("")) {
+                if (expectedExitCode.equals(
+                        new Integer(SUCCESS_STATUS).toString()) ||
+                        expectedExitCode.equals(
+                        new Integer(INVALID_OPTION_STATUS).toString())) {
+                     stringsFound = cli.findStringsInOutput(expectedMessage, 
+                             ";");                    
+                }
+            } else {
+                stringsFound = true;
             }
             cli.resetArgList();
                    

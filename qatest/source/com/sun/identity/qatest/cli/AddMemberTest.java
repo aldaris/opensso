@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddMemberTest.java,v 1.4 2007-08-16 19:39:19 cmwesley Exp $
+ * $Id: AddMemberTest.java,v 1.5 2008-04-01 20:23:57 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -362,8 +362,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
 
             if (expectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
-                log(Level.FINEST, "testMemberAddition", "Output Messages Found: "
-                        + stringsFound);
+                log(Level.FINEST, "testMemberAddition", 
+                        "Output Messages Found: " + stringsFound);
                 log(Level.FINEST, "testMemberAddition", "Member Found: " + 
                         memberFound); 
                 assert (commandStatus == 
