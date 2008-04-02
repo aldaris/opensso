@@ -19,14 +19,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application.xml,v 1.2 2008-02-22 02:31:47 leiming Exp $
+   $Id: application.xml,v 1.3 2008-04-02 20:07:46 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <application version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
 
-    <description> Sun Java System Access Manager J2EE Policy Agent Sample Application </description>
+    <description> Sun Java System Federated Access Manager J2EE Policy Agent Sample Application </description>
     <display-name>SampleApplication</display-name>
 
     <module id="EjbModule_agentsample">

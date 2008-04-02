@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: securityawareservletresult.jsp,v 1.3 2008-02-22 02:31:46 leiming Exp $
+   $Id: securityawareservletresult.jsp,v 1.4 2008-04-02 20:01:57 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -73,7 +73,7 @@ a:hover{text-decoration:underline}
     <tr>
       <td style="vertical-align: top;"><a href="http://www.sun.com/" id="homelink">sun.com</a> </td>
       <td style="vertical-align: top; text-align: right;">
-      <a href="http://www.sun.com/software/products/access_mgr/index.html" id="homelink">Sun Java System Access Manager<br>
+      <a href="http://www.sun.com/software/products/access_mgr/index.html" id="homelink">Sun Java System Federated Access Manager<br>
       </a></td>
       <td style="vertical-align: top;">&nbsp;<br>
       </td>
