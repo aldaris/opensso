@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.3 2008-04-02 18:28:20 bina Exp $
+ * $Id: BootstrapCreator.java,v 1.4 2008-04-02 18:52:46 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,8 +92,9 @@ public class BootstrapCreator {
     private void update(IDSConfigMgr dsCfg)
         throws ConfigurationException {
         try {
-	    String bootstrapString = getBootStrapURL(dsCfg);
-            AMSetupServlet.writeToFile(AMSetupServlet.getBootStrapFile(),bootstrapString);
+            String bootstrapString = getBootStrapURL(dsCfg);
+            AMSetupServlet.writeToFile(AMSetupServlet.getBootStrapFile(),
+                bootstrapString);
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage());
         }
@@ -104,14 +105,15 @@ public class BootstrapCreator {
      *
      * @param dsCfg instance of the <code>IDSConfigMgr</code> containing
      *              the connection information to the config store.
-     * @exception throws ConfigurationException if there is an error.
+     * @exception ConfigurationException if there is an error and cannot
+     *     obtain the bootstrap URL. This may be due to connection error.
      */
     public String getBootStrapURL(IDSConfigMgr dsCfg)
         throws ConfigurationException {
-	String bootstrapStr = null;
+        String bootstrapStr = null;
         try {
             ServerGroup sg = dsCfg.getServerGroup("sms");
-            ServerGroup defaultGroup = dsCfg.getServerGroup("default");
+            ServerGroup defaultGroup = dsCfg.getServerGroup("default") ;
             ServerInstance svrCfg;
 
             if (sg == null) {
@@ -131,7 +133,7 @@ public class BootstrapCreator {
                 Crypt.getHardcodedKeyEncryptor());
             String rootSuffix = svrCfg.getBaseDN();
 
-            Collection serverList = (Collection) sg.getServersList();
+            Collection serverList = sg.getServersList();
             StringBuffer bootstrap = new StringBuffer();
 
             for (Iterator i = serverList.iterator(); i.hasNext(); ) {
@@ -157,10 +159,10 @@ public class BootstrapCreator {
                     URLEncoder.encode(connPwd, "UTF-8"));
                 bootstrap.append(url).append("\n");
             }
-	    bootstrapStr = bootstrap.toString();
+            bootstrapStr = bootstrap.toString();
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage());
         }
-	return bootstrapStr;
+        return bootstrapStr;
     }        
 }
