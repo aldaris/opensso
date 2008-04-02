@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.14 2008-03-06 23:03:22 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.15 2008-04-02 20:45:28 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,7 +117,8 @@ public class SPSSOFederate {
      *              AttributeConsumingServiceIndex (currently not supported),
      *              isPassive, ForceAuthN, AllowCreate, Destination,
      *              AuthnContextDeclRef, AuthnContextClassRef,
-     *              AuthComparison, Consent (currently not supported).
+     *              AuthComparison, Consent (currently not supported),
+     *              AuthLevel, and sunamcompositeadvice.
      * @throws SAML2Exception if error initiating request to IDP.
      */
     public static void initiateAuthnRequest(HttpServletRequest request,
@@ -162,7 +163,8 @@ public class SPSSOFederate {
      *              AttributeConsumingServiceIndex (currently not supported),
      *              isPassive, ForceAuthN, AllowCreate, Destination,
      *              AuthnContextDeclRef, AuthnContextClassRef,
-     *              AuthComparison, Consent (currently not supported).
+     *              AuthComparison, Consent (currently not supported),
+     *              AuthLevel, and sunamcompositeadvice.
      * @throws SAML2Exception if error initiating request to IDP.
      */
     public static void initiateAuthnRequest(HttpServletRequest request,

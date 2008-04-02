@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.25 2008-03-12 15:14:08 veiming Exp $
+ * $Id: SAML2Constants.java,v 1.26 2008-04-02 20:45:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -739,6 +739,7 @@ public interface SAML2Constants {
     public String AUTH_LEVEL="AuthLevel";
     public String AUTH_LEVEL_ATTR="sunFMAuthContextComparison";
     public String AUTH_TYPE="authType";
+    public String AUTH_LEVEL_ADVICE = "sunamcompositeadvice";
 
     public String AUTH_TYPE_ATTR ="sunFMAuthContextType";
 

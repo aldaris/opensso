@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.16 2008-03-04 23:40:09 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.17 2008-04-02 20:45:28 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1142,6 +1142,7 @@ public class SPACSUtils {
                 request, response, smap, respInfo, failureCode, se2);
             throw se2;
         }
+
         // set metaAlias
         String[] values = { metaAlias };
         try {
@@ -1223,16 +1224,19 @@ public class SPACSUtils {
                 hostEntityId, realm, request, 
                 response, session, authnRequest, respInfo.getResponse(), 
                 respInfo.getProfileBinding(), writeFedInfo);
+            String[] value = null;
             if (redirected) {
-                try {
-                    String[] value = new String[] {"true"};
-                    sessionProvider.setProperty(session, 
-                        SAML2Constants.RESPONSE_REDIRECTED, value);
-                } catch (SessionException ex) {
-                    SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
-                } catch (UnsupportedOperationException ex) {
-                    SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
-                }
+                value = new String[] {"true"};
+            } else {
+                value = new String[] {"false"};
+            }
+            try {
+                sessionProvider.setProperty(session, 
+                    SAML2Constants.RESPONSE_REDIRECTED, value);
+            } catch (SessionException ex) {
+                SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
+            } catch (UnsupportedOperationException ex) {
+                SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
             }
         }
 

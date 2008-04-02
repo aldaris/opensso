@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.19 2008-03-04 23:40:08 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.20 2008-04-02 20:45:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,6 @@ import com.sun.identity.security.cert.CRLValidator;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
-import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.XACMLAuthzDecisionQueryConfigElement;
@@ -1329,6 +1328,14 @@ public class SAML2Utils extends SAML2SDKUtils {
             paramsMap.put(SAML2Constants.AUTH_LEVEL,list);
         }
 
+        String levelAdvice = request.getParameter(
+            SAML2Constants.AUTH_LEVEL_ADVICE);
+        if (levelAdvice != null && levelAdvice.length() > 0) {
+            List list = new ArrayList();
+            list.add(levelAdvice);
+            paramsMap.put(SAML2Constants.AUTH_LEVEL_ADVICE,list);
+        }
+
         String reqBinding = request.getParameter(SAML2Constants.REQ_BINDING);
         if (reqBinding != null) {
             List list = new ArrayList();
@@ -1644,7 +1651,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         Document doc = XMLUtils.toDOMDocument(bin, debug);
         Element root= doc.getDocumentElement();
         if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message("LogoutUtil.getSOAPBody : soap body =\n"
+            SAML2Utils.debug.message("SAML2Util.getSOAPBody : soap body =\n"
                     + XMLUtils.print((Node) root));
         }
         String rootName  = doc.getDocumentElement().getLocalName();

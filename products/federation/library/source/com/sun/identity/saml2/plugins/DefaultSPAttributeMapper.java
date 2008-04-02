@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAttributeMapper.java,v 1.3 2008-03-12 15:14:08 veiming Exp $
+ * $Id: DefaultSPAttributeMapper.java,v 1.4 2008-04-02 20:45:27 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,13 +99,13 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
             Map configMap = getConfigAttributeMap(realm, hostEntityID, SP);
             if (configMap == null || configMap.isEmpty()) {
                 if (debug.messageEnabled()) {
-                    debug.message("DefaultIDPAttributeMapper.getAttr:" +
+                    debug.message("DefaultSPAttributeMapper.getAttr:" +
                         "Configuration map is not defined.");
                 }
                 return null;
             }
             if (debug.messageEnabled()) {
-                debug.message("DefaultIDPAttributeMapper.getAttr:" +
+                debug.message("DefaultSPAttributeMapper.getAttr:" +
                     "hosted SP attribute map = " + configMap);
             }
 

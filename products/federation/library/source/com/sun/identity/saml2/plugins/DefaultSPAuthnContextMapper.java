@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAuthnContextMapper.java,v 1.4 2008-02-29 00:22:04 exu Exp $
+ * $Id: DefaultSPAuthnContextMapper.java,v 1.5 2008-04-02 20:45:28 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,8 @@ import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.profile.SPCache;
+import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -48,6 +50,8 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.HashSet;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * The <code>DefaultSPAuthnContextMapper.java</code> class determines
@@ -113,6 +117,10 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                  }
              }
          }
+
+        if (authLevel == null) {
+            authLevel = getAuthLevelFromAdvice(paramsMap);
+        }
 
         if (SAML2Utils.debug.messageEnabled()) {   
             SAML2Utils.debug.message("authLevel in Query:"+ authLevel);
@@ -224,6 +232,76 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
          reqCtx.setComparison(authCtxComparison);
 
          return reqCtx;
+    }
+
+    /**
+     * Returns the auth level from advice.
+     * The advice is passed in through paramsMap as follows:
+     * Key:                  Value:
+     * sunamcompositeadvice URLEncoded XML blob that specifies auth level
+     *                      advice. Here is an example of the xml blob:
+     *                      <Advice>
+     *                      <AttributeValuePair>
+     *                      <Attribute name="AuthLevelConditionAdvice"/>
+     *                      <Value>/:1</Value>
+     *                      </AttributeValuePair>
+     *                      </Advice>
+     *
+     *                      In this advice, the requested auth level is 1.
+     *                      Note: The ":" before auth level 1 is a must.
+     */
+    private Integer getAuthLevelFromAdvice(Map paramsMap) {
+        Integer level = null;
+        List advices = (List) paramsMap.get(SAML2Constants.AUTH_LEVEL_ADVICE);
+        if (advices != null && !advices.isEmpty()) {
+            String adviceXML = URLEncDec.decode(
+                (String) advices.iterator().next());
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(
+                    "DefaultSPAuthnContextMapper:adviceXML=" + adviceXML);
+            }
+            Set authLevelvalues = null;
+            // parse xml
+            Document document = XMLUtils.toDOMDocument(
+                adviceXML, SAML2Utils.debug);
+            if (document != null) {
+                Node adviceNode = XMLUtils.getRootNode(document, "Advices");
+                if (adviceNode != null) {
+                    Map advicePair = XMLUtils.parseAttributeValuePairTags(
+                        adviceNode);
+                    authLevelvalues = (Set) advicePair.get(
+                        "AuthLevelConditionAdvice");
+                }
+            }
+            if ((authLevelvalues != null) && (!authLevelvalues.isEmpty())) {
+                // get the lowest auth level from the given set
+                Iterator iter = authLevelvalues.iterator();
+                while (iter.hasNext()) {
+                    String authLevelvalue = (String) iter.next();
+                    if (authLevelvalue != null && authLevelvalue.length() != 0){
+                        int index = authLevelvalue.indexOf(":");
+                        String authLevelStr = null;
+                        if (index != -1) {
+                            authLevelStr = 
+                                authLevelvalue.substring(index +1).trim();
+                        } else {
+                            authLevelStr = authLevelvalue;
+                        }
+                        try {
+                            Integer authLevel = new Integer(authLevelStr);
+                            if (level == null || level.compareTo(authLevel) > 0)
+                            {
+                                level = authLevel;
+                            }
+                        } catch (Exception nex) {
+                            continue;
+                        }
+                    }
+                }
+                
+             }
+        }
+        return level;   
     }
 
     /**
