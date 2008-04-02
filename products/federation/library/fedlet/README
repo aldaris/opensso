@@ -20,40 +20,49 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2008-03-31 19:53:39 qcheng Exp $
+$Id: README,v 1.2 2008-04-02 22:32:23 qcheng Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
 
 %% Contents:
     %% 1. Contents of this directory 
-    %% 2. How to embed Fedlet into existing application
-    %% 3. How to validate Fedlet deployment 
+    %% 2. How to use fedlet.war for demo.
+    %% 3. How to embed Fedlet into existing application
     %% 4. How to integrate with existing application after Single Sign-on 
 
 
 %% 1. Contents of this directory 
-   <zip root directory>
+   Fedlet.zip 
      |
-     |- war               Directory containing jar/properties/jsp files
-     |                    to be embedded in the application WAR. 
+     |- fedlet.war        Fedlet WAR file. This is a ready-to-deploy WAR 
+     |                    to show the Fedlet features.
      |
-     |- conf              Directory containing IDP/SP standard/extended
-     |                    metadata files, COT and configuration properties. 
-     |
-     |- README            This README file.
+     |- README            This README file. The file shows how to use Fedlet.
 
-%% 2. How to embed Fedlet into existing application
-  Two steps:
-  a) Copy all files under "war" directory to your existing WAR directory.
-     The files under "war" directory are structured as WAR format, you could
-     just overlay them with your existing application WAR structure.
-     For testing purpose, you could create a WAR including all files under "war"
-     directory and deploy in your web container. e.g.
-         % cd war
-         % jar cvf ../fedlet.war * 
-     This could serve as a sample application to validate Fedlet deployment.
-  b) Copy files under "conf" directory to a sub directory named "fedlet" 
+
+%% 2. How to use fedlet.war for demo 
+     The fedlet.war contains all necessay bits for Fedlet to acting as a 
+     light-weighted SAMLv2 Service provider. It also provides convenient ways 
+     to setup and validate Fedlet deployment. 
+
+     After deploying fedlet.war into your web container, try access the 
+     Fedlet(SP) index.jsp page to start Fedlet setup, e.g.
+         <SP_PROTOCOL>://<SP_HOST>:<SP_PORT>/<SP_DEPLOY_URI>/index.jsp
+
+     If this is the first time the page is accessed, it will show that the 
+     Fedlet home directory is not configured yet, and a link will be provided 
+     for you to create the configuration automatically. After done, you will 
+     be shown links to start Fedlet(SP) and IDP initiated Single Sing-on. 
+     Click the link, you will be redirected to IDP for login, then Single 
+     Sign-on to Fedlet(SP). Upon successful completion, a Fedlet(SP) side JSP 
+     will be presented to show the SSO Response, Assertion and 
+     AttributeStatement if any.
+
+     
+%% 3. How to embed Fedlet into your existing application WAR
+  a) Extract the fedlet.war into a temporal directory. 
+  b) Copy files inside "conf" directory to a sub directory named "fedlet" 
      under your web container running user's home directory (pointed by
      JVM property "user.home"). For example, assume running user's home 
      directory is "/home/webservd":
@@ -68,16 +77,13 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
          -Dcom.sun.identity.fedlet.home=/export/fedlet/conf 
      this will tell Fedlet to read metadata/COT/configuration files from 
      "/export/fedlet/conf" directory instead.
+  c) Copy all other files to your application WAR staging directory, overlay 
+     them with your existing application WAR structure.
+     Optionally you could remove index.jsp and "conf" directory from the 
+     temporal directory created in step a) before copying. 
+  d) Create the application WAR and redeploy in your web container. 
 
-%% 3. How to validate Fedlet deployment 
-     Access the Fedlet(SP) index.jsp page to validate Fedlet setup, e.g.
-     <SP_PROTOCOL>://<SP_HOST>:<SP_PORT>/<SP_DEPLOY_URI>/index.jsp
-     You will be shown links to start Fedlet(SP) and IDP initiated Single 
-     Sing-on. Click the link, you will be redirected to IDP for login, then 
-     Single Sign-on to Fedlet(SP). Upon successful completion, a Fedlet(SP) 
-     side JSP will be presented to show the SSO Response, Assertion and 
-     AttributeStatement.
-     
+
 %% 4. How to integrate with existing application after Single Sign-on
      After Fedlet completes SAMLv2 Single Sign-on, it will set the SAMLv2 
      Response XML as value for attribute "SAMLResponse" and forward to
@@ -99,14 +105,15 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
         for attribute "SAMLResponse". The Response object could be obtained 
         using following code in your processing servlet/jsp:
           // Get the Response XML string
-          String respXML = new String(Base64.decode((String) 
-              request.getAttribute(SAML2Constants.SAML_RESPONSE)));
-          if (respXML != null && respXML.length() != 0) {
+          String respXML = (String)
+              request.getAttribute(SAML2Constants.SAML_RESPONSE);
+          if ((respXML != null) && (respXML.length() != 0)) {
               // obtain the Response object
-              Response samlResp = 
-                  ProtocolFactory.getInstance().createResponse(respXML);
+              Response samlResp = ProtocolFactory.getInstance().createResponse(
+                  new String(Base64.decode(respXML)));
           }
         After obtaining the Response object, you could navigate through the
         object to get Assertion, Authentication Statements, Attribute Statements
-        etc. You could add your own business, such as creating your application 
-        session, setting attributes, make authorization checks etc.
+        object (refer to saml2/jsp/fedletDefault.jsp for more details). 
+        You could add your own business logics, such as creating your 
+        application session, setting attributes, making authorization check etc.

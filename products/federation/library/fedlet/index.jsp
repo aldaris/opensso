@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.1 2008-03-31 19:53:39 qcheng Exp $
+   $Id: index.jsp,v 1.2 2008-04-02 22:32:23 qcheng Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -31,7 +31,10 @@
 <%@ page import="com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaException" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
+<%@ page import="java.io.IOException" %>
 <%@ page import="java.io.File" %>
+<%@ page import="java.io.InputStream" %>
+<%@ page import="java.io.FileOutputStream" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
@@ -83,71 +86,139 @@
     String spMetaAlias = null;
     String idpEntityID = null;
     String idpMetaAlias= null;
-    Map paramsMap = null;
+    boolean createConfig = false; 
+    // check need to create configuration
+    String param = request.getParameter("CreateConfig");
+    if ((param != null) && param.equalsIgnoreCase("true")) {
+        createConfig = true;
+    } 
     try {
-        File dir = new File(fedletHomeDir);
-        File file = new File(fedletHomeDir + File.separator + 
-            "FederationConfig.properties");
-        if (!dir.exists() || !dir.isDirectory()) {
-            out.println("<p><br><b>Fedlet configuration directory is not configured.</b>");
-            out.println("<br><br>Please extract your fedlet.zip and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
-        } else if (!file.exists()) {
-            out.println("<p><br><b>FederationConfig.properties could not be found.</b>");
-            out.println("<br><br>Please extract your fedlet.zip and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+        if (createConfig) {
+            // copy all files under conf to fedletHomeDir
+            String[] files = new String[] {
+                "FederationConfig.properties",
+                "idp.xml",
+                "idp-extended.xml",
+                "sp.xml",
+                "sp-extended.xml",
+                "fedlet.cot"};
+            File dir = new File(fedletHomeDir);
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    throw new SAML2Exception("Failed to create Fedlet " +
+                        "configuration home directory " + fedletHomeDir);
+                }
+            } else if (dir.isFile()) {
+                throw new SAML2Exception("Fedlet configuration home " + 
+                    fedletHomeDir + " is a pre-existing file. <br>Please " +
+                    "remove the file and try again."); 
+            } 
+            ServletContext servletCtx = getServletContext();
+            for (int i = 0; i < files.length; i++) {
+                String source = "/conf/" + files[i];
+                String dest =  dir.getPath() + File.separator + files[i];
+                FileOutputStream fos = null;
+                InputStream src = null;
+                try {
+                    src = servletCtx.getResourceAsStream(source);
+                    if (src != null) {
+                        fos = new FileOutputStream(dest);
+                        int length = 0;
+                        byte[] bytes = new byte[1024];
+                        while ((length = src.read(bytes)) != -1) {
+                            fos.write(bytes, 0, length);
+                        }
+                    } else {
+                        throw new SAML2Exception("File " + source + 
+                            " could not be found in fedlet.war");
+                    }
+                } catch (IOException e) {
+                    throw new SAML2Exception(e.getMessage());
+                } finally {
+                    try {
+                        if (fos != null) {
+                            fos.close();
+                        }
+                        if (src != null) {
+                            src.close();
+                        }
+                    } catch (IOException ex) {
+                        //ignore
+                    }
+                }
+            }
+            out.println("<p><br><b>Fedlet configuration created under \"" +
+                fedletHomeDir + "\" directory.</b>");
+            out.println("<br><br>Click <a href=\"index.jsp\">here</a> to continue.");
         } else {
-            SAML2MetaManager manager = new SAML2MetaManager();
-            List spEntities = manager.getAllHostedServiceProviderEntities("/");
-            if ((spEntities != null) && !spEntities.isEmpty()) {
-                // get first one
-                spEntityID = (String) spEntities.get(0);
-            }
-
-            List spMetaAliases =
-                manager.getAllHostedServiceProviderMetaAliases("/");
-            if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
-                // get first one
-                spMetaAlias = (String) spMetaAliases.get(0);
-            }
-
-            List idpEntities = 
-                manager.getAllRemoteIdentityProviderEntities("/");
-            if ((idpEntities != null) && !idpEntities.isEmpty()) {
-                // get first one
-                idpEntityID = (String) idpEntities.get(0);
-            }
-            if ((spEntityID == null) || (idpEntityID == null)) {
-                out.println("<p><br><b>Fedlet or remote Identity Provider metadata is not configured.</b>");
-                out.println("<br><br>Please extract your fedlet.zip and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+            File dir = new File(fedletHomeDir);
+            File file = new File(fedletHomeDir + File.separator + 
+                "FederationConfig.properties");
+            if (!dir.exists() || !dir.isDirectory()) {
+                out.println("<p><br><b>Fedlet configuration home directory does not exists.</b>");
+                out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
+                out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+            } else if (!file.exists()) {
+                out.println("<p><br><b>FederationConfig.properties could not be found.</b>");
+                out.println("<br><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
+                out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
             } else {
-                // IDP base URL
-                String idpBaseUrl = null;
-                // find out IDP meta alias
-                IDPSSODescriptorElement idp = 
-                    manager.getIDPSSODescriptor("/", idpEntityID);
-                List ssoServiceList = idp.getSingleSignOnService();
-                if ((ssoServiceList != null) && (!ssoServiceList.isEmpty())) {
-                    Iterator i = ssoServiceList.iterator();
-                    while (i.hasNext()) {
-                        SingleSignOnServiceElement sso =
-                            (SingleSignOnServiceElement) i.next();
-                        if ((sso != null) && (sso.getBinding() != null)) {
-                            String ssoURL = sso.getLocation();
-                            int loc = ssoURL.indexOf("/metaAlias/");
-                            if (loc == -1) {
-                                continue;
-                            } else {
-                                idpMetaAlias = ssoURL.substring(loc + 10);
-                                String tmp = ssoURL.substring(0, loc);
-                                loc = tmp.lastIndexOf("/");
-                                idpBaseUrl = tmp.substring(0, loc);
-                                break;
+                SAML2MetaManager manager = new SAML2MetaManager();
+                List spEntities = 
+                    manager.getAllHostedServiceProviderEntities("/");
+                if ((spEntities != null) && !spEntities.isEmpty()) {
+                    // get first one
+                    spEntityID = (String) spEntities.get(0);
+                }
+
+                List spMetaAliases =
+                    manager.getAllHostedServiceProviderMetaAliases("/");
+                if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                    // get first one
+                    spMetaAlias = (String) spMetaAliases.get(0);
+                }
+
+                List idpEntities = 
+                    manager.getAllRemoteIdentityProviderEntities("/");
+                if ((idpEntities != null) && !idpEntities.isEmpty()) {
+                    // get first one
+                    idpEntityID = (String) idpEntities.get(0);
+                }
+                if ((spEntityID == null) || (idpEntityID == null)) {
+                    out.println("<p><br><b>Fedlet or remote Identity Provider metadata is not configured.</b>");
+                    out.println("<p><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
+                    out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                } else {
+                    // IDP base URL
+                    String idpBaseUrl = null;
+                    // find out IDP meta alias
+                    IDPSSODescriptorElement idp = 
+                        manager.getIDPSSODescriptor("/", idpEntityID);
+                    List ssoServiceList = idp.getSingleSignOnService();
+                    if ((ssoServiceList != null) 
+                        && (!ssoServiceList.isEmpty())) {
+                        Iterator i = ssoServiceList.iterator();
+                        while (i.hasNext()) {
+                            SingleSignOnServiceElement sso =
+                                (SingleSignOnServiceElement) i.next();
+                            if ((sso != null) && (sso.getBinding() != null)) {
+                                String ssoURL = sso.getLocation();
+                                int loc = ssoURL.indexOf("/metaAlias/");
+                                if (loc == -1) {
+                                    continue;
+                                } else {
+                                    idpMetaAlias = ssoURL.substring(loc + 10);
+                                    String tmp = ssoURL.substring(0, loc);
+                                    loc = tmp.lastIndexOf("/");
+                                    idpBaseUrl = tmp.substring(0, loc);
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                String fedletBaseUrl = request.getScheme() + "://" +
-                    request.getServerName() + ":" + request.getServerPort() +
-                    deployuri;
+                    String fedletBaseUrl = request.getScheme() + "://" +
+                        request.getServerName() + ":" + 
+                        request.getServerPort() + deployuri;
 %>
     <h2>Validate Fedlet Setup</h2>
     <p><br>
@@ -184,8 +255,8 @@
       <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID%>">Run Fedlet(SP) initiated Single Sign-On</a></td>
     </tr>
 <%
-                if ((idpMetaAlias != null) && (idpMetaAlias.length() != 0)) {
-                    // remote IDP is also FAM, show IDP initiated single sign-on
+                    if ((idpMetaAlias != null) && (idpMetaAlias.length() != 0)){
+                        //remote IDP is also FAM, show IDP initiated SSO 
 %>
     <tr>
       <td colspan="2"> </td>
@@ -194,13 +265,14 @@
        <td colspan="2"><a href="<%= idpBaseUrl %>/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias=<%= idpMetaAlias %>&spEntityID=<%=spEntityID %>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">Run Identity Provider initiated Single Sign-On</a></td>
      </tr>
 <%
-                }       
+                    }       
 %>
     <tr>
       <td colspan="2"> </td>
     </tr>
     </table>
 <%
+                }
             }
         }
     } catch (SAML2MetaException se) {
@@ -209,9 +281,6 @@
     } catch (SAML2Exception sse) {
         sse.printStackTrace();
         response.sendError(response.SC_INTERNAL_SERVER_ERROR, sse.getMessage());
-    } catch (java.lang.RuntimeException e) {
-        out.println("<p><br><b>Unable to start fedlet.</b>");
-        out.println("<br><br>Please make sure that you have extracted the fedlet.zip and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.<br><p>");
     }
 %>
 </body>
