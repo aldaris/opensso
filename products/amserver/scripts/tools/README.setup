@@ -18,55 +18,48 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.5 2008-02-14 02:51:36 ykwon Exp $
+   $Id: README.setup,v 1.6 2008-04-02 17:20:34 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
                                                                                
-Sun Java System OpenSSO: amAdminTools.zip 
+Sun Java System OpenSSO: famAdminTools.zip 
 ====================================================
 
-This file contains information on installing and using amAdminTools.zip.
-It is assumed that Access Manager Server is available.
+This file contains information on installing and using famAdminTools.zip.
+It is assumed that Federated Access Manager Server is available.
 
 Table of contents:
 -----------------
-1. Supported JDK versions
-2. Installing amAdminTools.zip
+1. Supported versions of Java Runtime
+2. Installing famAdminTools.zip
 3. What does this package contain?
 
-1. Supported JDK versions
+1. Supported versions of Java Runtime
 -------------------------
-Supported JDK versions are J2SE 1.5 or higher.
+J2SE 1.5 or higher.
 
-2. Installing amAdminTools.zip
+2. Installing famAdminTools.zip
 ------------------------------ 
 
-Steps involved in installing amAdminTools.zip are:
+Steps involved in installing famAdminTools.zip are:
 
-Step 1: Unzip amAdminTools.zip to the desired directory.
+Step 1: Unzip famAdminTools.zip to the desired directory.
 
-Step 2: Go to the directory which has the amAdminTools.zip unzipped.
+Step 2: Go to the directory which has the famAdminTools.zip unzipped.
         Run the setup command as follows:
-        "setup -p | --path <LOCATION_OF_CONFIGURED_AM_INSTANCE>"
-        where <LOCATION_OF_CONFIGURED_AM_INSTANCE> is the 
-        configuration directory of the server instance.
+        "./setup" or "setup"
+        for Unix and Windows respectively.
+        Then enter the configuration directory when prompted.
+        "Path to config files of Federated Access Manager
+        (example: /fam_config/opensso):"
 
-        Note: 
-            a. Users under Linux or Unix environment may need to run
-               "chmod +x setup" before running setup.
-            b. If the setup is run without any options, then the user will be
-               prompted as following:
-               "Path to config files of Access Manager (example: /opt/SUNWam/
-               config):"
-
-Step 3: After step 2 is performed, the CLI's can be run under the following
+Step 3: After step 2 is performed, the CLIs can be run under the following
         directory:
-        <TOOLS_DIR>/<AM_INSTANCE_NAME>/bin
-        where <TOOLS_DIR> is the directory which has amAdminTools.zip unzipped
-        (ie: current directory), and <AM_INSTANCE_NAME> is the name of the 
-        Access Manager and <AM_INSTANCE_NAME> is the name of the Access Manager
-        deployed instance in the container.
+        <TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin
+        where <TOOLS_DIR> is the directory which has famAdminTools.zip unzipped
+        (ie: current directory), and <FAM_INSTANCE_NAME> is the deployment
+        URI of Federated Access Manager.
         
 3. What does this package contain?
 ----------------------------------
