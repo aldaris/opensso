@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.6 2008-03-06 23:01:44 hengming Exp $
+   $Id: spSSOInit.jsp,v 1.7 2008-04-02 20:46:11 exu Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -143,6 +143,17 @@
 			    urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
     19.affiliationID	    affiliation entity ID
 
+    20.sunamcompositeadvice URLEncoded XML blob that specifies auth level 
+                            advice. Here is an example of the xml blob:
+                            <Advice>
+                            <AttributeValuePair>
+                            <Attribute name="AuthLevelConditionAdvice"/>
+                            <Value>/:1</Value>
+                            </AttributeValuePair>
+                            </Advice>
+
+                            In this advice, the requested auth level is 1.
+                            Note: The ":" before auth level 1 is a must.
 --%>
 <html>
 
