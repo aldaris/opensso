@@ -17,15 +17,15 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.1 2008-03-11 23:13:32 sean_brydon Exp $
+# $Id: FAMAgentConfiguration.template,v 1.2 2008-04-02 19:29:45 huacui Exp $
 #
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+# Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
 
 #------------------------------------------------------------------------------
 # Configuration Property File
 #
-# Sun Java(TM) System Access Manager Policy Agent for:
+# Sun Java(TM) System Federated Access Manager Policy Agent for:
 # Sun Java(TM) System Application Server 8.1/8.2/9.0/9.1
 #
 # Version: 3.0
@@ -373,7 +373,7 @@ com.sun.identity.agents.config.redirect.param = goto
 #
 # LOGIN URL
 #   Specifies the login URLs to be used by the Agent to redirect 
-#   incoming users without sufficient credentials to the Access Manager 
+#   incoming users without sufficient credentials to the Federated Access Manager 
 #   authentication service.
 # Hot-Swap Enabled: Yes
 #
@@ -469,7 +469,7 @@ com.sun.identity.agents.config.cookie.reset.path[] =
 #     that may be used by the Agent for CDSSO processing.
 #   - cdsso.clock.skew: Specifies a time in seconds to be used by the 
 #     Agent to determine the validity of the CDSSO AuthnResponse assertion.
-#   - cdsso.trusted.id.providers: This property specifies the Access Manager 
+#   - cdsso.trusted.id.providers: This property specifies the Federated Access Manager 
 #     Server/ID providers that should be trusted by the agent, when evaluating
 #     the CDC Liberty Responses. Used when a Load Balancer/Firewall is between 
 #     the agent & server.
@@ -703,7 +703,7 @@ com.sun.identity.agents.config.bypass.principal[0] =
 #
 # PRIVILEGED ATTRIBUTE PROCESSING PROPERTIES
 #   - default.privileged.attribute: A list of privileged attributes that will
-#     be granted to all users who have a valid Access Manager session.
+#     be granted to all users who have a valid Federated Access Manager session.
 #   - privileged.attribute.type: A list of privileged attribute types that will
 #     be fetched for each user.
 #   - privileged.attribute.tolowercase : A MAP property that specifies if the 
@@ -724,7 +724,7 @@ com.sun.identity.agents.config.privileged.session.attribute[0] =
 
 #
 # SSO TOKEN COOKIE NAME
-#   The name of the SSO Token cookie used between the Access Manager and
+#   The name of the SSO Token cookie used between the Federated Access Manager and
 #   the Agent.
 # Hot-Swap Enabled: No
 com.iplanet.am.cookie.name=iPlanetDirectoryPro
@@ -794,7 +794,7 @@ com.iplanet.am.server.port=@AM_SERVICES_PORT@
 #
 # POLICY CLIENT PROPERTIES
 #   - com.sun.identity.agents.server.log.file.name: Name of the log file 
-#     to use for logging messages to Access Manager. 
+#     to use for logging messages to Federated Access Manager. 
 #   - com.sun.identity.agents.logging.level: Granularity of remote policy 
 #     logging level. The valid values for are ALLOW, DENY, BOTH and NONE. 
 #   - com.sun.identity.agents.notification.enabled: A flag that specifies 
@@ -812,7 +812,7 @@ com.iplanet.am.server.port=@AM_SERVICES_PORT@
 #     to be used for different service names. 
 #   - com.sun.identity.policy.client.clockSkew: Specifies time in seconds
 #     which is allowed to accommodate the time difference between the 
-#     Access Manager machine and the remote policy client machine.
+#     Federated Access Manager machine and the remote policy client machine.
 #
 #     Note: the Notification URL for remote policy client is set by the 
 #     property com.sun.identity.client.notification.url.

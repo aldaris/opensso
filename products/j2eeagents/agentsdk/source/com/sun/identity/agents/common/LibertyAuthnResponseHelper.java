@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyAuthnResponseHelper.java,v 1.2 2007-07-30 20:34:47 veiming Exp $
+ * $Id: LibertyAuthnResponseHelper.java,v 1.3 2008-04-02 19:24:26 huacui Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -213,7 +213,7 @@ public class LibertyAuthnResponseHelper extends SurrogateBase
      *
      * @param encodedAuthnResponse Encoded Authentication Response.
      * @param requestID the Liberty AuthnRequest's requestID
-     * @param trustedIDProvider the identity provider URL (Access Manager) 
+     * @param trustedIDProvider the identity provider URL (Federated Access Manager) 
      * Server Login URL which when configured for CDSSO will be the CDC Servlet 
      * URL)
      * @param serviceProvider the service provider URL which is the URL of the

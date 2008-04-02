@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.21 2008-03-14 23:05:42 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.22 2008-04-02 19:23:32 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,20 +53,36 @@ import com.sun.identity.shared.debug.Debug;
 
 /**
  * <p>
- * Provides access to the configuration as set in the system. Underneath the
- * covers, the <code>AgentConfiguration</code> checks to see if the agent has
- * been deployed on a system where Access Manager or one of its components such
- * has FM has already been deployed. If so, the configuration file used would
- * be the applicable Access Manager configuration such as AMConfig.properties.
+ * Provides access to the configuration as set in the system.
  * </p><p>
- * If the agent has been deployed on a system that does not have Access Manager
- * or any of its components such as FM, it uses the configuration file called
- * AMAgent.properties which it expects to find in the system classpath. Any 
- * properties necessary for the Access Manager's client SDK that is bundled 
- * with the agent are set by this class as system properties which in turn are
- * picked up by the client SDK classes where necessary. 
+ * It uses the agent bootstrap configuration file called
+ * FAMAgent.properties to get the agent startup configuration that 
+ * include the Federated Access Manager(FAM) server information and the
+ * agent user credential. It uses these information to authenticate to 
+ * the FAM server. The FAM Authentication service completes the agent 
+ * authentication and sends a SSO token back to the agent. Using the SSO
+ * token, the agent calls the FAM Attribute service to fetch its 
+ * configuration. The FAM Attribute service sends the agent configuration
+ * back to the agent. The agent configuration returned contains the agent
+ * configuration repository location. If the location is "centralized",
+ * then agent will use the agent configuration just returned. If the 
+ * location is "local" or not present, then the agent knows that its 
+ * configuration is at the local. It reads the rest of its configuration
+ * from the local configuration file FAMAgentConfiguration.properties.
  * </p><p>
- * Configuration updates are available if the configuration setting 
+ * Most of the agent configuration properties are hot swappable. The
+ * changes to these properties are effective without having to restart
+ * the agent container. The property changes are updated at the agent 
+ * in two ways. The agent configuration change notification and agent 
+ * configuration change polling.
+ * </p><p>
+ * The agent configuration change notification is available in the case
+ * of the agent configuration is centralized. Anytime one or more agent 
+ * properties are changed in the FAM, a notification is sent to the agent.
+ * Upon receiving the notification, the affected agent will refetch its
+ * from the FAM server and updates its configuration using the new values. 
+ * </p><p>
+ * Configuration polling updates are available if the configuration setting 
  * <code>com.sun.identity.agents.j2ee.config.load.interval</code> has been set
  * to a non-zero positive value indicating the number of seconds after which
  * the system will poll to identify configuration changes. If this value is set
@@ -180,7 +196,7 @@ public class AgentConfiguration implements
     }
     
    /**
-    * Returns the name of the Access Manager Session property that is used by
+    * Returns the name of the Federated Access Manager Session property that is used by
     * the Agent runtime to identify the user-id of the current user.
     * 
     * @return the Session property name that identifies the user-id of the 
