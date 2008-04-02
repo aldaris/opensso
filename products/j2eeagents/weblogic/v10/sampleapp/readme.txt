@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.7 2008-03-11 23:13:34 sean_brydon Exp $
+   $Id: readme.txt,v 1.8 2008-04-02 20:34:52 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,7 +31,7 @@ This document describes how to use the agent sample application in conjunction
 with the Application Server.
 
     * Overview
-    * Configure the Access Manager server
+    * Configure the Federated Access Manager server
     * Configure the agent configuration properties
     * Deploying the Sample Application
     * Running the Sample Application
@@ -57,13 +57,13 @@ sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
 successfully and have followed the steps outlined in the Sun Java System 
-Access Manager Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, 
+Federated Access Manager Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, 
 including the post-installation steps.
 
 
-Configure the Access Manager server
+Configure the Federated Access Manager server
 ----------------------------
-This agent sample application requires that the Access Manager server is
+This agent sample application requires that the Federated Access Manager server is
 configured with the subjects and policies required by the sample application.
 
 1. Create the following users:
@@ -91,7 +91,7 @@ configured with the subjects and policies required by the sample application.
     * customer:
           o chris, ellen
     
-3. On Access Manager admin console, create the following URL Policies:
+3. On Federated Access Manager admin console, create the following URL Policies:
    In the following URLs, replace the <hostname> and <port> with the 
    actual fully qualified host name and port on which the sample 
    application will be running.
@@ -118,7 +118,7 @@ local configuraton then using FAMAgentConfiguration.properties)
 
 1. UUID to principal mapping in agent's configuration:
 
-    By default, the installation assumes that the Access Manager product was
+    By default, the installation assumes that the Federated Access Manager product was
     under default realm "dc=opensso,dc=java,dc=net". If the realm for the
     deployment scenario is different from the default root suffix, the Universal
     Id (UUID) for the role/principal mappings should be changed accordingly. The
@@ -160,7 +160,7 @@ Deploying the Sample Application
 --------------------------------
 Note, before deploying the sample application, please be sure that you have
 deployed the Agent Application, which should have been done after installing 
-the agent.This was explained in the Sun Java System Access Manager Policy 
+the agent.This was explained in the Sun Java System Federated Access Manager Policy 
 Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
 outlined the post-installation tasks.
 
@@ -184,7 +184,7 @@ If you encounter problems when running the application, review the log files to
 learn what exactly went wrong. J2EE Agent logs can be found at 
 <agent_install_root>/<agent_instance>/logs/debug directory.
 
-Also, see the Sun Java System Access Manager Policy Agent 3.0 Guide 
+Also, see the Sun Java System Federated Access Manager Policy Agent 3.0 Guide 
 for BEA WebLogic Server/Portal 10.0.
 
 

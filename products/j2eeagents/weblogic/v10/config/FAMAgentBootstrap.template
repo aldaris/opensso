@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentBootstrap.template,v 1.1 2008-03-11 23:13:34 sean_brydon Exp $
+# $Id: FAMAgentBootstrap.template,v 1.2 2008-04-02 20:32:21 huacui Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -25,7 +25,7 @@
 #------------------------------------------------------------------------------
 # J2EE Agents Bootstrap File
 #
-# Sun Java(TM) System Access Manager Policy Agent for:
+# Sun Java(TM) System Federated Access Manager Policy Agent for:
 # BEA WebLogic 10.0 Server/Portal
 #
 # Version: 3.0
