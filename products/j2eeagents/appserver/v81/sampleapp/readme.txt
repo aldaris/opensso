@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.6 2008-03-11 23:13:33 sean_brydon Exp $
+   $Id: readme.txt,v 1.7 2008-04-02 19:32:18 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -103,7 +103,7 @@ To verify the registration of the application:
 
 Post Deployment Agents Tasks
 ----------------------------
-This agent sample application requires that the Access Manager server is
+This agent sample application requires that the Federated Access Manager server is
 configured with the subjects and policies required by the sample application.
 
 1. Create the following users:
