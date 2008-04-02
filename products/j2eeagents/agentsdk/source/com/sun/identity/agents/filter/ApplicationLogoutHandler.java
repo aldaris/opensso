@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.3 2007-08-10 23:22:06 dknab Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.4 2008-04-02 19:00:00 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -353,15 +353,15 @@ implements IApplicationLogoutHandler {
 
     private boolean getLogoutParamMatchResult(String logoutParam,
             String queryString, String appName) {
-        String firstVariant = "?" + logoutParam + "=";
+        String firstVariant = logoutParam + "=";
         String secondVariant = "&" + logoutParam + "=";
         boolean result = false;
 
         if ((queryString != null) && (queryString.length() > 0)) {
-            if ((queryString.indexOf(firstVariant) > 0)
+            if (queryString.startsWith(firstVariant)
                     || (queryString.indexOf(secondVariant) > 0)) {
+                result = true;
                 if (isLogMessageEnabled()) {
-                    result = true;
                     logMessage("ApplicationLogoutHandler : App Name = "
                             + appName + "has a match for logout Param  ="
                             + logoutParam + " in the Request query string ."
