@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.42 2008-02-25 22:35:13 rajeevangal Exp $
+   $Id: build.xml,v 1.43 2008-04-02 20:13:12 bigfatrat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -82,6 +82,7 @@
             </lib>
             <lib dir="${amserver.dist.dir}" includes="opensso.jar" />
             <lib dir="${amserver.dist.dir}" includes="console.jar" />
+            <lib dir="${amserver.dist.dir}" includes="opensso-register.jar" />
             <lib dir="${sharedlib.dist.dir}" includes="opensso-sharedlib.jar" />
 
             <zipfileset dir="${amserver.www.dir}/authentication/UI">

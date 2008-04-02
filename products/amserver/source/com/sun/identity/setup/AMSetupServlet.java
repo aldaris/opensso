@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.49 2008-03-20 20:50:20 jonnelson Exp $
+ * $Id: AMSetupServlet.java,v 1.50 2008-04-02 20:12:27 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.LDAPServiceException;
+import com.sun.enterprise.registration.StartRegister;
 import com.sun.identity.authentication.UI.LoginLogoutMapping;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
@@ -92,6 +93,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -588,6 +590,9 @@ public class AMSetupServlet extends HttpServlet {
                 createIdentitiesForWSSecurity(serverURL, deployuri);
             }
             updateSTSwsdl(basedir, deployuri);
+
+            startRegistrationProcess(basedir, deployuri);
+
             isConfiguredFlag = true;
             configured = true;
         } catch (FileNotFoundException e) {
@@ -1891,6 +1896,67 @@ public class AMSetupServlet extends HttpServlet {
         }
         
         idrepo.createIdentity(IdType.AGENTONLY, name, attributes);
+    }
+
+    private static void startRegistrationProcess(String basedir,
+        String deployuri)
+    {
+        /*
+         *  make sure the basedir + "/" + deployuri + "/lib/registration"
+         *  directory exists, and then put the registration jar and xml
+         *  files there, before starting the registration process.
+         */
+
+        String libRegDir = basedir + "/" + deployuri + "/lib/registration";
+        File reglibDir = new File(libRegDir);
+        if (reglibDir.mkdirs()) {
+            if (copyRegFiles(libRegDir)) {
+                StartRegister sr = new StartRegister();
+                sr.servicetagTransfer();
+            } else {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "configure: failed to copy registration files to " +
+                    reglibDir.getPath());
+            }
+        } else {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "configure: failed to create registration lib directory");
+        }
+    }
+
+    private static boolean copyRegFiles(String destDir) {
+        String [] jarFiles = {"scn_stprs_util.jar",
+                              "commons-codec-1.3.jar",
+                              "opensso-register.jar"};
+        String [] xmlFiles = {"servicetag-registry.xml"};
+
+        try {
+            for (int i = 0; i < jarFiles.length; i++) {
+                copyCtxFile ("/WEB-INF/lib/", jarFiles[i], destDir);
+            }
+            for (int i = 0; i < xmlFiles.length; i++) {
+                copyCtxFile ("/WEB-INF/classes/", xmlFiles[i], destDir);
+            }
+        } catch (IOException ioex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.copyRegFiles:", ioex);
+            return false;
+        }
+        return true;
+    }
+
+    private static void copyCtxFile (String srcDir, String file,
+        String destDir) throws IOException
+    {
+        InputStream in = servletCtx.getResourceAsStream(srcDir + file);
+        FileOutputStream fos = new FileOutputStream(destDir + "/" + file);
+        byte[] b = new byte[2000];
+        int len;
+        while ((len = in.read(b)) > 0) {
+            fos.write(b, 0, len);
+        }
+        fos.close();
+        in.close();
     }
     
     private static void initDSConfigMgr(String str) 

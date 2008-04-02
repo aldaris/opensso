@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.7 2008-03-20 06:24:07 asyhuang Exp $
+   $Id: Home.jsp,v 1.8 2008-04-02 20:13:54 bigfatrat Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -63,6 +63,9 @@
 
 <div id="info11" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
 <div><a href="#" id="close11" onclick="closeAll(11); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpDoc" defaultValue="commontask.doc" bundleID="amConsole" /></span></p></div>
+
+<div id="info20" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
+<div><a href="#" id="close20" onclick="closeAll(20); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtRegisterProduct" defaultValue="commontask.register.product" bundleID="amConsole" /></span></p></div>
 
 <div class="TskPgeFllPge" id="TskPge" onclick="hideAllMenus()">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -157,6 +160,22 @@
         </table></td>
       </tr>
     </table>       
+
+    <span class="TskPgeSbHdr"></span><span class="TskPgeTskPdng"><cc:text name="txtRegisterProduct" defaultValue="commontask.label.register.product" bundleID="amConsole" /></span>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="TskPgeBtmSpc">
+    <tr><td class="TskPgeBckgrTd">
+        <table id="button2" width="100%"  border="0" cellspacing="0" cellpadding="0">
+        <tr>
+        <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif20" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
+        <td width="100%" class="TskPgeTskCntrTd"><a href="../task/RegisterProduct" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'">
+        <span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span>
+        <span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtRegisterProduct" defaultValue="commontask.label.register.product" bundleID="amConsole"/></span></a></td>
+        <td width="3%" align="right" valign="top" class="TskPgeTskRghtTd" >
+        <a href="#" onclick="test(20); event.cancelBubble = true; return false;" onmouseover="hoverImg(20); event.cancelBubble = true;" onmouseout="outImg(20); event.cancelBubble = true;" onfocus="hoverImg(20); event.cancelBubble = true;" onblur="outImg(20); event.cancelBubble = true;" id="i20"><img alt="" id="togImg20" src="../console/images/tasks/rightToggle.gif" width="29" height="21"  border="0" /></a></td>
+        </tr>
+        </table></td>
+      </tr>
+    </table>
 
     <td>&nbsp;</td>
   </tr>  

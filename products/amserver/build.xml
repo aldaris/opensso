@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.60 2008-01-07 20:37:09 veiming Exp $
+   $Id: build.xml,v 1.61 2008-04-02 20:09:07 bigfatrat Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -327,6 +327,7 @@
     
     <target name="war" depends="build,prepXML">
         <ant antfile="${amserver.base.dir}/build-jars.xml" target="openssojar" inheritRefs="true"/>
+        <ant antfile="${amserver.base.dir}/build-jars.xml" target="openssoregjar" inheritRefs="true"/>
         <ant antfile="${amserver.warbase.dir}/build.xml" target="war"
             inheritRefs="true"/>
     </target>

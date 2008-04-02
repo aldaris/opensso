@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.4 2007-10-17 23:00:10 veiming Exp $
+   $Id: build-jars.xml,v 1.5 2008-04-02 20:09:07 bigfatrat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,6 +40,7 @@
         <antcall target="openssojar" />
         <antcall target="openssotestjar" />
         <antcall target="openssosrcjar" />
+        <antcall target="openssoregjar" />
     </target>
 
     <target name="openssojar" depends="preparebuild">
@@ -51,7 +52,7 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <zipfileset dir="${amserver.built.dir}/classes" excludes="com/sun/identity/console" />
+            <zipfileset dir="${amserver.built.dir}/classes" excludes="com/sun/identity/console,com/sun/enterprise/**" />
             <zipfileset dir="${amserver.www.dir}" prefix="www" />
             <fileset dir="${amserver.xml.dir}">
                 <include name="serverconfig.xml" />
@@ -123,6 +124,21 @@
             algorithm="SHA" fileext=".sha" />
     </target>
 
+    <target name="openssoregjar" depends="preparebuild">
+        <jar destfile="${amserver.dist.dir}/opensso-register.jar">
+            <manifest>
+                <attribute name="Version" value="${version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
+            <fileset dir=".">
+                <include name="license.txt" />
+            </fileset>
+            <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/enterprise/**" />
+        </jar>
+        <checksum file="${amserver.dist.dir}/opensso-register.jar" 
+            algorithm="SHA" fileext=".sha" />
+    </target>
+
     <target name="preparebuild">
         <mkdir dir="${amserver.dist.dir}"/>
     </target>
@@ -134,5 +150,7 @@
         <delete file="${amserver.dist.dir}/opensso-test.jar.sha"/>
         <delete file="${amserver.dist.dir}/opensso-src.jar"/>
         <delete file="${amserver.dist.dir}/opensso-src.jar.sha"/>
+        <delete file="${amserver.dist.dir}/opensso-register.jar"/>
+        <delete file="${amserver.dist.dir}/opensso-register.jar.sha"/>
     </target>
 </project>
