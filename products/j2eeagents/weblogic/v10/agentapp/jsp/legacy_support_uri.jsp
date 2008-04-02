@@ -18,15 +18,15 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: legacy_support_uri.jsp,v 1.2 2008-02-22 02:31:48 leiming Exp $
+   $Id: legacy_support_uri.jsp,v 1.3 2008-04-02 20:24:38 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 <html>
 <head>
-  <title>Sun(TM) Java System Access Manager Policy Agent </title>
+  <title>Sun(TM) Java System Federated Access Manager Policy Agent </title>
 </head>
   <body>
-      Sun Java System Access Manager Policy Agent.
+      Sun Java System Federated Access Manager Policy Agent.
 </body>
 </html>
