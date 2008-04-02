@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.3 2007-03-16 18:44:05 bigfatrat Exp $
+ * $Id: Logger.java,v 1.4 2008-04-02 19:54:36 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,8 +84,9 @@ public class Logger extends java.util.logging.Logger {
         }
 
         /* Check if hostnames have to be resolved */
-        resolveHostName = Boolean.valueOf(SystemProperties.get(
-            LogConstants.LOG_RESOLVE_HOSTNAME, "true")).booleanValue();
+        resolveHostName = Boolean.valueOf(
+            lm.getProperty(LogConstants.LOG_RESOLVE_HOSTNAME_ATTR)).
+                booleanValue();
     }
     
     /**
@@ -145,10 +146,12 @@ public class Logger extends java.util.logging.Logger {
         result.setLevel(logLevel);
 
         //  but disabled logging in AMConfig.properties takes precedence
-        String logStatus = lm.getProperty(LogConstants.LOG_STATUS);
+        String logStatus = lm.getProperty(LogConstants.LOG_STATUS_ATTR);
         if (logStatus != null && logStatus.startsWith("INACTIVE")) {
-            result.setLevel(Level.OFF);
+            logLevel = Level.OFF;
         }
+        result.setLevel(logLevel);
+
         Class clz = null;
         Class [] parameters = {String.class};
         Object [] parameterObjects = {new String(result.logName)};
@@ -228,6 +231,10 @@ public class Logger extends java.util.logging.Logger {
         }
         
         result.setUseParentHandlers(false);
+
+        resolveHostName = Boolean.valueOf(
+            lm.getProperty(LogConstants.LOG_RESOLVE_HOSTNAME_ATTR)).
+                booleanValue();
     }
     
     /**

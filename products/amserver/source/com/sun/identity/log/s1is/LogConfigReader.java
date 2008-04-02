@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.10 2007-11-30 01:43:18 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.11 2008-04-02 19:54:36 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -739,18 +739,18 @@ public class LogConfigReader implements ServiceListener{
                 "LogConfigReader:Could not read MySQl DB date/time format");
         }
 
-        // Log status from the AMConfig.properties file
+        // Log status from the logging config
         try {
-            key = LogConstants.LOG_STATUS;
-            value = SystemProperties.get(key);
+            key = LogConstants.LOG_STATUS_ATTR;
+            value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() == 0)) {
-                debug.warning("LogConfigReader: Log Status string is null");
+                debug.warning("LogConfigReader: Log Status attribute is null");
             } else {
                 sbuffer.append(key).append("=").append(value).
                     append(LogConstants.CRLF);
             }
         } catch(Exception e) {
-            debug.error("LogConfigReader:Could not read Log Status");
+            debug.error("LogConfigReader:Could not read Log Status attribute");
         }
 
         // Logging Level attribute
@@ -786,6 +786,20 @@ public class LogConfigReader implements ServiceListener{
             if ((value == null) || (value.length() ==0)) {
                 debug.warning("LogConfigReader: loggins " +
                     "service url string is null");
+            } else {
+                sbuffer.append(key).append("=")
+                       .append(value).append(LogConstants.CRLF);
+            }
+        } catch (Exception e) {
+            debug.error("LogConfigReader: could not get from DS", e);
+        }
+        // hostname resolution
+        try {
+            key = LogConstants.LOG_RESOLVE_HOSTNAME_ATTR;
+            value = CollectionHelper.getMapAttr(logAttributes, key);
+            if ((value == null) || (value.length() == 0)) {
+                debug.warning("LogConfigReader: " +
+                    "Log Resolve Hostname attribute is null");
             } else {
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);

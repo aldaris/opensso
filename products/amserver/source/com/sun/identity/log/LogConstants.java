@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.7 2007-03-18 06:54:51 bigfatrat Exp $
+ * $Id: LogConstants.java,v 1.8 2008-04-02 19:54:36 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -498,6 +498,18 @@ public class LogConstants {
      */
     public static final String LOG_RESOLVE_HOSTNAME =
         "com.sun.identity.log.resolveHostName";
+
+    /**
+     * Attribute name for enable/disable Hostname resolution
+     */
+    public static final String LOG_RESOLVE_HOSTNAME_ATTR =
+        "resolveHostName";
+
+    /**
+     * Attribute name for logging status
+     */
+    public static final String LOG_STATUS_ATTR =
+        "logstatus";
 
     /**
      * default logging level

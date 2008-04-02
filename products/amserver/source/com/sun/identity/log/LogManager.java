@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.5 2007-10-24 20:51:02 veiming Exp $
+ * $Id: LogManager.java,v 1.6 2008-04-02 19:54:36 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -253,26 +253,44 @@ public class LogManager extends java.util.logging.LogManager {
                         }
                     }
 
-                    String strLogLevel =
-                        getProperty(LogConstants.LOGGING_LEVEL);
-                    try {
-                        loggingLevel = Level.parse(strLogLevel);
-                    } catch (IllegalArgumentException iaex) {
-                        loggingLevel = Level.INFO;  // default
-                        Debug.error("LogManager:readConfiguration:" +
-                            "Log level '" + strLogLevel +
+                    boolean loggingOff =
+                        (getProperty(LogConstants.LOG_STATUS_ATTR).
+                            equals("INACTIVE"));
+
+                    /*
+                     *  get the global logging level from the logging
+                     *  service config.  however, if logging status is
+                     *  INACTIVE, the overriding level becomes OFF
+                     */
+
+                    if (loggingOff) {
+                        loggingLevel = Level.OFF;
+                    } else {
+                        String strLogLevel =
+                            getProperty(LogConstants.LOGGING_LEVEL);
+                        try {
+                            loggingLevel = Level.parse(strLogLevel);
+                        } catch (IllegalArgumentException iaex) {
+                            loggingLevel = Level.INFO;  // default
+                            Debug.error("LogManager:readConfiguration:" +
+                                "Log level '" + strLogLevel +
                             "' unknown; setting to Level.INFO.");
+                        }
                     }
                 } else {
                     HANDLER = getProperty(LogConstants.REMOTE_HANDLER);
                     if (HANDLER == null) {
                         HANDLER = LogConstants.DEFAULT_REMOTE_HANDER;
                     }
-        	    FORMATTER = getProperty(LogConstants.REMOTE_FORMATTER);
+                    FORMATTER = getProperty(LogConstants.REMOTE_FORMATTER);
                     if (FORMATTER == null) {
                         FORMATTER = LogConstants.DEFAULT_REMOTE_FORMATTER;
                     }
                 }
+
+                Logger.resolveHostName = Boolean.valueOf(
+                    getProperty(LogConstants.LOG_RESOLVE_HOSTNAME_ATTR)).
+                        booleanValue();
 
                 /*
                  * modify existing loggers in memory according
@@ -337,16 +355,28 @@ public class LogManager extends java.util.logging.LogManager {
                         h.setFormatter(f);
                         l.addHandler(h);
 
-                        String levelProp = LogConstants.LOG_PROP_PREFIX + "." +
-                            l.getName() + ".level";
-                        String lvlStr = SystemProperties.get (levelProp);
+                        /*
+                         *  get the "iplanet-am-logging.<logfilename>.level
+                         *  value for this file, if it's been added on the
+                         *  server's advanced config page.
+                         *
+                         *  BUT: logging status set to Inactive means
+                         *  all logging is turned Level.OFF
+                         */
                         Level tlevel = loggingLevel;
+                        if (loggingLevel != Level.OFF) {
+                            String levelProp =
+                                LogConstants.LOG_PROP_PREFIX + "." +
+                                l.getName() + ".level";
+                            String lvlStr = SystemProperties.get (levelProp);
+                            tlevel = loggingLevel;
 
-                        if ((lvlStr != null) && (lvlStr.length() > 0)) {
-                            try {
-                                tlevel = Level.parse(lvlStr);
-                            } catch (IllegalArgumentException iaex) {
-                                // use value for all others
+                            if ((lvlStr != null) && (lvlStr.length() > 0)) {
+                                try {
+                                    tlevel = Level.parse(lvlStr);
+                                } catch (IllegalArgumentException iaex) {
+                                    // use value for all others
+                                }
                             }
                         }
                         if (loggingLevel != null) {  // only if isLocal
