@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.37 2008-03-05 00:04:16 mrudul_uchil Exp $
+   $Id: build.xml,v 1.38 2008-04-03 16:12:24 bigfatrat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -321,6 +321,7 @@
         <delete file="${openfm.extlib.dir}/amAdminTools.zip"/>
         <delete file="${openfm.extlib.dir}/console.jar"/>
         <delete file="${openfm.extlib.dir}/opensso.jar"/>
+        <delete file="${openfm.extlib.dir}/opensso-register.jar"/>
         <delete file="${openfm.extlib.dir}/opensso.war"/>
         <delete file="${openfm.extlib.dir}/opensso-sharedlib.jar"/>
         <delete file="${openfm.extlib.dir}/opensso-test.jar"/>

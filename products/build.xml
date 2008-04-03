@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.28 2008-04-03 03:58:05 veiming Exp $
+   $Id: build.xml,v 1.29 2008-04-03 16:13:14 bigfatrat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -59,6 +59,7 @@
             target="build" />
         <copy todir="${fm.base.dir}/extlib">
             <fileset file="${amserver.dist.dir}/opensso.jar" />
+            <fileset file="${amserver.dist.dir}/opensso-register.jar" />
             <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
             <fileset file="${amserver.dist.dir}/amAdminTools.zip" />
             <fileset file="${amserver.dist.dir}/amSessionTools.zip" />
@@ -85,6 +86,7 @@
         <copy todir="${fm.base.dir}/extlib">
             <fileset file="${amserver.dist.dir}/console.jar" />
             <fileset file="${amserver.dist.dir}/opensso.jar" />
+            <fileset file="${amserver.dist.dir}/opensso-register.jar" />
             <fileset file="${amserver.dist.dir}/opensso_server_samples.war" />
             <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
         </copy>
@@ -135,6 +137,8 @@
         <copy file="${amserver.dist.dir}/amSessionTools.zip"
             todir="${openfm.extlib.dir}"  />            
         <copy file="${amserver.dist.dir}/opensso.jar"
+            todir="${openfm.extlib.dir}"  />
+        <copy file="${amserver.dist.dir}/opensso-register.jar"
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/console.jar"
             todir="${openfm.extlib.dir}"  />
