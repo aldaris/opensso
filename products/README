@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.20 2008-01-23 00:03:13 bina Exp $
+$Id: README,v 1.21 2008-04-03 17:58:20 bigfatrat Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -91,6 +91,7 @@ The libraries needed for compiling OpenSSO sources are:
    - Open Message Queue: mq4_1-binary-Linux_X86-20070816.jar, 
      mq4_1-binary-SunOS_X86-20070816.jar, mq4_1-binary-SunOS-20070816.jar,
      mq4_1-binary-WINNT-20070816.jar, imq.jar and jms.jar
+   - Apache Commons Codec: commons-codec-1.3.jar
 
 Once these libraries are available, they should be placed under the 
 "opensso/products/extlib" directory of your workspace. Any library placed 
@@ -263,6 +264,14 @@ libraries/native to opensso/products/extlib.
 2.9.4 Unzip this zip file in a temporary directory.
 2.9.5 copy <temporary directory>/ant-contrib/ant-contrib-1.0b3.jar to
       <your workspace>/opensso/products/extlib/ant-contrib-1.0b3.jar
+
+%% 2.10 Obtaining commons-codec-1.3..jar
+2.10.1 Visit http://commons.apache.org/downloads/download_codec.cgi
+2.10.2 Download one of the Binary selections (e.g., 1.3.tar.gz)
+2.10.3 Uncompress (and un-tar, in the case of 1.3.tar.gz) the file in
+       a temporary directory.
+2.10.4 Find the commons-codec-1.3.jar file and copy it to
+       <your workspace>/opensso/products/extlib/commons-codec-1.3.jar
 
 %% 3. Building the workspace
 
