@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilter.java,v 1.3 2007-03-08 20:41:43 huacui Exp $
+ * $Id: AmFilter.java,v 1.4 2008-04-03 21:22:48 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +74,7 @@ public class AmFilter extends AgentBase
         
         CommonFactory cf = new CommonFactory(getModule());
         initLoginURLFailoverHelper(cf);
+        initLogoutURLFailoverHelper(cf);
         initSSOContext(cf);
 
         // Initialize various handlers
@@ -121,6 +122,7 @@ public class AmFilter extends AgentBase
 
         AmFilterRequestContext ctx = new AmFilterRequestContext(request,
             response, getRedirectParameterName(), getLoginURLFailoverHelper(),
+            getLogoutURLFailoverHelper(),
             isFormLoginRequest(request), getAccessDeniedURI(), this,
             getFilterMode(), getAgentHost(request), getAgentPort(request), 
             getAgentProtocol(request));
@@ -466,6 +468,23 @@ public class AmFilter extends AgentBase
                 loginURLs));
     }
     
+    private void initLogoutURLFailoverHelper(CommonFactory cf) 
+    throws AgentException 
+    {
+        String[] logoutURLs = getConfigurationStrings(CONFIG_LOGOUT_URL);
+        boolean isPrioritized = getConfigurationBoolean(
+                CONFIG_LOGOUT_URL_PRIORITIZED);
+        boolean probeEnabled = getConfigurationBoolean(
+                CONFIG_LOGOUT_URL_PROBE_ENABLED, true);
+        long    timeout = getConfigurationLong(
+                CONFIG_LOGOUT_URL_PROBE_TIMEOUT, 2000);
+        setLogoutURLFailoverHelper(cf.newURLFailoverHelper(
+                probeEnabled,
+                isPrioritized, 
+                timeout,
+                logoutURLs));
+    }
+    
     private void setLoginURLFailoverHelper(IURLFailoverHelper helper) {
         _loginURLFailoverHelper = helper;
         if (isLogMessageEnabled()) {
@@ -474,8 +493,20 @@ public class AmFilter extends AgentBase
         }
     }
     
+    private void setLogoutURLFailoverHelper(IURLFailoverHelper helper) {
+        _logoutURLFailoverHelper = helper;
+        if (isLogMessageEnabled()) {
+            logMessage("AmFilter: logout url failover helper: " 
+                    + _logoutURLFailoverHelper);
+        }
+    }
+    
     private IURLFailoverHelper getLoginURLFailoverHelper() {
         return _loginURLFailoverHelper;
+    }
+    
+    private IURLFailoverHelper getLogoutURLFailoverHelper() {
+        return _logoutURLFailoverHelper;
     }
     
     private String getRedirectParameterName() {
@@ -637,6 +668,7 @@ public class AmFilter extends AgentBase
     private HashSet _formLoginList;
     private String _redirectParameterName;
     private IURLFailoverHelper _loginURLFailoverHelper;
+    private IURLFailoverHelper _logoutURLFailoverHelper;
     private ISSOContext _ssoContext;
     private String _agentHost;
     private int _agentPort;

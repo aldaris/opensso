@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLFailoverHelper.java,v 1.3 2007-03-08 20:40:47 huacui Exp $
+ * $Id: URLFailoverHelper.java,v 1.4 2008-04-03 21:21:40 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,6 +67,9 @@ public class URLFailoverHelper extends SurrogateBase
     }
 
     public String getAvailableURL() throws AgentException {
+        if ((_urlList == null) || (_urlList.length == 0)) {
+            return null;
+        }
         String result = null;
         if(isEnabled()) {
             int index = getCurrentIndex();
