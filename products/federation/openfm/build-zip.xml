@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.13 2007-12-20 06:12:39 qcheng Exp $
+   $Id: build-zip.xml,v 1.14 2008-04-03 17:48:15 kenwho Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -154,6 +154,19 @@
         <copy todir="${zip.temp.dir}/ldif">
             <fileset dir="${openfm.dir}/ldif" includes="**/*"/>
         </copy>   
+
+        <copy todir="${zip.temp.dir}/ldif">
+            <fileset dir="${amserver.base.dir}/war/ldif">
+                <include name="am_remote_ad_schema.ldif" />
+                <include name="am_remote_basic.ldif" />
+                <include name="am_remote_opends_schema.ldif" />
+                <include name="am_remote_tivolids_schema.ldif" />
+                <include name="ds_remote_schema.ldif" />
+                <include name="index.ldif" />
+                <include name="plugin.ldif" />
+                <include name="sunone_schema2.ldif" />
+            </fileset>
+        </copy>
 
         <copy file="${openfm.dir}/docs/README.libraries"
             tofile="${zip.temp.dir}/libraries/README" />
