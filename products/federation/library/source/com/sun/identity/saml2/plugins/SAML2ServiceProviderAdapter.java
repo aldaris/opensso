@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ServiceProviderAdapter.java,v 1.1 2007-11-15 16:42:45 qcheng Exp $
+ * $Id: SAML2ServiceProviderAdapter.java,v 1.2 2008-04-03 07:01:33 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,6 +101,12 @@ public abstract class SAML2ServiceProviderAdapter {
      * user session. 
      */
     public static final int SSO_FAILED_SESSION_GENERATION = 10;
+
+    /**
+     * Status code for Single Sign-On failure due to unable to retrieve 
+     * meta data. 
+     */
+    public static final int SSO_FAILED_META_DATA_ERROR = 11;
 
     /**
      * Constants for hosted entity id parameter

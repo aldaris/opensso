@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.15 2008-04-02 20:45:28 exu Exp $
+ * $Id: SPSSOFederate.java,v 1.16 2008-04-03 07:03:10 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -257,7 +257,7 @@ public class SPSSOFederate {
 
             // create AuthnRequest 
             AuthnRequest authnRequest = createAuthnRequest(realm,spEntityID,
-                paramsMap,spConfigAttrsMap,extensionsList,spsso,
+                paramsMap,spConfigAttrsMap,extensionsList,spsso, idpsso,
                 ssoURL, false);
                
             // invoke SP Adapter class if registered
@@ -421,7 +421,7 @@ public class SPSSOFederate {
 
             // create AuthnRequest 
             AuthnRequest authnRequest = createAuthnRequest(realm, spEntityID,
-                paramsMap, spConfigAttrsMap, extensionsList, spsso, null,
+                paramsMap, spConfigAttrsMap, extensionsList, spsso, null, null,
                 true);
 
             // invoke SP Adapter class if registered
@@ -628,35 +628,11 @@ public class SPSSOFederate {
     /* Create NameIDPolicy Element */
     private static NameIDPolicy createNameIDPolicy(String spEntityID,
         String format, boolean allowCreate, SPSSODescriptorElement spsso,
-        String realm, Map paramsMap) throws SAML2Exception {
-        
-        if ((format != null) && (format.length() > 0)) {
-            if (format.equals("persistent") || format.equals("transient")) {
-                format = SAML2Constants.NAMEID_FORMAT_NAMESPACE + format;
-            }
-            if (format.equals(SAML2Constants.UNSPECIFIED)) {
-                format = SAML2Constants.PERSISTENT;
-            }
-        } else {
-            format = SAML2Constants.PERSISTENT;
-        }
-        
-        // get NameID Formats supported by SP from SPSSO Descriptor
-        if (spsso != null) {
-            List nameIDFormatList = spsso.getNameIDFormat();
-            if (nameIDFormatList != null && !nameIDFormatList.isEmpty()
-            && !nameIDFormatList.contains(format)) {
-                // should be error or use default Persistent?
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message("SPSSOFederate." +
-                        "createNameIDPolicy: NameIDFormat not supported: " +
-                        format);
-                }
-                Object[] args = { format };
-                throw new SAML2Exception(SAML2Utils.BUNDLE_NAME,
-                    "unsupportedNameIDFormatSP", args);
-            }
-        }
+        IDPSSODescriptorElement idpsso, String realm, Map paramsMap)
+        throws SAML2Exception {
+
+        format = SAML2Utils.verifyNameIDFormat(format, spsso, idpsso);
+
         NameIDPolicy nameIDPolicy =
                 ProtocolFactory.getInstance().createNameIDPolicy();
 
@@ -699,6 +675,7 @@ public class SPSSOFederate {
         Map spConfigMap,
         List extensionsList,
         SPSSODescriptorElement spsso,
+        IDPSSODescriptorElement idpsso,
         String ssourl,
         boolean isForECP
         ) throws SAML2Exception {
@@ -723,7 +700,8 @@ public class SPSSOFederate {
              SAML2Constants.NAMEID_POLICY_FORMAT);
          // get NameIDPolicy Element 
          NameIDPolicy nameIDPolicy = createNameIDPolicy(spEntityID,
-             nameIDPolicyFormat, allowCreate, spsso, realmName, paramsMap);
+             nameIDPolicyFormat, allowCreate, spsso, idpsso, realmName,
+             paramsMap);
          Issuer issuer = createIssuer(spEntityID);
          Integer acsIndex = getIndex(paramsMap,SAML2Constants.ACS_URL_INDEX);
          Integer attrIndex = getIndex(paramsMap,SAML2Constants.ATTR_INDEX);

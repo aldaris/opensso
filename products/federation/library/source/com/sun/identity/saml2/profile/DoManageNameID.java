@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.10 2008-03-04 23:40:09 hengming Exp $
+ * $Id: DoManageNameID.java,v 1.11 2008-04-03 07:03:10 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1951,8 +1951,7 @@ public class DoManageNameID {
         }
         return idpSession;
     }
-    static private void removeIDPFedSession(String spEntity)
-        throws SessionException {
+    static void removeIDPFedSession(String spEntity) {
         String method = "removeIDPFedSession ";
         Enumeration keys = null;
         String idpSessionIndex = null;

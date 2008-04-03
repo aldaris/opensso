@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.20 2008-04-02 20:45:27 exu Exp $
+ * $Id: SAML2Utils.java,v 1.21 2008-04-03 06:59:25 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3601,5 +3601,84 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
         out.println("</FORM></BODY></HTML>");
         out.close();
+    }
+
+    /**
+     * Verifies specified name ID format and returns it. If specified name ID
+     * format is empty, returns name ID foramt supported by both IDP and SP.
+     *
+     * @param nameIDFormat name ID format.
+     * @param spsso SP meta data desciptor.
+     * @param idpsso IDP meta data desciptor.
+     * @exception SAML2Exception if name ID format is not supported.
+     */
+    public static String verifyNameIDFormat(String nameIDFormat,
+        SPSSODescriptorElement spsso, IDPSSODescriptorElement idpsso)
+        throws SAML2Exception {
+
+        List spNameIDFormatList = spsso.getNameIDFormat();
+        if (spNameIDFormatList.isEmpty()) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.verifyNameIDFormat: " +
+                    "NameIDFormat not supported by SP: " + nameIDFormat);
+            }
+            Object[] args = { nameIDFormat };
+            throw new SAML2Exception(BUNDLE_NAME, "unsupportedNameIDFormatSP",
+                args);
+        }
+
+        List idpNameIDFormatList = idpsso.getNameIDFormat();
+        if (idpNameIDFormatList.isEmpty()) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.verifyNameIDFormat: " +
+                    "NameIDFormat not supported by IDP: " + nameIDFormat);
+            }
+            Object[] args = { nameIDFormat };
+            throw new SAML2Exception(BUNDLE_NAME, "unsupportedNameIDFormatIDP",
+                args);
+        }
+
+        if ((nameIDFormat == null) || (nameIDFormat.length() == 0)) {
+
+            nameIDFormat = null;
+            for(Iterator iter = spNameIDFormatList.iterator();iter.hasNext();){
+                String spNameIDFormat = (String)iter.next();
+                if (idpNameIDFormatList.contains(spNameIDFormat)) {
+                    nameIDFormat = spNameIDFormat;
+                    break;
+                }
+            }
+            if (nameIDFormat == null) {
+                throw new SAML2Exception(bundle.getString(
+                    "unsupportedNameIDFormatIDPSP"));
+            }
+        } else {
+            if (nameIDFormat.equals("persistent") ||
+                nameIDFormat.equals("transient")) {
+                nameIDFormat = SAML2Constants.NAMEID_FORMAT_NAMESPACE +
+                    nameIDFormat;
+            }
+            if  (!spNameIDFormatList.contains(nameIDFormat)) {
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2Utils.verifyNameIDFormat: " +
+                        "NameIDFormat not supported by SP: " + nameIDFormat);
+                }
+                Object[] args = { nameIDFormat };
+                throw new SAML2Exception(BUNDLE_NAME,
+                    "unsupportedNameIDFormatSP", args);
+            }
+
+            if  (!idpNameIDFormatList.contains(nameIDFormat)) {
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2Utils.verifyNameIDFormat: " +
+                        "NameIDFormat not supported by IDP: " + nameIDFormat);
+                }
+                Object[] args = { nameIDFormat };
+                throw new SAML2Exception(BUNDLE_NAME,
+                    "unsupportedNameIDFormatIDP", args);
+            }
+        }
+
+        return nameIDFormat;
     }
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.11 2008-03-12 16:54:07 exu Exp $
+ * $Id: IDPCache.java,v 1.12 2008-04-03 07:03:10 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -259,6 +260,14 @@ public class IDPCache {
     public static Hashtable defaultClassRefHash = new Hashtable();
 
     /**
+     * Hashtable saves NameID format to user profile attribute mapping
+     * key  : hostEntityID + "|" + realm
+     * value: Map containing NameNameID format as Key and user profile
+     *     attribute name as Value.
+     */
+    public static Hashtable formatAttributeHash = new Hashtable();
+
+    /**
      * Clears the authn context mapping hash tables.
      * @param realmName Organization or Realm
      */
@@ -272,5 +281,6 @@ public class IDPCache {
         if (defaultClassRefHash != null && !defaultClassRefHash.isEmpty()) {
             defaultClassRefHash.clear();
         }
+        formatAttributeHash.clear();
     }
 }

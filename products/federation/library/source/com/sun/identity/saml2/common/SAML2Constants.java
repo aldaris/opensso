@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.26 2008-04-02 20:45:27 exu Exp $
+ * $Id: SAML2Constants.java,v 1.27 2008-04-03 06:59:25 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,6 +146,12 @@ public interface SAML2Constants {
         NAMEID_FORMAT_NAMESPACE_V_1_1 + "unspecified";
   
     /**
+     * String to represent Email Address Name Identifier
+     */
+    public String EMAIL_ADDRESS =
+        NAMEID_FORMAT_NAMESPACE_V_1_1 + "emailAddress";
+
+    /**
      * String to represent Entity Name Identifier
      */
     public String ENTITY =
@@ -156,6 +162,18 @@ public interface SAML2Constants {
      */
     public String X509_SUBJECT_NAME =
         NAMEID_FORMAT_NAMESPACE_V_1_1 + "X509SubjectName";
+
+    /**
+     * String to represent Windows Domain Qualified Name Identifier
+     */
+    public String WINDOWS_DOMAIN_QUALIFIED_NAME =
+        NAMEID_FORMAT_NAMESPACE_V_1_1 + "WindowsDomainQualifiedName";
+
+    /**
+     * String to represent Kerberos Principal Name Identifier
+     */
+    public String KERBEROS_PRINCIPAL_NAME =
+        NAMEID_FORMAT_NAMESPACE + "kerberos";
 
     /**
      * String to represent the authentication service url
@@ -643,6 +661,11 @@ public interface SAML2Constants {
      */
     public String CERT_ALIAS = "sun-fm-saml2-cert-alias";
  
+    /**
+     * NameID format map configuration.
+     */
+    public String NAME_ID_FORMAT_MAP = "nameIDFormatMap";
+
     /**
      * Attribute map configuration.
      */

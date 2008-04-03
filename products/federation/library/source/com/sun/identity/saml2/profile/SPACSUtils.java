@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.17 2008-04-02 20:45:28 exu Exp $
+ * $Id: SPACSUtils.java,v 1.18 2008-04-03 07:03:10 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,6 +78,7 @@ import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.ArtifactResolutionServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
@@ -990,6 +991,35 @@ public class SPACSUtils {
                 throw se;
             }
         }
+
+        SPSSODescriptorElement spDesc = null;
+        try {
+            spDesc = metaManager.getSPSSODescriptor(realm, hostEntityId);
+        } catch (SAML2MetaException ex) {
+            SAML2Utils.debug.error(classMethod, ex);
+        }
+        if (spDesc == null) {
+            SAML2Exception se = new SAML2Exception(SAML2Utils.bundle.getString(
+                "metaDataError"));
+            invokeSPAdapterForSSOFailure(hostEntityId, realm, request,
+                response, smap, respInfo,
+                SAML2ServiceProviderAdapter.SSO_FAILED_META_DATA_ERROR, se);
+            throw se;
+        }
+        String nameIDFormat = nameId.getFormat();
+        if ((nameIDFormat != null) &&
+            (!spDesc.getNameIDFormat().contains(nameIDFormat))) {
+
+            Object[] args = { nameIDFormat };
+            SAML2Exception se = new SAML2Exception(SAML2Utils.BUNDLE_NAME,
+                "unsupportedNameIDFormatSP", args);
+
+            invokeSPAdapterForSSOFailure(hostEntityId, realm, request,
+                response, smap, respInfo,
+                SAML2ServiceProviderAdapter.INVALID_RESPONSE, se);
+            throw se;
+        }
+
         String existUserName = null;
         SessionProvider sessionProvider = null;
         try {
@@ -1082,16 +1112,13 @@ public class SPACSUtils {
             String [] array = dnObject.explodeDN(true);
             userName = array[0];
         */
-        boolean isPersistent = SAML2Utils.isPersistentNameID(nameId);
-        boolean writeFedInfo = false;        
-        if (!isFedInfoExists && isPersistent) {
-            writeFedInfo = true;
-        }        
+
+        boolean writeFedInfo = (!isFedInfoExists) &&
+           (!SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(nameId.getFormat()));
+
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(
                 classMethod + "userName : " + userName);
-            SAML2Utils.debug.message(
-                classMethod + "isPersistent : " + isPersistent);
             SAML2Utils.debug.message(
                 classMethod + "isFedInfoExists : " + isFedInfoExists);
             SAML2Utils.debug.message(

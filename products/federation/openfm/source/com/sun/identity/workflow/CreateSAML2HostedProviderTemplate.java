@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.12 2008-03-12 16:52:18 exu Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.13 2008-04-03 07:04:43 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -225,6 +225,14 @@ public class CreateSAML2HostedProviderTemplate {
             "\">\n" +
             "            <Value>com.sun.identity.saml2.plugins.DefaultAssertionIDRequestMapper" +
             "</Value>\n" +
+            "        </Attribute>\n" +
+            "        <Attribute name=\"" + SAML2Constants.NAME_ID_FORMAT_MAP +
+            "\">\n" +
+            "           <Value>" + SAML2Constants.EMAIL_ADDRESS + "=mail" + "</Value>\n" +
+            "           <Value>" + SAML2Constants.X509_SUBJECT_NAME + "=" + "</Value>\n" +
+            "           <Value>" + SAML2Constants.WINDOWS_DOMAIN_QUALIFIED_NAME + "=" + "</Value>\n" +
+            "           <Value>" + SAML2Constants.KERBEROS_PRINCIPAL_NAME + "=" + "</Value>\n" +
+            "           <Value>" + SAML2Constants.UNSPECIFIED + "=" + "</Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
             SAML2Constants.IDP_ECP_SESSION_MAPPER_CLASS +"\">\n" +
@@ -817,10 +825,16 @@ public class CreateSAML2HostedProviderTemplate {
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:SOAP\"\n" +
             "            Location=\"" + url + "/IDPMniSoap" + maStr + "\"/>\n" +
             "        <NameIDFormat>\n" +
-            "            urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\n" +
+            "            " + SAML2Constants.PERSISTENT + "\n" +
             "        </NameIDFormat>\n" +
             "        <NameIDFormat>\n" +
-            "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
+            "            " + SAML2Constants.NAMEID_TRANSIENT_FORMAT + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.EMAIL_ADDRESS + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.UNSPECIFIED + "\n" +
             "        </NameIDFormat>\n" +
             "        <SingleSignOnService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
@@ -928,10 +942,16 @@ public class CreateSAML2HostedProviderTemplate {
             "            ResponseLocation=\"" + url + "/SPMniSoap" + maStr +
             "\"/>\n" +
             "        <NameIDFormat>\n" +
-            "            urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\n" +
+            "            " + SAML2Constants.PERSISTENT + "\n" +
             "        </NameIDFormat>\n" +
             "        <NameIDFormat>\n" +
-            "            urn:oasis:names:tc:SAML:2.0:nameid-format:transient\n" +
+            "            " + SAML2Constants.NAMEID_TRANSIENT_FORMAT + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.EMAIL_ADDRESS + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.UNSPECIFIED + "\n" +
             "        </NameIDFormat>\n" +
             "        <AssertionConsumerService\n" +
             "            isDefault=\"true\"\n" +

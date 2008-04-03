@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.5 2008-03-04 23:40:09 hengming Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.6 2008-04-03 07:01:33 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,12 @@
 package com.sun.identity.saml2.plugins;
 
 import java.security.PrivateKey;
-import java.util.List;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
@@ -75,6 +77,9 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
      * @param ssoToken Single Sign On Token of the user.
      * @param hostEntityID <code>EntityID</code> of the hosted provider.
      * @param remoteEntityID <code>EntityID</code> of the remote provider.
+     * @param realm realm or the organization name that may be used to find
+     *        the user information.
+     * @param nameIDFormat <code>NameID</code> format.
      * @return the <code>NameID</code> corresponding to the authenticated user.
      *         null if the authenticated user does not container account
      *              federation information.
@@ -83,31 +88,22 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
     public NameID getNameID(
         Object session,
         String hostEntityID,
-        String remoteEntityID
+        String remoteEntityID,
+        String realm,
+        String nameIDFormat
     ) throws SAML2Exception {
 
         String userID = null;
-        String nameIDFormat = null;
         try {
             SessionProvider sessionProv = SessionManager.getProvider();
             userID = sessionProv.getPrincipalName(session);
-            String[] values = sessionProv.getProperty(session, 
-                IDPSSOUtil.NAMEID_FORMAT);
-            if ((values != null) && (values.length > 0)) {
-                nameIDFormat = values[0]; 
-            }
         } catch (SessionException se) {
             throw new SAML2Exception(SAML2Utils.bundle.getString(
                    "invalidSSOToken")); 
         }
-        
+
         String nameIDValue = null;
-        if (nameIDFormat != null &&
-            nameIDFormat.equals(SAML2Constants.X509_SUBJECT_NAME)) {
-            nameIDValue = userID;
-        } else if (nameIDFormat != null &&
-            nameIDFormat.equals(SAML2Constants.NAMEID_TRANSIENT_FORMAT))
-        {
+        if (nameIDFormat.equals(SAML2Constants.NAMEID_TRANSIENT_FORMAT)){
             String sessionIndex = IDPSSOUtil.getSessionIndex(session);
             if (sessionIndex != null) {
                 IDPSession idpSession = 
@@ -127,10 +123,24 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
                     }
                 }
             }
-        }
-
-        if (nameIDValue == null) {
-            nameIDValue = SAML2Utils.createNameIdentifier();
+            if (nameIDValue == null) {
+                nameIDValue = getNameIDValueFromUserProfile(realm,
+                    hostEntityID, userID, nameIDFormat);
+                if (nameIDValue ==  null) {
+                    nameIDValue = SAML2Utils.createNameIdentifier();
+                }
+            }
+        } else {
+            nameIDValue = getNameIDValueFromUserProfile(realm, hostEntityID,
+                userID, nameIDFormat);
+            if (nameIDValue == null) {
+                if (nameIDFormat.equals(SAML2Constants.PERSISTENT)) {
+                    nameIDValue = SAML2Utils.createNameIdentifier();
+                } else {
+                    throw new SAML2Exception(bundle.getString(
+                        "unableToGenerateNameIDValue")); 
+                }
+            }
         }
 
         NameID nameID = AssertionFactory.getInstance().createNameID(); 
@@ -192,5 +202,58 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
                 dse);
             throw new SAML2Exception(dse.getMessage());
         }
+    }
+
+    protected String getNameIDValueFromUserProfile(String realm,
+        String hostEntityID, String userID, String nameIDFormat){
+
+        String nameIDValue = null;
+        Map formatAttrMap = getFormatAttributeMap(realm, hostEntityID);
+        String attrName = (String)formatAttrMap.get(nameIDFormat);
+        if (attrName != null) {
+            try {
+                Set attrValues = dsProvider.getAttribute(userID, attrName);
+                if ((attrValues != null) && (!attrValues.isEmpty())) {
+                    nameIDValue = (String)attrValues.iterator().next();
+                }
+            } catch (DataStoreProviderException dspe) {
+                if (debug.warningEnabled()) {
+                    debug.warning("DefaultIDPAccountMapper." +
+                        "getNameIDValueFromUserProfile:", dspe);
+                }
+            }
+        }
+
+        return nameIDValue;
+    }
+
+    private Map getFormatAttributeMap(String realm, String hostEntityID) {
+        String key = hostEntityID + "|" + realm;
+        Map formatAttributeMap = (Map)IDPCache.formatAttributeHash.get(key);
+        if (formatAttributeMap != null) {
+            return formatAttributeMap;
+        }
+
+        formatAttributeMap = new HashMap();
+        List values = SAML2Utils.getAllAttributeValueFromSSOConfig(realm,
+            hostEntityID, role, SAML2Constants.NAME_ID_FORMAT_MAP);
+        if ((values != null) && (!values.isEmpty())) {
+            for(Iterator iter = values.iterator(); iter.hasNext(); ) {
+                String value = (String)iter.next();
+
+                int index = value.indexOf('=');
+                if (index != -1) {
+                    String format = value.substring(0, index).trim();
+                    String attrName = value.substring(index + 1).trim();
+                    if ((format.length() != 0) && (attrName.length() != 0)) {
+                        formatAttributeMap.put(format, attrName);
+                    }
+                }
+            }
+        }
+
+        IDPCache.formatAttributeHash.put(key, formatAttributeMap);
+
+        return formatAttributeMap;
     }
 }

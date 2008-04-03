@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.24 2008-03-12 16:54:07 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.25 2008-04-03 07:03:10 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1248,22 +1248,26 @@ public class IDPSSOUtil {
             }
         }
     
-        if ((nameIDFormat == null) || (nameIDFormat.trim().length() == 0)) {
-            nameIDFormat = SAML2Constants.PERSISTENT;
-        } else {
-            if (nameIDFormat.equals("persistent") ||
-                nameIDFormat.equals("transient")) {
-                // convert nameIDFormat from short format to its long format
-                nameIDFormat = 
-                    SAML2Constants.NAMEID_FORMAT_NAMESPACE + nameIDFormat;
-            }
-            if ((!nameIDFormat.equals(SAML2Constants.PERSISTENT)) &&
-                (!nameIDFormat.equals(SAML2Constants.NAMEID_TRANSIENT_FORMAT))&&
-                (!nameIDFormat.equals(SAML2Constants.X509_SUBJECT_NAME))) {
-                // found unsupported format, use persistent as default
-                nameIDFormat = SAML2Constants.PERSISTENT;
-            }
+        SPSSODescriptorElement spsso = metaManager.getSPSSODescriptor(
+            realm, recipientEntityID);
+        if (spsso == null) {
+            String[] data = { recipientEntityID };
+            LogUtil.error(Level.INFO,LogUtil.SP_METADATA_ERROR,data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "metaDataError"));
         }
+
+        IDPSSODescriptorElement idpsso =
+            metaManager.getIDPSSODescriptor(realm, idpEntityID);
+        if (idpsso == null) {
+            String[] data = { idpEntityID };
+            LogUtil.error(Level.INFO,LogUtil.IDP_METADATA_ERROR,data, null);
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "metaDataError"));
+        }
+
+        nameIDFormat = SAML2Utils.verifyNameIDFormat(nameIDFormat, spsso,
+            idpsso);
             
         NameIDInfo nameIDInfo = null;
         NameID nameID = null;
@@ -1280,30 +1284,29 @@ public class IDPSSOUtil {
                    SAML2Utils.bundle.getString("invalidSSOToken")); 
             }
 
-            NameIDInfo info = AccountUtils.getAccountFederation(userID,
+            nameIDInfo = AccountUtils.getAccountFederation(userID,
                 idpEntityID, remoteEntityID);
 
-            if (info != null) {
-                nameID = info.getNameID();
+            if (nameIDInfo != null) {
+                nameID = nameIDInfo.getNameID();
+
+                if (nameIDFormat.equals(nameID.getFormat())) {
+                    // existing federation
+                    isNewFederation.setValue(false);
+                } else {
+                    AccountUtils.removeAccountFederation(nameIDInfo, userID);
+                    DoManageNameID.removeIDPFedSession(remoteEntityID);
+                    nameID = null;
+                }
             }
         }
+
         if (nameID == null) {
-            // Gets federation info from the IDP account mapper
-            // ideally, the IDP account mapper should take a name id format, 
-            // for now, sets name id format on SSO token
-            try {
-                String[] values = { nameIDFormat };
-                sessionProvider.setProperty(session, NAMEID_FORMAT,
-                    values);
-            } catch (SessionException se) {
-                throw new SAML2Exception(SAML2Utils.bundle.getString(
-                    "invalidSSOToken"));
-            }
             // read federation info from the persistent datastore
             IDPAccountMapper idpAccountMapper = 
                 SAML2Utils.getIDPAccountMapper(realm, idpEntityID);
             nameID = idpAccountMapper.getNameID(session, idpEntityID,
-                spNameQualifier); 
+                spNameQualifier, realm, nameIDFormat); 
      
             if (!isTransient && allowCreate) {
                 // write federation info the into persistent datastore
@@ -1316,9 +1319,6 @@ public class IDPSSOUtil {
             } else {
                 isNewFederation.setValue(false);
             }
-        } else { 
-            // existing federation
-            isNewFederation.setValue(false);
         }
 
         subject.setNameID(nameID);

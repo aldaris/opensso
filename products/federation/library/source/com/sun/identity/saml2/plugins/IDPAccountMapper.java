@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPAccountMapper.java,v 1.3 2008-01-16 04:35:38 hengming Exp $
+ * $Id: IDPAccountMapper.java,v 1.4 2008-04-03 07:01:33 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,13 +55,18 @@ public interface IDPAccountMapper {
      * @param session Single Sign On session of the user.
      * @param hostEntityID <code>EntityID</code> of the hosted provider.
      * @param remoteEntityID <code>EntityID</code> of the remote provider.
+     * @param realm realm or the organization name that may be used to find
+     *        the user information.
+     * @param nameIDFormat <code>NameID</code> format.
      * @return the <code>NameID</code> corresponding to the authenticated user.
      * @exception SAML2Exception if any failure.
      */
     public com.sun.identity.saml2.assertion.NameID getNameID(
         Object session,
         java.lang.String hostEntityID,
-        java.lang.String remoteEntityID
+        java.lang.String remoteEntityID,
+        java.lang.String realm,
+        java.lang.String nameIDFormat
     ) throws SAML2Exception;
 
 
