@@ -12,7 +12,7 @@ xmldap-1.0.jar:
         svn checkout http://openinfocard.googlecode.com/svn/trunk/ \
         openinfocard-read-only
         cd openinfocard-read-only/ant
-        ant
+        ant build_core
     Copy xmldap-1.0.jar from openinfocard-read-only/build/xmldap-1.0/ to 
     lib
 
@@ -52,11 +52,15 @@ below
 
 6 - Copy source/Infocard.jsp into <OPENSSO_INSTALL_DIR>/config/auth/default
 
-7 - Copy source/Infocard.properties <OPENSSO_INSTALL_DIR>/WEB-INF/classes
+7 - Copy source/infocardInvalidToken.jsp <OPENSSO_INSTALL_DIR>/config/auth/default
 
-8 - Copy images/infocard_71x50.png into <OPENSSO_INSTALL_DIR>/images
+8 - Copy source/infocardInvalidCert.jsp <OPENSSO_INSTALL_DIR>/config/auth/default
 
-9 - Edit the <OPENSSO_INSTALL_DIR>/WEB-INF/classes/Infocard.properties file to 
+9 - Copy source/Infocard.properties <OPENSSO_INSTALL_DIR>/WEB-INF/classes
+
+10 - Copy images/infocard_71x50.png into <OPENSSO_INSTALL_DIR>/images
+
+11 - Edit the <OPENSSO_INSTALL_DIR>/WEB-INF/classes/Infocard.properties file to 
     define the application server's key store password and alias. On Glassfish 
     V2 which the module has been tested, the default alias is 's1as' and the 
     default password is the application's server admin password (i.e. 
@@ -66,18 +70,20 @@ below
     On Glassfish you can verify the password and alias with keytool -list \
     -storepass changeit -keystore \
     <GLASSFISH_DIR>/domains/domain1/config/keystore.jks
+    - Edit the <OPENSSO_INSTALL_DIR>/WEB-INF/classes/Infocard.properties file to
+      define the database connection URL parameters if different from defaults
 
-10 - Start a JavaDB (Derby) server on localhost and default port '1527'.
+12 - Start a JavaDB (Derby) server on localhost and default port '1527'.
     The module creates the database and tables at startup. The database is used
-    to store relations between Information Cards presented by users and the 
+    to store relations between Information Cards presented by users and the
     OpenSSO user accounts.
 
-11 - Restart the server
+13 - Restart the server
 
-12 - Point your browser at 
+14 - Point your browser at 
     http(s)://my.domain.name:port/opensso/UI/Login?module=Infocard
 
-13 - In order to play with the module, you'll have to install an Information 
+15 - In order to play with the module, you'll have to install an Information 
     Card Identity Selector application. The initial login page provides links 
     for where you can download an Identity Selector as a Firefox extension for 
     Linux, Windows and Mac OS X.
