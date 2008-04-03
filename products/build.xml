@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.27 2008-02-23 02:57:41 kevinserwin Exp $
+   $Id: build.xml,v 1.28 2008-04-03 03:58:05 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -222,7 +222,7 @@
             </classpath>
             <jvmarg value="-Dopensso.log.html.dir=${prd.log.html.dir}" />
             <arg value="${amserver.base.dir}/xml/log" />
-            <arg value="${fedlibrary.base.dir}/xml/log" />
+            <arg value="${openfm.dir}/xml/log" />
         </java>
     </target>
 
