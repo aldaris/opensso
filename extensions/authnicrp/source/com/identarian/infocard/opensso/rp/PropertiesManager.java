@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertiesManager.java,v 1.2 2008-02-28 23:31:19 superpat7 Exp $
+ * $Id: PropertiesManager.java,v 1.3 2008-04-03 14:09:58 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -47,5 +47,9 @@ public class PropertiesManager {
 
     public String getProperty(String propertyName) {
         return properties.getProperty(propertyName);
+    }
+    
+    public String getProperty(String propertyName, String defaultProperty) {
+        return properties.getProperty(propertyName, defaultProperty);
     }
 }
