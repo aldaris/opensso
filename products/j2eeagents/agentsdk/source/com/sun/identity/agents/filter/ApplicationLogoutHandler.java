@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.4 2008-04-02 19:00:00 huacui Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.5 2008-04-03 21:33:52 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -460,13 +460,18 @@ implements IApplicationLogoutHandler {
 
     /**
      * Returns the logout URL.
-     *
-     * @param request
-     * @return
      */
     private String getLogoutURL(AmFilterRequestContext ctx)
     throws AgentException {
         String result = null;
+        String logoutURL = ctx.getLogoutURL(getApplicationEntryURL(ctx));
+        if (logoutURL != null) {
+            // use the available FAM Logout URL
+            return logoutURL;
+        }
+
+        // FAM Logout URL is not available, try to construct it based on its 
+        // Login URL
         String loginURL = ctx.getAuthRedirectURL(getApplicationEntryURL(ctx));
         StringBuffer buff = null;
         String loginStr = "Login";

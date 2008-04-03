@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.8 2008-01-16 00:55:50 sean_brydon Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.9 2008-04-03 21:34:37 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,17 @@ public interface IFilterConfigurationConstants {
 
     public static final String CONFIG_LOGIN_URL_PROBE_TIMEOUT =
         "login.url.probe.timeout";
+
+    public static final String CONFIG_LOGOUT_URL = "logout.url";
+
+    public static final String CONFIG_LOGOUT_URL_PRIORITIZED =
+        "logout.url.prioritized";
+
+    public static final String CONFIG_LOGOUT_URL_PROBE_ENABLED =
+        "logout.url.probe.enabled";
+
+    public static final String CONFIG_LOGOUT_URL_PROBE_TIMEOUT =
+        "logout.url.probe.timeout";
 
     public static final String CONFIG_LOGIN_ATTEMPT_LIMIT =
         "login.attempt.limit";
@@ -261,6 +272,8 @@ public interface IFilterConfigurationConstants {
     public static final String DEFAULT_REDIRECT_PARAM_NAME = "goto";
 
     public static final boolean DEFAULT_LOGIN_URL_PRIORITIZED = true;
+    
+    public static final boolean DEFAULT_LOGOUT_URL_PRIORITIZED = true;
 
     public static final String  DEFAULT_LOGIN_COUNTER_COOKIE_NAME =
         "amFilterParam";

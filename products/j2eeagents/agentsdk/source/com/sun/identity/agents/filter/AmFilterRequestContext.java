@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.4 2007-08-08 01:24:22 sean_brydon Exp $
+ * $Id: AmFilterRequestContext.java,v 1.5 2008-04-03 21:32:35 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,8 @@ public class AmFilterRequestContext implements IUtilConstants {
      * @param gotoParameterName the parameter name used for return redirects
      * @param loginURLFailoverHelper the URL failover helper used to select
      * the currently available login URL in cases where necessary.
+     * @param logoutURLFailoverHelper the URL failover helper used to select
+     * the currently available logout URL in cases where necessary.
      * @param isFormLoginRequest a boolean indicating if the current request is
      * that for a J2EE Form based login.
      * @param accessDeniedURI the URI to be used for denying access to the 
@@ -71,6 +73,7 @@ public class AmFilterRequestContext implements IUtilConstants {
                            HttpServletResponse response,
                            String gotoParameterName,
                            IURLFailoverHelper loginURLFailoverHelper,
+                           IURLFailoverHelper logoutURLFailoverHelper,
                            boolean isFormLoginRequest,
                            String accessDeniedURI,
                            AmFilter amFilter,
@@ -82,6 +85,7 @@ public class AmFilterRequestContext implements IUtilConstants {
         setResponse(response);
         setGotoParameterName(gotoParameterName);
         setLoginURLFailoverHelper(loginURLFailoverHelper);
+        setLogoutURLFailoverHelper(logoutURLFailoverHelper);
         setIsFormLoginRequestFlag(isFormLoginRequest);
         setAccessDeniedURI(accessDeniedURI);
         setAmFilter(amFilter);
@@ -133,8 +137,8 @@ public class AmFilterRequestContext implements IUtilConstants {
     }
 
     /**
-     * Returns the value of the actual canoncialized desntination URL that
-     * the user intendend to access when the request was submitted.
+     * Returns the value of the actual canoncialized destination URL that
+     * the user intended to access when the request was submitted.
      *
      * @return the canonicalized destination URL as submitted by the user.
      */
@@ -317,6 +321,47 @@ public class AmFilterRequestContext implements IUtilConstants {
 
         return redirectURL;
     }
+
+
+    /**
+     * Returns a URL that can be used to logout the user from the
+     * Federated Access Manager and redirect the user to a specific URL. 
+     * @param gotoURL the redirect URL after logging out 
+     * @return a String representation of a URL that can be used to 
+     * logout the user from the Federated Access Manager and redirect 
+     * the user to the gotoURL. 
+     */
+    public String getLogoutURL(String gotoURL) {
+        String logoutURL = null;
+        try {
+            logoutURL = getLogoutURL();
+        } catch (AgentException ae) {
+            return null;
+        }
+      
+        if (logoutURL == null) {
+            return null;
+        } 
+
+        StringBuffer buff = new StringBuffer();
+        buff.append(logoutURL);
+
+        if (logoutURL.indexOf("?") != -1) {
+            buff.append("&");
+        } else {
+            buff.append("?");
+        }
+
+        if (gotoURL == null) {
+            gotoURL = populateGotoParameterValue();
+        }
+
+        buff.append(getGotoParameterName());
+        buff.append("=");
+        buff.append(URLEncoder.encode(gotoURL));
+        return buff.toString();
+    }
+
 
     /**
      * Returns a redirect result that can be used to redirect the user to
@@ -783,12 +828,24 @@ public class AmFilterRequestContext implements IUtilConstants {
         return getLoginURLFailoverHelper().getAvailableURL();
     }
 
+    private String getLogoutURL() throws AgentException {
+        return getLogoutURLFailoverHelper().getAvailableURL();
+    }
+
     private IURLFailoverHelper getLoginURLFailoverHelper() {
         return _loginURLFailoverHelper;
     }
 
+    private IURLFailoverHelper getLogoutURLFailoverHelper() {
+        return _logoutURLFailoverHelper;
+    }
+
     private void setLoginURLFailoverHelper(IURLFailoverHelper loginURLFailoverHelper) {
         _loginURLFailoverHelper = loginURLFailoverHelper;
+    }
+
+    private void setLogoutURLFailoverHelper(IURLFailoverHelper logoutURLFailoverHelper) {
+        _logoutURLFailoverHelper = logoutURLFailoverHelper;
     }
 
     private void setAccessDeniedURI(String accessDeniedURI) {
@@ -887,6 +944,7 @@ public class AmFilterRequestContext implements IUtilConstants {
     private String _policyDestinationURL;
     private Map _cookieMap;
     private IURLFailoverHelper _loginURLFailoverHelper;
+    private IURLFailoverHelper _logoutURLFailoverHelper;
     private boolean _isFormLoginRequestFlag;
     private String _accessDeniedURI;
     private String _accessDeniedURL;
