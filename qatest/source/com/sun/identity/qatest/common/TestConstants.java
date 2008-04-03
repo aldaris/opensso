@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.17 2008-02-26 01:57:08 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.18 2008-04-03 19:40:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -679,4 +679,16 @@ public interface TestConstants {
      * MultiProtocol Property key for <code>wsfed_sp_userpw</code>
      */
     String KEY_WSFed_SP_USER_PASSWORD = "wsfed_sp_userpw";  
+    
+    /**
+     * Authentication Property key for <code>dist_auth_enabled</code>
+     */
+    String KEY_DIST_AUTH_ENABLED = "dist_auth_enabled";
+    
+    /**
+     * Authentication Property key for 
+     * <code>dist_auth_notification_service</code>
+     */
+    String KEY_DIST_AUTH_NOTIFICATION_SVC = "dist_auth_notification_service";
+     
 } 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.12 2008-02-12 05:32:58 mrudulahg Exp $
+ * $Id: SetupProduct.java,v 1.13 2008-04-03 19:40:58 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceConfigManager;
 import java.util.logging.Level;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -67,6 +69,10 @@ public class SetupProduct extends TestCommon {
         try {
             boolean bserver1;
             boolean bserver2;
+            String namingProtocol = "";
+            String namingHost = "";
+            String namingPort = "";
+            String namingURI = "";
             
             if ((serverName1.indexOf("SERVER_NAME1") == -1) &&
                     (serverName2.indexOf("SERVER_NAME2") == -1)) {
@@ -80,12 +86,13 @@ public class SetupProduct extends TestCommon {
                 Map map = getURLComponents(strURL);
                 log(Level.FINE, "SetupProduct", "Server URL Components: " +
                         map);
-                String protocol = (String)map.get("protocol");
-                String host = (String)map.get("host");
-                String port = (String)map.get("port");
-                String uri = (String)map.get("uri");
+                namingProtocol = (String)map.get("protocol");
+                namingHost = (String)map.get("host");
+                namingPort = (String)map.get("port");
+                namingURI = (String)map.get("uri");
                 bserver1 = configureProduct(getConfigurationMap("Configurator-"
-                        + serverName1, protocol, host, port, uri));
+                        + serverName1, namingProtocol, namingHost, namingPort, 
+                        namingURI));
                 list = new ArrayList();
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct",
@@ -101,12 +108,14 @@ public class SetupProduct extends TestCommon {
                         String defDatastoreName1 = cfg1.getString(
                                 TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
                         
-                        String loginURL = protocol + ":" + "//" + host + ":" +
-                                port + uri + "/UI/Login";
-                        String logoutURL = protocol + ":" + "//" + host + ":" +
-                                port + uri + "/UI/Logout";
-                        String famadmURL = protocol + ":" + "//" + host + ":" +
-                                port + uri;
+                        String loginURL = namingProtocol + ":" + "//" + 
+                                namingHost + ":" + namingPort + namingURI + 
+                                "/UI/Login";
+                        String logoutURL = namingProtocol + ":" + "//" + 
+                                namingHost + ":" + namingPort + namingURI + 
+                                "/UI/Logout";
+                        String famadmURL = namingProtocol + ":" + "//" + 
+                                namingHost + ":" + namingPort + namingURI;
                         List datastoreList = new ArrayList();
                         
                         ResourceBundle cfg1Data =
@@ -123,12 +132,18 @@ public class SetupProduct extends TestCommon {
                             consoleLogin(webClient, loginURL, adminUser,
                                     adminPassword);
 
+                            admintoken = getToken(adminUser, adminPassword, 
+                                    basedn);
+                            smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
+                            Set datastoreSet = smsc.listDataStore(realm);
+                            String defDatastore1 = cfg1.getString(TestConstants.
+                                        KEY_ATT_CONFIG_DEFDATASTORENAME);
                             //delete default datastore if createDatastore is
-                            //successful
+                            //successful and default datastore exists
                             if (createDataStoreUsingfamadm(webClient, famadm,
-                                    cfg1Data, 0, dCount)) {
-                                datastoreList.add(cfg1.getString(TestConstants.
-                                        KEY_ATT_CONFIG_DEFDATASTORENAME));
+                                    cfg1Data, 0, dCount) && 
+                                    datastoreSet.contains(defDatastore1)) {
+                                datastoreList.add(defDatastore1);
                                 if (FederationManager.getExitCode(
                                         famadm.deleteDatastores(webClient,
                                         realm, datastoreList)) != 0) {
@@ -172,7 +187,10 @@ public class SetupProduct extends TestCommon {
                         admintoken = getToken(adminUser, adminPassword, basedn);
                         smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                         smsc.createDataStore(1, "configGlobalData");
-                        smsc.deleteDataStore(realm, defDataStoreName2);
+                        Set datastoreSet2 = smsc.listDataStore(realm);
+                        if (datastoreSet2.contains(defDataStoreName2)) {
+                            smsc.deleteDataStore(realm, defDataStoreName2);
+                        }
                     }
                 }
                 log(Level.FINE, "SetupProduct", "Check if multiprotocol " +
@@ -195,14 +213,15 @@ public class SetupProduct extends TestCommon {
                     map = getURLComponents(strURL);
                     log(Level.FINE, "SetupProduct", "Server3 URL Components: " +
                             map);
-                    protocol = (String)map.get("protocol");
-                    host = (String)map.get("host");
-                    port = (String)map.get("port");
-                    uri = (String)map.get("uri");
+                    namingProtocol = (String)map.get("protocol");
+                    namingHost = (String)map.get("host");
+                    namingPort = (String)map.get("port");
+                    namingURI = (String)map.get("uri");
                     
                     boolean bserver3 = configureProduct(
                             getConfigurationMap("Configurator-" + serverName3,
-                            protocol, host, port, uri));
+                            namingProtocol, namingHost, namingPort, 
+                            namingURI));
                     if (!bserver3) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName3);
@@ -214,16 +233,19 @@ public class SetupProduct extends TestCommon {
                                     TestConstants.KEY_ATT_AMADMIN_USER);
                             String adminPassword = cfg3.getString(
                                     TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-                            String defDatastoreName1 = cfg3.getString(
+                            String defDatastoreName3 = cfg3.getString(
                                     TestConstants.
                                     KEY_ATT_CONFIG_DEFDATASTORENAME);
                             
-                            String loginURL = protocol + ":" + "//" + host +
-                                    ":" + port + uri + "/UI/Login";
-                            String logoutURL = protocol + ":" + "//" + host +
-                                    ":" + port + uri + "/UI/Logout";
-                            String famadmURL = protocol + ":" + "//" + host +
-                                    ":" + port + uri;
+                            String loginURL = namingProtocol + ":" + "//" + 
+                                    namingHost + ":" + namingPort + 
+                                    namingURI + "/UI/Login";
+                            String logoutURL = namingProtocol + ":" + "//" + 
+                                    namingHost + ":" + namingPort + 
+                                    namingURI + "/UI/Logout";
+                            String famadmURL = namingProtocol + ":" + "//" + 
+                                    namingHost + ":" + namingPort + 
+                                    namingURI;
                             List datastoreList = new ArrayList();
                             ResourceBundle cfg1Data =
                                     ResourceBundle.getBundle(
@@ -240,12 +262,18 @@ public class SetupProduct extends TestCommon {
                                 webClient = new WebClient();
                                 consoleLogin(webClient, loginURL, adminUser,
                                         adminPassword);
+                                admintoken = getToken(adminUser, adminPassword, 
+                                        basedn);
+                                smsc = new SMSCommon(admintoken, 
+                                        "SMSGlobalConfig");
+                                Set datastoreSet3 = smsc.listDataStore(realm);                               
                                 //delete default datastore if createDatastore
-                                //is successful
+                                //is successful and the default datastore exists
                                 if (createDataStoreUsingfamadm(webClient,
-                                        famadm, cfg1Data, 2, dCount)) {
-                                    datastoreList.add(cfg3.getString(TestConstants.
-                                            KEY_ATT_CONFIG_DEFDATASTORENAME));
+                                        famadm, cfg1Data, 2, dCount) && 
+                                        datastoreSet3.contains(
+                                        defDatastoreName3)) {
+                                    datastoreList.add(defDatastoreName3);
                                     if (FederationManager.getExitCode(
                                             famadm.deleteDatastores(webClient,
                                             realm, datastoreList)) != 0) {
@@ -274,16 +302,17 @@ public class SetupProduct extends TestCommon {
                     map = getURLComponents(strURL);
                     log(Level.FINE, "SetupProduct", "Server 4 URL Components:" +
                             " " +  map);
-                    protocol = (String)map.get("protocol");
-                    host = (String)map.get("host");
-                    port = (String)map.get("port");
-                    uri = (String)map.get("uri");
+                    namingProtocol = (String)map.get("protocol");
+                    namingHost = (String)map.get("host");
+                    namingPort = (String)map.get("port");
+                    namingURI = (String)map.get("uri");
                     
                     ResourceBundle cfg1Data =
                             ResourceBundle.getBundle("configGlobalData");
                     boolean bserver4 = configureProduct(
                             getConfigurationMap("Configurator-" + serverName4,
-                            protocol, host, port, uri));
+                            namingProtocol, namingHost, namingPort,
+                            namingURI));
                     if (!bserver4) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName4);
@@ -295,16 +324,19 @@ public class SetupProduct extends TestCommon {
                                     TestConstants.KEY_ATT_AMADMIN_USER);
                             String adminPassword = cfg4.getString(
                                     TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-                            String defDatastoreName1 = cfg4.getString(
+                            String defDatastoreName4 = cfg4.getString(
                                     TestConstants.
                                     KEY_ATT_CONFIG_DEFDATASTORENAME);
                             
-                            String loginURL = protocol + ":" + "//" + host +
-                                    ":" + port + uri + "/UI/Login";
-                            String logoutURL = protocol + ":" + "//" + host +
-                                    ":" + port + uri + "/UI/Logout";
-                            String famadmURL = protocol + ":" + "//" + host +
-                                    ":" + port + uri;
+                            String loginURL = namingProtocol + ":" + "//" + 
+                                    namingHost + ":" + namingPort + 
+                                    namingURI + "/UI/Login";
+                            String logoutURL = namingProtocol + ":" + "//" + 
+                                    namingHost + ":" + namingPort + 
+                                    namingURI + "/UI/Logout";
+                            String famadmURL = namingProtocol + ":" + "//" + 
+                                    namingHost + ":" + namingPort + 
+                                    namingURI;
                             List datastoreList = new ArrayList();
                             
                             int dCount = new Integer(cfg1Data.getString(
@@ -319,12 +351,18 @@ public class SetupProduct extends TestCommon {
                                 webClient = new WebClient();
                                 consoleLogin(webClient, loginURL, adminUser,
                                         adminPassword);
+                                admintoken = getToken(adminUser, adminPassword, 
+                                        basedn);
+                                smsc = new SMSCommon(admintoken, 
+                                        "SMSGlobalConfig");
+                                Set datastoreSet4 = smsc.listDataStore(realm);                
                                 //delete default datastore if createDatastore
-                                //is successful
+                                //is successful and the default datastore exists
                                 if (createDataStoreUsingfamadm(webClient,
-                                        famadm, cfg1Data, 3, dCount)) {
-                                    datastoreList.add(cfg4.getString(TestConstants.
-                                            KEY_ATT_CONFIG_DEFDATASTORENAME));
+                                        famadm, cfg1Data, 3, dCount) &&
+                                        datastoreSet4.contains(
+                                        defDatastoreName4)) {
+                                    datastoreList.add(defDatastoreName4);
                                     if (FederationManager.getExitCode(
                                             famadm.deleteDatastores(webClient,
                                             realm, datastoreList)) != 0) {
@@ -345,17 +383,23 @@ public class SetupProduct extends TestCommon {
                 }
             } else if ((serverName1.indexOf("SERVER_NAME1") == -1) &&
                     (serverName2.indexOf("SERVER_NAME2") != -1)) {
+                ResourceBundle cfg1 = ResourceBundle.getBundle("Configurator-" +
+                        serverName1);                
+                String namingURL = cfg1.getString(KEY_ATT_NAMING_SVC);
+                Map namingURLMap = getURLComponents(namingURL);
+                namingProtocol = (String) namingURLMap.get("protocol");
+                namingHost = (String) namingURLMap.get("host");
+                namingPort = (String) namingURLMap.get("port");
+                namingURI = (String) namingURLMap.get("uri");
                 bserver1 = configureProduct(getConfigurationMap("Configurator-"
-                        + serverName1));
+                        + serverName1, namingProtocol, namingHost, namingPort,
+                        namingURI));
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct", "Configuration failed for" +
                             " " + serverName1);
                     setSingleServerSetupFailedFlag();
                     assert false;
                 } else {
-                    ResourceBundle cfg1 =
-                            ResourceBundle.getBundle("Configurator-" +
-                            serverName1);
                     String strUMDatastore1 = cfg1.getString("umdatastore");
                     String defDataStoreName1 = cfg1.getString(TestConstants.
                             KEY_ATT_CONFIG_DEFDATASTORENAME);
@@ -365,7 +409,10 @@ public class SetupProduct extends TestCommon {
                         admintoken = getToken(adminUser, adminPassword, basedn);
                         smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
                         smsc.createDataStore(1, "configGlobalData");
-                        smsc.deleteDataStore(realm, defDataStoreName1);
+                        Set datastoreSetSingle = smsc.listDataStore(realm);
+                        if (datastoreSetSingle.contains(defDataStoreName1)) {                        
+                            smsc.deleteDataStore(realm, defDataStoreName1);
+                        }
                     }
                 }
             } else if ((serverName1.indexOf("SERVER_NAME1") != -1) &&
@@ -375,10 +422,37 @@ public class SetupProduct extends TestCommon {
                         " SERVER_NAME1.");
                 assert false;
             }
+            if (distAuthEnabled) {
+                String strServiceName = "iPlanetAMAuthService";
+                admintoken = getToken(adminUser, adminPassword, basedn);               
+                ServiceConfigManager scm = new ServiceConfigManager(admintoken, 
+                        strServiceName, "1.0");
+                log(Level.FINEST, "SetupProduct", "get ServiceConfig");
+                ServiceConfig sc = scm.getOrganizationConfig(realm, null);
+                Map scAttrMap = sc.getAttributes();
+                log(Level.FINEST, "SetupProduct", "Map " +
+                        "returned from Org config is: " + scAttrMap);
+                Set oriAuthAttrValues = null;
+                oriAuthAttrValues = (Set) scAttrMap.get
+                        ("iplanet-am-auth-login-success-url");
+                log(Level.FINEST, "SetupProduct", "Value of " +
+                        "iplanet-am-auth-login-success-url: " + 
+                        oriAuthAttrValues);
+                Set newAuthValues = new HashSet();
+                newAuthValues.add(namingProtocol + "://" + namingHost + ":" + 
+                        namingPort + namingURI + "/console");
+                Map newAuthValuesMap = new HashMap();
+                newAuthValuesMap.put("iplanet-am-auth-login-success-url", 
+                        newAuthValues);
+                log(Level.FINEST, "AuthServiceOrgModificationTest", "Set " +
+                        "iplanet-am-auth-login-success-url to " + 
+                        newAuthValuesMap);
+                sc.setAttributes(newAuthValuesMap);
+            }                        
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
-        } finally {
+        } finally {          
             destroyToken(admintoken);
         }
     }

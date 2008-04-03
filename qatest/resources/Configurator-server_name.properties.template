@@ -19,6 +19,17 @@ notification_sleep=
 # '<protocol>://<fqdn>:<port>/<deploy-uri>/namingservice'
 namingservice=
 
+# Will distributed authentication be used in the installation under test.
+# Value should be "true" if distributed authentication is used and "false" 
+# if not.
+dist_auth_enabled=false
+
+# The notification URL of the distributed authentication deployment.
+# This value should have the following form:
+# '<da-protocol>://<da-fqdn>:<da-port>/<da-deploy-uri>/notificationservice
+# This value is only used if dist_auth_enabled is set to "true".
+dist_auth_notification_service=
+
 # The password to set for UrlAccessAgent user. This should be different from the
 # amadmin password. This property is utilized only at the time of configuring
 # the deployed war.

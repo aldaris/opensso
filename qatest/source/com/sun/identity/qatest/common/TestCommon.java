@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.40 2008-03-27 22:48:08 sridharev Exp $
+ * $Id: TestCommon.java,v 1.41 2008-04-03 19:40:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,9 +84,11 @@ public class TestCommon implements TestConstants {
     static protected String cookieDomain;
     static protected int notificationSleepTime;
     static protected Level logLevel;
+    static protected boolean distAuthEnabled = false;
     static private Logger logger;
     static private String logEntryTemplate;
     static private Server server;
+    static private String uriseparator = "/";
     private String productSetupResult;
     
     protected static String newline = System.getProperty("line.separator");
@@ -109,6 +111,8 @@ public class TestCommon implements TestConstants {
                     TestConstants.KEY_ATT_LOG_LEVEL);
             if ((logL != null)) {
                 logger.setLevel(Level.parse(logL));
+            } else {
+                logger.setLevel(Level.FINE);
             }
             logLevel = logger.getLevel();
             adminUser = rb_amconfig.getString(
@@ -116,10 +120,33 @@ public class TestCommon implements TestConstants {
             adminPassword = rb_amconfig.getString(
                     TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             basedn = rb_amconfig.getString(TestConstants.KEY_AMC_BASEDN);
-            protocol = rb_amconfig.getString(TestConstants.KEY_AMC_PROTOCOL);
-            host = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
-            port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
-            uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
+            distAuthEnabled = ((String)rb_amconfig.getString(
+                    TestConstants.KEY_DIST_AUTH_ENABLED)).equals("true");
+            if (!distAuthEnabled) {
+                protocol = rb_amconfig.getString(
+                        TestConstants.KEY_AMC_PROTOCOL);
+                host = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
+                port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
+                uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
+            } else {
+                String strDistAuthURL = rb_amconfig.getString(
+                         TestConstants.KEY_DIST_AUTH_NOTIFICATION_SVC);
+
+                int iFirstSep = strDistAuthURL.indexOf(":");
+                protocol = strDistAuthURL.substring(0, iFirstSep);
+
+                int iSecondSep = strDistAuthURL.indexOf(":", iFirstSep + 1);
+                host = strDistAuthURL.substring(iFirstSep + 3, iSecondSep);
+
+                int iThirdSep = strDistAuthURL.indexOf(uriseparator,
+                         iSecondSep + 1);
+                port = strDistAuthURL.substring(iSecondSep + 1, iThirdSep);
+
+                int iFourthSep = strDistAuthURL.indexOf(uriseparator,
+                         iThirdSep + 1);
+                uri = uriseparator +
+                        strDistAuthURL.substring(iThirdSep + 1, iFourthSep);                        
+            }
             realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM);
             cookieDomain = rb_amconfig.getString(
                     TestConstants.KEY_ATT_COOKIE_DOMAIN);
@@ -621,18 +648,22 @@ public class TestCommon implements TestConstants {
             String strNewURL = (String)map.get("serverurl") +
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
                     "IDToken1=" + adminUser + "&IDToken2=" +
-                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);;
-                    log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
+                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+                    log(Level.FINE, "configureProduct", "strNewURL: " + 
+                            strNewURL);
                     url = new URL(strNewURL);
                     page = (HtmlPage)webclient.getPage(url);
-                    if (getHtmlPageStringIndex(page, "Authentication Failed") != -1) {
-                        log(Level.FINE, "configureProduct", "Product was already" +
-                                " configured. Super admin login failed.");
+                    if (getHtmlPageStringIndex(page, 
+                            "Authentication Failed") != -1) {
+                        log(Level.FINE, "configureProduct", 
+                                "Product was already configured. " + 
+                                "Super admin login failed.");
                         exiting("configureProduct");
                         return false;
                     } else {
-                        log(Level.FINE, "configureProduct", "Product was already" +
-                                " configured. Super admin login successfull.");
+                        log(Level.FINE, "configureProduct", "Product was " + 
+                                "already configured. " + 
+                                "Super admin login successful.");
                         strNewURL = (String)map.get("serverurl") +
                                 (String)map.get("serveruri") + "/UI/Logout";
                         consoleLogout(webclient, strNewURL);
