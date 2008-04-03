@@ -17,16 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardStorageImpl.java,v 1.2 2008-02-28 23:31:20 superpat7 Exp $
+ * $Id: InfocardStorageImpl.java,v 1.3 2008-04-03 14:04:46 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
  */
-
 package com.identarian.infocard.opensso.db;
 
 import com.identarian.infocard.opensso.exception.InfocardException;
 import com.identarian.infocard.opensso.rp.Infocard;
+import com.identarian.infocard.opensso.rp.PropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import java.sql.*;
 
@@ -37,15 +37,18 @@ public class InfocardStorageImpl implements InfocardStorage {
     // the database name  
     private static final String dbName = "jdbcInfocardDB";
     // define the Derby connection URL to use 
-    private static final String connectionURL = "jdbc:derby://localhost:1527/" + dbName + ";create=true";
-    // TODO PPID is used as the key, but we (should?) use the card id instead
-    private static final String createString = "create table storecreds (ppid varchar(64) NOT NULL CONSTRAINT ACCOUNT_PK PRIMARY KEY," +
+    private static final String createString =
+            "create table storecreds (ppid varchar(64) NOT NULL CONSTRAINT ACCOUNT_PK PRIMARY KEY," +
+            "signature varchar(64)," +
             "userid varchar(64)," +
             "password varchar(64))";
     private static final String searchString = "SELECT * FROM storecreds where ppid = ?";
     private static Debug debug = null;
     private static Connection conn = null;
     private static boolean initialized = false;
+    private static String connectionURL = null;
+    private static String user = null;
+    private static String passwd = null;
 
     public InfocardStorageImpl() {
 
@@ -61,7 +64,25 @@ public class InfocardStorageImpl implements InfocardStorage {
         //   Beginning of JDBC code sections   
         //   ## LOAD DRIVER SECTION ##
         if (initialized == false) {
-            debug.message("starting up" + dbName + " database...");
+            debug.message("initializing" + dbName + " database...");
+            PropertiesManager modProperties = null;
+            try {
+                modProperties = new PropertiesManager(
+                        "/WEB-INF/classes/Infocard.properties");
+            } catch (Exception e) {
+                // Should be able to throw an exception here!
+                debug.error("Config error: can't access Infocard properties", e);
+            }
+            String jdbcHostname = modProperties.getProperty(
+                "com.identarian.infocard.opensso.jdbcHostname", "localhost");
+            String jdbcPort = modProperties.getProperty(
+                "com.identarian.infocard.opensso.jdbcPort", "1527");
+            user = modProperties.getProperty(
+                "com.identarian.infocard.opensso.jdbcUser", "APP");
+            passwd = modProperties.getProperty(
+                "com.identarian.infocard.opensso.jdbcPasswd", "APP");
+            connectionURL = "jdbc:derby://"+jdbcHostname+":"+jdbcPort+
+                    "/" + dbName + ";create=true";
             try {
                 // Load the Derby driver.
                 Class.forName(driver);
@@ -70,15 +91,15 @@ public class InfocardStorageImpl implements InfocardStorage {
                 debug.error(driver + " class not found", cnfe);
                 throw new InfocardException(driver + " class not found", cnfe);
             }
+        }
 
-            try {
-                // Create (if needed) and connect to the database
-                conn = DriverManager.getConnection(connectionURL);
-                debug.message("Connected to database " + dbName);
-                createStoredCredsTable();
-            } catch (SQLException sqle) {
-                throw new InfocardException("Failed to load JDBC driver", sqle);
-            }
+        try {
+            // Create (if needed) and connect to the database
+            conn = DriverManager.getConnection(connectionURL, user, passwd);
+            debug.message("Connected to database " + dbName);
+            createStoredCredsTable();
+        } catch (SQLException sqle) {
+            throw new InfocardException("Failed to load JDBC driver", sqle);
         }
     }
 
@@ -100,12 +121,14 @@ public class InfocardStorageImpl implements InfocardStorage {
     public void addCredentials(StoredCredentials creds)
             throws InfocardException {
 
-        if (conn == null) {
-            startup();
-        }
-
-        Statement s = null;
         try {
+
+            if (conn == null || !conn.isValid(5)) {
+                startup();
+            }
+
+            Statement s = null;
+
             s = conn.createStatement();
 
             try {
@@ -114,6 +137,8 @@ public class InfocardStorageImpl implements InfocardStorage {
                 // TODO: WE SHOULD encrypt the password!
                 StringBuffer insert = new StringBuffer("insert into storecreds values ('");
                 insert.append(creds.getPpid());
+                insert.append("', '");
+                insert.append(creds.getSignature());
                 insert.append("', '");
                 insert.append(creds.getUserID());
                 insert.append("', '");
@@ -145,12 +170,13 @@ public class InfocardStorageImpl implements InfocardStorage {
 
         StoredCredentials creds = null;
 
-        if (conn == null) {
-            startup();
-        }
-
-        PreparedStatement pstmt = null;
         try {
+            if (conn == null || !conn.isValid(5)) {
+                startup();
+            }
+
+            PreparedStatement pstmt = null;
+
             pstmt = conn.prepareStatement(searchString);
             try {
 
@@ -159,8 +185,9 @@ public class InfocardStorageImpl implements InfocardStorage {
                 if (rs.next()) {
                     creds = new StoredCredentials();
                     creds.setPpid(rs.getString(1));
-                    creds.setUserID(rs.getString(2));
-                    creds.setUserPasswd(rs.getString(3));
+                    creds.setSignature(rs.getString(2));
+                    creds.setUserID(rs.getString(3));
+                    creds.setUserPasswd(rs.getString(4));
                 }
                 rs.close();
                 pstmt.close();
