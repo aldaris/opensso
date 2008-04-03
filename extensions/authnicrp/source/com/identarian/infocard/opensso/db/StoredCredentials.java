@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StoredCredentials.java,v 1.2 2008-02-28 23:31:20 superpat7 Exp $
+ * $Id: StoredCredentials.java,v 1.3 2008-04-03 14:03:03 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -39,14 +39,16 @@ public class StoredCredentials implements Serializable {
     private static final long serialVersionUID = 1L;
     //@Id
     private String ppid;
+    private String signature;
     private String userID;
     private String userPasswd;
     
     protected StoredCredentials() {
     }
     
-    public StoredCredentials(String ppid, String uid, String passwd) {
+    public StoredCredentials(String ppid, String signature, String uid, String passwd) {
         this.ppid = ppid;
+        this.signature = signature;
         this.userID = uid;
         this.userPasswd = passwd;
     }
@@ -91,6 +93,14 @@ public class StoredCredentials implements Serializable {
 
     public void setPpid(String ppid) {
         this.ppid = ppid;
+    }
+    
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public String getUserID() {
