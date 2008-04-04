@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.4 2008-03-20 06:25:37 asyhuang Exp $
+   $Id: CreateHostedSP.jsp,v 1.5 2008-04-04 04:30:20 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -257,8 +257,6 @@
             return "&entityId=" +
             escape(frm.elements['CreateHostedSP.tfEntityId'].value) +
             "&realm=" + escape(realm) +
-            "&specert=" +
-            escape(frm.elements['CreateHostedSP.tfEncKey'].value) +
             "&cot=" + escape(cot) +
             "&attributemappings=" + escape(getNameAttributeMapping()) +
             "&defaultattributemappings=" + defaultAttrMapping;

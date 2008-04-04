@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSPViewBean.java,v 1.3 2008-03-12 15:14:09 veiming Exp $
+ * $Id: CreateHostedSPViewBean.java,v 1.4 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,6 @@ public class CreateHostedSPViewBean
 
     private static final String ENTITY_ID = "tfEntityId";
     private static final String META_DATA_FILE = "tfMetadataFile";
-    private static final String ENC_KEY = "tfEncKey";
     private static final String HAS_META_DATA = "radioHasMetaData";
     private static final String SELECT_COT  = "radioCOT";
     private static final String RADIO_META  = "radioMeta";
@@ -125,7 +124,7 @@ public class CreateHostedSPViewBean
         tableModel = new CCActionTableModel (
             getClass ().getClassLoader ().getResourceAsStream (
             "com/sun/identity/console/attributesMappingTable.xml"));
-        tableModel.setTitleLabel ("label.items");
+        tableModel.setTitleLabel("");
         tableModel.setActionValue ("deleteAttrMappingBtn",
             "configure.provider.attributesmapping.delete.button");
         tableModel.setActionValue ("NameColumn",
@@ -158,7 +157,7 @@ public class CreateHostedSPViewBean
                 html = html.substring(0, idx) + "</table></div>" + 
                     "<div id=\"info\">" + TAG_TABLE +
                     html.substring(idx);
-                idx = html.indexOf("tfEncKey");
+                idx = html.indexOf("tfEntityId");
                 idx = html.indexOf("</table>", idx);
                 html = html.substring(0, idx+8) + "</div>" +
                     html.substring(idx+8);
@@ -211,11 +210,7 @@ public class CreateHostedSPViewBean
                 html = html.substring(0, idx) +
                     "<span id=\"extendedfilename\"></span>" +
                     html.substring(idx);
-                idx = html.indexOf("menuUserAttributes");
-                idx = html.lastIndexOf("<select ", idx);
-                html = html.substring(0, idx) + "<br /><br />" +
-                    html.substring(idx);
-                
+
                 idx = html.indexOf("<div class=\"TblMgn\">");
                 html = html.substring(0, idx+4) + 
                     " id=\"tblAttrMappingDiv\" style=\"display:none\"" +
@@ -227,6 +222,7 @@ public class CreateHostedSPViewBean
                     " id=\"tblAttrMappingDivEx\" style=\"display:none\"" +
                     html.substring(idx+4);
             }
+            html = CreateFedletViewBean.removeSortHref(html);
         }
         return html;
     }
@@ -263,6 +259,7 @@ public class CreateHostedSPViewBean
         populateTableModel();
         
         Set userAttrNames = AMAdminUtils.getUserAttributeNames();
+        userAttrNames.remove("iplanet-am-user-account-life");
         CCDropDownMenu menuUserAttribute = (CCDropDownMenu)getChild(
             "menuUserAttributes");
         OptionList optList = createOptionList(userAttrNames);
@@ -277,13 +274,6 @@ public class CreateHostedSPViewBean
             Set realms = model.getRealms();
             CCDropDownMenu menuRealm = (CCDropDownMenu)getChild(REALM);
             menuRealm.setOptions(createOptionList(realms));
-            
-            Set keys = model.getSigningKeys();
-            OptionList optionList = createOptionList(keys);
-            optionList.add(0, 
-                model.getLocalizedString("configure.provider.keys.none"), "");
-            CCDropDownMenu menuEncKeys = (CCDropDownMenu)getChild(ENC_KEY);
-            menuEncKeys.setOptions(optionList);
         } catch (AMConsoleException ex) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 ex.getMessage());

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModel.java,v 1.2 2008-01-17 06:36:27 veiming Exp $
+ * $Id: TaskModel.java,v 1.3 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.task.model;
 
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
+import java.util.Map;
 import java.util.Set;
 
 public interface TaskModel
@@ -46,5 +47,81 @@ public interface TaskModel
      * @return a set of signing keys.
      */
     Set getSigningKeys()
+        throws AMConsoleException;
+    
+    /**
+     * Returns a set of circle of trusts.
+     * 
+     * @param realm Realm.
+     * @return a set of circle of trusts.
+     * @throws AMConsoleException if unable to retrieve circle of trusts.
+     */
+    Set getCircleOfTrusts(String realm)
+        throws AMConsoleException;
+    
+    /**
+     * Returns a set of entities in a circle of trust.
+     * 
+     * @param realm Realm.
+     * @param cotName Name of circle of trust.
+     * @return a set of entities in a circle of trust.
+     * @throws AMConsoleException if unable to retrieve entities.
+     */
+    Set getEntities(String realm, String cotName) 
+        throws AMConsoleException;
+    
+     /**
+     * Returns a set of hosted IDP in a circle of trust.
+     * 
+     * @param realm Realm.
+     * @param cotName Name of circle of trust.
+     * @return a set of hosted IDP in a circle of trust.
+     * @throws AMConsoleException if IDP cannot be returned.
+     */
+    Set getHostedIDP(String realm, String cotName)
+        throws AMConsoleException;
+    
+    /**
+     * Returns a set of remote IDP in a circle of trust.
+     * 
+     * @param realm Realm.
+     * @param cotName Name of circle of trust.
+     * @return a set of remote IDP in a circle of trust.
+     * @throws AMConsoleException if IDP cannot be returned.
+     */
+    Set getRemoteIDP(String realm, String cotName)
+        throws AMConsoleException;
+    
+    /**
+     * Returns a set of hosted SP in a circle of trust.
+     * 
+     * @param realm Realm.
+     * @param cotName Name of circle of trust.
+     * @return a set of hosted SP in a circle of trust.
+     * @throws AMConsoleException if IDP cannot be returned.
+     */
+    Set getHostedSP(String realm, String cotName)
+        throws AMConsoleException;
+    
+    /**
+     * Returns a set of remote SP in a circle of trust.
+     * 
+     * @param realm Realm.
+     * @param cotName Name of circle of trust.
+     * @return a set of remote SP in a circle of trust.
+     * @throws AMConsoleException if IDP cannot be returned.
+     */
+    Set getRemoteSP(String realm, String cotName)
+        throws AMConsoleException;
+    
+    /**
+     * Returns a map of realm to a map of circle of trust name to a set of
+     * Hosted Identity Providers.
+     * 
+     * @return a map of realm to a map of circle of trust name to a set of
+     *         Hosted Identity Providers.
+     * @throws AMConsoleException if this map cannot be constructed.
+     */
+    Map getRealmCotWithHostedIDPs() 
         throws AMConsoleException;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSP.java,v 1.4 2008-03-12 15:14:09 veiming Exp $
+ * $Id: CreateRemoteSP.java,v 1.5 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,12 +32,10 @@ import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -69,7 +67,7 @@ public class CreateRemoteSP
                 EntityDescriptorElement e = 
                     ImportSAML2MetaData.getEntityDescriptorElement(metadata);
                 String eId = e.getEntityID();
-                String metaAlias = CreateHostedSP.generateMetaAlias(realm);
+                String metaAlias = generateMetaAliasForSP(realm);
                 Map map = new HashMap();
                 map.put(CreateSAML2HostedProviderTemplate.P_SP, metaAlias);
                 extendedMeta = 
@@ -113,21 +111,6 @@ public class CreateRemoteSP
         }
 
         return getMessage("sp.configured", locale);
-    }
-
-    private List getAttributeMapping(Map params) {
-        List list = new ArrayList();
-        String strAttrMapping = getString(params, ParameterKeys.P_ATTR_MAPPING);
-        if ((strAttrMapping != null) && (strAttrMapping.length() > 0)) {
-            StringTokenizer st = new StringTokenizer(strAttrMapping, "|");
-            while (st.hasMoreTokens()) {
-                String s = st.nextToken();
-                if (s.length() > 0) {
-                    list.add(s);
-                }
-            }
-        }
-        return list;
     }
 
     private void validateParameters(Map params)

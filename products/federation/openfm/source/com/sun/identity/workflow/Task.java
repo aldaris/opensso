@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.5 2008-03-20 05:00:16 veiming Exp $
+ * $Id: Task.java,v 1.6 2008-04-04 04:30:20 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.workflow;
 
+import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaManager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,11 +37,15 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Base class for all Tasks.
@@ -142,5 +148,63 @@ public abstract class Task
                 getMessage("unable.to.reach.url", locale), param));
         }
     }
+    
+    protected List getAttributeMapping(Map params) {
+        List list = new ArrayList();
+        String strAttrMapping = getString(params, ParameterKeys.P_ATTR_MAPPING);
+        if ((strAttrMapping != null) && (strAttrMapping.length() > 0)) {
+            StringTokenizer st = new StringTokenizer(strAttrMapping, "|");
+            while (st.hasMoreTokens()) {
+                String s = st.nextToken();
+                if (s.length() > 0) {
+                    list.add(s);
+                }
+            }
+        }
+        return list;
+    }
+    
+    static String generateMetaAliasForIDP(String realm)
+        throws WorkflowException {
+        try {
+            Set metaAliases = new HashSet();
+            SAML2MetaManager mgr = new SAML2MetaManager();
+            metaAliases.addAll(
+                mgr.getAllHostedIdentityProviderMetaAliases(realm));
+            metaAliases.addAll(
+                mgr.getAllHostedServiceProviderMetaAliases(realm));
+            String metaAlias = (realm.equals("/")) ? "/idp" : realm + "/idp";
+            int counter = 1;
 
+            while (metaAliases.contains(metaAlias)) {
+                metaAlias = metaAlias + Integer.toString(counter);
+                counter++;
+            }
+            return metaAlias;
+        } catch (SAML2MetaException e) {
+            throw new WorkflowException(e.getMessage());
+        }
+    }
+    
+    static String generateMetaAliasForSP(String realm)
+        throws WorkflowException {
+        try {
+            Set metaAliases = new HashSet();
+            SAML2MetaManager mgr = new SAML2MetaManager();
+            metaAliases.addAll(
+                mgr.getAllHostedIdentityProviderMetaAliases(realm));
+            metaAliases.addAll(
+                mgr.getAllHostedServiceProviderMetaAliases(realm));
+            String metaAlias = (realm.equals("/")) ? "/sp" : realm + "/sp";
+            int counter = 1;
+
+            while (metaAliases.contains(metaAlias)) {
+                metaAlias = metaAlias + Integer.toString(counter);
+                counter++;
+            }
+            return metaAlias;
+        } catch (SAML2MetaException e) {
+            throw new WorkflowException(e.getMessage());
+        }
+    }
 }

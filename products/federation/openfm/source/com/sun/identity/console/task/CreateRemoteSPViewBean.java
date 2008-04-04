@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSPViewBean.java,v 1.4 2008-03-12 15:14:09 veiming Exp $
+ * $Id: CreateRemoteSPViewBean.java,v 1.5 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,7 @@ public class CreateRemoteSPViewBean
         tableModel = new CCActionTableModel(
             getClass().getClassLoader().getResourceAsStream(
             "com/sun/identity/console/attributesMappingTable.xml"));
-        tableModel.setTitleLabel("label.items");
+        tableModel.setTitleLabel("");
         tableModel.setActionValue("deleteAttrMappingBtn",
             "configure.provider.attributesmapping.delete.button");
         tableModel.setActionValue("NameColumn",
@@ -166,6 +166,7 @@ public class CreateRemoteSPViewBean
         populateTableModel();
 
         Set userAttrNames = AMAdminUtils.getUserAttributeNames();
+        userAttrNames.remove("iplanet-am-user-account-life");
         CCDropDownMenu menuUserAttribute = (CCDropDownMenu) getChild(
             "menuUserAttributes");
         OptionList optList = createOptionList(userAttrNames);
@@ -234,11 +235,7 @@ public class CreateRemoteSPViewBean
         html = html.substring(0, idx + 8) + "</div></div>" +
             html.substring(idx + 8);
         
-        idx = html.indexOf("menuUserAttributes");
-        idx = html.lastIndexOf("<select ", idx);
-        html = html.substring(0, idx) + "<br /><br />" +
-            html.substring(idx);
-
+        html = CreateFedletViewBean.removeSortHref(html);
         return html;
     }
 }

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AjaxProxy.jsp,v 1.1 2008-01-15 06:44:18 veiming Exp $
+   $Id: AjaxProxy.jsp,v 1.2 2008-04-04 04:30:17 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -57,7 +57,8 @@
                 map.put(n, request.getParameter(n));
             }
         }
-        
+
+        map.put("_servlet_context_", getServletConfig().getServletContext());
         out.println("0|" + task.execute(resLocale, map));
     } catch (WorkflowException e) {
         out.write("1|" + e.getL10NMessage(resLocale));

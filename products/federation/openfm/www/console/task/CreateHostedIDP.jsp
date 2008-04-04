@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.5 2008-03-20 06:25:36 asyhuang Exp $
+   $Id: CreateHostedIDP.jsp,v 1.6 2008-04-04 04:30:20 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -183,7 +183,7 @@
 
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
 
-    var msgConfigured = '<p>&nbsp;</p><cc:text name="txtConfigured" defaultValue="configure.provider.done" bundleID="amConsole" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtn" defaultValue="ajax.yes.button" bundleID="amConsole" />" onClick="createRemoteSP();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.no.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
+    var msgConfigured = '<cc:text name="txtConfigured" defaultValue="configure.provider.done" bundleID="amConsole" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtnSP" defaultValue="ajax.yes.sp.button" bundleID="amConsole" />" onClick="createRemoteSP();return false;" /> <input name="yesFedlet" type="submit" class="Btn1" value="<cc:text name="txtYesBtnSP" defaultValue="ajax.yes.fedlet.button" bundleID="amConsole" />" onClick="createFedlet();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.neither.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
 
     var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
 
@@ -254,8 +254,6 @@
             return "&entityId=" +
             escape(frm.elements['CreateHostedIDP.tfEntityId'].value) +
             "&realm=" + escape(realm) +
-            "&idpecert=" +
-            escape(frm.elements['CreateHostedIDP.tfEncKey'].value) +
             "&idpscert=" +
             escape(frm.elements['CreateHostedIDP.tfSigningKey'].value) +
             "&cot=" + escape(cot) +
@@ -318,6 +316,17 @@
                 ajaxObj = getXmlHttpRequestObject();
             }
         }
+    }
+
+    function createFedlet() {
+        var cot;
+        var cotRadio = getRadioVal(frm, 'CreateHostedIDP.radioCOT');
+        if (cotRadio == "yes") {
+            cot = frm.elements['CreateHostedIDP.choiceCOT'].value;
+        } else {
+            cot = frm.elements['CreateHostedIDP.tfCOT'].value;
+        }
+        document.location.replace('CreateFedlet?cot=' + cot + '&' + data);
     }
 
     function createRemoteSP() {
@@ -432,6 +441,14 @@
         tblBtnCounter['tblButton'] = 0;
         ccSetButtonDisabled('CreateHostedIDP.deleteAttrMappingBtn', 'CreateHostedIDP', true);
         return false;
+    }
+
+    function signKeySelect(menu) {
+        if (menu.value == 'test') {
+            document.getElementById('signTest').style.display = '';
+        } else {
+            document.getElementById('signTest').style.display = 'none';
+        }
     }
 
     function userAttrSelect(menu) {

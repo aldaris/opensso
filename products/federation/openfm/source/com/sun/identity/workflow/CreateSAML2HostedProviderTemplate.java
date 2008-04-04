@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.13 2008-04-03 07:04:43 hengming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.14 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,6 +162,13 @@ public class CreateSAML2HostedProviderTemplate {
     )  {
         String idpSCertAlias = (String)mapParams.get(P_IDP_S_CERT);
         String idpECertAlias = (String)mapParams.get(P_IDP_E_CERT);
+        
+        if (idpSCertAlias == null) {
+            idpSCertAlias = "";
+        }
+        if (idpECertAlias == null) {
+            idpECertAlias = "";
+        }
 
         buff.append(
             "    <IDPSSOConfig metaAlias=\"" + idpAlias + "\">\n" +
@@ -303,7 +310,13 @@ public class CreateSAML2HostedProviderTemplate {
     )  {
         String spSCertAlias = (String)mapParams.get(P_SP_S_CERT);
         String spECertAlias = (String)mapParams.get(P_SP_E_CERT);
-
+        if (spSCertAlias == null) {
+            spSCertAlias = "";
+        }
+        if (spECertAlias == null) {
+            spECertAlias = "";
+        }
+        
         buff.append(
             "    <SPSSOConfig metaAlias=\"" + spAlias + "\">\n" +
             "        <Attribute name=\"" + SAML2Constants.ENTITY_DESCRIPTION +
@@ -479,7 +492,14 @@ public class CreateSAML2HostedProviderTemplate {
     )  {
         String attraECertAlias = (String)mapParams.get(P_ATTR_AUTHORITY_E_CERT);
         String attraSCertAlias = (String)mapParams.get(P_ATTR_AUTHORITY_S_CERT);
-
+        
+        if (attraECertAlias == null) {
+            attraECertAlias = "";
+        }
+        if (attraSCertAlias == null) {
+            attraSCertAlias = "";
+        }
+        
         buff.append(
             "    <AttributeAuthorityConfig metaAlias=\"" + attraAlias + "\">\n"+
             "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
@@ -525,6 +545,14 @@ public class CreateSAML2HostedProviderTemplate {
             P_ATTR_QUERY_PROVIDER_S_CERT);
         String attrqECertAlias = (String)mapParams.get(
             P_ATTR_QUERY_PROVIDER_E_CERT);
+        
+        if (attrqSCertAlias == null) {
+            attrqSCertAlias = "";
+        }
+        if (attrqECertAlias == null) {
+            attrqECertAlias = "";
+        }        
+
         buff.append(
             "    <AttributeQueryConfig metaAlias=\"" + attrqAlias + "\">\n" +
             "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
@@ -549,7 +577,13 @@ public class CreateSAML2HostedProviderTemplate {
             (String)mapParams.get(P_AUTHN_AUTHORITY_E_CERT);
         String authnaSCertAlias =
             (String)mapParams.get(P_AUTHN_AUTHORITY_S_CERT);
-
+        if (authnaECertAlias == null) {
+            authnaECertAlias = "";
+        }
+        if (authnaSCertAlias == null) {
+            authnaSCertAlias = "";
+        }
+        
         buff.append(
             "    <AuthnAuthorityConfig metaAlias=\"" + authnaAlias + "\">\n"+
             "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
@@ -577,7 +611,13 @@ public class CreateSAML2HostedProviderTemplate {
     )  {
         String affiECertAlias = (String)mapParams.get(P_AFFI_E_CERT);
         String affiSCertAlias = (String)mapParams.get(P_AFFI_S_CERT);
-
+        if (affiECertAlias == null) {
+            affiECertAlias = "";
+        }
+        if (affiSCertAlias == null) {
+            affiSCertAlias = "";
+        }
+        
         buff.append(
             "    <AffiliationConfig metaAlias=\"" + affiAlias + "\">\n"+
             "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
@@ -599,6 +639,12 @@ public class CreateSAML2HostedProviderTemplate {
     )  {
         String pdpECertAlias = (String)mapParams.get(P_PDP_E_CERT);
         String pdpSCertAlias = (String)mapParams.get(P_PDP_S_CERT);
+        if (pdpECertAlias == null) {
+            pdpECertAlias = "";
+        }
+        if (pdpSCertAlias == null) {
+            pdpSCertAlias = "";
+        }
         buff.append(
             "    <XACMLPDPConfig metaAlias=\"" + pdpAlias + "\">\n" +
             "        <Attribute name=\"" + SAML2Constants.SIGNING_CERT_ALIAS +
@@ -637,7 +683,12 @@ public class CreateSAML2HostedProviderTemplate {
     )  {
         String pepECertAlias = (String)mapParams.get(P_PEP_E_CERT);
         String pepSCertAlias = (String)mapParams.get(P_PEP_S_CERT);
-
+        if (pepECertAlias == null) {
+            pepECertAlias = "";
+        }
+        if (pepSCertAlias == null) {
+            pepSCertAlias = "";
+        }
         buff.append(
             "   <XACMLAuthzDecisionQueryConfig metaAlias=\"" + pepAlias +
             "\">\n" +

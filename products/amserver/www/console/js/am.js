@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.4 2008-01-31 04:08:05 veiming Exp $
+ * $Id: am.js,v 1.5 2008-04-04 04:30:17 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -183,6 +183,73 @@ function selectOption(frm, name, value) {
         if (selectObj.options[i].value == value) {
             selectObj.options[i].selected = true;
             return;
+        }
+    }
+}
+
+function getSelectedOption(frm, name) {
+    var selectObj = frm.elements[name];
+    var sz = selectObj.options.length;
+    for (var i = 0; i < sz; i++) {
+        if (selectObj.options[i].selected) {
+            return selectObj.options[i].value;
+        }
+    }
+    return "";
+}
+
+function clearOptions(frm, name) {
+    var selectObj = frm.elements[name];
+    var sz = selectObj.options.length;
+    for (var i = sz-1; i >=0; --i) {
+        selectObj.options[i] = null;
+   }
+}
+
+function addOption(frm, name, value) {
+    var selectObj = frm.elements[name];
+    selectObj.options[selectObj.options.length] = new Option(value, value);
+}
+
+function constructArray(strArray) {
+    var sIdx = strArray.indexOf("{");
+    var eIdx = strArray.indexOf("}");
+
+    while ((sIdx > -1) && (eIdx > -1)) {
+        var str = strArray.substring(sIdx+1, eIdx);
+        var idx = str.indexOf("=");
+        if (idx != -1) {
+            var arrayName = str.substring(0, idx);
+            eval(arrayName + '= new Array();');
+            str = str.substring(idx+1);
+            idx = str.indexOf(",");
+            var secIdx = 0;
+
+            while (idx != -1) {
+                eval(arrayName + '[' + secIdx + ']=\'' + str.substring(0, idx) + '\';');
+                str = str.substring(idx+1);
+                idx = str.indexOf(",");
+                secIdx++;
+            }
+            if (str != "") {
+                eval(arrayName + '[' + secIdx + ']=\'' + str + '\';');
+            }
+        }
+        strArray = strArray.substring(eIdx +1);
+        sIdx = strArray.indexOf("{");
+        eIdx = strArray.indexOf("}");
+    }
+}
+
+function disableButton(frm, btnName, bDisable) {
+    var btn = frm.elements[btnName];
+    if (btn) {
+        if (bDisable) {
+            btn.className = 'Btn1Dis';
+            btn.disabled = 'disabled';
+        } else {
+            btn.className = 'Btn1';
+            btn.disabled = 0;
         }
     }
 }

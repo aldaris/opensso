@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDP.java,v 1.5 2008-03-12 15:14:09 veiming Exp $
+ * $Id: CreateHostedIDP.java,v 1.6 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,14 +31,12 @@ import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
  * Creates Hosted Identity Provider.
@@ -70,7 +68,7 @@ public class CreateHostedIDP
             extendedData = getContent(extendedDataFile, locale);
         } else {
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
-            String metaAlias = generateMetaAlias(getString(params, 
+            String metaAlias = generateMetaAliasForIDP(getString(params, 
                 ParameterKeys.P_REALM));
             Map map = new HashMap();
             map.put(CreateSAML2HostedProviderTemplate.P_IDP, metaAlias);
@@ -120,42 +118,10 @@ public class CreateHostedIDP
         } catch (SAML2MetaException e) {
             throw new WorkflowException(e.getMessage());
         }
-        return getMessage("idp.configured", locale) + "|||realm=" + realm;
-    }
-    
-    private List getAttributeMapping(Map params) {
-        List list = new ArrayList();
-        String strAttrMapping = getString(params, ParameterKeys.P_ATTR_MAPPING);
-        if ((strAttrMapping != null) && (strAttrMapping.length() > 0)) {
-            StringTokenizer st = new StringTokenizer(strAttrMapping, "|");
-            while (st.hasMoreTokens()) {
-                String s = st.nextToken();
-                if (s.length() > 0) {
-                    list.add(s);
-                }
-            }
-        }
-        return list;
-    }
-    
-    private String generateMetaAlias(String realm)
-        throws WorkflowException {
         try {
-            Set metaAliases = new HashSet();
-            SAML2MetaManager mgr = new SAML2MetaManager();
-            metaAliases.addAll(
-                mgr.getAllHostedIdentityProviderMetaAliases(realm));
-            metaAliases.addAll(
-                mgr.getAllHostedServiceProviderMetaAliases(realm));
-            String metaAlias = (realm.equals("/")) ? "/idp" : realm + "/idp";
-            int counter = 1;
-
-            while (metaAliases.contains(metaAlias)) {
-                metaAlias = metaAlias + Integer.toString(counter);
-                counter++;
-            }
-            return metaAlias;
-        } catch (SAML2MetaException e) {
+           return getMessage("idp.configured", locale) + "|||realm=" + realm +
+                "&entityId=" + URLEncoder.encode(entityId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
             throw new WorkflowException(e.getMessage());
         }
     }

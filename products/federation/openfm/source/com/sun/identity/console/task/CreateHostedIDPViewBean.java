@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDPViewBean.java,v 1.4 2008-03-12 15:14:09 veiming Exp $
+ * $Id: CreateHostedIDPViewBean.java,v 1.5 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,7 @@ public class CreateHostedIDPViewBean
         tableModel = new CCActionTableModel (
             getClass ().getClassLoader ().getResourceAsStream (
             "com/sun/identity/console/attributesMappingTable.xml"));
-        tableModel.setTitleLabel ("label.items");
+        tableModel.setTitleLabel("");
         tableModel.setActionValue ("deleteAttrMappingBtn",
             "configure.provider.attributesmapping.delete.button");
         tableModel.setActionValue ("NameColumn",
@@ -158,7 +158,7 @@ public class CreateHostedIDPViewBean
                 html = html.substring(0, idx) + "</table></div>" + 
                     "<div id=\"info\">" + TAG_TABLE +
                     html.substring(idx);
-                idx = html.indexOf("tfEncKey");
+                idx = html.indexOf("tfSigningKey");
                 idx = html.indexOf("</table>", idx);
                 html = html.substring(0, idx+8) + "</div>" +
                     html.substring(idx+8);
@@ -211,11 +211,20 @@ public class CreateHostedIDPViewBean
                 html = html.substring(0, idx) +
                     "<span id=\"extendedfilename\"></span>" +
                     html.substring(idx);
-                
-                idx = html.indexOf("menuUserAttributes");
+
+                idx = html.indexOf("tfSigningKey");
                 idx = html.lastIndexOf("<select ", idx);
-                html = html.substring(0, idx) + "<br /><br />" +
+                html = html.substring(0, idx) +
+                    "<table border=0><tr><td>" +
                     html.substring(idx);
+                idx = html.indexOf("</select>", idx);
+                html = html.substring(0, idx+9) + 
+                    "</td><td><span id=\"signTest\" style=\"display:none\">" + 
+                    html.substring(idx+9);
+                idx = html.indexOf("<br />", idx);
+                html = html.substring(0, idx) + 
+                    "</span></td></tr></table>" + html.substring(idx+6);
+                html = CreateFedletViewBean.removeSortHref(html);
             }
         }
         return html;
@@ -253,6 +262,7 @@ public class CreateHostedIDPViewBean
         populateTableModel();
         
         Set userAttrNames = AMAdminUtils.getUserAttributeNames();
+        userAttrNames.remove("iplanet-am-user-account-life");
         CCDropDownMenu menuUserAttribute = (CCDropDownMenu)getChild(
             "menuUserAttributes");
         OptionList optList = createOptionList(userAttrNames);
@@ -271,8 +281,6 @@ public class CreateHostedIDPViewBean
                 model.getLocalizedString("configure.provider.keys.none"), "");
             CCDropDownMenu menuSignKeys = (CCDropDownMenu)getChild(SIGN_KEY);
             menuSignKeys.setOptions(optionList);
-            CCDropDownMenu menuEncKeys = (CCDropDownMenu)getChild(ENC_KEY);
-            menuEncKeys.setOptions(optionList);
         } catch (AMConsoleException ex) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 ex.getMessage());

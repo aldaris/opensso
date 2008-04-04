@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateHostedIDP.xml,v 1.3 2008-03-12 15:14:07 veiming Exp $
+   $Id: propertyCreateHostedIDP.xml,v 1.4 2008-04-04 04:30:20 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -110,13 +110,13 @@
     </property>
     <property>
 	<label name="lblSigningKey" defaultValue="configure.provider.label.signing.key" labelFor="tfSigningKey" />
-	<cc name="tfSigningKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
+	<cc name="tfSigningKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <attribute name="onChange" value="signKeySelect(this);" />
+        </cc>
+        <cc name="txtSigningKeyText" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="defaultValue" value="configure.provider.help.signing.key.test" />
+        </cc>
         <fieldhelp name="helpSigningKey" defaultValue="configure.provider.help.signing.key" />
-    </property>
-    <property>
-	<label name="lblEncKey" defaultValue="configure.provider.label.encryption.key" labelFor="tfEncKey" />
-	<cc name="tfEncKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
-        <fieldhelp name="helpEncKey" defaultValue="configure.provider.help.encryption.key" />
     </property>
     </section>
     <section name="cot" defaultValue="configure.provider.section.cot">

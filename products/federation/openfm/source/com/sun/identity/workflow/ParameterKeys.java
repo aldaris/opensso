@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ParameterKeys.java,v 1.4 2008-03-12 15:14:09 veiming Exp $
+ * $Id: ParameterKeys.java,v 1.5 2008-04-04 04:30:20 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,9 @@ public interface ParameterKeys {
     String P_SP_E_CERT = "idpecert";
     String P_SP_S_CERT = "idpscert";
     String P_COT = "cot";
+    String P_IDP = "idp";
     String P_ATTR_MAPPING = "attributemappings";
     String P_DEF_ATTR_MAPPING = "defaultattributemappings";
+    String P_ASSERT_CONSUMER = "assertionconsumer";
+    String P_SERVLET_CONTEXT = "_servlet_context_";
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSP.java,v 1.3 2008-03-12 15:14:09 veiming Exp $
+ * $Id: CreateHostedSP.java,v 1.4 2008-04-04 04:30:19 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,9 @@ import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
  * Creates Hosted Service Provider.
@@ -72,7 +69,7 @@ public class CreateHostedSP
             extendedData = getContent(extendedDataFile, locale);
         } else {
             String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
-            String metaAlias = generateMetaAlias(
+            String metaAlias = generateMetaAliasForSP(
                 getString(params, ParameterKeys.P_REALM));
             Map map = new HashMap();
             map.put(CreateSAML2HostedProviderTemplate.P_SP, metaAlias);
@@ -134,21 +131,6 @@ public class CreateHostedSP
         return getMessage("sp.configured", locale) + "|||realm=" + realm;
     }
     
-    private List getAttributeMapping(Map params) {
-        List list = new ArrayList();
-        String strAttrMapping = getString(params, ParameterKeys.P_ATTR_MAPPING);
-        if ((strAttrMapping != null) && (strAttrMapping.length() > 0)) {
-            StringTokenizer st = new StringTokenizer(strAttrMapping, "|");
-            while (st.hasMoreTokens()) {
-                String s = st.nextToken();
-                if (s.length() > 0) {
-                    list.add(s);
-                }
-            }
-        }
-        return list;
-    }
-    
     private String enableSigning(String metadata) {
         int idx = metadata.indexOf("WantAssertionsSigned=\"false\"");
         if (idx != -1) {
@@ -159,28 +141,6 @@ public class CreateHostedSP
         return metadata;
     }
     
-    static String generateMetaAlias(String realm)
-        throws WorkflowException {
-        try {
-            Set metaAliases = new HashSet();
-            SAML2MetaManager mgr = new SAML2MetaManager();
-            metaAliases.addAll(
-                mgr.getAllHostedIdentityProviderMetaAliases(realm));
-            metaAliases.addAll(
-                mgr.getAllHostedServiceProviderMetaAliases(realm));
-            String metaAlias = (realm.equals("/")) ? "/sp" : realm + "/sp";
-            int counter = 1;
-
-            while (metaAliases.contains(metaAlias)) {
-                metaAlias = metaAlias + Integer.toString(counter);
-                counter++;
-            }
-            return metaAlias;
-        } catch (SAML2MetaException e) {
-            throw new WorkflowException(e.getMessage());
-        }
-    }
-
     private void validateParameters(Map params)
         throws WorkflowException {
         String metadata = getString(params, ParameterKeys.P_META_DATA);

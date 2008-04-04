@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateHostedSP.xml,v 1.3 2008-03-12 15:14:07 veiming Exp $
+   $Id: propertyCreateHostedSP.xml,v 1.4 2008-04-04 04:30:20 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -107,11 +107,6 @@
 	    <attribute name="size" value="75" />
 	</cc>
         <fieldhelp name="helpEntityId" defaultValue="configure.provider.help.entityId" />
-    </property>
-    <property>
-	<label name="lblEncKey" defaultValue="configure.provider.label.encryption.key" labelFor="tfEncKey" />
-	<cc name="tfEncKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
-        <fieldhelp name="helpEncKey" defaultValue="configure.provider.help.encryption.key" />
     </property>
     </section>
     <section name="cot" defaultValue="configure.provider.section.cot">

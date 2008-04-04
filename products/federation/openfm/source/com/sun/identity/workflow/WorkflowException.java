@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WorkflowException.java,v 1.1 2008-01-15 06:44:20 veiming Exp $
+ * $Id: WorkflowException.java,v 1.2 2008-04-04 04:30:20 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.workflow;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 import java.util.Locale;
