@@ -209,6 +209,10 @@ am_policy_resource_canonicalize(const char *, char **);
 AM_EXPORT am_status_t
 am_policy_invalidate_session(am_policy_t policy_handle,
                              const char *ssoTokenId);
+AM_EXPORT am_status_t
+am_policy_user_logout(am_policy_t policy_handle,
+                             const char *ssoTokenId,
+                             am_properties_t properties);
 
 AM_END_EXTERN_C
 

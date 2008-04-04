@@ -1774,8 +1774,9 @@ am_web_is_access_allowed(const char *sso_token,
 	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0') {
 		am_web_log_debug("invalidating session %s", sso_token);
 		am_status_t logout_status =
-		    am_policy_invalidate_session(boot_info.policy_handle,
-						 sso_token);
+		    am_policy_user_logout(boot_info.policy_handle,
+						 sso_token,
+						 (*agentConfigPtr)->properties);
 		if (AM_SUCCESS != logout_status) {
 		    am_web_log_warning(
 				"%s: Error %s invalidating session %s.",

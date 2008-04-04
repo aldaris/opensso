@@ -118,6 +118,9 @@ class PolicyEngine {
      *	InternalException upon other errors
      */
     am_status_t invalidate_session(am_policy_t hdl, const char *ssoTokenId);
+    am_status_t user_logout(am_policy_t hdl, 
+                                   const char *ssoTokenId,
+                                   Properties& );
 
     /* Throws InternalException upon error */
     bool isNotificationEnabled(am_policy_t); 

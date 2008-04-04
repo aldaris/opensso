@@ -116,7 +116,7 @@ class Service {
 
     am_status_t do_agent_auth_logout();
 
-    void initialize(SSOToken ssoToken, Properties& properties);
+    void initialize(Properties& properties);
 
     void update_policy(const SSOToken &, const std::string &,
 		       const std::string &,
@@ -212,6 +212,9 @@ class Service {
 
     am_status_t invalidate_session(const char *ssoTokenId);
 
+    am_status_t user_logout(const char *ssoTokenId,
+                                   Properties& properties);
+
     void flushPolicyEntry(const SSOToken&);
 
     void setRemUserAndAttrs(am_policy_result_t *policy_res,
@@ -238,6 +241,8 @@ private:
     void construct_advice_string(const KeyValueMap &, std::string &) const;
     void add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
 				      std::string &adviceStr) const;
+    void reinitialize(Properties& properties); 
+
 
 };
 

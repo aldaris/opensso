@@ -106,6 +106,7 @@ typedef enum {
     AM_REST_ATTRS_SERVICE_FAILURE, /* error code 32 */
     AM_REST_SERVICE_NOT_AVAILABLE, /* error code 33 */
     AM_REPOSITORY_TYPE_INVALID, /* error code 34, valid values: local, centralized */
+    AM_INVALID_APP_SSOTOKEN,
     AM_NUM_ERROR_CODES	/* This should always be the last. */
 } am_status_t;
 

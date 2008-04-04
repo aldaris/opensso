@@ -98,6 +98,7 @@ private:
     static const BodyChunk prefixChunk;
     static const BodyChunk firstSessionRequestPrefixChunk;
     static const BodyChunk additionalSessionRequestPrefixChunk;
+    static const BodyChunk encodedAppSSOTokenPrefixChunk;
     static const BodyChunk getSessionRequestPrefixChunk;
     static const BodyChunk getSessionRequestMiddleChunk;
     static const BodyChunk getSessionRequestSuffixChunk;
@@ -115,6 +116,7 @@ private:
     static const BodyChunk suffixChunk;
     static const BodyChunk falseChunk;
     static const BodyChunk trueChunk;
+
 };
 
 END_PRIVATE_NAMESPACE

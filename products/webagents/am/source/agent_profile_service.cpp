@@ -751,6 +751,7 @@ am_status_t AgentProfileService::agentLogin()
 
         // set the agent SSO Token.
         agentSSOToken = authC.getSSOToken();
+        setEncodedAgentSSOToken(agentSSOToken);
 
         // save the auth context for logging out when service is destroyed
         mAuthCtx = authC;
@@ -942,4 +943,29 @@ bool AgentProfileService::isListMapProperty(const char* propName) {
     }
 
     return retVal;
+}
+
+/*
+* Encoded App SSOToken needs to be sent in
+* requester attribute in SessionRequest.
+*/
+void AgentProfileService::setEncodedAgentSSOToken(std::string appSSOToken) {
+    char* encodedAppSSOTokenString = NULL;
+    string tmpTokenString = "token:";
+    tmpTokenString.append(appSSOToken);
+    encodedAppSSOTokenString = (char *)
+        malloc(((tmpTokenString.size() * 4/3 + 1)/4 + 1)*4 + 4);
+
+    if(encodedAppSSOTokenString != NULL) {
+        encode_base64(tmpTokenString.c_str(),
+                  tmpTokenString.size(),
+                  encodedAppSSOTokenString);
+        encodedAgentSSOToken = encodedAppSSOTokenString;
+    } else {
+        encodedAgentSSOToken = "";
+    }
+
+    if(encodedAppSSOTokenString != NULL) {
+       free(encodedAppSSOTokenString);
+    }
 }

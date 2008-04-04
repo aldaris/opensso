@@ -74,6 +74,10 @@ public:
     std::string getAgentSSOToken() {
         return agentSSOToken;
     }
+
+    std::string getEncodedAgentSSOToken() {
+        return encodedAgentSSOToken;
+    }
     
     void fetchAndUpdateAgentConfigCache();
     void deleteOldAgentConfigInstances();
@@ -94,6 +98,7 @@ private:
     std::string repositoryType;
     AgentConfigCache agentConfigCache;
     Utils::boot_info_t boot_info;
+    std::string encodedAgentSSOToken; 
 
     Utils::url_info_list_t not_enforced_list_c;
 
@@ -106,6 +111,7 @@ private:
                                        bool isRestURL,
                                        std::string &parsedServiceURL);
     bool isListMapProperty(const char* propName); 
+    void setEncodedAgentSSOToken(std::string agentSSOToken);
 
 };
 

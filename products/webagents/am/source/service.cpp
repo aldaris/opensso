@@ -192,7 +192,7 @@ Service::Service(const char *svcName,
  *	InternalException upon other errors
  */
 void
-Service::initialize(SSOToken ssoToken, Properties& properties) {
+Service::initialize(Properties& properties) {
     string func("Service::initialize()");
     ScopeLock myLock(lock);
     if(initialized == true) {
@@ -320,7 +320,11 @@ Service::initialize(SSOToken ssoToken, Properties& properties) {
     am_status_t status;
     mPolicyEntry = new PolicyEntry(rsrcTraits);
     SSOToken& ssoTok = mPolicyEntry->getSSOToken();
-    ssoTok = ssoToken;
+    const SSOToken appSSOToken(
+              agentProfileService->getAgentSSOToken(),
+              Http::encode(agentProfileService->getAgentSSOToken()));
+
+    ssoTok = appSSOToken;
 
     // Do naming query
     if(AM_SUCCESS !=
@@ -1043,10 +1047,7 @@ Service::getPolicyResult(const char *userSSOToken,
     bool mFetchFromRootResource;
 
     if(initialized == false) {
-        const SSOToken appSSOToken(
-              agentProfileService->getAgentSSOToken(),
-              Http::encode(agentProfileService->getAgentSSOToken()));
-        initialize(appSSOToken, properties);
+        initialize(properties);
     }
 
     rsrcTraits.canonicalize(rName, &c_res);
@@ -1354,15 +1355,39 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
                            policyEntry->cookies, true, sessionInfo, 
                            false, false);
     
-    if (status != AM_SUCCESS) {
-        // if agent could not contact session service to validate
-        // user, and get any NSPR error, it is considered equivalent
-	// to the session being invalid.
-        if (AM_NSPR_ERROR == status) {
-             status = AM_INVALID_SESSION;
+    // If app ssotoken got invalidated,
+    // then agent need to reinitialize. 
+    if (status == AM_INVALID_APP_SSOTOKEN) {
+        Log::log(logID, Log::LOG_WARNING, 
+            "Agent SSOToken reset during getSessionInfo().");
+        reinitialize(properties);
+        if (initialized == true) {
+            Log::log(logID, Log::LOG_WARNING,
+                    "Thread wokeup after successful initialization.");
+            // agent reinitialized, so try getSessionInfo again.
+            // this will be required in case app ssotoken invalidated
+            // not because of server restart, but for some other reason.
+            status =  mSSOTokenSvc.getSessionInfo(
+                           policyEntry->namingInfo.getSessionSvcInfo(), 
+                           ssoTok.getString(), 
+                           policyEntry->cookies, true, sessionInfo, 
+                           false, false);
+        } else {
+            throw InternalException(func, "Agent reinitialization failed",
+                    status);
         }
-	throw InternalException(func, "Session query failed.", status);
+    } 
+    // endof reinitialize service
+
+    if (status != AM_SUCCESS) {
+        
+        // Log:ERROR
+        if (AM_NSPR_ERROR == status) {
+            status = AM_INVALID_SESSION;
+        }
+        throw InternalException(func, "Session query failed.", status);
     }
+
 
     if (refetchPolicy) {
         policyUpdated = do_update_policy(ssoTok, resName, actionName, env,
@@ -1448,56 +1473,31 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 					       attrList,
 					       xmlData)) != AM_SUCCESS) {
 	if (status == AM_INIT_FAILURE) {
-	    Log::log(logID, Log::LOG_WARNING, "Agent SSOToken reset.");
-	    bool gotPermToCleanup = false;
-        {
-            ScopeLock myLock(lock);
-            if (initialized == true) {
-		        Log::log(logID, Log::LOG_WARNING,
-					"This thread got permission to reset");
-		        initialized = false;
-		        gotPermToCleanup = true;
-            }
-	    }
+	    Log::log(logID, Log::LOG_WARNING, 
+                "Agent SSOToken reset during getPolicyDecisions().");
+            // If app ssotoken got invalidated,
+            // then agent need to reinitialize. 
+            reinitialize(properties);
 
-	    // only one thread get's permission to cleanup.
-	    // others wait till cleanup happens.
-	    if (gotPermToCleanup) {
+            if (initialized == true) {
+                Log::log(logID, Log::LOG_WARNING,
+			    "Thread wokeup after successful initialization.");
                 // If we need to update the agent SSOToken
                 // we cleanup the entire cache.
                 policyTable.cleanup();
-                Log::log(logID, Log::LOG_WARNING, "Invoking initialize().");
-                agentProfileService->agentLogin();
-                const SSOToken appSSOToken(
-                           agentProfileService->getAgentSSOToken(),
-                           Http::encode(agentProfileService->getAgentSSOToken()));
-                initialize(appSSOToken, properties);
-	    } else {
-                int counter = 0;
-                // Just a sleep factor.  The init must happen
-                // in approxiamtely in 6 seconds.
-                Log::log(logID, Log::LOG_WARNING,
-                     "This thread waiting for initialization to complete.");
-                while (initialized == false && ++counter < 6) {
-		        PR_Sleep(PR_TicksPerSecond());
-                }
-            }
-        if (initialized == true) {
-            Log::log(logID, Log::LOG_WARNING,
-			    "Thread wokeup after successful initialization.");
-            /* This method is returning false because we have re-initialized   
-             * the Agent but we haven't updated the orignal policy
-             */
-            return false;
-        } else {
-            throw InternalException(func, "Agent reinitialization failed",
+                /* This method is returning false because we have re-initialized   
+                 * the Agent but we haven't updated the orignal policy
+                 */
+                return false;
+            } else {
+                throw InternalException(func, "Agent reinitialization failed",
                                     status);
 	    }
 	} else {
-        // Log:ERROR
-        if (AM_NSPR_ERROR == status) {
+            // Log:ERROR
+            if (AM_NSPR_ERROR == status) {
                 status = AM_INVALID_SESSION;
-        }
+            }
 	    throw InternalException(func, "Policy query failed.", status);
 	}
     } else {
@@ -1575,26 +1575,57 @@ Service::do_agent_auth_logout()
     return status;
 }
 
-
 am_status_t
 Service::invalidate_session(const char *ssoTokenId) {
     am_status_t status = AM_FAILURE;
     ServiceInfo svcInfo;
     bool cookieEncoded=strchr(ssoTokenId,'%')!=NULL;
     const SSOToken ssoToken(cookieEncoded?Http::decode(ssoTokenId):ssoTokenId,
-			    cookieEncoded?ssoTokenId:Http::encode(ssoTokenId));
+                            cookieEncoded?ssoTokenId:Http::encode(ssoTokenId));
 
-    status = mSSOTokenSvc.destroySession(svcInfo, ssoToken.getString());
+    status = mSSOTokenSvc.destroySession(svcInfo, 
+                                         ssoToken.getString());
 
     PolicyEntryRefCntPtr uPolicyEntry = policyTable.find(ssoToken.getString());
     if (uPolicyEntry) {
         // remove sso token entry from table whether or not destroySession
         // was successful.
         policyTable.remove(ssoToken.getString());
-	Log::log(logID, Log::LOG_DEBUG,
-	         "Service::invalidate_session(): "
-                 "sso token %s removed from policy table.",
-		 ssoTokenId);
+        Log::log(logID, Log::LOG_DEBUG,
+             "Service::invalidate_session(): "
+             "sso token %s removed from policy table.",
+             ssoTokenId);
+    }
+    return status;
+}
+
+/*
+ * This function gets used by agent to invalidate user
+ * ssotoken when logout feature used.
+ */
+am_status_t
+Service::user_logout(const char *ssoTokenId,
+                            Properties& properties) 
+{
+    am_status_t status = AM_FAILURE;
+    string func("Service::user_logout");
+
+    status = invalidate_session(ssoTokenId);
+
+    // If app ssotoken got invalidated,
+    // then agent need to reinitialize. 
+    if (status == AM_INVALID_APP_SSOTOKEN) {
+        Log::log(logID, Log::LOG_WARNING, 
+            "Agent SSOToken reset during destroySession().");
+        reinitialize(properties);
+        if (initialized == true) {
+            Log::log(logID, Log::LOG_WARNING,
+                    "Thread wokeup after successful reinitialization.");
+            // agent reinitialized, so try invalidate_session again.
+            // this will be required in case app ssotoken invalidated
+            // not because of server restart, but for some other reason.
+            status = invalidate_session(ssoTokenId);
+        } 
     }
     return status;
 }
@@ -1638,4 +1669,43 @@ Service::add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
     }
     adviceStr.append("</AttributeValuePair>\n");
     return;
+}
+
+/*
+* Service reinitialization needs to happen when
+* AM responds with invalid app ssotoken during
+* session requests and policy request.
+*/
+void
+Service::reinitialize(Properties& properties) {
+
+    bool gotPermToCleanup = false; 
+    {
+        ScopeLock myLock(lock);
+        if (initialized == true) {
+            Log::log(logID, Log::LOG_WARNING,
+                    "This thread got permission to reset");
+            initialized = false;
+            gotPermToCleanup = true;
+        }
+    }
+        
+    // only one thread get's permission to cleanup.
+    // others wait till cleanup happens.
+    if (gotPermToCleanup) {
+    // If we need to update the agent SSOToken
+        // we cleanup the entire cache.
+        Log::log(logID, Log::LOG_WARNING, "Invoking initialize().");
+        agentProfileService->agentLogin();
+        initialize(properties);
+    } else {
+        int counter = 0;
+        // Just a sleep factor.  The init must happen
+        // in approxiamtely in 6 seconds.
+        Log::log(logID, Log::LOG_WARNING,
+                "This thread waiting for initialization to complete.");
+        while (initialized == false && ++counter < 6) {
+            PR_Sleep(PR_TicksPerSecond());
+        }
+    }
 }

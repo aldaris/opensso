@@ -541,7 +541,6 @@ am_policy_handle_notification(am_policy_t policy_handle,
     return sts;
 }
 
-
 extern "C" am_status_t
 am_policy_invalidate_session(am_policy_t policy_handle,
                              const char *ssoTokenId)
@@ -582,3 +581,44 @@ am_policy_invalidate_session(am_policy_t policy_handle,
     return status;
 }
 
+extern "C" am_status_t
+am_policy_user_logout(am_policy_t policy_handle,
+                             const char *ssoTokenId,
+                             am_properties_t properties) 
+{
+    Log::ModuleId logID = Log::addModule(AM_POLICY_SERVICE);
+    am_status_t status = AM_FAILURE;
+    try {
+        status = enginePtr->user_logout(policy_handle, 
+                     ssoTokenId,
+                     *reinterpret_cast<Properties *>(properties));
+    } catch (InternalException& ex) {
+	Log::log(logID, Log::LOG_ERROR,
+		 "am_policy_user_logout(): "
+		 "Internal Exception encountered: '%s'",
+		 ex.getMessage());
+	status = ex.getStatusCode();
+    }
+    catch (NSPRException& ex) {
+	Log::log(logID, Log::LOG_ERROR,
+		 "am_policy_user_logout(): "
+		 "NSPR Exception encountered: Error code %s",
+                  PR_ErrorToString(ex.getErrorCode(), PR_LANGUAGE_I_DEFAULT));
+	Log::log(logID, Log::LOG_ERROR, ex);
+	status = AM_NSPR_ERROR;
+    }
+    catch (std::exception& ex) {
+	Log::log(logID, Log::LOG_ERROR,
+		 "am_policy_user_logout(): "
+		 "Unknown Exception encountered: %s", ex.what());
+	Log::log(logID, Log::LOG_ERROR, ex);
+        status = AM_FAILURE;
+    }
+    catch (...) {
+	Log::log(logID, Log::LOG_ERROR,
+		 "am_policy_user_logout(): "
+		 "Unknown Exception encountered.");
+        status = AM_FAILURE;
+    }
+    return status;
+}

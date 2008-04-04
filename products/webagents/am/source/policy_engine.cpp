@@ -483,3 +483,31 @@ PolicyEngine::invalidate_session(am_policy_t hdl, const char *ssoTokenId)
     }
     return serviceEntry->invalidate_session(ssoTokenId);
 }
+
+/**
+ * Throws:
+ *	NSPRException upon NSPR error 
+ *	InternalException upon other errors
+ */
+am_status_t
+PolicyEngine::user_logout(am_policy_t hdl, 
+                                 const char *ssoTokenId,
+                                 Properties& properties)
+{
+    if (ssoTokenId == NULL || '\0' == *ssoTokenId) {
+	log(Log::LOG_DEBUG,
+	    "PolicyEngine::user_logout(): "
+	    "null or empty ssoToken");
+        return AM_INVALID_ARGUMENT;
+    }
+
+    Service *serviceEntry = getService(hdl);
+    if (serviceEntry == NULL) {
+	log(Log::LOG_DEBUG,
+	    "PolicyEngine::user_logout(): "
+            "Invalid policy handle - no service found.");
+        return AM_INVALID_ARGUMENT;
+    }
+    return serviceEntry->user_logout(ssoTokenId,
+                                            properties);
+}
