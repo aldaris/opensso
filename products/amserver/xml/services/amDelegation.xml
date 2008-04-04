@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.4 2007-03-12 18:21:44 bhavnab Exp $
+   $Id: amDelegation.xml,v 1.5 2008-04-04 01:16:21 goodearth Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -191,6 +191,19 @@
                             <Value>READ</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
+                    <SubConfiguration name="AgentsReadWrite" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/AgentService/1.0/*</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/agent*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                            <Value>MODIFY</Value>
+                            <Value>DELEGATE</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
                 </SubConfiguration>
                 <SubConfiguration name="Privileges">
                     <SubConfiguration name="RealmAdmin" id="Privilege">
@@ -232,6 +245,12 @@
                         <AttributeValuePair>
                             <Attribute name="listOfPermissions" />
                             <Value>LogWrite</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="AgentAdmin" id="Privilege">
+                        <AttributeValuePair>
+                            <Attribute name="listOfPermissions" />
+                            <Value>AgentsReadWrite</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
