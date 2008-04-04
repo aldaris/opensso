@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StartupScriptBase.java,v 1.3 2007-12-10 21:39:09 huacui Exp $
+ * $Id: StartupScriptBase.java,v 1.4 2008-04-04 22:10:15 madan_ranganath Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,6 +83,9 @@ public class StartupScriptBase implements InstallConstants, IConfigKeys {
                 };
             } else {
                 String instanceName = stateAccess.getInstanceName();
+	        if (instanceName == null) {
+	            instanceName = DEFAULT_INSTANCE_NAME;
+                }
                 
                 StringBuffer sb = new StringBuffer(256);
                 sb.append(homeDir).append(FILE_SEP);
@@ -138,6 +141,9 @@ public class StartupScriptBase implements InstallConstants, IConfigKeys {
         String startupscriptDir =
                 (String) stateAccess.get(STR_KEY_STARTUP_SCRIPT_DIR);
         String instanceName = (String) stateAccess.get(STR_KEY_SERVER_NAME);
+	if (instanceName == null) {
+	    instanceName = DEFAULT_INSTANCE_NAME;
+        }
         
         if (osName.toLowerCase().startsWith(STR_WINDOWS)) {
             destFile =
@@ -176,5 +182,6 @@ public class StartupScriptBase implements InstallConstants, IConfigKeys {
     private String[] agentClasspathEntries;
     private String agentJavaOptions;
     private String agentEnvScriptFile;
+    public static final String DEFAULT_INSTANCE_NAME = "AdminServer";
     
 }

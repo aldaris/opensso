@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureDomainXMLTask.java,v 1.2 2008-02-05 18:46:12 leiming Exp $
+ * $Id: UnconfigureDomainXMLTask.java,v 1.3 2008-04-04 22:05:31 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,11 @@ public class UnconfigureDomainXMLTask extends DomainXMLBase
             
             String serverXMLFile = getDomainXMLFile(stateAccess);
             String serverInstanceName = getServerInstanceName(stateAccess); 
-            if (serverXMLFile != null && serverInstanceName != null) {        
+            if (serverInstanceName == null) {
+                // use the default one
+                serverInstanceName = DEFAULT_INSTANCE_NAME;
+            }
+            if (serverXMLFile != null) {        
                 try {
                     File serverXML = new File(serverXMLFile);
                     XMLDocument domainXMLDoc = new XMLDocument(serverXML);
@@ -76,8 +80,7 @@ public class UnconfigureDomainXMLTask extends DomainXMLBase
                 }
             } else {
                 Debug.log("UnconfigureDomainXMLTask.execute() Error could get " +
-                    "server.xml file: " + serverXMLFile + " or server instance" +
-                    " name: " + serverInstanceName);
+                    "server.xml file: " + serverXMLFile);
             }
             
             postUnconfigureTasks(stateAccess);
@@ -126,6 +129,7 @@ public class UnconfigureDomainXMLTask extends DomainXMLBase
         return result;
     }
 
+    public static final String DEFAULT_INSTANCE_NAME = "server";
     public static final String LOC_TSK_MSG_UNCONFIGURE_DOMAIN_XML_EXECUTE =
         "TSK_MSG_UNCONFIGURE_DOMAIN_XML_EXECUTE";
     public static final String LOC_TSK_MSG_UNCONFIGURE_DOMAIN_XML_ROLLBACK =

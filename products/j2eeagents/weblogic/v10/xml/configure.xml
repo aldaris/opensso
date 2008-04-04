@@ -38,6 +38,127 @@
                     <class name="PathNormalizer" type="system"/>
                 </value-normalizer>
             </interaction>
+        </instance-finder-interactions>
+    </instance-finder>	
+    <install>
+        <common-interactions>
+            <interaction lookupkey="WEBLOGIC_HOME_DIR">
+                <i18n key="INT_WEBLOGIC_HOME_DIR" group="wl10Tools"/>
+                <default-value-finder>
+                    <class name="WeblogicHomeDirFinder" type="custom"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="DIR_EXISTS">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="DIR_READ_WRITE">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_WL_HOME_DIR">
+                        <class name="WeblogicHomeDirValidator" type="custom"/>
+                    </validation>
+                    <validation name="VALID_WL_VERSION">
+                        <class name="WeblogicHomeDirValidator" type="custom"/>
+                    </validation>		
+                </validations>
+                <value-normalizer>
+                    <class name="PathNormalizer" type="system"/>
+                </value-normalizer>
+            </interaction>
+            <interaction lookupkey="AM_SERVER_URL" persistent="false">
+                <i18n key="INT_AM_SERVER_URL" group="amToolsMessages"/>
+                <validations>			
+                    <validation name="VALID_SERVER_URL">
+                        <class name="ValidateURL" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+        </common-interactions>
+        <instance-interactions>
+            <interaction lookupkey="AGENT_URL">
+                <i18n key="INT_AGENT_URL" group="amToolsMessages"/>
+                <validations>
+                    <validation name="VALID_AGENT_URL">
+                        <class name="ValidateURL" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_PROFILE_NAME" persistent="false">
+                <i18n key="INT_AGENT_PROFILE_NAME" group="amToolsMessages"/>
+                <validations>
+                    <validation name="VALID_STRING">
+                        <class name="StringValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_PASSWORD_FILE" persistent="false">
+                <i18n key="INT_AGENT_PASSWORD_FILE" group="amToolsMessages"/>
+                <validations>
+                    <validation name="FILE_VALID">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="FILE_READABLE">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_PASSWORD">
+                        <class name="PasswordValidator" type="system"/>
+                        <property name="minLen" value="1"/>
+                        <property name="maxLen" value="256"/>
+                    </validation>
+                </validations>
+                <value-normalizer>
+                    <class name="PathNormalizer" type="system"/>
+                </value-normalizer>
+            </interaction>
+        </instance-interactions>
+        <common-tasks>
+            <task name="COPY_MBEANS_JAR">
+                <class name="CopyMbeansTask" type="custom"/>
+            </task>
+        </common-tasks>
+        <instance-tasks>
+            <task name="CREATE_LAYOUT">
+                <class name="CreateLayoutTask" type="system"/>
+            </task>
+            <task name="ENCRYPT_DATA">
+                <class name="EncryptTask" type="agentsdk"/>
+                <property name="DATA_FILE_LOOKUP_KEY" 
+          value="AGENT_PASSWORD_FILE"/>
+                <property name="ENCRYPTION_KEY_LOOKUP_KEY" 
+                          value="AGENT_ENCRYPT_KEY"/>
+                <property name="ENCRYPTED_VALUE_KEY_LOOKUP_KEY" 
+                          value="AGENT_ENCRYPTED_PASSWORD"/>
+            </task>
+            <task name="GENERATE_AUDIT_LOGFILE_NAME">
+           		<class name="AuditLogFileNameTask" type="system"/>
+           		<property name="HOSTNAME_LOOKUP_KEY"
+           				  value="AGENT_HOST"/>
+           	    <property name="PORT_LOOKUP_KEY"
+           	    		  value="AGENT_PREF_PORT"/>
+           	    <property name="LOGFILE_NAME_OUTPUT_KEY"
+           	    		  value="AUDIT_LOG_FILENAME"/>
+           	</task>
+            <task name="CONFIGURE_AGENT_PROPS">
+            	<class name="ConfigurePropertiesTask" type="system"/>    
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
+                                      value="FAMAgentBootstrap.template"/>
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
+                                      value="FAMAgentBootstrap.properties"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
+                                      value="FAMAgentConfiguration.template"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG"
+                                      value="FAMAgentConfiguration.properties"/>
+            </task>
+            <task name="CONFIGURE_STARTUP_SCRIPT">
+                <class name="ConfigureStartupScriptTask" type="custom"/>
+            </task>
+            <task name="CONFIGURE_WEBLOGIC_PROPERTIES">
+                <class name="ConfigureWeblogicProperties" type="custom"/>
+            </task>
+        </instance-tasks>
+    </install>
+    <custom-install>
+        <common-interactions>
             <interaction lookupkey="SERVER_NAME">
                 <i18n key="INT_SERVER_NAME" group="wl10Tools"/>
                 <default-value-finder>
@@ -50,10 +171,6 @@
                     </validation>
                 </validations>
             </interaction>
-        </instance-finder-interactions>
-    </instance-finder>	
-    <install>
-        <common-interactions>
             <interaction lookupkey="WEBLOGIC_HOME_DIR">
                 <i18n key="INT_WEBLOGIC_HOME_DIR" group="wl10Tools"/>
                 <default-value-finder>
@@ -216,7 +333,7 @@
                 <class name="ConfigureWeblogicProperties" type="custom"/>
             </task>
         </instance-tasks>
-    </install>
+    </custom-install>
     <uninstall>
         <common-interactions/>
         <instance-interactions/>

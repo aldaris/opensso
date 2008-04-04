@@ -39,6 +39,123 @@
 					<class name="PathNormalizer" type="system"/>
 				</value-normalizer>
 			</interaction>
+		</instance-finder-interactions>
+	</instance-finder>	
+	<install>
+		<common-interactions>
+		        <interaction lookupkey="AM_SERVER_URL" persistent="false">
+				<i18n key="INT_AM_SERVER_URL" group="amToolsMessages"/>
+				<validations>			
+				    <validation name="VALID_SERVER_URL">
+						<class name="ValidateURL" type="system"/>
+					</validation>
+				</validations>
+			</interaction>
+		</common-interactions>
+		<instance-interactions>
+			<interaction lookupkey="AGENT_URL">
+				<i18n key="INT_AGENT_URL" group="amToolsMessages"/>
+				<validations>	
+				    <validation name="VALID_AGENT_URL">
+						<class name="ValidateURL" type="system"/>
+					</validation>
+				</validations>
+			</interaction>	
+			<interaction lookupkey="AGENT_PROFILE_NAME" persistent="false">
+				<i18n key="INT_AGENT_PROFILE_NAME" group="amToolsMessages"/>
+				<validations>
+					<validation name="VALID_STRING">
+						<class name="StringValidator" type="system"/>
+					</validation>
+				</validations>
+			</interaction>
+			<interaction lookupkey="AGENT_PASSWORD_FILE" persistent="false">
+				<i18n key="INT_AGENT_PASSWORD_FILE" group="amToolsMessages"/>
+				<validations>
+					<validation name="FILE_VALID">
+						<class name="FileSystemValidator" type="system"/>
+					</validation>
+					<validation name="FILE_READABLE">
+						<class name="FileSystemValidator" type="system"/>
+					</validation>
+					<validation name="VALID_PASSWORD">
+						<class name="PasswordValidator" type="system"/>
+						<property name="minLen" value="1"/>
+						<property name="maxLen" value="256"/>
+					</validation>
+					<validation name="VALIDATE_AGENT_PASSWORD">
+						<class name="PasswordValidator" type="system"/>
+						<property name="AGENT_PROFILE_LOOKUP_KEY" value="AGENT_PROFILE_NAME"/>
+					</validation>
+				</validations>
+				<value-normalizer>
+					<class name="PathNormalizer" type="system"/>
+				</value-normalizer>
+			</interaction>
+		</instance-interactions>
+		<common-tasks>
+            <task name="BACKUP_FILE">
+            	<class name="BackupFileTask" type="system"/>
+                <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                          value="AS_LOGIN_CONF_FILE"/>
+            </task>                                             
+            <task name="BACKUP_FILE">
+            	<class name="BackupFileTask" type="system"/>
+                <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                          value="AS_SERVER_POLICY_FILE"/>
+            </task>                                 
+            <task name="CONFIGURE_LOGIN_CONF">                      
+            	<class name="ConfigureLoginConfTask" type="custom"/>
+            </task>            
+            <task name="GRANT_JAVA_PERMS">                  
+                <class name="ConfigureServerPolicyTask" type="custom"/>                                
+            </task>		
+		</common-tasks>
+		<instance-tasks>
+        	<task name="CREATE_LAYOUT">
+            	<class name="CreateLayoutTask" type="system"/>
+           	</task>
+            <task name="ENCRYPT_DATA">
+            	 <class name="EncryptTask" type="agentsdk"/>
+            	 <property name="DATA_FILE_LOOKUP_KEY" 
+            	 			value="AGENT_PASSWORD_FILE"/>
+                 <property name="ENCRYPTION_KEY_LOOKUP_KEY" 
+                 			value="AGENT_ENCRYPT_KEY"/>
+                 <property name="ENCRYPTED_VALUE_KEY_LOOKUP_KEY" 
+                 			value="AGENT_ENCRYPTED_PASSWORD"/>
+            </task>
+            <task name="GENERATE_AUDIT_LOGFILE_NAME">
+           		<class name="AuditLogFileNameTask" type="system"/>
+           		<property name="HOSTNAME_LOOKUP_KEY"
+           				  value="AGENT_HOST"/>
+           	    <property name="PORT_LOOKUP_KEY"
+           	    		  value="AGENT_PREF_PORT"/>
+           	    <property name="LOGFILE_NAME_OUTPUT_KEY"
+           	    		  value="AUDIT_LOG_FILENAME"/>
+           	</task>
+            <task name="CONFIGURE_AGENT_PROPS">
+            	<class name="ConfigurePropertiesTask" type="system"/>    
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
+                                      value="FAMAgentBootstrap.template"/>
+                <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
+                                      value="FAMAgentBootstrap.properties"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
+                                      value="FAMAgentConfiguration.template"/>
+                <property name="CONFIG_FILENAME_AGENT_CONFIG"
+                                      value="FAMAgentConfiguration.properties"/>
+            </task>
+            <task name="BACKUP_FILE">
+           	 	<class name="BackupFileTask" type="system"/>
+                <property name="BACK_UP_FILE_LOOKUP_KEY" 
+                          value="AS_DOMAIN_XML_FILE"/>
+            </task>                                                         
+            <task name="CONFIGURE_DOMAIN_XML">                  
+ 	            <class name="ConfigureDomainXMLTask" type="custom"/>                                
+            </task>                        
+		</instance-tasks>
+	</install>
+	<custom-install>
+		<common-interactions>
 			<interaction lookupkey="INSTANCE_NAME">
 				<i18n key="INT_INSTANCE_NAME" group="as81Tools"/>
 				<default-value-finder>
@@ -51,10 +168,6 @@
 					</validation>
 				</validations>
 			</interaction>
-		</instance-finder-interactions>
-	</instance-finder>	
-	<install>
-		<common-interactions>
 		        <interaction lookupkey="AM_SERVER_URL" persistent="false">
 				<i18n key="INT_AM_SERVER_URL" group="amToolsMessages"/>
 				<validations>			
@@ -240,7 +353,7 @@
  	            <class name="ConfigureDomainXMLTask" type="custom"/>                                
             </task>                        
 		</instance-tasks>
-	</install>
+	</custom-install>
 	<uninstall>
 		<common-interactions/>
 		<instance-interactions/>

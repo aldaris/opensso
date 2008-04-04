@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptTask.java,v 1.1 2006-09-28 23:41:30 huacui Exp $
+ * $Id: EncryptTask.java,v 1.2 2008-04-04 22:08:42 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.sun.identity.install.tools.configurator.InstallConstants;
 import com.sun.identity.install.tools.configurator.InstallException;
 import com.sun.identity.install.tools.configurator.IStateAccess;
 import com.sun.identity.install.tools.util.Debug;
+import com.sun.identity.install.tools.util.EncryptionKeyGenerator;
 import com.sun.identity.install.tools.util.LocalizedMessage;
 
 
@@ -65,6 +66,10 @@ public class EncryptTask implements ITask, InstallConstants {
         Debug.log("EncryptTask.execute() - Obtained encryption lookup key = " + 
             encryptionKeyLookUpKey);        
         String encryptionKey = (String) stateAccess.get(encryptionKeyLookUpKey);
+	if (encryptionKey == null) {
+	    encryptionKey = EncryptionKeyGenerator.generateRandomString();
+            stateAccess.put("AGENT_ENCRYPT_KEY", encryptionKey);
+	}
         Debug.log("EncryptTask.execute() - Obtained encryption key = " + 
             encryptionKey);
         System.setProperty(STR_ENCRYPTION_KEY_PROP_KEY, encryptionKey);
@@ -92,9 +97,7 @@ public class EncryptTask implements ITask, InstallConstants {
         return true;
     }
     
-    private String getEncryptedAppPassword(String data) 
-									throws InstallException {
-    	
+    private String getEncryptedAppPassword(String data) throws InstallException {
     	String applicationPassword = null;
     	Method method = null;
     	

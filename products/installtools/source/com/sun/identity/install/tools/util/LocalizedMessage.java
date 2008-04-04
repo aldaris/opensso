@@ -1,4 +1,5 @@
-/* The contents of this file are subject to the terms
+/*
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalizedMessage.java,v 1.1 2006-09-28 07:37:58 rarcot Exp $
+ * $Id: LocalizedMessage.java,v 1.2 2008-04-04 21:59:52 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +45,7 @@ public class LocalizedMessage {
 
     public static synchronized LocalizedMessage get(String id, String group,
             Object[] args) {
+        LocalizedMessage localizedMessage = null;
         ResourceBundle bundle = (ResourceBundle) getResourceBundles()
                 .get(group);
         if (bundle == null) {
@@ -51,14 +53,17 @@ public class LocalizedMessage {
             getResourceBundles().put(group, bundle);
         }
 
-        String message = bundle.getString(id);
-        LocalizedMessage localizedMessage = null;
-        if (args == null) {
-            localizedMessage = new LocalizedMessage(message);
-        } else {
-            localizedMessage = new LocalizedMessage(message, args);
+        try {
+            String message = bundle.getString(id);
+            if (message != null) {
+                if (args == null) {
+                    localizedMessage = new LocalizedMessage(message);
+                } else {
+                    localizedMessage = new LocalizedMessage(message, args);
+                }
+            }
+        } catch (java.util.MissingResourceException mre) {
         }
-
         return localizedMessage;
     }
 

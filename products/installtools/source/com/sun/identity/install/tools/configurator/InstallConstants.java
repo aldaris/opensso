@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.7 2008-03-04 01:59:59 madan_ranganath Exp $
+ * $Id: InstallConstants.java,v 1.8 2008-04-04 21:56:43 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,9 @@ public interface InstallConstants extends ICommonToolsConstants {
     
     /** Field STR_INSTALL **/
     public static final String STR_MIGRATE = "migrate";
+    
+    /** Field STR_CUSTOM **/
+    public static final String STR_CUSTOM = "custom";
     
     /** Field STR_LOG_CONFIG_FILE_PATH **/
     public static final String STR_LOG_CONFIG_FILE_PATH = 

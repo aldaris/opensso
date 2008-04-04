@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BaseToolsResolver.java,v 1.2 2008-01-15 22:41:36 leiming Exp $
+ * $Id: BaseToolsResolver.java,v 1.3 2008-04-04 21:57:20 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.install.tools.admin;
 import java.util.ArrayList;
 
 import com.sun.identity.install.tools.handler.InstallHandler;
+import com.sun.identity.install.tools.handler.CustomInstallHandler;
 import com.sun.identity.install.tools.handler.UninstallAllHandler;
 import com.sun.identity.install.tools.handler.UninstallHandler;
 import com.sun.identity.install.tools.handler.MigrateHandler;
@@ -37,9 +38,16 @@ public abstract class BaseToolsResolver {
 
     public ArrayList getDefaultOptions() {
         ArrayList result = new ArrayList();
+	String customInstallHelp = null;
         result.add(new ToolsOptionsInfo(InstallHandler.class.getName(),
                 STR_INSTALL_OPTION, LocalizedMessage
                         .get(LOC_HR_MSG_INSTALL_SHORT_HELP)));
+
+        if (LocalizedMessage.get(LOC_HR_MSG_CUSTOM_INSTALL_SHORT_HELP)!= null) {	
+            result.add(new ToolsOptionsInfo(CustomInstallHandler.class.getName(),
+                STR_CUSTOM_INSTALL_OPTION, LocalizedMessage
+                        .get(LOC_HR_MSG_CUSTOM_INSTALL_SHORT_HELP)));
+        }
 
         result.add(new ToolsOptionsInfo(UninstallHandler.class.getName(),
                 STR_UNINSTALL_OPTION, LocalizedMessage
@@ -79,6 +87,8 @@ public abstract class BaseToolsResolver {
 
     public static final String STR_INSTALL_OPTION = "--install";
 
+    public static final String STR_CUSTOM_INSTALL_OPTION = "--custom-install";
+
     public static final String STR_UNINSTALL_OPTION = "--uninstall";
 
     public static final String STR_VERSION_OPTION = "--version";
@@ -89,6 +99,9 @@ public abstract class BaseToolsResolver {
 
     public static final String LOC_HR_MSG_INSTALL_SHORT_HELP = 
         "HR_MSG_INSTALL_SHORT_HELP";
+
+    public static final String LOC_HR_MSG_CUSTOM_INSTALL_SHORT_HELP = 
+        "HR_MSG_CUSTOM_INSTALL_SHORT_HELP";
 
     public static final String LOC_HR_MSG_UNINSTALL_SHORT_HELP = 
         "HR_MSG_UNINSTALL_SHORT_HELP";

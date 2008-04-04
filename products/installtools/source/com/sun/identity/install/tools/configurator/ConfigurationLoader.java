@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationLoader.java,v 1.2 2008-01-15 22:41:37 leiming Exp $
+ * $Id: ConfigurationLoader.java,v 1.3 2008-04-04 21:56:43 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,10 @@ public class ConfigurationLoader {
         return _migrateRunInfo;
     }
     
+    public InstallRunInfo getCustomInstallRunInfo() {
+        return _customInstallRunInfo;
+    }
+    
     private void loadConfigurationFile(File configFile) throws InstallException
     {       XMLDocument xmlDoc = null;
         try {
@@ -79,6 +83,7 @@ public class ConfigurationLoader {
         initInstall(root);
         initUninstall(root);
         initMigrate(root);
+        initCustomInstall(root);
     }
 
     private void initWelcomeMessage(XMLElement root) throws InstallException {
@@ -123,6 +128,26 @@ public class ConfigurationLoader {
                 instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
         setMigrateRunInfo(info);
     }    
+    
+    private void initCustomInstall(XMLElement root) throws InstallException {
+        XMLElement customInstallElement = 
+		   getUniqueElement(STR_CUSTOM_INSTALL, root);
+        if (customInstallElement != null) {
+            ArrayList commonInteractions = 
+	       getCommonInteractions(customInstallElement);
+            ArrayList instanceInteractions = getInstanceInteractions(
+                customInstallElement);
+            ArrayList commonTasks = getCommonTasks(customInstallElement);
+            ArrayList instanceTasks = getInstanceTasks(customInstallElement);
+
+            InstallRunInfo info = new InstallRunInfo(false,
+                getHomeDirLocatorClass(), getInstanceFinderInteractions(),
+                commonInteractions, instanceInteractions, commonTasks,
+                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
+            setCustomInstallRunInfo(info);
+        }
+    }
+    
     
     private void initInstall(XMLElement root) throws InstallException {
         XMLElement installElement = getUniqueElement(STR_INSTALL, root);
@@ -443,14 +468,19 @@ public class ConfigurationLoader {
 
     private XMLElement getUniqueRequiredElement(String name, XMLElement parent)
             throws InstallException {
-        XMLElement result = getUniqueElement(name, parent);
-        if (result == null) {
-            Debug.log("ConfigurationLoader: Unique element: " + name
-                    + " not found in element: " + parent.getPath());
-            throw new InstallException(LocalizedMessage
-                    .get(ERROR_CONFIG_FILE_PARSING));
-        }
-
+        XMLElement result = null;
+        if (parent != null) {
+            result = getUniqueElement(name, parent);
+            if (result == null) {
+                Debug.log("ConfigurationLoader: Unique element: " + name
+                            + " not found in element: " + parent.getPath());
+                throw new InstallException(LocalizedMessage
+                        .get(ERROR_CONFIG_FILE_PARSING));
+            }
+        } else {
+            Debug.log("ConfigurationLoader: parent element: " + name
+                            + " not found : ");
+	}
         return result;
     }
 
@@ -489,6 +519,10 @@ public class ConfigurationLoader {
     private void setMigrateRunInfo(InstallRunInfo info) {
         _migrateRunInfo = info;
     }
+    
+    private void setCustomInstallRunInfo(InstallRunInfo info) {
+        _customInstallRunInfo = info;
+    }
 
     private I18NInfo getWelcomeMessageInfo() {
         return _welcomeMessageInfo;
@@ -517,6 +551,8 @@ public class ConfigurationLoader {
     private InstallRunInfo _uninstallRunInfo;
     
     private InstallRunInfo _migrateRunInfo;
+    
+    private InstallRunInfo _customInstallRunInfo;
 
     private I18NInfo _welcomeMessageInfo;
 
@@ -626,6 +662,8 @@ public class ConfigurationLoader {
     public static final String STR_UNINSTALL = "uninstall";
 
     public static final String STR_MIGRATE = "migrate";
+    
+    public static final String STR_CUSTOM_INSTALL = "custom-install";
     
     public static final String ERROR_CONFIG_FILE_NOT_FOUND = 
         "error_config_file_not_found";

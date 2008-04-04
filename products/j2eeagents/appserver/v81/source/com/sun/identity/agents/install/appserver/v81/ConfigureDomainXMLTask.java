@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureDomainXMLTask.java,v 1.1 2006-09-29 00:34:03 huacui Exp $
+ * $Id: ConfigureDomainXMLTask.java,v 1.2 2008-04-04 22:05:31 madan_ranganath Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,10 +52,13 @@ public class ConfigureDomainXMLTask extends DomainXMLBase implements ITask {
            Debug.log("Skipping ConfigureDomainXMLTask.execute()");
            status = true;
         } else {
-
             String serverXMLFile = getDomainXMLFile(stateAccess);
             String serverInstanceName = getServerInstanceName(stateAccess); 
-            if (serverXMLFile != null && serverInstanceName != null) {
+            if (serverInstanceName == null) {
+                // use the default one
+                serverInstanceName = DEFAULT_INSTANCE_NAME;
+            }
+            if (serverXMLFile != null) {
                 try {
                     File serverXML = new File(serverXMLFile);
                     XMLDocument domainXMLDoc = new XMLDocument(serverXML);
@@ -75,8 +78,7 @@ public class ConfigureDomainXMLTask extends DomainXMLBase implements ITask {
                 }
             } else {
                 Debug.log("ConfigureDomainXMLTask.execute() Error could get " +
-                    "server.xml file: " + serverXMLFile + " or server instance" +
-                    " name: " + serverInstanceName);
+                    "server.xml file: " + serverXMLFile);
             }
         }
  
@@ -111,8 +113,12 @@ public class ConfigureDomainXMLTask extends DomainXMLBase implements ITask {
            status = true;
         } else {
             String serverXMLFile = getDomainXMLFile(stateAccess);
-            String serverInstanceName = getServerInstanceName(stateAccess); 
-            if (serverXMLFile != null && serverInstanceName != null) {
+            String serverInstanceName = getServerInstanceName(stateAccess);
+            if (serverInstanceName == null) {
+                // use the default one
+                serverInstanceName = DEFAULT_INSTANCE_NAME;
+            }
+            if (serverXMLFile != null) {
                 try {
                     File serverXML = new File(serverXMLFile);
                     XMLDocument domainXMLDoc = new XMLDocument(serverXML);
@@ -131,15 +137,13 @@ public class ConfigureDomainXMLTask extends DomainXMLBase implements ITask {
                 }
             } else {
                 Debug.log("ConfigureDomainXMLTask.rollBack() Error could get " +
-                    "server.xml file: " + serverXMLFile + " or server instance" +
-                    " name: " + serverInstanceName);
+                    "server.xml file: " + serverXMLFile);
             }
         }
 
         return status;
     }
        
-
     private boolean skipTask(IStateAccess stateAccess) {
         boolean result = false;
         String isRemote = (String) stateAccess.get(STR_DAS_HOST_IS_REMOTE_KEY);
@@ -152,6 +156,7 @@ public class ConfigureDomainXMLTask extends DomainXMLBase implements ITask {
         return result;
     }
  
+    public static final String DEFAULT_INSTANCE_NAME = "server";
     public static final String LOC_TSK_MSG_CONFIGURE_DOMAIN_XML_EXECUTE =
         "TSK_MSG_CONFIGURE_DOMAIN_XML_EXECUTE";
     public static final String LOC_TSK_MSG_CONFIGURE_DOMAIN_XML_ROLLBACK =
