@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentMigration71.java,v 1.1 2008-04-02 16:53:04 goodearth Exp $
+ * $Id: AgentMigration71.java,v 1.2 2008-04-04 19:39:34 goodearth Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,8 +50,12 @@ public class AgentMigration71 {
             // First get all the sub realms
             OrganizationConfigManager ocmGet = 
                 new OrganizationConfigManager(token, "/");
-            Set getSet = ocmGet.getSubOrganizationNames();
+            Set getSet = new HashSet(); 
             getSet.add(SMSEntry.getRootSuffix());
+            Set orgSet = ocmGet.getSubOrganizationNames();
+            if (!orgSet.isEmpty()) {
+                getSet.addAll(orgSet);
+            } 
             System.out.println(IdRepoBundle.getString("500"));
             Object [] args = { getSet.toString() };
             System.out.println(IdRepoBundle.getString("501", args));

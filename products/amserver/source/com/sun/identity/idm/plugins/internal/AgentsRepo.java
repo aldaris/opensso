@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.22 2008-03-27 17:17:03 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.23 2008-04-04 19:39:34 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1114,8 +1114,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         // If notification URLs are present, send notifications
         sendNotificationSet(type);
 
-        repoListener.allObjectsChanged();
-
+        if (repoListener != null) { 
+            repoListener.allObjectsChanged();
+        }
     }
 
     /*
@@ -1137,7 +1138,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         // If notification URLs are present, send notifications
         sendNotificationSet(type);
 
-        repoListener.allObjectsChanged();
+        if (repoListener != null) { 
+            repoListener.allObjectsChanged();
+        }
 
     }
 
@@ -1151,7 +1154,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.schemaChanged..");
         }
-        repoListener.allObjectsChanged();
+        if (repoListener != null) { 
+            repoListener.allObjectsChanged();
+        }
     }
 
     public String getFullyQualifiedName(SSOToken token, IdType type, 
