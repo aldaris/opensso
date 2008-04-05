@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.10 2008-02-20 06:42:35 superpat7 Exp $
+ * $Id: LoginViewBean.java,v 1.11 2008-04-05 16:43:34 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 
 package com.sun.identity.authentication.UI;
 
+import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
@@ -37,8 +38,10 @@ import com.iplanet.jato.view.html.ImageField;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -46,8 +49,10 @@ import com.sun.identity.authentication.spi.HttpCallback;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 import com.sun.identity.authentication.spi.RedirectCallback;
 import com.sun.identity.authentication.util.AMAuthUtils;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
@@ -242,7 +247,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     public void forwardTo(RequestContext requestContext) {
         
         loginDebug.message("In forwardTo()");
-        
+        SSOToken ssoToken = null;
         if (requestContext!=null) {
             request = requestContext.getRequest();
             response = requestContext.getResponse();
@@ -272,38 +277,20 @@ public class LoginViewBean extends AuthViewBeanBase {
         }
         
         SessionID sessionID = null;
+        InternalSession intSession = null;
         try {
             boolean isBackPost = false;
             // if the request is a GET then iPlanetAMDirectoryPro cookie
             // will be used to retrieve the session for session upgrade
             sessionID = AuthUtils.getSessionIDFromRequest(request);
-            SSOToken ssoToken = AuthUtils.getExistingValidSSOToken(sessionID);
-            AuthContextLocal origAC = AuthUtils.getOrigAuthContext(sessionID);
+            ssoToken = AuthUtils.getExistingValidSSOToken(sessionID);
             forceAuth = AuthUtils.forceAuthFlagExists(reqDataHash);
-            if ((origAC == null) && !AuthUtils.newSessionArgExists(reqDataHash) &&
-                !forceAuth){
-                // The Cookie might be create on the other Access Manager server
-                // and valid
-                String originalRedirectURL = AuthUtils.getOrigRedirectURL(request,
-                sessionID);
-                if (originalRedirectURL != null) {
-                    if (loginDebug.messageEnabled()) {
-                        loginDebug.message(
-                        "Redirect to original Redirect URL: " +
-                        originalRedirectURL);
-                    }
-                    response.sendRedirect(originalRedirectURL);
-                    return;
-                }
-            } else if (origAC != null) {
-                if (loginDebug.messageEnabled()) {
-                    loginDebug.message("origAC = " + origAC);
-                }
+            if (ssoToken != null) {
                 if (AuthUtils.newSessionArgExists(reqDataHash)) {
-                    AuthUtils.destroySession(origAC);
-                } else if (AuthUtils.isSessionActive(origAC)) {
+                    SSOTokenManager.getInstance().destroyToken(ssoToken);
+                } else {
                     loginDebug.message("Old Session is Active.");
-                    newOrgExist = checkNewOrg(origAC);
+                    newOrgExist = checkNewOrg(ssoToken);
                     if (!newOrgExist) {
                         if (isPost) {
                             isBackPost = canGetOrigCredentials(ssoToken);
@@ -322,6 +309,66 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
             }
             
+            if ((ssoToken != null) && (!sessionUpgrade)) {
+                try {
+                    loginDebug.message("Session is Valid / already "
+                    + "authenticated");
+                    bValidSession = true;
+                    /*
+                     * redirect to 'goto' parameter or SPI hook or default
+                     * redirect URL.
+                     */
+                    redirect_url = ssoToken.getProperty(
+                        ISAuthConstants.SUCCESS_URL);
+                    if (redirect_url == null) {
+                        ResultVal = rb.getString("authentication.already.login");
+                    }
+                    LoginSuccess = true;
+                    response.sendRedirect(redirect_url);
+                    return;
+                }
+                catch (Exception er){
+                    if (loginDebug.messageEnabled()) {
+                        loginDebug.message("Session getState exception: ", er);
+                    }
+                    setErrorMessage(er);
+                }
+            }
+            if (sessionID != null) {
+                intSession = AuthD.getSession(sessionID);
+            }
+            if ((intSession != null) && (intSession.isTimedOut())) { //Session Timeout
+                // clear the cookie only if cookie supported
+                loginDebug.message("Session timeout TRUE");
+                if (sessionUpgrade) {
+                    try {
+                        redirect_url = getPrevSuccessURLAndSetCookie();
+                        clearGlobals();
+                        response.sendRedirect(redirect_url);
+                        return;
+                    } catch (Exception e) {
+                        loginDebug.message("Error redirecting :" ,e);
+                    }
+                } else {
+                    // clear AM Cookie if it exists.
+                    if (CookieUtils.getCookieValueFromReq(request,
+                    AuthUtils.getCookieName())!=null) {
+                        clearCookie(AuthUtils.getCookieName());
+                    }
+                    // clear Auth Cookie if it exists.
+                    if (CookieUtils.getCookieValueFromReq(request,
+                    AuthUtils.getAuthCookieName())!=null) {
+                        clearCookie(AuthUtils.getAuthCookieName());
+                    }
+                    loginURL = intSession.getProperty(ISAuthConstants.
+                        FULL_LOGIN_URL);
+                    errorTemplate = AuthUtils.getErrorVal(
+                        AMAuthErrorCode.AUTH_TIMEOUT,AuthUtils.ERROR_TEMPLATE);
+                    errorCode = AMAuthErrorCode.AUTH_TIMEOUT;
+                    ErrorMessage = AuthUtils.getErrorVal(
+		        AMAuthErrorCode.AUTH_TIMEOUT,AuthUtils.ERROR_MESSAGE);
+                }
+            }
             ac = AuthUtils.getAuthContext(
                 request, response, sessionID, sessionUpgrade, isBackPost);
             if (sessionUpgrade) {
@@ -335,6 +382,11 @@ public class LoginViewBean extends AuthViewBeanBase {
             if (loginDebug.messageEnabled()) {
                 loginDebug.message("ac = " + ac);
                 loginDebug.message("JSPLocale = " + locale);
+            }
+            if (!AuthUtils.getInetDomainStatus(ac)) {//domain inactive
+                if ((errorTemplate==null)||(errorTemplate.length() == 0)) {
+                    setErrorMessage(null);
+                }
             }
             // check session or new request
             // add cookie only if cookie is supported
@@ -373,42 +425,6 @@ public class LoginViewBean extends AuthViewBeanBase {
             return;
         }
         
-        if (AuthUtils.sessionTimedOut(ac)) { //Session Timeout
-            // clear the cookie only if cookie supported
-            loginDebug.message("Session timeout TRUE");
-            if (AuthUtils.isSessionUpgrade(ac)) {
-                try {
-                    redirect_url = getPrevSuccessURLAndSetCookie();
-                    clearGlobals();
-                    response.sendRedirect(redirect_url);
-                    return;
-                } catch (Exception e) {
-                    loginDebug.message("Error redirecting :" ,e);
-                }
-            } else {
-                // clear AM Cookie if it exists.
-                if (CookieUtils.getCookieValueFromReq(request,
-                AuthUtils.getCookieName())!=null) {
-                    clearCookie(ac);
-                }
-                // clear Auth Cookie if it exists.
-                if (CookieUtils.getCookieValueFromReq(request,
-                AuthUtils.getAuthCookieName())!=null) {
-                    clearCookie(AuthUtils.getAuthCookieName());
-                }
-                setErrorMessage(null);
-            }
-            // set cookie flag to false since if session
-            // upgrade case don't have to set the cookie
-            // since AM Cookie is already set  and in
-            // normal auth case since no valid session is
-            // is there AM Cookie does not have to be set.
-        } else if (!AuthUtils.getInetDomainStatus(ac)) {//domain inactive
-            if ((errorTemplate==null)||(errorTemplate.length() == 0)) {
-                setErrorMessage(null);
-            }
-        }
-        
         if ((errorTemplate==null)||(errorTemplate.length() == 0)) {
             processLogin();
             if (requestContext==null) { // solve the recursive case
@@ -428,7 +444,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                     }
                     
                     // destroy session if necessary.
-                    AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
+                    InternalSession oldSession = AuthUtils.getOldSession(ac);
                     if (ac.getStatus() == AuthContext.Status.FAILED) {
                         loginDebug.message(
                             "forwardTo(): Auth failed - Destroy Session!");
@@ -437,16 +453,17 @@ public class LoginViewBean extends AuthViewBeanBase {
                             loginDebug.message(
                                 "forwardTo(): Session upgrade - " +
                                 "Restoring original Session!");
-                            if (prevAC != null) {
-                                ac = prevAC;
+                            if (oldSession != null) {
+                                ac.getLoginState().setSession(oldSession);
+                                ac.getLoginState().setSid(oldSession.getID());
                             }
                         } else {
                             clearCookieAndDestroySession(ac);
-                            if (prevAC != null) {
+                            if (oldSession != null) {
                                 loginDebug.message(
                                     "Destroy existing/old valid session");
-                                clearCookie(prevAC);
-                                AuthUtils.destroySession(prevAC);
+                                AuthD authD = AuthD.getAuth();
+                                authD.destroySession(oldSession.getID());
                             }
                         }
                         loginDebug.message(
@@ -459,16 +476,18 @@ public class LoginViewBean extends AuthViewBeanBase {
                                     + "Restoring updated session");
                             }
                             clearCookieAndDestroySession(ac);
-                            ac = prevAC;
+                            ac.getLoginState().setSession(oldSession);
+                            ac.getLoginState().setSid(oldSession.getID());
                         } else {
                             if (AuthUtils.isCookieSupported(ac)) {
                                 setCookie();
                                 clearCookie(AuthUtils.getAuthCookieName());
                             }
-                            if (prevAC != null) {
+                            if (oldSession != null) {
                                 loginDebug.message(
                                     "Destroy existing/old valid session");
-                                AuthUtils.destroySession(prevAC);
+                                AuthD authD = AuthD.getAuth();
+                                authD.destroySession(oldSession.getID());
                             }
                         }
                     }
@@ -528,9 +547,9 @@ public class LoginViewBean extends AuthViewBeanBase {
         jsp_page = getFileName(jsp_page);
         
         if (ac != null) {
-            AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
+            InternalSession oldSession = AuthUtils.getOldSession(ac);
             if (loginDebug.messageEnabled()) {
-                loginDebug.message("Previous AC : " + prevAC);
+                loginDebug.message("Previous Session : " + oldSession);
             }
             if (ac.getStatus() == AuthContext.Status.SUCCESS) {
                 response.setHeader("X-AuthErrorCode", "0");
@@ -540,19 +559,23 @@ public class LoginViewBean extends AuthViewBeanBase {
                             + "Restoring updated session");
                     }
                     clearCookieAndDestroySession(ac);
-                    ac = prevAC;
+                    if (oldSession != null) {
+                        ac.getLoginState().setSession(oldSession);
+                        ac.getLoginState().setSid(oldSession.getID());
+                    }
                 } else {
                     if (AuthUtils.isCookieSupported(ac)) {
                         setCookie();
                         clearCookie(AuthUtils.getAuthCookieName());
                     }
                     try {
-                        if (prevAC != null) {
+                        if (oldSession != null) {
                             if (loginDebug.messageEnabled()) {
                                 loginDebug.message("Destroy the " +
                                 "original session Successful!");
                             }
-                            AuthUtils.destroySession(prevAC);
+                            AuthD authD = AuthD.getAuth();
+                            authD.destroySession(oldSession.getID());
                         }
                     } catch (Exception e) {
                         if (loginDebug.messageEnabled()) {
@@ -570,18 +593,19 @@ public class LoginViewBean extends AuthViewBeanBase {
                     clearCookieAndDestroySession(ac);
                     loginDebug.message(
                         "Session upgrade - Restoring original Session!");
-                    if (prevAC != null) {
-                        ac = prevAC;
+                    if (oldSession != null) {
+                        ac.getLoginState().setSession(oldSession);
+                        ac.getLoginState().setSid(oldSession.getID());
                     }
                     loginDebug.message("Original session restored successful!");
                 } else {
                     // clear cookie ,destroy failed session
                     clearCookieAndDestroySession(ac);
-                    if (prevAC != null) {
+                    if (oldSession != null) {
                         loginDebug.message(
                             "Destroy existing/old valid session");
-                        clearCookie(prevAC);
-                        AuthUtils.destroySession(prevAC);
+                        AuthD authD = AuthD.getAuth();
+                        authD.destroySession(oldSession.getID());
                     }
                 }
                 loginDebug.message("Login failure, current session destroyed!");
@@ -712,31 +736,6 @@ public class LoginViewBean extends AuthViewBeanBase {
     
     private void processLogin() {
         loginDebug.message("In processLogin()");
-        
-        try {
-            if (AuthUtils.isSessionActive(ac)) {
-                loginDebug.message("Session is Valid / already authenticated");
-                bValidSession = true;
-                /*
-                 * redirect to 'goto' parameter or SPI hook or default
-                 * redirect URL.
-                 */
-                redirect_url = AuthUtils.getSuccessURL(request,ac);
-                if (redirect_url == null) {
-                    ResultVal = rb.getString("authentication.already.login");
-                }
-                LoginSuccess = true;
-                return;
-            }
-        }
-        catch (Exception er){
-            if (loginDebug.messageEnabled()) {
-                loginDebug.message("Session getState exception: ", er);
-            }
-            setErrorMessage(er);
-            return;
-        }
-        
         if (isPost) {
             try {
                 processLoginDisplay();
@@ -808,13 +807,15 @@ public class LoginViewBean extends AuthViewBeanBase {
             (ac.getStatus() == AuthContext.Status.ORG_MISMATCH)) {
                 loginDebug.message(
                     "getLoginDisplay(): Destroying current session!");
-                AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
+                InternalSession oldSession = AuthUtils.
+                            getOldSession(ac);
                 if (AuthUtils.isSessionUpgrade(ac)) {
                     clearCookieAndDestroySession(ac);
                     loginDebug.message("getLoginDisplay(): Session upgrade - " +
                     " Restoring original Session!");
-                    if (prevAC != null) {
-                        ac = prevAC;
+                    if (oldSession != null) {
+                        ac.getLoginState().setSession(oldSession);
+                        ac.getLoginState().setSid(oldSession.getID());
                         String redirect_url = AuthUtils.getSuccessURL(request,ac);
                         if (loginDebug.messageEnabled()) {
                             loginDebug.message(
@@ -826,11 +827,11 @@ public class LoginViewBean extends AuthViewBeanBase {
                     forward=false;
                 } else {
                     clearCookieAndDestroySession(ac);
-                    if (prevAC != null) {
+                    if (oldSession != null) {
                         loginDebug.message(
                             "Destroy existing/old valid session");
-                        clearCookie(prevAC);
-                        AuthUtils.destroySession(prevAC);
+                        AuthD authD = AuthD.getAuth();
+                           	authD.destroySession(oldSession.getID());
                     }
                     ac = null;
                     forwardTo(null);
@@ -1490,13 +1491,13 @@ public class LoginViewBean extends AuthViewBeanBase {
     }
     
     // Method to check if this is Session Upgrade
-    private boolean checkNewOrg(AuthContextLocal origAC) {
+    private boolean checkNewOrg(SSOToken ssot) {
         loginDebug.message("Check New Organization!");
         boolean checkNewOrg = false;
         
         try {
             // always make sure the orgName is the same
-            String orgName = AuthUtils.getSessionProperty("Organization", origAC);
+            String orgName = ssot.getProperty("Organization");
             String orgParam = AuthUtils.getOrgParam(reqDataHash);
             String queryOrg = AuthUtils.getQueryOrgName(request,orgParam);
             String newOrgName = AuthUtils.getOrganizationDN(queryOrg,true,request);
@@ -1523,16 +1524,18 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
                 
                 if ((strButton != null) && (strButton.length() != 0)) {
-                    java.util.Locale locale =
-                        com.sun.identity.shared.locale.Locale.getLocale(
-                            AuthUtils.getLocale(origAC));
-                    rb =  rbCache.getResBundle(bundleName, locale);
+                    ISLocaleContext localeContext = new ISLocaleContext();
+                    localeContext.setLocale(request);
+                    fallbackLocale = localeContext.getLocale();
+                    rb =  rbCache.getResBundle(bundleName, fallbackLocale);
                     
                     if (strButton.trim().equals(rb.getString("Yes").trim())) {
                         loginDebug.message("Submit with YES. Destroy session.");
                         param = queryOrg;
-                        clearCookie(origAC);
-                        AuthUtils.destroySession(origAC);
+                        clearCookie(AuthUtils.getCookieName());
+                        clearHostUrlCookie(response);
+                        AuthUtils.clearlbCookie(response);
+                        SSOTokenManager.getInstance().destroyToken(ssot);
                     } else if (!(strButton.trim().equals(rb.getString("No")
                         .trim()))
                     ) {
@@ -1793,10 +1796,14 @@ public class LoginViewBean extends AuthViewBeanBase {
      */
     String getPrevSuccessURLAndSetCookie() {
         loginDebug.message("Restoring original Session !");
-        AuthContextLocal prevAC = AuthUtils.getPrevAuthContext(ac);
+        InternalSession oldSession = AuthUtils.getOldSession(ac);
         clearCookieAndDestroySession(ac);
-        ac = prevAC;
-        String redirect_url = AuthUtils.getSuccessURL(request,ac);
+        if (oldSession != null) {
+            ac.getLoginState().setSession(oldSession);
+            ac.getLoginState().setSid(oldSession.getID());
+        }
+        String redirect_url = oldSession.getProperty(ISAuthConstants.
+            SUCCESS_URL);
         return redirect_url;
     }
     

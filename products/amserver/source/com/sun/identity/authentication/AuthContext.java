@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.12 2008-02-28 01:18:59 pawand Exp $
+ * $Id: AuthContext.java,v 1.13 2008-04-05 16:40:11 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1980,26 +1980,30 @@ public class AuthContext extends Object implements java.io.Serializable {
         if (localSessionChecked) {
             return;
         }
-        com.sun.identity.authentication.server.AuthContextLocal 
-        oldACLocal = acLocal.getPrevAuthContext();
-        com.sun.identity.authentication.server.AuthContextLocal
-        acLocalToDestroy = null;
-        if (oldACLocal != null) {
+        SSOToken currToken = acLocal.getSSOToken();
+        com.iplanet.dpro.session.service.InternalSession oldSess
+            = acLocal.getLoginState().getOldSession();
+        if (oldSess != null) {
             if (forceAuth) {
-                acLocalToDestroy = acLocal;
-                acLocal = oldACLocal;
+                try {
+                    SSOTokenManager.getInstance().
+                        destroyToken(currToken);
+                } catch (SSOException ssoExp) {
+                    authDebug.error("AuthContext.onSuccessLocal: ",
+                        ssoExp);
+    	
+                }
+                acLocal.getLoginState().setSession(oldSess);
+                acLocal.getLoginState().setSid(oldSess
+                    .getID());
+                acLocal.getLoginState().setForceAuth(false);
+                ssoToken = acLocal.getSSOToken();
+                ssoTokenID = ssoToken.getTokenID().toString();
                 
             } else {
-                acLocalToDestroy = oldACLocal;
-            }
-            try {
-                SSOToken tmpSession = acLocalToDestroy.getSSOToken();
-                SSOTokenManager.getInstance().
-                    destroyToken(tmpSession);
-            } catch (SSOException ssoExp) {
-                authDebug.error("AuthContext.onSuccessLocal: ",
-                    ssoExp);
-	
+                com.iplanet.dpro.session.service.SessionService.
+                   getSessionService().destroyInternalSession
+                   (oldSess.getID());
             }
         }
         localSessionChecked = true;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.6 2008-02-21 22:48:26 pawand Exp $
+ * $Id: AuthXMLResponse.java,v 1.7 2008-04-05 16:42:30 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,12 +33,17 @@ import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 
+import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenID;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
+import com.sun.identity.authentication.util.ISAuthConstants;
 
 /**
  * AuthXMLResponse constructs the response XML string to return
@@ -67,7 +72,9 @@ public class AuthXMLResponse {
     String authIdentifier;
     String prevAuthIdentifier;
     Set moduleNames = new HashSet() ;
-    AuthContextLocal oldAuthContext = null;
+    InternalSession oldSession = null;
+    boolean validSessionNoUpgrade = false;
+    AuthXMLRequest authXMLReq = null;
 
     /**
      * Creates <code>AuthXMLResponse</code> object
@@ -210,24 +217,44 @@ public class AuthXMLResponse {
                         .append(AuthXMLTags.QUOTE);
         }
 
-        if (loginStatus == AuthContext.Status.SUCCESS)  {
-            setSSOToken();
+        if (loginStatus == AuthContext.Status.SUCCESS) {
+            String sessionID = null;
+            if (validSessionNoUpgrade) {
+                sessionID = authXMLReq.getAuthIdentifier();
+            } else {
+                setSSOToken();
+            }
             if (ssoToken != null) {
                 ssoTokenID = ssoToken.getTokenID();
                 if (debug.messageEnabled()) {
                     debug.message("ssoTokenID is : " + ssoTokenID.toString());
                 }
             }
-            if (ssoTokenID != null) {
+            if ((ssoTokenID != null) || (sessionID != null)) {
                 statusString.append(AuthXMLTags.SPACE)
                             .append(AuthXMLTags.SSOTOKEN)
                             .append(AuthXMLTags.EQUAL)
-                            .append(AuthXMLTags.QUOTE)
-                            .append(ssoTokenID.toString())
                             .append(AuthXMLTags.QUOTE);
+                if (validSessionNoUpgrade) {
+                    statusString.append(sessionID);
+                } else {
+                    statusString.append(ssoTokenID.toString());
+                }
+                statusString.append(AuthXMLTags.QUOTE);
             }
-        
-            successURL = AuthUtils.getLoginSuccessURL(authContext);
+            if (validSessionNoUpgrade){
+                try {
+                SSOToken ssot = SSOTokenManager.getInstance().
+                   createSSOToken(sessionID);
+                successURL = ssot.getProperty(
+                   ISAuthConstants.SUCCESS_URL);
+                } catch (SSOException ssoExp) {
+                    debug.error("AuthXMLResponse.createLoginStatusString:" 
+                        + ssoExp.getMessage());
+                }
+            } else {
+                successURL = AuthUtils.getLoginSuccessURL(authContext);
+            }
 
             if (successURL != null) {
                 statusString.append(AuthXMLTags.SPACE)
@@ -237,9 +264,13 @@ public class AuthXMLResponse {
                             .append(successURL)
                             .append(AuthXMLTags.QUOTE);
             }
-
-            Subject subject = authContext.getSubject();
-
+            
+            Subject subject = null;
+            if (validSessionNoUpgrade) {
+                subject = authXMLReq.getSubject();
+            } else {
+                subject = authContext.getSubject();
+            }
             if (debug.messageEnabled()) {
                  debug.message("Subject is : " + subject);
             } 
@@ -311,8 +342,9 @@ public class AuthXMLResponse {
                 } else if (loginStatus == AuthContext.Status.SUCCESS) {
                     xmlString.append(createLoginStatusString());
                     debug.message("destroying old session");
-                    if (oldAuthContext != null) {
-                        AuthUtils.destroySession(oldAuthContext);
+                    if (oldSession != null) {
+                        AuthD authD = AuthD.getAuth();
+                        authD.destroySession(oldSession.getID());
                     }
                 } else {
                     xmlString.append(createLoginStatusString());
@@ -322,6 +354,13 @@ public class AuthXMLResponse {
             case AuthXMLRequest.LoginIndex:
             case AuthXMLRequest.LoginSubject:
             case AuthXMLRequest.SubmitRequirements:
+                if (validSessionNoUpgrade) {
+                    debug.message("Session is Valid and does not need "
+                        + "update. Returning success." );
+                    loginStatus = AuthContext.Status.SUCCESS;
+                    xmlString.append(createLoginStatusString());
+                    break;
+                }
                 if (reqdCallbacks != null) {
                     String xmlCallback
                         = AuthXMLUtils.getXMLForCallbacks(reqdCallbacks);
@@ -336,17 +375,22 @@ public class AuthXMLResponse {
                         xmlString.append(createXMLErrorString());
                             AuthUtils.destroySession(authContext);
                     } else if (loginStatus == AuthContext.Status.SUCCESS) {
-                        if (oldAuthContext != null) {
+                        if (oldSession != null) {
+                            AuthD authD = AuthD.getAuth();
                             if (authContext.getLoginState().getForceFlag()){
-                                AuthUtils.destroySession(authContext);
-                                authContext = oldAuthContext;
+                                authD.destroySession(authContext.getLoginState()
+                                    .getSid());
+                                authContext.getLoginState().setSession(
+                                    oldSession);
+                                authContext.getLoginState().setSid(oldSession
+                                    .getID());
                                 authContext.getLoginState().setForceAuth(false);
                             } else {
                                 if (debug.messageEnabled()) {
                                     debug.message("AuthXMLResponse.toXMLString : "
                                         +"destroying old session");
                                 }
-                                AuthUtils.destroySession(oldAuthContext);
+                                authD.destroySession(oldSession.getID());
                             }
                         }
                         xmlString.append(createLoginStatusString());
@@ -468,8 +512,22 @@ public class AuthXMLResponse {
      *
      * @param aOldAuthContext previous authentication context object.
      */
-    public void setPrevAuthContext(AuthContextLocal aOldAuthContext) {
-        this.oldAuthContext = aOldAuthContext;
+    public void setOldSession(InternalSession aOldSession) {
+        this.oldSession = aOldSession;
+    }
+    
+    /**
+     * Sets the attribute for valid session
+     * and no session upgrade in request.
+     *
+     * @param aValidSessionNoUpgrade.
+     */
+    public void setValidSessionNoUpgrade(boolean
+        aValidSessionNoUpgrade) {
+        this.validSessionNoUpgrade = aValidSessionNoUpgrade;
     }
 
+    public void setAuthXMLRequest(AuthXMLRequest authXMLReq) {
+        this.authXMLReq = authXMLReq;
+    }
 }

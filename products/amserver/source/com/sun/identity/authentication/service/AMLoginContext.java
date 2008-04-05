@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.10 2008-02-20 06:42:36 superpat7 Exp $
+ * $Id: AMLoginContext.java,v 1.11 2008-04-05 16:41:09 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -464,8 +464,15 @@ public class AMLoginContext {
                         updateLoginState(
                             loginState,indexType,indexName,configName,orgDN);
                         //activate session
+                        Object lcInSession = null;
+                        if (isPureJAAS()) {
+                            lcInSession = lc;
+                        } else {
+                            lcInSession = jlc;
+                        } 
                         boolean sessionActivated = 
-                            loginState.activateSession(subject, authContext);
+                            loginState.activateSession(subject, authContext,
+                            lcInSession);
                         if (sessionActivated) {
                             loginState.logSuccess();
                             if (amAccountLockout.isLockoutEnabled()) {

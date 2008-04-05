@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.7 2008-02-20 06:42:35 superpat7 Exp $
+ * $Id: LogoutViewBean.java,v 1.8 2008-04-05 16:43:34 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,10 +38,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.dpro.session.service.SessionService;
+import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
@@ -52,7 +54,9 @@ import com.iplanet.jato.view.html.StaticTextField;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.common.ISLocaleContext;
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -91,6 +95,8 @@ public class LogoutViewBean extends AuthViewBeanBase {
      */
     public void forwardTo(RequestContext requestContext) {
         SessionID sessionID = null;
+        SSOToken token = null;
+        InternalSession intSess = null;
         java.util.Locale locale = null;
         logoutDebug.message("In forwardTo()");
         if (requestContext!=null) {
@@ -108,38 +114,60 @@ public class LogoutViewBean extends AuthViewBeanBase {
         
         try {
             sessionID = new SessionID(request);
-            ac = AuthUtils.getAuthContext(request,response,sessionID,false,false,true);
-            
-            // I18N get resource bundle
-            locale = com.sun.identity.shared.locale.Locale.getLocale(
-                AuthUtils.getLocale(ac));
-            fallbackLocale = locale;
+            intSess = AuthD.getSession(sessionID);
+            if (intSess != null) {
+                populateL10NFileAttrs(intSess);
+                String localeStr =  intSess.getProperty(ISAuthConstants.LOCALE);
+                // I18N get resource bundle
+                locale = com.iplanet.am.util.Locale.getLocale(localeStr);
+                fallbackLocale = locale;
+            } else {
+                ISLocaleContext localeContext = new ISLocaleContext();
+                localeContext.setLocale(request);
+                locale = localeContext.getLocale();
+                if (locale == null) {
+                    String localeStr = AuthD.getAuth().getPlatformLocale();
+                    locale = com.iplanet.am.util.Locale.getLocale(localeStr);
+                }
+            }
+                
             rb = (ResourceBundle)  rbCache.getResBundle("amAuthUI", locale);
             clientType = AuthUtils.getClientType(request);
             if (logoutDebug.messageEnabled()) {
                 logoutDebug.message("clienttype is : " + clientType);
             }
+            token = SSOTokenManager.getInstance().
+                createSSOToken(sessionID.toString());
         } catch (Exception e) {
             ResultVal = getL10NMessage(e, locale);
         }
         
         // Get the Login URL and query map
-        loginURL = AuthUtils.getLoginURL(ac);
+        try {
+            loginURL = token.getProperty(ISAuthConstants.FULL_LOGIN_URL);
+        } catch (com.iplanet.sso.SSOException ssoExp) {
+            if (logoutDebug.messageEnabled()) {
+                logoutDebug.message("LogoutViewBean.forwardTo: "
+                    + " Cannot get Login URL");
+            }
+        }
         
         // set the cookie Value or set the logoutcookie string in
         // the case of URL rewriting otherwise set in the responsed
         // header
-        
-        cookieSupported = AuthUtils.isCookieSupported(ac,request);
-        SessionID sid  = AuthUtils.getSidValue(ac,request);
-        
+        Cookie[] cookieArr = request.getCookies();
+        if ((cookieArr != null) && (cookieArr.length != 0)) {
+            cookieSupported = true;
+        } else {
+            cookieSupported = false;
+        }
         if (cookieSupported) {
             logoutDebug.message("Cookie is supported");
-            clearAllCookies(sid);
+            clearAllCookies(sessionID);
         } else {
             logoutDebug.message("Cookie is not supported");
-            if ( (sid != null) && (sid.toString().length() != 0)) {
-                logoutCookie = AuthUtils.getLogoutCookieString(sid);
+            if ( (sessionID != null) && (sessionID.toString().length() != 0)) {
+                logoutCookie = AuthUtils.getLogoutCookieString(sessionID);
                 if (logoutDebug.messageEnabled()) {
                     logoutDebug.message("Logout Cookie is " + logoutCookie);
                 }
@@ -148,8 +176,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
         
         // get the Logout JSP page path
         jsp_page = appendLogoutCookie(getFileName(LOGOUT_JSP));
-        
-        if (ac != null && AuthUtils.sessionTimedOut(ac)) {
+        if ((intSess != null) && intSess.isTimedOut()) {
             try {
                 if (logoutDebug.messageEnabled()) {
                     logoutDebug.message("Goto Login URL : " + loginURL);
@@ -180,133 +207,150 @@ public class LogoutViewBean extends AuthViewBeanBase {
             super.forwardTo(requestContext);
             return;
         }
-        
-        if (ac == null) {
-            if (SessionService.getSessionService().isSiteEnabled() ||
-            SessionService.getSessionService().isSessionFailoverEnabled()) {
+        Object loginContext = intSess.getObject(ISAuthConstants.
+            LOGIN_CONTEXT);
+        try {
+            if (loginContext != null) {
+                if (loginContext instanceof 
+                    javax.security.auth.login.LoginContext) {
+                    javax.security.auth.login.LoginContext lc = 
+                        (javax.security.auth.login.LoginContext) loginContext;
+                    lc.logout();
+                } else {
+                    com.sun.identity.authentication.jaas.LoginContext jlc =
+                        (com.sun.identity.authentication.jaas.LoginContext) 
+                        loginContext;
+                    jlc.logout();
+                }
+            }
+        } catch (javax.security.auth.login.LoginException loginExp) {
+            logoutDebug.error("LogoutViewBean.forwardTo: "
+                + " Cannot Execute module Logout", loginExp);
+        }
+        Set postAuthSet = (Set) intSess.getObject(ISAuthConstants.
+            POSTPROCESS_INSTANCE_SET);
+        if ((postAuthSet != null) && !(postAuthSet.isEmpty())) {
+            AMPostAuthProcessInterface postLoginInstance=null;
+            for(Iterator iter = postAuthSet.iterator();
+            iter.hasNext();) {
                 try {
-                    Session session = Session.getSession(sid);
-                    String plis = session.getProperty(
-                            ISAuthConstants.POST_AUTH_PROCESS_INSTANCE);
-                    if (plis != null && plis.length() > 0) {
-                        StringTokenizer st = new StringTokenizer(plis, "|");
-                        SSOToken token = null;
+	            postLoginInstance =
+	 	        (AMPostAuthProcessInterface) iter.next();
+                     postLoginInstance.onLogout(request, response, token);
+                } catch (Exception exp) {
+                   logoutDebug.error("LogoutViewBean.forwardTo: "
+                       + "Failed in post logout.", exp);
+                }
+	    }
+        } else {
+            String plis = intSess.getProperty(
+                    ISAuthConstants.POST_AUTH_PROCESS_INSTANCE);
+            if (plis != null && plis.length() > 0) {
+                StringTokenizer st = new StringTokenizer(plis, "|");
+                if (token != null) {
+                    while (st.hasMoreTokens()) {
+                        String pli = (String)st.nextToken();
                         try {
-                            token = SSOTokenManager.getInstance().
-                                    createSSOToken(sid.toString());
-                        } catch (SSOException e) {
-                            if (logoutDebug.messageEnabled()) {
-                                logoutDebug.message("Failed to get token for post process ", e);
-                            }
-                        }
-                        if (token != null) {
-                            while (st.hasMoreTokens()) {
-                                String pli = (String)st.nextToken();
-                                try {
-                                    AMPostAuthProcessInterface postProcess = 
-                                            (AMPostAuthProcessInterface)
-                                            Thread.currentThread().
-                                            getContextClassLoader().
-                                            loadClass(pli).newInstance();
-                                    postProcess.onLogout(request, response, token);
-                                } catch (Exception e) {
-                                    logoutDebug.error("Failed in post logout process of " + pli, e);
-                                }
-                            }
+                            AMPostAuthProcessInterface postProcess = 
+                                    (AMPostAuthProcessInterface)
+                                    Thread.currentThread().
+                                    getContextClassLoader().
+                                    loadClass(pli).newInstance();
+                            postProcess.onLogout(request, response, token);
+                        } catch (Exception e) {
+                            logoutDebug.error("Failed in post logout process of " + pli, e);
                         }
                     }
-                    session.logout();
-                    logoutDebug.message("logout successfully in Site Enabled/Session failover mode");
-                    ResultVal = rb.getString("logout.successful");
-                } catch (SessionException se) {
+                }
+            }
+        }
+        boolean isTokenValid = false;
+        try {
+            isTokenValid = SSOTokenManager.getInstance().isValidToken(token);
+        } catch (com.iplanet.sso.SSOException ssoExp) {
+            if (logoutDebug.messageEnabled()) {
+                logoutDebug.message("LogoutViewBean.forwardTo: "
+                    + " SSOException checking validity of SSO Token");
+            }
+        }
+            
+        if ((token != null) && isTokenValid) {
+            try {
+                Session session = Session.getSession(sessionID);
+                session.logout();
+                logoutDebug.message("logout successful.");
+                ResultVal = rb.getString("logout.successful");
+            } catch (SessionException se) {
+                try {
+                    if (logoutDebug.messageEnabled()) {
+                        logoutDebug.message("Exception during logout", se);
+                        logoutDebug.message("Goto Login URL : "+ LOGINURL);
+                    }
+                    if (doSendRedirect(LOGINURL)) {
+                        response.sendRedirect(appendLogoutCookie(LOGINURL));
+                        return;
+                    } else {
+                        jsp_page = appendLogoutCookie(
+                        getFileName(LOGIN_JSP));
+                    }
+                
+                } catch (Exception e) {
+                    if (logoutDebug.messageEnabled()) {
+                        logoutDebug.message(
+                            "Redirect failed:" + LOGINURL ,e);
+                    }
+                    ResultVal = e.getMessage();
+                }
+                super.forwardTo(requestContext);
+                return;
+            }
+        } else {
+            if (!isGotoSet()) {
+                String originalRedirectURL = AuthUtils.getOrigRedirectURL(
+                    request,sessionID);
+                if (originalRedirectURL != null) {
                     try {
                         if (logoutDebug.messageEnabled()) {
-                            logoutDebug.message("Exception during logout", se);
-                            logoutDebug.message("Goto Login URL : "+ LOGINURL);
+                            logoutDebug.message("Original Redirect URL: " +
+                            originalRedirectURL);
+                        }
+                        int index = originalRedirectURL.indexOf("/Login");
+                        if (index != -1) {
+                            originalRedirectURL =
+                                originalRedirectURL.substring(0,index)
+                                + "/Logout";
+                        }
+                        if (logoutDebug.messageEnabled()) {
+                            logoutDebug.message(
+                                "Redirect to Original Redirect URL :"
+                                + originalRedirectURL);
+                        }
+                        if (doSendRedirect(originalRedirectURL)) {
+                            response.sendRedirect(
+                                appendLogoutCookie(originalRedirectURL));
+                            return;
+                        }
+                    } catch (Exception e) {
+                        ResultVal = getL10NMessage(e, locale);
+                    }
+                } else {
+                    try {
+                        if (logoutDebug.messageEnabled()) {
+                            logoutDebug.message(
+                                "Goto LOGINURL : "+ LOGINURL);
                         }
                         if (doSendRedirect(LOGINURL)) {
-                            response.sendRedirect(appendLogoutCookie(LOGINURL));
+                            response.sendRedirect(
+                                appendLogoutCookie(LOGINURL));
                             return;
                         } else {
                             jsp_page = appendLogoutCookie(
                                 getFileName(LOGIN_JSP));
                         }
-                        
                     } catch (Exception e) {
-                        if (logoutDebug.messageEnabled()) {
-                            logoutDebug.message(
-                                "Redirect failed:" + LOGINURL ,e);
-                        }
-                        ResultVal = e.getMessage();
-                    }
-                    super.forwardTo(requestContext);
-                    return;
-                }
-            } else {
-                if (!isGotoSet()) {
-                    String originalRedirectURL = AuthUtils.getOrigRedirectURL(
-                        request,sessionID);
-                    if (originalRedirectURL != null) {
-                        try {
-                            if (logoutDebug.messageEnabled()) {
-                                logoutDebug.message("Original Redirect URL: " +
-                                originalRedirectURL);
-                            }
-                            int index = originalRedirectURL.indexOf("/Login");
-                            if (index != -1) {
-                                originalRedirectURL =
-                                    originalRedirectURL.substring(0,index)
-                                    + "/Logout";
-                            }
-                            if (logoutDebug.messageEnabled()) {
-                                logoutDebug.message(
-                                    "Redirect to Original Redirect URL :"
-                                    + originalRedirectURL);
-                            }
-                            if (doSendRedirect(originalRedirectURL)) {
-                                response.sendRedirect(
-                                    appendLogoutCookie(originalRedirectURL));
-                                return;
-                            }
-                        } catch (Exception e) {
-                            ResultVal = getL10NMessage(e, locale);
-                        }
-                    } else {
-                        try {
-                            if (logoutDebug.messageEnabled()) {
-                                logoutDebug.message("AuthContext is NULL");
-                                logoutDebug.message(
-                                    "Goto LOGINURL : "+ LOGINURL);
-                            }
-                            if (doSendRedirect(LOGINURL)) {
-                                response.sendRedirect(
-                                    appendLogoutCookie(LOGINURL));
-                                return;
-                            } else {
-                                jsp_page = appendLogoutCookie(
-                                    getFileName(LOGIN_JSP));
-                            }
-                        } catch (Exception e) {
-                            ResultVal = getL10NMessage(e, locale);
-                        }
+                        ResultVal = getL10NMessage(e, locale);
                     }
                 }
-            }
-        } else {
-            try {
-                ac.logout();
-                logoutDebug.message("logout successfully");
-                ResultVal = rb.getString("logout.successful");
-            } catch (Exception e) {
-                if (logoutDebug.messageEnabled()) {
-                    logoutDebug.message(
-                        "error in logout : " + e.getMessage(), e);
-                }
-                
-                ResultVal = rb.getString("logout.failure")
-                + " : " + getL10NMessage(e, locale);
-                super.forwardTo(requestContext);
-                return;
             }
         }
         
@@ -315,10 +359,24 @@ public class LogoutViewBean extends AuthViewBeanBase {
         }
     }
     
+    private void populateL10NFileAttrs(InternalSession intSess) {
+        if (intSess != null){
+            localeName = intSess.getProperty(ISAuthConstants.LOCALE);
+            orgDN = intSess.getClientDomain();
+            String serviceName = intSess.getProperty(ISAuthConstants.SERVICE);
+            if ((serviceName != null) && (serviceName.length() != 0)) {
+                indexType = AuthContext.IndexType.SERVICE;
+                indexName = serviceName;
+            }
+        }
+    }
+    
     private String getFileName(String fileName) {
         String relativeFileName = null;
-        if (ac != null) {
-            relativeFileName = AuthUtils.getFileName(ac,fileName);
+        if (orgDN != null) {
+            relativeFileName = AuthUtils.getFileName(fileName, localeName,
+                orgDN, request, AuthD.getAuth().getServletContext(), 
+                indexType, indexName);
         } else {
             relativeFileName = AuthUtils.getDefaultFileName(request,fileName);
         }
@@ -345,19 +403,17 @@ public class LogoutViewBean extends AuthViewBeanBase {
     }
     
     private void clearAllCookiesByDomain(SessionID sid, String cookieDomain) {
-        Cookie cookie;
-        if (ac != null) {
-            cookie = AuthUtils.getLogoutCookie(ac, cookieDomain);
-        } else {
-            cookie = AuthUtils.getLogoutCookie(sid, cookieDomain);
-        }
+        Cookie cookie = AuthUtils.getLogoutCookie(sid, cookieDomain);
         response.addCookie(cookie);
-        if (ac == null || AuthUtils.getPersistentCookieMode(ac)) {
+        String pCookieName = AuthUtils.getPersistentCookieName();
+        String cookieValue = CookieUtils.getCookieValueFromReq(
+            request, pCookieName);
+        if (cookieValue != null) {
             // clear Persistent Cookie
-            cookie = AuthUtils.clearPersistentCookie(cookieDomain, ac);
+            cookie = AuthUtils.clearPersistentCookie(cookieDomain, null);
             if (logoutDebug.messageEnabled()) {
-                logoutDebug.message("Clearing persistent cookie: "
-                + cookieDomain);
+                logoutDebug.message("LogoutViewBean.clearAllCookiesByDomain"
+                    + "Clearing persistent cookie: " + cookieDomain);
                 logoutDebug.message("Persistent cookie: " + cookie);
             }
             response.addCookie(cookie);
@@ -561,9 +617,12 @@ public class LogoutViewBean extends AuthViewBeanBase {
     // Instance variables
     ////////////////////////////////////////////////////////////////////////////
     
+    String localeName = null;
+    String orgDN = null;
+    AuthContext.IndexType indexType = null;
+    String indexName = null;
     HttpServletRequest request;
     HttpServletResponse response;
-    AuthContextLocal ac = null;
     /** Logout result value */
     public String ResultVal = "";
     /** Goto url */

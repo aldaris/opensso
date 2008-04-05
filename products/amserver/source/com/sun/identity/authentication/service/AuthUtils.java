@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.17 2008-02-21 22:47:18 pawand Exp $
+ * $Id: AuthUtils.java,v 1.18 2008-04-05 16:41:09 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,8 +46,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 
+import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 
@@ -63,6 +65,7 @@ import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.config.AMAuthLevelManager;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.server.AuthContextLocal;
+import com.sun.identity.authentication.server.AuthXMLRequest;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -75,6 +78,7 @@ import com.sun.identity.common.Constants;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.DNMapper;
 
 import com.sun.identity.policy.PolicyUtils;
@@ -212,13 +216,17 @@ public class AuthUtils extends AuthClientUtils {
             if ((authContext == null) || (isSessionUpgrade) || (isBackPost)) {
                 try {
                     loginState = new LoginState();
+                    InternalSession oldSession = null;
+                    if (sid != null) {
+                        oldSession = AuthD.getSession(sid);
+                        loginState.setOldSession(oldSession);
+                    }
                     if (isSessionUpgrade) {
-                        loginState.setPrevAuthContext(authContext);
+                        loginState.setOldSession(oldSession);
                         loginState.setSessionUpgrade(isSessionUpgrade);
                     } else if (isBackPost) {
-                        loginState.setPrevAuthContext(authContext);
+                        loginState.setOldSession(oldSession);
                     }
-                    
                     authContext =
                     loginState.createAuthContext(request,response,sid,dataHash);
                     authContext.setLoginState(loginState);
@@ -876,11 +884,11 @@ public class AuthUtils extends AuthClientUtils {
      *  @return AuthContextLocal object
      */
     public static AuthContextLocal getAuthContext(String orgName,
-    String sessionID, boolean isLogout, HttpServletRequest req,
-    String indexType, String indexName)
-    throws AuthException {
-         return getAuthContext(orgName, sessionID, false, req,indexType,
-             indexName,false);
+        String sessionID, boolean isLogout, HttpServletRequest req,
+        String indexType, AuthXMLRequest xmlReq)
+        throws AuthException {
+        return getAuthContext(orgName, sessionID, false, req,indexType,
+            xmlReq,false);
     }
 
     /* create auth context for org  and sid, if sessionupgrade then
@@ -901,14 +909,21 @@ public class AuthUtils extends AuthClientUtils {
      *  @return AuthContextLocal object
      */
     public static AuthContextLocal getAuthContext(String orgName,
-    String sessionID, boolean isLogout, HttpServletRequest req,
-    String indexType, String indexName, boolean forceAuth)
-    throws AuthException {
+        String sessionID, boolean isLogout, HttpServletRequest req,
+        String indexType,  AuthXMLRequest xmlReq, boolean forceAuth)
+        throws AuthException {
         AuthContextLocal authContext = null;
         SessionID sid = null;
+        com.iplanet.dpro.session.service.InternalSession sess = null;
         LoginState loginState = null;
         boolean sessionUpgrade = false;
         AuthD ad = AuthD.getAuth();
+        int sessionState = -1;
+        SSOToken ssot = null;
+        String indexName = null;
+        if (xmlReq != null) {
+            indexName = xmlReq.getIndexName();
+        }
         
         if (utilDebug.messageEnabled()) {
             utilDebug.message("orgName : " + orgName);
@@ -923,32 +938,31 @@ public class AuthUtils extends AuthClientUtils {
                 
                 // check if this sesson id is active, if yes then it
                 // is a session upgrade case.
-                LoginState prevLoginState = getLoginState(authContext);
-                com.iplanet.dpro.session.service.InternalSession sess = null;
-                if (prevLoginState != null) {
-                    sess = prevLoginState.getSession();
+                loginState = getLoginState(authContext);
+                if (loginState != null) {
+                    sess = loginState.getSession();
+                } else {
+                    sess = AuthD.getSession(sessionID);
                 }
                 if (sess == null) {
                     sessionUpgrade = false;
                 } else {
-                    int sessionState = sess.getState();
+                    sessionState = sess.getState();
                     if (utilDebug.messageEnabled()) {
                         utilDebug.message("sid from sess is : " + sess.getID());
                         utilDebug.message("sess is : " + sessionState);
                     }
                     if (!((sessionState == Session.INVALID)  || (isLogout))) {
+                        ssot = AuthUtils.
+                            getExistingValidSSOToken(sid);
                         if ((indexType != null) && (indexName != null)) {
                             Hashtable indexTable = new Hashtable();
                             indexTable.put(indexType, indexName);
-                            if (authContext != null) {
-                                if (forceAuth) {
-                                    sessionUpgrade = true;
-                                } else {
-                                    SSOToken ssot = prevLoginState.
-                                        getSSOToken();
-                                    sessionUpgrade = checkSessionUpgrade(ssot,
-                                        indexTable);
-                                }
+                            if (forceAuth) {
+                                sessionUpgrade = true;
+                            } else {
+                                sessionUpgrade = checkSessionUpgrade(ssot,
+                                    indexTable);
                             }
                         } else {
                             sessionUpgrade = true;
@@ -970,19 +984,30 @@ public class AuthUtils extends AuthClientUtils {
                     + forceAuth);
             }
             
-            if ((orgName == null) && (authContext == null)) {
+            if ((orgName == null) && (sess == null)) {
                 utilDebug.error("Cannot create authcontext with null org " );
                 throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
+            } else if (orgName == null) {
+                orgName = sess.getClientDomain();
+            }
+            if ((ssot != null) && !(sessionUpgrade)) {
+                xmlReq.setValidSessionNoUpgrade(true);
+                return null;
             }
             
-            if ((orgName != null) && ((authContext ==null) || (sessionUpgrade))) {
+            if (((ssot == null) && (loginState == null)) || 
+                (sessionUpgrade)) {
                 try {
                     loginState = new LoginState();
+                    InternalSession oldSession = null;
+                    if (sid != null) {
+                        oldSession = AuthD.getSession(sid);
+                        loginState.setOldSession(oldSession);
+                    }
                     if (sessionUpgrade) {
-                        loginState.setPrevAuthContext(authContext);
+                        loginState.setOldSession(oldSession);
                         loginState.setSessionUpgrade(sessionUpgrade);
                     }
-                    
                     authContext = loginState.createAuthContext(sid,orgName,req);
                     authContext.setLoginState(loginState);
                     String queryOrg = getQueryOrgName(null,orgName);
@@ -1006,8 +1031,10 @@ public class AuthUtils extends AuthClientUtils {
                         utilDebug.message("AuthUtil :Session is .. : " + requestSess);
                     }
                     loginState = getLoginState(authContext);
-                    loginState.setSession(requestSess);
-                    loginState.setRequestType(false);
+                    if (loginState != null) {
+                        loginState.setSession(requestSess);
+                        loginState.setRequestType(false);
+                    }
                 } catch (Exception ae) {
                     utilDebug.message("Error Retrieving AuthContextLocal" );
                     if (utilDebug.messageEnabled()) {
@@ -1050,18 +1077,14 @@ public class AuthUtils extends AuthClientUtils {
         return AMAuthLevelManager.getInstance().getModulesForLevel(authLevel,
         organizationDN, clientType);
     }
-    
-    /* return the previous authcontext */
-    public static AuthContextLocal getPrevAuthContext(AuthContextLocal authContext) {
-        LoginState loginState = getLoginState(authContext);
-        AuthContextLocal oldAuthContext = loginState.getPrevAuthContext();
-        return oldAuthContext;
+ 
+    /* return the previous Internal Session */
+    public static InternalSession getOldSession(AuthContextLocal authContext) {
+     	LoginState loginState = getLoginState(authContext);
+	InternalSession oldSession = loginState.getOldSession();
+	return oldSession;
     }
-    
-    /* return the LoginState for the authconext */
-    public static LoginState getPrevLoginState(AuthContextLocal oldAuthContext) {
-        return getLoginState(oldAuthContext);
-    }
+
     
     /* retreive the authcontext based on the req */
     public static AuthContextLocal getOrigAuthContext(SessionID sid)
@@ -1780,5 +1803,35 @@ public class AuthUtils extends AuthClientUtils {
          }
          return isForward;
      }
-
+     
+     /**
+      * Returns <code>Map</code> attributes
+      *
+      * @param serviceName Service Name
+      * @return <code>Map</code> of global attributes.
+      */
+     public static Map getGlobalAttributes(String serviceName) {
+         Map attrs = null;
+         try {
+             SSOToken dUserToken = (SSOToken) AccessController.doPrivileged (
+                 AdminTokenAction.getInstance());
+             ServiceSchemaManager scm = new ServiceSchemaManager(
+                 serviceName, dUserToken);
+             ServiceSchema schema = scm.getGlobalSchema();
+             if (schema != null) {
+                 attrs = schema.getAttributeDefaults();
+             }
+         } catch (SMSException smsExp) {
+             utilDebug.error("AuthUtils.getGlobalAttributes: SMS Error", smsExp
+                 );
+         } catch (SSOException ssoExp) {
+             utilDebug.error("AuthUtils.getGlobalAttributes: SSO Error", ssoExp
+                 );
+         }
+         if (utilDebug.messageEnabled()) {
+             utilDebug.message("AuthUtils.getGlobalAttributes: attrs=" + attrs);
+         }
+         return attrs;
+     }
+     
 }

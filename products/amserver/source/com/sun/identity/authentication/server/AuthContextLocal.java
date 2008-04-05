@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLocal.java,v 1.8 2008-02-28 01:18:26 pawand Exp $
+ * $Id: AuthContextLocal.java,v 1.9 2008-04-05 16:42:30 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -935,18 +935,6 @@ public final class AuthContextLocal extends Object
      */
     public String getOrgDN() {
         return orgDN;
-    }
-
-    /**
-     * Returns the instance of previous Auth Context
-     * @return authContextLocal
-     */
-    public AuthContextLocal getPrevAuthContext() {
-        AuthContextLocal authContextLocal = null;
-        if (loginState != null) {
-            authContextLocal = loginState.getPrevAuthContext();
-        }
-        return authContextLocal;
     }
 
     /**

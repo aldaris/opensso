@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.22 2008-03-21 06:19:04 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.23 2008-04-05 16:41:09 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -170,7 +170,6 @@ public class LoginState {
     String pAuthMethName=null;
     String queryOrg = null;
     SessionID sid;
-    SSOToken ssoToken;
     boolean cookieSupported = true;
     boolean cookieSet = false;
     String filePath;
@@ -207,7 +206,6 @@ public class LoginState {
     public String userIDGeneratorClassName;
     Set domainAuthenticators = null;
     Set moduleInstances= null;
-    AuthContextLocal oldAuthContext;
     private InternalSession oldSession = null;
     private SSOToken oldSSOToken = null;
     private boolean forceAuth;
@@ -343,6 +341,8 @@ public class LoginState {
     // Variable indicating a request "forward" after 
     // authentication success
     boolean forwardSuccess = false;
+    boolean postProcessInSession = false;
+    boolean modulesInSession = false;
     
     static {
         
@@ -841,6 +841,27 @@ public class LoginState {
     }
     
     /**
+     * Populates the global profile.
+     *
+     * @throws AuthException
+     */
+    public void populateGlobalProfile() throws AuthException {
+        Map attrs = AuthUtils.getGlobalAttributes("iPlanetAMAuthService");
+        String tmpPostProcess = (String)Misc.getMapAttr(attrs,
+         ISAuthConstants.KEEP_POSTPROCESS_IN_SESSION);
+        postProcessInSession = Boolean.parseBoolean(tmpPostProcess); 
+        String tmpModules = (String)Misc.getMapAttr(attrs,
+         ISAuthConstants.KEEP_MODULES_IN_SESSION);
+        modulesInSession = Boolean.parseBoolean(tmpModules); 
+        if (messageEnabled) {
+            debug.message("LoginState.populateGlobalProfile: "
+                + "Getting Global Profile: " +
+                "\npostProcessInSession ->" + postProcessInSession +
+                "\nmodulesInSession ->" + modulesInSession);
+        }
+    }
+    
+    /**
      * Sets the authenticated subject.
      *
      * @param subject Authenticated subject.
@@ -1024,7 +1045,7 @@ public class LoginState {
         return (servletRequest != null) ?
             AuthUtils.getClientType(servletRequest) : AuthUtils.getDefaultClientType();
     }
-    
+
     /**
      * Activates session on successful authenticaton.
      *
@@ -1033,6 +1054,19 @@ public class LoginState {
      * @return true if user session is activated successfully 
      */
     public boolean activateSession(Subject subject, AuthContextLocal ac) {
+        return activateSession(subject, ac, null);
+    }
+    
+    /**
+     * Activates session on successful authenticaton.
+     *
+     * @param subject
+     * @param ac
+     * @param LoginContext
+     * @return true if user session is activated successfully 
+     */
+    public boolean activateSession(Subject subject, AuthContextLocal ac, Object
+        loginContext) {
         try {
             if (messageEnabled) {
                 debug.message("activateSession - Token is : "+ token);
@@ -1046,23 +1080,29 @@ public class LoginState {
                     session = ad.newSession(getOrgDN(), null); 
                     //save the AuthContext object in Session
                     sid = session.getID();
-                    session.setObject(ISAuthConstants.AUTH_CONTEXT_OBJ, ac);
+                    //session.setObject(ISAuthConstants.AUTH_CONTEXT_OBJ, ac);
                     if (hsession != null) {
                         hsession.removeAttribute(
                             ISAuthConstants.AUTH_CONTEXT_OBJ);
                         hsession.invalidate();
                         hsession = null;
                     }
+                } else {
+                    session.removeObject(ISAuthConstants.AUTH_CONTEXT_OBJ);
                 }
                 this.subject = addSSOTokenPrincipal(subject);
                 setSessionProperties(session);
+                if ((modulesInSession) && (loginContext != null)) {
+                    session.setObject(ISAuthConstants.LOGIN_CONTEXT,
+                    loginContext);
+                }
                 activated = session.activate(userDN);
             } catch (AuthException e) {
-                return false;
+		return false;
             }
 
             if (messageEnabled) {
-                debug.message("Activating session: " + session);
+		debug.message("Activating session: " + session);
             }
             return activated;
         } catch (Exception e) {
@@ -1096,8 +1136,8 @@ public class LoginState {
         }
         
         String oldUserDN = null;
-        if (oldAuthContext != null) {
-            oldUserDN = AuthUtils.getLoginState(oldAuthContext).getUserDN();
+        if (oldSession != null) {
+            oldUserDN = oldSession.getProperty(ISAuthConstants.PRINCIPAL);;
             
         }
         if (messageEnabled) {
@@ -1111,15 +1151,12 @@ public class LoginState {
         
         String moduleAuthTime = null;
         if (sessionUpgrade) {
-            LoginState oldLoginState = AuthUtils.getLoginState(oldAuthContext);
-            if (oldLoginState != null) {
-                oldSession = oldLoginState.getSession();
-                try {
-                    oldSSOToken = oldLoginState.getSSOToken();
-                } catch (SSOException ssoExp) {
-                    debug.warning("LoginState.setSessionProperties : "
-                        + "cannot get old SSO Token",ssoExp);
-                }
+            try {
+                oldSSOToken = SSOTokenManager.getInstance().createSSOToken
+                    (oldSession.getID().toString());
+            } catch (SSOException ssoExp) {
+                debug.error("LoginState.setSessionProperties: Cannot get "
+                    + "oldSSOToken.");
             }
             Map moduleTimeMap = null;
             if (oldSSOToken != null) {
@@ -1185,6 +1222,7 @@ public class LoginState {
                 defaultLoginURL = loginURL.substring(0, questionMark);
             }
             session.putProperty(ISAuthConstants.LOGIN_URL, defaultLoginURL);
+            session.putProperty(ISAuthConstants.FULL_LOGIN_URL, loginURL);
         }
         
         sessionSuccessURL = ad.processURL(successLoginURL, servletRequest);
@@ -1461,6 +1499,10 @@ public class LoginState {
         return sid; 
     }
     
+    public void setSid(SessionID aSid) {
+        sid = aSid; 
+    }
+
     public boolean getForceFlag() {
          return forceAuth;
     }
@@ -1594,6 +1636,7 @@ public class LoginState {
         amIdRepo = ad.getAMIdentityRepository(getOrgDN());
         persistentCookieArgExists();
         populateOrgProfile();
+        populateGlobalProfile();
         return authContext;
     }
     
@@ -1635,17 +1678,13 @@ public class LoginState {
      * @throws SSOException
      */
     public SSOToken getSSOToken() throws SSOException {
-        if (ssoToken != null) {
-            return ssoToken;
-        }
-
         if ((session != null) && (session.getState() == Session.INACTIVE)) {
             return null;
         }
 
         try {
             SSOTokenManager ssoManager = SSOTokenManager.getInstance();
-            ssoToken = ssoManager.createSSOToken(session.getID().toString());
+            SSOToken ssoToken = ssoManager.createSSOToken(session.getID().toString());
             return ssoToken;
         } catch (SSOException ex) {
             debug.error("Error retrieving SSOToken :", ex);
@@ -4547,21 +4586,21 @@ public class LoginState {
     }
 
     /**
-     * Sets old authentication context.
+     * Sets old Session
      *
-     * @param oldAuthContext Old authentication context.
+     * @param oldSession Old InternalSession Object
      */
-    public void setPrevAuthContext(AuthContextLocal oldAuthContext) {
-        this.oldAuthContext = oldAuthContext;
+    public void setOldSession(InternalSession oldSession) {
+        this.oldSession = oldSession;
     }
     
     /**
-     * Returns old authentication context.
+     * Returns old Session
      *
-     * @return old authentication context.
+     * @return old Session
      */
-    public AuthContextLocal getPrevAuthContext() {
-        return oldAuthContext;
+    public InternalSession getOldSession() {
+        return oldSession;
     }
     
     /**
@@ -4588,13 +4627,6 @@ public class LoginState {
     
     void sessionUpgrade() {
         // set the larger authlevel
-        LoginState oldLoginState = AuthUtils.getLoginState(oldAuthContext);
-        InternalSession oldSession = null;
-        
-        if (oldLoginState != null) {
-            oldSession = oldLoginState.getSession();
-        }
-        
         if (oldSession == null) {
             return;
         }
@@ -4831,6 +4863,16 @@ public class LoginState {
     void postProcess(AuthContext.IndexType indexType,String indexName, 
             int type) {
         setPostLoginInstances(indexType,indexName);
+        if ((postProcessInSession) && ((postLoginInstanceSet != null) &&
+            (!postLoginInstanceSet.isEmpty()))) {
+            if (messageEnabled) {
+                debug.message("LoginState.setPostLoginInstances : " 
+                    + "Setting post process class in session "
+                    + postLoginInstanceSet);
+            }
+            session.setObject(ISAuthConstants.POSTPROCESS_INSTANCE_SET,
+                postLoginInstanceSet);
+        }
         AMPostAuthProcessInterface postLoginInstance=null;
         if ((postLoginInstanceSet != null) && 
             (!postLoginInstanceSet.isEmpty())) {

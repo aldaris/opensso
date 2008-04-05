@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationServletBase.java,v 1.2 2006-02-01 00:22:35 beomsuk Exp $
+ * $Id: AuthenticationServletBase.java,v 1.3 2008-04-05 16:43:34 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,8 @@ import com.iplanet.jato.CompleteRequestException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.ViewBeanManager;
 
+import com.sun.identity.shared.debug.Debug;
+
 /**
  * This is the front controller of authentication UI
  */
@@ -43,6 +45,7 @@ public class AuthenticationServletBase extends ApplicationServletBase {
     /**
      * creates an instance of application servlet base
      */
+static Debug exDebug = Debug.getInstance("amAuthExceptionViewBean");
     public AuthenticationServletBase() {
         super();
     }
@@ -104,6 +107,10 @@ public class AuthenticationServletBase extends ApplicationServletBase {
         AuthExceptionViewBean vb = (AuthExceptionViewBean) 
             viewBeanManager.getViewBean(
             com.sun.identity.authentication.UI.AuthExceptionViewBean.class);
+        if (exDebug.messageEnabled()) {
+            exDebug.message("AuthenticationServletBase.onUncaughtException:"
+                , e);
+        }
         vb.forwardTo(requestContext);
         throw new CompleteRequestException();
     }

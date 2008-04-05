@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.5 2008-02-21 22:48:26 pawand Exp $
+ * $Id: AuthXMLRequest.java,v 1.6 2008-04-05 16:42:30 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,6 +95,7 @@ public class AuthXMLRequest {
     private String orgName=null;
     private String hostName=null;
     private String forceAuth=null;
+    private boolean validSessionNoUpgrade=false;
     private String requestedInformation=null;
     private boolean isPCookie=false;
     private AuthContext.IndexType indexType=null;
@@ -196,6 +197,17 @@ public class AuthXMLRequest {
      */
     public void setForceAuth(String aForceAuth) {
 	this.forceAuth = aForceAuth;
+    }
+
+    /**
+     * Sets the attribute for valid session 
+     * and no session upgrade in request.
+     *
+     * @param aValidSessionNoUpgrade.
+     */
+    public void setValidSessionNoUpgrade(boolean 
+        aValidSessionNoUpgrade) {
+	this.validSessionNoUpgrade = aValidSessionNoUpgrade;
     }
 
     /**
@@ -315,6 +327,16 @@ public class AuthXMLRequest {
      */
     public String getForceAuth() {
  	return forceAuth;
+    }
+
+    /**
+     * Returns the attribute for valid session 
+     * and no session upgrade in request.
+     *
+     * @return aValidSessionNoUpgrade.
+     */
+    public boolean getValidSessionNoUpgrade() {
+	return validSessionNoUpgrade;
     }
 
     /**

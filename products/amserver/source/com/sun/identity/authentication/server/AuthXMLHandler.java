@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.11 2008-02-21 22:48:26 pawand Exp $
+ * $Id: AuthXMLHandler.java,v 1.12 2008-04-05 16:42:30 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.authentication.server;
 
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.services.comm.client.PLLClient;
@@ -263,6 +264,11 @@ public class AuthXMLHandler implements RequestHandler {
             debug.message("authContext is : " + authContext);
             debug.message("requestType : " + requestType);
         }
+        if (authXMLRequest.getValidSessionNoUpgrade()) {
+            authResponse.setAuthXMLRequest(authXMLRequest);
+            authResponse.setValidSessionNoUpgrade(true);
+            return authResponse;
+        }
         String securityEnabled =  null;
         try {
             securityEnabled =  AuthUtils.getRemoteSecurityEnabled();
@@ -467,9 +473,9 @@ public class AuthXMLHandler implements RequestHandler {
                     postProcess(loginState, authResponse);
                     loginStatus = authContext.getStatus();
                     authResponse.setLoginStatus(loginStatus);
-                    AuthContextLocal prevAuthContext =  loginState.
-                        getPrevAuthContext();
-                    authResponse.setPrevAuthContext(prevAuthContext);
+                    InternalSession oldSession =  loginState.
+                        getOldSession();
+                    authResponse.setOldSession(oldSession);
                     checkACException(authResponse, authContext);
                 } catch (Exception le) {
                     debug.error("Error during login ", le);
@@ -571,8 +577,8 @@ public class AuthXMLHandler implements RequestHandler {
             throw new AuthException(
             AMAuthErrorCode.AUTH_INVALID_DOMAIN, null);
         }
-        AuthContextLocal prevAuthContext =  loginState.getPrevAuthContext();
-        authResponse.setPrevAuthContext(prevAuthContext);
+        InternalSession oldSession =  loginState.getOldSession();
+        authResponse.setOldSession(oldSession);
                     
         authResponse.setLoginStatus(AuthContext.Status.IN_PROGRESS);
         AuthUtils.setlbCookie(authContext, servletResponse);

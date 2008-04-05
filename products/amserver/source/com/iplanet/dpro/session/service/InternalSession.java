@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.8 2008-01-17 06:36:26 veiming Exp $
+ * $Id: InternalSession.java,v 1.9 2008-04-05 16:39:25 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -280,6 +280,7 @@ public class InternalSession implements TaskRunnable, Serializable {
         protectedProperties.add("authInstant");
         protectedProperties.add("Principals");
         protectedProperties.add("loginURL");
+        protectedProperties.add("FullLoginURL");
         protectedProperties.add("Role");
         protectedProperties.add("Service");
         protectedProperties.add("SessionTimedOut");

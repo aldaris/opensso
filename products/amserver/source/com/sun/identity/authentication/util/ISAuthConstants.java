@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.11 2008-02-19 18:14:35 pawand Exp $
+ * $Id: ISAuthConstants.java,v 1.12 2008-04-05 16:41:37 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -424,6 +424,8 @@ public interface ISAuthConstants {
     public static final String USER_PROFILE = "UserProfile";
     
     public static final String LOGIN_URL = "loginURL";
+
+    public static final String FULL_LOGIN_URL = "FullLoginURL";
     
     public static final String SUCCESS_URL = "successURL";
 
@@ -580,4 +582,20 @@ public interface ISAuthConstants {
      // Key in shared state for composite advice
      public static final String COMPOSITE_ADVICE_XML =
          "CompositeAdviceXML";
+
+    // Indicates if Post Process Instances Need be added to Session
+    public static final String KEEP_POSTPROCESS_IN_SESSION = 
+        "sunAMAuthKeepPostProcessInstances";
+
+    // Indicates if Auth Module Instances Need be added to Session
+    public static final String KEEP_MODULES_IN_SESSION = 
+        "sunAMAuthKeepAuthModuleIntances";
+
+    // Property name for Post Process Instances in Session
+    public static final String POSTPROCESS_INSTANCE_SET = 
+        "sunAMAuthPostProcessInstanceSet";
+
+    // Property name for Login Context in Session
+    public static final String LOGIN_CONTEXT = 
+        "sunAMAuthLoginContext";
 }
