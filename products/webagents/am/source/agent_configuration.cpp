@@ -754,7 +754,20 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 AM_FALSE,
                 &this->ignore_server_check);
     }
-    
+
+    /* Proxy host name if configured */
+    if (AM_SUCCESS == status) {
+        const char * proxyHost = NULL;
+        parameter = AM_COMMON_FORWARD_PROXY_HOST;
+	status = am_properties_get_with_default(this->properties, parameter, NULL, 
+						&proxyHost); 
+        if (AM_SUCCESS == status && proxyHost != NULL && proxyHost[0] != '\0') {
+            /* is_server_alive always skipped when proxy is specified */
+            /* no direct tcp/ip connection through proxy */ 
+	    this->ignore_server_check = true;
+        }
+    }
+
     /* Get iis6 auth_type property */
     if (AM_SUCCESS == status) {
         parameter = AM_WEB_AUTHTYPE_IN_IIS6_AGENT;

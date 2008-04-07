@@ -95,7 +95,7 @@ NamingService::NamingService(const Properties& props,
                 const std::string &cert_nick_name,
                 bool trustServerCert)
     : BaseService("NamingService", props, cert_passwd, cert_nick_name, 
-		  trustServerCert),
+		trustServerCert),
       namingURL(props.get(AM_COMMON_NAMING_URL_PROPERTY)),
       ignorePreferredNamingURL(props.getBool(AM_COMMON_IGNORE_PREFERRED_NAMING_URL_PROPERTY, true))
 {
@@ -255,37 +255,38 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 	bodyChunkList.push_back(sessidPrefixChunk);
 	bodyChunkList.push_back(BodyChunk(ssoToken));
 
-        if(!ignorePreferredNamingURL) {
-	bodyChunkList.push_back(preferredNamingPrefixChunk);
+        if (!ignorePreferredNamingURL) {
+	    bodyChunkList.push_back(preferredNamingPrefixChunk);
 
-	url_length = strlen(namingURL.c_str());
-	preferredNamingURL = (char *)malloc(url_length);
-	if (preferredNamingURL != NULL) {
-	    ServiceInfo::const_iterator iter;
-	    for (iter = service.begin(); (iter != service.end() && status == AM_FAILURE); ++iter) {
-		std::string protocol = (*iter).getProtocol();
-		std::string hostname = (*iter).getHost();
-		unsigned short portnumber = (*iter).getPort();
-		status = check_server_alive(hostname, portnumber);
-		if (status == AM_SUCCESS) {
-		    strcpy(preferredNamingURL,protocol.c_str());
-		    strcat(preferredNamingURL,"://");
-		    strcat(preferredNamingURL,hostname.c_str());
-		    strcat(preferredNamingURL,":");
-		    snprintf(portBuf, sizeof(portBuf), "%u", portnumber);
-		    strcat(preferredNamingURL,portBuf);
-		}
+	    url_length = strlen(namingURL.c_str());
+	    preferredNamingURL = (char *)malloc(url_length);
+	    if (preferredNamingURL != NULL) {
+	        ServiceInfo::const_iterator iter;
+	        for (iter = service.begin(); (iter != service.end() && 
+                     status == AM_FAILURE); ++iter) {
+		    std::string protocol = (*iter).getProtocol();
+		    std::string hostname = (*iter).getHost();
+		    unsigned short portnumber = (*iter).getPort();
+		    status = check_server_alive(hostname, portnumber);
+		    if (status == AM_SUCCESS) {
+		        strcpy(preferredNamingURL,protocol.c_str());
+		        strcat(preferredNamingURL,"://");
+		        strcat(preferredNamingURL,hostname.c_str());
+		        strcat(preferredNamingURL,":");
+		        snprintf(portBuf, sizeof(portBuf), "%u", portnumber);
+		        strcat(preferredNamingURL,portBuf);
+		    }
+	        }
+	    } else {
+	        Log::log(logModule, Log::LOG_ERROR,
+	        "NamingService::getProfile() unable to allocate memory %d for "
+	        "preferredNamingURL", url_length);
 	    }
-	} else {
-	    Log::log(logModule, Log::LOG_ERROR,
-	    "NamingService::getProfile() unable to allocate memory %d for "
-	    "preferredNamingURL", url_length);
-	}
 
-	if (preferredNamingURL != NULL) {
-	    bodyChunkList.push_back(BodyChunk(preferredNamingURL));
-	    free(preferredNamingURL);
-        }
+	    if (preferredNamingURL != NULL) {
+	        bodyChunkList.push_back(BodyChunk(preferredNamingURL));
+	        free(preferredNamingURL);
+            }
         }
 	bodyChunkList.push_back(suffixChunk);
 
@@ -376,6 +377,8 @@ am_status_t NamingService::check_server_alive(std::string hostname, unsigned sho
     PRStatus	prStatus;
     PRFileDesc *tcpSocket;
     unsigned timeout = 2;
+
+    if (getUseProxy()) return AM_SUCCESS;
 
     prStatus = PR_GetHostByName(hostname.c_str(), buffer, sizeof(buffer), &hostEntry);
     if (PR_SUCCESS == prStatus) {

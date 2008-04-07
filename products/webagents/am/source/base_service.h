@@ -130,6 +130,12 @@ protected:
 			 const char *expectedId) const;
 
     Log::ModuleId logModule;
+    bool getUseProxy() { return useProxy; }
+    bool getUseAuth() { return useProxyAuth; }
+    const char * getProxyHost() { return proxyHost.c_str(); }
+    unsigned short getProxyPort() { return proxyPort; }
+
+
 
 private:
     typedef unsigned int IdType;
@@ -182,6 +188,16 @@ private:
     std::string certNickName;
     std::string poll_primary_server;
     bool alwaysTrustServerCert;
+
+    /* proxy parameters */
+    bool useProxy;
+    bool useProxyAuth;
+    std::string proxyHost;
+    unsigned short proxyPort;
+    std::string proxyUser;
+    std::string proxyPassword;
+
+
 };
 
 END_PRIVATE_NAMESPACE

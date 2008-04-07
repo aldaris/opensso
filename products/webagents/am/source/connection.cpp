@@ -208,61 +208,7 @@ PRFileDesc *Connection::createSocket(const PRNetAddr& address, bool useSSL,
 
     if (static_cast<PRFileDesc *>(NULL) != rawSocket) {
 	if (useSSL) {
-	    sslSocket = SSL_ImportFD(NULL, rawSocket);
-	    if (static_cast<PRFileDesc *>(NULL) != sslSocket) {
-		SECStatus secStatus;
-		const char *sslMethodName = "SSL_OptionSet";
-
-		secStatus = SSL_OptionSet(sslSocket, SSL_SECURITY, PR_TRUE);
-		if (SECSuccess == secStatus) {
-		    secStatus = SSL_OptionSet(sslSocket,
-					      SSL_HANDSHAKE_AS_CLIENT,
-					      PR_TRUE);
-		    if (SECSuccess == secStatus && alwaysTrustServerCert) {
-			sslMethodName = "SSL_AuthCertificateHook";
-			secStatus = SSL_AuthCertificateHook(sslSocket,
-							    acceptAnyCert,
-							    NULL);
-		    }
-		    if(SECSuccess == secStatus &&
-		       certDBPasswd.size() > 0) {
-			sslMethodName = "SSL_SetPKCS11PinArg";
-			secStatus = SSL_SetPKCS11PinArg(sslSocket,
-                                                        certdbpasswd);
-		    }
-		    
-		    if(SECSuccess == secStatus) {
-			char *nickName = NULL;
-			if(certNickName.size() > 0) {
-			    nickName = (char *)certNickName.c_str();
-			}
-			sslMethodName = "SSL_GetClientAuthDataHook";
-			secStatus = SSL_GetClientAuthDataHook(sslSocket,
-							      NSS_GetClientAuthData,
-							      static_cast<void *>(nickName));
-		    }
-		    if( SECSuccess == secStatus) {
-			sslMethodName = "SSL_HandshakeCallback";
-			secStatus = SSL_HandshakeCallback(sslSocket,
-							  (SSLHandshakeCallback)finishedHandshakeHandler,
-							  NULL);
-		    }
-		}
-
-		if (SECSuccess != secStatus) {
-		    PRErrorCode error = PR_GetError();
-
-		    PR_Close(sslSocket);
-		    throw NSPRException("Connection::createSocket",
-					sslMethodName, error);
-		}
-	    } else {
-		PRErrorCode error = PR_GetError();
-
-		PR_Close(rawSocket);
-		throw NSPRException("Connection::createSocket", "SSL_ImportFD",
-				    error);
-	    }
+		sslSocket = secureSocket(certDBPasswd, certNickName, alwaysTrustServerCert, rawSocket);
 	} else {
 	    sslSocket = rawSocket;
 	}
@@ -271,6 +217,88 @@ PRFileDesc *Connection::createSocket(const PRNetAddr& address, bool useSSL,
     }
 
     return sslSocket;
+}
+
+/**
+ * Performs SSL handshake on a TCP socket.
+ */
+PRFileDesc *Connection::secureSocket(const std::string &certDBPasswd,
+	const std::string &certNickName,
+	bool alwaysTrustServerCert,
+	PRFileDesc *rawSocket) {
+	bool upgradeExisting = false;
+	// Use object's socket if none passed
+	if (rawSocket == static_cast<PRFileDesc *>(NULL)) {
+		rawSocket = socket;
+		upgradeExisting = true;
+	}
+	PRFileDesc *sslSocket = SSL_ImportFD(NULL, rawSocket);
+	if (static_cast<PRFileDesc *>(NULL) != sslSocket) {
+	    SECStatus secStatus = SECSuccess;
+	    const char *sslMethodName;
+	
+	    // In case there was any communication on the socket
+	    // before the upgrade we should call a reset
+	    if (upgradeExisting) {
+                sslMethodName = "SSL_ResetHandshake";
+                secStatus = SSL_ResetHandshake(sslSocket, false);
+	    }
+
+	    if (SECSuccess == secStatus) {
+                sslMethodName = "SSL_OptionSet";
+                secStatus = SSL_OptionSet(sslSocket, SSL_SECURITY, PR_TRUE);
+	    }
+
+	    if (SECSuccess == secStatus) {
+                secStatus = SSL_OptionSet(sslSocket,
+                                      SSL_HANDSHAKE_AS_CLIENT, PR_TRUE);
+                if (SECSuccess == secStatus && alwaysTrustServerCert) {
+                    sslMethodName = "SSL_AuthCertificateHook";
+                    secStatus = SSL_AuthCertificateHook(sslSocket, acceptAnyCert,
+                                                    NULL);
+                }
+
+                if (SECSuccess == secStatus && certDBPasswd.size() > 0) {
+                    sslMethodName = "SSL_SetPKCS11PinArg";
+                    secStatus = SSL_SetPKCS11PinArg(sslSocket, certdbpasswd);
+                }
+
+                if (SECSuccess == secStatus) {
+                    char *nickName = NULL;
+		    if (certNickName.size() > 0) {
+                        nickName = (char *)certNickName.c_str();
+                    }
+                    sslMethodName = "SSL_GetClientAuthDataHook";
+                    secStatus = SSL_GetClientAuthDataHook(sslSocket,
+                                                   NSS_GetClientAuthData,
+                                                   static_cast<void *>(nickName));
+                }
+
+                if (SECSuccess == secStatus) {
+                    sslMethodName = "SSL_HandshakeCallback";
+                    secStatus = SSL_HandshakeCallback(sslSocket,
+                                (SSLHandshakeCallback)finishedHandshakeHandler,
+                                 NULL);
+		}
+	    }
+
+	    if (SECSuccess != secStatus) {
+		PRErrorCode error = PR_GetError();
+
+		PR_Close(sslSocket);
+		throw NSPRException("Connection::secureSocket",
+				sslMethodName, error);
+	    }
+	} else {
+	    PRErrorCode error = PR_GetError();
+
+	    PR_Close(rawSocket);
+	    throw NSPRException("Connection::secureSocket", "SSL_ImportFD",
+				error);
+	}
+
+	socket = sslSocket;
+	return sslSocket;
 }
 
 /**

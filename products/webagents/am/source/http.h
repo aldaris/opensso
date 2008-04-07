@@ -155,6 +155,7 @@ namespace Http {
 
 	am_status_t readAndParse(Log::ModuleId logModule, Connection& conn,
 				    std::size_t initialBufferLen);
+        void readAndIgnore(Log::ModuleId logModule, Connection& conn);
 
 	Status getStatus() const { return httpStatus; }
 	const CookieList& getCookieList() const { return cookieList; }

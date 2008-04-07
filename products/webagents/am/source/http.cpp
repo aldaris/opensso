@@ -659,6 +659,21 @@ am_status_t Http::Response::readAndParse(Log::ModuleId logModule,
     return status;
 }
 
+/**
+ * Get the HTTP response and discard it
+ */
+void Http::Response::readAndIgnore(Log::ModuleId logModule,
+                                   Connection& conn)
+{
+    LineBuffer buffer(conn);
+    const char *linePtr;
+
+    while (AM_SUCCESS == buffer.getLine(linePtr) && strlen(linePtr) > 0) {
+        Log::log(logModule, Log::LOG_MAX_DEBUG,
+                 "Http::Response::readAndIgnore(): %s",
+                 linePtr);
+    }
+}
 
 /*
  * URL decode a string, in the same way as URLDecoder.java in j2se, 

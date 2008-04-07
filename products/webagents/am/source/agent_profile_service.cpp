@@ -132,7 +132,10 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
     const char *connReceiveTimeout = NULL;
     const char *connTimeout = NULL;
     const char *connTcpDelay = NULL;
-
+    const char *proxy_host = NULL;
+    const char *proxy_port = NULL;
+    const char *proxy_user = NULL;
+    const char *proxy_password = NULL;
 
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_PASSWORD_PROPERTY;
@@ -215,6 +218,31 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
                                    &connTimeout);
         am_properties_set(properties, parameter,
                                       connTimeout);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_FORWARD_PROXY_HOST;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &proxy_host);
+        am_properties_set(properties, parameter, proxy_host);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_FORWARD_PROXY_PORT;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &proxy_port);
+        am_properties_set(properties, parameter, proxy_port);
+    }
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_FORWARD_PROXY_USER;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &proxy_user);
+        am_properties_set(properties, parameter, proxy_user);
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_FORWARD_PROXY_PASSWORD;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &proxy_password);
+        am_properties_set(properties, parameter, proxy_password);
     }
     return status;
 }

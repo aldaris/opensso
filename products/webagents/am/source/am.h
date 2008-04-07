@@ -86,6 +86,12 @@ AM_BEGIN_EXTERN_C
 
 #define	AM_COMMON_IGNORE_PREFERRED_NAMING_URL_PROPERTY	AM_COMMON_PROPERTY_PREFIX "ignore.preferred.naming.url"
 
+/* Proxy Properties */
+#define AM_COMMON_FORWARD_PROXY_HOST AM_COMMON_PROPERTY_PREFIX "forward.proxy.host"
+#define AM_COMMON_FORWARD_PROXY_PORT AM_COMMON_PROPERTY_PREFIX "forward.proxy.port"
+#define AM_COMMON_FORWARD_PROXY_USER AM_COMMON_PROPERTY_PREFIX "forward.proxy.user"
+#define AM_COMMON_FORWARD_PROXY_PASSWORD AM_COMMON_PROPERTY_PREFIX "proxy.password"
+
 
 /*
  * This function must be called at the end of the program to

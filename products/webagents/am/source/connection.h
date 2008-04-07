@@ -200,6 +200,15 @@ public:
     //
     static am_status_t shutdown(void);
 
+    //
+    // Performs SSL handshake on a TCP socket
+    //
+    PRFileDesc *secureSocket(const std::string &certDBPasswd,
+                             const std::string &certNickName,
+                             bool alwaysTrustServerCert,
+                             PRFileDesc *rawSocket);
+
+
 private:
     Connection(const Connection&);		// Not implemented
     Connection& operator=(const Connection&);	// Not implemented

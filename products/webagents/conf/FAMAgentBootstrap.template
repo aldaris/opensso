@@ -147,3 +147,23 @@ com.sun.identity.agents.config.trust.server.certs = true
 com.sun.identity.agents.config.receive.timeout = 0
 com.sun.identity.agents.config.connect.timeout = 0
 com.sun.identity.agents.config.tcp.nodelay.enable = false
+
+#
+# Proxy server settings
+#
+# Configure these properties only if a proxy server is in between Agent 
+# and Access Manager machine and is configured in forward proxy mode. 
+# In this case all communication between Agent and Access Manager 
+# should go thru this proxy server
+# 
+#   - proxy.host     - Proxy server host name
+#   - proxy.port     - Proxy server port number
+#   - proxy.user     - User name if Basic Auth is enabled in proxy server
+#   - proxy.password - User Password if Basic Auth is enabled 
+#                      in proxy server
+#
+com.sun.identity.agents.config.forward.proxy.host = 
+com.sun.identity.agents.config.forward.proxy.port =
+com.sun.identity.agents.config.forward.proxy.user =
+com.sun.identity.agents.config.forward.proxy.password =
+
