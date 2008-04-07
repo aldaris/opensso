@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.8 2008-04-02 20:34:52 huacui Exp $
+   $Id: readme.txt,v 1.9 2008-04-07 23:40:53 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,11 +28,11 @@ J2EE Policy Agent Sample Application
 ------------------------------------
 
 This document describes how to use the agent sample application in conjunction 
-with the Application Server.
+with the Weblogic 10 Application Server and the J2EE Agent.
 
     * Overview
     * Configure the Federated Access Manager server
-    * Configure the agent configuration properties
+    * Configure the agent properties
     * Deploying the Sample Application
     * Running the Sample Application
     * Troubleshooting
@@ -57,16 +57,19 @@ sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
 successfully and have followed the steps outlined in the Sun Java System 
-Federated Access Manager Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, 
-including the post-installation steps.
+Federated Access Manager Policy Agent 3.0 Guide for BEA WebLogic Server/Portal
+10.0, including the post-installation steps.
+
+
 
 
 Configure the Federated Access Manager server
-----------------------------
-This agent sample application requires that the Federated Access Manager server is
-configured with the subjects and policies required by the sample application.
+----------------------------------------------
+This agent sample application requires that the Federated Access Manager server
+is configured with the subjects and policies required by the sample application.
 
-1. Create the following users:
+On Federated Access Manager admin console, do the following configuration.
+1.  Create the following users:
     Here is the following list of users with username/password :
 
     * andy/andy
@@ -91,7 +94,7 @@ configured with the subjects and policies required by the sample application.
     * customer:
           o chris, ellen
     
-3. On Federated Access Manager admin console, create the following URL Policies:
+3. Create the following URL Policies:
    In the following URLs, replace the <hostname> and <port> with the 
    actual fully qualified host name and port on which the sample 
    application will be running.
@@ -103,7 +106,7 @@ configured with the subjects and policies required by the sample application.
                 + http://<hostname>:<port>/agentsample/protectedservlet
                 + http://<hostname>:<port>/agentsample/securityawareservlet
                 + http://<hostname>:<port>/agentsample/unprotectedservlet
-          o Subject: the entire organization which is all authenticated users.                     
+          o Subject: all authenticated users.                     
     * Policy 2:
           o allow:
                 + http://<hostname>:<port>/agentsample/urlpolicyservlet
@@ -112,47 +115,64 @@ configured with the subjects and policies required by the sample application.
 
 
 
-Configure the agent configuaration using FAM/opensso server UI (or if using
-local configuraton then using FAMAgentConfiguration.properties)
+Configure the agent properties
 --------------------------------------------
 
-1. UUID to principal mapping in agent's configuration:
+   If the agent configuration is centralized, then do the following steps.
+   1). login to Opensso/FAM console as amadmin user
+   2). navigate to Configuration/Agents/J2EE, and click on the agent instance 
+       link (assume the agent instance is already created, otherwise refer to
+       the agent doc to create the agent instance).
+   3). in tab "Global", section "General", property "Resource Access Denied URI"
+       enter /agentsample/authentication/accessdenied.html, and SAVE the change.
+   4). in tab "Application", section "Login Processing", property "Login Form URI",
+       add [0]=/agentsample/authentication/login.html, and SAVE the change.
+   5). in tab "Application", section "URI Processing", property "Not Enforced URIs",
+       add the following entries:
+          [0]=/agentsample/public/*
+          [1]=/agentsample/images/*
+          [2]=/agentsample/styles/*
+          [3]=/agentsample/index.html
+          [4]=/agentsample
+       and SAVE the change. 
+   6). in tab "Application", section "Privilege Attributes Processing", property
+       "Privileged Attribute Mapping",
+       add the following entries:
+       [UUID of group employee]=am_employee_role
+       [UUID of group manager]=am_manager_role
+       and SAVE the change.
+       Note you can find the UUID (Universal User ID) of the groups employee 
+       and manager from the FAM/OpenSSO console group page.
+       For example, if the UUID of employee is id=employee,ou=group,dc=opensso,dc=java,dc=net 
+       and the UUID of manager is id=manager,ou=group,dc=opensso,dc=java,dc=net
+       then you need to add the following entries in the "Privileged Attribute Mapping".
+       [id=employee,ou=group,dc=opensso,dc=java,dc=net]=am_employee_role
+       [id=manager,ou=group,dc=opensso,dc=java,dc=net]=am_manager_role
 
-    By default, the installation assumes that the Federated Access Manager product was
-    under default realm "dc=opensso,dc=java,dc=net". If the realm for the
-    deployment scenario is different from the default root suffix, the Universal
-    Id (UUID) for the role/principal mappings should be changed accordingly. The
-    Universal Id can be obtained from the OpenSSO/FAM server console.
-
-    For WebLogic 10.0, a UUID has to be mapped to a value of type NMTOKEN, 
-    and then the mapped value is used in weblogic-ejb-jar.xml and weblogic.xml 
-    files as <principal-name> element value. The mapping is specified in 
-    agent's configuration by the property 
-
-                com.sun.identity.agents.config.privileged.attribute.mapping[].
-
-    Make sure the keys in the mapping are UUIDs corresponding to your Access
-    Manager installation; There is no need to change the values. Now uncomment 
-    out the mappings because by default they are commented out.
-
-
-2. Modify the following properties in the agent's configuration:
+   If the agent configuration is local, then edit the local agent configuration
+   file FAMAgentConfiguration.properties located at the directory 
+   <agent_install_root>/Agent_<instance_number>/config with following changes: 
 
     * Not enforced List:
-          com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*
-          com.sun.identity.agents.config.notenforced.uri[1] = /agentsample/images/*
-          com.sun.identity.agents.config.notenforced.uri[2] = /agentsample/styles/*
-          com.sun.identity.agents.config.notenforced.uri[3] = /agentsample/index.html
-          com.sun.identity.agents.config.notenforced.uri[4] = /agentsample
-    * Access Denied URI:
-          com.sun.identity.agents.config.access.denied.uri = 
-			/agentsample/authentication/accessdenied.html
-    * Form List:
-          com.sun.identity.agents.config.login.form[0] = 
-                        /agentsample/authentication/login.html
+      com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*
+      com.sun.identity.agents.config.notenforced.uri[1] = /agentsample/images/*
+      com.sun.identity.agents.config.notenforced.uri[2] = /agentsample/styles/*
+      com.sun.identity.agents.config.notenforced.uri[3] = /agentsample/index.html
+      com.sun.identity.agents.config.notenforced.uri[4] = /agentsample
 
-3. The WebLogic server with the agent installation and hosting the sample 
-   application needs to be restarted.
+    * Access Denied URI:
+      com.sun.identity.agents.config.access.denied.uri = /agentsample/authentication/accessdenied.html
+    * Form List:
+      com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
+
+    * Privileged Attribute Mapping: 
+      com.sun.identity.agents.config.privileged.attribute.mapping[id\=employee,ou\=group,dc\=opensso,dc\=java,dc\=net] = am_employee_role.
+      com.sun.identity.agents.config.privileged.attribute.mapping[id\=manager,ou\=group,dc\=opensso,dc\=java,dc\=net] = am_manager_role.
+      Note the above settings assume the UUIDs of group employee and manager are
+      "id=employee,ou=group,dc=opensso,dc=java,dc=net" and 
+      "id=manager,ou=group,dc=opensso,dc=java,dc=net" respectively. Change to 
+      the appropriate UUIDs accordingly.
+
 
 
 
@@ -160,13 +180,15 @@ Deploying the Sample Application
 --------------------------------
 Note, before deploying the sample application, please be sure that you have
 deployed the Agent Application, which should have been done after installing 
-the agent.This was explained in the Sun Java System Federated Access Manager Policy 
-Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
+the agent. This is explained in the Sun Java System Federated Access Manager 
+Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
 outlined the post-installation tasks.
 
 To deploy the application, do the following:
 
 Go to BEA WebLogic server console and deploy the sample application.
+
+
 
 
 Running the Sample Application
@@ -178,14 +200,18 @@ http://<hostname>:<port>/agentsample
 Traverse the various links to understand each agent feature.
 
 
+
+
 Troubleshooting
 ----------------------------
 If you encounter problems when running the application, review the log files to 
 learn what exactly went wrong. J2EE Agent logs can be found at 
-<agent_install_root>/<agent_instance>/logs/debug directory.
+<agent_install_root>/Agent_<instance_number>/logs/debug directory.
 
 Also, see the Sun Java System Federated Access Manager Policy Agent 3.0 Guide 
 for BEA WebLogic Server/Portal 10.0.
+
+
 
 
 Optional Steps
@@ -225,3 +251,5 @@ To rebuild the entire application from scratch, follow these steps:
       area and run a new build.
 
 Now you are ready to use the dist/agentsample.ear file for deployment.
+
+

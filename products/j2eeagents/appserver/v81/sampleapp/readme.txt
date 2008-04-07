@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.7 2008-04-02 19:32:18 huacui Exp $
+   $Id: readme.txt,v 1.8 2008-04-07 23:41:31 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,87 +27,48 @@
 J2EE Policy Agent Sample Application
 ------------------------------------
 
-This document describes how to use the agent sample application in conjunction with the 
-Application Server.
+This document describes how to use the agent sample application in conjunction 
+with the Sun Application Server and the J2EE Agent.
 
     * Overview
+    * Configure the Federated Access Manager server
+    * Configure the agent properties
     * Compiling and Assembling the Application
     * Deploying the Sample Application
-    * Post Deployment Agent tasks
     * Running the Sample Application
     * Troubleshooting
 
 
 Overview
 --------
-The sample application is a collection of servlets, JSPs and EJB's that demonstrate the salient 
-features of the J2EE policy Agent. These features include SSO, web-tier declarative security, 
-programmatic security, URL policy evaluation and session/policy/profile attribute fetch. 
-The sample application is supported for Open Source Policy Agent and OpenSSO Server only.
+The sample application is a collection of servlets, JSPs and EJB's that 
+demonstrate the salient features of the J2EE policy Agent. These features 
+include SSO, web-tier declarative security, programmatic security, URL policy 
+evaluation and session/policy/profile attribute fetch. The web.xml deployment
+descriptor has already been edited to include the Agent Filter. The
+deployment descriptors and source code are available in the sampleapp/src
+directory.
+
+The sample application is supported for Policy Agent 3.0.
+
+The application is already built and ready to be deployed. It is available at
+sampleapp/dist/agentsample.ear.
+
+Note, the instructions here assume that you have installed the agent
+successfully and have followed the steps outlined in the Sun Java System
+Federated Access Manager Policy Agent 3.0 Guide for Sun Java System Application
+Server 9, including the post-installation steps.
 
 
-Compiling and Assembling the Application
-----------------------------------------
-This section contains instructions to build and assemble the sample application using a Command 
-Line Interface (CLI).
 
-To build the entire application from scratch, follow these steps:
+Configure the Federated Access Manager server
+---------------------------------------------
+This agent sample application requires that the Federated Access Manager server
+is configured with the subjects and policies required by the sample application.
 
-   1. Set your JAVA_HOME and CLASSPATH to JDK1.4 or above.
-   2. Replace 'APPSERV_LIB_DIR' in build.xml with the directory where j2ee.jar is located.
-      For example: replace APPSERV_LIB_DIR with /opt/SUNWappserver/appserver/lib   where 
-      /opt/SUNWappserver/appserver is your <appserver_install_root>. 
-   3. Compile and assemble the application. 
-      For example: execute the command <appserver_install_root>/bin/asant 
-      under <agent_install_root>/sampleapp/ to execute the default target build and rebuild the EAR file. 
-      The build target creates a built and dist directory with the EAR file. 
-      By default, the Application server specific deployment descriptors assume 
-      that the OpenSSO Server product was installed under default Org/Realm 
-      "dc=opensso,dc=java,dc=net". If the Org/Realm for the deployment scenario is 
-      different from the default root suffix, the Universal Id(uuid) for the role/principal 
-      mappings should be changed accordingly.  The Universal Id can be obtained 
-      from the OpenSSO/FAM server console.
-   4. Deploy the application. After you have re-created the sample application from scratch, you may 
-      proceed directly to Deploying the Sample Application, or optionally perform step 3.
-   5. Optionally you can run 'ant rebuild' to clean the application project area and run a 
-      new build.
-
-Now you are ready to use the dist/agentsample.ear file for deployment.
-
-
-Deploying the Sample Application
---------------------------------
-To deploy the application, do the following:
-
-Execute the command asadmin deploy
-<appserver_install_root/bin/asadmin deploy --user <username> --password <password> 
-				<agent_install_root>/sampleapp/dist/agentsample.ear
-
-
-Verifying Deployment
---------------------
-
-As an optional step, you can use the Application Server Administration Tool to verify that the 
-application has been registered. Otherwise, proceed directly to Running the Sample Application.
-
-To verify the registration of the application:
-
-   1. Execute the command asadmin list-components to look at applications deployed with a server instance. 
-      For example:
-      asadmin list-components --user <username> --password <password> 
-      You will see agentsample listed.
-
-   2. Alternately, use Admin Console and navigate to Applications > Web Applications. You will 
-      see agentsample listed.
-
-
-Post Deployment Agents Tasks
-----------------------------
-This agent sample application requires that the Federated Access Manager server is
-configured with the subjects and policies required by the sample application.
-
-1. Create the following users:
-   Here is the following list of users with username/password :
+On Federated Access Manager admin console, do the following configuration.
+1.  Create the following users:
+    Here is the following list of users with username/password :
 
     * andy/andy
     * bob/bob
@@ -130,9 +91,11 @@ configured with the subjects and policies required by the sample application.
           o andy, bob, chris, dave, ellen, frank, gina
     * customer:
           o chris, ellen
-
-
+    
 3. Create the following URL Policies:
+   In the following URLs, replace the <hostname> and <port> with the 
+   actual fully qualified host name and port on which the sample 
+   application will be running.
 
     * Policy 1:
           o allow:
@@ -141,8 +104,7 @@ configured with the subjects and policies required by the sample application.
                 + http://<hostname>:<port>/agentsample/protectedservlet
                 + http://<hostname>:<port>/agentsample/securityawareservlet
                 + http://<hostname>:<port>/agentsample/unprotectedservlet
-          o Subject: entire organization which is all authenticated users.
-
+          o Subject: all authenticated users.                     
     * Policy 2:
           o allow:
                 + http://<hostname>:<port>/agentsample/urlpolicyservlet
@@ -150,38 +112,128 @@ configured with the subjects and policies required by the sample application.
 
 
 
-4. Modify the following properties in the agent configuration with using the 
-   FAM/opensso server or the FAMAgentConfiguration.properties file:
+
+Configure the agent properties
+------------------------------
+
+   If the agent configuration is centralized, then do the following steps.
+   1). login to Opensso/FAM console as amadmin user
+   2). navigate to Configuration/Agents/J2EE, and click on the agent instance 
+       link (assume the agent instance is already created, otherwise refer to
+       the agent doc to create the agent instance).
+   3). in tab "Global", section "General", property "Resource Access Denied URI"
+       enter /agentsample/authentication/accessdenied.html, and SAVE the change.
+   4). in tab "Application", section "Login Processing", property "Login Form URI",
+       add [0]=/agentsample/authentication/login.html, and SAVE the change.
+   5). in tab "Application", section "URI Processing", property "Not Enforced URIs",
+       add the following entries:
+          [0]=/agentsample/public/*
+          [1]=/agentsample/images/*
+          [2]=/agentsample/styles/*
+          [3]=/agentsample/index.html
+          [4]=/agentsample/
+          [5]=/agentsample
+       and SAVE the change. 
+
+   If the agent configuration is local, then edit the local agent configuration
+   file FAMAgentConfiguration.properties located at the directory 
+   <agent_install_root>/Agent_<instance_number>/config with following changes: 
 
     * Not enforced List:
-          o com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*
-          o com.sun.identity.agents.config.notenforced.uri[1] = /agentsample/images/*
-          o com.sun.identity.agents.config.notenforced.uri[2] = /agentsample/styles/*
-          o com.sun.identity.agents.config.notenforced.uri[3] = /agentsample/index.html
-          o com.sun.identity.agents.config.notenforced.uri[4] = /agentsample
-          o com.sun.identity.agents.config.notenforced.uri[5] = /agentsample/
+      com.sun.identity.agents.config.notenforced.uri[0] = /agentsample/public/*
+      com.sun.identity.agents.config.notenforced.uri[1] = /agentsample/images/*
+      com.sun.identity.agents.config.notenforced.uri[2] = /agentsample/styles/*
+      com.sun.identity.agents.config.notenforced.uri[3] = /agentsample/index.html
+      com.sun.identity.agents.config.notenforced.uri[4] = /agentsample/
+      com.sun.identity.agents.config.notenforced.uri[5] = /agentsample
 
     * Access Denied URI:
-          o com.sun.identity.agents.config.access.denied.uri = /agentsample/authentication/accessdenied.html
+      com.sun.identity.agents.config.access.denied.uri = /agentsample/authentication/accessdenied.html
     * Form List:
-          o com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
+      com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
+
+
+
+
+Compiling and Assembling the Application
+----------------------------------------
+This section contains instructions to build and assemble the sample application using a Command Line Interface (CLI).
+
+To build the entire application from scratch, follow these steps:
+
+   1. Set your JAVA_HOME and CLASSPATH to JDK1.4 or above.
+   2. Replace 'APPSERV_LIB_DIR' in build.xml with the directory where j2ee.jar 
+      is located. For example: replace APPSERV_LIB_DIR with 
+      /opt/SUNWappserver/appserver/lib where /opt/SUNWappserver/appserver is 
+      your <appserver_install_root>. 
+   3. Compile and assemble the application. 
+      execute the command <appserver_install_root>/bin/asant 
+      under <agent_install_root>/sampleapp/ to execute the default target build
+      and rebuild the EAR file. 
+      The build target creates a built and dist directory with the EAR file. 
+      By default, the Application server specific deployment descriptors assume 
+      that the OpenSSO Server product was installed under default Org/Realm 
+      "dc=opensso,dc=java,dc=net". If the Org/Realm for the deployment scenario
+      is different from the default root suffix, the Universal Id(uuid) for the
+      role/principal mappings should be changed accordingly. The Universal Id 
+      can be obtained from the OpenSSO/FAM server console the group/role pages.
+   4. Deploy the application. After you have re-created the sample application 
+      from scratch, you may proceed directly to Deploying the Sample Application
+      or optionally perform step 5.
+   5. Optionally you can run 'ant rebuild' to clean the application project 
+      area and run a new build.
+
+Now you are ready to use the dist/agentsample.ear file for deployment.
+
+
+
+
+Deploying the Sample Application
+--------------------------------
+To deploy the application, do the following:
+
+Execute the command asadmin deploy
+<appserver_install_root/bin/asadmin deploy --user <username> --password <password> <agent_install_root>/sampleapp/dist/agentsample.ear
+
+Or you can log into the Application Server Admin Console to deploy the agentsample.ear.
+
+
+Verifying Deployment
+--------------------
+
+As an optional step, you can use the Application Server Administration Tool to 
+verify that the application has been registered. Otherwise, proceed directly to
+Running the Sample Application.
+
+To verify the registration of the application:
+
+   1. Execute the command asadmin list-components to look at applications deployed with a server instance. 
+      For example:
+      asadmin list-components --user <username> --password <password> 
+      You will see agentsample listed.
+
+   2. Alternately, use the Application Server Admin Console and navigate to 
+      Applications > Enterprise Applications. You will see agentsample listed.
+
 
 
 
 Running the Sample Application
 ----------------------------
-You can run the application through the following URL:
+You can access the application through the following URL in a web browser:
 
 http://<hostname>:<port>/agentsample
 
 Traverse the various links to understand each agent feature.
 
 
+
+
 Troubleshooting
 ----------------------------
-If you encounter problems when running the application, review the log files to learn what exactly 
-went wrong. Application server log files are located at 
-<install_root>/domains/<domain_name>/logs/server.log and the J2EE Agent logs can be found 
-at <agent_install_root>/agent_<instance_number>/logs/debug directory.
+If you encounter problems when running the application, review the log files to
+learn what exactly went wrong. Application server log files are located at 
+<appserver_install_root>/domains/<domain_name>/logs and the J2EE Agent logs can
+be found at <agent_install_root>/Agent_<instance_number>/logs/debug directory.
 
 
