@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.59 2008-03-11 02:28:31 veiming Exp $
+ * $Id: AccessManager.java,v 1.60 2008-04-07 18:30:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1206,7 +1206,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-addmember-succeed={0} had been added to {1}."})
+            "idrepo-get-addmember-succeed={0} was added to {1}."})
     private String add_member;
 
     @SubCommandInfo(
@@ -1223,7 +1223,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "idrepo-get-removemember-succeed={0} had been removed from {1}."})
+            "idrepo-get-removemember-succeed={0} was removed from {1}."})
     private String remove_member;
 
     @SubCommandInfo(
