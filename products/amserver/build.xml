@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.61 2008-04-02 20:09:07 bigfatrat Exp $
+   $Id: build.xml,v 1.62 2008-04-07 17:22:52 bigfatrat Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -128,6 +128,9 @@
             <fileset dir="${amserver.dtd.xml.dir}">
                 <include name="**/*.dtd"/>
                 <exclude name="dtd/sms.dtd"/>
+            </fileset>
+            <fileset dir="${amserver.productregistry.xml.dir}">
+                <include name="*.xml"/>
             </fileset>
         </copy>
 
@@ -339,6 +342,9 @@
             </fileset>
             <fileset dir="${amserver.xml.dir}">
                 <include name="AccessManagerCLI.xml" />
+            </fileset>
+            <fileset dir="${amserver.productregistry.xml.dir}">
+                <include name="*.xml" />
             </fileset>
         </copy>
         <copy todir="${amserver.built.war.dir}/xml">
