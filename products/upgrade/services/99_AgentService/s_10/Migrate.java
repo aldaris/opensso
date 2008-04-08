@@ -17,11 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.1 2008-01-24 00:32:28 bina Exp $
+ * $Id: Migrate.java,v 1.2 2008-04-08 16:27:50 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
+import com.sun.identity.idm.AgentMigration71;
 import com.sun.identity.upgrade.MigrateTasks;
 import com.sun.identity.upgrade.UpgradeException;
 import com.sun.identity.upgrade.UpgradeUtils;
@@ -53,6 +54,7 @@ public class Migrate implements MigrateTasks {
      * @return true if successful else error.
      */
     public boolean postMigrateTask() {
+        AgentMigration71.migrate22AgentsToFAM80(); 
         return true;
     }
 
