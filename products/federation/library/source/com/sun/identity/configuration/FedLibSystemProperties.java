@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedLibSystemProperties.java,v 1.5 2008-03-26 04:29:47 qcheng Exp $
+ * $Id: FedLibSystemProperties.java,v 1.6 2008-04-08 23:40:57 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,7 @@ public class FedLibSystemProperties implements ISystemProperties {
     private static final String FEDLET_HOME_TAG = "@FEDLET_HOME@";
     private static final String FEDLET_HOME_DIR = 
         "com.sun.identity.fedlet.home";
-    private static Properties systemConfigProps = null;
+    protected static Properties systemConfigProps = null;
 
     static {
         initProperties();
@@ -58,7 +58,7 @@ public class FedLibSystemProperties implements ISystemProperties {
      */
     public FedLibSystemProperties() {
     }
-    
+
     /**
      * Returns system properties.
      *

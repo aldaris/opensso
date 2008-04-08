@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.2 2008-04-02 22:32:23 qcheng Exp $
+   $Id: index.jsp,v 1.3 2008-04-08 23:40:47 qcheng Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -240,7 +240,10 @@
       <td colspan="2"> </td>
     </tr>
     <tr>
-      <td><b>Fedlet(SP) Entity ID:</b>&nbsp;&nbsp;&nbsp;&nbsp;</td> <td><%= spEntityID %></td>
+      <td><b>Fedlet (SP) Configuration Directory:&nbsp;&nbsp;</b></td> <td><%= fedletHomeDir %></td>
+    </tr>
+    <tr>
+      <td><b>Fedlet (SP) Entity ID:</b>&nbsp;&nbsp;&nbsp;&nbsp;</td> <td><%= spEntityID %></td>
     </tr>
     <tr>
       <td><b>IDP Entity ID:</b></td> <td><%= idpEntityID %></td>
@@ -252,7 +255,7 @@
       <td colspan="2"> </td>
     </tr>
     <tr>
-      <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID%>">Run Fedlet(SP) initiated Single Sign-On</a></td>
+      <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID%>">Run Fedlet (SP) initiated Single Sign-On</a></td>
     </tr>
 <%
                     if ((idpMetaAlias != null) && (idpMetaAlias.length() != 0)){

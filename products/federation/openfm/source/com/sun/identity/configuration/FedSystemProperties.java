@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedSystemProperties.java,v 1.4 2007-10-17 23:00:59 veiming Exp $
+ * $Id: FedSystemProperties.java,v 1.5 2008-04-08 23:41:07 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,9 @@ public class FedSystemProperties extends FedLibSystemProperties {
     }
     
     private static void initAttributeMapping() {
+        if (systemConfigProps != null) {
+            systemConfigProps.clear();
+        } 
         ResourceBundle rb = ResourceBundle.getBundle("serverAttributeMap");
         for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
             String propertyName = (String)e.nextElement();
