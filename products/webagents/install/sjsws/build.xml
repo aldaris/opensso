@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2008-03-13 18:47:34 subbae Exp $
+   $Id: build.xml,v 1.5 2008-04-08 23:56:10 subbae Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -92,12 +92,12 @@
         <antcall target="copy-${build.os}-library"/>
 
         <!-- Generate SJSWS agent install archive -->
-        <zip destfile="${webagents.dist.dir}/${containername}_v70_${build.os}${build.type.suffix}_agent.zip">
+        <zip destfile="${webagents.dist.dir}/${containername}_v70_${build.os}${build.type.suffix}_agent_${agentversion}.zip">
              <fileset dir="${webagents.container.scratch.dir}" excludes="**/bin/**"/>
              <zipfileset dir="${container.web_agent.bin.dir}" filemode="755"
                          prefix="web_agents/sjsws_agent/bin"/>
         </zip> 
-        <checksum file="${webagents.dist.dir}/${containername}_v70_${build.os}${build.type.suffix}_agent.zip"
+        <checksum file="${webagents.dist.dir}/${containername}_v70_${build.os}${build.type.suffix}_agent_${agentversion}.zip"
             algorithm="SHA" fileext=".sha" />
 
     </target>
@@ -110,7 +110,7 @@
         </copy>
     </target>
 
-    <target name="copy-SunOS-library">
+    <target name="copy-SunOS_sparc-library">
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.sjsws.src.dir}">
                     <include name="libames6.so"/>

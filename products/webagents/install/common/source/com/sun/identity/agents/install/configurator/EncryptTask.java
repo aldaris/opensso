@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptTask.java,v 1.1 2006-10-06 18:27:34 subbae Exp $
+ * $Id: EncryptTask.java,v 1.2 2008-04-08 23:56:10 subbae Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,8 @@ public class EncryptTask implements ITask, InstallConstants {
         "TSK_MSG_ENCRYPT_DATA_ROLLBACK";
     private static final String LOC_TSK_ERR_INVALID_APP_SSO_PASSWORD = 
         "TSK_ERR_INVALID_APP_SSO_PASSWORD";
+    private static final String LOC_TSK_ERR_CRYPT_UTIL = 
+        "TSK_ERR_CRYPT_UTIL";
 
     // crypt_util binary for unix platforms
     private static final String STR_UNIX_CRYPT_UTIL = "crypt_util";
@@ -114,6 +116,7 @@ public class EncryptTask implements ITask, InstallConstants {
     	
     	String applicationPassword = null;
         String cryptUtil = null;
+    	String cryptUtilError = null;
     	
     	try {
             if (OSChecker.isWindows()) {
@@ -143,9 +146,13 @@ public class EncryptTask implements ITask, InstallConstants {
     	} catch (Exception ex) {
             Debug.log("EncryptionHandler.getEncryptedAppPassword() - " +
                 "failed to invoke method with exception :", ex);
+            cryptUtilError = ex.toString();
     	}
 
-        if (applicationPassword == null || 
+        if (cryptUtilError != null) {  
+       	    throw new InstallException(
+                LocalizedMessage.get(LOC_TSK_ERR_CRYPT_UTIL));
+        } else if (applicationPassword == null || 
         		applicationPassword.trim().length() == 0) {
        	    throw new InstallException(
                 LocalizedMessage.get(LOC_TSK_ERR_INVALID_APP_SSO_PASSWORD));

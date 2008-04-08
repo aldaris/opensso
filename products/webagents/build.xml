@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2008-03-13 18:47:33 subbae Exp $
+   $Id: build.xml,v 1.8 2008-04-08 23:56:09 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -40,7 +40,7 @@
         <os name="linux"/>
     </condition>
 
-    <condition property="build.os" value="SunOS">
+    <condition property="build.os" value="SunOS_sparc">
         <and>
             <os name="sunos"/>
             <and>
@@ -70,6 +70,9 @@
         <equals arg1="${build.type}" arg2="64"/>
     </condition>
 
+
+    <!-- agent version number appended to end of agent zip file name -->
+    <property name="agentversion" value="3"/>
 
     <!-- overridable properties -->
     <!-- build.debug is used for c code. valid values are: optimize, full -->
@@ -137,6 +140,7 @@
     <target name="nightly">
         <filter token="DATE" value="${nightly.date}" />
         <filter token="OS" value="${build.os}" />
+        <filter token="BIT" value="${build.type.suffix}" />
         <antcall target="prenightly" inheritRefs="true"/>
         <antcall target="all" inheritRefs="true"/>
         <copy file="${webagents.docs.dir}/nightly.html" 

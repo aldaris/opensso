@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-03-13 18:47:34 subbae Exp $
+   $Id: build.xml,v 1.6 2008-04-08 23:56:10 subbae Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -99,7 +99,7 @@
         </copy>
     </target>
 
-    <target name="copy-SunOS-files">
+    <target name="copy-SunOS_sparc-files">
         <copy todir="${container.web_agent.bin.dir}">
             <fileset dir="${webagents.install.dir}/scripts">
                     <include name="agentadmin"/>
