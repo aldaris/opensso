@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.60 2008-04-07 18:30:21 veiming Exp $
+ * $Id: AccessManager.java,v 1.61 2008-04-08 18:56:45 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1708,7 +1708,7 @@ public class AccessManager {
         webSupport="true",
         mandatoryOptions={
             "agentname|b|s|Name of agent.",
-            "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"
+            "agenttype|t|s|Type of agent. e.g. J2EEAgent, WebAgent"
             },
         optionAliases={},
         macro="authentication",
@@ -1779,7 +1779,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "filter|x|s|Filter (Pattern).",
-            "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
+            "agenttype|t|s|Type of agent. e.g. J2EEAgent, WebAgent"},
         resourceStrings={
             "search-agent-no-entries=There were no agents.",
             "format-search-agent-results={0} ({1})"
@@ -1842,7 +1842,7 @@ public class AccessManager {
         webSupport="true",
         mandatoryOptions={
             "agentgroupname|b|s|Name of agent group.",
-            "agenttype|t|s|Type of agent group. e.g. WebLogicAgent, WebAgent"},
+            "agenttype|t|s|Type of agent group. e.g. J2EEAgent, WebAgent"},
         optionAliases={},
         macro="authentication",
         optionalOptions={
@@ -1879,7 +1879,7 @@ public class AccessManager {
           macro="authentication",
         optionalOptions={
             "filter|x|s|Filter (Pattern).",
-            "agenttype|t|s|Type of agent. e.g. WebLogicAgent, WebAgent"},
+            "agenttype|t|s|Type of agent. e.g. J2EEAgent, WebAgent"},
         resourceStrings={
             "search-agent-group-no-entries=There were no agent groups.",
             "format-search-agent-group-results={0} ({1})"
