@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.4 2008-02-29 00:20:57 exu Exp $
+ * $Id: SecureAttrs.java,v 1.5 2008-04-09 21:27:28 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,6 +89,20 @@ public class SecureAttrs
      * @supported.api
      */
     public static final String SAE_PARAM_AUTHLEVEL   = "sun.authlevel";
+
+    /**
+     *  SAE Parameter used to pass IDP entity ID to SP app.
+     *  IDP: Not Applicable
+     *  SP: populates this parameter to identify IDP used in SSO.
+     */
+    public static final String SAE_PARAM_IDPENTITYID = "sun.idpentityid";
+
+    /**
+     *  SAE Parameter used to pass SP entity ID to SP app.
+     *  IDP: Not Applicable
+     *  SP: populates this parameter to identify SP used in SSO.
+     */
+    public static final String SAE_PARAM_SPENTITYID = "sun.spentityid";
 
     /**
      *  SAE Parameter representing the requested SP app to be invoked.

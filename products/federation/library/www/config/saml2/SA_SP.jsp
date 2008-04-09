@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_SP.jsp,v 1.4 2008-02-29 00:23:32 exu Exp $
+   $Id: SA_SP.jsp,v 1.5 2008-04-09 21:27:28 exu Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,6 +30,8 @@ java.util.logging.Level,
 com.sun.identity.plugin.session.SessionProvider,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionException,
+com.sun.identity.saml2.common.AccountUtils,
+com.sun.identity.saml2.common.NameIDInfoKey,
 com.sun.identity.saml2.common.SAML2Constants,
 com.sun.identity.saml2.common.SAML2Utils,
 com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement,
@@ -77,6 +79,7 @@ com.sun.identity.sae.api.Utils"
     boolean loggedIn = false;
     String loggedinPrincipal = null;
     String loggedinAuthLevel = null;
+    String idpEntityId = null;
     try {
         provider = SessionManager.getProvider();
         token = provider.getSession(request);
@@ -88,6 +91,17 @@ com.sun.identity.sae.api.Utils"
             if ((levelStr != null) && (levelStr.length > 0)) {
                 loggedinAuthLevel = levelStr[0];
             }
+            String[] infoStrs = provider.getProperty(
+                token, AccountUtils.getNameIDInfoKeyAttribute());
+            if (infoStrs != null && infoStrs.length != 0) {
+                String infoStr = infoStrs[0];
+                int index = infoStr.lastIndexOf(SAML2Constants.SECOND_DELIM);
+                if (index != -1) {
+                    infoStr = infoStr.substring(index, infoStr.length());
+                }
+                NameIDInfoKey infoKey = NameIDInfoKey.parse(infoStr);
+                idpEntityId = infoKey.getRemoteEntityID();
+            }
         } else {
             token  = null; // for logging
         }
@@ -95,6 +109,10 @@ com.sun.identity.sae.api.Utils"
         SAML2Utils.debug.message("SA_SP:sessionvalidation exc:ignored" , e);
         token  = null; // for logging
         // Assumed not logged in
+    } catch (Exception se) {
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message("SA_SP:error parsing NameInfoKey:", se);
+        }
     }
 
     if (loggedIn == false ) {
@@ -117,8 +135,19 @@ com.sun.identity.sae.api.Utils"
         response.sendRedirect(errStr);
         return;
     }
+
+    if (idpEntityId == null) {
+        String errStr = errorUrl + "?errorcode=8&errorstring=SP_NOIDPEntityID";
+        String data[] = {errStr};
+        SAML2Utils.logError(Level.INFO, LogUtil.SAE_SP_ERROR, 
+                   data, token, ipaddr, userid, realm, "SAE", null);
+        response.sendRedirect(errStr);
+        return;
+    }
+
     HashMap map = new HashMap();
     map.put(SecureAttrs.SAE_PARAM_AUTHLEVEL, loggedinAuthLevel);
+    map.put(SecureAttrs.SAE_PARAM_IDPENTITYID, idpEntityId);
     try {
         realm = SAML2MetaUtils.getRealmByMetaAlias(spMetaAlias);
         SAML2MetaManager mm = SAML2Utils.getSAML2MetaManager();
@@ -149,6 +178,7 @@ com.sun.identity.sae.api.Utils"
         }
     } catch (SAML2MetaException se) {
     }
+    map.put(SecureAttrs.SAE_PARAM_SPENTITYID, spEntityId);
     
     // Get SAE attributes relating to FM-SP and SPApp
     Map hp = SAML2Utils.getSAEAttrs(
