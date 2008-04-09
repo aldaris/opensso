@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.27 2008-04-03 06:59:25 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.28 2008-04-09 06:24:06 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,6 +206,9 @@ public interface SAML2Constants {
 
     public String INVALID_NAME_ID_POLICY =
         "urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy";
+
+    public String NO_AUTHN_CONTEXT =
+        "urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext";
 
     /**
      * Basic name format

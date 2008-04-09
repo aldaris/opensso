@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAuthnContextMapper.java,v 1.2 2006-11-30 05:47:42 qcheng Exp $
+ * $Id: SPAuthnContextMapper.java,v 1.3 2008-04-09 06:25:04 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ package com.sun.identity.saml2.plugins;
 import com.sun.identity.saml2.assertion.AuthnContext;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.common.SAML2Exception;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,4 +84,21 @@ public interface SPAuthnContextMapper {
 			    AuthnContext authContext,String realm,
 			    String hostEntityID, String idpEntityID) 
 			    throws SAML2Exception;
+
+    /** 
+     * Returns true if the specified AuthnContextClassRef matches a list of
+     * requested AuthnContextClassRef.
+     *
+     * @param authnRequest a list of requested AuthnContextClassRef's
+     * @param acClassRef AuthnContextClassRef
+     * @param comparison the type of comparison
+     * @param realm  Realm or Organization of the Service Provider.
+     * @param hostEntityID Entity ID of the Service Provider.
+     * 
+     * @return true if the specified AuthnContextClassRef matches a list of
+     *     requested AuthnContextClassRef
+     */
+    public boolean isAuthnContextMatching(List requestedACClassRefs,
+        String acClassRef, String comparison, String realm,
+        String hostEntityID);
 }

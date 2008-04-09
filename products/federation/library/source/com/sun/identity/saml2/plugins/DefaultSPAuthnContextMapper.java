@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAuthnContextMapper.java,v 1.5 2008-04-02 20:45:28 exu Exp $
+ * $Id: DefaultSPAuthnContextMapper.java,v 1.6 2008-04-09 06:25:04 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,25 +31,19 @@ import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
-import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
-import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaException;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.saml2.profile.SPSSOFederate;
 import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.HashSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -65,7 +59,6 @@ import org.w3c.dom.Node;
 
 public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
 
-    static SAML2MetaManager sm = SAML2Utils.getSAML2MetaManager();;
     static String DEFAULT = "default";
 
     /**
@@ -104,19 +97,19 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
         Integer authLevel=null;
         if (authLevelList != null && !authLevelList.isEmpty()) {
             try { 
-                 authLevel = 
-                     new Integer((String) authLevelList.iterator().next());
-             } catch (NumberFormatException nfe) {
-                 if (SAML2Utils.debug.messageEnabled()) {
-                     SAML2Utils.debug.message("not a valid integer",nfe);   
-                 }
-             } catch (Exception e) {
-                 if (SAML2Utils.debug.messageEnabled()) {
-                     SAML2Utils.debug.message("error getting " 
-                          + "integer object",e);
-                 }
-             }
-         }
+                authLevel =
+                    new Integer((String) authLevelList.iterator().next());
+            } catch (NumberFormatException nfe) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("not a valid integer",nfe);   
+                }
+            } catch (Exception e) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("error getting " 
+                        + "integer object",e);
+                }
+            }
+        }
 
         if (authLevel == null) {
             authLevel = getAuthLevelFromAdvice(paramsMap);
@@ -128,26 +121,13 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                                       authContextClassRef);
         }
 
-        Map spConfigMap = getSPConfigAttrs(realm,hostEntityID);
         // Retreived the cached AuthClass Ref / Auth Level Map
-        Map authRefMap = Collections.EMPTY_MAP;
-        if ((SPCache.authContextHash != null) && 
-           (!SPCache.authContextHash.isEmpty())) {
-            authRefMap = 
-                (Map) SPCache.authContextHash.get(hostEntityID+"|"+realm);
-        }
-        // Retreive the AuthClass Reference from SP Configuration
-        if (authRefMap == null || authRefMap.isEmpty()) {
-            authRefMap = (Map) getAuthnCtxFromSPConfig(spConfigMap);
-            if (authRefMap != null && !authRefMap.isEmpty()) {
-                SPCache.authContextHash.put(hostEntityID+"|"+realm,authRefMap);
-            }
-        }
+        Map authRefMap = getAuthRefMap(realm, hostEntityID);
 
-         List authCtxList = new ArrayList();
+        List authCtxList = new ArrayList();
 
         // create a List of AuthnContext Class Reference
-         if (authContextClassRef != null && !authContextClassRef.isEmpty()) {
+        if (authContextClassRef != null && !authContextClassRef.isEmpty()) {
             Iterator i = authContextClassRef.iterator();
             while (i.hasNext()) {
                 String authClassRef = prefixIfRequired((String) i.next());
@@ -157,53 +137,42 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                 }
                 authCtxList.add(authClassRef);
             }
-         }   
-         if (authLevel != null) {
-             Set authCtxSet = authRefMap.keySet();
-             Iterator i = authCtxSet.iterator();
-             while (i.hasNext()) {
-                  String className = (String)i.next();
-                  if (DEFAULT.equals(className)) {
-                      continue;
-                  }
-                  try {
-                      Integer aLevel = 
-                        new Integer((String) authRefMap.get(className));
-                      if (aLevel != null &&
-                          aLevel.intValue() >= authLevel.intValue()) {
-                          authCtxList.add(className);
-                      }
-                  } catch (NumberFormatException nfe) {
-                      if (SAML2Utils.debug.messageEnabled()) {
-                          SAML2Utils.debug.message("not a valid integer",nfe);
-                      }
-                  } catch (Exception e) {
-                      if (SAML2Utils.debug.messageEnabled()) {
-                          SAML2Utils.debug.message("error getting " 
-                                    + "integer value ",e);
-                      }
-                  }
-              }
-         }
+        }   
+        if (authLevel != null) {
+            Set authCtxSet = authRefMap.keySet();
+            Iterator i = authCtxSet.iterator();
+            while (i.hasNext()) {
+                String className = (String)i.next();
+                if (DEFAULT.equals(className)) {
+                    continue;
+                }
 
-         if ((authCtxList == null || authCtxList.isEmpty()) 
-              && (authRefMap != null 
-              && !authRefMap.isEmpty())) {   
-              Set authCtxSet = authRefMap.keySet();
-              Iterator i = authCtxSet.iterator();
-              while (i.hasNext()) {
-                  String val = (String) i.next();
-                  if (val != null && !val.equals(DEFAULT)) {
-                      authCtxList.add(val);
-                  }
-              }
-         }
+                Integer aLevel = (Integer)authRefMap.get(className);
+                if (aLevel != null &&
+                    aLevel.intValue() >= authLevel.intValue()) {
+                    authCtxList.add(className);
+                }
+            }
+        }
 
-         // if list empty set the default
-         if (authCtxList.isEmpty()) {
+        if ((authCtxList == null || authCtxList.isEmpty()) 
+            && (authRefMap != null 
+            && !authRefMap.isEmpty())) {   
+            Set authCtxSet = authRefMap.keySet();
+            Iterator i = authCtxSet.iterator();
+            while (i.hasNext()) {
+                String val = (String) i.next();
+                if (val != null && !val.equals(DEFAULT)) {
+                    authCtxList.add(val);
+                }
+            }
+        }
+
+        // if list empty set the default
+        if (authCtxList.isEmpty()) {
             authCtxList.add(
                 SAML2Constants.CLASSREF_PASSWORD_PROTECTED_TRANSPORT);
-         }
+        }
         
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message("SPCache.authContextHash is: "
@@ -212,26 +181,31 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
         }
                 
         // Retrieve Auth Comparison from Query parameter
-         String authCtxComparison =  getAttrValue(paramsMap,
-             SAML2Constants.SP_AUTHCONTEXT_COMPARISON);
+        String authCtxComparison = SPSSOFederate.getParameter(paramsMap,
+            SAML2Constants.SP_AUTHCONTEXT_COMPARISON);
 
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message("AuthComparison in Query:"+
                                       authCtxComparison);
         }
-         if ((authCtxComparison == null) || 
-             !isValidAuthComparison(authCtxComparison)) {
-             authCtxComparison = 
-                 getAttrValue(spConfigMap,
-                 SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE);
-         } 
+        if ((authCtxComparison == null) || 
+            !isValidAuthComparison(authCtxComparison)) {
+            authCtxComparison = SAML2Utils.getAttributeValueFromSSOConfig(
+                realm, hostEntityID, SAML2Constants.SP_ROLE,
+                SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE);
 
-         RequestedAuthnContext reqCtx = 
+            if ((authCtxComparison != null) &&
+                (!isValidAuthComparison(authCtxComparison))) {
+                authCtxComparison = null;
+            }
+        } 
+
+        RequestedAuthnContext reqCtx = 
             ProtocolFactory.getInstance().createRequestedAuthnContext();
-         reqCtx.setAuthnContextClassRef(authCtxList);
-         reqCtx.setComparison(authCtxComparison);
+        reqCtx.setAuthnContextClassRef(authCtxList);
+        reqCtx.setComparison(authCtxComparison);
 
-         return reqCtx;
+        return reqCtx;
     }
 
     /**
@@ -299,7 +273,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                     }
                 }
                 
-             }
+            }
         }
         return level;   
     }
@@ -327,6 +301,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
         if (authRefMap == null || authRefMap.isEmpty()) {
             authRefMap = getAuthRefMap(realm,hostEntityID);
         }
+
         int authLevel = 0;
 
         if (SAML2Utils.debug.messageEnabled()) {
@@ -344,32 +319,27 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
             authnClassRef = authnContext.getAuthnContextClassRef();
         }
 
-        String authLevelStr = null;
+        if ((reqCtx != null) && (authnClassRef != null) &&
+            (!isAuthnContextMatching(reqCtx.getAuthnContextClassRef(),
+            authnClassRef, reqCtx.getComparison(), realm, hostEntityID))) {
+
+            throw new SAML2Exception(SAML2Utils.bundle.getString(
+                "invalidAuthnContextClassRef"));
+        }
+
+        Integer authLevelInt = null;
         if ((authnClassRef != null) && (authnClassRef.length() > 0)) {
-            if ((authRefMap != null) && !authRefMap.isEmpty()) {
-                if (authRefMap.containsKey(authnClassRef)) {
-                    authLevelStr =  (String) authRefMap.get(authnClassRef);
-                } else {
-                    authLevelStr = (String)authRefMap.get(DEFAULT);
-                }
+            if ((authRefMap != null) && (!authRefMap.isEmpty())) {
+                authLevelInt = (Integer)authRefMap.get(authnClassRef);
             }
         } else {
-             if ((authRefMap != null) && (!authRefMap.isEmpty())) {
-                    authLevelStr = (String)authRefMap.get(DEFAULT);
-             }
-        }
-
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message("AuthLevel is :" + authLevel);
-        }
-
-        if (authLevelStr != null) {
-            try {
-                authLevel = new Integer(authLevelStr).intValue();
-            } catch (Exception e) {
-                SAML2Utils.debug.message("Error getting authLevel " 
-                                        + "using default");
+            if ((authRefMap != null) && (!authRefMap.isEmpty())) {
+                authLevelInt = (Integer)authRefMap.get(DEFAULT);
             }
+        }
+
+        if (authLevelInt != null) {
+            authLevel = authLevelInt.intValue();
         }
 
         if (SAML2Utils.debug.messageEnabled()) {
@@ -381,22 +351,48 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
         return authLevel;
     }
 
+    /** 
+     * Returns true if the specified AuthnContextClassRef matches a list of
+     * requested AuthnContextClassRef.
+     *
+     * @param authnRequest a list of requested AuthnContextClassRef's
+     * @param acClassRef AuthnContextClassRef
+     * @param comparison the type of comparison
+     * @param realm  Realm or Organization of the Service Provider.
+     * @param hostEntityID Entity ID of the Service Provider.
+     * 
+     * @return true if the specified AuthnContextClassRef matches a list of
+     *     requested AuthnContextClassRef
+     */
+    public boolean isAuthnContextMatching(List requestedACClassRefs,
+        String acClassRef, String comparison, String realm,
+        String hostEntityID) {
+
+        Map authRefMap = getAuthRefMap(realm, hostEntityID);
+
+        return SAML2Utils.isAuthnContextMatching(requestedACClassRefs,
+            acClassRef, comparison, authRefMap);
+    }
+
     /* parses the AuthContext attribute to get the Class Reference and
      * authlevel 
      */
-    private static Map getAuthnCtxFromSPConfig(Map spConfigMap) {
-        List authContextClassRefConfig =
-         (List) spConfigMap.get(SAML2Constants.SP_AUTH_CONTEXT_CLASS_REF_ATTR);
+    private static Map getAuthnCtxFromSPConfig(String realm,
+        String hostEntityID) {
+
+        List authContextClassRefConfig = 
+            SAML2Utils.getAllAttributeValueFromSSOConfig(realm, hostEntityID,
+            SAML2Constants.SP_ROLE, 
+            SAML2Constants.SP_AUTH_CONTEXT_CLASS_REF_ATTR);
 
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message("DefaultSPAuthnContextMapper: List:"
                         +authContextClassRefConfig);
         }
         HashMap authRefMap =  new LinkedHashMap();
-        String authLevel = null;
 
         if (authContextClassRefConfig != null && 
-                authContextClassRefConfig.size() != 0) {
+            authContextClassRefConfig.size() != 0) {
 
             Iterator i = authContextClassRefConfig.iterator();
             while (i.hasNext()) { 
@@ -417,23 +413,33 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                                                  + "not found");
                     }
                 }
-                try {
-                    authLevel = (String) st.nextToken();
-                } catch (Exception e ) {
+
+                if (st.hasMoreTokens()) {
+                    Integer authLevel = null;
+                    try {
+                        authLevel = new Integer(st.nextToken());
+                    } catch (NumberFormatException nfe) {
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(
+                                "DefaultSPAuthnContextMapper." +
+                                "getAuthnCtxFromSPConfig:", nfe);
+                        }
+                    }
+
                     if (SAML2Utils.debug.messageEnabled()) {
-                        SAML2Utils.debug.message("AuthnContextClassRef  "
-                                                 + "not found");
+                        SAML2Utils.debug.message(
+                            "DefaultSPAuthnContextMapper." +
+                            "getAuthnCtxFromSPConfig: AuthLevel is " +
+                            authLevel);
                     }
-                }
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message("AuthLevel is :" + authLevel);
-                }
-                if (authRefVal != null) {
-                    if (isDefault && !authRefMap.containsKey(DEFAULT)) {
-                        authRefMap.put(DEFAULT, authLevel);
-                    }
-                    if (authClass != null) {
-                        authRefMap.put(prefixIfRequired(authClass), authLevel);
+                    if (authLevel != null) {
+                        if (isDefault && (!authRefMap.containsKey(DEFAULT))) {
+                            authRefMap.put(DEFAULT, authLevel);
+                        }
+                        if (authClass != null) {
+                            authRefMap.put(prefixIfRequired(authClass),
+                                authLevel);
+                        }
                     }
                 }
             }
@@ -450,56 +456,26 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                                 || authComparison.equals("maximum") 
                                 || authComparison.equals("minimum") 
                                 || authComparison.equals("better") ;
-   }
-
-
-    /* returns the SP Entity Config attributes */
-    private static Map getSPConfigAttrs(String realm,String hostEntityID) {
-        Map spConfigMap = Collections.EMPTY_MAP;
-        try {
-            if (sm != null) {
-                SPSSOConfigElement spEntityCfg =
-                            sm.getSPSSOConfig(realm,hostEntityID);
-                if (spEntityCfg != null) {
-                    spConfigMap = SAML2MetaUtils.getAttributes(spEntityCfg);
-                }
-            }
-        } catch (Exception se) {
-            SAML2Utils.debug.message("Error retrieving config",se);
-        }
-        return spConfigMap;
     }
-
-
-   /* returns the auth context comparison type value */
-   private static String getAttrValue(Map spConfigMap,String attrName) {
-        String attrVal = SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE_VALUE;
-        List listVal = (List) spConfigMap.get(attrName);
-        if (listVal != null && listVal.size() != 0) {
-            attrVal= ((String) listVal.iterator().next()).trim();
-        }
-        return attrVal;
-   }
 
     /* returns a Map with key as the hostEntityID|realm and value the
      * the SP Extended configuration attributes.
      */
     private static Map getAuthRefMap(String realm,String hostEntityID) {
-        Map authRefMap = Collections.EMPTY_MAP;
-        try {
-            SPSSOConfigElement spEntityCfg = 
-                        sm.getSPSSOConfig(realm,hostEntityID);
-            if (spEntityCfg != null)  {
-                Map spConfigMap = SAML2MetaUtils.getAttributes(spEntityCfg);
-                authRefMap = (Map) getAuthnCtxFromSPConfig(spConfigMap);
-                if (authRefMap != null && !authRefMap.isEmpty()) {
-                    SPCache.authContextHash.put(hostEntityID+"|"+realm,
-                                                authRefMap);
+        String key = hostEntityID + "|" + realm;
+        Map authRefMap = (Map)SPCache.authContextHash.get(key);
+
+        if (authRefMap == null) {
+            try {
+                authRefMap = (Map)getAuthnCtxFromSPConfig(realm, hostEntityID);
+                if ((authRefMap != null) && (!authRefMap.isEmpty())) {
+                    SPCache.authContextHash.put(key, authRefMap);
                 }
-            }
-        } catch (Exception e ) {
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("Error getting SP config : ",e);
+            } catch (Exception e ) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("DefaultSPAuthnContextMapper." +
+                        "getAuthRefMap:", e);
+                }
             }
         }
         return authRefMap;
@@ -516,4 +492,4 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
             return authClassRef;
         }
     }
- }
+}

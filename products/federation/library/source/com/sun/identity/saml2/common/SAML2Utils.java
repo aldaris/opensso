@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.21 2008-04-03 06:59:25 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.22 2008-04-09 06:24:06 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3681,4 +3681,117 @@ public class SAML2Utils extends SAML2SDKUtils {
 
         return nameIDFormat;
     }
+
+    /** 
+     * Returns true if the specified AuthnContextClassRef matches a list of
+     * requested AuthnContextClassRef.
+     *
+     * @param authnRequest a list of requested AuthnContextClassRef's
+     * @param acClassRef AuthnContextClassRef
+     * @param comparison the type of comparison
+     * @param acClassRefLevelMap a AuthnContextClassRef to AuthLevel map. Key
+     *     is AuthnContextClassRef in <code>String</code> and value is
+     *     AuthLevel in <code>Integer</code>
+     * 
+     * @return true if the specified AuthnContextClassRef matches a list of
+     *     requested AuthnContextClassRef
+     */
+    public static boolean isAuthnContextMatching(List requestedACClassRefs,
+        String acClassRef, String comparison, Map acClassRefLevelMap) {
+
+        Integer levelInt = (Integer)acClassRefLevelMap.get(acClassRef);
+        if (levelInt == null) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("SAML2Utils.isAuthnContextMatching: " +                   "AuthnContextClassRef " + acClassRef +" is not supported.");
+            }
+            return false;
+        }
+        int level = levelInt.intValue();
+
+        if ((comparison == null) || (comparison.length() == 0) ||
+            (comparison.equals("exact"))) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                if (requstedACClassRef.equals(acClassRef)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message("SAML2Utils.isAuthnContextMatching: " +
+                "acClassRef = " + acClassRef + ", level = " + level +
+                ", comparison = " + comparison);
+        }
+        if (comparison.equals("minimum")) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                Integer requestedLevelInt =
+                    (Integer)acClassRefLevelMap.get(requstedACClassRef);
+                int requestedLevel = (requestedLevelInt == null) ?
+                    0 : requestedLevelInt.intValue();
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("SAML2Utils." +
+                        "isAuthnContextMatching: requstedACClassRef = " +
+                        requstedACClassRef + ", level = " + requestedLevel);
+                }
+
+                if (level >= requestedLevel) {
+                    return true;
+                }
+            }
+            return false;
+        } else if (comparison.equals("better")) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                Integer requestedLevelInt =
+                    (Integer)acClassRefLevelMap.get(requstedACClassRef);
+                int requestedLevel = (requestedLevelInt == null) ?
+                    0 : requestedLevelInt.intValue();
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("SAML2Utils." +
+                        "isAuthnContextMatching: requstedACClassRef = " +
+                        requstedACClassRef + ", level = " + requestedLevel);
+                }
+
+                if (level <= requestedLevel) {
+                    return false;
+                }
+            }
+            return true;
+        } else if (comparison.equals("maximum")) {
+            for(Iterator iter = requestedACClassRefs.iterator();
+                iter.hasNext();) {
+
+                String requstedACClassRef = (String)iter.next();
+                Integer requestedLevelInt =
+                    (Integer)acClassRefLevelMap.get(requstedACClassRef);
+                int requestedLevel = (requestedLevelInt == null) ?
+                    0 : requestedLevelInt.intValue();
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("SAML2Utils." +
+                        "isAuthnContextMatching: requstedACClassRef = " +
+                        requstedACClassRef + ", level = " + requestedLevel);
+                }
+
+                if (level <= requestedLevel) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return false;
+    }
+
 }

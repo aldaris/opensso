@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.12 2008-02-29 00:22:04 exu Exp $
+ * $Id: IDPSSOFederate.java,v 1.13 2008-04-09 06:25:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,7 @@ import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
+import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -351,6 +352,56 @@ public class IDPSSOFederate {
                         session = null;
                     }
                 }
+
+                IDPAuthnContextMapper idpAuthnContextMapper = null;
+                try {
+                    idpAuthnContextMapper =
+                        IDPSSOUtil.getIDPAuthnContextMapper(realm, idpEntityID);
+                } catch (SAML2Exception sme) {
+                    SAML2Utils.debug.error(classMethod, sme);
+                }
+                if (idpAuthnContextMapper == null) {
+                    SAML2Utils.debug.error(classMethod +
+                        "Unable to get IDPAuthnContextMapper from meta.");
+                    sendError(response, SAML2Constants.SERVER_FAULT,
+                        "metaDataError", null, isFromECP);
+                    return;
+                } 
+
+                IDPAuthnContextInfo idpAuthnContextInfo = null;
+                try {
+                    idpAuthnContextInfo =
+                        idpAuthnContextMapper.getIDPAuthnContextInfo(authnReq,
+                        idpEntityID, realm);
+                } catch (SAML2Exception sme) {
+                    SAML2Utils.debug.error(classMethod, sme);
+                }
+
+                if (idpAuthnContextInfo == null) {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod + "Unable to " +
+                            "find valid AuthnContext. Sending error Response.");
+                    }
+                    try {
+                        Response res = SAML2Utils.getErrorResponse(authnReq, 
+                            SAML2Constants.REQUESTER,
+                            SAML2Constants.NO_AUTHN_CONTEXT, null, idpEntityID);
+                        StringBuffer returnedBinding = new StringBuffer();
+                        String acsURL = IDPSSOUtil.getACSurl(spEntityID, realm,
+                            authnReq, request, returnedBinding);
+                        String acsBinding = returnedBinding.toString();
+                        IDPSSOUtil.sendResponse(response, acsBinding,
+                            spEntityID, idpEntityID, idpMetaAlias, realm, null,
+                            acsURL, res, session);
+                    } catch (SAML2Exception sme) {
+                        SAML2Utils.debug.error(classMethod, sme);
+                        sendError(response, SAML2Constants.SERVER_FAULT,
+                            "metaDataError", null, isFromECP);
+                    }
+                    return;
+                }
+
+
                 // need to check if the forceAuth is true. if so, do auth 
                 if ((Boolean.TRUE.equals(authnReq.isForceAuthn())) &&
                     (!Boolean.TRUE.equals(authnReq.isPassive())))
@@ -421,8 +472,8 @@ public class IDPSSOFederate {
    
                     // redirect to the authentication service
                     try {
-                        redirectAuthentication(request, response, authnReq,
-                            reqID, realm, idpEntityID, false);
+                        redirectAuthentication(request, response, reqID,
+                            idpAuthnContextInfo, realm, idpEntityID, false);
                     } catch (IOException ioe) {
                         SAML2Utils.debug.error(classMethod +
                             "Unable to redirect to authentication.", ioe);
@@ -442,14 +493,11 @@ public class IDPSSOFederate {
                         SAML2Utils.debug.message(classMethod + 
                             "Session is valid");
                     }
-                    RequestedAuthnContext requestAuthnContext =
-                        authnReq.getRequestedAuthnContext();
-                    boolean sessionUpgrade = true;
+
                     IDPSession oldIDPSession = null;
-                    String sessionIndex = null;
-                    sessionIndex = IDPSSOUtil.getSessionIndex(session);
-                    sessionUpgrade =
-                        isSessionUpgrade(requestAuthnContext,sessionIndex);
+                    String sessionIndex = IDPSSOUtil.getSessionIndex(session);
+                    boolean sessionUpgrade = isSessionUpgrade(
+                        idpAuthnContextInfo.getAuthnContext(), sessionIndex);
 
                     if (SAML2Utils.debug.messageEnabled()) {
                         SAML2Utils.debug.message(classMethod +
@@ -476,8 +524,8 @@ public class IDPSSOFederate {
                         }
 
                         try {
-                             redirectAuthentication(request, response, authnReq,
-                                 reqID, realm, idpEntityID, true);
+                             redirectAuthentication(request, response, reqID,
+                                 idpAuthnContextInfo, realm, idpEntityID, true);
                              return;
                         } catch (IOException ioe) {
                             SAML2Utils.debug.error(classMethod +
@@ -714,28 +762,17 @@ public class IDPSSOFederate {
     /**
      * Redirect to authenticate service
      */
-    private static void redirectAuthentication(
-                             HttpServletRequest request,
-                             HttpServletResponse response,
-                             AuthnRequest authnReq,
-                             String reqID,
-                             String realm,
-                             String idpEntityID,
-                             boolean isSessionUpgrade) 
+    private static void redirectAuthentication(HttpServletRequest request,
+        HttpServletResponse response, String reqID, IDPAuthnContextInfo info,
+        String realm, String idpEntityID, boolean isSessionUpgrade) 
         throws SAML2Exception, IOException {
+
         String classMethod = "IDPSSOFederate.redirectAuthentication: ";
         // get the authentication service url 
         StringBuffer newURL = new StringBuffer(
                                 IDPSSOUtil.getAuthenticationServiceURL(
                                 realm, idpEntityID, request));
-        // find out the authentication method, e.g. module=LDAP, from
-        // authn context mapping 
-        IDPAuthnContextMapper idpAuthnContextMapper = 
-            IDPSSOUtil.getIDPAuthnContextMapper(realm, idpEntityID);
         
-        IDPAuthnContextInfo info = 
-            idpAuthnContextMapper.getIDPAuthnContextInfo(
-                authnReq, idpEntityID, realm);
         Set authnTypeAndValues = info.getAuthnTypeAndValues();
         if ((authnTypeAndValues != null) 
             && (!authnTypeAndValues.isEmpty())) { 
@@ -791,89 +828,33 @@ public class IDPSSOFederate {
      * @param sessionIndex the Session Index of the active session.
      * @return true if the requester requires to reauthenticate
      */
-    private static boolean isSessionUpgrade(
-                               RequestedAuthnContext requestAuthnContext,
-                               String sessionIndex) {
+    private static boolean isSessionUpgrade(AuthnContext authnContext,
+        String sessionIndex) {
         String classMethod = "IDPSSOFederate.isSessionUpgrade: ";
 
         if (sessionIndex == null) {
             return false;
         }
 
-        boolean sessionUpgrade=true;
-        if (requestAuthnContext != null) {
-            // Get the AuthContext 
-            Set authContextSet = 
-                (HashSet) IDPCache.authnContextCache.remove(sessionIndex);
-            if (authContextSet != null && !authContextSet.isEmpty()) {
-                Iterator authCtxIterator = authContextSet.iterator();
-                List authnCtxRefList = 
-                    requestAuthnContext.getAuthnContextClassRef();
-                if (authnCtxRefList != null &&  !authnCtxRefList.isEmpty()){
-                    Iterator i = authnCtxRefList.iterator();
-                    while (i.hasNext()) {
-                        String authClass = (String)i.next();
-                        if (SAML2Utils.debug.messageEnabled()) {
-                            SAML2Utils.debug.message(classMethod 
-                                        + "SP authClassReference: " 
-                                        + authClass);
-                        }
-                        while (authCtxIterator.hasNext()) {
-                            AuthnContext authnContext = 
-                                  (AuthnContext)authCtxIterator.next();
-                            String origAuthnCtxClassRef = 
-                                  authnContext.getAuthnContextClassRef();
-                            if (SAML2Utils.debug.messageEnabled()) {
-                                SAML2Utils.debug.message(classMethod 
-                                  +  "SP Original authClassReference: "
-                                  + origAuthnCtxClassRef);
-                            }
-                            if (authClass != null && 
-                                authClass.equals(origAuthnCtxClassRef)) {
-                                sessionUpgrade = false;
-                                break;
-                            }
-                         }
-                     }
-                 } else { 
-                     List authnCtxDeclRef = 
-                         requestAuthnContext.getAuthnContextDeclRef();
-                     if (authnCtxDeclRef != null && 
-                                   !authnCtxDeclRef.isEmpty()) {
-                         Iterator i = authnCtxDeclRef.iterator();
-                         while(i.hasNext()) {
-                             String authClass = (String)i.next();
-                             if (SAML2Utils.debug.messageEnabled()) {
-                                 SAML2Utils.debug.message(classMethod +
-                                     "authDeclReference from SP is :" + 
-                                      authClass);
-                             }
-                             while (authCtxIterator.hasNext()) {
-                                 AuthnContext authnContext = 
-                                     (AuthnContext)authCtxIterator.next();
-                                 String origDeclRef = 
-                                     authnContext.getAuthnContextDeclRef();
-                                 if (SAML2Utils.debug.messageEnabled()) {
-                                     SAML2Utils.debug.message(classMethod 
-                                     +"Original authDeclRef from  SP is : " 
-                                     + origDeclRef);
-                                 }
-                                 if ((authClass != null) 
-                                     && (authClass.equals(origDeclRef))) {
-                                     sessionUpgrade=false;
-                                     break;
-                                 }
-                             }
-                          }
-                      }
-                 }
-            } else {
-                // no authcontext to compare with 
-                // so no session upgrade.
-                 sessionUpgrade=false;
+        Set oldAuthnContexts =
+           (Set)IDPCache.authnContextCache.get(sessionIndex);
+
+        if ((oldAuthnContexts == null) || (oldAuthnContexts.isEmpty())) {
+            return false;
+        }
+
+        String newAuthnContextClassRef = authnContext.getAuthnContextClassRef(); 
+        
+        for(Iterator iter = oldAuthnContexts.iterator(); iter.hasNext(); ) {
+            AuthnContext oldAuthnContext = (AuthnContext)iter.next();
+            if (newAuthnContextClassRef.equals(
+                oldAuthnContext.getAuthnContextClassRef())) {
+
+                return false;
             }
-         }
-         return sessionUpgrade;
+        }
+
+        return true;
     }
 
     /**
