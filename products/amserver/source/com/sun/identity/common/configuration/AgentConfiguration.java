@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.19 2008-03-14 16:50:20 babysunil Exp $
+ * $Id: AgentConfiguration.java,v 1.20 2008-04-09 22:05:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,6 +113,22 @@ public class AgentConfiguration {
         return agentTypes;
     }
 
+    private static void validateAgentType(String type)
+        throws ConfigurationException {
+        try {
+            Set types = getAgentTypes();
+            if (!types.contains(type)) {
+                Object[] param = {type};
+                throw new ConfigurationException(
+                    "agent.invalid.type", param);
+            }
+        } catch (SMSException e) {
+            throw new ConfigurationException(e.getMessage());
+        } catch (SSOException e) {
+            throw new ConfigurationException(e.getMessage());
+        }
+    }
+
     /**
      * Creates an agent group.
      *
@@ -125,7 +141,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      * @throws ConfigurationException if there are missing information in
-     *         server or agent URL.
+     *         server or agent URL; or invalid agent type.
      */
     public static void createAgentGroup(
         SSOToken ssoToken,
@@ -153,7 +169,7 @@ public class AgentConfiguration {
      * @throws SMSException if there are errors in service management layers.
      * @throws MalformedURLException if server or agent URL is invalid.
      * @throws ConfigurationException if there are missing information in
-     *         server or agent URL.
+     *         server or agent URL; or invalid agent type
      */
     public static void createAgentGroup(
         SSOToken ssoToken,
@@ -190,7 +206,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      * @throws ConfigurationException if there are missing information in
-     *         server or agent URL.
+     *         server or agent URL; or invalid agent type.
      */
     private static void createAgentGroup(
         SSOToken ssoToken,
@@ -202,6 +218,7 @@ public class AgentConfiguration {
         URL agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
+        validateAgentType(agentType);
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
@@ -234,7 +251,7 @@ public class AgentConfiguration {
      * @throws SMSException if there are errors in service management layers.
      * @throws MalformedURLException if server or agent URL is invalid.
      * @throws ConfigurationException if there are missing information in
-     *         server or agent URL.
+     *         server or agent URL; or invalid agent type.
      */
     public static void createAgent(
         SSOToken ssoToken,
@@ -269,7 +286,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      * @throws ConfigurationException if there are missing information in
-     *         server or agent URL.
+     *         server or agent URL; or invalid agent type.
      */
     public static void createAgent(
         SSOToken ssoToken,
@@ -297,7 +314,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      * @throws ConfigurationException if there are missing information in
-     *         server or agent URL.
+     *         server or agent URL; or invalid agent type.
      */
     private static void createAgent(
         SSOToken ssoToken,
@@ -309,6 +326,7 @@ public class AgentConfiguration {
         URL agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
+        validateAgentType(agentType);
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
