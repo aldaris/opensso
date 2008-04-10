@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SigningEncryptionTests.java,v 1.5 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2SigningEncryptionTests.java,v 1.6 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -306,9 +306,9 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             "SignEncryptSPSSOSLOTermArt_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
+                    false, false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);
             String terminatexmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(terminatexmlfile, configMap, "http");
             
@@ -408,9 +408,10 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             "SignEncryptSPSSOSLOTermPost_slo",
             "SignEncryptSPSSOSLOTermPost_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false,
+                    false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);
             String terminatexmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(terminatexmlfile, configMap, "soap");
             

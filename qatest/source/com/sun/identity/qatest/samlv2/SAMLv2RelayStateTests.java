@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2RelayStateTests.java,v 1.6 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2RelayStateTests.java,v 1.7 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -221,10 +221,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2spinitssors_slo", "samlv2spinitssors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
+                    false, false);
             configMap.remove("urlparams");
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);
             String termxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
             
@@ -271,10 +271,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
             String[] arrActions = {"samlv2spinitpostssors_ssoinit", 
             "samlv2spinitpostssors_slo", "samlv2spinitpostssors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false, 
+                    false);
             configMap.remove("urlparams");
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);
             String termxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
             
@@ -428,11 +429,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2spinitslors_slo", "samlv2spinitslors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
+                    false, false);
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate5"));
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);
             configMap.remove("urlparams");
             String termxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
@@ -479,11 +480,12 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2spinitpostslors_slo",
                     "samlv2spinitpostslors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false, 
+                    false);
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate6"));
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);
             configMap.remove("urlparams");
             String termxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");
@@ -644,11 +646,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2spinitssoslors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
+                    false, false);
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate9"));
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);
             configMap.remove("urlparams");
             String termxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "http");
@@ -702,11 +704,11 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     "samlv2spinitpostssoslors_terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post",
-                    false);
+                    false, false);
             configMap.put("urlparams", "RelayState="
                     + usersMap.get("relaystate10"));
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);
             configMap.remove("urlparams");
             String termxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(termxmlfile, configMap, "soap");

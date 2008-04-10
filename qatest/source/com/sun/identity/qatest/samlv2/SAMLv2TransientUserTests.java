@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2TransientUserTests.java,v 1.5 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2TransientUserTests.java,v 1.6 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -318,9 +318,9 @@ public class SAMLv2TransientUserTests extends TestCommon {
                     "ssonospaccspinit_slo"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact", 
-                    true);
+                    true, false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");            
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);            
             
             for (int i = 0; i < arrActions.length; i++) {
                 log(Level.FINEST, "SSONoSPAccSPInit", 
@@ -403,9 +403,10 @@ public class SAMLv2TransientUserTests extends TestCommon {
             String[] arrActions = {"ssonospaccspinitpost_sso", 
             "ssonospaccspinitpost_slo"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", true);
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", true, 
+                    false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");          
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);          
             
             for (int i = 0; i < arrActions.length; i++) {
                 log(Level.FINEST, "SSONoSPAccSPInitPost", 

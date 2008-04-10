@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.12 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.13 2008-04-10 21:27:04 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
@@ -166,11 +167,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                 log(Level.FINEST, "configureSAMLv2", "sp entity doesnt exist." +
                         " Get template & create the entity");
                 if (strGroupName.contains("sec")) {
-                    spMetadata = SAMLv2Common.configureSP(spWebClient,
-                            configMap, true);
+                    spMetadata = MultiProtocolCommon.importMetadata(spWebClient, 
+                            configMap, true, "SP");
                 } else {
-                    spMetadata = SAMLv2Common.configureSP(spWebClient,
-                            configMap, false);
+                    spMetadata = MultiProtocolCommon.importMetadata(spWebClient,
+                            configMap, false, "SP");
                 }
                 if ((spMetadata[0].equals(null)) ||
                         (spMetadata[1].equals(null))) {
@@ -248,11 +249,11 @@ public class ConfigureSAMLv2 extends TestCommon {
                 log(Level.FINEST, "configureSAMLv2", "idp entity doesnt" +
                         " exist. Get template & create the entity");
                 if (strGroupName.contains("sec")) {
-                    idpMetadata = SAMLv2Common.configureIDP(idpWebClient,
-                            configMap, true);
+                    idpMetadata = MultiProtocolCommon.importMetadata(
+                            idpWebClient,  configMap, true, "IDP");
                 } else {
-                    idpMetadata = SAMLv2Common.configureIDP(idpWebClient,
-                            configMap, false);
+                    idpMetadata = MultiProtocolCommon.importMetadata(
+                            idpWebClient, configMap, false, "IDP");
                 }
                 
                 log(Level.FINEST, "configureSAMLv2", "idp metadata" +
@@ -269,8 +270,8 @@ public class ConfigureSAMLv2 extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage idpExportEntityPage = idpfm.exportEntity(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, true,
-                        true, "saml2");
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                        false, true, true, "saml2");
                 if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
                    log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
                            " command failed");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.8 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.9 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -179,7 +179,8 @@ public class SAMLv2SmokeTest extends TestCommon {
             log(Level.FINEST, "testSPSSOInit", "Running: testSPSSOInit");
             getWebClient();
             xmlfile = baseDir + "test1spssoinit.xml";
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false);
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false, 
+                    false);
             log(Level.FINEST, "testSPSSOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
@@ -203,7 +204,7 @@ public class SAMLv2SmokeTest extends TestCommon {
         try {
             log(Level.FINEST, "testSPSLO", "Running: testSPSLO");
             xmlfile = baseDir + "test2spslo.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http", false);
             log(Level.FINEST, "testSPSSOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
@@ -331,7 +332,8 @@ public class SAMLv2SmokeTest extends TestCommon {
             log(Level.FINEST, "testSPSSOInitPost", "Running: testSPSSOInitPost");
             getWebClient();
             xmlfile = baseDir + "test4spssoinit.xml";
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false, 
+                    false);
             log(Level.FINEST, "testSPSSOInitPost", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
@@ -355,7 +357,7 @@ public class SAMLv2SmokeTest extends TestCommon {
         try {
             log(Level.FINEST, "testSPSLOSOAP", "Running: testSPSLOSOAP");
             xmlfile = baseDir + "test5spslo.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap", false);
             log(Level.FINEST, "testSPSLOSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
@@ -437,7 +439,7 @@ public class SAMLv2SmokeTest extends TestCommon {
             log(Level.FINEST, "testIDPSLOSOAP", "Running: testIDPSLOSOAP");
             
             xmlfile = baseDir + "test11idpslo.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap", false);
             log(Level.FINEST, "testIDPSLOSOAP", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);

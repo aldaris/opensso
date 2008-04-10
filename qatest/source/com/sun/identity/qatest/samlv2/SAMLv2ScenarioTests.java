@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ScenarioTests.java,v 1.8 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2ScenarioTests.java,v 1.9 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -207,9 +207,9 @@ public class SAMLv2ScenarioTests extends TestCommon {
             "scen1spsamlv2terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
+                    false, false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);
             String terminatexmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(terminatexmlfile, configMap, "http");
             
@@ -300,9 +300,10 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String[] arrActions = {"scen3spsamlv2ssoinit", "scen3spsamlv2slo",
             "scen3spsamlv2terminate"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false, 
+                    false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);
             String terminatexmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(terminatexmlfile, configMap, "soap");
             
@@ -392,9 +393,9 @@ public class SAMLv2ScenarioTests extends TestCommon {
             "scen5spsamlv2ssoinit", "scen5spsamlv2slo"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "artifact",
-                    false);
+                    false, false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "http", false);
             
             for (int i = 0; i < arrActions.length; i++) {
                 log(Level.FINE, "samlv2Scenario5",
@@ -435,9 +436,10 @@ public class SAMLv2ScenarioTests extends TestCommon {
             String[] arrActions = {"scen6spsamlv2ssoinit", "scen6spsamlv2slo",
             "scen6spsamlv2ssoinit", "scen6spsamlv2slo"};
             String ssoxmlfile = baseDir + arrActions[0] + ".xml";
-            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(ssoxmlfile, configMap, "post", false, 
+                    false);
             String sloxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(sloxmlfile, configMap, "soap", false);
             
             for (int i  = 0; i  <  arrActions.length;  i++) {
                 log(Level.FINE, "samlv2Scenario6",

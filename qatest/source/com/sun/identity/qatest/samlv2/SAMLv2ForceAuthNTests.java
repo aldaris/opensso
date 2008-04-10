@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.7 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.8 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -204,10 +204,10 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             configMap.put("urlparams","ForceAuthn=true");
             SAMLv2Common.getxmlSPInitSSO(loginxmlfile, configMap, "artifact", 
-                    false);
+                    false, false);
             configMap.remove("urlparams");
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "http", false);
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "http");
             
@@ -254,10 +254,10 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
                     "forceauthntruepost_terminate"};
             String loginxmlfile = baseDir + arrActions[0] + ".xml";
             SAMLv2Common.getxmlSPInitSSO(loginxmlfile, configMap, "post",
-                    false);
+                    false, false);
             configMap.remove("urlparams");
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "soap", false);
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "soap");
             
@@ -306,7 +306,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             getxmlSPInitSSOSPOnly(loginxmlfile, configMap, "artifact");
             configMap.remove("urlparams");
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "http", false);
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "http");
             
@@ -355,7 +355,7 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             getxmlSPInitSSOSPOnly(loginxmlfile, configMap, "post");
             configMap.remove("urlparams");
             String ssoxmlfile = baseDir + arrActions[1] + ".xml";
-            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(ssoxmlfile, configMap, "soap", false);
             String sloxmlfile = baseDir + arrActions[2] + ".xml";
             SAMLv2Common.getxmlSPTerminate(sloxmlfile, configMap, "soap");
             

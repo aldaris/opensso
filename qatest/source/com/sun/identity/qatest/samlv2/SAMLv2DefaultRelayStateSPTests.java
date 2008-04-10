@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.5 2008-02-26 01:56:10 mrudulahg Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.6 2008-04-10 21:27:06 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -290,7 +290,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     "SPSSOInitArtdefaultRS");
             getWebClient();
             xmlfile = baseDir + "spssoinitdefaultrs.xml";
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false);
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false, 
+                    false);
             log(Level.FINE, "SPSSOInitArtdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -318,7 +319,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             log(Level.FINE, "SPSLOHTTPdefaultRS", "Running:" +
                     " SPSLOHTTPdefaultRS");
             xmlfile = baseDir + "SPSLOHTTPdefaultRS.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http", false);
             log(Level.FINE, "SPSLOHTTPdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -380,7 +381,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                     (String)configMap.get("ssoinitresultRS"));
             log(Level.FINEST, "SPSSOInitArtRSdefaultRS", "ConfigMap " + 
                     configMap);
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false);
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact", false,
+                    false);
             log(Level.FINE, "SPSSOInitArtRSdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -411,7 +413,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             configMap.put(TestConstants.KEY_SP_SLO_RESULT,
                     (String)configMap.get(TestConstants.KEY_SP_SLO_RESULT + 
                     "RS"));
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "http", false);
             log(Level.FINE, "SPSLOHTTPRSdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -476,7 +478,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             xmlfile = baseDir + "SPSSOInitPostdefaultRS.xml";
             log(Level.FINEST, "SPSSOInitPostdefaultRS", "ConfigMap " + 
                     configMap);
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false, 
+                    false);
             log(Level.FINE, "SPSSOInitPostdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -504,7 +507,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             log(Level.FINE, "SPSLOSOAPdefaultRS", "Running: " +
                     "SPSLOSOAPdefaultRS");
             xmlfile = baseDir + "SPSLOSOAPdefaultRS.xml";
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap", false);
             log(Level.FINE, "SPSLOSOAPdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -567,7 +570,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
                    "RelayState"));
            log(Level.FINEST, "SPSSOInitPostRSdefaultRS", "ConfigMap " +
                    configMap); 
-            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false);
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "post", false,
+                    false);
             log(Level.FINE, "SPSSOInitPostRSdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
@@ -598,7 +602,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             configMap.put(TestConstants.KEY_SP_SLO_RESULT,
                     (String)configMap.get(TestConstants.KEY_SP_SLO_RESULT + 
                     "RS"));
-            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap");
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, "soap", false);
             log(Level.FINE, "SPSLOSOAPRSdefaultRS", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
