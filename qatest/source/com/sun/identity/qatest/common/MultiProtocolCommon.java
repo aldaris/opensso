@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.9 2008-03-25 02:29:28 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.10 2008-04-10 21:25:44 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -476,5 +476,119 @@ public class MultiProtocolCommon extends TestCommon {
         out.write("</url>");
         out.write(newline);
         out.close();
+    }
+    
+       /**
+     * This method creates the hosted SP/IDP metadata template & loads it.
+     * It returns the uploaded standard & extended metadata.
+     * Null is returned in case of failure.
+     * @param WebClient object after admin login is successful.
+     * @param Map consisting of SP/IDP data
+     * @param boolean signed metadata should contain signature true or false
+     */
+    public static String[] importMetadata(WebClient webClient, Map m,
+            boolean signed, String role) {
+        String[] arrMetadata= {"", ""};
+        try {
+            String deployurl = "";
+            String entityName = "";
+            String idpmetaAlias = "";
+            String spmetaAlias = "";
+            String spcertAlias = "";
+            String idpcertAlias = "";
+            String executionRealm = "";
+            String cot = "";
+            
+            if (role.equalsIgnoreCase("SP")) {
+                deployurl = m.get(TestConstants.KEY_SP_PROTOCOL) + "://" +
+                        m.get(TestConstants.KEY_SP_HOST) + ":"
+                        + m.get(TestConstants.KEY_SP_PORT)
+                        + m.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+                entityName = (String)m.get(TestConstants.KEY_SP_ENTITY_NAME);
+                spmetaAlias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
+                spcertAlias = (String)m.get(TestConstants.KEY_SP_CERTALIAS);
+                executionRealm = (String)m.get(TestConstants.KEY_SP_EXECUTION_REALM);
+                cot = (String)m.get(TestConstants.KEY_SP_COT);
+            } else if (role.equalsIgnoreCase("IDP")) {
+                deployurl = m.get(TestConstants.KEY_IDP_PROTOCOL) + "://" +
+                        m.get(TestConstants.KEY_IDP_HOST) + ":"
+                        + m.get(TestConstants.KEY_IDP_PORT)
+                        + m.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
+                entityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
+                idpmetaAlias = (String)m.get(TestConstants.KEY_IDP_METAALIAS);
+                idpcertAlias = (String)m.get(TestConstants.KEY_IDP_CERTALIAS);
+                executionRealm = (String)m.get(TestConstants.KEY_IDP_EXECUTION_REALM);
+                cot = (String)m.get(TestConstants.KEY_IDP_COT);
+            } else if (role.equalsIgnoreCase("IDPPROXY")) {
+                deployurl = m.get(TestConstants.KEY_IDP_PROXY_PROTOCOL) + "://" +
+                        m.get(TestConstants.KEY_IDP_PROXY_HOST) + ":"
+                        + m.get(TestConstants.KEY_IDP_PROXY_PORT)
+                        + m.get(TestConstants.KEY_IDP_PROXY_DEPLOYMENT_URI);
+                entityName = (String)m.get(TestConstants.KEY_IDP_PROXY_ENTITY_NAME);
+                spmetaAlias = (String)m.get(TestConstants.KEY_IDP_PROXY_SP_METAALIAS);
+                idpmetaAlias = (String)m.get(TestConstants.KEY_IDP_PROXY_IDP_METAALIAS);
+                spcertAlias = (String)m.get(TestConstants.KEY_IDP_PROXY_CERTALIAS);
+                idpcertAlias = (String)m.get(TestConstants.KEY_IDP_PROXY_CERTALIAS);
+                executionRealm = (String)m.get(TestConstants.KEY_IDP_PROXY_EXECUTION_REALM);
+                cot = (String)m.get(TestConstants.KEY_IDP_PROXY_COT);
+            }
+            
+            //get sp & idp extended metadata
+            FederationManager fm = new FederationManager(deployurl);
+            HtmlPage metaPage;
+            if (signed) {
+                metaPage = fm.createMetadataTempl(webClient, entityName, true,
+                        true, spmetaAlias, idpmetaAlias, 
+                        null, null, null, null, null, null, null,
+                        spcertAlias, idpcertAlias,
+                        null, null, null, null, null, null,
+                        spcertAlias, idpcertAlias,
+                        null, null, null, null, null, null, "saml2");
+            } else {
+                metaPage = fm.createMetadataTempl(webClient, entityName, true,
+                        true, spmetaAlias, idpmetaAlias,
+                        null, null, null, null,  null, null, null, null,
+                        null, null, null, null, null, null, null, null, null,
+                        null, null, null, null, null, null, "saml2");
+            }
+            if (FederationManager.getExitCode(metaPage) != 0) {
+               assert false;
+            }
+            
+            String page = metaPage.getWebResponse().getContentAsString();
+            if (page.indexOf("EntityDescriptor") != -1) {
+                arrMetadata[0] = page.substring(
+                        page.indexOf("EntityDescriptor") - 4,
+                        page.lastIndexOf("EntityDescriptor") + 17);
+                arrMetadata[1] = page.substring(
+                        page.indexOf("EntityConfig") - 4,
+                        page.lastIndexOf("EntityConfig") + 13);
+            } else {
+                arrMetadata[0] = null;
+                arrMetadata[1] = null;
+                assert false;
+            }
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
+            {
+                assert(false);
+            } else {
+                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
+                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
+                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
+                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
+                if (FederationManager.getExitCode(fm.importEntity(webClient,
+                        executionRealm, arrMetadata[0], arrMetadata[1],
+                        cot, "saml2")) != 0)
+                {
+                    arrMetadata[0] = null;
+                    arrMetadata[1] = null;
+                    assert(false);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return arrMetadata;
+        
     }
 }

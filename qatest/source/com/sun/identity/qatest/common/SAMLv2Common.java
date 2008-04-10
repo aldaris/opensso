@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.10 2008-03-25 02:29:28 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.11 2008-04-10 21:25:44 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
-import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.io.BufferedWriter;
@@ -38,9 +37,6 @@ import java.util.logging.Level;
  * This class contains helper methods for samlv2 tests
  */
 public class SAMLv2Common extends TestCommon {
-    
-    public static String newline = System.getProperty("line.separator");
-    public static String fileseparator = System.getProperty("file.separator");
     
     /** Creates a new instance of SAMLv2Common */
     public SAMLv2Common() {
@@ -61,9 +57,10 @@ public class SAMLv2Common extends TestCommon {
      * @param bindingType can be artifact or post
      * @param idpLoginOnly can be used in autofedertion case, where only
      * idplogin is req
+     * @param idpProxy should be set to true in IDP proxy scenario
      */
     public static void getxmlSPInitSSO(String xmlFileName, Map m,
-            String bindingType, boolean idpLoginOnly)
+            String bindingType, boolean idpLoginOnly, boolean idpProxy)
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
@@ -73,8 +70,20 @@ public class SAMLv2Common extends TestCommon {
         String sp_deployment_uri = (String)m.get(
                 TestConstants.KEY_SP_DEPLOYMENT_URI);
         String sp_alias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
-        String idp_entity_name = (String)m.get(
-                TestConstants.KEY_IDP_ENTITY_NAME);
+        String idp_entity_name = "";
+        String idp_proxy_user = "";
+        String idp_proxy_userpw = "";
+        if (idpProxy) {
+            idp_entity_name = (String)m.get(
+                    TestConstants.KEY_IDP_PROXY_ENTITY_NAME);
+            idp_proxy_user = (String)m.get(TestConstants.
+                    KEY_IDP_PROXY_USER);
+            idp_proxy_userpw = (String)m.get(TestConstants.
+                    KEY_IDP_PROXY_USER_PASSWORD);
+        } else {
+            idp_entity_name = (String)m.get(
+                    TestConstants.KEY_IDP_ENTITY_NAME);
+        }
         String sp_user = (String)m.get(TestConstants.KEY_SP_USER);
         String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String idp_user = (String)m.get(TestConstants.KEY_IDP_USER);
@@ -95,6 +104,17 @@ public class SAMLv2Common extends TestCommon {
         out.write(newline);
         out.write("<form name=\"Login\" buttonName=\"\" >");
         out.write(newline);
+        if (idpProxy) {
+            out.write("<form name=\"Login\" buttonName=\"\" >");
+            out.write(newline);
+            out.write("<input name=\"IDToken1\" value=\"" + idp_proxy_user + "\" />");
+            out.write(newline);
+            out.write("<input name=\"IDToken2\" value=\""
+                    + idp_proxy_userpw + "\" />");
+            out.write(newline);
+            out.write("</form>");
+            out.write(newline);
+        }
         out.write("<input name=\"IDToken1\" value=\"" + idp_user + "\" />");
         out.write(newline);
         out.write("<input name=\"IDToken2\" value=\""
@@ -247,9 +267,10 @@ public class SAMLv2Common extends TestCommon {
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
      * @param bindingType can be http or soap
+     * @param idpProxy should be set to true in IDP proxy scenario
      */
     public static void getxmlSPSLO(String xmlFileName, Map m,
-            String bindingType)
+            String bindingType, boolean idpProxy)
     throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
@@ -259,8 +280,14 @@ public class SAMLv2Common extends TestCommon {
         String sp_deployment_uri = (String)m.get(
                 TestConstants.KEY_SP_DEPLOYMENT_URI);
         String sp_alias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
-        String idp_entity_name = (String)m.get(
-                TestConstants.KEY_IDP_ENTITY_NAME);
+        String idp_entity_name;
+        if (idpProxy) {
+            idp_entity_name = (String)m.get(
+                    TestConstants.KEY_IDP_PROXY_ENTITY_NAME);
+        } else {
+            idp_entity_name = (String)m.get(
+                    TestConstants.KEY_IDP_ENTITY_NAME);
+        }
         String strResult = (String)m.get(TestConstants.KEY_SP_SLO_RESULT);
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
@@ -359,7 +386,7 @@ public class SAMLv2Common extends TestCommon {
                 TestConstants.KEY_SP_DEPLOYMENT_URI);
         String sp_alias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
         String idp_entity_name = (String)m.get(
-                TestConstants.KEY_IDP_ENTITY_NAME);
+                    TestConstants.KEY_IDP_ENTITY_NAME);
         String sp_user = (String)m.get(TestConstants.KEY_SP_USER);
         String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String strResult = (String)m.get(TestConstants.KEY_TERMINATE_RESULT);
@@ -870,162 +897,6 @@ public class SAMLv2Common extends TestCommon {
     }
     
     /**
-     * This method creates the hosted SP metadata template & loads it.
-     * It returns the uploaded standard & extended metadata.
-     * Null is returned in case of failure.
-     * @param WebClient object after admin login is successful.
-     * @param Map consisting of SP data
-     * @param boolean signed metadata should contain signature true or false
-     */
-    public static String[] configureSP(WebClient webClient, Map m,
-            boolean signed) {
-        String[] arrMetadata= {"", ""};
-        try {
-            String spurl = m.get(TestConstants.KEY_SP_PROTOCOL) + "://" +
-                    m.get(TestConstants.KEY_SP_HOST) + ":"
-                    + m.get(TestConstants.KEY_SP_PORT)
-                    + m.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            
-            //get sp & idp extended metadata
-            FederationManager spfm = new FederationManager(spurl);
-            HtmlPage spmetaPage;
-            if (signed) {
-                spmetaPage = spfm.createMetadataTempl(webClient,
-                        (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
-                        true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
-                        null, null, null, null, null, null, null, null,
-                        (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, null, null, null, null,
-                        (String)m.get(TestConstants.KEY_SP_CERTALIAS), null,
-                        null, null, null, null, null, null, "saml2");
-            } else {
-                spmetaPage = spfm.createMetadataTempl(webClient,
-                        (String)m.get(TestConstants.KEY_SP_ENTITY_NAME), true,
-                        true, (String)m.get(TestConstants.KEY_SP_METAALIAS),
-                        null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, "saml2");
-            }
-            if (FederationManager.getExitCode(spmetaPage) != 0) {
-               assert false;
-            }
-            
-            String spPage = spmetaPage.getWebResponse().getContentAsString();
-            if (spPage.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = spPage.substring(
-                        spPage.indexOf("EntityDescriptor") - 4,
-                        spPage.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = spPage.substring(
-                        spPage.indexOf("EntityConfig") - 4,
-                        spPage.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
-                assert(false);
-            } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
-                if (FederationManager.getExitCode(spfm.importEntity(webClient,
-                        (String)m.get(TestConstants.KEY_SP_EXECUTION_REALM),
-                        arrMetadata[0], arrMetadata[1],
-                        (String)m.get(TestConstants.KEY_SP_COT), "saml2")) != 0)
-                {
-                    arrMetadata[0] = null;
-                    arrMetadata[1] = null;
-                    assert(false);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return arrMetadata;
-        
-    }
-    
-    /**
-     * This method creates the hosted IDP metadata template & loads it.
-     * @param WebClient object after admin login is successful.
-     * @param Map consisting of IDP data
-     * @param boolean signed metadata should contain signature true or false
-     */
-    public static String[] configureIDP(WebClient webClient, Map m,
-            boolean signed) {
-        String[] arrMetadata={"",""};
-        try {
-            String idpurl = m.get(TestConstants.KEY_IDP_PROTOCOL) + "://" +
-                    m.get(TestConstants.KEY_IDP_HOST) + ":"
-                    + m.get(TestConstants.KEY_IDP_PORT)
-                    + m.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            
-            //get sp & idp extended metadata
-            FederationManager idpfm = new FederationManager(idpurl);
-            HtmlPage idpmetaPage;
-            if (signed) {
-                idpmetaPage = idpfm.createMetadataTempl(webClient,
-                        (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
-                        true, null,
-                        (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
-                        null, null, null, null, null, null, null, 
-                        (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null, null, null, null, null,
-                        (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
-                        null, null, null, null, null, "saml2");
-            } else {
-                idpmetaPage = idpfm.createMetadataTempl(webClient,
-                        (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
-                        true, null,
-                        (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
-                        null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null, null, 
-                        null, null, null, null, "saml2");
-            }
-            if (FederationManager.getExitCode(idpmetaPage) != 0) {
-               assert false;
-            }
-            String idpPage = idpmetaPage.getWebResponse().getContentAsString();
-            if (idpPage.indexOf("EntityDescriptor") != -1) {
-                arrMetadata[0] = idpPage.substring(
-                        idpPage.indexOf("EntityDescriptor") - 4,
-                        idpPage.lastIndexOf("EntityDescriptor") + 17);
-                arrMetadata[1] = idpPage.substring(
-                        idpPage.indexOf("EntityConfig") - 4,
-                        idpPage.lastIndexOf("EntityConfig") + 13);
-            } else {
-                arrMetadata[0] = null;
-                arrMetadata[1] = null;
-                assert false;
-            }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
-                assert(false);
-            } else {
-                arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
-                arrMetadata[0] = arrMetadata[0].replaceAll("&gt;", ">");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
-                arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
-                if (FederationManager.getExitCode(idpfm.importEntity(webClient,
-                        (String)m.get(TestConstants.KEY_IDP_EXECUTION_REALM),
-                        arrMetadata[0], arrMetadata[1],
-                        (String)m.get(TestConstants.KEY_IDP_COT), "saml2"))
-                        != 0) {
-                    arrMetadata[0] = null;
-                    arrMetadata[1] = null;
-                    assert(false);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return arrMetadata;
-    }
-    
-    /*
      * This method loads the IDP metadata on sp & idp
      * @param metadata is the standard metadata of IDP
      * @param metadataext is the extended metadata of IDP
