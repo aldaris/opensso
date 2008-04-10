@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: opensso.css,v 1.1 2008-01-15 06:44:18 veiming Exp $
+ * $Id: opensso.css,v 1.2 2008-04-10 23:15:02 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,4 +36,23 @@ div.dvs {
     display: none;
     border: darkgray 4px solid
 }
+
+div.bubble {
+    position:absolute;
+    width:200px;
+    height:100px;
+    padding: 10px;
+    left:50%;
+    top:50%;
+    background-color:#FCFCFC;
+    display: none;
+    border: #E76F00 4px solid
+}
+
+h1.TaskTitle {color:#000000;font-size:20px;font-weight:bold;margin:0px}
+span.ProgressTitle {color:#ff830f;font-size:16px;font-weight:bold;margin:0px}
+span.ProgressDoneTitle {color:#a1a1a1;font-size:16px;font-weight:bold;margin:0px}
+span.ProgressFailedTitle {color:#a1a1a1;font-size:16px;font-weight:bold;margin:0px}
+span.ProgressText {color:#a1a1a1;font-size:14px;margin:0px}
+a.ProcessLink {color:#a1a1a1;font-size:14px;text-decoration:underline}
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateServerConfig.java,v 1.1 2007-10-17 23:00:30 veiming Exp $
+ * $Id: UpdateServerConfig.java,v 1.2 2008-04-10 23:15:01 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,8 @@ public class UpdateServerConfig extends AuthenticatedCommand {
                     ServerConfiguration.setServerInstance(
                         adminSSOToken, serverName, attributeValues);
                 } catch (UnknownPropertyNameException ex) {
-                    outputWriter.printlnMessage(ex.getMessage());
+                    outputWriter.printlnMessage(
+                        ex.getL10NMessage(getCommandManager().getLocale()));
                     outputWriter.printlnMessage("");
                 }
                 outputWriter.printlnMessage(MessageFormat.format(

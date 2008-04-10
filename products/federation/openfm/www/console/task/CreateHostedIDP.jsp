@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.6 2008-04-04 04:30:20 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.7 2008-04-10 23:15:05 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -176,16 +176,16 @@
 </cc:form>
 </cc:header>
 </div>
-<div id="dlg" class="dvs"></div>
+<div id="dlg" class="dvs" style="height:200px"></div>
 
 <script language="javascript">
     hideRealm();
 
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
 
-    var msgConfigured = '<cc:text name="txtConfigured" defaultValue="configure.provider.done" bundleID="amConsole" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtnSP" defaultValue="ajax.yes.sp.button" bundleID="amConsole" />" onClick="createRemoteSP();return false;" /> <input name="yesFedlet" type="submit" class="Btn1" value="<cc:text name="txtYesBtnSP" defaultValue="ajax.yes.fedlet.button" bundleID="amConsole" />" onClick="createFedlet();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.neither.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
+    var msgConfigured = '<cc:text name="txtConfigured" defaultValue="configure.provider.done" bundleID="amConsole" escape="false" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtnSP" defaultValue="ajax.yes.sp.button" bundleID="amConsole" escape="false" />" onClick="createRemoteSP();return false;" /> <input name="yesFedlet" type="submit" class="Btn1" value="<cc:text name="txtYesBtnSP" defaultValue="ajax.yes.fedlet.button" bundleID="amConsole" escape="false" />" onClick="createFedlet();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.neither.button" bundleID="amConsole" escape="false" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
 
-    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
+    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />" onClick="focusMain();return false;" /></div></p>';
 
     var msgGetCOTs = "<cc:text name="txtConfigured" defaultValue="configure.provider.get.cots" bundleID="amConsole" escape="false" />";
 

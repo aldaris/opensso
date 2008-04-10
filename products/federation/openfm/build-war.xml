@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.36 2008-03-31 19:54:11 qcheng Exp $
+   $Id: build-war.xml,v 1.37 2008-04-10 23:15:03 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -139,6 +139,13 @@
         </copy>
 
         <copy file="${openfm.dir}/www/jsp/famadm.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validatorMain.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validatorStatus.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validateWait.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validator.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validatorFooter.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validatorRpt.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/validatorAuthFail.jsp" todir="${war.package.dir}" />
 
         <copy todir="${war.package.dir}/config/federation/default">
             <fileset dir="${library.dir}/www/config/federation" 

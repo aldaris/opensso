@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.17 2007-11-16 22:11:31 babysunil Exp $
+ * $Id: FederationViewBean.java,v 1.18 2008-04-10 23:15:03 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,7 +203,7 @@ public  class FederationViewBean
         removePageSessionAttribute (SAML_TABLE_ATTRIBUTE);
         List cache = new ArrayList ();
         
-        for (Iterator iter = attrValues.keySet ().iterator (); iter.hasNext (); ) {
+        for (Iterator iter = attrValues.keySet().iterator(); iter.hasNext(); ) {
             String name = (String)iter.next ();
             Set values = (Set)attrValues.get (name);
             

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: css_master.css,v 1.1 2008-01-17 06:36:22 veiming Exp $
+ * $Id: css_master.css,v 1.2 2008-04-10 23:15:02 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,7 @@ td.TskPgeBckgrTd {background-image:url(../images/tasks/gradation-grey.gif); back
 a.TskPgeTxtBg, a.TskPgeTxtBgOvr {border-left: 1px solid #AABCC8;}
 a.TskPgeTxtBg {color:#333333 !important; background-image: url(../images/tasks/grad1.gif); background-color: #E2E7EA;}
 a.TskPgeTxtBgOvr { color:#FFF !important; background-image: url(../images/tasks/grad2.gif); background-color: #4581B3;}
-div.TskPgeFllPge {background-color:#B6C6D6; background-image: url(../images/tasks/bkgrnd.gif); }
+div.TskPgeFllPge {background-color:#FFFFFF; }
 div.TskPgeInfPnl {border: 1px solid #AABCC8; background-color: #F4F6F7;}
 span.TskPgeHdr {color:#666666;}
 span.TskPgeTskLftBtm {background-image: url(../images/tasks/leftBottom.gif); }     
@@ -43,7 +43,7 @@ span.TskPgeTskLftTp {background-image: url(../images/tasks/leftTop.gif); }
 span.TskPgeTskRghtBtm {background-image: url(../images/tasks/rightBottom.gif);}     
 span.TskPgeTskRghtTp {background-image: url(../images/tasks/rightTop.gif);} 
 span.TskPgeTskRghtBrdr {background-color: #AABCC8;}
-span.TskPgeSbHdr {color: #4B5E6A;}
+span.TskPgeSbHdr {color: #E76F00;}
 
 /*<<<<<<<<<<<<<<<<<<<<------------>>>>>>>>>>>>>>>>>>>>*/
 body#TskPge {padding:0px;}
@@ -62,7 +62,7 @@ div.TskPgeFllPge {position:absolute; width: 100%; background-repeat:repeat-x; ba
 div.TskPgeInfPnl {position:absolute; display: none; height: 200px; width: 100px;overflow:auto;z-index:2;}
 div.TskPgeInfPnl div {float: right;}
 div.TskPgeInfPnl p {margin: 16px 18px}
-span.TskPgeHdr {font-size:12px; font-weight: bold;}
+span.TskPgeHdr {font-size:12px;}
 span.TskPgeSbHdr {font-size: 13px; font-weight: bold; padding-bottom: 5px; padding-top: 20px; display: block}
 span.TskPgeTskPdng {font-size:11px;padding: 0px 7px; display: block; padding-top: 4px; padding-bottom: 3px;}
 span.TskPgeTskLftBtm, span.TskPgeTskLftTp, span.TskPgeTskRghtBtm, span.TskPgeTskRghtTp {position: absolute; width: 8px; height: 11px;cursor: pointer; background-position: top left; background-repeat: no-repeat;}

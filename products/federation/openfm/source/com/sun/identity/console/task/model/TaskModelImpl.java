@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.3 2008-04-04 04:30:19 veiming Exp $
+ * $Id: TaskModelImpl.java,v 1.4 2008-04-10 23:15:04 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.cot.COTConstants;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
@@ -95,7 +96,7 @@ public class TaskModelImpl
             throw new AMConsoleException(e.getMessage());
         }
     }
-    
+
     /**
      * Returns a set of circle of trusts.
      * 
