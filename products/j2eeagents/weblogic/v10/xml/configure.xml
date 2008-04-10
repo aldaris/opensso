@@ -3,7 +3,6 @@
 <configure>
     <class-prefix>
         <package type="system" name="com.sun.identity.install.tools.configurator"/>
-        <package type="common" name="com.sun.identity.agents.tools.weblogic"/>
         <package type="custom" name="com.sun.identity.agents.tools.weblogic.v10"/>
         <package type="agentsdk" name="com.sun.identity.agents.install.configurator"/>
     </class-prefix>
