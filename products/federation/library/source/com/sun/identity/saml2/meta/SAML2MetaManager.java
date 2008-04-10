@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.12 2008-03-04 23:40:08 hengming Exp $
+ * $Id: SAML2MetaManager.java,v 1.13 2008-04-10 06:38:16 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.plugin.configuration.ConfigurationManager;
 import com.sun.identity.plugin.configuration.ConfigurationInstance;
 import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.jaxb.entityconfig.AffiliationConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeAuthorityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeQueryConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AuthnAuthorityConfigElement;
@@ -795,6 +796,26 @@ public class SAML2MetaManager {
         }
 
         return null;
+    }
+
+    /**
+     * Returns affiliation configuration in an entity under the realm.
+     * @param realm The realm under which the entity resides.
+     * @param entityId ID of the entity to be retrieved.
+     * @return <code>AffiliationConfigElement</code> for the entity or
+     *     null if not found.
+     * @throws SAML2MetaException if unable to retrieve the affiliation
+     *     configuration.
+     */
+    public AffiliationConfigElement getAffiliationConfig(
+        String realm, String entityId) throws SAML2MetaException {
+
+        EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+        if (eConfig == null) {
+            return null;
+        }
+
+        return (AffiliationConfigElement)eConfig.getAffiliationConfig();
     }
 
     /**
