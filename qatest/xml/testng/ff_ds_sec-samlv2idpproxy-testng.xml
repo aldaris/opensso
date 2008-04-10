@@ -1,0 +1,80 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: ff_ds_sec-samlv2idpproxy-testng.xml,v 1.1 2008-04-10 21:24:23 mrudulahg Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<suite name="ff_ds_sec-samlv2idpproxy" verbose="1">
+    <parameter name="groupName" value="ff_ds_sec"/>
+    <test name="SAMLv2IDPProxyTestsSSOArtSLOHTTP">
+        <parameter name="ssoprofile" value="artifact"/>
+        <parameter name="sloprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.ConfigureSAMLv2IDPProxy"/>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.UnconfigureSAMLv2IDPProxy"/>
+        </classes>
+    </test>
+    <test name="SAMLv2IDPProxyTestsSSOArtSLOSOAP">
+        <parameter name="ssoprofile" value="Artifact"/>
+        <parameter name="sloprofile" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/>
+        </classes>
+    </test>
+    <test name="SAMLv2IDPProxyTestsSSOPostSLOHTTP">
+        <parameter name="ssoprofile" value="Post"/>
+        <parameter name="sloprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/>
+        </classes>
+    </test>
+    <test name="SAMLv2IDPProxyTestsSSOPostSLOSOAP">
+        <parameter name="ssoprofile" value="Post"/>
+        <parameter name="sloprofile" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/>
+        </classes>
+    </test>
+</suite>
