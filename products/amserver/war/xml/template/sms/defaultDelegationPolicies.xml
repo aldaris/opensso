@@ -99,6 +99,22 @@
             <Value>allow</Value>
         </AttributeValuePair>
     </Rule>
+    <Rule name="delegation-rule4">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunFMSAML2MetadataService/1.0/OrganizationConfig/*" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Rule name="delegation-rule5">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunFMCOTConfigService/1.0/OrganizationConfig/*" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
     <Subjects name="Subjects" description="">
         <Subject name="delegation-subject" type="AuthenticatedUsers" includeType="inclusive">
         </Subject>
