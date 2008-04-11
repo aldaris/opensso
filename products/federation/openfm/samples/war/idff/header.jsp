@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: header.jsp,v 1.1 2006-10-30 23:17:51 qcheng Exp $
+   $Id: header.jsp,v 1.2 2008-04-11 03:16:52 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -41,8 +41,17 @@ import="java.io.IOException,
 
     String baseURL = request.getRequestURI().toString();
     int idx = baseURL.indexOf('/', 1);
-    baseURL = request.getScheme() + "://" + request.getServerName() +
-        ":" + request.getServerPort() + baseURL.substring(0, idx);
+    String localProto = request.getScheme();
+    String localHost = request.getServerName();
+    String localPort = "" + request.getServerPort();
+    String localDeploymentURI = baseURL.substring(0, idx);
+    baseURL = localProto + "://" + localHost +
+        ":" + localPort + localDeploymentURI;
+    String realBaseURL =
+        SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL) + "://" +
+        SystemPropertiesManager.get(Constants.AM_SERVER_HOST) + ":" +
+        SystemPropertiesManager.get(Constants.AM_SERVER_PORT) +
+        SystemPropertiesManager.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
     try {
         SessionProvider provider = SessionManager.getProvider();
@@ -64,12 +73,4 @@ import="java.io.IOException,
             URLEncoder.encode(gotoUrl);
         localAuthUrl = baseURL + "/UI/Login?goto=" + URLEncoder.encode(gotoUrl);
     }
-
-    String localProto = SystemPropertiesManager.get(
-        Constants.AM_SERVER_PROTOCOL);
-    String localHost = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
-    String localPort = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
-    String localDeploymentURI = SystemPropertiesManager.get(
-        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-
 %>

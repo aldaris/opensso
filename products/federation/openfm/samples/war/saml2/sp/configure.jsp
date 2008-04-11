@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.4 2008-01-04 18:50:06 asyhuang Exp $
+   $Id: configure.jsp,v 1.5 2008-04-11 03:17:34 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -123,6 +123,10 @@
                         metaStartIdx);
                     metaXML = result.substring(metaStartIdx, metaEndIdx +
                         endEntityDescriptorTag.length() +1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get metadata XML
 
                     
@@ -133,6 +137,11 @@
                         extendStartIdx);
                     String extendedXML = result.substring(extendStartIdx,
                         extendEndIdx + endEntityConfigTag.length() + 1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        extendedXML = 
+                            extendedXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get extended data XML
                    
                     // [START] Import these XMLs
@@ -184,11 +193,8 @@
                     //         to form IDP metadata XML and import it
                     metaXML = metaXML.replaceAll(remoteIDPEntityID,
                         "@remoteIDPEntityID@");
-                    String idpMetaXML = metaXML.replaceAll(localProto, proto);
-                    idpMetaXML = idpMetaXML.replaceAll(localHost, host);
-                    idpMetaXML = idpMetaXML.replaceAll(localPort, port);
-                    idpMetaXML = idpMetaXML.replaceAll(localDeploymentURI,
-                        deploymenturi);
+                    String idpMetaXML = metaXML.replaceAll(realBaseURL,
+                        proto + "://" + host + ":" + port + deploymenturi);
                     idpMetaXML = idpMetaXML.replaceAll("@remoteIDPEntityID@",
                         remoteIDPEntityID);
                     EntityDescriptorElement idpDescriptor =

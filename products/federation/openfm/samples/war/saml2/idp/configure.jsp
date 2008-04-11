@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.4 2008-01-04 18:49:58 asyhuang Exp $
+   $Id: configure.jsp,v 1.5 2008-04-11 03:17:34 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -125,6 +125,10 @@
                         metaStartIdx);
                     metaXML = result.substring(metaStartIdx, metaEndIdx +
                         endEntityDescriptorTag.length() +1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get metadata XML
 
 
@@ -135,6 +139,11 @@
                         extendStartIdx);
                     String extendedXML = result.substring(extendStartIdx,
                         extendEndIdx + endEntityConfigTag.length() + 1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        extendedXML = 
+                            extendedXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get extended data XML
 
 
@@ -185,11 +194,8 @@
                     //         to form IDP metadata XML and import it
                     metaXML = metaXML.replaceAll(remoteSPEntityID,
                         "@remoteSPEntityID@");
-                    String spMetaXML = metaXML.replaceAll(localProto, proto);
-                    spMetaXML = spMetaXML.replaceAll(localHost, host);
-                    spMetaXML = spMetaXML.replaceAll(localPort, port);
-                    spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
-                        deploymenturi);
+                    String spMetaXML = metaXML.replaceAll(realBaseURL,
+                        proto + "://" + host + ":" + port + deploymenturi);
                     spMetaXML = spMetaXML.replaceAll("@remoteSPEntityID@",
                         remoteSPEntityID);
                     EntityDescriptorElement spDescriptor =

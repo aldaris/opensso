@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: util.jsp,v 1.4 2008-01-03 00:26:15 veiming Exp $ 
+   $Id: util.jsp,v 1.5 2008-04-11 03:17:33 qcheng Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -71,15 +71,15 @@ import="java.io.IOException,
     String redirectUrl = null;
     String localAuthUrl = null;
 
-    String localProto = SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
-    String localHost = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
-    String localPort = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
-    String localDeploymentURI = SystemPropertiesManager.get(
-        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+    String localProto;
+    String localHost;
+    String localPort;
+    String localDeploymentURI;
     String defaultRealm = "/";
 
     String baseHost = null;
     String baseURL = null;
+    String realBaseURL = null;
     String baseURI = null;
     SSOToken ssoToken = null;
 
@@ -213,6 +213,10 @@ import="java.io.IOException,
                 metaStartIdx);
             metaXML = result.substring(metaStartIdx, metaEndIdx +
                 endEntityDescriptorTag.length() +1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get metadata XML
 
         
@@ -223,6 +227,11 @@ import="java.io.IOException,
                 extendStartIdx);
             String extendedXML = result.substring(extendStartIdx,
                 extendEndIdx + endEntityConfigTag.length() + 1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                extendedXML = 
+                    extendedXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get extended data XML
        
             // [START] Import these XMLs
@@ -267,11 +276,8 @@ import="java.io.IOException,
 
             // [START] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
-            String idpMetaXML = metaXML.replaceAll(localProto, proto);
-            idpMetaXML = idpMetaXML.replaceAll(localHost, host);
-            idpMetaXML = idpMetaXML.replaceAll(localPort, port);
-            idpMetaXML = idpMetaXML.replaceAll(localDeploymentURI,
-                deploymenturi);
+            String idpMetaXML = metaXML.replaceAll(realBaseURL,
+                proto + "://"+ host + ":" + port + deploymenturi);
             EntityDescriptorElement idpDescriptor = (EntityDescriptorElement)
                 SAML2MetaUtils.convertStringToJAXB(idpMetaXML);
             remoteIDPEntityID = idpDescriptor.getEntityID();
@@ -329,6 +335,9 @@ import="java.io.IOException,
                 metaStartIdx);
             String metaXML = result.substring(metaStartIdx, metaEndIdx +
                 endEntityDescriptorTag.length() +1);
+            if (!realBaseURL.equals(baseURL)) {
+                metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get metadata XML
             
             // [START] Parse the output of CLI to get extended data XML
@@ -338,6 +347,11 @@ import="java.io.IOException,
                 extendStartIdx);
             String extendedXML = result.substring(extendStartIdx,
                 extendEndIdx + endEntityConfigTag.length() + 1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                extendedXML = 
+                    extendedXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get extended data XML
         
             // [START] modify extended config to set providerHomePageURL
@@ -394,11 +408,8 @@ import="java.io.IOException,
         
             // [START] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
-            String idpMetaXML = metaXML.replaceAll(localProto, proto);
-            idpMetaXML = idpMetaXML.replaceAll(localHost, host);
-            idpMetaXML = idpMetaXML.replaceAll(localPort, port);
-            idpMetaXML = idpMetaXML.replaceAll(localDeploymentURI,
-                deploymenturi);
+            String idpMetaXML = metaXML.replaceAll(realBaseURL,
+                proto + "://"+ host + ":" + port + deploymenturi);
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement 
                 idpDescriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
                 IDFFMetaUtils.convertStringToJAXB(idpMetaXML);
@@ -454,6 +465,9 @@ import="java.io.IOException,
                 metaStartIdx);
             String metaXML = result.substring(metaStartIdx, metaEndIdx +
                 endEntityDescriptorTag.length() +1);
+            if (!realBaseURL.equals(baseURL)) {
+                metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get metadata XML
             
             // [START] Parse the output of CLI to get extended data XML
@@ -463,6 +477,11 @@ import="java.io.IOException,
                 extendStartIdx);
             String extendedXML = result.substring(extendStartIdx,
                 extendEndIdx + endEntityConfigTag.length() + 1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                extendedXML = 
+                    extendedXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get extended data XML
         
             // [START] modify extended config to set defaultRelayState 
@@ -519,11 +538,8 @@ import="java.io.IOException,
         
             // [START] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
-            String idpMetaXML = metaXML.replaceAll(localProto, proto);
-            idpMetaXML = idpMetaXML.replaceAll(localHost, host);
-            idpMetaXML = idpMetaXML.replaceAll(localPort, port);
-            idpMetaXML = idpMetaXML.replaceAll(localDeploymentURI,
-                deploymenturi);
+            String idpMetaXML = metaXML.replaceAll(realBaseURL,
+                proto + "://"+ host + ":" + port + deploymenturi);
             // [END] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
 
@@ -616,6 +632,9 @@ import="java.io.IOException,
                     metaStartIdx);
             metaXML = result.substring(metaStartIdx, metaEndIdx +
                     endEntityDescriptorTag.length() +1);
+            if (!realBaseURL.equals(baseURL)) {
+                metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get metadata XML
             
             
@@ -626,6 +645,11 @@ import="java.io.IOException,
                     extendStartIdx);
             String extendedXML = result.substring(extendStartIdx,
                     extendEndIdx + endEntityConfigTag.length() + 1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                extendedXML = 
+                    extendedXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get extended data XML
             
             
@@ -671,11 +695,8 @@ import="java.io.IOException,
             
             // [START] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
-            String spMetaXML = metaXML.replaceAll(localProto, proto);
-            spMetaXML = spMetaXML.replaceAll(localHost, host);
-            spMetaXML = spMetaXML.replaceAll(localPort, port);
-            spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
-                    deploymenturi);
+            String spMetaXML = metaXML.replaceAll(realBaseURL,
+                proto + "://"+ host + ":" + port + deploymenturi);
             EntityDescriptorElement spDescriptor =
                     (EntityDescriptorElement)
                     SAML2MetaUtils.convertStringToJAXB(spMetaXML);
@@ -733,6 +754,9 @@ import="java.io.IOException,
                     metaStartIdx);
             String metaXML = result.substring(metaStartIdx, metaEndIdx +
                     endEntityDescriptorTag.length() +1);
+            if (!realBaseURL.equals(baseURL)) {
+                metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get metadata XML
             
             // [START] Parse the output of CLI to get extended data XML
@@ -742,6 +766,11 @@ import="java.io.IOException,
                     extendStartIdx);
             String extendedXML = result.substring(extendStartIdx,
                     extendEndIdx + endEntityConfigTag.length() + 1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                extendedXML = 
+                    extendedXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get extended data XML
             
             // [START] modify extended config to set providerHomePageURL
@@ -797,10 +826,8 @@ import="java.io.IOException,
             
             // [START] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
-            String spMetaXML = metaXML.replaceAll(localProto, proto);
-            spMetaXML = spMetaXML.replaceAll(localHost, host);
-            spMetaXML = spMetaXML.replaceAll(localPort, port);
-            spMetaXML = spMetaXML.replaceAll(localDeploymentURI, deploymenturi);
+            String spMetaXML = metaXML.replaceAll(realBaseURL,
+                proto + "://"+ host + ":" + port + deploymenturi);
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement spDescriptor = (com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement)
                 IDFFMetaUtils.convertStringToJAXB(spMetaXML);
             remoteSPEntityID = spDescriptor.getProviderID();
@@ -857,6 +884,9 @@ import="java.io.IOException,
                 metaStartIdx);
             String metaXML = result.substring(metaStartIdx, metaEndIdx +
                 endEntityDescriptorTag.length() +1);
+            if (!realBaseURL.equals(baseURL)) {
+                metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get metadata XML
             
             // [START] Parse the output of CLI to get extended data XML
@@ -866,6 +896,11 @@ import="java.io.IOException,
                 extendStartIdx);
             String extendedXML = result.substring(extendStartIdx,
                 extendEndIdx + endEntityConfigTag.length() + 1);
+            // handle LB case
+            if (!realBaseURL.equals(baseURL)) {
+                extendedXML = 
+                    extendedXML.replaceAll(realBaseURL, baseURL);
+            }
             // [END] Parse the output of CLI to get extended data XML
         
             // [START] Import these XMLs
@@ -911,11 +946,8 @@ import="java.io.IOException,
         
             // [START] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
-            String spMetaXML = metaXML.replaceAll(localProto, proto);
-            spMetaXML = spMetaXML.replaceAll(localHost, host);
-            spMetaXML = spMetaXML.replaceAll(localPort, port);
-            spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
-                deploymenturi);
+            String spMetaXML = metaXML.replaceAll(realBaseURL,
+                proto + "://"+ host + ":" + port + deploymenturi);
             // [END] Swap protocol, host, port and deployment URI
             //         to form IDP metadata XML and import it
 
@@ -952,8 +984,17 @@ import="java.io.IOException,
     baseURL = request.getRequestURI().toString();
     int idx = baseURL.indexOf('/', 1);
     baseURI = baseURL.substring(idx);
-    baseURL = request.getScheme() + "://" + request.getServerName() +
-        ":" + request.getServerPort() + baseURL.substring(0, idx);
+    localProto = request.getScheme();
+    localHost =  request.getServerName();
+    localPort = "" + request.getServerPort();
+    localDeploymentURI = baseURL.substring(0, idx);
+    baseURL = localProto + "://" + localHost +
+        ":" + localPort + localDeploymentURI;
+    realBaseURL = 
+        SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL) + "://" +
+        SystemPropertiesManager.get(Constants.AM_SERVER_HOST) + ":" + 
+        SystemPropertiesManager.get(Constants.AM_SERVER_PORT) + 
+        SystemPropertiesManager.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     try {
         SessionProvider provider = SessionManager.getProvider();
         Object sess = provider.getSession(request);

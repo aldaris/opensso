@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.9 2008-02-25 21:45:38 qcheng Exp $
+   $Id: configure.jsp,v 1.10 2008-04-11 03:16:53 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -103,6 +103,10 @@
                         metaStartIdx);
                     String metaXML = result.substring(metaStartIdx, metaEndIdx +
                         endEntityDescriptorTag.length() +1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get metadata XML
 
                     
@@ -113,6 +117,11 @@
                         extendStartIdx);
                     String extendedXML = result.substring(extendStartIdx,
                         extendEndIdx + endEntityConfigTag.length() + 1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        extendedXML = 
+                            extendedXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get extended data XML
                    
                     // [START] modify extended config to set providerHomePageURL
@@ -164,11 +173,8 @@
 
                     // [START] Swap protocol, host, port and deployment URI
                     //         to form IDP metadata XML and import it
-                    String idpMetaXML = metaXML.replaceAll(localProto, proto);
-                    idpMetaXML = idpMetaXML.replaceAll(localHost, host);
-                    idpMetaXML = idpMetaXML.replaceAll(localPort, port);
-                    idpMetaXML = idpMetaXML.replaceAll(localDeploymentURI,
-                        deploymenturi);
+                    String idpMetaXML = metaXML.replaceAll(realBaseURL,
+                        proto + "://" + host + ":" + port + deploymenturi);
                     EntityDescriptorElement idpDescriptor =
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(idpMetaXML);

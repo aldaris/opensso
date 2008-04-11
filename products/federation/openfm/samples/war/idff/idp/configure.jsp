@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.9 2008-02-25 21:45:37 qcheng Exp $
+   $Id: configure.jsp,v 1.10 2008-04-11 03:16:53 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -105,6 +105,10 @@
                         metaStartIdx);
                     String metaXML = result.substring(metaStartIdx, metaEndIdx +
                         endEntityDescriptorTag.length() +1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        metaXML = metaXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get metadata XML
 
 
@@ -115,6 +119,11 @@
                         extendStartIdx);
                     String extendedXML = result.substring(extendStartIdx,
                         extendEndIdx + endEntityConfigTag.length() + 1);
+                    // handle LB case
+                    if (!realBaseURL.equals(baseURL)) {
+                        extendedXML = 
+                            extendedXML.replaceAll(realBaseURL, baseURL);
+                    }
                     // [END] Parse the output of CLI to get extended data XML
 
 
@@ -167,11 +176,8 @@
 
                     // [START] Swap protocol, host, port and deployment URI
                     //         to form IDP metadata XML and import it
-                    String spMetaXML = metaXML.replaceAll(localProto, proto);
-                    spMetaXML = spMetaXML.replaceAll(localHost, host);
-                    spMetaXML = spMetaXML.replaceAll(localPort, port);
-                    spMetaXML = spMetaXML.replaceAll(localDeploymentURI,
-                        deploymenturi);
+                    String spMetaXML = metaXML.replaceAll(realBaseURL,
+                        proto + "://" + host + ":" + port + deploymenturi);
                     EntityDescriptorElement spDescriptor =
                         (EntityDescriptorElement)
                             IDFFMetaUtils.convertStringToJAXB(spMetaXML);
