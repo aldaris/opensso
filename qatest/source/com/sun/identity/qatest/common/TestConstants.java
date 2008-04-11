@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.18 2008-04-03 19:40:22 cmwesley Exp $
+ * $Id: TestConstants.java,v 1.19 2008-04-11 04:04:00 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -558,6 +558,147 @@ public interface TestConstants {
      * SAMLv2, IDFF Property key for <code>idp_mail</code>
      */
     String KEY_IDP_USER_MAIL = "idp_mail";  
+
+    /** 
+     * SAMLv2, IDFF IDP related constants 
+     * Property key for <code>idpProxy_host</code>
+     */
+    String KEY_IDP_PROXY_HOST = "idpProxy_host";
+ 
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_port</code>
+     */
+    String KEY_IDP_PROXY_PORT = "idpProxy_port";  
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_protocol</code>
+     */
+    String KEY_IDP_PROXY_PROTOCOL = "idpProxy_protocol";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_deployment_uri</code>
+     */
+    String KEY_IDP_PROXY_DEPLOYMENT_URI = "idpProxy_deployment_uri";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_metaalias</code>
+     */
+    String KEY_IDP_PROXY_METAALIAS = "idpProxy_metaalias";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_sp_metaalias</code>
+     */
+    String KEY_IDP_PROXY_SP_METAALIAS = "idpProxy_sp_metaalias";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_idp_metaalias</code>
+     */
+    String KEY_IDP_PROXY_IDP_METAALIAS = "idpProxy_idp_metaalias";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_entity_name</code>
+     */
+    String KEY_IDP_PROXY_ENTITY_NAME = "idpProxy_entity_name";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_realm</code>
+     */
+    String KEY_IDP_PROXY_REALM = "idpProxy_realm";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_execution_realm</code>
+     */
+    String KEY_IDP_PROXY_EXECUTION_REALM = "idpProxy_execution_realm";      
+    
+    /**
+     * Property key for <code>idpProxy_subrealm_recursive_delete</code>.
+     */
+    String KEY_IDP_PROXY_SUBREALM_RECURSIVE_DELETE = "idpProxy_subrealm_recursive_delete";
+
+   /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_cot</code>
+     */
+    String KEY_IDP_PROXY_COT = "idpProxy_cot";      
+
+    /**
+     * SAMLv2, IDFF Property key for <code>idpProxy_encryption_key</code>
+     */
+    String KEY_IDP_PROXY_ENC_KEY = "idpProxy_encryption_key";
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_certalias</code>
+     */
+    String KEY_IDP_PROXY_CERTALIAS = "idpProxy_certalias";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_config_dir</code>
+     */
+    String KEY_IDP_PROXY_CONFIG_DIR = "idpProxy_config_dir";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_datastore</code>
+     */
+    String KEY_IDP_PROXY_DATASTORE = "idpProxy_datastore";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_amadmin_username</code>
+     */
+    String KEY_IDP_PROXY_AMADMIN_USER = "idpProxy_amadmin_username";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_amadmin_password</code>
+     */
+    String KEY_IDP_PROXY_AMADMIN_PASSWORD = "idpProxy_amadmin_password";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_directory_server</code>
+     */
+    String KEY_IDP_PROXY_DIRECTORY_SERVER = "idpProxy_directory_server";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_directory_port</code>
+     */
+    String KEY_IDP_PROXY_DIRECTORY_PORT = "idpProxy_directory_port";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_config_root_suffix</code>
+     */
+    String KEY_IDP_PROXY_CONFIG_ROOT_SUFFIX = "idpProxy_config_root_suffix";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_ds_dirmgrdn</code>
+     */
+    String KEY_IDP_PROXY_DS_DIRMGRDN = "idpProxy_ds_dirmgrdn";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_ds_dirmgrpasswd</code>
+     */
+    String KEY_IDP_PROXY_DS_DIRMGRPASSWORD = "idpProxy_ds_dirmgrpasswd";      
+    
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_load_ums</code>
+     */
+    String KEY_IDP_PROXY_LOAD_UMS = "idpProxy_load_ums";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_cookiedomain</code>
+     */
+    String KEY_IDP_PROXY_COOKIE_DOMAIN = "idpProxy_cookiedomain";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_user</code>
+     */
+    String KEY_IDP_PROXY_USER = "idpProxy_user";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_userpw</code>
+     */
+    String KEY_IDP_PROXY_USER_PASSWORD = "idpProxy_userpw";  
+
+    /** 
+     * SAMLv2, IDFF Property key for <code>idpProxy_mail</code>
+     */
+    String KEY_IDP_PROXY_USER_MAIL = "idpProxy_mail";  
 
     /** 
      * SAMLv2, IDFF Property key for <code>ssoresult</code>
