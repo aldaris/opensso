@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.9 2008-02-26 01:21:23 veiming Exp $
+ * $Id: Bootstrap.java,v 1.10 2008-04-11 20:39:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,10 @@ public class Bootstrap {
     {   
         if (!isBootstrap) {
             String basedir = System.getProperty(JVM_OPT_BOOTSTRAP);
-            load(basedir);
+            if (load(basedir, false) == null) {
+                throw new ConfiguratorException(
+                    "configurator.cannot.bootstrap");
+            }
             SystemProperties.initializeProperties("com.iplanet.am.naming.url",
                 SystemProperties.getServerInstanceName() + "/namingservice");
         }
@@ -92,9 +95,10 @@ public class Bootstrap {
      *        bootstrap file can contain either an URL where 
      *        we can go fetch the server configuration properties
      *        or a file that contains the properties.
+     * @param bServer <code>true</code> if server.
      * @throws Exception if properties cannot be loaded.
      */
-    public static Properties load(String basedir)
+    public static Properties load(String basedir, boolean bServer)
         throws Exception {
         if (!basedir.endsWith(File.separator)) {
             basedir = basedir + File.separator;
@@ -116,7 +120,7 @@ public class Bootstrap {
         } else {
             isBootstrap = true;
             BootstrapData bData = new BootstrapData(basedir);
-            prop = getConfiguration(bData, true);
+            prop = getConfiguration(bData, true, bServer);
         }
         
         return prop;
@@ -142,7 +146,7 @@ public class Bootstrap {
      */
     public static boolean bootstrap(BootstrapData bootstrapInfo, boolean reinit) 
         throws Exception {
-        return (getConfiguration(bootstrapInfo, reinit) != null);
+        return (getConfiguration(bootstrapInfo, reinit, true) != null);
     }
 
     /**
@@ -155,10 +159,11 @@ public class Bootstrap {
      */
     private static Properties getConfiguration(
         BootstrapData bootstrapData,
-        boolean reinit
+        boolean reinit,
+        boolean bStartDS
     ) throws Exception {
         Properties properties = null;
-        bootstrapData.initSMS();
+        bootstrapData.initSMS(bStartDS);
         if (reinit) {
             AdminUtils.initialize();
             SMSAuthModule.initialize();

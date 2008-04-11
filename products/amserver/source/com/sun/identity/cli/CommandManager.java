@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.20 2008-02-26 19:03:41 veiming Exp $
+ * $Id: CommandManager.java,v 1.21 2008-04-11 20:39:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.iplanet.services.util.Crypt;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.tools.bundles.VersionCheck;
 import java.io.FileNotFoundException;
@@ -74,6 +75,9 @@ public class CommandManager {
     public static void main(String[] argv) {
         try {
             Bootstrap.load();
+        } catch (ConfiguratorException ex) {
+            System.err.println(ex.getL10NMessage(Locale.getDefault()));
+            System.exit(1);
         } catch (Exception e) {
             System.err.println("Cannot bootstrap the system" + e.getMessage());
             System.exit(1);

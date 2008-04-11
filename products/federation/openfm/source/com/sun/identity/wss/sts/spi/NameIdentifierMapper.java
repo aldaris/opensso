@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIdentifierMapper.java,v 1.1 2008-03-08 03:03:19 mallas Exp $
+ * $Id: NameIdentifierMapper.java,v 1.2 2008-04-11 20:39:37 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,18 +28,17 @@ package com.sun.identity.wss.sts.spi;
  * real user identity to the psuedo name and vice versa.
  */
 public interface NameIdentifierMapper {
+     /**
+      * Returns the user psuedo name for a given user ID.
+      * @param userid user ID or name for which psuedo name to be retrieved.
+      * @return the user psuedo name for a given user ID. 
+      */
+     String getUserPsuedoName(String userid);
 
      /**
-      * Returns the user psuedo name for a given userid.
-      * @param userid user id or name for which psuedo name to be retrieved.
-      * @return the user psuedo name for a given userid. 
+      * Returns the user ID for a given psuedo name.
+      * @param psuedoName the user psuedo name. 
+      * @return the user ID for a given psuedo name.
       */
-     public String getUserPsuedoName(String userid);
-
-     /**
-      * Returns the userid for a given psuedo name.
-      * @param the user psuedo name. 
-      * @return the userid for a given psuedo name.
-      */
-     public String getUserID(String psuedoName);
+     String getUserID(String psuedoName);
 }

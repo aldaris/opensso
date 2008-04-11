@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.4 2008-03-20 20:50:20 jonnelson Exp $
+ * $Id: BootstrapData.java,v 1.5 2008-04-11 20:39:34 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,7 +154,7 @@ public class BootstrapData {
         return mapQuery;
     }
 
-    public void initSMS() 
+    public void initSMS(boolean startDS) 
         throws UnsupportedEncodingException, LDAPServiceException,
         MalformedURLException {
         String serverConfigXML = getServerConfigXML();
@@ -163,7 +163,9 @@ public class BootstrapData {
         Crypt.reinitialize();
         loadServerConfigXML(serverConfigXML);
         
-        startEmbeddedDS(basedir + AMSetupServlet.OPENDS_DIR);
+        if (startDS) {
+            startEmbeddedDS(basedir + AMSetupServlet.OPENDS_DIR);
+        }
     }
 
     private Properties getBootstrapProperties() {

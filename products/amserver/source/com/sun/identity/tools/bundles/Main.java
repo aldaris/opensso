@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.4 2007-11-30 00:13:32 veiming Exp $
+ * $Id: Main.java,v 1.5 2008-04-11 20:39:35 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ public class Main implements SetupConstants{
                         currentOS + QUESTION));
                 }
                 
-                configProp = Bootstrap.load(configPath);
+                configProp = Bootstrap.load(configPath, false);
 
                 if (configProp == null) {
                     System.out.println(bundle.getString("message.error.dir"));

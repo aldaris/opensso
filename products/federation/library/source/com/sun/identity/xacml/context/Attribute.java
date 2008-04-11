@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.3 2008-03-18 19:48:44 dillidorai Exp $
+ * $Id: Attribute.java,v 1.4 2008-04-11 20:39:37 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,8 @@
 package com.sun.identity.xacml.context;
 
 import com.sun.identity.xacml.common.XACMLException;
-
-import java.util.List;
 import java.net.URI;
+import java.util.List;
 
 /**
  * The <code>Attribute</code> element specifies information about the
@@ -59,8 +58,8 @@ public interface Attribute {
     public URI getAttributeId() ;
 
     /**
-     * Sets the attribiteId of the <code>Attribute</code>
-     * @param attributeId <code>URI</code> representing the attribite id.
+     * Sets the attributeId of the <code>Attribute</code>.
+     * @param attributeID <code>URI</code> representing the attribite id.
      * @exception XACMLException if the object is immutable
      */
     public void setAttributeId(URI attributeID) throws XACMLException;
@@ -150,10 +149,10 @@ public interface Attribute {
             throws XACMLException;
 
    /**
-    * Returns a string representation of this object
+    * Returns a string representation of this object.
     *
-    * @return a string representation of this object
-    * @exception XACMLException if conversion fails for any reason
+    * @return a string representation of this object.
+    * @exception XACMLException if conversion fails for any reason.
     */
     public String toXMLString() throws XACMLException;
 
@@ -163,10 +162,9 @@ public interface Attribute {
     public void makeImmutable();
 
    /**
-    * Checks if the object is mutable
+    * Returns <code>true</code> if the object is mutable.
     *
-    * @return <code>true</code> if the object is mutable,
-    *         <code>false</code> otherwise
+    * @return <code>true</code> if the object is mutable.
     */
     public boolean isMutable();
     

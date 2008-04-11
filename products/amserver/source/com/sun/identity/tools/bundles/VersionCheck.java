@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.6 2008-02-26 19:03:42 veiming Exp $
+ * $Id: VersionCheck.java,v 1.7 2008-04-11 20:39:36 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.tools.bundles;
 
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.setup.ConfiguratorException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class VersionCheck implements SetupConstants {
@@ -40,6 +42,9 @@ public class VersionCheck implements SetupConstants {
     public static int isValid() {
         try {
             Bootstrap.load();
+        } catch (ConfiguratorException ex) {
+            System.err.println(ex.getL10NMessage(Locale.getDefault()));
+            System.exit(1);
         } catch (Exception ex) {
             System.out.println(bundle.getString("message.error.amconfig") + " "
                 + System.getProperty(Bootstrap.JVM_OPT_BOOTSTRAP));

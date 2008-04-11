@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.9 2008-02-26 19:03:41 veiming Exp $
+ * $Id: ServerConfigMgr.java,v 1.10 2008-04-11 20:39:31 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,6 +63,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
 import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSEntry;
@@ -74,6 +75,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.callback.Callback;
@@ -458,6 +460,9 @@ public class ServerConfigMgr {
             validateArguments(args);
             boolean proceeded = printHelpMessage(args) ||
                 encryptPassword(args) || changePassword(args);
+        } catch (ConfiguratorException ex) {
+            System.err.println(ex.getL10NMessage(Locale.getDefault()));
+            System.exit(1);
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
