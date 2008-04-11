@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.14 2008-04-04 04:30:19 veiming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.15 2008-04-11 00:10:14 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,32 +40,6 @@ import java.util.Map;
  * Create SAML2 Hosted Provider Template.
  */
 public class CreateSAML2HostedProviderTemplate {
-    public static final String P_IDP = "idp";
-    public static final String P_IDP_E_CERT = "idpecert";
-    public static final String P_IDP_S_CERT = "idpscert";
-    public static final String P_SP = "sp";
-    public static final String P_SP_E_CERT = "specert";
-    public static final String P_SP_S_CERT = "spscert";
-    public static final String P_ATTR_AUTHORITY = "attra";
-    public static final String P_ATTR_AUTHORITY_E_CERT = "attraecert";
-    public static final String P_ATTR_AUTHORITY_S_CERT = "attrascert";
-    public static final String P_ATTR_QUERY_PROVIDER = "attrq";
-    public static final String P_ATTR_QUERY_PROVIDER_E_CERT = "attrqecert";
-    public static final String P_ATTR_QUERY_PROVIDER_S_CERT = "attrqscert";
-    public static final String P_AUTHN_AUTHORITY = "authna";
-    public static final String P_AUTHN_AUTHORITY_E_CERT = "authnaecert";
-    public static final String P_AUTHN_AUTHORITY_S_CERT = "authnascert";
-    public static final String P_AFFILIATION = "affiliation";
-    public static final String P_AFFI_MEMBERS = "affimembers";
-    public static final String P_AFFI_E_CERT = "affiecert";
-    public static final String P_AFFI_S_CERT = "affiscert";
-    public static final String P_PDP = "pdp";
-    public static final String P_PDP_E_CERT = "pdpecert";
-    public static final String P_PDP_S_CERT = "pdpscert";
-    public static final String P_PEP = "pep";
-    public static final String P_PEP_E_CERT = "pepecert";
-    public static final String P_PEP_S_CERT = "pepscert";
-
     private CreateSAML2HostedProviderTemplate() {
     }
 
@@ -99,52 +73,56 @@ public class CreateSAML2HostedProviderTemplate {
             "    hosted=\"" + strHosted + "\"\n" +
             "    entityID=\"" + entityID + "\">\n\n");
 
-        String idpAlias = (String)mapParams.get(P_IDP);
+        String idpAlias = (String)mapParams.get(MetaTemplateParameters.P_IDP);
         if (idpAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(idpAlias);
             buildIDPConfigTemplate(buff, idpAlias, url, mapParams);
         }
 
-        String spAlias = (String)mapParams.get(P_SP);
+        String spAlias = (String)mapParams.get(MetaTemplateParameters.P_SP);
         if (spAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
             buildSPConfigTemplate(buff, spAlias, url, mapParams);
         }
 
-        String attraAlias = (String)mapParams.get(P_ATTR_AUTHORITY);
+        String attraAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_AUTHORITY);
         if (attraAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(attraAlias);
             buildAttributeAuthorityConfigTemplate(buff, attraAlias, url,
                 mapParams);
         }
 
-        String attrqAlias = (String)mapParams.get(P_ATTR_QUERY_PROVIDER);
+        String attrqAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_QUERY_PROVIDER);
         if (attrqAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
             buildAttributeQueryConfigTemplate(buff, attrqAlias, url, mapParams);
         }
 
-        String authnaAlias = (String)mapParams.get(P_AUTHN_AUTHORITY);
+        String authnaAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AUTHN_AUTHORITY);
         if (authnaAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(authnaAlias);
             buildAuthnAuthorityConfigTemplate(buff, authnaAlias, url,
                 mapParams);
         }
 
-        String affiAlias = (String)mapParams.get(P_AFFILIATION);
+        String affiAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFILIATION);
         if (affiAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(affiAlias);
             buildAffiliationConfigTemplate(buff, affiAlias, url,
                 mapParams);
         }
 
-        String pdpAlias = (String)mapParams.get(P_PDP);
+        String pdpAlias = (String)mapParams.get(MetaTemplateParameters.P_PDP);
         if (pdpAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
             buildPDPConfigTemplate(buff, pdpAlias, mapParams);
         }
 
-        String pepAlias = (String)mapParams.get(P_PEP);
+        String pepAlias = (String)mapParams.get(MetaTemplateParameters.P_PEP);
         if (pepAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(pepAlias);
             buildPEPConfigTemplate(buff, pepAlias, mapParams);
@@ -160,8 +138,10 @@ public class CreateSAML2HostedProviderTemplate {
         String url,
         Map mapParams
     )  {
-        String idpSCertAlias = (String)mapParams.get(P_IDP_S_CERT);
-        String idpECertAlias = (String)mapParams.get(P_IDP_E_CERT);
+        String idpSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_IDP_S_CERT);
+        String idpECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_IDP_E_CERT);
         
         if (idpSCertAlias == null) {
             idpSCertAlias = "";
@@ -308,8 +288,10 @@ public class CreateSAML2HostedProviderTemplate {
         String url,
         Map mapParams
     )  {
-        String spSCertAlias = (String)mapParams.get(P_SP_S_CERT);
-        String spECertAlias = (String)mapParams.get(P_SP_E_CERT);
+        String spSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_SP_S_CERT);
+        String spECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_SP_E_CERT);
         if (spSCertAlias == null) {
             spSCertAlias = "";
         }
@@ -490,8 +472,10 @@ public class CreateSAML2HostedProviderTemplate {
         String url,
         Map mapParams
     )  {
-        String attraECertAlias = (String)mapParams.get(P_ATTR_AUTHORITY_E_CERT);
-        String attraSCertAlias = (String)mapParams.get(P_ATTR_AUTHORITY_S_CERT);
+        String attraECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_AUTHORITY_E_CERT);
+        String attraSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_AUTHORITY_S_CERT);
         
         if (attraECertAlias == null) {
             attraECertAlias = "";
@@ -542,9 +526,9 @@ public class CreateSAML2HostedProviderTemplate {
         Map mapParams
     )  {
         String attrqSCertAlias = (String)mapParams.get(
-            P_ATTR_QUERY_PROVIDER_S_CERT);
+            MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_S_CERT);
         String attrqECertAlias = (String)mapParams.get(
-            P_ATTR_QUERY_PROVIDER_E_CERT);
+            MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_E_CERT);
         
         if (attrqSCertAlias == null) {
             attrqSCertAlias = "";
@@ -573,10 +557,10 @@ public class CreateSAML2HostedProviderTemplate {
         String url,
         Map mapParams
     )  {
-        String authnaECertAlias =
-            (String)mapParams.get(P_AUTHN_AUTHORITY_E_CERT);
-        String authnaSCertAlias =
-            (String)mapParams.get(P_AUTHN_AUTHORITY_S_CERT);
+        String authnaECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AUTHN_AUTHORITY_E_CERT);
+        String authnaSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AUTHN_AUTHORITY_S_CERT);
         if (authnaECertAlias == null) {
             authnaECertAlias = "";
         }
@@ -609,8 +593,10 @@ public class CreateSAML2HostedProviderTemplate {
         String url,
         Map mapParams
     )  {
-        String affiECertAlias = (String)mapParams.get(P_AFFI_E_CERT);
-        String affiSCertAlias = (String)mapParams.get(P_AFFI_S_CERT);
+        String affiECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_E_CERT);
+        String affiSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_S_CERT);
         if (affiECertAlias == null) {
             affiECertAlias = "";
         }
@@ -637,8 +623,10 @@ public class CreateSAML2HostedProviderTemplate {
         String pdpAlias,
         Map mapParams
     )  {
-        String pdpECertAlias = (String)mapParams.get(P_PDP_E_CERT);
-        String pdpSCertAlias = (String)mapParams.get(P_PDP_S_CERT);
+        String pdpECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PDP_E_CERT);
+        String pdpSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PDP_S_CERT);
         if (pdpECertAlias == null) {
             pdpECertAlias = "";
         }
@@ -681,8 +669,10 @@ public class CreateSAML2HostedProviderTemplate {
         String pepAlias,
         Map mapParams
     )  {
-        String pepECertAlias = (String)mapParams.get(P_PEP_E_CERT);
-        String pepSCertAlias = (String)mapParams.get(P_PEP_S_CERT);
+        String pepECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PEP_E_CERT);
+        String pepSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PEP_S_CERT);
         if (pepECertAlias == null) {
             pepECertAlias = "";
         }
@@ -736,49 +726,53 @@ public class CreateSAML2HostedProviderTemplate {
             "    xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"\n" +
             "    entityID=\"" + entityID + "\">\n");
 
-        String idpAlias = (String)mapParams.get(P_IDP);
+        String idpAlias = (String)mapParams.get(MetaTemplateParameters.P_IDP);
         if (idpAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(idpAlias);
             addIdentityProviderTemplate(buff, idpAlias, url, mapParams);
         }
 
-        String spAlias = (String)mapParams.get(P_SP);
+        String spAlias = (String)mapParams.get(MetaTemplateParameters.P_SP);
         if (spAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(spAlias);
             addServiceProviderTemplate(buff, spAlias, url, mapParams);
         }
 
-        String attraAlias = (String)mapParams.get(P_ATTR_AUTHORITY);
+        String attraAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_AUTHORITY);
         if (attraAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(attraAlias);
             addAttributeAuthorityTemplate(buff, attraAlias, url, mapParams);
         }
 
-        String attrqAlias = (String)mapParams.get(P_ATTR_QUERY_PROVIDER);
+        String attrqAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_QUERY_PROVIDER);
         if (attrqAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(attrqAlias);
             addAttributeQueryTemplate(buff, attrqAlias, url, mapParams);
         }
 
-        String authnaAlias = (String)mapParams.get(P_AUTHN_AUTHORITY);
+        String authnaAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AUTHN_AUTHORITY);
         if (authnaAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(authnaAlias);
             addAuthnAuthorityTemplate(buff, authnaAlias, url, mapParams);
         }
 
-        String affiAlias = (String)mapParams.get(P_AFFILIATION);
+        String affiAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFILIATION);
         if (affiAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(affiAlias);
             addAffiliationTemplate(buff, entityID, affiAlias, url, mapParams);
         }
 
-        String pdpAlias = (String)mapParams.get(P_PDP);
+        String pdpAlias = (String)mapParams.get(MetaTemplateParameters.P_PDP);
         if (pdpAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(pdpAlias);
             addPDPTemplate(buff, pdpAlias, url, mapParams);
         }
 
-        String pepAlias = (String)mapParams.get(P_PEP);
+        String pepAlias = (String)mapParams.get(MetaTemplateParameters.P_PEP);
         if (pepAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(pepAlias);
             addPEPTemplate(buff, url, mapParams);
@@ -801,8 +795,10 @@ public class CreateSAML2HostedProviderTemplate {
             "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n"
         );
         
-        String idpSCertAlias = (String)mapParams.get(P_IDP_S_CERT);
-        String idpECertAlias = (String)mapParams.get(P_IDP_E_CERT);
+        String idpSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_IDP_S_CERT);
+        String idpECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_IDP_E_CERT);
 
         String idpSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             idpSCertAlias);
@@ -923,8 +919,10 @@ public class CreateSAML2HostedProviderTemplate {
             "        protocolSupportEnumeration=\n" +
             "            \"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
         
-        String spSCertAlias = (String)mapParams.get(P_SP_S_CERT);
-        String spECertAlias = (String)mapParams.get(P_SP_E_CERT);
+        String spSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_SP_S_CERT);
+        String spECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_SP_E_CERT);
 
         String spSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             spSCertAlias);
@@ -1033,8 +1031,10 @@ public class CreateSAML2HostedProviderTemplate {
             "    <AttributeAuthorityDescriptor\n" +
             "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
         
-        String attraECertAlias = (String)mapParams.get(P_ATTR_AUTHORITY_E_CERT);
-        String attraSCertAlias = (String)mapParams.get(P_ATTR_AUTHORITY_S_CERT);
+        String attraECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_AUTHORITY_E_CERT);
+        String attraSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_ATTR_AUTHORITY_S_CERT);
 
         String attraSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             attraSCertAlias);
@@ -1111,9 +1111,9 @@ public class CreateSAML2HostedProviderTemplate {
             "            \"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
         
         String attrqSCertAlias = (String)mapParams.get(
-            P_ATTR_QUERY_PROVIDER_S_CERT);
+            MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_S_CERT);
         String attrqECertAlias = (String)mapParams.get(
-            P_ATTR_QUERY_PROVIDER_E_CERT);
+            MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_E_CERT);
         String attrqSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             attrqSCertAlias);
         String attrqEX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
@@ -1176,10 +1176,10 @@ public class CreateSAML2HostedProviderTemplate {
             "    <AuthnAuthorityDescriptor\n" +
             "        protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
         
-        String authnaECertAlias =
-            (String)mapParams.get(P_AUTHN_AUTHORITY_E_CERT);
-        String authnaSCertAlias =
-            (String)mapParams.get(P_AUTHN_AUTHORITY_S_CERT);
+        String authnaECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AUTHN_AUTHORITY_E_CERT);
+        String authnaSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AUTHN_AUTHORITY_S_CERT);
 
         String authnaSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             authnaSCertAlias);
@@ -1244,7 +1244,8 @@ public class CreateSAML2HostedProviderTemplate {
             "    <AffiliationDescriptor\n" +
             "        affiliationOwnerID=\"" + entityID + "\">\n");
 
-        List affiMembers = (List)mapParams.get(P_AFFI_MEMBERS);
+        List affiMembers = (List)mapParams.get(
+            MetaTemplateParameters.P_AFFI_MEMBERS);
         for(Iterator iter = affiMembers.iterator(); iter.hasNext(); ) {
             String affiMember = (String)iter.next();
 
@@ -1252,8 +1253,10 @@ public class CreateSAML2HostedProviderTemplate {
                 "        <AffiliateMember>" + affiMember + "</AffiliateMember>\n");
         }
 
-        String affiECertAlias = (String)mapParams.get(P_AFFI_E_CERT);
-        String affiSCertAlias = (String)mapParams.get(P_AFFI_S_CERT);
+        String affiECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_E_CERT);
+        String affiSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_S_CERT);
 
         String affiSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             affiSCertAlias);
@@ -1306,8 +1309,10 @@ public class CreateSAML2HostedProviderTemplate {
             "protocolSupportEnumeration=" +
             "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
 
-        String pdpECertAlias = (String)mapParams.get(P_PDP_E_CERT);
-        String pdpSCertAlias = (String)mapParams.get(P_PDP_S_CERT);
+        String pdpECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PDP_E_CERT);
+        String pdpSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PDP_S_CERT);
 
         String pdpSX509Cert  = SAML2MetaSecurityUtils.buildX509Certificate(
             pdpSCertAlias);
@@ -1363,8 +1368,10 @@ public class CreateSAML2HostedProviderTemplate {
             "protocolSupportEnumeration=" +
             "\"urn:oasis:names:tc:SAML:2.0:protocol\">\n");
 
-        String pepECertAlias = (String)mapParams.get(P_PEP_E_CERT);
-        String pepSCertAlias = (String)mapParams.get(P_PEP_S_CERT);
+        String pepECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PEP_E_CERT);
+        String pepSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_PEP_S_CERT);
         
         String pepSX509Cert = SAML2MetaSecurityUtils.buildX509Certificate(
             pepSCertAlias);

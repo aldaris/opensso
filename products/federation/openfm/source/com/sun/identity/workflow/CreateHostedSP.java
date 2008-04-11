@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSP.java,v 1.5 2008-04-10 23:15:04 veiming Exp $
+ * $Id: CreateHostedSP.java,v 1.6 2008-04-11 00:10:13 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,8 +72,8 @@ public class CreateHostedSP
             String metaAlias = generateMetaAliasForSP(
                 getString(params, ParameterKeys.P_REALM));
             Map map = new HashMap();
-            map.put(CreateSAML2HostedProviderTemplate.P_SP, metaAlias);
-            map.put(CreateSAML2HostedProviderTemplate.P_SP_E_CERT,
+            map.put(MetaTemplateParameters.P_SP, metaAlias);
+            map.put(MetaTemplateParameters.P_SP_E_CERT,
                 getString(params, ParameterKeys.P_SP_E_CERT));
 
             try {

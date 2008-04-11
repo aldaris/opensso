@@ -19,3 +19,4 @@
 <neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredEditViewBean" />
 <neednodealwith classname="com.sun.identity.console.task.HomeViewBean" />
 <neednodealwith classname="com.sun.identity.console.federation.FileUploaderViewBean" />
+<neednodealwith classname="com.sun.identity.console.federation.CreateSAML2MetaDataViewBean" />

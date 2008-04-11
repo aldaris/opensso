@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.29 2008-03-04 23:42:16 hengming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.30 2008-04-11 00:10:13 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,32 +29,14 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.RequestContext;
-import com.sun.identity.cot.COTConstants;
-import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.meta.IDFFMetaException;
-import com.sun.identity.federation.meta.IDFFMetaSecurityUtils;
-import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.shared.Constants;
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
+import com.sun.identity.workflow.CreateIDFFMetaDataTemplate;
 import com.sun.identity.workflow.CreateSAML2HostedProviderTemplate;
-import com.sun.identity.wsfederation.common.WSFederationConstants;
-import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.ClaimType;
-import com.sun.identity.wsfederation.jaxb.wsfederation.DisplayNameType;
-import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.SingleSignOutNotificationEndpointElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerEndpointElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenIssuerNameElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenSigningKeyInfoElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenType;
-import com.sun.identity.wsfederation.jaxb.wsfederation.TokenTypesOfferedElement;
-import com.sun.identity.wsfederation.jaxb.wsfederation.UriNamedClaimTypesOfferedElement;
-import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+import com.sun.identity.workflow.CreateWSFedMetaDataTemplate;
+import com.sun.identity.workflow.MetaTemplateParameters;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -65,13 +47,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.SecurityTokenReference;
-import org.w3._2000._09.xmldsig_.X509Data;
-import org.w3._2000._09.xmldsig_.X509DataType.X509Certificate;
-import org.w3._2005._08.addressing.AttributedURIType;
 
 /**
  * Create Meta Data Template.
@@ -120,7 +96,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
      * @throws CLIException if unable to process this request.
      */
     public void handleRequest(RequestContext rc)
-    throws CLIException {
+        throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
         getOptions(rc);
@@ -136,14 +112,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             handleWSFedRequest(rc);
         } else {
             throw new CLIException(
-                    getResourceString("unsupported-specification"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                getResourceString("unsupported-specification"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         
     }
     
     private void handleSAML2Request(RequestContext rc)
-    throws CLIException {
+        throws CLIException {
         if (!isWebBased || (extendedData != null)) {
             buildConfigTemplate();
         }
@@ -153,7 +129,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void handleIDFFRequest(RequestContext rc)
-    throws CLIException {
+        throws CLIException {
         if (!isWebBased || (extendedData != null)) {
             buildIDFFConfigTemplate();
         }
@@ -164,14 +140,12 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     
     private void handleWSFedRequest(RequestContext rc)
     throws CLIException {
-        String url =  protocol + "://" + host + ":" + port + deploymentURI;
-
         if (!isWebBased || (extendedData != null)) {
-            buildWSFedConfigTemplate(url);
+            buildWSFedConfigTemplate();
         }
 
         if (!isWebBased || (metadata != null)) {
-            buildWSFedDescriptorTemplate(url);
+            buildWSFedDescriptorTemplate();
         }
     }
     
@@ -323,12 +297,11 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     }
     
     private void validateOptions()
-    throws CLIException {
+        throws CLIException {
         if ((idpAlias == null) && (spAlias == null) && (pdpAlias == null) && 
             (pepAlias == null) && (attraAlias == null) &&
-            (attrqAlias == null) && (authnaAlias == null) &&
-            (affiAlias == null)) {
-
+            (attrqAlias == null) && (authnaAlias == null) && (affiAlias == null)
+        ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-role-null"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -337,16 +310,16 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         if ((affiAlias != null) && ((idpAlias != null) ||
             (spAlias != null) || (pdpAlias != null) || (pepAlias != null) ||
             (attraAlias != null) || (attrqAlias != null) ||
-            (authnaAlias != null))) {
-
+            (authnaAlias != null))
+        ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-affi-conflict"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
 
         if ((affiAlias != null) &&
-            ((affiMembers == null) || affiMembers.isEmpty())) {
-
+            ((affiMembers == null) || affiMembers.isEmpty())
+        ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-affi-members-empty"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -354,31 +327,31 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
         if ((affiAlias == null) &&
             ((affiSCertAlias != null) || (affiECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-affi-null-with-cert-alias"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-affi-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
 
         if ((idpAlias == null) &&
             ((idpSCertAlias != null) || (idpECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-idp-null-with-cert-alias"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-idp-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         
         if ((spAlias == null) &&
             ((spSCertAlias != null) || (spECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-sp-null-with-cert-alias"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-sp-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         
         if ((attraAlias == null) &&
             ((attraSCertAlias != null) || (attraECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-attra-null-with-cert-alias"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -386,7 +359,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         
         if ((attrqAlias == null) &&
             ((attrqSCertAlias != null) || (attrqECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-attrq-null-with-cert-alias"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -394,7 +367,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
         if ((authnaAlias == null) &&
             ((authnaSCertAlias != null) || (authnaECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
                 "create-meta-template-exception-authna-null-with-cert-alias"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -410,31 +383,31 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         
         if ((pepAlias == null) &&
             ((pepSCertAlias != null) || (pepECertAlias != null))
-            ) {
+        ) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-pep-null-with-cert-alias"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-pep-null-with-cert-alias"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-        
+
         if (protocol == null) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-protocol-not-found"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-protocol-not-found"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         if (host == null) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-host-not-found"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-host-not-found"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         if (port == null) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-port-not-found"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-port-not-found"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
         if (deploymentURI == null) {
             throw new CLIException(getResourceString(
-                    "create-meta-template-exception-deploymentURI-not-found"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                "create-meta-template-exception-deploymentURI-not-found"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
     
@@ -531,22 +504,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             } else {
                 pw = new StringWriter();
             }
-            pw.write(
-                    "<EntityConfig xmlns=\"urn:sun:fm:ID-FF:entityconfig\"\n" +
-                    "    hosted=\"1\"\n" +
-                    "    entityID=\"" + entityID + "\">\n\n");
             
-            if (idpAlias != null) {
-                realm = IDFFMetaUtils.getRealmByMetaAlias(idpAlias);
-                buildIDFFIDPConfigTemplate(pw);
-            }
-            if (spAlias != null) {
-                realm = IDFFMetaUtils.getRealmByMetaAlias(spAlias);
-                buildIDFFSPConfigTemplate(pw);
-            }
-
-            pw.write("</EntityConfig>\n");
-
+            String xml = CreateIDFFMetaDataTemplate.createExtendedMetaTemplate(
+                entityID, getWorkflowParamMap());
+            pw.write(xml);
             if (!isWebBased) {
                 Object[] objs = {extendedData, realm};
                 getOutputWriter().printlnMessage(MessageFormat.format(
@@ -569,221 +530,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
     
-    private void buildIDFFIDPConfigTemplate(Writer pw)
-    throws IOException {
-        pw.write(
-                "    <IDPDescriptorConfig metaAlias=\"" + idpAlias + "\">\n" +
-                "        <Attribute name=\"" + IFSConstants.PROVIDER_STATUS + "\">\n" +
-                "            <Value>active</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.PROVIDER_DESCRIPTION + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + idpSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + idpECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENABLE_NAMEID_ENCRYPTION + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.GENERATE_BOOTSTRAPPING + "\">\n" +
-                "            <Value>true</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.RESPONDS_WITH + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FS_USER_PROVIDER_CLASS + "\">\n" +
-                "            <Value>com.sun.identity.federation.accountmgmt.DefaultFSUserProvider</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.NAMEID_IMPL_CLASS + "\">\n" +
-                "            <Value>com.sun.identity.federation.services.util.FSNameIdentifierImpl</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.AUTH_TYPE + "\">\n" +
-                "            <Value>local</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REGISTRATION_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.TERMINATION_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.LOGOUT_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.LISTOFCOTS_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ERROR_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.PROVIDER_HOME_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ASSERTION_INTERVAL + "\">\n" +
-                "            <Value>60</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.CLEANUP_INTERVAL + "\">\n" +
-                "            <Value>180</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ARTIFACT_TIMEOUT + "\">\n" +
-                "            <Value>120</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ASSERTION_LIMIT + "\">\n" +
-                "            <Value>0</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ASSERTION_ISSUER + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_PLUGIN + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.IDP_ATTRIBUTE_MAP + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.DEFAULT_AUTHNCONTEXT + "\">\n" +
-                "            <Value>" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.IDP_AUTHNCONTEXT_MAPPING + "\">\n" +
-                "            <Value>context=" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "|key=Module|value=DataStore|level=1</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENABLE_AUTO_FEDERATION + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.AUTO_FEDERATION_ATTRIBUTE + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_MAPPER_CLASS + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
-                "       </Attribute>\n" +
-                "    </IDPDescriptorConfig>\n"
-                );
-    }
-    
-    private void buildIDFFSPConfigTemplate(Writer pw)
-    throws IOException {
-        pw.write(
-                "    <SPDescriptorConfig metaAlias=\"" + spAlias + "\">\n" +
-                "        <Attribute name=\"" + IFSConstants.PROVIDER_STATUS + "\">\n" +
-                "            <Value>active</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.PROVIDER_DESCRIPTION + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SIGNING_CERT_ALIAS + "\">\n" +
-                "            <Value>" + spSCertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENCRYPTION_CERT_ALIAS + "\">\n" +
-                "            <Value>" + spECertAlias + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENABLE_IDP_PROXY + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.IDP_PROXY_LIST + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.IDP_PROXY_COUNT + "\">\n" +
-                "            <Value>-1</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.USE_INTRODUCTION_FOR_IDP_PROXY + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENABLE_AFFILIATION + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENABLE_NAMEID_ENCRYPTION + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SUPPORTED_SSO_PROFILE + "\">\n" +
-                "            <Value>http://projectliberty.org/profiles/brws-art</Value>\n" +
-                "            <Value>http://projectliberty.org/profiles/brws-post</Value>\n" +
-                "            <Value>http://projectliberty.org/profiles/wml-post</Value>\n" +
-                "            <Value>http://projectliberty.org/profiles/lecp</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.NAMEID_POLICY + "\">\n" +
-                "            <Value>federated</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FORCE_AUTHN + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.IS_PASSIVE + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.RESPONDS_WITH + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FS_USER_PROVIDER_CLASS + "\">\n" +
-                "            <Value>com.sun.identity.federation.accountmgmt.DefaultFSUserProvider</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.NAMEID_IMPL_CLASS + "\">\n" +
-                "            <Value>com.sun.identity.federation.services.util.FSNameIdentifierImpl</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.AUTH_TYPE + "\">\n" +
-                "            <Value>remote</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.REGISTRATION_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.TERMINATION_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.LOGOUT_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FEDERATION_DONE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.DOFEDERATE_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.LISTOFCOTS_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ERROR_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SSO_FAILURE_REDIRECT_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.PROVIDER_HOME_PAGE_URL + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.DEFAULT_AUTHNCONTEXT + "\">\n" +
-                "            <Value>" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SP_AUTHNCONTEXT_MAPPING + "\">\n" +
-                "            <Value>context=" + IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD + "|level=1</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ENABLE_AUTO_FEDERATION + "\">\n" +
-                "            <Value>false</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.AUTO_FEDERATION_ATTRIBUTE + "\">\n"+
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.ATTRIBUTE_MAPPER_CLASS + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.SP_ATTRIBUTE_MAP + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FEDERATION_SP_ADAPTER + "\">\n" +
-                "            <Value>com.sun.identity.federation.plugins.FSDefaultSPAdapter</Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + IFSConstants.FEDERATION_SP_ADAPTER_ENV + "\">\n" +
-                "            <Value></Value>\n" +
-                "        </Attribute>\n" +
-                "        <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
-                "        </Attribute>\n" +
-                "    </SPDescriptorConfig>\n");
-    }
-    
     private void buildIDFFDescriptorTemplate()
-    throws CLIException {
-        String url =  protocol + "://" + host + ":" + port + deploymentURI;
-        
+        throws CLIException {
         Writer pw = null;
         try {
             if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
@@ -791,20 +539,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             } else {
                 pw = new StringWriter();
             }
-            pw.write(
-                    "<EntityDescriptor\n" +
-                    "    xmlns=\"urn:liberty:metadata:2003-08\"\n" +
-                    "    providerID=\"" + entityID + "\">\n");
             
-            if (idpAlias != null) {
-                realm = IDFFMetaUtils.getRealmByMetaAlias(idpAlias);
-                addIDFFIdentityProviderTemplate(pw, url);
-            }
-            if (spAlias != null) {
-                realm = IDFFMetaUtils.getRealmByMetaAlias(spAlias);
-                addIDFFServiceProviderTemplate(pw, url);
-            }
-            pw.write("</EntityDescriptor>\n");
+            String xml = CreateIDFFMetaDataTemplate.createStandardMetaTemplate(
+                entityID, getWorkflowParamMap());
+            pw.write(xml);
             
             if (!isWebBased) {
                 Object[] objs = { metadata, realm };
@@ -830,141 +568,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
     
-    
-    private void addIDFFIdentityProviderTemplate(Writer pw, String url)
-    throws IOException, IDFFMetaException {
-        String maStr = buildMetaAliasInURI(idpAlias);
-        
-        pw.write(
-                "    <IDPDescriptor\n" +
-                "        protocolSupportEnumeration=" +
-                "\"urn:liberty:iff:2003-08 urn:liberty:iff:2002-12\">\n"
-                );
-        
-        String idpSX509Cert = IDFFMetaSecurityUtils.buildX509Certificate(
-                idpSCertAlias);
-        if (idpSX509Cert != null) {
-            pw.write(
-                    "        <KeyDescriptor use=\"signing\">\n" +
-                    "            <KeyInfo xmlns=\"" + IDFFMetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                    "                <X509Data>\n" +
-                    "                    <X509Certificate>\n" + idpSX509Cert +
-                    "                    </X509Certificate>\n" +
-                    "                </X509Data>\n" +
-                    "            </KeyInfo>\n" +
-                    "        </KeyDescriptor>\n");
-        }
-            
-        String idpEX509Cert = IDFFMetaSecurityUtils.buildX509Certificate(
-            idpECertAlias);
-        if (idpEX509Cert != null) {
-            pw.write(
-                "        <KeyDescriptor use=\"encryption\">\n" +
-                "            <EncryptionMethod>http://www.w3.org/2001/04/xmlenc#aes128-cbc</EncryptionMethod>\n" +
-                "            <KeySize>128</KeySize>\n" +
-                "            <KeyInfo xmlns=\"" + IDFFMetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                "                <X509Data>\n" +
-                "                    <X509Certificate>\n" + idpEX509Cert +
-                "                    </X509Certificate>\n" +
-                "                </X509Data>\n" +
-                "            </KeyInfo>\n" +
-                "        </KeyDescriptor>\n");
-        }
-        pw.write(
-                "        <SoapEndpoint>" + url + "/SOAPReceiver" + maStr + "</SoapEndpoint>\n" +
-                "        <SingleLogoutServiceURL>" + url + "/ProcessLogout" + maStr
-                + "</SingleLogoutServiceURL>\n" +
-                "        <SingleLogoutServiceReturnURL>" + url + "/ReturnLogout" + maStr
-                + "</SingleLogoutServiceReturnURL>\n" +
-                "        <FederationTerminationServiceURL>" + url + "/ProcessTermination"
-                + maStr + "</FederationTerminationServiceURL>\n" +
-                "        <FederationTerminationServiceReturnURL>" + url + "/ReturnTermination"
-                + maStr + "</FederationTerminationServiceReturnURL>\n" +
-                "        <FederationTerminationNotificationProtocolProfile>http://projectliberty.org/profiles/fedterm-sp-http</FederationTerminationNotificationProtocolProfile>\n" +
-                "        <FederationTerminationNotificationProtocolProfile>http://projectliberty.org/profiles/fedterm-sp-soap</FederationTerminationNotificationProtocolProfile>\n" +
-                "        <SingleLogoutProtocolProfile>http://projectliberty.org/profiles/slo-sp-http</SingleLogoutProtocolProfile>\n" +
-                "        <SingleLogoutProtocolProfile>http://projectliberty.org/profiles/slo-sp-soap</SingleLogoutProtocolProfile>\n" +
-                "        <RegisterNameIdentifierProtocolProfile>http://projectliberty.org/profiles/rni-sp-http</RegisterNameIdentifierProtocolProfile>\n" +
-                "        <RegisterNameIdentifierProtocolProfile>http://projectliberty.org/profiles/rni-sp-soap</RegisterNameIdentifierProtocolProfile>\n" +
-                "        <RegisterNameIdentifierServiceURL>" + url + "/ProcessRegistration"
-                + maStr + "</RegisterNameIdentifierServiceURL>\n" +
-                "        <RegisterNameIdentifierServiceReturnURL>" + url + "/ReturnRegistration"
-                + maStr + "</RegisterNameIdentifierServiceReturnURL>\n" +
-                "        <SingleSignOnServiceURL>" + url + "/SingleSignOnService" + maStr
-                + "</SingleSignOnServiceURL>\n" +
-                "        <SingleSignOnProtocolProfile>http://projectliberty.org/profiles/brws-art</SingleSignOnProtocolProfile>\n" +
-                "        <SingleSignOnProtocolProfile>http://projectliberty.org/profiles/brws-post</SingleSignOnProtocolProfile>\n" +
-                "        <SingleSignOnProtocolProfile>http://projectliberty.org/profiles/lecp</SingleSignOnProtocolProfile>\n" +
-                "    </IDPDescriptor>\n"
-                );
-    }
-    
-    private void addIDFFServiceProviderTemplate(Writer pw, String url)
-    throws IOException, IDFFMetaException {
-        String maStr = buildMetaAliasInURI(spAlias);
-        pw.write(
-                "    <SPDescriptor\n" +
-                "        protocolSupportEnumeration=\n" +
-                "            \"urn:liberty:iff:2003-08 urn:liberty:iff:2002-12\">\n");
-        
-        String spSX509Cert = IDFFMetaSecurityUtils.buildX509Certificate(
-            spSCertAlias);
-        if (spSX509Cert != null) {
-            pw.write(
-                "        <KeyDescriptor use=\"signing\">\n" +
-                "            <KeyInfo xmlns=\"" + IDFFMetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                "                <X509Data>\n" +
-                "                    <X509Certificate>\n" + spSX509Cert +
-                "                    </X509Certificate>\n" +
-                "                </X509Data>\n" +
-                "            </KeyInfo>\n" +
-                "        </KeyDescriptor>\n");
-        }
-            
-        String spEX509Cert = IDFFMetaSecurityUtils.buildX509Certificate(
-            spECertAlias);
-        if (spEX509Cert != null) {
-            pw.write(
-                "        <KeyDescriptor use=\"encryption\">\n" +
-                "            <EncryptionMethod>http://www.w3.org/2001/04/xmlenc#aes128-cbc</EncryptionMethod>\n" +
-                "            <KeySize>128</KeySize>\n" +
-                "            <KeyInfo xmlns=\"" + IDFFMetaSecurityUtils.NS_XMLSIG + "\">\n" +
-                "                <X509Data>\n" +
-                "                    <X509Certificate>\n" + spEX509Cert +
-                "                    </X509Certificate>\n" +
-                "                </X509Data>\n" +
-                "            </KeyInfo>\n" +
-                "        </KeyDescriptor>\n");
-        }
-        pw.write(
-                "        <SoapEndpoint>" + url + "/SOAPReceiver" + maStr + "</SoapEndpoint>\n" +
-                "        <SingleLogoutServiceURL>" + url + "/ProcessLogout" + maStr
-                + "</SingleLogoutServiceURL>\n" +
-                "        <SingleLogoutServiceReturnURL>" + url + "/ReturnLogout" + maStr
-                + "</SingleLogoutServiceReturnURL>\n" +
-                "        <FederationTerminationServiceURL>" + url + "/ProcessTermination"
-                + maStr + "</FederationTerminationServiceURL>\n" +
-                "        <FederationTerminationServiceReturnURL>" + url + "/ReturnTermination"
-                + maStr + "</FederationTerminationServiceReturnURL>\n" +
-                "        <FederationTerminationNotificationProtocolProfile>http://projectliberty.org/profiles/fedterm-idp-http</FederationTerminationNotificationProtocolProfile>\n" +
-                "        <FederationTerminationNotificationProtocolProfile>http://projectliberty.org/profiles/fedterm-idp-soap</FederationTerminationNotificationProtocolProfile>\n" +
-                "        <SingleLogoutProtocolProfile>http://projectliberty.org/profiles/slo-idp-http</SingleLogoutProtocolProfile>\n" +
-                "        <SingleLogoutProtocolProfile>http://projectliberty.org/profiles/slo-idp-soap</SingleLogoutProtocolProfile>\n" +
-                "        <RegisterNameIdentifierProtocolProfile>http://projectliberty.org/profiles/rni-idp-http</RegisterNameIdentifierProtocolProfile>\n" +
-                "        <RegisterNameIdentifierProtocolProfile>http://projectliberty.org/profiles/rni-idp-soap</RegisterNameIdentifierProtocolProfile>\n" +
-                "        <RegisterNameIdentifierServiceURL>" + url + "/ProcessRegistration"
-                + maStr + "</RegisterNameIdentifierServiceURL>\n" +
-                "        <RegisterNameIdentifierServiceReturnURL>" + url + "/ReturnRegistration"
-                + maStr + "</RegisterNameIdentifierServiceReturnURL>\n" +
-                "        <AssertionConsumerServiceURL id=\"1\" isDefault=\"true\">" + url
-                + "/AssertionConsumerService" + maStr
-                + "</AssertionConsumerServiceURL>\n" +
-                "        <AuthnRequestsSigned>false</AuthnRequestsSigned>\n" +
-                "    </SPDescriptor>\n"
-                );
-    }
-    
-    private void buildWSFedDescriptorTemplate(String url)
+    private void buildWSFedDescriptorTemplate()
     throws CLIException {
         Writer pw = null;
         try {
@@ -974,24 +578,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 pw = new StringWriter();
             }
             
-            JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
-            com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
-                objFactory = new 
-                com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory();
-            
-            FederationElement fed = objFactory.createFederationElement();
-            fed.setFederationID(entityID);
-
-            if (idpAlias != null) {
-                addWSFedIdentityProviderTemplate(objFactory, fed, url);
-            }
-            if (spAlias != null) {
-                addWSFedServiceProviderTemplate(objFactory, fed, url);
-            }
-
-            Marshaller m = jc.createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            m.marshal(fed, pw);
+            String xml = CreateWSFedMetaDataTemplate.createStandardMetaTemplate(
+                entityID, getWorkflowParamMap());
+            pw.write(xml);
             
             if (!isWebBased) {
                 Object[] objs = { metadata, realm };
@@ -1020,101 +609,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
 
-    private void addWSFedIdentityProviderTemplate(
-        com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
-        objFactory, FederationElement fed, String url)
-        throws JAXBException, CertificateEncodingException {
-        String maStr = buildMetaAliasInURI(idpAlias);
-        
-        if (idpSCertAlias.length() > 0) {
-            org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.ObjectFactory 
-                secextObjFactory = new 
-                org.oasis_open.docs.wss._2004._01.oasis_200401_wss_wssecurity_secext_1_0.ObjectFactory();
-            org.w3._2000._09.xmldsig_.ObjectFactory dsObjectFactory = new 
-                org.w3._2000._09.xmldsig_.ObjectFactory();
-
-            TokenSigningKeyInfoElement tski = 
-                objFactory.createTokenSigningKeyInfoElement();
-            SecurityTokenReference str = 
-                secextObjFactory.createSecurityTokenReference();
-            X509Data x509Data = dsObjectFactory.createX509Data();
-            X509Certificate x509Cert = 
-                dsObjectFactory.createX509DataTypeX509Certificate();
-            x509Cert.setValue(
-                KeyUtil.getKeyProviderInstance().getX509Certificate(idpSCertAlias).getEncoded());
-            x509Data.getX509IssuerSerialOrX509SKIOrX509SubjectName().add(x509Cert);
-            str.getAny().add(x509Data);
-            tski.setSecurityTokenReference(str);
-            fed.getAny().add(tski);
-        }
-        
-        TokenIssuerNameElement tin = objFactory.createTokenIssuerNameElement();
-        tin.setValue(entityID);
-        fed.getAny().add(tin);
-        
-        TokenIssuerEndpointElement tie = 
-            objFactory.createTokenIssuerEndpointElement();
-        org.w3._2005._08.addressing.ObjectFactory addrObjFactory = 
-            new org.w3._2005._08.addressing.ObjectFactory();
-        AttributedURIType auri = addrObjFactory.createAttributedURIType();
-        auri.setValue(url + "/WSFederationServlet" + maStr);
-        tie.setAddress(auri);        
-        fed.getAny().add(tie);
-        
-        TokenTypesOfferedElement tto = 
-            objFactory.createTokenTypesOfferedElement();
-        TokenType tt = objFactory.createTokenType();
-        tt.setUri(WSFederationConstants.URN_OASIS_NAMES_TC_SAML_11);
-        tto.getTokenType().add(tt);
-        fed.getAny().add(tto);
-        
-        UriNamedClaimTypesOfferedElement uncto = 
-            objFactory.createUriNamedClaimTypesOfferedElement();
-        ClaimType ct = objFactory.createClaimType();
-        ct.setUri(WSFederationConstants.NAMED_CLAIM_TYPES[
-            WSFederationConstants.NAMED_CLAIM_UPN]);
-        DisplayNameType dnt = objFactory.createDisplayNameType();
-        dnt.setValue(WSFederationConstants.NAMED_CLAIM_DISPLAY_NAMES[
-            WSFederationConstants.NAMED_CLAIM_UPN]);
-        ct.setDisplayName(dnt);
-        uncto.getClaimType().add(ct);
-        fed.getAny().add(uncto);
-    }
-
-    private void addWSFedServiceProviderTemplate(
-        com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
-        objFactory, FederationElement fed, String url)
-        throws JAXBException {
-        String maStr = buildMetaAliasInURI(spAlias);
-        
-        TokenIssuerNameElement tin = objFactory.createTokenIssuerNameElement();
-        tin.setValue(entityID);
-        fed.getAny().add(tin);
-        
-        TokenIssuerEndpointElement tie = 
-            objFactory.createTokenIssuerEndpointElement();
-        org.w3._2005._08.addressing.ObjectFactory addrObjFactory = 
-            new org.w3._2005._08.addressing.ObjectFactory();
-        AttributedURIType auri = addrObjFactory.createAttributedURIType();
-        auri.setValue(url + "/WSFederationServlet" + maStr);
-        tie.setAddress(auri);        
-        fed.getAny().add(tie);
-
-        SingleSignOutNotificationEndpointElement ssne = 
-            objFactory.createSingleSignOutNotificationEndpointElement();
-        AttributedURIType ssneUri = addrObjFactory.createAttributedURIType();
-        ssneUri.setValue(url + "/WSFederationServlet" + maStr);
-        ssne.setAddress(auri);        
-        fed.getAny().add(ssne);
-    }
-
-    private void buildWSFedConfigTemplate(String url)
+    private void buildWSFedConfigTemplate()
     throws CLIException {
-        JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
-        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
-            objFactory = 
-            new com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory();
-
         Writer pw = null;
         try {
             if (!isWebBased && (extendedData != null) &&
@@ -1125,23 +621,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 pw = new StringWriter();
             }
 
-            FederationConfigElement fedConfig = 
-                objFactory.createFederationConfigElement();
-
-            fedConfig.setFederationID(entityID);
-            fedConfig.setHosted(true);
-
-            if (idpAlias != null) {
-                buildWSFedIDPConfigTemplate(objFactory, fedConfig, url);
-            }
-            if (spAlias != null) {
-                buildWSFedSPConfigTemplate(objFactory, fedConfig, url);
-            }
-
-            Marshaller m = jc.createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            m.marshal(fedConfig, pw);
-
+            String xml = CreateWSFedMetaDataTemplate.createExtendedMetaTemplate(
+                entityID, this.getWorkflowParamMap());
+            pw.write(xml);
             if (!isWebBased) {
                 Object[] objs = {extendedData, realm};
                 getOutputWriter().printlnMessage(MessageFormat.format(
@@ -1167,139 +649,45 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         }
     }
 
-    private void buildWSFedIDPConfigTemplate(
-        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
-        objFactory, FederationConfigElement fedConfig, String url)
-        throws JAXBException
-    {
-        String[][] configDefaults = { 
-            { WSFederationConstants.DISPLAY_NAME, idpAlias },
-            { WSFederationConstants.UPN_DOMAIN, "" },
-            { SAML2Constants.SIGNING_CERT_ALIAS, idpSCertAlias },
-            { SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE, "600" },
-            { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
-            { SAML2Constants.IDP_AUTHNCONTEXT_MAPPER_CLASS, 
-                  "com.sun.identity.wsfederation.plugins.DefaultIDPAuthenticationMethodMapper" 
-            },
-            { SAML2Constants.IDP_ACCOUNT_MAPPER, 
-                  "com.sun.identity.wsfederation.plugins.DefaultIDPAccountMapper" },
-            { SAML2Constants.IDP_ATTRIBUTE_MAPPER, 
-                  "com.sun.identity.wsfederation.plugins.DefaultIDPAttributeMapper" },
-            { SAML2Constants.ATTRIBUTE_MAP, "" },
-            { COTConstants.COT_LIST, null },
-        };
 
-        com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement 
-            idpSSOConfig = objFactory.createIDPSSOConfigElement();
 
-        idpSSOConfig.setMetaAlias(idpAlias);
-
-        for ( int i = 0; i < configDefaults.length; i++ )
-        {
-            com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement 
-                attribute = objFactory.createAttributeElement();
-            attribute.setName(configDefaults[i][0]);
-            if (configDefaults[i][1] != null) {
-                attribute.getValue().add(configDefaults[i][1]);
-            }
-
-            idpSSOConfig.getAttribute().add(attribute);
-        }
-        
-        fedConfig.getIDPSSOConfigOrSPSSOConfig().add(idpSSOConfig);
-    }
-
-    private void buildWSFedSPConfigTemplate(
-        com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory 
-        objFactory, FederationConfigElement fedConfig, String url)
-    throws JAXBException
-    {
-        String maStr = buildMetaAliasInURI(spAlias);
-
-        String[][] configDefaults = { 
-            { WSFederationConstants.DISPLAY_NAME, spAlias },
-            { WSFederationConstants.ACCOUNT_REALM_SELECTION, "cookie" },
-            { WSFederationConstants.ACCOUNT_REALM_COOKIE_NAME, 
-                  "amWSFederationAccountRealm" },
-            { WSFederationConstants.HOME_REALM_DISCOVERY_SERVICE, 
-                  url + "/RealmSelection" + maStr },
-            { SAML2Constants.SIGNING_CERT_ALIAS, 
-                  ( idpSCertAlias.length() > 0 ) ? idpSCertAlias : "" },
-            { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
-            { SAML2Constants.SP_ACCOUNT_MAPPER, 
-                  "com.sun.identity.wsfederation.plugins.DefaultADFSPartnerAccountMapper" },
-            { SAML2Constants.SP_ATTRIBUTE_MAPPER, 
-                  "com.sun.identity.wsfederation.plugins.DefaultSPAttributeMapper" },
-            { SAML2Constants.SP_AUTHCONTEXT_MAPPER, 
-                  SAML2Constants.DEFAULT_SP_AUTHCONTEXT_MAPPER },
-            { SAML2Constants.SP_AUTH_CONTEXT_CLASS_REF_ATTR, 
-                  SAML2Constants.SP_AUTHCONTEXT_CLASSREF_VALUE },
-            { SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE, 
-                  SAML2Constants.SP_AUTHCONTEXT_COMPARISON_TYPE_VALUE },
-            { SAML2Constants.ATTRIBUTE_MAP, "" },
-            { SAML2Constants.AUTH_MODULE_NAME, "" },
-            { SAML2Constants.DEFAULT_RELAY_STATE, "" },
-            { SAML2Constants.ASSERTION_TIME_SKEW, "300" },
-            { SAML2Constants.WANT_ARTIFACT_RESPONSE_SIGNED, "true" },
-            { COTConstants.COT_LIST, null },
-        };
-
-        com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement 
-            spSSOConfig = objFactory.createSPSSOConfigElement();
-
-        spSSOConfig.setMetaAlias(spAlias);
-
-        for ( int i = 0; i < configDefaults.length; i++ )
-        {
-            com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement 
-                attribute = objFactory.createAttributeElement();
-            attribute.setName(configDefaults[i][0]);
-            if (configDefaults[i][1] != null) {
-                attribute.getValue().add(configDefaults[i][1]);
-            }
-
-            spSSOConfig.getAttribute().add(attribute);
-        }
-        
-        fedConfig.getIDPSSOConfigOrSPSSOConfig().add(spSSOConfig);
-    }
 
     private Map getWorkflowParamMap() {
         Map map = new HashMap();
-        map.put(CreateSAML2HostedProviderTemplate.P_IDP, idpAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_SP, spAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY, attraAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER,
+        map.put(MetaTemplateParameters.P_IDP, idpAlias);
+        map.put(MetaTemplateParameters.P_SP, spAlias);
+        map.put(MetaTemplateParameters.P_ATTR_AUTHORITY, attraAlias);
+        map.put(MetaTemplateParameters.P_ATTR_QUERY_PROVIDER,
             attrqAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY, authnaAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AFFILIATION, affiAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AFFI_MEMBERS, affiMembers);
-        map.put(CreateSAML2HostedProviderTemplate.P_PDP, pdpAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_PEP, pepAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT, idpECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_IDP_S_CERT, idpSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_SP_E_CERT, spECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_SP_S_CERT, spSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY_E_CERT,
+        map.put(MetaTemplateParameters.P_AUTHN_AUTHORITY, authnaAlias);
+        map.put(MetaTemplateParameters.P_AFFILIATION, affiAlias);
+        map.put(MetaTemplateParameters.P_AFFI_MEMBERS, affiMembers);
+        map.put(MetaTemplateParameters.P_PDP, pdpAlias);
+        map.put(MetaTemplateParameters.P_PEP, pepAlias);
+        map.put(MetaTemplateParameters.P_IDP_E_CERT, idpECertAlias);
+        map.put(MetaTemplateParameters.P_IDP_S_CERT, idpSCertAlias);
+        map.put(MetaTemplateParameters.P_SP_E_CERT, spECertAlias);
+        map.put(MetaTemplateParameters.P_SP_S_CERT, spSCertAlias);
+        map.put(MetaTemplateParameters.P_ATTR_AUTHORITY_E_CERT,
             attraECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_AUTHORITY_S_CERT,
+        map.put(MetaTemplateParameters.P_ATTR_AUTHORITY_S_CERT,
             attraSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER_E_CERT,
+        map.put(MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_E_CERT,
             attrqECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_ATTR_QUERY_PROVIDER_S_CERT,
+        map.put(MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_S_CERT,
             attrqSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY_E_CERT,
+        map.put(MetaTemplateParameters.P_AUTHN_AUTHORITY_E_CERT,
             authnaECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AUTHN_AUTHORITY_S_CERT,
+        map.put(MetaTemplateParameters.P_AUTHN_AUTHORITY_S_CERT,
             authnaSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AFFI_E_CERT,
+        map.put(MetaTemplateParameters.P_AFFI_E_CERT,
             affiECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_AFFI_S_CERT,
+        map.put(MetaTemplateParameters.P_AFFI_S_CERT,
             affiSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_PDP_E_CERT, pdpECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_PDP_S_CERT, pdpSCertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_PEP_E_CERT, pepECertAlias);
-        map.put(CreateSAML2HostedProviderTemplate.P_PEP_S_CERT, pepSCertAlias);
+        map.put(MetaTemplateParameters.P_PDP_E_CERT, pdpECertAlias);
+        map.put(MetaTemplateParameters.P_PDP_S_CERT, pdpSCertAlias);
+        map.put(MetaTemplateParameters.P_PEP_E_CERT, pepECertAlias);
+        map.put(MetaTemplateParameters.P_PEP_S_CERT, pepSCertAlias);
         return map;
     }
 }

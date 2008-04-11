@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDP.java,v 1.6 2008-04-04 04:30:19 veiming Exp $
+ * $Id: CreateHostedIDP.java,v 1.7 2008-04-11 00:10:13 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,10 +71,10 @@ public class CreateHostedIDP
             String metaAlias = generateMetaAliasForIDP(getString(params, 
                 ParameterKeys.P_REALM));
             Map map = new HashMap();
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP, metaAlias);
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP_E_CERT, 
+            map.put(MetaTemplateParameters.P_IDP, metaAlias);
+            map.put(MetaTemplateParameters.P_IDP_E_CERT, 
                 getString(params, ParameterKeys.P_IDP_E_CERT));
-            map.put(CreateSAML2HostedProviderTemplate.P_IDP_S_CERT, 
+            map.put(MetaTemplateParameters.P_IDP_S_CERT, 
                 getString(params, ParameterKeys.P_IDP_S_CERT));
 
             try {

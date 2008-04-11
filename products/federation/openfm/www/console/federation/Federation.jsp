@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Federation.jsp,v 1.2 2007-06-29 19:50:52 jonnelson Exp $
+   $Id: Federation.jsp,v 1.3 2008-04-11 00:10:15 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -35,6 +35,8 @@
 
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
 
+<link rel="stylesheet" type="text/css" href="../console/css/opensso.css" />
+
 <script language="javascript">
     <%--
         swichView() is called when the entity provider dropdown menu is 
@@ -45,10 +47,43 @@
         var frm = document.forms[0];
         frm.action += "?Federation.btnSearch=1";
         frm.submit();
-    }   
+    }
+
+    var txtSelectProtocol = "<cc:text name="txtSelectProtocol" defaultValue="federation.entity.select.protocol" bundleID="amConsole" />";
+    var optionSAML2 =  "<cc:text name="txtProtocolSAMLv2" defaultValue="federation.entity.protocol.samlv2" bundleID="amConsole" />";
+    var optionIDFF = "<cc:text name="txtProtocolIDFF" defaultValue="federation.entity.protocol.idff" bundleID="amConsole" />";
+    var optionWSFed =  "<cc:text name="txtProtocolWSFed" defaultValue="federation.entity.protocol.wsfed" bundleID="amConsole" />";
+
+    var closeBtn = '<p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
+
+    function gotoProtocolPage(radio) {
+        top.location = '../federation/CreateSAML2MetaData.jsp?p=' + radio.value;
+    }
+
+    function selectProviderType() {
+        document.getElementById('dlg').style.height = '175px';
+        fade();
+        var str = '<form name="dummy" action="#" onSubmit="return false;">' +
+            '<b>' + txtSelectProtocol + '</b><p><div style="text-align:left">' +
+            '<input type="radio" name="protocoltype" value="samlv2"' +
+                ' onClick="gotoProtocolPage(this);">' +
+            optionSAML2 + '<br />' +
+            '<input type="radio" name="protocoltype" value="idff"' +
+                ' onClick="gotoProtocolPage(this);">' +
+            optionIDFF + '<br />' +
+            '<input type="radio" name="protocoltype" value="wsfed"' +
+                ' onClick="gotoProtocolPage(this);">' +
+            optionWSFed + '</div>' +
+            closeBtn + '</p>' +
+            '</form>';
+        document.getElementById('dlg').innerHTML = '<center>' +
+            str + '</center>';
+        return false;
+    }
 </script>
 
 <script language="javascript" src="../console/js/am.js"></script>
+<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:1000">
 
 <cc:form name="Federation" method="post" defaultCommandChild="/btnSearch">
 <jato:hidden name="szCache" />
@@ -78,6 +113,8 @@
 
 <%-- END CONTENT --%>
 </cc:form>
+</div>
+<div id="dlg" class="dvs"></div>
 
 </cc:header>
 </jato:useViewBean>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entityTable.xml,v 1.5 2007-09-07 17:45:08 asyhuang Exp $
+   $Id: entityTable.xml,v 1.6 2008-04-11 00:10:16 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,8 +28,8 @@
 <table>
     <actions>
         <cc name="addEntityButton" 
-            tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-            <attribute name="disabled" value="true" />
+            tagclass="com.sun.web.ui.taglib.html.CCButtonTag">
+            <attribute name="onClick" value="return selectProviderType()" />
         </cc>
         <cc name="deleteEntityButton" 
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag">

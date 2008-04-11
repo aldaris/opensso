@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCOTViewBean.java,v 1.3 2007-06-29 19:50:18 jonnelson Exp $
+ * $Id: CreateCOTViewBean.java,v 1.4 2008-04-11 00:10:11 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,6 @@ public class CreateCOTViewBean
     private CCPageTitleModel ptModel;
     private AMPropertySheetModel psModel;
     private OptionList optList;
-    private boolean submitCycle;
     private boolean initialized;
     CCAddRemoveModel addRemoveModel;
     

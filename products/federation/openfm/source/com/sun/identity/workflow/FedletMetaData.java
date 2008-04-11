@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletMetaData.java,v 1.1 2008-04-04 04:30:20 veiming Exp $
+ * $Id: FedletMetaData.java,v 1.2 2008-04-11 00:10:14 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,8 +47,7 @@ public class FedletMetaData {
         List attrMapping
     ) throws WorkflowException {
         Map map = new HashMap();
-        map.put(CreateSAML2HostedProviderTemplate.P_SP, 
-            Task.generateMetaAliasForSP(realm));
+        map.put(MetaTemplateParameters.P_SP,Task.generateMetaAliasForSP(realm));
         String extendedData =
             CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
             entityId, map, false);
