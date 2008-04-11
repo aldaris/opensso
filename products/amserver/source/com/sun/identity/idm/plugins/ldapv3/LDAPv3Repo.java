@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.38 2008-03-20 22:27:43 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.39 2008-04-11 16:45:17 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1210,6 +1210,67 @@ public class LDAPv3Repo extends IdRepo {
         connPool.close(ld);
         return true;
     }
+
+    private boolean isExists(IdType type, String dn)
+            throws IdRepoException, SSOException {
+      if (debug.messageEnabled()) {
+          debug.message("LDAPv3Repo: isExists called " + type 
+              + ": " + dn);
+      }
+      checkConnPool();
+
+      LDAPEntry foundEntry = null;
+
+        LDAPConnection ld = connPool.getConnection();
+        enableCache(ld);
+        try {
+            foundEntry = ld.read(dn);
+        } catch (LDAPException e) {
+            switch (e.getLDAPResultCode()) {
+            case LDAPException.NO_SUCH_OBJECT:
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo: isExists: " +
+                        "The specified entry does not exist.");
+                }
+                break;
+            case LDAPException.LDAP_PARTIAL_RESULTS:
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo: isExists: Entry served by a " +
+                            "different LDAP server.");
+                }
+                break;
+            case LDAPException.INSUFFICIENT_ACCESS_RIGHTS:
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo: isExists: You do not have the " +
+                            "access rights to perform this operation.");
+                }
+                break;
+            default:
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo: isExists: Error number: "
+                            + e.getLDAPResultCode());
+                    debug.message("LDAPv3Repo: isExists: "
+                            + "Could not read the specified entry.");
+                }
+                break;
+            }
+            connPool.close(ld);
+
+            int resultCode = e.getLDAPResultCode();
+            if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)){
+                String ldapError = Integer.toString(resultCode);
+                Object[] args = {CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
+                IdRepoFatalException ide = new IdRepoFatalException(
+                        IdRepoBundle.BUNDLE_NAME, "311", args);
+                ide.setLDAPErrorCode(ldapError);
+                throw ide;
+            }
+            return false;
+        }
+        connPool.close(ld);
+        return true;
+    }
+
 
     public void removeListener() {
         if (debug.messageEnabled()) {
@@ -2752,10 +2813,28 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
             try {
-                ld.modify(groupDN,  mod);
+                if ( !isExists(IdType.USER, userDN) ) {
+                    String ldapError = Integer.toString(
+                        LDAPException.NO_SUCH_OBJECT);
+                    Object[] args = { CLASS_NAME, userDN, ""};
+                    IdRepoException ide = new IdRepoException(
+                        IdRepoBundle.BUNDLE_NAME, "220", args);
+                    ide.setLDAPErrorCode(ldapError);
+                    throw ide; 
+                }
+                if ( !isExists(IdType.GROUP, groupDN) ) {
+                    String ldapError = Integer.toString(
+                        LDAPException.NO_SUCH_OBJECT);
+                    Object[] args = { CLASS_NAME, groupDN, ""};
+                    IdRepoException ide = new IdRepoException(
+                        IdRepoBundle.BUNDLE_NAME, "220", args);
+                    ide.setLDAPErrorCode(ldapError);
+                    throw ide; 
+                }
                 if (mbrOf != null) {
                     ld.modify(userDN, modMemberOf);
                 }
+                ld.modify(groupDN,  mod);
                 if (cacheEnabled) {
                     ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
                     ldapCache.flushEntries(groupDN, LDAPv2.SCOPE_BASE);
@@ -4782,9 +4861,31 @@ public class LDAPv3Repo extends IdRepo {
                     || (groupCtnrNamingAttr == null)
                     || (groupCtnrNamingAttr.length() == 0)) {
                 dn = groupSearchNamingAttr + "=" + name + orgDN;
+                String filter = constructFilter(groupSearchNamingAttr,
+                    getObjClassFilter(IdType.GROUP), origName);
+                LDAPConnection ld = null;
+                try {
+                    ld = connPool.getConnection();
+                    enableCache(ld);
+                    LDAPSearchResults results = ld.search(orgDN,
+                        LDAPv2.SCOPE_SUB, filter, null, false);
+                    if (results != null && results.hasMoreElements()) {
+                        // Take the first DN
+                        dn = results.next().getDN();
+                    }
+                } catch (Exception lde) {
+                    // Debug the exception and return the auto-constructed DN
+                    if (debug.messageEnabled()) {
+                        debug.message("LDAPv3Repo: getDN user search", lde);
+                    }
+                } finally {
+                    if (ld != null) {
+                        connPool.close(ld);
+                    }
+                }
             } else {
                 dn = groupSearchNamingAttr + "=" + name + groupCtnrNamingAttr
-                        + "=" + groupCtnrValue + "," + orgDN;
+                     + "=" + groupCtnrValue + "," + orgDN;
             }
         } else if (type.equals(IdType.ROLE)) {
             dn = roleSearchNamingAttr + "=" + name + orgDN;
