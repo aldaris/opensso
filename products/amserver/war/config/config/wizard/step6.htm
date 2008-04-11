@@ -2,8 +2,7 @@
     
     function agentPasswordResponse(response) {
 	if (response.responseText == "true") {
-            $('agentPasswordStatus').innerHTML = okImage + 
-                '<small>$page.getLocalizedString("ok.string")</small>';
+            $('agentPasswordStatus').innerHTML = okString;
             $('nextTabButton').disabled = false;
 	} else {
             $('agentPasswordStatus').innerHTML = errorImage +

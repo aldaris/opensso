@@ -25,13 +25,13 @@
 
     function urlValidated( body ) {
         $('nextTabButton').disabled = eval(loadBalancerValid);
-        $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/ok.jpg">';
+        $('loadBalancerStatus').innerHTML = okString;
     }
 
     function urlInvalidated(body) {
         loadBalancerValid = false;
         $('nextTabButton').disabled = true;
-        $('loadBalancerStatus').innerHTML = '<img class="pointer" src="$context/assets/images/error.jpg"> ' + '<small>' + body + '</small>';
+        $('loadBalancerStatus').innerHTML = errorImage+'<small>'+body+'</small>';
     }
 
     function validatePrimaryURL() {
@@ -45,13 +45,13 @@
     <!--                     -->
     function siteNameValidated(body) {
         $('nextTabButton').disabled = eval(loadBalancerValid);
-        $('siteNameStatus').innerHTML = '<img class="pointer" src="$context/assets/images/ok.jpg">';
+        $('siteNameStatus').innerHTML = okString;
     }
 
     function siteNameInvalidated(body) {
         loadBalancerValid = false;
         $('nextTabButton').disabled = true;
-        $('siteNameStatus').innerHTML = '<img class="pointer" src="$context/assets/images/error.jpg"> ' + '<small>' + body + '</small>';
+        $('siteNameStatus').innerHTML = errorImage + '<small>'+body+'</small>';
     }
 
     function validateSiteName() {

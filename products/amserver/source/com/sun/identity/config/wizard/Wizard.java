@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.10 2008-04-01 15:49:22 rajeevangal Exp $
+ * $Id: Wizard.java,v 1.11 2008-04-11 17:02:52 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.config.wizard;
 import com.sun.identity.config.pojos.LDAPStore;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
+import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.setup.HttpServletRequestWrapper;
 import com.sun.identity.setup.HttpServletResponseWrapper;
 import com.sun.identity.setup.SetupProgress;
@@ -242,9 +243,11 @@ public class Wizard extends AjaxPage {
             } else {
                 writeToResponse(AMSetupServlet.getErrorMessage());
             }
+        } catch (ConfiguratorException cfe) {
+            writeToResponse(cfe.getMessage());
         } catch (Exception e) {
             writeToResponse("Error during configuration. Consult debug files for more information");
-            debug.error("error in processRequest: ", e);
+            debug.error("Wizard.createConfig() : error in processRequest: ", e);
         }
         
         setPath(null);

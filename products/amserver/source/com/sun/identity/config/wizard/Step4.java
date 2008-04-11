@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.6 2008-03-07 23:27:58 jonnelson Exp $
+ * $Id: Step4.java,v 1.7 2008-04-11 17:02:52 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class Step4 extends AjaxPage {
                 responseString = "invalid.port.number";
             }
         } else {
-            responseString = "missing.host.name";            
+            responseString = "missing.host.port";            
         }
         writeToResponse(getLocalizedString(responseString));
         setPath(null);
@@ -112,7 +112,7 @@ public class Step4 extends AjaxPage {
             getContext().setSessionAttribute(
                 SetupConstants.USER_STORE_LOGIN_ID, dn);
         } else {
-            responseString = "missing.manager.dn";            
+            responseString = "missing.login.id";            
         }
         writeToResponse(getLocalizedString(responseString));
         setPath(null);
@@ -138,7 +138,7 @@ public class Step4 extends AjaxPage {
             getContext().setSessionAttribute(
                 SetupConstants.USER_STORE_ROOT_SUFFIX, rootsuffix);
         } else {
-            responseString = "missing.rootsuffix";            
+            responseString = "missing.root.suffix";            
         }
         writeToResponse(getLocalizedString(responseString));
         setPath(null);

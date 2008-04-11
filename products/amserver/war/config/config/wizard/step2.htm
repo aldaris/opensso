@@ -24,8 +24,7 @@
     function serverFieldValidated(response) {
         if (response.responseText == "true") { 
             eval(field + "Valid = true;" );
-            $(field + 'Status').innerHTML = okImage +
-                  '<small>$page.getLocalizedString("ok.string")</small>';
+            $(field + 'Status').innerHTML = okString;
         } else {
             eval(field + "Valid = false;" );
             $(field + 'Status').innerHTML = errorImage +

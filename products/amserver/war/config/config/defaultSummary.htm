@@ -11,24 +11,24 @@
         YAHOO.sun.identity.config.options.defaultSummary.hide(); 
     }
     
-    function createConfigResponse(response) {
-        YAHOO.sun.identity.config.options.inProgress.hide();
-        if (response.responseText == "true") {              
-            YAHOO.sun.identity.config.options.confComplete.show();
-        } else {
-            alert("Error: "+response.responseText);
-        }
-    }
+
     function createConfig() {
+        document.getElementById("returnToConfig").style.display = "none";
+        document.getElementById("setupMessage").innerHTML = "";
         YAHOO.sun.identity.config.options.inProgress.show();
-        AjaxUtils.call("$context$path?actionLink=createDefaultConfig", createConfigResponse);         
+
+        var fr1 = window.frames['progressIframe'];
+        if ( fr1 ) {
+            fr1.location = "$context/config/setSetupProgress.jsp";
+        }
+        
+        AjaxUtils.call("$context$path?actionLink=createDefaultConfig", writeConfigResponse);         
     }
     
     
     function defaultAdminPasswordResponse(response) {
 	if (response.responseText == "true") {
-	    $('defaultAdminPasswordStatus').innerHTML = okImage +
-                '<small>$page.getLocalizedString("ok.string")</small>';
+	    $('defaultAdminPasswordStatus').innerHTML = okString;
             defaultAdminFieldsValid = true;
 	} else {
 	    $('defaultAdminPasswordStatus').innerHTML = errorImage +
@@ -51,8 +51,7 @@
 
     function defaultAgentPasswordResponse(response) {
 	if (response.responseText == "true") {
-	    $('defaultAgentPasswordStatus').innerHTML = okImage +
-                '<small>$page.getLocalizedString("ok.string")</small>';
+	    $('defaultAgentPasswordStatus').innerHTML = okString;
 	   defaultAgentFieldsValid = true;
 	} else {
 	   $('defaultAgentPasswordStatus').innerHTML = errorImage +
@@ -143,5 +142,3 @@
         </div>
     </div>
 </div>
-
-

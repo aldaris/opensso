@@ -63,13 +63,20 @@
             // url was a valid fam server
             validServerURL = true;  
             if (resp.embedded == "true") {
+                document.getElementById("replicationPorts").style.display = "";                    
+                document.getElementById("existingPort").disabled = true;
+                var message = "";
                 if (resp.replication == "true") {
-                    document.getElementById("replicationPorts").style.display = "none";
+                    document.getElementById("existingRepPort").disabled = true;
+		    message = '<small>$page.getLocalizedString("existing.port.values.replication")</small>';
                 } else {
-                    document.getElementById("replicationPorts").style.display = "";
+                    document.getElementById("existingRepPort").disabled = false; 
+		    message='<small>$page.getLocalizedString("existing.port.values.noreplication")</small>';
                 }   
+                document.getElementById("replicationMessage").innerHTML= message;
                 document.getElementById("existingPort").value = resp.existingPort;
                 document.getElementById("existingRepPort").value = resp.replicationPort;
+                $('nextTabButton').disabled = false;
             }
         } else{
             // error handling
@@ -82,9 +89,10 @@
     }
     
     function validateHostName() {
-        $('existingHostStatus').innerHTML = "validating url...";
+        $('existingHostStatus').innerHTML = '$page.getLocalizedString("validating.url.string")';
         var call = "$context$path?actionLink=validateHostName";
         var hostname = "&hostName=" + $('existingHost').value;
+        $('nextTabButton').disabled = true;
         AjaxUtils.call(call+hostname, validateServerURL);
     }
 
@@ -262,7 +270,7 @@
                             <input id="encryptionKey" name="encryptionKey" type="text" class="text" style="width:200px" value="$encryptionKey" onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
                             <span id="encryptionKeyStatus"></span>
                         </td>
-                    <ar>   
+                    </tr>   
                     <tr>
                         <td><label for="rootSuffix"><em>*&nbsp;</em>$page.getLocalizedString("root.suffix.label")</label></td>
                         <td>
@@ -321,7 +329,7 @@
                     <tr>
                         <td>&nbsp;</td>
                         <td>
-                            <small>URL of the existing FAM server. ex: http://server.co.com:8080/opensso</small>                    
+                            <small>$page.getLocalizedString("url.server.help")</small>                    
                         </td>
                     </tr>              
                 </table>
@@ -329,7 +337,7 @@
             
             <!-- replication ports -->
             <div id="replicationPorts" style="display:none">
-                <small>The existing FAM server is not setup for replication. Please confirm the following port values:</small>
+                <small>$page.getLocalizedString("local.port.values")</small>
                 <table class="temp">       
                     <tr>
                         <td><label for="localConfigPort"><em>*&nbsp;</em>$page.getLocalizedString("local.port.label")</label></td>
@@ -351,6 +359,11 @@
                             <span id="localRepPortStatus"></span>                       
                         </td>
                     </tr>  
+                    <tr>
+                        <td colspan="2">
+                            <span id="replicationMessage"></span>
+                        </td>
+                    </tr>
                     <tr>
                         <td><label for="existingPort"><em>*&nbsp;</em>$page.getLocalizedString("existing.port.label")</label></td>
                         <td>
@@ -385,3 +398,4 @@
         </div>
     </div>
 </div>
+

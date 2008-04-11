@@ -2,8 +2,10 @@
     YAHOO.namespace("sun.identity.config.options");
 
     var okImage = '<img class="pointer" src="$context/assets/images/ok.jpg">';
+    var okString = okImage + '<small>$page.getLocalizedString("ok.string")</small>';
     var errorImage = '<img class="pointer" src="$context/assets/images/error.jpg">';
-
+    var userStoreChoice;
+    
     //convenient alias:
     var $ = YAHOO.util.Dom.get;
 
@@ -92,6 +94,7 @@
             YAHOO.sun.identity.config.options.defaultSummary.hide(); 
             YAHOO.sun.identity.config.options.confComplete.show();
         } else {
+        
             YAHOO.sun.identity.config.options.defaultSummary.show();
         }
     }
@@ -114,7 +117,7 @@
         YAHOO.sun.identity.config.options.inProgress.show();
         AjaxUtils.doPost("defaultSummary", "$context/config/defaultSummary.htm", AjaxUtils.serializeForm("defaultForm"), onDefaultSummarySuccess, onDefaultSummaryFailure);
     }
-    
+
     function renderDefaultSummary() {
         YAHOO.sun.identity.config.options.defaultSummary = new YAHOO.widget.Panel("defaultSummary", { width:"450px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.defaultSummary.render();
@@ -158,9 +161,34 @@
     
     /* #end
      */
+     
+    function writeConfigResponse(response) {
+        if (response.responseText == "true") {              
+            YAHOO.sun.identity.config.options.inProgress.hide();
+            YAHOO.sun.identity.config.options.confComplete.show();
+        } else {
+	    document.getElementById("returnToConfig").style.display = "";
+	    document.getElementById("setupMessage").innerHTML = errorImage + "&nbsp;" + response.responseText;
+        }
+    }
+    
+    var isProgressShow = false;
+    function toggleProgressDiv() {
+        var obj = document.getElementById("progressControl"); 
+        var obj1 = document.getElementById("progressDiv"); 
+        if (isProgressShow == true ) {
+            obj.innerHTML = "Show Progress";
+            obj1.style.display ="none";
+            isProgressShow = false;
+        } else {
+            obj.innerHTML = "Hide progress log";
+            obj1.style.display="block";
+            isProgressShow = true;
+        }
+    }   
 
     function init() {
-        YAHOO.sun.identity.config.options.inProgress = new YAHOO.widget.Panel("inProgress", { fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.inProgress = new YAHOO.widget.Panel("inProgress", { width:"700px", fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.inProgress.render();
         
         YAHOO.sun.identity.config.options.confComplete = new YAHOO.widget.Panel("confComplete", { fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
@@ -199,35 +227,10 @@
         AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", renderWizard);
         /* #end
         */
-    }
+    }        
         
     YAHOO.util.Event.onDOMReady(init);
-
 </script>
-    <script language="Javascript">
-        function addProgressText(str) 
-        { 
-            var obj = document.getElementById("progressText"); 
-            obj.innerHTML += str;
-            var obj = document.getElementById("progressP");
-            obj.scrollTop = obj.scrollHeight; 
-        }
-        var isProgressShow = false;
-        function toggleProgressDiv()
-        {
-            var obj = document.getElementById("progressControl"); 
-            var obj1 = document.getElementById("progressDiv"); 
-            if (isProgressShow == true ) {
-                obj.innerHTML = "Show Progress";
-                obj1.style.display ="none";
-                isProgressShow = false;
-            } else {
-                obj.innerHTML = "Hide progress log";
-                obj1.style.display="block";
-                isProgressShow = true;
-            }
-        }
-    </script>
 
 <link rel="stylesheet" type="text/css" href="$context/assets/css/Specific/optionUpgrade.css" />
 
@@ -342,10 +345,22 @@
                 <br/>
                 <h2>$page.getLocalizedString("configurator.progress")</h2>
                 <img src="$context/assets/images/rel_interstitial_loading.gif" />
-                <p><a href="#" onclick="toggleProgressDiv()" id="progressControl">Show progress log</a>
-                <div id="progressDiv" style="display:none">
+
+ <br>
+
+                <div id="progressDiv">
                    <iframe id="progressIframe" name="progressIframe"  src="$context/assets/images/rel_interstitial_loading.gif" height=220 width=600 scrolling="no" frameborder="0">This browser cannot dipslay iframes.</iframe>
                 </div>
+               	<br>
+		<hr>
+		<br> <br>
+		<span id="setupMessage"></span>
+		<br>
+		<br>
+		<div id="returnToConfig">
+                    <a href="#" onClick="YAHOO.sun.identity.config.options.inProgress.hide(); return false;">$page.getLocalizedString("return.config.link")</a>
+		</div>
+		<br>
             </div>
         </div>
     </div>
@@ -359,8 +374,9 @@
                 <h1>$page.getLocalizedString("configuration.option1.complete.message")</h1>
                 <br/>
                 <p align="center" class="blueSmall">
-                    <a class="pointer" href="#" onclick="launchConsole(); return false">$page.getLocalizedString("go.to.login.screen")</a>
+                    <a href="#" onclick="launchConsole(); return false">$page.getLocalizedString("go.to.login.screen")</a>
                 </div>
         </div>
     </div>
 #end
+

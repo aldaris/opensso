@@ -20,9 +20,9 @@
 
             var usingCustomUserStore = false;
             var userStoreNameValid = false;
-            var userStoreHostValid = false;
+            //var userStoreHostValid = false;
             var userStoreBaseDNValid = false;
-            var userStoreLoginIdValid = false;
+           // var userStoreLoginIdValid = false;
 
             // generic validation code used by all pages. This will automatically
             // set the status response, plus set boolean flags for each field
@@ -38,8 +38,7 @@
             function fieldValidated(response) {
                 if (response.responseText == "true") { 
                     eval(field + "Valid = true;" );
-                    $(field + 'Status').innerHTML = okImage +
-                          '<small>$page.getLocalizedString("ok.string")</small>';
+                    $(field + 'Status').innerHTML = okString;
                 } else {
                     eval(field + "Valid = false;" );
                     $(field + 'Status').innerHTML = errorImage +
@@ -151,27 +150,15 @@
                 document.location = "$context/commonTasks.htm";
             }
 
-            function onWriteConfigurationResponse( response ) {            
-                YAHOO.sun.identity.config.options.inProgress.hide();
-                var fr1 = window.frames['progressIframe'];
-                if ( fr1 ) {
-                    fr1.location = "$context/assets/images/rel_interstitial_loading.gif";
-                }
-                if (response.responseText == "true") {
-                    YAHOO.sun.identity.config.options.confComplete.show();                    
-                } else {
-                    // TODO - show a specific (nice looking) error message dialog 
-                    // that explains why writing config failed.
-                    alert(response.responseText);                   
-                }
+            function writeConfigurationAsync() {
+                AjaxUtils.call("$context$path?actionLink=createConfig", writeConfigResponse );
             }
-
-            function writeConfigurationAsync()
-            {
-                AjaxUtils.call( "$context$path?actionLink=createConfig", onWriteConfigurationResponse );
-            }
+            
             function writeConfiguration() {
+	        document.getElementById("returnToConfig").style.display = "none";
+    	        document.getElementById("setupMessage").innerHTML = "";
                 YAHOO.sun.identity.config.options.inProgress.show();
+                
                 var fr1 = window.frames['progressIframe'];
                 if ( fr1 ) {
                     fr1.location = "$context/config/setSetupProgress.jsp";
@@ -237,7 +224,6 @@
             }
 
             function adjustNextTabButton( type ) {
-            alert ("adjustNextTabButton");
                 var allValidated = false;
                 if ( type == 'config' ) {
                     allValidated = isCustomConfigStoreValid();
@@ -250,7 +236,7 @@
             function storeServerValidated( type, response ) {
                 if( response.responseText == "true" ) {
                     eval( type + "StoreHostValid = true;" );
-                    $(type + 'StoreHostStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>OK</small>';
+                    $(type + 'StoreHostStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' + '<small>$page.getLocalizedString("ok.string")</small>';
                 } else {
                     eval( type + "StoreHostValid = true;" );
                     $(type + 'StoreHostStatus').innerHTML = response.responseText;
@@ -262,7 +248,7 @@
                 if( response.responseText == "true" ) {
                     eval( type + "StoreBaseDNValid = true;" );
                     $(type + 'StoreBaseDNStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                           '<small>OK</small>';
+                                                           '<small>$page.getLocalizedString("ok.string")</small>';
                 } else {
                     eval( type + "StoreBaseDNValid = true;" );
                     $(type + 'StoreBaseDNStatus').innerHTML = response.responseText;
@@ -274,7 +260,7 @@
                 if( response.responseText == "true" ) {
                     eval( type + "StoreLoginIdValid = true;" );
                     $(type + 'StoreLoginIdStatus').innerHTML = '<img class="pointer" src="$context/assets/images/check_true.JPG"> ' +
-                                                           '<small>OK</small>';
+                                                           '<small>$page.getLocalizedString("ok.string")</small>';
                 } else {
                     eval( type + "StoreLoginIdValid = true;" );
                     $(type + 'StoreLoginIdStatus').innerHTML = response.responseText;
@@ -438,4 +424,3 @@
                 
             </div>
         </div>
-

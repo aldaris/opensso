@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.4 2008-03-20 20:50:21 jonnelson Exp $
+ * $Id: Step7.java,v 1.5 2008-04-11 17:02:52 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,8 @@ public class Step7 extends AjaxPage {
         add("userHostPort", tmp);
         tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX);        
         add("userRootSuffix", tmp);
+        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_LOGIN_ID);
+        add("userLoginID", tmp);
         
         // Load Balancer Properties
         add("loadBalancerHost", 

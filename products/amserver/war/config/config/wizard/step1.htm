@@ -2,8 +2,7 @@
 
     function adminPasswordResponse(response) {
 	if (response.responseText == "true") {
-            $('adminPasswordStatus').innerHTML = okImage + 
-                '<small>$page.getLocalizedString("ok.string")</small>';
+            $('adminPasswordStatus').innerHTML = okString;
             $('nextTabButton').disabled = false;
 	} else {
             $('adminPasswordStatus').innerHTML = errorImage +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.8 2008-03-25 04:45:08 jonnelson Exp $
+ * $Id: Step3.java,v 1.9 2008-04-11 17:02:52 jonnelson Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,10 +56,6 @@ public class Step3 extends LDAPStoreWizardPage {
     private String localRepPort;
     
     public Step3() {
-        setType("config");
-        setTypeTitle("Configuration");
-        setPageNum(3);
-        setStoreSessionName(LDAP_STORE_SESSION_KEY);
     }
     
     public void onInit() {
@@ -281,14 +277,8 @@ public class Step3 extends LDAPStoreWizardPage {
      * values in the request so they can be used to configure the exisiting
      * FAM server.
      */
-    private void setupDSParams(Map data) {
-        String tmp = (String)data.get(BootstrapData.DS_HOST);
-        getContext().setSessionAttribute("configStoreHost", tmp);
-        
-        //tmp = (String)data.get("dsport");
-        //    getContext().setSessionAttribute("configStorePort", tmp);        
-        
-        tmp = (String)data.get(BootstrapData.DS_BASE_DN);
+    private void setupDSParams(Map data) {             
+        String tmp = (String)data.get(BootstrapData.DS_BASE_DN);
         getContext().setSessionAttribute("rootSuffix", tmp);        
         
         tmp = (String)data.get(BootstrapData.DS_MGR);
