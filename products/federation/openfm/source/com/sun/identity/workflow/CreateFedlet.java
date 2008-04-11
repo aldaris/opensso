@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.1 2008-04-04 04:30:19 veiming Exp $
+ * $Id: CreateFedlet.java,v 1.2 2008-04-11 07:13:01 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,9 +119,16 @@ public class CreateFedlet
     public String execute(Locale locale, Map params)
         throws WorkflowException {
         validateParameters(params);
+        String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
+        entityId = entityId.replaceAll("/", "%2F");
         String workDir = SystemProperties.get(SystemProperties.CONFIG_PATH) +
-            "/work/" + Long.toString(System.currentTimeMillis());
+            "/myfedlets/" + entityId;
         File dir = new File(workDir);
+        if (dir.exists()) {
+            Object[] param = {workDir};
+            throw new WorkflowException("directory.already.exist", param);
+        }
+        
         if (!dir.getParentFile().exists())  {
             dir.getParentFile().mkdir();
         }

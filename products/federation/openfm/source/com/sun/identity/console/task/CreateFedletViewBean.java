@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletViewBean.java,v 1.1 2008-04-04 04:30:18 veiming Exp $
+ * $Id: CreateFedletViewBean.java,v 1.2 2008-04-11 07:13:01 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,9 +54,6 @@ import javax.servlet.http.HttpServletRequest;
 public class CreateFedletViewBean
     extends AMPrimaryMastHeadViewBean
 {
-    private static final String TAG_TABLE =
-        "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" title=\"\">";
-
     public static final String DEFAULT_DISPLAY_URL =
         "/console/task/CreateFedlet.jsp";
     private static final String PAGETITLE = "pgtitle";

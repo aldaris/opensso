@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.1 2008-04-04 04:30:20 veiming Exp $
+   $Id: CreateFedlet.jsp,v 1.2 2008-04-11 07:13:01 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -125,7 +125,7 @@
 </cc:form>
 </cc:header>
 </div>
-<div id="dlg" class="dvs"></div>
+<div id="dlg" class="dvs" style="width:600px; margin-left:-300px"></div>
 
 <script language="javascript">
 
@@ -162,7 +162,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var idp = frm.elements['CreateFedlet.choiceIDP'].value;
         var realm = frm.elements['CreateFedlet.tfRealm'].value;
         var entityId = frm.elements['CreateFedlet.tfEntityId'].value;
-        var assertConsumer = frm.elements['CreateFedlet.tfAssertConsumer'].value;
+        var assertConsumer = frm.elements['CreateFedlet.tfAssertConsumer'].value + '/fedletAssertionConsumer.jsp';
 
         return "&realm=" + escape(realm) +
             "&cot=" + escape(cot) +
