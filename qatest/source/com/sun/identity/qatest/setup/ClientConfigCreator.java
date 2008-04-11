@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.18 2008-03-05 18:00:06 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.19 2008-04-11 05:09:39 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,11 +103,12 @@ public class ClientConfigCreator {
                     KEY_ATT_MULTIPROTOCOL_ENABLED).equalsIgnoreCase("true")) {
                 getDefaultValues(testDir, serverName1, 
                         configDef1.getString(TestConstants.KEY_ATT_IDFF_SP), 
-                        properties_idff);
+                        serverName2, properties_idff);
                 getDefaultValues(testDir, serverName1, 
                         configDef1.getString(TestConstants.KEY_ATT_WSFED_SP), 
                         properties_wsfed);
                 getDefaultValues(testDir, serverName1, serverName2, 
+                        configDef1.getString(TestConstants.KEY_ATT_IDFF_SP),
                         properties_saml);
             } else {
                 getDefaultValues(testDir, serverName1, serverName2, 
@@ -236,6 +237,7 @@ public class ClientConfigCreator {
      * Method to do the actual transfer of properties from  default
      * configuration files to single multi server execution mode config data
      * file.
+     * serverName3 will be used as IDP proxy
      */
     private void getDefaultValues(String testDir, String serverName1,
             String serverName2, Map properties_protocol)
@@ -436,6 +438,74 @@ public class ClientConfigCreator {
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
             properties_protocol.put("sp_" + key, value);
         }
+    }
+    
+    public void getDefaultValues(String testDir, String serverName1, String 
+            serverName2, String serverName3, Map properties_protocol)
+            throws Exception
+    {
+        getDefaultValues(testDir, serverName1, serverName2, properties_protocol);
+        PropertyResourceBundle configDef3 = new PropertyResourceBundle(
+            new FileInputStream(testDir + fileseparator + "resources" +
+                fileseparator + "Configurator-" +
+                serverName3 + ".properties"));
+
+        String strNamingURL = configDef3.getString(
+                TestConstants.KEY_ATT_NAMING_SVC);
+
+        int iFirstSep = strNamingURL.indexOf(":");
+        String strProtocol = strNamingURL.substring(0, iFirstSep);  
+
+        int iSecondSep = strNamingURL.indexOf(":", iFirstSep + 1);
+        String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
+
+        int iThirdSep = strNamingURL.indexOf(uriseparator, iSecondSep + 1);
+        String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
+
+        int iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
+        String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
+                iFourthSep);
+
+        for (Enumeration e = configDef3.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)configDef3.getString(key);
+
+            if (value.equals("@COPY_FROM_CONFIG@")) {
+                if (key.equals(TestConstants.KEY_ATT_PROTOCOL))
+                    value = strProtocol;
+                else if (key.equals(TestConstants.KEY_ATT_HOST))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_PORT))
+                    value = strPort;
+                else if (key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI))
+                    value = strURI;
+                else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_ENTITY_NAME))
+                    value = strHost;
+                else if (key.equals(TestConstants.KEY_ATT_COT))
+                    value = "proxycot";
+            }
+            if (key.equals(TestConstants.KEY_ATT_METAALIAS)) {
+                if (!configDef3.getString(TestConstants.
+                        KEY_ATT_EXECUTION_REALM).endsWith("/")) {
+                    value = configDef3.getString(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
+                            value;
+                } else {
+                    value = configDef3.getString(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + 
+                            value;
+                }
+            properties_protocol.put("idpProxy_sp_" + key, value + "proxysp");
+            properties_protocol.put("idpProxy_idp_" + key, value + "proxyidp");
+            }
+            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
+                    !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
+                    !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
+            properties_protocol.put("idpProxy_" + key, value);
+        }       
     }
 
     /**
