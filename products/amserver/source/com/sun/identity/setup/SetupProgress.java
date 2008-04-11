@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProgress.java,v 1.4 2008-04-01 15:49:22 rajeevangal Exp $
+ * $Id: SetupProgress.java,v 1.5 2008-04-11 07:14:43 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,7 +116,6 @@ public class SetupProgress
         if (param != null)
             istr +=param;
         
-        System.out.println(istr);
         try {
             if (writer != null) {
                 
