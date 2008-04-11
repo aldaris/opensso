@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.23 2008-04-05 16:41:09 pawand Exp $
+ * $Id: LoginState.java,v 1.24 2008-04-11 00:35:00 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1062,7 +1062,7 @@ public class LoginState {
      *
      * @param subject
      * @param ac
-     * @param LoginContext
+     * @param loginContext instance of JAAS <code>LoginContext</code>
      * @return true if user session is activated successfully 
      */
     public boolean activateSession(Subject subject, AuthContextLocal ac, Object

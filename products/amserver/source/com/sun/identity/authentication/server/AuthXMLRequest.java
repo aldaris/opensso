@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequest.java,v 1.6 2008-04-05 16:42:30 pawand Exp $
+ * $Id: AuthXMLRequest.java,v 1.7 2008-04-11 00:33:55 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -203,7 +203,7 @@ public class AuthXMLRequest {
      * Sets the attribute for valid session 
      * and no session upgrade in request.
      *
-     * @param aValidSessionNoUpgrade.
+     * @param aValidSessionNoUpgrade Session is valid No upgrade needed.
      */
     public void setValidSessionNoUpgrade(boolean 
         aValidSessionNoUpgrade) {

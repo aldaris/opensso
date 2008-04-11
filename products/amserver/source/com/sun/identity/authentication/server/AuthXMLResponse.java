@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.7 2008-04-05 16:42:30 pawand Exp $
+ * $Id: AuthXMLResponse.java,v 1.8 2008-04-11 00:33:56 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -510,7 +510,7 @@ public class AuthXMLResponse {
     /**
      * Sets previous authentication context.
      *
-     * @param aOldAuthContext previous authentication context object.
+     * @param aOldSession previous Internal Session
      */
     public void setOldSession(InternalSession aOldSession) {
         this.oldSession = aOldSession;
@@ -520,7 +520,7 @@ public class AuthXMLResponse {
      * Sets the attribute for valid session
      * and no session upgrade in request.
      *
-     * @param aValidSessionNoUpgrade.
+     * @param aValidSessionNoUpgrade Session is valid no upgrade needed
      */
     public void setValidSessionNoUpgrade(boolean
         aValidSessionNoUpgrade) {
