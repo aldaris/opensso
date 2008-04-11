@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.2 2008-01-31 22:06:28 rmisra Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.3 2008-04-11 17:09:31 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -300,7 +300,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
             xmlfile = baseDir +
                     "MultiProtocolfederateUsers_SAMLv2SPSSOInit.xml";
             SAMLv2Common.getxmlSPInitSSO(xmlfile, samlv2ConfigMap, "artifact",
-                    false);
+                    false, false);
             log(Level.FINE, "federateSAMLv2Users", "Run " + xmlfile);
             task = new DefaultTaskHandler(xmlfile);
             page = task.execute(webClient);
