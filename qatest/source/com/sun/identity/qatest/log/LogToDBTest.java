@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.1 2008-03-17 05:35:34 kanduls Exp $
+ * $Id: LogToDBTest.java,v 1.2 2008-04-11 04:49:32 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,7 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
     private static String testCaseInfoFileName = "LogToDBTest";
     private String curTestName;
     private String restore;
+    private String modifyServConfig;
     private String tableName;
     
     /** Creates a new instance of LogToDBTest */
@@ -105,10 +106,11 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
      * database.
      */
     @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    @Parameters({"testName", "createUser", "restore"})
-    public void setup(String testName, String createUser, String restore) 
+    @Parameters({"testName", "createUser", "restore", "modifyServConfig"})
+    public void setup(String testName, String createUser, String restore, 
+            String modifyServConfig)
     throws Exception {
-        Object[] params = {testName, createUser, restore};
+        Object[] params = {testName, createUser, restore, modifyServConfig};
         entering("setup", params);
         try {
             if (dbInit) {
@@ -116,6 +118,7 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     configure();
                 }
                 this.restore = restore;
+                this.modifyServConfig = modifyServConfig;
                 curTestName = testName;
                 if (createUser.equals("true")) {
                     userId = testCaseInfo.getString(curTestName + "." + 
@@ -132,7 +135,7 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                 }
                 assert configured;
             } else {
-                log(Level.SEVERE, "setup ", "DB is not initialized. ");
+                log(Level.SEVERE, "setup", "DB is not initialized. ");
                 assert false;
             }
         } catch (Exception ex) {
@@ -154,14 +157,16 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
             Reporter.log("Test Name : " + curTestName);
             Reporter.log("Test Description : " + testCaseInfo.getString(
                     curTestName + "." + LOGTEST_KEY_DESCRIPTION));
-            Reporter.log("Test action :  modifyLogConfig");
-            String attrValPair =  testCaseInfo.getString(curTestName + "." +
-                    LOGTEST_KEY_ATTR_VAL_PAIR);
-            Map logSvcMap = attributesToMap(attrValPair);
-            Reporter.log("Test configuration : " + logSvcMap);
-            log(Level.FINEST, "modifyLogConfig", 
-                    "Updating service config : " + logSvcMap);
-            assert (updateLogConfig(adminSSOToken, logSvcMap));
+            if (modifyServConfig.equals("true")) {
+                Reporter.log("Test action :  modifyLogConfig");
+                String attrValPair =  testCaseInfo.getString(curTestName + "." +
+                        LOGTEST_KEY_ATTR_VAL_PAIR);
+                Map logSvcMap = attributesToMap(attrValPair);
+                Reporter.log("Test configuration : " + logSvcMap);
+                log(Level.FINEST, "modifyLogConfig",
+                        "Updating service config : " + logSvcMap);
+                assert (updateLogConfig(adminSSOToken, logSvcMap));
+            }
         } catch (Exception ex) {
             log(Level.SEVERE, "modifyLogConfig", 
                     "Error Modifying log service : " + ex.getMessage());
@@ -186,18 +191,21 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     LOGTEST_KEY_MODULE_NAME);
             tableName = testCaseInfo.getString(curTestName + "." + 
                     LOGTEST_KEY_TABLE_NAME);
-            String level = testCaseInfo.getString(curTestName + "." +
-                    LOGTEST_KEY_LEVEL);
+            String loggerLevel = testCaseInfo.getString(curTestName + "." +
+                    LOGTEST_KEY_LOGGER_LEVEL);
+            String recordLevel = testCaseInfo.getString(curTestName + "." +
+                    LOGTEST_KEY_RECORD_LEVEL);
             Reporter.log("Test Name : " + curTestName);
             Reporter.log("Test Description : " + testCaseInfo.getString(
                     curTestName + "." + LOGTEST_KEY_DESCRIPTION));
             Reporter.log("Test action :  logMessageToDB");
-            Reporter.log("Test log level : " + level);
+            Reporter.log("Test logger log level : " + loggerLevel);
+            Reporter.log("Test record log level : " + recordLevel);
             Reporter.log("Test log message : " + msgStr);
             Reporter.log("Test table name : " + tableName);
             log(Level.FINE, "logMessageToDB", "Logging message : " + msgStr);
             assert(writeLog(adminSSOToken, userSSOToken, tableName, msgStr, 
-                    moduleName, getLevel(level)));
+                    moduleName, getLevel(loggerLevel), getLevel(recordLevel)));
         } catch (Exception ex) {
              log(Level.SEVERE, "logMessageToDB", "Error writing log : " + 
                      ex.getMessage());

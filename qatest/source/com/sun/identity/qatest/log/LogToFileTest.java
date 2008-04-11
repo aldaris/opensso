@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToFileTest.java,v 1.1 2008-03-17 05:35:34 kanduls Exp $
+ * $Id: LogToFileTest.java,v 1.2 2008-04-11 04:49:32 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
     private static String testCaseInfoFileName = "LogToFileTest";
     private String curTestName;
     private String restore;
+    private String modifyServConfig;
     
     /** Creates a new instance of LogToFileTest */
     public LogToFileTest() 
@@ -76,13 +77,15 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
      * This function creates the test user.
      */
     @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    @Parameters({"testName", "createUser", "restore"})
-    public void setup(String testName, String createUser, String restore)
+    @Parameters({"testName", "createUser", "restore", "modifyServConfig"})
+    public void setup(String testName, String createUser, String restore, 
+            String modifyServConfig)
     throws Exception {
-        Object[] params = {testName, createUser, restore};
+        Object[] params = {testName, createUser, restore, modifyServConfig};
         entering("setup", params);
         try {
             this.restore = restore;
+            this.modifyServConfig = modifyServConfig;
             curTestName = testName;
             if (createUser.equals("true")) {
                 userId = testCaseInfo.getString(curTestName + "." + 
@@ -97,7 +100,7 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
                 }
             }
         } catch (Exception ex) {
-            log(Level.SEVERE, "setup", "Setup failed ");
+            log(Level.SEVERE, "setup", "Setup failed :" + ex.getMessage());
             cleanUp();
             throw ex;
         }
@@ -115,16 +118,22 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
             Reporter.log("Test Name : " + curTestName);
             Reporter.log("Test Description : " + testCaseInfo.getString(
                     curTestName + "." + LOGTEST_KEY_DESCRIPTION));
-            Reporter.log("Test action :  modifyLogConfig");
-            String attrValPair =  testCaseInfo.getString(curTestName + "." +
-                    LOGTEST_KEY_ATTR_VAL_PAIR);
-            Map logSvcMap = attributesToMap(attrValPair);
-            Reporter.log("Test configuration : " + logSvcMap);
-            log(Level.FINEST, "modifyLogConfig", 
-                    "Updating service config " + logSvcMap);
-            assert (updateLogConfig(adminSSOToken, logSvcMap));
+            if (modifyServConfig.equals("true")) {
+                Reporter.log("Test action :  modifyLogConfig");
+                String attrValPair =  testCaseInfo.getString(curTestName + "." +
+                        LOGTEST_KEY_ATTR_VAL_PAIR);
+                Map logSvcMap = attributesToMap(attrValPair);
+                Reporter.log("Test configuration : " + logSvcMap);
+                log(Level.FINEST, "modifyLogConfig",
+                        "Updating service config " + logSvcMap);
+                assert (updateLogConfig(adminSSOToken, logSvcMap));
+            } else {
+                log(Level.FINEST, "modifyLogConfig",
+                        "Using previours testcase service configuration. ");
+            }
         } catch (Exception ex) {
-            log(Level.SEVERE, "testLogging", "Error Modifying log service");
+            log(Level.SEVERE, "testLogging", "Error Modifying log service :" +
+                    ex.getMessage());
             cleanUp();
             throw ex;
         } 
@@ -140,26 +149,29 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
     throws Exception {
         entering("logMessage", null);
         try {
-            
             String msgStr = testCaseInfo.getString(curTestName + "." +
                     LOGTEST_KEY_MESSAGE);
             String moduleName = testCaseInfo.getString(curTestName + "." +
                     LOGTEST_KEY_MODULE_NAME);
             String fileName = testCaseInfo.getString(curTestName + "." + 
                     LOGTEST_KEY_FILE_NAME);
-            String level = testCaseInfo.getString(curTestName + "." +
-                    LOGTEST_KEY_LEVEL);
+            String loggerLevel = testCaseInfo.getString(curTestName + "." +
+                    LOGTEST_KEY_LOGGER_LEVEL);
+            String recordLevel = testCaseInfo.getString(curTestName + "." +
+                    LOGTEST_KEY_RECORD_LEVEL);
             Reporter.log("Test Name : " + curTestName);
             Reporter.log("Test Description : " + testCaseInfo.getString(
                     curTestName + "." + LOGTEST_KEY_DESCRIPTION));
             Reporter.log("Test action :  logMessage");
-            Reporter.log("Test log level : " + level);
+            Reporter.log("Test logger log level : " + loggerLevel);
+            Reporter.log("Test record log level : " + recordLevel);
             Reporter.log("Test log message : " + msgStr);
             log(Level.FINE, "logMessage", "Logging message " + msgStr);
             assert(writeLog(adminSSOToken, userSSOToken, fileName, msgStr, 
-                    moduleName, getLevel(level)));
+                    moduleName, getLevel(loggerLevel), getLevel(recordLevel)));
         } catch (Exception ex) {
-             log(Level.SEVERE, "logMessage", "Error writing log ");
+             log(Level.SEVERE, "logMessage", "Error writing log :" + 
+                     ex.getMessage());
              cleanUp();
              throw ex;
         }

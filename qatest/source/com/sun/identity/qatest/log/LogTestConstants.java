@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogTestConstants.java,v 1.1 2008-03-17 05:35:34 kanduls Exp $
+ * $Id: LogTestConstants.java,v 1.2 2008-04-11 04:49:31 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,7 +37,8 @@ public interface LogTestConstants {
     static final String LOGTEST_KEY_FILE_NAME = "file_name";
     static final String LOGTEST_KEY_MESSAGE = "message";
     static final String LOGTEST_KEY_MODULE_NAME = "module_name";
-    static final String LOGTEST_KEY_LEVEL = "level";
+    static final String LOGTEST_KEY_LOGGER_LEVEL = "logger_level";
+    static final String LOGTEST_KEY_RECORD_LEVEL = "record_level";
     static final String LOGTEST_KEY_TABLE_NAME="table_name";
     static final String LOGTEST_KEY_LOG_LOCATION = 
             "iplanet-am-logging-location";

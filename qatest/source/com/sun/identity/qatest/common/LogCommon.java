@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogCommon.java,v 1.1 2008-03-17 05:49:23 kanduls Exp $
+ * $Id: LogCommon.java,v 1.2 2008-04-11 04:47:19 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,24 +96,46 @@ public class LogCommon extends TestCommon {
     }
     
     /**
+     * This method writes the log to the server using default logger level
+     * as Level.INFO.
+     * @param loggerToken Admin token who have logging permissions.
+     * @param userToken user token who wants to generate log message.
+     * @param logFileName File name where logs has to be written.
+     * @param message Log message to be written.
+     * @param moduleName Module to name which is generating logs.
+     * @param recordLevel Level to be set for log record.
+     * @return true if modification is success else false.
+     */
+    public boolean writeLog(SSOToken loggerToken, SSOToken userToken, 
+            String logFileName, String message, String moduleName, 
+            Level recordLevel) 
+    throws Exception {
+        return writeLog(loggerToken, userToken, logFileName, message, 
+                moduleName, Level.INFO, recordLevel);
+    }
+    
+    /**
      * This method writes the log to the server.
      * @param loggerToken Admin token who have logging permissions.
      * @param userToken user token who wants to generate log message.
      * @param logFileName File name where logs has to be written.
      * @param message Log message to be written.
      * @param moduleName Module to name which is generating logs.
-     * @param level Log level.
+     * @param loggerLevel Level to set for the logger.
+     * @param recordLevel Level to set for the log record.
      * @return true if modification is success else false.
      */
     public boolean writeLog(SSOToken loggerToken, SSOToken userToken, 
-            String logFileName, String message, String moduleName, Level level)
+            String logFileName, String message, String moduleName, 
+            Level loggerLevel, Level recordLevel)
     throws Exception {
         try {
             LogRecord logRecord = 
-                new LogRecord(level, message, userToken);
+                new LogRecord(recordLevel, message, userToken);
             logRecord.addLogInfo("ModuleName", moduleName);
             Logger logger = (Logger)Logger.getLogger(logFileName);
             log(Level.FINE, "writeLog", "Writing message : " + message);
+            logger.setLevel(loggerLevel);
             logger.log(logRecord, loggerToken);
         } catch (Exception ex) {
             log (Level.SEVERE, "writeLog", "Writing log failed : " +
@@ -197,34 +219,36 @@ public class LogCommon extends TestCommon {
             Statement selectSt = con.createStatement();
             ResultSet results = selectSt.executeQuery("SELECT * FROM " + 
                     logName + " ORDER BY TIME DESC LIMIT 1");
-            results.last();
-            lastRec = new StringBuffer(results.getString("TIME"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("DATA"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("MODULENAME"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("DOMAIN"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("LOGLEVEL"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("LOGINID"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("IPADDR"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("LOGGEDBY"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("HOSTNAME"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("MESSAGEID"));
-            lastRec.append(" ");
-            lastRec.append(results.getString("CONTEXTID"));
+            if (results.last()) {
+                lastRec = new StringBuffer(results.getString("TIME"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("DATA"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("MODULENAME"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("DOMAIN"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("LOGLEVEL"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("LOGINID"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("IPADDR"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("LOGGEDBY"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("HOSTNAME"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("MESSAGEID"));
+                lastRec.append(" ");
+                lastRec.append(results.getString("CONTEXTID"));
+                return lastRec.toString();
+            }
         } catch (Exception ex){
             log(Level.SEVERE, "readLastLogEntry", 
                     "Error getting last record : " + ex.getMessage());
             throw ex;
         }
-        return lastRec.toString();
+        return null;
     }
     
     /**
@@ -249,7 +273,8 @@ public class LogCommon extends TestCommon {
         } else if (level.equalsIgnoreCase("warning")) {
             return Level.WARNING;
         } else {
-           throw new RuntimeException("Level type " + level + " supported.");
+           throw new RuntimeException("Level type " + level + 
+                   " not supported.");
          }
     }
     
