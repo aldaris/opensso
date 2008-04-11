@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityCommand.java,v 1.2 2007-02-02 18:05:34 veiming Exp $
+ * $Id: IdentityCommand.java,v 1.3 2008-04-11 22:54:17 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,19 +25,14 @@
 package com.sun.identity.cli.idrepo;
 
 
-import com.iplanet.sso.SSOException;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.delegation.DelegationPrivilege;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdSearchControl;
-import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
-import java.text.MessageFormat;
+import com.sun.identity.idm.IdUtils;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -84,20 +79,11 @@ public abstract class IdentityCommand extends AuthenticatedCommand {
     protected IdType convert2IdType(String idType)
         throws CLIException
     {
-        if (IdType.USER.getName().equalsIgnoreCase(idType)) {
-            return IdType.USER;
-        } else if (IdType.AGENT.getName().equalsIgnoreCase(idType)) {
-            return IdType.AGENT;
-        } else if (IdType.FILTEREDROLE.getName().equalsIgnoreCase(idType)) {
-            return IdType.FILTEREDROLE;
-        } else if (IdType.GROUP.getName().equalsIgnoreCase(idType)) {
-            return(IdType.GROUP);
-        } else if (IdType.ROLE.getName().equalsIgnoreCase(idType)) {
-            return(IdType.ROLE);
-        } else {
-            String[] arg = {idType};
-            throw new CLIException(MessageFormat.format(getResourceString(
-                "invalid-identity-type"), (Object[])arg), 
+        try {
+            return IdUtils.getType(idType);
+        } catch (IdRepoException ex) {
+            throw new CLIException(ex.getL10NMessage(
+                getCommandManager().getLocale()), 
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
