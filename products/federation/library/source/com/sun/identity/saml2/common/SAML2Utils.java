@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.22 2008-04-09 06:24:06 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.23 2008-04-14 21:13:29 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2362,7 +2362,8 @@ public class SAML2Utils extends SAML2SDKUtils {
     throws SAML2Exception {
         String roleName = getParameter(paramsMap,SAML2Constants.ROLE);
         if (roleName.equalsIgnoreCase(SAML2Constants.SP_ROLE) ||
-                roleName.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
+            roleName.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) 
+        {
             return roleName;
         }
         
@@ -2370,6 +2371,31 @@ public class SAML2Utils extends SAML2SDKUtils {
                 SAML2Utils.bundle.getString("unknownHostEntityRole"));
     }
     
+    /**
+     * Returns true if this entity is acting as both SP and IDP.
+     * @param hostEntityId entity ID of the hosted entity.
+     * @param realm the realm the entity resides.
+     * @return true if this entity is acting as both SP and IDP,
+     *         false otherwise.
+     */
+    public static boolean isDualRole(String hostEntityId, String realm) {
+        try {
+            SPSSOConfigElement spConfig  =
+                saml2MetaManager.getSPSSOConfig(realm, hostEntityId);
+            if (spConfig == null) {
+                return false;
+            }
+            IDPSSOConfigElement idpConfig =
+                saml2MetaManager.getIDPSSOConfig(realm, hostEntityId);
+            if (idpConfig == null) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+              return false;
+        }
+    }
+
     /**
      * Returns url for redirection.
      * @param request <code>HttpServletRequest</code> for redirecting.

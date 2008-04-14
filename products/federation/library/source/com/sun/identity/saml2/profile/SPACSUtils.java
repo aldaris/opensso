@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.18 2008-04-03 07:03:10 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.19 2008-04-14 21:13:29 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1191,16 +1191,27 @@ public class SPACSUtils {
         String affiID = nameId.getSPNameQualifier();
         AffiliationDescriptorType affiDesc =
             metaManager.getAffiliationDescriptor(realm, affiID);
+        boolean isDualRole = SAML2Utils.isDualRole(hostEntityId, realm);
         if (affiDesc != null) {
             if (!affiDesc.getAffiliateMember().contains(hostEntityId)) {
                 throw new SAML2Exception(SAML2Utils.bundle.getString(
                     "spNotAffiliationMember"));
             }
-            info = new NameIDInfo(affiID, remoteHostId, nameId,
-                SAML2Constants.SP_ROLE, true);
+            if (isDualRole) {
+                info = new NameIDInfo(affiID, remoteHostId, nameId,
+                    SAML2Constants.DUAL_ROLE, true);
+            } else {
+                info = new NameIDInfo(affiID, remoteHostId, nameId,
+                    SAML2Constants.SP_ROLE, true);
+            }
         } else {
-            info = new NameIDInfo(hostEntityId, remoteHostId, nameId,
-                SAML2Constants.SP_ROLE, false);
+            if (isDualRole) {
+                info = new NameIDInfo(hostEntityId, remoteHostId, nameId,
+                    SAML2Constants.DUAL_ROLE, false);
+            } else {
+                info = new NameIDInfo(hostEntityId, remoteHostId, nameId,
+                    SAML2Constants.SP_ROLE, false);
+            }
         }
         Map props = new HashMap();
         String nameIDValueString = info.getNameIDValue();

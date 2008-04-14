@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDInfo.java,v 1.1 2006-10-30 23:16:12 qcheng Exp $
+ * $Id: NameIDInfo.java,v 1.2 2008-04-14 21:13:29 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,8 +47,7 @@ import com.sun.identity.saml2.assertion.AssertionFactory;
  *       <idp_nameid_format>   : nameid format for the IDP
  *       <sp_nameid>           : name identifier for the SP/Affiliation
  *       <sp_nameid_qualifier> : nameid qualifier for the SP/Affiliation
- *       <hosted_entity_role>  : choice of SPRole or IDPRole, useful when one 
- *                               entity could be IDP and SP at same time.
+ *       <hosted_entity_role>  : value of SPRole, IDPRole or DualRole.
  *       <is_affiliation>      : true for affiliation, false otherwise 
  *       for example:
  *       http://www.sp.com|http://www.idp.com|

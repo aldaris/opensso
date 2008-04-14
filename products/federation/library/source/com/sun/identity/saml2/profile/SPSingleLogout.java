@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.13 2008-02-21 23:18:55 hengming Exp $
+ * $Id: SPSingleLogout.java,v 1.14 2008-04-14 21:13:29 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -840,8 +840,7 @@ public class SPSingleLogout {
 
                 String infoKeyString = null; 
                 infoKeyString = (new NameIDInfoKey(nameID.getValue(), 
-                                         nameID.getSPNameQualifier(), 
-                         nameID.getNameQualifier())).toValueString(); 
+                         spEntityID, idpEntity)).toValueString(); 
                 if (debug.messageEnabled()) {
                     debug.message(method + "infokey=" + infoKeyString);
                 }

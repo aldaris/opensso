@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.28 2008-04-09 06:24:06 hengming Exp $
+ * $Id: SAML2Constants.java,v 1.29 2008-04-14 21:13:29 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -796,6 +796,12 @@ public interface SAML2Constants {
      */
     public String IDP_ROLE = "IDPRole";
     
+    /**
+     * Constant value for entity acting as both SP and IDP role.
+     */
+    public String DUAL_ROLE ="DualRole";
+
+
     /**
      * Policy Decision Point Role
      */
