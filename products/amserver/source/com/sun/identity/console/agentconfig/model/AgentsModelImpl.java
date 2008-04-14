@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.5 2008-03-14 16:54:39 babysunil Exp $
+ * $Id: AgentsModelImpl.java,v 1.6 2008-04-14 23:24:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.console.agentconfig.model;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.CLIConstants;
-import com.sun.identity.common.DisplayUtils;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -74,21 +73,21 @@ public class AgentsModelImpl
     /**
      * Returns agent names.
      *
-     * @param strType Agent Type.
+     * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
      * @return error code.
      * @throws AMConsoleException if result cannot be returned.
      */
     public int getAgentNames(
-        String strType,
+        Set setTypes,
         String pattern,
         Set results
     ) throws AMConsoleException {
         String realmName = "/";
         int sizeLimit = getSearchResultLimit();
         int timeLimit = getSearchTimeOutLimit();
-        String[] params = {realmName, strType, pattern,
+        String[] params = {realmName, setTypes.toString(), pattern,
             Integer.toString(sizeLimit), Integer.toString(timeLimit)};
         
         try {
@@ -108,7 +107,7 @@ public class AgentsModelImpl
             if ((res != null) && !res.isEmpty()) {
                 for (Iterator i = res.iterator(); i.hasNext(); ) {
                     AMIdentity amid = (AMIdentity)i.next();
-                    if (matchType(amid, strType)) {
+                    if (matchType(amid, setTypes)) {
                         results.add(amid);
                     }
                 }
@@ -117,7 +116,7 @@ public class AgentsModelImpl
             logEvent("SUCCEED_SEARCH_AGENT", params);
             return isr.getErrorCode();
         } catch (IdRepoException e) {
-            String[] paramsEx = {realmName, strType, pattern,
+            String[] paramsEx = {realmName, setTypes.toString(), pattern,
                 Integer.toString(sizeLimit), Integer.toString(timeLimit),
                 getErrorString(e)};
             logEvent("EXCEPTION_SEARCH_AGENT", paramsEx);
@@ -127,7 +126,7 @@ public class AgentsModelImpl
             }
             throw new AMConsoleException("no.properties");
         } catch (SSOException e) {
-            String[] paramsEx = {realmName, strType, pattern,
+            String[] paramsEx = {realmName, setTypes.toString(), pattern,
                 Integer.toString(sizeLimit), Integer.toString(timeLimit),
                 getErrorString(e)};
             logEvent("EXCEPTION_SEARCH_AGENT", paramsEx);
@@ -139,21 +138,21 @@ public class AgentsModelImpl
     /**
      * Returns agent group names.
      *
-     * @param strType Agent Type.
+     * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
      * @return error code.
      * @throws AMConsoleException if result cannot be returned.
      */
     public int getAgentGroupNames(
-        String strType,
+        Set setTypes,
         String pattern,
         Set results
     ) throws AMConsoleException {
         String realmName = "/";
         int sizeLimit = getSearchResultLimit();
         int timeLimit = getSearchTimeOutLimit();
-        String[] params = {realmName, strType, pattern,
+        String[] params = {realmName, setTypes.toString(), pattern,
             Integer.toString(sizeLimit), Integer.toString(timeLimit)};
         
         try {
@@ -172,7 +171,7 @@ public class AgentsModelImpl
             if ((res != null) && !res.isEmpty()) {
                 for (Iterator i = res.iterator(); i.hasNext(); ) {
                     AMIdentity amid = (AMIdentity)i.next();
-                    if (matchType(amid, strType)) {
+                    if (matchType(amid, setTypes)) {
                         results.add(amid);
                     }
                 }
@@ -181,7 +180,7 @@ public class AgentsModelImpl
             logEvent("SUCCEED_SEARCH_AGENT_GROUP", params);
             return isr.getErrorCode();
         } catch (IdRepoException e) {
-            String[] paramsEx = {realmName, strType, pattern,
+            String[] paramsEx = {realmName, setTypes.toString(), pattern,
                 Integer.toString(sizeLimit), Integer.toString(timeLimit),
                 getErrorString(e)};
             logEvent("EXCEPTION_SEARCH_AGENT_GROUP", paramsEx);
@@ -191,7 +190,7 @@ public class AgentsModelImpl
             }
             throw new AMConsoleException("no.properties");
         } catch (SSOException e) {
-            String[] paramsEx = {realmName, strType, pattern,
+            String[] paramsEx = {realmName, setTypes.toString(), pattern,
                 Integer.toString(sizeLimit), Integer.toString(timeLimit),
                 getErrorString(e)};
             logEvent("EXCEPTION_SEARCH_AGENT_GROUP", paramsEx);
@@ -201,22 +200,31 @@ public class AgentsModelImpl
     }
     
     
-    private boolean matchType(AMIdentity amid, String pattern)
-        throws IdRepoException, SSOException {
-        boolean matched = (pattern.length() == 0);
-        
-        if (!matched) {
-            Map attrValues = amid.getAttributes();
-            Set set = (Set)attrValues.get(CLIConstants.ATTR_NAME_AGENT_TYPE);
-            if ((set != null) && !set.isEmpty()) {
-                String t = (String)set.iterator().next();
-                matched = DisplayUtils.wildcardMatch(t, pattern);
-            }
-        }
-        
-        return matched;
+    private boolean matchType(AMIdentity amid, Set setTypes)
+        throws AMConsoleException {
+        return setTypes.contains(getAgentType(amid));
     }
 
+    /**
+     * Returns agent type.
+     * @param amid Identity Object.
+     * @return agent type.
+     * @throws AMConsoleException if agent type cannot be obtained.
+     */
+    public String getAgentType(AMIdentity amid) 
+        throws AMConsoleException {
+        try {
+            Map attrValues = amid.getAttributes();
+            Set set = (Set) attrValues.get(CLIConstants.ATTR_NAME_AGENT_TYPE);
+            return ((set != null) && !set.isEmpty()) ? 
+                (String) set.iterator().next() : "";
+        } catch (IdRepoException ex) {
+            throw new AMConsoleException(ex.getMessage());
+        } catch (SSOException ex) {
+            throw new AMConsoleException(ex.getMessage());
+        }
+    }
+    
     /**
      * Creates agent.
      *

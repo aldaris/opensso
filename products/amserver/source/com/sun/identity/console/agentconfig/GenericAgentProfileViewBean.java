@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.7 2008-03-14 16:53:09 babysunil Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.8 2008-04-14 23:24:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,8 +96,7 @@ public class GenericAgentProfileViewBean
 
     
     protected AMPropertySheetModel createPropertySheetModel(String type) {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AgentsModel model = (AgentsModel)getModel();
         String tabName = (String)getPageSessionAttribute(PS_TABNAME);
         String choice = (String)getPageSessionAttribute(
@@ -163,8 +162,7 @@ public class GenericAgentProfileViewBean
     }
     
     protected HashSet getPropertyNames() {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         HashSet names = new HashSet();
         for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
             AttributeSchema as = (AttributeSchema)i.next();
@@ -178,8 +176,7 @@ public class GenericAgentProfileViewBean
     }
 
     protected void createTabModel() {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         if (isLocalConfig(agentType)) {
             agentType = AgentsViewBean.AGENT_2_2;
         }
@@ -213,10 +210,8 @@ public class GenericAgentProfileViewBean
     public boolean beginBtnInheritDisplay(ChildDisplayEvent event) {
         String choice = (String)getPageSessionAttribute(
                 AgentsViewBean.LOCAL_OR_NOT);
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
         return super.beginBtnInheritDisplay(event) && !is2dot2Agent() 
-            && !isLocalConfig(agentType);
+            && !isLocalConfig(getAgentType());
     }
 
      /**
@@ -236,8 +231,7 @@ public class GenericAgentProfileViewBean
      * @param nodeID Tab Id.
      */
     public void nodeClicked(RequestInvocationEvent event, int nodeID) {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AgentTabManager mgr = AgentTabManager.getInstance();
         boolean forward = false;
         
@@ -279,8 +273,7 @@ public class GenericAgentProfileViewBean
     }
     
     protected boolean isFirstTab() {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         String tabName = (String)getPageSessionAttribute(PS_TABNAME);
         return AgentTabManager.getInstance().isFirstTab(agentType, tabName);
     }
@@ -296,5 +289,10 @@ public class GenericAgentProfileViewBean
         return (choice != null && choice.equals(AgentsViewBean.PROP_LOCAL) &&
                 (agentType.equals(AgentsViewBean.AGENT_WEB) ||
                 agentType.equals(AgentsViewBean.DEFAULT_ID_TYPE)));
+    }
+    
+    protected String getAgentType() {
+        return (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_SUPERCEDE_AGENT_TYPE);
     }
 }

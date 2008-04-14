@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.4 2007-12-17 19:42:51 veiming Exp $
+ * $Id: AMViewConfig.java,v 1.5 2008-04-14 23:24:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,6 +80,9 @@ public class AMViewConfig {
         "realmEnableHideAttrName";
     private static final String IDENTITY_SERVICE = "identityservice";
     private static final String AGENT_SERVICE = "agentservice";
+    private static final String COMBINE_AGENT = "combineagent";
+    
+    private Map combineAgent = new HashMap();
 
     private AMViewConfig() {
         Document doc = parseDocument(CONFIG_FILENAME);
@@ -162,25 +165,67 @@ public class AMViewConfig {
                     agentNode = c;
                 }
             }
-            
             if (agentNode != null) {
                 for (int i = 0; i < supported.size(); i++) {
                     String t = (String)supported.get(i);
                     int nodeId = Integer.parseInt("46" + i);
-                    CCNavNode n = new CCNavNode(nodeId,
-                        (String)mapSupported.get(t), t, t);
+
+                    String i18nKey = (String)mapSupported.get(t);
+                    if (i18nKey == null) {
+                        i18nKey = "agenttype." + t; 
+                    }
+                    CCNavNode n = n = new CCNavNode(nodeId, i18nKey, t, t);
                     if (nodeId == idx) {
                         selected = n;
                     }
-                    agentNode.addChild(n);
+                    agentNode.addChild(n);                        
                 }
             }
         }
 
         return selected;
     }
-
     
+    /**
+     * Returns the combined agent type.
+     * 
+     * @param cName Combined Agent type referred name.
+     * @return the combined agent type.
+     */
+    public String getCombineAgentType(String type) {
+        String cName = null;
+        for (Iterator i = combineAgent.keySet().iterator(); 
+            (i.hasNext() && (cName == null));
+        ) {
+            String name = (String)i.next();
+            Set set = (Set) combineAgent.get(name);
+            if (set.contains(type)) {
+                cName = name;
+            }
+        }
+        return cName;
+    }
+
+    /**
+     * Returns <code>ture</code> if combined agent type.
+     * 
+     * @param cName Combined Agent type referred name.
+     * @return <code>ture</code> if combined agent type.
+     */
+    public boolean isCombineAgentType(String type) {
+        return combineAgent.keySet().contains(type);
+    }
+    
+    /**
+     * Returns the combined agent types.
+     * 
+     * @param cName Combined Agent type referred name.
+     * @return the combined agent types.
+     */
+    public Set getCombineAgentTypes(String type) {
+        return (Set)combineAgent.get(type);
+    }
+
     public List getSupportedAgentTypes(AMModel model) {
         Map supported = getSupportedAgentTypesMap(model);
         List ordered = null;
@@ -208,7 +253,25 @@ public class AMViewConfig {
             }
         }
 
-        return (ordered == null) ? Collections.EMPTY_LIST : ordered;
+        if ((ordered != null) && !ordered.isEmpty()) {
+            Set alreadyAddedCName = new HashSet();
+            List newList = new ArrayList(ordered.size());
+
+            for (Iterator i = ordered.iterator(); i.hasNext();) {
+                String name = (String) i.next();
+                String cName = getCombineAgentType(name);
+                if (cName != null) {
+                    if (!alreadyAddedCName.contains(cName)) {
+                        newList.add(cName);
+                        alreadyAddedCName.add(cName);
+                    }
+                } else {
+                    newList.add(name);
+                }
+            }
+            return newList;
+        }
+        return Collections.EMPTY_LIST;
     }
 
 
@@ -707,12 +770,37 @@ public void setTabViews(int parentID, List items) {
                             AMModelBase.debug.error(
                                 "AMViewConfig.configServices", e);
                         }
+                    } else if (child.getNodeName().equals(COMBINE_AGENT)) {
+                        try {
+                            String order = getAttribute(child, "pairs");
+                            StringTokenizer st =new StringTokenizer(order, "|");
+                            while (st.hasMoreElements()) {
+                                String token = st.nextToken();
+                                int idx = token.indexOf("=");
+                                if (idx != -1) {
+                                    String vType = token.substring(0, idx);
+                                    String suffix = token.substring(idx+1);
+
+                                    StringTokenizer st1 = new StringTokenizer(
+                                        suffix, ",");
+                                    Set set = new HashSet();
+                                    combineAgent.put(vType, set);
+                                    while (st1.hasMoreElements()) {
+                                        set.add(st1.nextToken());
+                                    }
+                                }
+                            }
+                        } catch (AMConsoleException e) {
+                            AMModelBase.debug.error(
+                                "AMViewConfig.configServices", e);
+                        }
+                        
                     }
                 }
             }
         }
     }
-
+    
     private void configProfileTabs(Document doc) {
         NodeList nodes = doc.getElementsByTagName(PROFILE_TABS);
 

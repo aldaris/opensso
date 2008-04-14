@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentGroupAddViewBean.java,v 1.3 2008-01-18 17:45:38 veiming Exp $
+ * $Id: AgentGroupAddViewBean.java,v 1.4 2008-04-14 23:24:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,9 +70,7 @@ public class AgentGroupAddViewBean
 
     protected void initialize() {
         if (!initialized) {
-            String agentType = (String)getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
-
+            String agentType = getAgentType();
             if (agentType != null) {
                 createPageTitleModel();
                 createPropertyModel();
@@ -117,8 +115,7 @@ public class AgentGroupAddViewBean
     }
 
     private void createPropertyModel() {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         String xml;
 
         if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE)) {
@@ -147,8 +144,7 @@ public class AgentGroupAddViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event) {
         AgentsModel model = (AgentsModel)getModel();
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
         String agentGroupName = (String)propertySheetModel.getValue(TF_NAME);
         agentGroupName = agentGroupName.trim();
@@ -190,5 +186,10 @@ public class AgentGroupAddViewBean
 
     protected boolean startPageTrail() {
         return false;
+    }
+    
+    private String getAgentType() {
+        return (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_SUPERCEDE_AGENT_TYPE);
     }
 }

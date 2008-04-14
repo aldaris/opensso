@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentAddViewBean.java,v 1.4 2008-03-14 16:51:48 babysunil Exp $
+ * $Id: AgentAddViewBean.java,v 1.5 2008-04-14 23:24:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,8 +76,7 @@ public class AgentAddViewBean
 
     protected void initialize() {
         if (!initialized) {
-            String agentType = (String)getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+            String agentType = getAgentType();
 
             if (agentType != null) {
                 createPageTitleModel();
@@ -123,8 +122,7 @@ public class AgentAddViewBean
     }
 
     private void createPropertyModel() {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         String xml;
 
         if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE)) {
@@ -160,8 +158,7 @@ public class AgentAddViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event) {
         AgentsModel model = (AgentsModel)getModel();
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
         String agentName = (String)propertySheetModel.getValue(TF_NAME);
         agentName = agentName.trim();
@@ -233,5 +230,10 @@ public class AgentAddViewBean
 
     protected boolean startPageTrail() {
         return false;
+    }
+    
+    private String getAgentType() {
+        return (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_SUPERCEDE_AGENT_TYPE);
     }
 }

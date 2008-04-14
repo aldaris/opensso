@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.4 2008-03-14 16:54:20 babysunil Exp $
+ * $Id: AgentsModel.java,v 1.5 2008-04-14 23:24:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.agentconfig.model;
 
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.idm.AMIdentity;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -39,14 +40,14 @@ public interface AgentsModel
     /**
      * Returns agent names.
      *
-     * @param strType Agent Type.
+     * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
      * @return error code.
      * @throws AMConsoleException if result cannot be returned.
      */
     int getAgentNames(
-        String strType,
+        Set setTypes,
         String pattern,
         Set results
     ) throws AMConsoleException;
@@ -54,14 +55,14 @@ public interface AgentsModel
     /**
      * Returns agent group names.
      *
-     * @param strType Agent Type.
+     * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
      * @return error code.
      * @throws AMConsoleException if result cannot be returned.
      */
     int getAgentGroupNames(
-        String strType,
+        Set setTypes,
         String pattern,
         Set results
     ) throws AMConsoleException;
@@ -295,5 +296,14 @@ public interface AgentsModel
      * @throws AMConsoleException if members cannot be returned.
      */
     Set getAgentGroupMembers(String agentId)
+        throws AMConsoleException;
+    
+    /**
+     * Returns agent type.
+     * @param amid Identity Object.
+     * @return agent type.
+     * @throws AMConsoleException if agent type cannot be obtained.
+     */
+    String getAgentType(AMIdentity amid) 
         throws AMConsoleException;
 }

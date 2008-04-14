@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.4 2008-03-14 16:52:46 babysunil Exp $
+ * $Id: AgentsViewBean.java,v 1.5 2008-04-14 23:24:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.AgentsModelImpl;
+import com.sun.identity.console.base.AMPostViewBean;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.web.ui.model.CCNavNode;
 import com.sun.web.ui.view.tabs.CCTabs;
@@ -74,6 +75,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 /**
  * Main page of agent configuration.
@@ -87,7 +89,8 @@ public class AgentsViewBean
     static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/Agents.jsp";
     public static final String PG_SESSION_AGENT_TYPE = "agenttype";
-   
+    public static final String PG_SESSION_SUPERCEDE_AGENT_TYPE = 
+        "superagenttype";
     static final String PG_SESSION_AGENT_MAIN_TAB = "pgAgentMainTab";
     private static final String CACHE_AGENTS = "agents";
     private static final String CACHE_AGENT_GROUPS = "agentgroups";
@@ -108,9 +111,14 @@ public class AgentsViewBean
     private static final String TBL_DATA_NAME = "tblDataName";
     private static final String TBL_DATA_UNIVERSALNAME = "tblDataUniversalName";
     private static final String TBL_DATA_ACTION_HREF = "tblDataActionHref";
+    private static final String TBL_COL_TYPE = "tblColType";
+    private static final String TBL_DATA_TYPE = "tblDataType";
 
     private static final String TBL_COL_NAME_GROUP = "tblColGroupName";
     private static final String TBL_DATA_NAME_GROUP = "tblDataGroupName";
+    private static final String TBL_COL_TYPE_GROUP = "tblColGroupType";
+    private static final String TBL_DATA_TYPE_GROUP = "tblDataGroupType";
+
     private static final String TBL_DATA_UNIVERSALNAME_GROUP = 
         "tblDataUniversalGroupName";
     private static final String TBL_DATA_ACTION_HREF_GROUP = 
@@ -137,6 +145,8 @@ public class AgentsViewBean
     private boolean tblModelPopulated = false;
     private CCNavNode selectedNode;
     private static Map agentViewBeans = new HashMap();
+    public boolean combinedType;
+    public Set supportedTypes = new TreeSet();
     
     static {
         ResourceBundle rb = ResourceBundle.getBundle("agentViewBean");
@@ -152,9 +162,20 @@ public class AgentsViewBean
     public AgentsViewBean() {
         super("Agents");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
-        createPageTitleModel();
-        createTableModel();
-        registerChildren();
+    }
+
+    protected void initialize() {
+        if (!initialized) {
+            String agentType = (String) getPageSessionAttribute(
+                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+            if (agentType != null) {
+                super.initialize();
+                initialized = true;
+                createPageTitleModel();
+                createTableModel();
+                registerChildren();
+            }
+        }
     }
  
     protected void createTabModel() {
@@ -174,19 +195,6 @@ public class AgentsViewBean
             tabModel.clear();
             registerChild(TAB_COMMON, CCTabs.class);
         }
-    }
-    
-    /**
-     * Resets this view bean.
-     */
-    public void resetView() {
-        super.resetView();
-        tblModelPopulated = false;
-        SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
-        szCache.setValue(null);
-        tblModel.clearAll();
-        tblGroupModel.clearAll();
-        setDisplayFieldValue(TF_FILTER, "*");
     }
 
     protected void registerChildren() {
@@ -214,11 +222,12 @@ public class AgentsViewBean
             view = new CCActionTable(this, tblGroupModel, name);
         } else if (name.equals(PAGETITLE)) {
             view = new CCPageTitle(this, ptModel, name);
-        } else if (tblModel.isChildSupported(name)) {
+        } else if ((tblModel != null) && tblModel.isChildSupported(name)) {
             view = tblModel.createChild(this, name);
-        } else if (tblGroupModel.isChildSupported(name)) {
+        } else if ((tblGroupModel != null) && 
+            tblGroupModel.isChildSupported(name)) {
             view = tblGroupModel.createChild(this, name);
-        } else if (ptModel.isChildSupported(name)) {
+        } else if ((ptModel != null) && ptModel.isChildSupported(name)) {
             view = ptModel.createChild(this, name);
         } else {
             view = super.createChild(name);
@@ -254,10 +263,11 @@ public class AgentsViewBean
         super.beginDisplay(event, false);
         resetButtonState(TBL_BUTTON_DELETE);
         AgentsModel model = (AgentsModel)getModel();
-
-        Object[] param = {getDisplayIDType()};
-        ptModel.setPageTitleText(MessageFormat.format(
-            model.getLocalizedString("page.title.agents"), param));
+        String agentType = getDisplayIDType();
+        
+        Object[] param = {agentType};
+        ptModel.setPageTitleText(model.getLocalizedString("agenttype." + 
+            agentType));
         tblModel.setTitle(MessageFormat.format(
             model.getLocalizedString("table.agents.title.name"), param));
         tblModel.setTitleLabel(MessageFormat.format(
@@ -299,9 +309,14 @@ public class AgentsViewBean
                 if (idx < list.size()) {
                     setPageSessionAttribute(PG_SESSION_AGENT_TYPE, 
                         (String)list.get(idx));
+                    AMPostViewBean vb = (AMPostViewBean)getViewBean(
+                        AMPostViewBean.class);
+                    passPgSessionMap(vb);
+                    vb.setTargetViewBeanURL("../agentconfig/Agents");
+                    vb.forwardTo(getRequestContext());
+                } else {
+                    forwardTo();
                 }
-                resetView();
-                forwardTo();
             } else {
                 super.nodeClicked(event, nodeID);
             }
@@ -329,19 +344,32 @@ public class AgentsViewBean
     }
 
     private void createTableModel() {
+        String agentType = getDisplayIDType();
+        AMViewConfig viewCfg = AMViewConfig.getInstance();
+        combinedType = viewCfg.isCombineAgentType(agentType); 
+        
+        String xml = (!combinedType) ?
+            "com/sun/identity/console/tblAgents.xml" :
+            "com/sun/identity/console/tblAgentsCombined.xml";
         tblModel = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/tblAgents.xml"));
+            getClass().getClassLoader().getResourceAsStream(xml));
         tblModel.setTitleLabel("label.items");
         tblModel.setActionValue(TBL_BUTTON_ADD, "table.agents.button.new");
         tblModel.setActionValue(TBL_BUTTON_DELETE,
             "table.agents.button.delete");
-        tblModel.setActionValue(TBL_COL_NAME,
-            "table.agents.name.column.name");
+        tblModel.setActionValue(TBL_COL_NAME, "table.agents.name.column.name");
+        
+        if (combinedType) {
+            tblModel.setActionValue(TBL_COL_TYPE, 
+                "table.agents.name.column.type");
+        }
      
+        xml = (!combinedType) ?
+            "com/sun/identity/console/tblAgentGroups.xml" :
+            "com/sun/identity/console/tblAgentGroupsCombined.xml";
         tblGroupModel = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/tblAgentGroups.xml"));
+            getClass().getClassLoader().getResourceAsStream(xml));
+
         tblGroupModel.setTitleLabel("label.items");
         tblGroupModel.setActionValue(TBL_BUTTON_ADD_GROUP, 
             "table.agent.groups.button.new");
@@ -349,6 +377,11 @@ public class AgentsViewBean
             "table.agent.groups.button.delete");
         tblGroupModel.setActionValue(TBL_COL_NAME_GROUP,
             "table.agent.groups.name.column.name");
+        
+        if (combinedType) {
+            tblGroupModel.setActionValue(TBL_COL_TYPE_GROUP,
+                "table.agent.groups.name.column.type");
+        }
     }
 
     private void getAgentNames() {
@@ -369,11 +402,21 @@ public class AgentsViewBean
         } else {
             gfilter = gfilter.trim();
         }
-
+        
+        // this is to faciliate combined types.
+        String agentType = getDisplayIDType();
+        AMViewConfig cfg = AMViewConfig.getInstance();
+        Set agentTypes = cfg.getCombineAgentTypes(agentType);
+        if (agentTypes == null) {
+            agentTypes = new HashSet(2);
+            agentTypes.add(agentType);
+        } else {
+            supportedTypes.addAll(agentTypes);
+        }
+        
         try {
             Set agents = new HashSet();
-            int errorCode = model.getAgentNames(getDisplayIDType(), filter,
-                agents);
+            int errorCode = model.getAgentNames(agentTypes, filter, agents);
             switch (errorCode) {
             case IdSearchResults.SIZE_LIMIT_EXCEEDED:
                 setInlineAlertMessage(CCAlert.TYPE_WARNING, "message.warning",
@@ -386,7 +429,7 @@ public class AgentsViewBean
             }
             
             Set agentGroups = new HashSet();
-            errorCode = model.getAgentGroupNames(getDisplayIDType(), gfilter,
+            errorCode = model.getAgentGroupNames(agentTypes, gfilter,
                 agentGroups);
             switch (errorCode) {
             case IdSearchResults.SIZE_LIMIT_EXCEEDED:
@@ -504,6 +547,16 @@ public class AgentsViewBean
                     tblModel.setValue(TBL_DATA_NAME, name);
                     tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
                     tblModel.setValue(TBL_DATA_ACTION_HREF, universalId);
+                    
+                    if (combinedType) {
+                        try {
+                            tblModel.setValue(TBL_DATA_TYPE, model.getAgentType(
+                                entity));
+                        } catch (AMConsoleException e) {
+                            setInlineAlertMessage(CCAlert.TYPE_ERROR, 
+                                "message.error", model.getErrorString(e));
+                        }
+                    }
                     cacheAgents.add(universalId);
                 }
                 mapCache.put(CACHE_AGENTS, cacheAgents);
@@ -532,6 +585,15 @@ public class AgentsViewBean
                         universalId);
                     tblGroupModel.setValue(TBL_DATA_ACTION_HREF_GROUP,
                         universalId);
+                    if (combinedType) {
+                        try {
+                            tblGroupModel.setValue(TBL_DATA_TYPE_GROUP, 
+                                model.getAgentType(entity));
+                        } catch (AMConsoleException e) {
+                            setInlineAlertMessage(CCAlert.TYPE_ERROR,
+                                "message.error", model.getErrorString(e));
+                        }
+                    }
                     cacheAgentGroups.add(universalId);
                 }
                 mapCache.put(CACHE_AGENT_GROUPS, cacheAgentGroups);
@@ -558,8 +620,18 @@ public class AgentsViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblButtonGroupAddRequest(RequestInvocationEvent event) {
-       AgentGroupAddViewBean vb = (AgentGroupAddViewBean)getViewBean(
+        AgentGroupAddViewBean vb = (AgentGroupAddViewBean) getViewBean(
             AgentGroupAddViewBean.class);
+        String hiddenType = getRequestContext().getRequest().getParameter(
+            "agenttype");
+
+        if ((hiddenType != null) && (hiddenType.trim().length() > 0)) {
+            setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE,
+                hiddenType);
+        } else {
+            setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE,
+                getDisplayIDType());
+        }
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
@@ -570,8 +642,18 @@ public class AgentsViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblButtonAddRequest(RequestInvocationEvent event) {
-       AgentAddViewBean vb = (AgentAddViewBean)getViewBean(
+        AgentAddViewBean vb = (AgentAddViewBean) getViewBean(
             AgentAddViewBean.class);
+        String hiddenType = getRequestContext().getRequest().getParameter(
+            "agenttype");
+
+        if ((hiddenType != null) && (hiddenType.trim().length() > 0)) {
+            setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE,
+                hiddenType);
+        } else {
+            setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE,
+                getDisplayIDType());
+        }
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
@@ -583,7 +665,7 @@ public class AgentsViewBean
      */
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
         AgentsModel model = (AgentsModel)getModel();
-        String idType = (String)getPageSessionAttribute(PG_SESSION_AGENT_TYPE);
+        String agentType = getDisplayIDType();
         String universalId = (String)getDisplayFieldValue(
             TBL_DATA_ACTION_HREF);
         setPageSessionAttribute(AgentProfileViewBean.UNIVERSAL_ID, 
@@ -593,22 +675,23 @@ public class AgentsViewBean
         StringTokenizer st = new StringTokenizer(universalId, "=,");
         st.nextToken();
         String agentName = st.nextToken();
-        String agentType = (String) getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
         try {
+            AMIdentity amid = new AMIdentity(ssoToken, agentName,
+                IdType.AGENTONLY, realm, null);
+
             if (agentType.equals(AgentsViewBean.AGENT_WEB) || 
                     (agentType.equals(AgentsViewBean.DEFAULT_ID_TYPE))) 
             { 
-                AMIdentity amid = new AMIdentity(ssoToken, agentName,
-                        IdType.AGENTONLY, realm, null);
                 if (isPropertiesLocallyStored(amid)) {
                     setPageSessionAttribute(LOCAL_OR_NOT, PROP_LOCAL);
                 } else {
                     setPageSessionAttribute(LOCAL_OR_NOT, PROP_CENTRAL);
                 }
             }
-            Class clazz = getAgentCustomizedViewBean(idType);
+            Class clazz = getAgentCustomizedViewBean(agentType);
             AMViewBeanBase vb = (AMViewBeanBase)getViewBean(clazz);
+            setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE, 
+                model.getAgentType(amid));
             removePageSessionAttribute(GenericAgentProfileViewBean.PS_TABNAME);
             passPgSessionMap(vb);
             vb.forwardTo(getRequestContext());
@@ -617,6 +700,10 @@ public class AgentsViewBean
                 model.getErrorString(e));
             forwardTo();
         } catch (SSOException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                model.getErrorString(e));
+            forwardTo();
+        } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 model.getErrorString(e));
             forwardTo();
@@ -636,13 +723,20 @@ public class AgentsViewBean
         RequestInvocationEvent event
     ) {
         AgentsModel model = (AgentsModel)getModel();
-        String idType = (String)getPageSessionAttribute(PG_SESSION_AGENT_TYPE);
+        String idType = getDisplayIDType();
         String universalId = (String)getDisplayFieldValue(
             TBL_DATA_ACTION_HREF_GROUP);
         setPageSessionAttribute(AgentProfileViewBean.UNIVERSAL_ID, 
             universalId);
 
+        SSOToken ssoToken = model.getUserSSOToken();
+        String realm = "/";
+        StringTokenizer st = new StringTokenizer(universalId, "=,");
+        st.nextToken();
+        String agentGrpName = st.nextToken();
         try {
+            AMIdentity amid = new AMIdentity(ssoToken, agentGrpName,
+                IdType.AGENTGROUP, realm, null);
             String vbName = (String)agentViewBeans.get(idType);
             if (vbName == null) {
                 vbName = GENERIC_VIEW_BEAN;
@@ -652,8 +746,14 @@ public class AgentsViewBean
                 vbName);
             AMViewBeanBase vb = (AMViewBeanBase)getViewBean(clazz);
             removePageSessionAttribute(GenericAgentProfileViewBean.PS_TABNAME);
+            setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE, 
+                model.getAgentType(amid));
             passPgSessionMap(vb);
             vb.forwardTo(getRequestContext());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                model.getErrorString(e));
+            forwardTo();
         } catch (ClassNotFoundException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 model.getErrorString(e));
@@ -782,8 +882,7 @@ public class AgentsViewBean
     }
     
     protected boolean is2dot2Agent() {
-        String agentType = (String) getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getDisplayIDType();
         return (agentType != null) && 
             agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
     }

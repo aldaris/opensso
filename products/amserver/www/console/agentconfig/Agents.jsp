@@ -18,11 +18,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.3 2008-03-20 06:14:43 asyhuang Exp $
+   $Id: Agents.jsp,v 1.4 2008-04-14 23:24:32 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
+<%@page import="java.util.*" %>
 
 <%@ page info="Agents" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
@@ -36,6 +37,8 @@
 
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2004" fireDisplayEvents="true">
 
+<link rel="stylesheet" type="text/css" href="../console/css/opensso.css" />
+
 <script language="javascript" src="../console/js/am.js"></script>
 <script language="javascript">
     function switchView(selectElmName) {
@@ -44,9 +47,11 @@
         frm.submit();
     }
 </script>
+<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%">
 
 <cc:form name="Agents" method="post" defaultCommandChild="/btnSearch">
 <jato:hidden name="szCache" />
+
 <script language="javascript">
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
@@ -58,9 +63,9 @@
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
-	<td>
-	<cc:alertinline name="ialertCommon" bundleID="amConsole" />
-	</td>
+        <td>
+        <cc:alertinline name="ialertCommon" bundleID="amConsole" />
+        </td>
     </tr>
 </table>
 
@@ -78,10 +83,10 @@
 
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
-	<td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-	<td nowrap><cc:textfield name="tfGroupFilter" defaultValue="*" /></td>
-	<td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
-	<td><cc:button name="btnGroupSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
+        <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
+        <td nowrap><cc:textfield name="tfGroupFilter" defaultValue="*" /></td>
+        <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
+        <td><cc:button name="btnGroupSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
     </tr>
 </table>
 
@@ -106,10 +111,10 @@
 
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
-	<td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-	<td nowrap><cc:textfield name="tfFilter" defaultValue="*" /></td>
-	<td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
-	<td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
+        <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
+        <td nowrap><cc:textfield name="tfFilter" defaultValue="*" /></td>
+        <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
+        <td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
     </tr>
 </table>
 
@@ -132,4 +137,90 @@
 </cc:form>
 
 </cc:header>
+</div>
+<div id="dlg" class="dvs"></div>
+<script language="javascript">
+    <%
+        if (viewBean.combinedType) {
+            out.println("var frm = document.forms['Agents'];");
+            out.println("var btnGrp = frm.elements['Agents.tblButtonGroupAdd'];");
+            out.println("var btn= frm.elements['Agents.tblButtonAdd'];");
+            out.println("btn.onclick = chooseAgentType;");
+            out.println("btnGrp.onclick = chooseAgentGroupType;");
+
+        }
+    %>
+    
+    var txtSelectAgentType = "<cc:text name="txtSelectAgentType" defaultValue="agenttype.select.agent.type" bundleID="amConsole" />";
+    var closeBtn = '<p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
+
+    function getScrollY() {
+        var scrOfY = 0;
+        if (typeof( window.pageYOffset ) == 'number') {
+            //Netscape compliant
+            scrOfY = window.pageYOffset;
+        } else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+            //DOM compliant
+            scrOfY = document.body.scrollTop;
+        } else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+            //IE6 standards compliant mode
+            scrOfY = document.documentElement.scrollTop;
+        }
+        return scrOfY;
+}
+
+    function chooseAgentType() {
+        fade();
+        var str = '<form name="dummy" action="#" onSubmit="return false;">' +
+            '<b>' + "<cc:text name="txtSelectAgentType" defaultValue="agenttype.select.type" bundleID="amConsole" />" + '</b><p><div style="text-align:left">';
+<%
+        for (Iterator i = viewBean.supportedTypes.iterator(); i.hasNext(); ) {
+            String type = (String)i.next();
+            out.print("str += '<input type=\"radio\" name=\"agenttype\" value=\"");
+            out.print(type);
+            out.print("\" onClick=\"newAgent(this);\">");
+            out.print(viewBean.getModel().getLocalizedString("agenttype." + type));
+            out.println("<br />';");
+        }
+%>
+        str += '</div>' + closeBtn + '</p>' + '</form>';
+        var eltDlg = document.getElementById('dlg');
+        eltDlg.style.top = getWindowHeight()/2 + getScrollY()  + 'px';
+        eltDlg.innerHTML = '<center>' + str + '</center>';
+        return false;
+    }
+
+    function chooseAgentGroupType() {
+        fade();
+        var str = '<form name="dummy" action="#" onSubmit="return false;">' +
+            '<b>' + "<cc:text name="txtSelectAgentType" defaultValue="agenttype.select.type" bundleID="amConsole" />" + '</b><p><div style="text-align:left">';
+<%
+        for (Iterator i = viewBean.supportedTypes.iterator(); i.hasNext(); ) {
+            String type = (String)i.next();
+            out.print("str += '<input type=\"radio\" name=\"agenttype\" value=\"");
+            out.print(type);
+            out.print("\" onClick=\"newAgentGroup(this);\">");
+            out.print(viewBean.getModel().getLocalizedString("agenttype." + type));
+            out.println("<br />';");
+        }
+%>
+        str += '</div>' + closeBtn + '</p>' + '</form>';
+        var eltDlg = document.getElementById('dlg');
+        eltDlg.style.top = getWindowHeight()/2 + getScrollY()  + 'px';
+        eltDlg.innerHTML = '<center>' + str + '</center>';
+        return false;
+    }
+
+    function newAgent(radio) {
+        var frm = document.forms['Agents'];
+        frm.action += '?agenttype=' + radio.value + '&Agents.tblButtonAdd=';
+       frm.submit();
+    }
+
+    function newAgentGroup(radio) {
+        var frm = document.forms['Agents'];
+        frm.action += '?agenttype=' + radio.value + '&Agents.tblButtonGroupAdd=';
+       frm.submit();
+    }
+</script>
 </jato:useViewBean>

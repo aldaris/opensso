@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.4 2008-03-14 16:52:18 babysunil Exp $
+ * $Id: AgentProfileViewBean.java,v 1.5 2008-04-14 23:24:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -131,8 +131,7 @@ public abstract class AgentProfileViewBean
     
     protected boolean createPropertyModel() {
         boolean created = false;
-        String type = (String)getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String type = getAgentType();
         
         if ((type != null) && (type.trim().length() > 0)) {
             AgentsModel model = (AgentsModel)getModel();
@@ -231,8 +230,7 @@ public abstract class AgentProfileViewBean
     
     protected void setPropertySheetValues(){
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-        String agentType = (String)getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AgentsModel model = (AgentsModel)getModel();
         try {
             setDefaultValues(agentType);
@@ -259,7 +257,9 @@ public abstract class AgentProfileViewBean
     private void setProperty(AgentsModel model, String type, String universalId)
     throws AMConsoleException {
         Set groups = new HashSet();
-        model.getAgentGroupNames(type, "*", groups);
+        Set set = new HashSet(2);
+        set.add(type);
+        model.getAgentGroupNames(set, "*", groups);
         CCDropDownMenu menu = (CCDropDownMenu)getChild(
                 CHILD_AGENT_GROUP);
         Set groupNames = new TreeSet();
@@ -315,8 +315,7 @@ public abstract class AgentProfileViewBean
         submitCycle = true;
         AgentsModel model = (AgentsModel)getModel();
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-        String type = (String)getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String type = getAgentType();
         String choice = (String) getPageSessionAttribute(
                 AgentsViewBean.LOCAL_OR_NOT);
         try {
@@ -439,8 +438,7 @@ public abstract class AgentProfileViewBean
     }
     
     protected boolean is2dot2Agent() {
-        String agentType = (String) getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         return agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
     }
     
@@ -449,6 +447,10 @@ public abstract class AgentProfileViewBean
                 type.equals(AgentsViewBean.DEFAULT_ID_TYPE));
     }
     
+    protected String getAgentType() {
+        return (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_SUPERCEDE_AGENT_TYPE);
+    }
     protected abstract boolean isFirstTab();
     
     protected abstract void setDefaultValues(String type)

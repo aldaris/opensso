@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigInheritViewBean.java,v 1.2 2008-02-11 18:26:03 veiming Exp $
+ * $Id: AgentConfigInheritViewBean.java,v 1.3 2008-04-14 23:24:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,8 +174,7 @@ public class AgentConfigInheritViewBean
             SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
             String universalId = (String)getPageSessionAttribute(
                 AgentProfileViewBean.UNIVERSAL_ID);
-            String agentType = (String)getPageSessionAttribute(
-                AgentsViewBean.PG_SESSION_AGENT_TYPE);
+            String agentType = getAgentType();
             
             AgentsModel model = (AgentsModel)getModel();
             Set inheritedPropertyNames = model.getInheritedPropertyNames(
@@ -329,5 +328,10 @@ public class AgentConfigInheritViewBean
                 break;
             }
         }
+    }
+    
+    protected String getAgentType() {
+        return (String)getPageSessionAttribute(
+            AgentsViewBean.PG_SESSION_SUPERCEDE_AGENT_TYPE);
     }
 }

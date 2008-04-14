@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.2 2008-03-11 21:33:44 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.3 2008-04-14 23:24:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,8 +106,7 @@ public abstract class WebServiceEditViewBean
     }
     
     protected void createTabModel() {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
 
         if (agentType != null) {
             super.createTabModel();
@@ -141,8 +140,7 @@ public abstract class WebServiceEditViewBean
      * @param nodeID Tab ID.
      */
     public void nodeClicked(RequestInvocationEvent event, int nodeID) {
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AgentTabManager mgr = AgentTabManager.getInstance();
 
         if (nodeID == 4600) {
@@ -216,8 +214,7 @@ public abstract class WebServiceEditViewBean
     
     private Set getMessageLevelSecurityMech(Map displayNameToValue) {
         Set i18nKey = new TreeSet();
-        String agentType = (String)getPageSessionAttribute(
-            AgentsViewBean.PG_SESSION_AGENT_TYPE);
+        String agentType = getAgentType();
         AgentsModel model = (AgentsModel)getModel();
         Map choiceValues = model.getSecurityMechanisms(agentType);
         i18nKey.addAll(choiceValues.keySet());
