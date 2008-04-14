@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentPropertyXMLBuilder.java,v 1.4 2008-03-14 16:51:06 babysunil Exp $
+ * $Id: AgentPropertyXMLBuilder.java,v 1.5 2008-04-14 17:30:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,8 @@ public class AgentPropertyXMLBuilder
 
     private static final String DUMMY_SECTION = "blank.header";
     private static final String ATTR_NAME_PWD = "userpassword";
+    private static final String ATTR_LOC_CONFIG =
+        "com.sun.identity.agents.config.repository.location";
     
     /**
      * Constructor
@@ -162,8 +164,12 @@ public class AgentPropertyXMLBuilder
             String i18nKey = as.getI18NKey();
             if ((i18nKey == null) || (i18nKey.trim().length() == 0)) {
                 i.remove();
-            } else if (bGroup && as.getName().equals(ATTR_NAME_PWD)) {
-                i.remove();
+            } else if (bGroup) {
+                if (as.getName().equals(ATTR_NAME_PWD) ||
+                    as.getName().equals(ATTR_LOC_CONFIG)
+                ) {
+                    i.remove();
+                }
             }
         }
         
