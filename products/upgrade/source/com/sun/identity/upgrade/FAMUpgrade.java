@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.2 2008-03-20 17:21:08 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.3 2008-04-14 23:17:31 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,7 +146,7 @@ public class FAMUpgrade {
             if (configDir == null) {
                 configDir = System.getProperty(CONFIG_DIR);
             }
-            Bootstrap.load(configDir);
+            Bootstrap.load(configDir,true);
         } catch (Exception e) {
             System.err.println("Cannot bootstrap the system" + e.getMessage());
             System.exit(1);
