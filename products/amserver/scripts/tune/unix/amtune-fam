@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-fam,v 1.1 2008-02-14 02:23:36 ykwon Exp $
+# $Id: amtune-fam,v 1.2 2008-04-14 22:11:31 ykwon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -186,6 +186,8 @@ fi
 ECHO_MSG "`$gettext 'Federated Access Manager Tuning Script'`"
 
 $ECHO $FAMADM_PASSWORD > $FAMADM_PASSFILE
+
+chmod 400 $FAMADM_PASSFILE
 
 tune_FAMServerConfig     | eval $OUTPUT_TYPE
 tune_ServerConfig       | eval $OUTPUT_TYPE
