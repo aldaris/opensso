@@ -1,1 +1,1 @@
-OpenSSO Authentication Module for Hitachi Finger Vein Biometric
+OpenSSO Authentication Module for Hitachi Finger Vein Biometric.
