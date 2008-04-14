@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.3 2007-08-23 19:35:57 jonnelson Exp $
+   $Id: Debug.jsp,v 1.4 2008-04-14 05:21:01 hengming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,14 +29,19 @@
         com.iplanet.sso.SSOToken,
         com.iplanet.sso.SSOTokenManager,
         com.iplanet.am.util.Debug,
+        com.iplanet.am.util.SystemProperties,
+        com.sun.identity.common.DNUtils,
         com.sun.identity.idm.AMIdentity,
         com.sun.identity.idm.IdRepoException,
         com.sun.identity.idm.IdType,
         com.sun.identity.idm.IdUtils,
+        com.sun.identity.security.AdminTokenAction,
+        java.security.AccessController,
         java.text.MessageFormat,
         java.util.ArrayList,
         java.util.Enumeration,
         java.util.HashMap,
+        java.util.HashSet,
         java.util.Iterator,
         java.util.List,
         java.util.Map,
@@ -46,6 +51,28 @@
         java.util.StringTokenizer,
         netscape.ldap.util.DN"
     %>
+<%!
+
+    static Set adminUserSet = new HashSet();
+    static AMIdentity adminUserId;
+    static {
+        try {
+            // This will give you the 'amAdmin' user dn
+            String adminUser = SystemProperties.get(
+                "com.sun.identity.authentication.super.user");
+            if (adminUser != null) {
+                adminUserSet.add(DNUtils.normalizeDN(adminUser));
+                 // This will give you the 'amAdmin' Identity
+                SSOToken adminToken = (SSOToken)AccessController
+                    .doPrivileged(AdminTokenAction.getInstance());
+                adminUserId = new AMIdentity(adminToken, adminUser,
+                    IdType.USER, "/", null);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+%>
 
 <% 
     String category= request.getParameter("category");
@@ -59,13 +86,15 @@
     try {
         SSOTokenManager sMgr = SSOTokenManager.getInstance();
         SSOToken ssoToken = sMgr.createSSOToken(request);
-        AMIdentity roleTopLevelAdmin = new AMIdentity(
-            ssoToken, "Top-level Admin Role", IdType.ROLE, "/", null);
-        AMIdentity userIdentity = IdUtils.getIdentity(ssoToken);
 
-        if (!userIdentity.isMember(roleTopLevelAdmin)) {
-           out.println(resourceBundle.getString("message-no-privileges"));
-           return;
+        // This will be your incoming user/token.
+        AMIdentity user = new AMIdentity(ssoToken);
+        if ((!adminUserSet.contains(DNUtils.normalizeDN(
+            ssoToken.getPrincipal().getName()))) &&
+            (!user.equals(adminUserId))) {
+
+            out.println(resourceBundle.getString("message-no-privileges"));
+            return;
         }
 
         for (Enumeration e = resourceBundle.getKeys();
@@ -85,9 +114,6 @@
         }
     } catch (SSOException e) {
         response.sendRedirect("UI/Login?goto=../Debug.jsp");
-        return;
-    } catch (IdRepoException e) {
-        out.println(e.getMessage());
         return;
     } catch (MissingResourceException e) {
         out.println(e.getMessage());
