@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.20 2008-04-09 22:05:15 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.21 2008-04-15 03:39:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -808,7 +808,8 @@ public class AgentConfiguration {
     private static String getAgentType(AMIdentity amid)
         throws IdRepoException, SSOException {
         Set setType = amid.getAttribute(IdConstants.AGENT_TYPE);
-        return (String)setType.iterator().next();
+        return ((setType != null) && !setType.isEmpty()) ?
+            (String)setType.iterator().next() : "";
     }
     
     private static Map parseAttributeMap(String agentType, Map attrValues)
@@ -1249,6 +1250,11 @@ public class AgentConfiguration {
      */
     public static void AddAgentToGroup(AMIdentity group, AMIdentity agent) 
         throws IdRepoException, SSOException, ConfigurationException {
+        if (!group.isExists()) {
+            String[] param = {group.getName()};
+            throw new ConfigurationException(
+                "cannot.add.agent.to.group.group.does.not.exist", param);
+        }
         String agentType = getAgentType(agent);
         if (supportLocalProperties(agentType) && 
             isPropertiesLocallyStored(agent)

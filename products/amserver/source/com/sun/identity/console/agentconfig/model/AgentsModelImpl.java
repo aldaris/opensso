@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.6 2008-04-14 23:24:32 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.7 2008-04-15 03:39:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.SMSException;
 import java.net.MalformedURLException;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -579,6 +580,12 @@ public class AgentsModelImpl
                 if ((groupId != null) && (groupId.trim().length() > 0)) {
                     AMIdentity group = IdUtils.getIdentity(
                         getUserSSOToken(), groupId);
+                    if (!group.isExists()) {
+                        Object[] arg = {group.getName()};
+                        throw new AMConsoleException(MessageFormat.format(
+                            getLocalizedString("agent.group.does.not.exist"),
+                            arg));
+                    }
                     Map groupValues = AgentConfiguration.getAgentAttributes(
                         group, false);
                     groupValues.putAll(values);

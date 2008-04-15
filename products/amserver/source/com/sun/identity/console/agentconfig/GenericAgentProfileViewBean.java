@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.8 2008-04-14 23:24:31 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.9 2008-04-15 03:39:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,6 +148,7 @@ public class GenericAgentProfileViewBean
             } catch (AMConsoleException e) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());
+                disableButton("button1", true);
             }
 
             String[] uuid = {universalId};

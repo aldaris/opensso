@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.5 2008-04-14 23:24:31 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.6 2008-04-15 03:39:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -251,6 +251,7 @@ public abstract class AgentProfileViewBean
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());
         }
+
         propertySheetModel.setValue(PROPERTY_UUID, universalId);
     }
     
