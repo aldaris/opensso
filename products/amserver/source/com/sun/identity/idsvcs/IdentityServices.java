@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServices.java,v 1.1 2007-08-30 00:26:03 arviranga Exp $
+ * $Id: IdentityServices.java,v 1.2 2008-04-15 22:37:10 rafsanchez Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,14 @@ public interface IdentityServices extends Remote {
     public Token authenticate(String username, String password, String uri)
         throws UserNotFound, InvalidPassword, NeedMoreCredentials,
         InvalidCredentials, GeneralFailure, RemoteException;
+
+    /**
+     * Close session referenced by the subject token.
+     * @param subject Token identifying the session to close.
+     * @throws GeneralFailure errors.
+     */
+    public void logout(Token subject)
+        throws GeneralFailure, RemoteException;
 
     /**
      * Attempt to authorize the subject for the optional action on the
@@ -91,4 +99,88 @@ public interface IdentityServices extends Remote {
     public void log(Token app, Token subject, String logName, String message)
         throws AccessDenied, TokenExpired, GeneralFailure, RemoteException;
 
+    /**
+     * Retrieve a list of identity names matching the input criteria.
+     *
+     * @param filter Optional filter to use as search against identity names.
+     * @param admin Token identifying the administrator to be used to authorize
+     * the request.
+     * @param attributes Optional list of Attribute objects which provide
+     * additional search criteria for the search.
+     * @return List The list of identities matching the input criteria.
+     * @throws NeedMoreCredentials when more credentials are required for
+     * authorization.
+     * @throws TokenExpired when subject's token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public List search(String filter, List attributes, Token admin)
+        throws NeedMoreCredentials, TokenExpired, GeneralFailure;
+
+    /**
+     * Creates an identity object with the specified attributes.
+     *
+     * @param admin Token identifying the administrator to be used to authorize
+     * the request.
+     * @param identity object containing the attributes of the object to be created.
+     * @throws NeedMoreCredentials when more credentials are required for
+     * authorization.
+     * @throws DuplicateObject if an object matching the name, type and realm already exists.
+     * @throws TokenExpired when subject's token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public void create(IdentityDetails identity, Token admin)
+        throws NeedMoreCredentials, DuplicateObject, TokenExpired, GeneralFailure;
+
+    /**
+     * Retrieves an identity object matching input criteria.
+     *
+     * @param name The name of identity to retrieve.
+     * @param attributes Attribute objects specifying criteria for the object
+     * to retrieve.
+     * @param admin Token identifying the administrator to be used to authorize
+     * the request.
+     * @return IdentityDetails of the subject.
+     * @throws NeedMoreCredentials when more credentials are required for
+     * authorization.
+     * @throws ObjectNotFound if no subject is found that matches the input criteria.
+     * @throws TokenExpired when subject's token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public IdentityDetails read(String name, List attributes, Token admin)
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure;
+
+    /**
+     * Updates an identity object with the specified attributes.
+     *
+     * @param admin Token identifying the administrator to be used to authorize
+     * the request.
+     * @param identity object containing the attributes of the object to be updated.
+     * @throws NeedMoreCredentials when more credentials are required for
+     * authorization.
+     * @throws ObjectNotFound if the requested object to update cannot be found.
+     * @throws TokenExpired when subject's token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public void update(IdentityDetails identity, Token admin)
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure;
+
+    /**
+     * Deletes an identity object matching input criteria.
+     *
+     * @param admin Token identifying the administrator to be used to authorize
+     * the request.
+     * @param name The name of identity to retrieve.
+     * @param identityType The identity type.
+     * @param universalId Optional universal ID of the identity.
+     * @param realm Optional name of realm to search.
+     * @param attributeNames Optional array of attributes to be returned.
+     * @return IdentityDetails of the subject.
+     * @throws NeedMoreCredentials when more credentials are required for
+     * authorization.
+     * @throws ObjectNotFound if no subject is found that matches the input criteria.
+     * @throws TokenExpired when subject's token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public void delete(IdentityDetails identity, Token admin)
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure;
 }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesHandler.java,v 1.1 2007-08-30 00:26:05 arviranga Exp $
+ * $Id: IdentityServicesHandler.java,v 1.2 2008-04-15 22:39:28 rafsanchez Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,9 +36,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.sun.identity.idsvcs.Attribute;
 import com.sun.identity.idsvcs.GeneralFailure;
+import com.sun.identity.idsvcs.IdentityDetails;
 import com.sun.identity.idsvcs.IdentityServicesImpl;
 import com.sun.identity.idsvcs.IdentityServicesFactory;
+import com.sun.identity.idsvcs.NeedMoreCredentials;
+import com.sun.identity.idsvcs.ObjectNotFound;
 import com.sun.identity.idsvcs.Token;
 import com.sun.identity.idsvcs.UserDetails;
 
@@ -135,6 +139,8 @@ public class IdentityServicesHandler extends HttpServlet {
             new SecurityParameter("TOKENID", Token.class);
         public static final SecurityParameter SUBJECTID =
             new SecurityParameter("SUBJECTID", Token.class);
+        public static final SecurityParameter IDENTITY =
+            new SecurityParameter("IDENTITY", IdentityDetails.class);
         public static final SecurityParameter ATTRIBUTENAMES =
             new SecurityParameter("ATTRIBUTENAMES",
             (new String[1]).getClass());
@@ -146,6 +152,14 @@ public class IdentityServicesHandler extends HttpServlet {
             new SecurityParameter("MESSAGECODE");
         public static final SecurityParameter APPID =
             new SecurityParameter("APPID", Token.class);
+        public static final SecurityParameter ADMIN =
+            new SecurityParameter("ADMIN", Token.class);
+        public static final SecurityParameter NAME =
+            new SecurityParameter("NAME");
+        public static final SecurityParameter FILTER =
+            new SecurityParameter("FILTER");
+        public static final SecurityParameter ATTRIBUTES =
+            new SecurityParameter("ATTRIBUTES", Attribute[].class);
         // ===================================================================
         // Fields
         // ===================================================================
@@ -172,6 +186,12 @@ public class IdentityServicesHandler extends HttpServlet {
                 ret = getToken(request);
             } else if (this.type == List.class) {
                 ret = getList(request);
+            } else if (this.type == String[].class) {
+                ret = getArray(request);
+            } else if (this.type == Attribute[].class) {
+                ret = getAttributeArray(request);
+            } else if (this.type == IdentityDetails.class) {
+                ret = getIdentityDetails(request);
             } else {
                 ret = getString(request);
             }
@@ -213,6 +233,203 @@ public class IdentityServicesHandler extends HttpServlet {
             }
             return ret;
         }
+
+        public String[] getArray(ServletRequest request)
+        {
+            String[] ret = null;
+            List valuesList = getList(request);
+
+            if ((valuesList != null) && (valuesList.size() > 0)) {
+                ret = new String[valuesList.size()];
+
+                valuesList.toArray(ret);
+            }
+
+            return ret;
+        }
+
+        public Attribute[] getAttributeArray(ServletRequest request)
+        {
+            Attribute[] ret = null;
+            List attributeList = null;
+            String n = name().toLowerCase();
+            String[] attrNames = request.getParameterValues(n + "_names");
+
+            if (attrNames != null) {
+                for (int i = 0; i < attrNames.length; i++) {
+                    String attrName = attrNames[i];
+
+                    if (isBlank(attrName)) {
+                        break;
+                    }
+
+                    String attrValues[] =
+                        request.getParameterValues(n + "_values_" + attrName);
+
+                    if ((attrValues != null) && (attrValues.length > 0)) {
+                        List attrValueList = new ArrayList();
+
+                        for (int j = 0; j < attrValues.length; j++) {
+                            String attrValue = attrValues[j];
+
+                            if (!isBlank(attrValue)) {
+                                attrValueList.add(attrValue);
+                            }
+                        }
+
+                        String[] attrValuesArray =
+                            new String[attrValueList.size()];
+
+                        attrValueList.toArray(attrValuesArray);
+
+                        Attribute attribute = new Attribute();
+                        attribute.setName(attrName);
+                        attribute.setValues(attrValuesArray);
+
+                        if (attributeList == null) {
+                            attributeList = new ArrayList();
+                        }
+
+                        attributeList.add(attribute);
+                    }
+                }
+            }
+
+            if ((attributeList != null) && (attributeList.size() > 0)) {
+                ret = new Attribute[attributeList.size()];
+                attributeList.toArray(ret);
+            }
+
+            return ret;
+        }
+
+        public IdentityDetails getIdentityDetails(ServletRequest request)
+        {
+            IdentityDetails rv = null;
+            String n = name().toLowerCase();
+            String identityName = request.getParameter(n + "_name");
+
+            if (!isBlank(identityName)) {
+                rv = new IdentityDetails();
+                rv.setName(identityName);
+
+                String objType = request.getParameter(n + "_type");
+                if (!isBlank(objType)) {
+                    rv.setType(objType);
+                }
+
+                String realm = request.getParameter(n + "_realm");
+                if (!isBlank(realm)) {
+                    rv.setRealm(realm);
+                }
+
+                String[] roles = request.getParameterValues(n + "_roles");
+                if (roles != null) {
+                    List rolesList = new ArrayList();
+
+                    for (int i = 0; i < roles.length; i++) {
+                        String role = roles[i];
+
+                        if (!isBlank(role)) {
+                            rolesList.add(role);
+                        }
+                    }
+
+                    String[] rolesArray = new String[rolesList.size()];
+
+                    rolesList.toArray(rolesArray);
+                    rv.setRoles(rolesArray);
+                }
+
+                String[] groups = request.getParameterValues(n + "_groups");
+                if (groups != null) {
+                    List groupsList = new ArrayList();
+
+                    for (int i = 0; i < groups.length; i++) {
+                        String group = groups[i];
+
+                        if (!isBlank(group)) {
+                            groupsList.add(group);
+                        }
+                    }
+
+                    String[] groupsArray = new String[groupsList.size()];
+
+                    groupsList.toArray(groupsArray);
+                    rv.setGroups(groupsArray);
+                }
+
+                String[] members = request.getParameterValues(n + "_members");
+                if (members != null) {
+                    List membersList = new ArrayList();
+
+                    for (int i = 0; i < members.length; i++) {
+                        String member = members[i];
+
+                        if (!isBlank(member)) {
+                            membersList.add(member);
+                        }
+                    }
+
+                    String[] membersArray = new String[membersList.size()];
+
+                    membersList.toArray(membersArray);
+                    rv.setMembers(membersArray);
+                }
+
+                List attrList = new ArrayList();
+                String[] attrNames =
+                        request.getParameterValues(n + "_attribute_names");
+
+                if (attrNames != null) {
+                    for (int i = 0; i < attrNames.length; i++) {
+                        String attrName = attrNames[i];
+
+                        if (isBlank(attrName)) {
+                            break;
+                        }
+
+                        Attribute attribute = null;
+                        String attrValues[] =
+                            request.getParameterValues(n + "_attribute_values_" + attrName);
+
+                        if (attrValues != null) {
+                            List attrValueList = new ArrayList();
+
+                            for (int j = 0; j < attrValues.length; j++) {
+                                String attrValue = attrValues[j];
+
+                                if (!isBlank(attrValue)) {
+                                    attrValueList.add(attrValue);
+                                }
+                            }
+
+                            String[] attrValuesArray =
+                                new String[attrValueList.size()];
+
+                            attrValueList.toArray(attrValuesArray);
+                            attribute = new Attribute();
+                            attribute.setName(attrName);
+                            attribute.setValues(attrValuesArray);
+                            attrList.add(attribute);
+                        } else {
+                            attribute = new Attribute();
+                            attribute.setName(attrName);
+                            attrList.add(attribute);
+                        }
+
+                        if (attrList.size() > 0) {
+                            Attribute[] attrArray = new Attribute[attrList.size()];
+
+                            attrList.toArray(attrArray);
+                            rv.setAttributes(attrArray);
+                        }
+                    }
+                }
+            }
+
+            return rv;
+        }
     }
 
    /**
@@ -223,6 +440,8 @@ public class IdentityServicesHandler extends HttpServlet {
         public static final SecurityMethod AUTHENTICATE = new SecurityMethod(
             "AUTHENTICATE", Token.class, SecurityParameter.USERNAME,
             SecurityParameter.PASSWORD, SecurityParameter.URI);
+        public static final SecurityMethod LOGOUT = new SecurityMethod(
+                "LOGOUT", Void.class, SecurityParameter.SUBJECTID);
         public static final SecurityMethod AUTHORIZE = new SecurityMethod(
             "AUTHORIZE", Boolean.class, SecurityParameter.URI,
             SecurityParameter.ACTION, SecurityParameter.SUBJECTID);
@@ -230,10 +449,27 @@ public class IdentityServicesHandler extends HttpServlet {
             "ATTRIBUTES", UserDetails.class, SecurityParameter.ATTRIBUTENAMES,
             SecurityParameter.SUBJECTID);
         public static final SecurityMethod LOG = new SecurityMethod(
-            "LOG", Void.class, new SecurityParameter[]
-            {SecurityParameter.APPID, SecurityParameter.SUBJECTID,
-             SecurityParameter.URI, SecurityParameter.LOGNAME,
-             SecurityParameter.MESSAGE});
+                "LOG", Void.class, new SecurityParameter[]
+                {SecurityParameter.APPID, SecurityParameter.SUBJECTID,
+                 SecurityParameter.URI, SecurityParameter.LOGNAME,
+                 SecurityParameter.MESSAGE});
+        public static final SecurityMethod SEARCH =	new SecurityMethod(
+            "SEARCH", String[].class, new SecurityParameter[]
+            {SecurityParameter.FILTER, SecurityParameter.ATTRIBUTES,
+             SecurityParameter.ADMIN});
+        public static final SecurityMethod CREATE =   new SecurityMethod(
+                "CREATE", Void.class, new SecurityParameter[]
+                {SecurityParameter.IDENTITY, SecurityParameter.ADMIN});
+        public static final SecurityMethod READ =	new SecurityMethod(
+            "READ", IdentityDetails.class, new SecurityParameter[]
+            {SecurityParameter.NAME, SecurityParameter.ATTRIBUTES,
+             SecurityParameter.ADMIN});
+        public static final SecurityMethod UPDATE =   new SecurityMethod(
+                "UPDATE", Void.class, new SecurityParameter[]
+                {SecurityParameter.IDENTITY, SecurityParameter.ADMIN});
+        public static final SecurityMethod DELETE =   new SecurityMethod(
+                "DELETE", Void.class, new SecurityParameter[]
+                {SecurityParameter.IDENTITY, SecurityParameter.ADMIN});
 
         // ===================================================================
         // Constructors
@@ -301,12 +537,24 @@ public class IdentityServicesHandler extends HttpServlet {
             SecurityMethod method = null;
             if (path.equals("AUTHENTICATE")) {
                 method = SecurityMethod.AUTHENTICATE;
+            } else if (path.equals("LOGOUT")) {
+                method = SecurityMethod.LOGOUT;
             } else if (path.equals("AUTHORIZE")) {
                 method = SecurityMethod.AUTHORIZE;
             } else if (path.equals("ATTRIBUTES")) {
                 method = SecurityMethod.ATTRIBUTES;
             } else if (path.equals("LOG")) {
                 method = SecurityMethod.LOG;
+            } else if (path.equals("SEARCH")) {
+                method = SecurityMethod.SEARCH;
+            } else if (path.equals("CREATE")) {
+                method = SecurityMethod.CREATE;
+            } else if (path.equals("READ")) {
+                method = SecurityMethod.READ;
+            } else if (path.equals("UPDATE")) {
+                method = SecurityMethod.UPDATE;
+            } else if (path.equals("DELETE")) {
+                method = SecurityMethod.DELETE;
             }
 
             try {
@@ -315,6 +563,14 @@ public class IdentityServicesHandler extends HttpServlet {
                 // marshall the response..
                 if (method.type != Void.class) {
                     mar.newInstance(method.type).marshall(wrt, value);
+                }
+            } catch (ObjectNotFound ex) {
+                // write out the proper ObjectNotFound exception.
+                try {
+                    mar.newInstance(ObjectNotFound.class).marshall(wrt, ex);
+                } catch (Exception e) {
+                    // something really went wrong so just give up..
+                    throw new ServletException(e);
                 }
             } catch (GeneralFailure ex) {
                 // write out the proper security based exception..
@@ -343,8 +599,9 @@ public class IdentityServicesHandler extends HttpServlet {
         }
 
         private Object invoke(IdentityServicesImpl security,
-            ServletRequest request) throws GeneralFailure {
-            
+                              ServletRequest request)
+            throws GeneralFailure, ObjectNotFound, NeedMoreCredentials
+        {
             // find the value for each parameter..
             Object[] params = new Object[this.parameters.length];
             for (int i = 0; i < this.parameters.length; i++) {
@@ -361,9 +618,18 @@ public class IdentityServicesHandler extends HttpServlet {
             } catch (IllegalAccessException e) {
                 throw new GeneralFailure(e.getMessage());
             } catch (InvocationTargetException e) {
-                // make sure to get the actual InvalidPassword etc..
-                throw (GeneralFailure) e.getTargetException();
+                Throwable th = e.getTargetException();
+
+                if (th instanceof NeedMoreCredentials) {
+                    throw (NeedMoreCredentials)th;
+                } else if (th instanceof ObjectNotFound) {
+                    throw (ObjectNotFound)th;
+                } else {
+                    // make sure to get the actual InvalidPassword etc..
+                    throw (GeneralFailure)th;
+                }
             }
+
             return ret;
         }
     }
