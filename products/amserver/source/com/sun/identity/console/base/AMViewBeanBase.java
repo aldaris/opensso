@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.2 2007-12-17 19:42:51 veiming Exp $
+ * $Id: AMViewBeanBase.java,v 1.3 2008-04-15 16:13:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -908,6 +908,15 @@ public abstract class AMViewBeanBase
         }
 
         return path.toString();
+    }
+
+    protected String getRequestURL() {
+        HttpServletRequest req = this.getRequestContext().getRequest();
+        String uri = req.getRequestURI().toString();
+        int idx = uri.indexOf('/', 1);
+        uri = uri.substring(0, idx);
+        return req.getScheme() + "://" + req.getServerName() +
+            ":" + req.getServerPort() + uri;
     }
 
 }

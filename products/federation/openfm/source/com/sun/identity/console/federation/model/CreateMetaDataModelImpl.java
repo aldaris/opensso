@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataModelImpl.java,v 1.1 2008-04-11 00:10:12 veiming Exp $
+ * $Id: CreateMetaDataModelImpl.java,v 1.2 2008-04-15 16:13:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ import javax.xml.bind.JAXBException;
 public class CreateMetaDataModelImpl extends AMModelBase
     implements CreateMetaDataModel 
 {
+    private String requestURL;
     /**
      * Creates a simple model using default resource bundle.
      *
@@ -59,6 +60,11 @@ public class CreateMetaDataModelImpl extends AMModelBase
      */
     public CreateMetaDataModelImpl(HttpServletRequest req,  Map map) {
         super(req, map);
+        String uri = req.getRequestURI().toString();
+        int idx = uri.indexOf('/', 1);
+        uri = uri.substring(0, idx);
+        requestURL = req.getScheme() + "://" + req.getServerName() +
+            ":" + req.getServerPort() + uri;
     }
 
     /**
@@ -72,9 +78,9 @@ public class CreateMetaDataModelImpl extends AMModelBase
         throws AMConsoleException {
         try {
             String metadata = CreateSAML2HostedProviderTemplate.
-                buildMetaDataTemplate(entityId, values);
+                buildMetaDataTemplate(entityId, values, requestURL);
             String extendedData = CreateSAML2HostedProviderTemplate.
-                createExtendedDataTemplate(entityId, values);
+                createExtendedDataTemplate(entityId, values, requestURL);
             ImportSAML2MetaData.importData(realm, metadata, extendedData);
         } catch (WorkflowException ex) {
             throw new AMConsoleException(ex.getMessage());
@@ -96,7 +102,7 @@ public class CreateMetaDataModelImpl extends AMModelBase
             IDFFMetaManager metaManager = new IDFFMetaManager(
                 getUserSSOToken());
             String metadata = CreateIDFFMetaDataTemplate.
-                createStandardMetaTemplate(entityId, values);
+                createStandardMetaTemplate(entityId, values, requestURL);
             String extendedData = CreateIDFFMetaDataTemplate.
                 createExtendedMetaTemplate(entityId, values);
             EntityDescriptorElement descriptor = (EntityDescriptorElement)
@@ -124,7 +130,7 @@ public class CreateMetaDataModelImpl extends AMModelBase
         try {
             String metadata = 
                 CreateWSFedMetaDataTemplate.createStandardMetaTemplate(
-                entityId, values);
+                entityId, values, requestURL);
             String extendedData = 
                 CreateWSFedMetaDataTemplate.createExtendedMetaTemplate(
                 entityId, values);

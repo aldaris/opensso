@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletMetaData.java,v 1.2 2008-04-11 00:10:14 veiming Exp $
+ * $Id: FedletMetaData.java,v 1.3 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,7 @@ public class FedletMetaData {
         map.put(MetaTemplateParameters.P_SP,Task.generateMetaAliasForSP(realm));
         String extendedData =
             CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-            entityId, map, false);
+            entityId, map, null, false);
         
         int idx = extendedData.indexOf("<Attribute name=\"spAccountMapper\">");
         if (idx != -1) {

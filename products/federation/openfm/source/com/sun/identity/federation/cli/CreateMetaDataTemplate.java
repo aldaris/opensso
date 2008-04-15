@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.30 2008-04-11 00:10:13 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.31 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -423,7 +423,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
             String xml =
                 CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityID, getWorkflowParamMap());
+                    entityID, getWorkflowParamMap(), null);
             pw.write(xml);
             
             if (!isWebBased) {
@@ -468,7 +468,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
             String xml =
                 CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                entityID, getWorkflowParamMap());
+                entityID, getWorkflowParamMap(), null);
             pw.write(xml);
             
             if (!isWebBased) {
@@ -541,7 +541,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             }
             
             String xml = CreateIDFFMetaDataTemplate.createStandardMetaTemplate(
-                entityID, getWorkflowParamMap());
+                entityID, getWorkflowParamMap(), null);
             pw.write(xml);
             
             if (!isWebBased) {
@@ -579,7 +579,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             }
             
             String xml = CreateWSFedMetaDataTemplate.createStandardMetaTemplate(
-                entityID, getWorkflowParamMap());
+                entityID, getWorkflowParamMap(), null);
             pw.write(xml);
             
             if (!isWebBased) {

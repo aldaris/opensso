@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.15 2008-04-11 00:10:14 veiming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.16 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,16 +55,21 @@ public class CreateSAML2HostedProviderTemplate {
 
     public static String createExtendedDataTemplate(
         String entityID,
-        Map mapParams
+        Map mapParams,
+        String url
     )  {
-        return createExtendedDataTemplate(entityID, mapParams, true);
+        return createExtendedDataTemplate(entityID, mapParams, url, true);
     }
+    
     public static String createExtendedDataTemplate(
         String entityID,
         Map mapParams,
+        String url,
         boolean hosted
     )  {
-        String url = getHostURL();
+        if (url != null) {
+            url = getHostURL();
+        }
         StringBuffer buff = new StringBuffer();
         String strHosted = (hosted) ? "1" : "0";
         buff.append(
@@ -717,10 +722,13 @@ public class CreateSAML2HostedProviderTemplate {
 
     public static String buildMetaDataTemplate(
         String entityID,
-        Map mapParams
+        Map mapParams,
+        String url
     ) throws SAML2MetaException {
         StringBuffer buff = new StringBuffer();
-        String url = getHostURL();
+        if (url == null) {
+            url = getHostURL();
+        }
         buff.append(
             "<EntityDescriptor\n" +
             "    xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"\n" +

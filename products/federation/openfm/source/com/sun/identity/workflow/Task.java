@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.6 2008-04-04 04:30:20 veiming Exp $
+ * $Id: Task.java,v 1.7 2008-04-15 16:13:36 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Base class for all Tasks.
@@ -54,6 +55,7 @@ public abstract class Task
     implements ITask 
 {
     private static Map resMap = new HashMap();
+    static String REQ_OBJ = "_request_";
 
     protected String getString(Map params, String key) {
         Object values = params.get(key);
@@ -206,5 +208,14 @@ public abstract class Task
         } catch (SAML2MetaException e) {
             throw new WorkflowException(e.getMessage());
         }
+    }
+
+    protected String getRequestURL(Map map) {
+        HttpServletRequest req = (HttpServletRequest) map.get(REQ_OBJ);
+        String uri = req.getRequestURI().toString();
+        int idx = uri.indexOf('/', 1);
+        uri = uri.substring(0, idx);
+        return req.getScheme() + "://" + req.getServerName() +
+            ":" + req.getServerPort() + uri;
     }
 }

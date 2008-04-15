@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.1 2008-04-11 00:10:14 veiming Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.2 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,8 @@ public class CreateWSFedMetaDataTemplate {
     
     public static String createStandardMetaTemplate(
         String entityId,
-        Map mapParams
+        Map mapParams,
+        String url
     ) throws JAXBException, CertificateEncodingException {
         JAXBContext jc = WSFederationMetaUtils.getMetaJAXBContext();
         com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory
@@ -77,13 +78,13 @@ public class CreateWSFedMetaDataTemplate {
         String idpAlias = (String)mapParams.get(MetaTemplateParameters.P_IDP);
         if (idpAlias != null) {
             addWSFedIdentityProviderTemplate(entityId, objFactory, fed, 
-                mapParams);
+                mapParams, url);
         }
         
         String spAlias = (String)mapParams.get(MetaTemplateParameters.P_SP);
         if (spAlias != null) {
             addWSFedServiceProviderTemplate(entityId, objFactory, fed, 
-                mapParams);
+                mapParams, url);
         }
 
         Marshaller m = jc.createMarshaller();
@@ -98,9 +99,12 @@ public class CreateWSFedMetaDataTemplate {
         com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
         objFactory, 
         FederationElement fed,
-        Map mapParams
+        Map mapParams,
+        String url
     ) throws JAXBException, CertificateEncodingException {
-        String url = getHostURL();
+        if (url == null) {
+            url = getHostURL();
+        }
         String idpAlias = (String)mapParams.get(MetaTemplateParameters.P_IDP);
         String idpSCertAlias = (String)mapParams.get(
             MetaTemplateParameters.P_IDP_S_CERT);
@@ -167,9 +171,12 @@ public class CreateWSFedMetaDataTemplate {
         com.sun.identity.wsfederation.jaxb.wsfederation.ObjectFactory 
         objFactory, 
         FederationElement fed,
-        Map mapParams
+        Map mapParams,
+        String url
     ) throws JAXBException {
-        String url = getHostURL();
+        if (url == null) {
+            url = getHostURL();
+        }
         String spAlias = (String)mapParams.get(MetaTemplateParameters.P_SP);
         String maStr = buildMetaAliasInURI(spAlias);
         

@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDPViewBean.java,v 1.5 2008-04-04 04:30:19 veiming Exp $
+ * $Id: CreateHostedIDPViewBean.java,v 1.6 2008-04-15 16:13:34 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.task;
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.ChildContentDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
@@ -257,8 +256,7 @@ public class CreateHostedIDPViewBean
             setDisplayFieldValue(RADIO_META, "file");
         }
         
-        setDisplayFieldValue(ENTITY_ID,
-            SystemProperties.getServerInstanceName());
+        setDisplayFieldValue(ENTITY_ID, getRequestURL());
         populateTableModel();
         
         Set userAttrNames = AMAdminUtils.getUserAttributeNames();

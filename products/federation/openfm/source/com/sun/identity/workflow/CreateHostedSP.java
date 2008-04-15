@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSP.java,v 1.6 2008-04-11 00:10:13 veiming Exp $
+ * $Id: CreateHostedSP.java,v 1.7 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,11 +79,11 @@ public class CreateHostedSP
             try {
                 metadata =
                     CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityId, map);
+                    entityId, map, getRequestURL(params));
                 //metadata = enableSigning(metadata);
                 extendedData =
                    CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    entityId, map);
+                    entityId, map, getRequestURL(params));
             } catch (SAML2MetaException e) {
                 return e.getMessage();
             }

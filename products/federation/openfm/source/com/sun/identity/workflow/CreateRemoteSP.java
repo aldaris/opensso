@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRemoteSP.java,v 1.6 2008-04-11 00:10:14 veiming Exp $
+ * $Id: CreateRemoteSP.java,v 1.7 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class CreateRemoteSP
                 map.put(MetaTemplateParameters.P_SP, metaAlias);
                 extendedMeta = 
                    CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                    eId, map, false);
+                    eId, map, null, false);
             } catch (SAML2MetaException ex) {
                 throw new WorkflowException(ex.getMessage());
             } catch (JAXBException ex) {

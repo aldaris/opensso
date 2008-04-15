@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIDFFMetaDataTemplate.java,v 1.1 2008-04-11 00:10:13 veiming Exp $
+ * $Id: CreateIDFFMetaDataTemplate.java,v 1.2 2008-04-15 16:13:35 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,16 +44,19 @@ public class CreateIDFFMetaDataTemplate {
     
     public static String createStandardMetaTemplate(
         String entityId,
-        Map mapParams
+        Map mapParams,
+        String url
     ) throws IDFFMetaException {
-        String protocol = SystemPropertiesManager.get(
-            Constants.AM_SERVER_PROTOCOL);
-        String host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
-        String port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
-        String deploymentURI = SystemPropertiesManager.get(
-            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        if (url == null) {
+            String protocol = SystemPropertiesManager.get(
+                Constants.AM_SERVER_PROTOCOL);
+            String host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+            String port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+            String deploymentURI = SystemPropertiesManager.get(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            url = protocol + "://" + host + ":" + port + deploymentURI;
+        }
         
-        String url =  protocol + "://" + host + ":" + port + deploymentURI;
         StringBuffer buff = new StringBuffer();
         buff.append("<EntityDescriptor\n")
             .append("    xmlns=\"urn:liberty:metadata:2003-08\"\n")
