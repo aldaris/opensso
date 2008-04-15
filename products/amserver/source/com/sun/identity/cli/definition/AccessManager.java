@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.61 2008-04-08 18:56:45 veiming Exp $
+ * $Id: AccessManager.java,v 1.62 2008-04-15 20:59:40 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1799,6 +1799,7 @@ public class AccessManager {
             "outfile|o|s|Filename where configuration is written to.",
             "inherit|i|u|Set this to inherit properties from parent group."},
         resourceStrings={
+            "show-agent-agent-does-not-exist=Agent {0} does not exist.",
             "show-agent-to-file=Agent properties were written to file.",
             "show-agent-no-attributes=There were no attribute values."
         }
@@ -1830,6 +1831,7 @@ public class AccessManager {
         optionalOptions={
             "outfile|o|s|Filename where configuration is written to."},
         resourceStrings={
+            "show-agent-group-does-not-exist=Agent group {0} does not exist.",
             "show-agent-group-to-file=Agent group properties were written to file.",
             "show-agent-group-no-attributes=There were no attribute values."
         }
@@ -1898,6 +1900,7 @@ public class AccessManager {
         optionalOptions={
             "filter|x|s|Filter (Pattern)."},
         resourceStrings={
+            "list-agent-group-member-group-does-not-exist=Agent group {0} did not exist.",
             "list-agent-group-members-no-members=There were no members.",
              "format-list-agent-group-members-results={0} ({1})"
         }
