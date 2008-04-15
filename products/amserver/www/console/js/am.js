@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.5 2008-04-04 04:30:17 veiming Exp $
+ * $Id: am.js,v 1.6 2008-04-15 03:54:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,10 +145,35 @@ function ajaxPost(req, url, params, callback) {
 }
 
 function fade() {
+    if( window.innerHeight && window.scrollMaxY ) {// Firefox 
+        pageHeight = window.innerHeight + window.scrollMaxY;
+    } else if( document.body.scrollHeight > document.body.offsetHeight ) { 
+        // all but Explorer Mac
+        pageHeight = document.body.scrollHeight;
+    } else { // works in Explorer 6 Strict, Mozilla (not FF) and Safari
+        pageHeight = document.body.offsetHeight + document.body.offsetTop;
+    }
+        
     var maindiv = document.getElementById('main');
+    maindiv.style.height = pageHeight + 'px';
     maindiv.style.opacity = 0.6;
     maindiv.style.backgroundColor = 'darkgray';
     document.getElementById('dlg').style.display='block';
+}
+
+function getWindowHeight() {
+    var myHeight = 0;
+    if( typeof( window.innerWidth ) == 'number' ) {
+        //Non-IE
+        myHeight = window.innerHeight;
+    } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+        //IE 6+ in 'standards compliant mode'
+        myHeight = document.documentElement.clientHeight;
+    } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+        //IE 4 compatible
+        myHeight = document.body.clientHeight;
+    }
+    return myHeight;
 }
 
 function focusMain() {
