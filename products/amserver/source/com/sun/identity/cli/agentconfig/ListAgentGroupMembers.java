@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAgentGroupMembers.java,v 1.2 2008-03-11 02:28:30 veiming Exp $
+ * $Id: ListAgentGroupMembers.java,v 1.3 2008-04-15 20:45:00 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,8 +33,8 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.DisplayUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
@@ -60,15 +60,33 @@ public class ListAgentGroupMembers extends AuthenticatedCommand {
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
         String realm = "/";
+        String pattern = getStringOptionValue(IArgument.FILTER);
         String agentGroupName = getStringOptionValue(
             IArgument.AGENT_GROUP_NAME);
         String[] params = {realm, agentGroupName};
-
+        
+        if ((pattern == null) || (pattern.trim().length() == 0)) {
+            pattern = "*";
+        }
+        
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_SHOW_AGENT_GROUP_MEMBERS", params);
             AMIdentity amid = new AMIdentity(
-                adminSSOToken, agentGroupName, IdType.AGENTGROUP, realm, null); 
+                adminSSOToken, agentGroupName, IdType.AGENTGROUP, realm, null);
+            if (!amid.isExists()) {
+                String[] args = {realm, agentGroupName, 
+                    "agent group did not exist"};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_SHOW_AGENT_GROUP_MEMBERS", args);
+                Object[] p = {agentGroupName};
+                String msg = MessageFormat.format(
+                    getResourceString(
+                        "list-agent-group-member-group-does-not-exist"), p);
+                throw new CLIException(msg,
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            
             Set members = amid.getMembers(IdType.AGENT);
 
             if ((members != null) && !members.isEmpty()) {
@@ -77,11 +95,13 @@ public class ListAgentGroupMembers extends AuthenticatedCommand {
                 String[] arg = {"", ""};
 
                 for (Iterator i = members.iterator(); i.hasNext(); ) {
-                    AMIdentity a = (AMIdentity)i.next();
-                    arg[0] = a.getName();
-                    arg[1] = a.getUniversalId();
-                    outputWriter.printlnMessage(
-                        MessageFormat.format(msg, (Object[])arg));
+                    AMIdentity a = (AMIdentity) i.next();
+                    if (DisplayUtils.wildcardMatch(a.getName(), pattern)) {
+                        arg[0] = a.getName();
+                        arg[1] = a.getUniversalId();
+                        outputWriter.printlnMessage(
+                            MessageFormat.format(msg, (Object[]) arg));
+                    }
                 }
             } else {
                 outputWriter.printlnMessage(

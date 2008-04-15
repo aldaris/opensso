@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgentGroup.java,v 1.2 2008-03-11 02:28:30 veiming Exp $
+ * $Id: ShowAgentGroup.java,v 1.3 2008-04-15 20:45:00 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -74,10 +75,22 @@ public class ShowAgentGroup extends AuthenticatedCommand {
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_SHOW_AGENT_GROUP", params);
+            AMIdentity amid = new AMIdentity(adminSSOToken, agentGroupName,
+                IdType.AGENTGROUP, realm, null);
+            if (!amid.isExists()) {
+                String[] args = {realm, agentGroupName, 
+                    "agent group did not exist"};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_SHOW_AGENT_GROUP", args);
+                Object[] p = {agentGroupName};
+                String msg = MessageFormat.format(
+                    getResourceString("show-agent-group-does-not-exist"), p);
+                throw new CLIException(msg,
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
             Map values = AgentConfiguration.getAgentGroupAttributes(
                 adminSSOToken, agentGroupName);
-            AMIdentity amid = new AMIdentity(adminSSOToken, agentGroupName,
-                IdType.AGENTGROUP, realm, null); 
+
             Set passwords = AgentConfiguration.getAttributesSchemaNames(
                 amid, AttributeSchema.Syntax.PASSWORD);
 

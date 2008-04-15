@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgent.java,v 1.5 2008-03-11 02:28:30 veiming Exp $
+ * $Id: ShowAgent.java,v 1.6 2008-04-15 20:45:00 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -76,10 +77,21 @@ public class ShowAgent extends AuthenticatedCommand {
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_SHOW_AGENT",
                 params);
-            Map values = AgentConfiguration.getAgentAttributes(
-                adminSSOToken, agentName, inherit);
             AMIdentity amid = new AMIdentity(adminSSOToken, agentName, 
                 IdType.AGENTONLY, realm, null); 
+            if (!amid.isExists()) {
+                String[] args = {realm, agentName, "agent did not exist"};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_SHOW_AGENT", args);
+                Object[] p = {agentName};
+                String msg = MessageFormat.format(
+                    getResourceString("show-agent-agent-does-not-exist"), p);
+                throw new CLIException(msg, 
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            Map values = AgentConfiguration.getAgentAttributes(
+                adminSSOToken, agentName, inherit);
+            
             Set passwords = AgentConfiguration.getAttributesSchemaNames(
                 amid, AttributeSchema.Syntax.PASSWORD);
 
