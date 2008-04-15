@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.4 2006-07-17 18:11:27 veiming Exp $
+ * $Id: CachedSMSEntry.java,v 1.5 2008-04-15 21:07:29 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,14 +197,16 @@ public class CachedSMSEntry {
         // Inform the ServiceSchemaManager's of changes to attributes
         Iterator objs = serviceObjects.iterator();
         while (objs.hasNext()) {
-            Object obj = objs.next();
-            try {
-                Method m = obj.getClass().getDeclaredMethod(
-                    method, (Class[])null);
-                m.invoke(obj, (Object[])null);
-            } catch (Exception e) {
-                SMSEntry.debug.error("CachedSMSEntry::unable to "
+            synchronized (objs) {
+                Object obj = objs.next();
+                try {
+                    Method m = obj.getClass().getDeclaredMethod(
+                        method, (Class[])null);
+                    m.invoke(obj, (Object[])null);
+                } catch (Exception e) {
+                    SMSEntry.debug.error("CachedSMSEntry::unable to "
                         + "deliver notification(" + dn + ")", e);
+                }
             }
         }
     }
