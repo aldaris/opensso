@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.11 2008-04-03 07:03:10 hengming Exp $
+ * $Id: DoManageNameID.java,v 1.12 2008-04-15 16:44:30 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,8 +267,11 @@ public class DoManageNameID {
                     config = metaManager.getSPSSOConfig(realm, remoteEntityID);
                 }
                 mniURL = SAML2Utils.fillInBasicAuthInfo(config, mniURL);
-                doMNIBySOAP(mniRequest, mniURL, metaAlias, hostEntityRole,
-                    request, response);
+                if (!doMNIBySOAP(mniRequest, mniURL, metaAlias, hostEntityRole,
+                    request, response)) {
+                    throw new SAML2Exception(
+                        SAML2Utils.bundle.getString("mniFailed"));
+                }
             } else if (binding.equalsIgnoreCase(SAML2Constants.HTTP_POST)) {
                 signMNIRequest(mniRequest, realm, hostEntityID, hostEntityRole,
                     remoteEntityID);
