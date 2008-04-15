@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.24 2008-04-11 00:35:00 pawand Exp $
+ * $Id: LoginState.java,v 1.25 2008-04-15 17:55:13 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3186,44 +3186,11 @@ public class LoginState {
             if (messageEnabled) {
                 debug.message("authMethStr: " + authMethStr);
             }
-            int i = 0;
-            String origAuthMethStr = authMethStr;
-            while (i != -1) {
-                i = authMethStr.indexOf("|");
-                if (i == -1) {
-                    authModuleName = ad.getAuthenticatorForName(authMethStr);
-                    if (messageEnabled) {
-                        debug.message("authMethStr is : " + authMethStr);
-                        debug.message(
-                            "authModuleName is : " + authModuleName);
-                    }
-                    if  ((authModuleName == null) ||
-                    (!domainAuthenticators.contains(authMethStr))) {
-                        return null;
-                    }
-                    break;
-                } else {
-                    String authMName = authMethStr.substring(0,i);
-                    authModuleName = ad.getAuthenticatorForName(authMName);
-                    if (messageEnabled) {
-                        debug.message("authModulename is : " + authMName);
-                        debug.message(
-                            "authModuleName instance is : " + authModuleName);
-                    }
-                    if ((authModuleName == null) ||
-                    (!domainAuthenticators.contains(authMName))) {
-                        return null;
-                    }
-                    String remStr = authMethStr.substring(i+1);
-                    authMethStr = remStr;
-                }
-            }
-            
-            pAuthMethName = origAuthMethStr;
+            pAuthMethName = authMethStr;
             if (messageEnabled) {
                 debug.message("Found valid PC : username=" + usernameStr +
                     "\ndomainname=" + domainStr + "\nauthMethod=" +
-                    origAuthMethStr + "\nmaxSession=" + maxSession +
+                    pAuthMethName + "\nmaxSession=" + maxSession +
                     "\nidleTime=" + idleTime + "\ncacheTime=" + cacheTime +
                     "\norgDN=" + orgDN);
             }
