@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.9 2008-02-04 05:00:08 hengming Exp $
+ * $Id: SAML2SDKUtils.java,v 1.10 2008-04-15 17:19:59 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -770,5 +770,24 @@ public class SAML2SDKUtils {
         
         throw new SAML2Exception(SAML2SDKUtils.bundle.getString(
             "invalidXMLBooleanValue"));
+    }
+
+    /**
+     * Removes deployment URI from the pass down string. i.e.
+     * from "/opensso/ArtifactResolver/metaAlias/idp" to
+     * "/ArtifactResolver/metaAlias/idp".
+     * @param uri the URI string which the deployment uri is to be removed
+     * return string without deployment uri
+     */
+    public static String removeDeployUri(String uri) {
+        if ((uri == null) || (uri.length() == 0)) {
+            return uri;
+        }
+        int loc = uri.indexOf("/", 1);
+        if (loc == -1) {
+            return null;
+        } else {
+            return uri.substring(loc);
+        }
     }
 }

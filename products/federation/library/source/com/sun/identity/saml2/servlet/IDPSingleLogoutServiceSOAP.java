@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.3 2007-08-28 23:28:16 weisun2 Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.4 2008-04-15 17:21:18 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 
 package com.sun.identity.saml2.servlet;
 
-import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
@@ -167,19 +166,12 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
                 "LogoutRequest");
             logoutReq = 
                 ProtocolFactory.getInstance().createLogoutRequest(reqElem);
-            LogoutUtil.verifySLORequest(logoutReq, realm, 
-                        logoutReq.getIssuer().getValue(), 
-                        idpEntityID, SAML2Constants.IDP_ROLE);
+            // delay the signature until this server finds the session
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error("IDPSingleLogoutServiceSOAP.onMessage: " + 
                 "unable to get LogoutRequest from message", se);
             return SAML2Utils.createSOAPFault(SAML2Constants.CLIENT_FAULT, 
                 "errorLogoutRequest", se.getMessage());
-        } catch (SessionException se) {
-            SAML2Utils.debug.error("IDPSingleLogoutServiceSOAP.onMessage: " + 
-                    "unable to verify Sinature in SLORequest.", se);
-                return SAML2Utils.createSOAPFault(SAML2Constants.CLIENT_FAULT, 
-                    "errorLogoutRequest", se.getMessage());
         }
 
         // TODO decrypt LogoutRequest if any
@@ -195,8 +187,8 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
         LogoutResponse loRes = null;
         try {
             // process LogoutRequestElement
-             loRes = IDPSingleLogout.processLogoutRequest(logoutReq, request, 
-                 response, SAML2Constants.SOAP, null, idpEntityID, realm);
+            loRes = IDPSingleLogout.processLogoutRequest(logoutReq, request, 
+                response, SAML2Constants.SOAP, null, idpEntityID, realm, false);
             LogoutUtil.signSLOResponse(loRes, realm, idpEntityID, 
                     SAML2Constants.IDP_ROLE, logoutReq.getIssuer().getValue());
         } catch (SAML2Exception e) {

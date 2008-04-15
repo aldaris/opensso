@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.7 2008-02-21 23:18:55 hengming Exp $
+ * $Id: IDPProxyUtil.java,v 1.8 2008-04-15 17:20:49 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -847,7 +847,12 @@ public class IDPProxyUtil {
             }        
             IDPSession idpSession = (IDPSession)
                 IDPCache.idpSessionsByIndices.get(sessionIndex);
-                   
+            
+            if (idpSession == null) {
+                // session is in another server
+                return sessMap;
+            }
+       
             sessMap.put(SAML2Constants.SESSION_INDEX, sessionIndex); 
             sessMap.put(SAML2Constants.IDP_SESSION, idpSession);     
             Object session = idpSession.getSession(); 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.4 2007-12-15 06:22:21 hengming Exp $
+ * $Id: IDPArtifactResolution.java,v 1.5 2008-04-15 17:20:49 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -306,7 +306,8 @@ public class IDPArtifactResolution {
             String remoteServiceURL =
                  SAML2Utils.getRemoteServiceURL(art.getMessageHandle());
             if (remoteServiceURL != null) {
-                remoteArtURL = remoteServiceURL +request.getRequestURI();
+                remoteArtURL = remoteServiceURL +
+                    SAML2Utils.removeDeployUri(request.getRequestURI());
                 try {
                     SOAPConnection con = SAML2Utils.scf.createConnection();
                     SOAPMessage resMsg = con.call(message, remoteArtURL);

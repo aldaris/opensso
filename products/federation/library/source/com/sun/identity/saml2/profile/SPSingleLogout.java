@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.14 2008-04-14 21:13:29 exu Exp $
+ * $Id: SPSingleLogout.java,v 1.15 2008-04-15 17:21:18 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -739,14 +739,14 @@ public class SPSingleLogout {
         if (partners != null && !partners.isEmpty()) {
             LogoutResponse logoutRespon =
                 processLogoutRequest(logoutReq, spEntityID, realm,
-                request, response, false, false, binding);
+                request, response, false, false, binding, true);
             logoutRespon.setDestination(location);
             IDPProxyUtil.sendIDPInitProxyLogoutRequest(request, response,
                  logoutRespon, location, spEntityID, idpEntityID, binding);
         } else {
             LogoutResponse logoutRes = processLogoutRequest(
                 logoutReq, spEntityID, realm,
-                request, response, true, binding);
+                request, response, true, binding, true);
             logoutRes.setDestination(location);
 
             LogoutUtil.sendSLOResponse(response, logoutRes, location,
@@ -767,36 +767,39 @@ public class SPSingleLogout {
      * @param isLBReq true if the request is for load balancing.
      * @param binding value of <code>SAML2Constants.HTTP_REDIRECT</code> or
      *        <code>SAML2Constants.SOAP</code>.
+     * @param isVerified true if the request is verified already.
      * @return LogoutResponse the target URL on successful
      * <code>LogoutRequest</code>.
      */
     public static LogoutResponse processLogoutRequest(
         LogoutRequest logoutReq, String spEntityID, String realm,
         HttpServletRequest request, HttpServletResponse response,
-        boolean isLBReq, String binding) {
+        boolean isLBReq, String binding, boolean isVerified) {
             return processLogoutRequest(logoutReq, spEntityID, realm,
-            request, response, isLBReq, true, binding);        
+            request, response, isLBReq, true, binding, isVerified);        
      }    
  
-     /**
-      * Gets and processes the Single <code>LogoutRequest</code> from IDP
-      * and return <code>LogoutResponse</code>.
-      *
-      * @param logoutReq <code>LogoutRequest</code> from IDP
-      * @param spEntityID name of host entity ID.
-      * @param realm name of host entity.
-      * @param request HTTP servlet request.
-      * @param request HTTP servlet response.
-      * @param isLBReq true if the request is for load balancing.
-      * @param binding value of <code>SAML2Constants.HTTP_REDIRECT</code> or
-      *        <code>SAML2Constants.SOAP</code>.
-      * @return LogoutResponse the target URL on successful
-      * <code>LogoutRequest</code>.
-      */
+    /**
+     * Gets and processes the Single <code>LogoutRequest</code> from IDP
+     * and return <code>LogoutResponse</code>.
+     *
+     * @param logoutReq <code>LogoutRequest</code> from IDP
+     * @param spEntityID name of host entity ID.
+     * @param realm name of host entity.
+     * @param request HTTP servlet request.
+     * @param request HTTP servlet response.
+     * @param isLBReq true if the request is for load balancing.
+     * @param binding value of <code>SAML2Constants.HTTP_REDIRECT</code> or
+     *        <code>SAML2Constants.SOAP</code>.
+     * @param isVerified true if the request is verified already.
+     * @return LogoutResponse the target URL on successful
+     * <code>LogoutRequest</code>.
+     */
     public static LogoutResponse processLogoutRequest(
         LogoutRequest logoutReq, String spEntityID, String realm,
         HttpServletRequest request, HttpServletResponse response,
-        boolean isLBReq, boolean destroySession, String binding) {
+        boolean isLBReq, boolean destroySession, String binding,
+        boolean isVerified) {
         final String method = "processLogoutRequest : "; 
         NameID nameID = null;
         Status status = null;
@@ -878,18 +881,16 @@ public class SPSingleLogout {
                 if (list == null || list.isEmpty()) {
                     if (foundPeer) {
                         boolean peerError = false;
-                        LogoutRequest lReq = copyAndMakeMutable(logoutReq);
                         for(Iterator iter = remoteServiceURLs.iterator();
                             iter.hasNext();) {
 
-                            String remoteLogoutURL = ((String)iter.next()) +
-                                        request.getRequestURI() +
-                                       (request.getQueryString() == null ?
-                                         "?" : "&") + "isLBReq=false";
+                            String remoteLogoutURL = getRemoteLogoutURL(
+                                (String)iter.next(), request);
                             LogoutResponse logoutRes =
-                                LogoutUtil.forwardToRemoteServer(lReq,
-                                                              remoteLogoutURL);
-                            if (!isNameNotFound(logoutRes)) {
+                                LogoutUtil.forwardToRemoteServer(
+                                    logoutReq, remoteLogoutURL);
+                            if ((logoutRes != null) &&
+                                !isNameNotFound(logoutRes)) {
                                 if (isSuccess(logoutRes)) {
                                     if (numSI > 0) {
                                        siList =
@@ -898,7 +899,6 @@ public class SPSingleLogout {
                                            peerError = false;
                                            break;
                                        }
-                                       lReq.setSessionIndex(siList);
                                     }
                                 } else { 
                                     peerError = true;
@@ -921,6 +921,15 @@ public class SPSingleLogout {
                     }
                     break;
                 } else {
+                    // find the session, do signature validation
+                    if(!isVerified &&
+                        !LogoutUtil.verifySLORequest(logoutReq, realm,
+                        logoutReq.getIssuer().getValue(),
+                        spEntityID, SAML2Constants.SP_ROLE)) {
+                        throw new SAML2Exception(
+                           SAML2Utils.bundle.getString("invalidSignInRequest"));
+                    }
+
                     // invoke SPAdapter for preSingleLogoutProcess
                     try {                     
                         String tokenId = 
@@ -980,14 +989,12 @@ public class SPSingleLogout {
                         for(Iterator iter = remoteServiceURLs.iterator();
                             iter.hasNext();) {
 
-                            String remoteLogoutURL = ((String)iter.next()) +
-                                        request.getRequestURI() +
-                                       (request.getQueryString() == null ?
-                                         "?" : "&") + "isLBReq=false";
+                            String remoteLogoutURL = getRemoteLogoutURL(
+                                (String)iter.next(), request);
                             LogoutResponse logoutRes =
-                                    LogoutUtil.forwardToRemoteServer(logoutReq,
-                                                              remoteLogoutURL);
-                            if (!(isSuccess(logoutRes) ||
+                                 LogoutUtil.forwardToRemoteServer(logoutReq,
+                                 remoteLogoutURL);
+                            if ((logoutRes == null) || !(isSuccess(logoutRes) ||
                                   isNameNotFound(logoutRes))) {
                                 peerError = true;
                             }
@@ -1056,14 +1063,13 @@ public class SPSingleLogout {
                                 iter.hasNext();) {
 
                                 lReq.setSessionIndex(siNotFound);
-                                String remoteLogoutURL = ((String)iter.next()) +
-                                        request.getRequestURI() +
-                                       (request.getQueryString() == null ?
-                                         "?" : "&") + "isLBReq=false";
+                                String remoteLogoutURL = getRemoteLogoutURL(
+                                    (String)iter.next(), request);
                                 LogoutResponse logoutRes =
-                                    LogoutUtil.forwardToRemoteServer(lReq,
-                                                              remoteLogoutURL);
-                                if (!isNameNotFound(logoutRes)) {
+                                    LogoutUtil.forwardToRemoteServer(lReq, 
+                                        remoteLogoutURL);
+                                if ((logoutRes != null) &&
+                                    !isNameNotFound(logoutRes)) {
                                     if (isSuccess(logoutRes)) {
                                         siNotFound =
                                          LogoutUtil.getSessionIndex(logoutRes);
@@ -1188,6 +1194,21 @@ public class SPSingleLogout {
             }
         }
         return location;
+    }
+
+    private static String getRemoteLogoutURL(String serverURL,
+        HttpServletRequest request) {
+        if (serverURL == null || request == null) {
+            return null;
+        }
+        String queryString = request.getQueryString();
+        if (queryString == null) {
+            return serverURL + SAML2Utils.removeDeployUri(
+                request.getRequestURI()) +  "?isLBReq=false";
+        } else {
+            return serverURL + SAML2Utils.removeDeployUri(
+                request.getRequestURI()) + "?" + queryString + "&isLBReq=false";
+        }
     }
 }
 

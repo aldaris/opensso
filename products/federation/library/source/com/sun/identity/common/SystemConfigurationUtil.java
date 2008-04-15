@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemConfigurationUtil.java,v 1.4 2007-10-17 23:00:54 veiming Exp $
+ * $Id: SystemConfigurationUtil.java,v 1.5 2008-04-15 17:19:59 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,7 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
     private static String authenticationURL;
     private static List cookieDomains;
     private static List serverList;
+    private static List siteList;
     private static Hashtable serverToIdTable = null;
     private static Hashtable idToServerTable = null;
     private static boolean platformNamingInitialized = false;
@@ -112,6 +113,18 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
             initPlatformNaming();
         }
         return serverList;
+    }
+
+    /**
+     * Returns all the sites instance.
+     * @return list of site names.
+     * @throws SystemConfigurationException if unable to get the server list.
+     */
+    public static List getSiteList() throws SystemConfigurationException {
+        if (!platformNamingInitialized) {
+            initPlatformNaming();
+        }
+        return siteList;
     }
 
     /**
@@ -334,6 +347,7 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
             serverList = Collections.EMPTY_LIST;
             serverToIdTable = null;
             idToServerTable = null;
+            return;
         }
 
         int serverSize = servers.size();
@@ -360,6 +374,32 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
             } else {
                 getDebug().error("SystemConfigurationUtil.storeServerList: " +
                     "Platform Server List entry is invalid:" + serverEntry);
+            }
+        }
+    }
+
+    private static void storeSiteList(Set sites) {
+        if ((sites == null) || sites.isEmpty()) {
+            siteList = Collections.EMPTY_LIST;
+            return;
+        }
+
+        siteList = new ArrayList(sites.size());
+
+        Iterator iter = sites.iterator();
+        while(iter.hasNext()) {
+            String siteEntry = (String)iter.next();
+            int index = siteEntry.indexOf("|");
+            if (index != -1) {
+                String site = siteEntry.substring(0, index).toLowerCase();
+                if (getDebug().messageEnabled()) {
+                    getDebug().message("SystemConfigUtil.storeSiteList: " +
+                        "add site" + site);
+                }
+                siteList.add(site);
+            } else {
+                getDebug().error("SystemConfigurationUtil.storeSiteList: " +
+                    "Platform Server List entry is invalid:" + siteEntry);
             }
         }
     }
@@ -422,6 +462,13 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
                     cookieDomains.addAll(values);
                 }
 
+                if (getDebug().messageEnabled()) {
+                    getDebug().message("SystemConfigUtil.update: " +
+                        "servers=" + (Set)avPairs.get(Constants.PLATFORM_LIST));
+                    getDebug().message("SystemConfigUtil.update: " +
+                        "sites=" + (Set)avPairs.get(Constants.SITE_LIST));
+                }
+
                 values = (Set)avPairs.get(Constants.PLATFORM_LIST);
                 if ((values == null) || values.isEmpty()) {
                     values = (Set)avPairs.get(Constants.SITE_LIST);
@@ -429,6 +476,7 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
                     values.addAll((Set)avPairs.get(Constants.SITE_LIST));
                 }
                 storeServerList(values);
+                storeSiteList((Set)avPairs.get(Constants.SITE_LIST));
             }
         } catch (ConfigurationException ex) {
             getDebug().error("SystemConfigurationUtil.update:", ex);

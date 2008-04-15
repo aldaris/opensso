@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutInit.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
+   $Id: idpSingleLogoutInit.jsp,v 1.3 2008-04-15 17:21:41 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -152,12 +152,12 @@
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error sending Logout Request " , sse);
         response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("requestProcessingError"));
+                SAML2Utils.bundle.getString("LogoutRequestProcessingError"));
         return;
     } catch (Exception e) {
         SAML2Utils.debug.error("Error processing Request ",e);
         response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("requestProcessingError"));
+                SAML2Utils.bundle.getString("LogoutRequestProcessingError"));
         return;
     }
 %>

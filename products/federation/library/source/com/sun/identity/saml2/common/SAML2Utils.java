@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.23 2008-04-14 21:13:29 exu Exp $
+ * $Id: SAML2Utils.java,v 1.24 2008-04-15 17:19:59 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1447,6 +1447,16 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         try {
             serverList = SystemConfigurationUtil.getServerList();
+            List siteList = SystemConfigurationUtil.getSiteList();
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.getRemoteServiceURLs: servers=" +
+                    serverList + ", siteList=" + siteList);
+            }
+            serverList.removeAll(siteList);
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.getRemoteServiceURLs: new servers=" +
+                    serverList);
+            }
         } catch (Exception ex) {
             if (debug.messageEnabled()) {
                 debug.message("SAML2Utils.getRemoteServiceURLs:", ex);

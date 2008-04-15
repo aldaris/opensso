@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.13 2008-04-10 23:15:03 veiming Exp $
+ * $Id: IDPSingleLogout.java,v 1.14 2008-04-15 17:20:49 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,14 @@ public class IDPSingleLogout {
     static SAML2MetaManager sm = null;
     static Debug debug = SAML2Utils.debug;
     static SessionProvider sessionProvider = null;
+    // Status elements
+    static final Status SUCCESS_STATUS =
+        SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
+        SAML2Utils.bundle.getString("requestSuccess"));
+    static final Status PARTIAL_LOGOUT_STATUS =
+        SAML2Utils.generateStatus(SAML2Constants.RESPONDER,
+        SAML2Utils.bundle.getString("partialLogout"));
+
     static {
         try {
             sm = new SAML2MetaManager();
@@ -488,14 +496,8 @@ public class IDPSingleLogout {
         }
 
         LogoutResponse logoutRes = processLogoutRequest(
-            logoutReq,
-            request,
-            response,
-            binding,
-            relayState,
-            idpEntityID,
-            realm
-            );
+            logoutReq, request, response, binding, relayState,
+            idpEntityID, realm, true);
         if (logoutRes == null) {
             // this is the case where there is more SP session participant
             // and processLogoutRequest() sends LogoutRequest to one of them
@@ -1025,6 +1027,7 @@ public class IDPSingleLogout {
      * @param relayState the relay state.
      * @param idpEntityID name of host entity ID.
      * @param realm name of host entity.
+     * @param isVerified true if the request is verified already.
      * @return LogoutResponse the target URL on successful
      * <code>LogoutRequest</code>.
      * @throws SAML2Exception if error processing
@@ -1037,11 +1040,14 @@ public class IDPSingleLogout {
         String binding,
         String relayState,
         String idpEntityID,
-        String realm) throws SAML2Exception {
+        String realm, boolean isVerified) throws SAML2Exception {
       
         Status status = null;
         String spEntity = logoutReq.getIssuer().getValue();
         Object session = null;
+        String tmpStr = request.getParameter("isLBReq");
+        boolean isLBReq = (tmpStr == null || !tmpStr.equals("false"));
+
         try {
             do {
                 String requestId = logoutReq.getID();
@@ -1049,6 +1055,14 @@ public class IDPSingleLogout {
                          realm, idpEntityID, logoutReq.getIssuer(), requestId);
                     
                 List siList = logoutReq.getSessionIndex();
+                if(siList == null) {
+                    debug.error("IDPSingleLogout.processLogoutRequest: " +
+                        "session index are null in logout request");
+                    status =
+                        SAML2Utils.generateStatus(SAML2Constants.REQUESTER, "");
+                    break;
+                }
+                int numSI = siList.size();
                 // TODO : handle list of session index
                 Iterator siIter = siList.iterator();
                 String sessionIndex = null;
@@ -1078,16 +1092,80 @@ public class IDPSingleLogout {
                     break;
                 }
 
+                String remoteServiceURL = null;
+                if(isLBReq) {
+                   // server id is the last two digit of the session index
+                   String serverId =
+                       sessionIndex.substring(sessionIndex.length() - 2);
+                   if (debug.messageEnabled()) {
+                       debug.message("IDPSingleLogout.processLogoutRequest: " +
+                           "sessionIndex=" + sessionIndex +", id=" + serverId);
+                   }
+                   // find out remote serice URL based on server id
+                   remoteServiceURL = SAML2Utils.getRemoteServiceURL(serverId);
+                }
+
                 IDPSession idpSession = (IDPSession)
                     IDPCache.idpSessionsByIndices.get(sessionIndex);
                 if (idpSession == null) {
-                    debug.error("IDPLogoutUtil.processLogoutRequest: " +
+                    // If the IDP session does not find locally for a given
+                    // session index and if the IDP is behind a lb with another
+                    // peer then we have to route the request.
+                    if (remoteServiceURL != null) {
+                       boolean peerError = false;
+                       String remoteLogoutURL = remoteServiceURL +
+                           SAML2Utils.removeDeployUri(request.getRequestURI());
+                       String queryString = request.getQueryString();
+                       if(queryString == null) {
+                          remoteLogoutURL = remoteLogoutURL + "?isLBReq=false";
+                       } else {
+                          remoteLogoutURL = remoteLogoutURL + "?" +
+                              queryString + "&isLBReq=false";
+                       }
+                       LogoutResponse logoutRes =
+                           LogoutUtil.forwardToRemoteServer(
+                           logoutReq, remoteLogoutURL);
+                       if ((logoutRes != null) &&
+                           !isNameNotFound(logoutRes)) {
+                           if ((isSuccess(logoutRes)) && (numSI > 0)) {
+                              siList =
+                                  LogoutUtil.getSessionIndex(logoutRes);
+                              if(siList == null || siList.isEmpty()) {
+                                 peerError = false;
+                                 break;
+                              }
+                           }
+                       } else {
+                           peerError = true;
+                       }
+                       if (peerError ||
+                           (siList != null && siList.size() > 0)) {
+                           status = PARTIAL_LOGOUT_STATUS;
+                           break;
+                       } else {
+                           status = SUCCESS_STATUS;
+                           break;
+                       }
+                    } else {
+                        debug.error("IDPLogoutUtil.processLogoutRequest: " +
                         "IDP no longer has this session index "+ sessionIndex);
-                    status = SAML2Utils.generateStatus(
+                        status = SAML2Utils.generateStatus(
                             SAML2Constants.RESPONDER, 
                             SAML2Utils.bundle.getString("invalidSessionIndex"));
-                    break;
+                        break;
+                    }
+                } else {
+                    // If the user session exists in this IDP then verify the
+                    // signature.
+                    if (!isVerified &&
+                        !LogoutUtil.verifySLORequest(logoutReq, realm,
+                        logoutReq.getIssuer().getValue(),
+                        idpEntityID, SAML2Constants.IDP_ROLE)) {
+                        throw new SAML2Exception(
+                           SAML2Utils.bundle.getString("invalidSignInRequest"));
+                    }
                 }
+
                 session = idpSession.getSession();
                 List list = (List)idpSession.getNameIDandSPpairs();
                 int n = list.size();
@@ -1374,5 +1452,45 @@ public class IDPSingleLogout {
                 IDPCache.authnContextCache.remove(idpSessionIndex);
             }       
         }
+    }
+
+    static boolean isSuccess(LogoutResponse logoutRes) {
+        return logoutRes.getStatus().getStatusCode().getValue()
+                        .equals(SAML2Constants.SUCCESS);
+    }
+
+    static boolean isNameNotFound(LogoutResponse logoutRes) {
+        Status status = logoutRes.getStatus();
+        String  statusMessage = status.getStatusMessage();
+
+        return (status.getStatusCode().getValue()
+                     .equals(SAML2Constants.RESPONDER) &&
+                statusMessage != null &&
+                statusMessage.equals(
+                     SAML2Utils.bundle.getString("invalid_name_identifier")));
+    }
+
+    private static LogoutRequest copyAndMakeMutable(LogoutRequest src) {
+        LogoutRequest dest =
+            ProtocolFactory.getInstance().createLogoutRequest();
+        try {
+            dest.setNotOnOrAfter(src.getNotOnOrAfter());
+            dest.setReason(src.getReason());
+            dest.setEncryptedID(src.getEncryptedID());
+            dest.setNameID(src.getNameID());
+            dest.setBaseID(src.getBaseID());
+            dest.setSessionIndex(src.getSessionIndex());
+            dest.setIssuer(src.getIssuer());
+            dest.setExtensions(src.getExtensions());
+            dest.setID(src.getID());
+            dest.setVersion(src.getVersion());
+            dest.setIssueInstant(src.getIssueInstant());
+            dest.setDestination(src.getDestination());
+            dest.setConsent(src.getConsent());
+            // TODO : handle signature in case of list of session case
+        } catch(SAML2Exception ex) {
+            debug.error("IDPSingleLogout.copyAndMakeMutable:", ex);
+        }
+        return dest;
     }
 }

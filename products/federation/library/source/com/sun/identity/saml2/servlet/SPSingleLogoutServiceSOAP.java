@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogoutServiceSOAP.java,v 1.2 2007-11-15 16:42:46 qcheng Exp $
+ * $Id: SPSingleLogoutServiceSOAP.java,v 1.3 2008-04-15 17:21:18 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 
 package com.sun.identity.saml2.servlet;
 
-import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
@@ -142,20 +141,10 @@ public class SPSingleLogoutServiceSOAP extends HttpServlet {
                 "LogoutRequest");
             logoutReq = 
                 ProtocolFactory.getInstance().createLogoutRequest(reqElem);
-            
-            if (!isLBReq) {
-                LogoutUtil.verifySLORequest(logoutReq, realm, 
-                                logoutReq.getIssuer().getValue(), 
-                                spEntityID, SAML2Constants.SP_ROLE);
-            }
+            // delay the signature validation until it finds the session
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error("SPSingleLogoutServiceSOAP.onMessage: " +
                 "unable to get LogoutRequest from message", se);
-            return SAML2Utils.createSOAPFault(SAML2Constants.CLIENT_FAULT,
-                "errorLogoutRequest", se.getMessage());
-        } catch (SessionException se) {
-            SAML2Utils.debug.error("SPSingleLogoutServiceSOAP.onMessage: " +
-                "unable to verify Sinature in SLORequest.", se);
             return SAML2Utils.createSOAPFault(SAML2Constants.CLIENT_FAULT,
                 "errorLogoutRequest", se.getMessage());
         }
@@ -169,7 +158,7 @@ public class SPSingleLogoutServiceSOAP extends HttpServlet {
         // process LogoutRequestElement
         LogoutResponse loRes = 
             SPSingleLogout.processLogoutRequest(logoutReq, spEntityID, realm,
-                request, response, isLBReq, SAML2Constants.SOAP);
+                request, response, isLBReq, SAML2Constants.SOAP, false);
 
         if (loRes == null) {
             SAML2Utils.debug.error("SPSLOSOAP.onMessage: null LogoutResponse");
