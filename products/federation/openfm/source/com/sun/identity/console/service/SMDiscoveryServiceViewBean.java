@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceViewBean.java,v 1.2 2007-11-10 06:14:03 veiming Exp $
+ * $Id: SMDiscoveryServiceViewBean.java,v 1.3 2008-04-16 00:17:03 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,7 @@ import com.sun.identity.console.service.model.SMDiscoEntryData;
 import com.sun.identity.console.service.model.SMDiscoveryServiceData;
 import com.sun.identity.console.service.model.SMDiscoveryServiceModel;
 import com.sun.identity.console.service.model.SMDiscoveryServiceModelImpl;
+import com.sun.identity.console.user.UMUserResourceOfferingViewBean;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
@@ -224,13 +225,13 @@ public class SMDiscoveryServiceViewBean
 	    AMIdentity amid = IdUtils.getIdentity(
 		model.getUserSSOToken(), univId);
 	    if (amid.getType().getName().equalsIgnoreCase("user")) {
-		ServicesNoAttributeViewBean vb = (ServicesNoAttributeViewBean)
-		    getViewBean(ServicesNoAttributeViewBean.class);
+		UMUserResourceOfferingViewBean vb = (UMUserResourceOfferingViewBean)
+		    getViewBean(UMUserResourceOfferingViewBean.class);
 		vb.unlockPageTrail();
 		vb.setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID,
 		    univId);
 		vb.setPageSessionAttribute(
-		    ServicesNoAttributeViewBean.SERVICE_NAME, 
+		    UMUserResourceOfferingViewBean.SERVICE_NAME, 
 		    AMAdminConstants.DISCOVERY_SERVICE);
 		vb.setPageSessionAttribute(AMAdminConstants.CURRENT_REALM,
 		    req.getParameter("realm"));

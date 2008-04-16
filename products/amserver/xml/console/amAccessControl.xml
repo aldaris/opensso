@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.8 2008-01-15 22:26:13 jonnelson Exp $
+   $Id: amAccessControl.xml,v 1.9 2008-04-16 00:15:25 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -471,4 +471,9 @@
 <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListAddViewBean" />
 <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListDupViewBean" />
 <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.user.UMUserResourceOfferingViewBean" />
+    <neednodealwith classname="com.sun.identity.console.user.UMUserResourceOfferingAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.user.UMUserResourceOfferingEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.user.UMUserDiscoveryDescriptionAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.user.UMUserDiscoveryDescriptionEditViewBean" />
 </accesscontrols>
