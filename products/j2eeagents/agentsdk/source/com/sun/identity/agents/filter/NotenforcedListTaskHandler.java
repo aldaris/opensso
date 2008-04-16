@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedListTaskHandler.java,v 1.1 2006-09-28 23:34:24 huacui Exp $
+ * $Id: NotenforcedListTaskHandler.java,v 1.2 2008-04-16 00:45:46 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,7 +101,8 @@ implements INotenforcedListTaskHandler {
     {
         AmFilterResult result = null;
         HttpServletRequest request = ctx.getHttpServletRequest();
-        String requestURI = request.getRequestURI();
+        //requestURI includes complete URL requested
+        String requestURI = ctx.getPolicyDestinationURL();
         if(isNotEnforcedURI(requestURI)) {
             if(isLogMessageEnabled()) {
                 logMessage("NotenforcedListTaskHandler: The request URI "
