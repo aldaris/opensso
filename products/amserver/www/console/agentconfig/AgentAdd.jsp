@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentAdd.jsp,v 1.3 2008-03-20 06:14:42 asyhuang Exp $
+   $Id: AgentAdd.jsp,v 1.4 2008-04-17 00:51:56 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -46,11 +46,11 @@
     function SelectLocal(radio) {
        var formElement = document.forms["AgentAdd"];
        if(radio.value=="local") {
-           formElement.elements[7].disabled = true;
-           formElement.elements[8].disabled = true;
+           formElement.elements['AgentAdd.tfServerURL'].disabled = true;
+           formElement.elements['AgentAdd.tfAgentURL'].disabled = true;
        } else if (radio.value=="centralized") {
-           formElement.elements[7].disabled = false;
-           formElement.elements[8].disabled = false;
+           formElement.elements['AgentAdd.tfServerURL'].disabled = false;
+           formElement.elements['AgentAdd.tfAgentURL'].disabled = false;
        } 
     } 
 </script>
