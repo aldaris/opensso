@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXMLViewBean.java,v 1.2 2007-12-21 21:14:55 veiming Exp $
+ * $Id: ServerConfigXMLViewBean.java,v 1.3 2008-04-17 17:50:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,10 +71,6 @@ public class ServerConfigXMLViewBean
     private static final String TF_SERVER_MIN_POOL = "tfserverminpool";
     private static final String TF_SERVER_MAX_POOL = "tfservermaxpool";
 
-    private static final String TBL_SERVERS_BTN_ADD = 
-        "tblServerConfigXMLServerButtonAdd";
-    private static final String TBL_SERVERS_BTN_DELETE =
-        "tblServerConfigXMLServerButtonDelete";
     private static final String TBL_SERVERS_COL_HOST =
         "tblServerConfigXMLServerColHost";
     private static final String TBL_SERVERS_COL_NAME =
@@ -96,10 +92,6 @@ public class ServerConfigXMLViewBean
     private static final String TF_USER_MIN_POOL = "tfuserminpool";
     private static final String TF_USER_MAX_POOL = "tfusermaxpool";
 
-    private static final String TBL_USERS_BTN_ADD = 
-        "tblServerConfigXMLUserButtonAdd";
-    private static final String TBL_USERS_BTN_DELETE =
-        "tblServerConfigXMLUserButtonDelete";
     private static final String TBL_USERS_COL_NAME =
         "tblServerConfigXMLUserColName";
     private static final String TBL_USERS_COL_HOST =
@@ -126,6 +118,7 @@ public class ServerConfigXMLViewBean
     private CCActionTableModel tblServerModel;
     private CCActionTableModel tblUserModel;
     private boolean submitCycle;
+    private boolean bAMSDKEnabled;
 
     /**
      * Creates a server config XML view bean.
@@ -141,6 +134,8 @@ public class ServerConfigXMLViewBean
                 ServerEditViewBeanBase.PG_ATTR_SERVER_NAME);
             if (serverName != null) {
                 super.initialize();
+                
+                bAMSDKEnabled = getModel().isAMSDKEnabled();
                 createPageTitleModel();
                 createTabModel();
                 createPropertyModel(serverName);
@@ -305,34 +300,39 @@ public class ServerConfigXMLViewBean
     }
 
     private void createPropertyModel(String serverName) {
+        String fileName = (bAMSDKEnabled) ?
+            "com/sun/identity/console/propertyServerConfigXMLWithAMSDK.xml" :
+            "com/sun/identity/console/propertyServerConfigXML.xml";
         String xml = AMAdminUtils.getStringFromInputStream(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/propertyServerConfigXML.xml"));
+            getClass().getClassLoader().getResourceAsStream(fileName));
         propertySheetModel = new AMPropertySheetModel(xml);
         propertySheetModel.clear(); 
     }
     
     private void populateServerTableModel(List entries) {
-        tblServerModel.clearAll();
-        SerializedField szCache = (SerializedField)getChild(SZ_CACHE_SERVER);
-        int counter = 0;
+        if (bAMSDKEnabled) {
+            tblServerModel.clearAll();
+            SerializedField szCache = (SerializedField)getChild(
+                SZ_CACHE_SERVER);
+            int counter = 0;
 
-        if ((entries != null) && !entries.isEmpty()) {
-            for (Iterator i = entries.iterator(); i.hasNext(); counter++) {
-                if (counter > 0) {
-                    tblServerModel.appendRow();
+            if ((entries != null) && !entries.isEmpty()) {
+                for (Iterator i = entries.iterator(); i.hasNext(); counter++) {
+                    if (counter > 0) {
+                        tblServerModel.appendRow();
+                    }
+
+                    ServerConfigXML.ServerObject entry =
+                        (ServerConfigXML.ServerObject) i.next();
+                    tblServerModel.setValue(TBL_SERVERS_NAME_DATA, entry.name);
+                    tblServerModel.setValue(TBL_SERVERS_HOST_DATA, entry.host);
+                    tblServerModel.setValue(TBL_SERVERS_PORT_DATA, entry.port);
+                    tblServerModel.setValue(TBL_SERVERS_TYPE_DATA, entry.type);
+                    tblServerModel.setSelectionVisible(counter, true);
                 }
-                
-                ServerConfigXML.ServerObject entry =
-                    (ServerConfigXML.ServerObject)i.next();
-                tblServerModel.setValue(TBL_SERVERS_NAME_DATA, entry.name);
-                tblServerModel.setValue(TBL_SERVERS_HOST_DATA, entry.host);
-                tblServerModel.setValue(TBL_SERVERS_PORT_DATA, entry.port);
-                tblServerModel.setValue(TBL_SERVERS_TYPE_DATA, entry.type);
-                tblServerModel.setSelectionVisible(counter, true);
             }
+            szCache.setValue(entries);
         }
-        szCache.setValue(entries);
     }
     
     private void populateUserTableModel(List entries) {
@@ -365,8 +365,6 @@ public class ServerConfigXMLViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event) {
         submitCycle = true;
-        String serverMinPool = (String)getDisplayFieldValue(TF_SERVER_MIN_POOL);
-        String serverMaxPool = (String)getDisplayFieldValue(TF_SERVER_MAX_POOL);
         String userMinPool = (String)getDisplayFieldValue(TF_USER_MIN_POOL);
         String userMaxPool = (String)getDisplayFieldValue(TF_USER_MAX_POOL);
         String bindDN = (String)getDisplayFieldValue(TF_USERS_BIND_DN);
@@ -378,13 +376,21 @@ public class ServerConfigXMLViewBean
         
         try {
             ServerConfigXML xmlObj = model.getServerConfigObject(serverName);
-            ServerConfigXML.ServerGroup defaultServerGroup = 
-                xmlObj.getDefaultServerGroup();
             ServerConfigXML.ServerGroup smsServerGroup = 
                 xmlObj.getSMSServerGroup();
+            
+            if (bAMSDKEnabled) {
+                String serverMinPool = (String)
+                    getDisplayFieldValue(TF_SERVER_MIN_POOL);
+                String serverMaxPool = (String)
+                    getDisplayFieldValue(TF_SERVER_MAX_POOL);
+                ServerConfigXML.ServerGroup defaultServerGroup = 
+                    xmlObj.getDefaultServerGroup();
 
-            defaultServerGroup.minPool = Integer.parseInt(serverMinPool);
-            defaultServerGroup.maxPool = Integer.parseInt(serverMaxPool);
+                defaultServerGroup.minPool = Integer.parseInt(serverMinPool);
+                defaultServerGroup.maxPool = Integer.parseInt(serverMaxPool);
+            }
+
             smsServerGroup.minPool = Integer.parseInt(userMinPool);
             smsServerGroup.maxPool = Integer.parseInt(userMaxPool);
             List userGroup = smsServerGroup.dsUsers;
@@ -549,8 +555,6 @@ public class ServerConfigXMLViewBean
      * @param nodeID Selected Node ID.
      */
     public void nodeClicked(RequestInvocationEvent event, int nodeID) {
-        AMViewConfig amconfig = AMViewConfig.getInstance();
-
         try {
             AMViewBeanBase vb = getTabNodeAssociatedViewBean(
                 "cscGeneral", nodeID);

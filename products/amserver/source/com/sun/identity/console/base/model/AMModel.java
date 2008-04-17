@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModel.java,v 1.4 2007-12-17 19:42:51 veiming Exp $
+ * $Id: AMModel.java,v 1.5 2008-04-17 17:50:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.console.base.model;
 
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOException;
 import com.sun.identity.idm.AMIdentity;
 import java.util.Set;
 import java.util.Map;
@@ -253,4 +252,13 @@ public interface AMModel
      */
     public Set getRealmNames(String base, String filter)
         throws AMConsoleException;
+
+    /**
+     * Returns <code>true</code> if server is running with <code>AMSDK</code>
+     * repo enabled.
+     * 
+     * @return <code>true</code> if server is running with <code>AMSDK</code>
+     * repo enabled.
+     */
+    boolean isAMSDKEnabled();
 }

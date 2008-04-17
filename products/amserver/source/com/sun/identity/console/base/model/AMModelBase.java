@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.8 2008-02-20 05:41:47 goodearth Exp $
+ * $Id: AMModelBase.java,v 1.9 2008-04-17 17:50:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1096,5 +1096,28 @@ public class AMModelBase
             }
         }
         return altered;
+    }
+    
+    /**
+     * Returns <code>true</code> if server is running with <code>AMSDK</code>
+     * repo enabled.
+     * 
+     * @return <code>true</code> if server is running with <code>AMSDK</code>
+     * repo enabled.
+     */
+    public boolean isAMSDKEnabled() {
+        try {
+            ServiceSchemaManager schemaMgr = new ServiceSchemaManager(
+                IdConstants.REPO_SERVICE, AMAdminUtils.getSuperAdminSSOToken());
+            ServiceSchema orgSchema = schemaMgr.getOrganizationSchema();
+            Set names = orgSchema.getSubSchemaNames();
+            return (names != null) && names.contains("amSDK");
+        } catch (SMSException e) {
+            debug.error("AMModelBase.isAMSDKEnabled", e);
+            return false;
+        } catch (SSOException e) {
+            debug.error("AMModelBase.isAMSDKEnabled", e);
+            return false;
+        }
     }
 }
