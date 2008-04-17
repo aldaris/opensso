@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.3 2008-04-08 23:40:47 qcheng Exp $
+   $Id: index.jsp,v 1.4 2008-04-17 00:34:45 qcheng Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -151,17 +151,33 @@
                 fedletHomeDir + "\" directory.</b>");
             out.println("<br><br>Click <a href=\"index.jsp\">here</a> to continue.");
         } else {
+            // check if this WAR contain Fedlet configuration
+            boolean confExist = false;
+            InputStream src = getServletContext().getResourceAsStream(
+                "/conf/FederationConfig.properties");
+            if (src != null) {
+                confExist = true;
+            }
+
             File dir = new File(fedletHomeDir);
             File file = new File(fedletHomeDir + File.separator + 
                 "FederationConfig.properties");
             if (!dir.exists() || !dir.isDirectory()) {
                 out.println("<p><br><b>Fedlet configuration home directory does not exists.</b>");
-                out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
-                out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                if (confExist) {
+                    out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
+                    out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                } else {
+                    out.println("<br>Please follow the README bundled inside your Fedlet-unconfigured.zip file to setup Fedlet configuration, then restart your web container.");
+                }
             } else if (!file.exists()) {
                 out.println("<p><br><b>FederationConfig.properties could not be found.</b>");
-                out.println("<br><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
-                out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                if (confExist) {
+                    out.println("<br><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
+                    out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                } else {
+                    out.println("<br>Please follow the README bundled inside your Fedlet-unconfigured.zip file to setup Fedlet configuration, then restart your web container.");
+                }
             } else {
                 SAML2MetaManager manager = new SAML2MetaManager();
                 List spEntities = 
@@ -186,8 +202,12 @@
                 }
                 if ((spEntityID == null) || (idpEntityID == null)) {
                     out.println("<p><br><b>Fedlet or remote Identity Provider metadata is not configured.</b>");
-                    out.println("<p><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
-                    out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                    if (confExist) {
+                        out.println("<p><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
+                        out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
+                    } else {
+                        out.println("<br>Please follow the README bundled inside your Fedlet-unconfigured.zip file to setup Fedlet configuration, then restart your web container.");
+                    }
                 } else {
                     // IDP base URL
                     String idpBaseUrl = null;

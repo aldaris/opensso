@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.38 2008-04-03 16:12:24 bigfatrat Exp $
+   $Id: build.xml,v 1.39 2008-04-17 00:34:45 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -139,12 +139,28 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="zip" depends="war,clientsamples,tools,publicdoc">
+    <target name="zip" depends="war,fedlet,clientsamples,tools,publicdoc">
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
     <target name="war" depends="jars">
         <ant antfile="${openfm.dir}/build-war.xml" inheritRefs="true"/>
+    </target>
+
+    <target name="fedlet" depends="war">
+        <delete file="${openfm.dir}/built/dist/Fedlet-unconfigured.zip"/>
+        <java classname="com.sun.identity.fedlet.CreateFedletZip">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement location="${library.res.i18n.dir}"/>
+                <pathelement location="${openfm.res.i18n.dir}"/>
+            </classpath>
+            <arg value="${openfm.dir}/resources/fedletBits.properties"/>
+            <arg value="${openfm.dir}/resources/fedletJarExtract.properties"/>
+            <arg value="${openfm.dir}/built/war/package"/>
+            <arg value="${openfm.dir}/built/dist/Fedlet-unconfigured.zip"/>
+            <arg value="${library.dir}/fedlet/README.unconfigured"/>
+        </java>
     </target>
 
     <target name="tools" depends="jars">
@@ -170,7 +186,8 @@
             </fileset>
             <fileset dir="${openfm.services.xml.dir}" includes="*.xml" />
             <zipfileset dir="${openfm.classes.dir}"
-                excludes="com/sun/identity/console/**" />
+                excludes="com/sun/identity/console/**, 
+                com/sun/identity/fedlet/**" />
         </jar>
 
         <copy tofile="${fm.dist.dir}/console.jar"

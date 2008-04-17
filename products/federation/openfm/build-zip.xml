@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.14 2008-04-03 17:48:15 kenwho Exp $
+   $Id: build-zip.xml,v 1.15 2008-04-17 00:34:45 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,6 +49,10 @@
         </copy>
         <copy file="${fm.dist.dir}/opensso.war"
             tofile="${zip.temp.dir}/deployable-war/opensso.war" />
+
+        <mkdir dir="${zip.temp.dir}/fedlet" />
+        <copy file="${fm.dist.dir}/Fedlet-unconfigured.zip"
+            todir="${zip.temp.dir}/fedlet" />
 
         <!-- copy IDP discovery related files to deployable-war -->
         <mkdir dir="${zip.temp.dir}/deployable-war/idpdiscovery" />
