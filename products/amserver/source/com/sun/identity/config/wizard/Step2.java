@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.7 2008-03-20 20:50:21 jonnelson Exp $
+ * $Id: Step2.java,v 1.8 2008-04-17 17:27:29 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ public class Step2 extends AjaxPage {
 
         val = (String)getContext().getSessionAttribute("configDirectory");
         if (val == null) {
-            val = getBaseDir();
+            val = getBaseDir(getContext().getRequest());
         }
         add("configDirectory", val);
         super.onInit();

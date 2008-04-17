@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.14 2008-03-20 20:50:22 jonnelson Exp $
+ * $Id: AjaxPage.java,v 1.15 2008-04-17 17:27:29 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -205,21 +205,23 @@ public abstract class AjaxPage extends Page {
         return hostName;
     }
     
-    public String getBaseDir() {
+    public String getBaseDir(HttpServletRequest req) {
         String basedir = AMSetupServlet.getPresetConfigDir();
         if ((basedir == null) || (basedir.length() == 0)) {
             String tmp = System.getProperty("user.home");
             if (File.separatorChar == '\\') {
                 tmp = tmp.replace('\\', '/');
             }
-            basedir = tmp;
+            String uri = req.getRequestURI();
+            int idx = uri.indexOf("/", 1);
+            if (idx != -1) {
+                uri = uri.substring(0, idx);
+            }
+            
+            basedir = (tmp.endsWith("/")) ? tmp.substring(0, tmp.length()-1) :
+                tmp;
+            basedir += uri;
         } 
-
-        if (basedir.endsWith("/")) {
-            basedir = basedir + "opensso"; 
-        } else {
-            basedir = basedir + "/opensso";
-        }
 
         return basedir;
     }

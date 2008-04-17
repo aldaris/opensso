@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.7 2008-02-29 19:32:00 jonnelson Exp $
+ * $Id: DefaultSummary.java,v 1.8 2008-04-17 17:27:28 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ import com.sun.identity.setup.HttpServletRequestWrapper;
 import com.sun.identity.setup.HttpServletResponseWrapper;
 import com.sun.identity.setup.SetupConstants;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import net.sf.click.control.ActionLink;
 
 public class DefaultSummary extends AjaxPage {
@@ -72,10 +71,12 @@ public class DefaultSummary extends AjaxPage {
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_URI, req.getRequestURI());
         request.addParameter(
-            SetupConstants.CONFIG_VAR_SERVER_URL, req.getRequestURL().toString());
+            SetupConstants.CONFIG_VAR_SERVER_URL, 
+                req.getRequestURL().toString());
         
         request.addParameter(
-            SetupConstants.CONFIG_VAR_BASE_DIR, getBaseDir());
+            SetupConstants.CONFIG_VAR_BASE_DIR, getBaseDir(
+                getContext().getRequest()));
 
         request.addParameter(
             SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, 

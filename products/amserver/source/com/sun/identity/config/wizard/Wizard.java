@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.11 2008-04-11 17:02:52 jonnelson Exp $
+ * $Id: Wizard.java,v 1.12 2008-04-17 17:27:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -233,7 +233,7 @@ public class Wizard extends AjaxPage {
         String base = 
             (String)getContext().getSessionAttribute("configDirectory");
         if (base == null) {
-            base = getBaseDir();
+            base = getBaseDir(getContext().getRequest());
         }
         request.addParameter(SetupConstants.CONFIG_VAR_BASE_DIR, base);
                    
