@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.3 2008-02-27 05:46:01 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.4 2008-04-17 16:25:11 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -185,6 +185,10 @@ public class SiteConfiguration extends ConfigurationBase {
             if (sc != null) {
                 ServiceConfig cfg = sc.getSubConfig(siteName);
                 if (cfg != null) {
+                    Set svrs = listServers(ssoToken, siteName);
+                    if ((svrs != null) && !svrs.isEmpty()) {
+                        removeServersFromSite(ssoToken, siteName, svrs);
+                    }
                     sc.removeSubConfig(siteName);
                     deleted = true;
                 } 
