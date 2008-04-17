@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationTaskHandler.java,v 1.4 2008-03-07 03:56:25 sean_brydon Exp $
+ * $Id: NotificationTaskHandler.java,v 1.5 2008-04-17 22:16:08 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                 logMessage("NotificationTaskHandler.handleNotification:"
                         + " received " + serviceID + " notification");
             }
-            if (serviceID != null) {
+            if (serviceID != null && isServiceNotificationEnabled(serviceID)) {
                 String response = STR_NOTIFICATION_PROCESSING_FAILED;
                 NotificationHandler handler =
                         PLLClient.getNotificationHandler(serviceID);
@@ -166,6 +166,30 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         }
         
         return result;
+    }
+    
+    /**
+     * Checks if the policy,session, or agent configuration notifications 
+     * are enabled when receiving one of those notification types.
+     *
+     * @param serviceID is the service ID attrbute contained inside a
+     *        notification xml message and identifies the type of notification
+     */               
+    private boolean isServiceNotificationEnabled(String serviceID) {
+        boolean enabled = false;
+        if (serviceID != null) {
+            if(serviceID.equals(SERVICE_ID_POLICY) 
+                                         && isPolicyNotificationEnabled()) {
+                enabled = true;
+            } else if(serviceID.equals(SERVICE_ID_SESSION) 
+                                         && isSessionNotificationEnabled()) {
+                enabled = true;
+            } else if(serviceID.equals(SERVICE_ID_AGENT_CONFIGURATION) 
+                                         && isConfigNotificationEnabled()) {
+                enabled = true;
+            }                   
+        }
+        return enabled;
     }
     
     private String getNotificationDataString(HttpServletRequest request) {
@@ -294,4 +318,9 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
     private boolean                         _policyNotificationEnabled  = false;
     private boolean                         _configNotificationEnabled  = false;
     private String                          _notificationURI;
+    
+    //serviceID attribute values inside notification xml messages
+    private static final String SERVICE_ID_AGENT_CONFIGURATION =  "agentconfig";
+    private static final String SERVICE_ID_POLICY              =  "policy";
+    private static final String SERVICE_ID_SESSION             =  "session";
 }
