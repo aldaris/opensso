@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeadTaskRunnable.java,v 1.1 2007-09-13 18:12:17 ww203982 Exp $
+ * $Id: HeadTaskRunnable.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,12 @@ public class HeadTaskRunnable implements TaskRunnable {
     
     protected Date time;
     protected volatile TaskRunnable nextTask;
+    protected volatile TaskRunnable tailTask;
+    protected volatile boolean expired;
+    protected volatile boolean timeout;
+    protected int waitCount;
+    protected int acquireCount;
+    protected volatile Thread owner;
     protected Triggerable parent;
     
     /**
@@ -57,24 +63,142 @@ public class HeadTaskRunnable implements TaskRunnable {
             throw new IllegalArgumentException();
         }
         this.time = time;
+        this.owner = null;
         this.nextTask = nextTask;
+        this.tailTask = nextTask;
+        this.expired = false;
+        this.timeout = false;
+        this.waitCount = 0;
+        this.acquireCount = 0;
         this.nextTask.setHeadTask(this);
         this.nextTask.setPrevious(this);
         this.parent = parent;
     }
     
     /**
-     * Implement for TaskRunnable interface, no actual use for HeadTaskRunnable.
+     * Sets the status of the HeadTask to expired.
      */
     
-    public void setHeadTask(TaskRunnable headTask) {
+    protected synchronized void expire() throws IllegalMonitorStateException {
+        if (owner == Thread.currentThread()) {
+            expired = true;
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
+        }
     }
     
     /**
-     * Implement for TaskRunnable interface, no actual use for HeadTaskRunnable.
+     * Sets the status of the HeadTask to timeout.
      */
     
-    public TaskRunnable getHeadTask() {
+    protected synchronized void timeout() throws IllegalMonitorStateException {
+        if (owner == Thread.currentThread()) {
+            timeout = true;
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
+        }
+    }
+    
+    /**
+     * Returns a boolean to indicate whether the HeadTask is timeout already.
+     *
+     * @return a boolen to indicate whether the HeadTask is timeout.
+     */
+    
+    public boolean isTimedOut() {
+        return timeout;
+    }
+    
+    /**
+     * Returns a boolean to indicate whether the HeadTask is expired already.
+     *
+     * @return a boolean to indicate whether the HeadTask is expired.
+     */
+    
+    public boolean isExpired() {
+        return expired;
+    }
+    
+    /**
+     * Returns the thread which currently holding this lock.
+     *
+     * @return the thread which currently own the lock or null.
+     */
+    
+    public Thread getCurrentOwner() {
+        return owner;
+    }
+    
+    /**
+     * Tries to acquire a valid (non-expired) lock.
+     *
+     * @return a boolean to indicate whether it is succeed to acquire the lock.
+     */
+    
+    public synchronized boolean acquireValidLock() {
+        while (!expired) {
+            if (owner == null) {
+                owner = Thread.currentThread();
+                acquireCount = 1;
+                return true;
+            } else {
+                if (owner != Thread.currentThread()) {
+                    try {
+                        waitCount++;
+                        this.wait();
+                        waitCount--;
+                    } catch (InterruptedException ex){
+                        //ignored
+                    }
+                } else {
+                    acquireCount++;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Releases the currently holding lock.
+     */
+    
+    public synchronized void releaseLockAndNotify() throws
+        IllegalMonitorStateException {
+        if (owner == Thread.currentThread()) {
+            if (acquireCount > 1) {
+                acquireCount--;
+            } else {
+                owner = null;
+                acquireCount = 0;
+                if (waitCount > 0) {
+                    if (expired) {
+                        this.notifyAll();
+                    } else {
+                        this.notify();
+                    }
+                }
+            }
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
+        }
+    }
+    
+    /**
+     * Implements for TaskRunnable interface, no actual use for HeadTaskRunnable.
+     */
+    
+    public void setHeadTask(HeadTaskRunnable headTask) {
+    }
+    
+    /**
+     * Implements for TaskRunnable interface, no actual use for HeadTaskRunnable.
+     */
+    
+    public HeadTaskRunnable getHeadTask() {
         return null;
     }
     
@@ -168,6 +292,24 @@ public class HeadTaskRunnable implements TaskRunnable {
     }
     
     /**
+     * Implements for TaskRunnable interface.
+     */
+    
+    public void cancel() {
+        if (acquireValidLock()) {
+            try {
+                synchronized (this) {
+                    if (parent != null) {
+                        parent.trigger(time);
+                    }
+                }
+            } finally {
+                releaseLockAndNotify();
+            }
+        }
+    }
+    
+    /**
      * Sets the Triggerable interface which will be run when the linked-list is
      * empty.
      *
@@ -177,10 +319,30 @@ public class HeadTaskRunnable implements TaskRunnable {
     
     public void setTrigger(Triggerable parent) {
         synchronized (this) {
-            if (parent != null){
-                this.parent = parent;
-            }
+            this.parent = parent;
         }
+    }
+    
+    /**
+     * Sets the task which is the tail of the list.
+     *
+     * It is for internal use only.
+     *
+     * @param task The task which is at the tail of the list.
+     */
+    
+    protected void setTail(TaskRunnable task) {        
+        tailTask = task;
+    }
+    
+    /**
+     * Returns the Task which is at the tail of the list.
+     *
+     * @return The task which is at the tail of the list.
+     */
+    
+    protected TaskRunnable tail() {
+        return tailTask;
     }
     
     /**
@@ -190,7 +352,11 @@ public class HeadTaskRunnable implements TaskRunnable {
      */
     
     public long scheduledExecutionTime() {
-        return time.getTime();
+        if (expired) {
+            return -1;
+        } else {
+            return time.getTime();
+        }
     }
     
     /**

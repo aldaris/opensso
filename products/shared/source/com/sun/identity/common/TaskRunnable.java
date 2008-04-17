@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskRunnable.java,v 1.1 2007-09-13 18:12:19 ww203982 Exp $
+ * $Id: TaskRunnable.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,6 +59,8 @@ public interface TaskRunnable extends Runnable {
     
     /** 
      * Sets the TaskRunnable next to this TaskRunnable in the linked-list.
+     * 
+     * It is for internal use only.
      *
      * @param task The next TaskRunnable
      */
@@ -67,6 +69,8 @@ public interface TaskRunnable extends Runnable {
     
     /**
      * Sets the TaskRunnable previous to this TaskRunnable in the linked-list.
+     * 
+     * It is for internal use only.
      *
      * @param task The previous TaskRunnable
      */
@@ -77,12 +81,13 @@ public interface TaskRunnable extends Runnable {
      * Sets the head task for this linkable TaskRunnable.
      *
      * The head task of this TaskRunnable will be set. HeadTask works as a lock
-     * when the elements of the linked task is going to be changed.
+     * when the elements of the linked task is going to be changed. It is for
+     * internal use only.
      *
      * @param headTask The HeadTaskRunnable
      */
     
-    public void setHeadTask(TaskRunnable headTask);
+    public void setHeadTask(HeadTaskRunnable headTask);
     
     /**
      * Returns the head task for this linkable TaskRunnable.
@@ -94,7 +99,7 @@ public interface TaskRunnable extends Runnable {
      * @return The head task of this linkable TaskRunnable
      */
     
-    public TaskRunnable getHeadTask();
+    public HeadTaskRunnable getHeadTask();
     
     /**
      * Returns the run period of this TaskRunnable.
@@ -129,5 +134,11 @@ public interface TaskRunnable extends Runnable {
      */
     
     public long scheduledExecutionTime();
+    
+    /**
+     * Cancel the task from scheduled Timer.
+     */
+    
+    public void cancel();
     
 }

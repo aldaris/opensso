@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimerPool.java,v 1.3 2007-11-26 18:04:29 ww203982 Exp $
+ * $Id: TimerPool.java,v 1.4 2008-04-17 09:06:57 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.shared.debug.Debug;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ public class TimerPool implements Triggerable {
     private Scheduler scheduler;
     private SortedMap taskList;
     private Date nextRun;
+    private Debug debug;
 
     /**
      * Constructor of TimerPool.
@@ -57,14 +59,16 @@ public class TimerPool implements Triggerable {
      * @param poolSize The size of the TimerPool
      * @param daemon The boolean to indicate whether the threads in TimerPool
      *        are daemon
+     * @param debug Debug object to send debugging message to.
      */
     
-    public TimerPool(String name, int poolSize, boolean daemon) {
+    public TimerPool(String name, int poolSize, boolean daemon, Debug debug) {
         this.name = name;
 	this.poolSize = poolSize;
         this.busyThreadCount = 0;
         this.currentThreadCount = 0;
         this.daemon = daemon;
+        this.debug = debug;
         this.shutdownThePool = false;
         this.threads = new WorkerThread[poolSize];
         this.scheduler = new Scheduler(this);
@@ -120,28 +124,37 @@ public class TimerPool implements Triggerable {
         WorkerThread t = null;
         HeadTaskRunnable task = null;
         synchronized (this) {
-            while (busyThreadCount == poolSize) {
-                try {
-                    wait();
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (nextRun != null) {
-                long now = System.currentTimeMillis();
-                if (nextRun.getTime() <= now ) {
-                    if ((task = (HeadTaskRunnable) taskList.remove(nextRun)) 
-                        != null) {
-                        t = getAvailableThread();
+            if (shutdownThePool) {
+                return;
+            } else {
+                while (busyThreadCount == poolSize) {
+                    try {
+                        wait();
+                        if (shutdownThePool) {
+                            return;
+                        }
+                    } catch(Exception ex) {
+                        if (debug != null) {
+                            debug.error("TimerPool:runNext() " + name, ex);
+                        }
                     }
                 }
-                try {
-                    nextRun = (Date) taskList.firstKey();
-                    long delay = nextRun.getTime() - now;
-                    scheduler.setDelay((delay >= 0 ? delay : 0));
-                } catch(NoSuchElementException ex) {
-                    nextRun = null;
-                    scheduler.setDelay(-1);
+                if (nextRun != null) {
+                    long now = System.currentTimeMillis();
+                    if (nextRun.getTime() <= now ) {
+                        if ((task = (HeadTaskRunnable) taskList.remove(nextRun)) 
+                            != null) {
+                            t = getAvailableThread();
+                        }
+                    }
+                    try {
+                        nextRun = (Date) taskList.firstKey();
+                        long delay = nextRun.getTime() - now;
+                        scheduler.setDelay((delay >= 0 ? delay : 0));
+                    } catch(NoSuchElementException ex) {
+                        nextRun = null;
+                        scheduler.setDelay(-1);
+                    }
                 }
             }
         }
@@ -157,6 +170,7 @@ public class TimerPool implements Triggerable {
     private synchronized void deductCurrentThreadCount(){
         currentThreadCount--;
         busyThreadCount--;
+        notify();
     }
     
     /**
@@ -181,7 +195,7 @@ public class TimerPool implements Triggerable {
             synchronized (this) {
                 busyThreadCount--;
                 if(busyThreadCount == 0){
-                    notify();
+                    notifyAll();
                 }
             }
         } else {
@@ -205,17 +219,39 @@ public class TimerPool implements Triggerable {
     public void schedule(TaskRunnable task, Date time) throws
         IllegalArgumentException, IllegalStateException {
         if (shutdownThePool) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                "The timers have been shuted down!");
         } else {
             if ((task != null) && (time != null)) {
                 HeadTaskRunnable head = null;
+                do {
+                    head = task.getHeadTask();
+                    if (head != null) {
+                        if (head.acquireValidLock()) {
+                            try {
+                                if (head == task.getHeadTask()) {
+                                    if (head.scheduledExecutionTime() ==
+                                        time.getTime()) {
+                                        return;
+                                    } else {
+                                        if (!head.isTimedOut()) {
+                                            throw new IllegalStateException(
+                                                "The task has been scheduled!");
+                                        }
+                                    }
+                                }
+                            } finally {
+                                head.releaseLockAndNotify();
+                            }
+                        }
+                    }
+                } while (head != task.getHeadTask());
                 synchronized (taskList) {
                     if((head = (HeadTaskRunnable) taskList.get(time)) == null) {
                         task.setNext(null);
                         taskList.put(time, new HeadTaskRunnable(this, task,
                             time));        
                     }
-                    
                 }
                 if (head == null) {
                     synchronized (this) {
@@ -228,12 +264,19 @@ public class TimerPool implements Triggerable {
                         }
                     }
                 } else {
-                    synchronized (head) {
-                        task.setHeadTask(head);
-                        task.setPrevious(head);
-                        task.setNext(head.next());
-                        head.next().setPrevious(task);
-                        head.setNext(task);
+                    if (head.acquireValidLock()) {
+                        try {
+                            task.setHeadTask(head);
+                            TaskRunnable tailTask = head.tail();
+                            task.setPrevious(tailTask);
+                            tailTask.setNext(task);
+                            task.setNext(null);
+                            head.setTail(task);
+                        } finally {
+                            head.releaseLockAndNotify();
+                        }
+                    } else {
+                        schedule(task, time);
                     }
                 }
             } else {
@@ -281,7 +324,9 @@ public class TimerPool implements Triggerable {
                     // when they all back.
                     wait();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    if (debug != null) {
+                        debug.error("TimerPool:shutdown() " + name, ex);
+                    }
                 }
             }
             currentThreadCount = busyThreadCount = 0;
@@ -313,6 +358,7 @@ public class TimerPool implements Triggerable {
             this.pool = pool;
             this.shouldTerminate = false;
             this.needReturn = true;
+            this.task = null;
         }
     
         /**
@@ -354,49 +400,79 @@ public class TimerPool implements Triggerable {
             while (true) {
                 try{
                     synchronized(this) {
-                        if (!shouldTerminate){
+                        if ((!shouldTerminate) && (task == null)) {
                             this.wait();
                         }
                         // need a local copy because they may be changed after
                         // leaving synchronized block.
                         localHeadTask = task;
+                        task = null;
                     }
                     if (shouldTerminate) {
                         // we may need to log something here!
                         break;
                     }
                     if(localHeadTask != null){
-                        synchronized (localHeadTask) {
-                        // skip head task
-                            localTask = localHeadTask.next();
-                            do {
-                                runTask = localTask;
-                                localTask = localTask.next();
-                                // cut the connection before run the task.
-                                runTask.setNext(null);
-                                runTask.run();
-                                if (runTask.getRunPeriod() >= 0) {
+                        if (localHeadTask.acquireValidLock()) {
+                            try {
+                                // skip head task
+                                localHeadTask.timeout();
+                                localTask = localHeadTask.next();
+                                do {
+                                    runTask = localTask;
+                                    localTask = localTask.next();
+                                    // cut the connection before run the task.
+                                    runTask.setNext(null);
+                                    runTask.run();
+                                    if (runTask.getRunPeriod() >= 0) {
+                                        pool.schedule(runTask, new Date(
+                                            localHeadTask
+                                            .scheduledExecutionTime()
+                                            + runTask.getRunPeriod()));
+                                    }
+                                } while (localTask != null);
+                                localHeadTask.expire();
+                            } finally {
+                                localHeadTask.releaseLockAndNotify();
+                            }
+                        }
+                    }
+                } catch (IllegalStateException ex) {
+                    if (debug != null) {
+                        debug.message("TimerPool$WorkerThread:run() " + name,
+                            ex);
+                    }
+                    // This exception will be thrown only if the Timer has been
+                    // shutdown already.
+                    shouldTerminate = true;
+                } catch (RuntimeException ex) {
+                    if (debug != null) {
+                        debug.error("TimerPool$WorkerThread:run() " + name, ex);
+                    }
+                    if (localHeadTask != null) {
+                        if (localHeadTask.acquireValidLock()) {
+                            try {
+                                if ((runTask.getRunPeriod() >= 0) &&
+                                    (runTask.scheduledExecutionTime() ==
+                                    localHeadTask.scheduledExecutionTime())){
                                     pool.schedule(runTask, new Date(
                                         localHeadTask.scheduledExecutionTime()
                                         + runTask.getRunPeriod()));
                                 }
-                            } while (localTask != null);
-                        }
-                    }
-                } catch (RuntimeException ex) {
-                    // decide what to log here
-                    if (localHeadTask != null) {
-                        synchronized (localHeadTask) {
-                            if ((runTask.getRunPeriod() >= 0) &&
-                                (runTask.scheduledExecutionTime() ==
-                                localHeadTask.scheduledExecutionTime())){
-                                pool.schedule(runTask, new Date(
-                                    localHeadTask.scheduledExecutionTime()
-                                    + runTask.getRunPeriod()));
-                            }
-                            if (localTask != null) {
-                                localHeadTask.setNext(localTask);
-                                localTask.setPrevious(localHeadTask);
+                                if (localTask != null) {
+                                    localHeadTask.setNext(localTask);
+                                    localTask.setPrevious(localHeadTask);
+                                }
+                            } catch (IllegalStateException iex) {
+                                if (debug != null) {
+                                    debug.message("TimerPool$WorkerThread:" + 
+                                        "run() " + name, iex);
+                                }
+                                // This exception will be thrown only if the
+                                // Timer has been shutdown already.
+                                shouldTerminate = true;
+                            } finally {
+                                localHeadTask.releaseLockAndNotify();
                             }
                         }
                     }
@@ -410,21 +486,38 @@ public class TimerPool implements Triggerable {
                     shouldTerminate = true;
                     needReturn = false;
                 } catch (Exception ex) {
+                    if (debug != null) {
+                        debug.error("TimerPool$WorkerThread:run() " + name, ex);
+                    }
                     // don't need to rethrow
 	        } catch (Throwable e) {
-                    // decide what to log here
+                    if (debug != null) {
+                        debug.error("TimerPool$WorkerThread:run() " + name, e);
+                    }
                     if (localHeadTask != null) {
-                        synchronized (localHeadTask) {
-                            if ((runTask.getRunPeriod() >= 0) &&
-                                (runTask.scheduledExecutionTime() ==
-                                localHeadTask.scheduledExecutionTime())){
-                                pool.schedule(runTask, new Date(
-                                    localHeadTask.scheduledExecutionTime()
-                                    + runTask.getRunPeriod()));
-                            }
-                            if (localTask != null) {
-                                localHeadTask.setNext(localTask);
-                                localTask.setPrevious(localHeadTask);
+                        if (localHeadTask.acquireValidLock()) {
+                            try {                        
+                                if ((runTask.getRunPeriod() >= 0) &&
+                                    (runTask.scheduledExecutionTime() ==
+                                    localHeadTask.scheduledExecutionTime())){
+                                    pool.schedule(runTask, new Date(
+                                        localHeadTask.scheduledExecutionTime()
+                                        + runTask.getRunPeriod()));
+                                }
+                                if (localTask != null) {
+                                    localHeadTask.setNext(localTask);
+                                    localTask.setPrevious(localHeadTask);
+                                }
+                            } catch (IllegalStateException iex) {
+                                if (debug != null) {
+                                    debug.message("TimerPool$WorkerThread:" + 
+                                        "run() " + name, iex);
+                                }
+                                // This exception will be thrown only if the
+                                // Timer has been shutdown already.
+                                shouldTerminate = true;
+                            } finally {
+                                localHeadTask.releaseLockAndNotify();
                             }
                         }
                     }
@@ -480,6 +573,7 @@ public class TimerPool implements Triggerable {
             this.beingNotified = false;
             this.delay = -1;
             this.pool = pool;
+            setName(pool.name + "-Scheduler");
         }
         
         /**

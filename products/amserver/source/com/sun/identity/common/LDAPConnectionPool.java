@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.8 2008-01-15 22:12:44 ww203982 Exp $
+ * $Id: LDAPConnectionPool.java,v 1.9 2008-04-17 09:06:56 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.common;
 
 import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.HeadTaskRunnable;
 import com.sun.identity.common.SystemTimer;
 import com.sun.identity.common.SystemTimerPool;
 import java.util.ArrayList;
@@ -200,8 +201,8 @@ public class LDAPConnectionPool {
         LDAPConnection ldc
     ) throws LDAPException {
         this(name, min, max, ldc.getHost(), ldc.getPort(),
-              ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(),
-              (LDAPConnection)ldc.clone(), null);
+            ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(), ldc,
+            null);
     }
 
     /* 
@@ -827,13 +828,23 @@ public class LDAPConnectionPool {
         }
         
         public void cancel() {
-            if (headTask != null) {
-                synchronized(headTask) {
-                    previousTask.setNext(nextTask);
-                    if (nextTask != null) {
-                        nextTask.setPrevious(previousTask);
-                        nextTask = null;
-                    }
+            synchronized (this) {
+                if (headTask != null) {
+                    HeadTaskRunnable oldHeadTask;
+                    do {
+                        oldHeadTask = headTask;
+                        if (oldHeadTask.acquireValidLock()) {
+                            try {
+                                previousTask.setNext(nextTask);
+                                if (nextTask != null) {
+                                    nextTask.setPrevious(previousTask);
+                                    nextTask = null;
+                                }
+                            } finally {
+                                oldHeadTask.releaseLockAndNotify();
+                            }
+                        }
+                    } while (oldHeadTask != headTask);
                 }
             }
         }

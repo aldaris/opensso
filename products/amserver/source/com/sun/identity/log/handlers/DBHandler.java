@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.8 2008-04-02 20:44:06 bigfatrat Exp $
+ * $Id: DBHandler.java,v 1.9 2008-04-17 09:06:56 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,7 @@ import java.util.logging.Level;
 import com.iplanet.log.ConnectionException;
 import com.iplanet.log.DriverLoadException;
 import com.iplanet.log.NullLocationException;
+import com.sun.identity.common.HeadTaskRunnable;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
 import com.sun.identity.common.TaskRunnable;
@@ -298,7 +299,7 @@ public class DBHandler extends Handler {
                 ":DBHandler: Unable to Initialize formatter", fie);
         }
 
-        String stat = lmanager.getProperty(LogConstants.LOG_STATUS_ATTR);
+        String stat = lmanager.getProperty(LogConstants.LOG_STATUS);
         if (Debug.messageEnabled()) {
             Debug.message("DBHandler:tableName = " + tableName +
                 ", LOG_STATUS = " + stat);
@@ -1106,24 +1107,6 @@ public class DBHandler extends Handler {
             return runPeriod;
         }
         
-        /**
-         *  Method that can be used to cancel the task from scheduled running.
-         */
-        
-        public void cancel() {
-            synchronized (this) {
-                if (headTask != null) {
-                    synchronized (headTask) {
-                        previousTask.setNext(nextTask);
-                        if (nextTask != null) {
-                            nextTask.setPrevious(previousTask);
-                        }
-                        nextTask = null;
-                    }
-                }
-                headTask = null;
-            }
-        }
     }
     
     private void startTimeBufferingThread() {

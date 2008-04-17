@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.12 2008-01-15 22:12:42 ww203982 Exp $
+ * $Id: Session.java,v 1.13 2008-04-17 09:06:55 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -442,6 +442,7 @@ public class Session extends GeneralTaskRunnable {
                     });
                 }
             } catch (SessionException se) {
+                se.printStackTrace();
                 Session.removeSID(sid);
                 sessionDebug.message(
                     "session is not in timeout state so clean it", se);
@@ -644,8 +645,9 @@ public class Session extends GeneralTaskRunnable {
      *            during communication with session service.
      */
     public long getIdleTime() throws SessionException {
-        if (!cacheBasedPolling && maxCachingTimeReached())
+        if (!cacheBasedPolling && maxCachingTimeReached()) {
             refresh(false);
+        }
         return sessionIdleTime;
     }
 
@@ -659,8 +661,9 @@ public class Session extends GeneralTaskRunnable {
      *            service.
      */
     public long getTimeLeft() throws SessionException {
-        if (!cacheBasedPolling && maxCachingTimeReached())
+        if (!cacheBasedPolling && maxCachingTimeReached()) {            
             refresh(false);
+        }
         return sessionTimeLeft;
     }
 
@@ -679,6 +682,7 @@ public class Session extends GeneralTaskRunnable {
      */
     public int getState(boolean reset) throws SessionException {
         if (!cacheBasedPolling && maxCachingTimeReached()) {
+            
             refresh(reset);
         } else {
             if (reset) {
@@ -809,6 +813,7 @@ public class Session extends GeneralTaskRunnable {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new SessionException(e);
         }
     }
@@ -848,7 +853,8 @@ public class Session extends GeneralTaskRunnable {
         session = (Session) sessionTable.remove(sid);
 
         if (session != null) {
-            session.setState(Session.DESTROYED);
+            session.cancel();
+            session.setState(Session.DESTROYED);            
             long eventTime = System.currentTimeMillis();
             SessionEvent event = new SessionEvent(session,
                     SessionEvent.DESTROY, eventTime);
@@ -947,8 +953,9 @@ public class Session extends GeneralTaskRunnable {
             } catch (Exception e) {
                 throw new SessionException(e);
             }
-            if (!cacheBasedPolling && session.maxCachingTimeReached())
+            if (!cacheBasedPolling && session.maxCachingTimeReached()) {
                 session.refresh(false);
+            }
             return session;
         }
         session = new Session(sid);
@@ -969,12 +976,23 @@ public class Session extends GeneralTaskRunnable {
                 timeoutTime = Math.min((latestRefreshTime +
                     (maxCachingTime * 60)) * 1000, timeoutTime);
             }
-            timerPool.schedule(this, new Date(timeoutTime));
+            if (scheduledExecutionTime() > timeoutTime) {
+                cancel();
+            }
+            if (scheduledExecutionTime() == -1) {
+                timerPool.schedule(this, new Date(timeoutTime));
+            }
         } else {
             if ((sessionCleanupEnabled) && (maxSessionTime < (Long.MAX_VALUE /
                 60))) {
-                timerPool.schedule(this, new Date((latestRefreshTime +
-                    (maxSessionTime * 60)) * 1000));
+                long timeoutTime = (latestRefreshTime + (maxSessionTime * 60))
+                    * 1000;
+                if (scheduledExecutionTime() > timeoutTime) {
+                    cancel();
+                }
+                if (scheduledExecutionTime() == -1) {
+                    timerPool.schedule(this, new Date(timeoutTime));
+                }
             }
         }
     }
@@ -1276,6 +1294,7 @@ public class Session extends GeneralTaskRunnable {
                     });
 
         } catch (Exception e) {
+            e.printStackTrace();
             Session.removeSID(sessionID);
             if (sessionDebug.messageEnabled()) {
                 sessionDebug.message("session.Refresh " + "Removed SID:"
@@ -1311,9 +1330,13 @@ public class Session extends GeneralTaskRunnable {
             }
             info = (SessionInfo) infos.elementAt(0);
         }
+        long oldMaxCachingTime = maxCachingTime;
+        long oldMaxIdleTime = maxIdleTime;
+        long oldMaxSessionTime = maxSessionTime;
         update(info);
-        if ((scheduledExecutionTime() == -1) ||
-            (maxCachingTime < maxIdleTime)) {
+        if ((scheduledExecutionTime() == -1) || (oldMaxCachingTime >
+            maxCachingTime) || (oldMaxIdleTime > maxIdleTime) ||
+            (oldMaxSessionTime > maxSessionTime)) {
             scheduleToTimerPool();
         }
     }
@@ -1779,6 +1802,7 @@ public class Session extends GeneralTaskRunnable {
                 Vector infos = sres.getSessionInfoVector();
                 info = (SessionInfo) infos.elementAt(0);
             } catch (Exception ex) {
+                ex.printStackTrace();
                 Session.removeSID(sid);
                 if (debug.messageEnabled())
                     debug.message("Could not connect to the session server"
@@ -1794,8 +1818,16 @@ public class Session extends GeneralTaskRunnable {
                             || info.state.equals("destroyed")) {
                         Session.removeSID(sid);
                     } else {
+                        long oldMaxCachingTime = session.maxCachingTime;
+                        long oldMaxIdleTime = session.maxIdleTime;
+                        long oldMaxSessionTime = session.maxSessionTime;
                         session.update(info);
-                        session.scheduleToTimerPool();
+                        if ((scheduledExecutionTime() == -1) ||
+                            (oldMaxCachingTime > session.maxCachingTime) ||
+                            (oldMaxIdleTime > session.maxIdleTime) ||
+                            (oldMaxSessionTime > session.maxSessionTime)) {
+                            scheduleToTimerPool();
+                        }
                     }
                 } catch (SessionException se) {
                     Session.removeSID(sid);

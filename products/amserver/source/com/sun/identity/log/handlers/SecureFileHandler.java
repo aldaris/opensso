@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.5 2008-02-09 07:01:41 ww203982 Exp $
+ * $Id: SecureFileHandler.java,v 1.6 2008-04-17 09:06:56 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,7 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 import com.iplanet.log.NullLocationException;
+import com.sun.identity.common.HeadTaskRunnable;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
 import com.sun.identity.common.TaskRunnable;
@@ -1046,24 +1047,6 @@ public class SecureFileHandler extends java.util.logging.Handler {
             return runPeriod;
         }
         
-        /**
-         *  Method that can be used to cancel the task from scheduled running.
-         */
-        
-        public void cancel() {
-            synchronized (this) {
-                if (headTask != null) {
-                    synchronized (headTask) {
-                        previousTask.setNext(nextTask);
-                        if (nextTask != null) {
-                            nextTask.setPrevious(previousTask);
-                        }
-                        nextTask = null;
-                    }
-                }
-                headTask = null;
-            }
-        }
     }// end of class SignTask
 }
 

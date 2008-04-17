@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemTimerPool.java,v 1.1 2007-11-14 18:55:34 ww203982 Exp $
+ * $Id: SystemTimerPool.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
+
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * SystemTimerPool is a TimerPool which shared in the system.
@@ -31,6 +33,7 @@ package com.sun.identity.common;
 public class SystemTimerPool {
     
     protected static TimerPool instance;
+    protected static Debug debug;
     public static int DEFAULT_POOL_SIZE = 3;
     
     /**
@@ -39,8 +42,9 @@ public class SystemTimerPool {
     
     public static synchronized TimerPool getTimerPool() {
         if (instance == null) {
+            debug = Debug.getInstance("SystemTimerPool");
             instance = new TimerPool("SystemTimerPool", DEFAULT_POOL_SIZE,
-                false);
+                false, debug);
             ShutdownManager shutdownMan = ShutdownManager.getInstance();
             shutdownMan.addShutdownListener(new ShutdownListener() {
                 public void shutdown() {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.17 2008-03-12 21:36:04 manish_rustagi Exp $
+ * $Id: SessionService.java,v 1.18 2008-04-17 09:06:55 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -717,7 +717,7 @@ public class SessionService {
 
         if (session != null) {
             remoteSessionSet.remove(sid);
-            session.cancelScheduledRun();
+            session.cancel();
             removeSessionHandle(session);
             removeRestrictedTokens(session);
             isSessionStored = session.getIsISstored();
@@ -2467,7 +2467,7 @@ public class SessionService {
         Session.markNonLocal(sid);
         InternalSession is = (InternalSession) sessionTable.remove(sid);
         if (is != null) {
-            is.cancelScheduledRun();
+            is.cancel();
             removeSessionHandle(is);
             removeRestrictedTokens(is);
         } else {

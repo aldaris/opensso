@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstantRunnable.java,v 1.1 2007-09-13 18:12:18 ww203982 Exp $
+ * $Id: InstantRunnable.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.common.HeadTaskRunnable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -104,26 +105,8 @@ public class InstantRunnable extends GeneralTaskRunnable {
             if (allowToChange) {
                 boolean result = actions.remove(obj);
                 if (actions.isEmpty()) {
-                    synchronized (this) {
-                        if (headTask != null) {
-                            synchronized (headTask) {
-                                TaskRunnable t = null;
-                                if ((t = next()) != null) {
-                                    t.setPrevious(previous());
-                                }
-                                if ((t = previous()) != null) {
-                                    t.setNext(next());
-                                }
-                            }
-                        } else {
-                            TaskRunnable t = null;
-                            if ((t = next()) != null) {
-                                t.setPrevious(previous());
-                            }
-                            if ((t = previous()) != null) {
-                                t.setNext(next());
-                            }
-                        }
+                    if (headTask != null) {
+                        cancel();
                     }
                 }
                 return result;

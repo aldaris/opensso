@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.9 2008-04-05 16:39:25 pawand Exp $
+ * $Id: InternalSession.java,v 1.10 2008-04-17 09:06:55 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.iplanet.dpro.session.TokenRestriction;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.iplanet.dpro.session.share.SessionInfo;
+import com.sun.identity.common.HeadTaskRunnable;
 import com.sun.identity.common.SystemTimerPool;
 import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.common.TimerPool;
@@ -195,9 +196,8 @@ public class InternalSession implements TaskRunnable, Serializable {
 
     private transient volatile TaskRunnable nextTask = null;
     private transient volatile TaskRunnable previousTask = null;
-    private transient volatile TaskRunnable headTask = null;
+    private transient volatile HeadTaskRunnable headTask = null;
     private transient TimerPool timerPool = null;
-    private transient long scheduledTime;
     private volatile boolean reschedulePossible;
     
     /*
@@ -280,7 +280,6 @@ public class InternalSession implements TaskRunnable, Serializable {
         protectedProperties.add("authInstant");
         protectedProperties.add("Principals");
         protectedProperties.add("loginURL");
-        protectedProperties.add("FullLoginURL");
         protectedProperties.add("Role");
         protectedProperties.add("Service");
         protectedProperties.add("SessionTimedOut");
@@ -322,8 +321,9 @@ public class InternalSession implements TaskRunnable, Serializable {
      * @ param sid SessionID
      */
     InternalSession(SessionID sid) {
+        maxIdleTime = maxDefaultIdleTime;
+        maxSessionTime = maxDefaultIdleTime;
         reschedulePossible = maxDefaultIdleTime > maxIdleTime;
-        scheduledTime = -1;
         sessionID = sid;
         sessionState = Session.INVALID;
         timerPool = SystemTimerPool.getTimerPool();
@@ -336,15 +336,8 @@ public class InternalSession implements TaskRunnable, Serializable {
      *
      * @param headTask The HeadTask indicate the time to run this task.
      */
-    public void setHeadTask(TaskRunnable headTask) {
-        synchronized (this) {
-            this.headTask = headTask;
-            if (headTask != null) {
-                scheduledTime = headTask.scheduledExecutionTime();
-            } else {
-                scheduledTime = -1;
-            }
-        }
+    public void setHeadTask(HeadTaskRunnable headTask) {
+        this.headTask = headTask;
     }
 
     /**
@@ -354,8 +347,11 @@ public class InternalSession implements TaskRunnable, Serializable {
      */
     public long scheduledExecutionTime() {
         synchronized (this) {
-            return scheduledTime;
+            if (headTask != null) {
+                return headTask.scheduledExecutionTime();
+            }
         }
+        return -1;
     }
     
     /**
@@ -363,7 +359,7 @@ public class InternalSession implements TaskRunnable, Serializable {
      *
      * @return The HeadTask of this task.
      */
-    public TaskRunnable getHeadTask() {
+    public HeadTaskRunnable getHeadTask() {
         // no need to synchronize for single operation
         return headTask;
     }
@@ -486,28 +482,35 @@ public class InternalSession implements TaskRunnable, Serializable {
     /**
      * Cancel the scheduled run of this task from TimerPool.
      */
-    protected void cancelScheduledRun() {
-        synchronized (this) {
-            if (headTask != null) {
-                synchronized (headTask) {
-                    previousTask.setNext(nextTask);
-                    if (nextTask != null) {
-                       nextTask.setPrevious(previousTask);
+    public void cancel() {
+        HeadTaskRunnable oldHeadTask = null;
+        do {
+            oldHeadTask = headTask;
+            if (oldHeadTask != null) {
+                if (oldHeadTask.acquireValidLock()) {
+                    try {
+                        if (oldHeadTask == headTask) {
+                            previousTask.setNext(nextTask);
+                            if (nextTask != null) {
+                                nextTask.setPrevious(previousTask);
+                                nextTask = null;
+                            }
+                            break;
+                        }
+                    } finally {
+                        oldHeadTask.releaseLockAndNotify();
                     }
-                    nextTask = null;
                 }
             }
-            headTask = null;
-            scheduledTime = -1;
-        }
+        } while (oldHeadTask != headTask);
+        headTask = null;
     }
     
     /**
      * Schedule this task to TimerPool according to the current state.
      */
     protected void reschedule() {
-        if ((timerPool != null) && (reschedulePossible ||
-            (scheduledExecutionTime() == -1))) {
+        if (timerPool != null) {
             long timeoutTime = Long.MAX_VALUE;
             switch (sessionState) {
                 case Session.INVALID:
@@ -521,7 +524,7 @@ public class InternalSession implements TaskRunnable, Serializable {
                     break;
             }
             if (timeoutTime < scheduledExecutionTime()) {
-                cancelScheduledRun();
+                cancel();
             }
             if (scheduledExecutionTime() == -1) {
                 Date time = new Date(timeoutTime);
@@ -612,8 +615,12 @@ public class InternalSession implements TaskRunnable, Serializable {
      *            Maximum Session Time
      */
     public void setMaxSessionTime(long t) {
+        boolean mayReschedule = false;
+        if (t < maxSessionTime) {
+            mayReschedule = true;
+        }
         maxSessionTime = t;
-        if (scheduledExecutionTime() != -1) {
+        if ((scheduledExecutionTime() != -1) && mayReschedule) {
             reschedule();
         }
         updateForFailover();
@@ -633,6 +640,10 @@ public class InternalSession implements TaskRunnable, Serializable {
      * @param t
      */
     public void setMaxIdleTime(long t) {
+        boolean mayReschedule = false;
+        if (t < maxIdleTime) {
+            mayReschedule = true;
+        }
         maxIdleTime = t;
         reschedulePossible = maxDefaultIdleTime > maxIdleTime;
         if (httpSession != null) {
@@ -641,7 +652,8 @@ public class InternalSession implements TaskRunnable, Serializable {
                 httpSession.setMaxInactiveInterval(((int) maxIdleTime) * 60);
             }
         }
-        if (scheduledExecutionTime() != -1) {
+        if ((scheduledExecutionTime() != -1) && (mayReschedule ||
+            reschedulePossible)) {
             reschedule();
         }
         updateForFailover();
@@ -1004,7 +1016,9 @@ public class InternalSession implements TaskRunnable, Serializable {
         }
         setLatestAccessTime();
         setState(Session.VALID);
-        reschedule();
+        if (reschedulePossible) {
+            reschedule();
+        }
         SessionService.getSessionService().logEvent(this,
                 SessionEvent.SESSION_CREATION);
         SessionService.getSessionService().sendEvent(this,
@@ -1033,7 +1047,7 @@ public class InternalSession implements TaskRunnable, Serializable {
      * Changes the state of the session to ACTIVE from IN-ACTIVE.
      */
     public void reactivate() {
-        cancelScheduledRun();
+        cancel();
         setCreationTime();
         setLatestAccessTime();
         setState(Session.VALID);
@@ -1055,7 +1069,7 @@ public class InternalSession implements TaskRunnable, Serializable {
             maxSessionTime = Long.MAX_VALUE / 60;
             maxIdleTime = Long.MAX_VALUE / 60;
             maxCachingTime = SessionService.applicationMaxCachingTime;
-            cancelScheduledRun();
+            cancel();
             timerPool = null;
         }
         willExpireFlag = expire;
@@ -1571,7 +1585,6 @@ public class InternalSession implements TaskRunnable, Serializable {
     private void readObject(ObjectInputStream oin) throws IOException,
         ClassNotFoundException {
         oin.defaultReadObject();
-        scheduledTime = -1;
         if (willExpireFlag) {
             timerPool = SystemTimerPool.getTimerPool();   
             if (!isTimedOut()) {

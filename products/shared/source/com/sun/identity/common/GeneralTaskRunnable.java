@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralTaskRunnable.java,v 1.1 2007-09-13 18:12:17 ww203982 Exp $
+ * $Id: GeneralTaskRunnable.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ public abstract class GeneralTaskRunnable implements TaskRunnable {
 
     protected volatile TaskRunnable nextTask;
     protected volatile TaskRunnable previousTask;
-    protected volatile TaskRunnable headTask;
+    protected volatile HeadTaskRunnable headTask;
     
     /**
      * Sets the head task for this linkable TaskRunnable
@@ -45,11 +45,8 @@ public abstract class GeneralTaskRunnable implements TaskRunnable {
      * @param headTask The HeadTaskRunnable
      */
     
-    public void setHeadTask(TaskRunnable headTask) {
-        // synchronize when set the value
-        synchronized (this) {
-            this.headTask = headTask;
-        }
+    public void setHeadTask(HeadTaskRunnable headTask) {
+        this.headTask = headTask;
     }
     
     /**
@@ -58,7 +55,7 @@ public abstract class GeneralTaskRunnable implements TaskRunnable {
      * @return The head task of this linkable TaskRunnable
      */
     
-    public TaskRunnable getHeadTask() {
+    public HeadTaskRunnable getHeadTask() {
         // no need to synchronize for single operation
         return headTask;
     }
@@ -127,6 +124,36 @@ public abstract class GeneralTaskRunnable implements TaskRunnable {
             }
         }
         return -1;
+    }
+    
+    /**
+     * Implements for TaskRunnable interface.
+     *
+     * Cancels the task from the associated Timer.
+     */
+    
+    public void cancel() {
+        HeadTaskRunnable oldHeadTask = null;
+        do {
+            oldHeadTask = headTask;
+            if (oldHeadTask != null) {
+                if (oldHeadTask.acquireValidLock()) {
+                    try {
+                        if (oldHeadTask == headTask) {
+                            previousTask.setNext(nextTask);
+                            if (nextTask != null) {
+                                nextTask.setPrevious(previousTask);
+                                nextTask = null;
+                            }
+                            break;
+                        }
+                    } finally {
+                        oldHeadTask.releaseLockAndNotify();
+                    }
+                }
+            }
+        } while (oldHeadTask != headTask);
+        headTask = null;
     }
     
 }
