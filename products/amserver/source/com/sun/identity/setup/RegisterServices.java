@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.7 2008-02-25 18:30:41 goodearth Exp $
+ * $Id: RegisterServices.java,v 1.8 2008-04-17 03:38:37 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,6 +72,12 @@ public class RegisterServices {
 
         for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
             String serviceFileName = (String)i.next();
+            boolean tagswap = true;
+            if (serviceFileName.startsWith("*")) {
+                serviceFileName = serviceFileName.substring(1);
+                tagswap = false;
+            }
+            
             SetupProgress.reportStart("emb.registerservice",serviceFileName);
             BufferedReader rawReader = null;
             InputStream serviceStream = null;
@@ -96,7 +102,9 @@ public class RegisterServices {
                 //String strXML = manipulateServiceXML(
                     //serviceFileName, buff.toString());
 
-                strXML = ServicesDefaultValues.tagSwap(strXML);
+                if (tagswap) {
+                    strXML = ServicesDefaultValues.tagSwap(strXML);
+                }
                 serviceStream = (InputStream)new ByteArrayInputStream(
                     strXML.getBytes());
                 serviceManager.registerServices(serviceStream);
