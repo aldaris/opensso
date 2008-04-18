@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.22 2008-04-15 20:59:41 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.23 2008-04-18 19:29:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1262,6 +1262,7 @@ public class AgentConfiguration {
         }
 
         String agentType = getAgentType(agent);
+        String agentGroupType = getAgentType(group);
         if (supportLocalProperties(agentType) && 
             isPropertiesLocallyStored(agent)
         ) {
@@ -1270,6 +1271,15 @@ public class AgentConfiguration {
             throw new ConfigurationException(
                 "cannot.add.agent.to.group.proeprties.locally.stored", param);
         }
+
+        if (!agentType.equals(agentGroupType)) {
+            String agentName = agent.getName();
+            String groupName = group.getName();
+            String[] param = {agentName, groupName};
+            throw new ConfigurationException(
+                "cannot.add.agent.to.group.type.mismatched", param);
+        }
+
         group.addMember(agent);
     }
     
