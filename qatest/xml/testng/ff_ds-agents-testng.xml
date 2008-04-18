@@ -20,12 +20,118 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-agents-testng.xml,v 1.6 2008-03-28 00:10:09 nithyas Exp $: 
+ $Id: ff_ds-agents-testng.xml,v 1.7 2008-04-18 19:28:52 nithyas Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds-agents" verbose="1">
+   <test name="Hot Swap J2EE Agents Tests 1">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="testIdx" value="0"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="agentType" value="3.0J2EE"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.ConfigureUnconfigure"/>
+                <class name="com.sun.identity.qatest.agents.J2EEAgentHotSwapTests"/>
+            </classes>
+    </test>  
+    <test name="Hot Swap J2EE Agents Tests 2">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="testIdx" value="1"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="agentType" value="3.0J2EE"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.J2EEAgentHotSwapTests"/>
+            </classes>
+    </test>  
+    <test name="Hot Swap J2EE Agents Tests 3">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="testIdx" value="2"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="agentType" value="3.0J2EE"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.J2EEAgentHotSwapTests"/>
+            </classes>
+    </test>  
+    <test name="Hot Swap Web Agents Tests 1">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="testIdx" value="3"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="agentType" value="3.0WEB"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.WebAgentHotSwapTests"/>
+            </classes>
+    </test>  
+    <test name="Hot Swap Web Agents Tests 2">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="testIdx" value="4"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="agentType" value="3.0WEB"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.WebAgentHotSwapTests"/>
+            </classes>
+    </test>  
+    <test name="Header Attribute Tests for 2.2 Agent">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="setup" value="true"/>
+            <parameter name="cleanup" value="false"/>
+            <parameter name="agentType" value="2.2"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.AgentTests2_2"/>
+            </classes>
+    </test> 
+    <test name="Header Attribute Tests for 3.0 Agent with local configuration">
+            <parameter name="policyIdx" value="0"/>
+            <parameter name="evaluationIdx" value="0"/>
+            <parameter name="resourceIdx" value="21"/>
+            <parameter name="agentType" value="3.0"/>            
+            <groups>
+                <run>
+                    <include name="ff_ds"/>
+                </run>
+            </groups>
+            <classes>
+                <class name="com.sun.identity.qatest.agents.AgentTests3_0_Local"/>
+            </classes>
+    </test>  
     <test name="AgentsSample Test 1">
             <parameter name="policyIdx" value="0"/>
             <parameter name="evaluationIdx" value="0"/>

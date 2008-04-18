@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.7 2008-03-28 00:11:35 nithyas Exp $
+ * $Id: HeaderAttributeTests.java,v 1.8 2008-04-18 19:28:50 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.AgentsCommon;
+import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.SMSCommon;
@@ -49,7 +50,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-import com.sun.identity.qatest.common.FederationManager;
+import org.testng.Reporter;
+
 
 ///jsxFunction_reload(true)
 /**
@@ -99,6 +101,23 @@ public class HeaderAttributeTests extends TestCommon {
         smsc = new SMSCommon(admintoken);
     }
     
+    public HeaderAttributeTests(String strFetchMode) 
+    throws Exception{
+        super("HeaderAttributeTests");
+        strHeaderFetchMode = strFetchMode;
+        System.out.println("Setting in constructor strHeaderFetchMode: " + strHeaderFetchMode);
+        mpc = new AgentsCommon();
+        idmc = new IDMCommon();
+        rbg = ResourceBundle.getBundle(strGblRB);
+        executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
+                ".executeAgainstOpenSSO")).booleanValue();
+        pollingTime = new Integer(rbg.getString(strGblRB +
+                ".pollingInterval")).intValue();
+        admintoken = getToken(adminUser, adminPassword, basedn);
+        smsc = new SMSCommon(admintoken);
+        
+    }
+    
     /**
      * Sets up policy and creates users required by the policy
      */
@@ -111,7 +130,10 @@ public class HeaderAttributeTests extends TestCommon {
 
         try {
             strAgentType = rbg.getString(strGblRB + ".agentType");
-            strHeaderFetchMode = rbg.getString(strGblRB + ".headerFetchMode");
+            if (strHeaderFetchMode  == null){
+                strHeaderFetchMode = rbg.getString(strGblRB + ".headerFetchMode");
+            }
+            System.out.println("strHeaderFetchMode: " + strHeaderFetchMode);
             if (strAgentType.contains("J2EE")) {
                 strScriptURL = rbg.getString(strGblRB + 
                         ".headerEvalScriptName");
@@ -252,8 +274,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates updated response attribute which holds a single dynamic value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
-    dependsOnMethods={"evaluateDynamicResponseAttribute"})
+    //@Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    //dependsOnMethods={"evaluateDynamicResponseAttribute"})
         public void evaluateUpdatedDynamicResponseAttribute()
     throws Exception {
         entering("evaluateUpdatedDynamicResponseAttribute", null);
@@ -446,6 +468,11 @@ public class HeaderAttributeTests extends TestCommon {
 
         webClient = new WebClient();
         try {
+            Reporter.log("Test description: " + "evaluateNewSingleValuedProfileAttribute");   
+            Reporter.log("Resource: " + url);   
+            Reporter.log("Username: " + "pauser");   
+            Reporter.log("Password: " + "pauser");   
+            Reporter.log("Expected Result: " + "HTTP_PROFILE_CN:pauser"); 
             idmc.createIdentity(admintoken, realm, IdType.ROLE, "parole1",
                     new HashMap());
             idmc.addUserMember(admintoken, "pauser", "parole1", IdType.ROLE);
@@ -789,15 +816,15 @@ public class HeaderAttributeTests extends TestCommon {
         entering("cleanup", null);
  
         try {
-            if (executeAgainstOpenSSO)
+  /*          if (executeAgainstOpenSSO)
                 mpc.deletePolicies(strLocRB, polIdx);
             else 
                 log(Level.FINE, "cleanup", "Executing against non OpenSSO" +
                         " Install");
-
+*/
             Set set = new HashSet();
             set.add("10");
-            smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
+/*            smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
                     "iplanet-am-policy-config-subjects-result-ttl", set,
                     "Organization");
 
@@ -820,7 +847,7 @@ public class HeaderAttributeTests extends TestCommon {
             if (idmc.searchIdentities(admintoken, "parole2",
                     IdType.ROLE).size() != 0)
                 idmc.deleteIdentity(admintoken, realm, IdType.ROLE, "parole2");
- 
+ */
              } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
@@ -843,11 +870,11 @@ public class HeaderAttributeTests extends TestCommon {
 
         SSOToken locAdminToken = getToken(adminUser, adminPassword, basedn);
         try {
-            if (idmc.searchIdentities(locAdminToken, "filparole1",
+/*            if (idmc.searchIdentities(locAdminToken, "filparole1",
                     IdType.FILTEREDROLE).size() != 0)
                 idmc.deleteIdentity(locAdminToken, realm, IdType.FILTEREDROLE,
                         "filparole1");
-            
+  */          
         } catch (Exception e) {
             log(Level.SEVERE, "cleanupForDS", e.getMessage());
             e.printStackTrace();

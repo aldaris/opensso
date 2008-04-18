@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.3 2008-03-18 04:59:09 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.4 2008-04-18 19:28:50 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import org.testng.Reporter;
 
 /**
  * This class tests the following features for agents:
@@ -107,29 +108,32 @@ public class GeneralAgentTests extends TestCommon {
         Object[] params = {policyIdx, resourcePIdx, resourceNPIdx,
         resourceCaseIdx};
         entering("setup", params);
-
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
             "/UI/Logout";
-
-        strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
-        log(Level.FINEST, "setup", "Header Script URL: " + strScriptURL);
-        url = new URL(strScriptURL);
         strAgentType = rbg.getString(strGblRB + ".agentType");
-        log(Level.FINEST, "setup", "Agent Type - "+strAgentType );        
+        log(Level.FINEST, "setup", "Agent type - " + strAgentType );        
+        strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
+        if (strAgentType.contains("J2EE")) {
+            String strHeaderFetchMode = rbg.getString(strGblRB + 
+                                ".headerFetchMode");
+            strScriptURL = strScriptURL.substring(0, strScriptURL.length() - 1);
+            strScriptURL = strScriptURL + "?fetch_mode=" + 
+                    strHeaderFetchMode;
+        }
+        log(Level.FINEST, "setup", "Header script URL: " + strScriptURL);
+        url = new URL(strScriptURL);
         int resPIdx = new Integer(resourcePIdx).intValue();
         int resNPIdx = new Integer(resourceNPIdx).intValue();
         int resCaseIdx = new Integer(resourceCaseIdx).intValue();
-
         resourceProtected = rbg.getString(strGblRB + ".resource" + resPIdx);
         resourceNotProtected = rbg.getString(strGblRB + ".resource" + resNPIdx);
         resourceCase = rbg.getString(strGblRB + ".resource" + resCaseIdx);
-        log(Level.FINEST, "setup", "Protected Resource Name: " +
+        log(Level.FINEST, "setup", "Protected resource name : " +
                 resourceProtected);
-        log(Level.FINEST, "setup", "Unprotected Resource Name: " +
+        log(Level.FINEST, "setup", "Unprotected resource name : " +
                 resourceNotProtected);
-        log(Level.FINEST, "setup", "Case sensitive Resource Name: " +
+        log(Level.FINEST, "setup", "Case sensitive resource name : " +
                 resourceCase);
-
         polIdx = new Integer(policyIdx).intValue();
         mpc.createIdentities(strLocRB, polIdx);
         if (executeAgainstOpenSSO) {
@@ -137,8 +141,7 @@ public class GeneralAgentTests extends TestCommon {
             log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB + ".xml");
            mpc.createPolicy(strLocRB + ".xml");
         } else
-            log(Level.FINE, "setup", "Executing against non OpenSSO Install");
-
+            log(Level.FINE, "setup", "Executing against non OpenSSO install");
         exiting("setup");
     }
     
@@ -167,18 +170,39 @@ public class GeneralAgentTests extends TestCommon {
         } finally {
             consoleLogout(webClient, logoutURL);
         }
-
         exiting("evaluateRemoteUser");
+    }
+
+    /**
+     * Checks if the Agent Being tested, supports Anonymous Users, i.e. Agent 
+     * is a 2.2 Web Agent
+     */
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    private void isAnonymousSupported()
+        throws Exception {
+            try {
+                if (!strAgentType.equals("2.2WEB")) {
+                    Reporter.log ("Agent being tested is of type " + 
+                            strAgentType + ". Test case evaluateAnonymous is " + 
+                            "for 2.2WEB Agents only. Skipping test case");
+                    assert(false);
+                }
+            } catch (Exception e) {
+                log(Level.SEVERE, "isAnonymousSupported", e.getMessage());
+                e.printStackTrace();
+                throw e;
+         }
     }
 
     /**
      * Validates the value of REMOTE_USER for anonymous user.
      */ 
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    dependsOnMethods={"isAnonymousSupported"})
     public void evaluateAnonymous()
     throws Exception {
         entering("evaluateAnonymous", null);
-        if (!(strAgentType.contains("J2EE"))){
+        if (!(strAgentType.contains("J2EE"))) {
             webClient = new WebClient();
             try {
                 URL urlLoc = new URL(resourceNotProtected);
@@ -223,7 +247,6 @@ public class GeneralAgentTests extends TestCommon {
             e.printStackTrace();
             throw e;
         }
-
         exiting("evaluateNotEnforced");
     }
 
@@ -235,18 +258,23 @@ public class GeneralAgentTests extends TestCommon {
     throws Exception {
         entering("evaluateCaseSensitive", null);
         webClient = new WebClient();
+        webClient.setCookiesEnabled(true);
+        URL urlLoc = new URL(resourceCase);
         try {
-             page = consoleLogin(webClient, resourceProtected,
+            page = consoleLogin(webClient, resourceProtected,
                     "generalagenttests", "generalagenttests");
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
                     "Allow Page");
             assert (iIdx != -1);
-            URL urlLoc = new URL(resourceCase);
+            log(Level.SEVERE, "evaluateCaseSensitive", "resourceCase:" + 
+                    resourceCase);
             page = (HtmlPage)webClient.getPage(urlLoc);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,"Access Denied");
             assert (iIdx != -1);
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException 
+                ee) {
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateCaseSensitive", e.getMessage());
             e.printStackTrace();
@@ -254,8 +282,7 @@ public class GeneralAgentTests extends TestCommon {
         } finally {
             consoleLogout(webClient, logoutURL);
         }
-
-        exiting("evaluateCaseSensitive");
+           exiting("evaluateCaseSensitive");
     }
 
     /**
@@ -291,7 +318,6 @@ public class GeneralAgentTests extends TestCommon {
         } finally {
             consoleLogout(webClient, logoutURL);
         }
-
         exiting("evaluateSessionTermination");
     }
 
@@ -328,7 +354,6 @@ public class GeneralAgentTests extends TestCommon {
         } finally {
             consoleLogout(webClient, logoutURL);
         }
-
         exiting("evaluateSessionLogout");
     }
 
@@ -339,13 +364,11 @@ public class GeneralAgentTests extends TestCommon {
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
-
         if (executeAgainstOpenSSO)
             mpc.deletePolicies(strLocRB, polIdx);
         else 
-            log(Level.FINE, "cleanup", "Executing against non OpenSSO Install");
-
-        idmc.deleteIdentity(admintoken, realm, IdType.USER,
+            log(Level.FINE, "cleanup", "Executing against non OpenSSO install");
+        idmc.deleteIdentity(admintoken, realm, IdType.USER, 
                 "generalagenttests");
         destroyToken(admintoken);
         exiting("cleanup");

@@ -18,7 +18,7 @@
  # your own identifying information:
  # "Portions Copyrighted [year] [name of copyright owner]"
  #
- # $Id: headers.cgi,v 1.3 2008-03-28 00:16:46 nithyas Exp $
+ # $Id: headers.cgi,v 1.4 2008-04-18 19:28:49 nithyas Exp $
  #
 
 # Please dont modify the script, the agents tests rely on the
@@ -33,8 +33,15 @@ print "--------------------------------<BR>\n";
 foreach (keys %cookies) {
         $name = $cookies{$_}->name;
         $value = $cookies{$_}->value;
-        print "$name:$value|<BR>\n";
+        @array=split(/\|/,$value);
+        # sort 'em
+        @sorted=sort(@array);
+        # put them back as | separated
+        $sorted_val=join("|",@sorted);
+        print "$name:$sorted_val|<BR>\n";
+
 }
+
 print "Headers <BR>\n";
 print "----------------------------------<BR>\n";
 for my $header ( sort keys %ENV) {

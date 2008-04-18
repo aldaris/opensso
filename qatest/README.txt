@@ -21,7 +21,7 @@ README file for executing QA test on OpenSSO
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.2 2007-03-20 22:02:22 rmisra Exp $
+# $Id: README.txt,v 1.3 2008-04-18 19:28:47 nithyas Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -42,8 +42,9 @@ classpath.
 testng. Unzip the downloaded zip file. Copy testng-5.1-jdk15.jar to 
 QATEST_HOME/lib 
 1.3 Go to http://htmlunit.sourceforge.net/. Click on Download. Download 
-Release 1.10. Unzip the downloaded zip file. Copy all the jars under lib
+Release 1.14. Unzip the downloaded zip file. Copy all the jars under lib
 from unzipped file to QATEST_HOME/lib/htmlunit.
+NOTE: If you are updating jars, make sure the old jars are removed.
 
 %% 2 Execution
 

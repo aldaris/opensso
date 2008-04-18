@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.7 2008-03-18 04:54:40 nithyas Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.8 2008-04-18 19:28:49 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public class ConfigureUnconfigure extends TestCommon {
     private String agentPassword;
     private String strGblRB = "agentsGlobal";
     private String agentType;
+    private String agentConfigurationType;
 
     /**
      * Class constructor. Instantiates the ResourceBundles and
@@ -64,6 +65,8 @@ public class ConfigureUnconfigure extends TestCommon {
         agentId = rbg.getString(strGblRB + ".agentId");
         agentPassword = rbg.getString(strGblRB + ".agentPassword");
         agentType = rbg.getString(strGblRB + ".agentType");
+        agentConfigurationType = rbg.getString(strGblRB + 
+                ".30agentConfigurationType");
         idmc = new IDMCommon();
     }
 
@@ -76,6 +79,7 @@ public class ConfigureUnconfigure extends TestCommon {
         entering("createAgentProfile", null);
         try {
             startNotificationServer();
+            CreateAgentProfile create = new CreateAgentProfile();
             Map map = new HashMap();
             Set set = new HashSet();
             set.add(agentPassword);
@@ -107,9 +111,13 @@ public class ConfigureUnconfigure extends TestCommon {
                     }
                 }
                 if (!setValuesHasString(idmc.searchIdentities(admintoken,
-                        agentId, IdType.AGENTONLY), agentId))
+                        agentId, IdType.AGENTONLY), agentId)) {
                     idmc.createIdentity(admintoken, realm, IdType.AGENTONLY,
                             agentId, map);
+                    if (agentConfigurationType.equals("centralized")) { 
+                        create.create(agentId, agentType);
+                    }
+                }
             }
         } catch (Exception e) {
             stopNotificationServer();
