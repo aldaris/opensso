@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.9 2008-02-26 01:57:27 mrudulahg Exp $
+ * $Id: IDMCommon.java,v 1.10 2008-04-18 19:16:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 /**
@@ -819,6 +821,8 @@ public class IDMCommon extends TestCommon {
             return IdType.AGENT;
         } else if (gidtType.equals("group")) {
             return IdType.GROUP;
+        } else if (gidtType.equals("agentonly")) {
+            return IdType.AGENTONLY;            
         } else {
             log(Level.SEVERE, "getIdType", "Invalid id type " + gidtType);
             assert false;
@@ -895,5 +899,112 @@ public class IDMCommon extends TestCommon {
                         "realm deletion failed");
             }
         }
+    }
+
+    /**
+     * Determines if ROLE,FILTEREDROLE are supported for this realm
+     */
+    public boolean isFilteredRolesSupported()
+    throws Exception {
+        try {
+            SSOToken admintoken = getToken(adminUser, adminPassword, basedn);
+            if (!isIdTypeSupported(admintoken, "/", "FILTEREDROLE") ||
+                !isIdTypeSupported(admintoken, "/", "ROLE")) {
+                log(Level.SEVERE, "isFilteredRolesSupported",
+                        "Roles or Filtered Roles " + 
+                        "are not supported in this configuration");
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            log(Level.SEVERE, "isFilteredRolesSupported", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Hot Swaps the property strPropName with value strPropValue.
+     * In case of multi valued properties, the | seperated values in 
+     * strPropValue are added to the exisiting list
+     */
+    public void hotSwapProperty(AMIdentity amid, String strPropName, 
+            String strPropValue)
+    throws Exception {
+        entering("hotSwapProperty", null);
+        Set set;
+        Set origSet;
+        Map map;
+        String strPropValueOrig;
+        try {
+            log(Level.FINE, "hotSwapProperty", "Inside IDMCommon");
+            map = new HashMap();
+            set = new HashSet();
+            origSet = new HashSet();
+            origSet = amid.getAttribute(strPropName);
+            if (origSet.size() != 0) { 
+                SortedSet sortset = new TreeSet();
+                Iterator itr = origSet.iterator();                
+                while (itr.hasNext()) {
+                    strPropValueOrig = (String)itr.next();
+                    sortset.add(strPropValueOrig);
+                }
+                String maxSetValue = (String)sortset.last();
+                map = new HashMap();
+                String strProp;
+                if (origSet.size() > 1) {
+                    set = amid.getAttribute(strPropName);
+                    int pos = maxSetValue.indexOf("[");
+                    int pos1 = maxSetValue.indexOf("]");
+                    int maxSetVal = new Integer(maxSetValue.substring(pos 
+                            + 1 , pos1)).intValue();
+                    if (strPropValue.contains("|")) {
+                        String strSplit[] = strPropValue.split("\\|");
+                        for (int i = 0; i < strSplit.length; i++) {
+                            strProp = "[" + (maxSetVal + i + 1) + "]=" + 
+                                strSplit[i];
+                            log(Level.FINE, "hotSwapProperty", "strProp : " + 
+                                strProp);
+                            set.add(strProp);                  
+                        log(Level.FINE, "hotSwapProperty", "strProp(Adding " +
+                                "multi value to multi valued attribute): "
+                                + strProp);
+
+                        }                            
+                    } else {
+                        strProp = "[" + (maxSetVal + 1) + "]=" + 
+                                strPropValue;
+                        set.add(strProp);                  
+                        log(Level.FINE, "hotSwapProperty", "strProp(Adding " +
+                                "single value to multi valued attribute): "
+                                + strProp);
+                    }
+                } else {
+                    if (maxSetValue.contains("[")) {
+                        set.add("[0]=" + strPropValue);
+                        log(Level.FINE, "hotSwapProperty", "strProp(Setting " +
+                                "first value in multi valued attribute): "
+                                + "[0]=" + strPropValue);
+
+                    } else {
+                       log(Level.FINE, "hotSwapProperty", "Setting " +
+                                "single valued attribute): " + strPropValue);
+                        set.add(strPropValue);
+                    }
+                }
+                map.put(strPropName, set);
+                modifyIdentity(amid, map);
+            } else {
+                log(Level.SEVERE, "hotSwapProperty", "Property : " + 
+                        strPropName + "is NOT present. Check if property name" +
+                        "is correct or if present, check the default " +
+                        "initialisation value.");
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "hotSwapProperty", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } 
+        exiting("hotSwapProperty");
     }
 }
