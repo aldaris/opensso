@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.23 2008-04-18 19:29:38 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.24 2008-04-18 19:33:11 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,8 +115,17 @@ public class AgentConfiguration {
 
     private static void validateAgentType(String type)
         throws ConfigurationException {
+        validateAgentType(type, false);
+    }
+
+    private static void validateAgentType(String type, boolean isGroup)
+        throws ConfigurationException {
         try {
             Set types = getAgentTypes();
+            if (isGroup) {
+                types.remove(AGENT_TYPE_2_DOT_2_AGENT);
+            }
+
             if (!types.contains(type)) {
                 Object[] param = {type};
                 throw new ConfigurationException(
@@ -218,7 +227,7 @@ public class AgentConfiguration {
         URL agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
-        validateAgentType(agentType);
+        validateAgentType(agentType, true);
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
