@@ -1,0 +1,304 @@
+/* The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: SessionAttributeTests.java,v 1.1 2008-04-18 20:05:37 nithyas Exp $
+ *
+ * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ */
+
+package com.sun.identity.qatest.agents;
+
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.AgentsCommon;
+import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
+import com.sun.identity.qatest.common.SMSConstants;
+import com.sun.identity.qatest.common.TestCommon;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import org.testng.Reporter;
+
+/**
+ * This class tests Header attributes related to Session, Profile
+ * and Response. Attributes are tested using a webapp or a cgi script
+ * which can read the header attributes in the browser. Attributes
+ * are tested for new and updated values for different profile.
+ */
+
+public class SessionAttributeTests extends TestCommon {
+    
+    private boolean executeAgainstOpenSSO;
+    private String logoutURL;
+    private String strScriptURL;
+    private String strLocRB = "HeaderAttributeTests";
+    private String strGblRB = "agentsGlobal";
+    private String resource;
+    private URL url;
+    private WebClient webClient;
+    private int polIdx;
+    private int resIdx;
+    private int iIdx;
+    private AgentsCommon mpc;
+    private AMIdentity amid;
+    private IDMCommon idmc;
+    private SMSCommon smsc;
+    private ResourceBundle rbg;
+    private SSOToken usertoken;
+    private SSOToken admintoken;
+    private int sleepTime = 2000;
+    private int pollingTime;
+    private String strAgentType;
+    private String strHeaderFetchMode;
+    private String agentId;
+    
+    /**
+     * Instantiated different helper class objects
+     */
+    public SessionAttributeTests() 
+    throws Exception{
+        super("SessionAttributeTests");
+        mpc = new AgentsCommon();
+        idmc = new IDMCommon();
+        rbg = ResourceBundle.getBundle(strGblRB);
+        executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
+                ".executeAgainstOpenSSO")).booleanValue();
+        pollingTime = new Integer(rbg.getString(strGblRB +
+                ".pollingInterval")).intValue();
+        admintoken = getToken(adminUser, adminPassword, basedn);
+        smsc = new SMSCommon(admintoken);
+        logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
+                "/UI/Logout";
+        
+    }
+
+    /**
+     * Two Argument constructor initialising the ScriptURL 
+     * and resource being tested
+     * value
+     */
+    public SessionAttributeTests(String strScriptURL, String strResource) 
+      throws Exception {
+        this();
+        url = new URL(strScriptURL);
+        resource = strResource;
+   }
+       
+    /**
+     * Evaluates a standard session attribute
+     */
+    public void evaluateUniversalIdSessionAttribute()
+    throws Exception {
+        entering("evaluateUniversalIdSessionAttribute", null);
+
+        webClient = new WebClient();
+        try {
+            HtmlPage page = consoleLogin(webClient, resource, "sauser",
+                    "sauser");
+            page = (HtmlPage)webClient.getPage(url);
+            iIdx = -1;
+            String strUniveraslId = "id=sauser," +
+                    rbg.getString(strGblRB +
+                    ".uuid.suffix.AMIdentitySubject.User") + "," + basedn;
+            log(Level.FINEST,
+                    "evaluateUniversalIdSessionAttribute", "strUniveraslId: " +
+                    strUniveraslId);
+            iIdx = getHtmlPageStringIndex(page,
+                    "HTTP_SESSION_UNIVERSALIDENTIFIER:" + strUniveraslId);
+            Reporter.log("Resource: " + url);   
+            Reporter.log("Username: " + "sauser");   
+            Reporter.log("Password: " + "sauser");   
+            Reporter.log("Expected Result: " + 
+                     "HTTP_SESSION_UNIVERSALIDENTIFIER:" + strUniveraslId); 
+            assert (iIdx != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "evaluateUniversalIdSessionAttribute",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
+        exiting("evaluateUniversalIdSessionAttribute");
+    }
+
+    /**
+     * Evaluates newly created and updated custom session attribute
+     */
+    public void evaluateCustomSessionAttribute()
+    throws Exception {
+        entering("evaluateCustomSessionAttribute", null);
+        webClient = new WebClient();
+        SSOTokenManager stMgr;
+        try {
+            HtmlPage page = consoleLogin(webClient, resource, "sauser",
+                    "sauser");
+            page = (HtmlPage)webClient.getPage(url);
+            webClient.setCookiesEnabled(true);
+            String strCookie = rbg.getString(strGblRB + ".serverCookieName");
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "strCookie: " +
+                    strCookie);
+            String s0 = page.asXml();
+            int i1;
+            String s3;
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "s0:\n" + s0);
+            i1 = s0.indexOf(strCookie + ":");
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "i1: " + i1);
+            String s1 = s0.substring(i1, s0.length());
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "s1:\n" + s1);
+            int i2 = s1.indexOf("|");
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "i2: " + i2);
+            s3 = s1.substring(strCookie.length() + 1, i2);
+            log(Level.FINEST, "evaluateCustomSessionAttribute", "s3: " + s3);
+            stMgr = SSOTokenManager.getInstance();
+            String s3_decoded;
+            log(Level.FINEST, "evaluateCustomSessionAttribute", 
+                    "usertoken before decode=" + s3);
+            if (s3.indexOf("%") != -1) {
+                s3_decoded = URLDecoder.decode(s3);
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "usertoken after decode=" + s3_decoded);
+                if((s3_decoded.indexOf("%") != -1)) {
+                log(Level.FINEST, "evaluateCustomSessionAttribute", 
+                        "usertoken after decode has %");
+                    assert (s3_decoded.indexOf("%") != -1);   
+                }
+                 usertoken = stMgr.createSSOToken(s3_decoded);
+            } else {
+                usertoken = stMgr.createSSOToken(s3);
+            }
+            log(Level.FINE, "destroyToken", " usertoken TokenId is " + 
+                usertoken.getTokenID());
+            String strProperty;
+            if (validateToken(usertoken)) {
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "UserId property value: " +
+                        usertoken.getProperty("UserId"));
+                usertoken.setProperty("MyProperty", "val1");
+                strProperty = usertoken.getProperty("MyProperty");
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "Session property value: " + strProperty);
+                assert (strProperty.equals("val1"));
+            } else {
+                log(Level.FINEST, "evaluateCustomSessionAttribute",
+                        "User token is invalid");
+                assert false;
+            }
+            boolean isFound = false;
+            long time = System.currentTimeMillis();
+            while (System.currentTimeMillis() - time < pollingTime &&
+                !isFound) {
+                page = (HtmlPage)webClient.getPage(url);
+                iIdx = -1;
+                iIdx = getHtmlPageStringIndex(page, 
+                        "HTTP_SESSION_MYPROPERTY:val1", false);
+                if (iIdx != -1) {
+                    isFound = true;
+                }
+            }
+            log(Level.FINEST, "evaluateUpdatedSessionAttribute",
+                    "Waited for : " + (System.currentTimeMillis() - time));
+            iIdx = -1;
+            iIdx = getHtmlPageStringIndex(page,
+                    "HTTP_SESSION_MYPROPERTY:val1");
+            assert (iIdx != -1);
+            usertoken.setProperty("MyProperty", "val2");
+            time = System.currentTimeMillis();
+            isFound = false;
+            while (System.currentTimeMillis() - time < sleepTime &&
+                !(usertoken.getProperty("MyProperty")).equals("val2")) {
+            }
+            log(Level.FINEST, "evaluateUpdatedSessionAttribute",
+                    "waited for : " + (System.currentTimeMillis() - time) );
+            strProperty = usertoken.getProperty("MyProperty");
+            log(Level.FINEST, "evaluateUpdatedSessionAttribute",
+                    "Session property value: " + strProperty);
+            assert (strProperty.equals("val2"));
+            isFound = false;
+            time = System.currentTimeMillis();
+            while (System.currentTimeMillis() - time < pollingTime &&
+                !isFound) {
+                page = (HtmlPage)webClient.getPage(url);
+                iIdx = -1;
+                iIdx = getHtmlPageStringIndex(page,
+                        "HTTP_SESSION_MYPROPERTY:val2", false);
+                if (iIdx != -1) {
+                    isFound = true;
+                }
+            }
+            log(Level.FINEST, "evaluateUpdatedSessionAttribute",
+                    "waited for : " + (System.currentTimeMillis() - time) );
+            page = (HtmlPage)webClient.getPage(url);
+            iIdx = -1;
+            iIdx = getHtmlPageStringIndex(page,
+                    "HTTP_SESSION_MYPROPERTY:val2");
+            Reporter.log("Resource: " + url);   
+            Reporter.log("Username: " + "sauser");   
+            Reporter.log("Password: " + "sauser");   
+            Reporter.log("Expected Result: " + 
+                     "HTTP_SESSION_MYPROPERTY:val1"); 
+            Reporter.log("Expected Result (after updation): " + 
+                     "HTTP_SESSION_MYPROPERTY:val2"); 
+            assert (iIdx != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "evaluateUpdatedSessionAttribute",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(webClient, logoutURL);
+        }
+        exiting("evaluateUpdatedSessionAttribute");
+    }
+    
+    /**
+     * Deletes policies, identities and updates service attributes to default
+     * values.
+     */
+    public void cleanup()
+    throws Exception {
+        entering("cleanup", null);
+        try {
+          if (idmc.searchIdentities(admintoken, "sauser",
+                    IdType.USER).size() != 0)
+                idmc.deleteIdentity(admintoken, realm, IdType.USER, "sauser");
+        } catch (Exception e) {
+            log(Level.SEVERE, "cleanup", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            destroyToken(admintoken);
+        }
+        exiting("cleanup");
+    }
+}
