@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.62 2008-04-15 20:59:40 veiming Exp $
+ * $Id: AccessManager.java,v 1.63 2008-04-18 19:26:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1509,7 +1509,7 @@ public class AccessManager {
             "entries|a|m|formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.",
             "datafile|D|s|Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options."},
         resourceStrings={
-            "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries was updated",
+            "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries were updated",
             "authentication-set-auth-config-entries-not-found=Authentication Configuration was not found.",
             "authentication-set-auth-config-entries-missing-data=Entries and datafile were missing."}
     )
