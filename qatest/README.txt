@@ -21,7 +21,7 @@ README file for executing QA test on OpenSSO
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.3 2008-04-18 19:28:47 nithyas Exp $
+# $Id: README.txt,v 1.4 2008-04-18 20:01:45 nithyas Exp $
 #
 # Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
@@ -42,9 +42,8 @@ classpath.
 testng. Unzip the downloaded zip file. Copy testng-5.1-jdk15.jar to 
 QATEST_HOME/lib 
 1.3 Go to http://htmlunit.sourceforge.net/. Click on Download. Download 
-Release 1.14. Unzip the downloaded zip file. Copy all the jars under lib
+Release 1.10. Unzip the downloaded zip file. Copy all the jars under lib
 from unzipped file to QATEST_HOME/lib/htmlunit.
-NOTE: If you are updating jars, make sure the old jars are removed.
 
 %% 2 Execution
 
@@ -59,11 +58,11 @@ just replace this jar (backup the original)
 
 2.4 Set 5 variables in QATEST_HOME/build.properties file:
 2.4.1 OPENSSO_HOME - where OpenSSO product is installed
-2.4.2 QATEST_HOME – home directory for qatest code base
+2.4.2 QATEST_HOME â home directory for qatest code base
 2.4.3 EXECUTION_MODE - what tests we want to execute (server, server-smoke, 
 clientsdk, the list can go on; these are group names used in Java 
 implementation)
-2.4.4 REPORT_DIR – In case the report need to be copied to a NFS location
+2.4.4 REPORT_DIR â In case the report need to be copied to a NFS location
 2.4.5 TEST_MODULE - for testing an individual module, the test module name
 
 2.5 Open AMClient.properties file under QATEST_HOME/resources and set the 
