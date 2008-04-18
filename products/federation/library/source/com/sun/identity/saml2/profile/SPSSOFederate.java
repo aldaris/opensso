@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.16 2008-04-03 07:03:10 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.17 2008-04-18 17:49:43 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -985,40 +985,11 @@ public class SPSSOFederate {
     }
 
 
-    public static String getRelayStateID(String relayState,
-                                          String requestID) {
-        String relayStateID = null;
+    public static String getRelayStateID(String relayState, String requestID) {
         
-        if (SPCache.relayStateHash != null) {
-            synchronized (SPCache.relayStateHash) {
-                Iterator iter = SPCache.relayStateHash.keySet().iterator();
-                while (iter.hasNext() && (relayStateID == null)) {
-                    String id = (String) iter.next();
-                    CacheObject cacheObj = (CacheObject)
-                        SPCache.relayStateHash.get(id);
-                    if (cacheObj != null) {
-                        String value = (String)cacheObj.getObject();
-                        if ((value != null) && value.equals(relayState)) {
-                            relayStateID = id;
-                            
-                        }
-                    }
-                }
-            }
-        }
-        if (relayStateID == null) {
-            relayStateID = requestID;
-            SPCache.relayStateHash.put(relayStateID, 
-                new CacheObject(relayState));
-        }
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(
-                "SPSSOFederate.getRelayStateID: RelayStateHash : " + 
-                SPCache.relayStateHash);
-        }
-        return relayStateID;
+        SPCache.relayStateHash.put(requestID, new CacheObject(relayState));
+        return requestID;
     }
-
 
    /* Creates RequestedAuthnContext Object */
    private static RequestedAuthnContext createReqAuthnContext(String realmName,
