@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.3 2008-04-03 14:09:34 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.4 2008-04-18 13:52:35 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -97,7 +97,7 @@ public class Infocard extends AMLoginModule {
     private Map options;
     private Token token = null;
     private String ppid = null;
-    private String signature = null;
+    private String digest = null;
     private Map<String, String> claims = null;
     private String userID = null;
     private String userPasswd = null;
@@ -270,20 +270,22 @@ public class Infocard extends AMLoginModule {
 
         if (encXmlToken != null) {
             //dumpXmlToken(encXmlToken);
-            StoredCredentials cred = null;
+            StoredCredentials creds = null;
             try {
                 ppid = getPPID(encXmlToken);
                 if (ppid == null) {
                     throw new InvalidTokenException("Manadatory claim 'PPID' is missing");
                 }
 
-                signature = getSignature(encXmlToken);
-                if (signature == null) {
+                digest = getDigest(encXmlToken);
+                if (digest == null) {
                     throw new BrokenTokenException("Manadatory token signature is missing");
                 }
 
-                cred = null;
-                cred = getStoredCred(ppid);
+                System.out.println("PPID = " + ppid + " digest = " + digest);
+                
+                creds = null;
+                creds = getStoredCred(ppid);
 
             } catch (BrokenTokenException e1) {
                 debug.error("Received broken token", e1);
@@ -299,10 +301,10 @@ public class Infocard extends AMLoginModule {
                 throw new AuthLoginException("Processing infocard Internal error", e4);
             }
 
-            if (cred != null) {
+            if (creds != null) {
                 try {
-                    userID = cred.getUserID();
-                    userPasswd = cred.getUserPasswd();
+                    userID = creds.getUserID();
+                    userPasswd = creds.getUserPasswd();
                     storeUsernamePasswd(userID, userPasswd);
                     Callback[] idCallbacks = new Callback[2];
                     NameCallback nameCallback = new NameCallback("dummy");
@@ -322,7 +324,11 @@ public class Infocard extends AMLoginModule {
                         validatedUserID = userID;
                     } else {
                         setFailureID(userID);
-                        throw new AuthLoginException("Authentication Failed");
+                        // credential now longer associated with user account
+                        // remove that entry
+                        debug.message("Delete orphan stored credentials for userID" + userID);
+                        deleteCredentials(creds);
+                        retval = BINDING_STATE;
                     }
                 } catch (AuthLoginException e1) {
                     setFailureID(userID);
@@ -331,6 +337,9 @@ public class Infocard extends AMLoginModule {
                 } catch (IdRepoException e2) {
                     setFailureID(userID);
                     throw new AuthLoginException("Internal iDRepo Authentication Error" + e2.getMessage());
+                } catch (InfocardException e3) {
+                    e3.printStackTrace();
+                    throw new AuthLoginException("Processing infocard Internal error", e3);
                 }
             } else {
                 // Goto BINDING_STATE to associate PPID with user account
@@ -382,7 +391,7 @@ public class Infocard extends AMLoginModule {
                 validatedUserID = userID;
                 // store ppid along with user's credentials
                 try {
-                    persistCredentials(ppid, signature, userID, userPasswd);
+                    persistCredentials(ppid, digest, userID, userPasswd);
                 } catch (InfocardException ife) {
                     throw new AuthLoginException("Failed to store user's credentials", ife);
                 }
@@ -424,7 +433,7 @@ public class Infocard extends AMLoginModule {
 
         // store ppid along with user's credentials 
         try {
-            persistCredentials(ppid, signature, userID, userPasswd);
+            persistCredentials(ppid, digest, userID, userPasswd);
         } catch (InfocardException ife) {
             throw new AuthLoginException("failed to store user's credentials", ife);
         }
@@ -524,7 +533,7 @@ public class Infocard extends AMLoginModule {
     }
 
     // Get token's public key
-    private String getSignature(String encXmlToken)
+    private String getDigest(String encXmlToken)
             throws BrokenTokenException, InvalidCertException,
             InvalidTokenException, InfocardException {
 
@@ -603,7 +612,7 @@ public class Infocard extends AMLoginModule {
 
         creds = storage.findCredentials(ppid);
 
-        if (creds != null && !signature.equals(creds.getSignature())) {
+        if (creds != null && !digest.equals(creds.getSignature())) {
             // Forgery ?
             debug.message(
                     "Token's signature and stored signature do not match for ppid =" + ppid);
@@ -621,6 +630,14 @@ public class Infocard extends AMLoginModule {
         StoredCredentials creds = new StoredCredentials(ppid, signature, uid, passwd);
 
         storage.addCredentials(creds);
+    }
+
+    private void deleteCredentials(StoredCredentials creds)
+            throws InfocardException {
+
+        InfocardStorage storage = new InfocardStorageImpl();
+
+        storage.delCredentials(creds);
     }
 
     private int getAndCheckRegistrationFields(Callback[] callbacks)

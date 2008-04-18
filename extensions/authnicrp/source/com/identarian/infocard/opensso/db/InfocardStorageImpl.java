@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardStorageImpl.java,v 1.3 2008-04-03 14:04:46 ppetitsm Exp $
+ * $Id: InfocardStorageImpl.java,v 1.4 2008-04-18 13:52:33 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -43,6 +43,7 @@ public class InfocardStorageImpl implements InfocardStorage {
             "userid varchar(64)," +
             "password varchar(64))";
     private static final String searchString = "SELECT * FROM storecreds where ppid = ?";
+    private static final String deleteString = "DELETE FROM storecreds where ppid = ?";
     private static Debug debug = null;
     private static Connection conn = null;
     private static boolean initialized = false;
@@ -132,7 +133,6 @@ public class InfocardStorageImpl implements InfocardStorage {
             s = conn.createStatement();
 
             try {
-
                 // store ppid, userID and password
                 // TODO: WE SHOULD encrypt the password!
                 StringBuffer insert = new StringBuffer("insert into storecreds values ('");
@@ -158,7 +158,32 @@ public class InfocardStorageImpl implements InfocardStorage {
                 s.close();
                 conn.commit();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new InfocardException(e);
+        }
+    }
+    
+      public void delCredentials(StoredCredentials creds)
+            throws InfocardException {
 
+        try {
+            if (conn == null || !conn.isValid(5)) {
+                startup();
+            }
+
+            PreparedStatement pstmt = null;
+            pstmt = conn.prepareStatement(deleteString);
+            try {
+                pstmt.setString(1, creds.getPpid());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new InfocardException(e);
+            } finally {
+                pstmt.close();
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new InfocardException(e);
@@ -176,7 +201,6 @@ public class InfocardStorageImpl implements InfocardStorage {
             }
 
             PreparedStatement pstmt = null;
-
             pstmt = conn.prepareStatement(searchString);
             try {
 

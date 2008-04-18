@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InfocardStorage.java,v 1.2 2008-02-28 23:31:19 superpat7 Exp $
+ * $Id: InfocardStorage.java,v 1.3 2008-04-18 13:52:33 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -35,6 +35,8 @@ public interface InfocardStorage {
     public void shutdown()
             throws InfocardException ; 
     public void addCredentials(StoredCredentials creds)
+            throws InfocardException;
+    public void delCredentials(StoredCredentials creds)
             throws InfocardException;
     public StoredCredentials findCredentials(String ppid)
             throws InfocardException;

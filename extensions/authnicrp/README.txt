@@ -35,7 +35,7 @@ below
 
 1 - Install OpenSSO (Download from 
     https://opensso.dev.java.net/public/use/index.html). 
-    The module has been tested against OpenSSO v1 Builds 2 and 3.
+    The module has been tested against OpenSSO v1 Builds 2, 3 and 4.
 
 2 - Using the OpenSSO Admin console, navigate to Configuration>Core>Auth Module 
     and type com.identarian.infocard.opensso.rp.Infocard in the 'New Value' 
