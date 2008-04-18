@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.29 2008-01-18 02:49:49 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.30 2008-04-18 15:43:55 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2303,6 +2303,61 @@ public class IdServicesImpl implements IdServices {
         }
         return unionSupportedOps;
     }
+
+    public void clearIdRepoPlugins(String orgName, String serviceComponent) {
+        if (getDebug().messageEnabled()) {
+            getDebug().message("IdServicesImpl.clearIdRepoPlugins(): " +
+                "orgName: " + orgName + "; serviceComponent: " + serviceComponent +
+                "Cleanup IdRepo Plugins is called...\n. Cleaning up the map.." +
+                idRepoMap);
+        }
+
+        Set localSet = new HashSet();
+        synchronized (idRepoMap) {
+            Set keys = idRepoMap.keySet();
+
+            for (Iterator it = keys.iterator(); it.hasNext(); ) {
+                String cachekey = (String) it.next();
+                Object o = idRepoMap.get(cachekey);
+                if (o instanceof IdRepo) {
+                    // do nothing this is a special repo.
+                    // special repos do not change.
+                } else {
+                    // see if cachekey matches orgname. 
+                    // cachekey is in following format: 
+                    // dc=opensso,dc=java,dc=net:LDAPv3ForAMDS
+                    // o=trealm2,ou=services,dc=opensso,dc=java,dc=net:LDAPv3
+                    // have to stripped off ":*"
+                    // do it inside the else clause below.
+                    String [] cachedOrgName = cachekey.split(":");
+                    if (cachedOrgName[0].equalsIgnoreCase(orgName)) {
+                        Map rMap = (Map) o;
+                        Set rKeys = rMap.keySet();
+                        // rMap key is name of the datastore
+                        // rMap value is the datastore instance.
+                        for (Iterator it2 = rKeys.iterator(); it2.hasNext(); ) {
+                            String dsName = (String) it2.next();
+                            String slashDsName = "/" + dsName;
+                            if (dsName.equalsIgnoreCase(serviceComponent) ||
+                                slashDsName.equalsIgnoreCase(serviceComponent) ) {
+                                localSet.addAll(rMap.values());
+                                idRepoMap.remove(cachekey);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // shutdown the datastore that changed.
+        for (Iterator it = localSet.iterator(); it.hasNext(); ) {
+            IdRepo repo = (IdRepo) it.next();
+            repo.removeListener();
+            repo.shutdown();
+        }
+    }
+
 
     public void clearIdRepoPlugins() {
         if (getDebug().messageEnabled()) {

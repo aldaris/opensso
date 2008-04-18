@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoServiceListener.java,v 1.4 2007-11-10 04:38:28 veiming Exp $
+ * $Id: IdRepoServiceListener.java,v 1.5 2008-04-18 15:43:24 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class IdRepoServiceListener implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("IdRepoServiceListener: Org Config changed called");
         }
-        idServices.clearIdRepoPlugins();
+        idServices.clearIdRepoPlugins(orgName, serviceComponent);
 
         // Clear IdUtils.getOrganization(...) cache
         IdUtils.clearOrganizationNamesCache();
