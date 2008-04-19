@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.13 2008-03-10 05:53:09 kanduls Exp $
+ * $Id: SMSCommon.java,v 1.14 2008-04-19 01:17:51 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -266,6 +266,20 @@ public class SMSCommon extends TestCommon {
             realmIdentity.assignService(serviceName, map);
         set = realmIdentity.getAssignedServices();
         return (set.contains(serviceName));
+    }
+    
+    /**
+     * Update service attributes of the realm
+     */
+    public void updateServiceAttrsRealm(String serviceName, String realm, 
+            Map map)
+    throws Exception {
+        AMIdentityRepository idrepo = new AMIdentityRepository(
+                admintoken, realm);
+        AMIdentity realmIdentity = idrepo.getRealmIdentity();
+        Set set = realmIdentity.getAssignedServices();
+        if(set.contains(serviceName))
+            realmIdentity.modifyService(serviceName, map);
     }
     
     /**
