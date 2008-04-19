@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.30 2008-04-18 15:43:55 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.31 2008-04-19 20:40:16 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1452,11 +1452,12 @@ public class IdServicesImpl implements IdServices {
         
         IdRepo pluginClass = null;
         boolean pluginInitialized = false;
+        String cacheKey = orgName + ":" + IdConstants.AGENTREPO_PLUGIN;
         synchronized (idRepoMap) {
             // Checking for the presence of the plugin & adding it to the
             // plugin cache should be in the critical section 
             // hence synchronized.
-            Object o = idRepoMap.get(IdConstants.AGENTREPO_PLUGIN);
+            Object o = idRepoMap.get(cacheKey);
             if (o instanceof IdRepo) {
                 pluginClass = (IdRepo) o;
             }
@@ -1467,8 +1468,12 @@ public class IdServicesImpl implements IdServices {
                         getContextClassLoader().
                             loadClass(IdConstants.AGENTREPO_PLUGIN);
                     pluginClass = (IdRepo) thisClass.newInstance();
-                    pluginClass.initialize(new HashMap());
-                    idRepoMap.put(IdConstants.AGENTREPO_PLUGIN, pluginClass);
+                    HashMap config = new HashMap(2);
+                    HashSet realmName = new HashSet();
+                    realmName.add(orgName);
+                    config.put("agentsRepoRealmName", realmName);
+                    pluginClass.initialize(config);
+                    idRepoMap.put(cacheKey, pluginClass);
                     pluginInitialized = true;
                 } catch (Exception e) {
                     getDebug().error("IdServicesImpl.getAgentRepoPlugin: "
@@ -2530,18 +2535,18 @@ public class IdServicesImpl implements IdServices {
             if (opSet != null && opSet.contains(op)) {
                 pluginClasses.add(specialRepo);
             }
+        }
 
-            // add the "AgentRepoUser" plugin only if revision number of
-            // sunIdentityRepository service is greater than or equal to 30.
-            // This is for backward compatibility.
+        // add the "AgentRepoUser" plugin only if revision number of
+        // sunIdentityRepository service is greater than or equal to 30.
+        // This is for backward compatibility.
 
-            if (svcRevisionNumber >= 30) {
-                IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
+        if (svcRevisionNumber >= 30) {
+            IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
             
-                Set agOpSet = agentRepo.getSupportedOperations(type);
-                if (agOpSet != null && agOpSet.contains(op)) {
-                    pluginClasses.add(agentRepo);
-                }
+            Set agOpSet = agentRepo.getSupportedOperations(type);
+            if (agOpSet != null && agOpSet.contains(op)) {
+                pluginClasses.add(agentRepo);
             }
         }
 
@@ -2601,15 +2606,15 @@ public class IdServicesImpl implements IdServices {
             // add the "SpecialUser plugin
             IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);
             pluginClasses.add(specialRepo);            
+        }
 
-            // add the "AgentRepoUser" plugin only if revision number of
-            // sunIdentityRepository service is greater than or equal to 30.
-            // This is for backward compatibility.
+        // add the "AgentRepoUser" plugin only if revision number of
+        // sunIdentityRepository service is greater than or equal to 30.
+        // This is for backward compatibility.
 
-            if (svcRevisionNumber >= 30) {
-                IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
-                pluginClasses.add(agentRepo);            
-            }
+        if (svcRevisionNumber >= 30) {
+            IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
+            pluginClasses.add(agentRepo);            
         }
 
         if (ServiceManager.isCoexistenceMode()) {

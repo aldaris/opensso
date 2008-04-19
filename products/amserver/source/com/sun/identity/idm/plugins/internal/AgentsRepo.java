@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.23 2008-04-04 19:39:34 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.24 2008-04-19 20:41:16 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,6 +93,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     IdRepoListener repoListener = null;
 
     Debug debug = Debug.getInstance("amAgentsRepo");
+
+    private String realmName;
 
     private Map supportedOps = new HashMap();
 
@@ -1015,6 +1017,16 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
      */
     public void initialize(Map configParams) {
         super.initialize(configParams);
+        // Initialize with the realm name
+        Set realms = (Set) configParams.get("agentsRepoRealmName");
+        if ((realms != null) && !realms.isEmpty()) {
+            realmName = DNMapper.orgNameToDN((String) realms.iterator().next());
+            // Initalize ServiceConfig with realm names
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            getOrgConfig(adminToken);
+            getAgentGroupConfig(adminToken);
+        }
     }
 
     /*
@@ -1135,13 +1147,15 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.organizationConfigChanged..");
         }
 
-        // If notification URLs are present, send notifications
-        sendNotificationSet(type);
+        // Process notification only if realm name matches
+        if (orgName.equalsIgnoreCase(realmName)) {
+            // If notification URLs are present, send notifications
+            sendNotificationSet(type);
 
-        if (repoListener != null) { 
-            repoListener.allObjectsChanged();
+            if (repoListener != null) { 
+                repoListener.allObjectsChanged();
+            }
         }
-
     }
 
     /*
@@ -1325,7 +1339,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     scm = new ServiceConfigManager(token, agentserviceName, 
                         version);
                 }
-                orgConfig = scm.getOrganizationConfig("/", null);
+                orgConfig = scm.getOrganizationConfig(realmName, null);
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
@@ -1353,11 +1367,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         version);
                 }
                 String agentGroupDN = constructDN(agentGroupNode, 
-                    instancesNode, "/", version, agentserviceName);
+                    instancesNode, realmName, version, agentserviceName);
                 ServiceConfig orgConfig = getOrgConfig(token);
                 orgConfig.checkAndCreateGroup(agentGroupDN, agentGroupNode);
                 agentGroupConfig = 
-                    scm.getOrganizationConfig("/", agentGroupNode);
+                    scm.getOrganizationConfig(realmName, agentGroupNode);
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
