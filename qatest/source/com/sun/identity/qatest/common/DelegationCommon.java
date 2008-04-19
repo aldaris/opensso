@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCommon.java,v 1.2 2008-03-10 05:53:09 kanduls Exp $
+ * $Id: DelegationCommon.java,v 1.3 2008-04-19 01:07:56 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.delegation.DelegationConstants;
 import com.sun.identity.sm.OrganizationConfigManager;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -445,6 +446,31 @@ public class DelegationCommon extends IDMCommon {
             throw ex;
         }
         return status;
+    }
+
+    /**
+     * This method gets service attributes for the given user
+     * @param token Admin user ssotoken
+     * @param userName User Name
+     * @param serviceName Service Name
+     * @param attrMap Service attribute value map.
+     * @param delegationRealm Parent Realm
+     * @return true if service is removed else return false.
+     */
+    public Map getServiceAttrsOfUser(SSOToken token,
+            String userName,
+            String serviceName,
+            String delegationRealm)
+    throws Exception {
+        AMIdentity amId = new AMIdentity(token, userName,
+                    IdType.USER, delegationRealm, null);
+        if(isServiceAssigned(amId, serviceName)) {
+            return amId.getServiceAttributes(serviceName);
+        } else {
+            log(Level.SEVERE, "getServiceAttrsOfUser", "Service " +
+                        "not assigned to user " + userName);
+            return null;
+        } 
     }
     
     /**
