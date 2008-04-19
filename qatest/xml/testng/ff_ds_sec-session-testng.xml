@@ -20,20 +20,45 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-session-testng.xml,v 1.2 2007-09-24 20:29:04 rmisra Exp $: 
+ $Id: ff_ds_sec-session-testng.xml,v 1.3 2008-04-19 01:27:41 srivenigan Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds_sec-session" verbose="1">
-    <test name="SessionServerTimeConstraintsTest">
+    <test name="SessionConstraints Global">
+       <parameter name="inheritancelevel" value="Global"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.session.SessionServerTimeConstraintsTest"/>
+            <class name=
+            "com.sun.identity.qatest.session.GlobalRealmSessionConstraints"/>
+        </classes>
+    </test>
+    <test name="SessionConstraints Realm">
+       <parameter name="inheritancelevel" value="Realm"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.GlobalRealmSessionConstraints"/>
+        </classes>
+    </test>
+    <test name="SessionConstraints User">
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.UserSessionConstraints"/>
         </classes>
     </test>
     <test name="SessionProperty">
@@ -45,5 +70,16 @@
         <classes>
             <class name="com.sun.identity.qatest.session.SessionProperty"/>
         </classes>
-    </test>
+    </test>    
+    <test name="SessionServerTimeConstraintsTest">
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.SessionServerTimeConstraintsTest"/>
+        </classes>
+    </test>      
 </suite>
