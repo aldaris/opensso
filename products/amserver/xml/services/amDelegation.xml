@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.5 2008-04-04 01:16:21 goodearth Exp $
+   $Id: amDelegation.xml,v 1.6 2008-04-19 20:42:05 goodearth Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -194,8 +194,7 @@
                     <SubConfiguration name="AgentsReadWrite" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/AgentService/1.0/*</Value>
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/agent*</Value>
+                            <Value>*REALM/sunIdentityRepositoryService/1.0/application/agent*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
