@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.42 2008-04-18 19:20:19 nithyas Exp $
+ * $Id: TestCommon.java,v 1.43 2008-04-19 01:21:25 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1048,6 +1048,31 @@ public class TestCommon implements TestConstants {
         }
         return (stok);
     }
+    
+    /**
+     * Returns all SSOTokens of a user.
+     */
+    protected Set getAllUserTokens(SSOToken requester, String userId)
+    throws Exception {
+        SSOToken stok = null;
+        Set setAllToken = new HashSet();
+        if (validateToken(requester)) {
+            SSOTokenManager stMgr = SSOTokenManager.getInstance();
+            Set set = stMgr.getValidSessions(requester, host);
+            Iterator it = set.iterator();
+            String strLocUserID;
+            while (it.hasNext()) {
+                stok = (SSOToken)it.next();
+                strLocUserID = stok.getProperty("UserId");
+                log(Level.FINEST, "getAllUserTokens", "UserID: " + strLocUserID);
+                if (strLocUserID.equalsIgnoreCase(userId)) {
+                    setAllToken.add(stok);
+                }
+            }
+        }
+        return setAllToken;
+    }
+    
     
     /**
      * Start the notification (jetty) server for getting notifications from the
