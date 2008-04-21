@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-session-tools.xml,v 1.2 2007-12-04 18:06:25 ww203982 Exp $
+   $Id: build-session-tools.xml,v 1.3 2008-04-21 19:13:25 weisun2 Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -98,16 +98,16 @@
         </jar>
         <delete dir="${amsession.classes.dir}"/>
         <mkdir dir="${amsession.classes.dir}"/>
-        <mkdir dir="${amsession.classes.dir}/com/iplanet/dpro/session/jmqdb"/>
-        <mkdir dir="${amsession.classes.dir}/com/iplanet/dpro/session/jmqdb/client"/>
-        <copy todir="${amsession.classes.dir}/com/iplanet/dpro/session/jmqdb"
+        <mkdir dir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb"/>
+        <mkdir dir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb/client"/>
+        <copy todir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb"
             overwrite="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.dir}/classes/com/iplanet/dpro/session/jmqdb"
+            <fileset dir="${amserver.built.dir}/classes/com/sun/identity/ha/jmqdb"
                 includes="*"/>
         </copy>
-        <copy todir="${amsession.classes.dir}/com/iplanet/dpro/session/jmqdb/client"
+        <copy todir="${amsession.classes.dir}/com/sun/identity/ha/jmqdb/client"
             overwrite="yes" encoding="UTF-8">
-            <fileset dir="${amserver.built.dir}/classes/com/iplanet/dpro/session/jmqdb/client"
+            <fileset dir="${amserver.built.dir}/classes/com/sun/identity/ha/jmqdb/client"
                 includes="*"/>
         </copy>       
         <jar destfile="${amsession.lib.dir}/am_sessiondb.jar"
