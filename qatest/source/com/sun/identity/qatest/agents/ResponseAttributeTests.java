@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseAttributeTests.java,v 1.1 2008-04-18 20:04:47 nithyas Exp $
+ * $Id: ResponseAttributeTests.java,v 1.2 2008-04-21 20:20:02 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -291,12 +291,12 @@ public class ResponseAttributeTests extends TestCommon {
         try {
             Set set = new HashSet();
             set.add("10");
-/*            smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
+            smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
                     "iplanet-am-policy-config-subjects-result-ttl", set,
                     "Organization");
             smsc.removeServiceAttributeValues("iPlanetAMPolicyConfigService",
                     "sun-am-policy-dynamic-response-attributes",
-                    "Organization");*/
+                    "Organization");
             if (idmc.searchIdentities(admintoken, "rauser",
                     IdType.USER).size() != 0)
                idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser");
