@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.50 2008-04-02 20:12:27 bigfatrat Exp $
+ * $Id: AMSetupServlet.java,v 1.51 2008-04-21 23:51:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -411,7 +411,7 @@ public class AMSetupServlet extends HttpServlet {
                 SetupConstants.CONFIG_VAR_BASE_DIR);
             File baseDirectory = new File(basedir);
             if (!baseDirectory.exists()) {
-                baseDirectory.mkdir();
+                baseDirectory.mkdirs();
             } else {
                 SetupProgress.reportStart("emb.checkingbasedir",basedir);
                 File bootstrapFile = new File(basedir + "/" + BOOTSTRAP_EXTRA);
