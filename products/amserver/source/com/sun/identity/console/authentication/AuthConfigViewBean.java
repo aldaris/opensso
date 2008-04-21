@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthConfigViewBean.java,v 1.1 2007-02-07 20:18:49 jonnelson Exp $
+ * $Id: AuthConfigViewBean.java,v 1.2 2008-04-21 23:50:47 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -218,6 +218,47 @@ public class AuthConfigViewBean
 
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                 "authentication.instance.list.empty");
+        }
+        
+        showInvalidSet();
+    }
+    
+    public void showInvalidSet() {
+        Set invalidSet = new HashSet();
+        Set validSet  = new HashSet();
+        
+        List list = getInstanceNames();
+        if ((list != null) && !list.isEmpty()) {
+            validSet.addAll(list);
+        }
+        
+		AuthConfigurationModel model = (AuthConfigurationModel)getModel();
+        int size = model.getNumberEntries();
+        
+        for (int i = 0; i < size; i++) {
+            String module = model.getModuleName(i);
+            if (!validSet.contains(module)) {
+                invalidSet.add(module);
+            }
+        }
+        
+        if (!invalidSet.isEmpty()) {
+            StringBuffer buff = new StringBuffer();
+            boolean bFirst = true;
+            for (Iterator i = invalidSet.iterator(); i.hasNext(); ) {
+                if (bFirst) {
+                    bFirst = false;
+                } else {
+                    buff.append(", ");
+                }
+                buff.append((String)i.next());
+            }
+            Object[] params = {buff.toString()};
+            String msg = (invalidSet.size() > 1) ? 
+                "authentication.instance.invalids" : 
+                "authentication.instance.invalid";
+            setInlineAlertMessage(CCAlert.TYPE_WARNING, "message.warning",
+                MessageFormat.format(model.getLocalizedString(msg), params));            
         }
     }
 

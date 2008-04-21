@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthActionTiledView.java,v 1.1 2007-02-07 20:18:49 jonnelson Exp $
+ * $Id: AuthActionTiledView.java,v 1.2 2008-04-21 23:50:47 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.console.authentication;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.html.OptionList;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
+import com.iplanet.jato.view.html.Option;
 import com.sun.identity.console.base.AMTableTiledView;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.view.html.CCDropDownMenu;
@@ -92,20 +93,31 @@ public class AuthActionTiledView
     ) {
         boolean display = false;
         AuthConfigViewBean parentVB = (AuthConfigViewBean)getParentViewBean();
-
+        String value = parentVB.getModuleName(index);
+        
         CCDropDownMenu list = (CCDropDownMenu)getChild(childName);
         OptionList optList = parentVB.getModuleNameChoiceValues();
-        list.setOptions(optList);
 
         if ((optList != null) && (optList.size() > 0)) {
-            String value = parentVB.getModuleName(index);
             if ((value != null) && (value.length() != 0)) {
+                if (!containsOption(optList, value)) {
+                    optList.add(0, value, value);
+                }
+                list.setOptions(optList);
                 list.setValue(value);
                 display = true;
             }
         }
-
         return display;
+    }
+    
+    private boolean containsOption(OptionList optList, String val) {
+        boolean bYes = false;
+        for (int i = 0; (i < optList.size()) && !bYes; i++) {
+            Option opt = optList.get(i);
+            bYes = opt.getValue().equals(val);
+        }
+        return bYes;
     }
 
     private boolean displayTextFieldAction(
