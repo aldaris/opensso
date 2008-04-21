@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthLevelCondition.java,v 1.4 2006-08-25 21:21:08 veiming Exp $
+ * $Id: AuthLevelCondition.java,v 1.5 2008-04-21 20:58:09 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -498,7 +498,9 @@ public class AuthLevelCondition implements Condition {
                 Iterator iter = qualifiedLevels.iterator();
                 while (iter.hasNext()) {
                     String qualifiedLevel = (String)iter.next();
-                    if (authLevel.equals(qualifiedLevel)) {
+                    String realm = AMAuthUtils.getRealmFromRealmQualifiedData(
+                            qualifiedLevel);
+                    if (authRealm.equals(realm)) {
                         int level = getAuthLevel(qualifiedLevel);
                         maxAuthLevel = (level > maxAuthLevel)? level 
                                 : maxAuthLevel;
