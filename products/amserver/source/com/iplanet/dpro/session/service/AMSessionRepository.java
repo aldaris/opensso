@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSessionRepository.java,v 1.2 2005-11-04 18:53:40 veiming Exp $
+ * $Id: AMSessionRepository.java,v 1.3 2008-04-21 19:06:27 weisun2 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import com.iplanet.dpro.session.SessionID;
   I <code> JMQSessionRepository</code> implements this interface.
   *
   * @see com.iplanet.dpro.session.jdbc.JDBCSessionRepository
-  * @see com.iplanet.dpro.session.jmqdb.JMQSessionRepository
+  * @see com.iplanet.dpro.session.JMQSessionRepository
   */ 
 public interface AMSessionRepository {
 

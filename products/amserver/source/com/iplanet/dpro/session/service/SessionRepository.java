@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRepository.java,v 1.1 2005-11-01 00:29:57 arvindp Exp $
+ * $Id: SessionRepository.java,v 1.2 2008-04-21 19:06:27 weisun2 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import com.iplanet.am.util.SystemProperties;
 public class SessionRepository {
 
     private static final String DEFAULT_REPOSITORY_CLASS = 
-        "com.iplanet.dpro.session.jmqdb.JMQSessionRepository";
+        "com.iplanet.dpro.session.JMQSessionRepository";
 
     private static final String REPOSITORY_CLASS_PROPERTY = 
         "com.sun.am.session.SessionRepositoryImpl";
