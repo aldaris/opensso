@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.8 2008-02-19 18:15:06 pawand Exp $
+ * $Id: AMLoginModule.java,v 1.9 2008-04-21 18:55:30 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -797,17 +797,6 @@ public abstract class AMLoginModule implements LoginModule {
                         if (newUser != null) {
                             ((NameCallback) callbacks[i]).setName(newUser);
                         }
-                    } else if (callbacks[i] instanceof PasswordCallback) {
-                        char[] password = ((PasswordCallback) callbacks[i])
-                            .getPassword();
-                        if ((password == null) || (password.length == 0)) {
-                            if (debug.messageEnabled()) {
-                                debug.message("AMLoginModule.wrapProcess:"+
-                                    " Password is null/empty");
-                            }
-                            throw new InvalidPasswordException(bundleName,
-                                "invalidPasswd",null);
-                        } 
                     }
                 }
             }
