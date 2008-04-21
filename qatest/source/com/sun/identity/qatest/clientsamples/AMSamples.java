@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.2 2008-03-10 05:55:27 kanduls Exp $
+ * $Id: AMSamples.java,v 1.3 2008-04-21 18:30:27 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,8 +62,10 @@ public class AMSamples extends TestCommon {
     private String userprofileURL;
     private String policyURL;
     private String ssovalidationURL;
+    private String stsclientvalidationURL;
     private String baseDir;
     private String userName;
+    private String userPassword;
     private String resourceName;
     private String clientDomain;
     private String polName = "clientSamplePolicyTest";
@@ -73,7 +75,7 @@ public class AMSamples extends TestCommon {
     private IDMCommon idmc;
     private PolicyCommon pc;
     private WebClient webClient;
-
+    
     /**
      * Creates a new instance of AMSamples and instantiates common objects and
      * classes.
@@ -88,10 +90,10 @@ public class AMSamples extends TestCommon {
         idmc = new IDMCommon();
         pc = new PolicyCommon();
         baseDir = getBaseDir() + System.getProperty("file.separator")
-            + rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
-            + System.getProperty("file.separator") + "built"
-            + System.getProperty("file.separator") + "classes"
-            + System.getProperty("file.separator");
+        + rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
+        + System.getProperty("file.separator") + "built"
+                + System.getProperty("file.separator") + "classes"
+                + System.getProperty("file.separator");
     }
     
     /**
@@ -101,39 +103,44 @@ public class AMSamples extends TestCommon {
     public void setup()
     throws Exception {
         entering("setup", null);
-
+        
         clientDomain = rb_client.getString("client_domain_name");
         log(Level.FINE, "setup", "Client host domain name: " + clientDomain);
-
+        
         String deployPort = rb_client.getString("deploy_port");
         log(Level.FINE, "setup", "Deploy port: " + deployPort);
-
+        
         String deployURI = rb_client.getString("deploy_uri");
         log(Level.FINE, "setup", "Deploy URI: " + deployURI);
-
+        
         InetAddress addr = InetAddress.getLocalHost();
         String hostname = addr.getCanonicalHostName();
-
+        
         clientURL = protocol + "://" + hostname +  clientDomain + ":" +
                 deployPort + deployURI;
         log(Level.FINE, "setup", "Client URL: " + clientURL);
-
+        
         serviceconfigURL = clientURL + rb_ams.getString("serviceconfig_uri");
         log(Level.FINE, "setup", "Service Configuration Sample Servlet URL: " +
                 serviceconfigURL);
-
+        
         userprofileURL = clientURL + rb_ams.getString("userprofile_uri");
         log(Level.FINE, "setup", "User Profile (Attributes) Sample Servlet" +
                 " URL: " + userprofileURL);
-
+        
         policyURL = clientURL + rb_ams.getString("policy_uri");
         log(Level.FINE, "setup", "Policy Evaluator Client Sample Servlet" +
                 " URL: " + policyURL);
-
+        
         ssovalidationURL = clientURL + rb_ams.getString("ssovalidation_uri");
         log(Level.FINE, "setup", "Single Sign On Token Verification Servlet" +
                 " URL: " + ssovalidationURL);
-
+        
+        stsclientvalidationURL = clientURL + 
+                rb_ams.getString("stsclientvalidation_uri");
+        log(Level.FINE, "setup", "STS Client Sample with End user Token JSP" +
+                " URL: " + stsclientvalidationURL);
+        
         Map map = new HashMap();
         Set set = new HashSet();
         userName = rb_ams.getString("cs_username");
@@ -143,23 +150,23 @@ public class AMSamples extends TestCommon {
         set.add(userName);
         map.put("cn", set);
         set = new HashSet();
-        String userPassword = rb_ams.getString("cs_password");
+        userPassword = rb_ams.getString("cs_password");
         set.add(userPassword);
         map.put("userpassword", set);
         set = new HashSet();
         set.add("Active");
         map.put("inetuserstatus", set);
-
+        
         idmc.createIdentity(admintoken, realm, IdType.USER, userName, map);
-
+        
         resourceName = rb_ams.getString("policy_resource");
         String xmlFile = "client-samples-policy-test.xml";
         createPolicyXML(xmlFile);
         assert(pc.createPolicy(xmlFile, realm));
-
+        
         exiting("setup");
     }
-
+    
     /**
      * This test validates the user attributes for a super admin user.
      */
@@ -187,7 +194,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testUserProfileAdminUser");
     }
-
+    
     /**
      * This test validates the user attributes for a user with no admin
      * privilages
@@ -215,7 +222,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testUserProfileNonadminUser");
     }
-
+    
     /**
      * This test validates the user attributes for a non existing user.
      */
@@ -241,7 +248,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testUserProfileNonExistingUser");
     }
-
+    
     /**
      * This test validates the user attributes for a user with incorrect
      * credentials (incorrect password).
@@ -269,7 +276,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testUserProfileInvalidUserCredential");
     }
-
+    
     /**
      * This test validates the service configuration for DAI service for
      * configuration type set to Schema.
@@ -296,7 +303,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testServiceConfigDAISchema");
     }
-
+    
     /**
      * This test validates the service configuration for DAI service for
      * configuration type set to Config.
@@ -323,7 +330,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testUserProfileAdminUser");
     }
-
+    
     /**
      * This test validates the service configuration for
      * iplanetAMPlatformService service for configuration type set to Schema.
@@ -352,7 +359,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testServiceConfigPlatformSvcSchema");
     }
-
+    
     /**
      * This test validates the service configuration for
      * iplanetAMPlatformService service for configuration type set to Config.
@@ -381,7 +388,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testServiceConfigPlatformSvcConfig");
     }
-
+    
     /**
      * This test validates the service configuration for not existing service
      * for configuration type set to Schema.
@@ -410,7 +417,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testServiceConfigSvcNotExistSchema");
     }
-
+    
     /**
      * This test validates the service configuration for not existing service
      * for configuration type set to Config.
@@ -439,7 +446,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testServiceConfigSvcNotExistConfig");
     }
-
+    
     /**
      * This test validates valid authorization (allow access) to a policy
      * resource for a super admin user.
@@ -467,7 +474,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testPolicyEvalPassAdminUser");
     }
-
+    
     /** his test validates valid authorization(deny access) to a policy
      * resource for a super admin user.
      */
@@ -498,7 +505,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testPolicyEvalFailAdminUser");
     }
-
+    
     /**
      * This test validates valid authorization (allow access) to a policy
      * resource for a user with no admin privilages.
@@ -526,7 +533,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testPolicyEvalPassTestUser");
     }
-
+    
     /**
      * This test validates valid authorization (deny access) to a policy
      * resource for a user with no admin privilage.
@@ -558,7 +565,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testPolicyEvalFailTestUser");
     }
-
+    
     /**
      * This test validates SSO Token for a super admin user.
      */
@@ -594,7 +601,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testSSOVerificationServletAdminUser");
     }
-
+    
     /**
      * This test validates SSO Token for a user with no admin privilages.
      */
@@ -630,7 +637,7 @@ public class AMSamples extends TestCommon {
         }
         exiting("testSSOVerificationServletTestUser");
     }
-
+    
     /**
      * This test validates SSO Token failure when no user token is available.
      */
@@ -655,7 +662,76 @@ public class AMSamples extends TestCommon {
         }
         exiting("testSSOVerificationServletError");
     }
-
+    
+    /**
+     * This test validates STS Token for a super admin user.
+     */
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void testSTSClientAdminUser()
+    throws Exception {
+        entering("testSTSClientAdminUser", null);
+        String logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
+                "/UI/Logout";
+        try {
+            String res = adminUser;
+            String xmlFile = "testSTSClientAdminUser.xml";
+            
+            generateSTSClientXML(adminUser, adminPassword, xmlFile, res);
+            task = new DefaultTaskHandler(baseDir + xmlFile);
+            webClient = new WebClient();
+            page = task.execute(webClient);
+            log(Level.FINEST, "testSTSClientAdminUser",
+                    "testSTSClientAdminUser page after login\n" +
+                    page.getWebResponse().getContentAsString());
+            
+            if (getHtmlPageStringIndex(page, res) == -1)
+                assert false;
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSTSClientAdminUser", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            Reporter.log("This test validates valid STS token generated for " +
+                    " valid admin user SSOToken");            
+            consoleLogout(webClient, logoutURL);
+        }
+        exiting("testSTSClientAdminUser");
+    }
+    
+    /**
+     * This test validates STS Token for a normal user.
+     */
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void testSTSClientNormalUser()
+    throws Exception {
+        entering("testSTSClientNormalUser", null);
+        String logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
+                "/UI/Logout";
+        try {
+            String res = userName;
+            String xmlFile = "testSTSClientNormalUser.xml";
+            
+            generateSTSClientXML(userName, userPassword, xmlFile, res);
+            task = new DefaultTaskHandler(baseDir + xmlFile);
+            webClient = new WebClient();
+            page = task.execute(webClient);
+            log(Level.FINEST, "testSTSClientNormalUser",
+                    "testSTSClientNormalUser page after login\n" +
+                    page.getWebResponse().getContentAsString());
+            if (getHtmlPageStringIndex(page, res) == -1)
+                assert false;
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSTSClientNormalUser", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            Reporter.log("This test validates valid STS token generated for " +
+                    " valid normal user SSOToken");
+            consoleLogout(webClient, logoutURL);
+        }
+        exiting("testSTSClientNormalUser");
+    }
+    
     /**
      * Cleanup method. This method:
      * (a) Delete users
@@ -678,21 +754,21 @@ public class AMSamples extends TestCommon {
         }
         exiting("cleanup");
     }
-
+    
     /**
      * Generate the XML for User Profile testcases.
      */
     private void generateUserProfileXML(String org, String username,
             String password, String xmlFile, String result)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(baseDir + xmlFile);
         BufferedWriter out = new BufferedWriter(fstream);
-
+        
         log(Level.FINEST, "generateUserProfileXML", "Organization: " + org);
         log(Level.FINEST, "generateUserProfileXML", "Username: " + username);
         log(Level.FINEST, "generateUserProfileXML", "Password: " + password);
         log(Level.FINEST, "generateUserProfileXML", "XML File: " + xmlFile);
-
+        
         out.write("<url href=\"" + userprofileURL);
         out.write("\">");
         out.write(newline);
@@ -712,17 +788,17 @@ public class AMSamples extends TestCommon {
         out.write(newline);
         out.close();
     }
-
+    
     /**
      * Generates XML for Service Configuration testacses
      */
     private void generateServiceConfigXML(String org, String username,
             String password, String svcName, String configType,
             String xmlFile, String result)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(baseDir + xmlFile);
         BufferedWriter out = new BufferedWriter(fstream);
-
+        
         log(Level.FINEST, "generateServiceConfigXML", "Organization: " + org);
         log(Level.FINEST, "generateServiceConfigXML", "Username: " + username);
         log(Level.FINEST, "generateServiceConfigXML", "Password: " + password);
@@ -731,7 +807,7 @@ public class AMSamples extends TestCommon {
         log(Level.FINEST, "generateServiceConfigXML", "Configuration Type: " +
                 configType);
         log(Level.FINEST, "generateServiceConfigXML", "XML File: " + xmlFile);
-
+        
         out.write("<url href=\"" + serviceconfigURL);
         out.write("\">");
         out.write(newline);
@@ -756,24 +832,24 @@ public class AMSamples extends TestCommon {
         out.write(newline);
         out.close();
     }
-
+    
     /**
      * Generates XML for Policy testacses.
      */
     private void generatePolicyEvalXML(String org, String username,
             String password, String svcName, String resName, String xmlFile,
             String result)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(baseDir + xmlFile);
         BufferedWriter out = new BufferedWriter(fstream);
-
+        
         log(Level.FINEST, "generatePolicyEvalXML", "Organization: " + org);
         log(Level.FINEST, "generatePolicyEvalXML", "Username: " + username);
         log(Level.FINEST, "generatePolicyEvalXML", "Password: " + password);
         log(Level.FINEST, "generatePolicyEvalXML", "Service Name: " + svcName);
         log(Level.FINEST, "generatePolicyEvalXML", "Resource: " + resName);
         log(Level.FINEST, "generatePolicyEvalXML", "XML File: " + xmlFile);
-
+        
         out.write("<url href=\"" + policyURL);
         out.write("\">");
         out.write(newline);
@@ -797,7 +873,40 @@ public class AMSamples extends TestCommon {
         out.write(newline);
         out.close();
     }
-
+    
+    /**
+     * Generates XML for STS testacses.
+     */
+    private void generateSTSClientXML( String username,
+            String password, String xmlFile, String result)
+            throws Exception {
+        FileWriter fstream = new FileWriter(baseDir + xmlFile);
+        BufferedWriter out = new BufferedWriter(fstream);
+        
+        log(Level.FINEST, "generateSTSClientXML", "Result: " + result);
+        log(Level.FINEST, "generateSTSClientXML", "Username: " + username);
+        log(Level.FINEST, "generateSTSClientXML.", "Password: " + password);
+        log(Level.FINEST, "generateSTSClientXML", "XML File: " + xmlFile);
+        
+        out.write("<url href=\"" + stsclientvalidationURL);
+        out.write("\">");
+        out.write(newline);
+        out.write("<form name=\"Login\" IDButton=\"\" >");
+        out.write(newline);
+        out.write("<input name=\"IDToken1\" value=\"" + username + "\" />");
+        out.write(newline);
+        out.write("<input name=\"IDToken2\" value=\"" + password + "\" />");
+        out.write(newline);
+        out.write("<result text=\"" + result + "\"/>");
+        out.write(newline);
+        out.write("</form>");
+        out.write(newline);
+        out.write("</url>");
+        out.write(newline);
+        out.close();
+    }
+    
+    
     /**
      * Generates XML for creating the policy.
      */
@@ -805,7 +914,7 @@ public class AMSamples extends TestCommon {
     throws Exception {
         FileWriter fstream = new FileWriter(baseDir + xmlFile);
         BufferedWriter out = new BufferedWriter(fstream);
-
+        
         out.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
         out.write(newline);
         out.write("<!DOCTYPE Policies");
@@ -815,14 +924,14 @@ public class AMSamples extends TestCommon {
         out.write(newline);
         out.write("\"jar://com/sun/identity/policy/policyAdmin.dtd\">");
         out.write(newline);
-
+        
         out.write("<Policies>");
         out.write(newline);
-
+        
         out.write("<Policy name=\"" + polName + "\" referralPolicy=\"false\"");
         out.write(" active=\"true\">");
         out.write(newline);
-
+        
         out.write("<Rule name=\"csrule\">");
         out.write(newline);
         out.write("<ServiceName name=\"iPlanetAMWebAgentService\"/>");
@@ -847,7 +956,7 @@ public class AMSamples extends TestCommon {
         out.write(newline);
         out.write("</Rule>");
         out.write(newline);
-
+        
         out.write("<Subjects name=\"cssubjects\" description=\"\">");
         out.write(newline);
         out.write("<Subject name=\"cssubj\" type=\"AuthenticatedUsers\"");
@@ -857,7 +966,7 @@ public class AMSamples extends TestCommon {
         out.write(newline);
         out.write("</Subjects>");
         out.write(newline);
-
+        
         out.write("</Policy>");
         out.write(newline);
         out.write("</Policies>");
