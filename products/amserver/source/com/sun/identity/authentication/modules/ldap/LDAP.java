@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.6 2007-05-24 23:17:25 manish_rustagi Exp $
+ * $Id: LDAP.java,v 1.7 2008-04-21 18:58:01 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -399,6 +399,13 @@ public class LDAP extends AMLoginModule {
                     userName = ( (NameCallback) callbacks[0]).getName();
                     userPassword = charToString(((PasswordCallback)
                     callbacks[1]).getPassword(), callbacks[1]);
+                }
+                if (userPassword == null || userPassword.length() == 0) {
+                    if (debug.messageEnabled()) {
+                        debug.message("LDAP.process: Password is null/empty");
+                    } 
+                    throw new InvalidPasswordException("amAuth",
+                            "invalidPasswd", null); 
                 }
                 //store username password both in success and failure case
                 storeUsernamePasswd(userName, userPassword);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.6 2007-12-14 00:07:28 dillidorai Exp $
+ * $Id: Application.java,v 1.7 2008-04-21 18:56:51 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,7 +155,7 @@ public class Application extends AMLoginModule {
             secretParam = (String) map.get("secret");
             userName = (String) map.get("uid");
         }
-        if (secretParam == null) {
+        if (secretParam == null || secretParam.length() == 0) {
             throw new AuthLoginException(amAuthApplication, "noPassword", null);
         }
         

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Membership.java,v 1.4 2007-04-02 21:38:19 manish_rustagi Exp $
+ * $Id: Membership.java,v 1.5 2008-04-21 18:58:45 ericow Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -442,6 +443,15 @@ public class Membership extends AMLoginModule {
                 password = String.valueOf(((PasswordCallback)
                     callbacks[1]).getPassword());
             }
+
+            if (password == null || password.length() == 0) {
+                if (debug.messageEnabled()) {
+                    debug.message("Membership.loginUser: Password is null/empty");
+                } 
+                throw new InvalidPasswordException("amAuth",
+                        "invalidPasswd", null); 
+            }
+
             //store username password both in success and failure case
             storeUsernamePasswd(userName, password);
             initAuthConfig();
