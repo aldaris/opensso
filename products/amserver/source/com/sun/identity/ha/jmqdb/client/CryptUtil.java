@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SFOCryptUtil.java,v 1.3 2007-12-06 21:59:11 manish_rustagi Exp $
+ * $Id: CryptUtil.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.iplanet.dpro.session.jmqdb.client;
+package com.sun.identity.ha.jmqdb.client;
 
 import java.io.*;
 import java.util.*;
@@ -37,7 +37,7 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.NoSuchPaddingException;
 
-public class SFOCryptUtil {
+public class CryptUtil {
 
     static final String DEFAULT_PBE_PWD =
         "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
@@ -341,7 +341,7 @@ public class SFOCryptUtil {
         // Encrypting the data ...
         // *******************************************
         String encrypted = 
-            SFOCryptUtil.encrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
+            CryptUtil.encrypt(CryptUtil.DEFAULT_PBE_PWD,
                                  password);
         
         System.out.println("encrypted = "+ encrypted);
@@ -350,7 +350,7 @@ public class SFOCryptUtil {
         // Decrypting the data
         // *******************************************
         String decrypted = 
-            SFOCryptUtil.decrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
+            CryptUtil.decrypt(CryptUtil.DEFAULT_PBE_PWD,
                                  encrypted);
 
         System.out.println("decrypted = "+ decrypted);

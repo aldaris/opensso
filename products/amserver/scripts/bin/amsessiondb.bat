@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amsessiondb.bat,v 1.1 2007-11-13 23:15:29 manish_rustagi Exp $
+: $Id: amsessiondb.bat,v 1.2 2008-04-21 18:56:08 weisun2 Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -34,5 +34,5 @@ set CLASSPATH=%IMQ_JAR_PATH%\imq.jar;%JMS_JAR_PATH%\jms.jar;%AM_HOME%\ext\je.jar
 
 set JAVA_OPTS=""
 
-%JAVA_HOME%/bin/java.exe %JAVA_OPTS% -classpath "%CLASSPATH%" com.iplanet.dpro.session.jmqdb.client.AMSessionDB %*
+%JAVA_HOME%/bin/java.exe %JAVA_OPTS% -classpath "%CLASSPATH%" com.sun.identity.ha.jmqdb.client.FAMHaDB %*
 endlocal

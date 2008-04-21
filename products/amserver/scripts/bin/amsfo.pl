@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo.pl,v 1.1 2007-11-13 23:15:29 manish_rustagi Exp $
+# $Id: amsfo.pl,v 1.2 2008-04-21 18:56:08 weisun2 Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -185,7 +185,7 @@ sub start_am {
 	    my $classpath="$imq_jar_path/imq.jar;$jms_jar_path/jms.jar;$prop{'AM_HOME_DIR'}/ext/je.jar;$prop{'AM_HOME_DIR'}/locale;$prop{'AM_HOME_DIR'}/lib/am_sessiondb.jar;.";
 	    my $java_opts="";
 	    my $amExecutable = "$java_home/bin/java.exe";
-	    my $cmd_args = " -classpath \"$classpath\" com.iplanet.dpro.session.jmqdb.client.AMSessionDB -a $cluster_list -u $user_name -f $passwordfile -b $database_dir $amsessiondb_args";
+	    my $cmd_args = " -classpath \"$classpath\" com.sun.identity.ha.jmqdb.client.FAMHaDB -a $cluster_list -u $user_name -f $passwordfile -b $database_dir $amsessiondb_args";
             if ($debug eq "true") {
                 print("$amExecutable $cmd_args\n");
             }                       

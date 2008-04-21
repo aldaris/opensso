@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConnectionFactoryProviderImpl.java,v 1.1 2007-11-14 00:19:59 manish_rustagi Exp $
+ * $Id: ConnectionFactoryProviderImpl.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.iplanet.dpro.session.jmqdb;
+package com.sun.identity.ha.jmqdb;
 
 import javax.jms.TopicConnectionFactory;
  

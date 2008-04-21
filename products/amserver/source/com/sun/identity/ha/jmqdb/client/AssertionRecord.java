@@ -17,14 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2007-11-14 00:18:54 manish_rustagi Exp $
+ * $Id: AssertionRecord.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
- 
-/**
- * This package contains classes that represent JMQ based session repository 
- * to store/recover internal session object in failover mode.
- */
+package com.sun.identity.ha.jmqdb.client;
 
-package com.iplanet.dpro.session.jmqdb;
+import com.sleepycat.persist.model.Entity;
+/**
+ * Assertion Record stores Assertion related data.
+ */
+@Entity
+public class AssertionRecord extends BaseRecord {
+}

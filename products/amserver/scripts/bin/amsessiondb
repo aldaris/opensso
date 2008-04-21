@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsessiondb,v 1.3 2007-11-13 23:12:45 manish_rustagi Exp $
+# $Id: amsessiondb,v 1.4 2008-04-21 18:56:08 weisun2 Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -82,8 +82,8 @@ RESTART=true
 while [ "$RESTART" = "true" ]; do
      echo "Starting...  $RESTART"
     _javapid=""
-     echo "$JAVA_HOME/bin/java $JAVA_OPTS -classpath $CLASSPATH com.iplanet.dpro.session.jmqdb.client.AMSessionDB"
-     $JAVA_HOME/bin/java $JAVA_OPTS -classpath "$CLASSPATH" com.iplanet.dpro.session.jmqdb.client.AMSessionDB "$@" &
+     echo "$JAVA_HOME/bin/java $JAVA_OPTS -classpath $CLASSPATH com.sun.identity.ha.jmqdb.client.FAMHaDB"
+     $JAVA_HOME/bin/java $JAVA_OPTS -classpath "$CLASSPATH" com.sun.identity.ha.jmqdb.client.FAMHaDB "$@" &
     _javapid=$!
     wait $_javapid
     _status=$?

@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConnectionFactoryProviderFactory.java,v 1.2 2007-11-14 00:18:54 manish_rustagi Exp $
+ * $Id: ConnectionFactoryProviderFactory.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.iplanet.dpro.session.jmqdb;
+package com.sun.identity.ha.jmqdb;
 
 /**
  * A factory to access <code>ConnectionFactoryProvider</code> instance at
@@ -45,7 +45,7 @@ public class ConnectionFactoryProviderFactory {
      * the configuration.
      */
     public static final String DEFAULT_CONNECTION_FACTORY_PROVIDER_FACTORY = 
-        "com.iplanet.dpro.session.jmqdb.ConnectionFactoryProviderImpl";
+        "com.sun.identity.ha.jmqdb.ConnectionFactoryProviderImpl";
 
     /**
      * The singleton instance of <code>ConnectionFactoryProvider</code> to be

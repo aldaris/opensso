@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionDBEnv.java,v 1.1 2007-11-14 00:22:53 manish_rustagi Exp $
+ * $Id: HaDBEnv.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.iplanet.dpro.session.jmqdb.client;
+package com.sun.identity.ha.jmqdb.client;
 
 import java.io.File;
 
@@ -33,13 +33,13 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.StoreConfig;
 
-public class SessionDBEnv {
+public class HaDBEnv {
 
     private Environment sessionEnv;
     private EntityStore store;
 
     // Our constructor does nothing
-    public SessionDBEnv() {}
+    public HaDBEnv() {}
 
     // The setup() method opens the environment and store
     // for us.

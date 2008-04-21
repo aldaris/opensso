@@ -17,12 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSessionDB.java,v 1.3 2007-12-06 22:02:25 manish_rustagi Exp $
+ * $Id: FAMHaDB.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
  
-package com.iplanet.dpro.session.jmqdb.client;
+package com.sun.identity.ha.jmqdb.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -52,8 +52,8 @@ import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 
-import com.iplanet.dpro.session.jmqdb.ConnectionFactoryProvider;
-import com.iplanet.dpro.session.jmqdb.ConnectionFactoryProviderFactory;
+import com.sun.identity.ha.jmqdb.ConnectionFactoryProvider;
+import com.sun.identity.ha.jmqdb.ConnectionFactoryProviderFactory;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -63,10 +63,12 @@ import com.sleepycat.persist.EntityCursor;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.ConnectionFactory;
+import com.sleepycat.persist.PrimaryIndex;
+import com.sleepycat.persist.SecondaryIndex;
 
-public class AMSessionDB implements Runnable {
+public class FAMHaDB implements Runnable {
     
-    static AMSessionDB dbs;
+    static FAMHaDB dbs;
     /* Operations */
     static boolean debug = true;
     
@@ -75,8 +77,8 @@ public class AMSessionDB implements Runnable {
     static public final String DELETE = "DELETE";
     static public final String DELETEBYDATE = "DELETEBYDATE";
     static public final String SHUTDOWN = "SHUTDOWN";
-    static public final String GET_SESSION_COUNT =
-        "GET_SESSION_COUNT";
+    static public final String GET_RECORD_COUNT =
+        "GET_RECORD_COUNT"; 
     static public final String NOT_FOUND = "notfound";
     static public final String OP_STATUS = "opstatus";
     
@@ -93,7 +95,6 @@ public class AMSessionDB implements Runnable {
 
     /* JMQ Properties */
     static public final String ID = "ID";
-
 
     // Private data members
     private String _id;
@@ -124,10 +125,10 @@ public class AMSessionDB implements Runnable {
     private static long nodeUpdateGraceperiod 
         = 1000; // 1 second in milli-seconds
 
-    private SessionDataAccessor da;
+    private DataAccessor da;
 
     // Encapsulates the database environment.
-    private static SessionDBEnv sessionDbEnv = new SessionDBEnv();
+    private static HaDBEnv haDbEnv = new HaDBEnv();
     private static File sessDbEnvPath = null;
 
     /* Config data - TODO : move to properties/CLI options */
@@ -163,7 +164,7 @@ public class AMSessionDB implements Runnable {
     private static final int HELP = 11;
     private static final int VERSION = 12;
     private static final int NODE_STATUS_UPDATE_INTERVAL = 13;
-    
+    private static final int PROPERTIES_FILE =14; 
     private static ResourceBundle bundle = null;
     private static final String RESOURCE_BUNDLE = "amSessionDB";
     
@@ -182,6 +183,7 @@ public class AMSessionDB implements Runnable {
     private static PrintWriter statsWriter = null;
     
     private Thread processThread;
+    private String propertiesfile = null; 
     
     static {
         arguments.put("--username", new Integer(USER_NAME));
@@ -212,6 +214,9 @@ public class AMSessionDB implements Runnable {
                       new Integer(NODE_STATUS_UPDATE_INTERVAL));
         arguments.put("-p", 
                       new Integer(NODE_STATUS_UPDATE_INTERVAL));
+        arguments.put("-m", new Integer(PROPERTIES_FILE)); 
+        arguments.put("--propertiesfile", 
+                      new Integer(PROPERTIES_FILE));
         try {
             bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, 
                      Locale.getDefault());
@@ -225,18 +230,19 @@ public class AMSessionDB implements Runnable {
     }    
         
 
-    public AMSessionDB(String id) throws Exception {
+    public FAMHaDB(String id) throws Exception {
         
         _id = id;
     }
     
     private void initDB() throws Exception {
         try {
-            sessionDbEnv.setup(sessDbEnvPath, // path to the environment home
+            haDbEnv.setup(sessDbEnvPath, // path to the environment home
                                false);        // is this environment read-only?
             // Open the data accessor. This is used to retrieve
             // persistent objects.
-            da = new SessionDataAccessor(sessionDbEnv.getEntityStore());
+            da = new DataAccessor(haDbEnv.getEntityStore(),
+                propertiesfile);
         } catch (DatabaseException dbe) {
             // Exception handling goes here
             System.err.println("Error in creating session data accessor");
@@ -320,7 +326,7 @@ public class AMSessionDB implements Runnable {
     
     private void Shutdown() {
         try {
-            sessionDbEnv.close();
+            haDbEnv.close();
         } catch (Exception e) {
             System.out.println("e.getMessage");
         }
@@ -332,9 +338,11 @@ public class AMSessionDB implements Runnable {
                 
         String id = message.getStringProperty(ID);
         String op = message.getStringProperty("op");
-        
+        String svc = message.getStringProperty("service");
+        System.out.println("OP=" + op);
+        System.out.println("service=" + svc);
         //showAllSessionRecords();
-        
+        PrimaryIndex recordByPrimaryKey = da.getPrimaryIndex(svc);
         if (op.indexOf(READ) >= 0) {
             if(verbose) {
                 System.out.println(bundle.getString("readmsgrecv"));
@@ -342,32 +350,32 @@ public class AMSessionDB implements Runnable {
 	        if(statsEnabled) {
                 readCount++;
             }
-            String sid = getLenString(message);
+            String pKey = getLenString(message);
             long random = message.readLong();
             
-            System.out.println(">>>>>>>>>>>>>> Read by SID : " + sid);
+            System.out.println(">>>>>>>>>>>>>> Read by Primary Key : " + pKey);
 
-            SessionRecord sessionRec = null;
+            BaseRecord baseRecord = null;
             try {
-                sessionRec = da.sessionBySID.get(sid);
+                baseRecord = (BaseRecord)recordByPrimaryKey.get(pKey);
             } catch (DatabaseException ex) {
                 ex.printStackTrace();
                 System.out.println("READ exc: " + ex);
             }
             
-            if (sessionRec != null) { 
+            if (baseRecord != null) { 
                 System.out.println(">>>>>>>>>>>>>> Found record !");
             } else {
                 System.out.println(">>>>>>>>>>>>>> Not found record !");
             }
             
-            if (sessionRec != null) { 
+            if (baseRecord != null) { 
                 BytesMessage resmsg = 
                     (BytesMessage) tSession.createBytesMessage();
                 resmsg.setStringProperty(ID, id);
 	            resmsg.writeLong(random);
 
-                byte blob[] = sessionRec.getSessionBlob();
+                byte blob[] = baseRecord.getBlob();
                 resmsg.writeLong(blob.length);
                 resmsg.writeBytes(blob);
                 resPub.publish(resmsg);
@@ -382,36 +390,36 @@ public class AMSessionDB implements Runnable {
         } else if (op.indexOf(WRITE) >= 0) {
             
             if(verbose) {
-                System.out.println(bundle.getString("writemsgrecv"));
+               System.out.println(bundle.getString("writemsgrecv"));
             }    
-	        if(statsEnabled) {
+	    if(statsEnabled) {
                 writeCount++;
             }
-            String sid = getLenString(message);
+            String pKey = getLenString(message);
             long expdate = message.readLong();
-            byte[] uuid = getLenBytes(message);
-            byte[] masterSID = getLenBytes(message);
+            byte[] secondKey = getLenBytes(message);
+            byte[] auxdata = getLenBytes(message);
             int state = message.readInt();
             byte[] stuff = getLenBytes(message);
             
-            System.out.println(">>>>>>>>>>>>>> Write by SID : " + sid);
+            System.out.println(">>>>>>>>>>>>>> Write by Primary Key : " + pKey);
 
-            SessionRecord record = new SessionRecord();
-            record.setSID(sid);
+            BaseRecord record = (BaseRecord) da.classes.get(svc).newInstance();   
+            record.setPrimaryKey(pKey);
             record.setExpDate(expdate);
-            record.setUUID(new String(uuid, "utf8"));
-            record.setMasterSID(new String(masterSID, "utf8"));
-            record.setSessionState(state);
-            record.setSessionBlob(stuff);
+            record.setSecondaryKey(new String(secondKey, "utf8"));
+            record.setAuxData(new String(auxdata, "utf8"));
+            record.setState(state);
+            record.setBlob(stuff);
 
-            da.sessionBySID.put(record);
+            recordByPrimaryKey.put(record);
         } else if (op.indexOf(DELETEBYDATE) >= 0) {
             if(verbose) {
                 System.out.println(bundle.getString("datemsgrecv"));
             }    
             long expDate = message.readLong();
             System.out.println(">>>>>>>>>>>>>> Delete by Date : " + expDate);
-            deleteByDate(expDate, numCleanSessions); 
+            deleteByDate(expDate, numCleanSessions, svc); 
         } else if (op.indexOf(DELETE) >= 0) {
             if(verbose) {
                 System.out.println(bundle.getString("deletemsgrecv"));
@@ -419,11 +427,11 @@ public class AMSessionDB implements Runnable {
 	        if(statsEnabled) {
                 deleteCount++;
             }
-            String sid = getLenString(message);
-            System.out.println(">>>>>>>>>>>>>> Delete by SID : " + sid);
-            Transaction txn = sessionDbEnv.getEnv().beginTransaction(null, null);
+            String pKey = getLenString(message);
+            System.out.println(">>>>>>>>>>>>>> Delete by Primary Key : " + pKey);
+            Transaction txn = haDbEnv.getEnv().beginTransaction(null, null);
             try {
-                da.sessionBySID.delete(txn, sid);
+                recordByPrimaryKey.delete(txn, pKey);
                 txn.commit();
             } catch (Exception e) {
                 txn.abort();
@@ -433,21 +441,21 @@ public class AMSessionDB implements Runnable {
         } else if (op.indexOf(SHUTDOWN) >= 0) {
             Shutdown();
             return(1);
-        } else if (op.indexOf(GET_SESSION_COUNT) >= 0) {
-
+        } else if (op.indexOf(GET_RECORD_COUNT) >= 0) {
+  
             if(verbose) {
                 System.out.println(bundle.getString("getsessioncount"));
             }    
 	        if(statsEnabled) {
                 scReadCount++;
             }
-            getSessionsByUUID(message, id);
+            getRecordsBySecondaryKey(message, id, svc);
         } 
         return 0;
     }
 
-    public void getSessionsByUUID(BytesMessage message,
-                                  String id) 
+    public void getRecordsBySecondaryKey(BytesMessage message,
+                                 String id, String service) 
         throws Exception {
         
         if (!isMasterNode) {
@@ -457,31 +465,34 @@ public class AMSessionDB implements Runnable {
             return;
         }
 
-        String uuid = getLenString(message);
+        String secondKey = getLenString(message);
+        System.out.println("SEC"+ secondKey);
         long random = message.readLong();
-        int nsessions = 0;
-        Vector sessions = new Vector();
-        EntityCursor<SessionRecord> records = null;
+        int nrows = 0;
+        Vector rows = new Vector();
+        EntityCursor<? extends BaseRecord> records = null;
         
         try {
-            // Use the SessionRecord uuid secondary key to retrieve
+            // Use the BaseRecord secondary key to retrieve
             // these objects.
-            records = da.sessionByUUID.subIndex(uuid).entities();
-            for (SessionRecord record : records) {
+            SecondaryIndex recordBySecondaryIndx =
+                da.getSecondaryIndex2(service);  
+            records = recordBySecondaryIndx.subIndex(secondKey).entities();
+            for (BaseRecord record : records) {
                 // only the "valid" non-expired sessions with the 
-                // right uuid will be counted
+                // right secondaryKey will be counted
                 long currentTime = 
                     System.currentTimeMillis()/1000;
                 Long expdate = record.getExpDate();
-                if ((record.getSessionState() == SESSION_VALID) &&
+                if ((record.getState() == SESSION_VALID) &&
                     (currentTime < expdate.longValue())) {
-                    nsessions++;
-                    SessionExpTimeInfo info = 
-                        new SessionExpTimeInfo();
-                    info.masterSIDLen = record.getMasterSID().length();
-                    info.masterSID = record.getMasterSID().getBytes("utf8");
+                    nrows++;
+                    RecordExpTimeInfo info = 
+                        new RecordExpTimeInfo();
+                    info.auxDataLen = record.getAuxData().length();
+                    info.auxyData = record.getAuxData().getBytes("utf8");
                     info.expTime = expdate;
-                    sessions.add(info);
+                    rows.add(info);
                 }
             }
         } catch (Exception e) {
@@ -497,35 +508,36 @@ public class AMSessionDB implements Runnable {
             = (BytesMessage) tSession.createBytesMessage();
         resmsg.setStringProperty(ID, id);
         resmsg.writeLong(random);
-        resmsg.writeInt(nsessions);
-        for (int i=0;i<sessions.size();i++) {
-            SessionExpTimeInfo info =
-                (SessionExpTimeInfo)sessions.get(i);            
-            resmsg.writeInt(info.masterSIDLen);
-            resmsg.writeBytes(info.masterSID);
+        resmsg.writeInt(nrows);
+        for (int i=0;i<rows.size();i++) {
+            RecordExpTimeInfo info =
+                (RecordExpTimeInfo)rows.get(i);            
+            resmsg.writeInt(info.auxDataLen);
+            resmsg.writeBytes(info.auxyData);
             resmsg.writeLong(info.expTime);
         }
         resPub.publish(resmsg);                    
     }
      
-    private class SessionExpTimeInfo {
-        int masterSIDLen;
-        byte[] masterSID;
+    private class RecordExpTimeInfo {
+        int auxDataLen;
+        byte[] auxyData;
         long expTime;
     }
     
-    public void deleteByDate(long expTime, int cleanCount) 
+    public void deleteByDate(long expTime, int cleanCount, String svc) 
     throws Exception {
-        EntityCursor<SessionRecord> records = 
-            da.sessionByExpDate.entities();
+        
+        EntityCursor<? extends BaseRecord> records = 
+            da.getSecondaryIndex1(svc).entities();
         Transaction txn = null;
         
-        for (SessionRecord record : records) {
+        for (BaseRecord record : records) {
             Long expdate = record.getExpDate();
             if (expdate.longValue() <= expTime) {
                 try {
-                    txn = sessionDbEnv.getEnv().beginTransaction(null, null);
-                    da.sessionByExpDate.delete(txn, expdate);
+                    txn = haDbEnv.getEnv().beginTransaction(null, null);
+                    da.getSecondaryIndex1(svc).delete(txn, expdate);
                     txn.commit();
                 } catch (Exception e) {
                     txn.abort();
@@ -540,18 +552,24 @@ public class AMSessionDB implements Runnable {
         }
         records.close();
     }
+    
+    public void deleteByDate(long expTime, int cleanCount) 
+    throws Exception {
+        //TODO: loop through all services 
+        deleteByDate(expTime, cleanCount, "session");
+    }
 
     // Displays all the session records in the store
-    private void showAllSessionRecords() 
+    private void showAllSessionRecords(String service) 
         throws DatabaseException {
 
         // Get a cursor that will walk every
         // inventory object in the store.
-        EntityCursor<SessionRecord> records =
-            da.sessionByExpDate.entities();
+        EntityCursor<? extends BaseRecord> records =
+            da.getSecondaryIndex1(service).entities();
 
         try { 
-            for (SessionRecord record : records) {
+            for (BaseRecord record : records) {
                 displaySessionRecord(record);
             }
         } catch(DatabaseException de){
@@ -564,34 +582,35 @@ public class AMSessionDB implements Runnable {
         }
     }
     
-    private void displaySessionRecord(SessionRecord theSession)
+    private void displaySessionRecord(BaseRecord theSession)
         throws DatabaseException {
 
         assert theSession != null;
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        System.out.println("SID :\t " + theSession.getSID());
+        System.out.println("Primary Key :\t " + theSession.getPrimaryKey());
         System.out.println("Expiration Date :\t " + theSession.getExpDate());
-        System.out.println("Master SessionID :\t " + theSession.getMasterSID());
-        System.out.println("Session State :\t " + theSession.getSessionState());
-        System.out.println("UUID :\t " + theSession.getUUID());
+        System.out.println("Aux Data :\t " + theSession.getAuxData());
+        System.out.println("State :\t " + theSession.getState());
+        System.out.println("Secondary Key :\t " + theSession.getSecondaryKey());
         
     }
     
     String getLenString(Message msg) throws Exception
     {
             BytesMessage message = (BytesMessage) msg;
-            long sidlen = message.readLong();
-            byte[] sidbytes  = new byte[(int) sidlen];
-            message.readBytes(sidbytes);
-            return(new String(sidbytes, "utf8"));
+            long pKeylen = message.readLong();
+            byte[] pKeybytes  = new byte[(int) pKeylen];
+            message.readBytes(pKeybytes);
+            return(new String(pKeybytes, "utf8"));
     }
+    
     byte[] getLenBytes(Message msg) throws Exception
     {
             BytesMessage message = (BytesMessage) msg;
-            long sidlen = message.readLong();
-            byte[] sidbytes  = new byte[(int) sidlen];
-            message.readBytes(sidbytes);
-            return(sidbytes);
+            long keylen = message.readLong();
+            byte[] keybytes  = new byte[(int) keylen];
+            message.readBytes(keybytes);
+            return(keybytes);
     }
 
     public void run() {
@@ -605,7 +624,7 @@ public class AMSessionDB implements Runnable {
                     totalTrans++;
 
                     if (statsEnabled && 
-                            ((System.currentTimeMillis() - startTime) >= statsInterval)) {
+                       ((System.currentTimeMillis() - startTime) >= statsInterval)) {
 
                         printStats(); 
                         startTime = System.currentTimeMillis();
@@ -666,7 +685,7 @@ public class AMSessionDB implements Runnable {
     {
         
         try {
-             dbs = new AMSessionDB("AMSessionDB");
+             dbs = new FAMHaDB("FAMHaDB");
              dbs.initialize(args);
              
              AMDBShutdown shutDownHook = new AMDBShutdown();
@@ -757,8 +776,8 @@ public class AMSessionDB implements Runnable {
                         printCommandError("nopasswordfile",  argv[i-1]);                    
                 }
                 
-                String pwd = SFOCryptUtil.decrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
-                        AMSFOPassword.readEncPasswordFromFile(passwordfile));
+                String pwd = CryptUtil.decrypt(CryptUtil.DEFAULT_PBE_PWD,
+                        FAMSFOPassword.readEncPasswordFromFile(passwordfile));
 
                 if (pwd == null) {
                     printCommandError("nopwdinfile",  argv[i]); 
@@ -875,6 +894,13 @@ public class AMSessionDB implements Runnable {
                     nodeUpdateInterval = 5000;
                 }
                 break;
+             case PROPERTIES_FILE:
+                i++;
+                if (i >= argv.length) {
+                    printUsage();
+                }
+                propertiesfile = argv[i];
+                break;
             default:
                 System.err.println(bundle.getString("usage"));
                 System.err.println(bundle.getString("invalid-option") + argv[i]);
@@ -900,12 +926,11 @@ public class AMSessionDB implements Runnable {
 	boolean retValue = true;
         boolean hasPassword = false;
         boolean hasPwdFile = false;
-	
+
         if (len == 0) {
 	    retValue = false;
 	} else if (len == 1) {
 	    String arg = argv[0].toLowerCase();
-
 	    if (!(arg.equals("--help") || 
 	            arg.equals("-h") ||
 	            arg.equals("--version") ||

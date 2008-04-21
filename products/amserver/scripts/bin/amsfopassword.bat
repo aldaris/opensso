@@ -19,7 +19,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amsfopassword.bat,v 1.1 2007-11-13 23:15:29 manish_rustagi Exp $
+: $Id: amsfopassword.bat,v 1.2 2008-04-21 18:56:09 weisun2 Exp $
 :
 : Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
@@ -28,5 +28,5 @@ set JAVA_HOME=JDK_PATH
 set AM_HOME=BASEDIR\PRODUCT_DIR
 set CLASSPATH=%AM_HOME%\locale;%AM_HOME%\lib\am_sessiondb.jar
 
-%JAVA_HOME%/bin/java.exe -classpath "%CLASSPATH%" com.iplanet.dpro.session.jmqdb.client.AMSFOPassword %*
+%JAVA_HOME%/bin/java.exe -classpath "%CLASSPATH%" com.sun.identity.ha.jmqdb.client.FAMSFOPassword %*
 endlocal

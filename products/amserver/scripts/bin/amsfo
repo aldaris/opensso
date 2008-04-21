@@ -19,7 +19,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsfo,v 1.3 2007-11-13 23:13:49 manish_rustagi Exp $
+# $Id: amsfo,v 1.4 2008-04-21 18:56:08 weisun2 Exp $
 #
 # Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 #
@@ -158,11 +158,11 @@ start_am() {
         fi
 
         if [ "$AMDEBUG" = "true" ] ; then
-            echo "$AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR $AMSESSIONDB_ARGS"
+            echo "$AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR $AMSESSIONDB_ARGS -m $CONF_FILE"
         fi        
            
         mkdir -p $DATABASE_DIR
-        $AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR $AMSESSIONDB_ARGS >> $LOG_DIR/amsessiondb.log & 
+        $AMEXECUTABLE -a $CLUSTER_LIST -u $USER_NAME -f $PASSWORDFILE -b $DATABASE_DIR $AMSESSIONDB_ARGS -m $CONF_FILE >> $LOG_DIR/amsessiondb.log & 
         _ampid=$!
         echo $_ampid > $AM_PID_FILE
      fi

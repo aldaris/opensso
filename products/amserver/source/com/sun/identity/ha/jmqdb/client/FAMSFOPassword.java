@@ -17,18 +17,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSFOPassword.java,v 1.3 2007-11-14 00:21:06 manish_rustagi Exp $
+ * $Id: FAMSFOPassword.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 
-package com.iplanet.dpro.session.jmqdb.client;
+package com.sun.identity.ha.jmqdb.client;
 
 import java.io.*;
 import java.util.*;
 
-public class AMSFOPassword {
+public class FAMSFOPassword {
 
     private static final String RESOURCE_BUNDLE = "amSessionDB";
     private static final String HELP = "--help";
@@ -50,7 +50,7 @@ public class AMSFOPassword {
 	}
     }
     
-    AMSFOPassword() {
+    FAMSFOPassword() {
     }
 
     private void saveEncPasswordToFile(String passwordfile,
@@ -133,7 +133,7 @@ public class AMSFOPassword {
         }
         
         String encPassword = 
-            SFOCryptUtil.encrypt(SFOCryptUtil.DEFAULT_PBE_PWD,
+            CryptUtil.encrypt(CryptUtil.DEFAULT_PBE_PWD,
                                   cleartext);
         saveEncPasswordToFile(filename, encPassword);
     }
@@ -172,8 +172,8 @@ public class AMSFOPassword {
 
     static public void main(String args[]) {
     
-        AMSFOPassword pwdGen = new AMSFOPassword();        
-        ResourceBundle rb = AMSFOPassword.getResourceBundle();
+        FAMSFOPassword pwdGen = new FAMSFOPassword();        
+        ResourceBundle rb = FAMSFOPassword.getResourceBundle();
                 
         try {
             pwdGen.process(args);
