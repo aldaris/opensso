@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.20 2008-03-08 03:03:19 mallas Exp $
+ * $Id: AgentProvider.java,v 1.21 2008-04-21 20:12:29 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,7 +197,9 @@ public class AgentProvider extends ProviderConfig {
 
     private void setConfig(String attr, String value) {
  
-        debug.message("Attribute name: " + attr + " Value: "+ value);
+        if (debug.messageEnabled()) {
+            debug.message("Attribute name: " + attr + " Value: "+ value);
+        }
 
         if (attr.equals(SEC_MECH)) {
            if (secMech == null) {
@@ -488,16 +490,23 @@ public class AgentProvider extends ProviderConfig {
             }
 
             if (profilePresent) {
+                attributes.remove(AGENT_TYPE_ATTR);
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
                     providerName, IdType.AGENTONLY, "/", null);
-                debug.message("Attributes to be stored: " + attributes);
+                if (debug.messageEnabled()) {
+                    debug.message("Attributes to be stored: " + attributes);
+                }
                 id.setAttributes(attributes);
                 id.store();
             } else {
                 // Create a new Agent profile
                 if (idRepo == null) {
                     idRepo = new AMIdentityRepository(token, "/");
+                }
+                if (debug.messageEnabled()) {
+                    debug.message("New provider - Attributes to be stored: " 
+                        + attributes);
                 }
                 idRepo.createIdentity(IdType.AGENTONLY,
                     providerName, attributes);

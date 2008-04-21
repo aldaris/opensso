@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.6 2008-02-15 19:55:07 mrudul_uchil Exp $
+ * $Id: DiscoveryAgent.java,v 1.7 2008-04-21 20:12:29 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -159,7 +159,9 @@ public class DiscoveryAgent extends DiscoveryConfig {
 
     private void setConfig(String attr, String value) {
  
-        debug.message("Attribute name: " + attr + " Value: "+ value);
+        if (debug.messageEnabled()) {
+            debug.message("Attribute name: " + attr + " Value: "+ value);
+        }
 
         if (attr.equals(AUTHN_ENDPOINT)) {
            this.authServiceEndpoint = value; 
@@ -208,10 +210,13 @@ public class DiscoveryAgent extends DiscoveryConfig {
                 attributes.put(key, values);
             }
             if (profilePresent) {
+                attributes.remove(AGENT_TYPE_ATTR);
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
                     name, IdType.AGENTONLY, "/", null);
-                debug.message("Attributes to be stored: " + attributes);
+                if (debug.messageEnabled()) {
+                    debug.message("Attributes to be stored: " + attributes);
+                }
                 id.setAttributes(attributes);
                 id.store();
             } else {
