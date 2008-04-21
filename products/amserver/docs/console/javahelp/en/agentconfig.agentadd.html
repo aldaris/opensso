@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>To Create a New Agent - Sun Java System Federated Access Manager 8.0 Console Online Help
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.agentadd"></a><h5>To Create a New Agent</h5>
+<p>Creating a new agent is also referred to as creating a new
+agent profile. You can perform this task in the Federated Access Manager Administration Console.
+This task applies to web agents, J2EE agents, and 2.2 agents. However, some
+of the individual steps do not apply to the 2.2 agents.</p><ol>
+<li><b>Click Agents under the Configuration tab.</b></li>
+<li><b>If necessary, select the tab for the appropriate agent type.</b><ul>
+<li><b>Web Agents:</b><p>The Web tab is for web agents and is the default selection. No
+further selection is necessary.</p></li>
+<li><b>J2EE Agents:</b><p>The J2EE tab is for J2EE agents. If applicable, click this tab.</p></li>
+<li><b>2.2 Agents</b><p>The 2.2 Agents tab is for agents in the Policy Agent 2.2 software
+set. If applicable, click this tab.</p></li></ul></li>
+<li><b>In the Agent section, click New.</b></li>
+<li><b>In the Name field, enter the name for the new agent profile.</b></li>
+<li><b>Enter and confirm the Password.</b>
+<hr><p><b>Caution - </b>This password must be the same password that you enter in the agent
+profile password file that you specify when you run the <tt>agentadmin</tt> program
+to install the agent.</p>
+<hr>
+</li>
+<li><b>Select the applicable configuration: Local or Centralized (Does not apply to 2.2 agents).</b><p>Furthermore, when local is selected, the attributes related to this agent can only
+be edited from a file in the agent. They can not be edited
+from the Console.</p></li>
+<li><b>In the Server URL field, enter the Federated Access Manager server URL (Does
+not apply to 2.2 agents).</b><p>For example:</p><pre>http://fam.example.com:8080/fam</pre></li>
+<li><b>In the Agent URL field, enter the URL for the agent application,
+<tt>agentapp</tt> (Does not apply to 2.2 agents).</b><p>For example:</p><pre>http://fam.example.com:8090/agentapp</pre></li>
+<li><b>Click Create.</b><p>The console creates the agent profile and displays the agent (WebAgent, J2EEAgent, or
+2.2_Agent) page again with a link to the new agent profile.</p><p>To do additional configuration for the agent profile, click this link to display the
+Edit agent page.</p></li></ol>
+<br/>
+
+</body>
+</html>

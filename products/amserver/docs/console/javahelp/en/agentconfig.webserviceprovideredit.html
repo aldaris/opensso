@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Web Service Provider - Sun Java System Federated Access Manager 8.0 Console Online Help
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webserviceprovideredit"></a><h4>Web Service Provider</h4>
+<p>The Web Service Provider agent profile describes the configuration that is used for
+securing web service requests from a web service provider. The names of the
+web services must be unique to each web service provider.</p>
+
+<a name="ggouz"></a><h5>General</h5>
+<p>The following General attributes define basic web service provider properties:</p>
+
+<a name="ggovu"></a><h5>Group</h5>
+<p>The Group mechanism allows you to define a collection of similar types of
+agents. The group must defined before including the particular agent into a collection.
+</p>
+
+<a name="ggotz"></a><h5>Password</h5>
+<p>Defines the password for the web service provider attribute.</p>
+
+<a name="ggotl"></a><h5>Password Confirm</h5>
+<p>Confirm the password.</p>
+
+<a name="ggova"></a><h5>Status</h5>
+<p>Defines whether web service provider agent will participate in securing outbound service requests.
+By default, it is set to <tt>Active</tt>, meaning it will participate. </p>
+
+<a name="ggowp"></a><h5>Universal Identifier</h5>
+<p>Lists the basic LDAP properties, that uniquely define the web service provider agent.</p>
+
+<a name="gglej"></a><h5>Security</h5>
+<p>The following attributes define web service provider security attributes: </p>
+
+<a name="gglhw"></a><h5>Security Mechanism</h5>
+<p>Defines the type of security credential that is used to secure the web
+services provider request. You can choose from the following security types: </p>
+<ul><li><p>Anonymous &mdash; The anonymous security mechanism contains no security credentials.</p></li>
+<li><p>LibertyBearerToken</p></li>
+<li><p>LibertySAMLToken</p></li>
+<li><p>LibertyX509Token &mdash; Uses the Libery-defined X509 cerficiate to secure the web provider request.</p></li>
+<li><p>SAML-HolderOfKey &mdash; Uses the SAML 1.1 assertion type Holder-Of-Key for securing the request.</p></li>
+<li><p>SAML-SenderVouches &mdash; Uses the SAML 1.1 assertion type Sender Vouches for securing the request.</p></li>
+<li><p>SAML2&ndash;HolderOfKey &mdash; Uses the SAML 2.0 assertion token type Holder-Of-Key for securing the request.</p></li>
+<li><p>SAML2&ndash;SenderVouches &mdash; Uses the SAML 2.0 assertion token type Sender Vouches for securing the request.</p></li>
+<li><p>UserNameToken &mdash; Uses a user name token to secure the web provider client requests.</p></li>
+<li><p>UserNameToken-Plain &mdash; Uses a user name token with a clear text password for securing web provider requests.</p></li>
+<li><p>X509Token &mdash; Uses the X509 certificate to secure the web provider requests.</p></li></ul>
+
+
+<a name="gglfy"></a><h5>Authentication Chain</h5>
+<p>Definition &ndash; </p>
+
+<a name="ggoum"></a><h5>Preserve Security Headers in Message</h5>
+<p>When enabled, this attribute defines that the SOAP security headers are preserved to
+the web service provider for further processing.</p>
+
+<a name="ggovi"></a><h5>Liberty Service Type URN</h5>
+<p>The URN (Universal Resource Name) describes a Liberty service type that the web
+service provider will use for service lookups.</p>
+
+<a name="ggovn"></a><h5>Credential for User Token</h5>
+<p>The attribute represents the username/password shared secrets that are used by the web
+service provider to generate a Username security token.</p>
+
+<a name="gglhq"></a><h5>Private Key Type</h5>
+<p>Definition &ndash; </p>
+
+<a name="gglfz"></a><h5>SAML Configuration</h5>
+<p>The following attributes configure the Security Assertion Markup Language (SAML) for the web
+service provider:</p>
+
+<a name="gglfx"></a><h5>SAML Attribute Mapping</h5>
+<p>This configuration represents a SAML attribute that needs to be generated during assertion
+creation by the Security Token Service. The same mapping is used for the
+web service provider to populate it to the SSOToken.</p>
+
+<a name="gglgf"></a><h5>SAML NameID Mapper Plugin</h5>
+<p>Defines the NameID mapper plug-in class that is used for SAML account mapping.</p>
+
+<a name="gglhk"></a><h5>SAML Attributes Namespace</h5>
+<p>Defines the name space used for generating SAML attributes.</p>
+
+<a name="gglfv"></a><h5>Include Memberships</h5>
+<p>If enabled, this attribute defines that the principal's membership must be included as
+a SAML attribute.</p>
+
+<a name="ggovx"></a><h5>Singing and Encryption</h5>
+<p>The following attributes define signing and encryption configuration for web provider security:</p>
+
+<a name="ggowr"></a><h5>Is Response Singed</h5>
+<p>When enabled, the web services provider signs the response using a given token
+type.</p>
+
+<a name="ggouo"></a><h5>Is Response Encrypted</h5>
+<p>When enabled, the web services response will be encrypted.</p>
+
+<a name="ggowz"></a><h5>Is Request Signature Verified</h5>
+<p>When enabled, the web services request signature is verified.</p>
+
+<a name="ggouw"></a><h5>Is Request Header Encrypted</h5>
+<p>When enabled, the web services client security header will be encrypted.</p>
+
+<a name="ggotr"></a><h5>Is Request Decrypted</h5>
+<p>When enabled, the web service provider request will be decrypted.</p>
+
+<a name="gglls"></a><h5>Key Store</h5>
+<p>The following attributes configure the keystore to be used for certificate storage and
+retrieval: </p>
+
+<a name="gglld"></a><h5>Public Key Alias of Web Service client</h5>
+<p>This attribute defines the public certificate key alias that is sued to encrypt
+the web service response.</p>
+
+<a name="gglmc"></a><h5>Private Key Alias</h5>
+<p>This attribute defines the private certificate key alias that is used to sign/decrypt
+the web service request.</p>
+
+<a name="ggljf"></a><h5>Key Storage Usage</h5>
+<p>This configuration defines whether to use the default keystore, or a custom keystore.
+The following values must be defined for a custom key store:</p>
+<ul><li><p>Location of Key Store</p></li>
+<li><p>Password of Key Store</p></li>
+<li><p>Password of Key</p></li></ul>
+
+
+<a name="gglko"></a><h5>End Points</h5>
+<p>The following attributes define web service endpoints:</p>
+
+<a name="gglmp"></a><h5>Web Service End Point</h5>
+<p>This attribute defines a web service end point to which the web service
+client is making a request.</p>
+<br/>
+
+</body>
+</html>

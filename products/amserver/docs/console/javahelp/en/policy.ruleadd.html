@@ -1,104 +1,67 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title><IMG border="0" alt="Procedure" src="graphics/procedure-toc.gif">To Add a Rule to a Policy
+  <title>To Add a Rule to a Policy - Sun Java System Federated Access Manager 8.0 Console Online Help
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="policy.ruleadd"></A><h4><IMG border="0" alt="Procedure" src="graphics/procedure.gif">To Add a Rule to a Policy</h4>
-<h5>Steps</h5><ol><li><p><b><A NAME="indexterm-22"></A>If you have already created the policy, click the name of the policy for
-which you wish to add the rule. If not, see <A HREF="policy.policynormaladd.html#policy.policynormaladd">To Create a New Normal Policy</A>.</b></p></li>
-<li><p><b>Under the Rules menu, click New.</b></p><p></p>
+
+
+<a name="policy.ruleadd"></a><h5>To Add a Rule to a Policy</h5>
+<ol>
+<li><b><a name="indexterm-25"></a>If you have already created the policy, click the name of the policy
+for which you wish to add the rule. If not, see <a href="policy.policynormaladd.html">To Create a New Normal Policy</a>.</b></li>
+<li><b>Under the Rules menu, click New.</b></li>
+<li><b>Select one of the following default service types for the rule. You may
+see a larger list if more services are enabled for the policy:</b><dl><dt>Discovery Service</dt>
+<dd><p>Defines the authorization actions for Discovery service query and modify protocol invocations by web services clients for a specified resource.</p></dd>
+<dt>Liberty Personal Profile Service</dt>
+<dd><p>Defines the authorization actions for Liberty Personal Profile service query and modify protocol invocations by web services clients for a specified resource.</p></dd>
+<dt>URL Policy Agent</dt>
+<dd><p>Defines authorization actions for the URL Policy Agent service. This is used to define policies that protect HTTP and HTTPS URLs. This is the most common use case of Federated Access Manager policies.</p></dd>
+</dl>
 </li>
-<li><p><b>Select one of the following default service types for the rule. You may
-see a larger list if more services are enabled for the policy:</b></p><table border="0" cellspacing="5"><tr valign="top"><td>Discovery Service</td><td><p>Defines the authorization actions for Discovery service query and
-modify protocol invocations by web services clients for a specified resource.</p>
-</td></tr><tr valign="top"><td>Liberty Personal Profile Service</td><td><p>Defines the authorization actions for Liberty Personal Profile service
-query and modify protocol invocations by web services clients for a specified resource.</p>
-</td></tr><tr valign="top"><td>URL Policy Agent</td><td><p>Provides the URL Policy Agent service for policy enforcement. This
-service allows administrators to create and manage policies through a policy enforcer
-or <i>policy agent.</i></p>
-</td></tr></table>
+<li><b>Click Next.</b></li>
+<li><b>Enter a name and resource name for the rule.</b><p>Currently, Federated Access Manager Policy Agents only support <tt>http://</tt> and <tt>https://</tt>  resources
+and do not support IP addresses in place of the hostname.</p><p>Wildcards are supported for protocol, host, port and resource name. For example:</p><pre>http*://*:*/*.html</pre><p>For the URL Policy Agent service, if a port number is not
+entered, the default port number is 80 for <tt>http://</tt>, and 443 for <tt>https://.</tt></p>
+<hr><p><b>Note - </b>Steps 6 and 7 are not applicable for a referral policy.</p>
+<hr>
 </li>
-<li><p><b>Click Next.</b></p></li>
-<li><p><b>Enter a name and resource name for the rule.</b></p><p>Currently, Policy
-Agents only support <tt>http://</tt> and <tt>https://</tt> resources
-and do not support IP addresses in place of the hostname.</p>
-<p>Wildcards are
-supported for resource names, port number, and protocol. For example:</p>
-<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>http*://*:*/*.html</pre>
-</td></table><br><p>For the URL Policy Agent service, if a port number is not entered, the default
-port number is 80 for <tt>http://</tt>, and 443 for <tt>https://.</tt></p>
-<p>To allow the management of resource for all servers installed on a specific
-machine, you can define the resource as <tt>http://host*:*.</tt> Additionally,
-you can define the following resource to grant an administrator to a specific organization
-authority for all of the services in that organization:</p>
-<table cellpadding="4" border="1" cols="1" width="100%"><td><pre>http://*.<i>subdomain.domain.topleveldomain</i></pre>
-</td></table><br><p><hr size="1" noshade><p><b>Note - </b>Steps 6 and 7 are not applicable for a referral policy.</p>
-<hr size="1" noshade></p></li>
-<li><p><b>Select the action for the rule. Depending on the service type, you can
-select the following:</b></p><ul><li><p>LOOKUP</p>
+<li><b>Select the action for the rule. Depending on the service type, you can
+select the following:</b>
+<ul><li><p>LOOKUP (Discovery Service)</p></li>
+<li><p>UPDATE (Discovery Service)</p></li>
+<li><p>MODIFY (Liberty Personal Profile Service)</p></li>
+<li><p>QUERY (Liberty Personal Profile Service)</p></li>
+<li><p>GET (URL Policy Agent)</p></li>
+<li><p>POST (URL Policy Agent)</p></li></ul>
 </li>
-<li><p>UPDATE</p>
+<li><b>Select the Action Values.</b>
+<ul><li><p>Interaction for Consent &mdash; Invokes the Liberty interaction protocol for consent on a resource. This is for the Liberty Personal Profile service type only.</p></li>
+<li><p>Interaction for Value &mdash; Invokes the Liberty interaction protocol for a value on a resource. This is for the Liberty Personal Profile service type only.</p></li>
+<li><p>Allow &mdash; Enables you access the resource matching the resource defined in the rule.</p></li>
+<li><p>Deny &mdash; Denies access to the resource matching the resource defined in the rule.</p><p>Denial rules always take precedence over allow rules in a policy. For example, if you have two policies for a given resource, one denying access and the other allowing access, the result is a deny access (provided that the conditions for both policies are met). It is recommended that deny policies be used with extreme caution as they may lead to potential conflicts between the policies. Typically, the policy definition process should only use allow rules, and use the default deny when no policies apply to accomplish the deny case.</p><p>If explicit deny rules are used, policies that are assigned to a given user through different subjects (such as role and/or group membership) may result in denied access to a resource even if one or more of the policies allow access. For example, if there is a deny policy for a resource applicable to an Employee role and there is another allow policy for the same resource applicable to Manager role, policy decisions for users assigned both Employee and Manager roles would be denied.</p><p>One way to resolve such problems is to design policies using Condition plug-ins. In the case above, a &ldquo;role condition&rdquo; that applies the deny policy to users authenticated to the Employee role and applies the allow policy to users authenticated to the Manager role helps differentiate the two policies. Another way could be to use the <tt>authentication level</tt> condition, where the Manager role authenticates at a higher authentication level.</p></li></ul>
 </li>
-<li><p>MODIFY</p>
-</li>
-<li><p>QUERY</p>
-</li>
-<li><p>GET</p>
-</li>
-<li><p>POST</p>
-</li>
-</ul>
-</li>
-<li><p><b>Select the Action Values. </b></p><ul><li><p>Interaction for Consent -- Invokes the Liberty interaction protocol
-for consent on a resource. This is for the Liberty Personal Profile service type only.</p>
-</li>
-<li><p>Interaction for Value -- Invokes the Liberty interaction protocol
-for a value on a resource. This is for the Liberty Personal Profile service type only.</p>
-</li>
-<li><p>Allow -- Enables you access the resource matching the resource
-defined in the rule.</p>
-</li>
-<li><p>Deny -- Denies access to the resource matching the resource defined
-in the rule.</p>
-</li>
-<li><p>Denial rules always take precedence over allow rules in a policy.
-For example, if you have two policies for a given resource, one denying access and
-the other allowing access, the result is a deny access (provided that the conditions
-for both policies are met). It is recommended that deny policies be used with extreme
-caution as they may lead to potential conflicts between the policies. Typically, the
-policy definition process should only use allow rules, and use the default deny when
-no policies apply to accomplish the deny case.</p>
-<p>If explicit deny rules
-are used, policies that are assigned to a given user through different subjects (such
-as role and/or group membership) may result in denied access to a resource even if
-one or more of the policies allow access. For example, if there is a deny policy for
-a resource applicable to an Employee role and there is another allow policy for the
-same resource applicable to Manager role, policy decisions for users assigned both
-Employee and Manager roles would be denied.</p>
-<p>One way to resolve such problems
-is to design policies using Condition plug-ins. In the case above, a "role condition"
-that applies the deny policy to users authenticated to the Employee role and applies
-the allow policy to users authenticated to the Manager role helps differentiate the
-two policies. Another way could be to use the <tt>authentication level</tt> condition,
-where the Manager role authenticates at a higher authentication level.</p>
-</li>
-</ul>
-</li>
-<li><p><b>Click Finish.</b></p></li>
-</ol>
-<br />
+<li><b>Click Finish.</b></li></ol>
+<br/>
 
 </body>
 </html>

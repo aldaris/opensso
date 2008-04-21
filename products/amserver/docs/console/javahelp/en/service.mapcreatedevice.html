@@ -1,37 +1,48 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title><IMG border="0" alt="Procedure" src="graphics/procedure-toc.gif">To Add a New Client 
+  <title>To Add a New Client - Sun Java System Federated Access Manager 8.0 Console Online Help
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.mapcreatedevice"></A><h3><IMG border="0" alt="Procedure" src="graphics/procedure.gif">To Add a New Client </h3>
-<h5>Steps</h5><ol><li><p><b><A NAME="indexterm-197"></A>Click New in the <b>Client Type</b> list.</b></p></li>
-<li><p><b>Select the device type with the following fields:</b></p><table border="0" cellspacing="5"><tr valign="top"><td><b>Style</b></td><td><p>Displays the base style for the device. For example, HTML.</p>
-</td></tr><tr valign="top"><td><b>Device User Agent</b></td><td><p>Accepts the name for the device.</p>
-</td></tr></table>
+
+
+<a name="service.mapcreatedevice"></a><h4>To Add a New Client</h4><ol>
+<li><b><a name="indexterm-208"></a>Click New in the Client Type list.</b></li>
+<li><b>Select the device type with the following fields:</b><dl><dt>Style</dt>
+<dd><p>Displays the base style for the device. For example, HTML.</p></dd>
+<dt>Device User Agent</dt>
+<dd><p>Accepts the name for the device.</p></dd>
+</dl>
 </li>
-<li><p><b>Click Next.</b></p></li>
-<li><p><b>Enter the following information for the new device:</b></p><table border="0" cellspacing="5"><tr valign="top"><td><b>Client Type Name</b></td><td><p>Accepts the name for the device. The name must be unique across all
-devices</p>
-</td></tr><tr valign="top"><td><b>The HTTP User String</b></td><td><p>Defines the User-Agent in the HTTP request header. For example, Mozilla/4.0.</p>
-</td></tr></table>
+<li><b>Click Next.</b></li>
+<li><b>Enter the following information for the new device:</b><dl><dt>Client Type Name</dt>
+<dd><p>Accepts the name for the device. The name must be unique across all devices</p></dd>
+<dt>The HTTP User String</dt>
+<dd><p>Defines the User-Agent in the HTTP request header. For example, Mozilla/4.0.</p></dd>
+</dl>
 </li>
-<li><p><b>Click Finish.</b></p></li>
-<li><p><b>To duplicate a device and its properties, click the Duplicate link. Device names must unique. By default, Access Manager will rename
-the device to <tt>copy_of_</tt><i>devicename<tt></i></tt>.</b></p></li>
-</ol>
-<br />
+<li><b>Click Finish.</b></li>
+<li><b>To duplicate a device and its properties, click the Duplicate link. Device names
+must unique. By default, Federated Access Manager will rename the device to <tt>copy_of_</tt><i>devicename</i><tt></tt>.</b></li></ol>
+<br/>
 
 </body>
 </html>

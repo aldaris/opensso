@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Federated Access Manager Data Store Types - Sun Java System Federated Access Manager 8.0 Console Online Help
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="idrepoadd"></a><h4>Federated Access Manager Data Store Types</h4>
+<p>In the Federated Access Manager Data Store Selection screen, you can create the
+following data store types:</p>
+
+<a name="gdlmv"></a><h5>Active Directory</h5>
+<p>This data store type uses the LDAP version 3 specification to write identity
+data to an instance of Microsoft Active Directory.</p><p>For attribute definitions, see <a href="adattrs.html">Active Directory Attributes</a>.</p>
+
+<a name="gdlmr"></a><h5>Generic LDAPv3</h5>
+<p>This data store type allows identity data to written to any LDAPv3&ndash;compliant database.
+If the LDAPv3 database you are using does not support Persistent Search, then
+you can not use the caching feature.</p><p>For attribute definitions, see <a href="gdoto.html">Generic LDAPv3 Attributes</a>.</p>
+
+<a name="gdlnw"></a><h5>Sun Directory Server With Federated Access Manager Schema</h5>
+<p>This data store type resides in a Sun Java System Directory Server instance
+and holds the Federated Access Manager information tree. It differs from the Federated
+Access Manager Repository Plug-in, in that more configuration attributes allow you to better
+customize the data store.</p><p>For attribute definitions, see <a href="sundirattrs.html">Sun Directory Server with Federated Access Manager Schema Attributes</a>.</p>
+<br/>
+
+</body>
+</html>

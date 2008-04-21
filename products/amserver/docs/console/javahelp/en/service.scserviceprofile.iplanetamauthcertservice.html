@@ -1,197 +1,199 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Certificate
+  <title>Certificate - Sun Java System Federated Access Manager 8.0 Console Online Help
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamauthcertservice"></A><h3>Certificate</h3>
-<p><A NAME="indexterm-170"></A>This module enables a user to log in through a personal digital certificate
-(PDC). The module instance can require the use of the Online Certificate Status Protocol
-(OCSP) to determine the state of a certificate. Use of the OCSP is optional. The user
-is granted or denied access to a resource based on whether or not the certificate
-is valid. The Certificate authentication attributes are realm attributes. The attributes
-are:</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbia">Match Certificate in LDAP</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiq">Subject DN Attribute Used to Search LDAP for Certificates</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">Match Certificate to CRL</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbik">Issuer DN Attribute Used to Search LDAP for CRLs</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbin">HTTP Parameters for CRL Update</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbil">Enable OCSP Validation</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbij">LDAP Server Where Certificates are Stored</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbtp">LDAP Start Search DN</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbqp">LDAP Server Principal User</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbst">LDAP Server Principal Password</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiu">LDAP Server Principal Password (confirm)</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblo">LDAP Attribute for Profile ID</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblm">Use SSL for LDAP Access</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbof">Certificate Field Used to Access User Profile</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbna">Other Certificate Field Used to Access User Profile</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbiw">Trusted Remote Hosts</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbkd">SSL Port Number</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwblx">Authentication Level</A></p>
-</li>
-</ul>
-<A NAME="fwbia"></A><h4>Match Certificate in LDAP</h4>
+
+
+<a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Certificate</h4>
+<p><a name="indexterm-176"></a>This module enables a user to log in through a personal digital certificate
+(PDC). The module instance can require the use of the Online Certificate Status
+Protocol (OCSP) to determine the state of a certificate. Use of the OCSP
+is optional. The user is granted or denied access to a resource based
+on whether or not the certificate is valid. The Certificate authentication attributes are realm
+attributes. The attributes are:</p>
+<ul><li><p><a href="#fwbia">Match Certificate in LDAP</a></p></li>
+<li><p><a href="#fwbiq">Subject DN Attribute Used to Search LDAP for Certificates</a></p></li>
+<li><p><a href="#fwbim">Match Certificate to CRL</a></p></li>
+<li><p><a href="#fwbik">Issuer DN Attribute Used to Search LDAP for CRLs</a></p></li>
+<li><p><a href="#fwbin">HTTP Parameters for CRL Update</a></p></li>
+<li><p><a href="#fwbil">OCSP Validation</a></p></li>
+<li><p><a href="#fwbij">LDAP Server Where Certificates are Stored</a></p></li>
+<li><p><a href="#fwbtp">LDAP Start Search DN</a></p></li>
+<li><p><a href="#fwbqp">LDAP Server Principal User</a></p></li>
+<li><p><a href="#fwbst">LDAP Server Principal Password</a></p></li>
+<li><p><a href="#fwbiu">LDAP Server Principal Password (confirm)</a></p></li>
+<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
+<li><p><a href="#fwblm">Use SSL for LDAP Access</a></p></li>
+<li><p><a href="#fwbof">Certificate Field Used to Access User Profile</a></p></li>
+<li><p><a href="#fwbna">Other Certificate Field Used to Access User Profile</a></p></li>
+<li><p><a href="#fwbiw">Trusted Remote Hosts</a></p></li>
+<li><p><a href="#fwbkd">SSL Port Number</a></p></li>
+<li><p><a href="#fwblx">Authentication Level</a></p></li></ul>
+
+
+<a name="fwbia"></a><h5>Match Certificate in LDAP</h5>
 <p>Specifies whether to check if the user certificate presented at login is stored
-in the LDAP Server. If no match is found, the user is denied access. If a match is
-found and no other validation is required, the user is granted access. The default
-is that the Certificate Authentication service does not check for the user certificate. </p>
-<p><hr size="1" noshade><p><b>Note - </b>A certificate stored in the Directory Server is not necessarily valid;
-it may be on the certificate revocation list. See <A HREF="service.scserviceprofile.iplanetamauthcertservice.html#fwbim">Match Certificate to CRL</A>. However, the web container may check the validity of the user certificate
-presented at login.</p>
-<hr size="1" noshade></p><A NAME="fwbiq"></A><h4>Subject DN Attribute Used to Search LDAP for Certificates</h4>
-<p>Specifies the attribute of the certificate's <i>SubjectDN</i> value
-that will be used to search LDAP for certificates. This attribute must uniquely identify
-a user entry. The actual value will be used for the search. The default is <tt>cn</tt>.</p>
-<A NAME="fwbim"></A><h4>Match Certificate to CRL</h4>
-<p>Specifies whether to compare the user certificate against the Certificate Revocation
-List (CRL) in the LDAP Server. The CRL is located by one of the attribute names in
-the issuer's <i>SubjectDN</i>. If the certificate is on the CRL, the
-user is denied access; if not, the user is allowed to proceed. This attribute is,
-by default, not enabled. </p>
-<p>Certificates should be revoked when the owner of the certificate has changed
-status and no longer has the right to use the certificate or when the private key
-of a certificate owner has been compromised.</p>
-<A NAME="fwbik"></A><h4>Issuer DN Attribute Used to Search LDAP for CRLs</h4>
-<p>Specifies the attribute of the received certificate's issuer <i>subjectDN</i> value that will be used to search LDAP for CRLs. This field is used only
-when the Match Certificate to CRL attribute is enabled. The actual value will be used
-for the search. The default is <tt>cn</tt>.</p>
-<A NAME="fwbin"></A><h4>HTTP Parameters for CRL Update</h4>
-<p>Specifies the HTTP parameters for obtaining a CRL from a servlet for a CRL update.
-Contact the administrator of your CA for these parameters.</p>
-<A NAME="fwbil"></A><h4>Enable OCSP Validation</h4>
-<p>Enables OCSP validation to be performed by contacting the corresponding OCSP
-responder. The OCSP responder is decided as follows during runtime: </p>
-<ul><li><p>If <tt>com.sun.identity.authentication.ocspCheck</tt> is
-true and the OCSP responder is set in the <i>com.sun.identity.authentication.ocsp.repsonder.url</i> attribute, the value of the attribute will be used as the OCSP responder.</p>
-</li>
-<li><p>If <i>com.sun.identity.authentication.ocspCheck</i> is
-set to true and If the value of the attribute is not set in the <tt>AMConfig.properties</tt> file, the OCSP responder presented in your client certificate is used
-as the OCSP responder. </p>
-</li>
-<li><p>If <i>com.sun.identity.authentication.ocspCheck</i> is
-set to false or if <i>com.sum.identity.authentication.ocspCheck</i> is
-set to true and if an OCSP responder can not be found, no OCSP validation will be
-performed. </p>
-</li>
-</ul>
-<p>Before enabling OCSP Validation, make sure that the time of the Access Manager
-machine and the OCSP responder machine are in sync as close as possible. Also, the
-time on the Access Manager machine must not be behind the time on the OCSP responder.
-For example: </p>
-<p><tt>OCSP responder machine - 12:00:00 pm</tt>  </p>
-<p><tt>Access Manager machine - 12:00:30 pm</tt> </p>
-<A NAME="fwbij"></A><h4>LDAP Server Where Certificates are Stored</h4>
+in the LDAP Server. If no match is found, the user is denied
+access. If a match is found and no other validation is required, the
+user is granted access. The default is that the Certificate Authentication service does
+not check for the user certificate.</p>
+<hr><p><b>Note - </b>A certificate stored in the Directory Server is not necessarily valid; it may
+be on the certificate revocation list. See <a href="#fwbim">Match Certificate to CRL</a>. However, the web container may
+check the validity of the user certificate presented at login.</p>
+<hr>
+
+
+<a name="fwbiq"></a><h5>Subject DN Attribute Used to Search LDAP for Certificates</h5>
+<p>Specifies the attribute of the certificate's <i>SubjectDN</i> value that will be used to
+search LDAP for certificates. This attribute must uniquely identify a user entry. The
+actual value will be used for the search. The default is <tt>cn</tt>.</p>
+
+<a name="fwbim"></a><h5>Match Certificate to CRL</h5>
+<p>Specifies whether to compare the user certificate against the Certificate Revocation List (CRL)
+in the LDAP Server. The CRL is located by one of the attribute
+names in the issuer's <i>SubjectDN</i>. If the certificate is on the CRL, the
+user is denied access; if not, the user is allowed to proceed. This
+attribute is, by default, not enabled.</p><p>Certificates should be revoked when the owner of the certificate has changed status
+and no longer has the right to use the certificate or when the
+private key of a certificate owner has been compromised.</p>
+
+<a name="fwbik"></a><h5>Issuer DN Attribute Used to Search LDAP for CRLs</h5>
+<p>Specifies the attribute of the received certificate's issuer  <i>subjectDN</i> value that will
+be used to search LDAP for CRLs. This field is used only when
+the Match Certificate to CRL attribute is enabled. The actual value will be
+used for the search. The default is <tt>cn</tt>.</p>
+
+<a name="fwbin"></a><h5>HTTP Parameters for CRL Update</h5>
+<p>Specifies the HTTP parameters for obtaining a CRL from a servlet for a
+CRL update. Contact the administrator of your CA for these parameters.</p>
+
+<a name="fwbil"></a><h5>OCSP Validation</h5>
+<p>Enables OCSP validation to be performed by contacting the corresponding OCSP responder. The
+OCSP responder is decided as follows during runtime:</p>
+<ul><li><p>If <tt>com.sun.identity.authentication.ocspCheck</tt> is true and the OCSP responder is set in the <i>com.sun.identity.authentication.ocsp.repsonder.url</i> attribute, the value of the attribute will be used as the OCSP responder.</p></li>
+<li><p>If <tt>com.sun.identity.authentication.ocspCheck</tt> is set to true and If the value of the attribute is not set in the <tt>AMConfig.properties</tt> file, the OCSP responder presented in your client certificate is used as the OCSP responder. </p></li>
+<li><p>If <tt>com.sun.identity.authentication.ocspCheck</tt> is set to false or if <i>com.sum.identity.authentication.ocspCheck</i> is set to true and if an OCSP responder can not be found, no OCSP validation will be performed.</p></li></ul>
+<p>Before enabling OCSP Validation, make sure that the time of the Federated Access
+Manager machine and the OCSP responder machine are in sync as close as
+possible. Also, the time on the Federated Access Manager machine must not be
+behind the time on the OCSP responder. For example:</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Federated Access Manager machine - 12:00:30 pm</tt> </p>
+
+<a name="fwbij"></a><h5>LDAP Server Where Certificates are Stored</h5>
 <p>Specifies the name and port number of the LDAP server where the certificates
-are stored. The default value is the host name and port specified when Access Manager
-was installed. The host name and port of any LDAP Server where the certificates are
-stored can be used. The format is <tt>hostname:port</tt>.</p>
-<A NAME="fwbtp"></A><h4>LDAP Start Search DN</h4>
-<p>Specifies the DN of the node where the search for the user's certificate should
-start. There is no default value. The field will recognize any valid DN. </p>
-<p>Multiple entries must be prefixed by the local server name. The format is as
-follows: </p>
-<p><tt>servername|search dn </tt></p>
-<p>For multiple entries:</p>
-<p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt> </p>
-<p>If multiple users are found for the same search, authentication will fail.</p>
-<A NAME="fwbqp"></A><h4>LDAP Server Principal User</h4>
-<p>This field accepts the DN of the principal user for the LDAP server where the
-certificates are stored. There is no default value for this field which will recognize
-any valid DN. The principal user must be authorized to read, and search certificate
-information stored in the Directory Server.</p>
-<A NAME="fwbst"></A><h4>LDAP Server Principal Password</h4>
+are stored. The default value is the host name and port specified when
+Federated Access Manager was installed. The host name and port of any LDAP
+Server where the certificates are stored can be used. The format is <tt>hostname:port</tt>.</p>
+
+<a name="fwbtp"></a><h5>LDAP Start Search DN</h5>
+<p>Specifies the DN of the node where the search for the user's certificate
+should start. There is no default value. The field will recognize any valid
+DN.</p><p>Multiple entries must be prefixed by the local server name. The format is
+as follows:</p><p><tt>servername|search dn</tt> </p><p>For multiple entries:</p><p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p><p>If multiple entries exist under the root organization with the same user ID,
+then this parameter should be set so that the only one entry can
+be searched for or found in order to be authenticated. For example, in
+the case where the agent ID and user ID is same under root
+org, this parameter should be <tt>ou=Agents</tt> for the root organization to authenticate using
+Agent ID and <tt>ou=People,</tt> for the root organization to authenticate using User
+ID.</p>
+
+<a name="fwbqp"></a><h5>LDAP Server Principal User</h5>
+<p>This field accepts the DN of the principal user for the LDAP server
+where the certificates are stored. There is no default value for this field
+which will recognize any valid DN. The principal user must be authorized to
+read, and search certificate information stored in the Directory Server.</p>
+
+<a name="fwbst"></a><h5>LDAP Server Principal Password</h5>
 <p>This field carries the LDAP password associated with the user specified in the
-LDAP Server Principal User field. There is no default value for this field which will
-recognize the valid LDAP password for the specified principal user.  	This value is
-stored as readable text in the directory. </p>
-<A NAME="fwbiu"></A><h4>LDAP Server Principal Password (confirm)</h4>
+LDAP Server Principal User field. There is no default value for this field
+which will recognize the valid LDAP password for the specified principal user.  This
+value is stored as readable text in the directory.</p>
+
+<a name="fwbiu"></a><h5>LDAP Server Principal Password (confirm)</h5>
 <p>Confirm the password.</p>
-<A NAME="fwblo"></A><h4>LDAP Attribute for Profile ID</h4>
-<p>Specifies the attribute in the Directory Server entry that matches the certificate
-whose value should be used to identify the correct user profile. There is no default
-value for this field which will recognize any valid attribute in a user entry (<i>cn</i>, <i>sn</i>, and so forth) that can be used as the UserID.</p>
-<A NAME="fwblm"></A><h4>Use SSL for LDAP Access</h4>
-<p>Specifies whether to use SSL to access the LDAP server. The default is that
-the Certificate Authentication service does not use SSL for LDAP access.</p>
-<A NAME="fwbof"></A><h4>Certificate Field Used to Access User Profile</h4>
+
+<a name="fwblm"></a><h5>Use SSL for LDAP Access</h5>
+<p>Specifies whether to use SSL to access the LDAP server. The default is
+that the Certificate Authentication service does not use SSL for LDAP access.</p>
+
+<a name="fwbof"></a><h5>Certificate Field Used to Access User Profile</h5>
 <p>Specifies which field in the certificate's Subject DN should be used to search
-for a matching user profile. For example, if you choose email address, the certificate authentication service will search for the user profile
-that matches the attribute <i>emailAddr</i> in the user certificate.
-The user logging in then uses the matched profile. The default field is <i>subject CN</i>. The list contains:</p>
-<ul><li><p>email address </p>
-</li>
-<li><p>subject CN</p>
-</li>
-<li><p>subject DN</p>
-</li>
-<li><p>subject UID</p>
-</li>
-<li><p>other</p>
-</li>
-</ul>
-<A NAME="fwbna"></A><h4>Other Certificate Field Used to Access User Profile</h4>
-<p>If the value of the <b>Certificate Field Used to Access User Profile</b> attribute is set to other, then this field
-specifies the attribute that will be selected from the received certificate's <i>subjectDN</i> value. The authentication service will then search the user
-profile that matches the value of that attribute.</p>
-<A NAME="fwbiw"></A><h4>Trusted Remote Hosts</h4>
-<p>Defines a list of trusted hosts that can be trusted to send certificates to
-Access Manager. Access Manager must verify whether the certificate emanated from one
-of these hosts. This configuration only used with Sun Java System Portal Server. This
-attribute accepts the following values: </p>
-<table border="0" cellspacing="5"><tr valign="top"><td>none</td><td><p>Disables the attribute. This is set by default.</p>
-</td></tr><tr valign="top"><td>any</td><td><p>Accepts Portal Server Gateway-style certificate authentication from
-any client IP address.</p>
-</td></tr><tr valign="top"><td>IP ADDR</td><td><p>Lists the IP addresses from which to accept Portal Server Gateway-style
-certificate authentication requests (the IP Address of the Gateway(s)). The attribute
-is configurable on an realm basis.</p>
-</td></tr></table>
-<A NAME="fwbkd"></A><h4>SSL Port Number</h4>
-<p>Specifies the port number for the secure socket layer. Currently, this attribute
-is only used by the Gateway servlet. Before you add or change an SSL Port Number,
-see the "Policy-Based Resource Management" section in the Access Manager Administration
-Guide.</p>
-<A NAME="fwblx"></A><h4>Authentication Level</h4>
-<p>The authentication level is set separately for each method of authentication.
-The value indicates how much to trust an authentication mechanism. Once a user has
-authenticated, this value is stored in the SSO token for the session. When the SSO
-token is presented to an application the user wants to access, the application uses
-the stored value to determine whether the level is sufficient to grant the user access.
-If the authentication level stored in an SSO token does not meet the minimum value
-required, the application can prompt the user to authenticate again through a service
-with a higher authentication level. The default value is 0. </p>
-<p><hr size="1" noshade><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value
-specified in the Core authentication attribute <A HREF="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</A>.</p>
-<hr size="1" noshade></p>
-<br />
+for a matching user profile. For example, if you choose email address, the
+certificate authentication service will search for the user profile that matches the attribute
+<i>emailAddr</i>  in the user certificate. The user logging in then uses the
+matched profile. The default field is <i>subject CN</i>. The list contains:</p>
+<ul><li><p>email address</p></li>
+<li><p>subject CN</p></li>
+<li><p>subject DN</p></li>
+<li><p>subject UID</p></li>
+<li><p>other</p></li></ul>
+
+
+<a name="fwbna"></a><h5>Other Certificate Field Used to Access User Profile</h5>
+<p>If the value of the Certificate Field Used to Access User Profile attribute
+is set to other, then this field specifies the attribute that will be
+selected from the received certificate's <i>subjectDN</i>  value. The authentication service will
+then search the user profile that matches the value of that attribute.</p>
+
+<a name="fwbiw"></a><h5>Trusted Remote Hosts</h5>
+<p>Defines a list of trusted hosts that can be trusted to send certificates
+to Federated Access Manager. Federated Access Manager must verify whether the certificate emanated
+from one of these hosts. This attribute is used for the Portal Server
+gateway, for a load balancer with SSL termination and for Distributed Authentication.. </p><dl><dt>none</dt>
+<dd><p>Disables the attribute. This is set by default.</p></dd>
+<dt>all</dt>
+<dd><p>Accepts Portal Server Gateway-style certificate authentication from any client IP address.</p></dd>
+<dt>IP ADDR</dt>
+<dd><p>Lists the IP addresses from which to accept Portal Server Gateway-style certificate authentication requests (the IP Address of the Gateway(s)). The attribute is configurable on an realm basis.</p></dd>
+</dl>
+
+
+<a name="fwbkd"></a><h5>SSL Port Number</h5>
+<p>Specifies the port number for the secure socket layer. Currently, this attribute is
+only used by the Gateway servlet. Before you add or change an SSL
+Port Number, see the "Policy-Based Resource Management" section in the Federated Access Manager
+Administration Guide.</p>
+
+<a name="gcabp"></a><h5>HTTP Header Name for Client Certificate</h5>
+<p>This attribute is used only when the Trusted Remote Hosts attribute is set
+to all or has a specific host name defined. The administrator must specify
+the http header name for the client certificate that is inserted by the
+load balancer or SRA. </p>
+
+<a name="fwblx"></a><h5>Authentication Level</h5>
+<p>The authentication level is set separately for each method of authentication. The value
+indicates how much to trust an authentication mechanism. Once a user has authenticated,
+this value is stored in the SSO token for the session. When the
+SSO token is presented to an application the user wants to access, the
+application uses the stored value to determine whether the level is sufficient to
+grant the user access. If the authentication level stored in an SSO token does
+not meet the minimum value required, the application can prompt the user to
+authenticate again through a service with a higher authentication level. The default value
+is 0.</p>
+<hr><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value specified
+in the Core authentication attribute <a href="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</a>.</p>
+<hr>
+
+<br/>
 
 </body>
 </html>

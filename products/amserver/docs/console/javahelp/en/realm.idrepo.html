@@ -1,30 +1,47 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title><IMG border="0" alt="Procedure" src="graphics/procedure-toc.gif">To Create a New LDAPv3 Data Store
+  <title>Data Stores - Sun Java System Federated Access Manager 8.0 Console Online Help
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="realm.idrepo"></A><h3><IMG border="0" alt="Procedure" src="graphics/procedure.gif">To Create a New LDAPv3 Data Store</h3>
-<h5>Steps</h5><ol><li><p><b><A NAME="indexterm-12"></A>Select the realm to which you wish to add a new data store.</b></p></li>
-<li><p><b>Click the <b>Data Store</b> tab.</b></p></li>
-<li><p><b>Click New from the Data Stores list.</b></p></li>
-<li><p><b>Enter a name for the data store. </b></p></li>
-<li><p><b>Define the attributes for the LDAPv3 repository plug-in. For a description
-of the attributes, see <A HREF="realm.idrepoadd.html#realm.idrepoadd">LDAPv3 Repository Plug-in Attributes</A>.</b></p></li>
-<li><p><b>Click Finish.</b></p></li>
-</ol>
-<br />
+
+
+<a name="realm.idrepo"></a><h3>Data Stores</h3>
+<p><a name="indexterm-10"></a><a name="indexterm-11"></a>A data store is a database where you can store user attributes and
+user configuration data.</p><p>Federated Access Manager provides identity repository plug-ins that connect to an LDAPv3 identity
+repository framework. This enables you to view and retrieve Federated Access Manager user
+information without having to make changes in your existing user database. The Federated Access
+Manager framework integrates data from the identity repository plug-in with data from other
+Federated Access Manager plug-ins to form a virtual identity for each user. Federated
+Access Manager can then use the universal identity in authentication and authorization processes among
+more than one identity repository. The virtual user identity is destroyed when the
+user's session ends.</p><p>Federated Access Manager supports the following data stores:</p>
+<ul><li><p>Federated Access Manager Repository Plug-in</p></li>
+<li><p>Active Directory</p></li>
+<li><p>Flat Files Repository</p></li>
+<li><p>Generic LDAPv3</p></li>
+<li><p>Sun Directory Server with Federated Access Manager Schema</p></li></ul>
+<p>See <a href="realm.idreposelecttype.html">To Create a New Data Store</a> for information on creating a new data store and configuring the
+repository plug-ins.</p>
+<br/>
 
 </body>
 </html>

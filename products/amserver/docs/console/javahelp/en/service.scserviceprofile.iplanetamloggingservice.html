@@ -1,174 +1,187 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Logging
+  <title>Logging - Sun Java System Federated Access Manager 8.0 Console Online Help
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="service.scserviceprofile.iplanetamloggingservice"></A><h3>Logging</h3>
-<p><A NAME="indexterm-198"></A>The Logging service provides status and error messages related to Access
-Manager administration. An administrator can configures values such as log file size
-and log file location. Access Manager can record events in flat text files or in a
-relational database. The Logging service attributes are global attributes. The attributes
-are:</p>
-<ul><li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsv">Maximum Log Size</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsg">Number of History Files</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbzh">Log File Location</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwg">Logging Type</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbrd">Database User Name</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcdf">Database User Password</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcep">Database User Password (confirm)</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvb">Database Driver Name</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsb">Configurable Log Fields</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxccb">Log Verification Frequency</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxe">Log Signature Time</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcbz">Enable Secure Logging</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbxt">Maximum Number of Records</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbwp">Number of Files per Archive</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbyw">Buffer Size</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbvh">DB Failure Memory Buffer Size</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxcea">Buffer Time</A></p>
-</li>
-<li><p><A HREF="service.scserviceprofile.iplanetamloggingservice.html#fxbsn">Enable Time Buffering</A></p>
-</li>
-</ul>
-<p></p>
-<A NAME="fxbsv"></A><h4>Maximum Log Size</h4>
-<p>This attribute accepts a value for the maximum size (in bytes) of a Access Manager
-log file. The default value is 1000000.</p>
-<A NAME="fxbsg"></A><h4>Number of History Files</h4>
-<p>This attribute has a value equal to the number of backup log files that will
-be retained for historical analysis. Any integer can be entered depending on the partition
-size and available disk space of the local system. The default value is 3.</p>
-<p>The files only apply to the FILE logging type. When the logging type is set
-to DB, there are no history files and limit explicitly set by Access Manager to the
-size of the files.</p>
-<p><hr size="1" noshade><p><b>Note - </b>Entering a value of 0 is interpreted to be the same as a value of 1, meaning
-that if you specify 0, a history log file will be created.</p>
-<hr size="1" noshade></p><A NAME="fxbzh"></A><h4>Log File Location</h4>
+
+
+<a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>Logging</h4>
+<p><a name="indexterm-209"></a>The Logging service provides status and error messages related to Federated Access Manager
+administration. An administrator can configures values such as log file size and log
+file location. Federated Access Manager can record events in flat text files or
+in a relational database. The Logging service attributes are global attributes. The attributes are:</p>
+<ul><li><p><a href="#fxbsv">Maximum Log Size</a></p></li>
+<li><p><a href="#fxbsg">Number of History Files</a></p></li>
+<li><p><a href="#fxbzh">Log File Location</a></p></li>
+<li><p><a href="#fxbwg">Logging Type</a></p></li>
+<li><p><a href="#fxbrd">Database User Name</a></p></li>
+<li><p><a href="#fxcdf">Database User Password</a></p></li>
+<li><p><a href="#fxcep">Database User Password (confirm)</a></p></li>
+<li><p><a href="#fxbvb">Database Driver Name</a></p></li>
+<li><p><a href="#fxbsb">Configurable Log Fields</a></p></li>
+<li><p><a href="#fxccb">Log Verification Frequency</a></p></li>
+<li><p><a href="#fxbxe">Log Signature Time</a></p></li>
+<li><p><a href="#fxcbz">Secure Logging</a></p></li>
+<li><p><a href="#fxbxt">Maximum Number of Records</a></p></li>
+<li><p><a href="#fxbwp">Number of Files per Archive</a></p></li>
+<li><p><a href="#fxbyw">Buffer Size</a></p></li>
+<li><p><a href="#fxbvh">DB Failure Memory Buffer Size</a></p></li>
+<li><p><a href="#fxcea">Buffer Time</a></p></li>
+<li><p><a href="#fxbsn">Time Buffering</a></p></li></ul>
+
+
+<a name="fxbsv"></a><h5>Maximum Log Size</h5>
+<p>This attribute accepts a value for the maximum size (in bytes) of a
+Federated Access Manager log file. The default value is 1000000.</p>
+
+<a name="fxbsg"></a><h5>Number of History Files</h5>
+<p>This attribute has a value equal to the number of backup log files
+that will be retained for historical analysis. Any integer can be entered depending
+on the partition size and available disk space of the local system. The
+default value is 3.</p><p>The files only apply to the FILE logging type. When the logging type
+is set to DB, there are no history files and limit explicitly set
+by Federated Access Manager to the size of the files.</p>
+<hr><p><b>Note - </b>Entering a value of 0 is interpreted to be the same as a
+value of 1, meaning that if you specify 0, a history log
+file will be created.</p>
+<hr>
+
+
+<a name="fxbzh"></a><h5>Log File Location</h5>
 <p>The file-based logging function needs a location where log files can be stored.
-This field accepts a full directory path to that location. The default location is: </p>
-<p><tt>/var/opt/SUNWam/logs</tt> </p>
-<p>If a non-default directory is specified, Access Manager will create the directory
-if it does not exist. You should then set the appropriate permissions for that directory
-(for example, 0700).</p>
-<p>When configuring the log location for DB (database) logging (such as, Oracle
-or MySQL), part of the log location is case sensitive. For example, if you are logging
-to an Oracle database, the log location should be (note case sensitivity):</p>
-<p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt> </p>
-<p>To configure logging to DB, add the JDBC driver files to the web container's
-JVM classpath. You need to manually add JDBC driver files to the classpath of the <tt>amadmin</tt> script, otherwise <tt>amadmin</tt> logging can not load
-the JDBC driver.  </p>
-<p>Changes to logging attributes usually take effect after you save them. This
-does not require you to restart the server. If you are changing to secure logging,
-however, you should restart the server.</p>
-<A NAME="fxbwg"></A><h4>Logging Type</h4>
-<p>Enables you to specify either File, for flat file
-logging, or DB for database logging.</p>
-<p>If the Database User Name or Database User Password is invalid, it will seriously
-affect Access Manager processing. If Access manager or the console becomes unstable,
-you set the following property in <tt>AMConfig.properties</tt>:</p>
-<p><i>com.iplanet.am.logstatus=INACTIVE</i></p>
-<p>After you have set the property, restart the server. You can then log in to
-the console and reset the logging attribute. Then, change the <i>logstatus</i> property to <i>ACTIVE</i> and restart the server.</p>
-<A NAME="fxbrd"></A><h4>Database User Name</h4>
-<p>This attribute accepts the name of the user that will connect to the database
-when the Logging Type attribute is set to DB.</p>
-<A NAME="fxcdf"></A><h4>Database User Password</h4>
-<p>This attribute accepts the database user password when the Logging Type attribute
-is set to DB.</p>
-<A NAME="fxcep"></A><h4>Database User Password (confirm)</h4>
+This field accepts a full directory path to that location. The default location
+is:</p><p><tt>/var/opt/SUNWam/logs</tt></p><p>If a non-default directory is specified, Federated Access Manager will create the directory
+if it does not exist. You should then set the appropriate permissions for
+that directory (for example, 0700).</p><p>When configuring the log location for DB (database) logging (such as, Oracle or
+MySQL), part of the log location is case sensitive. For example, if you
+are logging to an Oracle database, the log location should be (note case
+sensitivity):</p><p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p><p>To configure logging to DB, add the JDBC driver files to the web
+container's JVM classpath. You need to manually add JDBC driver files to the
+classpath of the <tt>amadmin</tt> script, otherwise  <tt>amadmin</tt> logging can not load the
+JDBC driver.</p><p>Changes to logging attributes usually take effect after you save them. This does
+not require you to restart the server. If you are changing to secure
+logging, however, you should restart the server.</p>
+
+<a name="fxbwg"></a><h5>Logging Type</h5>
+<p>Enables you to specify either File, for flat file logging, or DB for
+database logging.</p><p>If the Database User Name or Database User Password is invalid, it will
+seriously affect Federated Access Manager processing. If Federated Access Manager or the console
+becomes unstable, you set the following property in  <tt>AMConfig.properties</tt>:</p><p><i>com.iplanet.am.logstatus=INACTIVE</i></p><p>After you have set the property, restart the server. You can then log
+in to the console and reset the logging attribute. Then, change the <i>logstatus</i>
+property to <i>ACTIVE</i>  and restart the server.</p>
+
+<a name="fxbrd"></a><h5>Database User Name</h5>
+<p>This attribute accepts the name of the user that will connect to the
+database when the Logging Type attribute is set to DB.</p>
+
+<a name="fxcdf"></a><h5>Database User Password</h5>
+<p>This attribute accepts the database user password when the Logging Type attribute is
+set to DB.</p>
+
+<a name="fxcep"></a><h5>Database User Password (confirm)</h5>
 <p>Confirm the database password.</p>
-<A NAME="fxbvb"></A><h4>Database Driver Name</h4>
+
+<a name="fxbvb"></a><h5>Database Driver Name</h5>
 <p>This attribute enables you to specify the driver used for the logging implementation
 class.</p>
-<A NAME="fxbsb"></A><h4>Configurable Log Fields</h4>
-<p>Represents the list of fields that are to be logged. By default, all of the
-fields are logged. The fields are:</p>
-<ul><li><p>CONTEXTID</p>
-</li>
-<li><p>DOMAIN</p>
-</li>
-<li><p>HOSTNAME</p>
-</li>
-<li><p>IPADDRESS</p>
-</li>
-<li><p>LOGGED BY</p>
-</li>
-<li><p>LOGLEVEL</p>
-</li>
-<li><p>LOGINID</p>
-</li>
-<li><p>MESSAGEID</p>
-</li>
-<li><p>MODULENAME</p>
-</li>
-</ul>
+
+<a name="fxbsb"></a><h5>Configurable Log Fields</h5>
+<p>Represents the list of fields that are to be logged. By default, all
+of the fields are logged. The fields are:</p>
+<ul><li><p>CONTEXTID</p></li>
+<li><p>DOMAIN</p></li>
+<li><p>HOSTNAME</p></li>
+<li><p>IPADDRESS</p></li>
+<li><p>LOGGED BY</p></li>
+<li><p>LOGLEVEL</p></li>
+<li><p>LOGINID</p></li>
+<li><p>MESSAGEID</p></li>
+<li><p>MODULENAME</p></li></ul>
 <p>At minimum you should log CONTEXTID, DOMAIN, HOSTNAME, LOGINID and MESSAGEID.</p>
-<A NAME="fxccb"></A><h4>Log Verification Frequency</h4>
-<p>This attribute sets the frequency (in seconds) that the server should verify
-the logs to detect tampering. The default time is 3600 seconds. This parameter applies
+
+<a name="fxccb"></a><h5>Log Verification Frequency</h5>
+<p>This attribute sets the frequency (in seconds) that the server should verify the
+logs to detect tampering. The default time is 3600 seconds. This parameter applies
 to secure logging only.</p>
-<A NAME="fxbxe"></A><h4>Log Signature Time</h4>
+
+<a name="fxbxe"></a><h5>Log Signature Time</h5>
 <p>This parameter sets the frequency (in seconds) that the log will be signed.
 The default time is 900 seconds. This parameter applies to secure logging only.</p>
-<A NAME="fxcbz"></A><h4>Enable Secure Logging</h4>
-<p>This attribute specifies whether or not to enable secure logging. By default,
-secure logging is off. Secure Logging enables detection of unauthorized changes or
-tampering of security logs.</p>
-<A NAME="fxbxt"></A><h4>Maximum Number of Records</h4>
-<p>This attribute sets the maximum number of records that the Java <!-- was interface. No mapping rule. -->LogReader interfaces return, regardless of how many records match the
-read query. By default, it is set to 500. This attribute can be overridden by the
-caller of the Logging API through the <i>LogQuery</i> class.</p>
-<A NAME="fxbwp"></A><h4>Number of Files per Archive</h4>
+
+<a name="fxcbz"></a><h5>Secure Logging</h5>
+<p>This attribute enables or disables secure logging. By default, secure logging is off.
+Secure Logging enables detection of unauthorized changes or tampering of security logs.</p>
+
+<a name="ggdct"></a><h5>Secure Logging Signing Algorithm</h5>
+<p>This attribute defines RSA and DSA (Digital Signature Algorithm), which have private keys
+for signing and a public key for verification. You can select from the
+following:</p>
+<ul><li><p>MD2 w/RSA</p></li>
+<li><p>MD5 w/RSA</p></li>
+<li><p>SHA1 w/DSA</p></li>
+<li><p>SHA1 w/RSA</p></li></ul>
+<p>MD2, MD5 and RSA are one-way hashes.  For example, if you
+select the signing algorithm MD2 w/RSA, the secure logging feature generates a group of
+messages with MD2 and encrypts the value with the RSA private key. This
+encrypted value is the signature of the original logged records and will be
+appended to the last record of the most recent signature. For validation, it
+well decrypt the signature with the RSA public key and compare the decrypted
+value to the group of logged records. The secure logging feature will then
+will detect any modifications to any logged record.</p>
+
+<a name="fxbxt"></a><h5>Maximum Number of Records</h5>
+<p>This attribute sets the maximum number of records that the Java LogReader
+interfaces return, regardless of how many records match the read query. By default,
+it is set to 500. This attribute can be overridden by the caller
+of the Logging API through the  <i>LogQuery</i> class.</p>
+
+<a name="fxbwp"></a><h5>Number of Files per Archive</h5>
 <p>This attribute is only applicable to secure logging. It specifies when the log
-files and keystore need to be archived, and the secure keystore regenerated, for subsequent
-secure logging. The default is five files per logger.</p>
-<A NAME="fxbyw"></A><h4>Buffer Size</h4>
+files and keystore need to be archived, and the secure keystore regenerated, for
+subsequent secure logging. The default is five files per logger.</p>
+
+<a name="fxbyw"></a><h5>Buffer Size</h5>
 <p>This attribute specifies the maximum number of log records to be buffered in
 memory before the logging service attempts to write them to the logging repository.
 The default is one record.</p>
-<A NAME="fxbvh"></A><h4>DB Failure Memory Buffer Size</h4>
-<p>This attribute defines the maximum number of log records held in memory if database
-(DB) logging fails. This attribute is only applicable when DB logging is specified.
-When the Access Manager logging service loses connection to the DB, it will buffer
-up to the number of records specified. This attribute defaults to two times of the
-value defined in the Buffer Size attribute.</p>
-<A NAME="fxcea"></A><h4>Buffer Time</h4>
-<p>This attribute defines the amount of time that the log records will buffered
-in memory before they are sent to the logging service to be logged. This attribute
-applies if Enable Time Buffering is ON. The default is 3600 seconds.</p>
-<A NAME="fxbsn"></A><h4>Enable Time Buffering</h4>
-<p>When selected as ON, Access Manager will set a time limit for log records to
-be buffered in memory. The amount of time is set in the Buffer Time attribute.</p>
 
-<br />
+<a name="fxbvh"></a><h5>DB Failure Memory Buffer Size</h5>
+<p>This attribute defines the maximum number of log records held in memory if
+database (DB) logging fails. This attribute is only applicable when DB logging is
+specified. When the Federated Access Manager logging service loses connection to the DB,
+it will buffer up to the number of records specified. This attribute defaults
+to two times of the value defined in the Buffer Size attribute.</p>
+
+<a name="fxcea"></a><h5>Buffer Time</h5>
+<p>This attribute defines the amount of time that the log records will buffered
+in memory before they are sent to the logging service to be logged.
+This attribute applies if Enable Time Buffering is ON. The default is 3600
+seconds.</p>
+
+<a name="fxbsn"></a><h5>Time Buffering</h5>
+<p>When selected as ON, Federated Access Manager will set a time limit for
+log records to be buffered in memory. The amount of time is set
+in the Buffer Time attribute.</p>
+<br/>
 
 </body>
 </html>

@@ -1,31 +1,41 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><!-- GenHTML@12751-->
+<html>
 <head>
-  <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=iso-8859-1">
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Time Condition
+  <title>Time (day, date, time, and timezone) - Sun Java System Federated Access Manager 8.0 Console Online Help
   </title>
-  <script type="text/javascript" src="/com_sun_web_ui/js/browserVersion.js"></script>
-  <script type="text/javascript" src="/com_sun_web_ui/js/stylesheet.js"></script>
-  <script type="text/javascript"><!-- Empty script so IE5.0 Windows will draw table and button borders --></script>
-  <meta name="Copyright" content="Copyright &copy; 2005 by Sun Microsystems, Inc. All Rights Reserved." />
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
 </head>
 
 <body class="HlpBdy">
 
-<A NAME="policy.pmdefaulttimeconditionadd"></A><h3>Time Condition</h3>
-<p><A NAME="indexterm-35"></A>Sets the condition based on time constraints. The fields are:</p>
-<table border="0" cellspacing="5"><tr valign="top"><td><b>Date From/To</b></td><td><p>Specifies the range of the date.</p>
-</td></tr><tr valign="top"><td><b>Time</b></td><td><p>Specifies the range of time within a day.</p>
-</td></tr><tr valign="top"><td><b>Day</b></td><td><p>Specifies a range of days.</p>
-</td></tr><tr valign="top"><td><b>Timezone</b></td><td><p>Specifies a timezone, either standard or custom. Custom timezones
-can only be a timezone ID recognized by Java (for example, PST). If no value is specified,
-the default value is the Timezone set in the Access Manager JVM.</p>
-</td></tr></table>
 
-<br />
+
+<a name="policy.pmdefaulttimeconditionadd"></a><h4>Time (day, date, time, and timezone)</h4>
+<p><a name="indexterm-40"></a>Sets the condition based on time constraints. The fields are:</p><dl><dt>Date From/To</dt>
+<dd><p>Specifies the range of the date.</p></dd>
+<dt>Time</dt>
+<dd><p>Specifies the range of time within a day.</p></dd>
+<dt>Day</dt>
+<dd><p>Specifies a range of days.</p></dd>
+<dt>Timezone</dt>
+<dd><p>Specifies a timezone, either standard or custom. Custom timezones can only be a timezone ID recognized by Java (for example, PST). If no value is specified, the default value is the Timezone set in the Federated Access Manager JVM.</p></dd>
+</dl>
+
+<br/>
 
 </body>
 </html>
