@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.52 2008-04-22 01:34:40 bigfatrat Exp $
+ * $Id: AMSetupServlet.java,v 1.53 2008-04-22 20:53:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1099,7 +1099,8 @@ public class AMSetupServlet extends HttpServlet {
                 }
             }
             
-            String swapped = ServicesDefaultValues.tagSwap(sbuf.toString());
+            String swapped = ServicesDefaultValues.tagSwap(sbuf.toString(),
+                file.endsWith("xml"));
             
             if (absFile.equalsIgnoreCase(SetupConstants.AMCONFIG_PROPERTIES) ||
                 absFile.equalsIgnoreCase(SystemProperties.CONFIG_FILE_NAME)

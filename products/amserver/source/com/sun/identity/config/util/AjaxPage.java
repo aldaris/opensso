@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.15 2008-04-17 17:27:29 veiming Exp $
+ * $Id: AjaxPage.java,v 1.16 2008-04-22 20:53:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -254,7 +254,7 @@ public abstract class AjaxPage extends Page {
     }
 
     public boolean validateInput() {
-        String key = toString("key");
+         String key = toString("key");
         String value = toString("value");
 
         if (value == null) {

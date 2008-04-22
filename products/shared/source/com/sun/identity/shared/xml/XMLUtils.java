@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.6 2007-09-11 22:01:15 weisun2 Exp $
+ * $Id: XMLUtils.java,v 1.7 2008-04-22 20:53:21 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -709,6 +709,22 @@ public class XMLUtils {
         } catch (Exception e) {
             return null; 
         }
+    }
+
+    /**
+     * Returns unescape special character text.
+     *
+     * @param text String to be unescaped.
+     * @return unescape special character text.
+     */
+    public static String unescapeSpecialCharacters(String text) {
+        text = text.replaceAll("&amp;", "&");
+        text = text.replaceAll("&lt;", "<");
+        text = text.replaceAll("&gt;", ">");
+        text = text.replaceAll("&quot;", "\"");
+        text = text.replaceAll("&apos;", "'");
+        text = text.replaceAll("&#xD;", "\n");
+        return text;
     }
 
     /**

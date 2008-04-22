@@ -51,7 +51,7 @@
     function validateUserStoreRootSuffix() {
         field = "userStoreRootSuffix";
         var callUrl = "$context$path?actionLink=setRootSuffix";
-        var param = "&rootsuffix=" + $('userStoreRootSuffix').value;
+        var param = "&rootsuffix=" + escape($('userStoreRootSuffix').value);
         AjaxUtils.call(callUrl+param, validateUserFields);
     }
     

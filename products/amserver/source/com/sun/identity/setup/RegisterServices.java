@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.8 2008-04-17 03:38:37 veiming Exp $
+ * $Id: RegisterServices.java,v 1.9 2008-04-22 20:53:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,7 @@ public class RegisterServices {
             boolean tagswap = true;
             if (serviceFileName.startsWith("*")) {
                 serviceFileName = serviceFileName.substring(1);
-                tagswap = false;
+                tagswap = false;                
             }
             
             SetupProgress.reportStart("emb.registerservice",serviceFileName);
@@ -103,7 +103,13 @@ public class RegisterServices {
                     //serviceFileName, buff.toString());
 
                 if (tagswap) {
-                    strXML = ServicesDefaultValues.tagSwap(strXML);
+                    if (serviceFileName.equals("idRepoService.xml")) {
+                        // false because there are <!-- and --!>
+                        // IMO, adding these comments is a heck.
+                        strXML = ServicesDefaultValues.tagSwap(strXML, false);
+                    } else {
+                        strXML = ServicesDefaultValues.tagSwap(strXML, true);
+                    }
                 }
                 serviceStream = (InputStream)new ByteArrayInputStream(
                     strXML.getBytes());

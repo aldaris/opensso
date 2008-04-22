@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLParser.java,v 1.2 2008-02-26 01:21:22 veiming Exp $
+ * $Id: XMLParser.java,v 1.3 2008-04-22 20:53:19 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.util;
 
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +71,8 @@ public class XMLParser {
         if (nd_map != null) {
             for (int i = 0; i < nd_map.getLength(); i++) {
                 Node att = nd_map.item(i);
-                atts.put(att.getNodeName(), att.getNodeValue());
+                atts.put(att.getNodeName(), XMLUtils.unescapeSpecialCharacters(
+                    att.getNodeValue()));
             }
         }
         for (Node ch = nd.getFirstChild(); ch != null; ch = ch.getNextSibling())
@@ -80,7 +82,8 @@ public class XMLParser {
                 elements.addElement(walkTree(ch));
                 break;
             case Node.TEXT_NODE:
-                String tmp = stripWhitespaces(ch.getNodeValue());
+                String tmp = stripWhitespaces(XMLUtils.unescapeSpecialCharacters(
+                    ch.getNodeValue()));
                 if (tmp != null && tmp.length() != 0)
                     pcdata = tmp;
                 break;

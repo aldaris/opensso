@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.24 2008-03-25 04:45:08 jonnelson Exp $
+ * $Id: ServicesDefaultValues.java,v 1.25 2008-04-22 20:53:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.encode.Hash;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -509,7 +510,7 @@ public class ServicesDefaultValues {
         map.put(SetupConstants.CONFIG_VAR_CONSOLE_URI, deployURI);
         map.put(SetupConstants.CONFIG_VAR_SERVER_URI, deployURI);
     }
-
+    
     /**
      * Returns the tag swapped string.
      *
@@ -517,28 +518,60 @@ public class ServicesDefaultValues {
      * @return the tag swapped string.
      */
     public static String tagSwap(String orig) {
+        return tagSwap(orig, false);
+    }
+
+    /**
+     * Returns the tag swapped string.
+     *
+     * @param orig String to be tag swapped.
+     * @param bXML <code>true</code> if it is an XML file. and value
+     *        needs to be escaped.
+     * @return the tag swapped string.
+     */
+    public static String tagSwap(String orig, boolean bXML) {
         Map map = instance.defValues;
         for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
             String key = (String)i.next();
             String value = (String)map.get(key);
-            if (value != null) {                
+            if (value != null) {
                 value = value.replaceAll("[$]", "\\\\\\$");
 
                 if (preappendSlash.contains(key)) {
+                    if (bXML) {
+                        value = XMLUtils.escapeSpecialCharacters(value);
+                    }
                     orig = orig.replaceAll("/@" + key + "@", value);
 
                     if (trimSlash.contains(key)) {
-                        orig = orig.replaceAll("@" + key + "@", value.substring(1));
+                        orig = orig.replaceAll("@" + key + "@", 
+                            value.substring(1));
                     }
                 } else if (key.equals(SetupConstants.CONFIG_VAR_ROOT_SUFFIX)) {
                     String normalized = DNUtils.normalizeDN(value);
+                    String tmp = normalized.replaceAll(",", "^");
+                    tmp = (bXML) ? XMLUtils.escapeSpecialCharacters(tmp) :
+                        tmp ;
                     orig = orig.replaceAll(
-                        "@" + SetupConstants.SM_ROOT_SUFFIX_HAT + "@",
-                        normalized.replaceAll(",", "^"));
+                        "@" + SetupConstants.SM_ROOT_SUFFIX_HAT + "@", tmp);
+                    
                     String rfced = (new DN(value)).toRFCString();
+                    tmp = (bXML) ? XMLUtils.escapeSpecialCharacters(rfced) :
+                        rfced;
                     orig = orig.replaceAll(
-                        "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX + "@", rfced);
+                        "@" + SetupConstants.CONFIG_VAR_ROOT_SUFFIX + "@",
+                        tmp);
+                } else if (
+                    key.equals(SetupConstants.SM_ROOT_SUFFIX_HAT) ||
+                    key.equals(SetupConstants.NORMALIZED_RS) ||
+                    key.equals(SetupConstants.NORMALIZED_ORG_BASE) ||
+                    key.equals(SetupConstants.SM_ROOT_SUFFIX_HAT)
+                ) {
+                    orig = orig.replaceAll("@" + key + "@", value);
                 } else {
+                    if (bXML) {
+                        value = XMLUtils.escapeSpecialCharacters(value);
+                    }
                     orig = orig.replaceAll("@" + key + "@", value);
                 }
             }

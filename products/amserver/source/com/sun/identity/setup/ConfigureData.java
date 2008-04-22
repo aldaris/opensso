@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.6 2007-10-17 23:00:45 veiming Exp $
+ * $Id: ConfigureData.java,v 1.7 2008-04-22 20:53:20 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -173,7 +173,7 @@ public class ConfigureData {
         while ((len = fin.read(cbuf)) > 0) {
             sbuf.append(cbuf, 0, len);
         }
-        String data = ServicesDefaultValues.tagSwap(sbuf.toString());
+        String data = ServicesDefaultValues.tagSwap(sbuf.toString(), true);
         ByteArrayInputStream bis = new ByteArrayInputStream(
             data.getBytes());
         PolicyUtils.createPolicies(pm, bis);
