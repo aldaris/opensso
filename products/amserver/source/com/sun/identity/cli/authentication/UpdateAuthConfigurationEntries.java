@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthConfigurationEntries.java,v 1.1 2007-02-23 22:37:03 veiming Exp $
+ * $Id: UpdateAuthConfigurationEntries.java,v 1.2 2008-04-22 21:01:25 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,8 @@ package com.sun.identity.cli.authentication;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
+import com.sun.identity.authentication.config.AMAuthenticationInstance;
+import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.config.AMConfigurationException;
 import com.sun.identity.authentication.config.AuthConfigurationEntry;
 import com.sun.identity.cli.AttributeValues;
@@ -43,6 +45,7 @@ import com.sun.identity.sm.SMSException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,6 +87,7 @@ public class UpdateAuthConfigurationEntries extends AuthenticatedCommand {
         
         try {
             List entries = parse(datafile, listEntries);
+            validateEntries(realm, adminSSOToken, entries, params);
             Map configData = new HashMap(2);
             Set tmp = new HashSet(2);
             String xml = AMAuthConfigUtils.authConfigurationEntryToXMLString(
@@ -113,6 +117,57 @@ public class UpdateAuthConfigurationEntries extends AuthenticatedCommand {
                 "FAILED_SET_AUTH_CONFIG_ENTRIES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
+    }
+    
+    private void validateEntries(
+        String realm, 
+        SSOToken adminSSOToken,
+        List entries,
+        String[] params
+    ) throws CLIException {
+        if ((entries != null) && !entries.isEmpty()) {
+            Set instanceNames = getInstanceNames(realm, adminSSOToken, params);
+
+            for (Iterator i = entries.iterator(); i.hasNext();) {
+                AuthConfigurationEntry token = (AuthConfigurationEntry)i.next();
+                String instanceName = token.getLoginModuleName();
+                if (!instanceNames.contains(instanceName)) {
+                    Object[] p = {instanceName};
+                    throw new CLIException(MessageFormat.format(
+                        getResourceString(
+                   "authentication-set-auth-config-entries-instance-not-found"),
+                        p),
+                        ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
+            }
+        }
+    }
+    
+    private Set getInstanceNames(
+        String realm, 
+        SSOToken adminSSOToken, 
+        String[] params
+    ) throws CLIException {
+        Set names = new HashSet();
+
+        try {
+            AMAuthenticationManager mgr = new AMAuthenticationManager(
+                adminSSOToken, realm);
+            Set instances = mgr.getAuthenticationInstances();
+
+            for (Iterator i = instances.iterator(); i.hasNext();) {
+                AMAuthenticationInstance instance =
+                    (AMAuthenticationInstance) i.next();
+                names.add(instance.getName());
+            }
+        } catch (AMConfigurationException e) {
+            debugError("ListAuthInstances.handleRequest", e);
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_SET_AUTH_CONFIG_ENTRIES", params);
+            throw new CLIException(e,
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+        return names;
     }
     
     private List parse(String fileName, List listEntries)

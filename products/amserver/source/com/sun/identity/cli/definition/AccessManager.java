@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.65 2008-04-22 20:59:26 veiming Exp $
+ * $Id: AccessManager.java,v 1.66 2008-04-22 21:01:25 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1511,6 +1511,7 @@ public class AccessManager {
         resourceStrings={
             "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries were updated",
             "authentication-set-auth-config-entries-not-found=Authentication Configuration was not found.",
+            "authentication-set-auth-config-entries-instance-not-found=Authentication instance {0} was not found.",
             "authentication-set-auth-config-entries-missing-data=Entries and datafile were missing."}
     )
     private String update_auth_cfg_entr;
