@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.51 2008-04-21 23:51:54 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.52 2008-04-22 01:34:40 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -493,6 +493,14 @@ public class AMSetupServlet extends HttpServlet {
                 writeSchemaFiles(basedir, schemaFiles);
             }
 
+            String serverURL = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_URL);
+            String deployuri = (String)map.get(
+                SetupConstants.CONFIG_VAR_SERVER_URI);
+            String serverInstanceName = serverURL + deployuri;
+
+            // do this here since initializeConfigProperties needs the dir
+            setupSecurIDDirs(basedir,deployuri);
             Map mapFileNameToConfig = initializeConfigProperties();
             String strAMConfigProperties = (String)
                 mapFileNameToConfig.get(SetupConstants.AMCONFIG_PROPERTIES);
@@ -501,11 +509,6 @@ public class AMSetupServlet extends HttpServlet {
             Properties propAMConfig = ServerConfiguration.getProperties(
                 strAMConfigProperties);
             
-            String serverURL = (String)map.get(
-                SetupConstants.CONFIG_VAR_SERVER_URL);
-            String deployuri = (String)map.get(
-                SetupConstants.CONFIG_VAR_SERVER_URI);
-            String serverInstanceName = serverURL + deployuri;
             reInitConfigProperties(serverInstanceName,
                 propAMConfig, strServerConfigXML);
             SSOToken adminSSOToken = getAdminSSOToken();
@@ -590,6 +593,9 @@ public class AMSetupServlet extends HttpServlet {
                 createIdentitiesForWSSecurity(serverURL, deployuri);
             }
             updateSTSwsdl(basedir, deployuri);
+
+            String aceDataDir = basedir + "/" + deployuri + "/auth/ace/data";
+            copyAuthSecurIDFiles(aceDataDir);
 
             startRegistrationProcess(basedir, deployuri);
 
@@ -1039,9 +1045,9 @@ public class AMSetupServlet extends HttpServlet {
         String basedir = (String)map.get(
             SetupConstants.CONFIG_VAR_BASE_DIR);
        
+        String deployuri =
+            (String)map.get(SetupConstants.CONFIG_VAR_SERVER_URI);
         try {
-            String deployuri = (String)map.get(
-                SetupConstants.CONFIG_VAR_SERVER_URI);
             File fhm = new File(basedir + deployuri + "/" + SMS_STR);
             fhm.mkdirs();
         } catch (SecurityException e){
@@ -1052,7 +1058,17 @@ public class AMSetupServlet extends HttpServlet {
         
         for (Iterator i = dataFiles.iterator(); i.hasNext(); ) {
             String file = (String)i.next();
-            StringBuffer sbuf = readFile(file);
+            StringBuffer sbuf = null;
+    
+            // if the file's not there, just output debug msg and skip it
+            try {
+                sbuf = readFile(file);
+            } catch (IOException ioex) {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "AMSetupServlet.initializeConfigProperties: " +
+                    "error reading " + file);
+                break;
+            }
             
             int idx = file.lastIndexOf("/");
             String absFile = (idx != -1) ? file.substring(idx+1) : file;
@@ -1089,6 +1105,11 @@ public class AMSetupServlet extends HttpServlet {
                 absFile.equalsIgnoreCase(SystemProperties.CONFIG_FILE_NAME)
             ) {
                 mapFileNameToContent.put(absFile, swapped);
+            } else if (absFile.equalsIgnoreCase(
+                    SetupConstants.SECURID_PROPERTIES))
+            {
+                writeToFile(basedir + deployuri + "/auth/ace/data/" + absFile,
+                    swapped);
             } else {
                 writeToFile(basedir + "/" + absFile, swapped);
             }
@@ -1100,9 +1121,13 @@ public class AMSetupServlet extends HttpServlet {
         throws IOException {
         InputStreamReader fin = null;
         StringBuffer sbuf = new StringBuffer();
+        InputStream is = null;
         
         try {
-            fin = new InputStreamReader(servletCtx.getResourceAsStream(file));
+            if ((is = servletCtx.getResourceAsStream(file)) == null) {
+                throw new IOException(file + " not found");
+            }
+            fin = new InputStreamReader(is);
             char[] cbuf = new char[1024];
             int len;
             while ((len = fin.read(cbuf)) > 0) {
@@ -1113,7 +1138,14 @@ public class AMSetupServlet extends HttpServlet {
                 try {
                     fin.close();
                 } catch (Exception ex) {
-                    //No handling requried
+                    //No handling required
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception ex) {
+                    // no handling required
                 }
             }
         }
@@ -1945,18 +1977,60 @@ public class AMSetupServlet extends HttpServlet {
         return true;
     }
 
-    private static void copyCtxFile (String srcDir, String file,
+
+    private static void setupSecurIDDirs(String basedir, String deployuri)
+    {
+        /*
+         *  make sure the basedir + "/" + deployuri + "/auth/ace/data"
+         *  directory exists.
+         */
+
+        String aceDataDir = basedir + "/" + deployuri + "/auth/ace/data";
+        File dataAceDir = new File(aceDataDir);
+        if (!dataAceDir.mkdirs()) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.setupSecurIDDirs: " +
+                "failed to create SecurID data directory");
+        }
+    }
+
+    private static void copyAuthSecurIDFiles (String destDir) {
+        /*
+         * not rsa_api.properties, as it's tagged swapped and
+         * written to <configdir>/<uri>/auth/ace/data earlier.
+         */
+        String [] propFiles = {"log4j.properties"};
+        try {
+            for (int i = 0; i < propFiles.length; i++) {
+                if (!copyCtxFile ("/WEB-INF/classes/", propFiles[i], destDir)){
+                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                        "AMSetupServlet.copyAuthSecurIDFiles:" +
+                        "file not copied: /WEB-INF/classes/" + propFiles[i]);
+                }
+            }
+        } catch (IOException ioex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.copyAuthSecurIDFiles:", ioex);
+        }
+    }
+
+    private static boolean copyCtxFile (String srcDir, String file,
         String destDir) throws IOException
     {
         InputStream in = servletCtx.getResourceAsStream(srcDir + file);
-        FileOutputStream fos = new FileOutputStream(destDir + "/" + file);
-        byte[] b = new byte[2000];
-        int len;
-        while ((len = in.read(b)) > 0) {
-            fos.write(b, 0, len);
+        if (in != null) {
+            FileOutputStream fos = new FileOutputStream(destDir + "/" + file);
+            byte[] b = new byte[2000];
+            int len;
+            while ((len = in.read(b)) > 0) {
+                fos.write(b, 0, len);
+            }
+            fos.close();
+            in.close();
+        } else {
+            return false;
         }
-        fos.close();
-        in.close();
+        return true;
     }
     
     private static void initDSConfigMgr(String str) 

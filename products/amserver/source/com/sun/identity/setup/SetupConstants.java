@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.21 2008-03-07 23:27:58 jonnelson Exp $
+ * $Id: SetupConstants.java,v 1.22 2008-04-22 01:34:40 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -511,4 +511,9 @@ public interface SetupConstants {
      * Password for the user login ID.
      */
     String USER_STORE_LOGIN_PWD = "userStoreLoginPassword";
+
+    /**
+     * <code>rsa_api.properties</code> file name.
+     */
+    String SECURID_PROPERTIES = "rsa_api.properties";
 }
