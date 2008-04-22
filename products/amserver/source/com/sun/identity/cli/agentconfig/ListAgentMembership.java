@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAgentMembership.java,v 1.2 2008-04-22 00:23:14 veiming Exp $
+ * $Id: ListAgentMembership.java,v 1.3 2008-04-22 20:59:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,6 +67,19 @@ public class ListAgentMembership extends AuthenticatedCommand {
                 "ATTEMPT_LIST_AGENT_MEMBERSHIP", params);
             AMIdentity amid = new AMIdentity(
                 adminSSOToken, agentName, IdType.AGENT, realm, null); 
+            
+            if (!amid.isExists()) {
+                String[] args = {realm, agentName, 
+                    "agent did not exist"};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_LIST_AGENT_MEMBERSHIP", args);
+                Object[] p = {agentName};
+                String msg = MessageFormat.format(getResourceString(
+                        "list-agent-membership-agent-not-found"), p);
+                throw new CLIException(msg,
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            
             Set groups = amid.getMemberships(IdType.AGENTGROUP);
 
             if ((groups != null) && !groups.isEmpty()) {

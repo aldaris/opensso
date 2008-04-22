@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.64 2008-04-22 00:23:14 veiming Exp $
+ * $Id: AccessManager.java,v 1.65 2008-04-22 20:59:26 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1932,6 +1932,7 @@ public class AccessManager {
         optionalOptions={},
         resourceStrings={
             "list-agent-membership-succeeded=Agent belongs to {0} ({1}).",
+            "list-agent-membership-agent-not-found={0} did not exist.",
             "list-agent-membership-no-members=Agent had no memberships."
         }
     )
@@ -1968,6 +1969,8 @@ public class AccessManager {
           optionalOptions={},
           resourceStrings={
             "remove-agent-to-group-succeeded=Agent was removed from group.",
+            "remove-agent-to-group-agent-invalid-group={0} did not exist.",
+            "remove-agent-to-group-agent-not-member={0} was not a member of {1}.",
             "remove-agent-to-group-succeeded-pural=Agents were removed from group."
           }
       )

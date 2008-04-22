@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveAgentsFromGroup.java,v 1.2 2008-04-22 00:23:14 veiming Exp $
+ * $Id: RemoveAgentsFromGroup.java,v 1.3 2008-04-22 20:59:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,7 +35,6 @@ import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
@@ -70,6 +69,15 @@ public class RemoveAgentsFromGroup extends AuthenticatedCommand {
         try {
             AMIdentity agentGroup = new AMIdentity(
                 adminSSOToken, agentGroupName, IdType.AGENTGROUP, realm, null);
+            if (!agentGroup.isExists()) {
+                Object[] p = {agentGroupName};
+                throw new CLIException(MessageFormat.format(
+                    getResourceString(
+                        "remove-agent-to-group-agent-invalid-group"),
+                    p), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            
+            validateAgents(realm, adminSSOToken, agentGroup, agentNames);
             
             for (Iterator i = agentNames.iterator(); i.hasNext(); ) {
                 agentName = (String)i.next();
@@ -102,6 +110,25 @@ public class RemoveAgentsFromGroup extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_REMOVE_AGENT_FROM_GROUP", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    }
+
+    private void validateAgents(
+        String realm,
+        SSOToken adminSSOToken,
+        AMIdentity agentGroup, 
+        List agentNames
+    ) throws CLIException, IdRepoException, SSOException {
+        for (Iterator i = agentNames.iterator(); i.hasNext();) {
+            String agentName = (String) i.next();
+            AMIdentity amid = new AMIdentity(
+                adminSSOToken, agentName, IdType.AGENTONLY, realm, null);
+            if (!amid.isMember(agentGroup)) {
+                Object[] p = {agentName, agentGroup.getName()};
+                throw new CLIException(MessageFormat.format(
+                    getResourceString("remove-agent-to-group-agent-not-member"),
+                    p), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
         }
     }
 }
