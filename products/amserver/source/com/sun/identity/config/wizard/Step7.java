@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.5 2008-04-11 17:02:52 jonnelson Exp $
+ * $Id: Step7.java,v 1.6 2008-04-22 20:56:25 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,7 @@ package com.sun.identity.config.wizard;
 
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
-import net.sf.click.Page;
+import net.sf.click.Context;
 
 /**
  * This is the summary page for the values entered during the configuration
@@ -34,9 +34,9 @@ import net.sf.click.Page;
 public class Step7 extends AjaxPage {
 
     public void onInit() {
-        
+        Context ctx = getContext();
         // Config Store Properties
-        String tmp =(String)getContext().getSessionAttribute("configDirectory");
+        String tmp =(String)ctx.getSessionAttribute("configDirectory");
         add("configDirectory", tmp);        
         tmp = getAttribute("configStoreHost", getHostName());
         add("configStoreHost", tmp);
@@ -48,20 +48,33 @@ public class Step7 extends AjaxPage {
         add("configStoreLoginId", tmp);
 
         // User Config Store Properties
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_HOST);
-        add("userHostName", tmp);
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_PORT);
-        add("userHostPort", tmp);
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX);        
-        add("userRootSuffix", tmp);
-        tmp = (String)getContext().getSessionAttribute(SetupConstants.USER_STORE_LOGIN_ID);
-        add("userLoginID", tmp);
+        tmp = (String)ctx.getSessionAttribute(SetupConstants.USER_STORE_HOST);
+        if (tmp != null) {
+            add("userHostName", tmp);
+            tmp = (String)ctx.getSessionAttribute(
+                SetupConstants.USER_STORE_PORT);
+            add("userHostPort", tmp);
+            tmp = (String)ctx.getSessionAttribute(
+                SetupConstants.USER_STORE_ROOT_SUFFIX);        
+            add("userRootSuffix", tmp);
+            tmp = (String)ctx.getSessionAttribute(
+                SetupConstants.USER_STORE_LOGIN_ID);
+            add("userLoginID", tmp);
+            
+            tmp = (String)ctx.getSessionAttribute(SetupConstants.USER_STORE_TYPE);
+            if (tmp.equals("LDAPv3ForAMDS")) {
+                add("userStoreType", getLocalizedString("am.ldap.schema"));
+            } else {
+                add("userStoreType", getLocalizedString("generic.ldap.schema"));
+            }
+        }
+        
         
         // Load Balancer Properties
         add("loadBalancerHost", 
-            (String)getContext().getSessionAttribute(SetupConstants.LB_SITE_NAME));
+            (String)ctx.getSessionAttribute(SetupConstants.LB_SITE_NAME));
         add("loadBalancerPort", 
-            (String)getContext().getSessionAttribute(SetupConstants.LB_PRIMARY_URL));
+            (String)ctx.getSessionAttribute(SetupConstants.LB_PRIMARY_URL));
 
         super.onInit();
     }

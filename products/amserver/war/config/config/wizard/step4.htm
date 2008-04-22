@@ -124,6 +124,7 @@
         copyConfigStoreFieldsToUserStoreFields();
         disableUserSettings(false);
         $('nextTabButton').disabled = true;
+        AjaxUtils.call("$context$path?actionLink=copyData");
     }
     
     function disableUserSettings(checked) {

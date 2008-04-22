@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.7 2008-04-11 17:02:52 jonnelson Exp $
+ * $Id: Step4.java,v 1.8 2008-04-22 20:56:25 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 import net.sf.click.control.ActionLink;
-import net.sf.click.Context;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
+import net.sf.click.Context;
 /**
  * Step 4 is the input of the remote user data store properties.
  */
@@ -33,6 +33,8 @@ public class Step4 extends AjaxPage {
     public static final String LDAP_STORE_SESSION_KEY = "wizardCustomUserStore";
     public ActionLink clearDataLink = 
         new ActionLink("clearData", this, "clearData");
+    public ActionLink copyDataLink = 
+        new ActionLink("copyData", this, "copyData");
 
     public ActionLink setHostLink = 
         new ActionLink("setHost", this, "setHost");
@@ -46,10 +48,47 @@ public class Step4 extends AjaxPage {
         new ActionLink("setPassword", this, "setPassword");
     public ActionLink setStoreTypeLink = 
         new ActionLink("setStoreType", this, "setStoreType");    
-    
+
     private String responseString = "ok";
     
     public Step4() {
+    }
+    
+    public void onInit() {
+        super.onInit();
+        copyDataEx();
+    }
+
+    public boolean copyData() {
+        copyDataEx();
+        setPath(null);
+        return false;
+    }
+    public void copyDataEx() {
+        Context ctx = getContext();
+        
+        if (ctx.getSessionAttribute(SetupConstants.USER_STORE_HOST) == null) {
+            ctx.setSessionAttribute(SetupConstants.USER_STORE_HOST,
+                getAttribute("configStoreHost", getHostName()));
+        }
+        if (ctx.getSessionAttribute(SetupConstants.USER_STORE_PORT) == null) {
+            ctx.setSessionAttribute(SetupConstants.USER_STORE_PORT,
+                getAttribute("configStorePort", getAvailablePort(50389)));
+        }
+        if (ctx.getSessionAttribute(SetupConstants.USER_STORE_LOGIN_ID) == null)
+        {
+            ctx.setSessionAttribute(SetupConstants.USER_STORE_LOGIN_ID,
+                getAttribute("configStoreLoginId", Wizard.defaultUserName));
+        }
+        if (ctx.getSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX) 
+            == null) {
+            ctx.setSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX,
+                getAttribute("rootSuffix", Wizard.defaultRootSuffix));
+        }
+        if (ctx.getSessionAttribute(SetupConstants.USER_STORE_TYPE) == null) {
+            ctx.setSessionAttribute(SetupConstants.USER_STORE_TYPE,
+                "LDAPv3ForAMDS");
+        }
     }
     
     /**
@@ -93,8 +132,8 @@ public class Step4 extends AjaxPage {
         if ((port != null) && port.length() > 0) {
             int intValue = Integer.parseInt(port);
             if ((intValue > 0) && (intValue < 65535)) {
-            getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_PORT, port);
+                getContext().setSessionAttribute(
+                    SetupConstants.USER_STORE_PORT, port);
             } else {
                 responseString = "invalid.port.number";
             }
@@ -155,8 +194,4 @@ public class Step4 extends AjaxPage {
         setPath(null);
         return false;
     }    
-    
-    public void onInit() {
-        super.onInit();
-    }   
 }
