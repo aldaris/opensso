@@ -89,14 +89,9 @@ USING_PRIVATE_NAMESPACE
  * Names of the various advices that we need to process.
  */
 #define	AUTH_SCHEME_KEY			"AuthSchemeConditionAdvice"
-#define	AUTH_SCHEME_URL_PREFIX		"&module="
-#define	AUTH_SCHEME_URL_PREFIX_LEN	(sizeof(AUTH_SCHEME_URL_PREFIX) - 1)
 #define	AUTH_LEVEL_KEY			"AuthLevelConditionAdvice"
-#define	AUTH_LEVEL_URL_PREFIX		"&authlevel="
-#define	AUTH_LEVEL_URL_PREFIX_LEN	(sizeof(AUTH_LEVEL_URL_PREFIX) - 1)
 #define	AUTH_REALM_KEY			"AuthenticateToRealmConditionAdvice"
-#define	AUTH_REALM_URL_PREFIX		"&realm="
-#define	AUTH_REALM_URL_PREFIX_LEN	(sizeof(AUTH_REALM_URL_PREFIX) - 1)
+#define	AUTH_SERVICE_KEY		"AuthenticateToServiceConditionAdvice"
 
 #define COMPOSITE_ADVICE_KEY "sunamcompositeadvice"
 #define SESSION_COND_KEY     "SessionConditionAdvice"
@@ -2341,8 +2336,6 @@ am_web_get_url_to_redirect(am_status_t status,
 	     * specify the auth module (scheme), because the module seems
 	     * more specific than the level.
 	     */
-	    const char *auth_advice_url_prefix = "";
-	    size_t auth_advice_url_prefix_len = 0;
 	    const char *auth_advice_value = "";
 	    size_t auth_advice_value_len = 0;
 	    const char *session_adv_value = "";
@@ -2351,29 +2344,27 @@ am_web_get_url_to_redirect(am_status_t status,
 		auth_advice_value = am_map_find_first_value(advice_map,
 							AUTH_SCHEME_KEY);
 		if (NULL != auth_advice_value) {
-			auth_advice_url_prefix = AUTH_SCHEME_URL_PREFIX;
-			auth_advice_url_prefix_len = AUTH_SCHEME_URL_PREFIX_LEN;
 			auth_advice_value_len = strlen(auth_advice_value);
 		} else {
 		    auth_advice_value = am_map_find_first_value(advice_map,
 							    AUTH_LEVEL_KEY);
 		    if (NULL != auth_advice_value) {
-			auth_advice_url_prefix = AUTH_LEVEL_URL_PREFIX;
-			auth_advice_url_prefix_len = AUTH_LEVEL_URL_PREFIX_LEN;
 			auth_advice_value_len = strlen(auth_advice_value);
-		    } 
-                    else {
+		    } else {
                         auth_advice_value = am_map_find_first_value(advice_map,
                                                             AUTH_REALM_KEY);
                         if (NULL != auth_advice_value) {
-                            auth_advice_url_prefix = AUTH_REALM_URL_PREFIX;
-                            auth_advice_url_prefix_len = AUTH_REALM_URL_PREFIX_LEN;
                             auth_advice_value_len = strlen(auth_advice_value);
-                        }
-                        else {
-                            auth_advice_value = "";
-                            am_web_log_debug("%s: advice_map contains no "
+                        } else {
+                            auth_advice_value = am_map_find_first_value(advice_map,
+                                                            AUTH_SERVICE_KEY);
+                            if (NULL != auth_advice_value) {
+                                auth_advice_value_len = strlen(auth_advice_value);
+                            } else {
+                                auth_advice_value = "";
+                                am_web_log_debug("%s: advice_map contains no "
                                              "Auth-related advices", thisfunc);
+                            }
                         }
                     }		
 
