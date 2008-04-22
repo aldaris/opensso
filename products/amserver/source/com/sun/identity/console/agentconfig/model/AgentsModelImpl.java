@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.7 2008-04-15 03:39:16 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.8 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +74,7 @@ public class AgentsModelImpl
     /**
      * Returns agent names.
      *
+     * @param realmName Realm where agents reside.
      * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
@@ -81,11 +82,11 @@ public class AgentsModelImpl
      * @throws AMConsoleException if result cannot be returned.
      */
     public int getAgentNames(
+        String realmName,
         Set setTypes,
         String pattern,
         Set results
     ) throws AMConsoleException {
-        String realmName = "/";
         int sizeLimit = getSearchResultLimit();
         int timeLimit = getSearchTimeOutLimit();
         String[] params = {realmName, setTypes.toString(), pattern,
@@ -139,6 +140,7 @@ public class AgentsModelImpl
     /**
      * Returns agent group names.
      *
+     * @param realmName Realm where agent groups reside.
      * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
@@ -146,11 +148,11 @@ public class AgentsModelImpl
      * @throws AMConsoleException if result cannot be returned.
      */
     public int getAgentGroupNames(
+        String realmName,
         Set setTypes,
         String pattern,
         Set results
     ) throws AMConsoleException {
-        String realmName = "/";
         int sizeLimit = getSearchResultLimit();
         int timeLimit = getSearchTimeOutLimit();
         String[] params = {realmName, setTypes.toString(), pattern,
@@ -229,6 +231,7 @@ public class AgentsModelImpl
     /**
      * Creates agent.
      *
+     * @param realmName Realm where agent resides.
      * @param name Name of agent.
      * @param type Type of agent.
      * @param password Password of agent.
@@ -236,14 +239,14 @@ public class AgentsModelImpl
      * @throws AMConsoleException if agent cannot be created.
      */
     public void createAgent(
-            String name,
-            String type,
-            String password,
-            String choice)
-            throws AMConsoleException {
-        String realmName = "/";
+        String realmName,
+        String name,
+        String type,
+        String password,
+        String choice
+    ) throws AMConsoleException {
         String[] params = {realmName, name, type};
-        
+
         try {
             logEvent("ATTEMPT_CREATE_AGENT", params);
             Map map = AgentConfiguration.getDefaultValues(type);
@@ -257,7 +260,8 @@ public class AgentsModelImpl
                 newset.add(AgentConfiguration.VAL_CONFIG_REPO_LOCAL);
                 map.put(AgentConfiguration.ATTR_CONFIG_REPO, newset);
             }
-            AgentConfiguration.createAgent(getUserSSOToken(), name, type, map);
+            AgentConfiguration.createAgent(getUserSSOToken(), realmName, name, 
+                type, map);
             logEvent("SUCCEED_CREATE_AGENT", params);
         } catch (ConfigurationException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
@@ -285,6 +289,7 @@ public class AgentsModelImpl
     /**
      * Creates agent.
      *
+     * @param realmName Realm where agent resides.
      * @param name Name of agent.
      * @param type Type of agent.
      * @param password Password of agent.
@@ -293,13 +298,13 @@ public class AgentsModelImpl
      * @throws AMConsoleException if agent cannot be created.
      */
     public void createAgent(
+        String realmName,
         String name,
         String type,
         String password,
         String serverURL,
         String agentURL
     ) throws AMConsoleException {
-        String realmName = "/";
         String[] params = {realmName, name, type};
 
         try {
@@ -308,8 +313,8 @@ public class AgentsModelImpl
             Set set = new HashSet(2);
             map.put(AgentConfiguration.ATTR_NAME_PWD, set);
             set.add(password);
-            AgentConfiguration.createAgent(getUserSSOToken(), name, type,
-                map, serverURL, agentURL);
+            AgentConfiguration.createAgent(getUserSSOToken(), realmName, name, 
+                type, map, serverURL, agentURL);
             logEvent("SUCCEED_CREATE_AGENT", params);
         } catch (ConfigurationException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
@@ -342,6 +347,7 @@ public class AgentsModelImpl
     /**
      * Creates agent group.
      *
+     * @param realmName Realm where agent group resides.
      * @param name Name of agent group.
      * @param type Type of agent group.
      * @param serverURL Server URL.
@@ -349,17 +355,18 @@ public class AgentsModelImpl
      * @throws AMConsoleException if agent group cannot be created.
      */
     public void createAgentGroup(
+        String realmName,
         String name,
         String type,
         String serverURL,
         String agentURL
     ) throws AMConsoleException {
-        String realmName = "/";
         String[] params = {realmName, name, type};
 
         try {
             logEvent("ATTEMPT_CREATE_AGENT_GROUP", params);
-            AgentConfiguration.createAgentGroup(getUserSSOToken(), name, type,
+            AgentConfiguration.createAgentGroup(getUserSSOToken(), realmName,
+                name, type,
                 AgentConfiguration.getDefaultValues(type), serverURL, agentURL);
             logEvent("SUCCEED_CREATE_AGENT_GROUP", params);
         } catch (MalformedURLException e) {
@@ -393,19 +400,19 @@ public class AgentsModelImpl
     /**
      * Creates agent group.
      *
+     * @param realmName Realm where agent group resides.
      * @param name Name of agent group.
      * @param type Type of agent group.
      * @throws AMConsoleException if agent group cannot be created.
      */
-    public void createAgentGroup(String name, String type) 
+    public void createAgentGroup(String realmName, String name, String type) 
         throws AMConsoleException {
-        String realmName = "/";
         String[] params = {realmName, name, type};
 
         try {
             logEvent("ATTEMPT_CREATE_AGENT_GROUP", params);
-            AgentConfiguration.createAgentGroup(getUserSSOToken(), name, type, 
-                AgentConfiguration.getDefaultValues(type));
+            AgentConfiguration.createAgentGroup(getUserSSOToken(), realmName,
+                name, type, AgentConfiguration.getDefaultValues(type));
             logEvent("SUCCEED_CREATE_AGENT_GROUP", params);
         } catch (ConfigurationException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
@@ -433,13 +440,13 @@ public class AgentsModelImpl
     /**
      * Deletes agents.
      *
+     * @param realmName Realm where agent resides.
      * @param agents Set of agent names to be deleted.
      * @throws AMConsoleException if agents cannot be deleted.
      */
-    public void deleteAgents(Set agents) 
+    public void deleteAgents(String realmName, Set agents) 
         throws AMConsoleException {
         if ((agents != null) && !agents.isEmpty()) {
-            String realmName = "/";
             String idNames = AMFormatUtils.toCommaSeparatedFormat(agents);
             String[] params = {realmName, idNames};
             logEvent("ATTEMPT_DELETE_AGENT", params);
@@ -464,13 +471,13 @@ public class AgentsModelImpl
     /**
      * Deletes agent groups.
      *
+     * @param realmName Realm where agent group resides.
      * @param agentGroups Set of agent group names to be deleted.
      * @throws AMConsoleException if agents cannot be deleted.
      */
-    public void deleteAgentGroups(Set agentGroups) 
+    public void deleteAgentGroups(String realmName, Set agentGroups) 
         throws AMConsoleException {
         if ((agentGroups != null) && !agentGroups.isEmpty()) {
-            String realmName = "/";
             String idNames = AMFormatUtils.toCommaSeparatedFormat(agentGroups);
             String[] params = {realmName, idNames};
             logEvent("ATTEMPT_DELETE_AGENT_GROUP", params);
@@ -506,16 +513,17 @@ public class AgentsModelImpl
     /**
      * Returns the group of which agent belongs to.
      *
+     * @param realmName Realm where agent group resides.
      * @param universalId Universal ID of the agent.
      * @return the group of which agent belongs to.
      * @throws AMConsoleException if object cannot located.
      */
-    public String getAgentGroupId(String universalId)
+    public String getAgentGroupId(String realmName, String universalId)
         throws AMConsoleException {
-        String groupName = getAgentGroup(universalId);
+        String groupName = getAgentGroup(realmName, universalId);
         if (groupName != null) {
             AMIdentity amid = new AMIdentity(getUserSSOToken(), 
-                groupName, IdType.AGENTGROUP, "/", null);
+                groupName, IdType.AGENTGROUP, realmName, null);
             return amid.getUniversalId();
         } else {
             return null;
@@ -525,13 +533,14 @@ public class AgentsModelImpl
     /**
      * Returns the group of which agent belongs to.
      *
+     * @param realmName Realm where agent group resides.
      * @param universalId Universal ID of the agent.
      * @return the group of which agent belongs to.
      * @throws AMConsoleException if object cannot located.
      */
-    public String getAgentGroup(String universalId) 
+    public String getAgentGroup(String realmName, String universalId) 
         throws AMConsoleException {
-        String[] param = {"/", universalId};
+        String[] param = {realmName, universalId};
         logEvent("ATTEMPT_GET_AGENT_ATTRIBUTE_VALUES", param);
         String groupName = null;
         try {
@@ -546,11 +555,11 @@ public class AgentsModelImpl
             logEvent("SUCCEED_GET_AGENT_ATTRIBUTE_VALUES", param);
             return groupName;
         } catch (SSOException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {realmName, universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {realmName, universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
@@ -559,14 +568,18 @@ public class AgentsModelImpl
     /**
      * Returns attribute values of an agent or agent group.
      *
+     * @param realmName Realm where agent or agent group resides.
      * @param universalId Universal ID of the agent/agent group.
      * @param withInheritValues <code>true</code> to include inherited values.
      * @return attribute values of an agent or agent group.
      * @throws AMConsoleException if object cannot located.
      */
-    public Map getAttributeValues(String universalId, boolean withInheritValues)
-        throws AMConsoleException {
-        String[] param = {"/", universalId};
+    public Map getAttributeValues(
+        String realmName,
+        String universalId, 
+        boolean withInheritValues
+    ) throws AMConsoleException {
+        String[] param = {universalId};
         logEvent("ATTEMPT_GET_AGENT_ATTRIBUTE_VALUES", param);
         
         try {
@@ -575,7 +588,7 @@ public class AgentsModelImpl
             Map values = AgentConfiguration.getAgentAttributes(amid, false);
             
             if (withInheritValues) {
-                String groupId = getAgentGroupId(universalId);
+                String groupId = getAgentGroupId(realmName, universalId);
                 
                 if ((groupId != null) && (groupId.trim().length() > 0)) {
                     AMIdentity group = IdUtils.getIdentity(
@@ -596,15 +609,15 @@ public class AgentsModelImpl
             logEvent("SUCCEED_GET_AGENT_ATTRIBUTE_VALUES", param);
             return values;
         } catch (SSOException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (SMSException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
@@ -613,31 +626,33 @@ public class AgentsModelImpl
     /**
      * Returns attribute values of an agent group.
      *
+     * @param realmName Realm where agent group resides.
      * @param agentName agent group.
      * @return attribute values of an agent group.
      * @throws AMConsoleException if object cannot located.
      */
-    public Map getGroupAttributeValues(String groupName)
+    public Map getGroupAttributeValues(String realmName, String groupName)
         throws AMConsoleException {
-        String[] param = {"/", groupName};
+        String[] param = {realmName, groupName};
         logEvent("ATTEMPT_GET_AGENT_ATTRIBUTE_VALUES", param);
         
         try {
             AMIdentity amid = new AMIdentity(
-                getUserSSOToken(), groupName, IdType.AGENTGROUP, "/", null);
+                getUserSSOToken(), groupName, IdType.AGENTGROUP, realmName, 
+                null);
             Map values =  AgentConfiguration.getAgentAttributes(amid, false);
             logEvent("SUCCEED_GET_AGENT_ATTRIBUTE_VALUES", param);
             return values;
         } catch (SSOException e) {
-            String[] paramsEx = {"/", groupName, getErrorString(e)};
+            String[] paramsEx = {realmName, groupName, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (SMSException e) {
-            String[] paramsEx = {"/", groupName, getErrorString(e)};
+            String[] paramsEx = {realmName, groupName, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {"/", groupName, getErrorString(e)};
+            String[] paramsEx = {realmName, groupName, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
@@ -652,7 +667,7 @@ public class AgentsModelImpl
      */
     public void setAttributeValues(String universalId, Map values)
         throws AMConsoleException {
-        String[] param = {"/", universalId};
+        String[] param = {universalId};
         logEvent("ATTEMPT_SET_AGENT_ATTRIBUTE_VALUE", param);
         
         try {
@@ -664,11 +679,11 @@ public class AgentsModelImpl
             amid.store();
             logEvent("SUCCEED_SET_AGENT_ATTRIBUTE_VALUE", param);
         } catch (SSOException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
@@ -677,13 +692,14 @@ public class AgentsModelImpl
     /**
      * Modifies agent's group.
      *
+     * @param realmName realm where agent resides.
      * @param universalId Universal ID of the agent.
      * @param groupName Name of group.
      * @throws AMConsoleException if object cannot located.
      */
-    public void setGroup(String universalId, String groupName)
+    public void setGroup(String realmName, String universalId, String groupName)
         throws AMConsoleException {
-        String[] param = {"/", universalId};
+        String[] param = {realmName, universalId};
         logEvent("ATTEMPT_SET_AGENT_ATTRIBUTE_VALUE", param);
         
         try {
@@ -691,7 +707,8 @@ public class AgentsModelImpl
                 getUserSSOToken(), universalId);
             if ((groupName != null) && (groupName.length() > 0)) {
                 AMIdentity group =  new AMIdentity(
-                    getUserSSOToken(), groupName, IdType.AGENTGROUP, "/", null);
+                    getUserSSOToken(), groupName, IdType.AGENTGROUP, realmName,
+                    null);
                 group.addMember(amid);
             } else {
                 Set groups = amid.getMemberships(IdType.AGENTGROUP);
@@ -703,11 +720,11 @@ public class AgentsModelImpl
             
             logEvent("SUCCEED_SET_AGENT_ATTRIBUTE_VALUE", param);
         } catch (SSOException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {realmName, universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {"/", universalId, getErrorString(e)};
+            String[] paramsEx = {realmName, universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
@@ -834,13 +851,14 @@ public class AgentsModelImpl
     /**
      * Returns a set of inherited property names
      *
+     * @param realmName Realm where agent resides
      * @param universalId Universal ID of the agent.
      * @return a set of inherited property names.
      */
-    public Set getInheritedPropertyNames(String universalId) {
+    public Set getInheritedPropertyNames(String realmName, String universalId) {
         Set names = null;
         try {
-            if (getAgentGroup(universalId) != null) {
+            if (getAgentGroup(realmName, universalId) != null) {
                 AMIdentity amid = IdUtils.getIdentity(
                     getUserSSOToken(), universalId);
                 names = AgentConfiguration.getInheritedAttributeNames(amid);
@@ -903,18 +921,22 @@ public class AgentsModelImpl
     /**
      * Returns attribute values of agent's group.
      *
+     * @param realmName Realm where agent group resides
      * @param agentId Universal Id of the agent.
      * @param attrNames Attribute Names of interests.
      * @return attribute values of agent's group.
      * @throws AMConsoleException if unable to get the attribute values.
      */
-    public Map getAgentGroupValues(String agentId, Set attrNames) 
-        throws AMConsoleException {
+    public Map getAgentGroupValues(
+        String realmName,
+        String agentId, 
+        Set attrNames
+    ) throws AMConsoleException {
         if (attrNames.isEmpty()) {
             return Collections.EMPTY_MAP;
         }
 
-        String groupId = getAgentGroupId(agentId);
+        String groupId = getAgentGroupId(realmName, agentId);
         if ((groupId != null) && (groupId.length() != 0)) {
             try {
                 AMIdentity amid = IdUtils.getIdentity(

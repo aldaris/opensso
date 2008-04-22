@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.5 2008-04-14 23:24:32 veiming Exp $
+ * $Id: AgentsModel.java,v 1.6 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ public interface AgentsModel
     /**
      * Returns agent names.
      *
+     * @param realmName Realm where agents reside.
      * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
@@ -47,6 +48,7 @@ public interface AgentsModel
      * @throws AMConsoleException if result cannot be returned.
      */
     int getAgentNames(
+        String realmName,
         Set setTypes,
         String pattern,
         Set results
@@ -55,6 +57,7 @@ public interface AgentsModel
     /**
      * Returns agent group names.
      *
+     * @param realmName Realm where agent groups reside.
      * @param setTypes Agent Types.
      * @param pattern Search Pattern.
      * @param results Set to contains the results.
@@ -62,6 +65,7 @@ public interface AgentsModel
      * @throws AMConsoleException if result cannot be returned.
      */
     int getAgentGroupNames(
+        String realmName,
         Set setTypes,
         String pattern,
         Set results
@@ -70,6 +74,7 @@ public interface AgentsModel
     /**
      * Creates agent.
      *
+     * @param realmName Realm where agent resides.
      * @param name Name of agent.
      * @param type Type of agent.
      * @param password Password of agent.
@@ -77,6 +82,7 @@ public interface AgentsModel
      * @throws AMConsoleException if agent cannot be created.
      */
     void createAgent(
+        String realmName,
         String name,
         String type,
         String password,
@@ -86,6 +92,7 @@ public interface AgentsModel
     /**
      * Creates agent.
      *
+     * @param realmName Realm where agent resides.
      * @param name Name of agent.
      * @param type Type of agent.
      * @param password Password of agent.
@@ -94,6 +101,7 @@ public interface AgentsModel
      * @throws AMConsoleException if agent cannot be created.
      */
     void createAgent(
+        String realmName,
         String name,
         String type,
         String password,
@@ -104,15 +112,21 @@ public interface AgentsModel
     /**
      * Creates agent group.
      *
+     * @param realmName Realm where agent group resides.
      * @param name Name of agent group.
      * @param type Type of agent group.
      * @throws AMConsoleException if agent group cannot be created.
      */
-    void createAgentGroup(String name, String type) throws AMConsoleException;
+    void createAgentGroup(
+        String realmName,
+        String name, 
+        String type
+    ) throws AMConsoleException;
     
     /**
      * Creates agent group.
      *
+     * @param realmName Realm where agent group resides.
      * @param name Name of agent group.
      * @param type Type of agent group.
      * @param serverURL Server URL.
@@ -120,6 +134,7 @@ public interface AgentsModel
      * @throws AMConsoleException if agent group cannot be created.
      */
     void createAgentGroup(
+        String realmName,
         String name,
         String type,
         String serverURL,
@@ -128,57 +143,69 @@ public interface AgentsModel
     /**
      * Deletes agents.
      *
+     * @param realmName Realm where agent resides.
      * @param agents Set of agent names to be deleted.
      * @throws AMConsoleException if agents cannot be deleted.
      */
-    void deleteAgents(Set agents) throws AMConsoleException;
+    void deleteAgents(String realmName, Set agents) throws AMConsoleException;
     
     /**
      * Deletes agent groups.
      *
+     * @param realmName Realm where agent group resides.
      * @param agentGroups Set of agent group names to be deleted.
      * @throws AMConsoleException if agents cannot be deleted.
      */
-    void deleteAgentGroups(Set agentGroups) throws AMConsoleException;
+    void deleteAgentGroups(String realmName, Set agentGroups) 
+        throws AMConsoleException;
     
     
     /**
      * Returns the group of which agent belongs to.
      *
+     * @param realmName Realm where agent group resides.
      * @param universalId Universal ID of the agent.
      * @return the group of which agent belongs to.
      * @throws AMConsoleException if object cannot located.
      */
-    String getAgentGroup(String universalId) throws AMConsoleException;
+    String getAgentGroup(String realmName, String universalId)
+        throws AMConsoleException;
     
     /**
      * Returns the group of which agent belongs to.
      *
+     * @param realmName Realm where agent group resides.
      * @param universalId Universal ID of the agent.
      * @return the group of which agent belongs to.
      * @throws AMConsoleException if object cannot located.
      */
-    String getAgentGroupId(String universalId) throws AMConsoleException;
+    String getAgentGroupId(String realmName, String universalId)
+        throws AMConsoleException;
     
     /**
      * Returns attribute values of an agent or agent group.
      *
+     * @param realmName Realm where agent or agent group resides.
      * @param universalId Universal ID of the agent/agent group.
      * @param withInheritValues <code>true</code> to include inherited values.
      * @return attribute values of an agent or agent group.
      * @throws AMConsoleException if object cannot located.
      */
-    Map getAttributeValues(String universalId, boolean withInheritValues)
-        throws AMConsoleException;
+    Map getAttributeValues(
+        String realmName,
+        String universalId, 
+        boolean withInheritValues
+        ) throws AMConsoleException;
     
     /**
      * Returns attribute values of an agent group.
      *
+     * @param realmName Realm where agent group resides.
      * @param agentName agent group.
      * @return attribute values of an agent group.
      * @throws AMConsoleException if object cannot located.
      */
-    public Map getGroupAttributeValues(String groupName)
+    public Map getGroupAttributeValues(String realmName, String groupName)
         throws AMConsoleException;
         
     /**
@@ -194,11 +221,12 @@ public interface AgentsModel
     /**
      * Modifies agent's group.
      *
+     * @param realmName realm where agent resides.
      * @param universalId Universal ID of the agent.
      * @param groupName Name of group.
      * @throws AMConsoleException if object cannot located.
      */
-    void setGroup(String universalId, String groupName)
+    void setGroup(String realmName, String universalId, String groupName)
         throws AMConsoleException;
     
     /**
@@ -254,10 +282,11 @@ public interface AgentsModel
     /**
      * Returns a set of inherited property names.
      *
+     * @param realmName Realm where agent resides
      * @param universalId Universal ID of the agent.
      * @return a set of inherited property names
      */
-    Set getInheritedPropertyNames(String universalId);
+    Set getInheritedPropertyNames(String realmName, String universalId);
     
     /**
      * Returns attribute schemas of a given set of attributes.
@@ -281,12 +310,13 @@ public interface AgentsModel
     /**
      * Returns attribute values of agent's group.
      *
+      @param realmName Realm where agent group resides
      * @param agentId Universal Id of the agent.
      * @param attrNames Attribute Names of interests.
      * @return attribute values of agent's group.
      * @throws AMConsoleException if unable to get the attribute values.
      */
-    Map getAgentGroupValues(String agentId, Set attrNames) 
+    Map getAgentGroupValues(String realm, String agentId, Set attrNames) 
         throws AMConsoleException;
     
     /**

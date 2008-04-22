@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAgents.java,v 1.1 2007-10-26 17:15:17 veiming Exp $
+ * $Id: DeleteAgents.java,v 1.2 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class DeleteAgents extends AuthenticatedCommand {
         ldapLogin();
 
         SSOToken adminSSOToken = getAdminSSOToken();
-        String realm = "/";
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         List agentNames = (List)rc.getOption(IArgument.AGENT_NAMES);
 
         String displayableNames = tokenize(agentNames);

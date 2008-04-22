@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAgentsToGroup.java,v 1.2 2008-02-29 20:35:27 veiming Exp $
+ * $Id: AddAgentsToGroup.java,v 1.3 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -59,7 +59,7 @@ public class AddAgentsToGroup extends AuthenticatedCommand {
 
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = "/";
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String agentGroupName = getStringOptionValue(
             IArgument.AGENT_GROUP_NAME);
         List agentNames = rc.getOption(IArgument.AGENT_NAMES);

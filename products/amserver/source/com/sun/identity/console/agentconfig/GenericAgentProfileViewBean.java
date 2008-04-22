@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.9 2008-04-15 03:39:16 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.10 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.base.AMViewBeanBase;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.property.AgentPropertyXMLBuilder;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
@@ -136,9 +137,11 @@ public class GenericAgentProfileViewBean
             
             try {
                 if (!submitCycle) {
+                    String curRealm = (String) getPageSessionAttribute(
+                        AMAdminConstants.CURRENT_REALM);
                     // !isGroup should that we do not inherit value is
                     // the identity is a group.
-                    Map attrValues = model.getAttributeValues(
+                    Map attrValues = model.getAttributeValues(curRealm,
                         universalId, !isGroup);
                     propertySheetModel.clear();
                     AMPropertySheet prop = (AMPropertySheet)getChild(

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.5 2008-04-14 23:24:31 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.6 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.jato.view.html.HREF;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.console.base.AMViewBeanBase;
@@ -44,6 +45,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.sm.SMSSchema;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
@@ -68,7 +70,11 @@ import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.AgentsModelImpl;
 import com.sun.identity.console.base.AMPostViewBean;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
+import com.sun.identity.console.base.model.AMAdminConstants;
+import com.sun.identity.console.realm.RMRealmViewBean;
+import com.sun.web.ui.model.CCBreadCrumbsModel;
 import com.sun.web.ui.model.CCNavNode;
+import com.sun.web.ui.view.breadcrumb.CCBreadCrumbs;
 import com.sun.web.ui.view.tabs.CCTabs;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -84,6 +90,10 @@ public class AgentsViewBean
     extends AMPrimaryMastHeadViewBean
     implements HasEntitiesTabs
 {
+    private static final String PARENTAGE_PATH = "parentagepath";
+    private static final String PARENTAGE_PATH_HREF = "parentagepathHref";
+    private static final String TXT_ROOT = "txtRoot";
+
     static final String GENERIC_VIEW_BEAN =
         "com.sun.identity.console.agentconfig.GenericAgentProfileViewBean";
     static final String DEFAULT_DISPLAY_URL =
@@ -127,7 +137,6 @@ public class AgentsViewBean
     private static final String PAGETITLE = "pgtitle";
     public static final String DEFAULT_ID_TYPE = "J2EEAgent";
     static final String ATTR_NAME_AGENT_TYPE = "Type=";
-    static final String TAB_AGENT_PREFIX = "46";
     
     public static String DEVICE_KEY = "sunIdentityServerDeviceKeyValue";
     public static String DESCRIPTION = "description";
@@ -181,16 +190,20 @@ public class AgentsViewBean
     protected void createTabModel() {
         if (tabModel == null) {
             AMViewConfig amconfig = AMViewConfig.getInstance();
-            tabModel = amconfig.getTabsModel(
-                "/", getRequestContext().getRequest());
-            String tabIdx = (String)getPageSessionAttribute(
-                getTrackingTabIDName());
-
-            if (tabIdx != null) {
-                selectedNode = addAgentsTab(Integer.parseInt(tabIdx));
-                setPageSessionAttribute("CCTabs.SelectedTabId", tabIdx);
-            } else {
-                addAgentsTab(-1);
+            String realmName = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
+            if (realmName != null) {
+                tabModel = amconfig.getTabsModel("realms", realmName,
+                    getRequestContext().getRequest());
+                String tabIdx = (String) getPageSessionAttribute(
+                    getTrackingTabIDName());
+                if (tabIdx != null) {
+                    selectedNode = addAgentsTab(Integer.parseInt(tabIdx));
+                    setPageSessionAttribute("CCTabs.SelectedTabId", tabIdx);
+                } else {
+                    addAgentsTab(-1);
+                }
+                registerChild(TAB_COMMON, CCTabs.class);
             }
             tabModel.clear();
             registerChild(TAB_COMMON, CCTabs.class);
@@ -201,6 +214,8 @@ public class AgentsViewBean
         super.registerChildren();
         registerChild(TF_FILTER, CCTextField.class);
         registerChild(BTN_SEARCH, CCButton.class);
+        registerChild(PARENTAGE_PATH, CCBreadCrumbs.class);
+        registerChild(PARENTAGE_PATH_HREF, HREF.class);
         registerChild(PAGETITLE, CCPageTitle.class);
         registerChild(TBL_SEARCH, CCActionTable.class);
         registerChild(TBL_SEARCH_GROUP, CCActionTable.class);
@@ -211,8 +226,12 @@ public class AgentsViewBean
 
     protected View createChild(String name) {
         View view = null;
-        
-        if (name.equals(TAB_COMMON)) {
+
+        if (name.equals(PARENTAGE_PATH)) {
+            view = createParentagePath(name);
+        } else if (name.equals(PARENTAGE_PATH_HREF)) {
+            view = new HREF(this, name, null);
+        } else if (name.equals(TAB_COMMON)) {
             view = new CCTabs(this, tabModel, name);
         } else if (name.equals(TBL_SEARCH)) {
             populateTableModelEx();
@@ -296,10 +315,11 @@ public class AgentsViewBean
      * @param nodeID Selected Node ID.
      */
     public void nodeClicked(RequestInvocationEvent event, int nodeID) {
+        boolean forwardTo = false;
         String strNodeId = Integer.toString(nodeID);
         if (strNodeId.length() > 2) {
             String prefix = strNodeId.substring(0, 2);
-            if (prefix.equals("46")) {
+            if (prefix.equals(AMAdminConstants.TAB_AGENT_PREFIX)) {
                 setPageSessionAttribute(getTrackingTabIDName(), 
                     Integer.toString(nodeID));
                 AMViewConfig amconfig = AMViewConfig.getInstance();
@@ -314,21 +334,68 @@ public class AgentsViewBean
                     passPgSessionMap(vb);
                     vb.setTargetViewBeanURL("../agentconfig/Agents");
                     vb.forwardTo(getRequestContext());
-                } else {
-                    forwardTo();
+                    forwardTo = true;
                 }
-            } else {
-                super.nodeClicked(event, nodeID);
             }
-        } else {
-            super.nodeClicked(event, nodeID);
         }
+        
+        if (!forwardTo) {
+            try {
+                AMViewBeanBase vb = getTabNodeAssociatedViewBean("realms",
+                    nodeID);
+                String tmp = (String) getPageSessionAttribute(
+                    AMAdminConstants.PREVIOUS_REALM);
+                vb.setPageSessionAttribute(AMAdminConstants.PREVIOUS_REALM,tmp);
+
+                tmp = (String) getPageSessionAttribute(
+                    AMAdminConstants.CURRENT_REALM);
+                vb.setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, tmp);
+
+                tmp = (String) getPageSessionAttribute(
+                    AMAdminConstants.PREVIOUS_TAB_ID);
+                vb.setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, 
+                    tmp);
+                unlockPageTrailForSwapping();
+                passPgSessionMap(vb);
+                vb.forwardTo(getRequestContext());
+            } catch (AMConsoleException e) {
+                debug.error("AgentViewBean.nodeClicked", e);
+                forwardTo();
+            }
+        }
+    }
+    
+    /**
+     * Handles 'Back to' button request. In this case, it takes you back
+     * to the realm view.
+     *
+     * @param event Request Invocation Event.
+     */
+    public void handleButton1Request(RequestInvocationEvent event) {
+        backTrail();
+        // reset the current realm to be the realm that was being viewed before
+        // the profile page was opened.
+        String tmp = 
+            (String)getPageSessionAttribute(AMAdminConstants.PREVIOUS_REALM);
+        setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, tmp);
+
+        // reset the tab selected to the realm view
+        tmp = (String)getPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID);
+        setPageSessionAttribute(getTrackingTabIDName(), tmp);
+
+        // and now forward on to the realm page...
+        RMRealmViewBean vb = (RMRealmViewBean)getViewBean(
+            RMRealmViewBean.class);
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
     
     private void createPageTitleModel() {
         ptModel = new CCPageTitleModel(
             getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/simplePageTitle.xml"));
+                "com/sun/identity/console/oneBtnPageTitle.xml"));
+        ptModel.setValue("button1", 
+            getBackButtonLabel("page.title.realms"));
     }
 
     private CCNavNode addAgentsTab(int idx) {
@@ -416,7 +483,10 @@ public class AgentsViewBean
         
         try {
             Set agents = new HashSet();
-            int errorCode = model.getAgentNames(agentTypes, filter, agents);
+            String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
+            int errorCode = model.getAgentNames(curRealm, agentTypes, 
+                filter, agents);
             switch (errorCode) {
             case IdSearchResults.SIZE_LIMIT_EXCEEDED:
                 setInlineAlertMessage(CCAlert.TYPE_WARNING, "message.warning",
@@ -429,7 +499,7 @@ public class AgentsViewBean
             }
             
             Set agentGroups = new HashSet();
-            errorCode = model.getAgentGroupNames(agentTypes, gfilter,
+            errorCode = model.getAgentGroupNames(curRealm, agentTypes, gfilter,
                 agentGroups);
             switch (errorCode) {
             case IdSearchResults.SIZE_LIMIT_EXCEEDED:
@@ -671,7 +741,8 @@ public class AgentsViewBean
         setPageSessionAttribute(AgentProfileViewBean.UNIVERSAL_ID, 
             universalId);
         SSOToken ssoToken = model.getUserSSOToken();
-        String realm = "/";
+        String realm = (String) getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
         StringTokenizer st = new StringTokenizer(universalId, "=,");
         st.nextToken();
         String agentName = st.nextToken();
@@ -730,7 +801,8 @@ public class AgentsViewBean
             universalId);
 
         SSOToken ssoToken = model.getUserSSOToken();
-        String realm = "/";
+        String realm = (String) getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
         StringTokenizer st = new StringTokenizer(universalId, "=,");
         st.nextToken();
         String agentGrpName = st.nextToken();
@@ -785,7 +857,9 @@ public class AgentsViewBean
 
         try {
             AgentsModel model = (AgentsModel)getModel();
-            model.deleteAgents(names);
+            String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
+            model.deleteAgents(curRealm, names);
 
             if (selected.length == 1) {
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
@@ -826,7 +900,9 @@ public class AgentsViewBean
 
         try {
             AgentsModel model = (AgentsModel)getModel();
-            model.deleteAgentGroups(names);
+            String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
+            model.deleteAgentGroups(curRealm, names);
 
             if (selected.length == 1) {
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
@@ -888,7 +964,7 @@ public class AgentsViewBean
     }
     
     private static boolean isPropertiesLocallyStored(AMIdentity amid)
-    throws IdRepoException, SSOException {
+        throws IdRepoException, SSOException {
         boolean isLocal = false;
         Set setRepo = (Set)amid.getAttribute(ATTR_CONFIG_REPO);
         if ((setRepo != null) && !setRepo.isEmpty()) {
@@ -897,4 +973,126 @@ public class AgentsViewBean
         }
         return isLocal;
     }
+
+
+    protected String getBreadCrumbDisplayName() {
+        String realm = (String)getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
+        AMModel model = (AMModel)getModel();
+
+        String path = null;
+        if ((realm != null) && (realm.trim().length() > 0)) {
+            int idx = realm.lastIndexOf('/');
+            if ((idx != -1) && (idx < (realm.length() -1))) {
+                path = realm.substring(idx+1);
+            }
+        }
+        if (path == null) {
+            model.getStartDSDN();
+            path = AMFormatUtils.DNToName(model, model.getStartDSDN());
+        }
+
+        // unescape the value to display '/' character
+        String[] arg = {SMSSchema.unescapeName(path)};
+        return MessageFormat.format(
+        model.getLocalizedString("breadcrumbs.editRealm"), (Object[])arg);
+    }
+
+    protected boolean startPageTrail() {
+        return false;
+    }
+
+    private CCBreadCrumbs createParentagePath(String name) {
+        CCBreadCrumbsModel model = null;
+        AMModel ammodel = (AMModel)getModel();
+        String curRealm = getCurrentRealm();
+        if (curRealm.charAt(0) != '/') {
+            curRealm = "/" + curRealm;
+        }
+
+        String startDN = ammodel.getStartDN();
+        if (startDN.charAt(0) != '/') {
+            startDN = "/" + startDN;
+        }
+
+        String startDNString =
+            AMFormatUtils.DNToName(ammodel, ammodel.getStartDSDN());
+
+        if (curRealm.equals(startDN)) {
+            model = new CCBreadCrumbsModel();
+            setDisplayFieldValue(TXT_ROOT, startDNString);
+        } else {
+            int idx = curRealm.indexOf(startDN);
+            String subRealm = (idx == 0) ?
+                curRealm.substring(startDN.length()) : curRealm;
+            List list = reverseParentagePath(subRealm);
+            if (!list.isEmpty()) {
+                list.remove(list.size() -1);
+            }
+            /*
+             * The model is initialized with the name of the current realm.
+             * This entry is not selectable, just displayed as a label.
+             */
+            idx = subRealm.lastIndexOf("/");
+            if (idx != -1) {
+              subRealm = subRealm.substring(idx+1);
+            }
+            model = new CCBreadCrumbsModel(SMSSchema.unescapeName(subRealm));
+
+            StringBuffer baseDN = new StringBuffer(200);
+            baseDN.append(startDN);
+            /*
+             * each row added to the model is a selectable entry in the
+             * parentage path
+             */
+            model.appendRow();
+            model.setValue(CCBreadCrumbsModel.LABEL,
+                SMSSchema.unescapeName(startDNString));
+            model.setValue(CCBreadCrumbsModel.COMMANDFIELD,
+                PARENTAGE_PATH_HREF);
+            model.setValue(CCBreadCrumbsModel.HREF_VALUE, baseDN.toString());
+
+            for (Iterator iter = list.iterator(); iter.hasNext(); ) {
+                String tok = (String)iter.next();
+                if (!baseDN.toString().equals("/")) {
+                    baseDN.append("/").append(tok);
+                } else {
+                    baseDN.append(tok);
+                }
+                model.appendRow();
+                model.setValue(CCBreadCrumbsModel.LABEL,
+                    SMSSchema.unescapeName(tok));
+                model.setValue(CCBreadCrumbsModel.COMMANDFIELD,
+                    PARENTAGE_PATH_HREF);
+                model.setValue(CCBreadCrumbsModel.HREF_VALUE,
+                    baseDN.toString());
+            }
+        }
+
+        return new CCBreadCrumbs(this, model, name);
+    }
+
+    private List reverseParentagePath(String path) {
+        List list = new ArrayList();
+        StringTokenizer st = new StringTokenizer(path, "/");
+        while (st.hasMoreTokens()) {
+            list.add(st.nextToken());
+        }
+        return list;
+    }
+    
+    /**
+     * Handles parentage path request.
+     *
+     * @param event Request Invocation Event.
+     * @throws ModelControlException if table model cannot be restored.
+     */
+    public void handleParentagepathHrefRequest(RequestInvocationEvent event) {
+        String path = (String)getDisplayFieldValue(PARENTAGE_PATH_HREF);
+        setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, path);
+        setCurrentLocation(path);
+        unlockPageTrailForSwapping();
+        forwardTo();
+    }
+
 }

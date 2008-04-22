@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.6 2008-01-27 06:57:37 veiming Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.7 2008-04-22 00:23:17 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -9636,7 +9636,6 @@
         loglevel="LL_INFO"
         description="Attempt to get agent attribute values">
         <datainfo>
-            <item>base realm</item>
             <item>agent universal Id</item>
         </datainfo>
         <triggers>
@@ -9648,7 +9647,6 @@
         loglevel="LL_INFO"
         description="Agent attribute values is retrieved.">
         <datainfo>
-            <item>base realm</item>
             <item>agent universal Id</item>
         </datainfo>
         <triggers>
@@ -9660,7 +9658,6 @@
         loglevel="LL_SEVERE"
         description="Unable to get agent attribute values">
         <datainfo>
-            <item>base realm</item>
             <item>agent universal Id</item>
             <item>error message</item>
         </datainfo>
@@ -9675,7 +9672,6 @@
         loglevel="LL_INFO"
         description="Attempt to set agent attribute values">
         <datainfo>
-            <item>base realm</item>
             <item>agent universal Id</item>
         </datainfo>
         <triggers>
@@ -9687,7 +9683,6 @@
         loglevel="LL_INFO"
         description="Agent attribute values is retrieved.">
         <datainfo>
-            <item>base realm</item>
             <item>agent universal Id</item>
         </datainfo>
         <triggers>
@@ -9699,7 +9694,6 @@
         loglevel="LL_SEVERE"
         description="Unable to set agent attribute values">
         <datainfo>
-            <item>base realm</item>
             <item>agent universal Id</item>
             <item>error message</item>
         </datainfo>

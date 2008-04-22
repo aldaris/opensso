@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentGroupAddViewBean.java,v 1.4 2008-04-14 23:24:31 veiming Exp $
+ * $Id: AgentGroupAddViewBean.java,v 1.5 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -148,7 +148,8 @@ public class AgentGroupAddViewBean
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
         String agentGroupName = (String)propertySheetModel.getValue(TF_NAME);
         agentGroupName = agentGroupName.trim();
-
+        String curRealm = (String) getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
         try {
             if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
                 agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
@@ -156,10 +157,10 @@ public class AgentGroupAddViewBean
                 String serverURL = (String)propertySheetModel.getValue(
                     TF_SERVER_URL);
                 serverURL = serverURL.trim();
-                model.createAgentGroup(agentGroupName, agentType, serverURL,
-                    null);
+                model.createAgentGroup(curRealm, agentGroupName, agentType, 
+                    serverURL, null);
             } else {
-                model.createAgentGroup(agentGroupName, agentType);
+                model.createAgentGroup(curRealm, agentGroupName, agentType);
             }
             forwardToAgentsViewBean();
         } catch (AMConsoleException e) {

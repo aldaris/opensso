@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgentTypes.java,v 1.2 2008-03-11 02:28:31 veiming Exp $
+ * $Id: ShowAgentTypes.java,v 1.3 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
@@ -56,7 +57,7 @@ public class ShowAgentTypes extends AuthenticatedCommand {
 
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = "/";
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String[] params = {realm};
 
         try {

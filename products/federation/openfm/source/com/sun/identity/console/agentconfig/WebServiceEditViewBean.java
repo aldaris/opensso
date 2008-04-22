@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.3 2008-04-14 23:24:33 veiming Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.4 2008-04-22 00:23:17 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPropertySheet;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
@@ -227,17 +228,20 @@ public abstract class WebServiceEditViewBean
         if (propertySheetModel != null) {
             AgentsModel model = (AgentsModel)getModel();
             String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
+            String realm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
 
             try {
                 Map attrValues = (Map)removePageSessionAttribute(
                     TRACKER_ATTR);
                 Map inheritedValues = null;
                 if (attrValues == null) {
-                    attrValues = model.getAttributeValues(universalId, true);
+                    attrValues = model.getAttributeValues(realm, 
+                        universalId, true);
                 }
                 if (!isGroup) {
                     if (!inheritedPropertyNames.isEmpty()) {
-                        inheritedValues = model.getAgentGroupValues(
+                        inheritedValues = model.getAgentGroupValues(realm,
                             universalId, inheritedPropertyNames);
                         attrValues.putAll(inheritedValues);
                         if (inheritedPropertyNames.contains(
@@ -373,9 +377,11 @@ public abstract class WebServiceEditViewBean
     protected Map getFormValues()
         throws AMConsoleException, ModelControlException {
         AgentsModel model = (AgentsModel)getModel();
+        String realm = (String)getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-        Map oldValues = model.getAttributeValues(universalId, false);
+        Map oldValues = model.getAttributeValues(realm, universalId, false);
         
         Map values = prop.getAttributeValues(oldValues.keySet());
 
@@ -416,7 +422,7 @@ public abstract class WebServiceEditViewBean
         getExtendedFormsValues(values);
         
         if (!isGroup && !inheritedPropertyNames.isEmpty()) {
-            values.putAll(model.getAgentGroupValues(
+            values.putAll(model.getAgentGroupValues(realm,
                 universalId, inheritedPropertyNames));
         }
         return values;

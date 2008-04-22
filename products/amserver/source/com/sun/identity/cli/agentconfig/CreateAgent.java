@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgent.java,v 1.5 2008-01-17 21:22:10 veiming Exp $
+ * $Id: CreateAgent.java,v 1.6 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,8 +64,8 @@ public class CreateAgent extends AuthenticatedCommand {
         ldapLogin();
 
         SSOToken adminSSOToken = getAdminSSOToken();
-        String realm = "/"; // only root realm for now
 
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String agentName = getStringOptionValue(IArgument.AGENT_NAME);
         String agentType = getStringOptionValue(IArgument.AGENT_TYPE);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
@@ -96,7 +96,7 @@ public class CreateAgent extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
             
-            AgentConfiguration.createAgent(adminSSOToken, agentName, 
+            AgentConfiguration.createAgent(adminSSOToken, realm, agentName, 
                 agentType, attributeValues);
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-succeeded"),

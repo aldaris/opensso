@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessControlModelImpl.java,v 1.2 2007-02-07 20:19:44 jonnelson Exp $
+ * $Id: AccessControlModelImpl.java,v 1.3 2008-04-22 00:23:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@ package com.sun.identity.console.base.model;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationPermission;
@@ -45,8 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 public class AccessControlModelImpl
     implements AccessControlModel
 {
-    private static SSOToken adminSSOToken =
-        (SSOToken)AccessController.doPrivileged(AdminTokenAction.getInstance());
     private SSOToken ssoToken = null;
     private Set serviceNames;
 
@@ -158,13 +155,17 @@ public class AccessControlModelImpl
 
     private Set getServiceNames() {
         if (serviceNames == null) {
+            SSOToken adminSSOToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
             try {
                 ServiceManager sm = new ServiceManager(adminSSOToken);
                 serviceNames = sm.getServiceNames();
             } catch (SSOException e) {
-                AMModelBase.debug.error("AccessControlModelImpl.getServiceNames", e);
+                AMModelBase.debug.error(
+                    "AccessControlModelImpl.getServiceNames", e);
             } catch (SMSException e) {
-                AMModelBase.debug.error("AccessControlModelImpl.getServiceNames", e);
+                AMModelBase.debug.error(
+                    "AccessControlModelImpl.getServiceNames", e);
             }
         }
         return serviceNames;

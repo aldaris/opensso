@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeViewBean.java,v 1.1 2007-12-17 19:42:45 veiming Exp $
+ * $Id: HomeViewBean.java,v 1.2 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,6 @@ public class HomeViewBean
     public void forwardTo(RequestContext reqContext)
         throws NavigationException {
         EntitiesModel model = (EntitiesModel)getModel();
-        removePageSessionAttribute(AMAdminConstants.CURRENT_REALM);
         AMViewConfig config = AMViewConfig.getInstance();
         List supported = config.getSupportedAgentTypes(model);
 

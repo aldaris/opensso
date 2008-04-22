@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAgentGroups.java,v 1.2 2008-04-15 20:45:00 veiming Exp $
+ * $Id: ListAgentGroups.java,v 1.3 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,7 @@ public class ListAgentGroups extends AuthenticatedCommand {
 
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = "/";
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String patternType = getStringOptionValue(IArgument.AGENT_TYPE);
         String filter = getStringOptionValue(IArgument.FILTER);
 

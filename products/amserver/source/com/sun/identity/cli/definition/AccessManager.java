@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.63 2008-04-18 19:26:14 veiming Exp $
+ * $Id: AccessManager.java,v 1.64 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1707,6 +1707,7 @@ public class AccessManager {
         description="Create a new agent configuration.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentname|b|s|Name of agent.",
             "agenttype|t|s|Type of agent. e.g. J2EEAgent, WebAgent"
             },
@@ -1727,6 +1728,7 @@ public class AccessManager {
         description="Delete agent configurations.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentnames|s|m|Names of agent."},
         optionAliases={},
         macro="authentication",
@@ -1742,6 +1744,7 @@ public class AccessManager {
         description="Update agent configuration.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentname|b|s|Name of agent."},
         optionAliases={},
         macro="authentication",
@@ -1759,7 +1762,9 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.RemoveAgentProperties",
         description="Remove agent's properties.",
         webSupport="true",
-        mandatoryOptions={"agentname|b|s|Name of agent.",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "agentname|b|s|Name of agent.",
             "attributenames|a|m|properties name(s)."},
         optionAliases={},
         macro="authentication",
@@ -1774,7 +1779,8 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.ListAgents",
         description="List agent configurations.",
         webSupport="true",
-        mandatoryOptions={},
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
         optionAliases={},
         macro="authentication",
         optionalOptions={
@@ -1792,6 +1798,7 @@ public class AccessManager {
         description="Show agent profile.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentname|b|s|Name of agent."},
         optionAliases={},
         macro="authentication",
@@ -1810,7 +1817,8 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.ShowAgentTypes",
         description="Show agent types.",
         webSupport="true",
-        mandatoryOptions={},
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
         optionAliases={},
         macro="authentication",
         optionalOptions={},
@@ -1825,6 +1833,7 @@ public class AccessManager {
         description="Show agent group profile.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupname|b|s|Name of agent group."},
         optionAliases={},
         macro="authentication",
@@ -1843,6 +1852,7 @@ public class AccessManager {
         description="Create a new agent group.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupname|b|s|Name of agent group.",
             "agenttype|t|s|Type of agent group. e.g. J2EEAgent, WebAgent"},
         optionAliases={},
@@ -1862,6 +1872,7 @@ public class AccessManager {
         description="Delete agent groups.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupnames|s|m|Names of agent group."},
         optionAliases={},
         macro="authentication",
@@ -1876,7 +1887,8 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.ListAgentGroups",
         description="List agent groups.",
           webSupport="true",
-          mandatoryOptions={},
+          mandatoryOptions={
+            "realm|e|s|Name of realm."},
           optionAliases={},
           macro="authentication",
         optionalOptions={
@@ -1894,6 +1906,7 @@ public class AccessManager {
         description="List agents in agent group.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupname|b|s|Name of agent group."},
         optionAliases={},
         macro="authentication",
@@ -1912,6 +1925,7 @@ public class AccessManager {
         description="List agent's membership.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentname|b|s|Name of agent."},
         optionAliases={},
         macro="authentication",
@@ -1928,6 +1942,7 @@ public class AccessManager {
         description="Add agents to a agent group.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupname|b|s|Name of agent group.",
             "agentnames|s|m|Names of agents."},
         optionAliases={},
@@ -1945,6 +1960,7 @@ public class AccessManager {
         description="Remove agents from a agent group.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupname|b|s|Name of agent group.",
             "agentnames|s|m|Names of agents."},
         optionAliases={},
@@ -1962,6 +1978,7 @@ public class AccessManager {
         description="Update agent group configuration.",
         webSupport="true",
         mandatoryOptions={
+            "realm|e|s|Name of realm.",
             "agentgroupname|b|s|Name of agent group."},
         optionAliases={},
         macro="authentication",

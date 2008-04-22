@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amConsoleConfig.xml,v 1.8 2008-04-14 23:24:33 veiming Exp $
+   $Id: amConsoleConfig.xml,v 1.9 2008-04-22 00:23:16 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -97,14 +97,6 @@
 	status="tab.configuration.server.status"
 	permissions="iPlanetAMPlatformService" 
 	accesslevel="globalconfig" />
-
-        <tab id="46" viewbean="com.sun.identity.console.agentconfig.HomeViewBean"
-	url="../agentconfig/Home"
-	label="tab.configuration.agentconfig.label"
-	tooltip="tab.configuration.agentconfig.tooltip"
-	status="tab.configuration.agentconfig.status"
-	permissions="sunIdentityRepositoryService" 
-	accesslevel="globalconfig" />
     </tab>
 
     <tab id="5" 
@@ -169,6 +161,14 @@
     	    label="tab.sub.subjects.label"
     	    tooltip="tab.sub.subjects.tooltip"
     	    status="tab.sub.subjects.status"
+    	    permissions="sunIdentityRepositoryService" />
+
+        <tab id="18"
+            viewbean="com.sun.identity.console.agentconfig.HomeViewBean"
+	    url="../agentconfig/Home"
+	    label="tab.configuration.agentconfig.label"
+	    tooltip="tab.configuration.agentconfig.tooltip"
+	    status="tab.configuration.agentconfig.status"
     	    permissions="sunIdentityRepositoryService" />
     </profile>
     <profile id="cscGeneral">

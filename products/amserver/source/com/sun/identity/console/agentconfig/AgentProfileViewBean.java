@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.6 2008-04-15 03:39:15 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.7 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,23 +108,25 @@ public abstract class AgentProfileViewBean
     
     protected void initialize() {
         if (!initialized) {
-            String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
-            
+            String universalId = (String) getPageSessionAttribute(
+                UNIVERSAL_ID);
             if ((universalId != null) && (universalId.length() > 0)) {
-                isGroup = ((AgentsModel)getModel()).isAgentGroup(universalId);
-            }
-            if (isGroup) {
-                setPageSessionAttribute(IS_GROUP, "true");
-            } else {
-                setPageSessionAttribute(IS_GROUP, "false");
-            }
-            initialized = createPropertyModel();
-            
-            if (initialized) {
-                super.initialize();
-                createPageTitleModel();
-                createTabModel();
-                registerChildren();
+                isGroup = ((AgentsModel)
+                    getModel()).isAgentGroup(universalId);
+                if (isGroup) {
+                    setPageSessionAttribute(IS_GROUP, "true");
+                } else {
+                    setPageSessionAttribute(IS_GROUP, "false");
+                }
+
+                initialized = createPropertyModel();
+
+                if (initialized) {
+                    super.initialize();
+                    createPageTitleModel();
+                    createTabModel();
+                    registerChildren();
+                }
             }
         }
     }
@@ -134,18 +136,20 @@ public abstract class AgentProfileViewBean
         String type = getAgentType();
         
         if ((type != null) && (type.trim().length() > 0)) {
+            String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
             AgentsModel model = (AgentsModel)getModel();
             String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
             String choice = (String) getPageSessionAttribute(
                     AgentsViewBean.LOCAL_OR_NOT);
             if (checkAgentType(type)) {
                 inheritedPropertyNames = (!isGroup && !is2dot2Agent() &&
-                        !choice.equals(AgentsViewBean.PROP_LOCAL)) ?
-                            model.getInheritedPropertyNames(universalId) :
-                            Collections.EMPTY_SET;
+                    !choice.equals(AgentsViewBean.PROP_LOCAL)) ?
+                        model.getInheritedPropertyNames(curRealm, universalId) :
+                        Collections.EMPTY_SET;
             } else {
                 inheritedPropertyNames = (!isGroup && !is2dot2Agent()) ?
-                    model.getInheritedPropertyNames(universalId) :
+                    model.getInheritedPropertyNames(curRealm, universalId) :
                     Collections.EMPTY_SET;
             }
             AMPropertySheetModel psModel = createPropertySheetModel(type);
@@ -256,11 +260,13 @@ public abstract class AgentProfileViewBean
     }
     
     private void setProperty(AgentsModel model, String type, String universalId)
-    throws AMConsoleException {
+        throws AMConsoleException {
         Set groups = new HashSet();
         Set set = new HashSet(2);
         set.add(type);
-        model.getAgentGroupNames(set, "*", groups);
+        String curRealm = (String) getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
+        model.getAgentGroupNames(curRealm, set, "*", groups);
         CCDropDownMenu menu = (CCDropDownMenu)getChild(
                 CHILD_AGENT_GROUP);
         Set groupNames = new TreeSet();
@@ -272,7 +278,7 @@ public abstract class AgentProfileViewBean
         optList.add(0, model.getLocalizedString("agentgroup.none"), "");
         menu.setOptions(optList);
         
-        String group = model.getAgentGroup(universalId);
+        String group = model.getAgentGroup(curRealm, universalId);
         if (group != null) {
             menu.setValue(group);
         }
@@ -339,6 +345,8 @@ public abstract class AgentProfileViewBean
                 
             }
             model.setAttributeValues(universalId, values);
+            String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
             
             if (checkAgentType(type)) {
                 if (!isGroup && !is2dot2Agent() && isFirstTab() 
@@ -346,13 +354,13 @@ public abstract class AgentProfileViewBean
                     !choice.equals(AgentsViewBean.PROP_LOCAL)) {
                     String agentGroup = getDisplayFieldStringValue(
                             CHILD_AGENT_GROUP);
-                    model.setGroup(universalId, agentGroup);
+                    model.setGroup(curRealm, universalId, agentGroup);
                 }
             } else {
                 if (!isGroup && !is2dot2Agent() && isFirstTab()) {
                     String agentGroup = getDisplayFieldStringValue(
                             CHILD_AGENT_GROUP);
-                    model.setGroup(universalId, agentGroup);
+                    model.setGroup(curRealm, universalId, agentGroup);
                 }
             }
             
@@ -376,8 +384,10 @@ public abstract class AgentProfileViewBean
         AgentsModel model = (AgentsModel)getModel();
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
         disableButton(BTN_INHERIT, false);
+        String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
         try {
-            String groupId = model.getAgentGroup(universalId);
+            String groupId = model.getAgentGroup(curRealm, universalId);
             if ((groupId == null) || (groupId.trim().length() == 0)) {
                 disableButton(BTN_INHERIT, true);
             }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAgentMembership.java,v 1.1 2007-11-10 06:14:02 veiming Exp $
+ * $Id: ListAgentMembership.java,v 1.2 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class ListAgentMembership extends AuthenticatedCommand {
         ldapLogin();
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = "/";
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String agentName = getStringOptionValue(IArgument.AGENT_NAME);
         String[] params = {realm, agentName};
 

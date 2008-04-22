@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.9 2008-04-16 00:15:25 asyhuang Exp $
+   $Id: amAccessControl.xml,v 1.10 2008-04-22 00:23:16 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -150,7 +150,7 @@
     </viewbean>
 
     <!-- ENTITIES -->
-    <viewbean classname="com.sun.identity.console.agentconfig.AgentsViewBean" view="*" modify="*">
+    <viewbean classname="com.sun.identity.console.agentconfig.AgentsViewBean" view="AgentService" modify="AgentService">
 	<actionhandler name="tblButtonGroupAdd,tblButtonAdd,tblDataActionHref,tblDataActionGroupHref,tblDataActionGroupMembersHref,tblButtonDelete,tblButtonGroupDelete" />
 	<table name="tblSearch" />
     </viewbean>

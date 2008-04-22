@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigInheritViewBean.java,v 1.3 2008-04-14 23:24:31 veiming Exp $
+ * $Id: AgentConfigInheritViewBean.java,v 1.4 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,10 +175,11 @@ public class AgentConfigInheritViewBean
             String universalId = (String)getPageSessionAttribute(
                 AgentProfileViewBean.UNIVERSAL_ID);
             String agentType = getAgentType();
-            
+            String curRealm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
             AgentsModel model = (AgentsModel)getModel();
             Set inheritedPropertyNames = model.getInheritedPropertyNames(
-                universalId);
+                curRealm, universalId);
             Map nameToSchemas = model.getAttributeSchemas(agentType,
                 propertyNames);
             removeNonInheritable(nameToSchemas);
@@ -186,8 +187,9 @@ public class AgentConfigInheritViewBean
                 ResourceBundle rb = AgentConfiguration.getServiceResourceBundle(
                     model.getUserLocale());
 
-                String groupName = model.getAgentGroup(universalId);
-                Map groupValues = model.getGroupAttributeValues(groupName);
+                String groupName = model.getAgentGroup(curRealm, universalId);
+                Map groupValues = model.getGroupAttributeValues(
+                    curRealm, groupName);
                 ArrayList cache = new ArrayList();
 
                 int counter = 0;

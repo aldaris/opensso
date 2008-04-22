@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.24 2008-04-18 19:33:11 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.25 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,6 +142,7 @@ public class AgentConfiguration {
      * Creates an agent group.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Realm where group resides.
      * @param agentGroupName Name of agent group.
      * @param agentType Type of agent group.
      * @param values Map of attribute name to its values.
@@ -154,12 +155,13 @@ public class AgentConfiguration {
      */
     public static void createAgentGroup(
         SSOToken ssoToken,
+        String realm,
         String agentGroupName,
         String agentType,
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
-        createAgentGroup(ssoToken, "/", agentGroupName, agentType, attrValues,
+        createAgentGroupEx(ssoToken, realm, agentGroupName, agentType, attrValues,
             null, null);
     }
 
@@ -167,6 +169,7 @@ public class AgentConfiguration {
      * Creates an agent group.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Realm where group resides.
      * @param agentGroupName Name of agent group.
      * @param agentType Type of agent group.
      * @param values Map of attribute name to its values.
@@ -182,6 +185,7 @@ public class AgentConfiguration {
      */
     public static void createAgentGroup(
         SSOToken ssoToken,
+        String realm,
         String agentGroupName,
         String agentType,
         Map attrValues,
@@ -198,8 +202,8 @@ public class AgentConfiguration {
         if ((agentURL != null) && (agentURL.trim().length() > 0)) {
             urlAgent = new URL(agentURL);
         }
-        createAgentGroup(ssoToken, "/", agentGroupName, agentType, attrValues,
-            new URL(serverURL), urlAgent);
+        createAgentGroupEx(ssoToken, realm, agentGroupName, agentType, 
+            attrValues, new URL(serverURL), urlAgent);
     }
 
     /**
@@ -217,7 +221,7 @@ public class AgentConfiguration {
      * @throws ConfigurationException if there are missing information in
      *         server or agent URL; or invalid agent type.
      */
-    private static void createAgentGroup(
+    private static void createAgentGroupEx(
         SSOToken ssoToken,
         String realm,
         String agentGroupName,
@@ -249,6 +253,7 @@ public class AgentConfiguration {
      * Creates an agent.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Realm where agent resides.
      * @param agentName Name of agent.
      * @param agentType Type of agent.
      * @param values Map of attribute name to its values.
@@ -264,6 +269,7 @@ public class AgentConfiguration {
      */
     public static void createAgent(
         SSOToken ssoToken,
+        String realm,
         String agentName,
         String agentType,
         Map attrValues,
@@ -279,7 +285,7 @@ public class AgentConfiguration {
             throw new ConfigurationException(
                 "create.agent.invalid.agent.url", null);
         }
-        createAgent(ssoToken, "/", agentName, agentType, attrValues,
+        createAgentEx(ssoToken, realm, agentName, agentType, attrValues,
             new URL(serverURL), new URL(agentURL));
     }
 
@@ -287,6 +293,7 @@ public class AgentConfiguration {
      * Creates an agent.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Realm where agent resides.
      * @param agentName Name of agent.
      * @param agentType Type of agent.
      * @param values Map of attribute name to its values.
@@ -299,12 +306,13 @@ public class AgentConfiguration {
      */
     public static void createAgent(
         SSOToken ssoToken,
+        String realm,
         String agentName,
         String agentType,
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
-        createAgent(ssoToken, "/", agentName, agentType, attrValues, null,
+        createAgentEx(ssoToken, realm, agentName, agentType, attrValues, null,
             null);
     }
 
@@ -325,7 +333,7 @@ public class AgentConfiguration {
      * @throws ConfigurationException if there are missing information in
      *         server or agent URL; or invalid agent type.
      */
-    private static void createAgent(
+    private static void createAgentEx(
         SSOToken ssoToken,
         String realm,
         String agentName,
@@ -438,47 +446,6 @@ public class AgentConfiguration {
      * Updates agent attribute values.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
-     * @param agentName Name of agent.
-     * @param values Map of attribute name to its values.
-     * @throws IdRepoException if there are Id Repository related errors.
-     * @throws SSOException if the Single Sign On token is invalid or has
-     *         expired.
-     * @throws SMSException if there are errors in service management layers.
-     */
-    public static void updateAgent(
-        SSOToken ssoToken,
-        String agentName,
-        Map attrValues
-    ) throws IdRepoException, SSOException, SMSException {
-        updateAgent(ssoToken, "/", agentName, attrValues, true);
-    }
-    
-    /**
-     * Updates agent attribute values.
-     *
-     * @param ssoToken Single Sign On token that is to be used for creation.
-     * @param agentName Name of agent.
-     * @param values Map of attribute name to its values.
-     * @param bSet <code>true</code> to overwrite the values for the
-     *        attribute.
-     * @throws IdRepoException if there are Id Repository related errors.
-     * @throws SSOException if the Single Sign On token is invalid or has
-     *         expired.
-     * @throws SMSException if there are errors in service management layers.
-     */
-    public static void updateAgent(
-        SSOToken ssoToken,
-        String agentName,
-        Map attrValues,
-        boolean bSet
-    ) throws IdRepoException, SSOException, SMSException {
-        updateAgent(ssoToken, "/", agentName, attrValues, bSet);
-    }
-    
-    /**
-     * Updates agent attribute values.
-     *
-     * @param ssoToken Single Sign On token that is to be used for creation.
      * @param realm Name of realm where agent resides.
      * @param agentName Name of agent.
      * @param values Map of attribute name to its values.
@@ -489,7 +456,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      */
-    private static void updateAgent(
+    public static void updateAgent(
         SSOToken ssoToken,
         String realm,
         String agentName,
@@ -567,6 +534,7 @@ public class AgentConfiguration {
      * Updates agent group attribute values.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Realm where group resides.
      * @param agentName Name group of agent.
      * @param values Map of attribute name to its values.
      * @throws IdRepoException if there are Id Repository related errors.
@@ -576,33 +544,13 @@ public class AgentConfiguration {
      */
     public static void updateAgentGroup(
         SSOToken ssoToken,
+        String realm,
         String agentGroupName,
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException {
-        updateAgentGroup(ssoToken, "/", agentGroupName, attrValues, true);
+        updateAgentGroup(ssoToken, realm, agentGroupName, attrValues, true);
     }
 
-    /**
-     * Updates agent group attribute values.
-     *
-     * @param ssoToken Single Sign On token that is to be used for creation.
-     * @param agentName Name group of agent.
-     * @param values Map of attribute name to its values.
-     * @param bSet <code>true</code> to overwrite the values for the
-     *        attribute.
-     * @throws IdRepoException if there are Id Repository related errors.
-     * @throws SSOException if the Single Sign On token is invalid or has
-     *         expired.
-     * @throws SMSException if there are errors in service management layers.
-     */
-    public static void updateAgentGroup(
-        SSOToken ssoToken,
-        String agentGroupName,
-        Map attrValues,
-        boolean bSet
-    ) throws IdRepoException, SSOException, SMSException {
-        updateAgentGroup(ssoToken, "/", agentGroupName, attrValues, bSet);
-    }
     
     /**
      * Updates agent group attribute values.
@@ -618,7 +566,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      */
-    private static void updateAgentGroup(
+    public static void updateAgentGroup(
         SSOToken ssoToken,
         String realm,
         String agentGroupName,
@@ -688,24 +636,6 @@ public class AgentConfiguration {
         
         return names;
     }
-    
-    /**
-     * Returns agent group's attribute values.
-     *
-     * @param ssoToken Single Sign On token that is to be used for query.
-     * @param agentGroupName Name of agent group.
-     * @return agent group's attribute values.
-     * @throws IdRepoException if there are Id Repository related errors.
-     * @throws SSOException if the Single Sign On token is invalid or has
-     *         expired.
-     * @throws SMSException if there are errors in service management layers.
-     */
-    public static Map getAgentGroupAttributes(
-        SSOToken ssoToken,
-        String agentGroupName
-    ) throws IdRepoException, SMSException, SSOException {
-        return getAgentGroupAttributes(ssoToken, "/", agentGroupName);
-    }
 
     /**
      * Returns agent group's attribute values.
@@ -719,7 +649,7 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      */
-    private static Map getAgentGroupAttributes(
+    public static Map getAgentGroupAttributes(
         SSOToken ssoToken,
         String realm,
         String agentGroupName
@@ -735,6 +665,7 @@ public class AgentConfiguration {
      * Returns agent's attribute values.
      *
      * @param ssoToken Single Sign On token that is to be used for query.
+     * @param realm Realm where agent resides.
      * @param agentName Name of agent.
      * @return agent's attribute values.
      * @throws IdRepoException if there are Id Repository related errors.
@@ -742,10 +673,14 @@ public class AgentConfiguration {
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      */
-    public static Map getAgentAttributes(SSOToken ssoToken, String agentName) 
+    public static Map getAgentAttributes(
+        SSOToken ssoToken, 
+        String realm,
+        String agentName
+    ) 
         throws IdRepoException, SMSException, SSOException {
         AMIdentity amid = new AMIdentity(ssoToken, agentName,
-            IdType.AGENTONLY, "/", null);
+            IdType.AGENTONLY, realm, null);
         return getAgentAttributes(amid, true);
     }
     
@@ -753,6 +688,7 @@ public class AgentConfiguration {
      * Returns agent's attribute values.
      *
      * @param ssoToken Single Sign On token that is to be used for query.
+     * @param realm Realm where agent resides.
      * @param agentName Name of agent.
      * @param bInherit <code>true</code> to inherit from group.
      * @return agent's attribute values.
@@ -762,13 +698,14 @@ public class AgentConfiguration {
      * @throws SMSException if there are errors in service management layers.
      */
     public static Map getAgentAttributes(
-        SSOToken ssoToken, 
+        SSOToken ssoToken,
+        String realm,
         String agentName,
         boolean bInherit
     ) throws IdRepoException, SMSException, SSOException {
         IdType type = (bInherit) ? IdType.AGENT : IdType.AGENTONLY;
         AMIdentity amid = new AMIdentity(ssoToken, agentName,
-            type, "/", null);
+            type, realm, null);
         return getAgentAttributes(amid, true);
     }
     

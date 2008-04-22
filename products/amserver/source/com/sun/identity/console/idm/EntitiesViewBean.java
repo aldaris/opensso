@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.2 2007-06-07 18:48:42 veiming Exp $
+ * $Id: EntitiesViewBean.java,v 1.3 2008-04-22 00:23:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,6 @@ import com.sun.identity.console.idm.model.EntitiesModelImpl;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCButton;
@@ -467,13 +466,13 @@ public class EntitiesViewBean
             model.deleteEntities(curRealm, names);
 
             if (selected.length == 1) {
-                String[] param = {model.getLocalizedString(idType)};
+                Object[] param = {model.getLocalizedString(idType)};
                 String msg = model.getLocalizedString(
                     "entities.message.deleted");
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     MessageFormat.format(msg, param));
             } else {
-                String[] param = {model.getLocalizedString(idType)};
+                Object[] param = {model.getLocalizedString(idType)};
                 String msg = model.getLocalizedString(
                     "entities.message.deleted.pural");
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",

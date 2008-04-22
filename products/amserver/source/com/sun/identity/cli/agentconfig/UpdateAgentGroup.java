@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAgentGroup.java,v 1.3 2008-01-02 18:15:33 veiming Exp $
+ * $Id: UpdateAgentGroup.java,v 1.4 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class UpdateAgentGroup extends AuthenticatedCommand {
 
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = "/";
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String agentGroupName = getStringOptionValue(
             IArgument.AGENT_GROUP_NAME);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
@@ -78,8 +78,8 @@ public class UpdateAgentGroup extends AuthenticatedCommand {
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_UPDATE_AGENT_GROUP", params);
-            AgentConfiguration.updateAgentGroup(adminSSOToken, agentGroupName, 
-                attributeValues, bSet);
+            AgentConfiguration.updateAgentGroup(adminSSOToken, realm,
+                agentGroupName, attributeValues, bSet);
             outputWriter.printlnMessage(getResourceString(
                 "update-agent-group-succeeded"));
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,

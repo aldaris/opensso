@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentAddViewBean.java,v 1.5 2008-04-14 23:24:31 veiming Exp $
+ * $Id: AgentAddViewBean.java,v 1.6 2008-04-22 00:23:15 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.console.agentconfig;
 
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.view.View;
+import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
@@ -40,9 +41,7 @@ import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCTextField;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import com.iplanet.jato.view.event.DisplayEvent;
 
 /**
  * View Bean to create new agent.
@@ -173,13 +172,15 @@ public class AgentAddViewBean
         if (password.length() > 0) {
             if (password.equals(passwordConfirm)) {
                 try {
+                    String curRealm = (String)getPageSessionAttribute(
+                        AMAdminConstants.CURRENT_REALM);
                     if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
                             agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
                             ) {
                         
                         if (choice.equals(AgentsViewBean.PROP_LOCAL)) {
-                            model.createAgent(
-                                    agentName, agentType, password, choice);
+                            model.createAgent(curRealm, agentName, agentType, 
+                                password, choice);
                         } else {
                             String serverURL = (String)propertySheetModel.getValue(
                                     TF_SERVER_URL);
@@ -187,12 +188,12 @@ public class AgentAddViewBean
                             String agentURL = (String)propertySheetModel.getValue(
                                     TF_AGENT_URL);
                             agentURL = agentURL.trim();
-                            model.createAgent(agentName, agentType, password,
-                                    serverURL, agentURL);
+                            model.createAgent(curRealm, agentName, agentType, 
+                                password, serverURL, agentURL);
                         }
                     } else {
-                        model.createAgent(
-                                agentName, agentType, password, choice);
+                        model.createAgent(curRealm, agentName, agentType, 
+                            password, choice);
                     }
                     forwardToAgentsViewBean();
                 } catch (AMConsoleException e) {

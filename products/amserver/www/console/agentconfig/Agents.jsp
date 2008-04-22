@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.4 2008-04-14 23:24:32 veiming Exp $
+   $Id: Agents.jsp,v 1.5 2008-04-22 00:23:16 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -68,6 +68,16 @@
         </td>
     </tr>
 </table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+    <td>
+    <cc:breadcrumbs name="parentagepath" bundleID="amConsole" />
+    <div class="BcmWhtDiv"><cc:text name="txtRoot" bundleID="amConsole" /></div>
+    </td>
+    </tr>
+</table>
+
 
 <%-- PAGE CONTENT --%>
 <cc:pagetitle name="pgtitle" 

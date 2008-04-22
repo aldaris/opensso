@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.7 2008-01-15 22:38:15 jonnelson Exp $
+ * $Id: AMAdminConstants.java,v 1.8 2008-04-22 00:23:16 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,7 +188,17 @@ public interface AMAdminConstants {
     /**
      * Agent node identifier.
      */
-    int AGENTS_NODE_ID = 446;
+    int AGENTS_NODE_ID = 118;
+
+    /**
+     * Agent tab Id.
+     */
+    String TAB_AGENT_PREFIX = "18";
+
+    /**
+     * Agent tab Id.
+     */
+    int TAB_AGENT_PREFIX_INT = 18;
     
     /**
      * Subjects node identifier.

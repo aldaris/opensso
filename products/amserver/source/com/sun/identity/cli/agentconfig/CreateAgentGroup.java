@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentGroup.java,v 1.4 2008-01-17 21:22:10 veiming Exp $
+ * $Id: CreateAgentGroup.java,v 1.5 2008-04-22 00:23:14 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,8 +63,8 @@ public class CreateAgentGroup extends AuthenticatedCommand {
         ldapLogin();
 
         SSOToken adminSSOToken = getAdminSSOToken();
-        String realm = "/"; // only root realm for now
 
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
         String groupName = getStringOptionValue(IArgument.AGENT_GROUP_NAME);
         String agentType = getStringOptionValue(IArgument.AGENT_TYPE);
         String datafile = getStringOptionValue(IArgument.DATA_FILE);
@@ -91,7 +91,7 @@ public class CreateAgentGroup extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
 
-            AgentConfiguration.createAgentGroup(adminSSOToken, groupName,
+            AgentConfiguration.createAgentGroup(adminSSOToken, realm, groupName,
                 agentType, attributeValues);
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-group-succeeded"),

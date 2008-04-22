@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.5 2008-04-14 23:24:32 veiming Exp $
+ * $Id: AMViewConfig.java,v 1.6 2008-04-22 00:23:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -152,23 +152,13 @@ public class AMViewConfig {
         List supported = getSupportedAgentTypes(model);
 
         if (!supported.isEmpty()) {
-            CCNavNode configNode = (CCNavNode)tabModel.getNodeById(
-                AMAdminConstants.CONFIGURATION_NODE_ID);
-            CCNavNode agentNode = null;
-            
-            List nodes = configNode.getChildren();
-            for (Iterator i = nodes.iterator(); 
-                i.hasNext() && (agentNode == null);
-            ) {
-                CCNavNode c = (CCNavNode)i.next();
-                if (c.getId() == AMAdminConstants.AGENTS_NODE_ID) {
-                    agentNode = c;
-                }
-            }
+            CCNavNode agentNode = (CCNavNode)tabModel.getNodeById(
+                AMAdminConstants.TAB_AGENT_PREFIX_INT);
             if (agentNode != null) {
                 for (int i = 0; i < supported.size(); i++) {
                     String t = (String)supported.get(i);
-                    int nodeId = Integer.parseInt("46" + i);
+                    int nodeId = Integer.parseInt(
+                        AMAdminConstants.TAB_AGENT_PREFIX + i);
 
                     String i18nKey = (String)mapSupported.get(t);
                     if (i18nKey == null) {
@@ -409,7 +399,7 @@ public void setTabViews(int parentID, List items) {
         AccessControlModel model = new AccessControlModelImpl(req);
         List list = getTabList(type);
         String url = null;
-        for (Iterator i = tabs.iterator(); i.hasNext() && (url == null); ) {
+        for (Iterator i = list.iterator(); i.hasNext() && (url == null); ) {
             AMTabEntry entry = (AMTabEntry)i.next();
             url = entry.getURL(model, realmName);
         }
@@ -549,20 +539,18 @@ public void setTabViews(int parentID, List items) {
     }
 
     public AMTabEntry getTabEntry(int idx)
-        throws AMConsoleException
-    {
+        throws AMConsoleException {
         return getTabEntry(TABS, idx);
     }
 
     private AMTabEntry getTabEntry(String type, int idx)
-        throws AMConsoleException
-    {
+        throws AMConsoleException {
         List list = getTabList(type);
         AMTabEntry entry = null;
 
         for (Iterator iter = list.iterator(); 
-             iter.hasNext() && (entry == null);        ) 
-        {
+             iter.hasNext() && (entry == null);
+        ) {
             AMTabEntry e = (AMTabEntry)iter.next();
             entry = e.matchedID(idx);
         }

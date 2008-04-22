@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.2 2008-03-11 21:33:44 veiming Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.3 2008-04-22 00:23:17 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.WSSAttributeNames;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.web.ui.model.CCActionTableModel;
@@ -310,7 +311,9 @@ public class WebServiceProviderEditViewBean
             Map values = getFormValues();
             String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
             AgentsModel model = (AgentsModel)getModel();
-            values.putAll(model.getAgentGroupValues(
+            String realm = (String)getPageSessionAttribute(
+                AMAdminConstants.CURRENT_REALM);
+            values.putAll(model.getAgentGroupValues(realm,
                 universalId, inheritedPropertyNames));
             setPageSessionAttribute(TRACKER_ATTR, (Serializable)values);
             WebServiceUserCredAddViewBean vb = (WebServiceUserCredAddViewBean)
