@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.13 2008-04-17 09:06:55 ww203982 Exp $
+ * $Id: Session.java,v 1.14 2008-04-22 15:54:40 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -442,7 +442,6 @@ public class Session extends GeneralTaskRunnable {
                     });
                 }
             } catch (SessionException se) {
-                se.printStackTrace();
                 Session.removeSID(sid);
                 sessionDebug.message(
                     "session is not in timeout state so clean it", se);
@@ -813,7 +812,6 @@ public class Session extends GeneralTaskRunnable {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new SessionException(e);
         }
     }
@@ -1294,7 +1292,6 @@ public class Session extends GeneralTaskRunnable {
                     });
 
         } catch (Exception e) {
-            e.printStackTrace();
             Session.removeSID(sessionID);
             if (sessionDebug.messageEnabled()) {
                 sessionDebug.message("session.Refresh " + "Removed SID:"
@@ -1802,7 +1799,6 @@ public class Session extends GeneralTaskRunnable {
                 Vector infos = sres.getSessionInfoVector();
                 info = (SessionInfo) infos.elementAt(0);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 Session.removeSID(sid);
                 if (debug.messageEnabled())
                     debug.message("Could not connect to the session server"

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.9 2008-04-17 09:06:56 ww203982 Exp $
+ * $Id: DBHandler.java,v 1.10 2008-04-22 15:54:40 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -299,7 +299,7 @@ public class DBHandler extends Handler {
                 ":DBHandler: Unable to Initialize formatter", fie);
         }
 
-        String stat = lmanager.getProperty(LogConstants.LOG_STATUS);
+        String stat = lmanager.getProperty(LogConstants.LOG_STATUS_ATTR);
         if (Debug.messageEnabled()) {
             Debug.message("DBHandler:tableName = " + tableName +
                 ", LOG_STATUS = " + stat);
