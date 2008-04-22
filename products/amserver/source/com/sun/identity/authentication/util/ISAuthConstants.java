@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.12 2008-04-05 16:41:37 pawand Exp $
+ * $Id: ISAuthConstants.java,v 1.13 2008-04-22 01:25:57 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -165,6 +165,14 @@ public interface ISAuthConstants {
 
     public static final String LDAP_RETURNUSERDN = LDAP_SERVICE_PREFIX
             + "return-user-dn";
+
+    /**
+     * SecurID Service Attribute
+     */
+    public static final String SECURID_SERVICE_PREFIX =
+        AUTH_ATTR_PREFIX + "securid-";
+    public static final String SECURID_CONFIG_PATH =
+        SECURID_SERVICE_PREFIX + "server-config-path";
 
     /**
      * Platform Service Attributes
@@ -509,6 +517,13 @@ public interface ISAuthConstants {
     public static final int LOGIN_SUCCEED = -1;
 
     public static final int LOGIN_CHALLENGE = 2;
+
+    // next three added for SecurID
+    public static final int LOGIN_NEXT_TOKEN = 3;
+
+    public static final int LOGIN_SYS_GEN_PIN = 4;
+
+    public static final int LOGIN_NEW_PIN_NEXT_TOKEN = 5;
 
     /** Organization Attribute */
 
