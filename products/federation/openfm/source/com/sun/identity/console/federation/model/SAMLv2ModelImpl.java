@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.19 2008-03-06 20:01:52 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.20 2008-04-22 21:44:42 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,8 +66,12 @@ import com.sun.identity.saml2.jaxb.entityconfig.AttributeAuthorityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeQueryConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AuthnQueryServiceElement;
 import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
+import com.sun.identity.saml2.jaxb.entityconfig.AffiliationConfigElement;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import javax.xml.bind.JAXBException;
+import com.iplanet.jato.RequestManager;
+import com.iplanet.jato.RequestContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,7 +84,15 @@ import java.util.Set;
 public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private SAML2MetaManager metaManager;
     private static Map extendedMetaIdpMap = new HashMap(46);
+    private static Map extendedACMetaIdpMap = new HashMap(34);
+    private static Map extendedAPMetaIdpMap = new HashMap(12);
+    private static Map extendedSMetaIdpMap = new HashMap(2);
+    private static Map extendedAdMetaIdpMap = new HashMap(6);
     private static Map extendedMetaSpMap = new HashMap(54);
+    private static Map extendedACMetaSpMap = new HashMap(34);
+    private static Map extendedAPMetaSpMap = new HashMap(24);
+    private static Map extendedSMetaSpMap = new HashMap(2);
+    private static Map extendedAdMetaSpMap = new HashMap(20);
     private static Map xacmlPDPExtendedMeta = new HashMap(18);
     private static Map xacmlPEPExtendedMeta = new HashMap(18);
     private static Map extAttrAuthMap = new HashMap(12);
@@ -104,7 +116,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(IDP_MNI_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ASSERT_EFFECT_TIME, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_ACCT_MAPPER, Collections.EMPTY_SET);
-        extendedMetaIdpMap.put(IDP_AUTHN_CONTEXT_MAPPER, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(IDP_AUTHN_CONTEXT_MAPPER, 
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
                 Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_ATTR_MAPPER, Collections.EMPTY_SET);
@@ -136,12 +149,14 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(SP_BASIC_AUTH_PWD, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_AUTO_FED_ENABLED, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_AUTO_FED_ATTR, Collections.EMPTY_SET);
+        
         extendedMetaSpMap.put(SP_ATTR_MAP, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_NAMEID_ENCRYPTED, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_LOGOUT_REQ_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_LOGOUT_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_MNI_REQ_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_MNI_RESP_SIGN, Collections.EMPTY_SET);
+        
         extendedMetaSpMap.put(TRANSIENT_USER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_ACCT_MAPPER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_AUTHN_CONTEXT_MAPPER, Collections.EMPTY_SET);
@@ -160,6 +175,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
         
+               
         //IDP PROXY
         extendedMetaSpMap.put(ENABLE_IDP_PROXY, Collections.EMPTY_SET);
         extendedMetaSpMap.put(IDP_PROXY_LIST, Collections.EMPTY_SET);
@@ -175,13 +191,134 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         
         //SAE
-        extendedMetaSpMap.put(ATTR_SAE_SP_APP_SECRET_LIST, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(ATTR_SAE_SP_APP_SECRET_LIST, 
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SAE_SP_URL, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SAE_LOGOUT_URL, Collections.EMPTY_SET);
         
         //spAdapter
         extendedMetaSpMap.put(ATTR_SP_ADAPTER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SP_ADAPTER_ENV, Collections.EMPTY_SET);
+    }
+    
+    //extended Assertion Content metadata attributes for idp only    
+    static {
+        extendedACMetaIdpMap.put(ARTIF_RESOLVE_SIGN, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_LOGOUT_REQ_SIGN, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_LOGOUT_RESP_SIGN, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_MNI_REQ_SIGN, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_MNI_RESP_SIGN, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_SIGN_CERT_ALIAS, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_ENCRYPT_CERT_ALIAS, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_NAMEID_ENCRYPTED, Collections.EMPTY_SET);    
+        extendedACMetaIdpMap.put(IDP_AUTHN_CONTEXT_MAPPER, 
+                Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
+                Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(ASSERT_EFFECT_TIME, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(ASSERT_NOT_BEFORE_TIMESKEW,
+                Collections.EMPTY_SET);        
+        extendedACMetaIdpMap.put(IDP_BASIC_AUTH_ON, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_BASIC_AUTH_USER, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(IDP_BASIC_AUTH_PWD, Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(ASSERTION_CACHE_ENABLED,
+                Collections.EMPTY_SET);
+        extendedACMetaIdpMap.put(BOOT_STRAP_ENABLED, Collections.EMPTY_SET);
+    }
+    
+    //extended Assertion Processing metadata attributes for idp only    
+    static {
+        extendedAPMetaIdpMap.put(IDP_ATTR_MAP, Collections.EMPTY_SET);
+        extendedAPMetaIdpMap.put(IDP_ATTR_MAPPER, Collections.EMPTY_SET);
+        extendedAPMetaIdpMap.put(IDP_AUTO_FED_ENABLED, Collections.EMPTY_SET);
+        extendedAPMetaIdpMap.put(IDP_AUTO_FED_ATTR, Collections.EMPTY_SET);
+        extendedAPMetaIdpMap.put(IDP_ACCT_MAPPER, Collections.EMPTY_SET);
+        extendedAPMetaIdpMap.put(AUTH_URL, Collections.EMPTY_SET);
+    }
+    
+    //extended Services metadata attributes for idp only    
+    static {
+        extendedSMetaIdpMap.put(IDP_META_ALIAS, Collections.EMPTY_SET);
+    }
+    
+    //extended Advanced metadata attributes for idp only    
+    static {
+        extendedAdMetaIdpMap.put(ATTR_IDP_ECP_SESSION_MAPPER,
+                Collections.EMPTY_SET);
+        extendedAdMetaIdpMap.put(ATTR_SAE_IDP_APP_SECRET_LIST,
+                Collections.EMPTY_SET);
+        extendedAdMetaIdpMap.put(ATTR_SAE_IDP_URL,
+                Collections.EMPTY_SET);
+    }
+    
+    //extended Assertion Content metadata attributes for sp only    
+    static {
+        extendedACMetaSpMap.put(SP_SIGN_CERT_ALIAS, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_ENCRYPT_CERT_ALIAS, Collections.EMPTY_SET);        
+        extendedACMetaSpMap.put(SP_NAMEID_ENCRYPTED, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(WANT_ATTR_ENCRYPTED, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(WANT_ASSERTION_ENCRYPTED,
+                Collections.EMPTY_SET);       
+        extendedACMetaSpMap.put(SP_LOGOUT_REQ_SIGN, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_LOGOUT_RESP_SIGN, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_MNI_REQ_SIGN, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_MNI_RESP_SIGN, Collections.EMPTY_SET);        
+        extendedACMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_AUTHN_CONTEXT_MAPPER,
+                Collections.EMPTY_SET);        
+        extendedACMetaSpMap.put(SP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
+                Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_AUTHN_CONTEXT_COMPARISON,
+                Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(ASSERT_TIME_SKEW, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_BASIC_AUTH_ON, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_BASIC_AUTH_USER, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(SP_BASIC_AUTH_PWD, Collections.EMPTY_SET);
+        
+    }
+    
+    //extended Assertion Processing metadata attributes for sp only    
+    static {
+       extendedAPMetaSpMap.put(SP_ATTR_MAP, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(SP_ATTR_MAPPER, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(SP_AUTO_FED_ENABLED, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(SP_AUTO_FED_ATTR, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(SP_ACCT_MAPPER, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(TRANSIENT_USER, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(LOCAL_AUTH_URL, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(INTERMEDIATE_URL, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(DEFAULT_RELAY_STATE, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(SAML2_AUTH_MODULE, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(ATTR_SP_ADAPTER, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(ATTR_SP_ADAPTER_ENV, Collections.EMPTY_SET);
+    }
+    
+    //extended Services metadata attributes for sp only    
+    static {
+        extendedSMetaSpMap.put(SP_META_ALIAS, Collections.EMPTY_SET);        
+    }
+    
+    //extended Advanced metadata attributes for sp only    
+    static {
+        //IDP PROXY
+        extendedAdMetaSpMap.put(ENABLE_IDP_PROXY, Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(IDP_PROXY_LIST, Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(IDP_PROXY_COUNT, Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(IDP_PROXY_INTROD, Collections.EMPTY_SET);
+        
+        //ECP
+        extendedAdMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST_FINDER_IMPL,
+                Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST,
+                Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(ATTR_ECP_REQUEST_IDP_LIST_GET_COMPLETE,
+                Collections.EMPTY_SET);
+        
+        //SAE
+        extendedAdMetaSpMap.put(ATTR_SAE_SP_APP_SECRET_LIST,
+                Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(ATTR_SAE_SP_URL, Collections.EMPTY_SET);
+        extendedAdMetaSpMap.put(ATTR_SAE_LOGOUT_URL, Collections.EMPTY_SET);        
     }
     
     static {
@@ -296,56 +433,72 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 
                 //retrieve SingleLogoutService
-                List logoutList = idpssoDescriptor.getSingleLogoutService();
-                if (!logoutList.isEmpty()) {
-                    SingleLogoutServiceElement slsElem1 =
-                            (SingleLogoutServiceElement)logoutList.get(0);
-                    map.put(SINGLE_LOGOUT_HTTP_LOCATION,
+                map.put(SINGLE_LOGOUT_HTTP_LOCATION, Collections.EMPTY_SET);
+                map.put(SINGLE_LOGOUT_HTTP_RESP_LOCATION,
+                    Collections.EMPTY_SET);
+                map.put(SLO_POST_LOC, Collections.EMPTY_SET);
+                map.put(SLO_POST_RESPLOC, Collections.EMPTY_SET);
+                map.put(SINGLE_LOGOUT_SOAP_LOCATION, Collections.EMPTY_SET);
+                
+                List logoutList = idpssoDescriptor.getSingleLogoutService();                
+                for (int i=0; i<logoutList.size(); i++) {
+                    SingleLogoutServiceElement spslsElem = 
+                            (SingleLogoutServiceElement) logoutList.get(i);
+                    String tmp = spslsElem.getBinding();
+                    if (tmp.contains(httpRedirect)) {
+                        map.put(SINGLE_LOGOUT_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            slsElem1.getLocation()));
-                    map.put(SINGLE_LOGOUT_HTTP_RESP_LOCATION,
+                            spslsElem.getLocation()));
+                        map.put(SINGLE_LOGOUT_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            slsElem1.getResponseLocation()));
-                    SingleLogoutServiceElement slsElem3 =
-                            (SingleLogoutServiceElement)logoutList.get(1);
-                    map.put(SLO_POST_LOC,
+                            spslsElem.getResponseLocation()));
+                    } else if (tmp.contains(httpPost)) {
+                        map.put(SLO_POST_LOC,
                             returnEmptySetIfValueIsNull(
-                            slsElem3.getLocation()));
-                    map.put(SLO_POST_RESPLOC,
+                            spslsElem.getLocation()));
+                        map.put(SLO_POST_RESPLOC,
                             returnEmptySetIfValueIsNull(
-                            slsElem3.getResponseLocation()));
-                    SingleLogoutServiceElement slsElem2 =
-                            (SingleLogoutServiceElement)logoutList.get(2);
-                    map.put(SINGLE_LOGOUT_SOAP_LOCATION,
+                            spslsElem.getResponseLocation()));
+                    } else if (tmp.contains(soap)) {
+                        map.put(SINGLE_LOGOUT_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            slsElem2.getLocation()));
+                            spslsElem.getLocation()));
+                    }
                 }
                 
                 //retrieve ManageNameIDService
+                map.put(MANAGE_NAMEID_HTTP_LOCATION,Collections.EMPTY_SET);
+                map.put(MANAGE_NAMEID_HTTP_RESP_LOCATION,
+                    Collections.EMPTY_SET);
+                map.put(MNI_POST_LOC,Collections.EMPTY_SET);
+                map.put(MNI_POST_RESPLOC,Collections.EMPTY_SET);
+                map.put(MANAGE_NAMEID_SOAP_LOCATION,Collections.EMPTY_SET);
                 List manageNameIdList =
                         idpssoDescriptor.getManageNameIDService();
-                if (!manageNameIdList.isEmpty()) {
-                    ManageNameIDServiceElement mniElem1 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(0);
-                    map.put(MANAGE_NAMEID_HTTP_LOCATION,
+                
+                for (int i=0; i<manageNameIdList.size(); i++) {
+                    ManageNameIDServiceElement mniElem = 
+                        (ManageNameIDServiceElement) manageNameIdList.get(i);
+                    String tmp = mniElem.getBinding();
+                    if (tmp.contains(httpRedirect)) {
+                        map.put(MANAGE_NAMEID_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            mniElem1.getLocation()));
-                    map.put(MANAGE_NAMEID_HTTP_RESP_LOCATION,
+                            mniElem.getLocation()));
+                        map.put(MANAGE_NAMEID_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            mniElem1.getResponseLocation()));
-                    ManageNameIDServiceElement mniElem3 =
-                        (ManageNameIDServiceElement)manageNameIdList.get(1);
-                    map.put(MNI_POST_LOC,
+                            mniElem.getResponseLocation()));
+                    } else if (tmp.contains(httpPost)) {
+                        map.put(MNI_POST_LOC,
                             returnEmptySetIfValueIsNull(
-                            mniElem3.getLocation()));
-                    map.put(MNI_POST_RESPLOC,
+                            mniElem.getLocation()));
+                        map.put(MNI_POST_RESPLOC,
                             returnEmptySetIfValueIsNull(
-                            mniElem3.getResponseLocation()));
-                    ManageNameIDServiceElement mniElem2 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(2);
-                    map.put(MANAGE_NAMEID_SOAP_LOCATION,
+                            mniElem.getResponseLocation()));
+                    } else if (tmp.contains(soap)) {
+                        map.put(MANAGE_NAMEID_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            mniElem2.getLocation()));
+                            mniElem.getLocation()));
+                    }
                 }
                 
                 //retrieve nameid mapping service
@@ -353,7 +506,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         idpssoDescriptor.getNameIDMappingService();
                 if (!nameIDmappingList.isEmpty()) {
                     NameIDMappingServiceElement namidElem1 =
-                            (NameIDMappingServiceElement)nameIDmappingList.get(0);
+                        (NameIDMappingServiceElement)nameIDmappingList.get(0);
                     map.put(NAME_ID_MAPPPING,
                             returnEmptySetIfValueIsNull(
                             namidElem1.getLocation()));
@@ -367,23 +520,29 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 
                 //retrieve SingleSignOnService
+                map.put(SINGLE_SIGNON_HTTP_LOCATION, Collections.EMPTY_SET);
+                map.put(SINGLE_SIGNON_SOAP_LOCATION, Collections.EMPTY_SET);
+                map.put(SSO_SOAPS_LOC, Collections.EMPTY_SET);
+                
                 List signonList = idpssoDescriptor.getSingleSignOnService();
-                if (!signonList.isEmpty()) {
-                    SingleSignOnServiceElement signElem1 =
-                            (SingleSignOnServiceElement)signonList.get(0);
-                    map.put(SINGLE_SIGNON_HTTP_LOCATION,
+                
+                for (int i=0; i<signonList.size(); i++) {
+                    SingleSignOnServiceElement signElem = 
+                            (SingleSignOnServiceElement) signonList.get(i);
+                    String tmp = signElem.getBinding();
+                    if (tmp.contains(httpRedirect)) {
+                        map.put(SINGLE_SIGNON_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            signElem1.getLocation()));
-                    SingleSignOnServiceElement signElem2 =
-                            (SingleSignOnServiceElement)signonList.get(1);
-                    map.put(SINGLE_SIGNON_SOAP_LOCATION,
+                            signElem.getLocation()));
+                    } else if (tmp.contains(httpPost)) {
+                        map.put(SINGLE_SIGNON_SOAP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            signElem2.getLocation()));
-                    SingleSignOnServiceElement signElem3 =
-                            (SingleSignOnServiceElement)signonList.get(2);
-                    map.put(SSO_SOAPS_LOC,
+                            signElem.getLocation()));
+                    } else if (tmp.contains(soap)) {
+                        map.put(SSO_SOAPS_LOC,
                             returnEmptySetIfValueIsNull(
-                            signElem3.getLocation()));
+                            signElem.getLocation()));
+                    }
                 }
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
@@ -439,6 +598,54 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     }
     
     /**
+     *Returns the metaAlias of the entity.
+     *
+     *@param realm to which the entity belongs.
+     *@param entityName is the entity id.
+     *@param role the Role of entity.
+     *@return the metaAlias of the entity.
+     *@throws AMConsoleException if unable to retrieve metaAlias.
+     */
+    public String getMetaalias(
+            String realm,
+            String entityName,
+            String role
+            ) throws AMConsoleException {
+        String[] params = {realm, entityName, "SAMLv2", "Extended"};
+        logEvent("ATTEMPT_GET_METAALIAS", params);
+        String metaAlias = null;
+        IDPSSOConfigElement idpssoConfig = null;
+        SPSSOConfigElement spssoConfig = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            if (role.equals(EntityModel.IDENTITY_PROVIDER)) {
+                idpssoConfig = samlManager.getIDPSSOConfig(realm,entityName);
+                if (idpssoConfig != null) {
+                    BaseConfigType baseConfig = (BaseConfigType)idpssoConfig;
+                    metaAlias = baseConfig.getMetaAlias();
+                }
+            } else if (role.equals(EntityModel.SERVICE_PROVIDER)) {
+                spssoConfig = samlManager.getSPSSOConfig(realm,entityName);
+                if (spssoConfig != null) {
+                    BaseConfigType baseConfig = (BaseConfigType)spssoConfig;
+                    metaAlias = baseConfig.getMetaAlias();
+                }
+            }
+            logEvent("SUCCEED_GET_METAALIAS", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                    ("SAMLv2ModelImpl.getMetaalias:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "Extended", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_METAALIAS",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return metaAlias;
+    }
+    
+    /**
      * Returns a map with standard service provider attributes and values.
      *
      * @param realm to which the entity belongs.
@@ -469,81 +676,120 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         spssoDescriptor.isWantAssertionsSigned()));
                 
                 //retrieve SingleLogoutService
+                map.put(SP_SINGLE_LOGOUT_HTTP_LOCATION, Collections.EMPTY_SET);
+                map.put(SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION,
+                    Collections.EMPTY_SET);
+                map.put(SP_SLO_POST_LOC, Collections.EMPTY_SET);
+                map.put(SP_SLO_POST_RESPLOC, Collections.EMPTY_SET);
+                map.put(SP_SINGLE_LOGOUT_SOAP_LOCATION, Collections.EMPTY_SET);
                 List splogoutList = spssoDescriptor.getSingleLogoutService();
-                if (!splogoutList.isEmpty()) {
-                    SingleLogoutServiceElement spslsElem1 =
-                            (SingleLogoutServiceElement)splogoutList.get(0);
-                    map.put(SP_SINGLE_LOGOUT_HTTP_LOCATION,
+                for (int i=0; i<splogoutList.size(); i++) {
+                    SingleLogoutServiceElement spslsElem = 
+                            (SingleLogoutServiceElement) splogoutList.get(i);
+                    String tmp = spslsElem.getBinding();
+                    if (tmp.contains(httpRedirect)) {
+                        map.put(SP_SINGLE_LOGOUT_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            spslsElem1.getLocation()));
-                    map.put(SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION,
+                            spslsElem.getLocation()));
+                        map.put(SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            spslsElem1.getResponseLocation()));
-                    SingleLogoutServiceElement spslsElem3 =
-                            (SingleLogoutServiceElement)splogoutList.get(1);
-                    map.put(SP_SLO_POST_LOC,
+                            spslsElem.getResponseLocation()));
+                    } else if (tmp.contains(httpPost)) {
+                        map.put(SP_SLO_POST_LOC,
                             returnEmptySetIfValueIsNull(
-                            spslsElem3.getLocation()));
-                    map.put(SP_SLO_POST_RESPLOC,
+                            spslsElem.getLocation()));
+                        map.put(SP_SLO_POST_RESPLOC,
                             returnEmptySetIfValueIsNull(
-                            spslsElem3.getResponseLocation()));
-                    SingleLogoutServiceElement spslsElem2 =
-                            (SingleLogoutServiceElement)splogoutList.get(2);
-                    map.put(SP_SINGLE_LOGOUT_SOAP_LOCATION,
-                        returnEmptySetIfValueIsNull(spslsElem2.getLocation()));
+                            spslsElem.getResponseLocation()));
+                    } else if (tmp.contains(soap)) {
+                        map.put(SP_SINGLE_LOGOUT_SOAP_LOCATION,
+                        returnEmptySetIfValueIsNull(spslsElem.getLocation()));
+                    }
                 }
                 
                 //retrieve ManageNameIDService
+                map.put(SP_MANAGE_NAMEID_HTTP_LOCATION, Collections.EMPTY_SET);
+                map.put(SP_MANAGE_NAMEID_HTTP_RESP_LOCATION,
+                    Collections.EMPTY_SET);
+                map.put(SP_MNI_POST_LOC, Collections.EMPTY_SET);
+                map.put(SP_MNI_POST_RESPLOC, Collections.EMPTY_SET);
+                map.put(SP_MANAGE_NAMEID_SOAP_LOCATION, Collections.EMPTY_SET);
+                map.put(SP_MANAGE_NAMEID_SOAP_RESP_LOCATION,
+                    Collections.EMPTY_SET);
+                        
                 List manageNameIdList =
-                        spssoDescriptor.getManageNameIDService();
-                if (!manageNameIdList.isEmpty()) {
-                    ManageNameIDServiceElement mniElem1 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(0);
-                    map.put(SP_MANAGE_NAMEID_HTTP_LOCATION,
-                            returnEmptySetIfValueIsNull(mniElem1.getLocation()));
-                    map.put(SP_MANAGE_NAMEID_HTTP_RESP_LOCATION,
+                        spssoDescriptor.getManageNameIDService();                
+                for (int i=0; i<manageNameIdList.size(); i++) {
+                    ManageNameIDServiceElement mniElem = 
+                        (ManageNameIDServiceElement) manageNameIdList.get(i);
+                    String tmp = mniElem.getBinding();
+                    if (tmp.contains(httpRedirect)) {
+                        map.put(SP_MANAGE_NAMEID_HTTP_LOCATION,
+                        returnEmptySetIfValueIsNull(mniElem.getLocation()));
+                        map.put(SP_MANAGE_NAMEID_HTTP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            mniElem1.getResponseLocation()));
-                    ManageNameIDServiceElement mniElem3 =
-                        (ManageNameIDServiceElement)manageNameIdList.get(1);
-                    map.put(SP_MNI_POST_LOC,
+                            mniElem.getResponseLocation()));
+                    } else if (tmp.contains(httpPost)) {
+                        map.put(SP_MNI_POST_LOC,
                             returnEmptySetIfValueIsNull(
-                            mniElem3.getLocation()));
-                    map.put(SP_MNI_POST_RESPLOC,
+                            mniElem.getLocation()));
+                        map.put(SP_MNI_POST_RESPLOC,
                             returnEmptySetIfValueIsNull(
-                            mniElem3.getResponseLocation()));
-                    ManageNameIDServiceElement mniElem2 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(2);
-                    map.put(SP_MANAGE_NAMEID_SOAP_LOCATION,
-                            returnEmptySetIfValueIsNull(mniElem2.getLocation()));
-                    map.put(SP_MANAGE_NAMEID_SOAP_RESP_LOCATION,
+                            mniElem.getResponseLocation()));
+                    } else if (tmp.contains(soap)) {
+                        map.put(SP_MANAGE_NAMEID_SOAP_LOCATION,
+                        returnEmptySetIfValueIsNull(mniElem.getLocation()));
+                        map.put(SP_MANAGE_NAMEID_SOAP_RESP_LOCATION,
                             returnEmptySetIfValueIsNull(
-                            mniElem2.getResponseLocation()));
+                            mniElem.getResponseLocation()));
+                    }
                 }
                 
-                //retrieve AssertionConsumerService
+                //retrieve AssertionConsumerService                
+                map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT,
+                                returnEmptySetIfValueIsNull(false));
+                map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX,
+                            Collections.EMPTY_SET);
+                map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION,
+                            Collections.EMPTY_SET);
+                map.put(HTTP_POST_ASSRT_CONS_SERVICE_INDEX,
+                            Collections.EMPTY_SET);
+                map.put(HTTP_POST_ASSRT_CONS_SERVICE_LOCATION,
+                        Collections.EMPTY_SET);
+                map.put(PAOS_ASSRT_CONS_SERVICE_INDEX,
+                        Collections.EMPTY_SET);
+                map.put(PAOS_ASSRT_CONS_SERVICE_LOCATION,
+                        Collections.EMPTY_SET);
                 List asconsServiceList =
                         spssoDescriptor.getAssertionConsumerService();
-                if (!asconsServiceList.isEmpty()) {
-                    AssertionConsumerServiceElement acsElem1 =
-                            (AssertionConsumerServiceElement)
-                            asconsServiceList.get(0);
-                    map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT,
-                            returnEmptySetIfValueIsNull(acsElem1.isIsDefault()));
-                    map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX,
-                            returnEmptySetIfValueIsNull(
-                            Integer.toString(acsElem1.getIndex())));
-                    map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION,
-                            returnEmptySetIfValueIsNull(acsElem1.getLocation()));
-                    AssertionConsumerServiceElement acsElem2 =
-                            (AssertionConsumerServiceElement)
-                            asconsServiceList.get(1);
-                    map.put(HTTP_POST_ASSRT_CONS_SERVICE_INDEX,
-                            returnEmptySetIfValueIsNull(
-                            Integer.toString(acsElem2.getIndex())));
-                    map.put(HTTP_POST_ASSRT_CONS_SERVICE_LOCATION,
-                            returnEmptySetIfValueIsNull(acsElem2.getLocation()));
+                
+                for (int i=0; i<asconsServiceList.size(); i++) {
+                    AssertionConsumerServiceElement acsElem = 
+                    (AssertionConsumerServiceElement) asconsServiceList.get(i);
+                    String tmp = acsElem.getBinding();                    
+                    if (tmp.contains(artifact)) {
+                        map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT,
+                        returnEmptySetIfValueIsNull(acsElem.isIsDefault()));
+                        map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX,
+                                returnEmptySetIfValueIsNull(
+                                Integer.toString(acsElem.getIndex())));
+                        map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION,
+                            returnEmptySetIfValueIsNull(acsElem.getLocation()));
+                    } else if (tmp.contains(post)) {
+                        map.put(HTTP_POST_ASSRT_CONS_SERVICE_INDEX,
+                                returnEmptySetIfValueIsNull(
+                                Integer.toString(acsElem.getIndex())));
+                        map.put(HTTP_POST_ASSRT_CONS_SERVICE_LOCATION,
+                            returnEmptySetIfValueIsNull(acsElem.getLocation()));
+                    } else if (tmp.contains(paos)) {
+                        map.put(PAOS_ASSRT_CONS_SERVICE_INDEX,
+                                returnEmptySetIfValueIsNull(
+                                Integer.toString(acsElem.getIndex())));
+                        map.put(PAOS_ASSRT_CONS_SERVICE_LOCATION,
+                            returnEmptySetIfValueIsNull(acsElem.getLocation()));
+                    }
                 }
+                
                 //retrieve nameid format
                 List NameIdFormatList = spssoDescriptor.getNameIDFormat();
                 if (!NameIdFormatList.isEmpty()) {
@@ -619,6 +865,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String[] params = {realm, entityName, "SAMLv2", "IDP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         IDPSSODescriptorElement idpssoDescriptor = null;
+        com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact = new 
+                com.sun.identity.saml2.jaxb.metadata.ObjectFactory();
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
@@ -626,130 +874,200 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             idpssoDescriptor =
                     samlManager.getIDPSSODescriptor(realm,entityName);
             if (idpssoDescriptor != null) {
-                boolean value = setToBoolean(
-                        idpStdValues, WANT_AUTHN_REQ_SIGNED);
-                idpssoDescriptor.setWantAuthnRequestsSigned(value);
+                
+                // save for WantAuthnRequestsSigned 
+                if (idpStdValues.keySet().contains(WANT_AUTHN_REQ_SIGNED)) {
+                    boolean value = setToBoolean(
+                            idpStdValues, WANT_AUTHN_REQ_SIGNED);
+                    idpssoDescriptor.setWantAuthnRequestsSigned(value); 
+                }
                 
                 // save for Artifact Resolution Service
-                String artLocation = getResult(
-                        idpStdValues, ART_RES_LOCATION);
-                String indexValue = getResult(idpStdValues, ART_RES_INDEX);
-                boolean isDefault =
-                        setToBoolean(idpStdValues, ART_RES_ISDEFAULT);
-                List artList =
-                        idpssoDescriptor.getArtifactResolutionService();
-                if (!artList.isEmpty()) {
-                    ArtifactResolutionServiceElement elem =
+                if (idpStdValues.keySet().contains(ART_RES_LOCATION)) {
+                    String artLocation = getResult(
+                            idpStdValues, ART_RES_LOCATION);
+                    String indexValue = getResult(idpStdValues, ART_RES_INDEX);
+                    boolean isDefault =
+                            setToBoolean(idpStdValues, ART_RES_ISDEFAULT);
+                    List artList =
+                            idpssoDescriptor.getArtifactResolutionService();
+                    if (!artList.isEmpty()) {
+                        ArtifactResolutionServiceElement elem =
                             (ArtifactResolutionServiceElement)artList.get(0);
-                    elem.setLocation(artLocation);
-                    elem.setIndex(Integer.parseInt(indexValue));
-                    elem.setIsDefault(isDefault);
-                    idpssoDescriptor.getArtifactResolutionService().clear();
-                    idpssoDescriptor.getArtifactResolutionService().add(elem);
+                        elem.setLocation(artLocation);
+                        elem.setIndex(Integer.parseInt(indexValue));
+                        elem.setIsDefault(isDefault);
+                        idpssoDescriptor.
+                                getArtifactResolutionService().clear();
+                        idpssoDescriptor.
+                                getArtifactResolutionService().add(elem);
+                    }
                 }
                 
                 // save for Single Logout Service - Http-Redirect
-                String lohttpLocation = getResult(
-                        idpStdValues, SINGLE_LOGOUT_HTTP_LOCATION);
-                String lohttpRespLocation = getResult(
-                        idpStdValues, SINGLE_LOGOUT_HTTP_RESP_LOCATION);
-                String postLocation = getResult(
-                        idpStdValues, SLO_POST_LOC);
-                String postRespLocation = getResult(
-                        idpStdValues, SLO_POST_RESPLOC);
-                String losoapLocation = getResult(
-                        idpStdValues, SINGLE_LOGOUT_SOAP_LOCATION);
-                List logList = idpssoDescriptor.getSingleLogoutService();
-                if (!logList.isEmpty()) {
-                    SingleLogoutServiceElement slsElem1 =
-                            (SingleLogoutServiceElement)logList.get(0);
-                    SingleLogoutServiceElement slsElem3 =
-                            (SingleLogoutServiceElement)logList.get(1);
-                    SingleLogoutServiceElement slsElem2 =
-                            (SingleLogoutServiceElement)logList.get(2);
-                    slsElem1.setLocation(lohttpLocation);
-                    slsElem1.setResponseLocation(lohttpRespLocation);
-                    slsElem3.setLocation(postLocation);
-                    slsElem3.setResponseLocation(postRespLocation);
-                    slsElem2.setLocation(losoapLocation);
-                    idpssoDescriptor.getSingleLogoutService().clear();
-                    idpssoDescriptor.getSingleLogoutService().add(slsElem1);
-                    idpssoDescriptor.getSingleLogoutService().add(slsElem3);
-                    idpssoDescriptor.getSingleLogoutService().add(slsElem2);
+                if (idpStdValues.keySet().contains(
+                        SINGLE_LOGOUT_HTTP_LOCATION)) {
+                    String lohttpLocation = getResult(
+                            idpStdValues, SINGLE_LOGOUT_HTTP_LOCATION);
+                    String lohttpRespLocation = getResult(
+                            idpStdValues, SINGLE_LOGOUT_HTTP_RESP_LOCATION);
+                    String postLocation = getResult(
+                            idpStdValues, SLO_POST_LOC);
+                    String postRespLocation = getResult(
+                            idpStdValues, SLO_POST_RESPLOC);
+                    String losoapLocation = getResult(
+                            idpStdValues, SINGLE_LOGOUT_SOAP_LOCATION);
+                    
+                    List logList = idpssoDescriptor.getSingleLogoutService();
+                    
+                    if (!logList.isEmpty()) {
+                        logList.clear();                        
+                    }
+                    
+                    if (lohttpLocation != null && lohttpLocation.length() > 0) {
+                        SingleLogoutServiceElement slsElemRed = 
+                                objFact.createSingleLogoutServiceElement();   
+                        slsElemRed.setBinding(httpRedirectBinding);
+                        slsElemRed.setLocation(lohttpLocation);
+                        slsElemRed.setResponseLocation(lohttpRespLocation);
+                        logList.add(slsElemRed);
+                    }
+                    
+                    if (postLocation != null && postLocation.length() > 0) {
+                        SingleLogoutServiceElement slsElemPost = 
+                                objFact.createSingleLogoutServiceElement();
+                        slsElemPost.setBinding(httpPostBinding);
+                        slsElemPost.setLocation(postLocation);
+                        slsElemPost.setResponseLocation(postRespLocation);
+                        logList.add(slsElemPost);
+                    }
+                    
+                    if (losoapLocation != null && losoapLocation.length() > 0) {
+                        SingleLogoutServiceElement slsElemSoap = 
+                                objFact.createSingleLogoutServiceElement();
+                        slsElemSoap.setBinding(soapBinding);
+                        slsElemSoap.setLocation(losoapLocation);
+                        logList.add(slsElemSoap);
+                    }
                 }
                 
                 // save for Manage Name ID Service
-                String mnihttpLocation = getResult(
-                        idpStdValues, MANAGE_NAMEID_HTTP_LOCATION);
-                String mnihttpRespLocation = getResult(
-                        idpStdValues, MANAGE_NAMEID_HTTP_RESP_LOCATION);
-                String mnipostLocation = getResult(
-                        idpStdValues, MNI_POST_LOC);
-                String mnipostRespLocation = getResult(
-                        idpStdValues, MNI_POST_RESPLOC);                
-                String mnisoapLocation = getResult(
-                        idpStdValues, MANAGE_NAMEID_SOAP_LOCATION);
-                List manageNameIdList =
-                        idpssoDescriptor.getManageNameIDService();
-                if (!manageNameIdList.isEmpty()) {
-                    ManageNameIDServiceElement mniElem1 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(0);
-                    ManageNameIDServiceElement mniElem3 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(1);
-                    ManageNameIDServiceElement mniElem2 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(2);
-                    mniElem1.setLocation(mnihttpLocation);
-                    mniElem1.setResponseLocation(mnihttpRespLocation);
-                    mniElem3.setLocation(mnipostLocation);
-                    mniElem3.setResponseLocation(mnipostRespLocation);
-                    mniElem2.setLocation(mnisoapLocation);
-                    idpssoDescriptor.getManageNameIDService().clear();
-                    idpssoDescriptor.getManageNameIDService().add(mniElem1);
-                    idpssoDescriptor.getManageNameIDService().add(mniElem3);
-                    idpssoDescriptor.getManageNameIDService().add(mniElem2);
+                if (idpStdValues.keySet().contains(
+                        MANAGE_NAMEID_HTTP_LOCATION)) {
+                    String mnihttpLocation = getResult(
+                            idpStdValues, MANAGE_NAMEID_HTTP_LOCATION);
+                    String mnihttpRespLocation = getResult(
+                            idpStdValues, MANAGE_NAMEID_HTTP_RESP_LOCATION);
+                    String mnipostLocation = getResult(
+                            idpStdValues, MNI_POST_LOC);
+                    String mnipostRespLocation = getResult(
+                            idpStdValues, MNI_POST_RESPLOC);                
+                    String mnisoapLocation = getResult(
+                            idpStdValues, MANAGE_NAMEID_SOAP_LOCATION);
+                    List manageNameIdList =
+                            idpssoDescriptor.getManageNameIDService();
+                    
+                    if (!manageNameIdList.isEmpty()) {
+                        manageNameIdList.clear();                        
+                    }
+                    
+                    if (mnihttpLocation != null &&
+                            mnihttpLocation.length() > 0) {
+                        ManageNameIDServiceElement mniElemRed = 
+                                objFact.createManageNameIDServiceElement(); 
+                        mniElemRed.setBinding(httpRedirectBinding);
+                        mniElemRed.setLocation(mnihttpLocation);
+                        mniElemRed.setResponseLocation(mnihttpRespLocation);
+                        manageNameIdList.add(mniElemRed);
+                    }
+                    if (mnipostLocation != null && 
+                            mnipostLocation.length() > 0) {
+                        ManageNameIDServiceElement mniElemPost = 
+                                objFact.createManageNameIDServiceElement();
+                        mniElemPost.setBinding(httpPostBinding);
+                        mniElemPost.setLocation(mnipostLocation);                        
+                        mniElemPost.setResponseLocation(mnipostRespLocation);
+                        manageNameIdList.add(mniElemPost);
+                    }
+                    if (mnisoapLocation != null && 
+                            mnisoapLocation.length() > 0) {
+                        ManageNameIDServiceElement mniElemSoap = 
+                                objFact.createManageNameIDServiceElement();
+                        mniElemSoap.setBinding(soapBinding);
+                        mniElemSoap.setLocation(mnisoapLocation);
+                        manageNameIdList.add(mniElemSoap);
+                    }
                 }
                 
                 //save nameid mapping
-                String nameIDmappingloc = getResult(
-                        idpStdValues, NAME_ID_MAPPPING);
-                List nameIDmappingList =
-                        idpssoDescriptor.getNameIDMappingService();
-                if (!nameIDmappingList.isEmpty()) {
-                    NameIDMappingServiceElement namidElem1 =
-                            (NameIDMappingServiceElement)nameIDmappingList.get(0);
-                    namidElem1.setLocation(nameIDmappingloc);
-                    idpssoDescriptor.getNameIDMappingService().clear();
-                    idpssoDescriptor.getNameIDMappingService().add(namidElem1);
+                if (idpStdValues.keySet().contains(NAME_ID_MAPPPING)) {
+                    String nameIDmappingloc = getResult(
+                            idpStdValues, NAME_ID_MAPPPING);
+                    List nameIDmappingList =
+                            idpssoDescriptor.getNameIDMappingService();
+                    if (!nameIDmappingList.isEmpty()) {
+                        NameIDMappingServiceElement namidElem1 =
+                        (NameIDMappingServiceElement)nameIDmappingList.get(0);
+                        namidElem1.setLocation(nameIDmappingloc);
+                        idpssoDescriptor.getNameIDMappingService().clear();
+                        idpssoDescriptor.getNameIDMappingService().add(
+                                namidElem1);
+                    }
                 }
                 
-                //save nameid format
-                List NameIdFormatList = idpssoDescriptor.getNameIDFormat();
-                if (!NameIdFormatList.isEmpty()) {
-                    saveNameIdFormat(idpssoDescriptor, idpStdValues);
+                //save nameid format                
+                if (idpStdValues.keySet().contains(NAMEID_FORMAT)) {
+                    List NameIdFormatList = idpssoDescriptor.getNameIDFormat();
+                    if (!NameIdFormatList.isEmpty()) {
+                        saveNameIdFormat(idpssoDescriptor, idpStdValues);
+                    }
                 }
                 
                 //save for SingleSignOnService
-                String ssohttpLocation = getResult(
-                        idpStdValues, SINGLE_SIGNON_HTTP_LOCATION);
-                String ssopostLocation = getResult(
-                        idpStdValues, SINGLE_SIGNON_SOAP_LOCATION);
-                String ssoSoapLocation = getResult(
-                        idpStdValues, SSO_SOAPS_LOC);
-                List signonList = idpssoDescriptor.getSingleSignOnService();
-                if (!signonList.isEmpty()) {
-                    SingleSignOnServiceElement signElem1 =
-                            (SingleSignOnServiceElement)signonList.get(0);
-                    SingleSignOnServiceElement signElem2 =
-                            (SingleSignOnServiceElement)signonList.get(1);
-                    SingleSignOnServiceElement signElem3 =
-                            (SingleSignOnServiceElement)signonList.get(2);
-                    signElem1.setLocation(ssohttpLocation);
-                    signElem2.setLocation(ssopostLocation);
-                    signElem3.setLocation(ssoSoapLocation);
-                    idpssoDescriptor.getSingleSignOnService().clear();
-                    idpssoDescriptor.getSingleSignOnService().add(signElem1);
-                    idpssoDescriptor.getSingleSignOnService().add(signElem2);
-                    idpssoDescriptor.getSingleSignOnService().add(signElem3);
+                if (idpStdValues.keySet().contains(
+                        SINGLE_SIGNON_HTTP_LOCATION)) 
+                {
+                    String ssohttpLocation = getResult(
+                            idpStdValues, SINGLE_SIGNON_HTTP_LOCATION);
+                    String ssopostLocation = getResult(
+                            idpStdValues, SINGLE_SIGNON_SOAP_LOCATION);
+                    String ssoSoapLocation = getResult(
+                            idpStdValues, SSO_SOAPS_LOC);
+                    List signonList = idpssoDescriptor.getSingleSignOnService();
+                    
+                    if (!signonList.isEmpty()) {
+                        signonList.clear();                        
+                    }
+                    
+                    if (ssohttpLocation != null && 
+                            ssohttpLocation.length() > 0)
+                    {
+                        SingleSignOnServiceElement slsElemRed = 
+                                objFact.createSingleSignOnServiceElement();  
+                        slsElemRed.setBinding(httpRedirectBinding);
+                        slsElemRed.setLocation(ssohttpLocation);
+                        signonList.add(slsElemRed);
+                    }
+                    
+                    if (ssopostLocation != null &&
+                            ssopostLocation.length() > 0) 
+                    {
+                        SingleSignOnServiceElement slsElemPost = 
+                                objFact.createSingleSignOnServiceElement();
+                        slsElemPost.setBinding(httpPostBinding);
+                        slsElemPost.setLocation(ssopostLocation);
+                        signonList.add(slsElemPost);
+                    }
+                    
+                    if (ssoSoapLocation != null && 
+                            ssoSoapLocation.length() > 0) 
+                    {
+                        SingleSignOnServiceElement slsElemSoap = 
+                                objFact.createSingleSignOnServiceElement();
+                        slsElemSoap.setBinding(soapBinding);
+                        slsElemSoap.setLocation(ssoSoapLocation);
+                        signonList.add(slsElemSoap);
+                    }
                 }
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
@@ -763,6 +1081,13 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
                     paramsEx);
             throw new AMConsoleException(strError);
+        } catch (JAXBException e) {
+            debug.warning("SAMLv2ModelImpl.setIDPStdAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "IDP-Standard", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         }
     }
     
@@ -800,7 +1125,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             IDPSSOConfigElement  idpssoConfig =
                     samlManager.getIDPSSOConfig(realm,entityName);
             if (idpssoConfig != null) {
-                updateBaseConfig(idpssoConfig, idpExtValues);
+                updateBaseConfig(idpssoConfig, idpExtValues, role);
             }
             
             //saves the attributes by passing the new entityConfig object
@@ -846,6 +1171,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String[] params = {realm, entityName, "SAMLv2", "SP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         SPSSODescriptorElement spssoDescriptor = null;
+        com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact = new 
+                com.sun.identity.saml2.jaxb.metadata.ObjectFactory(); 
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
@@ -855,108 +1182,295 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             if (spssoDescriptor != null) {
                 
                 // save for Single Logout Service - Http-Redirect
-                String lohttpLocation = getResult(
-                        spStdValues, SP_SINGLE_LOGOUT_HTTP_LOCATION);
-                String lohttpRespLocation = getResult(
-                        spStdValues, SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION);
-                String lopostLocation = getResult(
-                        spStdValues, SP_SLO_POST_LOC);
-                String lopostRespLocation = getResult(
-                        spStdValues, SP_SLO_POST_RESPLOC);                
-                String losoapLocation = getResult(
-                        spStdValues, SP_SINGLE_LOGOUT_SOAP_LOCATION);
-                List logList = spssoDescriptor.getSingleLogoutService();
-                if (!logList.isEmpty()) {
-                    SingleLogoutServiceElement slsElem1 =
-                            (SingleLogoutServiceElement)logList.get(0);
-                    SingleLogoutServiceElement slsElem3 =
-                            (SingleLogoutServiceElement)logList.get(1);
-                    SingleLogoutServiceElement slsElem2 =
-                            (SingleLogoutServiceElement)logList.get(2);
-                    slsElem1.setLocation(lohttpLocation);
-                    slsElem1.setResponseLocation(lohttpRespLocation);
-                    slsElem3.setLocation(lopostLocation);
-                    slsElem3.setResponseLocation(lopostRespLocation);
-                    slsElem2.setLocation(losoapLocation);
-                    spssoDescriptor.getSingleLogoutService().clear();
-                    spssoDescriptor.getSingleLogoutService().add(slsElem1);
-                    spssoDescriptor.getSingleLogoutService().add(slsElem3);
-                    spssoDescriptor.getSingleLogoutService().add(slsElem2);
+                if (spStdValues.keySet().contains(
+                        SP_SINGLE_LOGOUT_HTTP_LOCATION)) 
+                {
+                    String lohttpLocation = getResult(
+                            spStdValues, SP_SINGLE_LOGOUT_HTTP_LOCATION);
+                    String lohttpRespLocation = getResult(
+                            spStdValues, SP_SINGLE_LOGOUT_HTTP_RESP_LOCATION);
+                    String lopostLocation = getResult(
+                            spStdValues, SP_SLO_POST_LOC);
+                    String lopostRespLocation = getResult(
+                            spStdValues, SP_SLO_POST_RESPLOC);                
+                    String losoapLocation = getResult(
+                            spStdValues, SP_SINGLE_LOGOUT_SOAP_LOCATION);
+                    List logList = spssoDescriptor.getSingleLogoutService();
+                    
+                    if (!logList.isEmpty()) {
+                        logList.clear();                        
+                    }
+                    
+                    if (lohttpLocation != null && 
+                            lohttpLocation.length() > 0) 
+                    {                    
+                        SingleLogoutServiceElement slsElemRed = 
+                                objFact.createSingleLogoutServiceElement();   
+                        slsElemRed.setBinding(httpRedirectBinding);
+                        slsElemRed.setLocation(lohttpLocation);
+                        slsElemRed.setResponseLocation(lohttpRespLocation);
+                        logList.add(slsElemRed);
+                    }
+                    
+                    if (lopostLocation != null && 
+                            lopostLocation.length() > 0) 
+                    {
+                        SingleLogoutServiceElement slsElemPost = 
+                                objFact.createSingleLogoutServiceElement();
+                        slsElemPost.setBinding(httpPostBinding);
+                        slsElemPost.setLocation(lopostLocation);
+                        slsElemPost.setResponseLocation(lopostRespLocation);
+                        logList.add(slsElemPost);
+                    }
+                    
+                    if (losoapLocation != null && 
+                            losoapLocation.length() > 0) 
+                    {
+                        SingleLogoutServiceElement slsElemSoap = 
+                                objFact.createSingleLogoutServiceElement();
+                        slsElemSoap.setBinding(soapBinding);
+                        slsElemSoap.setLocation(losoapLocation);
+                        logList.add(slsElemSoap);
+                    }
                 }
+                
                 // save for Manage Name ID Service
-                String mnihttpLocation = getResult(
-                        spStdValues, SP_MANAGE_NAMEID_HTTP_LOCATION);
-                String mnihttpRespLocation = getResult(
-                        spStdValues, SP_MANAGE_NAMEID_HTTP_RESP_LOCATION);
-                String mnipostLocation = getResult(
-                        spStdValues, SP_MNI_POST_LOC);
-                String mnipostRespLocation = getResult(
-                        spStdValues, SP_MNI_POST_RESPLOC);                
-                String mnisoapLocation = getResult(
-                        spStdValues, SP_MANAGE_NAMEID_SOAP_LOCATION);
-                String mnisoapResLocation = getResult(
-                        spStdValues, SP_MANAGE_NAMEID_SOAP_RESP_LOCATION);
-                List manageNameIdList =
-                        spssoDescriptor.getManageNameIDService();
-                if (!manageNameIdList.isEmpty()) {
-                    ManageNameIDServiceElement mniElem1 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(0);
-                    ManageNameIDServiceElement mniElem3 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(1);
-                    ManageNameIDServiceElement mniElem2 =
-                            (ManageNameIDServiceElement)manageNameIdList.get(2);
-                    mniElem1.setLocation(mnihttpLocation);
-                    mniElem1.setResponseLocation(mnihttpRespLocation);
-                    mniElem3.setLocation(mnipostLocation);
-                    mniElem3.setResponseLocation(mnipostRespLocation);
-                    mniElem2.setLocation(mnisoapLocation);
-                    mniElem2.setResponseLocation(mnisoapResLocation);
-                    spssoDescriptor.getManageNameIDService().clear();
-                    spssoDescriptor.getManageNameIDService().add(mniElem1);
-                    spssoDescriptor.getManageNameIDService().add(mniElem3);
-                    spssoDescriptor.getManageNameIDService().add(mniElem2);
+                if (spStdValues.keySet().contains(
+                        SP_MANAGE_NAMEID_HTTP_LOCATION)) 
+                {
+                    String mnihttpLocation = getResult(
+                            spStdValues, SP_MANAGE_NAMEID_HTTP_LOCATION);
+                    String mnihttpRespLocation = getResult(
+                            spStdValues, SP_MANAGE_NAMEID_HTTP_RESP_LOCATION);
+                    String mnipostLocation = getResult(
+                            spStdValues, SP_MNI_POST_LOC);
+                    String mnipostRespLocation = getResult(
+                            spStdValues, SP_MNI_POST_RESPLOC);                
+                    String mnisoapLocation = getResult(
+                            spStdValues, SP_MANAGE_NAMEID_SOAP_LOCATION);
+                    String mnisoapResLocation = getResult(
+                            spStdValues, SP_MANAGE_NAMEID_SOAP_RESP_LOCATION);
+                    List manageNameIdList =
+                            spssoDescriptor.getManageNameIDService();
+                      
+                    if (!manageNameIdList.isEmpty()) {
+                        manageNameIdList.clear();                        
+                    }
+                    
+                    if (mnihttpLocation != null && 
+                            mnihttpLocation.length() > 0) 
+                    {
+                        ManageNameIDServiceElement mniElemRed = 
+                                objFact.createManageNameIDServiceElement();
+                        mniElemRed.setBinding(httpRedirectBinding);
+                        mniElemRed.setLocation(mnihttpLocation);
+                        mniElemRed.setResponseLocation(mnihttpRespLocation);
+                        manageNameIdList.add(mniElemRed);
+                    }
+                    
+                    if (mnipostLocation != null && 
+                            mnipostLocation.length() > 0) 
+                    {
+                        ManageNameIDServiceElement mniElemPost = 
+                                objFact.createManageNameIDServiceElement();
+                        mniElemPost.setBinding(httpPostBinding);
+                        mniElemPost.setLocation(mnipostLocation);
+                        mniElemPost.setResponseLocation(mnipostRespLocation);
+                        manageNameIdList.add(mniElemPost);
+                    }
+                    
+                    if (mnisoapLocation != null && 
+                            mnisoapLocation.length() > 0) 
+                    {
+                        ManageNameIDServiceElement mniElemSoap = 
+                                objFact.createManageNameIDServiceElement();
+                        mniElemSoap.setBinding(soapBinding);
+                        mniElemSoap.setLocation(mnisoapLocation);
+                        mniElemSoap.setResponseLocation(mnisoapResLocation);
+                        manageNameIdList.add(mniElemSoap);
+                    }
                 }
-                //save for Assertion Consumer Service
-                boolean isassertDefault = setToBoolean(
-                        spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT);
-                String httpIndex = getResult(
-                        spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX);
-                String httpLocation = getResult(
+                
+                //save for artifact and post Assertion Consumer Service                
+                if (spStdValues.keySet().contains(
+                        HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT)) 
+                {
+                    boolean isassertDefault = setToBoolean(
+                            spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT);
+                    String httpIndex = getResult(
+                            spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX);
+                    String httpLocation = getResult(
                         spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION);
-                String postIndex =  getResult(
-                        spStdValues, HTTP_POST_ASSRT_CONS_SERVICE_INDEX);
-                String postLocation = getResult(
-                        spStdValues, HTTP_POST_ASSRT_CONS_SERVICE_LOCATION);
-                List asconsServiceList =
-                        spssoDescriptor.getAssertionConsumerService();
-                if (!asconsServiceList.isEmpty()) {
-                    AssertionConsumerServiceElement acsElem1 =
-                            (AssertionConsumerServiceElement)
-                            asconsServiceList.get(0);
-                    AssertionConsumerServiceElement acsElem2 =
-                            (AssertionConsumerServiceElement)
-                            asconsServiceList.get(1);
-                    acsElem1.setIsDefault(isassertDefault);
-                    acsElem1.setIndex(Integer.parseInt(httpIndex));
-                    acsElem1.setLocation(httpLocation);
-                    acsElem2.setIndex(Integer.parseInt(postIndex));
-                    acsElem2.setLocation(postLocation);
+                    String paosIndex = null;
+                    String paosLocation = null;
+                    String postIndex =  getResult(
+                            spStdValues, HTTP_POST_ASSRT_CONS_SERVICE_INDEX);
+                    String postLocation = getResult(
+                        spStdValues, HTTP_POST_ASSRT_CONS_SERVICE_LOCATION);                    
+                    
+                    List asconsServiceList =
+                            spssoDescriptor.getAssertionConsumerService();
+                    
+                    //to retain the value of ecp assertion consumer service
+                    if (!asconsServiceList.isEmpty()) {
+                        for (int i=0; i<asconsServiceList.size(); i++) {
+                            AssertionConsumerServiceElement acsElem =
+                                (AssertionConsumerServiceElement)
+                                asconsServiceList.get(i);
+                            String tmp = acsElem.getBinding();
+                            if (tmp.contains(paos)) {
+                                paosIndex = 
+                                        Integer.toString(acsElem.getIndex());
+                                paosLocation = acsElem.getLocation();
+                            }
+                        }
+                    }
+                    
+                    if (!asconsServiceList.isEmpty()) {
+                        asconsServiceList.clear();
+                    }
+
+                    AssertionConsumerServiceElement acsElemArti = null;                                          
+                    AssertionConsumerServiceElement acsElemPost = null;                           
+                    AssertionConsumerServiceElement acsElemPaos = null;
+                    
+                    if (httpLocation != null && httpLocation.length() > 0 ) {
+                        acsElemArti = 
+                                objFact.createAssertionConsumerServiceElement();
+                        acsElemArti.setBinding(httpartifactBinding);
+                        acsElemArti.setIsDefault(isassertDefault);                    
+                        acsElemArti.setIndex(Integer.parseInt(httpIndex));
+                        acsElemArti.setLocation(httpLocation);
+                        if (isassertDefault) {
+                            asconsServiceList.add(acsElemArti);
+                        }
+                    }
+                    if (postIndex != null && postIndex.length() > 0 ) {
+                        acsElemPost = 
+                                objFact.createAssertionConsumerServiceElement();
+                        acsElemPost.setBinding(httpPostBinding);
+                        acsElemPost.setIndex(Integer.parseInt(postIndex));
+                        acsElemPost.setLocation(postLocation);
+                        asconsServiceList.add(acsElemPost);
+                        if (acsElemArti!=null && !isassertDefault) {
+                          asconsServiceList.add(acsElemArti);  
+                        }
+                    }
+                    ;
+                    if (paosLocation != null && paosLocation.length() > 0 ) {
+                        acsElemPaos = 
+                            objFact.createAssertionConsumerServiceElement();
+                        acsElemPaos.setBinding(paosBinding);
+                        acsElemPaos.setIndex(Integer.parseInt(paosIndex));
+                        acsElemPaos.setLocation(paosLocation);
+                        asconsServiceList.add(acsElemPaos);
+                    }
                 }
+                
+                //save for ECP Assertion Consumer Service                
+                if (spStdValues.keySet().contains(
+                        PAOS_ASSRT_CONS_SERVICE_INDEX)) {
+                    String paosIndex = getResult(
+                            spStdValues, PAOS_ASSRT_CONS_SERVICE_INDEX);
+                    String paosLocation = getResult(
+                            spStdValues, PAOS_ASSRT_CONS_SERVICE_LOCATION);
+                    List asconsServiceList =
+                            spssoDescriptor.getAssertionConsumerService();
+                    
+                    boolean isassertDefault = false;
+                    String httpIndex = null;
+                    String httpLocation = null;
+                    String postIndex = null;
+                    String postLocation = null;
+                    
+                    // to retain the value of artifact and post assertions
+                    if (!asconsServiceList.isEmpty()) {
+                        for (int i=0; i<asconsServiceList.size(); i++) {
+                            AssertionConsumerServiceElement acsElem =
+                                    (AssertionConsumerServiceElement)
+                                    asconsServiceList.get(i);
+                            String tmp = acsElem.getBinding();
+                            if (tmp.contains(httpArtifact)) {
+                                httpIndex = Integer.toString(
+                                        acsElem.getIndex());
+                                httpLocation = acsElem.getLocation();                                
+                                if (acsElem.isIsDefault()) {
+                                    isassertDefault = acsElem.isIsDefault();
+                                }
+                            } else if (tmp.contains(httpPost)) {
+                                postIndex = Integer.toString(
+                                        acsElem.getIndex());
+                                postLocation = acsElem.getLocation();
+                            }
+                            
+                        }
+                    }
+                    
+                    if (!asconsServiceList.isEmpty()) {
+                        asconsServiceList.clear();
+                    }
+                    
+                    AssertionConsumerServiceElement acsElemArti = null;
+                    AssertionConsumerServiceElement acsElemPost = null;
+                    AssertionConsumerServiceElement acsElemPaos = null;
+                    
+                    if (httpLocation != null && httpLocation.length()>0) {
+                        acsElemArti = 
+                            objFact.createAssertionConsumerServiceElement();
+                        acsElemArti.setBinding(httpartifactBinding);
+                        acsElemArti.setIsDefault(isassertDefault);
+                        acsElemArti.setIndex(Integer.parseInt(httpIndex));
+                        acsElemArti.setLocation(httpLocation);
+                        if (isassertDefault) {
+                            asconsServiceList.add(acsElemArti);
+                        }
+                    }
+                    
+                    if (postLocation != null && postLocation.length()>0) {
+                        acsElemPost =
+                            objFact.createAssertionConsumerServiceElement();
+                        acsElemPost.setBinding(httpPostBinding);
+                        acsElemPost.setIndex(Integer.parseInt(postIndex));
+                        acsElemPost.setLocation(postLocation);
+                        asconsServiceList.add(acsElemPost);
+                        if(acsElemArti!=null && !isassertDefault) {
+                            asconsServiceList.add(acsElemArti);
+                        }
+                    }
+                    
+                    if (paosLocation != null && paosLocation.length()>0) {
+                        acsElemPaos =
+                            objFact.createAssertionConsumerServiceElement();
+                        acsElemPaos.setBinding(paosBinding);
+                        acsElemPaos.setIndex(Integer.parseInt(paosIndex));
+                        acsElemPaos.setLocation(paosLocation);
+                        asconsServiceList.add(acsElemPaos);
+                    }
+                    
+                }
+                
                 //save nameid format
-                List NameIdFormatList = spssoDescriptor.getNameIDFormat();
-                if (!NameIdFormatList.isEmpty()) {
-                    saveNameIdFormat(spssoDescriptor, spStdValues);
+                if (spStdValues.keySet().contains(NAMEID_FORMAT)) {
+                    List NameIdFormatList = spssoDescriptor.getNameIDFormat();
+                    if (!NameIdFormatList.isEmpty()) {
+                        saveNameIdFormat(spssoDescriptor, spStdValues);
+                    }
                 }
                 
                 //save AuthenRequestsSigned
-                boolean authnValue = setToBoolean(
-                        spStdValues, IS_AUTHN_REQ_SIGNED);
-                spssoDescriptor.setAuthnRequestsSigned(authnValue);
+                if (spStdValues.keySet().contains(IS_AUTHN_REQ_SIGNED)) {
+                    boolean authnValue = setToBoolean(
+                            spStdValues, IS_AUTHN_REQ_SIGNED);
+                    spssoDescriptor.setAuthnRequestsSigned(authnValue);
+                }
                 
                 //save WantAssertionsSigned
-                boolean assertValue = setToBoolean(
-                        spStdValues, WANT_ASSERTIONS_SIGNED);
-                spssoDescriptor.setWantAssertionsSigned(assertValue);
+                if (spStdValues.keySet().contains(WANT_ASSERTIONS_SIGNED)) {
+                    boolean assertValue = setToBoolean(
+                            spStdValues, WANT_ASSERTIONS_SIGNED);
+                    spssoDescriptor.setWantAssertionsSigned(assertValue);
+                }
+                
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -969,6 +1483,13 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
                     paramsEx);
             throw new AMConsoleException(strError);
+        } catch (JAXBException e) {
+            debug.error("SAMLv2ModelImpl.setSPStdAttributeValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "SP-Standard", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
         }
     }
     
@@ -1006,7 +1527,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             SPSSOConfigElement  spssoConfig = samlManager.getSPSSOConfig(
                     realm,entityName);
             if (spssoConfig != null){
-                updateBaseConfig(spssoConfig, spExtValues);
+                updateBaseConfig(spssoConfig, spExtValues, role);
             }
             
             //saves the attributes by passing the new entityConfig object
@@ -1041,44 +1562,41 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      *
      * @param baseConfig is the BaseConfigType passed.
      * @param values the Map which contains the new attribute/value pairs.
+     * @param role the role of entity.
      * @throws AMConsoleException if update of baseConfig object fails.
      */
     private void updateBaseConfig(
             BaseConfigType baseConfig,
-            Map values
-            ) throws AMConsoleException {
-        List attrList = baseConfig.getAttribute();
-        try {
+            Map values,
+            String role
+            ) throws JAXBException, AMConsoleException {
+            List attrList = baseConfig.getAttribute();
+            
+            //to handle cases from common tasks page
+            if ((attrList.size() == 1) && 
+                    (role.equals(EntityModel.IDENTITY_PROVIDER))) 
+            {
+                baseConfig = addAttributeType(extendedMetaIdpMap, baseConfig);
+                attrList = baseConfig.getAttribute();
+            } else if ((attrList.size() == 1) && 
+                    (role.equals(EntityModel.SERVICE_PROVIDER))) 
+            {
+                baseConfig = addAttributeType(extendedMetaSpMap, baseConfig);
+                attrList = baseConfig.getAttribute();
+            }
             if (attrList.size() > 1) {
                 for (Iterator it = attrList.iterator(); it.hasNext(); ) {
                     AttributeElement avpnew = (AttributeElement)it.next();
                     String name = avpnew.getName();
-                    Set set = (Set)values.get(name);
-                    if (set != null) {
-                        avpnew.getValue().clear();
-                        avpnew.getValue().addAll(set);
+                    if (values.keySet().contains(name)) {
+                        Set set = (Set)values.get(name);
+                        if (set != null) {
+                            avpnew.getValue().clear();
+                            avpnew.getValue().addAll(set);
+                        }
                     }
-                }
-            } else {
-                ObjectFactory objFactory = new ObjectFactory();
-                for (Iterator iter = values.keySet().iterator();
-                iter.hasNext();) {
-                    AttributeElement avp =
-                            objFactory.createAttributeElement();
-                    String key = (String)iter.next();
-                    avp.setName(key);
-                    Set set = (Set) values.get(key);
-                    if (set != null) {
-                        avp.getValue().addAll(set);
-                    }
-                    baseConfig.getAttribute().add(avp);
                 }
             }
-        } catch (JAXBException e) {
-            debug.warning
-                    ("SAMLv2ModelImpl.java.updateBaseConfig", e);
-            throw new AMConsoleException(e.getMessage());
-        }
     }
     
     
@@ -1159,35 +1677,105 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         List configList =
                 entityConfigElement.
                 getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+        
         BaseConfigType baseConfigIDP = null;
         BaseConfigType baseConfigSP = null;
-        BaseConfigType baseConfigAuth = null;
+        BaseConfigType baseConfigAuth = null;        
+        AttributeAuthorityDescriptorElement attrauthDescriptor =
+                samlManager.getAttributeAuthorityDescriptor(realm,entityName);
+        AuthnAuthorityDescriptorElement authnauthDescriptor  = 
+                samlManager.getAuthnAuthorityDescriptor(realm,entityName);
+        AttributeQueryDescriptorElement attrQueryDescriptor =
+                samlManager.getAttributeQueryDescriptor(realm,entityName);
+        IDPSSODescriptorElement idpssoDesc = 
+                samlManager.getIDPSSODescriptor(realm,entityName);
+        SPSSODescriptorElement spssoDesc = 
+                samlManager.getSPSSODescriptor(realm,entityName);                
+       XACMLAuthzDecisionQueryDescriptorElement xacmlAuthzDescriptor =
+                    samlManager.getPolicyEnforcementPointDescriptor(
+                    realm, entityName);
+        XACMLPDPDescriptorElement xacmlPDPDescriptor =
+                    samlManager.getPolicyDecisionPointDescriptor(
+                    realm, entityName);
+
         if (isDualRole(entityDescriptor)) {
             baseConfigIDP = objFactory.createIDPSSOConfigElement();
             baseConfigSP = objFactory.createSPSSOConfigElement();
+            baseConfigIDP = addAttributeType(extendedMetaIdpMap, baseConfigIDP);
+            baseConfigSP = addAttributeType(extendedMetaSpMap, baseConfigSP);
             configList.add(baseConfigIDP);
             configList.add(baseConfigSP);
-        }else if (role.equals("IDP")) {
+        }else if (role.equals(EntityModel.IDENTITY_PROVIDER) ||
+                (idpssoDesc != null)) 
+        {
             baseConfigIDP = objFactory.createIDPSSOConfigElement();
+            baseConfigIDP = addAttributeType(extendedMetaIdpMap, baseConfigIDP);
             configList.add(baseConfigIDP);
-        } else if (role.equals("SP")) {
+        } else if (role.equals(EntityModel.SERVICE_PROVIDER) || 
+                (spssoDesc  != null)) 
+        {
             baseConfigSP = objFactory.createSPSSOConfigElement();
+            baseConfigSP = addAttributeType(extendedMetaSpMap, baseConfigSP);
             configList.add(baseConfigSP);
-        } else if (role.equals("AttrAuthority")) {
-            baseConfigAuth = 
-                objFactory.createAttributeAuthorityConfigElement();
-            configList.add(baseConfigAuth);        
-        } else if (role.equals("AuthnAuthority")) {
-            baseConfigAuth = 
-                objFactory.createAuthnAuthorityConfigElement();
-            configList.add(baseConfigAuth);        
-        } else if (role.equals("AttrQuery")) {
-            baseConfigAuth = 
-                objFactory.createAttributeQueryConfigElement();
-            configList.add(baseConfigAuth);        
+        }
+        if (role.equals(EntityModel.SAML_ATTRAUTHORITY) || 
+                (attrauthDescriptor != null))
+        {
+            baseConfigAuth =
+                    objFactory.createAttributeAuthorityConfigElement();
+            baseConfigAuth = addAttributeType(extAttrAuthMap, baseConfigAuth);
+            configList.add(baseConfigAuth);
+        }
+        if (role.equals(EntityModel.SAML_AUTHNAUTHORITY) ||
+                (authnauthDescriptor != null)) 
+        {
+            baseConfigAuth =
+                    objFactory.createAuthnAuthorityConfigElement();
+            baseConfigAuth = addAttributeType(extAuthnAuthMap, baseConfigAuth);
+            configList.add(baseConfigAuth);
+        }
+        if (role.equals(EntityModel.SAML_ATTRQUERY) || 
+                (attrQueryDescriptor != null))
+        {
+            baseConfigAuth =
+                    objFactory.createAttributeQueryConfigElement();
+            baseConfigAuth = addAttributeType(extattrQueryMap, baseConfigAuth);
+            configList.add(baseConfigAuth);
+        }
+        if (role.equals(EntityModel.POLICY_DECISION_POINT_DESCRIPTOR) ||
+                (xacmlPDPDescriptor != null)) 
+        {
+            baseConfigAuth =
+                    objFactory.createXACMLPDPConfigElement();
+            baseConfigAuth = addAttributeType(
+                    xacmlPDPExtendedMeta, baseConfigAuth);
+            configList.add(baseConfigAuth);
+        }
+        if (role.equals(EntityModel.POLICY_ENFORCEMENT_POINT_DESCRIPTOR) ||
+                (xacmlAuthzDescriptor != null)) 
+        {
+            baseConfigAuth =
+                    objFactory.createXACMLAuthzDecisionQueryConfigElement();
+            baseConfigAuth = addAttributeType(
+                    xacmlPEPExtendedMeta, baseConfigAuth);
+            configList.add(baseConfigAuth);
         }
         
         samlManager.setEntityConfig(realm, entityConfigElement);
+    }
+    
+    private BaseConfigType addAttributeType(Map values, BaseConfigType bctype)
+    throws JAXBException{
+        ObjectFactory objFactory = new ObjectFactory();
+        for (Iterator iter = values.keySet().iterator();
+        iter.hasNext(); ) {
+            AttributeType avp = objFactory.createAttributeElement();
+            String key = (String)iter.next();
+            avp.setName(key);
+            avp.getValue().addAll(Collections.EMPTY_LIST);
+            bctype.getAttribute().add(avp);
+        }
+        return bctype;
     }
     
     /**
@@ -1250,7 +1838,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "SAMLv2", "XACML PEP", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
@@ -1303,7 +1892,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "SAMLv2", "XACML PDP", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", 
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
@@ -1326,7 +1916,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "XACML PEP"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
-        
+        String role = EntityModel.POLICY_ENFORCEMENT_POINT_DESCRIPTOR;
         Map data = null;
         List configList = null;
         String metaAlias = null;
@@ -1350,14 +1940,22 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 data.put("metaAlias", metaAlias);
             }  else {
-                createEntityConfig(realm, entityName, "PEP", location);
+                createExtendedObject(realm, entityName, location, role);
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+        } catch (JAXBException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "XACML PEP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", 
+                    paramsEx);
+            throw new AMConsoleException(strError);
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "SAMLv2", "XACML PEP", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
@@ -1380,7 +1978,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "XACML PDP"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
-        
+        String role =  EntityModel.POLICY_DECISION_POINT_DESCRIPTOR;
         Map data = null;
         List configList = null;
         String metaAlias = null;
@@ -1403,14 +2001,22 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 data.put("metaAlias", metaAlias);
             } else {
-                createEntityConfig(realm, entityName, "PDP", location);
+                createExtendedObject(realm, entityName, location, role);
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
+            } catch (JAXBException e) {
+             String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "SAMLv2", "XACML PDP", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", paramsEx);
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", 
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return (data != null) ? data : Collections.EMPTY_MAP;
@@ -1452,6 +2058,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             ATTR_XACML_AUTHZ_SERVICE_LOCATION)));
                 }
             }
+            saml2Manager.setEntityDescriptor(realm, entityDescriptor);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
@@ -1480,7 +2087,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "XACML PDP"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
-        
+        String role = EntityModel.POLICY_DECISION_POINT_DESCRIPTOR;
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
             
@@ -1497,13 +2104,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             if (pdpEntityConfig == null) {
                 throw new AMConsoleException("invalid.xacml.configuration");
             } else {
-                updateBaseConfig(pdpEntityConfig, attrValues);
+                updateBaseConfig(pdpEntityConfig, attrValues, role);
             }
             
             //saves the attributes by passing the new entityConfig object
             saml2Manager.setEntityConfig(realm,entityConfig);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "XACML PDP", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        } catch (JAXBException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "SAMLv2", "XACML PDP", strError};
@@ -1545,6 +2158,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "XACML PEP"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
+        String role = EntityModel.POLICY_ENFORCEMENT_POINT_DESCRIPTOR;
         
         try {
             SAML2MetaManager saml2Manager = getSAML2MetaManager();
@@ -1555,21 +2169,26 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.xacml.configuration");
-            }
-            
+            }            
             XACMLAuthzDecisionQueryConfigElement pepEntityConfig =
                     saml2Manager.getPolicyEnforcementPointConfig(
                     realm, entityName);
             if (pepEntityConfig == null) {
                 throw new AMConsoleException("invalid.xacml.configuration");
             } else {
-                updateBaseConfig(pepEntityConfig, attrValues);
+                updateBaseConfig(pepEntityConfig, attrValues, role);
             }
             
             //saves the attributes by passing the new entityConfig object
             saml2Manager.setEntityConfig(realm,entityConfig);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "XACML PEP", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        } catch (JAXBException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
             {realm, entityName, "SAMLv2", "XACML PEP", strError};
@@ -1709,7 +2328,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             SAMLv2AuthContexts cxt
             ) throws AMConsoleException {
         List list = cxt.toIDPAuthContextInfo();
-        String[] params = {realm, entityName,"SAMLv2", "IDP-updateIDPAuthenticationContexts"};
+        String[] params = {realm, entityName,"SAMLv2",
+            "IDP-updateIDPAuthenticationContexts"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         
         try {
@@ -1737,9 +2357,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
-            String[] paramsEx =
-            {realm, entityName, "SAMLv2", "IDP-updateIDPAuthenticationContexts", strError};
-            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            String[] paramsEx = {realm, entityName, "SAMLv2", 
+             "IDP-updateIDPAuthenticationContexts", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", 
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         
@@ -1762,7 +2383,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             SAMLv2AuthContexts cxt
             ) throws AMConsoleException {
         List list = cxt.toSPAuthContextInfo();
-        String[] params = {realm, entityName,"SAMLv2", "SP-updateSPAuthenticationContexts"};
+        String[] params = {realm, entityName,"SAMLv2", 
+            "SP-updateSPAuthenticationContexts"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         
         try {
@@ -1792,94 +2414,15 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         } catch (SAML2MetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-            {realm, entityName, "SAMLv2", "SP-updateSPAuthenticationContexts", strError};
-            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            {realm, entityName, "SAMLv2", 
+             "SP-updateSPAuthenticationContexts", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return;
     }
-    
-    /**
-     * create Entity Config Object.(Extended Metadata)
-     *
-     * @param realm realm of Entity
-     * @param entityName entity name of Entity Descriptor.
-     * @param role role of provider (SP, IDP, PDP or PEP)
-     * @param location entity is remote or hosted
-     * @throws AMConsoleException if creation fails
-     */
-    private void createEntityConfig(
-            String realm,
-            String entityName,
-            String role,
-            String location
-            ) throws AMConsoleException {
-        String classMethod = "SAMLv2ModelImpl.createEntityConfig: ";
         
-        try {
-            SAML2MetaManager manager = getSAML2MetaManager();
-            ObjectFactory objFactory = new ObjectFactory();
-            // Check whether the entity id existed in the DS
-            EntityDescriptorElement entityDesc =
-                    manager.getEntityDescriptor(realm, entityName);
-            
-            if (entityDesc == null) {
-                throw new AMConsoleException(classMethod +
-                        "invalid EntityName : " +
-                        entityName);
-            }
-            EntityConfigElement entityConfig =
-                    manager.getEntityConfig(realm, entityName);
-            if (entityConfig == null) {
-                entityConfig =
-                        objFactory.createEntityConfigElement();
-                // add to entityConfig
-                entityConfig.setEntityID(entityName);
-                if (location.equals("remote")) {
-                    entityConfig.setHosted(false);
-                } else {
-                    entityConfig.setHosted(true);
-                }
-            }
-            
-            // create entity config and add the attribute
-            BaseConfigType baseCfgType = null;
-            
-            // Decide which role EntityDescriptorElement includes
-            // It could have one PDP and one PEP.
-            if ((role.equals("PDP")) &&
-                    (SAML2MetaUtils.getPolicyDecisionPointDescriptor(entityDesc) != null)) {
-                baseCfgType = objFactory.createXACMLPDPConfigElement();
-                for (Iterator iter = xacmlPDPExtendedMeta.keySet().iterator();
-                iter.hasNext(); ) {
-                    AttributeType atype = objFactory.createAttributeType();
-                    String key = (String)iter.next();
-                    atype.setName(key);
-                    atype.getValue().addAll((List)xacmlPDPExtendedMeta.get(key));
-                    baseCfgType.getAttribute().add(atype);
-                }
-                entityConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig().add(baseCfgType);
-            } else if ((role.equals("PEP")) &&
-                    (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(entityDesc) != null)) {
-                baseCfgType = objFactory.createXACMLAuthzDecisionQueryConfigElement();
-                for (Iterator iter = xacmlPEPExtendedMeta.keySet().iterator();
-                iter.hasNext(); ) {
-                    AttributeType atype = objFactory.createAttributeType();
-                    String key = (String)iter.next();
-                    atype.setName(key);
-                    atype.getValue().addAll((List)xacmlPEPExtendedMeta.get(key));
-                    baseCfgType.getAttribute().add(atype);
-                }
-                entityConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig().add(baseCfgType);
-            }
-            manager.setEntityConfig(realm, entityConfig);
-        } catch (JAXBException e) {
-            throw new AMConsoleException(e);
-        } catch (SAML2MetaException e){
-            throw new AMConsoleException(e);
-        }
-    }
-    
     /**
      * Returns a map with standard AttributeAuthority attributes and values.
      *
@@ -2303,11 +2846,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String role = EntityModel.SAML_ATTRAUTHORITY;
         try {
             SAML2MetaManager samlManager = new SAML2MetaManager();
-            
-            //entityConfig is the extended entity configuration object
             EntityConfigElement entityConfig =
                     samlManager.getEntityConfig(realm,entityName);
-            
+                        
             //for remote cases
             if (entityConfig == null) {
                 createExtendedObject(realm, entityName, location, role);
@@ -2318,7 +2859,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     samlManager.getAttributeAuthorityConfig(
                     realm,entityName);
             if (attributeAuthorityConfig != null) {
-                updateBaseConfig(attributeAuthorityConfig, attrAuthExtValues);
+                updateBaseConfig(attributeAuthorityConfig, 
+                        attrAuthExtValues,role);
             }
             
             //saves the attributes by passing the new entityConfig object
@@ -2460,7 +3002,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     samlManager.getAuthnAuthorityConfig(
                     realm,entityName);
             if (authnAuthorityConfig != null) {
-                updateBaseConfig(authnAuthorityConfig, authnAuthExtValues);
+                updateBaseConfig(authnAuthorityConfig, 
+                        authnAuthExtValues, role);
             }
             
             //saves the attributes by passing the new entityConfig object
@@ -2579,7 +3122,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     samlManager.getAttributeQueryConfig(
                     realm,entityName);
             if (attrQueryConfig != null) {
-                updateBaseConfig(attrQueryConfig, attrQueryExtValues);
+                updateBaseConfig(attrQueryConfig, attrQueryExtValues, role);
             }
             
             //saves the attributes by passing the new entityConfig object
@@ -2609,6 +3152,154 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         }
     }
     
+    /**
+     * Returns a map with standard Affiliation attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with Affiliation values.
+     * @throws AMConsoleException if unable to retrieve std Affiliation 
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAffiliationAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {
+        String[] params = {realm, entityName,"SAMLv2", "Affiliation-Std"};
+        logEvent("ATTEMPT_GET_AFFILIATION_ATTR_VALUES", params);
+        Map map = new HashMap();
+        AffiliationDescriptorType affiliationDescriptor = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            affiliationDescriptor =
+                    samlManager.getAffiliationDescriptor(realm,entityName);
+            if (affiliationDescriptor != null) {
+                
+                //retrieve member list
+                List membList = affiliationDescriptor.getAffiliateMember();
+                if (!membList.isEmpty()) {
+                    map.put(AFFILIATE_MEMBER, returnEmptySetIfValueIsNull(
+                            convertListToSet(membList)));
+                }                
+            }
+            logEvent("SUCCEED_GET_AFFILIATION_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                    ("SAMLv2ModelImpl.getStandardAffiliationAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "Affiliation-Std", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_AFFILIATION_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return map;        
+    }
+    
+    /**
+     * Returns a map with extended Affiliation attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended Affiliation values.
+     * @throws AMConsoleException if unable to retrieve ext Affiliation
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAffiliationyAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException {;
+        String[] params = {realm, entityName, "SAMLv2", "Affiliation-Ext"};
+        logEvent("ATTEMPT_GET_AFFILIATION_VALUES", params);
+        Map map = null;
+        AffiliationConfigElement atffilConfig = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            atffilConfig = samlManager.getAffiliationConfig(
+                    realm,entityName);
+            if (atffilConfig != null) {
+                BaseConfigType baseConfig =
+                        (BaseConfigType)atffilConfig;
+                map = SAML2MetaUtils.getAttributes(baseConfig);
+                Iterator it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pairs = (Map.Entry)it.next();
+                }
+                String metalias = baseConfig.getMetaAlias();
+                List list = new ArrayList();
+                list.add(metalias);
+                map.put("metaAlias",list);
+            }
+            logEvent("SUCCEED_GET_AFFILIATION_ATTR_VALUES", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                    ("SAMLv2ModelImpl.getExtendedAffiliationyAttributes:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "Affiliation-Ext", strError};
+            logEvent("FEDERATION_EXCEPTION_AFFILIATION_ATTR_VALUES",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+        return (map != null) ? map : Collections.EMPTY_MAP;
+        
+    }
+    
+    /**
+     * Saves the standard attribute values for Affilaition.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param affilaitionValues Map which contains standard affiliation values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setStdAffilationValues(
+        String realm,
+        String entityName,
+        Map affilaitionValues
+        ) throws AMConsoleException {
+        
+        String[] params = {realm, entityName,"SAMLv2", "Affiliation-Std"};
+        logEvent("ATTEMPT_MODIFY_AFFILIATION_VALUES", params);
+        Map map = new HashMap();
+        AffiliationDescriptorType affiliationDescriptor = null;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            EntityDescriptorElement entityDescriptor =
+                    samlManager.getEntityDescriptor(realm,entityName);
+            affiliationDescriptor =
+                    samlManager.getAffiliationDescriptor(realm,entityName);
+            if (affiliationDescriptor != null) {
+                
+                //save memberlist
+                List memberList = 
+                   affiliationDescriptor.getAffiliateMember();
+                if (!memberList.isEmpty()) {                    
+                    List listtoSave = convertSetToList(
+                            (Set)affilaitionValues.get(AFFILIATE_MEMBER));
+                    affiliationDescriptor.getAffiliateMember().clear();
+                    Iterator itt = listtoSave.listIterator();
+                    while (itt.hasNext()) {
+                        String name =(String) itt.next();
+                        affiliationDescriptor.getAffiliateMember().add(name);
+                    }
+                }
+                samlManager.setEntityDescriptor(realm, entityDescriptor);
+            }
+            
+            logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
+        } catch (SAML2MetaException e) {
+            debug.warning
+                    ("SAMLv2ModelImpl.setStdAffilationValues:", e);
+            String strError = getErrorString(e);
+            String[] paramsEx =
+            {realm, entityName, "SAMLv2", "Affilaition-Std", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
+                    paramsEx);
+            throw new AMConsoleException(strError);
+        }
+    }
+    
     protected SAML2MetaManager getSAML2MetaManager() throws SAML2MetaException {
         if (metaManager == null) {
             metaManager = new SAML2MetaManager();
@@ -2624,10 +3315,12 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     
     private String getResult(Map map, String value) {
         Set set = (Set)map.get(value);
-        Iterator  i = set.iterator();
         String val = null;
-        while ((i !=  null) && (i.hasNext())) {
-            val = (String)i.next();
+        if (set != null  && !set.isEmpty() ) {
+            Iterator  i = set.iterator();
+            while ((i !=  null) && (i.hasNext())) {
+                val = (String)i.next();
+            }
         }
         return val;
     }
@@ -2648,6 +3341,78 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      */
     public Map getIDPEXDataMap() {
         return extendedMetaIdpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider attribute for Assertion Content.
+     *
+     * @return SAMLv2 Extended Service Provider attribute for Assertion Content.
+     */
+    public Map getSPEXACDataMap() {
+        return  extendedACMetaSpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider values for Assertion Processing.
+     *
+     * @return SAMLv2 Extended Service Provider values for Assertion Processing.
+     */
+    public Map getSPEXAPDataMap() {
+        return  extendedAPMetaSpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider attribute values for Services.
+     *
+     * @return SAMLv2 Extended Service Provider attribute values for Services.
+     */
+    public Map getSPEXSDataMap() {
+        return  extendedSMetaSpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider attribute values for Advanced.
+     *
+     * @return SAMLv2 Extended Service Provider attribute values for Advanced.
+     */
+    public Map getSPEXAdDataMap() {
+        return  extendedAdMetaSpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider values for Assertion Content.
+     *
+     * @return SAMLv2 Extended Identity Provider values for Assertion Content.
+     */
+    public Map getIDPEXACDataMap() {
+        return extendedACMetaIdpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider values for Assertion Processing.
+     *
+     * @return SAMLv2 Extended Identity Provider values for Assertion Processing.
+     */
+    public Map getIDPEXAPDataMap() {
+        return extendedAPMetaIdpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider attribute values for Services.
+     *
+     * @return SAMLv2 Extended Identity Provider attribute values for Services.
+     */
+    public Map getIDPEXSDataMap() {
+        return extendedSMetaIdpMap;
+    }
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider attribute values for Advanced.
+     *
+     * @return SAMLv2 Extended Identity Provider attribute values for Advanced.
+     */
+    public Map getIDPEXAdDataMap() {
+        return extendedAdMetaIdpMap;
     }
     
     /**
@@ -2675,5 +3440,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      */
     public Map getattrQueryEXDataMap() {
         return extattrQueryMap;
-    }
+    }    
+    
 }

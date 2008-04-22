@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.7 2008-03-20 05:00:16 veiming Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.8 2008-04-22 21:43:51 babysunil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,8 @@ public class ImportEntityModelImpl extends AMModelBase
     private static final String IDFF = "urn:liberty:metadata";
     private static final String WSFED = "Federation";
     private static final String DEFAULT_ROOT = "/";
+    private static final String SAML2_PROTOCOL = 
+            "urn:oasis:names:tc:SAML:2.0:metadata";
     
     private String standardMetaData;
     private String extendedMetaData;
@@ -384,7 +386,8 @@ public class ImportEntityModelImpl extends AMModelBase
     private String getProtocol(String metaData) {       
         String protocol = WSFED; 
         
-        if (metaData.contains(SAML2Constants.PROTOCOL_NAMESPACE)) {                          
+        if (metaData.contains(SAML2Constants.PROTOCOL_NAMESPACE) || 
+                (metaData.contains(SAML2_PROTOCOL))) {                                              
             protocol = SAML2Constants.PROTOCOL_NAMESPACE;         
         } else if (metaData.contains(IDFF)) {
             protocol = IDFF; 

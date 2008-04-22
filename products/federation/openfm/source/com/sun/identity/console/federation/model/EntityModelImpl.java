@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.13 2008-02-14 23:11:40 babysunil Exp $
+ * $Id: EntityModelImpl.java,v 1.14 2008-04-22 21:43:15 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,8 +111,10 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                         listToString(getSAMLv2Roles(entityName, realmName)));
                     
                     data.put(PROTOCOL, SAMLV2);
-                                        
-                    if ((hostedEntities != null) &&
+                    
+                    if (isAffiliate(SAMLV2, realmName, entityName)) {
+                        data.put(LOCATION, "");                                        
+                    } else if ((hostedEntities != null) &&
                         hostedEntities.contains(entityName)) 
                     {
                         data.put(LOCATION, HOSTED);
@@ -335,7 +337,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
      * acting as. It will producs a list of role names which can then
      * be used by the calling routine for whatever purpose it needs.
      */
-    private List getIDFFRoles(String entity, String realm) {
+    public List getIDFFRoles(String entity, String realm) {
         List roles = new ArrayList(6);
         
         try {
@@ -406,7 +408,7 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
      * acting as. It will producs a list of role names which can then
      * be used by the calling routine for whatever purpose it needs.
      */
-    private List getSAMLv2Roles(String entity, String realm) {
+    public List getSAMLv2Roles(String entity, String realm) {
         List roles = new ArrayList();
         
         try {
@@ -437,6 +439,9 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 }
                 if (SAML2MetaUtils.getAttributeQueryDescriptor(d) != null) {
                     roles.add(SAML_ATTRQUERY);
+                }
+                if (samlManager.getAffiliationDescriptor(realm, entity) != null) {
+                    roles.add(AFFILIATE);
                 }
             }
         } catch (SAML2MetaException s) {
@@ -475,11 +480,11 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         List roles = new ArrayList();
         
         // do not localize General. Its the name of a class file.
-        roles.add("General");
+        if (protocol.equals(WSFED)) {
+            roles.add("General");
+        }
         
-        if (protocol.equals(SAMLV2)) {
-            roles.addAll(getSAMLv2Roles(entity, realm));
-        } else if (protocol.equals(IDFF)) {
+        if (protocol.equals(IDFF)) {
             roles.addAll(getIDFFRoles(entity, realm));
         } else {
             roles.addAll(getWSFedRoles(entity, realm));
@@ -497,25 +502,45 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
     /**
      * Returns true if entity descriptor is an affiliate.
      *
+     * @param protocol the Protocol to which entity belongs.
      * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String realm, String name) 
-    throws AMConsoleException 
-    {
+    public boolean isAffiliate(String protocol, String realm, String name)
+    throws AMConsoleException {
         boolean isAffiliate = false;
+        com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType
+                idff_ad = null;
+        com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType
+                samlv2_sd = null;
         try {
-            IDFFMetaManager idffManager = new IDFFMetaManager(
-                getUserSSOToken());
-            AffiliationDescriptorType ad = (AffiliationDescriptorType)
-                idffManager.getAffiliationDescriptor(realm, name);
-            if (ad != null) {
+            if (protocol.equals(IDFF)) {
+                IDFFMetaManager idffManager = new IDFFMetaManager(
+                        getUserSSOToken());
+                idff_ad = (
+                com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType)
+                    idffManager.getAffiliationDescriptor(realm, name);
+            } else if (protocol.equals(SAMLV2)) {
+                SAML2MetaManager samlManager = new SAML2MetaManager();
+                samlv2_sd = (
+                com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType)
+                    samlManager.getAffiliationDescriptor(realm, name);
+            }
+            if (idff_ad != null || samlv2_sd != null ) {
                 isAffiliate = true;
             }
-        } catch (IDFFMetaException  e) {           
-            debug.warning("EntityModelImpl.isAffiliate", e);
+        } catch (IDFFMetaException  e) {
+            if (debug.warningEnabled()) {
+                debug.warning("EntityModelImpl.isAffiliate", e);
+            }
             throw new AMConsoleException(getErrorString(e));
+        } catch (SAML2MetaException s) {
+            if (debug.warningEnabled()) {
+                debug.warning("EntityModel.isAffiliate() - " +
+                        "Couldn't get SAMLMetaManager");
+            }
+            throw new AMConsoleException(getErrorString(s));
         }
         return isAffiliate;
     }

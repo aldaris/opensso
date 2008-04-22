@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.6 2008-04-22 00:23:16 veiming Exp $
+ * $Id: AMViewConfig.java,v 1.7 2008-04-22 21:38:17 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,6 +117,36 @@ public class AMViewConfig {
             CCNavNode navNode = entry.getNavNode(model, realmName);
             if (navNode != null) {
                 tabModel.addNode(navNode);
+            }
+        }
+        return tabModel;
+    }
+    
+    // all tabs for SAMLv2 property page are predefined in fmConsoleConfiguration.xml.
+    //here unwanted tabs are hidden based on the role of the respective entity.
+    
+    public CCTabsModel getSAMLv2TabsModel(
+            String type,
+            String realmName,
+            HttpServletRequest req,
+            List tabsToDisplay
+    ) {
+        CCTabsModel tabModel = new CCTabsModel();
+        AccessControlModel model = new AccessControlModelImpl(req);
+        List tabs = getTabList(type);
+        if ((tabs == null) || tabs.isEmpty()) {
+            return null;
+        }
+        for (Iterator iter = tabs.iterator(); iter.hasNext(); ) {
+            AMTabEntry entry = (AMTabEntry)iter.next();
+            for (Iterator tab_iter = tabsToDisplay.iterator(); tab_iter.hasNext(); ) {
+                String roletoDisplay = (String)tab_iter.next();
+                if (entry.getViewBean().contains(roletoDisplay)) {
+                    CCNavNode navNode = entry.getNavNode(model, realmName);
+                    if (navNode != null) {
+                        tabModel.addNode(navNode);
+                    }
+                }
             }
         }
         return tabModel;

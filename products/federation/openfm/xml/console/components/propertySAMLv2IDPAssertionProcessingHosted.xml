@@ -1,0 +1,119 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: propertySAMLv2IDPAssertionProcessingHosted.xml,v 1.1 2008-04-22 21:57:34 babysunil Exp $
+
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+
+<propertysheet>    
+    <section name="AttributeMapper" defaultValue="samlv2idp.attribute.label.idpAttributeMapper" >
+        <property> 
+            <ccgroup>                
+                <property> 
+                    <label name="lblIdpAttributeMapper"
+                           defaultValue="samlv2idp.attribute.label.idpAttributeMapper"
+                           labelFor="idpAttributeMapper" />
+                    <cc name="idpAttributeMapper" 
+                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="75" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
+                </property>
+                <property>
+                    <label name="lblIDPAttributeMap"
+                           defaultValue="samlv2idp.attribute.label.idpattributeMap"
+                           labelFor="attributeMap" />
+                    <ccgroup>
+                        <property>
+                            <cc name="attributeMap" 
+                                tagclass=
+                                "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                                <attribute name="name" value="list" />
+                                <attribute name="listboxLabel" 
+                                           value="label.current.value" />
+                                <attribute name="textboxLabel"
+                                           value="label.new.value" />
+                            </cc>
+                        </property>
+                    </ccgroup>
+                </property>
+            </ccgroup>
+        </property>
+    </section>
+    
+    <section name="federation" defaultValue="samlv2idp.provider.section.title.federation" >
+        <property>
+            <ccgroup>     
+                <property>
+                    <label name="lblIDPAutofedEnabled"
+                           defaultValue="samlv2idp.attribute.label.idpautofedEnabled"
+                           labelFor="autofedEnabled" />
+                    <cc name="autofedEnabled" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblIDPAutofedAttribute"
+                           defaultValue="samlv2idp.attribute.label.idpautofedAttribute"
+                           labelFor="autofedAttribute" />
+                    <cc name="autofedAttribute" 
+                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="75" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+    </section>
+    
+    <section name="AccountMapper" defaultValue="samlv2idp.attribute.label.idpAccountMapper" >
+        <property> 
+            <ccgroup> 
+                <property>
+                    <label name="lblIdpAccountMapper"
+                           defaultValue="samlv2idp.attribute.label.idpAccountMapper"
+                           labelFor="idpAccountMapper" />
+                    <cc name="idpAccountMapper" 
+                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="75" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
+                </property>               
+            </ccgroup>
+        </property>
+    </section>
+    
+    <section name="localConfiguration" defaultValue="samlv2idp.attribute.label.localConfiguration">
+        <property>
+            <label name="lblAuthUrl" defaultValue="samlv2idp.attribute.label.authUrl" labelFor="AuthUrl" />
+            <cc name="AuthUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>                
+    </section>
+   
+</propertysheet>

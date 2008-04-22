@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModel.java,v 1.8 2008-02-14 23:11:17 babysunil Exp $
+ * $Id: EntityModel.java,v 1.9 2008-04-22 21:42:47 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,10 @@ public interface EntityModel
     public static final String SAML_ATTRAUTHORITY = "AttrAuthority";
     public static final String SAML_ATTRQUERY = "AttrQuery";
     public static final String SAML_AUTHNAUTHORITY = "AuthnAuthority";
+    public static final String IDFF_AFFILAITAE = 
+            "com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType";
+    public static final String SAMLv2_AFFILAITAE = 
+            "com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType";
         
    /**
      * Returns a map with all entities including data about
@@ -120,10 +124,30 @@ public interface EntityModel
     /**
      * Returns true if entity descriptor is an affiliate.
      *
+     * @param protocol the Protocol to which entity belongs.
      * @param realm the realm in which the entity resides.
      * @param name Name of entity descriptor.
      * @return true if entity descriptor is an affiliate.
      */
-    public boolean isAffiliate(String realm, String name) 
+    public boolean isAffiliate(String protocol, String realm, String name) 
         throws AMConsoleException;
+    
+    /**
+     * Returns List of SAMLv2 roles.
+     *
+     * @param entity Name of entity descriptor.
+     * @param realm the realm in which the entity resides.
+     * @return list of SAMLv2 roles.
+     */    
+    public List getSAMLv2Roles(String entity, String realm);
+    
+    /**
+     * Returns List of IDFF roles.
+     *
+     * @param entity Name of entity descriptor.
+     * @param realm the realm in which the entity resides.
+     * @return list of IDFF roles.
+     */  
+    public List getIDFFRoles(String entity, String realm); 
+    
 }

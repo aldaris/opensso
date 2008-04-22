@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityPropertiesBase.java,v 1.2 2007-08-13 19:10:26 asyhuang Exp $
+ * $Id: EntityPropertiesBase.java,v 1.3 2008-04-22 21:41:40 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,26 +154,33 @@ public abstract class EntityPropertiesBase
     }
 
     protected void createTabModel() {
-	if (tabModel == null) {            
-            // set the tabs to display based on the roles(SP,IDP, etc...)
-            // assigned to the selected entity.
-	    AMViewConfig amconfig = AMViewConfig.getInstance();
-            String profile = getProfileName();
-            String entity = (String)getPageSessionAttribute(ENTITY_NAME);
-            String realm = (String)getPageSessionAttribute("entityRealm");
-                    
-            EntityModel m = (EntityModel)getEntityModel();
-            List entries = m.getTabMenu(profile, entity, realm);
-            if ((entries != null) && (entries.size() > 0)) {
-                // passing true here to reset the current tab entries
-                amconfig.addTabEntries(profile, entries, true);
-            }            
-            
-	    tabModel = amconfig.getTabsModel(
-                profile, "/", getRequestContext().getRequest());
-            tabModel.clear();
-            tabModel.setSelectedNode(1);
-	}
+        String profile = getProfileName();
+        String entity = (String)getPageSessionAttribute(ENTITY_NAME);
+        String realm = (String)getPageSessionAttribute("entityRealm");
+        EntityModel eModel = (EntityModel)getEntityModel();
+        
+        if (tabModel == null) {
+            if (profile.equals(eModel.SAMLV2)) {
+                AMViewConfig amconfig = AMViewConfig.getInstance();
+                List tabstoDisplay = eModel.getSAMLv2Roles(entity, realm);
+                
+                tabModel = amconfig.getSAMLv2TabsModel("SAMLv2", "/",
+                        getRequestContext().getRequest(), tabstoDisplay);
+                registerChild(TAB_COMMON, CCTabs.class);
+                
+                tabModel.clear();
+            } else if (!profile.equals(eModel.SAMLV2)) {
+                AMViewConfig amconfig = AMViewConfig.getInstance();
+                List entries = eModel.getTabMenu(profile, entity, realm);
+                if ((entries != null) && (entries.size() > 0)) {
+                    amconfig.addTabEntries(profile, entries, true);
+                }
+                tabModel = amconfig.getTabsModel(
+                        profile, "/", getRequestContext().getRequest());
+                tabModel.clear();
+                tabModel.setSelectedNode(1);
+            }
+        }
     }
     
     protected AMModel getEntityModel() {

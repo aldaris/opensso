@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.18 2008-04-10 23:15:03 veiming Exp $
+ * $Id: FederationViewBean.java,v 1.19 2008-04-22 21:42:12 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -355,7 +355,7 @@ public  class FederationViewBean
             tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);         
             
             try {
-                if(eModel.isAffiliate(realm, name)){               
+                if(eModel.isAffiliate(protocol, realm, name)){               
                     tableModel.setValue(ENTITY_LOCATION_VALUE, "");               
                     tableModel.setValue(ENTITY_ROLE_VALUE, 
                         "affiliate" );
@@ -788,17 +788,21 @@ public  class FederationViewBean
         String name = tmp.substring(0,index);                   
         
         EntityPropertiesBase vb = null;
+        List roles = null;
+        EntityModel eModel = (EntityModel) getEntityModel();
         if (protocol.equals(EntityModel.SAMLV2)) {                      
-            vb = (SAMLv2GeneralViewBean)
-                getViewBean(SAMLv2GeneralViewBean.class);           
+            roles = eModel.getSAMLv2Roles(name, realm );
+            String strViewBean = (String)roles.get(0);
+            vb = getSAMLv2ViewBean(strViewBean); 
         } else if (protocol.equals(EntityModel.IDFF)) {
-            vb = (IDFFGeneralViewBean)getViewBean(IDFFGeneralViewBean.class);
+            roles = eModel.getIDFFRoles(name, realm );
+            String strViewBean = (String)roles.get(0);
+            vb = getIDFFViewBean(strViewBean); 
         } else if (protocol.equals(EntityModel.WSFED)) {
             vb = (WSFedGeneralViewBean)getViewBean(WSFedGeneralViewBean.class);
         }
 
         if (vb != null) { 
-            setPageSessionAttribute(getTrackingTabIDName(), "1"); 
             setPageSessionAttribute(EntityPropertiesBase.ENTITY_NAME, name);        
             setPageSessionAttribute(EntityPropertiesBase.ENTITY_REALM, realm);
             setPageSessionAttribute(
@@ -827,5 +831,53 @@ public  class FederationViewBean
 
             forwardTo ();
         
-    }   
+    }
+    
+    private EntityPropertiesBase getSAMLv2ViewBean(String strViewBean) {
+        EntityPropertiesBase vb = null;
+        if (strViewBean.equals(EntityModel.SERVICE_PROVIDER)) {
+            vb = (SAMLv2SPAssertionContentViewBean)
+            getViewBean(SAMLv2SPAssertionContentViewBean.class);
+        } else if (strViewBean.equals(EntityModel.IDENTITY_PROVIDER)) {
+            vb = (SAMLv2IDPAssertionContentViewBean)
+            getViewBean(SAMLv2IDPAssertionContentViewBean.class);
+        } else if (strViewBean.equals(
+                EntityModel.POLICY_DECISION_POINT_DESCRIPTOR)) {
+            vb = (SAMLv2PDPViewBean)
+            getViewBean(SAMLv2PDPViewBean.class);
+        } else if (strViewBean.equals(
+                EntityModel.POLICY_ENFORCEMENT_POINT_DESCRIPTOR)) {
+            vb = (SAMLv2PEPViewBean)
+            getViewBean(SAMLv2PEPViewBean.class);
+        } else if (strViewBean.equals(EntityModel.SAML_ATTRAUTHORITY)) {
+            vb = (SAMLv2AttrAuthorityViewBean)
+            getViewBean(SAMLv2AttrAuthorityViewBean.class);
+        } else if (strViewBean.equals(EntityModel.SAML_AUTHNAUTHORITY)) {
+            vb = (SAMLv2AuthnAuthorityViewBean)
+            getViewBean(SAMLv2AuthnAuthorityViewBean.class);
+        } else if (strViewBean.equals(EntityModel.SAML_ATTRQUERY)) {
+            vb = (SAMLv2AttrQueryViewBean)
+            getViewBean(SAMLv2AttrQueryViewBean.class);
+        } else if (strViewBean.equals(EntityModel.AFFILIATE)) {
+            vb = (SAMLv2AffiliateViewBean)
+            getViewBean(SAMLv2AffiliateViewBean.class);
+        }
+        return vb;
+    }
+    
+    private EntityPropertiesBase getIDFFViewBean(String strViewBean) {
+        EntityPropertiesBase vb = null;
+        if (strViewBean.equals(EntityModel.SERVICE_PROVIDER)) {
+            vb = (IDFFSPViewBean)
+            getViewBean(IDFFSPViewBean.class);
+        } else if (strViewBean.equals(EntityModel.IDENTITY_PROVIDER)) {
+            vb = (IDFFIDPViewBean)
+            getViewBean(IDFFIDPViewBean.class);
+        } else if (strViewBean.equals(EntityModel.AFFILIATE)) {
+            vb = (IDFFAffiliateViewBean)
+            getViewBean(IDFFAffiliateViewBean.class);
+        }
+        return vb;
+    }
+    
 }

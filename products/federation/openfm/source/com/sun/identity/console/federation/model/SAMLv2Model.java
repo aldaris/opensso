@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.14 2008-03-06 20:01:41 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.15 2008-04-22 21:44:31 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,23 @@ public interface SAMLv2Model
     public static final String TF_NAME = "tfName";
     public static final String TF_KEY_NAME = "keySize";
     public static final String TF_ALGORITHM = "Algorithm";
+    public static final String httpRedirect = "HTTP-Redirect";
+    public static final String httpPost = "HTTP-POST";
+    public static final String soap = "SOAP";
+    public static final String artifact = "Artifact";
+    public static final String httpArtifact ="HTTP-Artifact";
+    public static final String post = "POST";
+    public static final String paos = "PAOS";
+    public static final String httpRedirectBinding = 
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
+    public static final String httpPostBinding = 
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
+    public static final String soapBinding = 
+            "urn:oasis:names:tc:SAML:2.0:bindings:SOAP";
+    public static final String httpartifactBinding = 
+            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact";
+    public static final String paosBinding = 
+            "urn:oasis:names:tc:SAML:2.0:bindings:PAOS";
     
     //SAMLv2 IDP Standard attributes
     public static final String WANT_AUTHN_REQ_SIGNED =
@@ -107,6 +124,10 @@ public interface SAMLv2Model
     public static final String SP_SLO_POST_RESPLOC = "slopostResponseLocation";
     public static final String SP_MNI_POST_LOC = "mnipostLocation";
     public static final String SP_MNI_POST_RESPLOC = "mnipostResponseLocation";
+    public static final String PAOS_ASSRT_CONS_SERVICE_INDEX =
+        "PaosIndex";
+    public static final String PAOS_ASSRT_CONS_SERVICE_LOCATION =
+        "PaosLocation";
     
     //SAML2 IDP Extended Attributes
     public static final String IDP_SIGN_CERT_ALIAS = 
@@ -146,6 +167,8 @@ public interface SAMLv2Model
         "AuthUrl";
     public static final String ASSERTION_CACHE_ENABLED =
         "assertionCacheEnabled";
+    public static final String IDP_META_ALIAS =
+        "metaAlias";
 
     
     //SAML2 SP Extended Attributes
@@ -185,6 +208,8 @@ public interface SAMLv2Model
         "wantAssertionEncrypted";
     public static final String WANT_ARTIF_RESP_SIGN =
         "wantArtifactResponseSigned";
+    public static final String SP_META_ALIAS =
+        "metaAlias";
     
     //IDP PROXY
     public static final String ENABLE_IDP_PROXY = "enableIDPProxy";
@@ -242,6 +267,8 @@ public interface SAMLv2Model
              "x509SubjectDataStoreAttrName";
      public static final String ASSERTION_ID_REQ_MAPPER = 
              "assertionIDRequestMapper";
+     public static final String AFFILIATE_MEMBER = 
+             "memberlist";
 
     // XACML PDP/PEP
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
@@ -388,11 +415,67 @@ public interface SAMLv2Model
     Map getSPEXDataMap();
     
     /**
+     * Returns SAMLv2 Extended Service Provider values for Assertion Content.
+     *
+     * @return SAMLv2 Extended Service Provider values for Assertion Content.
+     */
+    Map getSPEXACDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider values for Assertion Processing.
+     *
+     * @return SAMLv2 Extended Service Provider values for Assertion Processing.
+     */
+    Map getSPEXAPDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider attribute values for Services.
+     *
+     * @return SAMLv2 Extended Service Provider attribute values for Services.
+     */
+    Map getSPEXSDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Service Provider attribute values for Advanced.
+     *
+     * @return SAMLv2 Extended Service Provider attribute values for Advanced.
+     */
+    Map getSPEXAdDataMap();   
+    
+    /**
      * Returns SAMLv2 Extended Identity Provider attribute values.
      *
      * @return SAMLv2 Extended Identity Provider attribute values.
      */
     Map getIDPEXDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider values for Assertion Content.
+     *
+     * @return SAMLv2 Extended Identity Provider values for Assertion Content.
+     */
+    Map getIDPEXACDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider values for Assertion Processing.
+     *
+     * @return SAMLv2 Extended Identity Provider values for Assertion Processing.
+     */
+    Map getIDPEXAPDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider attribute values for Services.
+     *
+     * @return SAMLv2 Extended Identity Provider attribute values for Services.
+     */
+    Map getIDPEXSDataMap();
+    
+    /**
+     * Returns SAMLv2 Extended Identity Provider attribute values for Advanced.
+     *
+     * @return SAMLv2 Extended Identity Provider attribute values for Advanced.
+     */
+    Map getIDPEXAdDataMap();
     
     /**
      * Returns a Map of PEP descriptor data.(Standard Metadata)
@@ -763,4 +846,60 @@ public interface SAMLv2Model
         String location
         ) throws AMConsoleException;
     
+    /**
+     *Returns the metaAlias of the entity.
+     *
+     *@param realm to which the entity belongs.
+     *@param entityName is the entity id.
+     *@param role the Role of entity.
+     *@return the metaAlias of the entity.
+     *@throws AMConsoleException if unable to retrieve metaAlias.
+     */
+    public String getMetaalias(
+            String realm, 
+            String entityName,
+            String role
+            ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with standard Affiliation attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with Affiliation values.
+     * @throws AMConsoleException if unable to retrieve standard Affiliation 
+     *       values based on the realm and entityName passed.
+     */
+    public Map getStandardAffiliationAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Returns a map with extended Affiliation attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return Map with extended Affiliation values.
+     * @throws AMConsoleException if unable to retrieve extended Affiliation
+     *     attributes based on the realm and entityName passed.
+     */
+    public Map getExtendedAffiliationyAttributes(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+    
+    /**
+     * Saves the standard attribute values for Affilaition.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param affilaitionValues Map which contains standard affiliation values.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void setStdAffilationValues(
+        String realm,
+        String entityName,
+        Map affilaitionValues
+        ) throws AMConsoleException;
 }
