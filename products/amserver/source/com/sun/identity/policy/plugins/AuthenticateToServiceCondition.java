@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticateToServiceCondition.java,v 1.4 2006-08-25 21:21:08 veiming Exp $
+ * $Id: AuthenticateToServiceCondition.java,v 1.5 2008-04-22 21:29:53 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,6 +66,7 @@ public class AuthenticateToServiceCondition implements Condition {
 
     private Map properties;
     private String authenticateToService = null;
+    private boolean realmEmpty = false;
 
     private static List propertyNames = new ArrayList(1);
 
@@ -217,7 +218,7 @@ public class AuthenticateToServiceCondition implements Condition {
                 if ( DEBUG.messageEnabled()) {
                     DEBUG.message("At AuthenticateToServiceCondition."
                             + "getConditionDecision(): "
-                            + "requestAuthnServices, from request = " 
+                            + "requestAuthnServices from request = " 
                             + requestAuthnServices);
                 }
             } catch (ClassCastException e) {
@@ -238,16 +239,29 @@ public class AuthenticateToServiceCondition implements Condition {
                 if ( DEBUG.messageEnabled()) {
                     DEBUG.message("At AuthenticateToServiceCondition."
                             + "getConditionDecision(): "
-                            + "requestAuthnServices, from ssoToken = " 
+                            + "requestAuthnServices from ssoToken = " 
                             + requestAuthnServices);
                 }
             }
         }
 
-        allowed = true;
         Set adviceMessages = new HashSet(1);
-        if (!requestAuthnServices.contains(authenticateToService)) {
-            allowed = false;
+        if (requestAuthnServices.contains(authenticateToService)) {
+            allowed = true;
+        } else if (realmEmpty){
+            for (Iterator iter = requestAuthnServices.iterator();
+                    iter.hasNext(); ) {
+                String requestAuthnService = (String)iter.next();
+                String service = AMAuthUtils.getDataFromRealmQualifiedData(
+                        requestAuthnService);
+                if (authenticateToService.equals(service)) {
+                    allowed = true;
+                    break;
+                }
+            }
+        }
+
+        if (!allowed) {
             adviceMessages.add(authenticateToService);
             if ( DEBUG.messageEnabled()) {
                 DEBUG.message("At AuthenticateToServiceCondition."
@@ -294,6 +308,7 @@ public class AuthenticateToServiceCondition implements Condition {
                 theClone.properties.put(o, values);
             }
             theClone.authenticateToService = authenticateToService;
+            theClone.realmEmpty = realmEmpty;
         }
         return theClone;
     }
@@ -375,6 +390,13 @@ public class AuthenticateToServiceCondition implements Condition {
             throw new PolicyException(
                     ResBundleUtils.rbName,"property_is_not_a_String", 
                     args, null);
+        }
+        if (authenticateToService != null) {
+            String realm = AMAuthUtils.getRealmFromRealmQualifiedData(
+                    authenticateToService);
+            if ((realm == null) || (realm.length() == 0)) {
+                realmEmpty = true;
+            }
         }
         return true;
     }
