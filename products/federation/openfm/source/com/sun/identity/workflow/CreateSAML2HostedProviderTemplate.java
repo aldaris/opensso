@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.16 2008-04-15 16:13:35 veiming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.17 2008-04-22 17:41:16 asyhuang Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -449,6 +449,10 @@ public class CreateSAML2HostedProviderTemplate {
             "       </Attribute>\n" +
             "       <Attribute name=\"" + SAML2Constants.ECP_REQUEST_IDP_LIST +
             "\">\n" +
+            "           <Value></Value>\n" +
+            "       </Attribute>\n" +
+            "       <Attribute name=\"" +
+            SAML2Constants.ECP_REQUEST_IDP_LIST_GET_COMPLETE +"\">\n" +
             "           <Value></Value>\n" +
             "       </Attribute>\n" +
             "       <Attribute name=\"" + SAML2Constants.ENABLE_IDP_PROXY +
