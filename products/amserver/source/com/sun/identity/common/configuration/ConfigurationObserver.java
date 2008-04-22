@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationObserver.java,v 1.3 2008-03-13 18:50:15 veiming Exp $
+ * $Id: ConfigurationObserver.java,v 1.4 2008-04-22 18:09:20 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,26 +133,35 @@ public class ConfigurationObserver implements ServiceListener {
         String serviceComponent, 
         int type
     ) {
-        if (serviceName.equals(Constants.SVC_NAME_PLATFORM)) {            
-            String serverName = serviceComponent.substring(PARENT_LEN);
-            
-            if (serverName.equals(ServerConfiguration.DEFAULT_SERVER_CONFIG) ||
-                serverName.equals(SystemProperties.getServerInstanceName())
-            ) {
-                SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
-                    AdminTokenAction.getInstance());
-                try {
-                    Properties newProp = ServerConfiguration.getServerInstance(
-                        adminToken, serverName);
-                    SystemProperties.initializeProperties(newProp, true, true);
-                    notifies();                    
-                } catch (SSOException ex) {
+        if (serviceName.equals(Constants.SVC_NAME_PLATFORM)) {
+            if (serviceComponent.startsWith("/" +
+                    ConfigurationBase.CONFIG_SERVERS + "/")) {
+                String serverName = serviceComponent.substring(PARENT_LEN);
+
+                if (serverName.equals(ServerConfiguration.DEFAULT_SERVER_CONFIG)
+                    ||
+                    serverName.equals(SystemProperties.getServerInstanceName())
+                 ) {
+                    SSOToken adminToken = (SSOToken)
+                        AccessController.doPrivileged(
+                            AdminTokenAction.getInstance());
+                    try {
+                        Properties newProp = 
+                            ServerConfiguration.getServerInstance(
+                                adminToken, serverName);
+                        SystemProperties.initializeProperties(
+                            newProp, true, true);
+                        notifies();
+                    } catch (SSOException ex) {
                     //ingored
-                } catch (IOException ex) {
+                    } catch (IOException ex) {
                     //ingored
-                } catch (SMSException ex) {
+                    } catch (SMSException ex) {
                     //ingored
+                    }
                 }
+            } else {
+                notifies();
             }
         } else {
             /* need to do this else bcoz some of the property have been moved
