@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.5 2008-01-15 22:12:41 ww203982 Exp $
+ * $Id: ThreadPool.java,v 1.6 2008-04-23 19:58:58 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,7 +157,6 @@ public class ThreadPool {
         busyThreadCount--;
         if (!taskList.isEmpty()) {
             WorkerThread t = getAvailableThread();
-            t.setShouldWait(false);
             t.runTask((Runnable)taskList.remove(0));
         }
     }
@@ -185,11 +184,9 @@ public class ThreadPool {
             return;
         }
         if (!taskList.isEmpty()){
-            t.setShouldWait(false);
             t.runTask((Runnable)taskList.remove(0));
         }
         else{
-            t.setShouldWait(true);
             busyThreadCount--;
             // return threads from the end of array
             threads[currentThreadCount - busyThreadCount - 1] = t;
@@ -237,7 +234,6 @@ public class ThreadPool {
         
         private Runnable task = null;
         private ThreadPool pool;
-        private boolean shouldWait;
         private boolean needReturn;
         private boolean shouldTerminate;
         
@@ -246,12 +242,7 @@ public class ThreadPool {
             this.pool = pool;
             this.shouldTerminate = false;
             this.needReturn = true;
-            this.shouldWait = true;
         }
-        
-        public synchronized void setShouldWait(boolean value){
-            this.shouldWait = value;
-        }    
  
 	/**
 	 * Starts the thread pool.
@@ -263,13 +254,14 @@ public class ThreadPool {
             while (true) {
                 try{
                     synchronized (this) {
-                        if ((shouldWait) && (!shouldTerminate)){
+                        if ((task == null) && (!shouldTerminate)){
                             this.wait();
                         }
                         // need a local copy because they may be changed after
                         // leaving synchronized block.
                         localShouldTerminate = shouldTerminate;
                         localTask = task;
+                        task = null;
                     }
                     if (localShouldTerminate) {
                         // we may need to log something here!
