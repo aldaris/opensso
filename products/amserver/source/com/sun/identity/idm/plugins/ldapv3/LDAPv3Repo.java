@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.39 2008-04-11 16:45:17 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.40 2008-04-23 19:58:38 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -422,6 +422,9 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_LDAP_PSEARCHFILTER =
         "sun-idrepo-ldapv3-config-psearch-filter";
+
+    private static final String LDAPv3Config_LDAP_PSEARCHSCOPE =
+        "sun-idrepo-ldapv3-config-psearch-scope";
 
     private static final String LDAPv3Config_LDAP_ISACTIVEATTRNAME =
         "sun-idrepo-ldapv3-config-isactive";
@@ -970,11 +973,6 @@ public class LDAPv3Repo extends IdRepo {
      *      com.iplanet.am.sdk.IdType)
      */
     public Set getSupportedOperations(IdType type) {
-        if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: getSupportedOps on " + type + " called");
-            debug.message("  cont LDAPv3Repo: supportedOps Map = "
-                    + supportedOps.toString());
-        }
         return (Set) supportedOps.get(type);
     }
 
@@ -985,10 +983,6 @@ public class LDAPv3Repo extends IdRepo {
      */
 
     public Set getSupportedTypes() {
-        if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: getSupportedTypes: supportedOps.keySet="
-                    + supportedOps.keySet());
-        }
         return supportedOps.keySet();
     }
 
@@ -1425,10 +1419,20 @@ public class LDAPv3Repo extends IdRepo {
             // add the ps/listener.
             String filter = getPropertyStringValue(myConfigMap,
                 LDAPv3Config_LDAP_PSEARCHFILTER, "(objectclass=*)");
+            String psearchScopeStr = getPropertyStringValue(myConfigMap,
+                LDAPv3Config_LDAP_PSEARCHSCOPE, LDAP_SCOPE_SUB);
+            int psearchScope = LDAPv2.SCOPE_SUB;
+            if (psearchScopeStr.equalsIgnoreCase(LDAP_SCOPE_BASE)) {
+                psearchScope = LDAPv2.SCOPE_BASE;
+            } else if (psearchScopeStr.equalsIgnoreCase(LDAP_SCOPE_ONE)) {
+                psearchScope = LDAPv2.SCOPE_ONE;
+            } else {
+                psearchScope = LDAPv2.SCOPE_SUB;
+            }
             try {
                 // might have to change/add/delete params.  psIdKey
                 eventService.addListener(token, listener, searchBase,
-                    LDAPv3.SCOPE_SUB, filter, PS_OP, myConfigMap, this,
+                    psearchScope, filter, PS_OP, myConfigMap, this,
                     ldapServerName, psIdKey);
                 Integer numRequest = (Integer) _numRequest.get(ldapServerName);
                 int requestNum;
@@ -4820,18 +4824,67 @@ public class LDAPv3Repo extends IdRepo {
                 // Since people container is not specified, do a sub-tree
                 // search to find the user DN
                 // Auto-construct the DN in case search failed
-                dn = userSearchNamingAttr + "=" + name + orgDN;
+                dn = userSearchNamingAttr + "=" + name +  orgDN;
                 String filter = constructFilter(userSearchNamingAttr,
-                        getObjClassFilter(IdType.USER), origName);
+                    getObjClassFilter(IdType.USER), origName);
                 LDAPConnection ld = null;
                 try {
                     ld = connPool.getConnection();
+                    if (ld == null) {
+                        debug.error("LDAPv3Repo: getDN. ld is null");
+                    } 
                     enableCache(ld);
-                    LDAPSearchResults results = ld.search(orgDN,
-                            LDAPv2.SCOPE_SUB, filter, null, false);
+                    LDAPSearchConstraints searchConstraints =
+                        new LDAPSearchConstraints();
+                    searchConstraints.setMaxResults(2);
+                    searchConstraints.setServerTimeLimit(timeLimit);
+                    if (debug.messageEnabled()) {
+                        debug.message("LDAPv3Repo.getDN. before search. name="
+                            + name + "; filter=" + filter + ";  orgDN=" + orgDN);
+                    }
+                    LDAPSearchResults results = null;
+                    if ((userAtttributesAllowed == null) ||
+                        (userAtttributesAllowed.isEmpty()))  {
+                        results = ld.search(orgDN, LDAPv2.SCOPE_SUB,
+                            filter, null, false, searchConstraints);
+                    } else {
+                        String[] attrArr =
+                            (String[]) userAtttributesAllowed.toArray(
+                            new String[userAtttributesAllowed.size()]);
+                        results = ld.search(orgDN, LDAPv2.SCOPE_SUB,
+                            filter,  attrArr, false, searchConstraints);
+                    }
                     if (results != null && results.hasMoreElements()) {
                         // Take the first DN
-                        dn = results.next().getDN();
+                        LDAPEntry myEntry = results.next();
+                        if (myEntry != null) {                        
+                            dn = myEntry.getDN();
+                        } else {
+                            if (debug.messageEnabled()) {
+                                debug.message("LDAPv3Repo: getDN search again.");
+                            }
+                            clearCache();
+                            results = ld.search(orgDN, LDAPv2.SCOPE_SUB,
+                                filter, null, false, searchConstraints);
+                            if (results != null && results.hasMoreElements()) {
+                                myEntry = results.next(); 
+                                dn = myEntry.getDN(); 
+                            } else {
+                                if (debug.messageEnabled()) {
+                                    debug.message("LDAPv3Repo: 2nd getDN " +
+                                        "user search null.");  
+                                } 
+                            }
+ 
+                        }
+                        if (debug.messageEnabled()) {
+                            debug.message(
+                                "LDAPv3Repo.getDN. search return dn=" + dn);
+                        }
+                    } else {
+                        if (debug.warningEnabled()) {
+                            debug.message("LDAPv3Repo.getDN. user not found");
+                        }
                     }
                 } catch (Exception lde) {
                     // Debug the exception and return the auto-constructed DN
@@ -4844,8 +4897,9 @@ public class LDAPv3Repo extends IdRepo {
                     }
                 }
             } else {
-                dn = userSearchNamingAttr + "=" + name + peopleCtnrNamingAttr
-                        + "=" + peopleCtnrValue + "," + orgDN;
+                dn = userSearchNamingAttr + "=" + name
+                    + peopleCtnrNamingAttr + "=" + peopleCtnrValue
+                    + "," + orgDN;
             }
         } else if (type.equals(IdType.AGENT)) {
             if ((agentCtnrValue == null) || (agentCtnrValue.length() == 0)

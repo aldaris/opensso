@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.20 2008-02-29 21:45:47 kenwho Exp $
+   $Id: idRepoService.xml,v 1.21 2008-04-23 19:58:39 kenwho Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -875,6 +875,20 @@
                         </DefaultValues>
                     </AttributeSchema>
 
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-psearch-scope"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
+                            <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a2042">SCOPE_SUB</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>SCOPE_SUB</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
                     <AttributeSchema name="sun-idrepo-ldapv3-config-idletimeout"
                         type="single"
                         syntax="number"
@@ -1535,6 +1549,20 @@
                         </DefaultValues>
                     </AttributeSchema>
 
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-psearch-scope"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
+                            <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a2042">SCOPE_SUB</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>SCOPE_SUB</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
                     <AttributeSchema name="sun-idrepo-ldapv3-config-idletimeout"
                         type="single"
                         syntax="number"
@@ -2169,6 +2197,20 @@
                         i18nKey="a20431">
                         <DefaultValues>
                             <Value>(objectclass=*)</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema name="sun-idrepo-ldapv3-config-psearch-scope"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a20432">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
+                            <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a2042">SCOPE_SUB</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>SCOPE_SUB</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
