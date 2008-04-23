@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.9 2008-03-21 06:23:18 manish_rustagi Exp $
+ * $Id: AuthClientUtils.java,v 1.10 2008-04-23 23:54:55 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1865,7 +1865,9 @@ public class AuthClientUtils {
                 int uriIndex = cookieURL.indexOf(serviceURI);
                 String tmpCookieURL = cookieURL;
                 if (uriIndex != -1) {
-                    tmpCookieURL = cookieURL.substring(0,uriIndex);
+                    tmpCookieURL = cookieURL.substring(0,uriIndex) + 
+                        SystemProperties.get(Constants.
+                        AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
                 }
                 Vector platformList = WebtopNaming.getPlatformServerList();
                 if (utilDebug.messageEnabled()) {
