@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.5 2008-04-23 00:54:14 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.6 2008-04-23 06:18:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -618,10 +618,12 @@ public class IdentityServicesImpl
                 }
                 if (objectIdType.equals(IdType.AGENT) ||
                     objectIdType.equals(IdType.AGENTONLY)) {
-                    AgentConfiguration.createAgent(getSSOToken(admin),
+                    //Dennis: hardcoded realm as "/"
+                    AgentConfiguration.createAgent(getSSOToken(admin), "/",
                         idName, agentType, idAttrs, serverUrl, agentUrl);
                 } else {
-                    AgentConfiguration.createAgentGroup(getSSOToken(admin),
+                    //Dennis: hardcoded realm as "/"
+                    AgentConfiguration.createAgentGroup(getSSOToken(admin), "/",
                         idName, agentType, idAttrs, serverUrl, agentUrl);
                 }
             } else {
