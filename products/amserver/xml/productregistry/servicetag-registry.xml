@@ -2,7 +2,7 @@
 <registry>
   <service_tag>
     <instance_urn>urn:st:3da1f415-f015-4cd8-8c59-f36bd9c725bb</instance_urn>
-    <product_name>Sun Java System Federated Access Manager</product_name>
+    <product_name>Sun Federated Access Manager</product_name>
     <product_version>8.0</product_version>
     <product_urn>urn:uuid:58a2bfb9-03bf-11dc-b7cf-080020a9ed93</product_urn>
     <product_parent_urn/>
@@ -11,7 +11,7 @@
     <product_vendor>Sun Microsystems Inc.</product_vendor>
     <platform_arch>sparc</platform_arch>
     <container>global</container>
-    <source>Sun Java System Federated Access Manager Native Packages</source>
+    <source>Sun Federated Access Manager Native Packages</source>
     <status>NOT_TRANSFERRED</status>
     <registration_status>NOT_REGISTERED</registration_status>
   </service_tag>
