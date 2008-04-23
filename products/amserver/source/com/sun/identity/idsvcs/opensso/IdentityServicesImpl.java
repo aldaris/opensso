@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.4 2008-04-15 22:38:38 rafsanchez Exp $
+ * $Id: IdentityServicesImpl.java,v 1.5 2008-04-23 00:54:14 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,10 @@ import com.sun.identity.log.AMLogException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.service.AMAuthErrorCode;
+import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.configuration.AgentConfiguration;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyEvaluator;
@@ -77,11 +81,15 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 
 
+import com.sun.identity.sm.SMSException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.RemoteException;
 import java.security.AccessController;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import netscape.ldap.util.DN;
 
 /**
  * Web Service to provide security based on authentication and authorization
@@ -147,7 +155,19 @@ public class IdentityServicesImpl
             }
             // validate the password..
             if (lc.getStatus() != AuthContext.Status.SUCCESS) {
-                throw new InvalidPassword("");
+                String ec = lc.getErrorCode();
+                String em = lc.getErrorMessage();
+                if(ec.equals(AMAuthErrorCode.AUTH_INVALID_PASSWORD)) {
+                    throw new InvalidPassword(em);
+                } else if (ec.equals(AMAuthErrorCode.AUTH_PROFILE_ERROR) ||
+                    ec.equals(AMAuthErrorCode.AUTH_ACCOUNT_EXPIRED) ||
+                    ec.equals(AMAuthErrorCode.AUTH_USER_INACTIVE) ||
+                    ec.equals(AMAuthErrorCode.AUTH_USER_NOT_FOUND) ||
+                    ec.equals(AMAuthErrorCode.AUTH_ORG_INACTIVE)) {
+                    throw new UserNotFound(em);
+                } else if (ec.equals(AMAuthErrorCode.AUTH_LOGIN_FAILED)) {
+                    throw new InvalidCredentials(em);
+                }
             } else {
                 try {
                     // package up the token for transport..
@@ -155,8 +175,8 @@ public class IdentityServicesImpl
                     String id = lc.getSSOToken().getTokenID().toString();
                     ret.setId(id);
                 } catch (Exception e) {
-                    debug.error("IdentityServicesImpl:authContext " +
-                        "AuthException", e);
+                    debug.error("IdentityServicesImpl:authContext: " +
+                        "Unable to get SSOToken", e);
                     // we're going to throw a generic error
                     // because the system is likely down..
                     throw new GeneralFailure(e.getMessage());
@@ -180,12 +200,14 @@ public class IdentityServicesImpl
         throws GeneralFailure, RemoteException
     {
         try {
-            SSOTokenManager mgr = SSOTokenManager.getInstance();
-            SSOToken ssoToken = mgr.createSSOToken(subject.getId());
-
+            SSOToken ssoToken = getSSOToken(subject);
             if (ssoToken != null) {
+                SSOTokenManager mgr = SSOTokenManager.getInstance();
                 mgr.destroyToken(ssoToken);
             }
+        } catch (TokenExpired te) {
+            debug.error("IdentityServicesImpl:logout", te);
+            throw new GeneralFailure(te.getMessage());
         } catch (SSOException ex) {
             debug.error("IdentityServicesImpl:logout", ex);
             throw new GeneralFailure(ex.getMessage());
@@ -215,8 +237,7 @@ public class IdentityServicesImpl
         // Check policy
         try {
             // create the SSOToken
-            SSOToken ssoToken = SSOTokenManager.getInstance()
-                .createSSOToken(subject.getId());
+            SSOToken ssoToken = getSSOToken(subject);
 
             // Evaluate policy
             String serviceName = "iPlanetAMWebAgentService";
@@ -243,7 +264,7 @@ public class IdentityServicesImpl
             }
         } catch (SSOException e) {
             debug.error("IdentityServicesImpl:authorize", e);
-            throw new GeneralFailure(e.getMessage());
+            throw new TokenExpired(e.getMessage());
         } catch (PolicyException ex) {
             debug.error("IdentityServicesImpl:authorize", ex);
             throw new GeneralFailure(ex.getMessage());
@@ -275,15 +296,8 @@ public class IdentityServicesImpl
 
         SSOToken appToken = null;
         SSOToken subjectToken = null;
-        try {
-            SSOTokenManager ssoTokenManager = SSOTokenManager.getInstance();
-            appToken = ssoTokenManager.createSSOToken(app.getId());
-            subjectToken = (subject == null) ? null :
-                ssoTokenManager.createSSOToken(subject.getId());
-        } catch (SSOException e) {
-            System.err.println("SSOException%n");
-            throw new GeneralFailure(e.getMessage());
-        }
+        appToken = getSSOToken(app);
+        subjectToken = (subject == null) ? appToken : getSSOToken(subject);
 
         try {
             LogRecord logRecord = new LogRecord(
@@ -333,8 +347,7 @@ public class IdentityServicesImpl
         throws TokenExpired, GeneralFailure, RemoteException {
         UserDetails details = new UserDetails();
         try {
-            SSOToken ssoToken = SSOTokenManager.getInstance()
-                .createSSOToken(subject.getId());
+            SSOToken ssoToken = getSSOToken(subject);
             
             // Obtain user memberships (roles and groups)
             AMIdentity userIdentity = IdUtils.getIdentity(ssoToken);
@@ -460,46 +473,25 @@ public class IdentityServicesImpl
         try {
             String realm =  null;
             String objectType = null;
-            Map searchModifiers = null;
-
-            if (attributes != null) {
-                Iterator iter = attributes.iterator();
-
-                while (iter.hasNext()) {
-                    Attribute attr = (Attribute)iter.next();
-                    String attrName = attr.getName();
-
-                    if ("realm".equalsIgnoreCase(attrName)) {
-                        String[] values = attr.getValues();
-
-                        if ((values != null) && (values.length > 0)) {
-                            realm = values[0];
-                        }
-                    } else if ("objecttype".equalsIgnoreCase(attrName)) {
-                        String[] values = attr.getValues();
-
-                        if ((values != null) && (values.length > 0)) {
-                            objectType = values[0];
-                        }
-                    } else {
-                        String[] values = attr.getValues();
-
-                        if ((values != null) && (values.length > 0)) {
-                            if (searchModifiers == null) {
-                                searchModifiers = new HashMap();
-                            }
-
-                            searchModifiers.put(attrName, values[0]);
-                        }
-                    }
+            Map searchModifiers = attributesToMap(attributes);
+            if (searchModifiers != null) {
+                Set set = (Set) searchModifiers.get("realm");
+                if ((set != null) && !set.isEmpty()) {
+                    realm = set.iterator().next().toString();
+                    searchModifiers.remove("realm");
+                }
+                set = (Set) searchModifiers.get("objecttype");
+                if ((set != null) && !set.isEmpty()) {
+                    objectType = set.iterator().next().toString();
+                    searchModifiers.remove("objecttype");
                 }
             }
 
+            // Verify Realm and ObjectType has valid values
             if ((realm == null) || (realm.length() < 1)) {
                 // Default to root realm
                 realm = "/";
             }
-
             if ((objectType == null) || (objectType.length() < 1)) {
                 // Default to user type
                 objectType = "User";
@@ -514,10 +506,13 @@ public class IdentityServicesImpl
                     filter = "*";
                 }
 
-                objList = fetchAMIdentities(idType, filter, true, repo, searchModifiers);
+                objList = fetchAMIdentities(idType, filter, false, repo,
+                    searchModifiers);
             } else {
-                debug.error("IdentityServicesImpl:search unsupported object type");
-                throw new GeneralFailure("search unsupported object type: " + objectType);
+                debug.error("IdentityServicesImpl:search unsupported IdType" +
+                    objectType);
+                throw new GeneralFailure("search unsupported IdType: " +
+                    objectType);
             }
 
             if (objList != null) {
@@ -543,279 +538,181 @@ public class IdentityServicesImpl
         return rv;
     }
 
-    /*
-    public IdentityDetails[] search(String filter, Attribute[] searchAttrs,
-                                    Token admin)
-        throws TokenExpired, GeneralFailure, RemoteException
-    {
-        IdentityDetails[] rv = null;
-        List searchAttrsList = null;
-
-        if ((searchAttrs != null) && (searchAttrs.length > 0)) {
-            searchAttrsList = new ArrayList();
-
-            for (int i = 0; i < searchAttrs.length; i++) {
-                searchAttrsList.add(searchAttrs[i]);
-            }
-        }
-
-        List<IdentityDetails> identities = search(filter, searchAttrsList, admin);
-
-        if ((identities != null) && (identities.size() > 0)) {
-            rv = new IdentityDetails[identities.size()];
-            identities.toArray(rv);
-        }
-
-        return rv;
-    }
-
-    public List<IdentityDetails> search(String filter, List searchAttrs, Token admin)
-        throws TokenExpired, GeneralFailure, RemoteException
-    {
-        List<IdentityDetails> rv = null;
-
-        try {
-            String realm =  null;
-            String objectType = null;
-            Map searchModifiers = null;
-
-            if (searchAttrs != null) {
-                Iterator iter = searchAttrs.iterator();
-
-                while (iter.hasNext()) {
-                    Attribute attr = (Attribute)iter.next();
-                    String attrName = attr.getName();
-
-                    if ("realm".equalsIgnoreCase(attrName)) {
-                        String[] values = attr.getValues();
-
-                        if ((values != null) && (values.length > 0)) {
-                            realm = values[0];
-                        }
-                    } else if ("objecttype".equalsIgnoreCase(attrName)) {
-                        String[] values = attr.getValues();
-
-                        if ((values != null) && (values.length > 0)) {
-                            objectType = values[0];
-                        }
-                    } else {
-                        String[] values = attr.getValues();
-
-                        if ((values != null) && (values.length > 0)) {
-                            if (searchModifiers == null) {
-                                searchModifiers = new HashMap();
-                            }
-
-                            searchModifiers.put(attrName, values[0]);
-                        }
-                    }
-                }
-            }
-
-            if ((realm == null) || (realm.length() < 1)) {
-                // Default to root realm
-                realm = "/";
-            }
-
-            if ((objectType == null) || (objectType.length() < 1)) {
-                // Default to user type
-                objectType = "user";
-            }
-
-            AMIdentityRepository repo = getRepo(admin, realm);
-            IdType idType = getIdType(objectType);
-            List objList = null;
-
-            if ((idType != null)) {
-            	if ((filter == null) || (filter.length() == 0)) {
-            	    filter = "*";
-            	}
-
-            	objList = fetchAMIdentities(idType, filter, true, repo, searchModifiers);
-            } else {
-                debug.error("IdentityServicesImpl:search unsupported object type");
-                throw new GeneralFailure("search unsupported object type: " + objectType);
-            }
-
-            if (objList != null) {
-                int index = 0;
-                Iterator objIter = objList.iterator();
-                rv = new ArrayList<IdentityDetails>();
-
-                while (objIter.hasNext()) {
-                    AMIdentity identity = (AMIdentity)objIter.next();
-
-                    if (identityExists(identity)) {
-                        IdentityDetails details =
-                            convertToIdentityDetails(identity, (List)null);
-
-                        // Use the realm specified by the caller
-                        if ((realm != null) && (realm.length()> 0)) {
-                            details.setRealm(realm);
-                        }
-
-                        rv.add(details);
-                    }
-            	}
-            }
-        } catch (IdRepoException e) {
-            debug.error("IdentityServicesImpl:list", e);
-            throw new GeneralFailure(e.getMessage());
-        } catch (SSOException e) {
-            debug.error("IdentityServicesImpl:list", e);
-            throw new GeneralFailure(e.getMessage());
-        }
-
-        return rv;
-    }
-    */
-
-
     /**
      * Creates an identity object with the specified attributes.
      *
      * @param admin Token identifying the administrator to be used to authorize
      * the request.
-     * @param identity object containing the attributes of the object to be created.
+     * @param identity object containing the attributes of the object
+     * to be created.
      * @throws NeedMoreCredentials when more credentials are required for
      * authorization.
-     * @throws DuplicateObject if an object matching the name, type and realm already exists.
+     * @throws DuplicateObject if an object matching the name, type and
+     * realm already exists.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
      */
     public CreateResponse create(IdentityDetails identity, Token admin)
-        throws NeedMoreCredentials, DuplicateObject, TokenExpired, GeneralFailure
-    {
+        throws NeedMoreCredentials, DuplicateObject,
+        TokenExpired, GeneralFailure {
+        
+        // Verify valid information is provided
+        assert (identity != null);
+        assert (admin != null);
+        
+        // Obtain identity details & verify
         String idName = identity.getName();
         String idType = identity.getType();
         String realm = identity.getRealm();
-
         if ((idName == null) || (idName.length() < 1)) {
             // TODO: add a message to the exception
-            throw new GeneralFailure("");
+            throw new GeneralFailure("Identity name not provided");
         }
-
         if ((idType == null) || (idType.length() < 1)) {
-            // TODO: add a message to the exception
-            throw new GeneralFailure("");
+            idType = "user";
         }
-
         if (realm == null) {
             realm = "/";
         }
 
         try {
+            // Obtain IdRepo to create validate IdType & operations
             IdType objectIdType = getIdType(idType);
             AMIdentityRepository repo = getRepo(admin, realm);
 
             if (!isOperationSupported(repo, objectIdType, IdOperation.CREATE)) {
                 // TODO: add message to exception
-                throw new NeedMoreCredentials("");
+                throw new UnsupportedOperationException("Unsupported: " +
+                    "Type: " + idType + " Operation: CREATE");
             }
 
-            Attribute[] attrs = identity.getAttributes();
-            Map idAttrs = null;
-
-            if (attrs != null) {
-                idAttrs = new HashMap(attrs.length);
-
-                for (int i = 0; i < attrs.length; i++) {
-                    String attrName = attrs[i].getName();
-                    String[] attrValues = attrs[i].getValues();
-                    Set idAttrValues = null;
-
-                    if (attrValues != null) {
-                        idAttrValues = new HashSet(attrValues.length);
-
-                        for (int j = 0; j < attrValues.length; j++) {
-                            idAttrValues.add(attrValues[j]);
-                        }
-                    }
-
-                    idAttrs.put(attrName, idAttrValues);
+            // Obtain creation attributes
+            Map<String, Set> idAttrs = attributesToMap(
+                identity.getAttributes());
+            
+            // Create the identity, special case of Agents to merge
+            // and validate the attributes
+            AMIdentity amIdentity = null;
+            if (objectIdType.equals(IdType.AGENT) ||
+                objectIdType.equals(IdType.AGENTONLY) ||
+                objectIdType.equals(IdType.AGENTGROUP)) {
+                // Get agenttype, serverurl & agenturl
+                String agentType = null, serverUrl = null, agentUrl = null;
+                Set set = idAttrs.get("agenttype");
+                if ((set != null) && !set.isEmpty()) {
+                    agentType = set.iterator().next().toString();
+                    idAttrs.remove("agenttype");
+                } else {
+                    throw new UnsupportedOperationException("Unsupported: " +
+                        "Agent Type required for " + idType);
+                }
+                set = idAttrs.get("serverurl");
+                if ((set != null) && !set.isEmpty()) {
+                    serverUrl = set.iterator().next().toString();
+                    idAttrs.remove("serverurl");
+                }
+                set = idAttrs.get("agenturl");
+                if ((set != null) && !set.isEmpty()) {
+                    agentUrl = set.iterator().next().toString();
+                    idAttrs.remove("agenturl");
+                }
+                if (objectIdType.equals(IdType.AGENT) ||
+                    objectIdType.equals(IdType.AGENTONLY)) {
+                    AgentConfiguration.createAgent(getSSOToken(admin),
+                        idName, agentType, idAttrs, serverUrl, agentUrl);
+                } else {
+                    AgentConfiguration.createAgentGroup(getSSOToken(admin),
+                        idName, agentType, idAttrs, serverUrl, agentUrl);
                 }
             } else {
-                idAttrs = new HashMap(1);
-            }
+                // Create other identites like User, Group, Role, etc.
+                amIdentity = repo.createIdentity(objectIdType, idName, idAttrs);
+                
+                // Process roles, groups & memberships
+                if (objectIdType.equals(IdType.USER)) {
+                    String[] roleNames = identity.getRoles();
 
-            AMIdentity amIdentity = repo.createIdentity(objectIdType, idName, idAttrs);
+                    if (roleNames != null) {
+                        if (!isOperationSupported(repo, IdType.ROLE,
+                            IdOperation.EDIT)) {
+                            // TODO: Add message to exception
+                            throw new NeedMoreCredentials("");
+                        }
 
-            if (objectIdType.equals(IdType.USER)) {
-                String[] roleNames = identity.getRoles();
+                        for (int i = 0; i < roleNames.length; i++) {
+                            AMIdentity role = fetchAMIdentity(repo, IdType.ROLE,
+                                roleNames[i], false);
 
-                if (roleNames != null) {
-                    if (!isOperationSupported(repo, IdType.ROLE, IdOperation.EDIT)) {
-                        // TODO: Add message to exception
-                        throw new NeedMoreCredentials("");
+                            if (identityExists(role)) {
+                                role.addMember(amIdentity);
+                                role.store();
+                            }
+                        }
                     }
 
-                    for (int i = 0; i < roleNames.length; i++) {
-                        AMIdentity role = fetchAMIdentity(repo, IdType.ROLE,
-                                                          roleNames[i], false);
+                    String[] groupNames = identity.getGroups();
 
-                        if (identityExists(role)) {
-                            role.addMember(amIdentity);
-                            role.store();
+                    if (groupNames != null) {
+                        if (!isOperationSupported(repo, IdType.GROUP,
+                            IdOperation.EDIT)) {
+                            // TODO: Add message to exception
+                            throw new NeedMoreCredentials("");
+                        }
+
+                        for (int i = 0; i < groupNames.length; i++) {
+                            AMIdentity group = fetchAMIdentity(repo,
+                                IdType.GROUP, groupNames[i], false);
+                            if (identityExists(group)) {
+                                group.addMember(amIdentity);
+                                group.store();
+                            }
                         }
                     }
                 }
 
-                String[] groupNames = identity.getGroups();
+                if (objectIdType.equals(IdType.GROUP) ||
+                    objectIdType.equals(IdType.ROLE)) {
+                    String[] memberNames = identity.getMembers();
 
-                if (groupNames != null) {
-                    if (!isOperationSupported(repo, IdType.GROUP, IdOperation.EDIT)) {
-                        // TODO: Add message to exception
-                        throw new NeedMoreCredentials("");
-                    }
-
-                    for (int i = 0; i < groupNames.length; i++) {
-                        AMIdentity group = fetchAMIdentity(repo, IdType.GROUP,
-                                                           groupNames[i], false);
-
-                        if (identityExists(group)) {
-                            group.addMember(amIdentity);
-                            group.store();
+                    if (memberNames != null) {
+                        if (objectIdType.equals(IdType.GROUP) &&
+                            !isOperationSupported(repo, IdType.GROUP,
+                            IdOperation.EDIT)) {
+                            // TODO: Add message to exception
+                            throw new NeedMoreCredentials("");
                         }
-                    }
-                }
-            }
 
-            if (objectIdType.equals(IdType.GROUP) ||
-                objectIdType.equals(IdType.ROLE))
-            {
-                String[] memberNames = identity.getMembers();
-
-                if (memberNames != null) {
-                    if (objectIdType.equals(IdType.GROUP) &&
-                        !isOperationSupported(repo, IdType.GROUP, IdOperation.EDIT))
-                    {
-                        // TODO: Add message to exception
-                        throw new NeedMoreCredentials("");
-                    }
-
-                    if (objectIdType.equals(IdType.ROLE) &&
-                        !isOperationSupported(repo, IdType.ROLE, IdOperation.EDIT))
-                    {
-                        // TODO: Add message to exception
-                        throw new NeedMoreCredentials("");
-                    }
-
-                    for (int i = 0; i < memberNames.length; i++) {
-                        AMIdentity user = fetchAMIdentity(repo, IdType.USER,
-                                                          memberNames[i], false);
-
-                        if (identityExists(user)) {
-                            amIdentity.addMember(user);
+                        if (objectIdType.equals(IdType.ROLE) &&
+                            !isOperationSupported(repo, IdType.ROLE,
+                            IdOperation.EDIT)) {
+                            // TODO: Add message to exception
+                            throw new NeedMoreCredentials("");
                         }
-                    }
 
-                    amIdentity.store();
+                        for (int i = 0; i < memberNames.length; i++) {
+                            AMIdentity user = fetchAMIdentity(repo, IdType.USER,
+                                memberNames[i], false);
+                            if (identityExists(user)) {
+                                amIdentity.addMember(user);
+                            }
+                        }
+                        amIdentity.store();
+                    }
                 }
             }
         } catch (IdRepoException ex) {
             debug.error("IdentityServicesImpl:create", ex);
             throw new GeneralFailure(ex.getMessage());
         } catch (SSOException ex) {
+            debug.error("IdentityServicesImpl:create", ex);
+            throw new GeneralFailure(ex.getMessage());
+        } catch (SMSException ex) {
+            debug.error("IdentityServicesImpl:create", ex);
+            throw new GeneralFailure(ex.getMessage());
+        } catch (ConfigurationException ex) {
+            debug.error("IdentityServicesImpl:create", ex);
+            throw new GeneralFailure(ex.getMessage());
+        } catch (MalformedURLException ex) {
             debug.error("IdentityServicesImpl:create", ex);
             throw new GeneralFailure(ex.getMessage());
         }
@@ -837,7 +734,8 @@ public class IdentityServicesImpl
      * @return IdentityDetails of the subject.
      * @throws NeedMoreCredentials when more credentials are required for
      * authorization.
-     * @throws ObjectNotFound if no subject is found that matches the input criteria.
+     * @throws ObjectNotFound if no subject is found that matches the input
+     * criteria.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
      */
@@ -929,16 +827,17 @@ public class IdentityServicesImpl
         return rv;
     }
 
-
     /**
      * Updates an identity object with the specified attributes.
      *
      * @param admin Token identifying the administrator to be used to authorize
      * the request.
-     * @param identity object containing the attributes of the object to be updated.
+     * @param identity object containing the attributes of the object to be
+     * updated.
      * @throws NeedMoreCredentials when more credentials are required for
      * authorization.
-     * @throws ObjectNotFound if an object matching the name, type and realm cannot be found.
+     * @throws ObjectNotFound if an object matching the name, type and realm
+     * cannot be found.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
      */
@@ -955,8 +854,7 @@ public class IdentityServicesImpl
         }
 
         if ((idType == null) || (idType.length() < 1)) {
-            // TODO: add a message to the exception
-            throw new GeneralFailure("");
+            idType="user";
         }
 
         if (realm == null) {
@@ -965,20 +863,19 @@ public class IdentityServicesImpl
 
         try {
             IdType objectIdType = getIdType(idType);
-            SSOToken ssoToken =
-                SSOTokenManager.getInstance().createSSOToken(admin.getId());
-            AMIdentityRepository repo = getRepo(ssoToken, realm);
+            AMIdentityRepository repo = getRepo(admin, realm);
 
             if (!isOperationSupported(repo, objectIdType, IdOperation.EDIT)) {
                 // TODO: add message to exception
                 throw new NeedMoreCredentials("");
             }
 
-            AMIdentity amIdentity = getAMIdentity(ssoToken, repo, idType, idName);
+            AMIdentity amIdentity = getAMIdentity(getSSOToken(admin),
+                repo, idType, idName);
 
             if (!identityExists(amIdentity)) {
-                String msg = "Object \'" + idName + "\' of type \'" + idType + "\' not found.'";
-
+                String msg = "Object \'" + idName + "\' of type \'" +
+                    idType + "\' not found.'";
                 throw new ObjectNotFound(msg);
             }
 
@@ -1164,48 +1061,37 @@ public class IdentityServicesImpl
     }
 
     private AMIdentityRepository getRepo(SSOToken token, String realm)
-    	throws IdRepoException, SSOException
+    	throws IdRepoException, TokenExpired
     {
     	if ((realm == null) || (realm.length() == 0)) {
     		realm = "/";
     	}
-
-    	return new AMIdentityRepository(token, realm);
+        try {
+    	    return new AMIdentityRepository(token, realm);
+        } catch (SSOException ssoe) {
+            throw (new TokenExpired(ssoe.getMessage()));
+        }
     }
 
     private AMIdentityRepository getRepo(Token admin, String realm)
-    	throws IdRepoException, SSOException
+    	throws IdRepoException, TokenExpired
     {
-    	SSOToken ssoToken =
-    		SSOTokenManager.getInstance().createSSOToken(admin.getId());
-
+    	SSOToken ssoToken = getSSOToken(admin);
     	return getRepo(ssoToken, realm);
     }
 
-    public static final String OBJECT_TYPE_USER = "User";
-    public static final String OBJECT_TYPE_GROUP = "Group";
-    public static final String OBJECT_TYPE_ROLE = "Role";
-    public static final String OBJECT_TYPE_FILTERED_ROLE = "Filtered Role";
-
     private IdType getIdType(String objectType)
     {
-        IdType rv = null;
-
-        if (objectType.equalsIgnoreCase(OBJECT_TYPE_ROLE)) {
-            rv = IdType.ROLE;
-        } else if (objectType.equalsIgnoreCase(OBJECT_TYPE_FILTERED_ROLE)) {
-            rv = IdType.FILTEREDROLE;
-        } else if (objectType.equalsIgnoreCase(OBJECT_TYPE_GROUP)) {
-            rv = IdType.GROUP;
-        } else if (objectType.equalsIgnoreCase(OBJECT_TYPE_USER)) {
-            rv = IdType.USER;
+        try {
+            return (com.sun.identity.idm.IdUtils.getType(objectType));
+        } catch (IdRepoException ioe) {
+            // Ignore exception
         }
-
-        return rv;
+        return (null);
     }
 
     private boolean isOperationSupported(AMIdentityRepository repo,
-                                         IdType idType, IdOperation operation)
+        IdType idType, IdOperation operation)
     {
         boolean rv = false;
 
@@ -1293,20 +1179,13 @@ public class IdentityServicesImpl
         return identities;
     }
 
-    private List fetchAMIdentities(IdType type, String identity,
-                                   boolean fetchAllAttrs,
-                                   AMIdentityRepository repo)
-        throws GeneralFailure, IdRepoException
-    {
-        return fetchAMIdentities(type, identity, fetchAllAttrs, repo, null);
-    }
-
     private AMIdentity fetchAMIdentity(AMIdentityRepository repo, IdType type,
                                        String identity, boolean fetchAllAttrs)
         throws GeneralFailure, IdRepoException
     {
         AMIdentity rv = null;
-        List identities = fetchAMIdentities(type, identity, fetchAllAttrs, repo);
+        List identities = fetchAMIdentities(type, identity,
+            fetchAllAttrs, repo, null);
 
         if ((identities != null) && (identities.size() > 0)) {
             rv = (AMIdentity)identities.get(0);
@@ -1315,16 +1194,20 @@ public class IdentityServicesImpl
         return rv;
     }
 
-    private AMIdentity getAMIdentity(SSOToken ssoToken, AMIdentityRepository repo,
-    								 String guid, IdType idType)
-    	throws IdRepoException
+    private AMIdentity getAMIdentity(SSOToken ssoToken,
+        AMIdentityRepository repo, String guid, IdType idType)
+        throws IdRepoException, SSOException
     {
         AMIdentity rv = null;
 
         if (isOperationSupported(repo, idType, IdOperation.READ)) {
-            //amIdentity = new AMIdentity(_ssoToken, guid);
             try {
-                rv = new AMIdentity(ssoToken, guid);
+                if (DN.isDN(guid)) {
+                    rv = new AMIdentity(ssoToken, guid);
+                } else {
+                    rv = new AMIdentity(ssoToken, guid, idType,
+                        repo.getRealmIdentity().getRealm(), null);
+                }
             } catch (IdRepoException ex) {
                 String errCode = ex.getErrorCode();
 
@@ -1341,17 +1224,19 @@ public class IdentityServicesImpl
 
     private AMIdentity getAMIdentity(Token admin, String objectType, String id,
                                      String realm)
-        throws GeneralFailure, IdRepoException, SSOException
+        throws GeneralFailure, IdRepoException, TokenExpired
     {
-        SSOToken ssoToken =
-            SSOTokenManager.getInstance().createSSOToken(admin.getId());
+        SSOToken ssoToken = getSSOToken(admin);
         AMIdentityRepository repo = getRepo(ssoToken, realm);
-
-        return getAMIdentity(ssoToken, repo, objectType, id);
+        try {
+            return getAMIdentity(ssoToken, repo, objectType, id);
+        } catch (SSOException ssoe) {
+            throw (new TokenExpired(ssoe.getMessage()));
+        }
     }
 
-    private AMIdentity getAMIdentity(SSOToken ssoToken, AMIdentityRepository repo,
-                                     String objectType, String id)
+    private AMIdentity getAMIdentity(SSOToken ssoToken,
+        AMIdentityRepository repo, String objectType, String id)
     	throws GeneralFailure, IdRepoException, SSOException
     {
     	AMIdentity rv = null;
@@ -1380,7 +1265,8 @@ public class IdentityServicesImpl
         throws NeedMoreCredentials, IdRepoException, SSOException
     {
         if (!member.isMember(amIdentity)) {
-            if (isOperationSupported(repo, amIdentity.getType(), IdOperation.EDIT)) {
+            if (isOperationSupported(repo, amIdentity.getType(),
+                IdOperation.EDIT)) {
                 amIdentity.addMember(member);
             } else {
                 // TODO: Add message to exception
@@ -1390,8 +1276,8 @@ public class IdentityServicesImpl
     }
 
     private void removeMember(AMIdentityRepository repo, AMIdentity amIdentity,
-    						  AMIdentity member)
-    	throws NeedMoreCredentials, IdRepoException, SSOException
+    	AMIdentity member)
+        throws NeedMoreCredentials, IdRepoException, SSOException
     {
         if (member.isMember(amIdentity)) {
             IdType type = amIdentity.getType();
@@ -1406,7 +1292,7 @@ public class IdentityServicesImpl
     }
 
     private void deleteAMIdentities(AMIdentityRepository repo,
-    								IdType type, Set identities)
+    	IdType type, Set identities)
     	throws NeedMoreCredentials, IdRepoException, SSOException
     {
     	if (isOperationSupported(repo, type, IdOperation.DELETE)) {
@@ -1418,7 +1304,7 @@ public class IdentityServicesImpl
     }
 
     private void deleteAMIdentity(AMIdentityRepository repo,
-    							  AMIdentity amIdentity)
+    	AMIdentity amIdentity)
     	throws NeedMoreCredentials, IdRepoException, SSOException
     {
     	Set identities = new HashSet();
@@ -1461,9 +1347,10 @@ public class IdentityServicesImpl
         return rv;
     }
 
-    private void setMemberships(AMIdentityRepository repo, AMIdentity amIdentity,
-                                Set memberships, IdType idType)
-        throws IdRepoException, SSOException, GeneralFailure, NeedMoreCredentials
+    private void setMemberships(AMIdentityRepository repo,
+        AMIdentity amIdentity, Set memberships, IdType idType)
+        throws IdRepoException, SSOException, GeneralFailure,
+        NeedMoreCredentials
     {
         Set membershipsToAdd = memberships;
         Set membershipsToRemove = null;
@@ -1502,8 +1389,8 @@ public class IdentityServicesImpl
     }
 
     private void setMembers(AMIdentityRepository repo, AMIdentity amIdentity,
-                            Set members, IdType idType)
-        throws IdRepoException, SSOException, GeneralFailure, NeedMoreCredentials
+        Set members, IdType idType) throws IdRepoException, SSOException,
+        GeneralFailure, NeedMoreCredentials
     {
         Set membershipsToAdd = members;
         Set membershipsToRemove = null;
@@ -1706,7 +1593,8 @@ public class IdentityServicesImpl
                     if (valueList != null) {
                         String[] valueArray = new String[valueList.size()];
 
-                        attribute.setValues((String[])valueList.toArray(valueArray));
+                        attribute.setValues(
+                            (String[])valueList.toArray(valueArray));
                         attributes.add(attribute);
                     }
                 }
@@ -1718,5 +1606,52 @@ public class IdentityServicesImpl
         }
 
         return rv;
+    }
+    
+    private SSOToken getSSOToken(Token admin) throws TokenExpired {
+        SSOToken token = null;
+        try {
+            if (admin == null) {
+                throw (new TokenExpired("Token is NULL"));
+            }
+            SSOTokenManager mgr = SSOTokenManager.getInstance();
+            token = mgr.createSSOToken(admin.getId());
+        } catch (SSOException ex) {
+            // throw TokenExpired exception
+            throw (new TokenExpired(ex.getMessage()));
+        }
+        return (token);
+    }
+    
+    private Map<String, Set> attributesToMap(List attrs) {
+        if (attrs != null) {
+            Attribute[] attributes = new Attribute[attrs.size()];
+            attributes = (Attribute[]) attrs.toArray(attributes);
+            return (attributesToMap(attributes));
+        }
+        return (Collections.EMPTY_MAP);
+    }
+    
+    private Map<String, Set> attributesToMap(Attribute[] attrs) {
+        Map<String, Set> idAttrs = new CaseInsensitiveHashMap();
+        if (attrs != null) {
+            for (int i = 0; i < attrs.length; i++) {
+                String attrName = attrs[i].getName();
+                String[] attrValues = attrs[i].getValues();
+                Set idAttrValues = null;
+                if ((attrValues != null) && (attrValues.length > 0)) {
+                    idAttrValues = new HashSet(attrValues.length);
+                    for (int j = 0; j < attrValues.length; j++) {
+                        idAttrValues.add(attrValues[j]);
+                    }
+                } else {
+                    idAttrValues = Collections.EMPTY_SET;
+                }
+                idAttrs.put(attrName, idAttrValues);
+            }
+        } else {
+            idAttrs = new HashMap(1);
+        }
+        return (idAttrs);
     }
 }

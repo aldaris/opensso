@@ -17,13 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesHandler.java,v 1.2 2008-04-15 22:39:28 rafsanchez Exp $
+ * $Id: IdentityServicesHandler.java,v 1.3 2008-04-23 00:54:14 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idsvcs.rest;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,10 +43,10 @@ import com.sun.identity.idsvcs.GeneralFailure;
 import com.sun.identity.idsvcs.IdentityDetails;
 import com.sun.identity.idsvcs.IdentityServicesImpl;
 import com.sun.identity.idsvcs.IdentityServicesFactory;
-import com.sun.identity.idsvcs.NeedMoreCredentials;
 import com.sun.identity.idsvcs.ObjectNotFound;
 import com.sun.identity.idsvcs.Token;
 import com.sun.identity.idsvcs.UserDetails;
+import java.io.StringWriter;
 
 /**
  * Provides a marshall/unmarshall layer to the Security interface.
@@ -211,6 +213,19 @@ public class IdentityServicesHandler extends HttpServlet {
             Token ret = null;
             String n = name().toLowerCase();
             String id = request.getParameter(n);
+            if (isBlank(id)) {
+                try {
+                    // Check the cookie value "iPlanetDirectoryPro"
+                    SSOTokenManager mgr = SSOTokenManager.getInstance();
+                    SSOToken token = mgr.createSSOToken(
+                        (HttpServletRequest) request);
+                    if (token != null) {
+                        id = token.getTokenID().toString();
+                    }
+                } catch (SSOException ex) {
+                    // Ignore the exception, and no valid token
+                }
+            }
             if (!isBlank(id)) {
                 ret = new Token();
                 ret.setId(id);
@@ -290,6 +305,14 @@ public class IdentityServicesHandler extends HttpServlet {
                             attributeList = new ArrayList();
                         }
 
+                        attributeList.add(attribute);
+                    } else {
+                        // Add empyt attribute
+                        Attribute attribute = new Attribute();
+                        attribute.setName(attrName);
+                        if (attributeList == null) {
+                            attributeList = new ArrayList();
+                        }
                         attributeList.add(attribute);
                     }
                 }
@@ -451,8 +474,7 @@ public class IdentityServicesHandler extends HttpServlet {
         public static final SecurityMethod LOG = new SecurityMethod(
                 "LOG", Void.class, new SecurityParameter[]
                 {SecurityParameter.APPID, SecurityParameter.SUBJECTID,
-                 SecurityParameter.URI, SecurityParameter.LOGNAME,
-                 SecurityParameter.MESSAGE});
+                 SecurityParameter.LOGNAME, SecurityParameter.MESSAGE});
         public static final SecurityMethod SEARCH =	new SecurityMethod(
             "SEARCH", String[].class, new SecurityParameter[]
             {SecurityParameter.FILTER, SecurityParameter.ATTRIBUTES,
@@ -526,13 +548,20 @@ public class IdentityServicesHandler extends HttpServlet {
         final SecurityParameter[] parameters;
 
         public static void execute(IdentityServicesImpl security,
-            HttpServletRequest request, ServletResponse response)
+            HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
             
             // find the security method from the path..
             Writer wrt = response.getWriter();
+            StringWriter sw = null;
             String path = request.getPathInfo();
             MarshallerFactory mar = getMarshaller(path);
+            // Set the respone content type
+            if (mar.getProtocol().equalsIgnoreCase("XML")) {
+                response.setHeader("content-type", "text/xml");
+            } else {
+                response.setHeader("content-type", "text/plain");
+            }
             path = path.substring(path.lastIndexOf('/') + 1).toUpperCase();
             SecurityMethod method = null;
             if (path.equals("AUTHENTICATE")) {
@@ -555,19 +584,32 @@ public class IdentityServicesHandler extends HttpServlet {
                 method = SecurityMethod.UPDATE;
             } else if (path.equals("DELETE")) {
                 method = SecurityMethod.DELETE;
+            } else {
+                method = null;
             }
-
+            
             try {
+                if (method == null) {
+                    // Throw Unsupported Operation Exception
+                    response.sendError(501);
+                    mar.newInstance(Throwable.class).marshall(wrt,
+                        new UnsupportedOperationException(path));
+                }
                 // execute the method w/ the parameters..
                 Object value = method.invoke(security, request);
                 // marshall the response..
                 if (method.type != Void.class) {
                     mar.newInstance(method.type).marshall(wrt, value);
+                } else {
+                    response.setHeader("content-type", "text/plain");
                 }
             } catch (ObjectNotFound ex) {
                 // write out the proper ObjectNotFound exception.
+                // set the response error code
                 try {
-                    mar.newInstance(ObjectNotFound.class).marshall(wrt, ex);
+                    sw = new StringWriter(100);
+                    mar.newInstance(ObjectNotFound.class).marshall(sw, ex);
+                    response.sendError(401, sw.toString());
                 } catch (Exception e) {
                     // something really went wrong so just give up..
                     throw new ServletException(e);
@@ -575,14 +617,30 @@ public class IdentityServicesHandler extends HttpServlet {
             } catch (GeneralFailure ex) {
                 // write out the proper security based exception..
                 try {
-                    mar.newInstance(GeneralFailure.class).marshall(wrt, ex);
+                    sw = new StringWriter(100);
+                    mar.newInstance(GeneralFailure.class).marshall(sw, ex);
+                    response.sendError(500, sw.toString());
                 } catch (Exception e) {
                     // something really went wrong so just give up..
                     throw new ServletException(e);
                 }
-            } catch (Exception e) {
-                // something really went wrong so just give up..
-                throw new ServletException(e);
+            } catch (Throwable e) {
+                try {
+                    // something really went wrong so just give up..
+                    sw = new StringWriter(100);
+                    mar.newInstance(Throwable.class).marshall(sw, e);
+                    if (e instanceof UnsupportedOperationException) {
+                        response.sendError(501, sw.toString());
+                    } else {
+                        response.sendError(401, sw.toString());
+                    }
+                } catch (Exception ex) {
+                    throw new ServletException(ex);
+                }
+            } finally {
+                if (sw != null) {
+                    sw.close();
+                }
             }
         }
 
@@ -600,7 +658,7 @@ public class IdentityServicesHandler extends HttpServlet {
 
         private Object invoke(IdentityServicesImpl security,
                               ServletRequest request)
-            throws GeneralFailure, ObjectNotFound, NeedMoreCredentials
+            throws Throwable
         {
             // find the value for each parameter..
             Object[] params = new Object[this.parameters.length];
@@ -618,16 +676,7 @@ public class IdentityServicesHandler extends HttpServlet {
             } catch (IllegalAccessException e) {
                 throw new GeneralFailure(e.getMessage());
             } catch (InvocationTargetException e) {
-                Throwable th = e.getTargetException();
-
-                if (th instanceof NeedMoreCredentials) {
-                    throw (NeedMoreCredentials)th;
-                } else if (th instanceof ObjectNotFound) {
-                    throw (ObjectNotFound)th;
-                } else {
-                    // make sure to get the actual InvalidPassword etc..
-                    throw (GeneralFailure)th;
-                }
+                throw (e.getTargetException());
             }
 
             return ret;
