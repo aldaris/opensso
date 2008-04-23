@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.8 2008-04-05 16:43:34 pawand Exp $
+ * $Id: LogoutViewBean.java,v 1.9 2008-04-23 18:58:36 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,12 +143,14 @@ public class LogoutViewBean extends AuthViewBeanBase {
         }
         
         // Get the Login URL and query map
-        try {
-            loginURL = token.getProperty(ISAuthConstants.FULL_LOGIN_URL);
-        } catch (com.iplanet.sso.SSOException ssoExp) {
-            if (logoutDebug.messageEnabled()) {
-                logoutDebug.message("LogoutViewBean.forwardTo: "
-                    + " Cannot get Login URL");
+        if (token != null) {
+            try {
+                loginURL = token.getProperty(ISAuthConstants.FULL_LOGIN_URL);
+            } catch (com.iplanet.sso.SSOException ssoExp) {
+                if (logoutDebug.messageEnabled()) {
+                    logoutDebug.message("LogoutViewBean.forwardTo: "
+                        + " Cannot get Login URL");
+                }
             }
         }
         
@@ -207,8 +209,10 @@ public class LogoutViewBean extends AuthViewBeanBase {
             super.forwardTo(requestContext);
             return;
         }
-        Object loginContext = intSess.getObject(ISAuthConstants.
-            LOGIN_CONTEXT);
+        Object loginContext = null;
+        if (intSess != null) {
+            loginContext = intSess.getObject(ISAuthConstants.LOGIN_CONTEXT);
+        }
         try {
             if (loginContext != null) {
                 if (loginContext instanceof 
@@ -227,8 +231,11 @@ public class LogoutViewBean extends AuthViewBeanBase {
             logoutDebug.error("LogoutViewBean.forwardTo: "
                 + " Cannot Execute module Logout", loginExp);
         }
-        Set postAuthSet = (Set) intSess.getObject(ISAuthConstants.
-            POSTPROCESS_INSTANCE_SET);
+        Set postAuthSet = null;
+        if (intSess != null) {
+            postAuthSet = (Set) intSess.getObject(ISAuthConstants.
+                POSTPROCESS_INSTANCE_SET);
+        }
         if ((postAuthSet != null) && !(postAuthSet.isEmpty())) {
             AMPostAuthProcessInterface postLoginInstance=null;
             for(Iterator iter = postAuthSet.iterator();
@@ -243,8 +250,11 @@ public class LogoutViewBean extends AuthViewBeanBase {
                 }
 	    }
         } else {
-            String plis = intSess.getProperty(
+            String plis = null;
+            if (intSess != null) {
+                plis = intSess.getProperty(
                     ISAuthConstants.POST_AUTH_PROCESS_INSTANCE);
+            }
             if (plis != null && plis.length() > 0) {
                 StringTokenizer st = new StringTokenizer(plis, "|");
                 if (token != null) {
