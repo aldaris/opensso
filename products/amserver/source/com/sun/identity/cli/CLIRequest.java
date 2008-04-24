@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.11 2007-10-30 22:27:31 veiming Exp $
+ * $Id: CLIRequest.java,v 1.12 2008-04-24 23:53:42 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,6 +146,10 @@ public class CLIRequest {
                 CLIConstants.SHORT_ARGUMENT_INFORMATION)
         ) {
             processToolInfoRequest(mgr);
+        } else if (matchOption(arg, CLIConstants.ARGUMENT_VERBOSE,
+                CLIConstants.SHORT_ARGUMENT_VERBOSE)
+        ) {
+            // do nothing
         } else if (arg.startsWith(CLIConstants.PREFIX_ARGUMENT_SHORT)) {
             Object[] param = {commandName + " " + arg};
             throw new CLIException(MessageFormat.format(
