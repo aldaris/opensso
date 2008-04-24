@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.31 2008-04-19 20:40:16 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.32 2008-04-24 04:04:13 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2312,9 +2312,9 @@ public class IdServicesImpl implements IdServices {
     public void clearIdRepoPlugins(String orgName, String serviceComponent) {
         if (getDebug().messageEnabled()) {
             getDebug().message("IdServicesImpl.clearIdRepoPlugins(): " +
-                "orgName: " + orgName + "; serviceComponent: " + serviceComponent +
-                "Cleanup IdRepo Plugins is called...\n. Cleaning up the map.." +
-                idRepoMap);
+                "orgName: " + orgName + "; serviceComponent: " + 
+                serviceComponent + "Cleanup IdRepo Plugins is called...\n."+
+                " Cleaning up the map.." + idRepoMap);
         }
 
         Set localSet = new HashSet();
@@ -2322,32 +2322,37 @@ public class IdServicesImpl implements IdServices {
             Set keys = idRepoMap.keySet();
 
             for (Iterator it = keys.iterator(); it.hasNext(); ) {
-                String cachekey = (String) it.next();
-                Object o = idRepoMap.get(cachekey);
-                if (o instanceof IdRepo) {
-                    // do nothing this is a special repo.
-                    // special repos do not change.
-                } else {
-                    // see if cachekey matches orgname. 
-                    // cachekey is in following format: 
-                    // dc=opensso,dc=java,dc=net:LDAPv3ForAMDS
-                    // o=trealm2,ou=services,dc=opensso,dc=java,dc=net:LDAPv3
-                    // have to stripped off ":*"
-                    // do it inside the else clause below.
-                    String [] cachedOrgName = cachekey.split(":");
-                    if (cachedOrgName[0].equalsIgnoreCase(orgName)) {
-                        Map rMap = (Map) o;
-                        Set rKeys = rMap.keySet();
-                        // rMap key is name of the datastore
-                        // rMap value is the datastore instance.
-                        for (Iterator it2 = rKeys.iterator(); it2.hasNext(); ) {
-                            String dsName = (String) it2.next();
-                            String slashDsName = "/" + dsName;
-                            if (dsName.equalsIgnoreCase(serviceComponent) ||
-                                slashDsName.equalsIgnoreCase(serviceComponent) ) {
-                                localSet.addAll(rMap.values());
-                                idRepoMap.remove(cachekey);
-                                break;
+                synchronized (it) {
+                    String cachekey = (String) it.next();
+                    Object o = idRepoMap.get(cachekey);
+                    if (o instanceof IdRepo) {
+                        // do nothing this is a special repo.
+                        // special repos do not change.
+                    } else {
+                        // see if cachekey matches orgname. 
+                        // cachekey is in following format: 
+                        // dc=opensso,dc=java,dc=net:LDAPv3ForAMDS
+                        // o=trealm2,ou=services,dc=opensso,dc=java,dc=net
+                        // :LDAPv3
+                        // have to stripped off ":*"
+                        // do it inside the else clause below.
+                        String [] cachedOrgName = cachekey.split(":");
+                        if (cachedOrgName[0].equalsIgnoreCase(orgName)) {
+                            Map rMap = (Map) o;
+                            Set rKeys = rMap.keySet();
+                            // rMap key is name of the datastore
+                            // rMap value is the datastore instance.
+                            for (Iterator it2 = rKeys.iterator(); 
+                                it2.hasNext(); ) {
+                                String dsName = (String) it2.next();
+                                String slashDsName = "/" + dsName;
+                                if (dsName.equalsIgnoreCase(serviceComponent) 
+                                    || slashDsName.equalsIgnoreCase(
+                                    serviceComponent) ) {
+                                    localSet.addAll(rMap.values());
+                                    idRepoMap.remove(cachekey);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -2432,6 +2437,7 @@ public class IdServicesImpl implements IdServices {
             }
                         
             String cacheKey = orgName + ":" + p;
+            Set pNames = getConfiguredPluginNames(orgName, p);
             IdRepo pClass = null;
             Map classMap = null;
             synchronized (idRepoMap) {
@@ -2455,7 +2461,6 @@ public class IdServicesImpl implements IdServices {
                     }
                 } else {
                     // Not in cache. Invoke and initialize this class.
-                    Set pNames = getConfiguredPluginNames(orgName, p);
                     if (pNames == null) {
                         // Update the cache with empty HashMap
                         idRepoMap.put(cacheKey, Collections.EMPTY_MAP);
