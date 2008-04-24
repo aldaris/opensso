@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.19 2008-04-22 21:42:12 babysunil Exp $
+ * $Id: FederationViewBean.java,v 1.20 2008-04-24 22:28:54 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -802,7 +802,8 @@ public  class FederationViewBean
             vb = (WSFedGeneralViewBean)getViewBean(WSFedGeneralViewBean.class);
         }
 
-        if (vb != null) { 
+        if (vb != null) {
+            setPageSessionAttribute(getTrackingTabIDName(), "1"); 
             setPageSessionAttribute(EntityPropertiesBase.ENTITY_NAME, name);        
             setPageSessionAttribute(EntityPropertiesBase.ENTITY_REALM, realm);
             setPageSessionAttribute(
