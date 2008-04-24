@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupUtils.java,v 1.2 2007-11-14 00:24:59 manish_rustagi Exp $
+ * $Id: SetupUtils.java,v 1.3 2008-04-24 07:54:21 beomsuk Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -480,7 +480,7 @@ public class SetupUtils implements SetupConstants{
             CopyUtils.copyFile(srcFile, destFile, tokens, true, false);
         }
         if (! currentOS.equals(WINDOWS)) {
-            Process proc = Runtime.getRuntime().exec("chmod -R +x " +
+            Process proc = Runtime.getRuntime().exec("/bin/chmod -R +x " +
                 toDir.getName());
             try {
                 if (proc.waitFor() != 0) {
