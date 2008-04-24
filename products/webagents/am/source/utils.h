@@ -46,7 +46,9 @@ compare(const char *pat, const char *resName,
 
 am_resource_match_t match_patterns(const char * /*pattern*/,
 				   const char * /*target*/,
-				   bool /*ignorecase*/);
+				   bool /*ignorecase*/,
+				   bool /*onelevelwildcard*/,
+                                   char /*separator*/);
 
 PRTime getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &, unsigned long);
 

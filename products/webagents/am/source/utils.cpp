@@ -124,21 +124,25 @@ const entityRefTable eRefTable[] = { {FIRST_ENTITY_REF, "&amp;"},
 
 am_resource_match_t
 Utils::match_patterns(const char *patbegin, const char *matchbegin,
-		      bool caseignorecmp) {
+		      bool caseignorecmp, bool onelevelwildcard, 
+                      char separator) {
 
     const char *p1 = patbegin;
-    if(patbegin == NULL || matchbegin == NULL)
+    
+    if (patbegin == NULL || matchbegin == NULL)
 	return AM_NO_MATCH;
 
-    if(*patbegin == '\0' && *matchbegin == '\0')
+    if (*patbegin == '\0' && *matchbegin == '\0')
 	return AM_EXACT_MATCH;
 
-    while(*p1 != '\0' && *p1 !='*')
+    while (*p1 != '\0' && *p1 !='*' && *p1 != '-')
 	p1++;
 
-
-    if(*p1 == '\0') {
-	if(caseignorecmp) {
+    if ((*p1 == '-') && (*(p1+1) == '*') && (*(p1+2) == '-')) {
+        onelevelwildcard = true;
+    }
+    if (*p1 == '\0') {
+	if (caseignorecmp) {
 	    if (strcasecmp(patbegin, matchbegin) == 0)
 		return AM_EXACT_MATCH;
 	    else
@@ -150,8 +154,8 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
 		return AM_NO_MATCH;
 	}
     } else {
-	bool result;
-	if(caseignorecmp)
+	bool result; 
+	if (caseignorecmp)
 	    result = (strncasecmp(patbegin,
 				  matchbegin, p1 - patbegin) == 0);
 	else
@@ -160,36 +164,138 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
 	if(result == false) return AM_NO_MATCH;
     }
 
-    // ignoring mulitple '*'s
-    while(*p1 == '*') {
-	p1++;
-    }
-    
-    /* pattern ends with *, so return true. */
-    if(*p1 == '\0') return AM_EXACT_PATTERN_MATCH; 
+    if (onelevelwildcard) {
+        // Incoming pattern has one level wild card in it (-*-) which
+        // means the pattern -*- should match everything except /
+        // eg : http://host:port/-*-/test.html should match with
+        //      http://host:port/abc/test.html and should not match with
+        //      http://host:port/a/bc/test.html
+        // The algorithm uses a combination of patbegin and matchbegin 
+        // and starts comparing from the beginning in the matchbegin string
+        const char *s1 = matchbegin;
+        int start_position = 0;
+        
+        // upto the start_position, pattern matching is complete
+        while (start_position < (p1-patbegin)) {
+                s1++; start_position++;
+        }                              
+        while (*p1 != '\0') {
+            char *p2 = NULL;  char *s2 = NULL;
+            int count = 0; int match_position = 0;
+            int char_match = 0; int match_count = 0; 
+                        
+            string matchbegin(s1);
+            
+            while (*p1 == '-' || *p1 == '*') {
+                p1++;
+            }
+            
+            if (*p1 == '\0') {
+                // if the last character is a "/" , need to ignore the same
+                int pos = matchbegin.find_last_of("/");
+                if (pos == matchbegin.length() - 1) {
+                    matchbegin.erase(matchbegin.length() -1);
+                }
+                // the string is ending with -*-
+                for (int i = 0, match_index; 
+	              (match_index = matchbegin.find('/',i)) != string::npos;
+		      i = match_index + 1) {
+                         match_count++;
+                }                
+                if (match_count > 1)  {
+                    return AM_NO_MATCH;
+	        } else {
+                    return AM_EXACT_PATTERN_MATCH;
+	        }
+            }
+            
+            p2 = (char *) malloc(strlen(s1));
+            if (p2 != NULL) {
+                memset(p2, '\0', strlen(s1));
+                // Find either the first pattern or end of the string
+                // p2 will have a substring which is in between the patterns
+                // if it exists or till the p1 is null
+                while ((*p1 != '-') && (*p1 != '*') && (*p1 != '\0')) {
+                    p2[count++] = *p1++;
+                    char_match++;                    
+                }
+                
+                string patbegin(p2);
+                s2 = (char *) malloc(strlen(s1));
+                if (s2 != NULL) {
+                    memset(s2, '\0', strlen(s1));
+                    // Try to find the substring in the matchbegin, get the
+                    // match position (position where the substring begins)
+                    match_position = matchbegin.find(patbegin,0);
+                    if (match_position > 0) {
+                        // Substring exists, now starting from the index 0 
+                        // upto the match_position, collect the characters
+                        // to determine whether a "/" exists here (collected
+                        // in s2). If it exists, it means no match else there
+                        // is a match
+                        for (int i=0; i < match_position; i++) {
+                            s2[i] = s1[i];
+                        }
+                        string s2_string(s2);
+                        string::size_type loc = s2_string.find(separator,0);
+                        if (loc != string::npos) {
+                            // Separator exists, return no match
+	                    free(p2); free(s2);
+	                    return AM_NO_MATCH;
+                        }
+                     } else {
+                           // substring does not exist, return no match
+                           free(p2); free(s2);
+                           return AM_NO_MATCH;
+                     }
+                     // Pattern matching success so far
+                     // Move pointer s1 upto the point where match 
+                     // is complete
+                     for (int i=0; i < (match_position + char_match); i++) {
+	                   s1++;
+                      }
+                      free(p2); free(s2);
+                } else {
+                   // Unable to allocate memory, return no match
+                   free(p2);
+                   return AM_NO_MATCH;
+                }                
+            } else {
+                // Unable to allocate memory, return no match
+                return AM_NO_MATCH;
+            }
+        }
+        return AM_EXACT_PATTERN_MATCH;
+    } else {
+        const char *s1 = matchbegin;
+        const char *s2 = matchbegin;
 
-    const char *s1 = matchbegin;
-    const char *s2 = matchbegin;
+        // ignoring mulitple '*'s
+        while (*p1 == '*') {
+	    p1++;
+        }
+        /* pattern ends with *, so return true. */
+        if (*p1 == '\0') return AM_EXACT_PATTERN_MATCH; 
 
-    // find the end of the string.
-    // we need to go backwards.
-    while(*(s1+1) != '\0') s1++;
+        // find the end of the string.
+        // we need to go backwards.
+        while (*(s1+1) != '\0') s1++;
 
-    while(*s2 != '\0' && *s2 != *p1)
-	*s2++;
+        while(*s2 != '\0' && *s2 != *p1)
+	    *s2++;
 
-    if(*s2 == '\0') return AM_NO_MATCH;
+        if (*s2 == '\0') return AM_NO_MATCH;
 
-
-    for(; s1 >= s2; s1--) {
-	if(*s1 == *p1) {
-	    if(Utils::match_patterns(p1, s1,
-				     caseignorecmp) != AM_NO_MATCH)
+        for (; s1 >= s2; s1--) {
+	    if (*s1 == *p1) {
+	        if (Utils::match_patterns(p1, s1,
+		 		     caseignorecmp,onelevelwildcard,
+                                     separator) != AM_NO_MATCH)
 		return AM_EXACT_PATTERN_MATCH;
-	}
+	    }
+        }
+        return AM_NO_MATCH;
     }
-
-    return AM_NO_MATCH;
 }
 
 PRTime
@@ -229,7 +335,8 @@ compare_sub_pat(const char *r1, const char *r2,
 		const am_resource_traits_t *traits) {
     am_resource_match_t result;
     if((result = match_patterns(r1, r2,
-				B_TRUE==traits->ignore_case)) != AM_NO_MATCH)
+				B_TRUE==traits->ignore_case,false,
+                                traits->separator)) != AM_NO_MATCH)
 	return result;
 
     string r_1(r1);
@@ -243,7 +350,8 @@ compare_sub_pat(const char *r1, const char *r2,
 
     r_1.append(STAR);
 
-    if(match_patterns(r_1.c_str(), r2, B_TRUE==traits->ignore_case) != AM_NO_MATCH)
+    if(match_patterns(r_1.c_str(), r2, B_TRUE==traits->ignore_case,false,
+                      traits->separator) != AM_NO_MATCH)
 	return AM_SUB_RESOURCE_MATCH;
 
     return AM_NO_MATCH;
@@ -375,7 +483,8 @@ compare_pat(const char *r1, const char *r2,
 	if(x[i] == traits->separator) {
 	    string tmp = r_1.substr(0, i+1);
 	    if(match_patterns(tmp.c_str(), r_2.c_str(),
-			      B_TRUE==traits->ignore_case) != AM_NO_MATCH)
+			      B_TRUE==traits->ignore_case,false,
+                              traits->separator) != AM_NO_MATCH)
 		return AM_SUPER_RESOURCE_MATCH;
 	}
     }
@@ -415,7 +524,7 @@ Utils::compare(const char *pat, const char *resName,
 	return AM_EXACT_MATCH;
 
     if(usePatterns)
-	while(*r1 != '\0' && *r1 != '*') r1++;
+	while(*r1 != '\0' && *r1 != '-' && *r1 != '*') r1++;
 
     /* Has patterns? */
     if(usePatterns && *r1 != '\0') {
