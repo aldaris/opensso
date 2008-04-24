@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.24 2008-04-15 17:19:59 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.25 2008-04-24 17:46:23 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2426,7 +2426,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         String authUrl = SAML2Utils.getAttributeValueFromSSOConfig(
                 realm, hostEntityID, entityRole,
                 SAML2Constants.AUTH_URL);
-        if (authUrl == null) {
+        if ((authUrl == null) || (authUrl.trim().length() == 0)) {
             // need to get it from the request
             String uri = request.getRequestURI();
             String deploymentURI = uri;
