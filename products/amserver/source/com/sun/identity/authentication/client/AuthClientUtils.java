@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.10 2008-04-23 23:54:55 pawand Exp $
+ * $Id: AuthClientUtils.java,v 1.11 2008-04-24 23:40:47 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1755,6 +1755,8 @@ public class AuthClientUtils {
                 int i = remOrgDN.indexOf(",");
                 if (i != -1) {
                     remOrgDN = remOrgDN.substring(i+1);
+                } else {
+                    break;
                 }
                 if (utilDebug.messageEnabled()) {
                     utilDebug.message("remOrgDN is : "+ remOrgDN);
