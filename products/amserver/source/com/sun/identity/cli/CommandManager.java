@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.21 2008-04-11 20:39:32 veiming Exp $
+ * $Id: CommandManager.java,v 1.22 2008-04-24 00:42:08 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessage;
 import com.sun.identity.tools.bundles.VersionCheck;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -121,13 +122,17 @@ public class CommandManager {
                 remainReq = MessageFormat.format(rbMessages.getString(
                     "remaining-unprocessed-requests"), (Object[])arg);
             }
+            String msg = (e instanceof L10NMessage) ?
+                ((L10NMessage)e).getL10NMessage(getLocale()) :
+                e.getMessage();
+
             if (outputWriter != null) {
-                outputWriter.printlnError(e.getMessage());
+                outputWriter.printlnError(msg);
                 if (remainReq != null) {
                     outputWriter.printlnError(remainReq);
                 }
             } else {
-                System.out.println(e.getMessage());
+                System.out.println(msg);
                 if (remainReq != null) {
                     System.out.println(remainReq);
                 }
