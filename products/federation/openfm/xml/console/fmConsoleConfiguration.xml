@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fmConsoleConfiguration.xml,v 1.5 2008-04-22 21:40:33 babysunil Exp $
+   $Id: fmConsoleConfiguration.xml,v 1.6 2008-04-24 22:57:39 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -75,7 +75,7 @@
             accesslevel="globalconfig"/>
     </tab>
 </tabs>
-<
+
 <profile id="SAMLv2">
     <tab id="800" viewbean="com.sun.identity.console.federation.SAMLv2SPAssertionContentViewBean" url="../federation/SAMLv2SPAssertionContent" label="federation.SAMLv2SP.label" tooltip="federation.SAMLv2SP.tooltip" status="federation.SAMLv2SP.status" permissions="iPlanetAMProviderConfigService">
         <tab id="8001" viewbean="com.sun.identity.console.federation.SAMLv2SPAssertionContentViewBean"
