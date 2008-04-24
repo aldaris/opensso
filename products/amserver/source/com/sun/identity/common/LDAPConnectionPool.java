@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.9 2008-04-17 09:06:56 ww203982 Exp $
+ * $Id: LDAPConnectionPool.java,v 1.10 2008-04-24 14:43:56 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -304,6 +304,7 @@ public class LDAPConnectionPool {
         synchronized (this) {
             if (!defunct) {
                 defunct = true;
+                // disconnect the connections in pool.
                 for (int i = 0; 
                     i < currentConnectionCount - busyConnectionCount; i++) {
                     if ((pool[i] != null) && (pool[i].isConnected())) {
@@ -328,6 +329,8 @@ public class LDAPConnectionPool {
                         ":Error during disconnect.", e);
                 }
             }
+            // notify all threads which waiting for available connections.
+            this.notifyAll();
         }
     }
 
@@ -361,7 +364,18 @@ public class LDAPConnectionPool {
         LDAPConnection con = null;
         synchronized (this) {
             try {
-                if (busyConnectionCount == maxSize) {
+                /*
+                 * using if and add condition (waitCount > 0) to prevent 
+                 * starving.  (waitCount > 0) is not needed only if while loop
+                 * is used, however, if a connection is returned and the thread
+                 * who returning the connection and grab the connection again,
+                 * the notified thread is not likely to get the connection then
+                 * wait again in the while loop.  That's the reason why an if
+                 * statement is used with (waitCount > 0).  That makes the
+                 * waiting gain a higher priority since any newly incoming 
+                 * thread must wait if there is someone waiting.
+                 */
+                if ((busyConnectionCount == maxSize) || (waitCount > 0)) {
                     waitCount++;
                     if (timeout > 0) {
                         this.wait(timeout);
@@ -370,7 +384,9 @@ public class LDAPConnectionPool {
                     }
                     waitCount--;
                 }
-                con = getConnFromPool();
+                if (!defunct) {
+                    con = getConnFromPool();
+                }
             } catch (InterruptedException e) {
             }
         }
@@ -428,6 +444,7 @@ public class LDAPConnectionPool {
     public void close(LDAPConnection ld) {
         synchronized(this) {
             if (defunct) {
+                // disconnect the returning connection if destroy() is called.
                 if (ld != null) {
                     if (backupPool.remove(ld) || deprecatedPool.remove(ld)) {
                         if (ld.isConnected()) {
@@ -443,6 +460,8 @@ public class LDAPConnectionPool {
             } else {
                 if (ld != null) {
                     if (reinitInProgress) {
+                        // try to see if the connection is from the destroying
+                        // pool if reinitialization is in progress.
                         if (deprecatedPool.remove(ld)) {
                             try{
                                 ld.disconnect();
@@ -466,6 +485,8 @@ public class LDAPConnectionPool {
                             minSize)) {
                             cleaner.addElement(null);
                         }
+                        // notify the thread if there is someone waiting for
+                        // available connection.
                         if (waitCount > 0) {
                             this.notify();
                         }
