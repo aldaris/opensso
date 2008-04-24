@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.7 2008-04-23 18:18:45 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.8 2008-04-24 20:17:24 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -618,13 +618,25 @@ public class IdentityServicesImpl
                 }
                 if (objectIdType.equals(IdType.AGENT) ||
                     objectIdType.equals(IdType.AGENTONLY)) {
-                    //Dennis: hardcoded realm as "/"
-                    AgentConfiguration.createAgent(getSSOToken(admin), realm,
-                        idName, agentType, idAttrs, serverUrl, agentUrl);
+                    if ((serverUrl == null) || (serverUrl.length() == 0) ||
+                        (agentUrl == null) || (agentUrl.length() == 0)) {
+                        AgentConfiguration.createAgent(getSSOToken(admin),
+                            realm, idName, agentType, idAttrs);
+                    } else {
+                        AgentConfiguration.createAgent(getSSOToken(admin),
+                            realm, idName, agentType, idAttrs, serverUrl,
+                            agentUrl);
+                    }
                 } else {
-                    //Dennis: hardcoded realm as "/"
-                    AgentConfiguration.createAgentGroup(getSSOToken(admin),
-                        realm, idName, agentType, idAttrs, serverUrl, agentUrl);
+                    if ((serverUrl == null) || (serverUrl.length() == 0) ||
+                        (agentUrl == null) || (agentUrl.length() == 0)) {
+                        AgentConfiguration.createAgentGroup(getSSOToken(admin),
+                            realm, idName, agentType, idAttrs);
+                    } else {
+                        AgentConfiguration.createAgentGroup(getSSOToken(admin),
+                            realm, idName, agentType, idAttrs, serverUrl,
+                            agentUrl);
+                    }
                 }
             } else {
                 // Create other identites like User, Group, Role, etc.
