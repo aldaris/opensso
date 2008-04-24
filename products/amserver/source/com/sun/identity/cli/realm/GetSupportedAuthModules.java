@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetSupportedAuthModules.java,v 1.2 2008-03-11 02:28:33 veiming Exp $
+ * $Id: GetSupportedAuthModules.java,v 1.3 2008-04-24 00:53:42 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,14 +57,13 @@ public class GetSupportedAuthModules extends AuthenticatedCommand {
         
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = getStringOptionValue(IArgument.REALM_NAME);
-        String[] params = {realm};
+        String[] params = {};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_GET_SUPPORTED_AUTH_MODULES", params);
 
         try {
             AMAuthenticationManager mgr = new AMAuthenticationManager(
-                adminSSOToken, realm);
+                adminSSOToken, "/");
             Set types = mgr.getAuthenticationTypes();
 
             if ((types != null) && !types.isEmpty()) {
@@ -83,7 +82,7 @@ public class GetSupportedAuthModules extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                 "SUCCEED_GET_SUPPORTED_AUTH_MODULES", params);
         } catch (AMConfigurationException e) {
-            String[] args = {realm, e.getMessage()};
+            String[] args = {e.getMessage()};
             debugError("GetSupportedAuthModules.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_GET_SUPPORTED_AUTH_MODULES", args);

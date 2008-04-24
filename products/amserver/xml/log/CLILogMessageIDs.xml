@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.18 2008-02-01 23:58:01 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.19 2008-04-24 00:53:42 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -5606,6 +5606,39 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
+
+    <logmessage name="ATTEMPT_GET_SUPPORTED_AUTH_MODULES" id="4515"
+        loglevel="LL_INFO"
+        description="Attempt to get supported authentication modules in the system.">
+        <datainfo />
+        <triggers>
+            <item>Execute get supported authentication modules in the system Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_GET_SUPPORTED_AUTH_MODULES" id="4516"
+        loglevel="LL_INFO"
+        description="Supported authentication modules in the system are displayed.">
+        <datainfo />
+        <triggers>
+            <item>Execute get supported authentication modules in the system module Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_GET_SUPPORTED_AUTH_MODULES" id="4517"
+        loglevel="LL_INFO"
+        description="Failed to get supported authentication modules in the system.">
+        <datainfo>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get supported authentication modules in the system Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
     <logmessage name="ATTEMPT_REMOVE_AGENT_PROPERTIES" id="4520"
         loglevel="LL_INFO"
         description="Attempt to remove property values of an agent.">
