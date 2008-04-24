@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: distAuthConfigurator.jsp,v 1.2 2008-03-21 06:28:04 manish_rustagi Exp $
+   $Id: distAuthConfigurator.jsp,v 1.3 2008-04-24 23:38:36 manish_rustagi Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -94,39 +94,42 @@ java.util.Properties"
             appPassword = request.getParameter("appPassword");
             confirmAppPassword = request.getParameter("confirmAppPassword");
         
-            if ((famProt != null) && !famProt.equals("") && 
-                (famHost != null) && !famHost.equals("") && 
-                (famPort != null) && !famPort.equals("") &&
-                (famDeploymenturi != null) && !famDeploymenturi.equals("") && 
-                (distAuthProt != null) && !distAuthProt.equals("") && 
-                (distAuthHost != null) && !distAuthHost.equals("") && 
-                (distAuthPort != null) && !distAuthPort.equals("") &&  
-                (distAuthDeploymenturi != null) && !distAuthDeploymenturi.equals("") &&
-                (distAuthCookieName != null) && !distAuthCookieName.equals("") && 
-                (debugLevel != null) && !debugLevel.equals("") &&  
-                (debugDir != null) && !debugDir.equals("") &&
-                (encryptionKey != null) && !encryptionKey.equals("") &&                  
-                (appUser != null) && !appUser.equals("") &&
-                (appPassword != null) && !appPassword.equals("") &&
-                appPassword.equals(confirmAppPassword)){
+            if ((famProt != null) && !famProt.trim().equals("") && 
+                (famHost != null) && !famHost.trim().equals("") && 
+                (famPort != null) && !famPort.trim().equals("") &&
+                (famDeploymenturi != null) && !famDeploymenturi.trim().equals("") && 
+                (distAuthProt != null) && !distAuthProt.trim().equals("") && 
+                (distAuthHost != null) && !distAuthHost.trim().equals("") && 
+                (distAuthPort != null) && !distAuthPort.trim().equals("") &&  
+                (distAuthDeploymenturi != null) && !distAuthDeploymenturi.trim().equals("") &&
+                (distAuthCookieName != null) && !distAuthCookieName.trim().equals("") && 
+                (debugLevel != null) && !debugLevel.trim().equals("") &&  
+                (debugDir != null) && !debugDir.trim().equals("") &&
+                (encryptionKey != null) && !encryptionKey.trim().equals("") &&                  
+                (appUser != null) && !appUser.trim().equals("") &&
+                (appPassword != null) && !appPassword.trim().equals("") &&
+                appPassword.trim().equals(confirmAppPassword.trim())){
                 Properties props = new Properties();
-                props.setProperty("SERVER_PROTOCOL", famProt);
-                props.setProperty("SERVER_HOST", famHost);
-                props.setProperty("SERVER_PORT", famPort);
+                props.setProperty("SERVER_PROTOCOL", famProt.trim());
+                props.setProperty("SERVER_HOST", famHost.trim());
+                props.setProperty("SERVER_PORT", famPort.trim());
+                if(!((famDeploymenturi.trim()).startsWith("/"))){
+                    famDeploymenturi= "/" + famDeploymenturi.trim(); 
+                }
                 props.setProperty("DEPLOY_URI", famDeploymenturi);
-                props.setProperty("DISTAUTH_SERVER_PROTOCOL", distAuthProt);
-                props.setProperty("DISTAUTH_SERVER_HOST", distAuthHost);
-                props.setProperty("DISTAUTH_SERVER_PORT", distAuthPort);
-                props.setProperty("DISTAUTH_DEPLOY_URI", distAuthDeploymenturi);
-                props.setProperty("DISTAUTH_COOKIE_NAME", distAuthCookieName);                
-                props.setProperty("DEBUG_DIR", debugDir);
-                props.setProperty("DEBUG_LEVEL", debugLevel);
-                props.setProperty("ENCRYPTION_KEY", encryptionKey);
-                props.setProperty("ENCRYPTION_KEY_LOCAL", encryptionKey);
-                props.setProperty("APPLICATION_USER", appUser);
+                props.setProperty("DISTAUTH_SERVER_PROTOCOL", distAuthProt.trim());
+                props.setProperty("DISTAUTH_SERVER_HOST", distAuthHost.trim());
+                props.setProperty("DISTAUTH_SERVER_PORT", distAuthPort.trim());
+                props.setProperty("DISTAUTH_DEPLOY_URI", distAuthDeploymenturi.trim());
+                props.setProperty("DISTAUTH_COOKIE_NAME", distAuthCookieName.trim());                
+                props.setProperty("DEBUG_DIR", debugDir.trim());
+                props.setProperty("DEBUG_LEVEL", debugLevel.trim());
+                props.setProperty("ENCRYPTION_KEY", encryptionKey.trim());
+                props.setProperty("ENCRYPTION_KEY_LOCAL", encryptionKey.trim());
+                props.setProperty("APPLICATION_USER", appUser.trim());
                 props.setProperty("APPLICATION_PASSWD", "");
-                SystemProperties.initializeProperties("am.encryption.pwd",encryptionKey);
-                props.setProperty("ENCODED_APPLICATION_PASSWORD",Crypt.encrypt(appPassword));
+                SystemProperties.initializeProperties("am.encryption.pwd",encryptionKey.trim());
+                props.setProperty("ENCODED_APPLICATION_PASSWORD",Crypt.encrypt(appPassword.trim()));
                 props.setProperty("AM_COOKIE_NAME", "iPlanetDirectoryPro");                
                 props.setProperty("AM_COOKIE_SECURE", "false");
                 props.setProperty("AM_COOKIE_ENCODE", "false");
