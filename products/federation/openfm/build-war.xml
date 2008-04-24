@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.37 2008-04-10 23:15:03 veiming Exp $
+   $Id: build-war.xml,v 1.38 2008-04-24 21:19:09 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -261,7 +261,7 @@
         <!-- entities profile tabs -->
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
-            <arg value="&lt;profile id=\&quot;samlv2\&quot;&gt;.+?&lt;/profile&gt;" />
+            <arg value="&lt;profile id=\&quot;SAMLv2\&quot;&gt;.+?&lt;/profile&gt;" />
             <arg value="${openfm.dir}/xml/console/fmConsoleConfiguration.xml" />
             <arg value="${war.webinf.classes.dir}/amConsoleConfig.xml" />
             <arg value="&lt;/profiletabs&gt;" />
