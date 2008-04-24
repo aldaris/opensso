@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetSupportedDataTypes.java,v 1.2 2008-03-11 02:28:33 veiming Exp $
+ * $Id: GetSupportedDataTypes.java,v 1.3 2008-04-24 00:57:07 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,10 +58,8 @@ public class GetSupportedDataTypes extends AuthenticatedCommand {
         
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = getStringOptionValue(IArgument.REALM_NAME);
-        String[] params = {realm};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "ATTEMPT_GET_SUPPORTED_DATA_TYPES", params);
+            "ATTEMPT_GET_SUPPORTED_DATA_TYPES", null);
 
         try {
             ServiceSchemaManager scm = new ServiceSchemaManager(
@@ -80,15 +78,15 @@ public class GetSupportedDataTypes extends AuthenticatedCommand {
             }
 
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
-                "SUCCEED_GET_SUPPORTED_DATA_TYPES", params);
+                "SUCCEED_GET_SUPPORTED_DATA_TYPES", null);
         } catch (SSOException e) {
-            String[] args = {realm, e.getMessage()};
+            String[] args = {e.getMessage()};
             debugError("GetSupportedDataTypes.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_GET_SUPPORTED_DATA_TYPES", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
-            String[] args = {realm, e.getMessage()};
+            String[] args = {e.getMessage()};
             debugError("GetSupportedDataTypes.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_GET_SUPPORTED_DATA_TYPES", args);

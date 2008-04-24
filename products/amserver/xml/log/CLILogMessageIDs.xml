@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.19 2008-04-24 00:53:42 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.20 2008-04-24 00:57:07 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -4846,35 +4846,30 @@
 
     <logmessage name="ATTEMPT_GET_SUPPORTED_DATA_TYPES" id="5000"
         loglevel="LL_INFO"
-        description="Attempt to get the supported data types of a realm.">
-        <datainfo>
-            <item>name of realm</item>
-        </datainfo>
+        description="Attempt to get the supported data types.">
+        <datainfo />
         <triggers>
-            <item>Execute get the supported data type of realm Commandline interface.</item>
+            <item>Execute get the supported data type Commandline interface.</item>
         </triggers>
         <actions />
     </logmessage>
     <logmessage name="SUCCEED_GET_SUPPORTED_DATA_TYPES" id="5001"
         loglevel="LL_INFO"
         description="The supported data types are retrieved.">
-        <datainfo>
-            <item>name of realm</item>
-        </datainfo>
+        <datainfo />
         <triggers>
-            <item>Execute add service attribute values of realm Commandline interface.</item>
+            <item>Execute add service attribute values Commandline interface.</item>
         </triggers>
         <actions />
     </logmessage>
     <logmessage name="FAILED_GET_SUPPORTED_DATA_TYPES" id="5002"
         loglevel="LL_INFO"
-        description="Unable to get the supported data types of realm.">
+        description="Unable to get the supported data types.">
         <datainfo>
-            <item>name of realm</item>
             <item>error message</item>
         </datainfo>
         <triggers>
-            <item>Execute get the supported data types of realm Commandline interface.</item>
+            <item>Execute get the supported data types Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>

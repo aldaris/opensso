@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.67 2008-04-24 00:53:41 veiming Exp $
+ * $Id: AccessManager.java,v 1.68 2008-04-24 00:57:07 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1064,10 +1064,9 @@ public class AccessManager {
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.GetSupportedDataTypes",
-        description="Show the supported data type in a realm",
+        description="Show the supported data type in the system.",
         webSupport="true",
-        mandatoryOptions={
-            "realm|e|s|Name of realm."},
+        mandatoryOptions={},
         optionAliases={},
         macro="authentication",
         optionalOptions={},
