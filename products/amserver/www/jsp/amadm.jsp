@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amadm.jsp,v 1.10 2007-08-23 19:35:57 jonnelson Exp $
+   $Id: amadm.jsp,v 1.11 2008-04-24 22:48:08 asyhuang Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,7 +30,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Java(TM) System Access Manager</title>
+    <title>Sun Federated Access Manager</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
     <script language="Javascript" src="js/admincli.js"></script>
@@ -40,7 +40,7 @@
     <table class="MstTblBot" title="" border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
         <td class="MstTdTtl" width="99%">
-        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="console/images/PrimaryProductName.png" alt="Sun Java(TM) System Federated Access Manager" border="0"></div>
+        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="console/images/PrimaryProductName.png" alt="Sun Federated Access Manager" border="0"></div>
         </td>
         <td class="MstTdLogo" width="1%"><img name="AMConfig.configurator.BrandLogo" src="com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo" border="0" height="55" width="31"></td>
         </tr>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: success.jsp,v 1.1 2007-08-30 07:31:04 jonnelson Exp $
+   $Id: success.jsp,v 1.2 2008-04-24 22:47:00 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -35,7 +35,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Java(TM) System Federated Access Manager</title>
+    <title>Sun Federated Access Manager</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <meta name="Copyright"
          content="All Rights Reserved. Use is subject to license terms.">
@@ -88,8 +88,7 @@
                     <td width="260"><img src="<%= deployURI %>/images/dot.gif" width="260" height="2" alt="" /></td>
                     <td align="left">
                         <div style="color: #f88017; font-size:24px">
-                            Sun Java(tm) System<br>
-                            Federated Access Manager
+                            Sun Federated Access Manager
                         </div>
                         <p>
                         <div style="color: #50697d; font-size:16px">
@@ -116,7 +115,7 @@
           <td>&nbsp;</td>
           <td>  
               <div class="logCpy"><span class="logTxtCpy">
-                  Copyright © 2007 Sun Microsystems, Inc.  All rights reserved.  Sun Microsystems, Inc. has intellectual property rights relating to technology embodied in the product that is described in this document. In particular, and without limitation, these intellectual property rights may include one or more of the U.S. patents listed at http://www.sun.com/patents and one or more additional patents or pending patent applications in the U.S. and in other countries.U.S. Government Rights - Commercial software.  Government users are subject to the Sun Microsystems, Inc. standard license agreement and applicable provisions of the FAR and its supplements.  Use is subject to license terms.  This distribution may include materials developed by third parties.Sun,  Sun Microsystems and  the Sun logo are trademarks or registered trademarks of Sun Microsystems, Inc. in the U.S. and other countries.<br>
+                  Copyright © 2008 Sun Microsystems, Inc.  All rights reserved.  Sun Microsystems, Inc. has intellectual property rights relating to technology embodied in the product that is described in this document. In particular, and without limitation, these intellectual property rights may include one or more of the U.S. patents listed at http://www.sun.com/patents and one or more additional patents or pending patent applications in the U.S. and in other countries.U.S. Government Rights - Commercial software.  Government users are subject to the Sun Microsystems, Inc. standard license agreement and applicable provisions of the FAR and its supplements.  Use is subject to license terms.  This distribution may include materials developed by third parties.Sun,  Sun Microsystems and  the Sun logo are trademarks or registered trademarks of Sun Microsystems, Inc. in the U.S. and other countries.<br>
               </span></div>
           </td>
           <td>&nbsp;</td>

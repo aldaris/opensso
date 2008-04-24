@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: nowritewarning.jsp,v 1.1 2008-03-15 01:17:39 veiming Exp $
+   $Id: nowritewarning.jsp,v 1.2 2008-04-24 22:47:00 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -35,7 +35,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Java(TM) System Federated Access Manager</title>
+    <title>Sun Federated Access Manager</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <meta name="Copyright"
          content="All Rights Reserved. Use is subject to license terms.">

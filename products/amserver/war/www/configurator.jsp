@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.21 2008-01-25 20:09:22 veiming Exp $
+   $Id: configurator.jsp,v 1.22 2008-04-24 22:47:00 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -38,7 +38,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Java(TM) System Federated Access Manager</title>
+    <title>Sun Federated Access Manager</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <meta name="Copyright"
          content="All Rights Reserved. Use is subject to license terms.">
@@ -137,8 +137,7 @@
         Welcome to the 
     </div>
     <div style="color: #f88017; font-size:24px">
-        Sun Java(tm) System<br>
-        Federated Access Manager<br>
+        Sun Federated Access Manager<br>
         Configurator 
     </div>
 
