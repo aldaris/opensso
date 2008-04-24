@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.6 2008-04-24 00:42:08 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.7 2008-04-24 00:46:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -456,11 +456,17 @@ public class ServerConfiguration extends ConfigurationBase {
         if (SystemProperties.isServerMode()) {
             ServerPropertyValidator.validateProperty(properties);
         } else {
-            if (!RemoteServiceAttributeValidator.validate(token, 
+            try {
+                if (!RemoteServiceAttributeValidator.validate(token, 
                 "com.sun.identity.common.configuration.ServerPropertyValidator",
                 properties)
-            ) {
-                throw new ConfigurationException("invalid.properties", null);
+                ) {
+                    throw new ConfigurationException("invalid.properties",
+                        null);
+                }
+            } catch (SMSException e) {
+                throw new ConfigurationException("unable.to.connect.to.server",
+                    null);
             }
         }
     }

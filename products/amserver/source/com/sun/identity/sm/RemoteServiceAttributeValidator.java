@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteServiceAttributeValidator.java,v 1.1 2008-03-20 04:48:37 veiming Exp $
+ * $Id: RemoteServiceAttributeValidator.java,v 1.2 2008-04-24 00:46:48 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,21 +29,31 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
 import java.util.Set;
 
+/**
+ * This class makes a JAX-RPC calls to server to validate attribute values.
+ */
 public class RemoteServiceAttributeValidator {
     private RemoteServiceAttributeValidator() {
     }
 
+    /**
+     * Validates a set of values.
+     *
+     * @param token Single Sign On token.
+     * @param clazz Validator class.
+     * @param values Set of values to be validated.
+     * @return <code>true</code> if the set of values is valid.
+     * @throws SMSException if unable to connect to server.
+     */
     public static boolean validate(
         SSOToken token, 
         String clazz,
-        Set values) {
+        Set values
+    ) throws SMSException {
         try {
             SMSJAXRPCObject smsObj = new SMSJAXRPCObject();
-            return smsObj.validateServiceAttributes(token,
-                clazz, values);
+            return smsObj.validateServiceAttributes(token, clazz, values);
         } catch (SSOException e) {
-            return false;
-        } catch (SMSException e) {
             return false;
         }
     }
