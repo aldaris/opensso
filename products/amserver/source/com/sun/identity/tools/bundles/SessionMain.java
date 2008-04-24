@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionMain.java,v 1.2 2007-11-15 05:46:26 qcheng Exp $
+ * $Id: SessionMain.java,v 1.3 2008-04-24 23:58:18 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,14 +48,32 @@ public class SessionMain implements SetupConstants{
         currentOS = SetupUtils.determineOS();
         destPath = System.getProperty(PATH_DEST);
         try {
-            if ((destPath == null) || (destPath.length() == 0)) {
+            if ((destPath != null) && (destPath.trim().length() > 0)) {
+                if ((destPath.indexOf("/") > -1) || 
+                    (destPath.indexOf("\\") > -1)) {
+                    System.out.println(
+                        bundle.getString("message.error.inputformat"));
+                    destPath = null;
+                }
+            }    
+            while ((destPath == null) || (destPath.trim().length() == 0)) {
                 destPath = SetupUtils.getUserInput(bundle.getString(currentOS
                     + QUESTION));
+                if ((destPath != null) && (destPath.trim().length() > 0)) {
+                    if ((destPath.indexOf("/") > -1) || 
+                        (destPath.indexOf("\\") > -1)) {
+                        System.out.println(bundle.getString(
+                            "message.error.inputformat"));
+                        destPath = null;
+                    }
+                }    
             }
         } catch (IOException ex) {
-            System.out.println(bundle.getString("message.error.input"));
+            System.out.println(
+                bundle.getString("message.error.input"));
+            System.out.println(ex.getMessage());
             System.exit(1);
-        }
+        }        
         configProp.setProperty(USER_INPUT, destPath);
         configProp.setProperty(CURRENT_PLATFORM, currentOS);
         SetupUtils.evaluateBundleValues(bundle, configProp);
@@ -84,21 +102,27 @@ public class SessionMain implements SetupConstants{
                 SetupUtils.unzip(extDir + FILE_SEPARATOR + jmqFileName, jmqDir,
                     true);
                 System.out.println(bundle.getString("message.info.jmq.success")
-                    + " " + jmqDir + ".");
+                + " " + (new File(".").getCanonicalPath() + FILE_SEPARATOR +
+                jmqDir));
             } else {
-                Process proc = Runtime.getRuntime().exec("unzip -o -q " + extDir
+                Process proc = Runtime.getRuntime().exec("unzip -o -q "+ extDir
                     + FILE_SEPARATOR + jmqFileName + " -d " + jmqDir);
                 try {
                     if (proc.waitFor() != 0) {
-                        System.out.println(bundle.getString(
-                            "message.info.jmq.fail") + " " + jmqDir + ".");
+                        System.out.println(
+                        bundle.getString("message.info.jmq.fail")
+                        + " " + (new File(".").getCanonicalPath() + 
+                        FILE_SEPARATOR + jmqDir));
                     } else {
-                        System.out.println(bundle.getString(
-                            "message.info.jmq.success") + " " + jmqDir + ".");
+                        System.out.println(
+                        bundle.getString("message.info.jmq.success")
+                        + " " + (new File(".").getCanonicalPath() + 
+                        FILE_SEPARATOR + jmqDir));
                     }
                 } catch (InterruptedException ex) {
-                    System.out.println(bundle.getString(
-                        "message.info.jmq.fail") + " " + jmqDir + ".");
+                    System.out.println(bundle.getString("message.info.jmq.fail")
+                    + " " + (new File(".").getCanonicalPath() + FILE_SEPARATOR +
+                    jmqDir));
                 }
             }
         } catch (IOException ex) {

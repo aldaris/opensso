@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupUtils.java,v 1.3 2008-04-24 07:54:21 beomsuk Exp $
+ * $Id: SetupUtils.java,v 1.4 2008-04-24 23:58:18 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,12 +78,8 @@ public class SetupUtils implements SetupConstants{
         String userInput = null;
         BufferedReader in = new BufferedReader(
             new InputStreamReader(System.in));
-        try {
-            System.out.print(message);
-            userInput = in.readLine();
-        } finally {
-            in.close();
-        }
+        System.out.print(message);
+        userInput = in.readLine();
         return userInput;
     }
 

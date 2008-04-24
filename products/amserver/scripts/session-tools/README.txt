@@ -25,15 +25,15 @@ Step 1: Unzip amSessionTools.zip to the desired directory.
 Step 2: Go to the directory which has the amSessionTools.zip unzipped.
         Run the setup command as follows:
         "setup -p | --path <DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED>"
-        where <DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED> is the directory under
-        current directory 
+        where <DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED> is the one level relative
+        directory created under current directory
 
         Note:
             a. Users under Linux or Unix environment may need to run
                "chmod +x setup" before running setup.
             b. If the setup is run without any options, then the user will be
                prompted as following:
-               "Directory to install the scripts (example: sfoscripts):"
+               "Name of the directory to install the scripts (example: sfoscripts):"
 
 Step 3: After step 2 is performed, the CLI's can be run under the following
         directory:
