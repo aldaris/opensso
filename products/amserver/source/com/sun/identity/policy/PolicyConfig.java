@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfig.java,v 1.4 2008-01-17 19:16:58 kenwho Exp $
+ * $Id: PolicyConfig.java,v 1.5 2008-04-24 01:20:21 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -476,12 +476,11 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
                             * in clear text
                               */
                             if (attrName.equals(LDAP_BIND_PASSWORD)) {
-                                PolicyManager.debug.message("Attr Name = " 
-                               + attrName + ";  Attr Value = ********");  
-                            } else {
-                                PolicyManager.debug.message("Attr Name = " 
-                               + attrName + ";  Attr Value = " + attrValue);
+                                attrValue = PolicyUtils.encrypt(attrValue);
+                                orgAttrMap.put(attrName, attrValue);
                             }
+                            PolicyManager.debug.message("Attr Name = " 
+                                   + attrName + ";  Attr Value = " + attrValue);
                         }
                     }
                 }

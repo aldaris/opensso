@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.7 2007-03-09 05:51:01 veiming Exp $
+ * $Id: PolicyUtils.java,v 1.8 2008-04-24 01:23:16 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.shared.xml.XMLHandler;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
+import com.iplanet.services.util.Crypt; //from products/shared
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.log.Logger;
@@ -1114,6 +1115,22 @@ public class PolicyUtils {
             }
         }
         return clonedMap;
+    }
+
+    public static String encrypt(String plainText) {
+        if (plainText != null) {
+            return Crypt.encode(plainText);
+        } else {
+            return plainText;
+        }
+    }
+
+    public static String decrypt(String encryptedText) {
+        if (encryptedText != null) {
+            return Crypt.decode(encryptedText);
+        } else {
+            return encryptedText;
+        }
     }
 
 }

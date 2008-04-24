@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPRoles.java,v 1.4 2007-12-14 00:06:02 dillidorai Exp $
+ * $Id: LDAPRoles.java,v 1.5 2008-04-24 01:24:17 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,6 +142,9 @@ public class LDAPRoles implements Subject {
  
         authid = (String) configParams.get(PolicyConfig.LDAP_BIND_DN);
         authpw = (String) configParams.get(PolicyConfig.LDAP_BIND_PASSWORD);
+        if (authpw != null) {
+            authpw = PolicyUtils.decrypt(authpw);
+        }
         baseDN = (String) configParams.get(PolicyConfig.LDAP_BASE_DN);
         roleSearchFilter = (String) configParams.get(
             PolicyConfig.LDAP_ROLES_SEARCH_FILTER);

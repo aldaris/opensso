@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUsers.java,v 1.3 2006-08-25 21:21:10 veiming Exp $
+ * $Id: LDAPUsers.java,v 1.4 2008-04-24 01:24:16 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,6 +123,9 @@ public class LDAPUsers implements Subject {
 
         authid = (String) configParams.get(PolicyConfig.LDAP_BIND_DN);
         authpw = (String) configParams.get(PolicyConfig.LDAP_BIND_PASSWORD);
+        if (authpw != null) {
+            authpw = PolicyUtils.decrypt(authpw);
+        }
         baseDN = (String) configParams.get(PolicyConfig.LDAP_USERS_BASE_DN);
 
         userSearchFilter = (String) configParams.get(

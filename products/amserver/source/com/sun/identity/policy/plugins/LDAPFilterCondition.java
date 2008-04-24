@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPFilterCondition.java,v 1.4 2006-08-25 21:21:09 veiming Exp $
+ * $Id: LDAPFilterCondition.java,v 1.5 2008-04-24 01:24:18 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -502,6 +502,9 @@ public class LDAPFilterCondition implements Condition {
 
         authid = (String) configParams.get(PolicyConfig.LDAP_BIND_DN);
         authpw = (String) configParams.get(PolicyConfig.LDAP_BIND_PASSWORD);
+        if (authpw != null) {
+            authpw = PolicyUtils.decrypt(authpw);
+        }
         baseDN = (String) configParams.get(PolicyConfig.LDAP_USERS_BASE_DN);
 
         userSearchFilter = (String) configParams.get(
