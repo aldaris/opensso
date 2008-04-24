@@ -18,9 +18,37 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.tools,v 1.1 2007-08-28 16:21:30 kevinserwin Exp $
+   $Id: README.tools,v 1.2 2008-04-24 18:27:12 bigfatrat Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 Federated Access Manager - Tools
+
+Unzipping the Federated Access Manager (FAM) Tools zip File
+-----------------------------------------------------------
+
+For Solaris/Linux
+
+The Federated Access Manager (FAM) Tools are contained in the
+fam.zip file.  Unzip fam.zip in a directory owned by root.
+
+
+Using The Unix Authentication "helper" Process
+----------------------------------------------
+
+Unix authentication is only supported on Solaris/SPARC and Solaris/x86
+platforms.  In order to use Unix authentication in FAM, the amunixd
+"helper" process must be started as root.
+
+Find the amunixd executable in the unzipped fam.zip at
+fam/tools/helpers/{sparc,x86}.  A script to start the helper version
+for the system can be found as fam/tools/helpers/bin/amunixd.
+
+Note that if the Unix Configuration Port attribute setting is changed
+from the default (58946) through the FAM Admin Console
+(Configuration > Authentication > Unix), then the bin/amunixd script must
+specify it with the "-c" argument.
+
+The Unix authentication helper must be executed as root.
+
