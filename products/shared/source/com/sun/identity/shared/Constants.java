@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.20 2008-03-21 06:26:17 manish_rustagi Exp $
+ * $Id: Constants.java,v 1.21 2008-04-24 23:49:46 manish_rustagi Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -779,6 +779,11 @@ public interface Constants {
      * Property string for distauth deployment descriptor
      */
     String AM_DISTAUTH_DEPLOYMENT_DESCRIPTOR =
-        "com.iplanet.am.distauth.deploymentDescriptor";
-        
+        "com.iplanet.am.distauth.deploymentDescriptor";        
+       
+    /**
+     * Property string for cdc servlet login url
+     */
+    String CDCSERVLET_LOGIN_URL =
+        "com.sun.identity.cdcservlet.loginurl";        
 }

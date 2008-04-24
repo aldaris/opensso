@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.15 2008-04-17 00:34:45 qcheng Exp $
+   $Id: build-zip.xml,v 1.16 2008-04-24 23:46:23 manish_rustagi Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -122,6 +122,9 @@
             </fileset>
             <fileset dir="${amserver.base.dir}/distauth/configurator/resources">
                 <include name="AMDistAuthConfig.properties.template" />
+            </fileset>
+            <fileset dir="${openfm.built.dir}/classes">
+                <include name="com/iplanet/services/cdc/client/CDCClientServlet.class" />
             </fileset>
         </copy>
         <!-- Done copy Distributed Authentication WAR related files -->
