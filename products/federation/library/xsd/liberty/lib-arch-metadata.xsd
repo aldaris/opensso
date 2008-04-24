@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: lib-arch-metadata.xsd,v 1.2 2007-08-21 18:38:21 asyhuang Exp $
+   $Id: lib-arch-metadata.xsd,v 1.3 2008-04-24 18:30:46 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -118,7 +118,7 @@ https://www.projectliberty.org/specs/idff_copyrights.html
   </xs:simpleType>
   <xs:complexType name="providerDescriptorType">
     <xs:sequence>
-      <xs:element name="KeyDescriptor" type="keyDescriptorType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="KeyDescriptor" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="SoapEndpoint" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="SingleLogoutServiceURL" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="SingleLogoutServiceReturnURL" type="xs:anyURI" minOccurs="0"/>
@@ -158,8 +158,8 @@ https://www.projectliberty.org/specs/idff_copyrights.html
   <xs:element name="EntityDescriptor" type="entityDescriptorType"/>
   <xs:group name="providerGroup">
     <xs:sequence>
-      <xs:element name="IDPDescriptor" type="IDPDescriptorType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="SPDescriptor" type="SPDescriptorType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="IDPDescriptor" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="SPDescriptor" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:group>
   <xs:complexType name="entityDescriptorType">
@@ -197,6 +197,8 @@ https://www.projectliberty.org/specs/idff_copyrights.html
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:element name="IDPDescriptor" type="IDPDescriptorType"/>
+  <xs:element name="SPDescriptor" type="SPDescriptorType"/>
   <xs:complexType name="IDPDescriptorType">
     <xs:complexContent>
       <xs:extension base="providerDescriptorType">
@@ -218,7 +220,7 @@ https://www.projectliberty.org/specs/idff_copyrights.html
     <xs:sequence>
       <xs:element name="AffiliateMember" type="entityIDType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element ref="Extension" minOccurs="0"/>
-      <xs:element name="KeyDescriptor" type="keyDescriptorType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="KeyDescriptor" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element ref="ds:Signature" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="affiliationID" type="entityIDType" use="required"/>

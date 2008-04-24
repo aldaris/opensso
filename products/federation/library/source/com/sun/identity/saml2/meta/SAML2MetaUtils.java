@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaUtils.java,v 1.4 2008-01-16 04:34:45 hengming Exp $
+ * $Id: SAML2MetaUtils.java,v 1.5 2008-04-24 18:30:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,9 @@ import com.sun.identity.shared.locale.Locale;
 
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
@@ -492,4 +495,58 @@ public final class SAML2MetaUtils {
         }
     }
     
+    /**
+     * Returns first service provider's SSO configuration in an entity.
+     * @param eConfig <code>EntityConfigElement</code> of the entity to 
+     * be retrieved.
+     * @return <code>SPSSOConfigElement</code> for the entity or null if not
+     *         found.
+     * @throws SAML2MetaException if unable to retrieve the first service
+     *                            provider's SSO configuration.
+     */
+    public static SPSSOConfigElement getSPSSOConfig(EntityConfigElement eConfig)
+        throws SAML2MetaException {
+
+        if (eConfig == null) {
+            return null;
+        }
+
+        List list =
+            eConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof SPSSOConfigElement) {
+                return (SPSSOConfigElement)obj;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns first identity provider's SSO configuration in an entity
+     * @param eConfig <code>EntityConfigElement</code> of the entity to 
+     * be retrieved.
+     * @return <code>IDPSSOConfigElement</code> for the entity or null if not
+     *         found.
+     * @throws SAML2MetaException if unable to retrieve the first identity
+     *                            provider's SSO configuration.
+     */
+    public static IDPSSOConfigElement getIDPSSOConfig(
+        EntityConfigElement eConfig) throws SAML2MetaException {
+        if (eConfig == null) {
+            return null;
+        }
+
+        List list =
+            eConfig.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+        for(Iterator iter = list.iterator(); iter.hasNext();) {
+            Object obj = iter.next();
+            if (obj instanceof IDPSSOConfigElement) {
+                return (IDPSSOConfigElement)obj;
+            }
+        }
+
+        return null;
+    }
 }

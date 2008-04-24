@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaSecurityUtils.java,v 1.2 2007-08-01 21:04:39 superpat7 Exp $
+ * $Id: WSFederationMetaSecurityUtils.java,v 1.3 2008-04-24 18:30:46 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,12 +50,22 @@ import com.sun.identity.shared.encode.Base64;
 
 import com.sun.identity.saml.xmlsig.JKSKeyProvider;
 import com.sun.identity.saml.xmlsig.KeyProvider;
+import com.sun.identity.saml2.common.SAML2Constants;
 
+import com.sun.identity.wsfederation.jaxb.entityconfig.AttributeType;
+import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
+import com.sun.identity.wsfederation.jaxb.wsfederation.TokenSigningKeyInfoElement;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
+import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The <code>WSFederationMetaUtils</code> provides metadata security related 
@@ -68,7 +78,7 @@ public final class WSFederationMetaSecurityUtils {
     private static KeyStore keyStore = null;
     private static boolean checkCert = true;
     private static boolean keyProviderInitialized = false;
-    public static final String NS_META = "urn:oasis:names:tc:SAML:2.0:metadata";
+    public static final String NS_META = "http://schemas.xmlsoap.org/ws/2006/12/federation";
     public static final String NS_XMLSIG = "http://www.w3.org/2000/09/xmldsig#";
     public static final String NS_XMLENC = "http://www.w3.org/2001/04/xmlenc#";
     public static final String PREFIX_XMLSIG = "ds";
@@ -431,5 +441,153 @@ public final class WSFederationMetaSecurityUtils {
 
         Object[] objs = { certAlias };
         throw new WSFederationMetaException("invalid_cert_alias", objs);
+    }
+    
+
+    /**
+     * Updates signing or encryption key info for SP or IDP.
+     * This will update both signing/encryption alias on extended metadata and
+     * certificates in standard metadata.
+     * @param realm Realm the entity resides.
+     * @param entityID ID of the entity to be updated.
+     * @param certAlias Alias of the certificate to be set to the entity. If
+     *        null, will remove existing key information from the SP or IDP.
+     * @param isIDP true if this is for IDP signing/encryption alias, false
+     *        if this is for SP signing/encryption alias
+     * @throws WSFederationMetaException if failed to update the certificate 
+     *        alias for the entity.
+     */
+    public static void updateProviderKeyInfo(String realm,
+        String entityID, String certAlias, boolean isIDP)
+        throws WSFederationMetaException {
+        FederationConfigElement config =
+            WSFederationMetaManager.getEntityConfig(realm, entityID);
+        if (!config.isHosted()) {
+            String[] args = {entityID, realm};
+            throw new WSFederationMetaException("entityNotHosted", args);
+        }
+        FederationElement desp = 
+            WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+        if (isIDP) {
+            IDPSSOConfigElement idpConfig =
+                WSFederationMetaManager.getIDPSSOConfig(realm, entityID);
+            if ((idpConfig == null) || (desp == null)) {
+                String[] args = {entityID, realm};
+                throw new WSFederationMetaException("entityNotIDP", args);
+            }
+            // update standard metadata
+            if ((certAlias == null) || (certAlias.length() == 0)) {
+                // remove key info
+                removeKeyDescriptor(desp);
+                setExtendedAttributeValue(idpConfig,
+                        SAML2Constants.SIGNING_CERT_ALIAS, null);
+            } else {
+                TokenSigningKeyInfoElement kde = getKeyDescriptor(certAlias);
+                updateKeyDescriptor(desp, kde);
+                // update extended metadata
+                Set value = new HashSet();
+                value.add(certAlias);
+                setExtendedAttributeValue(idpConfig,
+                        SAML2Constants.SIGNING_CERT_ALIAS, value);
+            }
+        } else {
+            SPSSOConfigElement spConfig =
+                WSFederationMetaManager.getSPSSOConfig(realm, entityID);
+            if ((spConfig == null) || (desp == null)) {
+                String[] args = {entityID, realm};
+                throw new WSFederationMetaException("entityNotSP", args);
+            }
+            // update standard metadata
+            if ((certAlias == null) || (certAlias.length() == 0)) {
+                // remove key info
+                removeKeyDescriptor(desp);
+                setExtendedAttributeValue(spConfig,
+                    SAML2Constants.SIGNING_CERT_ALIAS, null);
+            } else {
+                TokenSigningKeyInfoElement kde = getKeyDescriptor(certAlias);
+                updateKeyDescriptor(desp, kde);
+                // update extended metadata
+                Set value = new HashSet();
+                value.add(certAlias);
+                setExtendedAttributeValue(spConfig,
+                        SAML2Constants.SIGNING_CERT_ALIAS, value);
+            }
+        }
+        WSFederationMetaManager.setFederation(realm, desp);
+        WSFederationMetaManager.setEntityConfig(realm, config);
+    }
+
+    private static void updateKeyDescriptor(FederationElement desp,
+        TokenSigningKeyInfoElement newKey) {
+        // NOTE : we only support one signing and one encryption key right now 
+        // the code need to be change if we need to support multiple signing
+        // and/or encryption keys in one entity
+        List objList = desp.getAny();
+        for (Iterator iter = objList.iterator(); iter.hasNext();) {
+            Object o = iter.next();
+            if (o instanceof TokenSigningKeyInfoElement) {
+                iter.remove();
+            }
+        }
+        desp.getAny().add(0,newKey);
+    }
+
+    private static void removeKeyDescriptor(FederationElement desp) {
+        // NOTE : we only support one signing and one encryption key right now 
+        // the code need to be change if we need to support multiple signing
+        // and/or encryption keys in one entity
+        List objList = desp.getAny();
+        for (Iterator iter = objList.iterator(); iter.hasNext();) {
+            Object o = iter.next();
+            if (o instanceof TokenSigningKeyInfoElement) {
+                iter.remove();
+            }
+        }
+    }
+
+    private static void setExtendedAttributeValue(BaseConfigType config,
+        String attrName, Set attrVal) throws WSFederationMetaException {
+        try {
+            List attributes = config.getAttribute();
+            for(Iterator iter = attributes.iterator(); iter.hasNext();) {
+                AttributeType avp = (AttributeType)iter.next();
+                if (avp.getName().trim().equalsIgnoreCase(attrName)) {
+                     iter.remove();
+                }
+            }
+            if (attrVal != null) {
+                ObjectFactory factory = new ObjectFactory();
+                AttributeType atype = factory.createAttributeType();
+                atype.setName(attrName);
+                atype.getValue().addAll(attrVal);
+                config.getAttribute().add(atype);
+            }
+        } catch (JAXBException e) {
+            throw new WSFederationMetaException(e);
+        }
+    }
+
+    private static TokenSigningKeyInfoElement getKeyDescriptor(String certAlias)
+        throws WSFederationMetaException {
+        try {
+            String certString =
+                WSFederationMetaSecurityUtils.buildX509Certificate(certAlias);
+            StringBuffer sb = new StringBuffer(4000);
+            sb.append("<TokenSigningKeyInfo xmlns=\"").append(NS_META)
+                .append("\">\n");
+            sb.append("<SecurityTokenReference xmlns=\"")
+              .append("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">\n")
+              .append("<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\">\n")
+              .append("<X509Certificate>\n")
+              .append(certString)
+              .append("</X509Certificate>\n")
+              .append("</X509Data>\n")
+              .append("</SecurityTokenReference>\n");
+            sb.append("</TokenSigningKeyInfo>\n");
+            return (TokenSigningKeyInfoElement)
+                WSFederationMetaUtils.convertStringToJAXB(sb.toString());
+        } catch (JAXBException e) {
+            throw new WSFederationMetaException(e);
+        }
     }
 }

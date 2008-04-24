@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaSecurityUtils.java,v 1.2 2007-12-15 06:19:00 hengming Exp $
+ * $Id: SAML2MetaSecurityUtils.java,v 1.3 2008-04-24 18:30:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,9 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -57,13 +60,21 @@ import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
+import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
+import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement; 
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.KeyDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.RoleDescriptorType;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.key.KeyUtil;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 
 /**
  * The <code>SAML2MetaUtils</code> provides metadata security related util
@@ -425,7 +436,7 @@ public final class SAML2MetaSecurityUtils {
             } catch (Exception ex) {
                 if (debug.messageEnabled()) {
                     debug.message(
-                          "SAML2MetaSecurityUtils.buildX509Certificate:", ex);
+                        "SAML2MetaSecurityUtils.buildX509Certificate:", ex);
                 }
             }
         }
@@ -433,4 +444,201 @@ public final class SAML2MetaSecurityUtils {
         Object[] objs = { certAlias };
         throw new SAML2MetaException("invalid_cert_alias", objs);
     }
+
+    /**
+     * Updates signing or encryption key info for SP or IDP. 
+     * This will update both signing/encryption alias on extended metadata and
+     * certificates in standard metadata. 
+     * @param realm Realm the entity resides.
+     * @param entityID ID of the entity to be updated.  
+     * @param certAlias Alias of the certificate to be set to the entity. If
+     *        null, will remove existing key information from the SP or IDP.
+     * @param isSigning true if this is signing certificate alias, false if 
+     *        this is encryption certification alias.
+     * @param isIDP true if this is for IDP signing/encryption alias, false
+     *        if this is for SP signing/encryption alias
+     * @param encAlgo Encryption algorithm URI, this is applicable for
+     *        encryption cert only.
+     * @param keySize Encryption key size, this is applicable for
+     *        encryption cert only. 
+     * @throws SAML2MetaException if failed to update the certificate alias 
+     *        for the entity.
+     */
+    public static void updateProviderKeyInfo(String realm,
+        String entityID, String certAlias, boolean isSigning, boolean isIDP,
+        String encAlgo, int keySize) throws SAML2MetaException { 
+        SAML2MetaManager metaManager = new SAML2MetaManager();
+        EntityConfigElement config = 
+            metaManager.getEntityConfig(realm, entityID);
+        if (!config.isHosted()) {
+            String[] args = {entityID, realm};
+            throw new SAML2MetaException("entityNotHosted", args);
+        }
+        EntityDescriptorElement desp = metaManager.getEntityDescriptor(
+            realm, entityID);
+        if (isIDP) {
+            IDPSSOConfigElement idpConfig = 
+                SAML2MetaUtils.getIDPSSOConfig(config);
+            IDPSSODescriptorElement idpDesp = 
+                SAML2MetaUtils.getIDPSSODescriptor(desp);
+            if ((idpConfig == null) || (idpDesp == null)) {
+                String[] args = {entityID, realm};
+                throw new SAML2MetaException("entityNotIDP", args);
+            }
+            // update standard metadata
+            if ((certAlias == null) || (certAlias.length() == 0)) {
+                // remove key info
+                removeKeyDescriptor(idpDesp, isSigning); 
+                if (isSigning) {
+                    setExtendedAttributeValue(idpConfig, 
+                        SAML2Constants.SIGNING_CERT_ALIAS, null); 
+                } else {
+                    setExtendedAttributeValue(idpConfig, 
+                        SAML2Constants.ENCRYPTION_CERT_ALIAS, null); 
+                }
+            } else {
+                KeyDescriptorElement kde = 
+                    getKeyDescriptor(certAlias, isSigning, encAlgo, keySize);
+                updateKeyDescriptor(idpDesp, kde);
+                // update extended metadata
+                Set value = new HashSet();
+                value.add(certAlias);
+                if (isSigning) {
+                    setExtendedAttributeValue(idpConfig, 
+                        SAML2Constants.SIGNING_CERT_ALIAS, value); 
+                } else {
+                    setExtendedAttributeValue(idpConfig, 
+                        SAML2Constants.ENCRYPTION_CERT_ALIAS, value); 
+                }
+            }
+            metaManager.setEntityDescriptor(realm, desp);
+            metaManager.setEntityConfig(realm, config); 
+        } else {
+            SPSSOConfigElement spConfig = SAML2MetaUtils.getSPSSOConfig(config);
+            SPSSODescriptorElement spDesp = 
+                SAML2MetaUtils.getSPSSODescriptor(desp);
+            if ((spConfig == null) || (spDesp == null)) {
+                String[] args = {entityID, realm};
+                throw new SAML2MetaException("entityNotSP", args);
+            }
+            // update standard metadata
+            if ((certAlias == null) || (certAlias.length() == 0)) {
+                // remove key info
+                removeKeyDescriptor(spDesp, isSigning); 
+                if (isSigning) {
+                    setExtendedAttributeValue(spConfig, 
+                        SAML2Constants.SIGNING_CERT_ALIAS, null); 
+                } else {
+                    setExtendedAttributeValue(spConfig, 
+                        SAML2Constants.ENCRYPTION_CERT_ALIAS, null); 
+                }
+            } else {
+                KeyDescriptorElement kde = 
+                    getKeyDescriptor(certAlias, isSigning, encAlgo, keySize);
+                updateKeyDescriptor(spDesp, kde);
+                // update extended metadata
+                Set value = new HashSet();
+                value.add(certAlias);
+                if (isSigning) {
+                    setExtendedAttributeValue(spConfig, 
+                        SAML2Constants.SIGNING_CERT_ALIAS, value); 
+                } else {
+                    setExtendedAttributeValue(spConfig, 
+                        SAML2Constants.ENCRYPTION_CERT_ALIAS, value); 
+                }
+            }
+            metaManager.setEntityDescriptor(realm, desp);
+            metaManager.setEntityConfig(realm, config); 
+        }
+    }
+
+    private static void updateKeyDescriptor(RoleDescriptorType desp, 
+        KeyDescriptorElement newKey) {
+        // NOTE : we only support one signing and one encryption key right now
+        // the code need to be change if we need to support multiple signing
+        // and/or encryption keys in one entity
+        List keys = desp.getKeyDescriptor();
+        for (Iterator iter = keys.iterator(); iter.hasNext();) {
+            KeyDescriptorElement key = (KeyDescriptorElement) iter.next();
+            if (key.getUse().equalsIgnoreCase(newKey.getUse())) {
+                iter.remove();
+            }
+        }
+        desp.getKeyDescriptor().add(newKey);
+    }
+
+    private static void removeKeyDescriptor(RoleDescriptorType desp,
+        boolean isSigningUse) {
+        List keys = desp.getKeyDescriptor();
+        for (Iterator iter = keys.iterator(); iter.hasNext();) {
+            KeyDescriptorElement key = (KeyDescriptorElement) iter.next();
+            String keyUse = "encryption";
+            if (isSigningUse) {
+                keyUse = "signing";
+            }
+            if (key.getUse().equalsIgnoreCase(keyUse)) {
+                iter.remove();
+            }
+        }
+    }
+  
+    private static void setExtendedAttributeValue(
+        BaseConfigType config,
+        String attrName, Set attrVal) throws SAML2MetaException {
+        try {
+            List attributes = config.getAttribute();
+            for(Iterator iter = attributes.iterator(); iter.hasNext();) {
+                AttributeType avp = (AttributeType)iter.next();
+                if (avp.getName().trim().equalsIgnoreCase(attrName)) {
+                     iter.remove(); 
+                }
+            }
+            if (attrVal != null) {
+                ObjectFactory factory = new ObjectFactory();
+                AttributeType atype = factory.createAttributeType();
+                atype.setName(attrName);
+                atype.getValue().addAll(attrVal);
+                config.getAttribute().add(atype);
+            }
+        } catch (JAXBException e) {
+            throw new SAML2MetaException(e);
+        }
+    }
+
+    private static KeyDescriptorElement getKeyDescriptor(
+        String certAlias, boolean isSigning, String encAlgo, int keySize) 
+        throws SAML2MetaException {
+     
+        try {
+            String certString = 
+                SAML2MetaSecurityUtils.buildX509Certificate(certAlias);
+            StringBuffer sb = new StringBuffer(4000);
+            sb.append("<KeyDescriptor xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\" use=\"");
+            if (isSigning) {
+                sb.append("signing");
+            } else {
+                sb.append("encryption");
+            }
+            sb.append("\">\n")
+              .append("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\">\n")
+              .append("<X509Data>\n")
+              .append("<X509Certificate>\n")
+              .append(certString).append("\n")
+              .append("</X509Certificate>")
+              .append("</X509Data>")
+              .append("</KeyInfo>");
+            if (!isSigning && (encAlgo != null)) {
+                sb.append("<EncryptionMethod Algorithm=\"").append(encAlgo)
+                  .append("\">\n");
+                sb.append("<KeySize xmlns=\"http://www.w3.org/2001/04/xmlenc#\">")
+                  .append("" + keySize).append("</KeySize>\n")
+                  .append("</EncryptionMethod>");
+            }
+            sb.append("</KeyDescriptor>");
+            return (KeyDescriptorElement) 
+                SAML2MetaUtils.convertStringToJAXB(sb.toString());
+        } catch (JAXBException e) {
+            throw new SAML2MetaException(e);
+        }
+    } 
 }

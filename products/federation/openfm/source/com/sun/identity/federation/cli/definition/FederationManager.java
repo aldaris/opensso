@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.27 2008-03-20 02:06:57 veiming Exp $
+ * $Id: FederationManager.java,v 1.28 2008-04-24 18:31:29 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,6 +106,27 @@ public class FederationManager {
             "create-meta-template-created-descriptor-template=Hosted entity descriptor for realm, {1} was written to file, {0}.",
             "create-meta-template-created-configuration-template=Hosted entity configuration for realm, {1} was written to file, {0}."})
     private String create_metadata_templ;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.federation.cli.UpdateMetadataKeyInfo",
+        description="Update XML signing and encryption key information in hosted entity metadata.",
+        webSupport="true",
+        mandatoryOptions={
+            "entityid|y|s|Entity ID"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "spscertalias|a|s|Service provider signing certificate alias",
+            "idpscertalias|b|s|Identity provider signing certificate alias",
+            "specertalias|r|s|Service provider encryption certificate alias",
+            "idpecertalias|g|s|Identity provider encryption certificate alias.",
+            "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
+        resourceStrings={
+            "update-keyinfo-succeeded=Update entity keyinfo succeeded : {0}",
+            "update-meta-keyinfo-exception-alias-null=Singing or encryption certificate alias for Identity or Service Provider is required.",
+            "update-meta-keyinfo-exception-entity-not-exist=Entity {0} does not exist under realm {1}.",
+            "update-meta-keyinfo-exception-invalid-option=Encryption cert alias option not supported for WS-Federation protocol."})
+    private String update_entity_keyinfo;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.federation.cli.ImportMetaData",
