@@ -112,7 +112,7 @@
     function submitDefaultSummaryForm() {
         YAHOO.sun.identity.config.options.defaultSummary.hide(); 
         if ( window.frames['progressIframe'] ) {
-            window.frames['progressIframe'].location = "$context/config/setSetupProgress.jsp";
+            window.frames['progressIframe'].location = "$context/setup/setSetupProgress";
         }
         YAHOO.sun.identity.config.options.inProgress.show();
         AjaxUtils.doPost("defaultSummary", "$context/config/defaultSummary.htm", AjaxUtils.serializeForm("defaultForm"), onDefaultSummarySuccess, onDefaultSummaryFailure);

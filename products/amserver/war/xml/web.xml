@@ -25,6 +25,10 @@
         <servlet-class>com.sun.identity.authentication.UI.LoginServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>setSetupProgress</servlet-name>
+        <servlet-class>com.sun.identity.setup.SetSetupProgress</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>GatewayServlet</servlet-name>
         <servlet-class>com.sun.identity.policy.util.Gateway</servlet-class>
     </servlet>
@@ -101,6 +105,10 @@
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/UI/*</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>
+        <servlet-name>setSetupProgress</servlet-name>
+        <url-pattern>/setup/setSetupProgress</url-pattern>
     </servlet-mapping>    
     <servlet-mapping>
         <servlet-name>PWResetServlet</servlet-name>

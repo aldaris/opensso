@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.8 2008-03-20 20:50:20 jonnelson Exp $
+ * $Id: AMSetupFilter.java,v 1.9 2008-04-24 00:04:10 rajeevangal Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,7 @@ public final class AMSetupFilter implements Filter {
     private static final String NOWRITE_PERMISSION = "/nowritewarning.jsp";
 
     private static String[] fList = { 
-        ".htm", ".css", ".js", ".jpg", ".gif", ".png",".JPG", "SMSObjectIF" 
+        ".htm", ".css", ".js", ".jpg", ".gif", ".png",".JPG", "SMSObjectIF" , "setSetupProgress"
     }; 
 
     /**
