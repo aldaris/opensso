@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.10 2008-04-01 15:49:22 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.11 2008-04-24 22:31:50 beomsuk Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -179,7 +179,6 @@ public class EmbeddedOpenDS {
         SetupProgress.reportStart("emb.installingemb", odsRoot);
         EmbeddedOpenDS.startServer(odsRoot);
         SetupProgress.reportEnd("emb.done", null);
-        //java.lang.Thread.sleep(5000);
 
         // Check: If adding a new server to a existing cluster
 
@@ -191,7 +190,6 @@ public class EmbeddedOpenDS {
             EmbeddedOpenDS.startServer(odsRoot);
             SetupProgress.reportEnd("emb.done", null);
         }
-        //java.lang.Thread.sleep(5000);
     }
 
     /**
@@ -249,8 +247,21 @@ public class EmbeddedOpenDS {
         EmbeddedUtils.startServer(config);
         debug.message("...EmbeddedOpenDS.startServer:DS Server started.");
 
-        serverStarted = true;
+        int sleepcount = 0;
+        while (!EmbeddedUtils.isRunning() && (sleepcount < 60)) {
+            sleepcount++;
+            SetupProgress.reportStart("emb.waitingforstarted", null);
+            Thread.sleep(1000);
+        }
+        
+        if (EmbeddedUtils.isRunning()) {
+            SetupProgress.reportEnd("emb.success", null);
+        } else {
+            SetupProgress.reportEnd("emb.failed", null);
+        }
 
+        serverStarted = true;
+      
         ShutdownManager shutdownMan = ShutdownManager.getInstance();
         shutdownMan.addShutdownListener(new ShutdownListener() {
             public void shutdown() {
@@ -280,7 +291,6 @@ public class EmbeddedOpenDS {
                 "com.sun.identity.setup.EmbeddedOpenDS",
                 Message.EMPTY);
             debug.message("EmbeddedOpenDS.shutdown server success.");
-            serverStarted = false;
         }
     }
 
