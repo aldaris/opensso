@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.2 2008-03-20 17:21:08 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.3 2008-04-24 12:56:03 bigfatrat Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1498,6 +1498,13 @@ public class UpgradeUtils {
     }
 
     /**
+     * Gets the deploy uri of fam instance.
+     */
+    public static String getDeployURI() {
+        return (deployURI);
+    }
+
+    /**
      * Sets the password of the admin user.
      * 
      * @param password the password the admin user.
@@ -1568,6 +1575,14 @@ public class UpgradeUtils {
     public static void setConfigDir(String dir) {
         configDir = dir;
     }
+
+    /**
+     * Gets the configuration directory location
+     */
+    public static String getConfigDir() {
+        return (configDir);
+    }
+
     /**
      * Returns the <code>ServiceSchemaManager</code> for a service.
      * 
@@ -1836,6 +1851,35 @@ public class UpgradeUtils {
                     "Error modifying auth configuration attribute", e);
         }
     }
+
+    /**
+     * Modifies the i18nKey of the specified attribute in the schema.
+     * 
+     * @param serviceName the service name where the attribute exists.
+     * @param subSchema the subschema name.
+     * @param schemaType the schema type
+     * @param attrName the attribute name.
+     * @param value the value of the i18nKey
+     * @throws UpgradeException if there is an error.
+     */
+    public static void modifyI18NInAttributeSchema(
+            String serviceName,
+            String subSchema,
+            String schemaType,
+            String attrName,
+            String value) throws UpgradeException
+    {
+        try {
+            ServiceSchema ss =
+                getServiceSchema(serviceName, subSchema, schemaType);
+            AttributeSchema attrSchema = ss.getAttributeSchema(attrName);
+            attrSchema.setI18NKey(value);
+        } catch (SSOException ssoe) {
+            throw new UpgradeException("Invalid token");
+        } catch (SMSException sme) {
+            throw new UpgradeException("Error setting i18N attribute");
+        }
+   } 
 
     /**
      * Migrates auth configuration defined at role level.
@@ -2623,4 +2667,36 @@ public class UpgradeUtils {
         }
         return fileString;
     }
+
+    /**
+     * Returns a value of an attribute.
+     * This method assumes that the attribute is single valued.
+     * 
+     * @param serviceName name of the service.
+     * @param attributeName name of the attribute.
+     * @param schemaType the schema type.
+     * @param subSchemaName the sub schema name.
+     * @return the value of the attribute 
+     */
+     public static String getSubSchemaAttributeValue(
+            String serviceName,
+            String schemaType,
+            String attributeName,
+            String subSchemaName) {
+        String classMethod = "UpgradeUtils:getSubSchemaAttributeValue :";
+        ServiceSchema ss = null;
+        String value = null;
+        try {
+            ss = getServiceSchema(serviceName, subSchemaName, schemaType);
+            AttributeSchema attrSchema = ss.getAttributeSchema(attributeName);
+            Set defaultVal = attrSchema.getDefaultValues();
+            value = (String) (defaultVal.iterator().next());
+        } catch (Exception e) {
+            debug.error(classMethod + "cannot retrieve attribute value for " +
+                attributeName);
+        }
+        return value;
+    }
+
+
 }
