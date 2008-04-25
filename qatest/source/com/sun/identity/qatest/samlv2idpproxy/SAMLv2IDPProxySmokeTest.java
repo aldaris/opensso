@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxySmokeTest.java,v 1.1 2008-04-10 21:28:28 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxySmokeTest.java,v 1.2 2008-04-25 15:15:48 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,56 +139,65 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
 
             fmIDPProxy = new FederationManager(idpproxyurl);
 
-            list = new ArrayList();
-            list.add("sn=" + configMap.get(TestConstants.KEY_SP_USER));
-            list.add("cn=" + configMap.get(TestConstants.KEY_SP_USER));
-            list.add("userpassword=" +
-                    configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
-            list.add("inetuserstatus=Active");
-            if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
-                    configMap.get(TestConstants.KEY_SP_USER), "User", 
-                    list)) != 0) {
-                log(Level.SEVERE, "setup", "createIdentity famadm command" +
-                        " failed while creating users at SP");
-                assert false;
-            }
-            spuserlist.add(configMap.get(TestConstants.KEY_SP_USER));
+            Integer totalUsers = new Integer(
+                    (String)configMap.get("totalUsers"));
+            for (int i = 1; i < totalUsers + 1; i++) {
+                list = new ArrayList();
+                list.add("sn=" + configMap.get(TestConstants.KEY_SP_USER + i));
+                list.add("cn=" + configMap.get(TestConstants.KEY_SP_USER + i));
+                list.add("userpassword=" +
+                        configMap.get(TestConstants.KEY_SP_USER_PASSWORD + i));
+                list.add("inetuserstatus=Active");
+                if (FederationManager.getExitCode(fmSP.createIdentity(webClient,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                        configMap.get(TestConstants.KEY_SP_USER + i), "User", 
+                        list)) != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command" +
+                            " failed while creating users at SP");
+                    assert false;
+                }
+                spuserlist.add(configMap.get(TestConstants.KEY_SP_USER + i));
 
-            // Create idp users
-            list.clear();
-            list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));
-            list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));
-            list.add("userpassword=" +
-                    configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
-            list.add("inetuserstatus=Active");
-            if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
-                    configMap.get(TestConstants.KEY_IDP_USER), "User", list))
-                    != 0) {
-                log(Level.SEVERE, "setup", "createIdentity famadm command " +
-                        "failed while creating users at IDP");
-                assert false;
-            }
-            idpuserlist.add(configMap.get(TestConstants.KEY_IDP_USER));
+                // Create idp users
+                list.clear();
+                list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER + i));
+                list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER + i));
+                list.add("userpassword=" +
+                        configMap.get(TestConstants.KEY_IDP_USER_PASSWORD + i));
+                list.add("inetuserstatus=Active");
+                if (FederationManager.getExitCode(fmIDP.createIdentity(webClient,
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                        configMap.get(TestConstants.KEY_IDP_USER + i), "User", 
+                        list))
+                        != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command " +
+                            "failed while creating users at IDP");
+                    assert false;
+                }
+                idpuserlist.add(configMap.get(TestConstants.KEY_IDP_USER + i));
 
-            // Create idp proxy users
-            list.clear();
-            list.add("sn=" + configMap.get(TestConstants.KEY_IDP_PROXY_USER));
-            list.add("cn=" + configMap.get(TestConstants.KEY_IDP_PROXY_USER));
-            list.add("userpassword=" +
-                    configMap.get(TestConstants.KEY_IDP_PROXY_USER_PASSWORD));
-            list.add("inetuserstatus=Active");
-            if (FederationManager.getExitCode(fmIDPProxy.createIdentity(
-                    webClient, configMap.get(TestConstants.
-                    KEY_IDP_PROXY_EXECUTION_REALM), configMap.get(TestConstants.
-                    KEY_IDP_PROXY_USER), "User", list)) != 0) {
-                log(Level.SEVERE, "setup", "createIdentity famadm command " +
-                        "failed while creating users at IDP Proxy");
-                assert false;
+                // Create idp proxy users
+                list.clear();
+                list.add("sn=" + configMap.get(TestConstants.KEY_IDP_PROXY_USER 
+                        + i));
+                list.add("cn=" + configMap.get(TestConstants.KEY_IDP_PROXY_USER 
+                        + i));
+                list.add("userpassword=" +
+                        configMap.get(TestConstants.KEY_IDP_PROXY_USER_PASSWORD 
+                        + i));
+                list.add("inetuserstatus=Active");
+                if (FederationManager.getExitCode(fmIDPProxy.createIdentity(
+                        webClient, configMap.get(TestConstants.
+                        KEY_IDP_PROXY_EXECUTION_REALM), configMap.get(
+                        TestConstants.KEY_IDP_PROXY_USER + i), "User", list)) 
+                        != 0) {
+                    log(Level.SEVERE, "setup", "createIdentity famadm command " +
+                            "failed while creating users at IDP Proxy");
+                    assert false;
+                }
+                idpproxyuserlist.add(configMap.get(TestConstants.
+                        KEY_IDP_PROXY_USER + i));
             }
-            idpproxyuserlist.add(configMap.get(TestConstants.
-                    KEY_IDP_PROXY_USER));
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -225,6 +234,19 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     throws Exception {
         entering("SPInitSSO", null);
         try {
+            configMap.put(TestConstants.KEY_SP_USER,
+                    configMap.get(TestConstants.KEY_SP_USER + 1));
+            configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
+                    configMap.get(TestConstants.KEY_SP_USER_PASSWORD + 1));
+            configMap.put(TestConstants.KEY_IDP_USER,
+                    configMap.get(TestConstants.KEY_IDP_USER + 1));
+            configMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
+                    configMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
+            configMap.put(TestConstants.KEY_IDP_PROXY_USER,
+                    configMap.get(TestConstants.KEY_IDP_PROXY_USER + 1));
+            configMap.put(TestConstants.KEY_IDP_PROXY_USER_PASSWORD,
+                    configMap.get(TestConstants.KEY_IDP_PROXY_USER_PASSWORD + 1));
+
             log(Level.FINEST, "SPInitSSO", "Running: SPInitSSO");
             getWebClient();
             xmlfile = baseDir + "SAMLv2IDPProxySPInitSSO.xml";
@@ -265,6 +287,71 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
         exiting("SPInitSLO");
     }
         
+    /**
+     * Run saml2 transient SSO in IDP Proxy scenario.
+     * @DocTest: SAML2|Perform SP initiated sso with transient federation.
+     */
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    dependsOnMethods={"SPInitSLO"})
+    public void SPInitSSOTransient()
+    throws Exception {
+        entering("SPInitSSOTransient", null);
+        try {
+            getWebClient();
+            configMap.put(TestConstants.KEY_SP_USER,
+                    configMap.get(TestConstants.KEY_SP_USER + 1));
+            configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
+                    configMap.get(TestConstants.KEY_SP_USER_PASSWORD + 1));
+            configMap.put(TestConstants.KEY_IDP_USER,
+                    configMap.get(TestConstants.KEY_IDP_USER + 1));
+            configMap.put(TestConstants.KEY_IDP_USER_PASSWORD,
+                    configMap.get(TestConstants.KEY_IDP_USER_PASSWORD + 1));
+            configMap.put(TestConstants.KEY_IDP_PROXY_USER,
+                    configMap.get(TestConstants.KEY_IDP_PROXY_USER + 1));
+            configMap.put(TestConstants.KEY_IDP_PROXY_USER_PASSWORD,
+                    configMap.get(TestConstants.KEY_IDP_PROXY_USER_PASSWORD + 1));
+            configMap.put("urlparams", "NameIDFormat=transient");
+
+            log(Level.FINEST, "SPInitSSOTransient", "Running: SPInitSSOTransient");
+            getWebClient();
+            xmlfile = baseDir + "SAMLv2IDPProxySPInitSSOTransient.xml";
+            SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, ssoProfile, false, 
+                    true);
+            log(Level.FINEST, "SPInitSSOTransient", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            page1 = task1.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "SPInitSSOTransient", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("SPInitSSOTransient");
+    }
+    
+    /**
+     * Run saml2 slo
+     * @DocTest: SAML2|Perform SP initiated slo.
+     */
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    dependsOnMethods={"SPInitSSOTransient"})
+    public void SPInitSLOTransient()
+    throws Exception {
+        entering("SPInitSLOTransient", null);
+        try {
+            log(Level.FINEST, "SPInitSLOTransient", "Running: SPInitSLOTransient");
+            xmlfile = baseDir + "SAMLv2IDPProxySPInitSLOTransient.xml";
+            SAMLv2Common.getxmlSPSLO(xmlfile, configMap, sloProfile, true);
+            log(Level.FINEST, "SPInitSLOTransient", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            page1 = task1.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "SPInitSLOTransient", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("SPInitSLOTransient");
+    }
+
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
