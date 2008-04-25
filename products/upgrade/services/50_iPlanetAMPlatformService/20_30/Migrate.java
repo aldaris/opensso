@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.2 2008-03-20 17:24:04 bina Exp $
+ * $Id: Migrate.java,v 1.3 2008-04-25 05:46:38 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,10 +57,12 @@ public class Migrate implements MigrateTasks {
     final static String ATTR_SITE_LIST = "iplanet-am-platform-site-list";
     final static String ATTR_LOGIN_URL = "iplanet-am-platform-login-url";
     final static String ATTR_LOGOUT_URL = "iplanet-am-platform-logout-url";
+    final static String SERVER_HOST = "com.iplanet.am.server.host";
+    final static String SERVER_PORT = "com.iplanet.am.server.port";
+    final static String SERVER_PROTO = "com.iplanet.am.server.protocol";
     final static String ATTR_SERVER_VALIDATOR = "ServerIDValidator";
     final static String ATTR_SITE_VALIDATOR = "SiteIDValidator";
     final static String ATTR_LOCALES = "iplanet-am-platform-available-locales";
-    final static String INSTANCE_NAME = "serverid";
     final static String INSTANCE_ID = "00";
 
     /**
@@ -69,6 +71,7 @@ public class Migrate implements MigrateTasks {
      * @return true if successful otherwise false.
      */
     public boolean migrateService() {
+        String classMethod = "iPlanetAMPlatformService/20_30:migrateService: ";
         boolean isSuccess = false;
         try {
             String fileName =
@@ -101,7 +104,7 @@ public class Migrate implements MigrateTasks {
                         new FileInputStream(
                         UpgradeUtils.getServerDefaultsPath()));
             } catch (IOException ioe) {
-                System.out.println("Error loading properties");
+                UpgradeUtils.debug.error("Error loading properties", ioe);
             }
             Set vSet = new HashSet();
             Enumeration propertiesNames = properties.propertyNames();
@@ -112,11 +115,11 @@ public class Migrate implements MigrateTasks {
             }
             // add to server-default subconfig
             UpgradeUtils.addServerDefaults(SERVICE_NAME, SERVER_ATTR,
-                    INSTANCE_NAME, INSTANCE_ID, vSet);
+                    null, INSTANCE_ID, vSet, null);
 
             // get the values of site list.
             Set attrValueSet = UpgradeUtils.getAttributeValue(SERVICE_NAME,
-                    PLATFORM_ATTR, schemaType);
+                    ATTR_SITE_LIST, schemaType);
             Iterator i = attrValueSet.iterator();
             while (i.hasNext()) {
                 String attrVal = (String) i.next();
@@ -131,7 +134,7 @@ public class Migrate implements MigrateTasks {
                 if (index != -1) {
                     String siteId = remStr.substring(0, index);
                     String accessPointStr = remStr.substring(index + 1);
-                    StringTokenizer st = 
+                    StringTokenizer st =
                             new StringTokenizer(accessPointStr, "|");
                     Set accessPoints = new HashSet();
                     while (st.hasMoreTokens()) {
@@ -141,6 +144,9 @@ public class Migrate implements MigrateTasks {
                 }
             }
 
+            // get existing AMConfig.properties 
+            String serverStr = UpgradeUtils.getServerName();
+            Properties amconfigProp = UpgradeUtils.getServerProperties();
             // get value of iplanet-am-platform-server-list attribute
             attrValueSet = UpgradeUtils.getAttributeValue(SERVICE_NAME,
                     PLATFORM_ATTR, schemaType);
@@ -158,7 +164,24 @@ public class Migrate implements MigrateTasks {
                 // get complete instance name with deployURI
                 String serverInstance =
                         UpgradeUtils.getServerInstance(serverName);
-                UpgradeUtils.createServiceInstance(serverInstance, serverId);
+                if (serverName != null &&
+                        serverName.equalsIgnoreCase(serverStr)) {
+                    Set values = getValues(amconfigProp);
+                    // read serverconfig XML
+                    String serverconfigXML = UpgradeUtils.getServerConfigXML();
+                    if (UpgradeUtils.debug.messageEnabled()) {
+                        UpgradeUtils.debug.message(classMethod +
+                                "AMConfig.properties " +
+                                "values are :" + values);
+                        UpgradeUtils.debug.message(classMethod +
+                                "serverconfigXMl is :" + serverconfigXML);
+                    }
+                    UpgradeUtils.addServerDefaults(SERVICE_NAME, SERVER_ATTR,
+                            serverInstance, serverId, values, serverconfigXML);
+                } else {
+                    UpgradeUtils.createServiceInstance(
+                            serverInstance, serverId);
+                }
                 if (siteId != null) {
                     UpgradeUtils.addToSite(serverInstance, siteId);
                 }
@@ -176,14 +199,6 @@ public class Migrate implements MigrateTasks {
      * @return true if successful else error.
      */
     public boolean postMigrateTask() {
-        // TODO - read AMConfig.properties and populate into the map values.
-        // and then remove the old attribute
-        //
-        //UpgradeUtils.removeAttributeSchema(SERVICE_NAME,schemaType,
-        //ATTR_SITE_LIST,null);
-        //UpgradeUtils.removeAttributeSchema(SERVICE_NAME,schemaType,
-        //PLATFORM_ATTR,null);
-
         return true;
     }
 
@@ -194,5 +209,22 @@ public class Migrate implements MigrateTasks {
      */
     public boolean preMigrateTask() {
         return true;
+    }
+
+    /**
+     * Returns a set of values from the properties.
+     * 
+     * @param properties the properties object.
+     * @return a set of values with the value in the format propertyName=value
+     */
+    private Set getValues(Properties properties) {
+        Set vSet = new HashSet();
+        Enumeration propertiesNames = properties.propertyNames();
+        while (propertiesNames.hasMoreElements()) {
+            String propertyName = (String) propertiesNames.nextElement();
+            String value = (String) properties.get(propertyName);
+            vSet.add(propertyName + "=" + value);
+        }
+        return vSet;
     }
 }
