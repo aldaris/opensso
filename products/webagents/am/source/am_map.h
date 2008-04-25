@@ -25,7 +25,8 @@
  * Abstract:
  *
  * Types and functions for creating, destroying, and manipulating the
- * map objects used by the Sun Java System Access Manager Access Management SDK.
+ * map objects used by the Sun Federated Access Manager Access Management 
+ * SDK.
  *
  */
 

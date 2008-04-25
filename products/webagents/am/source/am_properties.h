@@ -21,7 +21,7 @@
  *
  * Abstract:
  *
- * Properties map for use by clients of the Sun Java System Access Manager
+ * Properties map for use by clients of the Sun Federated Access Manager
  * Remote Client SDK.
  *
  */

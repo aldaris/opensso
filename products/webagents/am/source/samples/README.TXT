@@ -1,7 +1,7 @@
 README.TXT
 
 --------------------------------------------------------------------
-Sun(TM) Java(tm) System Access Manager Policy Agents 2.2
+Sun Federated Access Manager Policy Agent 3.0
 --------------------------------------------------------------------
 
 DISCLAIMER

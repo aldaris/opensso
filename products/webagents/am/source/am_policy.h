@@ -21,7 +21,7 @@
  *
  * Abstract:
  *
- * Types and functions for using Sun Java System Access Manager Access 
+ * Types and functions for using Sun Federated Access Manager Access 
  * Management SDK policy objects.
  *
  */

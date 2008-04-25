@@ -21,7 +21,7 @@
  *
  * Abstract:
  *
- * Common types and macros provided by the Sun Java System Access Manager 
+ * Common types and macros provided by the Sun Federated Access Manager 
  * Access Management SDK.
  *
  */

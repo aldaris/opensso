@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS6Resource.en,v 1.2 2008-03-11 23:13:43 sean_brydon Exp $
+' $Id: IIS6Resource.en,v 1.3 2008-04-25 22:07:27 madan_ranganath Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -43,7 +43,7 @@
 116 = Failover Server Deployment URI [/amserver] :
 117 = Failover Server Console URI [/amconsole] :
 
-118 = Agent-Access Manager Shared Secret :
+118 = Agent-Sun Federated Access Manager Shared Secret :
 119 = Re-enter Shared Secret :
 
 120 = CDSSO Enabled [false] :

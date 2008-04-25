@@ -24,7 +24,7 @@
 /*
  * Abstract:
  *
- * General utility routines provided by the Sun Java System Access Manager 
+ * General utility routines provided by the Sun Federated Access Manager 
  * Access Management library.
  *
  */
