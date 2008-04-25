@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-samlv2idpproxy-testng.xml,v 1.1 2008-04-10 21:24:22 mrudulahg Exp $
+ $Id: ds_ds-samlv2idpproxy-testng.xml,v 1.2 2008-04-25 15:23:58 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,8 +36,9 @@
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.samlv2idpproxy.ConfigureSAMLv2IDPProxy"/>
-            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.ConfigureSAMLv2IDPProxy"/> 
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/> 
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxyAutoFederationTests"/>
             <class name="com.sun.identity.qatest.samlv2idpproxy.UnconfigureSAMLv2IDPProxy"/> 
         </classes>
     </test>
