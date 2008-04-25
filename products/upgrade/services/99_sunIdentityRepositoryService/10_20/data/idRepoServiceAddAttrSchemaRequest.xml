@@ -17,32 +17,32 @@
 <SchemaRequests serviceName="sunIdentityRepositoryService"
     SchemaType="Organization"
     SubSchema="LDAPv3">
-    <AddAttributeSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddAttrRequest.xml" />
+    <AddAttributeSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddAttrRequest.xml" />
 
 </SchemaRequests>
 
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"
     SchemaType="Organization">
-    <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAMDS.xml"/>
+    <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAMDS.xml"/>
 </SchemaRequests>
 
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"
     SchemaType="Organization">
-    <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAD.xml"/>
+    <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAD.xml"/>
 </SchemaRequests>
 
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"
                 SchemaType="Organization">
-   <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddFiles.xml" />
+   <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddFiles.xml" />
 </SchemaRequests>
 
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"
     SchemaType="Organization">
-    <AddSubSchema fileName="BASEDIR/PRODUCT_DIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAMSDK.xml"/>
+    <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAMSDK.xml"/>
 </SchemaRequests>
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"

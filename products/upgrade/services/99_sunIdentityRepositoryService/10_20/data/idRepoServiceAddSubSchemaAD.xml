@@ -181,7 +181,7 @@
 		    <AttributeSchema name="sun-idrepo-ldapv3-config-search-scope"
 			type="single_choice"
 			syntax="string"
-			i18nKey="a20145">
+			i18nKey="a2014a">
 			<ChoiceValues>
 			    <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
 			    <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
