@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.13 2008-04-25 00:13:42 sridharev Exp $
+ * $Id: SAMLv2Common.java,v 1.14 2008-04-25 15:17:08 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,14 @@ public class SAMLv2Common extends TestCommon {
         out.write(newline);
         out.write("<form name=\"Login\" buttonName=\"\" >");
         out.write(newline);
-        if (idpProxy) {
+        out.write("<input name=\"IDToken1\" value=\"" + idp_user + "\" />");
+        out.write(newline);
+        out.write("<input name=\"IDToken2\" value=\""
+                + idp_userpw + "\" />");
+        out.write(newline);
+        if ((idpProxy) && (!idpLoginOnly)) {
+            out.write("</form>");
+            out.write(newline);
             out.write("<form name=\"Login\" buttonName=\"\" >");
             out.write(newline);
             out.write("<input name=\"IDToken1\" value=\"" + idp_proxy_user + "\" />");
@@ -112,14 +119,7 @@ public class SAMLv2Common extends TestCommon {
             out.write("<input name=\"IDToken2\" value=\""
                     + idp_proxy_userpw + "\" />");
             out.write(newline);
-            out.write("</form>");
-            out.write(newline);
         }
-        out.write("<input name=\"IDToken1\" value=\"" + idp_user + "\" />");
-        out.write(newline);
-        out.write("<input name=\"IDToken2\" value=\""
-                + idp_userpw + "\" />");
-        out.write(newline);
         if (!idpLoginOnly) {
             out.write("</form>");
             out.write(newline);
