@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.25 2008-04-15 17:55:13 pawand Exp $
+ * $Id: LoginState.java,v 1.26 2008-04-25 23:23:26 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -209,6 +209,8 @@ public class LoginState {
     private InternalSession oldSession = null;
     private SSOToken oldSSOToken = null;
     private boolean forceAuth;
+    private boolean cookieTimeToLiveEnabledFlag = false;
+    private int cookieTimeToLive = 0;
     boolean sessionUpgrade = false;
     String loginURL = null;
     long pageTimeOut = 60;
@@ -1511,7 +1513,56 @@ public class LoginState {
         forceAuth = force;
     }
 
-    
+    /**
+     * Enables AM session cookie time to live
+     * @param flag if <code>true</code> enables AM session cookie time to live,
+     *      otherwise disables AM session cookie time to live
+     */
+    public void enableCookieTimeToLive(boolean flag) {
+        cookieTimeToLiveEnabledFlag = flag;
+        if (ad.debug.messageEnabled()) {
+            ad.debug.message("LoginState.enableCookieTimeToLive():"
+                    + "enable=" + cookieTimeToLiveEnabledFlag);
+        }
+    }
+ 
+    /**
+     * Checks whether AM session cookie time to live is enabled
+     * @return <code>true</code> if AM session cookie time to live
+     *         is enabled, otherwise returns <code>false</code>
+     */
+    public boolean isCookieTimeToLiveEnabled() {
+        if (ad.debug.messageEnabled()) {
+            ad.debug.message("LoginState.isCookieTimeToLiveEnabled():"
+                    + "enabled=" + cookieTimeToLiveEnabledFlag);
+        }
+        return cookieTimeToLiveEnabledFlag;
+    }
+
+    /**
+     * Sets AM session cookie time to live
+     * @param timeToLive AM session cookie time to live in seconds
+     */
+    public void setCookieTimeToLive(int timeToLive) {
+        cookieTimeToLive = timeToLive;
+        if (ad.debug.messageEnabled()) {
+            ad.debug.message("LoginState.setCookieTimeToLive():"
+                    + "cookieTimeToLive=" + cookieTimeToLive);
+        }
+    }
+
+    /**
+     * Returns AM session cookie time to live
+     * @return AM session cookie time to live in seconds
+     */
+    public int getCookieTimeToLive() {
+        if (ad.debug.messageEnabled()) {
+            ad.debug.message("LoginState.getCookieTimeToLive():"
+                    + "cookieTimeToLive=" + cookieTimeToLive);
+        }
+        return cookieTimeToLive;
+    }
+
     /**
      * Returns user domain.
      *

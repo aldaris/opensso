@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.11 2008-04-24 23:40:47 manish_rustagi Exp $
+ * $Id: AuthClientUtils.java,v 1.12 2008-04-25 23:23:26 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2274,6 +2274,30 @@ public class AuthClientUtils {
         }
         return (returnValue);
     }
+
+    /**
+     * Checks whether FAM session cookie has to be made persistent.
+     * Only if value of <code>true</code> is providued for HTTP query
+     * parameter <code>Constants.PERSIST_AM_COOKIE</code>, AM session
+     * cookie would be made persistent
+     * @param reqDataHash http request parameters and values
+     * @return <code>true</code> if AM session cookie has to be made persistent,
+     *        otherwise returns <code>false</code>
+     */
+     public static boolean persistAMCookie(Hashtable reqDataHash) {
+         boolean persistCookie = false;
+         String persistCookieString
+                 = (String)reqDataHash.get(Constants.PERSIST_AM_COOKIE);
+         if (persistCookieString != null) {
+             persistCookie
+                     = (Boolean.valueOf(persistCookieString)).booleanValue();
+         }
+         if (utilDebug.messageEnabled()) {
+              utilDebug.message("AuthUtils.persistAMCookie(): " + persistCookie);
+         }
+         return persistCookie;
+     }
+    
 
     /**
      * Returns true if the request has the ForceAuth=<code>true</code>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.10 2007-10-17 23:00:30 veiming Exp $
+ * $Id: Constants.java,v 1.11 2008-04-25 23:23:25 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -206,6 +206,24 @@ public interface Constants {
      */
     public static final String AM_COOKIE_SECURE = 
         "com.iplanet.am.cookie.secure";
+
+    /**
+     *  URL Query parameter to indicate whether to persist AM session cookie,
+     *  only value that would enable persistence is "true". This works along
+     *  with the property <code>AM_COOKIE_TIME_TO_LIVE</code>. The expires time
+     *  of cookie is set only when the value of this property is "true"
+     *  and value of <code>AM_COOKIE_TIME_TO_LIVE<code> is a positive integer
+     */
+     public static final String PERSIST_AM_COOKIE = "PersistAMCookie";
+     
+     /**
+      *  property string for time to live of AM cookie, in minutes.
+      * If authentication was initiated with query parameter,
+      * <code>PERSIST_AM_COOKIE</code>=true, maxAge of AM session
+      * cookie is set to this value converted to seconds
+      */
+      public static final String AM_COOKIE_TIME_TO_LIVE
+      		= "com.iplanet.am.cookie.timeToLive";
 
     /**
      * property string for cookie encoding

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.13 2008-03-21 06:21:47 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.14 2008-04-25 23:23:27 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -365,6 +365,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 session.setAttribute("OrgName", orgName);
                 session.setAttribute("AuthContext", ac);
                 cookieSupported = AuthClientUtils.isCookieSupported(request);
+		if (cookieSupported) {
+		    if (AuthClientUtils.persistAMCookie(reqDataHash)) {
+			enableCookieTimeToLive();
+		    }
+		}
             } else if ( (authCookieValue != null) &&
                     (authCookieValue.length() != 0) &&
                     (!authCookieValue.equalsIgnoreCase("LOGOUT")) ) {
@@ -1143,6 +1148,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                         }
                         ac.getSSOToken().setProperty
                             (ISAuthConstants.DISTAUTH_LOGINURL,loginURL);
+			cookieTimeToLiveEnabled = isCookieTimeToLiveEnabled();
+			cookieTimeToLive = getCookieTimeToLive();
                         session.invalidate();
                     } else if (ac.getStatus() == AuthContext.Status.FAILED) {
                         LoginFail = true;
@@ -1371,15 +1378,35 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         if (cookieDomainSet.isEmpty()) {
             try {
                 cookie = AuthClientUtils.getCookieString(ac, null);
+		if (cookieTimeToLiveEnabled) {
+		    if (cookieTimeToLive > 0) {
+			if (loginDebug.messageEnabled()) {
+			    loginDebug.message("LoginViewBean.setCookie():"
+				    + "set cookie maxAge=" + cookieTimeToLive);
+			}
+			cookie.setMaxAge(cookieTimeToLive);
+		    }
+		}
                 response.addCookie(cookie);
             } catch (Exception e) {
                 loginDebug.message("Cound not set AM or AMAuth Cookie!");
             }
         } else {
+	    if (cookieTimeToLiveEnabled) {
+		if (cookieTimeToLive > 0) {
+		    if (loginDebug.messageEnabled()) {
+			loginDebug.message("LoginViewBean.setCookie():"
+				+ "would set cookie maxAge=" + cookieTimeToLive);
+		    }
+		}
+	    }
             Iterator iter = cookieDomainSet.iterator();
             while (iter.hasNext()) {
                 cookieDomain = (String)iter.next();
                 cookie = AuthClientUtils.getCookieString(ac, cookieDomain);
+		if (cookieTimeToLive > 0) {
+		    cookie.setMaxAge(cookieTimeToLive);
+		}
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("cookie for new request : " + cookie);
                 }
@@ -1761,7 +1788,61 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             return false;
         return true;
     }
-    
+
+   public void enableCookieTimeToLive() {
+       int cookieTimeToLive = 0;
+       boolean cookieTimeToLiveEnabled = false;
+       String cookieTimeToLiveString = SystemProperties.get(
+            com.sun.identity.common.Constants.AM_COOKIE_TIME_TO_LIVE);
+       if ((cookieTimeToLiveString != null)
+               && (cookieTimeToLiveString.length() != 0)) {
+           try {
+               cookieTimeToLive
+                       = Integer.parseInt(cookieTimeToLiveString) * 60;
+               if (loginDebug.messageEnabled()) {
+                   loginDebug.message("LoginViewBean.enableCookieTimeToLive():"
+                       + "cookieTimeToLive=" + cookieTimeToLive);
+               }
+   
+           } catch (NumberFormatException nfe) {
+               if (loginDebug.warningEnabled()) {
+                   loginDebug.warning("LoginViewBean.enableCookieTimeToLive():"
+                       + "not a valid number, leaving cookieTimeToLive as 0");
+               }
+           }
+       }
+       if (cookieTimeToLive > 0) {
+           cookieTimeToLiveEnabled = true;
+           if (loginDebug.messageEnabled()) {
+               loginDebug.message("LoginViewBean.enableCookieTimeToLive():"
+                   + "cookieTimeToLive " + cookieTimeToLive + "s, enabled");
+           }
+           session.setAttribute("distAuth.cookieTimeToLive",
+                   new Integer(cookieTimeToLive));
+           session.setAttribute("distAuth.cookieTimeToLiveEnabled",
+                   Boolean.TRUE);
+       } else {
+           if (loginDebug.messageEnabled()) {
+               loginDebug.message("LoginViewBean.enableCookieTimeToLive():"
+                   + "cookieTimeToLive not enabled");
+           }
+       }
+   }
+   
+   public int getCookieTimeToLive() {
+       return session.getAttribute("distAuth.cookieTimeToLive") != null ?
+               ((Integer)(session.getAttribute(
+                       "distAuth.cookieTimeToLive"))).intValue()
+               : 0;
+   }
+   
+   public boolean isCookieTimeToLiveEnabled() {
+       return session.getAttribute("distAuth.cookieTimeToLiveEnabled") != null
+           ? ((Boolean)(session.getAttribute(
+                   "distAuth.cookieTimeToLiveEnabled"))).booleanValue()
+           : false;
+   }
+
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
@@ -1846,6 +1927,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     ArrayList credentials = null;
     String tokenType = null;
     public String[] userCredentials = null; 
+    private boolean cookieTimeToLiveEnabled = false;
+    private int cookieTimeToLive = 0;
     
     /** Default parameter name for old token */
     public static final String TOKEN_OLD = "Login.Token";

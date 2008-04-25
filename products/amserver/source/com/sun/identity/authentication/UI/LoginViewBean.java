@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.11 2008-04-05 16:43:34 pawand Exp $
+ * $Id: LoginViewBean.java,v 1.12 2008-04-25 23:23:26 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@
 
 package com.sun.identity.authentication.UI;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.jato.RequestContext;
@@ -400,6 +401,9 @@ public class LoginViewBean extends AuthViewBeanBase {
             if (AuthUtils.isNewRequest(ac)) {
                 loginDebug.message("New AuthContext created");
                 if (AuthUtils.isCookieSupported(ac)) {
+		    if (AuthUtils.persistAMCookie(reqDataHash)) {
+			enableCookieTimeToLive();
+		    }
                     setCookie();
                     setlbCookie();
                 }
@@ -1568,6 +1572,19 @@ public class LoginViewBean extends AuthViewBeanBase {
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             try {
                 cookie = AuthUtils.getCookieString(ac, null);
+		int cookieTimeToLive = 0;
+		if (isCookieTimeToLiveEnabled()) {
+		    cookieTimeToLive = getCookieTimeToLive();
+		    if ((cookieTimeToLive > 0)
+			    && cookie.getName().equals(
+			AuthUtils.getCookieName())) {
+			if (loginDebug.messageEnabled()) {
+			    loginDebug.message("LoginViewBean.setCookie():"
+				    + "set cookie maxAge=" + cookieTimeToLive);
+			}
+			cookie.setMaxAge(cookieTimeToLive);
+		    }
+		}
                 response.addCookie(cookie);
                 if ((cookie.getName()).equals(AuthUtils.getCookieName())) {
                     setHostUrlCookie(response);
@@ -1577,9 +1594,24 @@ public class LoginViewBean extends AuthViewBeanBase {
             }
         } else {
             Iterator iter = cookieDomainSet.iterator();
+	    int cookieTimeToLive = 0;
+	    if (isCookieTimeToLiveEnabled()) {
+		cookieTimeToLive = getCookieTimeToLive();
+		if (cookieTimeToLive > 0) {
+		    if (loginDebug.messageEnabled()) {
+			loginDebug.message("LoginViewBean.setCookie():"
+				+ "would set cookie maxAge=" + cookieTimeToLive);
+		    }
+		}
+	    }
             while (iter.hasNext()) {
                 cookieDomain = (String)iter.next();
                 cookie = AuthUtils.getCookieString(ac, cookieDomain);
+		if ((cookieTimeToLive > 0) 
+			&& cookie.getName().equals(
+			AuthUtils.getCookieName())) {
+		    cookie.setMaxAge(cookieTimeToLive);
+		}
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("cookie for new request : "
                     + cookie.toString());
@@ -2013,7 +2045,67 @@ public class LoginViewBean extends AuthViewBeanBase {
             return false;
         return true;
     }
-    
+
+   /**
+    * Enables AM session cookie time to live
+    * @param flag if <code>true</code> enables AM session cookie time to live,
+    *      otherwise disables AM session cookie time to live
+    */
+   public void enableCookieTimeToLive() {
+       int cookieTimeToLive = 0;
+       String cookieTimeToLiveString = SystemProperties.get(
+            com.sun.identity.common.Constants.AM_COOKIE_TIME_TO_LIVE);
+     if ((cookieTimeToLiveString != null)
+               && (cookieTimeToLiveString.length() != 0)) {
+           try {
+               cookieTimeToLive
+                       = Integer.parseInt(cookieTimeToLiveString) * 60;
+               if (loginDebug.messageEnabled()) {
+                   loginDebug.message("LoginViewBean.enableCookieTimeToLive():"
+                       + "cookieTimeToLive=" + cookieTimeToLive);
+               }
+
+           } catch (NumberFormatException nfe) {
+               if (loginDebug.warningEnabled()) {
+                   loginDebug.warning("LoginViewBean.enableCookieTimeToLive():"
+                       + "not a valid number, leaving cookieTimeToLive as 0");
+               }
+           }
+       }
+       if (cookieTimeToLive > 0) {
+           boolean cookieTimeToLiveEnabledFlag = true;
+           if (loginDebug.messageEnabled()) {
+               loginDebug.message("LoginViewBean.enableCookieTimeToLive():"
+                   + "cookieTimeToLive " + cookieTimeToLive + "s, enabled");
+           }
+           ac.getLoginState().setCookieTimeToLive(cookieTimeToLive);
+           ac.getLoginState().enableCookieTimeToLive(true);
+       } else {
+           if (loginDebug.messageEnabled()) {
+               loginDebug.message("LoginViewBean.enableCookieTimeToLive():"
+                   + "cookieTimeToLive not enabled");
+           }
+       }
+   }
+
+    /**
+     * Checks whether AM session cookie time to live is enabled
+     * @return <code>true</code> if AM session cookie time to live
+     *         is enabled, otherwise returns <code>false</code>
+     */
+    public boolean isCookieTimeToLiveEnabled() {
+        return ac.getLoginState().isCookieTimeToLiveEnabled();
+    }
+   
+    /**
+     * Returns AM session cookie time to live
+     * @return AM session cookie time to live in seconds
+     */
+    public int getCookieTimeToLive() {
+        return ac.getLoginState().getCookieTimeToLive();
+    }
+  
+
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
