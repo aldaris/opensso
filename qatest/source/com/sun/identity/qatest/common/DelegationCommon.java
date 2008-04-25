@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCommon.java,v 1.3 2008-04-19 01:07:56 srivenigan Exp $
+ * $Id: DelegationCommon.java,v 1.4 2008-04-25 14:59:54 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -41,7 +42,7 @@ import java.util.logging.Level;
  *
  *This class contains helper methods to executed delegation testcases
  */
-public class DelegationCommon extends IDMCommon {
+public class DelegationCommon extends IDMCommon implements DelegationConstants {
     
     /**
      * famadm.jsp url
@@ -68,6 +69,7 @@ public class DelegationCommon extends IDMCommon {
      */
     protected String logoutURL;
     
+    protected ResourceBundle famMsgBdl;
     
     /** Creates a new instance of DelegationCommon */
     public DelegationCommon(String componentName) {
@@ -78,6 +80,7 @@ public class DelegationCommon extends IDMCommon {
                 "/UI/Logout";
         fmadmURL = protocol + ":" + "//" + host + ":" + port + uri;
         fmadm = new FederationManager(fmadmURL);
+        famMsgBdl = ResourceBundle.getBundle(DELEGATION_GLOBAL);
     }
     
     /**
@@ -108,12 +111,12 @@ public class DelegationCommon extends IDMCommon {
                     assert false;
                 }
                 if (getHtmlPageStringIndex(addPrivilegesPage,
-                        "Privileges are add to identity") != -1) {
+                        getMsg(PRIV_ADD_SUCCESS_MSG)) != -1) {
                     status = true;
                     log(Level.FINEST, "addPrivileges", "Privilege " +
                             privileges.toString() + " are added successfully");
                 } else if (getHtmlPageStringIndex(addPrivilegesPage,
-                        "already has privilege") != -1) {
+                        getMsg(ALREADY_HAVE_PRIV_MSG)) != -1) {
                     status = true;
                     log(Level.FINEST, "addPrivileges", "Privilege " +
                             privileges.toString() + " already exists");
@@ -161,7 +164,7 @@ public class DelegationCommon extends IDMCommon {
                     assert false;
                 }
                 if (getHtmlPageStringIndex(removePrivilegesPage,
-                        "Privileges are removed from identity") != -1) {
+                        getMsg(PRIV_REMOVE_SUCCESS_MSG)) != -1) {
                     status = true;
                     log(Level.FINEST, "removePrivileges", "Privilege " +
                             privileges.toString() +
@@ -194,7 +197,8 @@ public class DelegationCommon extends IDMCommon {
      */
     public boolean showPrivileges(SSOToken ssotoken, String idName,
             IdType idType,
-            String realmName)
+            String realmName,
+            String testPrivileges)
     throws Exception {
         boolean status = false;
         try {
@@ -208,12 +212,15 @@ public class DelegationCommon extends IDMCommon {
                         "showPrivilages famadm command failed");
                 assert false;
             }
-            if (getHtmlPageStringIndex(showPrivilegesPage,
-                    "Privileges of identity") != -1) {
+            if(getHtmlPageStringIndex(showPrivilegesPage,
+                    testPrivileges) != -1) {
                 status = true;
             } else {
+                log(Level.SEVERE, "showPrivileges",
+                        "Couldn't find privilege " + testPrivileges);
                 status = false;
             }
+            
         } catch (Exception ex) {
             ex.printStackTrace();
             throw ex;
@@ -295,7 +302,7 @@ public class DelegationCommon extends IDMCommon {
                 log(Level.FINE, "deleteRealmsRecursively", "Realm: " +
                         delRealmName);
                 if (getHtmlPageStringIndex(deleteRealmsPage,
-                        "Realm is deleted") != -1) {
+                        getMsg(REALM_DEL_MSG)) != -1) {
                     status = true;
                 } else {
                     status = false;
@@ -509,5 +516,15 @@ public class DelegationCommon extends IDMCommon {
             throw ex;
         }
         return true;
+    }
+    
+    /**
+     * Returns message from the DelegationGlobal properties file.
+     *
+     * @return Message string.
+     */
+    private String getMsg(String key) {
+        String paramKey = DELEGATION_GLOBAL + "." + key;
+        return famMsgBdl.getString(paramKey);
     }
 }

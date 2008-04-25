@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationConstants.java,v 1.2 2008-03-10 05:59:08 kanduls Exp $
+ * $Id: DelegationConstants.java,v 1.3 2008-04-25 14:57:46 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,4 +104,29 @@ public interface DelegationConstants extends IDMConstants {
      */
     static final String SCHEMA_TYPE = "schema_type";
     
+    /**
+     * Delegation Global properties file name.
+     */
+    static final String DELEGATION_GLOBAL = "DelegationGlobal";
+    
+    /**
+     * Key to hold assign privileges success msg
+     */
+     static final String PRIV_ADD_SUCCESS_MSG = "priv-add-success";
+     
+     /**
+      * Key to hold already have privileges
+      */
+     static final String ALREADY_HAVE_PRIV_MSG = "already-have-priv";
+     
+     /**
+      * Key to hold privileges remove message
+      */
+     static final String PRIV_REMOVE_SUCCESS_MSG = "remove-priv";
+     
+     /**
+      * Key to hold realm delete messsage
+      */
+     static final String REALM_DEL_MSG = "realm-del";
+     
 }

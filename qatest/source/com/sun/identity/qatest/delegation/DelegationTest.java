@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationTest.java,v 1.2 2008-03-10 05:59:08 kanduls Exp $
+ * $Id: DelegationTest.java,v 1.3 2008-04-25 14:57:46 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -311,7 +311,8 @@ public class DelegationTest extends DelegationCommon {
                                     "privileges to " + testIdType + " " +
                                     testIdName + "...");
                             assert(showPrivileges(ssoToken, testIdName,
-                                    getIdType(testIdType), delegationRealm));
+                                    getIdType(testIdType), delegationRealm,
+                                    testPrivileges));
                         } else {
                             assert false;
                         }
