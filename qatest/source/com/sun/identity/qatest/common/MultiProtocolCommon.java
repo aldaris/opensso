@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.10 2008-04-10 21:25:44 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.11 2008-04-25 00:12:33 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * This class contains common helper methods for samlv2, IDFF tests
@@ -80,13 +79,12 @@ public class MultiProtocolCommon extends TestCommon {
                         null, null, null, null, null, null, spec);
             }
             if (FederationManager.getExitCode(spmetaPage) != 0) {
-               assert false;
+                assert false;
             }
             
             arrMetadata[0] = getMetadataFromPage(spmetaPage, spec);
             arrMetadata[1] = getExtMetadataFromPage(spmetaPage, spec);
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
@@ -94,8 +92,8 @@ public class MultiProtocolCommon extends TestCommon {
                 arrMetadata[1] = arrMetadata[1].replaceAll("&lt;", "<");
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
-                        (String)m.get(TestConstants.KEY_SP_REALM), 
-                        arrMetadata[0], arrMetadata[1], 
+                        (String)m.get(TestConstants.KEY_SP_REALM),
+                        arrMetadata[0], arrMetadata[1],
                         (String)m.get(TestConstants.KEY_SP_COT), spec)) != 0) {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
@@ -132,7 +130,7 @@ public class MultiProtocolCommon extends TestCommon {
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
-                        null, null, null, null, null, null, null, 
+                        null, null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
                         null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
@@ -143,7 +141,7 @@ public class MultiProtocolCommon extends TestCommon {
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null, null, 
+                        null, null, null, null, null, null, null, null, null,
                         null, null, null, null, spec);
             }
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
@@ -152,8 +150,7 @@ public class MultiProtocolCommon extends TestCommon {
             
             arrMetadata[0] = getMetadataFromPage(idpmetaPage, spec);
             arrMetadata[1] = getExtMetadataFromPage(idpmetaPage, spec);
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
@@ -184,7 +181,7 @@ public class MultiProtocolCommon extends TestCommon {
         Map spMap = new HashMap<String, String>();
         try {
             spMap.put("serverurl", confMap.get(TestConstants.KEY_SP_PROTOCOL)
-                    + ":" + "//" + confMap.get(TestConstants.KEY_SP_HOST) + ":"
+            + ":" + "//" + confMap.get(TestConstants.KEY_SP_HOST) + ":"
                     + confMap.get(TestConstants.KEY_SP_PORT));
             spMap.put("serveruri",
                     confMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI));
@@ -197,7 +194,7 @@ public class MultiProtocolCommon extends TestCommon {
             spMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
                     confMap.get(TestConstants.KEY_SP_DATASTORE));
             spMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
-                confMap.get(TestConstants.KEY_SP_ENC_KEY));
+                    confMap.get(TestConstants.KEY_SP_ENC_KEY));
             spMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
                     confMap.get(TestConstants.KEY_SP_DIRECTORY_SERVER));
             spMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
@@ -217,7 +214,7 @@ public class MultiProtocolCommon extends TestCommon {
             return spMap;
         }
     }
-        
+    
     /**
      * This method fills map with IDP configuration data which is needed by
      * TestCommon.configureProduct method.
@@ -227,7 +224,7 @@ public class MultiProtocolCommon extends TestCommon {
         Map idpMap = new HashMap<String, String>();
         try {
             idpMap.put("serverurl", confMap.get(TestConstants.KEY_IDP_PROTOCOL)
-                    + ":" + "//" + confMap.get(TestConstants.KEY_IDP_HOST) + ":"
+            + ":" + "//" + confMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + confMap.get(TestConstants.KEY_IDP_PORT));
             idpMap.put("serveruri",
                     confMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI));
@@ -240,7 +237,7 @@ public class MultiProtocolCommon extends TestCommon {
             idpMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
                     confMap.get(TestConstants.KEY_IDP_DATASTORE));
             idpMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
-                confMap.get(TestConstants.KEY_IDP_ENC_KEY));
+                    confMap.get(TestConstants.KEY_IDP_ENC_KEY));
             idpMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
                     confMap.get(TestConstants.KEY_IDP_DIRECTORY_SERVER));
             idpMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
@@ -337,12 +334,12 @@ public class MultiProtocolCommon extends TestCommon {
         }
         return metadata;
     }
-
+    
     /**
-     * This method creates xml for Wsfed SP init SSO 
+     * This method creates xml for Wsfed SP init SSO
      * The flow is as follows
-     * If the SSO has been already established for the user with different 
-     * provider then SSO with WSFed will succeed without prompting to enter 
+     * If the SSO has been already established for the user with different
+     * provider then SSO with WSFed will succeed without prompting to enter
      * user details
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
@@ -381,12 +378,12 @@ public class MultiProtocolCommon extends TestCommon {
         out.write(newline);
         out.close();
     }
-
+    
     /**
      * This method creates xml for IDFF sp init sso
      * The flow is as follows
-     * If the SSO has been already established for the user with different 
-     * provider then SSO with IDFF will succeed without prompting to enter 
+     * If the SSO has been already established for the user with different
+     * provider then SSO with IDFF will succeed without prompting to enter
      * user details
      * @param xmlFileName is the file to be created.
      * @param Map m contains all the data for xml generation
@@ -423,13 +420,13 @@ public class MultiProtocolCommon extends TestCommon {
         out.write("</url>");
         out.write(System.getProperty("line.separator"));
         out.close();
-    }     
+    }
     
     /**
      * This method creates xml for SAMLv2 sp init sso
      * The flow is as follows
-     * If the SSO has been already established for the user with different 
-     * provider then SSO with SAMLv2 will succeed without prompting to enter 
+     * If the SSO has been already established for the user with different
+     * provider then SSO with SAMLv2 will succeed without prompting to enter
      * user details
      * 4. After successful sp login, "Single sign-on succeeded" msg is displayed.
      * @param xmlFileName is the file to be created.
@@ -438,7 +435,7 @@ public class MultiProtocolCommon extends TestCommon {
      */
     public static void getxmlSAMLv2SPInitSSO(String xmlFileName, Map m,
             String bindingType)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
@@ -478,7 +475,7 @@ public class MultiProtocolCommon extends TestCommon {
         out.close();
     }
     
-       /**
+    /**
      * This method creates the hosted SP/IDP metadata template & loads it.
      * It returns the uploaded standard & extended metadata.
      * Null is returned in case of failure.
@@ -495,33 +492,111 @@ public class MultiProtocolCommon extends TestCommon {
             String idpmetaAlias = "";
             String spmetaAlias = "";
             String spcertAlias = "";
+            String spattrqprovider = "";
+            String spscertalias = "";
+            String spattqsceralias = "";
+            String specertalias = "";
+            String spattrqecertalias = "";
+            String idpattrauthority = "";
+            String idpauthnauthority = "";
+            String idpscertalias = "";
+            String idpttrascertalias = "";
+            String idpauthnascertalias = "";
+            String idpecertalias = "";
+            String idpattraecertalias = "";
+            String idpauthnaecertalias = "";
             String idpcertAlias = "";
             String executionRealm = "";
             String cot = "";
             
             if (role.equalsIgnoreCase("SP")) {
-                deployurl = m.get(TestConstants.KEY_SP_PROTOCOL) + "://" +
-                        m.get(TestConstants.KEY_SP_HOST) + ":"
+                deployurl = m.get(TestConstants.KEY_SP_PROTOCOL) + "://"
+                        + m.get(TestConstants.KEY_SP_HOST) + ":"
                         + m.get(TestConstants.KEY_SP_PORT)
                         + m.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
                 entityName = (String)m.get(TestConstants.KEY_SP_ENTITY_NAME);
                 spmetaAlias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
                 spcertAlias = (String)m.get(TestConstants.KEY_SP_CERTALIAS);
                 executionRealm = (String)m.get(TestConstants.KEY_SP_EXECUTION_REALM);
+                spattrqprovider = (String)m.get(TestConstants.KEY_SP_ATTRQPROVIDER);
+                spscertalias = (String)m.get(TestConstants.KEY_SP_SCERTALIAS);
+                spattqsceralias = (String)m.get(TestConstants.KEY_SP_ATTRQ_SCERTALIAS);
+                specertalias = (String)m.get(TestConstants.KEY_SP_ECERTALIAS);
+                spattrqecertalias = (String)m.get(TestConstants.KEY_SP_ATTRQECERTALIAS);
                 cot = (String)m.get(TestConstants.KEY_SP_COT);
+                if (spattrqprovider.equals("") ||
+                        spattrqprovider.equals(null)) {
+                    spattrqprovider = "/attrq";
+                }
+                if (spscertalias.equals("") ||
+                        spscertalias.equals(null)) {
+                    spscertalias = spcertAlias;
+                }
+                if (spattqsceralias.equals("") ||
+                        spattqsceralias.equals(null)) {
+                    spattqsceralias = spcertAlias;
+                }
+                if (specertalias.equals("") ||
+                        specertalias.equals(null)) {
+                    specertalias = spcertAlias;
+                }
+                if (spattrqecertalias.equals("") ||
+                        spattrqecertalias.equals(null)) {
+                    spattrqecertalias = spcertAlias;
+                }
             } else if (role.equalsIgnoreCase("IDP")) {
-                deployurl = m.get(TestConstants.KEY_IDP_PROTOCOL) + "://" +
-                        m.get(TestConstants.KEY_IDP_HOST) + ":"
+                deployurl = m.get(TestConstants.KEY_IDP_PROTOCOL) + "://"
+                        + m.get(TestConstants.KEY_IDP_HOST) + ":"
                         + m.get(TestConstants.KEY_IDP_PORT)
                         + m.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
                 entityName = (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME);
                 idpmetaAlias = (String)m.get(TestConstants.KEY_IDP_METAALIAS);
                 idpcertAlias = (String)m.get(TestConstants.KEY_IDP_CERTALIAS);
                 executionRealm = (String)m.get(TestConstants.KEY_IDP_EXECUTION_REALM);
+                idpattrauthority = (String)m.get(TestConstants.KEY_IDP_ATTRAUTHOIRTY);
+                idpauthnauthority = (String)m.get(TestConstants.KEY_IDP_AUTHNAUTHORITY);
+                idpscertalias = (String)m.get(TestConstants.KEY_IDP_IDPSCERTALIAS);
+                idpttrascertalias = (String)m.get(TestConstants.KEY_IDP_ATTRASCERTALIAS);
+                idpauthnascertalias = (String)m.get(TestConstants.KEY_IDP_AUTHNASCERTALIAS);
+                idpecertalias = (String)m.get(TestConstants.KEY_IDP_IDPECERTALIAS);
+                idpattraecertalias = (String)m.get(TestConstants.KEY_IDP_ATTRAECERTALIAS);
+                idpauthnaecertalias = (String)m.get(TestConstants.KEY_IDP_AUTHNAECERTALIAS);
                 cot = (String)m.get(TestConstants.KEY_IDP_COT);
+                if (idpattrauthority.equals("") ||
+                        idpattrauthority.equals(null)) {
+                    idpattrauthority = "/attra";
+                }
+                if (idpauthnauthority.equals("") ||
+                        idpauthnauthority.equals(null))  {
+                    idpauthnauthority = "/authna";
+                }
+                if (idpscertalias.equals("") ||
+                        idpscertalias.equals(null)) {
+                    idpscertalias = idpcertAlias;
+                }
+                if (idpttrascertalias.equals("") ||
+                        idpttrascertalias.equals(null)) {
+                    idpttrascertalias = idpcertAlias;
+                }
+                if (idpauthnascertalias.equals("") ||
+                        idpauthnascertalias.equals(null)) {
+                    idpauthnascertalias = idpcertAlias;
+                }
+                if (idpecertalias.equals("") ||
+                        idpecertalias.equals(null)) {
+                    idpecertalias = idpcertAlias;
+                }
+                if (idpattraecertalias.equals("") ||
+                        idpattraecertalias.equals(null)) {
+                    idpattraecertalias = idpcertAlias;
+                }
+                if (idpauthnaecertalias.equals("") ||
+                        idpauthnaecertalias.equals(null)) {
+                    idpauthnaecertalias = idpcertAlias;
+                }
             } else if (role.equalsIgnoreCase("IDPPROXY")) {
-                deployurl = m.get(TestConstants.KEY_IDP_PROXY_PROTOCOL) + "://" +
-                        m.get(TestConstants.KEY_IDP_PROXY_HOST) + ":"
+                deployurl = m.get(TestConstants.KEY_IDP_PROXY_PROTOCOL) + "://"
+                        + m.get(TestConstants.KEY_IDP_PROXY_HOST) + ":"
                         + m.get(TestConstants.KEY_IDP_PROXY_PORT)
                         + m.get(TestConstants.KEY_IDP_PROXY_DEPLOYMENT_URI);
                 entityName = (String)m.get(TestConstants.KEY_IDP_PROXY_ENTITY_NAME);
@@ -532,27 +607,28 @@ public class MultiProtocolCommon extends TestCommon {
                 executionRealm = (String)m.get(TestConstants.KEY_IDP_PROXY_EXECUTION_REALM);
                 cot = (String)m.get(TestConstants.KEY_IDP_PROXY_COT);
             }
-            
             //get sp & idp extended metadata
             FederationManager fm = new FederationManager(deployurl);
             HtmlPage metaPage;
             if (signed) {
                 metaPage = fm.createMetadataTempl(webClient, entityName, true,
-                        true, spmetaAlias, idpmetaAlias, 
-                        null, null, null, null, null, null, null,
-                        spcertAlias, idpcertAlias,
-                        null, null, null, null, null, null,
-                        spcertAlias, idpcertAlias,
-                        null, null, null, null, null, null, "saml2");
+                        true, spmetaAlias, idpmetaAlias,
+                        spattrqprovider, idpattrauthority, idpauthnauthority,
+                        null, null, null, null, spcertAlias, idpcertAlias,
+                        spattqsceralias, idpscertalias, idpttrascertalias,
+                        null, null, null, spcertAlias, idpcertAlias,
+                        spattrqecertalias, idpattraecertalias,
+                        idpauthnaecertalias, null, null, null, "saml2");
             } else {
                 metaPage = fm.createMetadataTempl(webClient, entityName, true,
                         true, spmetaAlias, idpmetaAlias,
-                        null, null, null, null,  null, null, null, null,
+                        spattrqprovider, idpattrauthority, idpauthnauthority, 
+                        null,  null, null, null, null,
                         null, null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null, "saml2");
             }
             if (FederationManager.getExitCode(metaPage) != 0) {
-               assert false;
+                assert false;
             }
             
             String page = metaPage.getWebResponse().getContentAsString();
@@ -568,8 +644,7 @@ public class MultiProtocolCommon extends TestCommon {
                 arrMetadata[1] = null;
                 assert false;
             }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
@@ -578,8 +653,7 @@ public class MultiProtocolCommon extends TestCommon {
                 arrMetadata[1] = arrMetadata[1].replaceAll("&gt;", ">");
                 if (FederationManager.getExitCode(fm.importEntity(webClient,
                         executionRealm, arrMetadata[0], arrMetadata[1],
-                        cot, "saml2")) != 0)
-                {
+                        cot, "saml2")) != 0) {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
                     assert(false);

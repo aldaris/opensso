@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.13 2008-04-10 21:27:04 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.14 2008-04-25 00:14:35 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,6 +97,8 @@ public class ConfigureSAMLv2 extends TestCommon {
             log(Level.FINEST, "configureSAMLv2", "GroupName received from " +
                     "testng is " + strGroupName);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
                     configMap);
             log(Level.FINEST, "configureSAMLv2", "Map:" + configMap);
             

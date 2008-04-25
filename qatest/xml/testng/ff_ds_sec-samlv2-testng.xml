@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-samlv2-testng.xml,v 1.2 2007-08-10 23:31:55 mrudulahg Exp $
+ $Id: ff_ds_sec-samlv2-testng.xml,v 1.3 2008-04-25 00:11:43 sridharev Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -331,5 +331,261 @@
         <classes>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2SigningEncryptionTests"/>
         </classes>
-    </test> 
+    </test>
+        <test name="NameIdMngtSPHttpSPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPHttpSPHttpTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtSPHttpIDPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPHttpIDPHttpTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtSPHttpSPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPHttpSPSoapTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtSPHttpIDPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPHttpIDPSoapTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+      <test name="NameIdMngtSPSoapSPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPSoapSPHttpTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtSPSoapIDPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPSoapIDPHttpTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtSPSoapSPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPSoapSPSoapTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtSPSoapIDPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtSPSoapIDPSoapTest"/>
+        <parameter name="tinitor" value="SP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+      <test name="NameIdMngtIDPHttpSPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPHttpSPHttpTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtIDPHttpIDPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPHttpIDPHttpTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtIDPHttpSPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPHttpSPSoapTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtIDPHttpIDPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPHttpIDPSoapTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="HTTP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+      <test name="NameIdMngtIDPSoapSPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPSoapSPHttpTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtIDPSoapIDPHttpTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPSoapIDPHttpTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="HTTP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtIDPSoapSPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPSoapSPSoapTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="SP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
+    <test name="NameIdMngtIDPSoapIDPSoapTest">
+        <parameter name="groupName" value="ff_ds_sec"/>
+        <parameter name="ptestName" value="NameIdMngtIDPSoapIDPSoapTest"/>
+        <parameter name="tinitor" value="IDP"/>
+        <parameter name="tbind" value="SOAP"/>
+        <parameter name="nidInitor" value="IDP"/>
+        <parameter name="nidBind" value="SOAP"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2NameIdMngtTests"/>
+        </classes>
+    </test>
 </suite>

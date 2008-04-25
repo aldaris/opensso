@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.12 2008-04-11 06:10:05 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.13 2008-04-25 00:13:42 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1237,5 +1237,110 @@ public class SAMLv2Common extends TestCommon {
             e.printStackTrace();
         }
         return arrMetadata;
+    }
+    
+        
+    /**
+     * This method returns the termination URL based on the termination initiated
+     * either by SP or IDP and binding for termination can be SOAP or HTTP
+     * @param initiator can SP or IDP
+     * @param binding can be SOAP or HTTP
+     * @param Map consisting the configuration data
+     * @return termination URL
+     */
+    public static String getTerminateURL(String initiate, String binding,
+            Map m){
+        String terminateURL;
+        String spurl = m.get(TestConstants.KEY_SP_PROTOCOL) + "://" +
+                m.get(TestConstants.KEY_SP_HOST) + ":"
+                + m.get(TestConstants.KEY_SP_PORT)
+                + m.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String idpurl = m.get(TestConstants.KEY_IDP_PROTOCOL) +
+                "://" + m.get(TestConstants.KEY_IDP_HOST) + ":" +
+                m.get(TestConstants.KEY_IDP_PORT) +
+                m.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
+        
+        if (initiate.equalsIgnoreCase("SP")) {
+            if (binding.equalsIgnoreCase("HTTP")) {
+                terminateURL = spurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_SP_METAALIAS) +
+                        "&idpEntityID=" + m.get(TestConstants.KEY_IDP_ENTITY_NAME) +
+                        "&requestType=Terminate&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:HTTP-Redirect";
+            } else {
+                terminateURL = spurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_SP_METAALIAS) +
+                        "&idpEntityID=" + m.get(TestConstants.KEY_IDP_ENTITY_NAME) +
+                        "&requestType=Terminate&binding=urn:oasis:names:tc:" +
+                        "SAML:2.0:bindings:SOAP";
+            }
+        } else {
+            if (binding.equalsIgnoreCase("HTTP")) {
+                terminateURL = idpurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_IDP_METAALIAS) +
+                        "&spEntityID=" + m.get(TestConstants.KEY_SP_ENTITY_NAME) +
+                        "&requestType=Terminate&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:HTTP-Redirect";
+            } else {
+                terminateURL = idpurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_IDP_METAALIAS) +
+                        "&spEntityID=" + m.get(TestConstants.KEY_SP_ENTITY_NAME) +
+                        "&requestType=Terminate&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:SOAP";
+            }
+        }
+        return terminateURL;
+    }
+    
+    /**
+     * This method returns newID Request URL based on the request initiated
+     * either by SP or IDP and binding for termination can be SOAP or HTTP
+     * @param initiator can SP or IDP
+     * @param binding can be SOAP or HTTP
+     * @param Map consisting the configuration data
+     * @return newID request URL
+     */
+    public static String getNewIDRequestURL(String idInitiator,String binding,
+            Map m) {
+        String newIDReqURL;
+        String spurl = m.get(TestConstants.KEY_SP_PROTOCOL) + "://" +
+                m.get(TestConstants.KEY_SP_HOST) + ":"
+                + m.get(TestConstants.KEY_SP_PORT)
+                + m.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+        String idpurl = m.get(TestConstants.KEY_IDP_PROTOCOL) +
+                "://" + m.get(TestConstants.KEY_IDP_HOST) + ":" +
+                m.get(TestConstants.KEY_IDP_PORT) +
+                m.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
+        
+        if (idInitiator.equalsIgnoreCase("SP")) {
+            if (binding.equalsIgnoreCase("HTTP")) {
+                newIDReqURL = spurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_SP_METAALIAS) +
+                        "&idpEntityID=" + m.get(TestConstants.KEY_IDP_ENTITY_NAME) +
+                        "&requestType=NewID&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:HTTP-Redirect";
+            } else {
+                newIDReqURL = spurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_SP_METAALIAS) +
+                        "&idpEntityID=" + m.get(TestConstants.KEY_IDP_ENTITY_NAME) +
+                        "&requestType=NewID&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:SOAP";
+            }
+        } else {
+            if (binding.equalsIgnoreCase("HTTP")) {
+                newIDReqURL = idpurl + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_IDP_METAALIAS) +
+                        "&spEntityID=" + m.get(TestConstants.KEY_SP_ENTITY_NAME) +
+                        "&requestType=NewID&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:HTTP-Redirect";
+            } else {
+                newIDReqURL = idpurl + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=" +
+                        m.get(TestConstants.KEY_IDP_METAALIAS) +
+                        "&spEntityID=" + m.get(TestConstants.KEY_SP_ENTITY_NAME) +
+                        "&requestType=NewID&binding=urn:oasis:names:tc:SAML:2.0:" +
+                        "bindings:SOAP";
+            }
+        }
+        return newIDReqURL;
     }
 }
