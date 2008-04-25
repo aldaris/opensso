@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.3 2008-04-24 12:56:03 bigfatrat Exp $
+ * $Id: UpgradeUtils.java,v 1.4 2008-04-25 05:45:16 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.StringTokenizer;
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPDN;
@@ -143,6 +145,10 @@ public class UpgradeUtils {
     final static String IDFF_PROVIDER_SERVICE = 
         "iPlanetAMProviderConfigService";
     final static String IDFF_SERVICE_VERSION = "1.1";
+    final static String SERVER_HOST = "com.iplanet.am.server.host";
+    final static String SERVER_PORT = "com.iplanet.am.server.port";
+    final static String SERVER_PROTO = "com.iplanet.am.server.protocol";
+
     static SSOToken ssoToken;
     public static Debug debug = Debug.getInstance("famUpgrade");
     private static String dsHostName;
@@ -171,6 +177,7 @@ public class UpgradeUtils {
     static String SERVER_DEFAULTS_FILE = "serverdefaults.properties";
     static String AUTH_CONFIG_SEARCH_FILTER =
             "(&(objectclass=LDAPsubentry) (cn=iplanetamauthconfiguration))";
+    static String serverNameURL = null;
     final static String COS_TEMPL_FILTER = "objectclass=costemplate";
     final static String DELEGATION_SERVICE = "sunAMDelegationService";
     final static String ORG_ADMIN_ROLE = "Organization Admin Role";
@@ -187,7 +194,14 @@ public class UpgradeUtils {
     final static String CONFIG_SERVER_DEFAULT = "serverdefaults";
     final static String SUB_SCHEMA_SERVER = "server";
     final static String SERVER_CONFIG_XML = "serverconfig.xml";
-
+    final static String BACKUP_SERVER_CONFIG_XML = "serverconfig.xml.bak";
+    final static String BACKUP_AMCONFIG = "AMConfig.properties.bak";
+    final static String ATTR_SERVER_ID = "serverid";
+    final static String ATTR_SUNSERVICE_ID = "sunserviceid";
+    final static String ATTR_SUN_KEY_VALUE = "sunkeyvalue";
+    final static String DIR_UPGRADE = "upgrade";
+    final static String DIR_CONFIG = "config";
+    static Hashtable propertyFileMap = new Hashtable();
     static {
         //bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
         // TODO change this , the properties should be 
@@ -437,7 +451,7 @@ public class UpgradeUtils {
      * @param choiceValuesMap a set of choice values values to
      *        be added to the attribute, the key is the i18NKey and
      *        the values it the choice value
-     * @exception <code>UpgradeException</code> if there is an error.
+     * @throws <code>UpgradeException</code> if there is an error.
      */
 
     public static void addAttributeChoiceValues(
@@ -481,12 +495,11 @@ public class UpgradeUtils {
      * @param serviceName name of the service
      * @param attributeName name of the attribute
      * @param attrVals a set of attrubute values to be removed.
-     * @exception <code>UpgradeException</code> if there is an error.
      */
     public static void removeAttributeValuesFromRealms(
             String serviceName,
             String attributeName,
-            Set attrVals) throws UpgradeException {
+            Set attrVals) {
         String classMethod = "UpgradeUtils:removeAttributeValuesFromRealms : ";
         if (debug.messageEnabled()) {
             debug.message(classMethod +
@@ -504,8 +517,9 @@ public class UpgradeUtils {
                 ocm.removeAttributeValues(serviceName, attributeName, attrVals);
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Error updating attribute values " 
-                    +  sme.getMessage());
+            debug.error(classMethod + "Error updating attribute values ",sme);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error updating attribute values ",e);
         }
     }
 
@@ -516,12 +530,12 @@ public class UpgradeUtils {
      * @param serviceName name of the service
      * @param attributeName name of the attribute
      * @param attrValues a set of attrubute values to be added.
-     * @exception <code>UpgradeException</code> if there is an error.
      */
     public static void addAttributeValuesToRealms(
             String serviceName,
             String attributeName,
-            Set attrValues) throws UpgradeException {
+            Set attrValues) {
+        String classMethod = "UpgradeUtils:addAttributeValuesToRealms";
         try {
             // get a list of realms .
             OrganizationConfigManager ocm =
@@ -534,7 +548,9 @@ public class UpgradeUtils {
                 ocm.addAttributeValues(serviceName, attributeName, attrValues);
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Error updating attribute values ");
+            debug.error(classMethod + "Error adding attributes " , sme);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error adding attributes ", e);
         }
     }
 
@@ -578,18 +594,22 @@ public class UpgradeUtils {
             String schemaType,
             List attributeSchemaNames,
             String subSchemaName) throws UpgradeException {
-        String classMethod = "UpgradeUtils:removeAttributeSchema:";
-        ServiceSchema ss = null;
+        String classMethod = "UpgradeUtils:removeAttributeSchemas : ";
         try {
+            ServiceSchema ss =
+                    getServiceSchema(serviceName, subSchemaName, schemaType);
             for (Iterator i = attributeSchemaNames.iterator(); i.hasNext();) {
                 String attributeSchemaName = (String) i.next();
-                ss = getServiceSchema(serviceName, subSchemaName, schemaType);
                 ss.removeAttributeSchema(attributeSchemaName);
             }
         } catch (SSOException ssoe) {
-            throw new UpgradeException("Invalid sso Token ");
+            debug.error(classMethod + "Invalid SSO Token", ssoe);
+            throw new UpgradeException("Invalid SSO Token ");
         } catch (SMSException sme) {
-            throw new UpgradeException("Unable to remove attribute schema");
+            debug.error(classMethod + "Error removing attribute schema" +
+                    attributeSchemaNames, sme);
+            throw new UpgradeException(classMethod +
+                    "Unable to remove attribute schema");
         }
     }
 
@@ -598,7 +618,7 @@ public class UpgradeUtils {
      *
      * @param serviceName name of the service
      * @param attributeName name of the attribute
-     * @exception <code>UpgradeException</code> if there is an error.
+     * @throws <code>UpgradeException</code> if there is an error.
      */
     public static void removeAttributeFromRealms(
             String serviceName,
@@ -723,6 +743,36 @@ public class UpgradeUtils {
     }
 
     /**
+     * Updates the values of the <code>i18NKey</code> attribute in the service`
+     * subschema.
+     * 
+     * @param serviceName the service name where the attribute exists.
+     * @param subSchema the subschema name.
+     * @param schemaType the schema type
+     * @param value the value of the <code>i18NKey</code> attribute
+     * @throws UpgradeException if there is an error.
+     */
+    public static void modifyI18NKeyInSubSchema(
+            String serviceName,
+            String subSchema,
+            String schemaType,
+            String i18NKeyValue) throws UpgradeException {
+        String classMethod = "UpgradeUtils:modifyI18NKeyInSubSchema : ";
+        try {
+            ServiceSchema ss =
+                    getServiceSchema(serviceName, subSchema, schemaType);
+            ss.setI18Nkey(i18NKeyValue);
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSOToken");
+            throw new UpgradeException("Invalid SSOToken");
+        } catch (SMSException sme) {
+            debug.error(classMethod + 
+                    "Error setting i18N key : " + serviceName,sme);
+            throw new UpgradeException("Error setting i18NKey Value");
+        }
+    }
+    
+    /**
      * Returns the current service revision number .
      *
      * @param serviceName name of the service.
@@ -813,19 +863,29 @@ public class UpgradeUtils {
             String attributeName,
             Set defaultValues,
             String subSchema) throws UpgradeException {
+        String classMethod = "UpgradeUtils:removeAttributeDefaultValues : ";
         try {
             ServiceSchema ss =
                     getServiceSchema(serviceName, subSchema, schemaType);
-            AttributeSchema attrSchema =
-                    ss.getAttributeSchema(attributeName);
-            for (Iterator i = defaultValues.iterator(); i.hasNext();) {
-                String defaultValue = (String) i.next();
-                attrSchema.removeDefaultValue(defaultValue);
+            // check if service schema exists.
+            if (ss != null) {
+                AttributeSchema attrSchema =
+                        ss.getAttributeSchema(attributeName);
+                for (Iterator i = defaultValues.iterator(); i.hasNext();) {
+                    String defaultValue = (String) i.next();
+                    attrSchema.removeDefaultValue(defaultValue);
+                }
             }
         } catch (SSOException ssoe) {
             throw new UpgradeException("Invalid SSOToken");
         } catch (SMSException sme) {
-            throw new UpgradeException("Error removing attribute default vals");
+            throw new UpgradeException("Error removing attribute" +
+                    " default vals");
+        } catch (Exception e) {
+            UpgradeUtils.debug.error(classMethod +
+                    "Error removing attribute default vals", e);
+            throw new UpgradeException("Error removing attribute" +
+                    " default values");
         }
     }
 
@@ -885,7 +945,7 @@ public class UpgradeUtils {
                     new ServiceConfigManager(serviceName, ssoToken);
             ServiceConfig sc = scm.getGlobalConfig(null);
             if (sc != null) {
-                sc.addSubConfig(subConfigName, subConfigName,
+                sc.addSubConfig(subConfigName, subConfigID,
                         priority, attrValues);
             } else {
                 debug.error(classMethod + 
@@ -968,7 +1028,7 @@ public class UpgradeUtils {
     /**
      * Imports service data.
      * @param fileName the file containing the data in xml format.
-     * @throws com.sun.identity.upgrade.UpgradeException on error
+     * @throws <code>UpgradeException</code> on error
      */
     public static void importServiceData(
             String fileName)
@@ -990,7 +1050,7 @@ public class UpgradeUtils {
      * Imports service data
      * 
      * @param fileList list of files to be imported.
-     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     * @throws UpgradeException on error.
      */
     public static void importServiceData(
             String[] fileList) throws UpgradeException {
@@ -1014,7 +1074,7 @@ public class UpgradeUtils {
      * Imports service data
      * 
      * @param fileList list of files to be imported.
-     * @throws com.sun.identity.upgrade.UpgradeException
+     * @throws UpgradeException
      */
     public static void importServiceData(List fileList)
             throws UpgradeException {
@@ -1043,7 +1103,7 @@ public class UpgradeUtils {
      * Imports new service schema.
      * 
      * @param fileList list of files to be imported.
-     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     * @throws UpgradeException on error.
      */
     public static void importNewServiceSchema(
             String[] fileList) throws UpgradeException {
@@ -1067,7 +1127,7 @@ public class UpgradeUtils {
      * Import new service schema
      * 
      * @param fileName name of the file to be imported.
-     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     * @throws UpgradeException on error.
      */
     public static void importNewServiceSchema(
             String fileName) throws UpgradeException {
@@ -1087,7 +1147,7 @@ public class UpgradeUtils {
      * Imports new service schema.
      * 
      * @param fileList list of files
-     * @throws com.sun.identity.upgrade.UpgradeException
+     * @throws UpgradeException
      */
     public static void importNewServiceSchema(
             List fileList) throws UpgradeException {
@@ -1278,6 +1338,7 @@ public class UpgradeUtils {
         } catch (IOException ie) {
             debug.error(classMethod + "Error reading file" + file, ie);
         }
+        propertyFileMap.put(file,properties);
         return properties;
     }
 
@@ -1356,18 +1417,42 @@ public class UpgradeUtils {
     public static Set getAttributeValue(String serviceName,
             String attributeName,
             String schemaType) throws UpgradeException {
-
+        return getAttributeValue(serviceName, attributeName, schemaType, false);
+    }
+    
+    /**
+     * Returns a set of values of an attribute.
+     * 
+     * @param serviceName name of the service.
+     * @param attributeName the attribute name.
+     * @param  schemaType the schema type.
+     * @param isOrgAttrSchema boolean value indicating whether 
+     *        the attribute is to be retrieved from 
+     *        <OrganizationAttributeSchema>
+     * @return a set of values for the attribute.
+     * @throws UpgradeException if there is an error.
+     */
+    public static Set getAttributeValue(String serviceName,
+            String attributeName, String schemaType, boolean isOrgAttrSchema)
+            throws UpgradeException {
+        String classMethod = "UpgradeUtils:getAttributeValue : ";
         Set attrValues = Collections.EMPTY_SET;
         try {
             ServiceSchemaManager sm = getServiceSchemaManager(serviceName);
-            ServiceSchema ss = sm.getSchema(schemaType);
-            String attributeValue = null;
+            ServiceSchema ss = null;
+            if (isOrgAttrSchema) {
+                ss = sm.getOrganizationCreationSchema();
+            } else {
+                ss = sm.getSchema(schemaType);
+            }
             Map attributeDefaults = ss.getAttributeDefaults();
             if (attributeDefaults.containsKey(attributeName)) {
-                attrValues = (HashSet) attributeDefaults.get(attributeName);
+                attrValues = (Set) attributeDefaults.get(attributeName);
             }
         } catch (SMSException sme) {
-            throw new UpgradeException("Unable to get attribute value : " 
+            debug.error(classMethod + 
+                    "Error retreiving attribute values : ",sme);
+            throw new UpgradeException("Unable to get attribute values : " 
                     + sme.getMessage());
         }
         return attrValues;
@@ -1403,6 +1488,9 @@ public class UpgradeUtils {
      * @return the server instance name.
      */
     public static String getServerInstance(String serverName) {
+        if (serverName == null) {
+            serverName = getServerName();
+        }
         return serverName + File.separator + configTags.get("DEPLOY_URI");
     }
 
@@ -1416,10 +1504,40 @@ public class UpgradeUtils {
     public static void createServiceInstance(
             String serverInstance, String serverId)
             throws UpgradeException {
+        String classMethod = "UpgradeUtils:createServiceInstance : ";
         try {
             ServerConfiguration.createServerInstance(
                     ssoToken, serverInstance,
                     serverId, Collections.EMPTY_SET, "");
+        } catch (UnknownPropertyNameException uce) {
+            throw new UpgradeException("Unknown property ");
+        } catch (ConfigurationException ce) {
+            throw new UpgradeException("Unable to create Service instance");
+        } catch (SMSException sme) {
+            throw new UpgradeException("Unable to create Service instance");
+        } catch (SSOException ssoe) {
+            throw new UpgradeException("Invalid SSO Token");
+        } catch (Exception e) {
+            debug.error(classMethod + " Error creating service instance ", e);
+            throw new UpgradeException(e.getMessage());
+        }
+    }
+
+    /** 
+     * Creates a service instance.
+     * 
+     * @param serverInstance the server instance value
+     * @param serverId the server identifier
+     * @throws UpgradeException if there is an error.
+     */
+    public static void createServiceInstance(
+            String serverInstance, String serverId,
+            Set values,String serverConfigXML)
+            throws UpgradeException {
+        try {
+            ServerConfiguration.createServerInstance(
+                    ssoToken, serverInstance,
+                    serverId, values,serverConfigXML);
         } catch (UnknownPropertyNameException uce) {
             throw new UpgradeException("Unknwon property ");
         } catch (ConfigurationException ce) {
@@ -1430,7 +1548,6 @@ public class UpgradeUtils {
             throw new UpgradeException("invalid ssotoken");
         }
     }
-
     /**
      * Adds server to a site.
      *
@@ -1457,16 +1574,25 @@ public class UpgradeUtils {
      * @param subConfigName the sub configuration name
      * @param attrValues Map of attributes key is the attribute name and
      *        value a set of attribute values.
-     * @throws com.sun.identity.upgrade.UpgradeException on error.
+     * @throws UpgradeException on error.
      */
     public static void addAttributeToSubConfiguration(
             String serviceName,
             String subConfigName,
             Map attrValues) throws UpgradeException {
+        String classMethod = "UpgradeUtils:addAttributeToSubConfiguration : " ;
         try {
             ServiceConfigManager scm = getServiceConfigManager(serviceName);
             ServiceConfig sc = scm.getGlobalConfig(null);
-            sc = sc.getSubConfig(subConfigName);
+
+            StringTokenizer st = new StringTokenizer(subConfigName, "/");
+            int tokenCount = st.countTokens();
+
+            for (int i = 1; i <= tokenCount; i++) {
+                String scn = st.nextToken();
+                sc = sc.getSubConfig(scn);
+            }
+
             for (Iterator i = attrValues.keySet().iterator(); i.hasNext();) {
                 String attrName = (String) i.next();
                 sc.addAttribute(attrName, (Set) attrValues.get(attrName));
@@ -1475,6 +1601,13 @@ public class UpgradeUtils {
             throw new UpgradeException("Unable to add attribute to subconfig");
         } catch (SSOException ssoe) {
             throw new UpgradeException("invalid SSOToken");
+        } catch (Exception e) {
+            debug.error(classMethod + "Error adding attribute to subconfig:",e);
+        }
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Added attributes " + attrValues + 
+                    " to subconfig " + subConfigName 
+                    + " in service " + serviceName);
         }
     }
 
@@ -1501,6 +1634,9 @@ public class UpgradeUtils {
      * Gets the deploy uri of fam instance.
      */
     public static String getDeployURI() {
+        if (deployURI == null) {
+            deployURI = (String) configTags.get("DEPLOY_URI");
+        }
         return (deployURI);
     }
 
@@ -1641,9 +1777,9 @@ public class UpgradeUtils {
             throws UpgradeException {
         ServiceSchema ss = null;
         try {
-            SchemaType sschemaType = getSchemaType(schemaType);
+            SchemaType sType = getSchemaType(schemaType);
             ServiceSchemaManager ssm = getServiceSchemaManager(serviceName);
-            ss = ssm.getSchema(schemaType);
+            ss = ssm.getSchema(sType);
             if (subSchemaName != null) {
                 ss = ss.getSubSchema(subSchemaName);
             }
@@ -2363,20 +2499,29 @@ public class UpgradeUtils {
 
     /*
      * Return sub configurations in a service.
+     * 
+     * @param serviceName the service name.
+     * @param serviceVersion the version of the service
+     * @param realm the realm to retreive the sub configs from.
+     * @return a set containing the org sub configurations.
      */
-    static Set getOrgSubConfigs(String serviceName, String serviceVersion) {
+    static Set getOrgSubConfigs(String serviceName,
+            String serviceVersion,String realm) {
         String classMethod = "UpgradeUtils:getOrgSubConfigs : ";
         Set subConfigs;
         try {
             ServiceConfigManager scm = new ServiceConfigManager(
                     ssoToken, serviceName, serviceVersion);
             ServiceConfig orgConfig =
-                    scm.getOrganizationConfig(rootSuffix, null);
+                    scm.getOrganizationConfig(realm, null);
             subConfigs = orgConfig.getSubConfigNames();
             if (debug.messageEnabled()) {
                 debug.message(classMethod + "Org subConfigs : " + subConfigs);
             }
         } catch (Exception e) {
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "No organization subconfigs" , e);
+            }
             subConfigs = Collections.EMPTY_SET;
         }
         return subConfigs;
@@ -2612,11 +2757,13 @@ public class UpgradeUtils {
      * @param instanceName the instance name
      * @param instanceID the instance identifier
      * @param values a Set of values to be set.
-     * @throws com.sun.identity.upgrade.UpgradeException if there is an error.
+     * @param serverConfigXML string representation of 
+     *     <code>serverconfig.xml</code>
+     * @throws UpgradeException if there is an error.
      */
     public static void addServerDefaults(String serviceName,
             String subConfigName, String instanceName, String instanceID,
-            Set values) throws UpgradeException {
+            Set values,String serverConfigXML) throws UpgradeException {
         String classMethod = "UpgradeUtils:addServerDefaults : ";
         try {
             ServiceConfigManager scm =
@@ -2627,16 +2774,23 @@ public class UpgradeUtils {
             Map serverValues = new HashMap(4);
             Set setServerId = new HashSet(2);
             setServerId.add(instanceID);
-            serverValues.put(instanceName, setServerId);
+            serverValues.put(ATTR_SERVER_ID, setServerId);
 
             Set setServerConfigXML = new HashSet(2);
             String file = configDir + File.separator + SERVER_CONFIG_XML;
-            String serverConfigXML = readFile(file);
+            if (serverConfigXML == null) {
+                serverConfigXML = readFile(file);
+            }
             setServerConfigXML.add(serverConfigXML);
             serverValues.put(ATTR_SERVER_CONFIG, values);
             serverValues.put(ATTR_SERVER_CONFIG_XML, setServerConfigXML);
-            gConfig.addSubConfig(CONFIG_SERVER_DEFAULT,
+            if (instanceName == null) {
+                gConfig.addSubConfig(CONFIG_SERVER_DEFAULT,
+                        SUB_SCHEMA_SERVER, 0, serverValues);
+            } else {
+                gConfig.addSubConfig(instanceName,
                     SUB_SCHEMA_SERVER, 0, serverValues);
+            }
         } catch (Exception e) {
             debug.error(classMethod + "Error adding server instance :", e);
             throw new UpgradeException(e.getMessage());
@@ -2669,6 +2823,689 @@ public class UpgradeUtils {
     }
 
     /**
+     * Returns the properties from existing <code>AMConfig.properties</code>.
+     * 
+     * @return the properties from existing <code>AMConfig.properties</code>.
+     */
+    public static Properties getServerProperties() {
+        String fileName =
+                basedir +
+                File.separator + DIR_UPGRADE + File.separator +
+                DIR_CONFIG + File.separator + BACKUP_AMCONFIG;
+
+        Properties properties = (Properties) propertyFileMap.get(fileName);
+        if (properties == null) {
+            properties = getProperties(fileName);
+        }
+        return properties;
+    }
+
+    /**
+     * Returns the <code>serverconfig.xml</code> file contents as a string.
+     * 
+     * @return a string representing the <code>serverconfig.xml<code> file.
+     */
+    public static String getServerConfigXML() {
+        String fileName =
+                basedir +
+                File.separator + DIR_UPGRADE + File.separator +
+                DIR_CONFIG + File.separator + BACKUP_SERVER_CONFIG_XML;
+        return readFile(fileName);
+    }
+
+    /** 
+     * Returns the server name.
+     * The server name is constructed by appending the protocol , host name
+     * and port.
+     * 
+     * @return the server name.
+     */
+    public static String getServerName() {
+        if (serverNameURL == null) {
+            Properties amconfigProp = getServerProperties();
+            String serverProto = amconfigProp.getProperty(SERVER_PROTO);
+            String serverHost = amconfigProp.getProperty(SERVER_HOST);
+            String serverPort = amconfigProp.getProperty(SERVER_PORT);
+            serverNameURL = serverProto + "://" + serverHost + ":" + serverPort;
+        }
+        return serverNameURL;
+    }
+
+    /**
+     * Returns the value of the server host.
+     * The server host is retrieved from the <code>AMConfig.properties</code>
+     * 
+     * @return the server host value .
+     */
+    public static String getServerHost() {
+        Properties amconfigProp = getServerProperties();
+        return amconfigProp.getProperty(SERVER_HOST);
+    }
+    
+    /**
+     * Creates a file.
+     * This method is used to create the bootstrap file 
+     * 
+     * @param fileName mame of the file to be created.
+     * @param content value to be written to the file.
+     */
+    public static void writeToFile(String fileName, String content) {
+        String classMethod = "UpgradeUtils:writeToFile : ";
+        FileWriter fout = null;
+        try {
+            fout = new FileWriter(fileName);
+            fout.write(content);
+        } catch (IOException e) {
+            debug.error(classMethod +
+                    "Error writing to bootstrap file " + fileName);
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close();
+                } catch (Exception ex) {
+                //No handling required
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds attribute a sub schema.
+     * 
+     * @param serviceName name of the service
+     * @param parentSchemaName the parent schema name.
+     * @param subSchemaName the subschema name
+     * @param schemaType the schema type
+     * @param attributeSchemaFile the name of the file containing attributes 
+     *     to be added.
+     * @throws UpgradeException if there is an error adding the attributes.
+     */
+    public static void addAttributeToSubSchema(
+            String serviceName,
+            String parentSchemaName,
+            String subSchemaName,
+            String schemaType,
+            String attributeSchemaFile) throws UpgradeException {
+        String classMethod = "UpgradeUtils:addAttributeToSubSchema : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Adding attribute schema : " + attributeSchemaFile);
+            debug.message(" to subSchema " + subSchemaName +
+                    " to service " + serviceName);
+        }
+        FileInputStream fis = null;
+        ServiceSchema ss =
+                getServiceSchema(serviceName, parentSchemaName, schemaType);
+
+        try {
+            ServiceSchema subSchema = ss.getSubSchema(subSchemaName);
+            fis = new FileInputStream(attributeSchemaFile);
+            subSchema.addAttributeSchema(fis);
+        } catch (IOException ioe) {
+            debug.error(classMethod + "File not found " + attributeSchemaFile);
+            throw new UpgradeException(ioe.getMessage());
+        } catch (SMSException sme) {
+            debug.error(classMethod + "Cannot add attribute schema to : " +
+                    serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSOToken : ", ssoe);
+            throw new UpgradeException(ssoe.getMessage());
+        } catch (Exception e) {
+            debug.error(classMethod + "Error setting attribute schema : ", e);
+            throw new UpgradeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Removes attribute default values from a service sub-configuration.
+     * 
+     * @param serviceName name of the service
+     * @param sunServiceID set of service identifiers.
+     * @param attributeName name of the attribute.
+     * @param defaultValues set of default values to be removed.
+     * @throws UpgradeException if there is an error.
+     */
+    public static void removeAttrDefaultValueSubConfig(
+            String serviceName,
+            Set sunServiceID,
+            String attributeName,
+            Set defaultValues) throws UpgradeException {
+
+        String classMethod = "UpgradeUtils:removeAttrDefaultValueSubConfig: ";
+        try {
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realmSet = new HashSet();
+            realmSet.add(rootSuffix);
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            realms.addAll(realmSet);
+            if (debug.messageEnabled()) {
+                debug.message("realms is :" + realms);
+            }
+            Iterator oi = realms.iterator();
+            while (oi.hasNext()) {
+                String realm = (String) oi.next();
+                Set subConfigs = getOrgSubConfigs(serviceName, "1.0", realm);
+                Iterator i = subConfigs.iterator();
+                while (i.hasNext()) {
+                    String subConfigName = (String) i.next();
+                    if (debug.messageEnabled()) {
+                        debug.message(classMethod +
+                                "subconfig name is :" + subConfigName);
+                        debug.message(classMethod + 
+                                "Attribute Name : " + attributeName);
+                    }
+                    removeSubConfigAttributeDefaultValues(serviceName,
+                            sunServiceID,
+                            realm, subConfigName, attributeName, defaultValues);
+                }
+            }
+        } catch (SMSException sme) {
+            debug.error(classMethod + 
+                    "Cannot add attribute schema to : " + serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
+        } catch (Exception e) {
+            debug.error(classMethod + "Error setting attribute schema : ", e);
+            throw new UpgradeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns the value of <code>sunserviceid</code> attribute of a service
+     * sub-configuration. 
+     * 
+     * @param subConfig name of the service sub-configuration
+     * @return string value of <code>sunserviceid</code> attribute.
+     */
+    static String getSunServiceID(ServiceConfig subConfig) {
+        String classMethod = "UpgradeUtils:getSunServiceID : ";
+        String serviceID = "";
+        try {
+            String dn = subConfig.getDN();
+            ld = getLDAPConnection();
+            LDAPEntry ld1 = ld.read(dn);
+            LDAPAttributeSet attrSet = ld1.getAttributeSet();
+            if (attrSet != null) {
+                for (Enumeration enums = attrSet.getAttributes();
+                        enums.hasMoreElements();) {
+                    LDAPAttribute attr = (LDAPAttribute) enums.nextElement();
+                    String attrName = attr.getName();
+                    if ((attr != null) &&
+                            attrName.equalsIgnoreCase(ATTR_SUNSERVICE_ID)) {
+                        String[] value = attr.getStringValueArray();
+                        serviceID = value[0];
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + " sunserviceID is :" + serviceID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return serviceID;
+    }
+    
+    /**
+     * Removes attributes default values from service subconfiguration.
+     * 
+     * @param serviceName name of the service
+     * @param sunServiceID set of service identifiers
+     * @param realm the realm name
+     * @param subConfigName the service sub-configuration name.
+     * @param attributeName name of the attribute 
+     * @param defaultValues a set of values to be removed 
+     */
+    public static void removeSubConfigAttributeDefaultValues(
+            String serviceName,
+            Set sunServiceID,
+            String realm,
+            String subConfigName,
+            String attributeName,
+            Set defaultValues) {
+        String classMethod =
+                "UpgradeUtils:removeSubConfigAttributeDefaultValues : ";
+        try {
+            ServiceConfigManager scm = getServiceConfigManager(serviceName);
+            ServiceConfig sc = scm.getOrganizationConfig(realm, null);
+            ServiceConfig subConfig = sc.getSubConfig(subConfigName);
+            String serviceID = getSunServiceID(subConfig);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "sunServiceID :" + sunServiceID);
+                debug.message(classMethod + "serviceID :" + serviceID);
+                debug.message(classMethod + "subConfigName :" + subConfigName);
+                debug.message(classMethod + "Attribute Name :" + attributeName);
+                debug.message(classMethod + "Default Values :" + defaultValues);
+            }
+            if (sunServiceID.contains(serviceID)) {
+                Set valSet = getExistingValues(subConfig,
+                        attributeName, defaultValues);
+                if (debug.messageEnabled()) {
+                    debug.message(classMethod +
+                            "Values to be removed" + valSet);
+                }
+                subConfig.removeAttributeValues(attributeName, valSet);
+            }
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSOToken  : ", ssoe);
+        } catch (SMSException sme) {
+            debug.error(classMethod + "Error remove default values : ", sme);
+        }
+    }
+
+    /**
+     * Adds default values to an attribute in a service sub-configuration.
+     * This methods iterates through all realms to update the attribute default
+     * values. 
+     * 
+     * @param serviceName name of the service
+     * @param sunServiceID set of service identifiers for the sub-configuration.
+     * @param attributeName name of the attribute to be updated.
+     * @param defaultValues set of default values to be added .
+     */
+    public static void addAttrDefaultValueSubConfig(
+            String serviceName,
+            Set sunServiceID,
+            String attributeName,
+            Set defaultValues) {
+
+        String classMethod = "UpgradeUtils:addAttrDefaultValueSubConfig : ";
+        try {
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realmSet = new HashSet();
+            realmSet.add(rootSuffix);
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            realmSet.addAll(realms);
+            Iterator oi = realmSet.iterator();
+            while (oi.hasNext()) {
+                String realm = (String) oi.next();
+                Set subConfigs = getOrgSubConfigs(serviceName, "1.0", realm);
+                Iterator i = subConfigs.iterator();
+                while (i.hasNext()) {
+                    String subConfigName = (String) i.next();
+                    if (debug.messageEnabled()) {
+                        debug.message(classMethod
+                                + "addSubConfig : " + subConfigName);
+                    }
+                    addSubConfigAttributeDefaultValues(serviceName,
+                            sunServiceID,
+                            realm, subConfigName, attributeName, defaultValues);
+                }
+            }
+        } catch (SMSException sme) {
+            debug.error(classMethod 
+                    + "Cannot add attribute schema to : " + serviceName, sme);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error setting attribute schema : ", e);
+        }
+    }
+
+    /**
+     * Adds defaults values to service sub-configuration
+     * 
+     * @param serviceName the service name
+     * @param sunServiceID set of sunservice identifiers for sub-configuration
+     * @param realm the realm name
+     * @param subConfigName the sub-configuration name
+     * @param attributeName the attribute name
+     * @param defaultValues set of default values to be updated.
+     */
+    public static void addSubConfigAttributeDefaultValues(
+            String serviceName,
+            Set sunServiceID,
+            String realm,
+            String subConfigName,
+            String attributeName,
+            Set defaultValues) {
+        String classMethod =
+                "UpgradeUtils:addSubConfigAttributeDefaultValues : ";
+        try {
+            Set oldVal = new HashSet();
+            ServiceConfigManager scm = getServiceConfigManager(serviceName);
+            ServiceConfig sc = scm.getOrganizationConfig(realm, null);
+            ServiceConfig subConfig = sc.getSubConfig(subConfigName);
+            String serviceID = getSunServiceID(subConfig);
+            if (sunServiceID.contains(serviceID)) {
+                Set valSet = getExistingValues(
+                        subConfig, attributeName, defaultValues);
+                defaultValues.removeAll(valSet);
+                subConfig.replaceAttributeValues(
+                        attributeName, oldVal, defaultValues);
+            }
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSOToken", ssoe);
+        } catch (SMSException sme) {
+            debug.error(classMethod + "Error adding values ", sme);
+        }
+    }
+
+    /**
+     * Removes attributes from a service sub-configuration.
+     * Iterates through all realms and modifies all sub configuration instances.
+     * 
+     * @param serviceName the service name.
+     * @param sunServiceID set of service identifiers for the sub-configuration.
+     * @param attributeList list of attributes to be removed.
+     * @throws UpgradeException if there is an error.
+     */
+    public static void removeAttrFromSubConfig(
+            String serviceName,
+            Set sunServiceID,
+            List attributeList)
+            throws UpgradeException {
+        String classMethod = "UpgradeUtils:removeAttrFromSubConfig : ";
+        try {
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realmSet = new HashSet();
+            realmSet.add(rootSuffix);
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            realmSet.addAll(realms);
+            Iterator oi = realmSet.iterator();
+            while (oi.hasNext()) {
+                String realm = (String) oi.next();
+                Set subConfigs = getOrgSubConfigs(serviceName, "1.0", realm);
+                Iterator i = subConfigs.iterator();
+                while (i.hasNext()) {
+                    String subConfigName = (String) i.next();
+                    removeSubConfigAttribute(serviceName, sunServiceID,
+                            realm, subConfigName, attributeList);
+                }
+            }
+        } catch (SMSException sme) {
+            debug.error(classMethod +
+                    "Cannot add attribute schema to : " + serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
+        }
+    }
+
+    /**
+     * Removes attribute from service sub-configuration instances.
+     *
+     * @param serviceName the service name
+     * @param sunServiceID set of service identifiers
+     * @param realm the realm name
+     * @param subConfigName the subconfig name
+     * @param attrList a list of attributes
+     */
+    public static void removeSubConfigAttribute(
+            String serviceName,
+            Set sunServiceID,
+            String realm,
+            String subConfigName,
+            List attrList) {
+        String classMethod = "UpgradeUtils:removeSubConfigAttribute : ";
+        try {
+            ServiceConfigManager scm = getServiceConfigManager(serviceName);
+            ServiceConfig sc = scm.getOrganizationConfig(realm, null);
+            ServiceConfig subConfig = sc.getSubConfig(subConfigName);
+            String serviceID = getSunServiceID(subConfig);
+            if (sunServiceID.contains(serviceID)) {
+                Iterator i = attrList.iterator();
+                while (i.hasNext()) {
+                    String attributeName = (String) i.next();
+                    if (debug.messageEnabled()) {
+                        debug.message(classMethod 
+                                + "Removing attr :" + attributeName);
+                    }
+                    subConfig.removeAttribute(attributeName);
+                }
+            }
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSO Token ", ssoe);
+        } catch (SMSException sme) {
+            debug.error(classMethod + "Error removing attributes : " +
+                    attrList, sme);
+        }
+    }
+
+    /**
+     * Removes attribute default values from service schema.
+     * 
+     * @param serviceName the service name
+     * @param schemaType the schema type
+     * @param attrName name of the attribute
+     * @param defaultValues a set of default values to be remove
+     * @throws UpgradeException if there is an error
+     */
+    public static void removeAttributeDefaultValues(String serviceName,
+            String schemaType, String attrName,
+            Set defaultValues) throws UpgradeException {
+        removeAttributeDefaultValues(serviceName, schemaType,
+                attrName, defaultValues, false);
+    }
+
+    /**
+     * Removes attribute default values from service schema.
+     * 
+     * @param serviceName the service name
+     * @param schemaType the schema type
+     * @param attrName name of the attribute
+     * @param defaultValues a set of default values to be remove
+     * @param isOrgAttrSchema boolean value true if the schema is of the type
+     *     <code>OrganizationAttributeSchema</code>
+     * @throws UpgradeException if there is an error
+     */
+    public static void removeAttributeDefaultValues(String serviceName,
+            String schemaType, String attrName,
+            Set defaultValues, boolean isOrgAttrSchema)
+            throws UpgradeException {
+        String classMethod = "UpgradeUtils:removeAttributeDefaultValues : ";
+        ServiceSchema ss = null;
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "serviceName : " + serviceName);
+            debug.message(classMethod + "schemaTpe :" + schemaType);
+            debug.message(classMethod + "attrName : " + attrName);
+            debug.message(classMethod + "defaltValues :" + defaultValues);
+            debug.message(classMethod + "isOrgAttrSchema :" + isOrgAttrSchema);
+        }
+        try {
+            if (isOrgAttrSchema) {
+                ServiceSchemaManager sm =
+                        getServiceSchemaManager(serviceName);
+                ss = sm.getOrganizationCreationSchema();
+            } else {
+                ss = getServiceSchema(serviceName, null, schemaType);
+            }
+
+            if (ss != null) {
+                AttributeSchema attrSchema =
+                        ss.getAttributeSchema(attrName);
+                for (Iterator i = defaultValues.iterator(); i.hasNext();) {
+                    String defaultValue = (String) i.next();
+                    attrSchema.removeDefaultValue(defaultValue);
+                }
+            }
+        } catch (SMSException sme) {
+            debug.error(classMethod + "Error removing default values ", sme);
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSO Token", ssoe);
+        }
+    }
+
+
+    /**
+     * Replaces attribute default values in a service sub-configuration.
+     * Iterates through all realms to update all sub-configuration instances.
+     * 
+     * @param serviceName the service name
+     * @param sunServiceID set of service identifiers
+     * @param attributeName the attribute name.
+     * @param oldValues set of values to be replaced.
+     * @param newValues set of values to add.
+     * @throws UpgradeException if there is an error
+     */
+    public static void replaceAttrDefaultValueSubConfig(
+            String serviceName,
+            Set sunServiceID,
+            String attributeName,
+            Set oldValues, 
+            Set newValues) 
+            throws UpgradeException {
+        String classMethod = "UpgradeUtils:removeAttrDefaultValueSubConfig : ";
+        try {
+            OrganizationConfigManager ocm =
+                    new OrganizationConfigManager(ssoToken, rootSuffix);
+            Set realmSet = new HashSet();
+            realmSet.add(rootSuffix);
+            Set realms = ocm.getSubOrganizationNames("*", true);
+            realmSet.addAll(realms);
+            Iterator oi = realmSet.iterator();
+            while (oi.hasNext()) {
+                String realm = (String) oi.next();
+                Set subConfigs = getOrgSubConfigs(serviceName, "1.0", realm);
+                Iterator i = subConfigs.iterator();
+                while (i.hasNext()) {
+                    String subConfigName = (String) i.next();
+                    replaceSubConfigAttributeDefaultValues(
+                            serviceName, sunServiceID,
+                            realm, subConfigName, attributeName, 
+                            oldValues, newValues);
+                }
+            }
+        } catch (SMSException sme) {
+            debug.error(classMethod 
+                    + "Cannot add attribute schema to : " + serviceName, sme);
+            throw new UpgradeException(sme.getMessage());
+        } catch (Exception e) {
+            debug.error(classMethod + "Error setting attribute schema : ", e);
+            throw new UpgradeException(e.getMessage());
+        }
+    }
+
+    /**
+     * Replaces attributes default values in service sub-configuration.
+     *
+     * @param serviceName name of the service
+     * @param sunServiceID a set of subconfig service identifiers.
+     * @param realm the realm name.
+     * @param subConfigName the name of the service sub-configuration.
+     * @param attributeName name of the attribute
+     * @param oldValues set of values to be replaced.
+     * @param newValues set of values to be added.
+     */
+    public static void replaceSubConfigAttributeDefaultValues(
+            String serviceName,
+            Set sunServiceID,
+            String realm,
+            String subConfigName,
+            String attributeName,
+            Set oldValues, Set newValues) {
+        String classMethod =
+                "UpgradeUtils:replaceSubConfigAttributeDefaultValues : ";
+        try {
+            ServiceConfigManager scm = getServiceConfigManager(serviceName);
+            ServiceConfig sc = scm.getOrganizationConfig(realm, null);
+            ServiceConfig subConfig = sc.getSubConfig(subConfigName);
+            String serviceID = getSunServiceID(subConfig);
+            if (debug.messageEnabled()) {
+                debug.message("sunServiceID :" + sunServiceID);
+                debug.message("serviceID :" + serviceID);
+                debug.message("subConfigName :" + subConfigName);
+            }
+            if (sunServiceID.contains(serviceID)) {
+                subConfig.replaceAttributeValues(attributeName,
+                        oldValues, newValues);
+            }
+        } catch (SSOException ssoe) {
+            debug.error(classMethod + "Invalid SSO Token: ", ssoe);
+        } catch (SMSException sme) {
+            debug.error(classMethod 
+                    + "Error replacing default values for attribute : "
+                    + attributeName, sme);
+        }
+    }
+
+    /**
+     * Returns a set of valid attributes values for an attribute.
+     * 
+     * @param subConfig the <code>ServiceConfig</code> object.
+     * @param attrName the attribute name.
+     * @param defaultValues set of attribute values to validate with the
+     *    the existing attribute values.
+     */
+    static Set getExistingValues(ServiceConfig subConfig,
+            String attrName, Set defaultVal) {
+        Set valSet = new HashSet();
+        String classMethod = "UpgradeUtils:getExistingValues : ";
+        String serviceID = "";
+        try {
+            String dn = subConfig.getDN();
+            ld = getLDAPConnection();
+            LDAPEntry ld1 = ld.read(dn);
+            LDAPAttributeSet attrSet = ld1.getAttributeSet();
+            if (attrSet != null) {
+                for (Enumeration enums = attrSet.getAttributes(); 
+                enums.hasMoreElements();) {
+                    LDAPAttribute attr = (LDAPAttribute) enums.nextElement();
+                    String attName = attr.getName();
+                    if ((attName != null) &&
+                            attName.equalsIgnoreCase(ATTR_SUN_KEY_VALUE)) {
+                        String[] value = attr.getStringValueArray();
+                        for (int i = 0; i < value.length; i++) {
+                            int index = value[i].indexOf("=");
+                            if (index != -1) {
+                                String key = value[i].substring(0, index);
+                                if (key.equalsIgnoreCase(attrName)) {
+                                    String v = value[i].substring(
+                                            index + 1, value[i].length());
+                                    if (defaultVal.contains(v)) {
+                                        valSet.add(v);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            debug.error(classMethod + "Error retreving attribute values ", e);
+        }
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "Default Values are :" + valSet);
+        }
+        return valSet;
+    }
+
+    /**
+     * Remove all default values from an attribute.
+     * 
+     * @param serviceName name of the service
+     * @param schemaType the schema type
+     * @param attributeName name of the attribute
+     * @param subSchema the sub schema name.
+     * @throws UpgradeException if there is an error.
+     */
+    public static void removeAllAttributeDefaultValues(
+            String serviceName,
+            String schemaType,
+            String attributeName,
+            String subSchema) throws UpgradeException {
+        String classMethod = "UpgradeUtils:removeAttributeDefaultValues : ";
+        try {
+            ServiceSchema ss =
+                    getServiceSchema(serviceName, subSchema, schemaType);
+            // check if service schema exists.
+            if (ss != null) {
+                AttributeSchema attrSchema =
+                        ss.getAttributeSchema(attributeName);
+                attrSchema.removeDefaultValues();
+            }
+        } catch (SMSException sme) {
+            throw new UpgradeException(sme.getMessage());
+        } catch (Exception e) {
+            debug.error(classMethod + "Error removing default values", e);
+            throw new UpgradeException(e.getMessage());
+        }
+    }
+
+    /**
      * Returns a value of an attribute.
      * This method assumes that the attribute is single valued.
      * 
@@ -2697,6 +3534,4 @@ public class UpgradeUtils {
         }
         return value;
     }
-
-
 }

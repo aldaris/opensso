@@ -17,14 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.3 2008-04-14 23:17:31 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.4 2008-04-25 05:45:16 bina Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.upgrade;
 
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.ldap.DSConfigMgr;
 import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.setup.BootstrapCreator;
 import com.sun.identity.shared.debug.Debug;
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,6 +58,7 @@ public class FAMUpgrade {
     final static String NEW_DIR = "s_10";
     final static String DEFAULT_VERSION = "10";
     final static String CONFIG_DIR = "configDir";
+    final static String BOOTSTRAP_FILE = "bootstrap";
     static BufferedReader inbr = null;
     static String dsHost = "";
     static String dsPort = "";
@@ -119,9 +122,19 @@ public class FAMUpgrade {
                 // migrate to realm mode
                 UpgradeUtils.doMigration70();
             }
+            DSConfigMgr dsCfg = DSConfigMgr.getDSConfigMgr();
+            SystemProperties.setServerInstanceName(
+                UpgradeUtils.getServerInstance(null));
+            String bootstrap =
+                BootstrapCreator.getInstance().getBootStrapURL(dsCfg);
+            if (debug.messageEnabled()) {
+                debug.message("Bootstrap : " + bootstrap);
+            }
+            UpgradeUtils.writeToFile(configDir+File.separator+
+                BOOTSTRAP_FILE,bootstrap);
+
         } catch (Exception e) {
             System.out.println("Error in main: " + e);
-            e.printStackTrace();
         }
         System.exit(0);
     }
@@ -341,6 +354,9 @@ public class FAMUpgrade {
                     } else {
                         isNew = false;
                         dirName = (String) fileIterator.next();
+                        if (dirName.equals(NEW_DIR)) {
+                               continue;
+                        }
                         int index = dirName.indexOf("_");
                         if (index != -1) {
                             fromVer = dirName.substring(0, index);
@@ -444,8 +460,7 @@ public class FAMUpgrade {
                 copyFile(source, target);
             }
         } catch (Exception e) {
-            UpgradeUtils.debug.error(classMethod + 
-                    "Error copying new xmls" ,e );
+            debug.error(classMethod + "Error copying new xmls" ,e );
         }
     }
 
