@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.5 2008-02-20 06:42:35 superpat7 Exp $
+ * $Id: LoginServlet.java,v 1.6 2008-04-25 22:20:58 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,9 +40,12 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -183,6 +186,84 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
                         java.io.PrintWriter outP = response.getWriter();
                         outP.println(output_data);
                     }
+                   if ((redirect_url == null || (redirect_url.length() == 0))
+                           && (output_data == null || (output_data.length() 
+                           == 0))) {
+                       if (debug.messageEnabled()) {
+                           debug.message("LoginServlet:initializeRequestContext"
+                               + " No Response from original Auth server");
+                       }
+                       String refererURL = request.getHeader("Referer");
+                       String refererDomain = null;
+                       if(refererURL!=null && !(refererURL.length() == 0)) {
+                           URL u =new URL(refererURL);
+                           int pos = u.getHost().indexOf(".");
+                           if(pos!=-1) {
+                               refererDomain= u.getHost().substring(pos);
+                           }
+                       } else {
+                           refererURL = request.getRequestURL().toString();
+                           if (request.getQueryString() != null) {
+                               refererURL = refererURL + "?" + 
+                                   request.getQueryString();
+                           }
+                       }
+                       if (debug.messageEnabled()) {
+                           debug.message("LoginServlet:initializeRequestContext"
+                               + " referer domain is " + refererDomain); 
+                       }
+                       //remove amAuthCookie and amLBCookie cookies
+                       Cookie[] cookies = request.getCookies();
+                       Set domains = AuthUtils.getCookieDomains();
+                       if (cookies != null && cookies.length > 0) {
+                           for (int i = 0; i < cookies.length; i++) {
+                               if (cookies[i].getName().equalsIgnoreCase(
+                                   AuthUtils.getAuthCookieName())
+                                   || cookies[i].getName().equalsIgnoreCase
+                                   (AuthUtils.getlbCookieName())) {
+                                   if (debug.messageEnabled()) {
+                                       debug.message("LoginServlet:" 
+                                           + "initializeRequestContext removing"
+                                           + "cookie "+ cookies[i].getName());
+                                   }
+                                   cookies[i].setValue("");
+                                   cookies[i].setMaxAge(0);
+                                   response.addCookie(cookies[i]);
+                                   if (!domains.isEmpty()) {
+                                       for (Iterator it = domains.iterator(); 
+                                           it.hasNext(); ) {
+                                           String domain = (String)it.next();
+                                           if (debug.messageEnabled()) {
+                                               debug.message("LoginServlet:" 
+                                                   + "initializeRequestContext"
+                                                   + " removing cookie "+ 
+                                                   domain);
+                                           }
+                                           Cookie cookie = AuthUtils.
+                                               createCookie(
+                                               cookies[i].getName(),"",domain);
+                                           cookie.setMaxAge(0);
+                                           response.addCookie(cookie);
+                                       } //end for
+                                   } else {
+                                       //using domain name from referer
+                                       if (refererDomain != null) {
+                                           Cookie cookie = AuthUtils.
+                                               createCookie(cookies[i].
+                                               getName(),"", refererDomain);
+                                           cookie.setMaxAge(0);
+                                           response.addCookie(cookie);
+                                       }             
+                                   }
+                               } 
+                           }
+                       }
+                       if (debug.messageEnabled()) {
+                           debug.message("LoginServlet:initializeRequestContext"
+                               + "redirecting to: " + refererURL);
+                       }
+                       response.sendRedirect(refererURL);
+                   } 
                 } catch (Exception e) {
                     if (debug.messageEnabled()) {
                         debug.message("LoginServlet error in Request Routing : "
