@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSSProxy.java,v 1.1 2007-12-14 21:33:37 beomsuk Exp $
+ * $Id: JSSProxy.java,v 1.2 2008-04-25 22:27:19 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,21 +31,41 @@ import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 
 public class JSSProxy implements Runnable {
     public static HashMap connectHashMap = new HashMap();
     public static int serverPort;
+    private static Thread thread;
+    private static int threadPoolSize;
+    public static JSSThreadPool threadPool;
     private static ServerSocket sconnection = null;
     private static Debug debug = Debug.getInstance("amJSS");
+    private volatile boolean isShutdownCalled = false;
 
     static {
         try {
              sconnection = new ServerSocket(0, 50);
-        }
-        catch (IOException e) {
+             try {
+                threadPoolSize = Integer.parseInt(SystemPropertiesManager.get(
+                    "com.iplanet.am.jssproxy.threadpoolSize"));
+            } catch (Exception ex) {
+                threadPoolSize = JSSThreadPool.DEFAULT_THREAD_POOL_SIZE;
+            }
+
+            if (debug.messageEnabled()) {
+                debug.message("JSSThreadPool size = " + threadPoolSize);
+            }
+
+            threadPool = new JSSThreadPool("amJSS", threadPoolSize, false,
+                debug);
+        } catch (IOException e) {
             debug.error("JSSProxy: Unable to create server socket", e);
             sconnection = null;
         }
@@ -53,9 +73,24 @@ public class JSSProxy implements Runnable {
         if (sconnection != null) {
             serverPort = sconnection.getLocalPort();
             try {
-                JSSThreadPool.run(new JSSProxy());
+                final JSSProxy instance = new JSSProxy();
+                thread = new Thread(instance);
+                ShutdownManager.getInstance().addShutdownListener(new
+                    ShutdownListener() {
+                    
+                    public void shutdown() {
+                        if (instance != null) {
+                            instance.shutdown();
+                        }
+                        if (threadPool != null) {
+                            threadPool.shutdown();
+                        }
+                    }
+                    
+                });
+                thread.start();
             }
-            catch (InterruptedException e) {
+            catch (Exception e) {
                 debug.error("JSSProxy: Unable to run JSSProxy", e);
 
                 try {
@@ -70,42 +105,32 @@ public class JSSProxy implements Runnable {
     private JSSProxy() {
     }
 
+    public void shutdown() {
+        try {
+            isShutdownCalled = true;
+            sconnection.close();
+        } catch (Exception ex) {
+            //ignored
+        }
+    }
+    
     public void run() {
-        boolean go = true;
         Socket inconnection;
 
-        while (go) {
+        while (true) {
             try {
-                try {
-                    inconnection = (Socket) java.security.AccessController.
-                        doPrivileged(new java.security.
-                            PrivilegedExceptionAction(){
-                                public Object run() throws IOException {
-                                    return sconnection.accept();
-                                }
-                            });
-                } catch (Exception e) {
-                    debug.error(
-                        "JSSProxy: Unable to accept new connection.", e);
-
-                    try {
-                        sconnection.close();
-                    } 
-                    catch (IOException ee) {
-                        debug.error(
-                            "JSSProxy: Unable to close server socket.", e);
-                    }
-                    go = false;
-                    continue;
-                }
-
-
+                inconnection = (Socket) java.security.AccessController.
+                    doPrivileged(new java.security.
+                        PrivilegedExceptionAction(){
+                            public Object run() throws IOException {
+                                return sconnection.accept();
+                            }
+                        });
                 try {
                     inconnection.setTcpNoDelay(true);
                 }
                 catch (SocketException e) {
                     debug.error("JSSProxy: Unable to  TcpNoDelay.",e);
-
                     try {
                         inconnection.close();
                     } 
@@ -116,26 +141,31 @@ public class JSSProxy implements Runnable {
                     }
                     continue;
                 }
-
                 JSSProxy.JSSProxySessionRunnable p =
                             new JSSProxySessionRunnable(inconnection);
-                try {
-                    JSSThreadPool.run(p);
+                threadPool.run(p);
+            } catch (SocketTimeoutException ex) {
+                debug.error("JSSProxy: SocketTimeoutException:", ex);
+            } catch (SocketException ex) {
+                if (isShutdownCalled) {
+                    break;
                 }
-                catch (InterruptedException e) {
-                    debug.error(
-                             "JSSProxy: Unable to run new JSSProxySession", e);
-
-                    try {
-                        inconnection.close();
-                        p = null;
-                    } catch (IOException ee) {}
-                }
-
-            } 
-            catch (Throwable t) {
-                debug.error("JSSProxy: Uncaught exception:",t);
-            }
+            } catch (IOException ex) {
+                debug.error("JSSProxy: IOException:", ex);
+            } catch (SecurityException ex) {
+                debug.error("JSSProxy: SecurityException:", ex);
+            } catch (RuntimeException ex) {
+                debug.error("JSSProxy: RuntimeException:", ex);
+                // decide what to log here
+            } catch (Exception ex) {
+                // don't need to rethrow
+                debug.error("JSSProxy: Exception:", ex);
+            } catch (Throwable e) {
+                debug.error("JSSProxy: Uncaught exception:", e);
+                // decide what to log here
+                // rethrow Error here
+                throw new Error(e);
+	    }
         }
     }
 

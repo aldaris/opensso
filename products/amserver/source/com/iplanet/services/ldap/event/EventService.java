@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.8 2007-04-09 23:26:01 goodearth Exp $
+ * $Id: EventService.java,v 1.9 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,15 +26,20 @@ package com.iplanet.services.ldap.event;
 
 import java.security.AccessController;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPInterruptedException;
 import netscape.ldap.LDAPMessage;
 import netscape.ldap.LDAPResponse;
 import netscape.ldap.LDAPSearchConstraints;
@@ -44,6 +49,11 @@ import netscape.ldap.LDAPSearchResultReference;
 import netscape.ldap.controls.LDAPEntryChangeControl;
 import netscape.ldap.controls.LDAPPersistSearchControl;
 
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
@@ -79,7 +89,7 @@ public class EventService implements Runnable {
     protected static DSConfigMgr cm = null;
 
     // list that holds notification requests
-    Hashtable _requestList = new Hashtable();
+    protected Map _requestList = null;
 
     // Thread that listens to DS notifications
     static Thread _monitorThread = null;
@@ -141,13 +151,11 @@ public class EventService implements Runnable {
             "com.iplanet.am.sdk.ldap.EntryEventListener",
             "com.sun.identity.sm.ldap.LDAPEventManager" };
 
-    protected static Hashtable _ideListenersMap = new Hashtable();
-
-    protected static boolean _listenerInitialized = false;
-
-    protected static Object _listenerInitMonitor = new Object();
-
-    protected static boolean _isThreadStarted = false;
+    protected static Hashtable _ideListenersMap = new Hashtable();   
+    
+    protected static volatile boolean _isThreadStarted = false;
+    
+    protected static volatile boolean _shutdownCalled = false;
 
     static {
         // Determine the Number of retries for Event Service Connections
@@ -259,6 +267,7 @@ public class EventService implements Runnable {
      */
     protected EventService() throws EventException {
         getConfigManager();
+        _requestList = Collections.synchronizedMap(new HashMap());
     }
 
     /**
@@ -270,7 +279,7 @@ public class EventService implements Runnable {
     public synchronized static EventService getEventService()
             throws EventException, LDAPException {
         
-        if (_allDisabled) {
+        if (_allDisabled || _shutdownCalled) {
             return null;
         }
         
@@ -281,29 +290,19 @@ public class EventService implements Runnable {
             } else {
                 _instance = new EventServicePolling();
             }
-            // Start the monitor thread here!!
-            startMonitorThread();
-        }
-
-        while (!_listenerInitialized) {
-            synchronized (_listenerInitMonitor) {
-                // make sure startMonitorThread has completed addingListeners
-                // before allowing this process to continue because
-                // AMEventMananger
-                // depends on these listener being added/available.
-                try {
-                    _listenerInitMonitor.wait();
-                } catch (InterruptedException ie) {
-                    if (debugger.messageEnabled()) {
-                        debugger.message("EventService.getEventService: "
-                                + "InterruptedException " + ie);
+            ShutdownManager.getInstance().addShutdownListener(new
+                ShutdownListener() {
+                public void shutdown() {
+                    if (_instance != null) {
+                        _instance.finalize();
                     }
                 }
-            }
+            });
+            initListeners();
         }
         return _instance;
     }
-
+    
     protected static String getName() {
         return "EventService";
     }
@@ -314,13 +313,22 @@ public class EventService implements Runnable {
      * @supported.api
      */
     public void finalize() {
-        Collection requestObjs = _requestList.values();
-        Iterator iter = requestObjs.iterator();
-        while (iter.hasNext()) {
-            Request request = (Request) iter.next();
-            removeListener(request);
+        synchronized (this) {
+            _shutdownCalled = true;
+            if ((_monitorThread != null) && (_monitorThread.isAlive())) {
+                _monitorThread.interrupt();
+                _isThreadStarted = false;
+            }
         }
-        _requestList.clear();
+        synchronized (_requestList) {
+            Collection requestObjs = _requestList.values();
+            Iterator iter = requestObjs.iterator();
+            while (iter.hasNext()) {
+                Request request = (Request) iter.next();
+                removeListener(request);
+            }
+            _requestList.clear();
+        }
     }
 
     /**
@@ -331,6 +339,11 @@ public class EventService implements Runnable {
             IDSEventListener listener, String base, int scope, String filter,
             int operations) throws LDAPException, EventException {
 
+        if (_shutdownCalled) {
+            throw new EventException(i18n
+                    .getString(IUMSConstants.DSCFG_CONNECTFAIL));
+        }
+        
         LDAPConnection lc = null;
         try {
             lc = cm.getNewAdminConnection();
@@ -360,10 +373,16 @@ public class EventService implements Runnable {
                         + "Persistent Search on: " + base + " for listener: "
                         + listener);
             }
-
-            searchListener = lc.search(base, scope, filter, attrs, false, null,
-                    cons);
+            searchListener = lc.search(base, scope, filter, attrs, false,
+                    null, cons);
         } catch (LDAPException le) {
+            if ((lc != null) && lc.isConnected()) {
+                try {
+                    lc.disconnect();
+                } catch (Exception ex) {
+                    //ignored
+                }
+            }
             debugger.error("EventService.addListener() - Failed to set "
                     + "Persistent Search" + le.getMessage());
             throw le;
@@ -386,6 +405,14 @@ public class EventService implements Runnable {
             _msgQueue.merge(searchListener);
         }
 
+        if (!_isThreadStarted) {
+            startMonitorThread();
+        } else {
+            if (_requestList.size() == 1) {
+                notify();
+            }
+        }
+        
         if (debugger.messageEnabled()) {
             outstandingRequests = _msgQueue.getMessageIDs();
             debugger.message("EventService.addListener(): merged Listener: "
@@ -405,8 +432,8 @@ public class EventService implements Runnable {
     public static boolean isThreadStarted() {
         return _isThreadStarted;
     }
-    
-    protected void initListeners() {
+      
+    protected static void initListeners() {
         int size = listeners.length;
         for (int i = 0; i < size; i++){
             String l1 = listeners[i];
@@ -460,79 +487,110 @@ public class EventService implements Runnable {
                         + "listener " + l1, e);
             }
         }
-        
-        synchronized (_listenerInitMonitor) {
-            _listenerInitialized = true;
-            _listenerInitMonitor.notifyAll();
-        }  
     }
 
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
      *
      * @supported.api
-     */
+     */    
     public void run() {
-        if (debugger.messageEnabled()) {
-            debugger.message("EventService.run(): Event Thread is running! "
-                    + "No Idle timeout Set: " + _idleTimeOut + " minutes.");
-        }
-
-        initListeners();
-
-        synchronized (_listenerInitMonitor) {
-            _listenerInitialized = true;
-            _listenerInitMonitor.notifyAll();
-        }
-
-        boolean successState = true;
-        LDAPMessage message = null;
-        while (successState) {
-            try {
+        try {
+            if (debugger.messageEnabled()) {
+                debugger.message("EventService.run(): Event Thread is running! "
+                        + "No Idle timeout Set: " + _idleTimeOut + " minutes.");
+            }
+            
+            boolean successState = true;
+            LDAPMessage message = null;
+            while (successState) {
                 try {
                     if (debugger.messageEnabled()) {
                         debugger.message("EventService.run(): Waiting for "
                                 + "response");
                     }
+                    
                     message = _msgQueue.getResponse();
+                    synchronized (this) {
+                        if ((message == null) && (_requestList.isEmpty())) {
+                            wait();
+                            continue;
+                        }
+                    }
                     successState = processResponse(message);
+                } catch (LDAPInterruptedException ex) {
+                    if (_shutdownCalled) {
+                        break;
+                    } else {
+                        if (debugger.warningEnabled()) {
+                            debugger.warning("EventService.run() " +
+                                "LDAPInterruptedException received:", ex);
+                        }
+                    }
                 } catch (LDAPException ex) {
-                    int resultCode = ex.getLDAPResultCode();
-                    if (debugger.warningEnabled()) {
-                        debugger.warning("EventService.run() LDAPException "
+                    if (_shutdownCalled) {                        
+                        break;
+                    } else {
+                        int resultCode = ex.getLDAPResultCode();
+                        if (debugger.warningEnabled()) {
+                            debugger.warning("EventService.run() LDAPException "
                                 + "received:", ex);
-                    }
-                    if (_retryErrorCodes.contains("" + resultCode)) {
-                        successState = resetAllSearches(true);
-                    } else { // Some other network error
-                        processNetworkError(ex);
+                        }
+                        if (_retryErrorCodes.contains("" + resultCode)) {
+                            resetErrorSearches(true);
+                        } else { // Some other network error
+                            processNetworkError(ex);
+                        }
                     }
                 }
-            } catch (Throwable t) {
-                // Catching Throwable to prevent the thread from exiting.
+            } // end of while loop
+        } catch (InterruptedException ex) {
+            if (!_shutdownCalled) {
                 if (debugger.warningEnabled()) {
-                    debugger.warning("EventService.run(): Unknown exception "
-                            + "caught. Sleeping for a while.. ", t);
+                    debugger.warning("EventService.run(): Interrupted exception"
+                        + " caught.", ex);
                 }
-                sleepRetryInterval();
             }
-        } // end of while loop
-
-        // The thread is being terminated for some reason.
-        debugger.error("EventService.run() - Monitor thread is "
-                + "terminating! Persistent Searches will no longer be "
-                + "operational.");
-
-        return; // Gracefully exit the thread
+        } catch (RuntimeException ex) {
+            if (debugger.warningEnabled()) {
+                debugger.warning("EventService.run(): Runtime exception "
+                    + "caught.", ex);
+            }
+            // rethrow the Runtime exception to let the container handle the
+            // exception.
+            throw ex;
+        } catch (Exception ex) {
+            if (debugger.warningEnabled()) {
+                debugger.warning("EventService.run(): Unknown exception "
+                    + "caught.", ex);
+            }
+            // no need to rethrow.
+        } catch (Throwable t) {
+            // Catching Throwable to prevent the thread from exiting.
+            if (debugger.warningEnabled()) {
+                debugger.warning("EventService.run(): Unknown exception "
+                    + "caught. Sleeping for a while.. ", t);
+            }
+            // rethrow the Error to let the container handle the error.
+            throw new Error(t);
+        } finally {
+            synchronized (this) {
+                if (!_shutdownCalled) {
+                    // try to restart the monitor thread.
+                    _monitorThread = null;
+                    startMonitorThread();
+                }
+            }
+        }
     } // end of thread
-
-    private static void startMonitorThread() {
-        if (_monitorThread == null || (!_monitorThread.isAlive())) {
+    
+    private static synchronized void startMonitorThread() {
+        if (_monitorThread == null || (!_monitorThread.isAlive()) &&
+            !_shutdownCalled) {
             // Even if the monitor thread is not alive, we should use the
             // same instance of Event Service object (as it maintains all
             // the listener information)
             _monitorThread = new Thread(_instance, getName());
-            _monitorThread.setDaemon(true);
             _monitorThread.start();
             
             // Since this is a singleton class once a getEventService() 
@@ -550,17 +608,18 @@ public class EventService implements Runnable {
      * @param message -
      *            the LDAPMessage received as response
      * @return true if the reset was successful. False Otherwise.
-     */
-    protected synchronized boolean processResponse(LDAPMessage message) {
-        if (message == null) {
+     */        
+    protected boolean processResponse(LDAPMessage message) {
+        if ((message == null) && (!_requestList.isEmpty())) {
             // Some problem with the message queue. We should
             // try to reset it.
             debugger.warning("EventService.processResponse() - Received a "
                     + "NULL Response. Attempting to re-start persistent "
                     + "searches");
-            return resetAllSearches(false); // return false if not successful
+            resetErrorSearches(false);
+            return true;
         }
-
+        
         if (debugger.messageEnabled()) {
             debugger.message("EventService.processResponse() - received "
                     + "DS message  => " + message.toString());
@@ -602,7 +661,7 @@ public class EventService implements Runnable {
      * @param requestID
      *            The request ID returned by the addListener
      * @supported.api
-     */
+     */   
     protected void removeListener(Request request) {
         LDAPConnection connection = request.getLDAPConnection();
         if (connection != null) {
@@ -612,8 +671,10 @@ public class EventService implements Runnable {
                         + " Listener: " + request.getListener());
             }
             try {
-                connection.abandon(request.getId());
-                connection.disconnect();
+                if ((connection != null) && (connection.isConnected())) {
+                    connection.abandon(request.getId());
+                    connection.disconnect();
+                }
             } catch (LDAPException le) {
                 // Might have to check the reset codes and try to reset
                 if (debugger.warningEnabled()) {
@@ -625,15 +686,46 @@ public class EventService implements Runnable {
         }
     }
 
+    
+    /**
+     * Reset error searches. Clear cache only if true is passed to argument
+     * 
+     * @param clearCaches
+     */    
+    protected void resetErrorSearches(boolean clearCaches) {
+        
+        Hashtable tmpReqList = new Hashtable(_requestList);
+       
+        int[] ids = _msgQueue.getMessageIDs();
+        for (int i = 0; i < ids.length; i++) {
+            String reqID = Integer.toString(ids[i]);
+            tmpReqList.remove(reqID);
+        }
+        Collection reqList = tmpReqList.values();
+        for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+            Request req = (Request) iter.next();
+            _requestList.remove(req.getRequestID());
+            if (clearCaches) {
+                req.getListener().allEntriesChanged();
+            }
+        }
+        RetryTask task = new RetryTask(tmpReqList, _numRetries);
+        SystemTimer.getTimer().schedule(task, new Date(((
+            System.currentTimeMillis() + _retryInterval) / 1000) * 1000));
+    }
+    
     /**
      * Reset all searches. Clear cache only if true is passed to argument
      * 
      * @param clearCaches
      * @return
-     */
+     */    
     public synchronized boolean resetAllSearches(boolean clearCaches) {
 
-        Hashtable tmpReqList = (Hashtable) _requestList.clone();
+        if (_shutdownCalled) {
+            return false;
+        }
+        Hashtable tmpReqList = new Hashtable(_requestList);
         _requestList.clear(); // Will be updated in addListener method
         Collection reqList = tmpReqList.values();
 
@@ -643,60 +735,74 @@ public class EventService implements Runnable {
                 : false;
 
         if (clearCaches) {
-            dispatchAllEntriesChangedEvent();
+            for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                Request req = (Request) iter.next();
+                IDSEventListener el = req.getListener();
+                el.allEntriesChanged();
+            }
         }
         while (doItAgain) { // Re-try starts from 0.
-            try {
-                sleepRetryInterval();
-                if (debugger.messageEnabled()) {
-                    String str = (_numRetries == -1) ? "indefinitely" : Integer
-                            .toString(retry);
-                    debugger.message("EventService.resetAllSearches(): "
-                            + "retrying = " + str);
-                }
+            sleepRetryInterval();
+            if (debugger.messageEnabled()) {
+                String str = (_numRetries == -1) ? "indefinitely" : Integer
+                    .toString(retry);
+                debugger.message("EventService.resetAllSearches(): "
+                    + "retrying = " + str);
+            }
 
-                // Note: Avoid setting the messageQueue to null and just
-                // try to disconnect the connections. That way we can be sure
-                // that we have not lost any responses.
+            // Note: Avoid setting the messageQueue to null and just
+            // try to disconnect the connections. That way we can be sure
+            // that we have not lost any responses.
 
-                // we want to do the addListener in a seperate loop from the
-                // above removeListener because we want to remove all the
-                // listener first then do the add.
-                Iterator iter = reqList.iterator();
-                while (iter.hasNext()) {
+            // we want to do the addListener in a seperate loop from the
+            // above removeListener because we want to remove all the
+            // listener first then do the add.
+            for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                try {
                     Request request = (Request) iter.next();
 
                     // First add a new listener and then remove the old one
                     // that we do don't loose any responses to the message
                     // Queue.
                     addListener(request.getRequester(), request.getListener(),
-                        request.getBaseDn(), request.getScope(), 
+                        request.getBaseDn(), request.getScope(),
                         request.getFilter(), request.getOperations());
                     removeListener(request);
-                }
-                return true;
-            } catch (LDAPServiceException e) {
-                // Ignore exception and retry as we are in the process of
-                // re-establishing the searches. Notify Listeners after the
-                // attempt
-                if (retry == _numRetries) {
-                    processNetworkError(e);
-                }
-            } catch (LDAPException le) {
-                // Ignore exception and retry as we are in the process of
-                // re-establishing the searches. Notify Listeners after the
-                // attempt
-                if (retry == _numRetries) {
-                    processNetworkError(le);
-                }
+                    iter.remove();
+                } catch (LDAPServiceException e) {
+                    // Ignore exception and retry as we are in the process of
+                    // re-establishing the searches. Notify Listeners after the
+                    // attempt
+                    if (retry == _numRetries) {
+                        processNetworkError(e);
+                    }
+                } catch (LDAPException le) {
+                    // Ignore exception and retry as we are in the process of
+                    // re-establishing the searches. Notify Listeners after the
+                    // attempt
+                    if (retry == _numRetries) {
+                        processNetworkError(le);
+                    }
+                }       
             }
-            if (_numRetries != -1) {
-                doItAgain = (++retry <= _numRetries) ? true : false;
+            if (reqList.isEmpty()) {
+                return true;
+            } else {
+                if (_numRetries != -1) {
+                   doItAgain = (++retry <= _numRetries) ? true : false;
+                   if (!doItAgain) {
+                       // remove the requests fail to be resetted eventually.
+                       for (Iterator iter = reqList.iterator();
+                           iter.hasNext();) {
+                           removeListener((Request) iter.next());
+                       }
+                   }
+                }
             }
         } // end while loop
         return false;
     }
-
+       
     protected void sleepRetryInterval() {
         try {
             Thread.sleep(_retryInterval);
@@ -707,7 +813,7 @@ public class EventService implements Runnable {
 
     /**
      * get a handle to the Directory Server Configuration Manager sets the value
-     */
+     */    
     protected static void getConfigManager() throws EventException {
         try {
             cm = DSConfigMgr.getDSConfigMgr();
@@ -718,7 +824,7 @@ public class EventService implements Runnable {
                     .getString(IUMSConstants.DSCFG_NOCFGMGR), lse);
         }
     }
-
+    
     private void dispatchException(Exception e, Request request) {
         IDSEventListener el = request.getListener();
         debugger.error("EventService.dispatchException() - dispatching "
@@ -729,34 +835,24 @@ public class EventService implements Runnable {
 
     /**
      * Dispatch naming event to all listeners
-     */
+     */    
     private void dispatchEvent(DSEvent dirEvent, Request request) {
         IDSEventListener el = request.getListener();
         el.entryChanged(dirEvent);
     }
 
     /**
-     * Dispatch event to all listeners for all entris changed
-     * 
-     */
-    private synchronized void dispatchAllEntriesChangedEvent() {
-        Collection reqList = _requestList.values();
-        Iterator iter = reqList.iterator();
-        while (iter.hasNext()) {
-            Request req = (Request) iter.next();
-            IDSEventListener el = req.getListener();
-            el.allEntriesChanged();
-        }
-    }
-
-    /**
      * On network error, create ExceptionEvent and delever it to all listeners
      * on all events.
-     */
+     */    
     protected void processNetworkError(Exception ex) {
-        Collection reqList = _requestList.values();
-        Iterator iter = reqList.iterator();
-        while (iter.hasNext()) {
+        Hashtable tmpRequestList = new Hashtable(_requestList);
+        int[] ids = _msgQueue.getMessageIDs();
+        for (int i = 0; i < ids.length; i++) {
+            tmpRequestList.remove(Integer.toString(ids[i]));
+        }
+        Collection reqList = tmpRequestList.values();
+        for (Iterator iter = reqList.iterator(); iter.hasNext();) {
             Request request = (Request) iter.next();
             dispatchException(ex, request);
         }
@@ -766,9 +862,9 @@ public class EventService implements Runnable {
      * Response message carries a LDAP error. Response with the code 0
      * (SUCCESS), should never be received as persistent search never completes,
      * it has to be abandon. Referral messages are ignored
-     */
-    private boolean processResponseMessage(LDAPResponse rsp, Request request) {
-        boolean successState = true;
+     */    
+    protected boolean processResponseMessage(LDAPResponse rsp,
+        Request request) {
         if (_retryErrorCodes.contains("" + rsp.getResultCode())) {
             if (debugger.messageEnabled()) {
                 debugger.message("EventService.processResponseMessage() - "
@@ -776,7 +872,7 @@ public class EventService implements Runnable {
                         + request.getRequestID() + " Listener: "
                         + request.getListener() + "Need restarting");
             }
-            successState = resetAllSearches(false);
+            resetErrorSearches(false);
         } else if (rsp.getResultCode() != 0
                 || rsp.getResultCode() != LDAPException.REFERRAL) { 
             // If not neither of the cases then
@@ -784,16 +880,14 @@ public class EventService implements Runnable {
                     .getResultCode(), rsp.getErrorMessage(), 
                     rsp.getMatchedDN());
             dispatchException(ex, request);
-        } else {
-            sleepRetryInterval();
         }
-        return successState;
+        return true;
     }
 
     /**
      * Process change notification attached as the change control to the message
-     */
-    private synchronized void processSearchResultMessage(LDAPSearchResult res,
+     */    
+    protected void processSearchResultMessage(LDAPSearchResult res,
             Request req) {
         LDAPEntry modEntry = res.getEntry();
 
@@ -845,8 +939,8 @@ public class EventService implements Runnable {
 
     /**
      * Search continuation messages are ignored.
-     */
-    private void processSearchResultRef(LDAPSearchResultReference ref,
+     */    
+    protected void processSearchResultRef(LDAPSearchResultReference ref,
             Request req) {
         // Do nothing, message ignored, do not dispatch ExceptionEvent
         if (debugger.messageEnabled()) {
@@ -854,7 +948,7 @@ public class EventService implements Runnable {
                     + "Ignoring..");
         }
     }
-
+    
     protected static SSOToken getSSOToken() throws SSOException {
         try {
             DSConfigMgr cfgMgr = DSConfigMgr.getDSConfigMgr();
@@ -873,14 +967,14 @@ public class EventService implements Runnable {
 
     /**
      * Find event entry by message ID
-     */
-    private Request getRequestEntry(int id) {
+     */    
+    protected Request getRequestEntry(int id) {
         return (Request) _requestList.get(Integer.toString(id));
     }
 
     /**
      * Create naming event from a change control
-     */
+     */    
     private DSEvent createDSEvent(LDAPEntry entry,
             LDAPEntryChangeControl changeCtrl, Request req) throws Exception {
         DSEvent dsEvent = new DSEvent();
@@ -907,5 +1001,68 @@ public class EventService implements Runnable {
 
         return dsEvent;
     }
-
+    
+    class RetryTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        private Map requests;
+        private int numOfRetries;
+        private int retry;
+        
+        public RetryTask(Map requests, int numOfRetries) {
+            this.runPeriod = (long) EventService._retryInterval;
+            this.requests = requests;
+            this.numOfRetries = numOfRetries;
+            this.retry = 1;
+        }
+        
+        public void run() {
+            for (Iterator iter = requests.values().iterator();
+                iter.hasNext();) {
+                Request req = (Request) iter.next();
+                try {
+                    // First add a new listener and then remove the old one
+                    // that we do don't loose any responses to the message
+                    // Queue.
+                    addListener(req.getRequester(), req.getListener(),
+                        req.getBaseDn(), req.getScope(), 
+                        req.getFilter(), req.getOperations());
+                    removeListener(req);
+                    iter.remove();
+                } catch (Exception e) {
+                    // Ignore exception and retry as we are in the process of
+                    // re-establishing the searches. Notify Listeners after the
+                    // attempt
+                    if (retry == numOfRetries) {
+                        dispatchException(e, req);
+                    }
+                }
+            }
+            if (requests.isEmpty()) {
+                runPeriod = -1;
+            } else {
+                if (numOfRetries != -1) {
+                    if (++retry > numOfRetries) {
+                        runPeriod = -1;
+                    }
+                }
+            }
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+    }
 }

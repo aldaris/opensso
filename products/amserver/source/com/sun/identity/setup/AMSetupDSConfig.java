@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.10 2007-11-19 22:24:20 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.11 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,8 @@
 package com.sun.identity.setup;
 
 import com.sun.identity.common.LDAPUtils;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSSchema;
 import java.util.Iterator;
@@ -108,7 +110,8 @@ public class AMSetupDSConfig {
      * @return <code>true</code> if directory server is running.
      */
     public boolean isDServerUp() {
-        return (getLDAPConnection() == null) ? false : true;
+        LDAPConnection ldc = getLDAPConnection();
+        return ((ldc != null) && ldc.isConnected()) ? true : false;
     }
 
     /**
@@ -342,12 +345,20 @@ public class AMSetupDSConfig {
      *
      * @return Ldap connection 
      */
-    private LDAPConnection getLDAPConnection() {
+    private synchronized LDAPConnection getLDAPConnection() {
         if (ld == null) {
             try {
                 ld = new LDAPConnection();
                 ld.setConnectTimeout(300);
                 ld.connect(3, dsHostName, getPort(), dsManager, dsAdminPwd);
+                ShutdownManager.getInstance().addShutdownListener(new
+                    ShutdownListener() {
+                    
+                    public void shutdown() {
+                        disconnectDServer();
+                    }
+                    
+                });
             } catch (LDAPException e) {
                 disconnectDServer();
                 dsConfigInstance = null;

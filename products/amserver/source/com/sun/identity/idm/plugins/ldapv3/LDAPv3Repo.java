@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.40 2008-04-23 19:58:38 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.41 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,6 +109,8 @@ public class LDAPv3Repo extends IdRepo {
 
     private Map myServiceMap = null;
 
+    private boolean hasShutdown = false;
+    
     private IdRepoListener myListener = null;
 
     private static SOAPClient mySoapClient = new SOAPClient("dummy");
@@ -301,7 +303,7 @@ public class LDAPv3Repo extends IdRepo {
         "sun-idrepo-ldapv3-config-organization_name";
 
     private static final String LDAPv3Config_LDAP_GROUP_SEARCH_FILTER =
-"sun-idrepo-ldapv3-config-groups-search-filter";
+        "sun-idrepo-ldapv3-config-groups-search-filter";
 
     private static final String LDAPv3Config_LDAP_USERS_SEARCH_FILTER =
         "sun-idrepo-ldapv3-config-users-search-filter";
@@ -422,7 +424,7 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_LDAP_PSEARCHFILTER =
         "sun-idrepo-ldapv3-config-psearch-filter";
-
+    
     private static final String LDAPv3Config_LDAP_PSEARCHSCOPE =
         "sun-idrepo-ldapv3-config-psearch-scope";
 
@@ -687,6 +689,7 @@ public class LDAPv3Repo extends IdRepo {
             ShutdownManager.getInstance().addShutdownListener(
                 new ShutdownListener() {
                     public void shutdown() {
+                        hasShutdown = true;
                         if (connPool != null) {
                             connPool.destroy();
                         }
@@ -960,9 +963,17 @@ public class LDAPv3Repo extends IdRepo {
 
     public void shutdown() {
         debug.message("LDAPv3Repo: shutdown");
+        hasShutdown = true;
         super.shutdown();
         if (connPool != null) {
             connPool.destroy();
+        }
+        synchronized (_eventsMgr) {
+            for (Iterator iter = _eventsMgr.values().iterator();
+                iter.hasNext();) {
+                ((LDAPv3EventService) iter.next()).finalize();
+                iter.remove();
+            }
         }
     }
 
@@ -981,7 +992,6 @@ public class LDAPv3Repo extends IdRepo {
      * 
      * @see com.sun.identity.idm.IdRepo#getSupportedTypes()
      */
-
     public Set getSupportedTypes() {
         return supportedOps.keySet();
     }
@@ -991,7 +1001,7 @@ public class LDAPv3Repo extends IdRepo {
      * 
      * @see com.sun.identity.idm.IdRepo#isActive(com.iplanet.sso.SSOToken,
      *      com.sun.identity.idm.IdType, java.lang.String)
-     */
+     */    
     public boolean isActive(SSOToken token, IdType type, String name)
             throws IdRepoUnsupportedOpException, SSOException {
         /*
@@ -1155,10 +1165,10 @@ public class LDAPv3Repo extends IdRepo {
         } catch (IdRepoException idrepoerr) {
             return false;
         }
-
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
+        LDAPConnection ld = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
             foundEntry = ld.read(dn);
         } catch (LDAPException e) {
             switch (e.getLDAPResultCode()) {
@@ -1189,9 +1199,9 @@ public class LDAPv3Repo extends IdRepo {
                 }
                 break;
             }
-            connPool.close(ld);
             int resultCode = e.getLDAPResultCode();
-            if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)){
+            if ((resultCode == 80) || (resultCode == 81) ||
+                (resultCode == 82)) {
                 String ldapError = Integer.toString(resultCode);
                 Object[] args = {CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
                 IdRepoFatalException ide = new IdRepoFatalException(
@@ -1200,11 +1210,14 @@ public class LDAPv3Repo extends IdRepo {
                 throw ide;
             }
             return false;
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
-        connPool.close(ld);
         return true;
     }
-
+    
     private boolean isExists(IdType type, String dn)
             throws IdRepoException, SSOException {
       if (debug.messageEnabled()) {
@@ -1215,9 +1228,10 @@ public class LDAPv3Repo extends IdRepo {
 
       LDAPEntry foundEntry = null;
 
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
+        LDAPConnection ld = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
             foundEntry = ld.read(dn);
         } catch (LDAPException e) {
             switch (e.getLDAPResultCode()) {
@@ -1248,7 +1262,6 @@ public class LDAPv3Repo extends IdRepo {
                 }
                 break;
             }
-            connPool.close(ld);
 
             int resultCode = e.getLDAPResultCode();
             if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)){
@@ -1260,11 +1273,14 @@ public class LDAPv3Repo extends IdRepo {
                 throw ide;
             }
             return false;
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
-        connPool.close(ld);
         return true;
     }
-
+    
 
     public void removeListener() {
         if (debug.messageEnabled()) {
@@ -1279,7 +1295,7 @@ public class LDAPv3Repo extends IdRepo {
                     "server name.");
         }
         LDAPv3EventService eventService;
-
+        
         synchronized (listOfPS) {
         // keep a count with eventsMgr.ldapServerName of number of listener.
         // when the count reaches 0. remove the ldapServerName entry.
@@ -1301,11 +1317,13 @@ public class LDAPv3Repo extends IdRepo {
                     if (listOfDS.isEmpty()) { 
                         listOfPS.remove(psIdKey);
                         tobeRemoveListener.add(psIdKey);
-                        Integer requestNum = (Integer) _numRequest.get(ldapServerName);
+                        Integer requestNum = (Integer) _numRequest.get(
+                            ldapServerName);
                         if (requestNum != null) {
                             int requestInt = requestNum.intValue();
                             if (requestInt <= 1) {
                                 _eventsMgr.remove(ldapServerName);
+                                eventService.finalize();
                                 _numRequest.remove(ldapServerName);
                             } else {
                                 _numRequest.remove(ldapServerName);
@@ -1313,8 +1331,8 @@ public class LDAPv3Repo extends IdRepo {
                                     requestInt - 1));
                             }
                             if (debug.messageEnabled()) {
-                                debug.message("LDAPv3Repo: removeListener. requestInt="
-                                    + requestInt);
+                                debug.message("LDAPv3Repo: removeListener. " +
+                                    "requestInt=" + requestInt);
                             }
                         }
                    }
@@ -1332,7 +1350,6 @@ public class LDAPv3Repo extends IdRepo {
             String psIdKeyToRemove = (String) iter.next();
             eventService.removeListener(psIdKeyToRemove);
         }
-
     }
 
 
@@ -1443,15 +1460,16 @@ public class LDAPv3Repo extends IdRepo {
                 }
                 _numRequest.put(ldapServerName, new Integer(requestNum));
             } catch (IdRepoException idrepoex) {
-                debug.error("LDAPv3Repo: addListener failed. persistant search " +
-                    "not supported");
+                debug.error("LDAPv3Repo: addListener failed. persistant " +
+                    "search not supported");
             } catch (LDAPException ldapex) {
                 debug.error("LDAPv3Repo: addListener failed. " +
                              "eventService.addListener.LDAPException", ldapex);
                 Object[] args = { CLASS_NAME };
                 IdRepoException ide = new IdRepoException(
                    IdRepoBundle.BUNDLE_NAME, "218", args);
-                ide.setLDAPErrorCode(Integer.toString(ldapex.getLDAPResultCode()));
+                ide.setLDAPErrorCode(Integer.toString(
+                    ldapex.getLDAPResultCode()));
                 throw ide;
             }    
                 
@@ -1723,125 +1741,138 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         String eDN = getDN(type, name);
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        Set theOC = null;
-        if (type.equals(IdType.USER)) {
-            theOC = userObjClassSet;
-        } else if (type.equals(IdType.AGENT)) {
-            theOC = agentObjClassSet;
-        } else if (type.equals(IdType.GROUP)) {
-            theOC = groupObjClassSet;
-        } else if (type.equals(IdType.ROLE)) {
-            theOC = roleObjClassSet;
-        } else if (type.equals(IdType.FILTEREDROLE)) {
-            theOC = filterroleObjClassSet;
-        } else {
-            Object[] args = { CLASS_NAME, IdOperation.CREATE.getName(),
-                    type.getName() };
-            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "305", args);
-        }
-
-        Map origAttrMap = attrMap;
-        attrMap = new CaseInsensitiveHashMap(attrMap);
-        attrMap = doUserStatusMapping(type, name, attrMap);
-        attrMap = addAttrMapping(type, name, attrMap);
-        attrMap = getAllowedAttrs(type, attrMap);
-
-        LDAPAttributeSet ldapAttrSet = new LDAPAttributeSet();
-        if (attrMap != null && !attrMap.isEmpty()) {
-            // add the default objectclass to the attrMap passed in.
-            boolean addedOC = false;
-            Map privAttrMap = new HashMap();
-
-            Iterator itr = attrMap.keySet().iterator();
-            while (itr.hasNext()) {
-                String attrName = (String) itr.next();
-                if (attrName.equalsIgnoreCase(LDAP_OBJECT_CLASS)) {
-                    Set attrNameValue = ((Set) attrMap.get(attrName));
-                    HashSet newNameValue = new HashSet(attrNameValue);
-                    newNameValue.addAll(theOC);
-                    privAttrMap.put(attrName, newNameValue);
-                    addedOC = true;
-                } else {
-                    Set attrNameValue = (Set) attrMap.get(attrName);
-                    // ignore empty set because some servers can't handle it.
-                    if (!attrNameValue.isEmpty()) {
-                        privAttrMap.put(attrName, attrNameValue);
-                    }
-                }
-            }
-
-            if (!addedOC) { // object class not in attrMap passed in, add it.
-                privAttrMap.put(LDAP_OBJECT_CLASS, theOC);
-            }
-
-            itr = privAttrMap.keySet().iterator();
-            while (itr.hasNext()) {
-                String attrName = (String) itr.next();
-                Set set = (Set) (privAttrMap.get(attrName));
-                String attrValues[] = (set == null ? null : (String[]) set
-                        .toArray(new String[set.size()]));
-                if (debug.messageEnabled()) {
-                    if (attrName.equalsIgnoreCase("userpassword")) {
-                        debug.message("    : attrName= " + attrName);
-                    } else {
-                        debug.message("    : attrName= " + attrName + " set:"
-                                + set);
-                    }
-                }
-                ldapAttrSet.add(new LDAPAttribute(attrName, attrValues));
-            } // null
-        } else {
-            String attrValues[] = (theOC == null ? null : (String[]) theOC
-                    .toArray(new String[theOC.size()]));
-            ldapAttrSet.add(new LDAPAttribute(LDAP_OBJECT_CLASS, attrValues));
-
-        }
-        if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {  
-            // add default user to group.
-            ldapAttrSet.add(new LDAPAttribute(uniqueMemberAttr, defaultGrpMem));
-        }
-        if (debug.messageEnabled()) {
-            debug.message("    : before ld.add: eDN=" + eDN);
-        }
+        LDAPConnection ld = null;
+        Map origAttrMap = null;
         try {
-            LDAPEntry theEntry = new LDAPEntry(eDN, ldapAttrSet);
-            ld.add(theEntry);
-            connPool.close(ld);
-        } catch (LDAPException lde) {
-            debug.error("LDAPv3Repo.create failed. errorCode=" +
-                lde.getLDAPResultCode() + "  " + lde.getLDAPErrorMessage());
-            if (debug.messageEnabled()) {
-                debug.message("LDAPv3Repo.create failed", lde);
+            ld = connPool.getConnection();
+            enableCache(ld);
+            Set theOC = null;
+            if (type.equals(IdType.USER)) {
+                theOC = userObjClassSet;
+            } else if (type.equals(IdType.AGENT)) {
+                theOC = agentObjClassSet;
+            } else if (type.equals(IdType.GROUP)) {
+                theOC = groupObjClassSet;
+            } else if (type.equals(IdType.ROLE)) {
+                theOC = roleObjClassSet;
+            } else if (type.equals(IdType.FILTEREDROLE)) {
+                theOC = filterroleObjClassSet;
+            } else {
+                Object[] args = { CLASS_NAME, IdOperation.CREATE.getName(),
+                    type.getName() };
+                throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
+                    "305", args);
             }
-            connPool.close(ld);
-            attrMap = origAttrMap;
-            handleLDAPException(lde, eDN);
+
+            origAttrMap = attrMap;
+            attrMap = new CaseInsensitiveHashMap(attrMap);
+            attrMap = doUserStatusMapping(type, name, attrMap);
+            attrMap = addAttrMapping(type, name, attrMap);
+            attrMap = getAllowedAttrs(type, attrMap);
+
+            LDAPAttributeSet ldapAttrSet = new LDAPAttributeSet();
+            if (attrMap != null && !attrMap.isEmpty()) {
+                // add the default objectclass to the attrMap passed in.
+                boolean addedOC = false;
+                Map privAttrMap = new HashMap();
+
+                Iterator itr = attrMap.keySet().iterator();
+                while (itr.hasNext()) {
+                    String attrName = (String) itr.next();
+                    if (attrName.equalsIgnoreCase(LDAP_OBJECT_CLASS)) {
+                        Set attrNameValue = ((Set) attrMap.get(attrName));
+                        HashSet newNameValue = new HashSet(attrNameValue);
+                        newNameValue.addAll(theOC);
+                        privAttrMap.put(attrName, newNameValue);
+                        addedOC = true;
+                    } else {
+                        Set attrNameValue = (Set) attrMap.get(attrName);
+                    // ignore empty set because some servers can't handle it.
+                        if (!attrNameValue.isEmpty()) {
+                            privAttrMap.put(attrName, attrNameValue);
+                        }
+                    }
+                }
+
+                if (!addedOC) {// object class not in attrMap passed in, add it.
+                    privAttrMap.put(LDAP_OBJECT_CLASS, theOC);
+                }
+
+                itr = privAttrMap.keySet().iterator();
+                while (itr.hasNext()) {
+                    String attrName = (String) itr.next();
+                    Set set = (Set) (privAttrMap.get(attrName));
+                    String attrValues[] = (set == null ? null : (String[]) set
+                        .toArray(new String[set.size()]));
+                    if (debug.messageEnabled()) {
+                        if (attrName.equalsIgnoreCase("userpassword")) {
+                            debug.message("    : attrName= " + attrName);
+                        } else {
+                            debug.message("    : attrName= " + attrName +
+                                " set:" + set);
+                        }
+                    }
+                    ldapAttrSet.add(new LDAPAttribute(attrName, attrValues));
+                } // null
+            } else {
+                String attrValues[] = (theOC == null ? null : (String[]) theOC
+                        .toArray(new String[theOC.size()]));
+                ldapAttrSet.add(new LDAPAttribute(LDAP_OBJECT_CLASS,
+                    attrValues));
+
+            }
+            if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {  
+                // add default user to group.
+                ldapAttrSet.add(new LDAPAttribute(uniqueMemberAttr,
+                    defaultGrpMem));
+            }
+            if (debug.messageEnabled()) {
+                debug.message("    : before ld.add: eDN=" + eDN);
+            }
+            try {
+                LDAPEntry theEntry = new LDAPEntry(eDN, ldapAttrSet);
+                ld.add(theEntry);
+            } catch (LDAPException lde) {
+                debug.error("LDAPv3Repo.create failed. errorCode=" +
+                    lde.getLDAPResultCode() + "  " + lde.getLDAPErrorMessage());
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo.create failed", lde);
+                }
+                attrMap = origAttrMap;
+                handleLDAPException(lde, eDN);
+            }
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
         if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {
             if (memberOfAttr != null) {
+                checkConnPool();
                 try { 
-                    checkConnPool();
                     ld = connPool.getConnection();
                     LDAPAttribute mbrOf = new LDAPAttribute(memberOfAttr, eDN);
                     LDAPModification modMemberOf = 
                         new LDAPModification(LDAPModification.ADD, mbrOf);
                     ld.modify(defaultGrpMem, modMemberOf);
                     if (cacheEnabled) {
-                        ldapCache.flushEntries(defaultGrpMem, LDAPv2.SCOPE_BASE);
+                        ldapCache.flushEntries(defaultGrpMem,
+                            LDAPv2.SCOPE_BASE);
                     }
-                    connPool.close(ld);
                 } catch (LDAPException lde) {
-                    debug.error("LDAPv3Repo.create failed mod user. errorCode=" +
-                        lde.getLDAPResultCode() + "  " + lde.getLDAPErrorMessage());
+                    debug.error("LDAPv3Repo.create failed mod user. errorCode="
+                        + lde.getLDAPResultCode() + "  " +
+                        lde.getLDAPErrorMessage());
                     if (debug.messageEnabled()) {
-                        debug.message("LDAPv3Repo.create failed unable to mod user", lde);
+                        debug.message("LDAPv3Repo.create failed unable to " +
+                            "mod user", lde);
                     }
-                    connPool.close(ld);
                     attrMap = origAttrMap;
                     handleLDAPException(lde, eDN);
+                } finally {
+                    if (ld != null) {
+                        connPool.close(ld);
+                    }
                 }
             }
         }
@@ -1863,9 +1894,10 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         String eDN = getDN(type, name);
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
+        LDAPConnection ld = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
             ld.delete(eDN);
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();
@@ -1876,7 +1908,9 @@ public class LDAPv3Repo extends IdRepo {
             }
             handleLDAPException(lde, eDN);
         } finally {
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
     }
 
@@ -1924,48 +1958,49 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         String dn = getDN(type, name);
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-
-        boolean addActiveAttrName = false;
-        CaseInsensitiveHashSet predefinedAttr = null;
-        if (type.equals(IdType.USER)) {
-            if (!userAtttributesAllowed.contains("nsrole")) {
-                predefinedAttr = new CaseInsensitiveHashSet();
-                Iterator itr = userAtttributesAllowed.iterator();
-                while (itr.hasNext()) {
-                    predefinedAttr.add(itr.next());
-                }
-                predefinedAttr.add("nsrole");
-            } else {
-                predefinedAttr = userAtttributesAllowed;
-            }
-            if ((dsType == LDAPv3Config_LDAPV3AD)
-                && attrNamesCase.contains(defaultStatusAttribute)) {
-                if (!attrNamesCase.contains(isActiveAttrName)) {
-                    addActiveAttrName = true;
-                    attrNamesCase.add(isActiveAttrName);
-                }
-            }
-        } else if (type.equals(IdType.AGENT)) {
-            predefinedAttr = agentAtttributesAllowed;
-        } else if (type.equals(IdType.GROUP)) {
-            predefinedAttr = groupAtttributesAllowed;
-        } else if (type.equals(IdType.ROLE)) {
-            predefinedAttr = roleAtttributesAllowed;
-        } else if (type.equals(IdType.FILTEREDROLE)) {
-            predefinedAttr = filteredroleAtttributesAllowed;
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("  LDAPv3Repo: predefinedAttr=" + predefinedAttr
-                    + "; attrNames=" + attrNames);
-        }
-
+        LDAPConnection ld = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+
+            boolean addActiveAttrName = false;
+            CaseInsensitiveHashSet predefinedAttr = null;
+            if (type.equals(IdType.USER)) {
+                if (!userAtttributesAllowed.contains("nsrole")) {
+                    predefinedAttr = new CaseInsensitiveHashSet();
+                    Iterator itr = userAtttributesAllowed.iterator();
+                    while (itr.hasNext()) {
+                        predefinedAttr.add(itr.next());
+                    }
+                    predefinedAttr.add("nsrole");
+                } else {
+                    predefinedAttr = userAtttributesAllowed;
+                }
+                if ((dsType == LDAPv3Config_LDAPV3AD)
+                    && attrNamesCase.contains(defaultStatusAttribute)) {
+                    if (!attrNamesCase.contains(isActiveAttrName)) {
+                        addActiveAttrName = true;
+                        attrNamesCase.add(isActiveAttrName);
+                    }
+                }
+            } else if (type.equals(IdType.AGENT)) {
+                predefinedAttr = agentAtttributesAllowed;
+            } else if (type.equals(IdType.GROUP)) {
+                predefinedAttr = groupAtttributesAllowed;
+            } else if (type.equals(IdType.ROLE)) {
+                predefinedAttr = roleAtttributesAllowed;
+            } else if (type.equals(IdType.FILTEREDROLE)) {
+                predefinedAttr = filteredroleAtttributesAllowed;
+            }
+
+            if (debug.messageEnabled()) {
+                debug.message("  LDAPv3Repo: predefinedAttr=" + predefinedAttr
+                    + "; attrNames=" + attrNames);
+            }
+
             LDAPEntry foundEntry = null;
             if ((attrNames == null) || (attrNames.contains("*"))) {
                 if ((predefinedAttr == null) ||
@@ -1990,7 +2025,6 @@ public class LDAPv3Repo extends IdRepo {
                     }
                     attrNamesCase = allowedAttrNames;
                     if (attrNamesCase.isEmpty()) {
-                        connPool.close(ld);
                         return theAttrMap;  // nothing to read.
                     }
                 }
@@ -2005,7 +2039,6 @@ public class LDAPv3Repo extends IdRepo {
             if (foundEntry == null) {
                 debug.error("getAttributes: unable to find dn:" + dn
                         + " to retrieve its attributes.");
-                connPool.close(ld);
                 Object[] args = { CLASS_NAME, dn };
                 throw new IdRepoException(
                         IdRepoBundle.BUNDLE_NAME, "211", args);
@@ -2046,9 +2079,11 @@ public class LDAPv3Repo extends IdRepo {
                             }
                             attrValueSet = convertInetStatus(attrName,
                                 attrNamesCase, attrValueSet);
-                            theAttrMap.put(defaultStatusAttribute, attrValueSet);
+                            theAttrMap.put(defaultStatusAttribute,
+                                attrValueSet);
                         } else {
-                            theAttrMap.put(attrName.toLowerCase(), attrValueSet);
+                            theAttrMap.put(attrName.toLowerCase(),
+                                attrValueSet);
                         }
                     } else {
                         byte[][] values = ldapAttr.getByteValueArray();
@@ -2079,10 +2114,12 @@ public class LDAPv3Repo extends IdRepo {
                 debug.warning("LDAPv3Repo.getAttributes failed. errorCode=" +
                     lde.getLDAPResultCode() + "  " + ldeErrMsg);
             }
-            connPool.close(ld);
             handleLDAPException(lde, dn);
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
-        connPool.close(ld);
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: getAttributes returns theAttrMap: "
                     + theAttrMap);
@@ -2148,18 +2185,19 @@ public class LDAPv3Repo extends IdRepo {
      *            the url to be used for the group member search
      * @return the set of group member DNs satisfied the search url
      */
-
     private Set findDynamicGroupMembersByUrl(LDAPUrl url)
             throws IdRepoException {
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        Set groupMemberDNs = new HashSet();
+        LDAPConnection ld = null;
+        Set groupMemberDNs = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            groupMemberDNs = new HashSet();
             if (debug.messageEnabled()) {
                 debug.message("search filter in LDAPGroups : "
                         + url.getFilter());
@@ -2197,7 +2235,9 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, url.getDN());
         } finally {
             // release the ldap connection back to the pool
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
 
         return groupMemberDNs;
@@ -2217,11 +2257,11 @@ public class LDAPv3Repo extends IdRepo {
         } catch (IdRepoException idrepoerr) {
             return null;
         }
-
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
         LDAPEntry groupEntry = null;
+        LDAPConnection ld = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
             groupEntry = ld.read(dn);
         } catch (LDAPException e) {
             debug.error("LDAPGroups: invalid group name " + name);
@@ -2231,7 +2271,8 @@ public class LDAPv3Repo extends IdRepo {
             }
             String ldapError = Integer.toString(resultCode);
             Object[] args = { CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
-            if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)){
+            if ((resultCode == 80) || (resultCode == 81) ||
+                (resultCode == 82)) {
                 IdRepoFatalException ide = new IdRepoFatalException(
                         IdRepoBundle.BUNDLE_NAME, "311", args);
                 ide.setLDAPErrorCode(ldapError);
@@ -2239,7 +2280,9 @@ public class LDAPv3Repo extends IdRepo {
             }
             return null;
         } finally {
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
         LDAPAttribute attribute = groupEntry.getAttribute(uniqueMemberAttr);
         if (attribute != null) {
@@ -2271,14 +2314,16 @@ public class LDAPv3Repo extends IdRepo {
             IdType membersType) throws IdRepoException, SSOException {
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        Set roleMemberDNs = new HashSet();
-        LDAPSearchResults res = null;
+        LDAPConnection ld = null;
+        Set roleMemberDNs = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            roleMemberDNs = new HashSet();
+            LDAPSearchResults res = null;
             String filter = "(" + nsRoleDNAttr + "=" + getDN(type, name) + ")";
             if (debug.messageEnabled()) {
                 debug.message("search filter in getManagedRoleMembers: "
@@ -2300,7 +2345,6 @@ public class LDAPv3Repo extends IdRepo {
                     // ignore referrals
                     continue;
                 } catch (LDAPException le) {
-                    connPool.close(ld);
                     int resultCode = le.getLDAPResultCode();
                     // If time or size limit has reached, return the results
                     if (resultCode == LDAPException.TIME_LIMIT_EXCEEDED ||
@@ -2322,7 +2366,6 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException lde) {
-            connPool.close(ld);
             int resultCode = lde.getLDAPResultCode();
             debug.error("LDAPv3Repo: getManagedRoleMembers, ld.search error"
                 + resultCode);
@@ -2331,8 +2374,11 @@ public class LDAPv3Repo extends IdRepo {
                     "LDAPv3Repo: getManagedRoleMembers, ld.search error", lde);
             }
             handleLDAPException(lde, getDN(type, name));
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
-        connPool.close(ld);
         if (debug.messageEnabled()) {
             debug.message(
                 " exit getManagedRoleMembers. roleMembersDNs=" + roleMemberDNs);
@@ -2351,15 +2397,18 @@ public class LDAPv3Repo extends IdRepo {
             SSOException {
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        String getAttrs[] = { nsRoleFilterAttr };
-        Set roleMemberDNs = new HashSet();
-        String dn = getDN(type, name);
+        Set roleMemberDNs = null;
+        LDAPConnection ld = null;
+        String dn = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            String getAttrs[] = { nsRoleFilterAttr };
+            roleMemberDNs = new HashSet();
+            dn = getDN(type, name);
             if (debug.messageEnabled()) {
                 debug.message("getFilteredRoleMembers: name="
                         + name + "; type=" + type
@@ -2386,7 +2435,6 @@ public class LDAPv3Repo extends IdRepo {
                         } catch (LDAPReferralException lre) {
                             // ignore referrals
                         } catch (LDAPException le) {
-                            connPool.close(ld);
                             int resultCode = le.getLDAPResultCode();
                             /*
                              * If time or size limit has reached, return
@@ -2417,7 +2465,6 @@ public class LDAPv3Repo extends IdRepo {
                 } // outer while
             }
         } catch (LDAPException lde) {
-            connPool.close(ld);
             int resultCode = lde.getLDAPResultCode();
             debug.error("LDAPv3Repo: getFilteredRoleMembers, ld.read"
                 + resultCode);
@@ -2426,8 +2473,11 @@ public class LDAPv3Repo extends IdRepo {
                      + " ld.read", lde);
             }
             handleLDAPException(lde, dn);
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
-        connPool.close(ld);
         if (debug.messageEnabled()) {
             debug.message("exit getFilteredRoleMembers roleMemberDNs=" +
                 roleMemberDNs);
@@ -2505,20 +2555,23 @@ public class LDAPv3Repo extends IdRepo {
         throws IdRepoException, SSOException {
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        String getAttrs[] = { memberOfAttr };
-        Set groupDNs = new HashSet();
-        String dn = getDN(type, name);
-
-        if (debug.messageEnabled()) {
-            debug.message("  getGroupMemberFromUser: dn=" + dn +
-                    ";  memberOfAttr=" + memberOfAttr);
-        }
+        LDAPConnection ld = null;
+        String dn = null;
+        Set groupDNs = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            String getAttrs[] = { memberOfAttr };
+            groupDNs = new HashSet();
+            dn = getDN(type, name);
+
+            if (debug.messageEnabled()) {
+                debug.message("  getGroupMemberFromUser: dn=" + dn +
+                    ";  memberOfAttr=" + memberOfAttr);
+            }
             LDAPEntry foundEntry = ld.read(dn, getAttrs);
             LDAPAttribute ldapAttr = foundEntry.getAttribute( memberOfAttr);
             if (ldapAttr != null) {
@@ -2538,7 +2591,9 @@ public class LDAPv3Repo extends IdRepo {
             }
             handleLDAPException(lde, dn);
         } finally {
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
         return  groupDNs;
     }
@@ -2551,20 +2606,22 @@ public class LDAPv3Repo extends IdRepo {
         throws IdRepoException, SSOException {
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        Set groupDNs = new HashSet();
-        String dn = getDN(type, name);
-        String baseDN = getBaseDN(IdType.GROUP);
-        String attrs[] = { "dn" };
-        int searchGroupScope = searchScope;
-        String grpMembershipFilter = "(&" + groupSearchFilter +
+        Set groupDNs = null;
+        LDAPConnection ld = null;
+        try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            groupDNs = new HashSet();
+            String dn = getDN(type, name);
+            String baseDN = getBaseDN(IdType.GROUP);
+            String attrs[] = { "dn" };
+            int searchGroupScope = searchScope;
+            String grpMembershipFilter = "(&" + groupSearchFilter +
                 "(" + uniqueMemberAttr + "=" + dn + "))";
 
-        try {
             if (debug.messageEnabled()) {
                   debug.message("getGroupMemberSearch: dn=" + dn +
                       "; basedn=" + baseDN +
@@ -2638,15 +2695,18 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        String getAttrs[] = { nsRoleDNAttr };
-        Set roleDNs = new HashSet();
-        String dn = getDN(type, name);
+        Set roleDNs = null;
+        LDAPConnection ld = null;
+        String dn = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            String getAttrs[] = { nsRoleDNAttr };
+            roleDNs = new HashSet();
+            dn = getDN(type, name);
             LDAPEntry foundEntry = ld.read(dn, getAttrs);
             if (foundEntry != null) {
                 LDAPAttribute ldapAttr = foundEntry.getAttribute(nsRoleDNAttr);
@@ -2668,7 +2728,9 @@ public class LDAPv3Repo extends IdRepo {
             }
             handleLDAPException(lde, dn);
         } finally {
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
         return roleDNs;
     }
@@ -2678,19 +2740,22 @@ public class LDAPv3Repo extends IdRepo {
             SSOException {
 
         checkConnPool();
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(defaultMaxResults);
-        constraints.setServerTimeLimit(timeLimit);
-        String getAttrs[] = { nsRoleAttr };
-        Set allRoleDNs = new HashSet();
-        String dn = getDN(type, name);
-        // nsRole returns both managedRole and filteredRole.
-        // there is no way to just get the filtererRole.
-        // so get all the roles(managedRole and filteredRole) then
-        // remove managedRole from all the roles to get the filteredRole.
+        Set allRoleDNs = null;
+        LDAPConnection ld = null;
+        String dn = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints constraints = ld.getSearchConstraints();
+            constraints.setMaxResults(defaultMaxResults);
+            constraints.setServerTimeLimit(timeLimit);
+            String getAttrs[] = { nsRoleAttr };
+            allRoleDNs = new HashSet();
+            dn = getDN(type, name);
+            // nsRole returns both managedRole and filteredRole.
+            // there is no way to just get the filtererRole.
+            // so get all the roles(managedRole and filteredRole) then
+            // remove managedRole from all the roles to get the filteredRole.
             LDAPEntry foundEntry = ld.read(dn, getAttrs);
             LDAPAttribute ldapAttr = foundEntry.getAttribute(nsRoleAttr);
             if (ldapAttr != null) {
@@ -2733,7 +2798,9 @@ public class LDAPv3Repo extends IdRepo {
             }
             handleLDAPException(lde, dn);
         } finally {
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
         return allRoleDNs;
     }
@@ -2786,77 +2853,83 @@ public class LDAPv3Repo extends IdRepo {
             throws IdRepoException, SSOException {
         checkConnPool();
         String groupDN = getDN(type, name);
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        Iterator it = usersSet.iterator();
-        while (it.hasNext()) {
-            String userDN = (String) it.next();
-            LDAPAttribute mbr1 = new LDAPAttribute(uniqueMemberAttr, userDN);
-            LDAPAttribute mbrOf = null;
-            if (memberOfAttr != null) {
-                mbrOf = new LDAPAttribute(memberOfAttr, groupDN);
-            }
+        LDAPConnection ld = null;
+        try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            Iterator it = usersSet.iterator();
+            while (it.hasNext()) {
+                String userDN = (String) it.next();
+                LDAPAttribute mbr1 = new LDAPAttribute(uniqueMemberAttr,
+                    userDN);
+                LDAPAttribute mbrOf = null;
+                if (memberOfAttr != null) {
+                    mbrOf = new LDAPAttribute(memberOfAttr, groupDN);
+                }
 
-            LDAPModification mod = null;
-            LDAPModification modMemberOf = null;
-            switch (operation) {
-            case ADDMEMBER:
-                mod = new LDAPModification(
-                    LDAPModification.ADD, mbr1);
-                if (mbrOf != null) {
-                    modMemberOf = new LDAPModification(
-                        LDAPModification.ADD, mbrOf);
+                LDAPModification mod = null;
+                LDAPModification modMemberOf = null;
+                switch (operation) {
+                    case ADDMEMBER:
+                        mod = new LDAPModification(
+                            LDAPModification.ADD, mbr1);
+                        if (mbrOf != null) {
+                            modMemberOf = new LDAPModification(
+                                LDAPModification.ADD, mbrOf);
+                        }
+                        break;
+                    case REMOVEMEMBER:
+                        mod = new LDAPModification(
+                            LDAPModification.DELETE, mbr1);
+                        if (mbrOf != null) {
+                            modMemberOf = new LDAPModification(
+                                LDAPModification.DELETE, mbrOf);
+                        }
                 }
-                break;
-            case REMOVEMEMBER:
-                mod = new LDAPModification(
-                    LDAPModification.DELETE, mbr1);
-                if (mbrOf != null) {
-                    modMemberOf = new LDAPModification(
-                        LDAPModification.DELETE, mbrOf);
+                try {
+                    if ( !isExists(IdType.USER, userDN) ) {
+                        String ldapError = Integer.toString(
+                            LDAPException.NO_SUCH_OBJECT);
+                        Object[] args = { CLASS_NAME, userDN, ""};
+                        IdRepoException ide = new IdRepoException(
+                            IdRepoBundle.BUNDLE_NAME, "220", args);
+                        ide.setLDAPErrorCode(ldapError);
+                        throw ide; 
+                    }
+                    if ( !isExists(IdType.GROUP, groupDN) ) {
+                        String ldapError = Integer.toString(
+                            LDAPException.NO_SUCH_OBJECT);
+                        Object[] args = { CLASS_NAME, groupDN, ""};
+                        IdRepoException ide = new IdRepoException(
+                            IdRepoBundle.BUNDLE_NAME, "220", args);
+                        ide.setLDAPErrorCode(ldapError);
+                        throw ide; 
+                    }
+                    if (mbrOf != null) {
+                        ld.modify(userDN, modMemberOf);
+                    }
+                    ld.modify(groupDN,  mod);
+                    if (cacheEnabled) {
+                        ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
+                        ldapCache.flushEntries(groupDN, LDAPv2.SCOPE_BASE);
+                    }
+                } catch (LDAPException lde) {
+                    int resultCode = lde.getLDAPResultCode();
+                    debug.error("LDAPv3Repo: modifyGroupMembership ld.modify: "
+                        + resultCode + " groupDN = " + groupDN
+                        + " userDN= " + userDN );
+                    if (debug.messageEnabled()) {
+                        debug.message("LDAPv3Repo: modifyGroupMembership " +
+                            "ld.modify", lde);
+                    }
+                    handleLDAPException(lde, groupDN);
                 }
             }
-            try {
-                if ( !isExists(IdType.USER, userDN) ) {
-                    String ldapError = Integer.toString(
-                        LDAPException.NO_SUCH_OBJECT);
-                    Object[] args = { CLASS_NAME, userDN, ""};
-                    IdRepoException ide = new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "220", args);
-                    ide.setLDAPErrorCode(ldapError);
-                    throw ide; 
-                }
-                if ( !isExists(IdType.GROUP, groupDN) ) {
-                    String ldapError = Integer.toString(
-                        LDAPException.NO_SUCH_OBJECT);
-                    Object[] args = { CLASS_NAME, groupDN, ""};
-                    IdRepoException ide = new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "220", args);
-                    ide.setLDAPErrorCode(ldapError);
-                    throw ide; 
-                }
-                if (mbrOf != null) {
-                    ld.modify(userDN, modMemberOf);
-                }
-                ld.modify(groupDN,  mod);
-                if (cacheEnabled) {
-                    ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
-                    ldapCache.flushEntries(groupDN, LDAPv2.SCOPE_BASE);
-                }
-            } catch (LDAPException lde) {
-                int resultCode = lde.getLDAPResultCode();
-                debug.error("LDAPv3Repo: modifyGroupMembership ld.modify: "
-                    + resultCode + " groupDN = " + groupDN
-                    + " userDN= " + userDN );
+        } finally {
+            if (ld != null) {
                 connPool.close(ld);
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPv3Repo: modifyGroupMembership ld.modify",
-                        lde);
-                }
-                handleLDAPException(lde, groupDN);
             }
         }
-        connPool.close(ld);
     }
 
     private void modifyRoleMembership(SSOToken token, IdType type, String name,
@@ -2868,38 +2941,45 @@ public class LDAPv3Repo extends IdRepo {
         // there is nothing we can for filtered role since membership
         // is controlled by a filtered.
         String roleDN = getDN(type, name);
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        Iterator it = usersSet.iterator();
-        while (it.hasNext()) {
-            LDAPModification mod = null;
-            String userDN = (String) it.next();
-            LDAPAttribute mbr1 = new LDAPAttribute(nsRoleDNAttr, roleDN);
-            switch (operation) {
-            case ADDMEMBER:
-                mod = new LDAPModification(LDAPModification.ADD, mbr1);
-                break;
-            case REMOVEMEMBER:
-                mod = new LDAPModification(LDAPModification.DELETE, mbr1);
+        LDAPConnection ld = null;
+        try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            Iterator it = usersSet.iterator();
+            while (it.hasNext()) {
+                LDAPModification mod = null;
+                String userDN = (String) it.next();
+                LDAPAttribute mbr1 = new LDAPAttribute(nsRoleDNAttr, roleDN);
+                switch (operation) {
+                    case ADDMEMBER:
+                        mod = new LDAPModification(LDAPModification.ADD, mbr1);
+                        break;
+                    case REMOVEMEMBER:
+                        mod = new LDAPModification(LDAPModification.DELETE,
+                            mbr1);
+                }
+                try {
+                    ld.modify(userDN, mod);
+                    if (cacheEnabled) {
+                        ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
+                    }
+                } catch (LDAPException lde) {
+                    int resultCode = lde.getLDAPResultCode();
+                    debug.error("LDAPv3Repo: modifyRoleMembership ld.modify: "
+                        + resultCode + " userDN= " + userDN + " roleDN= " +
+                        roleDN);
+                    if (debug.messageEnabled()) {
+                        debug.message("LDAPv3Repo: modifyRoleMembership " +
+                            "ld.modify: ", lde);
+                    }
+                    handleLDAPException(lde, userDN);
+                }
             }
-            try {
-                ld.modify(userDN, mod);
-                if (cacheEnabled) {
-                    ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
-                }
-            } catch (LDAPException lde) {
-                int resultCode = lde.getLDAPResultCode();
-                debug.error("LDAPv3Repo: modifyRoleMembership ld.modify: "
-                    + resultCode + " userDN= " + userDN + " roleDN= " + roleDN);
-                if (debug.messageEnabled()) {
-                    debug.message("LDAPv3Repo: modifyRoleMembership ld.modify",
-                        lde);
-                }
+        } finally {
+            if (ld != null) {
                 connPool.close(ld);
-                handleLDAPException(lde, userDN);
             }
         }
-        connPool.close(ld);
     }
 
     /*
@@ -3008,9 +3088,10 @@ public class LDAPv3Repo extends IdRepo {
                 LDAPAttribute theAttr = new LDAPAttribute(attrName);
                 ldapModSet.add(LDAPModification.REPLACE, theAttr);
             } // while
-            LDAPConnection ld = connPool.getConnection();
-            enableCache(ld);
+            LDAPConnection ld = null;
             try {
+                ld = connPool.getConnection();
+                enableCache(ld);
                 ld.modify(eDN, ldapModSet);
                 if (cacheEnabled) {
                     ldapCache.flushEntries(eDN, LDAPv2.SCOPE_BASE);
@@ -3025,7 +3106,9 @@ public class LDAPv3Repo extends IdRepo {
                 }
                 handleLDAPException(lde, eDN);
             } finally {
-                connPool.close(ld);
+                if (ld != null) {
+                    connPool.close(ld);
+                }
             }
         }
     }
@@ -3063,236 +3146,251 @@ public class LDAPv3Repo extends IdRepo {
             scope = LDAPv2.SCOPE_ONE;
         }
         boolean attrsOnly = false;
+        LDAPConnection ld = null;
+        Map allEntryMap = null;
+        Set allEntries = null;
+        int errorCode;
+        try {
+            ld = connPool.getConnection();
+            enableCache(ld);
+            LDAPSearchConstraints searchConstraints = new
+                LDAPSearchConstraints();
+            if (maxResults < 1) {
+                searchConstraints.setMaxResults(defaultMaxResults);
+            } else {
+                searchConstraints.setMaxResults(maxResults);
+            }
 
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
-        LDAPSearchConstraints searchConstraints = new LDAPSearchConstraints();
-        if (maxResults < 1) {
-            searchConstraints.setMaxResults(defaultMaxResults);
-        } else {
-            searchConstraints.setMaxResults(maxResults);
-        }
+            if (maxTime < 1) {
+                searchConstraints.setServerTimeLimit(timeLimit);
+            } else {
+                searchConstraints.setServerTimeLimit(maxTime * 1000);
+            }
 
-        if (maxTime < 1) {
-            searchConstraints.setServerTimeLimit(timeLimit);
-        } else {
-            searchConstraints.setServerTimeLimit(maxTime * 1000);
-        }
-
-        String namingAttr = getNamingAttr(type);
-        String[] theAttr = null;
-        if ((returnAllAttrs) ||
-            (returnAttrs != null && returnAttrs.contains("*"))
-        ) {
-            theAttr = new String[] { "*" };
-        } else if (returnAttrs != null && !returnAttrs.isEmpty()) {
-            returnAttrs.add(namingAttr);
-            theAttr = (String[]) returnAttrs.toArray(new String[returnAttrs
+            String namingAttr = getNamingAttr(type);
+            String[] theAttr = null;
+            if ((returnAllAttrs) ||
+                (returnAttrs != null && returnAttrs.contains("*"))) {
+                theAttr = new String[] { "*" };
+            } else if (returnAttrs != null && !returnAttrs.isEmpty()) {
+                returnAttrs.add(namingAttr);
+                theAttr = (String[]) returnAttrs.toArray(new String[returnAttrs
                     .size()]);
-        } else { // don't return any attr it will be faster.
-            // Need to get back the naming attribute
-            theAttr = new String[] { namingAttr };
-        }
+            } else { // don't return any attr it will be faster.
+                // Need to get back the naming attribute
+                theAttr = new String[] { namingAttr };
+            }
 
-        LDAPSearchResults myResults = null;
-        String objectClassFilter = getObjClassFilter(type);
+            LDAPSearchResults myResults = null;
+            String objectClassFilter = getObjClassFilter(type);
 
-        StringBuffer filterSB = new StringBuffer();
+            StringBuffer filterSB = new StringBuffer();
 
-        if (filterOp == IdRepo.OR_MOD) {
-            filterSB.append("(|");
-        } else if (filterOp == IdRepo.AND_MOD) {
-            filterSB.append("(&");
-        } // do nothing for IdRepo.NO_MOD
+            if (filterOp == IdRepo.OR_MOD) {
+                filterSB.append("(|");
+            } else if (filterOp == IdRepo.AND_MOD) {
+                filterSB.append("(&");
+            } // do nothing for IdRepo.NO_MOD
 
-        filterSB.append("(&").append(
-                constructFilter(
+            filterSB.append("(&").append(
+                    constructFilter(
                         namingAttr, objectClassFilter, pattern)); // note A
 
-        if ((avPairs != null) && (avPairs.size() > 0)) {
-            filterSB.append(constructFilter(filterOp, avPairs));
-        }
-
-        filterSB.append(")"); // matches "(" in note A above
-
-        if ((filterOp == IdRepo.AND_MOD) || (filterOp == IdRepo.OR_MOD)) {
-            filterSB.append(")");
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: before ld.search call:" + "filterSB:"
-                    + filterSB + " ; base:" + base);
-            if (theAttr != null) {
-                debug.message("          theAttr[0]: " + theAttr[0]);
-            } else {
-                debug.message("          theAttr[0]:=null");
+            if ((avPairs != null) && (avPairs.size() > 0)) {
+                filterSB.append(constructFilter(filterOp, avPairs));
             }
-        }
-        try {
-            myResults = ld.search(
-                base, searchScope, filterSB.toString(), theAttr, attrsOnly,
-                searchConstraints);
-        } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
-            connPool.close(ld);
+
+            filterSB.append(")"); // matches "(" in note A above
+
+            if ((filterOp == IdRepo.AND_MOD) || (filterOp == IdRepo.OR_MOD)) {
+                filterSB.append(")");
+            }
+
             if (debug.messageEnabled()) {
-                debug.message(
-                    "LDAPv3Repo: search, ld.search error: " + resultCode);
-            }
-            String ldapError = Integer.toString(resultCode);
-            Object[] args = { CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
-            if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)){
-                IdRepoFatalException ide = new IdRepoFatalException(
-                        IdRepoBundle.BUNDLE_NAME, "311", args);
-                ide.setLDAPErrorCode(ldapError);
-                throw ide;
-            } else if (resultCode == 32) {
-                // return empty set for entry not found error.
-                return new RepoSearchResults(new HashSet(),
-                    RepoSearchResults.SUCCESS, Collections.EMPTY_MAP, type);
-            } else {
-                IdRepoException ide = new IdRepoException(
-                        IdRepoBundle.BUNDLE_NAME, "311", args);
-                ide.setLDAPErrorCode(ldapError);
-                throw ide;
-            }
-        }
-
-        int errorCode = RepoSearchResults.SUCCESS;
-        Map allEntryMap = new HashMap();
-        Set allEntries = new HashSet();
-        try {
-            while (myResults.hasMoreElements()) {
-                LDAPEntry entry = myResults.next();
-                String entryDN = entry.getDN();
-                Map attrEntryMap = new HashMap();
-                if (debug.messageEnabled()) {
-                    debug.message("    in search: entryDN=" + entryDN
-                        + "; returnAllAttrs=" + returnAllAttrs
-                        + "; allEntries=" + allEntries
-                        + "; allEntryMap=" + allEntryMap);
+                debug.message("LDAPv3Repo: before ld.search call:" + "filterSB:"
+                    + filterSB + " ; base:" + base);
+                if (theAttr != null) {
+                    debug.message("          theAttr[0]: " + theAttr[0]);
+                } else {
+                    debug.message("          theAttr[0]:=null");
                 }
+            }
+            try {
+                myResults = ld.search(
+                    base, searchScope, filterSB.toString(), theAttr, attrsOnly,
+                    searchConstraints);
+            } catch (LDAPException lde) {
+                int resultCode = lde.getLDAPResultCode();
+                if (debug.messageEnabled()) {
+                    debug.message(
+                        "LDAPv3Repo: search, ld.search error: " + resultCode);
+                }
+                String ldapError = Integer.toString(resultCode);
+                Object[] args = { CLASS_NAME, LDAPv3Bundle.getString(
+                    ldapError)};
+                if ((resultCode == 80) || (resultCode == 81) ||
+                    (resultCode == 82)){
+                    IdRepoFatalException ide = new IdRepoFatalException(
+                        IdRepoBundle.BUNDLE_NAME, "311", args);
+                    ide.setLDAPErrorCode(ldapError);
+                    throw ide;
+                } else if (resultCode == 32) {
+                    // return empty set for entry not found error.
+                    return new RepoSearchResults(new HashSet(),
+                        RepoSearchResults.SUCCESS, Collections.EMPTY_MAP, type);
+                } else {
+                    IdRepoException ide = new IdRepoException(
+                            IdRepoBundle.BUNDLE_NAME, "311", args);
+                    ide.setLDAPErrorCode(ldapError);
+                    throw ide;
+                }
+            }
 
-                if (returnAllAttrs) {
-                    // return all the attributes
-                    LDAPAttributeSet ldapAttrSet = entry.getAttributeSet();
-                    int size = ldapAttrSet.size();
-                    for (int i = 0; i < size; i++) {
-                        LDAPAttribute ldapAttr = ldapAttrSet.elementAt(i);
-                        if (ldapAttr != null) {
-                            String attrName = ldapAttr.getName();
-                            Set attrValueSet = new HashSet();
-                            Enumeration enumVals = ldapAttr.getStringValues();
-                            while ((enumVals != null)
+            errorCode = RepoSearchResults.SUCCESS;
+            allEntryMap = new HashMap();
+            allEntries = new HashSet();
+            try {
+                while (myResults.hasMoreElements()) {
+                    LDAPEntry entry = myResults.next();
+                    String entryDN = entry.getDN();
+                    Map attrEntryMap = new HashMap();
+                    if (debug.messageEnabled()) {
+                        debug.message("    in search: entryDN=" + entryDN
+                            + "; returnAllAttrs=" + returnAllAttrs
+                            + "; allEntries=" + allEntries
+                            + "; allEntryMap=" + allEntryMap);
+                    }
+
+                    if (returnAllAttrs) {
+                        // return all the attributes
+                        LDAPAttributeSet ldapAttrSet = entry.getAttributeSet();
+                        int size = ldapAttrSet.size();
+                        for (int i = 0; i < size; i++) {
+                            LDAPAttribute ldapAttr = ldapAttrSet.elementAt(i);
+                            if (ldapAttr != null) {
+                                String attrName = ldapAttr.getName();
+                                Set attrValueSet = new HashSet();
+                                Enumeration enumVals =
+                                    ldapAttr.getStringValues();
+                                while ((enumVals != null)
                                     && enumVals.hasMoreElements()) {
-                                String value = (String) enumVals.nextElement();
-                                attrValueSet.add(value);
+                                    String value = (String)
+                                        enumVals.nextElement();
+                                    attrValueSet.add(value);
+                                }
+                                attrEntryMap.put(attrName, attrValueSet);
+                            }
+                        }
+                        // Get the naming attribute value
+                        Set idNameValue = (Set) attrEntryMap.get(namingAttr);
+                        String idName = entryDN;
+                        if (entryDN != null && DN.isDN(entryDN) &&
+                            entryDN.toLowerCase().startsWith(
+                            namingAttr.toLowerCase())) {
+                            DN edn = new DN(entryDN);
+                            String[] dns = edn.explodeDN(true);
+                            idName = dns[0];
+                        } else
+                            if (idNameValue != null && !idNameValue.isEmpty()) {
+                                idName = (String) idNameValue.iterator().next();
+                            }
+                        allEntries.add(idName);
+                        allEntryMap.put(idName, attrEntryMap);
+                        if (debug.messageEnabled()) {
+                            debug.message("  search1 idName=" + idName +
+                                ";  attrEntryMap=" + attrEntryMap);
+                        }
+                    } else if (returnAttrs != null && !returnAttrs.isEmpty()) {
+                        // return the attributes specified by caller.
+                        Iterator itr = returnAttrs.iterator();
+                        while (itr.hasNext()) {
+                            String attrName = (String) itr.next();
+                            LDAPAttribute ldapAttr = entry.getAttribute(
+                                attrName);
+                            // return empty set if attribute does not exist.
+                            Set attrValueSet = new HashSet();
+                            if (ldapAttr != null) {
+                                Enumeration enumVals =
+                                    ldapAttr.getStringValues();
+                                while ((enumVals != null)
+                                    && enumVals.hasMoreElements()) {
+                                    String value = (String) 
+                                        enumVals.nextElement();
+                                    attrValueSet.add(value);
+                                }
                             }
                             attrEntryMap.put(attrName, attrValueSet);
                         }
-                    }
-                    // Get the naming attribute value
-                    Set idNameValue = (Set) attrEntryMap.get(namingAttr);
-                    String idName = entryDN;
-                    if (entryDN != null && DN.isDN(entryDN) &&
+                        // Get the naming attribute value
+                        Set idNameValue = (Set) attrEntryMap.get(namingAttr);
+                        String idName = entryDN;
+                        if (entryDN != null && DN.isDN(entryDN) &&
                             entryDN.toLowerCase().startsWith(
                             namingAttr.toLowerCase())) {
-                        DN edn = new DN(entryDN);
-                        String[] dns = edn.explodeDN(true);
-                        idName = dns[0];
-                    } else if (idNameValue != null && !idNameValue.isEmpty()) {
-                        idName = (String) idNameValue.iterator().next();
-                    }
-                    allEntries.add(idName);
-                    allEntryMap.put(idName, attrEntryMap);
-                    if (debug.messageEnabled()) {
-                        debug.message("  search1 idName=" + idName +
-                            ";  attrEntryMap=" + attrEntryMap);
-                    }
-                } else if (returnAttrs != null && !returnAttrs.isEmpty()) {
-                    // return the attributes specified by caller.
-                    Iterator itr = returnAttrs.iterator();
-                    while (itr.hasNext()) {
-                        String attrName = (String) itr.next();
-                        LDAPAttribute ldapAttr = entry.getAttribute(attrName);
-                        // return empty set if attribute does not exist.
-                        Set attrValueSet = new HashSet();
-                        if (ldapAttr != null) {
+                            DN edn = new DN(entryDN);
+                            String[] dns = edn.explodeDN(true);
+                            idName = dns[0];
+                        } else
+                            if (idNameValue != null && !idNameValue.isEmpty()) {    
+                            idName = (String) idNameValue.iterator().next();
+                        }
+                        allEntries.add(idName);
+                        allEntryMap.put(idName, attrEntryMap);
+                        if (debug.messageEnabled()) {
+                            debug.message("  search2 idName=" + idName +
+                                ";  attrEntryMap=" + attrEntryMap);
+                        }
+                    } else {
+                        /*
+                         * returnAllAttrs is false and list of attr to return is
+                         * null do not return any attribute.
+                        * Get the naming attribute for results
+                         * return entry DN if empty
+                         */
+                        String idName = entryDN;
+                        LDAPAttribute ldapAttr = entry.getAttribute(namingAttr);
+                        if (entryDN != null && DN.isDN(entryDN) &&
+                            entryDN.toLowerCase().startsWith(
+                                namingAttr.toLowerCase())) {
+                            DN edn = new DN(entryDN);
+                            String[] dns = edn.explodeDN(true);
+                            idName = dns[0];
+                        } else if (ldapAttr != null ) {
                             Enumeration enumVals = ldapAttr.getStringValues();
-                            while ((enumVals != null)
-                                    && enumVals.hasMoreElements()) {
-                                String value = (String) enumVals.nextElement();
-                                attrValueSet.add(value);
+                            if ((enumVals != null) &&
+                                enumVals.hasMoreElements()) {
+                                idName = (String) enumVals.nextElement();
                             }
                         }
-                        attrEntryMap.put(attrName, attrValueSet);
-                    }
-                    // Get the naming attribute value
-                    Set idNameValue = (Set) attrEntryMap.get(namingAttr);
-                    String idName = entryDN;
-                    if (entryDN != null && DN.isDN(entryDN) &&
-                            entryDN.toLowerCase().startsWith(
-                            namingAttr.toLowerCase())) {
-                        DN edn = new DN(entryDN);
-                        String[] dns = edn.explodeDN(true);
-                        idName = dns[0];
-                    } else if (idNameValue != null && !idNameValue.isEmpty()) {
-                        idName = (String) idNameValue.iterator().next();
-                    }
-                    allEntries.add(idName);
-                    allEntryMap.put(idName, attrEntryMap);
-                    if (debug.messageEnabled()) {
-                        debug.message("  search2 idName=" + idName +
-                            ";  attrEntryMap=" + attrEntryMap);
-                    }
-                } else {
-                    /*
-                     * returnAllAttrs is false and list of attr to return is
-                     * null do not return any attribute.
-                     * Get the naming attribute for results
-                     * return entry DN if empty
-                     */
-                    String idName = entryDN;
-                    LDAPAttribute ldapAttr = entry.getAttribute(namingAttr);
-                    if (entryDN != null && DN.isDN(entryDN) &&
-                            entryDN.toLowerCase().startsWith(
-                            namingAttr.toLowerCase())) {
-                        DN edn = new DN(entryDN);
-                        String[] dns = edn.explodeDN(true);
-                        idName = dns[0];
-                    } else if (ldapAttr != null ) {
-                        Enumeration enumVals = ldapAttr.getStringValues();
-                        if ((enumVals != null) && enumVals.hasMoreElements()) {
-                           idName = (String) enumVals.nextElement();
+                        allEntries.add(idName);
+                        if (debug.messageEnabled()) {
+                            debug.message("  search3 idName=" + idName +
+                                ";  allEntries=" + allEntries);
                         }
                     }
-                    allEntries.add(idName);
-                    if (debug.messageEnabled()) {
-                        debug.message("  search3 idName=" + idName +
-                            ";  allEntries=" + allEntries);
+                } // while
+            } catch (LDAPException e) {
+                int ldapErrCode = e.getLDAPResultCode();
+                switch (errorCode) {
+                    case LDAPException.TIME_LIMIT_EXCEEDED:
+                    case LDAPException.LDAP_TIMEOUT:
+                    {
+                        errorCode = RepoSearchResults.TIME_LIMIT_EXCEEDED;
+                        break;
                     }
+                    case LDAPException.SIZE_LIMIT_EXCEEDED: {
+                        errorCode = RepoSearchResults.SIZE_LIMIT_EXCEEDED;
+                        break;
+                    }
+                    default:
+                        errorCode = ldapErrCode;
                 }
-            } // while
-
-        } catch (LDAPException e) {
-            int ldapErrCode = e.getLDAPResultCode();
-            switch (errorCode) {
-            case LDAPException.TIME_LIMIT_EXCEEDED:
-            case LDAPException.LDAP_TIMEOUT:
-            {
-                errorCode = RepoSearchResults.TIME_LIMIT_EXCEEDED;
-                break;
             }
-            case LDAPException.SIZE_LIMIT_EXCEEDED: {
-                errorCode = RepoSearchResults.SIZE_LIMIT_EXCEEDED;
-                break;
-            }
-            default:
-                errorCode = ldapErrCode;
+        } finally {
+            if (ld != null) {
+                connPool.close(ld);
             }
         }
-
-        connPool.close(ld);
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: exit search " + "allEntryDN:"
                     + allEntries + " ;allEntries:" + allEntryMap);
@@ -3486,9 +3584,10 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         }
-        LDAPConnection ld = connPool.getConnection();
-        enableCache(ld);
+        LDAPConnection ld = null;
         try {
+            ld = connPool.getConnection();
+            enableCache(ld);
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: setAttributes. Calling ld.modify");
             }
@@ -3504,7 +3603,9 @@ public class LDAPv3Repo extends IdRepo {
             }
             handleLDAPException(lde, eDN);
         } finally {
-            connPool.close(ld);
+            if (ld != null) {
+                connPool.close(ld);
+            }
         }
     }
 
@@ -4073,9 +4174,10 @@ public class LDAPv3Repo extends IdRepo {
         int userMatches = 0;
 
         checkConnPool();
-        LDAPConnection ldc = connPool.getConnection();
-        enableCache(ldc);
+        LDAPConnection ldc = null;
         try {
+            ldc = connPool.getConnection();
+            enableCache(ldc);
             if (debug.messageEnabled()) {
                 debug.message("Connecting to " + firstHostAndPort + ":" +
                 "\nSearching " + baseDN + " for " +
@@ -4389,7 +4491,7 @@ public class LDAPv3Repo extends IdRepo {
             debug.message("objectChanged:  dn=" + dn);
         }
         boolean flushStatus;
-        if ((!cacheEnabled) || (ldapCache == null)) {
+        if (hasShutdown || (!cacheEnabled) || (ldapCache == null)) {
             return;
         }
 
@@ -4501,7 +4603,8 @@ public class LDAPv3Repo extends IdRepo {
      * and notify its listener and update the data store's cache.
      */
     protected static void objectChanged(String dn, int changeType, 
-        Request request, String psIdKey, boolean allObjChanged, boolean clearCache) {
+        Request request, String psIdKey, boolean allObjChanged,
+            boolean clearCache) {
         
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo.objectChanged: dn=" + dn 
@@ -4509,22 +4612,27 @@ public class LDAPv3Repo extends IdRepo {
                 + "; allObjChanged=" + allObjChanged + "; clearCache=" 
                 + clearCache);
         }
-        synchronized (listOfPS) {
-        Map listOfRepo = (Map) listOfPS.get(psIdKey);
+        //Map listOfRepo = (Map) listOfPS.get(psIdKey);
+        HashMap listOfRepo = (HashMap) listOfPS.get(psIdKey);
         if (listOfRepo != null) { 
-            HashSet listOfDS = (HashSet) listOfRepo.get("listOfDS");
+            //HashSet listOfDS = (HashSet) listOfRepo.get("listOfDS");
+            HashMap clonedListOfRepo = (HashMap) listOfRepo.clone();
+            HashSet listOfDS = (HashSet) clonedListOfRepo.get("listOfDS");
             Iterator iter = listOfDS.iterator();
             while (iter.hasNext()) {
                 LDAPv3Repo v3Repo = (LDAPv3Repo) iter.next();
-                if (allObjChanged) {
-                    clearCache = true;
-                    v3Repo.myListener.allObjectsChanged();
-                } else {
-                    v3Repo.objectChanged(dn, changeType);
-                    v3Repo.myListener.objectChanged(dn, changeType, v3Repo.myListener.getConfigMap());
-                }
-                if (clearCache) {
-                    v3Repo.clearCache();
+                if (!v3Repo.hasShutdown) {
+                    if (allObjChanged) {
+                        clearCache = true;
+                        v3Repo.myListener.allObjectsChanged();
+                    } else {
+                        v3Repo.objectChanged(dn, changeType);
+                        v3Repo.myListener.objectChanged(dn, changeType,
+                            v3Repo.myListener.getConfigMap());
+                    }
+                    if (clearCache) {
+                        v3Repo.clearCache();
+                    }
                 }
             }
         } else {
@@ -4532,7 +4640,6 @@ public class LDAPv3Repo extends IdRepo {
                 debug.message("LDAPv3Repo.objectChanged: "
                     + "did not find any datastore for this ps.");
             }
-        }
         }
     }
 
@@ -4616,10 +4723,16 @@ public class LDAPv3Repo extends IdRepo {
         throws LDAPException, IdRepoException {
         LDAPSchema dirSchema = new LDAPSchema();
         checkConnPool();
-        LDAPConnection conn = connPool.getConnection();
-        enableCache(conn);
-        dirSchema.fetchSchema(conn);
-        connPool.close(conn);
+        LDAPConnection conn = null;
+        try {
+            conn = connPool.getConnection();
+            enableCache(conn);
+            dirSchema.fetchSchema(conn);
+        } finally {
+            if (conn != null) {
+                connPool.close(conn);
+            }
+        }
         return (dirSchema);
 
     }
@@ -4824,9 +4937,9 @@ public class LDAPv3Repo extends IdRepo {
                 // Since people container is not specified, do a sub-tree
                 // search to find the user DN
                 // Auto-construct the DN in case search failed
-                dn = userSearchNamingAttr + "=" + name +  orgDN;
+                dn = userSearchNamingAttr + "=" + name + orgDN;
                 String filter = constructFilter(userSearchNamingAttr,
-                    getObjClassFilter(IdType.USER), origName);
+                        getObjClassFilter(IdType.USER), origName);
                 LDAPConnection ld = null;
                 try {
                     ld = connPool.getConnection();
@@ -4897,9 +5010,8 @@ public class LDAPv3Repo extends IdRepo {
                     }
                 }
             } else {
-                dn = userSearchNamingAttr + "=" + name
-                    + peopleCtnrNamingAttr + "=" + peopleCtnrValue
-                    + "," + orgDN;
+                dn = userSearchNamingAttr + "=" + name + peopleCtnrNamingAttr
+                        + "=" + peopleCtnrValue + "," + orgDN;
             }
         } else if (type.equals(IdType.AGENT)) {
             if ((agentCtnrValue == null) || (agentCtnrValue.length() == 0)
@@ -4939,7 +5051,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             } else {
                 dn = groupSearchNamingAttr + "=" + name + groupCtnrNamingAttr
-                     + "=" + groupCtnrValue + "," + orgDN;
+                        + "=" + groupCtnrValue + "," + orgDN;
             }
         } else if (type.equals(IdType.ROLE)) {
             dn = roleSearchNamingAttr + "=" + name + orgDN;
@@ -5296,7 +5408,7 @@ public class LDAPv3Repo extends IdRepo {
             }
             args[1]  = eDN;
             IdRepoException ide = new IdRepoException(
-                IdRepoBundle.BUNDLE_NAME, "220", args);
+                    IdRepoBundle.BUNDLE_NAME, "220", args);
             ide.setLDAPErrorCode(ldapError);
             throw ide;
         } else {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.12 2008-02-08 02:47:28 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.13 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,9 @@
 package com.sun.identity.idm.plugins.ldapv3;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -39,6 +41,7 @@ import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPInterruptedException;
 import netscape.ldap.LDAPMessage;
 import netscape.ldap.LDAPResponse;
 import netscape.ldap.LDAPSearchConstraints;
@@ -53,11 +56,15 @@ import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.controls.LDAPProxiedAuthControl;
 import netscape.ldap.factory.JSSESocketFactory;
 
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
+import java.util.Date;
 
 /**
  * Event Service monitors changes on the server. Implemented with the persistant
@@ -77,7 +84,7 @@ import com.sun.identity.idm.IdRepoException;
 public class LDAPv3EventService implements Runnable {
 
     // list that holds notification requests
-    Hashtable _requestList = new Hashtable();
+    protected Map _requestList;
 
     // Thread that listens to DS notifications
     Thread _monitorThread = null;
@@ -165,6 +172,8 @@ public class LDAPv3EventService implements Runnable {
     protected long _idleTimeOutMills;
 
     private boolean pSearchSupported = false;
+    
+    protected volatile boolean _shutdownCalled = false;
 
     int randomID = 0;
 
@@ -179,15 +188,19 @@ public class LDAPv3EventService implements Runnable {
 
     private static final String AD_NOTIFICATION_OID = "1.2.840.113556.1.4.528";
 
-    private boolean adNotificationSupported = false;
-
+    private boolean adNotificationSupported = false;    
+    
+    
     private int getPropertyIntValue(Map configParams, String key,
             int defaultValue) {
         int value = defaultValue;
         try {
-            Set valueSet = (Set) configParams.get(key);
-            if (valueSet != null && !valueSet.isEmpty()) {
-                value = Integer.parseInt((String) valueSet.iterator().next());
+            synchronized (configParams) {
+                Set valueSet = (Set) configParams.get(key);
+                if (valueSet != null && !valueSet.isEmpty()) {
+                    value = Integer.parseInt((String)
+                        valueSet.iterator().next());
+                }
             }
         } catch (NumberFormatException nfe) {
             value = defaultValue;
@@ -201,12 +214,14 @@ public class LDAPv3EventService implements Runnable {
 
     private String getPropertyStringValue(Map configParams, String key) {
         String value = null;
-        Set valueSet = (Set) configParams.get(key);
-        if (valueSet != null && !valueSet.isEmpty()) {
-            value = (String) valueSet.iterator().next();
-        } else {
-            debugger.error("LDAPv3EventService.getPropertyStringValue failed:"
-                    + key);
+        synchronized (configParams) {
+            Set valueSet = (Set) configParams.get(key);
+            if (valueSet != null && !valueSet.isEmpty()) {
+                value = (String) valueSet.iterator().next();
+            } else {
+                debugger.error(
+                    "LDAPv3EventService.getPropertyStringValue failed:" + key);
+            }
         }
 
         if (debugger.messageEnabled()) {
@@ -232,9 +247,11 @@ public class LDAPv3EventService implements Runnable {
     private HashSet getPropertyRetryErrorCodes(Map configParams, String key) {
         HashSet codes = new HashSet();
         Set retryErrorSet = (Set) configParams.get(key);
-        Iterator itr = retryErrorSet.iterator();
-        while (itr.hasNext()) {
-            codes.add(itr.next());
+        synchronized (retryErrorSet) {
+            Iterator itr = retryErrorSet.iterator();
+            while (itr.hasNext()) {
+                codes.add(itr.next());
+            }
         }
         if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.getPropertyRetryErrorCodes: "
@@ -273,6 +290,8 @@ public class LDAPv3EventService implements Runnable {
         _retryErrorCodes = getPropertyRetryErrorCodes(pluginConfig,
                 LDAPv3Config_LDAP_ERROR_CODES);
 
+        _requestList = Collections.synchronizedMap(new HashMap());        
+        
         LDAPConnection lc = null;
         try {
             lc = getConnection(pluginConfig, serverNames);
@@ -313,13 +332,21 @@ public class LDAPv3EventService implements Runnable {
      *
      */
     public void finalize() {
-        Collection requestObjs = _requestList.values();
-        Iterator iter = requestObjs.iterator();
-        while (iter.hasNext()) {
-            Request request = (Request) iter.next();
-            removeListener(request);
+        synchronized (this) {
+            _shutdownCalled = true;
+            if ((_monitorThread != null) && (_monitorThread.isAlive())) {
+                _monitorThread.interrupt();
+            }
         }
-        _requestList.clear();
+        synchronized (_requestList) {
+            Collection requestObjs = _requestList.values();
+            Iterator iter = requestObjs.iterator();
+            while (iter.hasNext()) {
+                Request request = (Request) iter.next();
+                removeListener(request);
+            }
+            _requestList.clear();
+        }
     }
 
     private Request findRequst(String psIdKey) {
@@ -328,19 +355,22 @@ public class LDAPv3EventService implements Runnable {
                     + _requestList.size() + " psIdKey =" + psIdKey);
         }
         Request owner = null;
-        Collection requestObjs = _requestList.values();
-        Iterator iter = requestObjs.iterator();
-        while (iter.hasNext()) {
-            Request request = (Request) iter.next();
-            String tmpOwner = request.getPsIdKey();
-            if (debugger.messageEnabled()) {
-                debugger.message("LDAPv3EventService.findRequest: tmpOwner ="
-                        + tmpOwner);
-            }
-            if (tmpOwner.equalsIgnoreCase(psIdKey)) {
-                owner = request;
-                debugger.message("LDAPv3EventService.findRequest. found it");
-                break;
+        synchronized (_requestList) {
+            Collection requestObjs = _requestList.values();
+            Iterator iter = requestObjs.iterator();
+            while (iter.hasNext()) {
+                Request request = (Request) iter.next();
+                String tmpOwner = request.getPsIdKey();
+                if (debugger.messageEnabled()) {
+                    debugger.message("LDAPv3EventService.findRequest: " +
+                        "tmpOwner =" + tmpOwner);
+                }
+                if (tmpOwner.equalsIgnoreCase(psIdKey)) {
+                    owner = request;
+                    debugger.message("LDAPv3EventService.findRequest. " +
+                        "found it");
+                    break;
+                }
             }
         }
         return owner;
@@ -362,15 +392,8 @@ public class LDAPv3EventService implements Runnable {
             removeListener(myRequest);
             dispatchEventAllChanged(myRequest);
         }
-        // generate an interrupt to wake up the process
-        // should we generate interrupt before or after removing listener.
-        // we want to interrupt after removing request from _requestList
-        // so the all relevent info will have been updated when the tread
-        // wakes up.
-        _monitorThread.interrupt();
     }
-
-
+    
     /**
      * Adds a listener to the directory.
      *
@@ -381,6 +404,14 @@ public class LDAPv3EventService implements Runnable {
             String serverNames, String psIdKey) throws 
             LDAPException, IdRepoException {
 
+        if (_shutdownCalled) {
+            debugger.error("LDAPv3EventService.addListener: unable to " +
+                "add listener after system is shutdown."
+                            + " randomID=" + randomID);
+            Object[] args = { CLASS_NAME };
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "218", args);
+        }
+        
         if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.addListener() - base =" + base
                     + " filter =" + filter + "; psIdKey=" + psIdKey);
@@ -394,11 +425,12 @@ public class LDAPv3EventService implements Runnable {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "218", args);
         }
         LDAPConnection lc = null;
+        
         try {
-            lc = getConnection(pluginConfig, serverNames);
+           lc = getConnection(pluginConfig, serverNames);
         } catch (LDAPException le) {
             debugger.error("LDAPv3EventService.addListener: "
-                    + "unable to connect to ldap server. randomID=" + randomID);
+                + "unable to connect to ldap server. randomID=" + randomID);
             throw le;
         }
 
@@ -483,27 +515,32 @@ public class LDAPv3EventService implements Runnable {
             }
         }
 
-        // Create new (LDAPv3EventService) Thread, if one doesn't exist.
-        startMonitorThread();
+        // Create new (LDAPv3EventService) Thread, if one doesn't exist.        
+        if (_monitorThread == null || (!_monitorThread.isAlive())) {
+            startMonitorThread();
+        } else {
+            if (_requestList.size() == 1) {
+                notify();
+            }
+        }
         return reqID;
-    }
-
+    }    
+    
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
      *
      */
     public void run() {
-        if (debugger.messageEnabled()) {
-            debugger.message(
+        try {
+            if (debugger.messageEnabled()) {
+                debugger.message(
                     "LDAPv3EventService.run(): Event Thread is running! No " +
                     "Idle timeout Set: " + _idleTimeOut + " minutes." + 
                     " randomID=" + randomID);
-        }
-
-        boolean successState = true;
-        LDAPMessage message = null;
-        while (successState) {
-            try {
+            }
+            boolean successState = true;
+            LDAPMessage message = null;        
+            while (successState) {
                 try {
                     if (debugger.messageEnabled()) {
                         debugger.message(
@@ -511,61 +548,87 @@ public class LDAPv3EventService implements Runnable {
                                 "response" + " randomID=" + randomID);
                     }
                     message = _msgQueue.getResponse();
+                    synchronized (this) {
+                        if ((message == null) && (_requestList.isEmpty())) {
+                            wait();
+                            continue;
+                        }
+                    }
                     successState = processResponse(message);
+                } catch (LDAPInterruptedException ex) {
+                    if (_shutdownCalled) {
+                        break;
+                    } else {
+                        if (debugger.warningEnabled()) {
+                            debugger.warning("LDAPv3EventService.run() " +
+                                "LDAPInterruptedException received:", ex);
+                        }
+                    }
                 } catch (LDAPException ex) {
-                    int resultCode = ex.getLDAPResultCode();
-                    if (debugger.warningEnabled()) {
-                        debugger.warning(
+                    if (_shutdownCalled) {                        
+                        break;
+                    } else {
+                        int resultCode = ex.getLDAPResultCode();
+                        if (debugger.warningEnabled()) {
+                            debugger.warning(
                                 "LDAPv3EventService.run() LDAPException " +
                                 "received:" + " randomID=" + randomID, ex);
+                        }
+                        if (_retryErrorCodes.contains("" + resultCode)) {
+                            resetErrorSearches(true);
+                        } else { // Some other network error
+                            processNetworkError(ex);
+                        }
                     }
-                    if (_retryErrorCodes.contains("" + resultCode)) {
-                        successState = resetAllSearches(true);
-                    } else { // Some other network error
-                        processNetworkError(ex);
-                    }
-                }
-            } catch (Throwable t) {
-                // Catching Throwable to prevent the thread from exiting.
+                }      
+            }
+        } catch (InterruptedException ex) {
+            if (!_shutdownCalled) {
                 if (debugger.warningEnabled()) {
-                    debugger.warning(
-                            "LDAPv3EventService.run(): Unknown exception "
-                                    + "caught. Sleeping for a while.. "
-                                    + " randomID=" + randomID, t);
-                }
-                if (_requestList.size() > 0) {
-                    sleepRetryInterval();
+                    debugger.warning("LDAPv3EventService.run(): " + 
+                        "Interrupted exception caught.", ex);
                 }
             }
-            // if no more request exit.
+        } catch (RuntimeException ex) {
             if (debugger.warningEnabled()) {
-                debugger.warning(
-                        "LDAPv3EventServicePolling.run(). _requestList.size()="
-                                + _requestList.size());
+                debugger.warning("LDAPv3EventService.run(): " + 
+                    "Runtime exception caught.", ex);
             }
-            if (_requestList.size() == 0) {
-                successState = false;
+            // rethrow the Runtime exception to let the container handle the
+            // exception.
+            throw ex;
+        } catch (Exception ex) {
+            if (debugger.warningEnabled()) {
+                debugger.warning("LDAPv3EventService.run(): " + 
+                    "Unknown exception caught.", ex);
             }
-        } // end of while loop
-
-        finalize(); // ok to remove since number of request will always be zero
-                    // anyway.
-
-        if (debugger.warningEnabled()) {
-            debugger.warning("LDAPv3EventService.run() - Monitor thread is "
-                    + "terminating! Persistent Searches will no longer be "
-                    + "operational." + " randomID=" + randomID);
+            // no need to rethrow.
+        } catch (Throwable t) {
+            // Catching Throwable to prevent the thread from exiting.
+            if (debugger.warningEnabled()) {
+                debugger.warning("EventService.run(): Unknown exception "
+                    + "caught. Sleeping for a while.. ", t);
+            }
+            // rethrow the Error to let the container handle the error.
+            throw new Error(t);
+        } finally {
+            synchronized (this) {
+                if (!_shutdownCalled) {
+                    // try to restart the monitor thread.
+                    _monitorThread = null;
+                    startMonitorThread();
+                }
+            }
         }
-        return; // Gracefully exit the thread
     } // end of thread
 
-    private void startMonitorThread() {
-        if (_monitorThread == null || (!_monitorThread.isAlive())) {
+    private synchronized void startMonitorThread() {
+        if (_monitorThread == null || (!_monitorThread.isAlive()) &&
+            !_shutdownCalled) {
             // Even if the monitor thread is not alive, we should use the
             // same instance of Event Service object (as it maintains all
             // the listener information)
             _monitorThread = new Thread(this, getName());
-            _monitorThread.setDaemon(true);
             _monitorThread.start();
         }
     }
@@ -577,17 +640,17 @@ public class LDAPv3EventService implements Runnable {
      *            the LDAPMessage received as response
      * @return true if the reset was successful. False Otherwise.
      */
-    protected synchronized boolean processResponse(LDAPMessage message) {
-        if (message == null) {
+    protected boolean processResponse(LDAPMessage message) {
+        if ((message == null) && (!_requestList.isEmpty())) {
             // Some problem with the message queue. We should
             // try to reset it.
-            debugger.warning(
-                    "LDAPv3EventService.processResponse() - Received a " +
-                    "NULL Response. Attempting to re-start persistent " +
-                    "searches" + " randomID=" + randomID);
-            return resetAllSearches(false); // return false if not successful
+            debugger.warning("EventService.processResponse() - Received a "
+                    + "NULL Response. Attempting to re-start persistent "
+                    + "searches");
+            resetErrorSearches(false);
+            return true;
         }
-
+        
         if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.processResponse() - received "
                     + "DS message  => " + message.toString() + " randomID="
@@ -647,8 +710,10 @@ public class LDAPv3EventService implements Runnable {
                         " serverNames=" + request.getServerNames());
             }
             try {
-                connection.abandon(request.getId());
-                connection.disconnect();
+                if ((connection != null) && (connection.isConnected())) {
+                    connection.abandon(request.getId());
+                    connection.disconnect();
+                }
             } catch (LDAPException le) {
                 // Might have to check the reset codes and try to reset
                 if (debugger.warningEnabled()) {
@@ -661,6 +726,40 @@ public class LDAPv3EventService implements Runnable {
     }
 
     /**
+     * Reset error searches. Clear cache only if true is passed to argument
+     * 
+     * @param clearCaches
+     */
+    protected void resetErrorSearches(boolean clearCaches) {
+        
+        Hashtable tmpReqList = new Hashtable(_requestList);
+       
+        int[] ids = _msgQueue.getMessageIDs();
+        for (int i = 0; i < ids.length; i++) {
+            String reqID = Integer.toString(ids[i]);
+            tmpReqList.remove(reqID);
+        }
+        Collection reqList = tmpReqList.values();
+        for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+            Request req = (Request) iter.next();
+            _requestList.remove(req.getRequestID());
+            if (clearCaches) {
+                String psIdKey = req.getPsIdKey();
+                if (debugger.messageEnabled()) {
+                    debugger.message(
+                        "LDAPv3EventService.dispatchAllEntriesChangedEvent() " 
+                        + " psIdKey=" + psIdKey);
+                }
+                LDAPv3Repo.objectChanged(null, LDAPPersistSearchControl.MODIFY,
+                    req, psIdKey, true, true);
+            }
+        }
+        RetryTask task = new RetryTask(tmpReqList, _numRetries);
+        SystemTimer.getTimer().schedule(task, new Date(((
+            System.currentTimeMillis() + _retryInterval) / 1000) * 1000));
+    }
+
+    /**
      * Reset all searches. Clear cache only if true is passed to argument
      * 
      * @param clearCaches
@@ -670,7 +769,10 @@ public class LDAPv3EventService implements Runnable {
      */
     protected synchronized boolean resetAllSearches(boolean clearCaches) {
 
-        Hashtable tmpReqList = (Hashtable) _requestList.clone();
+        if (_shutdownCalled) {
+            return false;
+        }
+        Hashtable tmpReqList = new Hashtable(_requestList);
         _requestList.clear(); // Will be updated in addListener method
         Collection reqList = tmpReqList.values();
 
@@ -681,26 +783,31 @@ public class LDAPv3EventService implements Runnable {
                 : false;
 
         if (clearCaches) {
-            dispatchAllEntriesChangedEvent();
+            for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                Request req = (Request) iter.next();
+                String psIdKey = req.getPsIdKey();
+                if (debugger.messageEnabled()) {
+                    debugger.message(
+                        "LDAPv3EventService.dispatchAllEntriesChangedEvent() " 
+                        + " psIdKey=" + psIdKey);
+                }
+                LDAPv3Repo.objectChanged(null, LDAPPersistSearchControl.MODIFY,
+                    req, psIdKey, true, true);
+            }
         }
         while (doItAgain) { // Re-try starts from 0.
-            try {
-                sleepRetryInterval();
-                if (debugger.messageEnabled()) {
-                    String str = (_numRetries == -1) ? "indefinitely" : Integer
-                            .toString(retry);
-                    debugger.message("LDAPv3EventService.resetAllSearches(): "
-                            + "retrying = " + str + " randomID=" + randomID);
-                }
-
-                // Re-initialize message queue
-                _msgQueue = null;
-
-                // we want to do the addListener in a seperate loop from the
-                // above removeListener because we want to remove all the
-                // listener first then do the add.
-                Iterator iter = reqList.iterator();
-                while (iter.hasNext()) {
+            sleepRetryInterval();
+            if (debugger.messageEnabled()) {
+                String str = (_numRetries == -1) ? "indefinitely" : Integer
+                    .toString(retry);
+                debugger.message("LDAPv3EventService.resetAllSearches(): "
+                    + "retrying = " + str + " randomID=" + randomID);
+            }
+            // we want to do the addListener in a seperate loop from the
+            // above removeListener because we want to remove all the
+            // listener first then do the add.
+            for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                try {
                     Request request = (Request) iter.next();
                     // Abandon the search & disconnect
                     // keep remove and add together to minimum down time.
@@ -713,22 +820,33 @@ public class LDAPv3EventService implements Runnable {
                                 request.getOwner(), request.getServerNames(),
                                 request.getPsIdKey());
                     }
-                }
-                return true;
-            } catch (LDAPException le) {
-                // Ignore exception and retry as we are in the process of
-                // re-establishing the searches. Notify Listeners after the
-                // attempt
-                if (retry == _numRetries) {
-                    processNetworkError(le);
-                }
-            } catch (IdRepoException ide) {
-                if (retry == _numRetries) {
-                    processNetworkError(ide);
+                    iter.remove();
+                } catch (LDAPException le) {
+                    // Ignore exception and retry as we are in the process of
+                    // re-establishing the searches. Notify Listeners after the
+                    // attempt
+                    if (retry == _numRetries) {
+                        processNetworkError(le);
+                    }
+                } catch (IdRepoException ide) {
+                    if (retry == _numRetries) {
+                        processNetworkError(ide);
+                    }
                 }
             }
-            if (_numRetries != -1) {
-                doItAgain = (++retry <= _numRetries) ? true : false;
+            if (reqList.isEmpty()) {
+                return true;
+            } else {
+                if (_numRetries != -1) {
+                   doItAgain = (++retry <= _numRetries) ? true : false;
+                   if (!doItAgain) {
+                       // remove the requests fail to be resetted eventually.
+                       for (Iterator iter = reqList.iterator();
+                           iter.hasNext();) {
+                           removeListener((Request) iter.next());
+                       }
+                   }
+                }
             }
         } // end while loop
         if (debugger.warningEnabled()) {
@@ -781,32 +899,17 @@ public class LDAPv3EventService implements Runnable {
     }
 
     /**
-     * Dispatch event to all listeners for all entris changed
-     * 
-     */
-    private synchronized void dispatchAllEntriesChangedEvent() {
-        Collection reqList = _requestList.values();
-        Iterator iter = reqList.iterator();
-        while (iter.hasNext()) {
-            Request req = (Request) iter.next();
-            String psIdKey = req.getPsIdKey();
-            if (debugger.messageEnabled()) {
-                debugger.message("LDAPv3EventService.dispatchAllEntriesChangedEvent() " 
-                    + " psIdKey=" + psIdKey);
-            }
-            LDAPv3Repo.objectChanged(null, LDAPPersistSearchControl.MODIFY, req,
-                psIdKey, true, true);
-        }
-    }
-
-    /**
      * On network error, create ExceptionEvent and delever it to all listeners
      * on all events.
-     */
+     */    
     protected void processNetworkError(Exception ex) {
-        Collection reqList = _requestList.values();
-        Iterator iter = reqList.iterator();
-        while (iter.hasNext()) {
+        Hashtable tmpRequestList = new Hashtable(_requestList);
+        int[] ids = _msgQueue.getMessageIDs();
+        for (int i = 0; i < ids.length; i++) {
+            tmpRequestList.remove(Integer.toString(ids[i]));
+        }
+        Collection reqList = tmpRequestList.values();
+        for (Iterator iter = reqList.iterator(); iter.hasNext();) {
             Request request = (Request) iter.next();
             dispatchException(ex, request);
         }
@@ -817,7 +920,8 @@ public class LDAPv3EventService implements Runnable {
      * (SUCCESS), should never be received as persistent search never completes,
      * it has to be abandon. Referral messages are ignored
      */
-    private boolean processResponseMessage(LDAPResponse rsp, Request request) {
+    protected boolean processResponseMessage(LDAPResponse rsp,
+        Request request) {
         if (debugger.messageEnabled()) {
             debugger.message(
                     "LDAPv3EventService.processResponseMessage().entry - "
@@ -838,7 +942,7 @@ public class LDAPv3EventService implements Runnable {
                                 + " serverNames="
                                 + request.getServerNames());
             }
-            successState = resetAllSearches(false);
+            resetErrorSearches(false);
         } else if (rsp.getResultCode() != 0
                 || rsp.getResultCode() != LDAPException.REFERRAL) {
             // If not neither of the cases then
@@ -860,7 +964,7 @@ public class LDAPv3EventService implements Runnable {
     /**
      * Process change notification attached as the change control to the message
      */
-    private synchronized void processSearchResultMessage(LDAPSearchResult res,
+    protected void processSearchResultMessage(LDAPSearchResult res,
             Request req) {
         if (debugger.messageEnabled()) {
             debugger.message(
@@ -946,7 +1050,7 @@ public class LDAPv3EventService implements Runnable {
     /**
      * Search continuation messages are ignored.
      */
-    private void processSearchResultRef(LDAPSearchResultReference ref,
+    protected void processSearchResultRef(LDAPSearchResultReference ref,
             Request req) {
         // Do nothing, message ignored, do not dispatch ExceptionEvent
         if (debugger.messageEnabled()) {
@@ -958,10 +1062,10 @@ public class LDAPv3EventService implements Runnable {
     /**
      * Find event entry by message ID
      */
-    private Request getRequestEntry(int id) {
+    protected Request getRequestEntry(int id) {
         return (Request) _requestList.get(Integer.toString(id));
     }
-
+    
     private LDAPConnection getConnection(Map pluginConfig, String serverNames)
             throws LDAPException {
 
@@ -1123,7 +1227,7 @@ public class LDAPv3EventService implements Runnable {
                     + " randomID=" + randomID);
         }
     }
-
+    
     public boolean persistentSearchSupported() {
         return pSearchSupported;
     }
@@ -1188,5 +1292,70 @@ public class LDAPv3EventService implements Runnable {
             dispatchEventAllChanged(req);
         }
 
+    }
+    
+    class RetryTask extends GeneralTaskRunnable {
+        
+        private long runPeriod;
+        private Map requests;
+        private int numOfRetries;
+        private int retry;
+        
+        public RetryTask(Map requests, int numOfRetries) {
+            this.runPeriod = (long) _retryInterval;
+            this.requests = requests;
+            this.numOfRetries = numOfRetries;
+            this.retry = 1;
+        }
+        
+        public void run() {
+            for (Iterator iter = requests.values().iterator();
+                iter.hasNext();) {
+                Request req = (Request) iter.next();
+                try {
+                    if (req.getStopStatus() == false) {
+                        removeListener(req);
+                        addListener(req.getRequester(), req.getListener(),
+                                req.getBaseDn(), req.getScope(),
+                                req.getFilter(), req.getOperations(),
+                                req.getPluginConfig(), req.getOwner(),
+                                req.getServerNames(), req.getPsIdKey());
+                    }
+                    iter.remove();
+                } catch (Exception e) {
+                    // Ignore exception and retry as we are in the process of
+                    // re-establishing the searches. Notify Listeners after the
+                    // attempt
+                    if (retry == numOfRetries) {
+                        dispatchException(e, req);
+                    }
+                }
+            }
+            if (requests.isEmpty()) {
+                runPeriod = -1;
+            } else {
+                if (numOfRetries != -1) {
+                    if (++retry > numOfRetries) {
+                        runPeriod = -1;
+                    }
+                }
+            }
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
     }
 }

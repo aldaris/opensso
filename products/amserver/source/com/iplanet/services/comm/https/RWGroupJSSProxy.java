@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RWGroupJSSProxy.java,v 1.1 2007-12-14 21:33:38 beomsuk Exp $
+ * $Id: RWGroupJSSProxy.java,v 1.2 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,13 +43,8 @@ public class RWGroupJSSProxy extends ReaderWriterLock {
 
         src_to_dst = new ReaderWriterClear(this, fromClient, toServer);
         dst_to_src = new ReaderWriterClear(this, toServer, fromClient);
-        try {
-            JSSThreadPool.run(src_to_dst); 
-            JSSThreadPool.run(dst_to_src);
-        } 
-        catch (InterruptedException e) {
-            debug.message("Could not start ReaderWriterClear tasks",e);
-        }
+        JSSProxy.threadPool.run(src_to_dst); 
+        JSSProxy.threadPool.run(dst_to_src);
     }
 
     public synchronized void notifyFinished(ReaderWriter obj) {

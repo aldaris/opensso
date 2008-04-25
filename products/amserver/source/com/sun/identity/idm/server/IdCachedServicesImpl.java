@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.11 2008-01-04 00:00:43 dlarson Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.12 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdCachedServices;
@@ -126,6 +128,12 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
             getDebug().message("IdCachedServicesImpl.getInstance(): "
                     + "Creating new Instance of IdCachedServicesImpl()");
             instance = new IdCachedServicesImpl();
+            ShutdownManager.getInstance().addShutdownListener(
+                new ShutdownListener() {
+                public void shutdown() {
+                    instance.clearIdRepoPlugins();
+                }
+            });
         }
         return instance;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventServicePolling.java,v 1.3 2007-04-09 23:26:01 goodearth Exp $
+ * $Id: EventServicePolling.java,v 1.4 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,13 +25,26 @@
 package com.iplanet.services.ldap.event;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPMessage;
+import netscape.ldap.LDAPResponse;
+import netscape.ldap.LDAPSearchResult;
+import netscape.ldap.LDAPSearchResultReference;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.PeriodicGroupMap;
+import com.sun.identity.common.ScheduleableGroupAction;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 
 /**
  * This class extends the EventService class and provides the functionality to
@@ -66,160 +79,49 @@ import com.iplanet.sso.SSOToken;
  */
 public class EventServicePolling extends EventService {
 
-    private TimeOut _timeOut = null;
-
-    private Thread _timeOutThread = null;
-
-    public synchronized String addListener(SSOToken token,
-            IDSEventListener listener, String base, int scope, String filter,
-            int operations) throws LDAPException, EventException {
-        String requestID = super.addListener(token, listener, base, scope,
-                filter, operations);
-
-        startTimeOutThread();
-        return requestID;
-    }
+    private Map map;
 
     protected EventServicePolling() throws EventException {
         super();
+        map = _requestList;
+        _requestList = new PeriodicGroupMap(new ScheduleableGroupAction() {
+            public void doGroupAction(Object obj) {
+                Request req = (Request) map.remove(obj);
+                // it should not be null, just for safety.
+                if (req != null) {
+                    try {
+                        addListener(req.getRequester(), req.getListener(),
+                            req.getBaseDn(), req.getScope(), req.getFilter(),
+                            req.getOperations());
+                        removeListener(req);
+                    } catch (LDAPServiceException le) {
+                        // Something wrong with establishing connection. All searches need
+                        // to be restared. Also reset timeout value back to original value
+                        if (debugger.messageEnabled()) {
+                            debugger.message("EventServicePolling: "
+                                + " LDAPServiceException occurred while re-establishing"
+                                + "listeners. ", le);
+                        }
+                        int errorCode = le.getLDAPExceptionErrorCode();
+                        processExceptionErrorCodes(le, errorCode);
+                    } catch (LDAPException e) {// Probably psearch could not be established
+                        if (debugger.messageEnabled()) {
+                            debugger.message("EventServicePolling.resetAllSearches(): "
+                                + "LDAPException occurred, while trying to re-establish "
+                                + "persistent searches.", e);
+                        }
+                        int errorCode = e.getLDAPResultCode();
+                        processExceptionErrorCodes(e, errorCode);
+                    }
+                }
+            }
+        }, _idleTimeOutMills, _idleTimeOutMills, true, map);
+        SystemTimer.getTimer().schedule((TaskRunnable) _requestList, new Date(((
+            System.currentTimeMillis() + _idleTimeOutMills) / 1000) * 1000));
     }
 
     protected static String getName() {
         return "EventServicePolling";
-    }
-
-    public synchronized boolean resetAllSearches(boolean clearCaches) {
-        boolean successState = super.resetAllSearches(clearCaches);
-        // Update the time out value for TimeOut thread and notify
-        interruptTimeOutThread(!successState, _idleTimeOutMills);
-        return successState;
-    }
-
-    // This method will be called by TimeOut thread. At the end of this call
-    // parameters for TimeOut thread are updated appropriately.
-    protected synchronized boolean resetTimedOutConnections() {
-        // Determine the connections that have timed out
-        Set resetList = new HashSet();
-        long nextTimeOut = _idleTimeOutMills;
-        long currentTime = System.currentTimeMillis();
-
-        if (debugger.messageEnabled()) {
-            debugger.message("EventServicePolling.resetTimedOutConnections():"
-                    + " determining timed out connections.");
-        }
-
-        Collection requestObjs = _requestList.values();
-        Iterator iter = requestObjs.iterator();
-        while (iter.hasNext()) {
-            Request request = (Request) iter.next();
-            long lastUpdatedTime = request.getLastUpdatedTime();
-            if (checkIfTimedOut(currentTime, lastUpdatedTime)) {
-                if (debugger.messageEnabled()) {
-                    debugger.message("EventServicePolling."
-                            + "resetTimedOutConnections(): the following "
-                            + "request: " + request.getListener()
-                            + " has timed" + " out. Current Time: "
-                            + currentTime + " Last " + "updated time: "
-                            + request.getLastUpdatedTime());
-                }
-                resetList.add(request);
-            } else { // Determine which connection will time out first
-                long timeOut = lastUpdatedTime + _idleTimeOutMills
-                        - currentTime;
-                nextTimeOut = (timeOut < nextTimeOut) ? timeOut : nextTimeOut;
-            }
-        }
-
-        boolean successState = true;
-        if (nextTimeOut == _idleTimeOutMills) {
-            // All the searches need to be re-established
-            successState = resetAllSearches(false);
-        } else {
-            // Only a few of them need to be re-established
-            successState = resetTimedOutSearches(resetList, nextTimeOut);
-        }
-
-        return successState;
-    }
-
-    /**
-     * Should be called only in Polling mode. This method will update the
-     * parameters of TimeOut thread
-     *
-     * @param resetList Set of Request objects whoses connections need to be
-     * reset.
-     * @param nextTimeOut the amount of time the TimeOut thread should sleep,
-     * in other words the time for next time out.
-     * @return true if the connections were successfully established. false
-     * if the connections could not be successfully established even after the
-     * retry.
-     */
-    private synchronized boolean resetTimedOutSearches(Set resetList,
-            long nextTimeOut) {
-        // Now Reset the searches that have timed out
-        if (debugger.messageEnabled()) {
-            debugger.message("EventServicePolling.resetAllSearches(): "
-                    + resetList.size() + " connections (searches) timed out!");
-        }
-
-        boolean successState = true;
-
-        // By default, if all the searches need to be reset timeOut =
-        // total idle time out.
-        long timeOut = _idleTimeOutMills;
-        try {
-            Iterator reqIter = resetList.iterator();
-            while (reqIter.hasNext()) {
-                Request request = (Request) reqIter.next();
-                addListener(request.getRequester(), request.getListener(),
-                        request.getBaseDn(), request.getScope(), request
-                                .getFilter(), request.getOperations());
-                // Remove request only after a new one was successfully added
-
-                removeListener(request);
-
-                // Remove the old request object from the list.
-                _requestList.remove(request.getRequestID());
-            }
-            // Listeners were successStately established. So, timeOut will be
-            // the value of next connection time out.
-            timeOut = nextTimeOut;
-        } catch (LDAPServiceException le) {
-            // Something wrong with establishing connection. All searches need
-            // to be restared. Also reset timeout value back to original value
-            if (debugger.messageEnabled()) {
-                debugger.message("EventServicePolling.resetAllSearches(): "
-                        + " LDAPServiceException occurred while re-establishing"
-                                        + "listeners. ", le);
-            }
-            int errorCode = le.getLDAPExceptionErrorCode();
-            successState = processExceptionErrorCodes(le, errorCode);
-        } catch (LDAPException e) {// Probably psearch could not be established
-            if (debugger.messageEnabled()) {
-                debugger.message("EventServicePolling.resetAllSearches(): "
-                       + "LDAPException occurred, while trying to re-establish "
-                                        + "persistent searches.", e);
-            }
-            int errorCode = e.getLDAPResultCode();
-            successState = processExceptionErrorCodes(e, errorCode);
-        } finally {
-            updateTimeOutThreadParams(!successState, timeOut);
-        }
-
-        return successState;
-    }
-
-    private boolean checkIfTimedOut(long currentTime, long lastUpdatedTime) {
-        boolean timedOut = false;
-        long timeDiffMills = currentTime - lastUpdatedTime;
-        long timeDiffMinutes = (timeDiffMills / 60000);
-
-        long elapsedTime = _idleTimeOut - timeDiffMinutes;
-        if (elapsedTime <= 1) {
-            // If the range is less that or equal to 1 minutes => Reset
-            timedOut = true;
-        }
-        return timedOut;
     }
 
     private boolean processExceptionErrorCodes(Exception ex, int errorCode) {
@@ -228,46 +130,66 @@ public class EventServicePolling extends EventService {
         if (_retryErrorCodes.contains(Integer.toString(errorCode))) {
             // Call Only the parent method, because at this point we
             // want to interrupt only if required.
-            successState = super.resetAllSearches(true);
+            resetErrorSearches(true);
         } else { // Some other error
             processNetworkError(ex);
         }
         return successState;
     }
-
+    
     /**
-     * Should be called only once!!
-     */
-    private void startTimeOutThread() {
-        if ((_timeOutThread == null) || (!_timeOutThread.isAlive())) {
-            // Start the Thread when the first listener is added
-            _timeOut = new TimeOut(this, _idleTimeOutMills);
-            _timeOutThread = new Thread(_timeOut, "TimeOut");
-            _timeOutThread.setDaemon(true);
-            _timeOutThread.start();
+     * Method which process the Response received from the DS.
+     * 
+     * @param message -
+     *            the LDAPMessage received as response
+     * @return true if the reset was successful. False Otherwise.
+     */    
+    protected boolean processResponse(LDAPMessage message) {
+        if ((message == null) && (!_requestList.isEmpty())) {
+            // Some problem with the message queue. We should
+            // try to reset it.
+            debugger.warning("EventService.processResponse() - Received a "
+                    + "NULL Response. Attempting to re-start persistent "
+                    + "searches");
+            resetErrorSearches(false);
+            return true;
         }
-    }
-
-    private void updateTimeOutThreadParams(boolean flag, long timeOut) {
+        
         if (debugger.messageEnabled()) {
-            debugger.message("EventServicePolling.updateTimeOutThreadParams(): "
-
-                    + " updating TimeOut thread params with exit status: "
-                    + flag + " time out: " + timeOut);
+            debugger.message("EventService.processResponse() - received "
+                    + "DS message  => " + message.toString());
         }
-        _timeOut.setTimeOutValue(timeOut);
-        _timeOut.setExitStatus(flag);
-    }
 
-    private void interruptTimeOutThread(boolean flag, long timeOut) {
-        if (debugger.messageEnabled()) {
-            debugger.message("EventServicePolling.interruptTimeOutThread(): "
-                    + " Interrupting TimeOut thread with exit status: " + flag
-                    + " time out: " + timeOut);
+        // To determine if the monitor thread needs to be stopped.
+        boolean successState = true;
+
+        Request request = getRequestEntry(message.getMessageID());
+
+        // If no listeners, abandon this message id
+        if (request == null) {
+            // We do not have anything stored about this message id.
+            // So, just log a message and do nothing.
+            if (debugger.messageEnabled()) {
+                debugger.message("EventService.processResponse() - Received "
+                        + "ldap message with unknown id = "
+                        + message.getMessageID());
+            }
+        } else if (message instanceof LDAPSearchResult) {
+            // then must be a LDAPSearchResult carrying change control
+            processSearchResultMessage((LDAPSearchResult) message, request);
+            TaskRunnable taskList = (TaskRunnable) _requestList;
+            taskList.removeElement(request.getRequestID());
+            taskList.addElement(request.getRequestID());
+            request.setLastUpdatedTime(System.currentTimeMillis());
+        } else if (message instanceof LDAPResponse) {
+            // Check for error message ...
+            LDAPResponse rsp = (LDAPResponse) message;
+            successState = processResponseMessage(rsp, request);
+        } else if (message instanceof LDAPSearchResultReference) { // Referral
+            processSearchResultRef(
+                    (LDAPSearchResultReference) message, request);
         }
-        _timeOut.setTimeOutValue(timeOut);
-        _timeOut.setExitStatus(flag);
-        _timeOutThread.interrupt();
+        return successState;
     }
 
     protected Thread getServiceThread() {

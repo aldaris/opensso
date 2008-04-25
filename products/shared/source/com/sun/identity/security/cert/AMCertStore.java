@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertStore.java,v 1.2 2007-11-12 22:13:04 beomsuk Exp $
+ * $Id: AMCertStore.java,v 1.3 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,7 @@ public class AMCertStore {
      *
      * @param NONE
      */
-    LDAPConnection getConnection() {
+    synchronized LDAPConnection getConnection() {
         if (ldapconn != null) {
             return ldapconn;
         }

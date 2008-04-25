@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.3 2007-12-10 19:15:37 beomsuk Exp $
+ * $Id: AMCRLStore.java,v 1.4 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,6 +135,14 @@ public class AMCRLStore extends AMCertStore {
         } catch (Exception e) {
             debug.error("AMCRLStore.getCRL: Error in getting CRL " + 
                         "from Configured Directory : ", e);
+        } finally {
+            if ((ldc != null) && (ldc.isConnected())) {
+                try {
+                    ldc.disconnect();
+                } catch (LDAPException ex) {
+                    //ignored
+                }
+            }
         }
 
         try {
@@ -562,9 +570,17 @@ public class AMCRLStore extends AMCertStore {
             }
             
             crl = (byte[])crlAttribute.getByteValues().nextElement();
-            
+
         } catch (Exception e) {
             debug.error("getCRLByLdapURI : Error in getting CRL",e);
+        } finally {
+            if ((ldc != null) && (ldc.isConnected())) {
+                try {
+                    ldc.disconnect();
+                } catch(LDAPException ex) {
+                    //ignored
+                }
+            }
         }
 
         return crl;

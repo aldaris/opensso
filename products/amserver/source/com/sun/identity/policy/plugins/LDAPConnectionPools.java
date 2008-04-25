@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPools.java,v 1.3 2006-08-25 21:21:09 veiming Exp $
+ * $Id: LDAPConnectionPools.java,v 1.4 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import netscape.ldap.util.*;
 import com.sun.identity.shared.debug.Debug;    
 import netscape.ldap.factory.JSSESocketFactory;
 import com.sun.identity.common.LDAPConnectionPool;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.ResBundleUtils;
@@ -122,7 +124,18 @@ public class LDAPConnectionPools {
                         debug.message(
                             "LDAPConnectionPools.initConnectionPool(): host: " +
                             host);
-                    } 
+                    }                    
+                    final LDAPConnectionPool finalPool = cPool;
+                    ShutdownManager.getInstance().addShutdownListener(new
+                        ShutdownListener() {
+                        
+                        public void shutdown() {
+                            if (finalPool != null) {
+                                finalPool.destroy();
+                            }
+                        }
+                        
+                    });
                     connectionPools.put(host, cPool);
                 }
             }

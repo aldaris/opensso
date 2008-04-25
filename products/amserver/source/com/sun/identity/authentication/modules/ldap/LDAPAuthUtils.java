@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.11 2008-01-15 22:12:43 ww203982 Exp $
+ * $Id: LDAPAuthUtils.java,v 1.12 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1014,6 +1014,7 @@ public class LDAPAuthUtils {
      */
     public boolean isServerRunning(String host, int port) {
         LDAPConnection ldapCon = null;
+        boolean running = false;
         try {
             if (ldapSSL) {
                 ldapCon = new LDAPConnection(new JSSESocketFactory(null));
@@ -1022,10 +1023,12 @@ public class LDAPAuthUtils {
                 ldapCon = new LDAPConnection();
             }
             ldapCon.connect(host, port);
+            running = ldapCon.isConnected();
+            ldapCon.disconnect();
         } catch (Exception ldapEx) {
             debug.message("Primary Server is not running");
         }
-        return ldapCon.isConnected();
+        return running;
         
     }
 

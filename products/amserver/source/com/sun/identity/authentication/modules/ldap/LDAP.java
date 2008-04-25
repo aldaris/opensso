@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.7 2008-04-21 18:58:01 ericow Exp $
+ * $Id: LDAP.java,v 1.8 2008-04-25 22:27:20 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,10 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.UserNamePasswordValidationException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TaskRunnable;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.shared.debug.Debug;
@@ -41,6 +45,7 @@ import com.sun.identity.sm.ServiceConfig;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -638,12 +643,14 @@ public class LDAP extends AMLoginModule {
                         firstTry = false;
                         primary = !primary;
                         setPrimaryFlag(currentConfigName, primary);
-                        if (fMgr == null || !fMgr.isAlive()) {
+                        if ((fMgr == null) ||
+                            (fMgr.scheduledExecutionTime() == -1)) {
                             fMgr = new FailbackManager();
-                            fMgr.start();
+                            SystemTimer.getTimer().schedule(fMgr, new Date(((
+                                System.currentTimeMillis()) / 1000) * 1000));
                         } else {
-                            if (interval < fMgr.sleepTime) {
-                                fMgr.sleepTime = interval;
+                            if (interval < fMgr.runPeriod) {
+                                fMgr.runPeriod = interval;
                             }
                         }
                         if (initializeLDAP()) {
@@ -800,60 +807,73 @@ public class LDAP extends AMLoginModule {
     
     // This class checks in regular intervals whether the connection is open
     // if connection is open it sets primary to true.
-    class FailbackManager  extends Thread {
-        public long sleepTime = interval;
-        public FailbackManager() {}
+    class FailbackManager  extends GeneralTaskRunnable {
+        public long runPeriod = interval;
+        
+        public FailbackManager() {
+            super();
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
         public void run() {
-            Thread thisThread = Thread.currentThread();
             boolean foundDown = true;
-            while (foundDown) {
-                try {
-                    foundDown = false;
-                    Set set1 = LDAPAuthUtils.connectionPoolsStatus.
-                        keySet();
-                    Iterator iter1 = set1.iterator();
-                    while (iter1.hasNext()){
-                        String key = (String)iter1.next();
-                        String status  = (String)LDAPAuthUtils.
-                            connectionPoolsStatus.get(key);
-                        if ( status.equals(LDAPAuthUtils.STATUS_DOWN)) {
-                            foundDown = true;
-                            if (debug.messageEnabled()) {
-                                debug.message("Checking for server "+key);
-                            }
-                            StringTokenizer st = new StringTokenizer(key,":");
-                            String downHost = (String)st.nextToken();
-                            String downPort = (String)st.nextToken();
-                            if ((downHost != null) && (downHost.length() != 0)
-				&& (downPort != null) && (downPort.length()
-				!= 0)) {
-				int intPort = (Integer.valueOf(downPort)).
-                                    intValue();
-				try {
-                                    LDAPConnection ldapConn =
-					new LDAPConnection();
-                                    ldapConn.connect(downHost, intPort);
-                                    if(ldapConn.isConnected()) {
-					LDAPAuthUtils.
-                                            connectionPoolsStatus.
-                                            put(key,LDAPAuthUtils.STATUS_UP);
-                                    }
+            try {
+                foundDown = false;
+                Set set1 = LDAPAuthUtils.connectionPoolsStatus.keySet();
+                Iterator iter1 = set1.iterator();
+                while (iter1.hasNext()){
+                    String key = (String)iter1.next();
+                    String status  = (String)LDAPAuthUtils.
+                        connectionPoolsStatus.get(key);
+                    if ( status.equals(LDAPAuthUtils.STATUS_DOWN)) {
+                        foundDown = true;
+                        if (debug.messageEnabled()) {
+                            debug.message("Checking for server "+key);
+                        }
+                        StringTokenizer st = new StringTokenizer(key,":");
+                        String downHost = (String)st.nextToken();
+                        String downPort = (String)st.nextToken();
+                        if ((downHost != null) && (downHost.length() != 0)
+                            && (downPort != null) && (downPort.length() != 0)) {
+                            int intPort = (Integer.valueOf(downPort)).
+                                intValue();
+                            LDAPConnection ldapConn = null;
+                            try {
+                                ldapConn = new LDAPConnection();
+                                ldapConn.connect(downHost, intPort);
+                                if(ldapConn.isConnected()) {
+                                    LDAPAuthUtils.connectionPoolsStatus.
+                                        put(key,LDAPAuthUtils.STATUS_UP);
+                                }
+                            } catch ( LDAPException e ) {
+                            } finally {
+                                if (ldapConn != null) {
                                     ldapConn.disconnect();
-                                } catch ( LDAPException e ) {
-				}
+                                }
                             }
-                        } 
-                    }
-                } catch (Exception exp) {
-                    debug.error("Error in Fallback Manager Thread",exp);
+                        }
+                    } 
                 }
-                if (!foundDown) {
-                    return;
-                }
-                try {
-                    thisThread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                }
+            } catch (Exception exp) {
+                debug.error("Error in Fallback Manager Thread",exp);
+            }
+            if (!foundDown) {
+                runPeriod = -1;
             }
         }
     }

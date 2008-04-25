@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventListener.java,v 1.9 2007-04-20 07:14:56 rarcot Exp $
+ * $Id: EventListener.java,v 1.10 2008-04-25 22:27:19 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.iplanet.am.sdk.remote;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,6 +50,9 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
@@ -168,7 +172,7 @@ class EventListener {
             try {
                 cachePollingInterval = Integer.parseInt(cachePollingTimeStr);            
             } catch (NumberFormatException nfe) {
-                debug.error("EventListener::NotificationThread:: "
+                debug.error("EventListener::NotificationRunnable:: "
                         + "Invalid Polling Time: " + cachePollingTimeStr + 
                         " Defaulting to " + DEFAULT_CACHE_POLLING_TIME  + 
                         " minute");
@@ -184,9 +188,10 @@ class EventListener {
                         "Starting the polling thread..");
             }
             // Run in polling mode
-            NotificationThread nt = new NotificationThread(
+            NotificationRunnable nt = new NotificationRunnable(
                     cachePollingInterval);
-            nt.start();            
+            SystemTimer.getTimer().schedule(nt, new Date((
+                System.currentTimeMillis() / 1000) * 1000));
         } else {
             if (debug.warningEnabled()) {
                 debug.warning("EventListener: Polling mode DISABLED. " +
@@ -460,68 +465,63 @@ class EventListener {
         return (Integer.parseInt(eventString));
     }
 
-    static class NotificationThread extends Thread {
+    static class NotificationRunnable extends GeneralTaskRunnable {
 
-        int pollingTime;        
-        int sleepTime;
+        private int pollingTime;        
+        private long runPeriod;
 
-        NotificationThread(int interval) {
-            // Set this as a dameon thread
-            setDaemon(true);
+        NotificationRunnable(int interval) {
             pollingTime = interval;
-            sleepTime = pollingTime * 1000 * 60;            
+            runPeriod = pollingTime * 1000 * 60;            
         }
 
+        public boolean addElement(Object obj) {
+            return false;
+        }
+        
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+        
+        public boolean isEmpty() {
+            return true;
+        }
+        
+        public long getRunPeriod() {
+            return runPeriod;
+        }
+        
         public void run() {
-            if (debug.messageEnabled()) {
-                debug.message("EventListener:NotificationThread "
-                        + "Polling Time: " + sleepTime);
-            }
-            boolean gotoSleep = false;
-            while (true) {
-                try {
-                    if (gotoSleep) {
-                        sleep(sleepTime);
-                    }
-                    Object obj[] = { new Integer(pollingTime) };
-                    Set mods = (Set) client.send("objectsChanged", obj, null, 
-                            null);
-                    if (debug.messageEnabled()) {
-                        debug.message("EventListener:NotificationThread "
-                                + "retrived changes: " + mods);
-                    }
-                    Iterator items = mods.iterator();
-                    while (items.hasNext()) {
-                        sendNotification((String) items.next());
-                    }
-
-                    // Check for IdRepo changes
-                    mods = (Set) client
-                            .send("objectsChanged_idrepo", obj, null, null);
-                    if (debug.messageEnabled()) {
-                        debug.message("EventListener:NotificationThread "
-                                + "retrived idrepo changes: " + mods);
-                    }
-                    items = mods.iterator();
-                    while (items.hasNext()) {
-                        sendIdRepoNotification((String) items.next());
-                    }
-
-                    gotoSleep = true;
-                } catch (NumberFormatException nfe) {
-                    // Should not happend
-                    debug.warning("EventListener::NotificationThread:run "
-                            + "Number Format Exception for polling Time: "
-                            + pollingTime, nfe);
-                } catch (InterruptedException ie) {
-                    gotoSleep = false;
-                    debug.warning("EventListener::NotificationThread:run "
-                            + "Interrupted Exception", ie);
-                } catch (Exception re) {
-                    gotoSleep = true;
-                    debug.warning("EventListener::NotificationThread:run "
-                            + "Exception", re);
+            try {
+                Object obj[] = { new Integer(pollingTime) };
+                Set mods = (Set) client.send("objectsChanged", obj, null, null);
+                if (debug.messageEnabled()) {
+                    debug.message("EventListener:NotificationRunnable "
+                        + "retrived changes: " + mods);
                 }
+                Iterator items = mods.iterator();
+                while (items.hasNext()) {
+                    sendNotification((String) items.next());
+                }
+                // Check for IdRepo changes
+                mods = (Set) client.send("objectsChanged_idrepo", obj, null,
+                    null);
+                if (debug.messageEnabled()) {
+                    debug.message("EventListener:NotificationRunnable "
+                        + "retrived idrepo changes: " + mods);
+                }
+                items = mods.iterator();
+                while (items.hasNext()) {
+                    sendIdRepoNotification((String) items.next());
+                }
+            } catch (NumberFormatException nfe) {
+                // Should not happend
+                debug.warning("EventListener::NotificationRunnable:run "
+                    + "Number Format Exception for polling Time: "
+                    + pollingTime, nfe);
+            } catch (Exception ex) {
+                debug.warning("EventListener::NotificationRunnable:run "
+                    + "Exception", ex);
             }
         }
     }

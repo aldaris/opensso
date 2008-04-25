@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.32 2008-04-24 04:04:13 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.33 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,6 +43,8 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
@@ -111,6 +113,12 @@ public class IdServicesImpl implements IdServices {
             getDebug().message("IdServicesImpl.getInstance(): "
                     + "Creating new Instance of IdServicesImpl()");
             _instance = new IdServicesImpl();
+            ShutdownManager.getInstance().addShutdownListener(
+                new ShutdownListener() {
+                public void shutdown() {
+                    _instance.clearIdRepoPlugins();
+                }
+            });
         }
         return _instance;
     }
@@ -2367,8 +2375,8 @@ public class IdServicesImpl implements IdServices {
             repo.shutdown();
         }
     }
-
-
+    
+    
     public void clearIdRepoPlugins() {
         if (getDebug().messageEnabled()) {
             getDebug().message("IdServicesImpl.cleanupIdRepoPlugins(): " +
@@ -2554,6 +2562,7 @@ public class IdServicesImpl implements IdServices {
                 pluginClasses.add(agentRepo);
             }
         }
+        
 
         if (ServiceManager.isCoexistenceMode()) { 
             // Legacy Mode. Add AM Repo plugin by default.

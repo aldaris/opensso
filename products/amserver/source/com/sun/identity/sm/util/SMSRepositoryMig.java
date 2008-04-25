@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSRepositoryMig.java,v 1.1 2005-11-01 00:31:37 arvindp Exp $
+ * $Id: SMSRepositoryMig.java,v 1.2 2008-04-25 22:27:21 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,31 +83,42 @@ public class SMSRepositoryMig {
 
         // Create the SMSFlatFileObject
         SMSFlatFileObject smsFlatFileObject = new SMSFlatFileObject();
-        LDAPConnection conn = new LDAPConnection();
-        conn.connect(host, port, binddn, pw);
-        String[] attrs = { "*" };
+        LDAPConnection conn = null;
+        try {
+            conn = new LDAPConnection();
+            conn.connect(host, port, binddn, pw);
+            String[] attrs = { "*" };
 
-        // Loop through LDAP attributes, create SMS object for each.
-        LDAPSearchResults res = conn.search("ou=services," + basedn,
+            // Loop through LDAP attributes, create SMS object for each.
+            LDAPSearchResults res = conn.search("ou=services," + basedn,
                 LDAPv2.SCOPE_SUB, "(objectclass=*)", attrs, false);
-        System.out.println("Migrating " + res.getCount() + " results.");
-        while (res.hasMoreElements()) {
-            LDAPEntry entry = null;
-            try {
-                entry = res.next();
-                LDAPAttributeSet attrSet = entry.getAttributeSet();
-                System.out.println(entry.getDN() + ": " + attrSet.size()
+            System.out.println("Migrating " + res.getCount() + " results.");
+            while (res.hasMoreElements()) {
+                LDAPEntry entry = null;
+                try {
+                    entry = res.next();
+                    LDAPAttributeSet attrSet = entry.getAttributeSet();
+                    System.out.println(entry.getDN() + ": " + attrSet.size()
                         + " Attributes found.");
-                createSMSEntry(smsFlatFileObject, entry.getDN(), attrSet);
-            } catch (LDAPReferralException e) {
-                System.out.println("ERROR: LDAP Referral not supported.");
-                System.out.println("LDAPReferralException received: "
+                    createSMSEntry(smsFlatFileObject, entry.getDN(), attrSet);
+                } catch (LDAPReferralException e) {
+                    System.out.println("ERROR: LDAP Referral not supported.");
+                    System.out.println("LDAPReferralException received: "
                         + e.toString());
-                e.printStackTrace();
-            } catch (LDAPException e) {
-                System.out.println("ERROR: LDAP Exception encountered: "
+                    e.printStackTrace();
+                } catch (LDAPException e) {
+                    System.out.println("ERROR: LDAP Exception encountered: "
                         + e.toString());
-                e.printStackTrace();
+                    e.printStackTrace();
+                }
+            }
+        } finally {
+            if ((conn != null) && (conn.isConnected())) {
+                try {
+                    conn.disconnect();
+                } catch (LDAPException ex) {
+                    //ignored
+                }
             }
         }
     }
