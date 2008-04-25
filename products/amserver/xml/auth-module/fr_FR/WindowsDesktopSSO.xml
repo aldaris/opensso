@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     The contents of this file are subject to the terms
     of the Common Development and Distribution License
@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: WindowsDesktopSSO.xml,v 1.2 2008-02-18 10:19:08 mahesh_prasad_r Exp $
+    $Id: WindowsDesktopSSO.xml,v 1.3 2008-04-25 18:53:58 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
