@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
+ * $Id: Policy.java,v 1.3 2008-04-25 23:24:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2586,6 +2586,24 @@ public class Policy implements Cloneable {
      */
     String getSubjectRealm() {
         return subjectRealm;
+    }
+
+    /**
+     * Clears the cached membership evaluation results corresponding
+     * to the <code>tokenIdString</code>. This is triggered through
+     * <code>PolicySSOTokenListener</code> and <code>PolicyCache</code>
+     * when session property
+     * of a logged in user is changed
+     *
+     * @param tokenIdString sessionId of the user whose session property changed
+     */
+    void clearSubjectResultCache(String tokenIdString) throws PolicyException {
+        if (DEBUG.messageEnabled()) {
+            DEBUG.message("Policy.clearSubjectResultCache(tokenIdString): "
+                    + " clearing cached subject evaluation result for "
+                    + " tokenId XXXXX");
+        }
+        users.clearSubjectResultCache(tokenIdString);
     }
 
 }

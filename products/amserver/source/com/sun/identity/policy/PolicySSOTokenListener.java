@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicySSOTokenListener.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
+ * $Id: PolicySSOTokenListener.java,v 1.3 2008-04-25 23:24:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,12 +106,15 @@ public class PolicySSOTokenListener
                     }
                 }
             }
+
+            //clean up userNSRoleCache
             PolicyEvaluator.userNSRoleCache.remove(tokenIdStr);
             if (debug.messageEnabled()) {
                 debug.message("PolicySSOTokenListener.ssoTokenChanged():"
                     +"cleaned up user nsRole cache for an expired token " 
                     + tokenIdStr);
             }
+
             // clean up the subject evaluation cache
             SubjectEvaluationCache.subjectEvaluationCache.remove(tokenIdStr);
             if (debug.messageEnabled()) {
@@ -119,6 +122,7 @@ public class PolicySSOTokenListener
                     +"cleaned up subject evaluation cache for an expired token" 
                     +" "+tokenIdStr);
             }
+
             // clean up the user role cache from LDAPRoles
             LDAPRoles.userLDAPRoleCache.remove(tokenIdStr);
             if (debug.messageEnabled()) {
@@ -126,6 +130,18 @@ public class PolicySSOTokenListener
                     +"up user role cache of LDAPRoles "
                     + "for an expired token "+tokenIdStr);
             }
+
+            // clean up subject result cache inside  Policy objects
+            if (evt.getType() == SSOTokenEvent.SSO_TOKEN_PROPERTY_CHANGED) {
+                if (debug.messageEnabled()) {
+                    debug.message("PolicySSOTokenListener.ssoTokenChanged():"
+                        + " receieved sso token property change notification, "
+                        + " clearing cached subject result cache "
+                        + " for tokenIdStr XXXXXX");
+                }
+                PolicyCache.getInstance().clearSubjectResultCache(tokenIdStr);
+            }
+
             PolicyEvaluator.ssoListenerRegistry.remove(tokenIdStr);
         } catch (Exception e ) {
             debug.error("PolicySSOTokenListener.ssoTokenChanged():policy sso "

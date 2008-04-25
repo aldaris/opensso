@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.2 2006-08-25 21:21:03 veiming Exp $
+ * $Id: PolicyCache.java,v 1.3 2008-04-25 23:24:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -611,5 +611,32 @@ class PolicyCache implements ServiceListener {
                 + " policyListeners cache: " 
                 + policyCache.policyListenersMap.size());
     }
+
+    /**
+     * Clears the cached membership evaluation results corresponding
+     * to the <code>tokenIdString</code>. This is triggered through
+     * <code>PolicySSOTokenListener</code> when session property
+     * of a logged in user is changed. This call delegates to each
+     * cached Policy. Each Policy in turn clears the cached
+     * membership evaluation results
+     *
+     * @param tokenIdString sessionId of the user whose session property changed
+     */
+    void clearSubjectResultCache(String tokenIdString) throws PolicyException {
+        if (DEBUG.messageEnabled()) {
+            DEBUG.message("PolicyCache.clearSubjectResultCache(tokenIdString): "
+                    + " clearing cached subject evaluation result for "
+                    + " tokenId XXXXX in each cached Policy");
+        }
+        Set policyNames = new HashSet();
+        policyNames.addAll(policies.keySet());
+        for (Iterator iter = policyNames.iterator(); iter.hasNext();) {
+            Policy policy = (Policy)policies.get(iter.next());
+            if (policy != null) {
+                policy.clearSubjectResultCache(tokenIdString);
+            }
+        }
+    }
+
 }
 

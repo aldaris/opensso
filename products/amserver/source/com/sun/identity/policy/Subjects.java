@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Subjects.java,v 1.2 2006-08-25 21:21:06 veiming Exp $
+ * $Id: Subjects.java,v 1.3 2008-04-25 23:24:12 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -852,6 +852,25 @@ public class Subjects {
             return subject instanceof SharedSubject;
         }
 
+    }
+
+    /**
+     * Clears the cached membership evaluation results corresponding
+     * to the <code>tokenIdString</code>. This is triggered through
+     * <code>PolicySSOTokenListener</code>, <code>PolicyCache</code>
+     * and <code>Policy</code> when session property
+     * of a logged in user is changed
+     *
+     * @param tokenIdString sessionId of the user whose session property changed
+     */
+    void clearSubjectResultCache(String tokenIdString) throws PolicyException {
+        if (PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message(
+                    "Subjects.clearSubjectResultCache(tokenIdString): "
+                    + " clearing cached subject evaluation result for "
+                    + " tokenId XXXXX");
+        }
+        resultCache.remove(tokenIdString);
     }
 
 }
