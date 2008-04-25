@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.9 2008-04-22 20:53:20 veiming Exp $
+ * $Id: RegisterServices.java,v 1.10 2008-04-25 03:15:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,72 +61,80 @@ public class RegisterServices {
      * Registers services.
      *
      * @param adminToken Administrator Single Sign On token.
+     * @Qparam bUseExtUMDS <code>true</code> to use external DS as
+     *         user management datastore.
      * @throws IOException if file operation errors occur.
      * @throws SMSException if services cannot be registered.
      * @throws SSOException if single sign on token is not valid.
      */
-    public void registers(SSOToken adminToken)
+    public void registers(SSOToken adminToken, boolean bUseExtUMDS)
         throws IOException, SMSException, SSOException {
         System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
         ServiceManager serviceManager = new ServiceManager(adminToken);
 
         for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
             String serviceFileName = (String)i.next();
-            boolean tagswap = true;
-            if (serviceFileName.startsWith("*")) {
-                serviceFileName = serviceFileName.substring(1);
-                tagswap = false;                
-            }
-            
-            SetupProgress.reportStart("emb.registerservice",serviceFileName);
-            BufferedReader rawReader = null;
-            InputStream serviceStream = null;
-            
-            try {
-                rawReader = new BufferedReader(new InputStreamReader(
-                     this.getClass().getClassLoader().getResourceAsStream(
-                        serviceFileName)));
-                StringBuffer buff = new StringBuffer();
-                String line = null;
-                
-                while ((line = rawReader.readLine()) != null) {
-                    buff.append(line);
+            if (!bUseExtUMDS || 
+                !serviceFileName.equals("idRepoEmbeddedOpenDS.xml")
+            ) {
+                boolean tagswap = true;
+                if (serviceFileName.startsWith("*")) {
+                    serviceFileName = serviceFileName.substring(1);
+                    tagswap = false;
                 }
-                
-                rawReader.close();
-                rawReader = null;
 
-                String strXML = buff.toString();
+                SetupProgress.reportStart("emb.registerservice", 
+                    serviceFileName);
+                BufferedReader rawReader = null;
+                InputStream serviceStream = null;
 
-                // Flatfile idrepo removed : Following code will be removed.
-                //String strXML = manipulateServiceXML(
+                try {
+                    rawReader = new BufferedReader(new InputStreamReader(
+                        this.getClass().getClassLoader().getResourceAsStream(
+                        serviceFileName)));
+                    StringBuffer buff = new StringBuffer();
+                    String line = null;
+
+                    while ((line = rawReader.readLine()) != null) {
+                        buff.append(line);
+                    }
+
+                    rawReader.close();
+                    rawReader = null;
+
+                    String strXML = buff.toString();
+
+                    // Flatfile idrepo removed : Following code will be removed.
+                    //String strXML = manipulateServiceXML(
                     //serviceFileName, buff.toString());
 
-                if (tagswap) {
-                    if (serviceFileName.equals("idRepoService.xml")) {
-                        // false because there are <!-- and --!>
-                        // IMO, adding these comments is a heck.
-                        strXML = ServicesDefaultValues.tagSwap(strXML, false);
-                    } else {
-                        strXML = ServicesDefaultValues.tagSwap(strXML, true);
+                    if (tagswap) {
+                        if (serviceFileName.equals("idRepoService.xml")) {
+                            // false because there are <!-- and --!>
+                            // IMO, adding these comments is a heck.
+                            strXML = ServicesDefaultValues.tagSwap(strXML,
+                                false);
+                        } else {
+                            strXML = ServicesDefaultValues.tagSwap(strXML, 
+                                true);
+                        }
                     }
-                }
-                serviceStream = (InputStream)new ByteArrayInputStream(
-                    strXML.getBytes());
-                serviceManager.registerServices(serviceStream);
-                serviceStream.close();
-                serviceStream = null;
-                SetupProgress.reportEnd("emb.success", null);
-            } finally {
-                if (rawReader != null) {
-                    rawReader.close();
-                }
-                if (serviceStream != null) {
+                    serviceStream = (InputStream) new ByteArrayInputStream(
+                        strXML.getBytes());
+                    serviceManager.registerServices(serviceStream);
                     serviceStream.close();
+                    serviceStream = null;
+                    SetupProgress.reportEnd("emb.success", null);
+                } finally {
+                    if (rawReader != null) {
+                        rawReader.close();
+                    }
+                    if (serviceStream != null) {
+                        serviceStream.close();
+                    }
+                    serviceManager.clearCache();
                 }
-                serviceManager.clearCache();
             }
-            
         }
         // Set installTime to false, to avoid in-memory notification from
         // SMS in cases where not needed, and to denote that service  

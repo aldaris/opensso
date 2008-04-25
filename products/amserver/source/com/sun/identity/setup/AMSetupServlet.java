@@ -1,4 +1,3 @@
-
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -18,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.54 2008-04-24 07:52:52 beomsuk Exp $
+ * $Id: AMSetupServlet.java,v 1.55 2008-04-25 03:15:56 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +76,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
@@ -93,7 +91,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.UUID;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -269,7 +266,7 @@ public class AMSetupServlet extends HttpServlet {
         Map userRepo = (Map)map.remove("UserStore");
         
         try {
-            isConfiguredFlag = configure(map);
+            isConfiguredFlag = configure(map, userRepo);
             if (isConfiguredFlag) {
                 //postInitialize was called at the end of configure????
                 postInitialize(getAdminSSOToken());
@@ -404,7 +401,7 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
     
-    private static boolean configure(Map map) {
+    private static boolean configure(Map map, Map userRepo) {
         boolean configured = false;
         try {
             String basedir = (String)map.get(
@@ -484,7 +481,7 @@ public class AMSetupServlet extends HttpServlet {
                         ex.getLocalizedMessage());
                 }
             }
-
+            
             if ((isDSServer || isADServer ) && !isDITLoaded) {
                 boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
                     SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
@@ -512,10 +509,11 @@ public class AMSetupServlet extends HttpServlet {
             reInitConfigProperties(serverInstanceName,
                 propAMConfig, strServerConfigXML);
             SSOToken adminSSOToken = getAdminSSOToken();
+            boolean bUseExtUMDS = (userRepo != null) && !userRepo.isEmpty();
 
             if (!isDITLoaded) {
                 RegisterServices regService = new RegisterServices();
-                regService.registers(adminSSOToken);
+                regService.registers(adminSSOToken, bUseExtUMDS);
                 processDataRequests("/WEB-INF/template/sms");
             }
 
@@ -1630,21 +1628,26 @@ public class AMSetupServlet extends HttpServlet {
         String orgName, 
         String configName, 
         String entry
-    ) throws SMSException, SSOException 
-    {
-        SSOToken token = (SSOToken) AccessController
-                 .doPrivileged(AdminTokenAction.getInstance());
+    ) throws SMSException, SSOException {
+        SSOToken token = (SSOToken)
+            AccessController.doPrivileged(AdminTokenAction.getInstance());
         ServiceConfigManager scm = new ServiceConfigManager(token,
-                 IdConstants.REPO_SERVICE, "1.0");
+            IdConstants.REPO_SERVICE, "1.0");
         ServiceConfig sc = scm.getOrganizationConfig(orgName, null);
-        ServiceConfig subConfig = sc.getSubConfig(configName);
-        Map configMap = subConfig.getAttributes();
-        Set vals = (Set)configMap.get("sun-idrepo-ldapv3-config-ldap-server");
-        vals.add(entry);
-        HashMap mp = new HashMap(2);
-        mp.put("sun-idrepo-ldapv3-config-ldap-server", vals);
-        subConfig.setAttributes(mp);
+        if (sc != null) {
+            ServiceConfig subConfig = sc.getSubConfig(configName);
+            if (subConfig != null) {
+                Map configMap = subConfig.getAttributes();
+                Set vals = (Set)configMap.get(
+                    "sun-idrepo-ldapv3-config-ldap-server");
+                vals.add(entry);
+                HashMap mp = new HashMap(2);
+                mp.put("sun-idrepo-ldapv3-config-ldap-server", vals);
+                subConfig.setAttributes(mp);
+            }
+        }
     }
+
     /**
      * Update platform server list and Organization alias
      */
@@ -1979,8 +1982,7 @@ public class AMSetupServlet extends HttpServlet {
     }
 
 
-    private static void setupSecurIDDirs(String basedir, String deployuri)
-    {
+    private static void setupSecurIDDirs(String basedir, String deployuri) {
         /*
          *  make sure the basedir + "/" + deployuri + "/auth/ace/data"
          *  directory exists.
