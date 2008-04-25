@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.4 2008-02-28 04:07:31 inthanga Exp $
+ * $Id: SessionUpgrade.java,v 1.5 2008-04-25 15:33:10 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -281,7 +281,8 @@ public class SessionUpgrade extends TestCommon {
         try {
             log(Level.FINEST, "cleanup", url);
             List<String> listModInstance = new ArrayList<String>();
-            listModInstance.add(moduleSubConfig);
+            listModInstance.add(FirstModuleName);
+            listModInstance.add(SecondModuleName);
             consoleLogin(webClient, url, adminUser, adminPassword);
 
             log(Level.FINE, "cleanup", "Deleting auth instance(s) " + 
