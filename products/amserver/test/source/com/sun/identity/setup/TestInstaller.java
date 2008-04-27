@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestInstaller.java,v 1.1 2006-10-20 19:24:26 veiming Exp $
+ * $Id: TestInstaller.java,v 1.2 2008-04-27 01:39:01 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public class TestInstaller {
             SSOToken adminSSOToken = getAdminSSOToken();
                 
             RegisterServices regService = new RegisterServices();
-            regService.registers(adminSSOToken);
+            regService.registers(adminSSOToken, true);
             Map map = ServicesDefaultValues.getDefaultValues();
             String hostname = (String)map.get("SERVER_HOST");
             ConfigureData configData = new ConfigureData(
