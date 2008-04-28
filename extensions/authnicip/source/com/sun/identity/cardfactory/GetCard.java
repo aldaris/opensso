@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetCard.java,v 1.2 2008-03-31 05:25:07 mrudul_uchil Exp $
+ * $Id: GetCard.java,v 1.3 2008-04-28 21:11:22 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.wss.sts.STSConstants;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -290,8 +291,9 @@ public class GetCard extends HttpServlet {
                 SystemConfigurationUtil.getProperty(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
         String famLoginUrl = 
                 serverProtocol + "://" + serverHost + ":" + serverPort + serviceUri + 
-                "/UI/Login?goto=" + serverProtocol + "://" + serverHost + ":" + 
-                serverPort + serviceUri + "/GetCard";
+                "/UI/Login?goto=" + URLEncDec.encode( serverProtocol + "://" + serverHost + ":" + 
+                serverPort + serviceUri + "/GetCard" + "?" +
+                request.getQueryString());
         debug.message("famLoginUrl : " + famLoginUrl);
         
         try {
@@ -472,13 +474,11 @@ public class GetCard extends HttpServlet {
            while (tokenTypes.hasMoreTokens()) {
                String strToken = tokenTypes.nextToken().trim();
                if(strToken.equals("SAML1") || strToken.equals("SAML11") || strToken.equals("SAML1.1")) {
-                   SupportedToken token = new SupportedToken(SupportedToken.SAML11);
-                   tokenList.addSupportedToken(token);
-                   break;
+                   tokenList.addSupportedToken(new SupportedToken(SupportedToken.SAML11));
+                   tokenList.addSupportedToken(new SupportedToken(SupportedToken.WSS_SAML11));
                } else if (strToken.equals("SAML2") || strToken.equals("SAML20") || strToken.equals("SAML2.0")) {
                    SupportedToken token = new SupportedToken(SupportedToken.SAML20);
                    tokenList.addSupportedToken(token);
-                   break;
                }
            }
         } else {
@@ -531,7 +531,8 @@ public class GetCard extends HttpServlet {
         }
         
         //PrintWriter out = response.getWriter();
-        response.setContentType("application/soap+xml; charset=utf-8");
+        response.setContentType("application/x-mscardfile; charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename="+userName+".crd");
 
         try {
             debug.message("******** CARD ********* : " + card.toXML());
