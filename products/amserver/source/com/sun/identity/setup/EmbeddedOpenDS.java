@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.11 2008-04-24 22:31:50 beomsuk Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.12 2008-04-28 20:09:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,8 +71,7 @@ public class EmbeddedOpenDS {
      *
      * @return <code>true</code> if the server has already been started.
      */ 
-    public static boolean isStarted()
-    {
+    public static boolean isStarted() {
         return serverStarted;
     }
 
@@ -290,6 +289,12 @@ public class EmbeddedOpenDS {
             DirectoryServer.shutDown(
                 "com.sun.identity.setup.EmbeddedOpenDS",
                 Message.EMPTY);
+            int sleepcount = 0;
+            while (DirectoryServer.isRunning() && (sleepcount < 60)) {
+                sleepcount++;
+                Thread.sleep(1000);
+            } 
+            serverStarted = false;
             debug.message("EmbeddedOpenDS.shutdown server success.");
         }
     }
