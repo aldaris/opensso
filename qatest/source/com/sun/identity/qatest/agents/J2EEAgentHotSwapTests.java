@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentHotSwapTests.java,v 1.1 2008-04-18 19:28:50 nithyas Exp $
+ * $Id: J2EEAgentHotSwapTests.java,v 1.2 2008-04-28 18:33:08 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,7 +67,6 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
     private String strGblRB = "agentsGlobal";
     private String resource;
     private URL url;
-    private WebClient webClient;
     private int polIdx;
     private int resIdx;
     private int iIdx;
@@ -166,7 +165,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
                 log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB +
                         ".xml");
                 mpc.createPolicy(strLocRB + ".xml");
-
+                
                 //HotSwapIdentities and Policies
                 mpc.createIdentities(strHotSwapRB, polIdx);
                 mpc.createPolicyXML(strGblRB, strHotSwapRB, polIdx, 
@@ -449,6 +448,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         String strPropValue="";
         String strEvalValue="";
         String strResVal="";
+        WebClient webClient = new WebClient();
         try {
             strPropName = rbp.getString(strHotSwapRB + testIdx + 
                    ".accessDeniedURI");
@@ -467,7 +467,6 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             strEvalValue = rbp.getString(strHotSwapRB + testIdx + 
                    ".accessDeniedURIEvalValue");
             hotswap.hotSwapProperty(strPropName, strPropValue);
-            webClient = new WebClient();
             webClient.setCookiesEnabled(true);
             page = consoleLogin(webClient, resource, "hsuser0",
                 "hsuser0");
@@ -511,6 +510,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         String strPropValue="";
         String strEvalValue="";
         String strResVal="";
+        WebClient webClient = new WebClient();
         try {
             strPropName = rbp.getString(strHotSwapRB + testIdx + 
                    ".notenfURI");
@@ -536,7 +536,6 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             Set set = amid.getAttribute(strPropName);
             log(Level.FINE,"evalNotEnfURI", "List of not enf URI's " +
                     "from amid object is : " + set.toString());
-            webClient = new WebClient();
             webClient.setCookiesEnabled(true);
             boolean isFound = false;
             long time = System.currentTimeMillis();
@@ -573,9 +572,34 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         entering("cleanup", null);
         try {
             hotswap.restoreDefaults(testIdx);
-            profile.cleanup();
-            resp.cleanup();
-            session.cleanup();
+            
+            // If profile, session & resp objects are null then the test 
+            // has failed in setup and only identities & policies need to 
+            // be deleted.
+            if (profile != null) { 
+                profile.cleanup();
+            } else {
+                if (idmc.searchIdentities(admintoken, "pauser",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER, 
+                           "pauser");
+            }
+            if (resp != null) { 
+                resp.cleanup();
+            } else {
+                if (idmc.searchIdentities(admintoken, "rauser",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                           "rauser");
+            }
+            if (session != null) { 
+                session.cleanup();
+            } else {
+                if (idmc.searchIdentities(admintoken, "sauser",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                           "sauser");
+            }
             if (executeAgainstOpenSSO) {
                 mpc.deletePolicies(strLocRB, polIdx);            
                 mpc.deletePolicies(strHotSwapRB, polIdx);

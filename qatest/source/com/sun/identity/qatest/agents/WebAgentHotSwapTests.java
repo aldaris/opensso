@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebAgentHotSwapTests.java,v 1.1 2008-04-18 20:07:17 nithyas Exp $
+ * $Id: WebAgentHotSwapTests.java,v 1.2 2008-04-28 18:32:23 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -395,6 +395,7 @@ public class WebAgentHotSwapTests extends TestCommon {
         String strPropName="";
         String strPropValue="";
         String strEvalValue="";
+        WebClient webClient = new WebClient();
         try {
             strPropName = rbp.getString(strHotSwapRB + testIdx + 
                    ".accessDeniedURL");
@@ -408,7 +409,6 @@ public class WebAgentHotSwapTests extends TestCommon {
                 strPropValue = rbg.getString(strPropValue);            
             }
             hotswap.hotSwapProperty(strPropName, strPropValue);
-            webClient = new WebClient();
             webClient.setCookiesEnabled(true);
             page = consoleLogin(webClient, resource, "hsuser0",
                 "hsuser0");
@@ -448,6 +448,7 @@ public class WebAgentHotSwapTests extends TestCommon {
         String strPropName="";
         String strPropValue="";
         String strEvalValue="";
+        WebClient webClient = new WebClient();        
         try {
             strPropName = rbp.getString(strHotSwapRB + testIdx + 
                    ".notenfURL");
@@ -466,7 +467,6 @@ public class WebAgentHotSwapTests extends TestCommon {
                     Url.toString());
             Reporter.log("Resource: " + Url.toString());   
             Reporter.log("Expected Result: " + strEvalValue); 
-            webClient = new WebClient();
             webClient.setCookiesEnabled(true);
             boolean isFound = false;
             long time = System.currentTimeMillis();
@@ -504,9 +504,34 @@ public class WebAgentHotSwapTests extends TestCommon {
         entering("cleanup", null);
         try {
             hotswap.restoreDefaults(testIdx);
-            profile.cleanup();
-            resp.cleanup();
-            session.cleanup();            
+            
+            // If profile, session & resp objects are null then the test 
+            // has failed in setup and only identities & policies need to 
+            // be deleted.
+            if (profile != null) { 
+                profile.cleanup();
+            } else {
+                if (idmc.searchIdentities(admintoken, "pauser",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER, 
+                           "pauser");
+            }
+            if (resp != null) { 
+                resp.cleanup();
+            } else {
+                if (idmc.searchIdentities(admintoken, "rauser",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                           "rauser");
+            }
+            if (session != null) { 
+                session.cleanup();
+            } else {
+                if (idmc.searchIdentities(admintoken, "sauser",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                           "sauser");
+            }
             if (executeAgainstOpenSSO) {
                 mpc.deletePolicies(strLocRB, polIdx);            
                 mpc.deletePolicies(strHotSwapRB, polIdx);
