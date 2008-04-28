@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.4 2008-04-18 19:28:50 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.5 2008-04-28 18:30:25 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,6 @@ public class GeneralAgentTests extends TestCommon {
                 ".executeAgainstOpenSSO")).booleanValue();
         pollingTime = new Integer(rbg.getString(strGblRB +
                 ".pollingInterval")).intValue();
-        admintoken = getToken(adminUser, adminPassword, basedn);
     }
     
     /**
@@ -108,6 +107,7 @@ public class GeneralAgentTests extends TestCommon {
         Object[] params = {policyIdx, resourcePIdx, resourceNPIdx,
         resourceCaseIdx};
         entering("setup", params);
+        admintoken = getToken(adminUser, adminPassword, basedn);
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
             "/UI/Logout";
         strAgentType = rbg.getString(strGblRB + ".agentType");
