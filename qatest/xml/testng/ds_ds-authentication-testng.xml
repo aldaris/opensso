@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-authentication-testng.xml,v 1.6 2008-02-13 19:31:03 arunav Exp $
+ $Id: ds_ds-authentication-testng.xml,v 1.7 2008-04-28 18:20:17 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -897,4 +897,28 @@
             <class name="com.sun.identity.qatest.authentication.ApplicationAuthTest"/>
         </classes>
     </test>
+    <test name="MapUserAttrToSSOTokenRootRealm">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.PostAuthProcessingTest"/>
+        </classes>
+    </test>
+    <test name="MapUserAttrToSSOTokenSubRealm">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testRealm" value="postrealm"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.PostAuthProcessingTest"/>
+        </classes>
+    </test>        
 </suite>

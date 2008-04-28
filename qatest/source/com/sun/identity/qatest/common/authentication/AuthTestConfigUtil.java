@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.8 2008-02-28 04:04:50 inthanga Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.9 2008-04-28 18:22:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,9 @@
 package com.sun.identity.qatest.common.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.ArrayList;
@@ -35,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
 
 /**
  * Authentication Test Utility class <code>AuthTestUtil</code>
@@ -396,5 +402,82 @@ public class AuthTestConfigUtil extends TestCommon {
         }
         log(Level.FINEST, "getListFromMap", "List: " + list);        
         return list;
+    }
+    
+    /**
+     * Login using an authentication module.
+     * authRealm - a String containing the realm in which the user will 
+     *     authenticate.
+     * module - a String containing the module instance which will be used for
+     *     authentication.
+     * userName - a String containing the user name of the user to be 
+     *     authenticated.
+     * userPassword - a String containing the password of the user userName.
+     * @return - an <code>SSOToken</code> for the authenticated user or null if 
+     *     the authentication is not successful.
+     */
+    public SSOToken moduleLogin(String authRealm, String module, 
+            String userName, String userPassword) 
+    throws Exception {
+        SSOToken userToken = null;
+        AuthContext loginContext = null;    
+        try {
+            String lcRealm = authRealm;
+            if (lcRealm.equals("/")) {
+                lcRealm = basedn;
+            } else if (lcRealm.indexOf("/") == 0) {
+                lcRealm = authRealm.substring(1);
+            }
+            
+            try {
+                log(Level.FINE, "moduleLogin", 
+                        "Obtaining an AuthContext in realm/org " + lcRealm +
+                        ".");
+                loginContext = new AuthContext(lcRealm);
+                AuthContext.IndexType indexType = 
+                        AuthContext.IndexType.MODULE_INSTANCE;
+                log(Level.FINE, "moduleLogin", "Executing AuthContext login()" +
+                        " with module " + module + " ...");
+                loginContext.login(indexType, module);
+            } catch (AuthLoginException ale) {
+               log(Level.SEVERE, "moduleLogin", userName + " failed to login.");
+               throw ale;
+            }
+            while (loginContext.hasMoreRequirements()) {
+                Callback[] callbacks = loginContext.getRequirements();
+                if (callbacks != null) {
+                    for (Callback callback: callbacks) {
+                        if (callback instanceof NameCallback) {
+                            NameCallback nameCallback = 
+                                    (NameCallback) callback;
+                           nameCallback.setName(userName);
+                       }
+
+                       if (callback instanceof PasswordCallback) {
+                           PasswordCallback passwordCallback =
+                                   (PasswordCallback) callback;
+                           passwordCallback.setPassword(
+                                   userPassword.toCharArray());
+                       }
+                   }
+                   loginContext.submitRequirements(callbacks);
+               }
+           }
+           if (loginContext.getStatus() == AuthContext.Status.SUCCESS) {
+               userToken = loginContext.getSSOToken();
+           } else if (loginContext.getStatus() == AuthContext.Status.FAILED) {
+               log(Level.SEVERE, "loginModule", "Login for user " + userName +
+                       " failed.");
+           } else {
+               log(Level.SEVERE, "loginModule", "Login for user " + userName + 
+                       "had unknown status " + loginContext.getStatus());
+           }
+       } catch (Exception e) {
+           log(Level.SEVERE, "loginModule", userName + 
+                   " login resulted in an exception.");
+           throw e;
+       } finally {
+           return userToken;
+       }
     }
 }
