@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.44 2008-04-21 21:55:37 nithyas Exp $
+ * $Id: TestCommon.java,v 1.45 2008-04-28 15:43:19 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,7 +109,7 @@ public class TestCommon implements TestConstants {
             logger.addHandler(fileH);
             String logL = rb_amconfig.getString(
                     TestConstants.KEY_ATT_LOG_LEVEL);
-            if ((logL != null)) {
+            if ((logL != null) && !logL.equals("")) {
                 logger.setLevel(Level.parse(logL));
             } else {
                 logger.setLevel(Level.FINE);
