@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.8 2008-02-20 19:27:57 inthanga Exp $
+ * $Id: AgentsCommon.java,v 1.9 2008-04-28 18:22:52 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -421,25 +421,25 @@ public class AgentsCommon extends TestCommon {
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
 		//fixed the properties files, now there is no identity with out an 
 		//attribute value
-                if (list != null){
-                    int retval = FederationManager.getExitCode(fmadm.createIdentity( 
-						webClient, realm, name, type, list));
-                    if ( retval != 0 ) {
+                if (list != null) {
+                    int retval = FederationManager.getExitCode( 
+                            fmadm.createIdentity( webClient, realm, name, 
+                            type, list));
+                    if (retval != 0 ) {
                         log(Level.SEVERE, "createIdentities",
-                                "createIdentity (not null list) famadm" +
-                                " command failed ");
+                            "createIdentity (not null list) famadm" +
+                            " command failed for Identity : " + name + 
+                            ", of type : " + type);
                         assert false;
-                    	}
                     }
-				else
-		    		{
-                        log(Level.SEVERE, "createIdentities",
-                                "Identity attribute list cannot be null" +
-								"check your properties file, make sure " +
-								"all the identities have atleast one " +
-								"attribute defined");
-                        assert false;
-            		 }
+                } else {
+                    log(Level.SEVERE, "createIdentities",
+                        "Identity attribute list cannot be null" +
+                        "check your properties file, make sure " +
+                        "all the identities have atleast one " +
+                        "attribute defined");
+                    assert false;
+                }
 		
                 String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
                         ".isMemberOf");
@@ -566,7 +566,7 @@ public class AgentsCommon extends TestCommon {
                 if (FederationManager.getExitCode(fmadm.createPolicies(
                         webClient, realm, policyXML)) != 0) {
                     log(Level.SEVERE, "createPolicy", "createPolicies famadm" +
-                            " command failed");
+                            " command failed for policyXML : \n " + policyXML);
                     assert false;
                 }
             }
@@ -602,7 +602,8 @@ public class AgentsCommon extends TestCommon {
                 if (FederationManager.getExitCode(fmadm.deleteIdentities(
                         webClient, realm, list, type)) != 0) {
                     log(Level.SEVERE, "deleteIdentities", "deleteIdentities" +
-                            " famadm command failed");
+                            " famadm command failed for list : " + list + 
+                            ", of type : " + type);
                     assert false;
                 }
             }
@@ -637,7 +638,7 @@ public class AgentsCommon extends TestCommon {
             if (FederationManager.getExitCode(fmadm.deletePolicies(webClient,
                     realm, list)) != 0) {
                 log(Level.SEVERE, "deletePolicies", "deletePolicies famadm" +
-                        " command failed");
+                        " command failed for policy list : " + list);
                 assert false;
             }
         } catch(Exception e) {
@@ -854,8 +855,8 @@ public class AgentsCommon extends TestCommon {
      */
     public void setDynamicRespAttribute(String strRealm, List dynRespList)
     throws Exception {
-       try {
-           WebClient webClient = new WebClient();
+        WebClient webClient = new WebClient();
+        try {
            consoleLogin(webClient, loginURL, adminUser, adminPassword);
            if (FederationManager.getExitCode(fmadm.setSvcAttrs(webClient,
                      strRealm, "iPlanetAMPolicyConfigService", dynRespList))
