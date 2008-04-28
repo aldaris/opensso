@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentTests.java,v 1.2 2008-04-18 19:28:51 nithyas Exp $
+ * $Id: J2EEAgentTests.java,v 1.3 2008-04-28 18:33:57 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -126,7 +126,11 @@ public class J2EEAgentTests extends TestCommon {
                         mpc.createIdentities(strLocRB, polIdx, "/");
                         mpc.createPolicyXML(strGblRB, strLocRB, polIdx, 
                             strLocRB + ".xml", "/");
-                        mpc.createPolicy(strLocRB + ".xml", "/");
+                        if (!(mpc.createPolicy(strLocRB + ".xml", "/"))) {
+                            log(Level.SEVERE, "setup", "Failure in creating " +
+                                    "Policy : \n " + strLocRB + ".xml");
+                            assert false;
+                        };
                     }
                 }
             } catch (Exception e) {
