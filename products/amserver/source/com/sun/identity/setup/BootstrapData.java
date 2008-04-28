@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.5 2008-04-11 20:39:34 veiming Exp $
+ * $Id: BootstrapData.java,v 1.6 2008-04-28 20:12:57 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -235,13 +235,10 @@ public class BootstrapData {
             // need to do this because URL class does not understand ldap://
             if (info.startsWith(BootstrapData.PROTOCOL_LDAPS)) {
                 info = "http://" +  info.substring(8);
+                ldaps = true;
             } else
             if (info.startsWith(BootstrapData.PROTOCOL_LDAP)) {
                 info = "http://" +  info.substring(7);
-            }
-            if (info.startsWith(BootstrapData.PROTOCOL_LDAPS)) {
-                info = "http://" +  info.substring(8);
-                ldaps = true;
             }
             URL url = new URL(info);
             if (first) {
