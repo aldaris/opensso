@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.9 2008-04-11 17:02:52 jonnelson Exp $
+ * $Id: Step3.java,v 1.10 2008-04-29 05:00:59 kevinserwin Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -200,7 +200,7 @@ public class Step3 extends LDAPStoreWizardPage {
                     String embedded = 
                         (String)data.get(BootstrapData.DS_ISEMBEDDED);
                     addObject(sb, "embedded", embedded);                                                            
-                    if (embedded.equals("true")) {                                                
+                    
                         // set the multi embedded flag 
                         getContext().setSessionAttribute(
                             SetupConstants.CONFIG_VAR_DATA_STORE, 
@@ -210,35 +210,66 @@ public class Step3 extends LDAPStoreWizardPage {
                             SetupConstants.DS_EMB_REPL_FLAG,
                             SetupConstants.DS_EMP_REPL_FLAG_VAL); 
                         
-                        // get the existing replication ports if any
-                        String replAvailable = (String)data.get(
-                            BootstrapData.DS_REPLICATIONPORT_AVAILABLE);
-                        addObject(sb, "replication", replAvailable);                   
+                        if (embedded.equals("true")) {      
+                   
+                             // get the existing replication ports if any
+                             String replAvailable = (String)data.get(
+                               BootstrapData.DS_REPLICATIONPORT_AVAILABLE);
+                              if (replAvailable == null) {
+                                 replAvailable = "false";
+                              }
+                              addObject(sb, "replication", replAvailable);        
+                              
+                              String existingRep = (String)data.get(BootstrapData.DS_REPLICATIONPORT);
+                              getContext().setSessionAttribute(
+                                "existingRepPort", existingRep);
+                              addObject(sb, "replicationPort", existingRep);                              
                         
-                        // set the replication ports pulled from the remote
-                        // server in the session and pass back to the client
-                        String existing = (String)data.get(BootstrapData.DS_PORT);
-                        getContext().setSessionAttribute(
-                            "existingPort", existing);
-                        addObject(sb, "existingPort", existing);
-                        
-                        String existingRep = (String)data.get(BootstrapData.DS_REPLICATIONPORT);
-                        getContext().setSessionAttribute(
-                            "existingRepPort", existingRep);
-                        addObject(sb, "replicationPort", existingRep);
-                        
-                        String host = (String)data.get(BootstrapData.DS_HOST);
-                        getContext().setSessionAttribute(
-                            "existingHost",host);
+                            // set the replication ports pulled from the remote
+                            // server in the session and pass back to the client
+                            String existing = (String)data.get(BootstrapData.DS_PORT);
+                            getContext().setSessionAttribute(
+                                "existingPort", existing);
+                            addObject(sb, "existingPort", existing);
 
-                        getContext().setSessionAttribute(
-                            "localRepPort", localRepPort);      
-                               
-                        // dsmgr password is same as amadmin for embedded
-                        getContext().setSessionAttribute(
-                            "configStorePassword", password);
-                    }                                                               
+                            // set the configuration store port
+                            getContext().setSessionAttribute(
+                                "configStorePort", existing);   
+                             addObject(sb, "configStorePort", existing);                        
+                            // set the configuration store port
+                            getContext().setSessionAttribute(
+                                "existingStorePort", existing);   
+                             addObject(sb, "existingStorePort", existing);
+
+
+                            String host = (String)data.get(BootstrapData.DS_HOST);
+                            getContext().setSessionAttribute(
+                                "existingHost",host);
+
+                            // set the configuration store host
+                            getContext().setSessionAttribute(
+                                "configStoreHost", host);   
+                             addObject(sb, "configStoreHost", host);
+
+                             // set the configuration store host
+                            getContext().setSessionAttribute(
+                                "existingStoreHost", host);   
+                             addObject(sb, "existingStoreHost", host);
+                            // set the configuration store port
+
+                            getContext().setSessionAttribute(
+                                "localRepPort", localRepPort);
+
+                            // dsmgr password is same as amadmin for embedded
+                            getContext().setSessionAttribute(
+                                "configStorePassword", password);
+                     } else {
+                            addObject(sb, "code", "100");
+                            addObject(sb, "message", getLocalizedString("invalid.port.number"));
+     
+                     }                                                              
                 }
+     
                 
             } catch (ConfiguratorException c) {
                 String code = c.getErrorCode();
