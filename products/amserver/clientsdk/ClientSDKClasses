@@ -133,7 +133,7 @@ com/iplanet/am/sdk/remote/DCTreeServicesImpl.class
 com/iplanet/am/sdk/remote/EventListener.class
 com/iplanet/am/sdk/remote/EventListener$EventNotificationHandler.class
 com/iplanet/am/sdk/remote/EventListener$IdRepoEventNotificationHandler.class
-com/iplanet/am/sdk/remote/EventListener$NotificationThread.class
+com/iplanet/am/sdk/remote/EventListener$NotificationRunnable.class
 com/iplanet/am/sdk/remote/IdRepoEventListener.class
 com/iplanet/am/sdk/remote/RemoteServicesFactory.class
 com/iplanet/am/sdk/remote/RemoteServicesImpl.class
