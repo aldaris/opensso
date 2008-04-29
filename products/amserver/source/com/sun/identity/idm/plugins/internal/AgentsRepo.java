@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.24 2008-04-19 20:41:16 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.25 2008-04-29 19:52:39 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,8 @@ import com.iplanet.services.comm.share.Notification;
 import com.iplanet.services.comm.share.NotificationSet;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.IdConstants;
@@ -98,20 +100,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
     private Map supportedOps = new HashMap();
 
-    ServiceSchemaManager ssm = null;
+    private static ServiceSchemaManager ssm = null;
 
-    ServiceConfigManager scm = null;
+    private static ServiceConfigManager scm = null;
 
     ServiceConfig orgConfig, agentGroupConfig;
 
     String ssmListenerId, scmListenerId;
 
-    // To determine if notification object has been registered for schema
-    // changes.
-    private static boolean registeredForNotifications;
-
-    private static String agentNameforNotificationSet = null;
-    private static IdType agentIdTypeforNotificationSet;
     private static String notificationURLname = 
         "com.sun.identity.client.notification.url";
     public static final String AGENT_CONFIG_SERVICE = "agentconfig";
@@ -132,10 +128,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             scm = new ServiceConfigManager(adminToken, agentserviceName, 
                 version);
                     
-            if (!registeredForNotifications) {
+            if (ssm != null) {
                 ssmListenerId = ssm.addListener(this);
+            }
+
+            if (scm != null) {
                 scmListenerId = scm.addListener(this);
-                registeredForNotifications = true;
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
@@ -168,9 +166,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.addListener().");
         }
         // Listeners are added when AgentsRepo got invoked.
-        if (registeredForNotifications) {
-            repoListener = listener;
-        }
+        repoListener = listener;
         return 0;
     }
 
@@ -938,15 +934,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "201", null);
         }
 
-        agentNameforNotificationSet = name;
-        agentIdTypeforNotificationSet = type;
-        if (debug.messageEnabled()) {
-            debug.message("AgentsRepo.setAttributes(): " + 
-                "agentNameforNotificationSet " + agentNameforNotificationSet);
-            debug.message("AgentsRepo.setAttributes(): " +
-                "agentIdTypeforNotificationSet "+agentIdTypeforNotificationSet);
-        }
-
         ServiceConfig aCfg = null;
         try {
             if (type.equals(IdType.AGENTONLY)) {
@@ -1122,9 +1109,15 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.globalConfigChanged..");
         }
-
+        IdType idType;
+        if (groupName.equalsIgnoreCase("default")) {
+            idType = IdType.AGENTONLY;
+        } else {
+            idType = IdType.AGENTGROUP;
+        }
         // If notification URLs are present, send notifications
-        sendNotificationSet(type);
+        sendNotificationSet(type, idType, 
+            serviceComponent.substring(serviceComponent.indexOf('/') + 1));
 
         if (repoListener != null) { 
             repoListener.allObjectsChanged();
@@ -1149,8 +1142,15 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
         // Process notification only if realm name matches
         if (orgName.equalsIgnoreCase(realmName)) {
+            IdType idType;
+            if (groupName.equalsIgnoreCase("default")) {
+                idType = IdType.AGENTONLY;
+            } else {
+                idType = IdType.AGENTGROUP;
+            }
             // If notification URLs are present, send notifications
-            sendNotificationSet(type);
+            sendNotificationSet(type, idType, 
+                serviceComponent.substring(serviceComponent.indexOf('/') + 1));
 
             if (repoListener != null) { 
                 repoListener.allObjectsChanged();
@@ -1190,7 +1190,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     }
 
     public boolean authenticate(Callback[] credentials) 
-        throws IdRepoException {
+        throws IdRepoException, AuthLoginException {
 
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.authenticate() called");
@@ -1247,7 +1247,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             Set userPwdSet = (Set) ansMap.get("userpassword"); 
             if ((userPwdSet != null) && (!userPwdSet.isEmpty())) {
                 userPwd = (String) userPwdSet.iterator().next();
-                answer = password.equals(userPwd);
+                if (!(answer = password.equals(userPwd))) {
+                    throw (new InvalidPasswordException("invalid password",
+                        userid));
+                }
             }
             if (debug.messageEnabled()) {
                 debug.message("AgentsRepo.authenticate() result: " + answer);
@@ -1492,7 +1495,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     }
 
     // If notification URLs are present, send notifications to clients/agents.
-    private void sendNotificationSet(int type) {
+    private void sendNotificationSet(int type, 
+        IdType agentIdTypeforNotificationSet,
+        String agentNameforNotificationSet) {
 
         switch (type) {
         case MODIFIED:
