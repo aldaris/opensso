@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.6 2008-04-22 00:23:15 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.7 2008-04-29 22:49:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -759,7 +759,7 @@ public class AgentsViewBean
                     setPageSessionAttribute(LOCAL_OR_NOT, PROP_CENTRAL);
                 }
             }
-            Class clazz = getAgentCustomizedViewBean(agentType);
+            Class clazz = getAgentCustomizedViewBean(model.getAgentType(amid));
             AMViewBeanBase vb = (AMViewBeanBase)getViewBean(clazz);
             setPageSessionAttribute(PG_SESSION_SUPERCEDE_AGENT_TYPE, 
                 model.getAgentType(amid));
