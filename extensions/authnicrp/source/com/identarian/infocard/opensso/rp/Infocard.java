@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.4 2008-04-18 13:52:35 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.5 2008-04-30 00:43:48 superpat7 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -70,6 +70,29 @@ public class Infocard extends AMLoginModule {
     public static final String amAuthInfocard = "amInfocard";
     private static final String PPID_CLAIM = "privatepersonalidentifier";
     private static final int BEGIN_STATE = ISAuthConstants.LOGIN_START;
+    private static final String MANDATORY_REQUIRED_CLAIMS = 
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier";
+    private static final String DEFAULT_REQUIRED_CLAIMS = 
+        "";
+    /*
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
+     */
+    private static final String DEFAULT_OPTIONAL_CLAIMS = "";
+    /*
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender\n" +
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+     */
+    private static final String DEFAULT_TOKEN_TYPE = "urn:oasis:names:tc:SAML:1.0:assertion";
     private static final int BINDING_STATE = 2;
     private static final int REGISTRATION_STATE = 3;
     private static final int NO_USERID_ERROR = 4;
@@ -164,8 +187,54 @@ public class Infocard extends AMLoginModule {
         keyAlias = modProperties.getProperty(
                 "com.identarian.infocard.opensso.keyAlias");
         minPasswordLength = Integer.getInteger(
-                modProperties.getProperty(
-                "com.identarian.infocard.opensso.userPasswordLength"), 8);
+                modProperties.getProperty("userPasswordLength"), 8);
+
+        // We accept semicolon-separated lists of claims in the HTTP parameter
+        // but we need them to be newline-separated in the page
+        HttpServletRequest request = getHttpServletRequest();
+        String requiredClaims = request.getParameter("requiredClaims");
+        if ( requiredClaims != null && requiredClaims.length() > 0 )
+        {
+            requiredClaims = requiredClaims.replace(';', '\n');
+        }
+        else
+        {
+            requiredClaims = DEFAULT_REQUIRED_CLAIMS;
+        }
+        
+        if ( requiredClaims.length() > 0 )
+        {
+            requiredClaims = MANDATORY_REQUIRED_CLAIMS + "\n" + requiredClaims;
+        }
+        else
+        {
+            requiredClaims = MANDATORY_REQUIRED_CLAIMS;
+        }
+        request.setAttribute("requiredClaims", requiredClaims);
+        
+        String optionalClaims = request.getParameter("optionalClaims");
+        if ( optionalClaims != null && optionalClaims.length() > 0 )
+        {
+            optionalClaims = optionalClaims.replace(';', '\n');
+        }
+        else
+        {
+            optionalClaims = DEFAULT_OPTIONAL_CLAIMS;
+        }
+        request.setAttribute("optionalClaims", optionalClaims);    
+
+        String tokenType = request.getParameter("tokenType");
+        request.setAttribute("tokenType", tokenType);    
+
+        String privacyUrl = modProperties.getProperty("privacyUrl");
+        if ( privacyUrl != null && privacyUrl.length() > 0 ) {
+            request.setAttribute("privacyUrl", privacyUrl);
+        }
+        String privacyVersion = modProperties.getProperty("privacyVersion");
+        if ( privacyVersion != null && privacyVersion.length() > 0 ) {
+            request.setAttribute("privacyVersion", privacyVersion);
+        }
+
         try {
             privateKey = getPrivateKey();
         } catch (InfocardException e) {
@@ -233,7 +302,7 @@ public class Infocard extends AMLoginModule {
                 }
                 if (action == 0) { // Register button
                     retval = getAndCheckRegistrationFields(callbacks);
-                    if (retval == 0) {
+                    if (retval == ISAuthConstants.LOGIN_IGNORE) {
                         retval = registerNewUser();
                     }
                 } else if (action == 1) { // Cancel
@@ -247,7 +316,7 @@ public class Infocard extends AMLoginModule {
             default: // Error states
                 return previousScreen;
         }
-
+        
         if (retval == ISAuthConstants.LOGIN_SUCCEED) {
             addInfocardClaimsToSession();
         }

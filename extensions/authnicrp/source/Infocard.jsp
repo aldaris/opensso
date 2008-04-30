@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Infocard.jsp,v 1.2 2008-02-28 23:31:19 superpat7 Exp $
+   $Id: Infocard.jsp,v 1.3 2008-04-30 00:43:48 superpat7 Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -362,25 +362,23 @@
     <jato:content name="validContent">
         <auth:form name="Login" method="post" defaultCommandChild="DefaultLoginURL" >
             <OBJECT type="application/x-informationCard" name="xmlToken">
-                <PARAM Name="tokenType" Value="urn:oasis:names:tc:SAML:1.0:assertion">
-                <PARAM Name="requiredClaims"
-                       Value="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname">
-                <PARAM Name="optionalClaims"
-                       Value="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender
-                       
-                       
-                       http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
+            <%
+            String[] parameters = { "issuer", 
+                "issuerPolicy", 
+                "tokenType", 
+                "requiredClaims", 
+                "optionalClaims", 
+                "privacyUrl",
+                "privacyVersion" };
+            for ( int i = 0; i < parameters.length; i++ ) {
+                String value = (String)request.getAttribute(parameters[i]);
+                if ( value != null && value.length() > 0 ) {
+            %>
+                    <PARAM Name="<%= parameters[i] %>" Value="<%= value %>">
+            <%
+                }
+            }
+            %>
             </OBJECT>
             
             <script language="javascript">
