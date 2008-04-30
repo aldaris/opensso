@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSessionConstraints.java,v 1.1 2008-04-19 01:33:50 srivenigan Exp $
+ * $Id: UserSessionConstraints.java,v 1.2 2008-04-30 20:05:12 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -189,7 +189,7 @@ public class UserSessionConstraints extends TestCommon {
                 destroyToken(usrtokenWithoutSrvcOrig);
                 destroyToken(usrtokenWithoutSrvcNew);
                 destroyToken(usrtokenWithSrvcOrig);
-                destroyToken(usrtokenWithSrvcNew);
+                destroyToken(usrtokenWithSrvcNew);     
             }
         }
         exiting("testQuotaDAWithSessionSrvcAtGlobal");
@@ -247,7 +247,7 @@ public class UserSessionConstraints extends TestCommon {
             if (!cleanedUp) {
                 destroyToken(usrtokenWithoutSrvcOrig);
                 destroyToken(usrtokenWithoutSrvcNew);
-                destroyToken(usrtokenWithSrvcNew);
+                destroyToken(usrtokenWithSrvcNew);     
             }
         }
         exiting("testQuotaDAWithSessionSrvcAtGlobal");
@@ -381,7 +381,7 @@ public class UserSessionConstraints extends TestCommon {
             if (!cleanedUp) {
                 destroyToken(usrtokenWithoutSrvcOrig);
                 destroyToken(usrtokenWithoutSrvcNew);
-                destroyToken(usrtokenWithSrvcNew);
+                destroyToken(usrtokenWithSrvcNew);     
             }
         }
         exiting("testQuotaDOSWithSessionSrvcAtRealm");
@@ -410,6 +410,8 @@ public class UserSessionConstraints extends TestCommon {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+        	destroyToken(admintoken);
         }
         exiting("cleanup");
     }   
@@ -488,7 +490,7 @@ public class UserSessionConstraints extends TestCommon {
         Map quotaMap = new HashMap();
         set = new HashSet();
         set.add(quotavalue);
-        quotamap.put(quotaattr, set);        
+        quotaMap.put(quotaattr, set);        
         return quotaMap;
     }   
 
