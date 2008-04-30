@@ -202,7 +202,7 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
         try {
             usertoken = getToken(userName, userName, basedn);
             Thread.sleep(95000);
-            assert (!validateToken(usertoken));
+            assert (!validateToken(usertoken)); 
         } catch(Exception e) {
             log(Level.SEVERE, "testMaxIdleTimeGlobal", e.getMessage());
             e.printStackTrace();
@@ -337,6 +337,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
+        } finally {
+        	destroyToken(admintoken);
         }
         exiting("cleanup");
     }
