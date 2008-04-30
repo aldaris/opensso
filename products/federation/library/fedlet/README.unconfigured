@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.1 2008-04-17 00:34:45 qcheng Exp $
+$Id: README.unconfigured,v 1.2 2008-04-30 23:00:12 qcheng Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
@@ -84,9 +84,9 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
         COT and configuration properties. For example, assume running user's 
         home directory is "/home/webservd":
           % mkdir /home/webservd/fedlet
-        To change this default directory, set the value of a JVM property 
-        "com.sun.identity.fedlet.home" to the desired location when starting 
-        your web container.  For example:
+        To change this default directory, set the value of a JVM run-time 
+        property "com.sun.identity.fedlet.home" to the desired location.
+        For example:
              -Dcom.sun.identity.fedlet.home=/export/fedlet/conf
         this will tell Fedlet to read metadata/COT/configuration files from
         "/export/fedlet/conf" directory instead.
@@ -94,11 +94,14 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
         home directory.
         Rename "sp-extended.xml-template" to "sp-extended.xml", 
         "sp.xml-template" to "sp.xml", "idp-extended.xml-template" to 
-        "idp-extended.xml", "fedlet.cot-template to" "fedlet.cot". 
+        "idp-extended.xml", "fedlet.cot-template" to "fedlet.cot". 
         Also copy FederationConfig.properties under "conf" to the fedlet 
         home directory.
      e) Get your IDP standard metadata XML file and copy to the fedlet home 
-        directory, the XML file must be named as "idp.xml".
+        directory. For example, if the remote IDP is a FAM instance, you could
+        use "famadm" CLI to export the IDP metadata to a XML file. The XML file 
+        for IDP standard metadata must be named as "idp.xml" when copied to
+        the fedlet home directory.
      f) Give the Fedlet metadata XML file "sp.xml" to your IDP, the metadata
         file must be imported to IDP machine and add it to the same COT as 
         the IDP entity.

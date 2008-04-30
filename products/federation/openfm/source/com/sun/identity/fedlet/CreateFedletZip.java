@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletZip.java,v 1.1 2008-04-17 00:34:45 qcheng Exp $
+ * $Id: CreateFedletZip.java,v 1.2 2008-04-30 23:00:12 qcheng Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,6 +79,10 @@ public class CreateFedletZip {
         fedConfigTagSwap.put("%BASE_DIR%", "@FEDLET_HOME@");
         fedConfigTagSwap.put("com.sun.identity.common.serverMode=true",
             "com.sun.identity.common.serverMode=false");
+        fedConfigTagSwap.put("@SERVER_PROTO@", "http");
+        fedConfigTagSwap.put("@SERVER_HOST@", "example.identity.sun.com");
+        fedConfigTagSwap.put("@SERVER_PORT@", "80");
+        fedConfigTagSwap.put("/@SERVER_URI@", "/fedlet");
 
         fedConfigTagSwapOrder = new ArrayList();
         fedConfigTagSwapOrder.add("@CONFIGURATION_PROVIDER_CLASS@");
@@ -90,6 +94,10 @@ public class CreateFedletZip {
         fedConfigTagSwapOrder.add("%BASE_DIR%%SERVER_URI%");
         fedConfigTagSwapOrder.add("%BASE_DIR%");
         fedConfigTagSwapOrder.add("com.sun.identity.common.serverMode=true");
+        fedConfigTagSwapOrder.add("@SERVER_PROTO@");
+        fedConfigTagSwapOrder.add("@SERVER_HOST@");
+        fedConfigTagSwapOrder.add("@SERVER_PORT@");
+        fedConfigTagSwapOrder.add("/@SERVER_URI@");
     }
 
     public void createFedletZip(String bitsFile, String jarExtractFile,

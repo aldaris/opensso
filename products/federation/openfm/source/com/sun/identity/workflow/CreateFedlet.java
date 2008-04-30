@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.2 2008-04-11 07:13:01 veiming Exp $
+ * $Id: CreateFedlet.java,v 1.3 2008-04-30 23:00:12 qcheng Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,6 +82,10 @@ public class CreateFedlet
         FedConfigTagSwap.put("%BASE_DIR%", "@FEDLET_HOME@"); 
         FedConfigTagSwap.put("com.sun.identity.common.serverMode=true",
             "com.sun.identity.common.serverMode=false");
+        FedConfigTagSwap.put("@SERVER_PROTO@", "http");
+        FedConfigTagSwap.put("@SERVER_HOST@", "example.identity.sun.com");
+        FedConfigTagSwap.put("@SERVER_PORT@", "80");
+        FedConfigTagSwap.put("/@SERVER_URI@", "/fedlet");
         
         FedConfigTagSwapOrder.add("@CONFIGURATION_PROVIDER_CLASS@"); 
         FedConfigTagSwapOrder.add("@DATASTORE_PROVIDER_CLASS@");
@@ -92,6 +96,10 @@ public class CreateFedlet
         FedConfigTagSwapOrder.add("%BASE_DIR%%SERVER_URI%");
         FedConfigTagSwapOrder.add("%BASE_DIR%");
         FedConfigTagSwapOrder.add("com.sun.identity.common.serverMode=true");
+        FedConfigTagSwapOrder.add("@SERVER_PROTO@");
+        FedConfigTagSwapOrder.add("@SERVER_HOST@");
+        FedConfigTagSwapOrder.add("@SERVER_PORT@");
+        FedConfigTagSwapOrder.add("/@SERVER_URI@");
         
         ResourceBundle rb = ResourceBundle.getBundle("fedletBits");
         for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {

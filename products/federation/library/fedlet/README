@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.3 2008-04-17 00:34:45 qcheng Exp $
+$Id: README,v 1.4 2008-04-30 23:00:12 qcheng Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
@@ -75,8 +75,8 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
      The "fedlet" subdirectory under the web container running user's home 
      is the default location for Fedlet to read its metadata, COT and 
      configuration properties. To change this default directory, set the 
-     value of a JVM property "com.sun.identity.fedlet.home" to the desired 
-     location.  For example:  
+     value of a JVM run-time property "com.sun.identity.fedlet.home" to the 
+     desired location.  For example:  
          -Dcom.sun.identity.fedlet.home=/export/fedlet/conf 
      this will tell Fedlet to read metadata/COT/configuration files from 
      "/export/fedlet/conf" directory instead.
