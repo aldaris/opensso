@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.33 2008-04-25 22:27:21 ww203982 Exp $
+ * $Id: IdServicesImpl.java,v 1.34 2008-04-30 15:56:10 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2457,7 +2457,7 @@ public class IdServicesImpl implements IdServices {
                     classMap = (Map) obj;
                 }
 
-                if (classMap != null) {
+                if ((classMap != null) && (!classMap.isEmpty())) {
                     // This plugin is in cache. Check for
                     // support of operation and type and add
                     // to list of plugins to be invoked.
@@ -2502,8 +2502,9 @@ public class IdServicesImpl implements IdServices {
                                     lter.setConfigMap(listenerConfig);
                                     thisPlugin.addListener(token, lter);
 
-                                    Map tmpMap = (Map) idRepoMap.get(cacheKey);
-                                    if (tmpMap == null) {
+                                    Map tmpMap = (Map)idRepoMap.get(cacheKey);
+                                    if ((tmpMap == null) || 
+                                        (tmpMap.isEmpty())) {
                                         tmpMap = new HashMap();
                                     }
                                     tmpMap.put(pn, thisPlugin);
