@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.3 2008-04-21 18:30:27 arunav Exp $
+ * $Id: AMSamples.java,v 1.4 2008-04-30 23:19:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -582,13 +582,8 @@ public class AMSamples extends TestCommon {
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
             Thread.sleep(5000);
             page = (HtmlPage)webClient.getPage(ssovalidationURL);
-            if (clientDomain.equals(cookieDomain)) {
-                if (getHtmlPageStringIndex(page, adminUser) == -1)
-                    assert false;
-            } else {
-                if (getHtmlPageStringIndex(page, adminUser) != -1)
-                    assert false;
-            }
+            if (getHtmlPageStringIndex(page, adminUser) == -1)
+                assert false;
         } catch (Exception e) {
             log(Level.SEVERE, "testSSOVerificationServletAdminUser",
                     e.getMessage());
@@ -618,13 +613,8 @@ public class AMSamples extends TestCommon {
             consoleLogin(webClient, loginURL, userName, userName);
             Thread.sleep(5000);
             page = (HtmlPage)webClient.getPage(ssovalidationURL);
-            if (clientDomain.equals(cookieDomain)) {
-                if (getHtmlPageStringIndex(page, userName) == -1)
-                    assert false;
-            } else {
-                if (getHtmlPageStringIndex(page, userName) != -1)
-                    assert false;
-            }
+            if (getHtmlPageStringIndex(page, userName) == -1)
+                assert false;
         } catch (Exception e) {
             log(Level.SEVERE, "testSSOVerificationServletTestUser",
                     e.getMessage());
