@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.4 2008-02-28 04:13:00 inthanga Exp $
+ * $Id: RedirectTest.java,v 1.5 2008-04-30 16:28:20 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,13 +63,11 @@ public class RedirectTest extends TestCommon {
     private String moduleOnFailPassMsg;
     private String createUserProp;
     private boolean userExists;
-    private boolean isSubrealm = false;
     private String cleanupFlag;
     private boolean debug;
     private String userName;
     private String password;
     private String redirectURL;
-    private String testRealm;
     private String uniqueIdentifier;
     private List moduleConfigData;
     private String moduleServiceName;
@@ -146,7 +144,6 @@ public class RedirectTest extends TestCommon {
         try {
             if (!testRealm.equals("/")) {
                 createTestRealm(testRealm);
-                isSubrealm = true;
                 uniqueIdentifier = testRealm + "_" + testModule;
                 redirectURL = getLoginURL(testRealm) + "&amp;"
                         + "module=" + moduleSubConfig;
@@ -160,6 +157,7 @@ public class RedirectTest extends TestCommon {
             createUserProp = testResources.getString("am-auth-test-" +
                     testModule + "-createTestUser");
             userExists = new Boolean(createUserProp).booleanValue();
+            testUserList.add(userName);
             if (!userExists) {
                 createUser(testRealm, userName, password);
             }
@@ -301,18 +299,21 @@ public class RedirectTest extends TestCommon {
                 deleteModule(testRealm, testModule);                
                 consoleLogin(webClient, url, adminUser, adminPassword);
 
-                if (!testUserList.isEmpty()) {
+                String delRealm = testRealm;
+                if (!testRealm.equals("/")) {
+                    delRealm = "/" + testRealm;
+                }
+                if ((testUserList != null) && !testUserList.isEmpty()) {
                     log(Level.FINE, "cleanup", "Deleting user " + userName + 
-                            " from realm " + realm + " ...");
+                            " from realm " + delRealm + " ...");
                     if (FederationManager.getExitCode(am.deleteIdentities(
-                            webClient, realm, testUserList, "User")) != 0) {
+                            webClient, delRealm, testUserList, "User")) != 0) {
                         log(Level.SEVERE, "cleanup", 
                                 "deleteIdentities famadm command failed");
                     }
                 }
                     
                 if (!testRealm.equals("/")) {
-                    String delRealm = "/" + testRealm;
                     log(Level.FINE, "cleanup", "Deleting realm " + delRealm + 
                             " ...");                    
                     if (FederationManager.getExitCode(am.deleteRealm(webClient, 

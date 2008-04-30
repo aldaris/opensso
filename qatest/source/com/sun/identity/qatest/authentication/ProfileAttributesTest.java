@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.6 2008-02-28 04:08:14 inthanga Exp $
+ * $Id: ProfileAttributesTest.java,v 1.7 2008-04-30 16:28:20 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,6 +149,8 @@ public class ProfileAttributesTest extends TestCommon {
                 log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
                 assert false;
             }
+            
+            testUserList.add(testUser);
             if (!userExists) {
                 createUser(testUser, testUserpass);
             }
@@ -219,7 +221,7 @@ public class ProfileAttributesTest extends TestCommon {
                         "deleteAuthInstances famadm command failed");
             }
             
-            if (!testUserList.isEmpty()) {
+            if (testUserList != null && !testUserList.isEmpty()) {
                 log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
                         " ...");
                 if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
@@ -272,7 +274,7 @@ public class ProfileAttributesTest extends TestCommon {
         userList.add("userpassword=" + userpassword);
         userList.add("inetuserstatus=Active");
         log(Level.FINE, "createUser", "Creating user " + newUser + " ...");
-        testUserList.add(newUser);
+        
         try {
             if (FederationManager.getExitCode(fm.createIdentity(webClient, 
                     realm, newUser, "User", userList)) != 0) {
