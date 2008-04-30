@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalRealmSessionConstraints.java,v 1.1 2008-04-19 01:30:44 srivenigan Exp $
+ * $Id: GlobalRealmSessionConstraints.java,v 1.2 2008-04-30 19:59:43 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -591,7 +591,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
-        }
+        } finally {
+            destroyToken(admintoken);
+        }        
         exiting("cleanup");
     }
     
