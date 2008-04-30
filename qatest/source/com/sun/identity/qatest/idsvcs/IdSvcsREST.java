@@ -17,15 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.3 2008-03-10 05:45:59 kanduls Exp $
+ * $Id: IdSvcsREST.java,v 1.4 2008-04-30 21:29:06 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.idsvcs;
 
+import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.IdType;
@@ -57,7 +57,7 @@ public class IdSvcsREST extends TestCommon {
     private String serverURI;
     private String polName = "idsvcsRESTPolicyTest";
     private String userName = "idsvcsresttest";
-    private HtmlPage page;
+    private TextPage page;
     private SSOToken admintoken;
     private SSOToken usertoken;
     private IDMCommon idmc;
@@ -129,15 +129,15 @@ public class IdSvcsREST extends TestCommon {
         entering("testSuperAdminAuthenticateREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + adminUser +
                     "&password=" + adminPassword);
-            log(Level.FINEST, "testSuperAdminAuthenticateREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testSuperAdminAuthenticateREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
+            log(Level.FINEST, "testSuperAdminAuthenticateREST",
+                    "Token string:" + s1);
 
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             usertoken = stMgr.createSSOToken(s1);
@@ -165,15 +165,15 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserAuthenticateREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserAuthenticateREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserAuthenticateREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
+            log(Level.FINEST, "testSuperAdminAuthenticateREST",
+                    "Token string: " + s1);
 
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             usertoken = stMgr.createSSOToken(s1);
@@ -203,20 +203,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolAAGetREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolAAGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolAAGetREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs1.com:80" +
                     "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
+            log(Level.FINEST, "testNormalUserPolAAGetREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=true") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -247,20 +247,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolAAPostREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolAAPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolAAPostREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs1.com:80" +
                     "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
+            log(Level.FINEST, "testNormalUserPolAAPostREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=true") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -291,20 +291,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolADGetREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolADGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolADGetREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs2.com:80" +
                     "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
+            log(Level.FINEST, "testNormalUserPolADGetREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=true") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -335,20 +335,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolADPostREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolADPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolADPostREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs2.com:80" +
                     "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
+            log(Level.FINEST, "testNormalUserPolADPostREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=false") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -379,20 +379,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolDAGetREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDAGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolDAGetREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs3.com:80" +
                     "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
+            log(Level.FINEST, "testNormalUserPolDAGetREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=false") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -423,20 +423,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolDAPostREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDAPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolDAPostREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs3.com:80" +
                     "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=true") == -1)
+            log(Level.FINEST, "testNormalUserPolDAPostREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=true") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -467,20 +467,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolDDGetREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDDGetREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolDDGetREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs4.com:80" +
                     "&action=GET&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
+            log(Level.FINEST, "testNormalUserPolDDGetREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=false") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -511,20 +511,20 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserPolDDPostREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName + 
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserPolDDPostREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserPolDDPostREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authorize?uri=http://www.restidsvcs4.com:80" +
                     "&action=POST&subjectid=" + URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, "boolean=false") == -1)
+            log(Level.FINEST, "testNormalUserPolDDPostREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf("boolean=false") == -1)
                 assert false;
 
         } catch (Exception e) {
@@ -555,24 +555,24 @@ public class IdSvcsREST extends TestCommon {
         entering("testNormalUserAttributesREST", null);
         try {
             webClient = new WebClient();
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/authenticate?username=" + userName +
                     "&password=" + userName);
-            log(Level.FINEST, "testNormalUserAttributesREST", "Token:\n" +
-                    page.asXml());
-            String s0 = page.asXml();
+            String s0 = page.getContent();
+            log(Level.FINEST, "testNormalUserAttributesREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
-            int i2 = s0.indexOf("</body");
-            String s1 = s0.substring(i1 + 1, i2).trim();
+            String s1 = s0.substring(i1 + 1, s0.length()).trim();
 
-            page = (HtmlPage)webClient.getPage(serverURI +
+            page = (TextPage)webClient.getPage(serverURI +
                     "/identity/attributes?subjectid=" +
                     URLEncoder.encode(s1, "UTF-8"));
-            if (getHtmlPageStringIndex(page, userName + "alias1") == -1)
+            log(Level.FINEST, "testNormalUserAttributesREST", "Page: " +
+                    page.getContent());
+            if (page.getContent().indexOf(userName + "alias1") == -1)
                 assert false;
-            if (getHtmlPageStringIndex(page, userName + "alias2") == -1)
+            if (page.getContent().indexOf(userName + "alias2") == -1)
                 assert false;
-            if (getHtmlPageStringIndex(page, userName + "alias3") == -1)
+            if (page.getContent().indexOf(userName + "alias3") == -1)
                 assert false;
 
         } catch (Exception e) {
