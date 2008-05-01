@@ -17,14 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.8 2008-04-24 20:17:24 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.9 2008-05-01 20:08:44 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.idsvcs.opensso;
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.idsvcs.InvalidToken;
 import com.sun.identity.policy.PolicyException;
 
 import java.net.URISyntaxException;
@@ -72,6 +74,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -1667,5 +1670,42 @@ public class IdentityServicesImpl
             idAttrs = new HashMap(1);
         }
         return (idAttrs);
+    }
+
+    public boolean isTokenValid(Token token)
+        throws InvalidToken, GeneralFailure, TokenExpired, RemoteException {
+        // Validate the token
+        try {
+            SSOTokenManager mgr = SSOTokenManager.getInstance();
+            SSOToken t = mgr.createSSOToken(token.getId());
+            mgr.validateToken(t);
+        } catch (SSOException e) {
+            // Token is not valid
+            throw (new InvalidToken(e.getMessage()));
+        }
+        return (true);
+    }
+
+    public String getCookieNameForToken() throws GeneralFailure,
+        RemoteException {
+        return (SystemProperties.get(Constants.AM_COOKIE_NAME,
+            "iPlanetDirectoryPro"));
+    }
+
+    public String[] getCookieNamesToForward() throws GeneralFailure,
+        RemoteException {
+        String[] cookies = null;
+        String ssoTokenCookie = getCookieNameForToken();
+        String lbCookieName = SystemProperties.get(
+            Constants.AM_LB_COOKIE_NAME);
+        if (lbCookieName == null) {
+            cookies = new String[1];
+        } else {
+            cookies = new String[2];
+            cookies[1] = lbCookieName;
+        }
+        cookies[0] = ssoTokenCookie;
+        return (cookies);
+        
     }
 }

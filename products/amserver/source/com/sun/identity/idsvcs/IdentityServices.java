@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServices.java,v 1.2 2008-04-15 22:37:10 rafsanchez Exp $
+ * $Id: IdentityServices.java,v 1.3 2008-05-01 20:08:44 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,8 @@ public interface IdentityServices extends Remote {
      * @throws GeneralFailure on other errors.
      */
     public List search(String filter, List attributes, Token admin)
-        throws NeedMoreCredentials, TokenExpired, GeneralFailure;
+        throws NeedMoreCredentials, TokenExpired, GeneralFailure,
+            RemoteException;
 
     /**
      * Creates an identity object with the specified attributes.
@@ -129,7 +130,8 @@ public interface IdentityServices extends Remote {
      * @throws GeneralFailure on other errors.
      */
     public void create(IdentityDetails identity, Token admin)
-        throws NeedMoreCredentials, DuplicateObject, TokenExpired, GeneralFailure;
+        throws NeedMoreCredentials, DuplicateObject, TokenExpired,
+        GeneralFailure, RemoteException;
 
     /**
      * Retrieves an identity object matching input criteria.
@@ -147,7 +149,8 @@ public interface IdentityServices extends Remote {
      * @throws GeneralFailure on other errors.
      */
     public IdentityDetails read(String name, List attributes, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure;
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired,
+        GeneralFailure, RemoteException;
 
     /**
      * Updates an identity object with the specified attributes.
@@ -162,7 +165,8 @@ public interface IdentityServices extends Remote {
      * @throws GeneralFailure on other errors.
      */
     public void update(IdentityDetails identity, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure;
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired,
+        GeneralFailure, RemoteException;
 
     /**
      * Deletes an identity object matching input criteria.
@@ -182,5 +186,43 @@ public interface IdentityServices extends Remote {
      * @throws GeneralFailure on other errors.
      */
     public void delete(IdentityDetails identity, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure;
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired,
+        GeneralFailure, RemoteException;
+    
+    /**
+     * Validates the <class>token</class> obtained during validation
+     *
+     * @param token Token being verified
+     * @return <true> if token is valid
+     * @throws InvalidToken if token is not a valid token
+     * @throws TokenExpired if token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public boolean isTokenValid(Token token)
+        throws InvalidToken, GeneralFailure, TokenExpired, RemoteException;
+    
+    /**
+     * Returns the cookie used by OpenSSO Authentication module to store
+     * the SSOToken. Can be used for Single-Sign-On by replaying this cookie
+     * back to OpenSSO for other operations.
+     *
+     * @return cookie name that contains the SSOToken
+     * @throws GeneralFailure on other errors.
+     */
+    public String getCookieNameForToken()
+        throws GeneralFailure, RemoteException;
+    
+    /**
+     * Returns a list of cookie names that are used by OpenSSO for
+     * authentication and load balancing. Replaying all these cookies
+     * during the request is highly recommended.
+     *
+     * @param token Token being verified
+     * @return <true> if token is valid
+     * @throws InvalidToken if token is not a valid token
+     * @throws TokenExpired if token has expired.
+     * @throws GeneralFailure on other errors.
+     */
+    public List getCookieNamesToForward()
+        throws GeneralFailure, RemoteException;
 }

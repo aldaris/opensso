@@ -21,6 +21,8 @@
             
             <xsd:element name="InvalidPassword" type="tns:InvalidPassword"></xsd:element>
             
+            <xsd:element name="InvalidToken" type="tns:InvalidToken"></xsd:element>
+            
             <xsd:element name="NeedMoreCredentials" type="tns:NeedMoreCredentials"></xsd:element>
             
             <xsd:element name="TokenExpired" type="tns:TokenExpired"></xsd:element>
@@ -44,6 +46,18 @@
             <xsd:element name="authorize" type="tns:authorize"></xsd:element>
             
             <xsd:element name="authorizeResponse" type="tns:authorizeResponse"></xsd:element>
+            
+            <xsd:element name="isTokenValid" type="tns:isTokenValid"></xsd:element>
+            
+            <xsd:element name="isTokenValidResponse" type="tns:isTokenValidResponse"></xsd:element>
+            
+            <xsd:element name="getCookieNameForToken" type="tns:getCookieNameForToken"></xsd:element>
+            
+            <xsd:element name="getCookieNameForTokenResponse" type="tns:getCookieNameForTokenResponse"></xsd:element>
+            
+            <xsd:element name="getCookieNamesToForward" type="tns:getCookieNamesToForward"></xsd:element>
+            
+            <xsd:element name="getCookieNamesToForwardResponse" type="tns:getCookieNamesToForwardResponse"></xsd:element>
             
             <xsd:element name="log" type="tns:log"></xsd:element>
             
@@ -145,6 +159,36 @@
             <xsd:complexType name="authorizeResponse">
                 <xsd:sequence>
                     <xsd:element name="return" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="isTokenValid">
+                <xsd:sequence>
+                    <xsd:element name="token" type="tns:token" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="isTokenValidResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="getCookieNameForToken">
+            </xsd:complexType>
+            
+            <xsd:complexType name="getCookieNameForTokenResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+            <xsd:complexType name="getCookieNamesToForward">
+            </xsd:complexType>
+            
+            <xsd:complexType name="getCookieNamesToForwardResponse">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:string" nillable="true" minOccurs="0" maxOccurs="unbounded"></xsd:element>
                 </xsd:sequence>
             </xsd:complexType>
             
@@ -275,6 +319,12 @@
                 </xsd:sequence>
             </xsd:complexType>
             
+            <xsd:complexType name="InvalidToken">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            
             <xsd:complexType name="InvalidCredentials">
                 <xsd:sequence>
                     <xsd:element name="message" type="xsd:string" minOccurs="0"></xsd:element>
@@ -327,6 +377,9 @@
     <message name="InvalidPassword">
         <part name="fault" element="tns:InvalidPassword"></part>
     </message>
+    <message name="InvalidToken">
+        <part name="fault" element="tns:InvalidToken"></part>
+    </message>
     <message name="NeedMoreCredentials">
         <part name="fault" element="tns:NeedMoreCredentials"></part>
     </message>
@@ -338,6 +391,24 @@
     </message>
     <message name="authorizeResponse">
         <part name="parameters" element="tns:authorizeResponse"></part>
+    </message>
+    <message name="isTokenValid">
+        <part name="parameters" element="tns:isTokenValid"></part>
+    </message>
+    <message name="isTokenValidResponse">
+        <part name="parameters" element="tns:isTokenValidResponse"></part>
+    </message>
+    <message name="getCookieNameForToken">
+        <part name="parameters" element="tns:getCookieNameForToken"></part>
+    </message>
+    <message name="getCookieNameForTokenResponse">
+        <part name="parameters" element="tns:getCookieNameForTokenResponse"></part>
+    </message>
+        <message name="getCookieNamesToForward">
+        <part name="parameters" element="tns:getCookieNamesToForward"></part>
+    </message>
+    <message name="getCookieNamesToForwardResponse">
+        <part name="parameters" element="tns:getCookieNamesToForwardResponse"></part>
     </message>
     <message name="search">
         <part name="parameters" element="tns:search"></part>
@@ -402,6 +473,23 @@
             <output message="tns:authorizeResponse"></output>
             <fault message="tns:NeedMoreCredentials" name="NeedMoreCredentials"></fault>
             <fault message="tns:TokenExpired" name="TokenExpired"></fault>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+        <operation name="isTokenValid">
+            <input message="tns:isTokenValid"></input>
+            <output message="tns:isTokenValidResponse"></output>
+            <fault message="tns:InvalidToken" name="InvalidToken"></fault>
+            <fault message="tns:TokenExpired" name="TokenExpired"></fault>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+        <operation name="getCookieNameForToken">
+            <input message="tns:getCookieNameForToken"></input>
+            <output message="tns:getCookieNameForTokenResponse"></output>
+            <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+        </operation>
+        <operation name="getCookieNamesToForward">
+            <input message="tns:getCookieNamesToForward"></input>
+            <output message="tns:getCookieNamesToForwardResponse"></output>
             <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
         </operation>
         <operation name="search">
@@ -529,6 +617,48 @@
             <fault name="TokenExpired">
                 <soap:fault name="TokenExpired" use="literal"></soap:fault>
             </fault>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="isTokenValid">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="InvalidToken">
+                <soap:fault name="InvalidToken" use="literal"></soap:fault>
+            </fault>
+            <fault name="TokenExpired">
+                <soap:fault name="TokenExpired" use="literal"></soap:fault>
+            </fault>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="getCookieNameForToken">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+            <fault name="GeneralFailure">
+                <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+        </operation>
+        <operation name="getCookieNamesToForward">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
             <fault name="GeneralFailure">
                 <soap:fault name="GeneralFailure" use="literal"></soap:fault>
             </fault>

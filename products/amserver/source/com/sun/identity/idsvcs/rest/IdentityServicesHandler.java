@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesHandler.java,v 1.3 2008-04-23 00:54:14 arviranga Exp $
+ * $Id: IdentityServicesHandler.java,v 1.4 2008-05-01 20:08:44 arviranga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -463,6 +463,12 @@ public class IdentityServicesHandler extends HttpServlet {
         public static final SecurityMethod AUTHENTICATE = new SecurityMethod(
             "AUTHENTICATE", Token.class, SecurityParameter.USERNAME,
             SecurityParameter.PASSWORD, SecurityParameter.URI);
+        public static final SecurityMethod ISTOKENVALID = new SecurityMethod(
+            "ISTOKENVALID", Boolean.class, SecurityParameter.TOKENID);
+        public static final SecurityMethod TOKENCOOKIE = new SecurityMethod(
+            "GETCOOKIENAMEFORTOKEN", String.class, (SecurityParameter[]) null);
+        public static final SecurityMethod ALLCOOKIES = new SecurityMethod(
+            "GETCOOKIENAMESTOFORWARD", String[].class, (SecurityParameter[]) null);
         public static final SecurityMethod LOGOUT = new SecurityMethod(
                 "LOGOUT", Void.class, SecurityParameter.SUBJECTID);
         public static final SecurityMethod AUTHORIZE = new SecurityMethod(
@@ -507,7 +513,7 @@ public class IdentityServicesHandler extends HttpServlet {
             for (int i = 0; i < SECURITY_METHODS.length; i++) {
                 Method m = SECURITY_METHODS[i];
                 // found the method by name..
-                String mname = m.getName();
+                String mname = m.getName().toLowerCase();
                 if (mname.equals(lname)) {
                     // lets check based on parameters..
                     imethod = m;
@@ -584,8 +590,12 @@ public class IdentityServicesHandler extends HttpServlet {
                 method = SecurityMethod.UPDATE;
             } else if (path.equals("DELETE")) {
                 method = SecurityMethod.DELETE;
-            } else {
-                method = null;
+            } else if (path.equals("ISTOKENVALID")) {
+                method = SecurityMethod.ISTOKENVALID;
+            } else if (path.equals("GETCOOKIENAMEFORTOKEN")) {
+                method = SecurityMethod.TOKENCOOKIE;
+            } else if (path.equals("GETCOOKIENAMESTOFORWARD")) {
+                method = SecurityMethod.ALLCOOKIES;
             }
             
             try {
@@ -594,14 +604,18 @@ public class IdentityServicesHandler extends HttpServlet {
                     response.sendError(501);
                     mar.newInstance(Throwable.class).marshall(wrt,
                         new UnsupportedOperationException(path));
+                    return;
                 }
                 // execute the method w/ the parameters..
                 Object value = method.invoke(security, request);
                 // marshall the response..
-                if (method.type != Void.class) {
+                if (method.type != Void.class && value != null) {
                     mar.newInstance(method.type).marshall(wrt, value);
                 } else {
                     response.setHeader("content-type", "text/plain");
+                    if (value == null) {
+                        wrt.write("NULL");
+                    }
                 }
             } catch (ObjectNotFound ex) {
                 // write out the proper ObjectNotFound exception.
@@ -661,16 +675,44 @@ public class IdentityServicesHandler extends HttpServlet {
             throws Throwable
         {
             // find the value for each parameter..
-            Object[] params = new Object[this.parameters.length];
-            for (int i = 0; i < this.parameters.length; i++) {
-                SecurityParameter param = this.parameters[i];
-                params[i] = param.getValue(request);
+            Object[] params = null;
+            if (parameters != null) {
+                params = new Object[this.parameters.length];
+                for (int i = 0; i < this.parameters.length; i++) {
+                    SecurityParameter param = this.parameters[i];
+                    params[i] = param.getValue(request);
+                }
             }
             
             Object ret = null;
             try {
-                // invoke the actual security param..
-                ret = method.invoke(security, params);
+                // Special case for authentication.
+                // If parameters are null and if already authenitcated
+                // i.e., iPlanetDirectoryPro cookie is present, send the
+                // SSOToken
+                if ((method == SecurityMethod.AUTHENTICATE.method) &&
+                    (params != null) &&  (params.length > 1) &&
+                    (params[0] == null) && (params[1] == null)) {
+                    // username & password is null for the authenticate method
+                    // Check for iPlanetDirectoryPro cookie
+                    try {
+                        SSOTokenManager mgr = SSOTokenManager.getInstance();
+                        SSOToken token = mgr.createSSOToken(
+                            (HttpServletRequest) request);
+                        if (mgr.isValidToken(token)) {
+                            // Contruct Token object
+                            Token t = new Token();
+                            t.setId(token.getTokenID().toString());
+                            ret = t;
+                        }
+                    } catch (SSOException ssoe) {
+                        // SSOToken not present, ignore the exception
+                        ret = method.invoke(security, params);
+                    }
+                } else {
+                    // invoke the actual security param..
+                    ret = method.invoke(security, params);
+                }
             } catch (IllegalArgumentException e) {
                 throw new GeneralFailure(e.getMessage());
             } catch (IllegalAccessException e) {
