@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.10 2008-04-18 19:16:40 nithyas Exp $
+ * $Id: IDMCommon.java,v 1.11 2008-05-01 02:02:35 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -620,6 +620,7 @@ public class IDMCommon extends TestCommon {
             throws Exception {
         entering("createID", null);
         boolean opSuccess = false;
+        IdType id = getIdType(idType); 
         log(Level.FINE, "createID", "Creating identity " + idType +
                 " name " + idName + "...");
         Map userAttrMap;
@@ -629,9 +630,9 @@ public class IDMCommon extends TestCommon {
             userAttrMap = setIDAttributes(userAttr);
         }
         log(Level.FINEST, "createID", "realm = " + realmName
-                + " type = " + getIdType(idType).getName() +
-                " attributes = " + userAttrMap.toString());
-        createIdentity(ssoToken, realmName, getIdType(idType), idName,
+                + " type = " + id.getName() + " attributes = " + 
+                userAttrMap.toString());
+        createIdentity(ssoToken, realmName, id, idName,
                 userAttrMap);
         opSuccess = (doesIdentityExists(idName, idType, ssoToken,
                 realmName)) ? true : false;
@@ -682,7 +683,7 @@ public class IDMCommon extends TestCommon {
             putSetIntoMap("givenname", tempMap, idName);
             putSetIntoMap("userpassword", tempMap, idName);
             putSetIntoMap("inetuserstatus", tempMap, "Active");
-        } else if (siaType.equals("agent")) {
+        } else if (siaType.equals("agent") || siaType.equals("agentonly") ) {
             putSetIntoMap("userpassword", tempMap, idName);
             putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active");
         } else if (siaType.equals("filteredrole")) {
@@ -811,23 +812,40 @@ public class IDMCommon extends TestCommon {
      */
     public IdType getIdType(String gidtType)
     throws Exception {
+        SMSCommon smsc;
+        SSOToken admintoken = null;
         if (gidtType.equals("user")) {
             return IdType.USER;
         } else if (gidtType.equals("role")) {
             return IdType.ROLE;
         } else if (gidtType.equals("filteredrole")) {
             return IdType.FILTEREDROLE;
-        } else if (gidtType.equals("agent")) {
-            return IdType.AGENT;
+        } else if (gidtType.equals("agent") || gidtType.equals("agentonly")) {
+            admintoken = getToken(adminUser, adminPassword, basedn);
+            try { 
+                smsc = new SMSCommon(admintoken);
+                if (smsc.isAMDIT()) {
+                    destroyToken(admintoken);
+                    return IdType.AGENT;                
+                } else {
+                    destroyToken(admintoken);
+                    return IdType.AGENTONLY;                            
+                }
+            } catch(Exception e) { 
+                destroyToken(admintoken);
+                log(Level.SEVERE, "getIdType", e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
         } else if (gidtType.equals("group")) {
             return IdType.GROUP;
-        } else if (gidtType.equals("agentonly")) {
-            return IdType.AGENTONLY;            
         } else {
             log(Level.SEVERE, "getIdType", "Invalid id type " + gidtType);
             assert false;
             return null;
         }
+
+
     }
     
     /*
