@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.13 2008-04-29 17:58:19 kevinserwin Exp $
+ * $Id: Wizard.java,v 1.14 2008-05-02 05:52:28 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,7 +208,7 @@ public class Wizard extends AjaxPage {
             SetupConstants.CONFIG_VAR_SERVER_URI, req.getRequestURI());
         request.addParameter(
             SetupConstants.CONFIG_VAR_SERVER_URL, 
-            req.getRequestURL().toString());        
+            getAttribute("serverURL", req.getRequestURL().toString()));        
 
         tmp = (String)getContext().getSessionAttribute("encryptionKey");
         if (tmp == null) {
