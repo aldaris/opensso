@@ -147,7 +147,7 @@ HINSTANCE hInstance;
 #endif
 
 
-extern "C" int decrypt_base64(const char *, char *);
+extern "C" int decrypt_base64(const char *, char *, const char*);
 extern "C" int decode_base64(const char *, char *);
 
 
@@ -460,11 +460,12 @@ load_bootstrap_properties(Utils::boot_info_t *boot_ptr,
                           boolean_t initializeLog)
 {
     const char *thisfunc = "load_bootstrap_properties()";
-    am_status_t status;
+    am_status_t status, keyStatus;
     const char *function_name = "am_properties_create";
     const char *parameter = "";
     const char *encrypt_passwd = NULL;
     char decrypt_passwd[100] = "";
+    const char *decrypt_key = NULL;
     int decrypt_status;
 
     status = am_properties_create(&boot_ptr->properties);
@@ -501,9 +502,12 @@ load_bootstrap_properties(Utils::boot_info_t *boot_ptr,
         parameter = AM_POLICY_PASSWORD_PROPERTY;
         status = am_properties_get(boot_ptr->properties, parameter,
                                    &encrypt_passwd);
-        if (AM_SUCCESS == status) {
-            if(encrypt_passwd != NULL){
-                decrypt_status = decrypt_base64(encrypt_passwd, decrypt_passwd);
+        keyStatus = am_properties_get(boot_ptr->properties, 
+                AM_POLICY_KEY_PROPERTY, &decrypt_key);
+        if (AM_SUCCESS == status && AM_SUCCESS == keyStatus) {
+            if(encrypt_passwd != NULL && decrypt_key != NULL){
+                decrypt_status = decrypt_base64(encrypt_passwd, decrypt_passwd, 
+                        decrypt_key);
                 if(decrypt_status == 0){
                     am_properties_set(boot_ptr->properties, parameter,
                                       decrypt_passwd);

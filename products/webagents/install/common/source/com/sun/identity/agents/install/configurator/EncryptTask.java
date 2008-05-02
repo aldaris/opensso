@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptTask.java,v 1.2 2008-04-08 23:56:10 subbae Exp $
+ * $Id: EncryptTask.java,v 1.3 2008-05-02 20:07:30 robertis Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,8 @@ import com.sun.identity.install.tools.util.LocalizedMessage;
 import com.sun.identity.install.tools.util.ExecuteCommand;
 import com.sun.identity.install.tools.util.OSChecker;
 import com.sun.identity.install.tools.util.ConfigUtil;
+import com.sun.identity.install.tools.util.EncryptionKeyGenerator;
+
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -73,6 +75,11 @@ public class EncryptTask implements ITask, InstallConstants {
     // cryptit binary for windows platform
     private static final String STR_WIN_CRYPT_UTIL = "cryptit.exe";
 
+    private String encryptionKey=null;
+
+    public static final String STR_ENCRYPTION_KEY_PROP_KEY = 
+        "com.sun.identity.agents.config.key";
+
     /**
      * Calls crypt utility, which is in the bin directory, 
      * to encrypt the password provided by the user.
@@ -85,6 +92,11 @@ public class EncryptTask implements ITask, InstallConstants {
     public boolean execute(String name, IStateAccess stateAccess, 
         Map properties) throws InstallException 
     {
+        //Generate the encryption key
+	    encryptionKey = EncryptionKeyGenerator.generateRandomString();
+            stateAccess.put("AGENT_ENCRYPT_KEY", encryptionKey);
+        System.setProperty(STR_ENCRYPTION_KEY_PROP_KEY, encryptionKey);
+
         // Set the encrypted value key
         String encryptedDataKey = (String) properties.get(
             STR_ENCRYPTED_DATA_LOOKUP_KEY);
@@ -129,7 +141,7 @@ public class EncryptTask implements ITask, InstallConstants {
                                 FILE_SEP + STR_UNIX_CRYPT_UTIL;
             }
             // execute crypt utility to encrypt the password
-            String[] commandArray = { cryptUtil, data };
+            String[] commandArray = { cryptUtil, data, encryptionKey };
             StringBuffer output = new StringBuffer();
             int sts = ExecuteCommand.executeCommand(
                 commandArray,

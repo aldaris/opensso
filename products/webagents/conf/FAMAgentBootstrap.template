@@ -58,6 +58,7 @@ com.sun.identity.agents.config.naming.url = @AM_SERVICES_PROTO@://@AM_SERVICES_H
 #
 com.sun.identity.agents.config.username = @AGENT_PROFILE_NAME@
 com.sun.identity.agents.config.password = @AGENT_ENCRYPTED_PASSWORD@
+com.sun.identity.agents.config.key = @AGENT_ENCRYPT_KEY@
 
 #
 # AGENT LOCAL LOG FILE
