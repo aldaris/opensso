@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.6 2007-10-26 00:06:58 exu Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.7 2008-05-02 05:11:18 exu Exp $ 
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -517,6 +517,18 @@ public abstract class FSSSOAndFedHandler {
                         }
                         return false;
                     } else {
+                        if (ssoToken != null) {
+                            try {
+                                SessionManager.getProvider().invalidateSession(
+                                    ssoToken, request, response);
+                            } catch (SessionException ssoe) {
+                                FSUtils.debug.error(
+                                    "FSSSOAndFedHandler.processPreAuthnSSO:" +
+                                    "Unable to invalidate the sso session.");
+                            }
+                            ssoToken = null;
+                        }
+
                         loginURL = authnResult.getLoginURL();
                         if (FSUtils.debug.messageEnabled()) {
                             FSUtils.debug.message(
