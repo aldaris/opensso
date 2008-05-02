@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.10 2008-03-18 19:46:34 goodearth Exp $
+ * $Id: ServiceConfig.java,v 1.11 2008-05-02 16:11:56 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -348,10 +348,12 @@ public class ServiceConfig {
             sc.getSubConfig(token, subConfigName);
         
         // Call ServiceConfigImpl's deleteInstance() to remove from cache.
-        sConfigImpl.deleteInstance(token, scmImpl, null, sdn, "/", 
-            sConfigImpl.getGroupName(), (getComponentName() + "/" 
-            + SMSSchema.escapeSpecialCharacters(subConfigName)), false, ss);
-
+        if (sConfigImpl != null) {
+            sConfigImpl.deleteInstance(token, scmImpl, null, sdn, "/", 
+                sConfigImpl.getGroupName(), (getComponentName() + "/" 
+                + SMSSchema.escapeSpecialCharacters(subConfigName)), false, 
+                ss);
+        }
         // Remove this entry from smsentry.
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sdn, null);
         SMSEntry entry = cEntry.getClonedSMSEntry();
