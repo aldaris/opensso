@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoNotificationTests.java,v 1.4 2008-02-23 00:12:17 mrudulahg Exp $
+ * $Id: IDRepoNotificationTests.java,v 1.5 2008-05-02 00:11:00 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -156,9 +156,19 @@ public class IDRepoNotificationTests extends TestCommon implements
                } else {
                     log(Level.FINE, "identityCreationTest", "This is FAM " +
                             "DIT, Agents are part of SM node");
-                    set.add("webagent");
+                    set.add("WebAgent");
                     map.put("AgentType", set);
-                    idmc.createIdentity(token, realm, IdType.AGENTONLY, strID, 
+                    /* In case the agent already exists, the createIdentity fails 
+                     * with error message as "Generic Message", which doesnt help 
+                     * in debugging. So we are performing an additional search to 
+                     * log if this is the case.
+                     */
+                    if (setValuesHasString(idmc.searchIdentities(token,
+                        strID, IdType.AGENTONLY), strID)) {
+                            log(Level.SEVERE, "identityCreationTest", "Agent " +
+                                    "with ID " + strID + ", already exists.");
+                    }
+                    idmc.createIdentity(token, realm, IdType.AGENTONLY, strID,
                             map);
                 }
                 log(Level.FINEST, "identityCreationTest", "Create the agent " +
