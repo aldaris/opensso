@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.26 2008-04-14 21:13:29 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.27 2008-05-02 21:46:27 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -855,6 +855,22 @@ public class IDPSSOUtil {
 
             IDPCache.assertionByIDCache.put(assertion.getID(), assertion);
         }
+        //  Save to persistent datastore 
+        try {
+            long sessionExpireTime = System.currentTimeMillis() +
+                 (sessionProvider.getTimeLeft(session))*1000;
+            if (SAML2Utils.failOver) {
+                SAML2Utils.jmq.save(sessionIndex,
+                    new IDPSessionCopy((IDPSession) 
+                    IDPCache.idpSessionsByIndices.get(
+                    sessionIndex)), sessionExpireTime);
+            }
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("SAVE IDPSession!");
+            }
+        } catch (Exception e) {
+            SAML2Utils.debug.error("DB error!");
+        }
 
         return assertion;
     }
@@ -1307,7 +1323,7 @@ public class IDPSSOUtil {
                 SAML2Utils.getIDPAccountMapper(realm, idpEntityID);
             nameID = idpAccountMapper.getNameID(session, idpEntityID,
                 spNameQualifier, realm, nameIDFormat); 
-     
+    
             if (!isTransient && allowCreate) {
                 // write federation info the into persistent datastore
                 if (SAML2Utils.isDualRole(idpEntityID,realm)){
@@ -1846,6 +1862,17 @@ public class IDPSSOUtil {
         }
         try {
             IDPCache.responsesByArtifacts.put(artStr, res);
+            long expireTime = getValidTimeofResponse(realm, idpEntityID,
+                res);
+            if (SAML2Utils.failOver) {
+                SAML2Utils.jmq.save(artStr, res.toXMLString(true,true),
+                    expireTime);
+            }
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(classMethod +
+                    "Save Response to DB!");
+            }
+
             String[] logdata = { idpEntityID, realm, redirectURL };
             LogUtil.access(Level.INFO, 
                 LogUtil.SEND_ARTIFACT, logdata, session, props);
@@ -1853,7 +1880,9 @@ public class IDPSSOUtil {
         } catch (IOException ioe) {
             SAML2Utils.debug.error(classMethod + 
                 "Unable to send redirect: ", ioe);
-        }                
+        } catch (Exception e) { 
+            SAML2Utils.debug.error("DB Error!"); 
+        }
     }    
 
     /**
@@ -2514,4 +2543,59 @@ public class IDPSSOUtil {
         
         return "true".equalsIgnoreCase(enabled) ? true : false;
     }
+    
+    public static byte[] stringToByteArray(String input) {
+        char chars[] = input.toCharArray();
+        byte bytes[] = new byte[chars.length];
+        for (int i = 0; i < chars.length; i++) {
+            bytes[i] = (byte) chars[i];
+        }
+        return bytes;
+    }
+      
+    public static long getValidTimeofResponse (
+        String realm, String idpEntityID, Response response)
+        throws SAML2Exception
+    {
+        // in seconds
+        int timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
+        String timeskewStr = getAttributeValueFromIDPSSOConfig(
+            realm,
+            idpEntityID,
+            SAML2Constants.ASSERTION_TIME_SKEW);
+        if (timeskewStr != null && timeskewStr.trim().length() > 0) {
+            timeskew = Integer.parseInt(timeskewStr);
+            if (timeskew < 0) {
+                timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
+            }
+         }
+         if (SAML2Utils.debug.messageEnabled()) {
+             SAML2Utils.debug.message("timeskew = " + timeskew);
+         }
+
+         List assertions = response.getAssertion();
+         if ((assertions == null) || (assertions.size() == 0)) {
+             throw new SAML2Exception("nullAssertion");
+         }
+
+         Assertion assertion = (Assertion)assertions.get(0);
+         Conditions cond = assertion.getConditions();
+         if (cond == null) {
+            throw new SAML2Exception("nullConditions");
+         }
+         Date notOnOrAfter = cond.getNotOnOrAfter();
+
+         long ret = notOnOrAfter.getTime() + timeskew * 1000;
+         if (notOnOrAfter == null ||
+            (ret < System.currentTimeMillis()))
+         {
+             if (SAML2Utils.debug.messageEnabled()) {
+                 SAML2Utils.debug.message("Time in Assertion "
+                     + " is invalid.");
+             }
+             throw new SAML2Exception(
+                 SAML2Utils.bundle.getString("invalidTimeOnResponse"));
+         }
+         return ret;
+      }
 }

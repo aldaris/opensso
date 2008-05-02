@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.11 2008-03-12 16:51:07 exu Exp $
+ * $Id: FMSessionProvider.java,v 1.12 2008-05-02 21:46:28 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -510,6 +510,16 @@ public class FMSessionProvider implements SessionProvider {
         try {        
             return ((SSOToken)session).getProperty(
                 Constants.UNIVERSAL_IDENTIFIER);
+        } catch (SSOException se) {
+            throw new SessionException(se);
+        }
+    }
+    
+    
+    public long getTimeLeft(Object session)
+        throws SessionException {
+        try {        
+            return ((SSOToken)session).getTimeLeft();
         } catch (SSOException se) {
             throw new SessionException(se);
         }

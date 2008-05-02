@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSession.java,v 1.2 2007-08-07 23:39:06 weisun2 Exp $
+ * $Id: IDPSession.java,v 1.3 2008-05-02 21:46:28 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,10 @@
 
 package com.sun.identity.saml2.profile;
 
+import com.sun.identity.plugin.session.SessionManager;
+import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.plugin.session.SessionException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
@@ -221,5 +225,32 @@ public class IDPSession {
      */
     public void setAuthnContext(String authnContext) {
         this.authnContext = authnContext;
+    }
+    
+    public IDPSession(IDPSessionCopy idpSessionCopy)  {
+        try {
+            nameIDandSPpairs = new ArrayList();
+            SessionProvider sessionProvider = SessionManager.getProvider();
+            session = sessionProvider.getSession(
+                 idpSessionCopy.getSSOToken());
+            nameIDandSPpairs = new ArrayList();
+            nameIDandSPpairs.addAll(
+                idpSessionCopy.getNameIDandSPpairs());
+            String  tmp = idpSessionCopy.getPendingLogoutRequestID();
+            if (tmp != null && !tmp.equals("")) {
+                pendingLogoutRequestID = new String(tmp);
+            }
+            tmp =  idpSessionCopy.getOriginatingLogoutRequestID();
+            if (tmp != null && !tmp.equals("")) {
+                originatingLogoutRequestID = new String(tmp);
+            }
+            tmp =idpSessionCopy.getOriginatingLogoutSPEntityID();
+            if (tmp != null && !tmp.equals("")) {
+                originatingLogoutSPEntityID = new String(tmp);
+            }
+            doLogoutAll = idpSessionCopy.getLogoutAll();
+        } catch (SessionException se) {
+            SAML2Utils.debug.error("Session Exception.", se);
+        }
     }
 }

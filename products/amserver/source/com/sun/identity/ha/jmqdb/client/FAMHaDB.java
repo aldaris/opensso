@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHaDB.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
+ * $Id: FAMHaDB.java,v 1.2 2008-05-02 21:44:11 weisun2 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,6 +65,10 @@ import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.ConnectionFactory;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class FAMHaDB implements Runnable {
     
@@ -407,11 +411,14 @@ public class FAMHaDB implements Runnable {
             BaseRecord record = (BaseRecord) da.classes.get(svc).newInstance();   
             record.setPrimaryKey(pKey);
             record.setExpDate(expdate);
-            record.setSecondaryKey(new String(secondKey, "utf8"));
-            record.setAuxData(new String(auxdata, "utf8"));
+            if (secondKey != null) {
+                record.setSecondaryKey(new String(secondKey, "utf8"));
+            }
+            if (auxdata != null) {
+                record.setAuxData(new String(auxdata, "utf8"));
+            }   
             record.setState(state);
             record.setBlob(stuff);
-
             recordByPrimaryKey.put(record);
         } else if (op.indexOf(DELETEBYDATE) >= 0) {
             if(verbose) {
@@ -608,8 +615,11 @@ public class FAMHaDB implements Runnable {
     {
             BytesMessage message = (BytesMessage) msg;
             long keylen = message.readLong();
-            byte[] keybytes  = new byte[(int) keylen];
-            message.readBytes(keybytes);
+            byte[] keybytes=null; 
+            if (keylen > 0) {
+                keybytes  = new byte[(int) keylen];
+                message.readBytes(keybytes);
+            }
             return(keybytes);
     }
 

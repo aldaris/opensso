@@ -17,24 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.2 2008-05-02 21:44:10 weisun2 Exp $
+ * $Id: DefaultJMQSAML2Repository.java,v 1.1 2008-05-02 21:46:28 weisun2 Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.iplanet.dpro.session;
+package com.sun.identity.saml2.plugins;
+
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 
 import com.sun.identity.common.GeneralTaskRunnable;
-import com.sun.identity.common.SystemTimer;
+
 import com.sun.identity.common.TaskRunnable;
-import com.sun.identity.common.TimerPool;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.SessionException;
-import com.iplanet.dpro.session.SessionID;
-import com.iplanet.dpro.session.service.AMSessionRepository;
-import com.iplanet.dpro.session.service.InternalSession;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
+
 import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.dpro.session.share.SessionBundle;
+import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.session.util.SessionUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -46,14 +47,15 @@ import com.sun.identity.ha.FAMRecord;
 import com.sun.identity.ha.FAMRecordPersister;
 import com.sun.identity.ha.jmqdb.FAMRecordJMQPersister;
 import com.sun.identity.ha.FAMPersisterManager;
+import com.sun.identity.saml2.common.SAML2Utils;
+
 
 /**
- * This class implements JMQ-based session repository which
- * is used in session failover mode to store/recover serialized
- * state of InternalSession object
+ * This class is used in SAML2 failover mode to store/recover serialized
+ * state of Assertion/Response object
  */
-public class JMQSessionRepository extends GeneralTaskRunnable implements
-    AMSessionRepository {
+public class DefaultJMQSAML2Repository extends GeneralTaskRunnable
+    implements JMQSAML2Repository {
 
     /* Operations */
     static public final String READ = "READ";
@@ -63,11 +65,10 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
     static public final String DELETE = "DELETE";
 
     static public final String DELETEBYDATE = "DELETEBYDATE";
-
-    static public final String SESSION = "session"; 
     
-    /* JMQ Properties */
-    static public final String ID = "ID";
+  
+    // Private data members
+    String serverId;
 
     /* Config data */
     private static boolean isDatabaseUp = true;
@@ -82,10 +83,10 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
         "com.sun.identity.session.repository.cleanupGracePeriod";
 
     private static final String BRIEF_DB_ERROR_MSG = 
-        "Session failover service is not functional due to DB unavailability.";
+        "SAML2 failover service is not functional due to DB unavailability.";
 
     private static final String DB_ERROR_MSG = 
-        "Session database is not available at this moment."
+        "SAML2 database is not available at this moment."
             + "Please check with the system administrator " +
                     "for appropriate actions";
 
@@ -107,7 +108,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
     private static long cleanUpValue = 0;
 
     public static final String CLEANUP_RUN_PERIOD = 
-        "com.sun.identity.session.repository.cleanupRunPeriod";
+        "com.sun.identity.saml2.repository.cleanupRunPeriod";
 
     /**
      * Time period between two successive runs of DBHealthChecker thread which
@@ -116,7 +117,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
     private static long healthCheckPeriod = 1 * 60 * 1000;
 
     public static final String HEALTH_CHECK_RUN_PERIOD = 
-        "com.sun.identity.session.repository.healthCheckRunPeriod";
+        "com.sun.identity.saml2.repository.healthCheckRunPeriod";
 
     /**
      * This period is actual one that is used by the thread. The value is set to
@@ -125,11 +126,12 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
     private static long runPeriod = 1 * 60 * 1000; // 1 min in milliseconds
 
 
-    static Debug debug = SessionService.sessionDebug;
+    static Debug debug = SAML2Utils.debug;
+    private String SAML2="saml2";
 
     static {
         try {
-            gracePeriod = Integer.parseInt(SystemProperties.get(
+            gracePeriod = Integer.parseInt(SystemPropertiesManager.get(
                     CLEANUP_GRACE_PERIOD, String.valueOf(gracePeriod)));
         } catch (Exception e) {
             debug.error("Invalid value for " + CLEANUP_GRACE_PERIOD
@@ -137,7 +139,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
         }
 
         try {
-            cleanUpPeriod = Integer.parseInt(SystemProperties.get(
+            cleanUpPeriod = Integer.parseInt(SystemPropertiesManager.get(
                     CLEANUP_RUN_PERIOD, String.valueOf(cleanUpPeriod)));
         } catch (Exception e) {
             debug.error("Invalid value for " + CLEANUP_RUN_PERIOD
@@ -146,7 +148,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
 
         try {
             healthCheckPeriod = Integer
-                    .parseInt(SystemProperties.get(HEALTH_CHECK_RUN_PERIOD,
+                    .parseInt(SystemPropertiesManager.get(HEALTH_CHECK_RUN_PERIOD,
                             String.valueOf(healthCheckPeriod)));
         } catch (Exception e) {
             debug.error("Invalid value for " + HEALTH_CHECK_RUN_PERIOD
@@ -165,21 +167,41 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
 
    /**
     *
-    * Constructs new JMQSessionRepository
-    * @exception Exception when cannot create a new Session repository
+    * Constructs new JMQSAML2Repository
+    * @exception Exception when cannot create a new SAML2 repository
     *
     */
-   public JMQSessionRepository() throws Exception {
-        initPersistSession();
+   public DefaultJMQSAML2Repository() throws Exception {
+
+        String thisSessionServerProtocol = SystemPropertiesManager
+                .get(Constants.AM_SERVER_PROTOCOL);
+        String thisSessionServer = SystemPropertiesManager
+                .get(Constants.AM_SERVER_HOST);
+        String thisSessionServerPortAsString = SystemPropertiesManager
+                .get(Constants.AM_SERVER_PORT);
+        String thisSessionURI = SystemPropertiesManager
+                .get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+
+        if (thisSessionServerProtocol == null
+                || thisSessionServerPortAsString == null
+                || thisSessionServer == null) {
+            throw new SessionException(SessionBundle.rbName,
+                    "propertyMustBeSet", null);
+        }
+
+        serverId = WebtopNaming.getServerID(thisSessionServerProtocol,
+                thisSessionServer, thisSessionServerPortAsString,
+                thisSessionURI);
+        initPersistSession();   
+
         SystemTimer.getTimer().schedule(this, new Date((
             System.currentTimeMillis() / 1000) * 1000));
     }
 
     /**
      *
-     * Initialize new persistant session
+     * Initialize new FAMRecord persister
      */
-   
     private void initPersistSession() {
         try {
             pSession = FAMPersisterManager.getInstance().
@@ -196,30 +218,22 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
     }
 
    /**
-    * Retrives new </code>InternalSession</code> for the session
-    * @param sid Session Id
-    * @return InternalSession 
-    * @throws Exception when cannot create a retrieve internal session
+    * Retrives existing SAML2 object from persistent datastore
+    * @param samlKey primary key 
+    * @return SAML2 object, if failed, return null. 
     */
-   public InternalSession retrieve(SessionID sid) throws Exception {
+   public Object retrieve(String samlKey) {
         if (!isDatabaseUp) {
             return null;
         }
         try {
-            String key = SessionUtils.getEncryptedStorageKey(sid);
-           
             FAMRecord famRec = new FAMRecord (
-                SESSION, FAMRecord.READ, key, 0, null, 0, null, null);
-            //TODO: Add interface  
+                SAML2, FAMRecord.READ, samlKey, 0, null, 0, null, null);
+           
             FAMRecord retRec = pSession.send(famRec);
-            byte[] blob = retRec.getBlob();       
-            InternalSession is = (InternalSession) SessionUtils.decode(blob);
-
-            /*
-             * ret.put(SESSIONID, message.getString(SESSIONID)); ret.put(DATA,
-             * message.getString(DATA));
-             */
-            return is;
+            byte[] blob = retRec.getBlob();  
+            Object retObj = SessionUtils.decode(blob);
+            return retObj;
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
             logDBStatus();
@@ -229,28 +243,24 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             }
             return null;
         } catch (Exception e) {
-            debug.message("JMQSessionRepository.retrieve(): failed retrieving "
-                    + "session", e);
+            debug.message("JMQSAML2Repository.retrieve(): failed retrieving "
+                    + "SAML2 object", e);
             return null;
         }
     }
 
    /**
-    * Deletes the given <code>Session</code>from the repository
-    * @param sid SessionId
-    * @throws Exception when cannot delete a session
+    * Deletes the SAML2 object by given primary key from the repository
+    * @param samlKey primary key 
     */
-   public void delete(SessionID sid) throws Exception {
+   public void delete(String samlKey)  {
         if (!isDatabaseUp) {
             return;
         }
         try {
-            String key = SessionUtils.getEncryptedStorageKey(sid);      
             FAMRecord famRec = new FAMRecord (
-                SESSION, FAMRecord.DELETE, key, 0, null, 0, null, null);
-           
+                SAML2, FAMRecord.DELETE, samlKey, 0, null, 0, null, null);
             FAMRecord retRec = pSession.send(famRec);
-           
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
             logDBStatus();
@@ -259,25 +269,24 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
                 debug.message(DB_ERROR_MSG, e);
             }
         } catch (Exception e) {
-            debug.error("JMQSessionRepository.delete(): failed deleting "
-                    + "session", e);
+            debug.error("JMQSAML2Repository.delete(): failed deleting "
+                    + "SAML2 object", e);
         }
     }
 
     /**
-     * Deletes all expired Sessions from the repository
-     * @exception When Unable to delete the expired sessions
+     * Deletes expired SAML2 object from the repository
+     * @exception When Unable to delete the expired SAML2 object
      */
-    public void deleteExpired() throws Exception {
+    public void deleteExpired()  {
         if (!isDatabaseUp) {
             return;
         }
         try {
             long date = System.currentTimeMillis() / 1000;     
-             FAMRecord famRec = new FAMRecord (
-                 SESSION, FAMRecord.DELETEBYDATE, null,
+            FAMRecord famRec = new FAMRecord (
+                 SAML2, FAMRecord.DELETEBYDATE, null,
                  date, null, 0, null, null);
-            //TODO: add interface revoke 
             FAMRecord retRec = pSession.send(famRec);
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
@@ -287,32 +296,27 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
                 debug.message(DB_ERROR_MSG, e);
             }
         } catch (Exception e) {
-            debug.error("JMQSessionRepository.deleteExpired(): failed "
-                    + "deleting Expired Sessions", e);
+            debug.error("JMQSAML2Repository.deleteExpired(): failed "
+                    + "deleting Expired saml2 object", e);
         }
     }
 
    /**
-    * Saves<code> InternalSession</code> into the <code>SessionRepository</code>
-    * @param is InternalSession
-    * @exception when cannot save the internal session
+    * Saves SAML2 data into the SAML2 Repository
+    * @param samlKey primary key 
+    * @param samlObj saml object such as Response, IDPSession
+    * @param expirationTime expiration time 
     */
-   public void save(InternalSession is) throws Exception {
+   public void save(String samlKey, Object samlObj, long expirationTime) {
         if (!isDatabaseUp) {
             return;
         }
 
         try {
-            SessionID sid = is.getID();
-            String key = SessionUtils.getEncryptedStorageKey(sid);
-            byte[] blob = SessionUtils.encode(is);
-            long expirationTime = is.getExpirationTime() + gracePeriod;
-            String uuid = is.getUUID();
-
+            byte[] blob = SessionUtils.encode(samlObj);
             FAMRecord famRec = new FAMRecord (
-                SESSION, FAMRecord.WRITE, key, expirationTime, uuid,
-                is.getState(), sid.toString(), blob);
-           
+                SAML2, FAMRecord.WRITE, samlKey, expirationTime, null,
+                0, null, blob);
             FAMRecord retRec = pSession.send(famRec); 
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
@@ -322,58 +326,19 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
                 debug.message(DB_ERROR_MSG, e);
             }
         } catch (Exception e) {
-            debug.error("JMQSessionRepository.save(): failed "
-                    + "to save Session", e);
+            debug.error("JMQSAML2Repository.save(): failed "
+                    + "to save SAML2 object", e);
         }
-    }
-
-    /**
-     * Returns the expiration information of all sessions belonging to a user.
-     * The returned value will be a Map (sid->expiration_time).
-     * 
-     * @param uuid
-     *            User's universal unique ID.
-     * @return Map of all Session for the user
-     * @throws Exception
-     *             if there is any problem with accessing the session
-     *             repository.
-     */
-    public Map getSessionsByUUID(String uuid) throws Exception {
-
-        if (!isDatabaseUp) {
-            throw new SessionException("Session repository is not "
-                    + "available.");
-        } 
-        HashMap sessions = null; 
-       
-        try {
-            FAMRecord famRec = new FAMRecord (
-                SESSION, FAMRecord.GET_RECORD_COUNT,
-                null, 0, uuid, 0, null, null);
-            FAMRecord retRec = pSession.send(famRec);
-            sessions = retRec.getExtraStringAttributes(); 
-        } catch (IllegalStateException e) {
-            isDatabaseUp = false;
-            logDBStatus();
-            debug.error(BRIEF_DB_ERROR_MSG, e);
-            if (debug.messageEnabled()) {
-                debug.message(DB_ERROR_MSG, e);
-            }
-            throw new SessionException(e);
-        } catch (Exception e) {
-            throw new SessionException(e);
-        }
-        return sessions;
     }
 
     /**
      * This method is invoked to log a message in the following two cases:
      * 
      * (1) the DB is detected down by either the user requests
-     * (retrieve/save/delete/getSessionCount) or the background checker thread:
-     * Log message: SESSION_DATABASE_UNAVAILABLE (2) the DB is detected
+     * (retrieve/save/delete) or the background checker thread:
+     * Log message: HA_DATABASE_UNAVAILABLE (2) the DB is detected
      * available again by the background health checker thread => Log message:
-     * SESSION_DATABASE_BACK_ONLINE
+     * HA_DATABASE_BACK_ONLINE
      * 
      * The flag "lastLoggedDBStatusIsUp" is used to avoid logging the same DB
      * status again and again if the status actually doesn't change over time.
@@ -417,6 +382,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
     public boolean isEmpty() {
         return true;
     }
+  
     
     /**
      * Monitoring logic used by background thread This thread is used for both
@@ -424,7 +390,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
      * checking. The thread always runs with smallest value of cleanUpPeriod and
      * healthCheckPeriod.
      */
-    public void run() {
+     public void run() {
         
         try {
 
@@ -446,15 +412,14 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
              * HealthChecking is done based on the runPeriod but only when
              * the Database is down.
              */
-            if (!isDatabaseUp) {
+           if (!isDatabaseUp) {
                 initPersistSession();
                 logDBStatus();
             }
         } catch (Exception e) {
-            debug.error("JMQSessionRepository.run(): Exception in thread",
+            debug.error("JMQSAML2Repository.run(): Exception in thread",
                     e);
         }
 
     }
-
 }

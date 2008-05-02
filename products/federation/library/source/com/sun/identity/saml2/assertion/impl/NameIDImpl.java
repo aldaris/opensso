@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDImpl.java,v 1.1 2006-10-30 23:16:09 qcheng Exp $
+ * $Id: NameIDImpl.java,v 1.2 2008-05-02 21:46:27 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,13 +36,14 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.xmlenc.EncManager;
+import java.io.Serializable;
 
 /**
  *  The <code>NameID</code> is used in various SAML assertion constructs
  *  such as <code>Subject</code> and <code>SubjectConfirmation</code>
  *  elements, and in various protocol messages.
  */
-public class NameIDImpl extends NameIDTypeImpl implements NameID {
+public class NameIDImpl extends NameIDTypeImpl implements NameID,Serializable {
 
     public static final String NAME_ID_ELEMENT = "NameID";
 

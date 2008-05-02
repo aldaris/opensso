@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.5 2008-04-15 17:20:49 qcheng Exp $
+ * $Id: IDPArtifactResolution.java,v 1.6 2008-05-02 21:46:27 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -321,10 +321,31 @@ public class IDPArtifactResolution {
                 }
             }
 
-            SAML2Utils.debug.error(classMethod + "Response is null");
+            //Check the Persistent DB store
+            try {
+                if (SAML2Utils.failOver) {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message("Artifact=" + artStr);
+                    }  
+                    String tmp = (String) SAML2Utils.jmq.retrieve(artStr);
+                    res = ProtocolFactory.getInstance().createResponse(tmp);
+                }
+            } catch (Exception e) {
+                SAML2Utils.debug.error(classMethod + "DB ERROR!!!");
+            }
+        }
+        if (res == null) {  
             return SAML2Utils.createSOAPFault(SAML2Constants.SERVER_FAULT, 
                 "UnableToFindResponse", null);
         }
+        // Remove Response from persistent DB
+        try {
+            if (SAML2Utils.failOver) {
+                SAML2Utils.jmq.delete(artStr);
+            }
+        } catch (Exception e) {
+            SAML2Utils.debug.error(classMethod + "DB ERROR!!!");
+        } 
 
         Map props = new HashMap();
         String nameIDString = SAML2Utils.getNameIDStringFromResponse(res);

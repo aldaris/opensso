@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataAccessor.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
+ * $Id: DataAccessor.java,v 1.2 2008-05-02 21:44:11 weisun2 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,10 +52,10 @@ public class DataAccessor {
         Enumeration svcNames = prop.propertyNames();
         while (svcNames.hasMoreElements()) {
             String svcp = (String) svcNames.nextElement(); 
-            if (!svcp.startsWith("persist.")) {
+            if (!svcp.startsWith("persist_")) {
                 continue;
             }
-            String svcid = svcp.substring("persist.".length());
+            String svcid = svcp.substring("persist_".length());
             String className = prop.getProperty(svcp);
             Class cl = Class.forName(className);
             classes.put(svcid, cl);

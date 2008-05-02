@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMRecordJMQPersister.java,v 1.1 2008-04-21 18:54:21 weisun2 Exp $
+ * $Id: FAMRecordJMQPersister.java,v 1.2 2008-05-02 21:44:11 weisun2 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,9 @@ import java.util.Iterator;
 import com.iplanet.dpro.session.service.SessionService;
 import com.sun.identity.ha.FAMRecord;
 import com.sun.identity.ha.FAMRecordPersister;
-
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.iplanet.services.naming.WebtopNaming;
 /**
  * This class <code>FAMRecordJMQPersister</code> implements 
  * </code> MessageListener</code> which is to receive 
@@ -137,24 +139,38 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
     private int readTimeOutForConstraint = 6 * 1000;
 
    /**
-    *
     * Constructs new FAMRecordJMQPersister
-    * @param id SessionId
-    * @param sList Server list
-    * @param uName user name
-    * @param pwd password
-    * @param conTimeOut Connection Timeout
-    * @param maxWaitTimeForConstraint Maximum Wait Time
     */
-   public FAMRecordJMQPersister(String id, String sList,String uName,String pwd,
-       int conTimeOut, int maxWaitTimeForConstraint) throws Exception {
-        _id = id;
+    public FAMRecordJMQPersister() throws Exception {
+        String thisServerProtocol = SystemPropertiesManager
+                .get(Constants.AM_SERVER_PROTOCOL);
+        String thisServer = SystemPropertiesManager
+                .get(Constants.AM_SERVER_HOST);
+        String thisServerPortAsString = SystemPropertiesManager
+                .get(Constants.AM_SERVER_PORT);
+        String thisURI = SystemPropertiesManager
+                .get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+
+        if (thisServerProtocol == null
+                || thisServerPortAsString == null
+                || thisServer == null) {
+            //TODO: 
+            throw new Exception("property must be set."); 
+                    //SessionBundle.rbName,
+                    //"propertyMustBeSet", null);
+        }
+
+        _id = WebtopNaming.getServerID(thisServerProtocol,
+                thisServer, thisServerPortAsString,
+                thisURI);
+                   
         // Initialize all message queues/topics
-        serverList = sList;
-        userName = uName;
-        password = pwd;
-        readTimeOut = conTimeOut;
-        readTimeOutForConstraint = maxWaitTimeForConstraint;
+        serverList = SessionService.getJdbcURL();
+        userName =   SessionService.getSessionStoreUserName();
+        password =   SessionService.getSessionStorePassword();
+        readTimeOut = SessionService.getConnectionMaxWaitTime();
+        readTimeOutForConstraint = 
+            SessionService.getMaxWaitTimeForConstraint();
         ConnectionFactoryProvider provider = ConnectionFactoryProviderFactory
                 .getProvider();
         tFactory = provider
@@ -201,7 +217,13 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
    
    public FAMRecord send(FAMRecord famRecord) throws Exception {
        BytesMessage msg =(BytesMessage) tSession.createBytesMessage();
-        
+           
+       msg.setStringProperty(ID, _id);
+       String op =  famRecord.getOperation();
+       msg.setStringProperty("op", op);
+       String service = famRecord.getService();
+       msg.setStringProperty("service", service);
+       
        // Write Primary key   
        String pKey = famRecord.getPrimaryKey(); 
        if (pKey != null && (!pKey.equals(""))) {
@@ -218,17 +240,31 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
        if (tmp != null && (!tmp.equals(""))) {
            msg.writeLong(tmp.length());
            msg.writeBytes(tmp.getBytes());
+       } else {
+           if (op.equals(FAMRecord.WRITE)){
+               msg.writeLong(0); 
+           }
        }
        // Write AuxData such as Master ID 
        tmp = famRecord.getAuxData();
        if (tmp != null && (!tmp.equals(""))) {
            msg.writeLong(tmp.length());
            msg.writeBytes(tmp.getBytes());
+       } else {
+           if (op.equals(FAMRecord.WRITE)) {
+               msg.writeLong(0);
+           }
        }
        int state = famRecord.getState(); 
        if (state > 0) {
            msg.writeInt(state);
+       } else {
+           if (op.equals(FAMRecord.WRITE)) {
+               msg.writeInt(0);
+           }
        } 
+       
+       
        byte[] blob = famRecord.getBlob(); 
        if (blob != null) {
            msg.writeLong(blob.length);
@@ -239,7 +275,7 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
        Iterator it; 
        if (mm != null) {
            it = mm.keySet().iterator(); 
-       while (it.hasNext()) {
+           while (it.hasNext()) {
            byte[] bt = famRecord.getBytes((String) it.next()); 
            msg.writeLong(bt.length);
            msg.writeBytes(bt);
@@ -250,19 +286,14 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
        if (mm != null) {
             it = mm.keySet().iterator();
             String key = null; 
-        while (it.hasNext()) {
+            while (it.hasNext()) {
            key = (String) it.next(); 
            tmp = famRecord.getString(key); 
            msg.setStringProperty(key, tmp);
        }
        }
        // Call for action 
-       msg.setStringProperty(ID, _id);
-       String op =  famRecord.getOperation();
-       msg.setStringProperty("op", op);
-       String service = famRecord.getService();
-       msg.setStringProperty("service", service);
-       
+   
        if (op.equals(FAMRecord.DELETE) || op.equals(FAMRecord.DELETEBYDATE)||
            op.equals(FAMRecord.WRITE) || op.equals(FAMRecord.SHUTDOWN)) {
            reqPub.publish(msg);

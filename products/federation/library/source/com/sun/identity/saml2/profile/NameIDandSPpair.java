@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDandSPpair.java,v 1.1 2006-10-30 23:16:37 qcheng Exp $
+ * $Id: NameIDandSPpair.java,v 1.2 2008-05-02 21:46:28 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,13 +26,13 @@
 package com.sun.identity.saml2.profile;
 
 import com.sun.identity.saml2.assertion.NameID;
-
+import java.io.Serializable;
 /**
  * This class represents a pair of <code>NameID</code> and its 
  * corresponding <code>SPEntityID</code>.
  */
 
-public class NameIDandSPpair {
+public class NameIDandSPpair implements Serializable {
 
     private NameID nameID = null;
     private String spEntityID = null;

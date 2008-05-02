@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.25 2008-04-24 17:46:23 exu Exp $
+ * $Id: SAML2Utils.java,v 1.26 2008-05-02 21:46:27 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,6 +142,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import com.sun.identity.saml2.plugins.JMQSAML2Repository;
 
 /**
  * The <code>SAML2Utils</code> contains utility methods for SAML 2.0
@@ -172,7 +173,8 @@ public class SAML2Utils extends SAML2SDKUtils {
     // Dir server info for CRL entry
     private static boolean checkCertStatus = false;
     private static boolean checkCAStatus = false;
-    
+    public static boolean failOver = false; 
+    public static JMQSAML2Repository jmq = null; 
     static {
         try {
             scf = SOAPConnectionFactory.newInstance();
@@ -213,8 +215,19 @@ public class SAML2Utils extends SAML2SDKUtils {
                     "with old config style.");
             }
         }
+        
+        try {
+            jmq = (JMQSAML2Repository) Class.forName(
+                "com.sun.identity.saml2.plugins.DefaultJMQSAML2Repository").
+                 newInstance(); 
+        } catch (Exception e) {
+            if (debug.messageEnabled()) {
+                debug.message("JMQSAML2Repository is not available."); 
+            }
+            jmq = null;  
+        }    
     }
-    
+         
     public static MessageFactory mf = null;
     static {
         try {
@@ -243,6 +256,13 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
     }
     
+    static {
+        boolean enableFailOver =  ((String) SAML2ConfigService.getAttribute(
+            SAML2ConfigService.SAML2_FAILOVER_ATTR)).equalsIgnoreCase("true"); 
+        if (enableFailOver && (jmq != null)) {
+            failOver = true; 
+        }
+    }   
     static AssertionFactory af = AssertionFactory.getInstance();
     private static SecureRandom randomGenerator = new SecureRandom();
     
@@ -3829,5 +3849,4 @@ public class SAML2Utils extends SAML2SDKUtils {
 
         return false;
     }
-
 }

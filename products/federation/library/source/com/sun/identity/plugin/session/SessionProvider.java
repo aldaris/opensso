@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProvider.java,v 1.5 2008-02-20 00:49:51 superpat7 Exp $
+ * $Id: SessionProvider.java,v 1.6 2008-05-02 21:46:26 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -262,5 +262,15 @@ public interface SessionProvider {
      *        to the user.
      */
     public void setLoadBalancerCookie(HttpServletResponse response);
+
+    /**
+     * Returns the time left for this session in seconds.
+     * @param session Session object.
+     * @return The time left for this session.
+     * @exception A SessionException is thrown if the session reached its maximum
+     * session time, or the session was destroyed, or there was an error during
+     * communication with session service.
+     */
+    public long getTimeLeft(Object session) throws SessionException; 
 }
 

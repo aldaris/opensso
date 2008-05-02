@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.7 2007-10-23 16:57:36 qcheng Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.8 2008-05-02 21:46:28 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,6 +80,7 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
         serviceNameMap.put("SAML2_SOAP_BINDING","sunfmSAML2SOAPBindingService");
         serviceNameMap.put("MULTI_PROTOCOL","sunMultiFederationProtocol");
         serviceNameMap.put("STS_CONFIG","sunFAMSTSService");
+        serviceNameMap.put("SAML2_CONFIG", "sunFAMSAML2Configuration"); 
     }
 
     /**

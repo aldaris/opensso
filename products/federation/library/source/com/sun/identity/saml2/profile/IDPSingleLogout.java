@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.14 2008-04-15 17:20:49 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.15 2008-05-02 21:46:28 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -184,6 +184,14 @@ public class IDPSingleLogout {
                     }
                 } else {
                     IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                    try {
+                        if (SAML2Utils.failOver) {
+                            SAML2Utils.jmq.delete(idpSessionIndex);
+                        }
+                    } catch (Exception e) {
+                        debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB." ,e);
+                    }
                     IDPCache.authnContextCache.remove(idpSessionIndex);
                 }       
                 idpSessionIndex = null;
@@ -214,6 +222,14 @@ public class IDPSingleLogout {
                     debug.message("No SP session participant(s)");
                 }
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                try {
+                    if (SAML2Utils.failOver) {
+                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    }
+                } catch (Exception e) {
+                    debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB.", e);
+                }
                 IDPCache.authnContextCache.remove(idpSessionIndex);
                 MultiProtocolUtils.invalidateSession(session, request,
                     response, SingleLogoutManager.SAML2);
@@ -778,6 +794,14 @@ public class IDPSingleLogout {
                 }
             } else {
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                try {
+                    if (SAML2Utils.failOver) {
+                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    }
+                } catch (Exception e) {
+                    debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB." , e);
+                }
                 IDPCache.authnContextCache.remove(idpSessionIndex);
             }       
             idpSessionIndex = null;
@@ -823,6 +847,14 @@ public class IDPSingleLogout {
                         userID, request, response);
                 } else {
                     IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                    try {
+                        if (SAML2Utils.failOver) {
+                            SAML2Utils.jmq.delete(idpSessionIndex);
+                        }
+                    } catch (Exception e) {
+                        debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB.", e);
+                    }
                     IDPCache.authnContextCache.remove(idpSessionIndex);
                     if (!MultiProtocolUtils.isMultipleProtocolSession(
                         idpSession.getSession(), SingleLogoutManager.SAML2)) {
@@ -920,6 +952,14 @@ public class IDPSingleLogout {
             if (location != null && logoutRes != null) {
                 logoutRes.setDestination(location); 
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                try {
+                    if (SAML2Utils.failOver) {
+                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    }
+                } catch (Exception e) {
+                    debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB.", e);
+                }
                 IDPCache.authnContextCache.remove(idpSessionIndex);
                 
                 // call multi-federation protocol processing
@@ -970,6 +1010,14 @@ public class IDPSingleLogout {
             }
             
             IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+            try {
+                if (SAML2Utils.failOver) {
+                        SAML2Utils.jmq.delete(idpSessionIndex);
+                }
+            } catch (Exception e) {
+                debug.error("Error while deleting idpSessionIndex"
+                    + " from Persistent DB.", e);
+            }
             IDPCache.authnContextCache.remove(idpSessionIndex);
             return false;
         } else {
@@ -1107,6 +1155,18 @@ public class IDPSingleLogout {
 
                 IDPSession idpSession = (IDPSession)
                     IDPCache.idpSessionsByIndices.get(sessionIndex);
+                    
+                if ((idpSession == null) && (SAML2Utils.failOver)) {
+                    // Read from DataBase
+                    IDPSessionCopy idpSessionCopy = (IDPSessionCopy)
+                        SAML2Utils.jmq.retrieve(sessionIndex);
+                    // Copy back to IDPSession
+                    if (idpSessionCopy != null) {
+                        idpSession = new IDPSession(idpSessionCopy);
+                    } else {
+                        SAML2Utils.debug.error("IDPSessionCopy is NULL!!!");
+                    }
+                }    
                 if (idpSession == null) {
                     // If the IDP session does not find locally for a given
                     // session index and if the IDP is behind a lb with another
@@ -1201,6 +1261,9 @@ public class IDPSingleLogout {
                         request, response, cleanUp);
                     if (cleanUp) {    
                        IDPCache.idpSessionsByIndices.remove(sessionIndex);
+                       if (SAML2Utils.failOver) {
+                           SAML2Utils.jmq.delete(sessionIndex);
+                       }
                        IDPCache.authnContextCache.remove(sessionIndex);
                     }   
                     break;
@@ -1288,6 +1351,9 @@ public class IDPSingleLogout {
                     request, response, true);
                 if (cleanUp) {    
                     IDPCache.idpSessionsByIndices.remove(sessionIndex);
+                    if (SAML2Utils.failOver) {
+                        SAML2Utils.jmq.delete(sessionIndex);
+                    }
                     IDPCache.authnContextCache.remove(sessionIndex);
                 }    
             } while (false);
@@ -1295,6 +1361,10 @@ public class IDPSingleLogout {
         } catch (SessionException ssoe) {
             debug.error("IDPLogoutUtil : unable to get meta for ", ssoe);
             status = SAML2Utils.generateStatus(idpEntityID, ssoe.toString()); 
+        } catch (Exception e) {
+             // show throw exception
+             e.printStackTrace();
+             SAML2Utils.debug.error("DB ERROR!!!");
         }
         // process multi-federation protocol
         boolean isMultiProtocol = false;
@@ -1449,6 +1519,14 @@ public class IDPSingleLogout {
                 }
             } else {
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
+                try {
+                    if (SAML2Utils.failOver) {
+                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    }
+                } catch (Exception e) {
+                    debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB.", e);
+                }
                 IDPCache.authnContextCache.remove(idpSessionIndex);
             }       
         }

@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletSessionProvider.java,v 1.1 2008-03-26 04:31:10 qcheng Exp $
+ * $Id: FedletSessionProvider.java,v 1.2 2008-05-02 21:46:27 weisun2 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -249,5 +249,9 @@ public class FedletSessionProvider implements SessionProvider {
      */
     public void setLoadBalancerCookie(HttpServletResponse response) {
         debug.message("FedletSessionProvider.setLoadBalancerCookie called");
+    }
+    
+    public long getTimeLeft(Object session) {
+         return 0;  
     }   
 }

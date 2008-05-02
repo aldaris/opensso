@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRepository.java,v 1.2 2008-04-21 19:06:27 weisun2 Exp $
+ * $Id: SessionRepository.java,v 1.3 2008-05-02 21:44:10 weisun2 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,7 @@ import com.iplanet.am.util.SystemProperties;
  * <code>SessionRepository</code> represents the session
  * repository , default repository 
  * is <code>JMQSessionRepository</code>
- * @see com.iplanet.dpro.session.jmqdb.JMQSessionRepository
+ * @see com.iplanet.dpro.session.JMQSessionRepository
  */
 
 public class SessionRepository {
