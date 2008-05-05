@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateSAML2SetupViewBean.java,v 1.1 2008-04-10 23:15:04 veiming Exp $
+ * $Id: ValidateSAML2SetupViewBean.java,v 1.2 2008-05-05 18:51:56 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,7 +188,10 @@ public class ValidateSAML2SetupViewBean
                 ex.getMessage());
         }
 
-        
+        if (setCOTs.isEmpty()) {
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                "no.providers.to.validate");
+        }
     }
 
     public String endPropertyAttributesDisplay(
@@ -307,29 +310,30 @@ public class ValidateSAML2SetupViewBean
     
     private String addQuestionImages(String html) {
         int idx = html.indexOf("TblColHdrSel");
-        idx = html.lastIndexOf("</caption>", idx);
-        int idx1 = html.lastIndexOf("&#160;", idx);
-          html = html.substring(0, idx1) + html.substring(idx);
+        if (idx != -1) {
+            idx = html.lastIndexOf("</caption>", idx);
+            int idx1 = html.lastIndexOf("&#160;", idx);
+            html = html.substring(0, idx1) + html.substring(idx);
 
-        int endIdx = html.indexOf("</table>", idx);
-        idx = html.indexOf("<tr>", idx1);
-        while (idx < endIdx) {
-            idx = html.indexOf("<td ", idx);
-            idx1 = html.indexOf("<input ", idx);
-            int endTD = html.indexOf("</td>", idx);
-            if ((idx1 == -1) || (idx1 > endTD)) {
-                idx = html.indexOf(">", idx);
-                html = html.substring(0, idx) +
-                    " valign=\"middle\">" +
-                    "<img src=\"../console/images/question.gif\" width=\"16\" " +
-                    "height=\"16\" border=\"0\" " +
-                    "onmouseover=\"showCannotValidateDiv(event)\" " +
-                    "onmouseout=\"hideCannotValidateDiv()\" />" +
-                    html.substring(idx + 1);
+            int endIdx = html.indexOf("</table>", idx);
+            idx = html.indexOf("<tr>", idx1);
+            while (idx < endIdx) {
+                idx = html.indexOf("<td ", idx);
+                idx1 = html.indexOf("<input ", idx);
+                int endTD = html.indexOf("</td>", idx);
+                if ((idx1 == -1) || (idx1 > endTD)) {
+                    idx = html.indexOf(">", idx);
+                    html = html.substring(0, idx) +
+                        " valign=\"middle\">" +
+                        "<img src=\"../console/images/question.gif\" width=\"16\" " +
+                        "height=\"16\" border=\"0\" " +
+                        "onmouseover=\"showCannotValidateDiv(event)\" " +
+                        "onmouseout=\"hideCannotValidateDiv()\" />" +
+                        html.substring(idx + 1);
+                }
+                idx = html.indexOf("<tr>", idx);
             }
-            idx = html.indexOf("<tr>", idx);
         }
-          
         return html;
     }
 
