@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmASRealm.java,v 1.2 2008-04-02 20:18:39 huacui Exp $
+ * $Id: AmASRealm.java,v 1.3 2008-05-05 17:22:50 huacui Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -133,7 +133,7 @@ public class AmASRealm extends IASRealm {
 
     
     public static final String AUTH_TYPE = 
-        "Sun Java(TM) System Federated Access Manager Policy Agent Realm";        
+        "Sun Federated Access Manager Policy Agent Realm";        
     public static final String ANYONE_ROLE = "ANYONE";
 
     private Properties _realmProperties = null;

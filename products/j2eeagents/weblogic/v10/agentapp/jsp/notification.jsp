@@ -18,15 +18,15 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: notification.jsp,v 1.3 2008-04-02 20:25:12 huacui Exp $
+   $Id: notification.jsp,v 1.4 2008-05-05 17:26:22 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 <html>
 <head>
-  <title>Sun(TM) Java System Federated Access Manager Policy Agent </title>
+  <title>Sun Federated Access Manager Policy Agent </title>
 </head>
   <body>
-      Sun Java System Federated Access Manager Policy Agent. 
+      Sun Federated Access Manager Policy Agent. 
 </body>
 </html>

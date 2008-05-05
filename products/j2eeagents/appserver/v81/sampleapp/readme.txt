@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.8 2008-04-07 23:41:31 huacui Exp $
+   $Id: readme.txt,v 1.9 2008-05-05 17:08:12 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,8 +55,8 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent
-successfully and have followed the steps outlined in the Sun Java System
-Federated Access Manager Policy Agent 3.0 Guide for Sun Java System Application
+successfully and have followed the steps outlined in the Sun Federated Access 
+Manager Policy Agent 3.0 Guide for Sun Java System Application
 Server 9, including the post-installation steps.
 
 

@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.4 2008-04-03 21:36:49 huacui Exp $
+# $Id: FAMAgentConfiguration.template,v 1.5 2008-05-05 17:06:19 huacui Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -25,8 +25,8 @@
 #------------------------------------------------------------------------------
 # Configuration Property File
 #
-# Sun Java(TM) System Federated Access Manager Policy Agent for:
-# Sun Java(TM) System Application Server 8.1/8.2/9.0/9.1
+# Sun Federated Access Manager Policy Agent for:
+# Sun Java System Application Server 8.1/8.2/9.0/9.1
 #
 # Version: 3.0
 
