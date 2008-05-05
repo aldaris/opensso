@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 Sun Microsystems, Inc.
-Sun Java System Federated Access Manager Policy Agent 3.0
+Sun Federated Access Manager Policy Agent 3.0
 -----------------------------------------------------------------------------
 
 The product manual and release notes for this product are published
