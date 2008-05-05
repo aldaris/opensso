@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.5 2008-04-15 21:07:29 goodearth Exp $
+ * $Id: CachedSMSEntry.java,v 1.6 2008-05-05 21:16:24 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,7 +58,7 @@ public class CachedSMSEntry {
     protected static Map smsEntries = new CaseInsensitiveHashMap(1000);
 
     // Pointer to Service objects and principals
-    protected Set serviceObjects; // callback service objects
+    protected HashSet serviceObjects; // callback service objects
 
     protected Set principals; // Principals who have read access
 
@@ -195,7 +195,8 @@ public class CachedSMSEntry {
                     + "method called: " + dn);
         }
         // Inform the ServiceSchemaManager's of changes to attributes
-        Iterator objs = serviceObjects.iterator();
+        HashSet origServiceObjects = (HashSet) serviceObjects.clone();
+        Iterator objs = origServiceObjects.iterator(); 
         while (objs.hasNext()) {
             synchronized (objs) {
                 Object obj = objs.next();
