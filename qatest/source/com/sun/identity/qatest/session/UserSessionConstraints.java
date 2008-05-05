@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSessionConstraints.java,v 1.2 2008-04-30 20:05:12 srivenigan Exp $
+ * $Id: UserSessionConstraints.java,v 1.3 2008-05-05 18:26:42 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -50,6 +51,7 @@ public class UserSessionConstraints extends TestCommon {
 
     private SSOToken admintoken;
     private IDMCommon idmc;
+    private Iterator itr;
     private SMSCommon smsc;
     private DelegationCommon delc;
     private Map map;
@@ -57,6 +59,7 @@ public class UserSessionConstraints extends TestCommon {
     private Set set;
     private String testUserWithSrvc = "sessConsTestWithSrvc";
     private String testUserWithoutSrvc = "sessConsTestWithoutSrvc";
+    private String quotaConst;
     private String resultBehavior;
     private String sessionsrvc = "iPlanetAMSessionService";
     private String srvcType = "Dynamic";
@@ -94,6 +97,26 @@ public class UserSessionConstraints extends TestCommon {
     throws Exception {
         entering("setup", null);
         try {
+            set = smsc.getAttributeValueFromSchema(sessionsrvc,
+                    "iplanet-am-session-enable-session-constraint", "Global");
+            Iterator itr = set.iterator();
+            quotaConst = (String) itr.next();            
+            set = smsc.getAttributeValueFromSchema(sessionsrvc,
+                    "iplanet-am-session-constraint-resulting-behavior", 
+                    "Global");
+            itr = set.iterator();
+            resultBehavior = (String) itr.next();     
+            log(Level.FINE, "setup", "Resulting behavior if session quota " +
+                    "exhausted is set to: " + resultBehavior);  
+            if (quotaConst.equals("OFF")) {
+                log(Level.SEVERE, "setup", "ERROR: Session constraints " +
+                        "testcases must be run with enable session quota " +
+                        "constraints attribute set to 'ON' " );
+                Reporter.log("ERROR: Session constraints " +
+                        "testcases must be run with enable session quota " +
+                        "constraints attribute set to 'ON' ");
+                assert false;
+            }
             idmc.createDummyUser(admintoken, realm, "", testUserWithSrvc);
             log(Level.FINE,"setup", "Created user " + 
                     testUserWithSrvc + " identity");
@@ -135,6 +158,13 @@ public class UserSessionConstraints extends TestCommon {
         SSOToken usrtokenWithSrvcNew = null;
         SSOToken usrtokenWithoutSrvcOrig = null;
         SSOToken usrtokenWithoutSrvcNew = null;
+        log(Level.FINE, "testQuotaDAWithSessionSrvcAtGlobal",
+                "This testcase validates session quota for one user with session " +
+                "service at user level and for other user at global level when " +
+                "resulting behavior set to DENY_ACCESS");
+        Reporter.log("Test Description: This testcase validates session quota " +
+                "for one user with session service at user level and for other " +
+                "user at global level when resulting behavior set to DENY_ACCESS");
         try {
             if (smsc.isServiceAssigned(sessionsrvc, realm)) {
                 smsc.unassignDynamicServiceRealm(sessionsrvc, realm);
@@ -150,7 +180,7 @@ public class UserSessionConstraints extends TestCommon {
                             sessionsrvc, quotaAttr, srvcType);
             }
             assert !globalActiveSessions.equals("1");
-            if (getresultBehaviorAttr().equals("DENY_ACCESS")) {
+            if (resultBehavior.equals("DENY_ACCESS")) {
                 usrtokenWithoutSrvcOrig = getToken(testUserWithoutSrvc, 
                                         testUserWithoutSrvc, basedn);
                 usrtokenWithoutSrvcNew = getToken(testUserWithoutSrvc, 
@@ -160,9 +190,12 @@ public class UserSessionConstraints extends TestCommon {
                 try {
                     usrtokenWithSrvcNew = getToken(testUserWithSrvc,
                             testUserWithSrvc, basedn);
+                    log(Level.SEVERE, "testQuotaDAWithSessionSrvcAtGlobal", 
+                            "ERROR: Deny access case for user failed ");
+                    assert false;
                 } 
                 catch (Exception e) {
-                	log(Level.SEVERE, "testMaxSessionQuotaGlobalRealmNDAUser",
+                	log(Level.SEVERE, "testQuotaDAWithSessionSrvcAtGlobal",
                                 "Cannot create new token for user: "
                     		  + testUserWithSrvc + "\n " + e.getMessage());
                         e.printStackTrace();
@@ -175,8 +208,10 @@ public class UserSessionConstraints extends TestCommon {
                 assert !validateToken(usrtokenWithSrvcNew);
             } else {
                 log(Level.FINE, "testQuotaDAWithSessionSrvcAtGlobal",
-                        "Resulting behaviour and top level " +
-                        "exempt attributes do not apply for this testcase");
+                        "Resulting behaviour attribute" +
+                        "do not apply for this testcase");
+                Reporter.log("Note: Resulting behaviour attribute " +
+                        "do not apply for this testcase");
             }
         } catch (Exception e) {
             cleanup();
@@ -216,8 +251,16 @@ public class UserSessionConstraints extends TestCommon {
         SSOToken usrtokenWithSrvcNew = null;
         SSOToken usrtokenWithoutSrvcOrig = null;
         SSOToken usrtokenWithoutSrvcNew = null;
+        log(Level.FINE, "testQuotaDOSWithSessionSrvcAtGlobal",
+                "This testcase validates session quota for one user with session" +
+                "service at user level and for other user at global level when " +
+                "resulting behavior set to DESTROY_OLD_SESSION");
+        Reporter.log("Test Description: This testcase validates session quota " +
+                "for one user with session service at user level and for other " +
+                "user at global level when resulting behavior set to " +
+                "DESTROY_OLD_SESSION");
         try {
-            if (getresultBehaviorAttr().equals("DESTROY_OLD_SESSION")) {
+            if (resultBehavior.equals("DESTROY_OLD_SESSION")) {
                 usrtokenWithoutSrvcOrig = getToken(testUserWithoutSrvc, 
                                         testUserWithoutSrvc, basedn);
                 usrtokenWithoutSrvcNew = getToken(testUserWithoutSrvc, 
@@ -226,21 +269,23 @@ public class UserSessionConstraints extends TestCommon {
                                         testUserWithSrvc, basedn);
                 usrtokenWithSrvcNew = getToken(testUserWithSrvc,
                             testUserWithSrvc, basedn);
-                log(Level.FINE, "testQuotaDAWithSessionSrvcAtGlobal", 
+                log(Level.FINE, "testQuotaDOSWithSessionSrvcAtGlobal", 
                         "Original token is valid and new " +
                         "token is valid here");
                 assert validateToken(usrtokenWithoutSrvcOrig);
                 assert validateToken(usrtokenWithoutSrvcNew);
                 assert validateToken(usrtokenWithSrvcNew);
             } else {
-                log(Level.FINE, "testQuotaDAWithSessionSrvcAtGlobal",
-                        "Resulting behaviour and top level " +
-                        "exempt attributes do not apply for this testcase");
+                log(Level.FINE, "testQuotaDOSWithSessionSrvcAtGlobal",
+                        "Resulting behaviour attribute" +
+                        " do not apply for this testcase");
+                Reporter.log("Note: Resulting behaviour attribute " +
+                        "do not apply for this testcase");
             }
         } catch (Exception e) {
             cleanup();
             cleanedUp = true;
-            log(Level.SEVERE, "testQuotaDAWithSessionSrvcAtGlobal",
+            log(Level.SEVERE, "testQuotaDOSWithSessionSrvcAtGlobal",
                     e.getMessage()); 
             e.printStackTrace();
         } finally {
@@ -250,7 +295,7 @@ public class UserSessionConstraints extends TestCommon {
                 destroyToken(usrtokenWithSrvcNew);     
             }
         }
-        exiting("testQuotaDAWithSessionSrvcAtGlobal");
+        exiting("testQuotaDOSWithSessionSrvcAtGlobal");
     }
 
     /**
@@ -273,6 +318,13 @@ public class UserSessionConstraints extends TestCommon {
         SSOToken usrtokenWithSrvcNew = null;
         SSOToken usrtokenWithoutSrvcOrig = null;
         SSOToken usrtokenWithoutSrvcNew = null;
+        log(Level.FINE, "testQuotaDAWithSessionSrvcAtRealm",
+                "This testcase validates session quota for one user with session" +
+                "service at user level and for other user at realm level when " +
+                "resulting behavior set to DENY_ACCESS");
+        Reporter.log("Test Description: This testcase validates session quota " +
+                "for one user with session service at user level and for other " +
+                "user at realm level when resulting behavior set to DENY_ACCESS");        
         try {
             if (smsc.isServiceAssigned(sessionsrvc, realm)) {
                 smsc.unassignDynamicServiceRealm(sessionsrvc, realm);
@@ -283,7 +335,7 @@ public class UserSessionConstraints extends TestCommon {
             String realmActiveSessions = getRealmSessionQuotaAttribute(
                     sessionsrvc, realm);
             assert !realmActiveSessions.equals("1");
-            if (getresultBehaviorAttr().equals("DENY_ACCESS")) {
+            if (resultBehavior.equals("DENY_ACCESS")) {
                 usrtokenWithoutSrvcOrig = getToken(testUserWithoutSrvc, 
                                         testUserWithoutSrvc, basedn);
                 usrtokenWithoutSrvcNew = getToken(testUserWithoutSrvc, 
@@ -293,6 +345,9 @@ public class UserSessionConstraints extends TestCommon {
                 try {
                     usrtokenWithSrvcNew = getToken(testUserWithSrvc,
                             testUserWithSrvc, basedn);
+                    log(Level.SEVERE, "testQuotaDAWithSessionSrvcAtRealm",
+                            "ERROR: Deny access case for user failed ");
+                    assert false;
                 } 
                 catch (Exception e) {
                       log(Level.SEVERE, "testQuotaDAWithSessionSrvcAtRealm",
@@ -309,8 +364,10 @@ public class UserSessionConstraints extends TestCommon {
                 assert !validateToken(usrtokenWithSrvcNew);
             } else {
                 log(Level.FINE, "testQuotaDAWithSessionSrvcAtRealm",
-                        "Resulting behaviour and top level " +
-                        "exempt attributes do not apply for this testcase");
+                        "Resulting behaviour attribute " +
+                        "do not apply for this testcase");
+                Reporter.log("Note: Resulting behaviour attribute " +
+                        "do not apply for this testcase");
             }
         } catch (Exception e) {
             cleanup();
@@ -350,8 +407,16 @@ public class UserSessionConstraints extends TestCommon {
         SSOToken usrtokenWithSrvcNew = null;
         SSOToken usrtokenWithoutSrvcOrig = null;
         SSOToken usrtokenWithoutSrvcNew = null;
+        log(Level.FINE, "testQuotaDOSWithSessionSrvcAtRealm",
+                "This testcase validates session quota for one user with session" +
+                "service at user level and for other user at realm level when " +
+                "resulting behavior set to DESTROY_OLD_SESSION");
+        Reporter.log("Test Description: This testcase validates session quota " +
+                "for one user with session service at user level and for other " +
+                "user at realm level when resulting behavior set to " +
+                "DESTROY_OLD_SESSION");        
         try {
-            if (getresultBehaviorAttr().equals("DESTROY_OLD_SESSION")) {
+            if (resultBehavior.equals("DESTROY_OLD_SESSION")) {
                 usrtokenWithoutSrvcOrig = getToken(testUserWithoutSrvc, 
                                         testUserWithoutSrvc, basedn);
                 usrtokenWithoutSrvcNew = getToken(testUserWithoutSrvc, 
@@ -368,8 +433,10 @@ public class UserSessionConstraints extends TestCommon {
                 assert validateToken(usrtokenWithSrvcNew);
             } else {
                 log(Level.FINE, "testQuotaDOSWithSessionSrvcAtRealm",
-                        "Resulting behaviour and top level " +
-                        "exempt attributes do not apply for this testcase");
+                        "Resulting behaviour attribute" +
+                        "do not apply for this testcase");
+                Reporter.log("Note: Resulting behaviour attribute" +
+                        " do not apply for this testcase");
             }
         } catch (Exception e) {
             cleanup();
@@ -493,20 +560,4 @@ public class UserSessionConstraints extends TestCommon {
         quotaMap.put(quotaattr, set);        
         return quotaMap;
     }   
-
-    /**
-     * 
-     * @return String - Resulting behavior if session quota exhausted
-     * 					Global attribute value
-     * 
-     * @throws java.lang.Exception
-     */
-    private String getresultBehaviorAttr()
-    throws Exception {
-        set = smsc.getAttributeValueFromSchema(sessionsrvc,
-                "iplanet-am-session-constraint-resulting-behavior", "Global");
-        Iterator itr = set.iterator();
-        resultBehavior = (String) itr.next();
-        return resultBehavior;
-    }
 }
