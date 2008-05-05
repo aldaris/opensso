@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.16 2008-04-24 23:46:23 manish_rustagi Exp $
+   $Id: build-zip.xml,v 1.17 2008-05-05 20:48:13 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -289,6 +289,21 @@
             <classpath refid="build.class.path"/>
             <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
             <arg value="${library.xml.dir}/web.xml" />
+            <arg value="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet mapping --&gt;" />
+        </java>
+        <!-- update web.xml with openfm servlet info -->
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
+            <arg value="${openfm.dir}/xml/noconsole/web.xml" />
+            <arg value="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
+            <arg value="${openfm.dir}/xml/noconsole/web.xml" />
             <arg value="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/web.xml" />
             <arg value="&lt;!-- servlet mapping --&gt;" />
         </java>
