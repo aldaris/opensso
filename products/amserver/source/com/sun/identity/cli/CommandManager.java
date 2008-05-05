@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.22 2008-04-24 00:42:08 veiming Exp $
+ * $Id: CommandManager.java,v 1.23 2008-05-05 18:50:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,9 @@ package com.sun.identity.cli;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.setup.Bootstrap;
@@ -40,12 +43,14 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -65,6 +70,7 @@ public class CommandManager {
     private List definitionObjects;
     private List requestQueue = new Vector();
     private boolean bContinue;
+    private Set ssoTokens = new HashSet();
 
     static {
         resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
@@ -141,6 +147,7 @@ public class CommandManager {
             printUsageOnException(e);
             System.exit(e.getExitCode());
         } finally {
+            destroySSOTokens();
             ShutdownManager.getInstance().shutdown();
         }
     }
@@ -690,5 +697,27 @@ public class CommandManager {
     public boolean webEnabled() {
         String url = getWebEnabledURL();
         return (url != null) && (url.length() > 0);
+    }
+
+    /**
+     * Registers Single Single On Token which will be destroyed after
+     * CLI is done.
+     *
+     * @param ssoToken Single Sign On Token.
+     */
+    public void registerSSOToken(SSOToken ssoToken) {
+        ssoTokens.add(ssoToken);
+    }
+
+    private void destroySSOTokens() {
+        try {
+            SSOTokenManager mgr = SSOTokenManager.getInstance();
+            for (Iterator i = ssoTokens.iterator(); i.hasNext(); ) {
+                SSOToken token = (SSOToken)i.next();
+                mgr.destroyToken(token);
+            }
+        } catch (SSOException e) {
+            Debugger.error(this, "CommandManager.destroySSOTokens", e);
+        }
     }
 }

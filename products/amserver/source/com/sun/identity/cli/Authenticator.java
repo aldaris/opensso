@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Authenticator.java,v 1.5 2006-12-08 21:02:17 veiming Exp $
+ * $Id: Authenticator.java,v 1.6 2008-05-05 18:50:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,6 +168,7 @@ class Authenticator {
                 AuthContext lc = sessionBasedLoginInternal(
                     mgr, bindUser, bindPwd);
                 ssoToken = lc.getSSOToken();
+                mgr.registerSSOToken(ssoToken);
             } catch (Exception e) {
                 ssoToken = ldapLoginInternal(mgr, bindUser, bindPwd);
             }
