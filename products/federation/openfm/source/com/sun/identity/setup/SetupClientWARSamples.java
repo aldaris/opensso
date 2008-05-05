@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.4 2008-03-04 23:53:19 mrudul_uchil Exp $
+ * $Id: SetupClientWARSamples.java,v 1.5 2008-05-05 16:48:38 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,22 +84,25 @@ public class SetupClientWARSamples {
         // Setup default client keystore path.
         URL url = 
             servletContext.getResource("/WEB-INF/lib/openssoclientsdk.jar");
-        String keystoreLocation = (url.toString()).substring(5);
-        int index = keystoreLocation.indexOf("WEB-INF");
-        keystoreLocation = keystoreLocation.substring(0, index-1);
-        content = content.replaceAll("@" + "BASE_DIR" + "@", keystoreLocation);
+        if (url != null) {
+            String keystoreLocation = (url.toString()).substring(5);
+            int index = keystoreLocation.indexOf("WEB-INF");
+            keystoreLocation = keystoreLocation.substring(0, index-1);
+            content = 
+                content.replaceAll("@" + "BASE_DIR" + "@", keystoreLocation);
         
-        // Update famsts-client.wsdl with Keystore location.
-        String contentWSDL = 
-                getFileContent("/WEB-INF/classes/famsts-client.wsdl");
-        createKeystoreFile();
-        contentWSDL = contentWSDL.replaceAll("@KEYSTORE_LOCATION@",
-            System.getProperty("user.home"));
-        BufferedWriter outWSDL = 
-            new BufferedWriter(new FileWriter(keystoreLocation +
-            "/WEB-INF/classes/famsts-client.wsdl"));
-        outWSDL.write(contentWSDL);
-        outWSDL.close();
+            // Update famsts-client.wsdl with Keystore location.
+            String contentWSDL = 
+                    getFileContent("/WEB-INF/classes/famsts-client.wsdl");
+            createKeystoreFile();
+            contentWSDL = contentWSDL.replaceAll("@KEYSTORE_LOCATION@",
+                System.getProperty("user.home"));
+            BufferedWriter outWSDL = 
+                new BufferedWriter(new FileWriter(keystoreLocation +
+                "/WEB-INF/classes/famsts-client.wsdl"));
+            outWSDL.write(contentWSDL);
+            outWSDL.close();
+        }
         
         BufferedWriter out = new BufferedWriter(new FileWriter(configFile));
         out.write(content);

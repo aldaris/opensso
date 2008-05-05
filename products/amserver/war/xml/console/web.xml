@@ -135,6 +135,11 @@
         <servlet-name>click-servlet</servlet-name>
         <servlet-class>net.sf.click.ClickServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>notificationservice</servlet-name>
+        <description>notificationservice</description>
+        <servlet-class>com.iplanet.services.comm.client.PLLNotificationServlet</servlet-class>
+    </servlet>
 
     <!-- servlet declaration -->
 
@@ -202,6 +207,12 @@
     <servlet-mapping>
         <servlet-name>click-servlet</servlet-name>
         <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
+
+   <!-- Notification service -->
+    <servlet-mapping>
+        <servlet-name>notificationservice</servlet-name>
+        <url-pattern>/notificationservice</url-pattern>
     </servlet-mapping>
 
     <!-- servlet mapping -->

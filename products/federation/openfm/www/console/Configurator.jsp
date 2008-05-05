@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.2 2007-12-16 02:55:40 qcheng Exp $
+   $Id: Configurator.jsp,v 1.3 2008-05-05 16:48:39 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -33,6 +33,8 @@
 
 <%@ page import="
 com.iplanet.am.util.SystemProperties,
+com.iplanet.services.util.ConfigurableKey,
+com.iplanet.services.util.Crypt,
 com.sun.identity.security.EncodeAction,
 com.sun.identity.setup.SetupClientWARSamples,
 java.io.*,
@@ -54,6 +56,7 @@ java.util.Properties"
     String consoleHost = null;
     String consolePort = null;
     String consoleDeploymenturi = null;
+    String encPwd = ""; 
     String debugDir = null;
     String appUser = null;
     String appPassword = null;
@@ -77,6 +80,10 @@ java.util.Properties"
         consoleHost = request.getParameter("consoleHost");
         consolePort = request.getParameter("consolePort");
         consoleDeploymenturi = request.getParameter("consoleDeploymenturi");
+        encPwd = request.getParameter("encPwd");
+        if (encPwd == null) {
+            encPwd = "";
+        }
         debugDir = request.getParameter("debugDir");
         appUser = request.getParameter("appUser");
         appPassword = request.getParameter("appPassword");
@@ -96,6 +103,11 @@ java.util.Properties"
                 (debugDir != null) && !debugDir.equals("") &&
                 (appUser != null) && !appUser.equals("") &&
                 (appPassword != null) && !appPassword.equals("")) {
+                if (encPwd.length() != 0) {
+                    SystemProperties.initializeProperties("am.encryption.pwd", 
+                        encPwd);
+                    ((ConfigurableKey) Crypt.getEncryptor()).setPassword(encPwd);
+                }
                 Properties props = new Properties();
                 props.setProperty("SERVER_PROTOCOL", famProt);
                 props.setProperty("SERVER_HOST", famHost);
@@ -107,8 +119,11 @@ java.util.Properties"
                 props.setProperty("CONSOLE_DEPLOY_URI", consoleDeploymenturi);
                 props.setProperty("CONSOLE_REMOTE", "true");
                 props.setProperty("DEBUG_DIR", debugDir);
-                props.setProperty("NAMING_URL", famProt + "://" + famHost + ":"
+                props.setProperty("NAMING_URL", famProt + "://" + famHost + ":" 
                     + famPort + famDeploymenturi + "/namingservice");
+                props.setProperty("NOTIFICATION_URL", consoleProt + "://" 
+                    + consoleHost + ":" + consolePort + consoleDeploymenturi 
+                    + "/notificationservice");
                 props.setProperty("DEBUG_LEVEL", "error");
                 props.setProperty("APPLICATION_USER", appUser);
                 props.setProperty("ENCODED_APPLICATION_PASSWORD", (String) 
@@ -116,7 +131,7 @@ java.util.Properties"
                 // set empty application password
                 props.setProperty("APPLICATION_PASSWD", ""); 
                 props.setProperty("AM_COOKIE_NAME", "iPlanetDirectoryPro");
-                props.setProperty("ENCRYPTION_KEY", "");
+                props.setProperty("ENCRYPTION_KEY", encPwd);
                 props.setProperty("ENCRYPTION_KEY_LOCAL", "");
                 props.setProperty("SESSION_PROVIDER_CLASS", 
                     "com.sun.identity.plugin.session.impl.FMSessionProvider");
@@ -124,7 +139,6 @@ java.util.Properties"
                     "com.sun.identity.plugin.configuration.impl.ConfigurationInstanceImpl");
                 props.setProperty("DATASTORE_PROVIDER_CLASS", 
                     "com.sun.identity.plugin.datastore.impl.IdRepoDataStoreProvider");
-                
                 try {
                     SetupClientWARSamples configurator = 
                         new SetupClientWARSamples(
@@ -227,6 +241,10 @@ java.util.Properties"
     <tr>
     <td>Server Deployment URI:</td>
     <td><input name="famDeploymenturi" type="text" size="15" value="<%= famDeploymenturi == null ? "" : famDeploymenturi %>" /></td>
+    </tr>
+    <tr>
+    <td>Password Encryption Key:</td>
+    <td><input name="encPwd" type="password" size="20" value="" /><br>The key must be the same as the Password Encryption Key set in the server instance. The Password Encryption Key of the server instance could be retrieved using famadm.jsp export-server option, enter the server instance and get the value of am.encryption.pwd attribute in the exported server configuration XML file.</td>
     </tr>
     <tr>
     <td>Application user name</td>
