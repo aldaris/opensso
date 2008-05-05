@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.20 2008-04-25 00:13:10 sridharev Exp $
+ * $Id: TestConstants.java,v 1.21 2008-05-05 19:28:01 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,7 @@ public interface TestConstants {
     /**
      * Property key for <code>com.iplanet.am.notification.url</code>.
      */
-    String KEY_AMC_NOTIFICATION_URL = "com.iplanet.am.notification.url";
+    String KEY_AMC_NOTIFICATION_URL = "com.sun.identity.client.notification.url";
     
     /**
      * Property key for <code>com.sun.identity.agents.app.username</code>.
