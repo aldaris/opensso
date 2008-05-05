@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.1 2008-04-28 18:22:22 cmwesley Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.2 2008-05-05 22:57:35 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,11 @@ package com.sun.identity.qatest.authentication;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
@@ -46,10 +48,14 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * This class performs the tests for setting up different user authentication
- * attibutes and verifies the login status and also verifies that the attributes
- * are set in the user entry correctly. The login is set to the module based
- * login
+ * This class performs the following tests:
+ * 1) setting various user profile attributes in the <code>SSOToken</code> using
+ * the "User Attribute Mapping to Session Attributes" feature of the 
+ * Authentication service.  After a successful authentication, the attributes
+ * can be retrieved using <code>SSOToken.getProperty()</code>.
+ * 2) attempting to modify user profile attributes which have already been set 
+ * in the <code>SSOToken</code>.  This should result in an 
+ * <code>SSOException</code>.
  */
 public class PostAuthProcessingTest extends TestCommon {
 
@@ -63,10 +69,10 @@ public class PostAuthProcessingTest extends TestCommon {
     private String moduleSubConfigId;
     private String configrbName = "authenticationConfigData";
     private String strServiceName = "iPlanetAMAuthService";
+    private String mappingAttrName = "sunAMUserAttributesSessionMapping";
     private IDMCommon idmc;
     private String testUserName;
     private String testUserPass;
-    String testUserStatus;
     private int noOfAttributes;
     private Map userAttrMap;
 
@@ -112,15 +118,33 @@ public class PostAuthProcessingTest extends TestCommon {
             Reporter.log("UserName: " + testUserName);
             Reporter.log("UserPassword: " + testUserPass);
             
+            String absoluteRealm = testRealm;
             if (!testRealm.equals("/")) {
                 if (testRealm.indexOf("/") != 0) {
-                    testRealm = "/" + testRealm;
+                    absoluteRealm = "/" + testRealm;
                 }
                 log(Level.FINE, "setup", "Creating the sub-realm " + testRealm);
-                realmToken = getToken(adminUser, adminPassword, basedn);
-                idmc.createSubRealm(realmToken, testRealm);
-                if (!idmc.searchRealms(realmToken, testRealm.substring(1)).
-                        contains(testRealm.substring(1))) {
+                realmToken = getToken(adminUser, adminPassword, realm);
+                String childRealm = absoluteRealm.substring(
+                        absoluteRealm.lastIndexOf("/") + 1);
+                String parentRealm = idmc.getParentRealm(absoluteRealm);
+                Map realmAttrMap = new HashMap();
+                if (realmToken != null) {
+                    log(Level.FINEST, "setup", 
+                            "SSOToken used for realm creation = " + realmToken);
+                } else {
+                    log(Level.SEVERE, "setup", 
+                            "The SSOToken for realm creation is null!");
+                }
+                log(Level.FINEST, "setup", 
+                        "Parent realm for realm creaetion = " + parentRealm);
+                log(Level.FINEST, "setup", "Realm entity name to create = " + 
+                        childRealm);              
+                AMIdentity amid = idmc.createIdentity(realmToken, parentRealm, 
+                        IdType.REALM, childRealm, realmAttrMap);
+                log(Level.FINE, "setup", "Searching for the sub-realm " + 
+                        testRealm);
+                if (amid == null) {
                     log(Level.SEVERE, "setup", "Creation of sub-realm " + 
                             testRealm + " failed!");
                     assert false;
@@ -165,7 +189,7 @@ public class PostAuthProcessingTest extends TestCommon {
                     moduleSubConfig, moduleConfigData, moduleSubConfigId);
             
             log(Level.FINE, "setup", "Creating user " + testUserName + "...");
-            idToken = getToken(adminUser, adminPassword, testRealm);
+            idToken = getToken(adminUser, adminPassword, realm);
             idmc.createIdentity(idToken, testRealm, IdType.USER, 
                     testUserName, userAttrMap);
             Set idSearchResults = idmc.searchIdentities(idToken, testUserName,
@@ -175,29 +199,20 @@ public class PostAuthProcessingTest extends TestCommon {
                         testUserName + "...");
                 assert false;
             }
-            
-            serviceToken = getToken(adminUser, adminPassword, basedn);               
-            ServiceConfigManager scm = new ServiceConfigManager(serviceToken, 
-                    strServiceName, "1.0");
-            log(Level.FINE, "setup", "Retrieve ServiceConfig");
-            ServiceConfig sc = scm.getOrganizationConfig(testRealm, null);
-            Map scAttrMap = sc.getAttributes();
-            log(Level.FINEST, "setup", "Map returned from Org config is: " + 
-                    scAttrMap);
-            oriAuthAttrValues = (Set) scAttrMap.get
-                    ("sunAMUserAttributesSessionMapping");
-            log(Level.FINEST, "setup", "Original value of " +
-                    "sunAMUserAttributesSessionMapping: " + 
-                    oriAuthAttrValues);
-            Map userProfileMappingAttrs = new HashMap();
-            userProfileMappingAttrs.put("sunAMUserAttributesSessionMapping", 
+                      
+            serviceToken = getToken(adminUser, adminPassword, realm);
+            SMSCommon smsc = new SMSCommon(serviceToken);
+            oriAuthAttrValues = (Set) smsc.getAttributeValue(testRealm, 
+                    strServiceName, mappingAttrName, "Organization");
+            log(Level.FINEST, "setup", "Original value of " + mappingAttrName +
+                    ": "  + oriAuthAttrValues);
+            log(Level.FINE, "setup", "Set " + mappingAttrName + " to " + 
                     userProfileValSet);
-            log(Level.FINE, "setup", 
-                    "Set sunAMUserAttributesSessionMapping to " + 
-                    userProfileMappingAttrs);
-            sc.setAttributes(userProfileMappingAttrs);           
+            smsc.updateSvcAttribute(testRealm, strServiceName, mappingAttrName,
+                    userProfileValSet, "Organization");
         } catch (Exception e) {
             log(Level.SEVERE, "setup", "Exception message = " + e.getMessage());
+            e.printStackTrace();
             if (oriAuthAttrValues == null) {
                 oriAuthAttrValues = new HashSet();
             }            
@@ -390,33 +405,32 @@ public class PostAuthProcessingTest extends TestCommon {
         
         try {
             log(Level.FINE, "cleanup", "Deleting module instance " + 
-                    moduleSubConfig + "in realm " + testRealm + " ...");
+                    moduleSubConfig + " in realm " + testRealm + " ...");
             moduleConfig.deleteModuleInstances(testRealm, moduleServiceName,
                     moduleSubConfig);
             
             log(Level.FINE, "cleanup", "Deleting user " + testUserName + "...");
-            idToken = getToken(adminUser, adminPassword, testRealm);
+            idToken = getToken(adminUser, adminPassword, realm);
             idmc.deleteIdentity(idToken, testRealm, IdType.USER, testUserName);
             
             log(Level.FINE, "cleanup", "Restoring original value of " +
                     "sunAMUserAttributesSessionMapping");
-            serviceToken = getToken(adminUser, adminPassword, basedn);               
-            ServiceConfigManager scm = new ServiceConfigManager(serviceToken, 
-                    strServiceName, "1.0");
-            ServiceConfig sc = scm.getOrganizationConfig(testRealm, null);
-            Map userProfileMappingAttrs = new HashMap();
-            userProfileMappingAttrs.put("sunAMUserAttributesSessionMapping", 
+            serviceToken = getToken(adminUser, adminPassword, realm); 
+            SMSCommon smsc = new SMSCommon(serviceToken);
+            log(Level.FINE, "setup", "Set " + mappingAttrName + " to " + 
                     oriAuthAttrValues);
-            log(Level.FINE, "cleanup", 
-                    "Set sunAMUserAttributesSessionMapping to " + 
-                    oriAuthAttrValues);
-            sc.setAttributes(userProfileMappingAttrs);    
+            smsc.updateSvcAttribute(testRealm, strServiceName, mappingAttrName,
+                    oriAuthAttrValues, "Organization");            
 
-            if (!testRealm.equals("/")) {
+            String absoluteRealm = testRealm;
+            if (!absoluteRealm.equals("/")) {
+                if (absoluteRealm.indexOf("/") != 0) {
+                    absoluteRealm = "/" + testRealm;
+                }             
                 log(Level.FINE, "cleanup", "Deleting the sub-realm " + 
-                        testRealm);
-                realmToken = getToken(adminUser, adminPassword, basedn);
-                idmc.deleteRealm(realmToken, testRealm);
+                        absoluteRealm);
+                realmToken = getToken(adminUser, adminPassword, realm);
+                idmc.deleteRealm(realmToken, absoluteRealm);
             }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());

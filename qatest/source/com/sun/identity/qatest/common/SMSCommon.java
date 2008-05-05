@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.14 2008-04-19 01:17:51 srivenigan Exp $
+ * $Id: SMSCommon.java,v 1.15 2008-05-05 22:57:00 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,11 +115,18 @@ public class SMSCommon extends TestCommon {
     
     /**
      * Returns attribute value as a set for an attribute in a service
-     * which have sub configurations. Service type can be one of the following:
-     * Global or Organization.
+     * which have sub configurations. 
+     * serviceRealm - a String containing the name of the realm from which the
+     * service attribute value should be retrieved.
+     * serviceName - a String containing the name of service from which the
+     * attribute value should be retrieved.
+     * attributeName - a String containing the name of the attribute
+     * type - a String set to "Global" or "Organization".
+     * @return a Set containing the value(s) of the attribute attributeName in
+     * the service serviceName.
      */
-    public Set getAttributeValue(String serviceName, String attributeName,
-            String type)
+    public Set getAttributeValue(String serviceRealm, String serviceName, 
+            String attributeName, String type)
             throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(admintoken,
                 serviceName, "1.0");
@@ -127,12 +134,27 @@ public class SMSCommon extends TestCommon {
         if (type.equals("Global"))
             sc = scm.getGlobalConfig(null);
         else if (type.equals("Organization"))
-            sc = scm.getOrganizationConfig(realm, null);
+            sc = scm.getOrganizationConfig(serviceRealm, null);
         Map map = sc.getAttributes();
         if (map.containsKey(attributeName))
             return (((Set)map.get(attributeName)));
         else
             return (null);
+    }
+    
+    /**
+     * Returns an attribute value for an attribute in a service.
+     * serviceName - a String containing the name of service from which the
+     * attribute value should be retrieved.
+     * attributeName - a String containing the name of the attribute
+     * type - a String set to "Global" or "Organization".
+     * @return a Set containing the value(s) of the attribute attributeName in
+     * the service serviceName.
+     */
+    public Set getAttributeValue(String serviceName, String attributeName, 
+            String type)
+    throws Exception {
+        return getAttributeValue(realm, serviceName, attributeName, type);
     }
     
     /**
@@ -142,7 +164,7 @@ public class SMSCommon extends TestCommon {
      * values for global and organization services which have sub
      * configurations.
      */
-    public void updateSvcAttribute(String serviceName,
+    public void updateSvcAttribute(String serviceRealm, String serviceName,
             String attributeName, Set set, String type)
             throws Exception {
         ServiceConfigManager scm = new ServiceConfigManager(serviceName,
@@ -151,11 +173,24 @@ public class SMSCommon extends TestCommon {
         if (type.equals("Global"))
             sc = scm.getGlobalConfig(null);
         else if (type.equals("Organization"))
-            sc = scm.getOrganizationConfig(realm, null);
+            sc = scm.getOrganizationConfig(serviceRealm, null);
         Map map = new HashMap();
         map.put(attributeName, set);
         sc.removeAttribute(attributeName);
         sc.setAttributes(map);
+    }
+    
+    /**
+     * Method updates a given attribute in any sepcified service.
+     * This is only valid for Global and Organization level attributes.
+     * It does not update Dynamic attributes. This updates attribute
+     * values for global and organization services which have sub
+     * configurations.
+     */
+    public void updateSvcAttribute(String serviceName, String attributeName,
+            Set set, String type)
+    throws Exception {    
+        updateSvcAttribute(realm, serviceName, attributeName, set, type);
     }
     
     /**

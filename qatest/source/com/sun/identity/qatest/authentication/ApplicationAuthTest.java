@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationAuthTest.java,v 1.3 2008-03-11 19:59:06 cmwesley Exp $
+ * $Id: ApplicationAuthTest.java,v 1.4 2008-05-05 22:57:35 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,6 +120,7 @@ public class ApplicationAuthTest extends TestCommon {
                     IdType.AGENTONLY, realm);
         } catch (Exception e) {
             log(Level.SEVERE, "createAgentProfile", e.getMessage());
+            deleteAgentProfile();
             e.printStackTrace();
             throw e;
         } finally {
@@ -213,8 +214,12 @@ public class ApplicationAuthTest extends TestCommon {
         entering("deleteAgentProfile", null);
         try {
             log(Level.FINE, "deleteAgentProfile", 
-                    "Deleting the agent identity " + agentId + " ...");            
+                    "Deleting the agent identity " + agentId + " ...");  
             adminToken = getToken(adminUser, adminPassword, realm);
+            if (amid == null) {
+                amid = idmc.getFirstAMIdentity(adminToken, agentId, 
+                        IdType.AGENTONLY, realm);
+            }            
             idrepo = new AMIdentityRepository(adminToken, realm);     
             Set idDelete = new HashSet();
             idDelete.add(amid);
