@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyevaluationtest_policyinactive.xml,v 1.2 2007-08-07 23:35:26 rmisra Exp $ 
+   $Id: policyevaluationtest_policyinactive.xml,v 1.3 2008-05-06 17:25:02 inthanga Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -50,7 +50,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             includeType="inclusive">
                 <AttributeValuePair>
                     <Attribute name="Values"/>
-                    <Value>id=user20,ou=user,dc=red,dc=iplanet,dc=com</Value>
+                    <Value>id=user20,ou=user,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>

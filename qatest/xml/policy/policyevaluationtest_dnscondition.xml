@@ -50,7 +50,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="user user1" type="AMIdentitySubject" 
             includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                <Value>id=dnsuser0,ou=user,dc=red,dc=iplanet,dc=com</Value>
+                <Value>id=dnsuser0,ou=user,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>        
@@ -88,7 +88,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="user user1" type="AMIdentitySubject" 
             includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                <Value>id=dnsuser1,ou=user,dc=red,dc=iplanet,dc=com</Value>
+                <Value>id=dnsuser1,ou=user,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>
@@ -127,7 +127,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="user user1" type="AMIdentitySubject" 
             includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                <Value>id=dnsuser2,ou=user,dc=red,dc=iplanet,dc=com</Value>
+                <Value>id=dnsuser2,ou=user,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>
@@ -165,7 +165,7 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="user user1" type="AMIdentitySubject" 
             includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/>
-                <Value>id=dnsuser3,ou=user,dc=red,dc=iplanet,dc=com</Value>
+                <Value>id=dnsuser3,ou=user,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>

@@ -52,19 +52,19 @@ PUBLIC "-//Sun Java System Access Manager 7.1 2006Q3 Admin CLI DTD//EN"
             <Subject name="AmidUser" type="AMIdentitySubject" 
               includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/><Value>id=user0,
-                    ou=user,dc=red,dc=iplanet,dc=com</Value>
+                    ou=user,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
             <Subject name="AmidGroup" type="AMIdentitySubject" 
                 includeType="inclusive">    
                 <AttributeValuePair><Attribute name="Values"/><Value>id=group1,
-                    ou=group,dc=red,dc=iplanet,dc=com</Value>
+                    ou=group,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
             <Subject name="AmidRole" type="AMIdentitySubject" 
                 includeType="inclusive">
                 <AttributeValuePair><Attribute name="Values"/><Value>id=role1,
-                    ou=role,dc=red,dc=iplanet,dc=com</Value>
+                    ou=role,SM_SUFFIX</Value>
                 </AttributeValuePair>
             </Subject>
         </Subjects>
