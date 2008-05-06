@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.8 2008-04-04 21:56:43 madan_ranganath Exp $
+ * $Id: InstallConstants.java,v 1.9 2008-05-06 17:40:16 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -164,7 +164,18 @@ public interface InstallConstants extends ICommonToolsConstants {
      */
      public static final String STR_SAVE_REMOTE_AGENT_INSTALL_DIR_KEY = 
              "SAVE_REMOTE_AGENT_INSTALL_DIR";
-    
+     
+     
+    /**
+     * Key to flag indicating if agent profile will be created
+     */
+     public static final String STR_CREATE_AGENT_PROFILE_KEY = 
+             "CREATE_AGENT_PROFILE_KEY";
+     
+     public static final String STR_CREATE_AGENT_PROFILE_NAME =
+            "CREATE_AGENT_PROFILE_NAME";
+     
+     
     // FORMATTING LINE FOR WELCOME AND EXIT MESSAGE, 80 chars
     public static final String STR_BEGIN_END_LINE_MARKER = "*************" +
                 "***********************************************************";
