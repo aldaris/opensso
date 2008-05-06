@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.4 2008-04-30 23:19:07 rmisra Exp $
+ * $Id: AMSamples.java,v 1.5 2008-05-06 19:41:22 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,19 +25,26 @@
 package com.sun.identity.qatest.clientsamples;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.PolicyCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
+import com.sun.identity.wss.provider.ProviderConfig;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.net.InetAddress;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -63,6 +70,7 @@ public class AMSamples extends TestCommon {
     private String policyURL;
     private String ssovalidationURL;
     private String stsclientvalidationURL;
+    private String stswscvalidationURL;
     private String baseDir;
     private String userName;
     private String userPassword;
@@ -140,6 +148,11 @@ public class AMSamples extends TestCommon {
                 rb_ams.getString("stsclientvalidation_uri");
         log(Level.FINE, "setup", "STS Client Sample with End user Token JSP" +
                 " URL: " + stsclientvalidationURL);
+       
+        stswscvalidationURL = clientURL +
+                rb_ams.getString("stswscvalidation_uri");
+        log(Level.FINE, "setup", "STS Client Sample for WSC Token JSP" +
+                " URL: " + stswscvalidationURL);
         
         Map map = new HashMap();
         Set set = new HashSet();
@@ -720,6 +733,173 @@ public class AMSamples extends TestCommon {
             consoleLogout(webClient, logoutURL);
         }
         exiting("testSTSClientNormalUser");
+    }
+    
+    /**
+     * This test validates STS Token for a normal user.
+     */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void testSTSwscSAMLv2Token()
+    throws Exception {
+        entering("testSTSwscSAMLv2Token", null);
+        
+        try {
+            String expResult = "SAML:2.0:assertion";
+            webClient = new WebClient();
+            
+            AMIdentity stsAmid = new AMIdentity(admintoken, 
+                    "SecurityTokenService", IdType.AGENTONLY, realm, null);
+            assert(stsAmid.isExists());
+            
+            AMIdentity amid = new AMIdentity(admintoken, "wsc",
+                    IdType.AGENTONLY, realm, null);
+            assert(amid.isExists());
+            Map idmAttrMap = new HashMap();
+            idmAttrMap = amid.getAttributes();
+            idmAttrMap = new HashMap();
+            Set set = new HashSet();
+            set.add("SecurityTokenService");
+            idmAttrMap.put("STS", set);
+            idmc.modifyIdentity(amid, idmAttrMap);
+            idmAttrMap = new HashMap();
+            set = new HashSet();
+            set.add("urn:sun:wss:sts:security");
+            idmAttrMap.put("SecurityMech", set);
+            idmc.modifyIdentity(amid, idmAttrMap);
+            set = new HashSet();
+            set.add("default");
+            idmAttrMap = new HashMap();
+            idmAttrMap.put("WSPEndpoint", set);
+            idmc.modifyIdentity(amid, idmAttrMap);
+            
+            idmAttrMap = new HashMap();
+            idmAttrMap = amid.getAttributes();
+            log(Level.FINEST, "testSTSwscSAMLv2Token",
+                    "WSC attributes \n" + idmAttrMap);
+
+            //Setup the WSP security mechanism to 2.0 token
+           
+            ProviderConfig pc = ProviderConfig.
+                    getProvider("wsp", ProviderConfig.WSP);
+            assert (ProviderConfig.isProviderExists("wsp", ProviderConfig.WSP));
+            List listSec = new ArrayList();            
+            listSec = pc.getSecurityMechanisms();
+            if ((listSec.contains("urn:sun:wss:security:null:SAMLToken-HK"))) {
+                listSec.remove("urn:sun:wss:security:null:SAMLToken-HK");
+            }            
+            if ((listSec.contains("urn:sun:wss:security:null:SAMLToken-SV"))) {
+               listSec.remove("urn:sun:wss:security:null:SAMLToken-SV");
+            }
+            if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-HK"))) {
+                listSec.add("urn:sun:wss:security:null:SAML2Token-HK");
+            }            
+            if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-SV"))) {
+                listSec.add("urn:sun:wss:security:null:SAML2Token-SV");
+            }            
+           
+            AMIdentity wspAmid = new AMIdentity(admintoken, "wsp",
+                    IdType.AGENTONLY, realm, null);
+            assert (wspAmid.isExists());
+            Map wspAttrMap;
+            wspAttrMap = new HashMap();        
+            pc.setSecurityMechanisms(listSec);
+            ProviderConfig.saveProvider(pc);           
+            wspAttrMap = wspAmid.getAttributes();
+            log(Level.FINEST, "testSTSwscSAMLv2Token",
+                    "WSP attributes \n" + wspAttrMap);            
+            
+            URL cmdUrl = new URL(stswscvalidationURL);           
+            HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);           
+            HtmlForm form = (HtmlForm) page.getForms().get(0);
+            
+            HtmlTextInput txtagentname = (HtmlTextInput) form.
+                    getInputByName("providerName");
+            txtagentname.setValueAttribute("wsc");
+            
+            HtmlPage returnPage = (HtmlPage) form.submit();
+            log(Level.FINEST, "testSTSwscSAMLv2Token",
+                    " Page after login\n" +
+                    returnPage.getWebResponse().getContentAsString());            
+            int iIdx = getHtmlPageStringIndex(returnPage, expResult);
+            assert (iIdx != -1);
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSTSwscSAMLv2Token", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            Reporter.log("Test Description: Verifying the WSC token " +
+                    "(of type SAMLv2)from STS  which can be presented to " +
+                    "  the WSP for authentication purposes"); 
+        }
+        exiting("testSTSwscSAMLv2Token");
+    }
+    
+     /**
+      * This test validates STS Token for a normal user.
+      */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    dependsOnMethods = {"testSTSwscSAMLv2Token"})
+    public void testSTSwscSAMLv1Token()
+    throws Exception {
+        entering("testSTSwscSAMLv1Token", null);
+        
+        try {
+            String expResult = "SAML:1.0:assertion";
+            webClient = new WebClient();
+            
+            ProviderConfig pc = null;
+            pc = ProviderConfig.getProvider("wsp", ProviderConfig.WSP);
+            assert (ProviderConfig.isProviderExists("wsp", ProviderConfig.WSP));
+            List listSec = new ArrayList();            
+            listSec = pc.getSecurityMechanisms();
+            
+            if ((listSec.contains("urn:sun:wss:security:null:SAML2Token-HK"))) {
+                listSec.remove("urn:sun:wss:security:null:SAML2Token-HK");
+            }
+            if ((listSec.contains("urn:sun:wss:security:null:SAML2Token-SV"))) {
+                listSec.remove("urn:sun:wss:security:null:SAML2Token-SV");
+            }
+            if (!(listSec.contains("urn:sun:wss:security:null:SAMLToken-HK"))) {
+                listSec.add("urn:sun:wss:security:null:SAMLToken-HK");
+            }
+            if (!(listSec.contains("urn:sun:wss:security:null:SAMLToken-SV"))) {
+                listSec.add("urn:sun:wss:security:null:SAMLToken-SV");
+            }
+            pc.setSecurityMechanisms(listSec);
+            ProviderConfig.saveProvider(pc);           
+           
+            AMIdentity wspAmid = new AMIdentity(admintoken, "wsp",
+                    IdType.AGENTONLY, realm, null);
+            assert (wspAmid.isExists());
+            Map wspAttrMap;
+            wspAttrMap = new HashMap();
+            wspAttrMap = wspAmid.getAttributes();
+            log(Level.FINEST, "testSTSwscSAMLv1Token",
+                    "WSP attributes \n" +  wspAttrMap);            
+            
+            URL cmdUrl = new URL(stswscvalidationURL);            
+            HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);            
+            HtmlForm form = (HtmlForm) page.getForms().get(0);            
+            HtmlTextInput txtagentname = (HtmlTextInput) form.
+                    getInputByName("providerName");
+            txtagentname.setValueAttribute("wsc");
+            
+            HtmlPage returnPage = (HtmlPage) form.submit();
+            log(Level.FINEST, "testSTSwscSAMLv1Token",
+                    " Page after login\n" +
+                    returnPage.getWebResponse().getContentAsString());
+            int iIdx = getHtmlPageStringIndex(returnPage, expResult);
+            assert (iIdx != -1);
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSTSwscSAMLv1Token", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            Reporter.log("Test Description: Verifying the WSC token " +
+                    "(of type SAMLv1)from STS  which can be presented to " +
+                    "  the WSP for authentication purposes ");            
+        }
+        exiting("testSTSwscSAMLv1Token");
     }
     
     /**
