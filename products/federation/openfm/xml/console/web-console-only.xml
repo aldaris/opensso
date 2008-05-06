@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web-console-only.xml,v 1.1 2007-12-15 08:06:00 qcheng Exp $
+   $Id: web-console-only.xml,v 1.2 2008-05-06 19:02:11 qcheng Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,16 @@
         <filter-name>clientConfiguratorFilter</filter-name>
         <filter-class>com.sun.identity.setup.ClientConfiguratorFilter</filter-class>
     </filter>
+    <servlet>
+        <servlet-name>notificationservice</servlet-name>
+        <description>notificationservice</description>
+        <servlet-class>com.iplanet.services.comm.client.PLLNotificationServlet</servlet-class>
+    </servlet>
     <filter-mapping>
         <filter-name>clientConfiguratorFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    <servlet-mapping>
+        <servlet-name>notificationservice</servlet-name>
+        <url-pattern>/notificationservice</url-pattern>
+    </servlet-mapping>
