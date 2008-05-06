@@ -104,6 +104,10 @@
                         <property name="minLen" value="1"/>
                         <property name="maxLen" value="256"/>
                     </validation>
+                    <validation name="VALIDATE_AGENT_PASSWORD">
+                        <class name="PasswordValidator" type="system"/>
+                        <property name="AGENT_PROFILE_LOOKUP_KEY" value="AGENT_PROFILE_NAME"/>
+                    </validation>
                 </validations>
                 <value-normalizer>
                     <class name="PathNormalizer" type="system"/>
@@ -281,6 +285,83 @@
                         <property name="minLen" value="1"/>
                         <property name="maxLen" value="256"/>
                     </validation>
+                    <validation name="VALIDATE_AGENT_PASSWORD">
+                        <class name="PasswordValidator" type="system"/>
+                        <property name="AGENT_PROFILE_LOOKUP_KEY" value="AGENT_PROFILE_NAME"/>
+                    </validation>
+                </validations>
+                <value-normalizer>
+                    <class name="PathNormalizer" type="system"/>
+                </value-normalizer>
+            </interaction>
+            <interaction lookupkey="CREATE_AGENT_PROFILE_NAME" 
+                         persistent="false">
+                <skipIf key="CREATE_AGENT_PROFILE_KEY" ignorecase="true">
+                    <value>false</value>
+                </skipIf>
+                <i18n key="INT_CREATE_AGENT_PROFILE_NAME" 
+                      group="amToolsMessages"/>
+                <default-value-finder>
+                    <class name="StaticDefaultValueFinder" type="system"/>
+                    <static value="false"/>
+                </default-value-finder>
+                <validations>
+                    <validation name="VALID_CHOICE">
+                        <class name="ChoiceValidator" type="system"/>
+                        <property name="value1" value="true"/>
+                        <property name="value2" value="false"/>
+                        <property name="ignorecase" value="true"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_PROFILE_TYPE" persistent="false">
+                <skipIf key="CREATE_AGENT_PROFILE_NAME" ignorecase="true">
+                    <value>false</value>
+                </skipIf>
+                <i18n key="INT_AGENT_PROFILE_TYPE" group="amToolsMessages"/>
+                <validations>
+                    <validation name="VALID_CHOICE">
+                        <class name="ChoiceValidator" type="system"/>
+                        <property name="value1" value="J2EEAgent"/>
+                        <property name="value2" value="WEBAgent"/>
+                        <property name="ignorecase" value="false"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_ADMINISTRATOR_NAME" 
+                         persistent="false">
+                <skipIf key="CREATE_AGENT_PROFILE_NAME" ignorecase="true">
+                    <value>false</value>
+                </skipIf>
+                <i18n key="INT_AGENT_ADMINISTRATOR_NAME" 
+                      group="amToolsMessages"/>
+                <validations>
+                    <validation name="VALID_STRING">
+                        <class name="StringValidator" type="system"/>
+                    </validation>
+                </validations>
+            </interaction>
+            <interaction lookupkey="AGENT_ADMINISTRATOR_PASSWORD_FILE" persistent="false">
+                <skipIf key="CREATE_AGENT_PROFILE_NAME" ignorecase="true">
+                    <value>false</value>
+                </skipIf>
+                <i18n key="INT_AGENT_ADMINISTRATOR_PASSWORD_FILE" group="amToolsMessages"/>
+                <validations>
+                    <validation name="FILE_VALID">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="FILE_READABLE">
+                        <class name="FileSystemValidator" type="system"/>
+                    </validation>
+                    <validation name="VALID_PASSWORD">
+                        <class name="PasswordValidator" type="system"/>
+                        <property name="minLen" value="1"/>
+                        <property name="maxLen" value="256"/>
+                    </validation>
+                    <validation name="VALIDATE_AGENT_PASSWORD">
+                        <class name="PasswordValidator" type="system"/>
+                        <property name="AGENT_PROFILE_LOOKUP_KEY" value="AGENT_ADMINISTRATOR_NAME"/>
+                    </validation>
                 </validations>
                 <value-normalizer>
                     <class name="PathNormalizer" type="system"/>
@@ -330,6 +411,9 @@
             </task>
             <task name="CONFIGURE_WEBLOGIC_PROPERTIES">
                 <class name="ConfigureWeblogicProperties" type="custom"/>
+            </task>
+            <task name="CREATE_AGENT_PROFILE">                      
+            	<class name="CreateProfileTask" type="system"/>
             </task>
         </instance-tasks>
     </custom-install>
