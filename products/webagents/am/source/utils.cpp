@@ -183,6 +183,7 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
             char *p2 = NULL;  char *s2 = NULL;
             int count = 0; int match_position = 0;
             int char_match = 0; int match_count = 0; 
+	    int query_count = 0;
                         
             string matchbegin(s1);
             
@@ -196,22 +197,29 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
                 if (pos == matchbegin.length() - 1) {
                     matchbegin.erase(matchbegin.length() -1);
                 }
-                // the string is ending with -*-
+                // Check whether the pattern has a "?", need to 
+                // exclude "?" from the matchbegin
+                for (int j = 0, query_index; 
+	              (query_index = matchbegin.find('?',j)) != string::npos;
+		      j = query_index + 1) {
+                         query_count++;
+                }
+                // the pattern is ending with -*-
                 for (int i = 0, match_index; 
 	              (match_index = matchbegin.find('/',i)) != string::npos;
 		      i = match_index + 1) {
                          match_count++;
-                }                
-                if (match_count > 1)  {
+                }
+                if ((query_count == 1) || ( match_count > 1))  {
                     return AM_NO_MATCH;
 	        } else {
                     return AM_EXACT_PATTERN_MATCH;
 	        }
             }
             
-            p2 = (char *) malloc(strlen(s1));
+            p2 = (char *) malloc(strlen(s1)+1);
             if (p2 != NULL) {
-                memset(p2, '\0', strlen(s1));
+                memset(p2, '\0', strlen(s1)+1);
                 // Find either the first pattern or end of the string
                 // p2 will have a substring which is in between the patterns
                 // if it exists or till the p1 is null
@@ -221,9 +229,9 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
                 }
                 
                 string patbegin(p2);
-                s2 = (char *) malloc(strlen(s1));
+                s2 = (char *) malloc(strlen(s1)+1);
                 if (s2 != NULL) {
-                    memset(s2, '\0', strlen(s1));
+                    memset(s2, '\0', strlen(s1)+1);
                     // Try to find the substring in the matchbegin, get the
                     // match position (position where the substring begins)
                     match_position = matchbegin.find(patbegin,0);
@@ -332,8 +340,79 @@ Utils::getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &element,
 
 am_resource_match_t
 compare_sub_pat(const char *r1, const char *r2,
-		const am_resource_traits_t *traits) {
+		const am_resource_traits_t *traits,bool fwdcmp) {
     am_resource_match_t result;
+    
+    if (r1 != NULL && r2 != NULL) {
+        string r1_str(r1);
+        string r2_str(r2);
+        string::size_type r1_loc = r1_str.find("?",0);
+        string::size_type r2_loc = r2_str.find("?",0);
+    
+        // First thing to check is whether r1 or r2 have a "?" in it.
+        // This requires extra pattern matchin. If neither one of them have it
+        // we can ignore the below check and continue as before.
+        if ((r1_loc != string::npos) || (r2_loc != string::npos)) {
+            // We have a "?" in either the pattern or the match_string
+            // Need to parse them and see whether they are matching or 
+            // not
+            if ((r1_loc != string::npos) && (r2_loc == string::npos) ||
+                (r1_loc == string::npos) && (r2_loc != string::npos)) {
+                // Either one of them does not have a "?", it is a no match
+                return AM_NO_MATCH;
+            }
+            // We have a "?" in both the pattern and the match string,
+            // continue further. The algorithm is to strtok the pattern and
+            // the match string at "?" and this each of the pattern tokens and
+            // match tokens to the match_patterns algorithm. 
+            char *tmp_r1 = NULL;
+            char *tmp_r2 = NULL;
+            char *pattern = NULL;            
+            char *match_str = NULL;
+            char *pattern_holder = NULL;
+            char *match_str_holder = NULL;
+        
+            tmp_r1 = strdup(r1);
+            if (tmp_r1 != NULL) {                
+                tmp_r2 = strdup(r2);
+                if (tmp_r2 != NULL) {                                        
+                    result = AM_EXACT_PATTERN_MATCH;                    
+                    pattern = strtok_r(tmp_r1, "?", &pattern_holder);
+                    match_str = strtok_r(tmp_r2, "?", &match_str_holder);
+                    
+                    while (pattern != NULL && match_str != NULL && 
+                            result == AM_EXACT_PATTERN_MATCH) {            
+                        result = match_patterns(pattern, match_str,
+                                         B_TRUE==traits->ignore_case,false,
+                                         traits->separator);            
+                        if (result == AM_NO_MATCH) {
+                            // No need to continue further as the 
+                            // pattern match has failed.
+                             continue;
+                        }
+                        pattern = strtok_r(NULL, "?", &pattern_holder);
+                        match_str = strtok_r(NULL, "?", &match_str_holder);
+                        if ((pattern != NULL && match_str == NULL) ||
+                            (pattern == NULL && match_str != NULL)) {
+                            result =  AM_NO_MATCH;
+                        }
+                    }
+                    if (tmp_r1 != NULL)
+                        free(tmp_r1);
+                    if (tmp_r2 != NULL)
+                        free(tmp_r2);
+                } else {
+                    if (tmp_r1 != NULL)
+                        free(tmp_r1);
+                    result = AM_NO_MATCH;
+                }
+          } else {
+              result = AM_NO_MATCH;
+          }
+        return result;
+      }
+    }
+    
     if((result = match_patterns(r1, r2,
 				B_TRUE==traits->ignore_case,false,
                                 traits->separator)) != AM_NO_MATCH)
@@ -433,7 +512,7 @@ am_resource_match_t
 compare_pat(const char *r1, const char *r2,
 	    const am_resource_traits_t *traits, bool fwdcmp) {
     // Check for sub || exact match.
-    am_resource_match_t resMatch = compare_sub_pat(r1, r2, traits);
+    am_resource_match_t resMatch = compare_sub_pat(r1, r2, traits, fwdcmp);
     if(resMatch != AM_NO_MATCH)
 	return resMatch;
 
