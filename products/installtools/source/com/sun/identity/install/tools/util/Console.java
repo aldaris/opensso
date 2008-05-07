@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Console.java,v 1.1 2006-09-28 07:37:56 rarcot Exp $
+ * $Id: Console.java,v 1.2 2008-05-07 23:25:38 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,13 @@ import java.util.StringTokenizer;
 
 public class Console {
 
-    public static final void pause() {
+    public static final String pause() {
         println();
         println(LocalizedMessage.get(MSG_PAUSE_PROMPT));
-        readLine();
+        String result = readLine();
+        return result;
     }
-
+    
     public static final void printlnRawText(String text) {
         System.out.println(text);
     }

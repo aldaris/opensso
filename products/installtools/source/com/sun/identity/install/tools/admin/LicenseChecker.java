@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LicenseChecker.java,v 1.1 2006-09-28 07:37:18 rarcot Exp $
+ * $Id: LicenseChecker.java,v 1.2 2008-05-07 23:25:38 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,9 +51,10 @@ public class LicenseChecker {
             LocalizedMessage licenseHeader = LocalizedMessage
                     .get(MSG_LICENSE_HEADER);
             Console.println(licenseHeader);
-            Console.pause();
-
-            displayLicense();
+            String result = Console.pause();
+            if (result != null && !result.equalsIgnoreCase("n")) {
+                displayLicense();
+            }
             Console.println();
             LocalizedMessage licensePrompt = LocalizedMessage
                     .get(MSG_LICENSE_PROMPT);
@@ -245,9 +246,13 @@ public class LicenseChecker {
             reader = new BufferedReader(new FileReader(getLicenseFile()));
             String nextLine = null;
             int index = 0;
+            String result = null;
             while ((nextLine = reader.readLine()) != null) {
                 if (index == 15) {
-                    Console.pause();
+                    result = Console.pause();
+                    if (result != null && result.equalsIgnoreCase("n")) {
+                        break;
+                    }
                     index = 0;
                 }
                 Console.printlnRawText(nextLine);
