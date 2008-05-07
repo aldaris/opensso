@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedURIHelper.java,v 1.1 2006-09-28 23:25:36 huacui Exp $
+ * $Id: NotenforcedURIHelper.java,v 1.2 2008-05-07 06:30:24 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,8 @@ import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Module;
 import com.sun.identity.agents.arch.SurrogateBase;
 import com.sun.identity.agents.util.AgentCache;
-
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * The class manages the not enforced URIs
@@ -85,7 +86,35 @@ public class NotenforcedURIHelper extends SurrogateBase
     public boolean isActive() {
         return _isActive;
     }
-    
+  
+    // check if the request is for an access denied page 
+    private boolean isAccessDeniedRequest(String requestURI, 
+                                          String accessDeniedURI) {
+        boolean result = false;
+        if (requestURI != null) {
+            if (requestURI.startsWith(STR_HTTP)) {
+                try {
+                    // The requestURI is a URL, so get its URI part and compare
+                    URL requestURL = new URL(requestURI);
+                    requestURI = requestURL.getPath();
+                } catch (MalformedURLException me) {
+                    logError("NotenforcedURIHelper.isAccessDeniedRequest: " +
+                             "invalid URL: " + requestURI, me);
+                    return false;
+                }
+            }
+            result = requestURI.equals(accessDeniedURI);
+            if(isLogMessageEnabled()) {
+                logMessage("NotenforcedURIHelper.isAccessDeniedRequest: "
+                           + "requestURI is " + requestURI
+                           + "; accessDeniedURI is " + accessDeniedURI
+                           + "; result is " + result);
+            }
+
+        }
+        return result;
+    }
+
     public boolean isNotEnforced (String requestURI) {
         boolean result = false;
         String  enforcedCacheEntry  = getEnforcedCacheEntry(requestURI);
@@ -105,7 +134,8 @@ public class NotenforcedURIHelper extends SurrogateBase
             }
         } else {    //there is no match in cache
             String accessDeniedURI = getAccessDeniedURI();
-            if((accessDeniedURI != null) && accessDeniedURI.equals(requestURI))
+            if ((accessDeniedURI != null) 
+               && isAccessDeniedRequest(requestURI, accessDeniedURI))
             {
                 result = true;
                 if(isLogMessageEnabled()) {
@@ -236,4 +266,5 @@ public class NotenforcedURIHelper extends SurrogateBase
     private AgentCache _notenforcedURICache;
     private AgentCache _enforcedURICache;
     private IPatternMatcher _matcher;
+    public static String STR_HTTP = "http";
 }
