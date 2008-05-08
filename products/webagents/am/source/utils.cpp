@@ -603,7 +603,7 @@ Utils::compare(const char *pat, const char *resName,
 	return AM_EXACT_MATCH;
 
     if(usePatterns)
-	while(*r1 != '\0' && *r1 != '-' && *r1 != '*') r1++;
+	while(*r1 != '\0' && *r1 != '*') r1++;
 
     /* Has patterns? */
     if(usePatterns && *r1 != '\0') {
