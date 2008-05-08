@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationSSOTokenProvider.java,v 1.1 2006-09-28 23:24:09 huacui Exp $
+ * $Id: ApplicationSSOTokenProvider.java,v 1.2 2008-05-08 03:50:12 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,12 +48,12 @@ public class ApplicationSSOTokenProvider extends SurrogateBase
     }
     
     public void initialize() {
-        //Nothing to initialize
+        //Nothing to initialize       
     }
     
     public SSOToken getApplicationSSOToken() throws AgentException {
         SSOToken result = null;
-        try {
+        try {         
             AuthContext authContext = 
                 new AuthContext(AgentConfiguration.getOrganizationName());
             authContext.login(AuthContext.IndexType.MODULE_INSTANCE,

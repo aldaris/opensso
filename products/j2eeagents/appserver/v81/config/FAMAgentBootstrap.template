@@ -95,4 +95,12 @@ com.iplanet.services.debug.directory=@DEBUG_LOGS_DIR@
 #
 com.sun.identity.agents.config.local.logfile = @AUDIT_LOGS_DIR@/@AUDIT_LOG_FILENAME@
 
+#
+# ORGANIZATION NAME
+#   Specifies the organization or realm name to be used for authenticating
+#   the Agent during runtime. The default value "/" identifies the root
+#   organization or realm.
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.organization.name = /
 

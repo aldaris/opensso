@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.22 2008-04-02 19:23:32 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.23 2008-05-08 03:50:10 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,9 +124,8 @@ public class AgentConfiguration implements
     private static final String ATTRIBUTE_SERVICE_NAME = "idsvcs-rest";
     private static final String AGENT_CONFIG_CENTRALIZED = "centralized";
     private static final String AGENT_CONFIG_LOCAL = "local";
-    public static final String ROOT_REALM_NAME = "/";
     /**name of the .version file for an agent **/
-    public static final String AGENT_VERSION_FILE_NAME = ".version";
+    private static final String AGENT_VERSION_FILE_NAME = ".version";
     
     
    /**
@@ -161,7 +160,7 @@ public class AgentConfiguration implements
     * @return the organization or realm name to which the Agent profile belongs.
     */
     public static String getOrganizationName() {
-        return ROOT_REALM_NAME;
+        return _organizationName;
     }    
     
    /**
@@ -579,18 +578,18 @@ public class AgentConfiguration implements
     }
     /**
      * Collect all configuration info. Store all config properties, including 
-     * FAMAgentBootstrap.properties bootstrap small set of props and also agent config
-     * props (from fam server or if local config file 
+     * FAMAgentBootstrap.properties bootstrap small set of props and also agent
+     *  config props (from fam server or if local config file 
      * FAMAgentConfiguration.properties) and store ALL the properties in a 
      * class field for later use, plus set a few fields on this class for some
      * props that are used throughout agent code and accessed from this class.
      * Also, for any clientsdk properties, push them into the JVM system 
      * properties so they can be accessed by clientsdk.
      * All non-system properties start with AGENT_CONFIG_PREFIX and this is how
-     * we distinguish between agent properties and cleintsdk properties.
+     * we distinguish between agent properties and clientsdk properties.
      * Note, a few clientsdk props (like notification url and notification
      * enable flags) are ALSO stored by this class in fields since
-     * they are also use throughout agent code as well as by cleintsdk.
+     * they are also use throughout agent code as well as by clientsdk.
      */   
     private static synchronized void bootStrapClientConfiguration() {
         if (!isInitialized()) {
@@ -631,6 +630,7 @@ public class AgentConfiguration implements
                 // instantiate the instance of DebugPropertiesObserver
                 debugObserver = DebugPropertiesObserver.getInstance();
                 setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
+                setOrganizationName();
                 setServiceResolver();
                 setApplicationUser();
                 setApplicationPassword();
@@ -784,6 +784,29 @@ public class AgentConfiguration implements
                         + serviceResolverClassName + ": "
                         + ex.getMessage());
                 }
+        }
+    }
+    
+    private static synchronized void setOrganizationName() {
+        if (!isInitialized()) {
+            _organizationName = getProperty(CONFIG_ORG_NAME);   
+            if (_organizationName == null || 
+                                  _organizationName.trim().length() == 0) {
+                _organizationName =  DEFAULT_ORG_NAME;
+                if (isLogMessageEnabled()) {
+                      logMessage("AgentConfiguration.setOrganizationName:"
+                              + " organization name for realm is not set in the"
+                              + " agent bootstrap file, so using the default"
+                              + " root realm = "
+                              + _organizationName);
+                }
+            } else {        
+                if (isLogMessageEnabled()) {
+                    logMessage("AgentConfiguration.setOrganizationName:"
+                            + " organization name for realm is set to: "
+                            + _organizationName); 
+                }
+            }
         }
     }
     
@@ -1369,6 +1392,7 @@ public class AgentConfiguration implements
     private static long _lastLoadTime = 0L;
     private static Vector _moduleConfigListeners = new Vector();
     private static ServiceResolver _serviceResolver;
+    private static String _organizationName = DEFAULT_ORG_NAME;
     private static UserMappingMode _userMappingMode = 
         UserMappingMode.MODE_USER_ID;
     private static String _userAttributeName;

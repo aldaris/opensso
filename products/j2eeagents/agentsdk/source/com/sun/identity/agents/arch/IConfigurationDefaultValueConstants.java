@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationDefaultValueConstants.java,v 1.2 2008-01-16 00:55:50 sean_brydon Exp $
+ * $Id: IConfigurationDefaultValueConstants.java,v 1.3 2008-05-08 03:50:11 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,8 +44,7 @@ public interface IConfigurationDefaultValueConstants {
     */
     public static final String DEFAULT_USER_MAPPING_MODE =
         UserMappingMode.STR_MODE_USER_ID;
-    
-    
+       
    /**
     * Default User-Id property name.
     */
@@ -60,5 +59,10 @@ public interface IConfigurationDefaultValueConstants {
     * Default use-DN flag value.
     */
     public static final String DEFAULT_USE_DN = "false";
+    
+    /**
+     * Deafult organization name is the root realm name
+     */
+    public static final String DEFAULT_ORG_NAME = "/";
     
 }
