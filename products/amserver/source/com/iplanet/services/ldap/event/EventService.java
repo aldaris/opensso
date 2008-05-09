@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.9 2008-04-25 22:27:20 ww203982 Exp $
+ * $Id: EventService.java,v 1.10 2008-05-09 20:16:57 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import netscape.ldap.LDAPConnection;
@@ -67,8 +68,12 @@ import com.iplanet.sso.providers.dpro.SSOProviderBundle;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.SMSException;
 
 /**
  * Event Service monitors changes on the server. Implemented with the persistant
@@ -245,10 +250,8 @@ public class EventService implements Runnable {
                 listeners[2] = null;
                     disableSM = true;
             } else {
-                if (debugger.messageEnabled()) {
-                    debugger.message("EventService.getListenerList() - " +
-                            "Invalid listener name: "+listener);
-                }
+                debugger.error("EventService.getListenerList() - " +
+                    "Invalid listener name: "+listener);
             }
         }
 
@@ -346,7 +349,36 @@ public class EventService implements Runnable {
         
         LDAPConnection lc = null;
         try {
-            lc = cm.getNewAdminConnection();
+            ServiceSchemaManager scm = new ServiceSchemaManager(token,
+                IdConstants.REPO_SERVICE, "1.0");
+            ServiceSchema idRepoSubSchema = scm.getOrganizationSchema();
+            Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
+
+            // This amSDK plugin check is to avoid getting
+            // connection and initiate these two listeners if amSDK plugin
+            // is not loaded.
+            // "com.iplanet.am.sdk.ldap.ACIEventListener" and
+            // "com.iplanet.am.sdk.ldap.EntryEventListener"
+
+            // Check for SMS listener and use "sms" group if present
+            if ((listener.getClass().getName().equals(
+                "com.sun.identity.sm.ldap.LDAPEventManager")) &&
+                (cm.getServerGroup("sms") != null)) {
+                    lc = cm.getNewConnection("sms", LDAPUser.Type.AUTH_ADMIN);
+
+            } else if (idRepoPlugins.contains("amSDK")) {
+                // if amSDK plugin exists, use admin connection from 'default'
+                // servergroup for all um,aci,sm listeners.
+                lc = cm.getNewAdminConnection();
+            } else {
+                return "0";
+            }
+        } catch (SSOException ssoe) {
+            throw new EventException(i18n
+                    .getString(IUMSConstants.DSCFG_CONNECTFAIL), ssoe);
+        } catch (SMSException smse) {
+            throw new EventException(i18n
+                    .getString(IUMSConstants.DSCFG_CONNECTFAIL), smse);
         } catch (LDAPServiceException le) {
             throw new EventException(i18n
                     .getString(IUMSConstants.DSCFG_CONNECTFAIL), le);
