@@ -337,36 +337,47 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 
 void NamingService::addLoadBalancerCookie(NamingInfo& namingInfo, 
 					  Http::CookieList& cookieList)
-{
-    char tmplbCookie[25] = {'\0'};
+{    
     int i = 0;
     char *pch = NULL; char *cookieName = NULL;
-    char *cookieValue = NULL;
+    char *cookieValue = NULL; char *tmplbCookie = NULL;
+    char *lbcookie_holder = NULL; 
     const std::string lbCookieStr = namingInfo.getlbCookieStr();
     if (!lbCookieStr.empty()) {
-        strcpy(tmplbCookie, lbCookieStr.c_str());
-        pch = strtok(tmplbCookie,"=");
-        while (pch != NULL) {
-            if (i == 0) cookieName = pch;
-            else cookieValue = pch;
-            pch = strtok(NULL, " ");
-            i++;
-        }
-        std::string tmpCookieName(cookieName);
-        std::string tmpCookieValue(cookieValue);
+        tmplbCookie = (char *)malloc(lbCookieStr.size()+1);
+	if (tmplbCookie != NULL) {
+            memset(tmplbCookie,'\0',lbCookieStr.size()+1);
+            strcpy(tmplbCookie, lbCookieStr.c_str());
+            pch = strtok_r(tmplbCookie,"=", &lbcookie_holder);
+            while (pch != NULL) {
+                if (i == 0) cookieName = pch;
+                else cookieValue = pch;
+                pch = strtok_r(NULL, "=", &lbcookie_holder);
+                i++;
+            }
+            free(tmplbCookie);
+
+            std::string tmpCookieName(cookieName);
+            std::string tmpCookieValue(cookieValue);
     
-        if (!tmpCookieName.empty() && !tmpCookieValue.empty()) {
-            namingInfo.lbCookieName = tmpCookieName;
-            namingInfo.lbCookieValue = tmpCookieValue;
+            if (!tmpCookieName.empty() && !tmpCookieValue.empty()) {
+                namingInfo.lbCookieName = tmpCookieName;
+                namingInfo.lbCookieValue = tmpCookieValue;
     
-            Http::Cookie lbCookie(namingInfo.lbCookieName, 
-                                  namingInfo.lbCookieValue);
-            cookieList.push_back(lbCookie);
-        }
+                Http::Cookie lbCookie(namingInfo.lbCookieName, 
+                                      namingInfo.lbCookieValue);
+                cookieList.push_back(lbCookie);
+            }
+        } else {
+            Log::log(logModule, Log::LOG_ERROR,
+                     "NamingService::addLoadBalancerCookie() - Unable "
+		     "to allocate memory for tmplbCookie");
+	}
     }
-     
+
     return;
 }
+
 am_status_t NamingService::check_server_alive(std::string hostname, unsigned short portnumber)
 {
     am_status_t status = AM_FAILURE;
