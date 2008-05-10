@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.15 2008-05-10 03:59:30 veiming Exp $
+ * $Id: Wizard.java,v 1.16 2008-05-10 04:20:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -158,10 +158,11 @@ public class Wizard extends AjaxPage {
 
                 
         // user store repository
-        tmp = (String)getContext().getSessionAttribute(
-            SetupConstants.USER_STORE_HOST);        
-        if (tmp != null) {                       
+        tmp = (String)getContext().getSessionAttribute("EXT_DATA_STORE");
+        if (tmp.equals("true")) {                       
             Map store = new HashMap(12);  
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_HOST);        
             store.put(SetupConstants.USER_STORE_HOST, tmp);
 
             tmp = (String)getContext().getSessionAttribute(

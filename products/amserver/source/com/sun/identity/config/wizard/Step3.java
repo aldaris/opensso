@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.12 2008-05-10 03:59:30 veiming Exp $
+ * $Id: Step3.java,v 1.13 2008-05-10 04:20:29 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,7 @@ public class Step3 extends LDAPStoreWizardPage {
     }
     
     public void onInit() {
-        String val = getAttribute("rootSuffix", Wizard.defaultRootSuffix);        
+        String val = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
         addModel("rootSuffix", val);
 
         val = getAttribute("encryptionKey", AMSetupServlet.getRandomString());
@@ -82,6 +82,14 @@ public class Step3 extends LDAPStoreWizardPage {
             SetupConstants.SMS_EMBED_DATASTORE);
         addModel(SetupConstants.CONFIG_VAR_DATA_STORE, val);
 
+        if (val.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+            addModel("selectEmbedded", "checked=\"checked\"");
+            addModel("selectExternal", "");
+        } else {
+            addModel("selectEmbedded", "");
+            addModel("selectExternal", "checked=\"checked\"");
+        }
+
         val = getAttribute("configStoreHost", "localhost");
         addModel("configStoreHost", val);
 
@@ -91,7 +99,7 @@ public class Step3 extends LDAPStoreWizardPage {
         val = getAttribute("configStoreLoginId", Wizard.defaultUserName);
         addModel("configStoreLoginId", val);
 
-        super.onInit();        
+        super.onInit();
     }       
 
     public boolean setConfigType() {
@@ -111,7 +119,6 @@ public class Step3 extends LDAPStoreWizardPage {
         if (type.equals("enable")) {
             type = SetupConstants.DS_EMP_REPL_FLAG_VAL;
         } 
-
         getContext().setSessionAttribute(
             SetupConstants.DS_EMB_REPL_FLAG, type);
         return true;
@@ -172,7 +179,8 @@ public class Step3 extends LDAPStoreWizardPage {
         
         if (hostName == null) {            
             addObject(sb, "code", "100");
-            addObject(sb, "message", getLocalizedString("missing.required.field"));
+            addObject(sb, "message",
+                getLocalizedString("missing.required.field"));
         } else {
             // try to retrieve the remote FAM information
             String admin = "amadmin";
@@ -192,83 +200,79 @@ public class Step3 extends LDAPStoreWizardPage {
                     setupDSParams(data);
                     
                     String key = (String)data.get("enckey");
-                    getContext().setSessionAttribute("encryptionKey",key);                   
+                    getContext().setSessionAttribute("encryptionKey",key);
                     
                     // true for embedded, false for sunds
                     String embedded = 
                         (String)data.get(BootstrapData.DS_ISEMBEDDED);
-                    addObject(sb, "embedded", embedded);                                                            
-                    
-                        // set the multi embedded flag 
-                        getContext().setSessionAttribute(
-                            SetupConstants.CONFIG_VAR_DATA_STORE, 
-                            SetupConstants.SMS_EMBED_DATASTORE); 
+                    addObject(sb, "embedded", embedded);
+
+                    // set the multi embedded flag 
+                    getContext().setSessionAttribute(
+                        SetupConstants.CONFIG_VAR_DATA_STORE, 
+                        SetupConstants.SMS_EMBED_DATASTORE); 
                        
+                    getContext().setSessionAttribute(
+                        SetupConstants.DS_EMB_REPL_FLAG,
+                        SetupConstants.DS_EMP_REPL_FLAG_VAL); 
+                        
+                    if (embedded.equals("true")) {
+                        // get the existing replication ports if any
+                        String replAvailable = (String)data.get(
+                            BootstrapData.DS_REPLICATIONPORT_AVAILABLE);
+                        if (replAvailable == null) {
+                            replAvailable = "false";
+                        }
+                        addObject(sb, "replication", replAvailable);
+                        String existingRep = (String)data.get(
+                            BootstrapData.DS_REPLICATIONPORT);
                         getContext().setSessionAttribute(
-                            SetupConstants.DS_EMB_REPL_FLAG,
-                            SetupConstants.DS_EMP_REPL_FLAG_VAL); 
-                        
-                        if (embedded.equals("true")) {      
-                   
-                             // get the existing replication ports if any
-                             String replAvailable = (String)data.get(
-                               BootstrapData.DS_REPLICATIONPORT_AVAILABLE);
-                              if (replAvailable == null) {
-                                 replAvailable = "false";
-                              }
-                              addObject(sb, "replication", replAvailable);        
-                              
-                              String existingRep = (String)data.get(BootstrapData.DS_REPLICATIONPORT);
-                              getContext().setSessionAttribute(
-                                "existingRepPort", existingRep);
-                              addObject(sb, "replicationPort", existingRep);                              
-                        
-                            // set the replication ports pulled from the remote
-                            // server in the session and pass back to the client
-                            String existing = (String)data.get(BootstrapData.DS_PORT);
-                            getContext().setSessionAttribute(
-                                "existingPort", existing);
-                            addObject(sb, "existingPort", existing);
+                            "existingRepPort", existingRep);
+                        addObject(sb, "replicationPort", existingRep);
 
-                            // set the configuration store port
-                            getContext().setSessionAttribute(
-                                "configStorePort", existing);   
-                             addObject(sb, "configStorePort", existing);                        
-                            // set the configuration store port
-                            getContext().setSessionAttribute(
-                                "existingStorePort", existing);   
-                             addObject(sb, "existingStorePort", existing);
+                        // set the replication ports pulled from the remote
+                        // server in the session and pass back to the client
+                        String existing = (String)data.get(
+                            BootstrapData.DS_PORT);
+                        getContext().setSessionAttribute(
+                            "existingPort", existing);
+                        addObject(sb, "existingPort", existing);
 
+                        // set the configuration store port
+                        getContext().setSessionAttribute(
+                            "configStorePort", existing);   
+                        addObject(sb, "configStorePort", existing);                        
+                        // set the configuration store port
+                        getContext().setSessionAttribute(
+                            "existingStorePort", existing);   
+                        addObject(sb, "existingStorePort", existing);
 
-                            String host = (String)data.get(BootstrapData.DS_HOST);
-                            getContext().setSessionAttribute(
-                                "existingHost",host);
+                        String host = (String)data.get(BootstrapData.DS_HOST);
+                        getContext().setSessionAttribute("existingHost",host);
 
-                            // set the configuration store host
-                            getContext().setSessionAttribute(
-                                "configStoreHost", host);   
-                             addObject(sb, "configStoreHost", host);
+                        // set the configuration store host
+                        getContext().setSessionAttribute(
+                            "configStoreHost", host);   
+                        addObject(sb, "configStoreHost", host);
 
-                             // set the configuration store host
-                            getContext().setSessionAttribute(
-                                "existingStoreHost", host);   
-                             addObject(sb, "existingStoreHost", host);
-                            // set the configuration store port
+                        // set the configuration store host
+                        getContext().setSessionAttribute(
+                            "existingStoreHost", host);   
+                        addObject(sb, "existingStoreHost", host);
 
-                            getContext().setSessionAttribute(
-                                "localRepPort", localRepPort);
+                        // set the configuration store port
+                        getContext().setSessionAttribute(
+                            "localRepPort", localRepPort);
 
-                            // dsmgr password is same as amadmin for embedded
-                            getContext().setSessionAttribute(
-                                "configStorePassword", password);
-                     } else {
-                            addObject(sb, "code", "100");
-                            addObject(sb, "message", getLocalizedString("invalid.port.number"));
-     
-                     }                                                              
+                        // dsmgr password is same as amadmin for embedded
+                        getContext().setSessionAttribute(
+                            "configStorePassword", password);
+                    } else {
+                        addObject(sb, "code", "100");
+                        addObject(sb, "message",
+                            getLocalizedString("invalid.port.number"));
+                     }
                 }
-     
-                
             } catch (ConfiguratorException c) {
                 String code = c.getErrorCode();
                 String message = getLocalizedString(code);

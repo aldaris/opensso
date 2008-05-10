@@ -1,9 +1,7 @@
 <script type="text/javascript">
 
-    var userStore = "embedded";
     var multiServer = "false";
     var validServerURL = "true";
-    var remoteDSHost = "localhost";
     
     function configStoreServerValidated( response ) {
         storeServerValidated( '$type', response );
@@ -26,32 +24,42 @@
     }
 
     function validatePort() {
+        $('nextTabButton').disabled = true;
 	field = "configStorePort";
 	if ($(field).value > 65535) {
 	    $(field+'Status').innerHTML = "Invalid Port Number";
 	    return;
 	}
+        setTimeout("enableNextButton()", 500);
 	validate();
     }
 
     function validateConfigStoreHost() {
+        $('nextTabButton').disabled = true;
 	field = "configStoreHost";
 	remoteDSHost = document.getElementById("configStoreHost").value;
+        setTimeout("enableNextButton()", 500);
  	validate();
     }
 
     function validateConfigStoreLoginId() {
+        $('nextTabButton').disabled = true;
 	field = "configStoreLoginId";
+        setTimeout("enableNextButton()", 500);
  	validate();
     }
 
     function validateConfigStorePassword() {
+        $('nextTabButton').disabled = true;
 	field = "configStorePassword";
+        setTimeout("enableNextButton()", 500);
  	validate();
     }
 
     function validateRootSuffix() {
+        $('nextTabButton').disabled = true;
 	field = "rootSuffix";
+        setTimeout("enableNextButton()", 500);
  	validate();
     }
 
@@ -82,7 +90,8 @@
             // error handling
             validServerURL = false;  
             image = errorImage;        
-            document.getElementById("replicationPorts").style.display = "none";                                  
+            document.getElementById("replicationPorts").style.display = "none";
+            $('nextTabButton').disabled = true;
         }
         $('existingHostStatus').innerHTML = image +
             '<small>' + resp.message + '</small>';
@@ -163,28 +172,57 @@
             document.getElementById("configStoreHost").value = "localhost";
         } else {
             document.getElementById("configStoreHost").disabled = false;
-            document.getElementById("configStoreHost").value = remoteDSHost;               
+            if (remoteDSHost == undefined) {
+                remoteDSHost = 'localhost';
+            }
+            document.getElementById("configStoreHost").value = remoteDSHost;
         }
     }
 
     function enableRemote() {
-	setExternalFieldsDisplay("");
-	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote");
         userStore = "external";
+        enableNextButton();
+	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote");
+	setExternalFieldsDisplay("");
     }
 
     function disableRemote() {
 	setExternalFieldsDisplay("none");
-	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded");
         userStore = "embedded";
+        enableNextButton();
+	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded");
     }
 
     function initConfig() {
-        setExternalFieldsDisplay("none");
-        document.getElementById("replicationPorts").style.display = "none";
-        if ( $usingCustomStore ) {
-            disableRemote('config');
+        if ("$DATA_STORE" == 'embedded') {
+            disableRemote();
+        } else {
+            enableRemote();
         }
+    }
+
+    function enableNextButton() {
+        if (userStore == "embedded") {
+            $('nextTabButton').disabled = 
+                !isFieldOK('configStoreHost') ||
+                !isFieldOK('configStorePort') ||
+                !isFieldOK('encryptionKey') ||
+                !isFieldOK('rootSuffix');
+        } else {
+            $('nextTabButton').disabled =
+                !isFieldOK('configStoreHost') ||
+                !isFieldOK('configStorePort') ||
+                !isFieldOK('encryptionKey') ||
+                !isFieldOK('rootSuffix') ||
+                !isFieldOK('configStoreLoginId') ||
+                !(isFieldOK('configStorePassword') &&
+                  document.getElementById('configStorePassword').value != '');
+        }
+    }
+
+    function isFieldOK(field) {
+        var x = $(field + 'Status').innerHTML; 
+        return (x == "") || (x == okString);
     }
 
     YAHOO.util.Event.onDOMReady(initConfig);
@@ -221,11 +259,11 @@
                         <td><label for="configStoreCustom">$page.getLocalizedString("existing.instance.label")</label></td>
                         <td>
                         <input type="radio" id="configStoreDefault" name="configStoreCustom" 
-                           style="margin-left:1em" value="false" checked="checked" 
+                           style="margin-left:1em" value="false" $selectEmbedded 
                            onclick="disableRemote();"/> 
                             $page.getLocalizedString("step3.embedded.option")
                         <input type="radio" id="configStoreCustom" name="configStoreCustom" 
-                           style="margin-left:1em" value="true" 
+                           style="margin-left:1em" value="true" $selectExternal
                            onclick="enableRemote();"/>
                             $page.getLocalizedString("step3.external.option")
                         </td>
@@ -303,7 +341,7 @@
                         <td><label for="existingHost"><em>*&nbsp;</em>$page.getLocalizedString("host.url.label")</label></td>
                         <td>
                             <input id="existingHost" name="existingHost" type="text" 
-                                   class="text" size="60" 
+                                   class="text" size="60"
                                    onkeyup="APP.callDelayed(this, validateHostName)"/>
                             <span id="existingHostStatus"></span>                        
                         </td>

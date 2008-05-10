@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.6 2008-04-22 20:56:25 veiming Exp $
+ * $Id: Step7.java,v 1.7 2008-05-10 04:20:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,15 +48,20 @@ public class Step7 extends AjaxPage {
         add("configStoreLoginId", tmp);
 
         // User Config Store Properties
-        tmp = (String)ctx.getSessionAttribute(SetupConstants.USER_STORE_HOST);
-        if (tmp != null) {
+        tmp = (String)ctx.getSessionAttribute("EXT_DATA_STORE");
+        if (tmp.equals("true")) {
+            tmp = (String)ctx.getSessionAttribute(
+                SetupConstants.USER_STORE_HOST);
             add("userHostName", tmp);
+
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_PORT);
             add("userHostPort", tmp);
+
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_ROOT_SUFFIX);        
             add("userRootSuffix", tmp);
+
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_LOGIN_ID);
             add("userLoginID", tmp);

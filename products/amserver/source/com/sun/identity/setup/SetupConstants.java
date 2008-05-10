@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.23 2008-05-10 03:59:31 veiming Exp $
+ * $Id: SetupConstants.java,v 1.24 2008-05-10 04:20:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -445,36 +445,36 @@ public interface SetupConstants {
     String DISABLE_PERSISTENT_SEARCH = "DISABLE_PERSISTENT_SEARCH";
 
     /**
-      * OpenDS Replication : Flag to indicate whether multi server sharing 
-      * needs configured.
-      */
-    final String DS_EMB_REPL_FLAG = "DS_EMB_REPL_FLAG";
+     * OpenDS Replication : Flag to indicate whether multi server sharing 
+     * needs configured.
+     */
+    String DS_EMB_REPL_FLAG = "DS_EMB_REPL_FLAG";
 
     /**
-      * Value of configurator checkbox representing 
-      * <code>DS_EMB_REPL_FLAG</code>
-      */
-    final String DS_EMP_REPL_FLAG_VAL = "embReplFlag";
+     * Value of configurator checkbox representing 
+     * <code>DS_EMB_REPL_FLAG</code>
+     */
+    String DS_EMP_REPL_FLAG_VAL = "embReplFlag";
 
     /**
-      * OpenDS Replication : local server  replication port.
-      */
-    final String DS_EMB_REPL_REPLPORT1 = "DS_EMB_REPL_REPLPORT1";
+     * OpenDS Replication : local server  replication port.
+     */
+    String DS_EMB_REPL_REPLPORT1 = "DS_EMB_REPL_REPLPORT1";
 
     /**
-      * OpenDS Replication : remote server replication port.
-      */
-    final String DS_EMB_REPL_REPLPORT2 = "DS_EMB_REPL_REPLPORT2";
+     * OpenDS Replication : remote server replication port.
+     */
+    String DS_EMB_REPL_REPLPORT2 = "DS_EMB_REPL_REPLPORT2";
 
     /**
-      * OpenDS Replication : remote server host.
-      */
-    final String DS_EMB_REPL_HOST2 = "DS_EMB_REPL_HOST2";
+     * OpenDS Replication : remote server host.
+     */
+    String DS_EMB_REPL_HOST2 = "DS_EMB_REPL_HOST2";
 
     /**
-      * OpenDS Replication : remote OpenDS server port.
-      */
-    final String DS_EMB_REPL_PORT2 = "DS_EMB_REPL_PORT2";
+     * OpenDS Replication : remote OpenDS server port.
+     */
+    String DS_EMB_REPL_PORT2 = "DS_EMB_REPL_PORT2";
     
     /**
      * Type of IDRepo entry to create for user data store.
