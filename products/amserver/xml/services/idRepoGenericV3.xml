@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+  
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+  
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+  
+   $Id: idRepoGenericV3.xml,v 1.1 2008-05-10 00:53:49 kenwho Exp $
+  
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+-->
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iplanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+  <Service name="sunIdentityRepositoryService" version="1.0">
+    <Configuration>
+      <OrganizationConfiguration name="@SM_CONFIG_ROOT_SUFFIX@">
+        <SubConfiguration name="generic ldapv3" id="LDAPv3">
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-ldap-server"/>
+            <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-authid"/>
+            <Value>@DS_DIRMGRDN@</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-authpw"/>
+            <Value>@DS_DIRMGRPASSWD@</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-organization_name"/>
+            <Value>@SM_CONFIG_ROOT_SUFFIX@</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sunIdRepoSupportedOperations"/>
+            <Value>realm=read,create,edit,delete,service</Value>
+            <Value>user=read,create,edit,delete,service</Value>
+            <Value>group=read,create,edit,delete</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-search-scope"/>
+            <Value>SCOPE_SUB</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-users-search-attribute"/>
+            <Value>uid</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-user-objectclass"/>
+            <Value>inetorgperson</Value>
+            <Value>organizationalPerson</Value>
+            <Value>person</Value>
+            <Value>top</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-user-attributes"/>
+            <Value>cn</Value>
+            <Value>employeenumber</Value>
+            <Value>givenname</Value>
+            <Value>mail</Value>
+            <Value>manager</Value>
+            <Value>memberOf</Value>
+            <Value>objectClass</Value>
+            <Value>postaladdress</Value>
+            <Value>preferredlanguage</Value>
+            <Value>sn</Value>
+            <Value>telephonenumber</Value>
+            <Value>uid</Value>
+            <Value>userpassword</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+            <Attribute name="sun-idrepo-ldapv3-config-group-objectclass"/>
+              <Value>groupofuniquenames</Value>
+              <Value>top</Value>
+              <Value>groupofurls</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-group-attributes"/>
+             <Value>cn</Value>
+             <Value>dn</Value>
+             <Value>memberURL</Value>
+             <Value>objectClass</Value>
+             <Value>uniqueMember</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-memberof"/>
+             <Value>memberOf</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-authenticatable-type"/>
+             <Value>User</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-auth-naming-attr"/>
+             <Value>uid</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-psearchbase"/>
+             <Value>@SM_CONFIG_ROOT_SUFFIX@</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-people-container-name"/>
+             <Value></Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-people-container-value"/>
+             <Value></Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-group-container-name"/>
+             <Value></Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-group-container-value"/>
+             <Value></Value>
+          </AttributeValuePair> 
+        </SubConfiguration>
+      </OrganizationConfiguration>
+    </Configuration>
+  </Service>
+</ServicesConfiguration>
