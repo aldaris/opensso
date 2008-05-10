@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.18 2008-05-06 19:02:10 qcheng Exp $
+   $Id: build-zip.xml,v 1.19 2008-05-10 01:00:28 kenwho Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -169,6 +169,7 @@
                 <include name="am_remote_opends_schema.ldif" />
                 <include name="am_remote_tivolids_schema.ldif" />
                 <include name="ds_remote_schema.ldif" />
+                <include name="ds_remote_s1ds_schema.ldif" />
                 <include name="index.ldif" />
                 <include name="plugin.ldif" />
                 <include name="sunone_schema2.ldif" />

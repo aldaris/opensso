@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.43 2008-04-02 20:13:12 bigfatrat Exp $
+   $Id: build.xml,v 1.44 2008-05-10 01:00:27 kenwho Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -191,6 +191,7 @@
                 <include name="am_sm_ds_schema.ldif" />
                 <include name="am_sm_ad_schema.ldif" />
                 <include name="ds_remote_schema.ldif" />
+                <include name="ds_remote_s1ds_schema.ldif" />
                 <include name="am_remote_opends_schema.ldif" />
                 <include name="index.ldif" />
                 <include name="install.ldif" />
