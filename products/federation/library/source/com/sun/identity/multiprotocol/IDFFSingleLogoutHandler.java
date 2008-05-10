@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSingleLogoutHandler.java,v 1.3 2007-10-16 21:50:20 exu Exp $
+ * $Id: IDFFSingleLogoutHandler.java,v 1.4 2008-05-10 05:22:59 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,7 +141,8 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
         }
         if (SingleLogoutManager.debug.messageEnabled()) {
             SingleLogoutManager.debug.message("IDFFSingleLogoutHandler: " +
-                "userID=" + userID + ", session=" + userSession + 
+                "IDFF idp meta alias=" + idpMetaAlias +
+                ", userID=" + userID + ", session=" + userSession + 
                 ", isSOAInitiated=" + isSOAPInitiated + ", isIDPInitiated=" +
                 isIDPInitiated + ", protocol=" + protocol + ", relam=" +
                 realm + ", idpEntityID=" + idpEntityID + ", spEntityID=" +
@@ -151,7 +152,7 @@ public class IDFFSingleLogoutHandler implements SingleLogoutHandler {
         }
         IDFFMetaManager idffManager = new IDFFMetaManager(null);
         String idpEntityId =  idffManager.getEntityIDByMetaAlias(idpMetaAlias);
-        if (!FSLogoutUtil.liveConnectionsExist(userID, idpEntityId)) {
+        if (!FSLogoutUtil.liveConnectionsExist(userID, idpMetaAlias)) {
             // no session for this protocol
             return SingleLogoutManager.LOGOUT_NO_ACTION_STATUS;
         }
