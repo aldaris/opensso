@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ConfigService.java,v 1.1 2008-05-02 21:46:27 weisun2 Exp $
+ * $Id: SAML2ConfigService.java,v 1.2 2008-05-10 05:26:23 qcheng Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,12 +104,14 @@ public class SAML2ConfigService implements ConfigurationListener {
                return;
             }
             attributes.clear();
-            Set values = (Set)attrMap.get(SAML2_FAILOVER_ATTR);
-            String value = "false" ; 
-            if ((values != null) && (values.size() == 1)) {
-                 value = (String) values.iterator().next(); 
-            } 
-            attributes.put(SAML2_FAILOVER_ATTR, value); 
+            if (attrMap != null) {
+                Set values = (Set)attrMap.get(SAML2_FAILOVER_ATTR);
+                String value = "false" ; 
+                if ((values != null) && (values.size() == 1)) {
+                     value = (String) values.iterator().next(); 
+                } 
+                attributes.put(SAML2_FAILOVER_ATTR, value); 
+            }
         }
     }
     

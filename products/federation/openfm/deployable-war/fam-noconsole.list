@@ -2094,8 +2094,7 @@
 ./saml2/jsp/SA_SP.jsp
 ./saml2/jsp/default.jsp
 ./saml2/jsp/exportmetadata.jsp
-./saml2/jsp/fedletAssertionConsumer.jsp
-./saml2/jsp/fedletDefault.jsp
+./saml2/jsp/fedletSampleApp.jsp
 ./saml2/jsp/fedletSSOInit.jsp
 ./saml2/jsp/idpArtifactResolution.jsp
 ./saml2/jsp/idpMNIPOST.jsp

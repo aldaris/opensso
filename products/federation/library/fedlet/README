@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2008-04-30 23:00:12 qcheng Exp $
+$Id: README,v 1.5 2008-05-10 05:26:22 qcheng Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
@@ -88,35 +88,49 @@ Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
 
 %% 4. How to integrate with existing application after Single Sign-on
-     After Fedlet completes SAMLv2 Single Sign-on, it will set the SAMLv2 
-     Response XML as value for attribute "SAMLResponse" and forward to
-     saml2/jsp/fedletDefault.jsp if no RelayState is specified. 
-     There are two ways you could integrate with your application after
-     Single Sign-on:
-     a) Customize saml2/jsp/fedletDefault.jsp to perform your business
-        specific logics. Right now, fedletDefault.jsp just display the
-        content of the Response/Assertion/Statements.
-     b) Modify the extended metadata of the Service Provider, set the
-        value of "intermediateUrl" attribute to a customer URL which resides
-        in the same web application and performs your business specific logics. 
-        For example:
-           <Attribute name="intermediateUrl">
-               <Value>/application/processing.jsp</Value>
-           </Attribute>
-        The Service Provider side assertion consumer service will forward
-        request to the configured URL with the SAMLv2 Response XML as value 
-        for attribute "SAMLResponse". The Response object could be obtained 
-        using following code in your processing servlet/jsp:
-          // Get the Response XML string
-          String respXML = (String)
-              request.getAttribute(SAML2Constants.SAML_RESPONSE);
-          if ((respXML != null) && (respXML.length() != 0)) {
-              // obtain the Response object
-              Response samlResp = ProtocolFactory.getInstance().createResponse(
-                  new String(Base64.decode(respXML)));
-          }
-        After obtaining the Response object, you could navigate through the
-        object to get Assertion, Authentication Statements, Attribute Statements
-        object (refer to saml2/jsp/fedletDefault.jsp for more details). 
-        You could add your own business logics, such as creating your 
-        application session, setting attributes, making authorization check etc.
+     There is a sample Fedlet application, fedletSampleApp.jsp, bundled 
+     with fedlet.war. The fedletSampleApp.jsp first invokes a util method 
+     to complete SAMLv2 protocol processing. A map containing various data, 
+     including Response/Assertion/Attributes, is returned to caller for further
+     processing. The fedletSampleApp.jsp also provides some sample code on 
+     how to retrieve data from the returned map. 
+     You could either modify fedletSampleApp.jsp to add your application
+     specific logic or replace fedletSampleApp.jsp with your own servlet/jsp.
+     To replace fedletSampleApp.jsp with new servlet/JSP:
+     1. Modify web.xml to set servlet and servlet-mapping for your new servlet
+        or JSP. You must map your new servlet/JSP to the url-pattern 
+        "/fedletapplication" since it is the URI set in the Fedlet metadata 
+        (the assertion consumer URL). For example:
+            <servlet>
+                <servlet-name>yourapplication</servlet-name>
+                <jsp-file>/Your-Application.jsp</jsp-file>
+            </servlet>
+            <servlet-mapping>
+                <servlet-name>yourapplication</servlet-name>
+                <url-pattern>/fedletapplication</url-pattern>
+            </servlet-mapping> 
+     2. Copy following code from fedletSampleApp.jsp to your
+        application processing code with proper import statement:
+Map map;
+try {
+    // invoke the Fedlet processing logic. this will do all the
+    // necessary processing conforming to SAMLv2 specifications,
+    // such as XML signature validation, Audience and Recipient
+    // validation etc.
+    map = SPACSUtils.processResponseForFedlet(request, response);
+} catch (SAML2Exception sme) {
+    response.sendError(response.SC_INTERNAL_SERVER_ERROR, sme.getMessage());
+    return;
+} catch (IOException ioe) {
+    response.sendError(response.SC_INTERNAL_SERVER_ERROR, ioe.getMessage());
+    return;
+} catch (SessionException se) {
+    response.sendError(response.SC_INTERNAL_SERVER_ERROR, se.getMessage());
+    return;
+} catch (ServletException se) {
+    response.sendError(response.SC_BAD_REQUEST, se.getMessage());
+    return;
+}
+        After obtaining the returned "map" object, you could follow the sample
+        code to retrieve data needed for your business logics.
+

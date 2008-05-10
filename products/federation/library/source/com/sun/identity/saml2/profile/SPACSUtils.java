@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.19 2008-04-14 21:13:29 exu Exp $
+ * $Id: SPACSUtils.java,v 1.20 2008-05-10 05:27:13 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletException;
 import java.security.cert.X509Certificate;
 
 import javax.xml.soap.SOAPConnection;
@@ -54,9 +55,11 @@ import com.sun.identity.liberty.ws.soapbinding.SOAPBindingException;
 import com.sun.identity.liberty.ws.soapbinding.SOAPFaultException;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.Advice;
+import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.assertion.Assertion;
@@ -70,6 +73,7 @@ import com.sun.identity.saml2.common.NameIDInfo;
 import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.ecp.ECPFactory;
 import com.sun.identity.saml2.ecp.ECPRelayState;
@@ -1746,5 +1750,190 @@ public class SPACSUtils {
             }
         }
         return attrList;
+    }
+    
+    /**
+     * Processes response from Identity Provider to Fedlet (SP).
+     * This will do all required protocol processing, include signature,
+     * issuer and audience validation etc. A map containing processing
+     * result will be returned. 
+     * Here is a list of keys and values for the returned map:
+     * SAML2Constants.ATTRIBUTE_MAP -- Attribute map containing all attributes
+     *                                 passed down from IDP inside the 
+     *                                 Assertion. Value is a java.util.Map
+     *                                 whose keys are attribute name,
+     *                                 values as a List of string values for
+     *                                 the attribute. <br>
+     * SAML2Constants.RELAY_STATE -- Relay state, value is string <br>
+     * SAML2Constants.IDPENTITYID -- IDP entity ID, value is string<br>
+     * SAML2Constants.RESPONSE    -- Response object, value is an instance of 
+     *                               com.sun.identity.saml2.protocol.Response
+     * SAML2Constants.ASSERTION   -- Assertion object, value is an instance of 
+     *                               com.sun.identity.saml2.assertion.Assertion
+     * SAML2Constants.SUBJECT     -- Subject object, value is an instance of 
+     *                               com.sun.identity.saml2.assertion.Subject
+     *
+     * @param request HTTP Servlet request
+     * @param response HTTP Servlet response.
+     *
+     * @return <code>Map</code> which holds result of the processing.
+     * @throws SAML2Exception if the processing failed due to server error.
+     * @throws IOException if the processing failed due to IO error.
+     * @throws SessionException if the processing failed due to session error.
+     * @throws ServletException if the processing failed due to request error.
+     */  
+    public static Map processResponseForFedlet (HttpServletRequest request,
+        HttpServletResponse response) throws SAML2Exception, IOException,
+        SessionException, ServletException {
+        if ((request == null) || (response == null)) {
+            throw new ServletException(
+                SAML2SDKUtils.bundle.getString("nullInput"));
+        }
+        
+        String requestURL = request.getRequestURL().toString();
+        SAML2MetaManager metaManager = new SAML2MetaManager();
+        if (metaManager == null) {
+            throw new SAML2Exception(
+                    SAML2SDKUtils.bundle.getString("errorMetaManager"));
+        }
+        String metaAlias = SAML2MetaUtils.getMetaAliasByUri(requestURL);
+        if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+            // pick the first available one
+            List spMetaAliases =
+                    metaManager.getAllHostedServiceProviderMetaAliases("/");
+            if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
+                // get first one
+                metaAlias = (String) spMetaAliases.get(0);
+            }
+            if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+                throw new ServletException(
+                        SAML2SDKUtils.bundle.getString("nullSPEntityID"));
+            }
+        }
+        String hostEntityId = null;
+        try {
+            hostEntityId = metaManager.getEntityByMetaAlias(metaAlias);
+        } catch (SAML2MetaException sme) {
+            SAML2SDKUtils.debug.error("SPACSUtils.processResponseForFedlet",
+                sme);
+            throw new SAML2Exception( 
+                    SAML2SDKUtils.bundle.getString("metaDataError"));
+        }
+        if (hostEntityId == null) {
+            // logging?
+            throw new SAML2Exception( 
+                    SAML2SDKUtils.bundle.getString("metaDataError"));
+        }
+        // organization is always root org
+        String orgName = "/";
+        String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+        SessionProvider sessionProvider = null;
+        ResponseInfo respInfo = null;
+        try {
+            sessionProvider = SessionManager.getProvider();
+        } catch (SessionException se) {
+            SAML2SDKUtils.debug.error("SPACSUtils.processResponseForFedlet",
+                se);
+            throw new SAML2Exception(se);
+        }
+        respInfo = SPACSUtils.getResponse(
+                request, response, orgName, hostEntityId, metaManager);
+        
+        Object newSession = null;
+        try {
+            newSession = SPACSUtils.processResponse(
+                    request, response, metaAlias, null, respInfo,
+                    orgName, hostEntityId, metaManager);
+        } catch (SAML2Exception se) {
+            SAML2SDKUtils.debug.message("SPACSUtils.processResponseForFedlet",
+                    se);
+            if (se.isRedirectionDone()) {
+                // response had been redirected already.
+                return createMapForFedlet(respInfo, null);
+            }
+            throw new SAML2Exception(
+                    SAML2SDKUtils.bundle.getString("SSOFailed"));
+        }
+        SAML2SDKUtils.debug.message("SSO SUCCESS");
+        String[] redirected = sessionProvider.getProperty(newSession,
+                SAML2Constants.RESPONSE_REDIRECTED);
+        if ((redirected != null) && (redirected.length != 0) &&
+                redirected[0].equals("true")) {
+            SAML2SDKUtils.debug.message("Already redirected in SPAdapter.");
+            // response redirected already in SPAdapter
+            return createMapForFedlet(respInfo, null);
+        }
+        // redirect to relay state
+        String finalUrl = SPACSUtils.getRelayState(
+                relayState, orgName, hostEntityId, metaManager);
+        String realFinalUrl = finalUrl;
+        if (finalUrl != null && finalUrl.length() != 0) {
+            try {
+                realFinalUrl =
+                    sessionProvider.rewriteURL(newSession, finalUrl);
+            } catch (SessionException se) {
+                SAML2SDKUtils.debug.message("SPACSUtils.processRespForFedlet",
+                    se);
+                realFinalUrl = finalUrl;
+            }
+        }
+        String redirectUrl = SPACSUtils.getIntermediateURL(
+                orgName, hostEntityId, metaManager);
+        String realRedirectUrl = null;
+        if (redirectUrl != null && redirectUrl.length() != 0) {
+            if (realFinalUrl != null && realFinalUrl.length() != 0) {
+                if (redirectUrl.indexOf("?") != -1) {
+                    redirectUrl += "&goto=";
+                } else {
+                    redirectUrl += "?goto=";
+                }
+                redirectUrl += URLEncDec.encode(realFinalUrl);
+                try {
+                    realRedirectUrl = sessionProvider.rewriteURL(
+                            newSession, redirectUrl);
+                } catch (SessionException se) {
+                    SAML2SDKUtils.debug.message(
+                      "SPACSUtils.processRespForFedlet: rewriting failed.", se);
+                    realRedirectUrl = redirectUrl;
+                }
+            } else {
+                realRedirectUrl = redirectUrl;
+            }
+        } else {
+            realRedirectUrl = finalUrl;
+        }
+        return createMapForFedlet(respInfo, realRedirectUrl); 
+    }
+
+    private static Map createMapForFedlet(
+        ResponseInfo respInfo, String relayUrl) {
+        Map map = new HashMap();
+        if (relayUrl != null) {
+            map.put(SAML2Constants.RELAY_STATE, relayUrl);
+        }
+        Response samlResp = respInfo.getResponse();
+        map.put(SAML2Constants.RESPONSE, samlResp);
+        Assertion assertion = (Assertion) samlResp.getAssertion().get(0);
+        map.put(SAML2Constants.ASSERTION, assertion); 
+        map.put(SAML2Constants.SUBJECT, assertion.getSubject());
+        map.put(SAML2Constants.IDPENTITYID, assertion.getIssuer().getValue()); 
+        // get all attributes
+        AttributeStatement attrStat = null;
+        List lst = assertion.getAttributeStatements();
+        if ((lst != null) && !lst.isEmpty()) {
+            attrStat = (AttributeStatement)
+                assertion.getAttributeStatements().get(0);
+        }
+        if (attrStat != null) {
+            Map valMap = new HashMap();
+            List attrList = attrStat.getAttribute();
+            Iterator iter = attrList.iterator();
+            while (iter.hasNext()) {
+                Attribute attr = (Attribute) iter.next();
+                valMap.put(attr.getName(), attr.getAttributeValueString()); 
+            }
+            map.put(SAML2Constants.ATTRIBUTE_MAP, valMap);
+        }
+        return map;
     }
 }

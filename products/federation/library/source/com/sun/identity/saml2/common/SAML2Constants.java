@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.29 2008-04-14 21:13:29 exu Exp $
+ * $Id: SAML2Constants.java,v 1.30 2008-05-10 05:26:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1383,4 +1383,15 @@ public interface SAML2Constants {
      * the Assertion
      */
     public String ATTR_WILD_CARD = "*";
+
+    /**
+     * Key name for Response object
+     */
+    public String RESPONSE = "Response"; 
+
+    /**
+     * Key name for Assertion object
+     */
+    public String ASSERTION = "Assertion"; 
+
 } 

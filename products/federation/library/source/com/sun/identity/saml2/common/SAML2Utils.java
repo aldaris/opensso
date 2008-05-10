@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.26 2008-05-02 21:46:27 weisun2 Exp $
+ * $Id: SAML2Utils.java,v 1.27 2008-05-10 05:26:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -257,9 +257,10 @@ public class SAML2Utils extends SAML2SDKUtils {
     }
     
     static {
-        boolean enableFailOver =  ((String) SAML2ConfigService.getAttribute(
-            SAML2ConfigService.SAML2_FAILOVER_ATTR)).equalsIgnoreCase("true"); 
-        if (enableFailOver && (jmq != null)) {
+        String enableFailOver =  (String) SAML2ConfigService.getAttribute(
+            SAML2ConfigService.SAML2_FAILOVER_ATTR);
+        if ((enableFailOver != null) && enableFailOver.equalsIgnoreCase("true") 
+            && (jmq != null)) {
             failOver = true; 
         }
     }   
