@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.14 2008-05-02 05:52:28 hengming Exp $
+ * $Id: Wizard.java,v 1.15 2008-05-10 03:59:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -155,9 +155,7 @@ public class Wizard extends AjaxPage {
         request.addParameter(
             SetupConstants.CONFIG_VAR_DS_MGR_PWD, tmp);
         
-        tmp = getAttribute(SetupConstants.CONFIG_VAR_DS_UM_SCHEMA,"");
-        request.addParameter(
-            SetupConstants.CONFIG_VAR_DS_UM_SCHEMA, tmp);
+
                 
         // user store repository
         tmp = (String)getContext().getSessionAttribute(
@@ -180,8 +178,8 @@ public class Wizard extends AjaxPage {
             store.put(SetupConstants.USER_STORE_LOGIN_PWD, tmp);      
             tmp = (String)getContext().getSessionAttribute(
                 SetupConstants.USER_STORE_TYPE);
-            store.put(SetupConstants.USER_STORE_TYPE, tmp);                        
-                                  
+            store.put(SetupConstants.USER_STORE_TYPE, tmp);
+
             request.addParameter("UserStore", store);
         }
         

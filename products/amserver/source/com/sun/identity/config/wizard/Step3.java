@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.11 2008-04-29 17:58:19 kevinserwin Exp $
+ * $Id: Step3.java,v 1.12 2008-05-10 03:59:30 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,8 +46,6 @@ public class Step3 extends LDAPStoreWizardPage {
         new ActionLink("validateHostName", this, "validateHostName");
     public ActionLink setConfigType = 
         new ActionLink("setConfigType", this, "setConfigType");
-    public ActionLink loadSchemaLink = 
-        new ActionLink("loadSchema", this, "loadSchema");
     public ActionLink validateLocalPortLink = 
         new ActionLink("validateLocalPort", this, "validateLocalPort");
     
@@ -319,20 +317,7 @@ public class Step3 extends LDAPStoreWizardPage {
         getContext().setSessionAttribute("configStorePassword", tmp);
        
         getContext().setSessionAttribute(
-            SetupConstants.CONFIG_VAR_DS_UM_SCHEMA,"");
-                                        
-        getContext().setSessionAttribute(
             SetupConstants.CONFIG_VAR_DATA_STORE, 
             SetupConstants.SMS_DS_DATASTORE);    
     }
-    
-    public boolean loadSchema() {
-        String schemaValue = toString("schema");
-        getContext().setSessionAttribute(
-            SetupConstants.CONFIG_VAR_DS_UM_SCHEMA, schemaValue);
-            
-        setPath(null);        
-        return false;    
-    }
-
 }

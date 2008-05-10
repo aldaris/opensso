@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.55 2008-04-25 03:15:56 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.56 2008-05-10 03:59:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,6 +104,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import netscape.ldap.LDAPException;
 
 /**
  * This class is the first class to get loaded by the Servlet container. 
@@ -306,10 +307,6 @@ public class AMSetupServlet extends HttpServlet {
                         AdminTokenAction.getInstance());
                     ServerConfiguration.setServerInstance(adminToken,
                         serverInstanceName, mapBootstrap);
-
-                    if ((userRepo != null) && !userRepo.isEmpty()) {
-                        createUserRepo(userRepo);
-                    }
                     
                     // setup site configuration information
                     if ((siteMap != null) && !siteMap.isEmpty()) {
@@ -343,62 +340,6 @@ public class AMSetupServlet extends HttpServlet {
             e.printStackTrace();
         }
         return isConfiguredFlag;
-    }
-    
-    private static void createUserRepo(Map userRepo) {
-        
-        try {
-            ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
-                IdConstants.REPO_SERVICE, adminToken);
-            ServiceConfig cfg = svcCfgMgr.getOrganizationConfig("", null);
-            Map values = new HashMap();
-            if (cfg == null) {
-                OrganizationConfigManager orgCfgMgr = 
-                    new OrganizationConfigManager(adminToken, "/");
-                ServiceSchemaManager schemaMgr = new ServiceSchemaManager(IdConstants.REPO_SERVICE, adminToken);
-                ServiceSchema orgSchema = schemaMgr.getOrganizationSchema();
-                Set attrs = orgSchema.getAttributeSchemas();
-
-                for (Iterator iter = attrs.iterator(); iter.hasNext(); ) {
-                    AttributeSchema as = (AttributeSchema)iter.next();
-                    values.put(as.getName(), as.getDefaultValues());
-                }    
-                cfg = orgCfgMgr.addServiceConfig(IdConstants.REPO_SERVICE, values);
-            }
-            Set dns = new HashSet(2);
-            String value = (String)userRepo.get(
-                SetupConstants.USER_STORE_LOGIN_ID);
-            dns.add(value);
-            values.put("sun-idrepo-ldapv3-config-authid",dns);
-
-            value = (String)userRepo.get(SetupConstants.USER_STORE_LOGIN_PWD);
-            Set pwdSet = new HashSet(2);
-            pwdSet.add(value);
-            values.put("sun-idrepo-ldapv3-config-authpw", pwdSet);
-
-            value = (String)userRepo.get(SetupConstants.USER_STORE_ROOT_SUFFIX);
-            Set orgSet = new HashSet(2);
-            orgSet.add(value);
-            values.put("sun-idrepo-ldapv3-config-organization_name",orgSet);
-
-            String host = (String)userRepo.get(SetupConstants.USER_STORE_HOST);
-            String port = (String)userRepo.get(SetupConstants.USER_STORE_PORT);
-            Set portSet = new HashSet(2);
-            portSet.add(host+":"+port);
-            values.put("sun-idrepo-ldapv3-config-ldap-server", portSet);
-            
-            String type = (String)userRepo.get(SetupConstants.USER_STORE_TYPE);
-            if (type == null) {
-                type = "LDAPv3ForAMDS";
-            }
-            cfg.addSubConfig(host, type, 0, values);
-        } catch (SMSException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.processRequest: error " +
-                "creating user idrepo", e);
-        } catch (SSOException e) {
-            //tbd
-        }
     }
     
     private static boolean configure(Map map, Map userRepo) {
@@ -463,11 +404,8 @@ public class AMSetupServlet extends HttpServlet {
                     if (EmbeddedOpenDS.isMultiServer(map)) {
                         // Replication 
                         // Temporary fix until OpenDS auto-loads schema
-                        boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
-                          SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
-                          "sdkSchema") : false;
-                        List schemaFiles = getSchemaFiles(dataStore,
-                            loadSDKSchema);
+                        //
+                        List schemaFiles = getSchemaFiles(dataStore);
                         writeSchemaFiles(basedir, schemaFiles);
                         EmbeddedOpenDS.setupReplication(map);
                         isDITLoaded = true;
@@ -483,10 +421,7 @@ public class AMSetupServlet extends HttpServlet {
             }
             
             if ((isDSServer || isADServer ) && !isDITLoaded) {
-                boolean loadSDKSchema = (isDSServer) ? ((String)map.get(
-                    SetupConstants.CONFIG_VAR_DS_UM_SCHEMA)).equals(
-                        "sdkSchema") : false;
-                List schemaFiles = getSchemaFiles(dataStore, loadSDKSchema);
+                List schemaFiles = getSchemaFiles(dataStore);
                 writeSchemaFiles(basedir, schemaFiles);
             }
 
@@ -580,16 +515,27 @@ public class AMSetupServlet extends HttpServlet {
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
 
+            if ((userRepo != null) && !userRepo.isEmpty()) {
+                try {
+                    UserIdRepo.configure(userRepo, basedir, servletCtx,
+                        adminSSOToken);
+                } catch (LDAPException e) {
+                    throw new ConfiguratorException(e.getMessage());
+                }
+            }
+            
+
             /*
              * requiring the keystore.jks file in OpenSSO workspace. The
              * createIdentitiesForWSSecurity is for the JavaEE/NetBeans 
              * integration that we had done.
              */
             createPasswordFiles(basedir, deployuri);
-            if (!isDITLoaded) {
+            if ((userRepo == null) || userRepo.isEmpty()) {
                 createDemoUser();
-                createIdentitiesForWSSecurity(serverURL, deployuri);
             }
+
+            createIdentitiesForWSSecurity(serverURL, deployuri);
             updateSTSwsdl(basedir, deployuri);
 
             String aceDataDir = basedir + "/" + deployuri + "/auth/ace/data";
@@ -1383,13 +1329,9 @@ public class AMSetupServlet extends HttpServlet {
      * Returns schema file names.
      *
      * @param dataStore Name of data store configuration data.
-     * @param sdkSchema <code>true</code> to include access manager SDK ldif
-     *        file.
-     * @return schema file names to be loaded.
      * @throws MissingResourceException if the bundle cannot be found.
      */
-
-    private static List getSchemaFiles(String dataStore, boolean sdkSchema)
+    private static List getSchemaFiles(String dataStore)
         throws MissingResourceException
     {
         List fileNames = new ArrayList();
@@ -1400,29 +1342,12 @@ public class AMSetupServlet extends HttpServlet {
         boolean embedded = 
               dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE);
         boolean isDSServer = false;
-        boolean isADServer = false;
         if (embedded) {
-            isDSServer = true;
-        } else { // Keep old behavior for now.
-            isDSServer = dataStore.equals(SetupConstants.SMS_DS_DATASTORE);
-            isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
-        }
-
-        if (embedded) {
-            strFiles = rb.getString(
-                           SetupConstants.OPENDS_SMS_PROPERTY_FILENAME); 
-        } else if (isDSServer) {
-            if (sdkSchema) {
-                strFiles = rb.getString(SetupConstants.SDK_PROPERTY_FILENAME);
-            } else {
-                strFiles = rb.getString(
-                    SetupConstants.DS_SMS_PROPERTY_FILENAME);
-            }
-        } else if (isADServer) {
-            strFiles = rb.getString(SetupConstants.AD_SMS_PROPERTY_FILENAME);
-        } else {
             strFiles = rb.getString(
                 SetupConstants.OPENDS_SMS_PROPERTY_FILENAME); 
+        } else {
+            strFiles = rb.getString(
+                SetupConstants.DS_SMS_PROPERTY_FILENAME);
         }
         
         StringTokenizer st = new StringTokenizer(strFiles);

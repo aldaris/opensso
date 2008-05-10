@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.25 2008-04-22 20:53:20 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.26 2008-05-10 03:59:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -153,16 +153,6 @@ public class ServicesDefaultValues {
                     map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
                     map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
                     map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, "");
-                    boolean loadSDKSchema = ((String)map.get(
-                        SetupConstants.CONFIG_VAR_DS_UM_SCHEMA))
-                            .equals("sdkSchema");
-                    if (!loadSDKSchema) {
-                        map.put(SetupConstants.XML_COMMENT_START, "<!--");
-                        map.put(SetupConstants.XML_COMMENT_END, "-->");
-                    } else {
-                        map.put(SetupConstants.XML_COMMENT_START, "");
-                        map.put(SetupConstants.XML_COMMENT_END, "");
-                    }
                 } else {
                     map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
                     map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, 

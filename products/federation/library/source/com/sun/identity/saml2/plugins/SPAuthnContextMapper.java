@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAuthnContextMapper.java,v 1.3 2008-04-09 06:25:04 hengming Exp $
+ * $Id: SPAuthnContextMapper.java,v 1.4 2008-05-10 03:59:33 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,7 @@ public interface SPAuthnContextMapper {
      * Returns true if the specified AuthnContextClassRef matches a list of
      * requested AuthnContextClassRef.
      *
-     * @param authnRequest a list of requested AuthnContextClassRef's
+     * @param requestedACClassRefs a list of requested AuthnContextClassRef's
      * @param acClassRef AuthnContextClassRef
      * @param comparison the type of comparison
      * @param realm  Realm or Organization of the Service Provider.

@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.21 2008-04-23 19:58:39 kenwho Exp $
+   $Id: idRepoService.xml,v 1.22 2008-05-10 03:59:32 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -172,14 +172,12 @@
 
                 <!-- Schema for linking SMS's organization to
                      AMSDK's organization. This will not be loaded for 
-                     Embedded DS/OpenDS configuration. The Macros 
-                     XML_COMMENT_START and XML_COMMENT_END are tag swapped with 
-                     xml tag open comments and close comments for this.-->
-@XML_COMMENT_START@
+                     Embedded DS/OpenDS configuration. -->
+<!--
                 <SubSchema name= "amSDK"
                     inheritance = "multiple"
                     i18nKey = "@AMSDK_I18N_KEY@">
-@XML_COMMENT_END@
+-->
                     <!-- The two attributes below, if defined, allow the IdRepo 
                         SDK to map attribute names and to determine entities 
                         supported and operations supported by this plugin. If 
@@ -187,7 +185,7 @@
                         attribute names are the same (no mapping needed. If the 
                         list of entities supported is not provided then the 
                         assumption is that no entities are supported -->
-@XML_COMMENT_START@
+<!--
                     <AttributeSchema name="sunIdRepoClass"
                         type = "single"
                         syntax = "string"
@@ -228,7 +226,7 @@
                         validator="validatatorClass for verifying this list against supported list"
                         i18nKey="">
                         <DefaultValues>
-@XML_COMMENT_END@
+-->
                             <!-- IdRepos can provide the object types
                                it can manage and the operations that can
                                be performed on these objects, as a key-value
@@ -236,7 +234,7 @@
                                etc., and the operations are limited to create,
                                read, edit and modify. The values are case
                                insenstive. -->
-@XML_COMMENT_START@
+<!--
                                <Value>user=read,create,edit,delete,service</Value>
                                <Value>agent=read,edit</Value>
                                <Value>role=read,edit,service</Value>
@@ -244,12 +242,12 @@
                                <Value>group=read</Value>
                         </DefaultValues>
                     </AttributeSchema>
-@XML_COMMENT_END@
+-->
                     <!-- From here on the list of plugin specific attributes 
                         for determining things like organization relating to 
                         this realm, authentication source,
                         user containers, group containers etc etc. -->
-@XML_COMMENT_START@
+<!--
                     <AttributeSchema name="amSDKOrgName"
                         type = "single"
                             syntax = "string"
@@ -312,7 +310,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
-@XML_COMMENT_END@
+-->
 
                 <!-- LDAPv3 plugin original 70 (generic ds)  -->
                 <SubSchema name= "LDAPv3"

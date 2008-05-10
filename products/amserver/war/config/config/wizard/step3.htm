@@ -130,15 +130,6 @@
         validate();
     }
 
-    function loadUMSchema() {
-        var checked = document.getElementById("enableUMSchema").checked;
-        var value = "";
-        if (checked == true) {
-            value = document.getElementById("enableUMSchema").value;
-        }
-        AjaxUtils.call("$context$path?actionLink=loadSchema&schema="+value);
-    }
-    
     function enableExisting() {
         multiServer = "true";
         // controls for displaying step6
@@ -166,7 +157,6 @@
     function setExternalFieldsDisplay(display) {
         document.getElementById("login").style.display = display;
         document.getElementById("password").style.display = display;
-        document.getElementById("schema").style.display = display;      
         
         if (display == "none") {
             document.getElementById("configStoreHost").disabled = true;
@@ -303,14 +293,6 @@
                             <span id="configStorePasswordStatus"></span>                        
                         </td>
                     </tr>  
-                    <tr id="schema">
-                        <td><label for="enableUMSchema"><em>*&nbsp;</em>$page.getLocalizedString("load.schema.label")</label></td>
-                        <td>
-                            <input type="checkbox" id="enableUMSchema" 
-                               name="enableUMSchema" value="sdkSchema" 
-                               onclick="loadUMSchema();"/>
-                        </td>
-                    </tr>                                 
                 </table>
             </div> 
                 

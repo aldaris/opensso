@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.22 2008-04-22 01:34:40 bigfatrat Exp $
+ * $Id: SetupConstants.java,v 1.23 2008-05-10 03:59:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -346,12 +346,6 @@ public interface SetupConstants {
      * Configuration Variable for the type of data store used.
      */
     String CONFIG_VAR_DATA_STORE = "DATA_STORE";
-
-    /**
-     * Configuration Variable to indicate if User Management 
-     * schema needs to be loaded. 
-     */
-    String CONFIG_VAR_DS_UM_SCHEMA = "DS_UM_SCHEMA";
 
     /**
      * Configuration Variable for Directory Server config store property.
