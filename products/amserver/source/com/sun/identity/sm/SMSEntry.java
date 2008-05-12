@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.34 2008-02-26 16:49:33 veiming Exp $
+ * $Id: SMSEntry.java,v 1.35 2008-05-12 21:18:47 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1082,6 +1082,12 @@ public class SMSEntry implements Cloneable {
                     + type + " IsLocal: " + isLocal
                     + "\nNumber of callback objects: "
                     + changeListeners.size());
+        }
+        // Since agentgroup placeholder node is added after install time,
+        // fix it here to avoid sending notifications.
+        if (type == SMSObjectListener.ADD
+            && (name.indexOf(AGENTGROUP_RDN) >= 0)) {
+            return;
         }
         if (!isLocal) {
             // Check if notification has been sent locally
