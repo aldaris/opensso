@@ -59,35 +59,35 @@ END_PRIVATE_NAMESPACE
 USING_PRIVATE_NAMESPACE
 void log_version_info() {
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-	     "=======================================");
+             "=======================================");
     std::string versionStr("Version: ");
     versionStr.append(Version::getMajorVersion());
     PUSH_BACK_CHAR(versionStr, '.');
     versionStr.append(Version::getMinorVersion());
-    if(Version::getMicroVersion() != NULL) {
-	PUSH_BACK_CHAR(versionStr, '_');
-	versionStr.append(Version::getMicroVersion());
+    if(Version::getPatchVersion() != NULL) {
+        versionStr.append(Version::getPatchVersion());
     }
-    if(Version::getPatchNumber() != NULL) {
-	PUSH_BACK_CHAR(versionStr, '-');
-	versionStr.append(Version::getPatchNumber());
+    if(Version::getHPVersion() != NULL) {
+        versionStr.append(" ");
+        versionStr.append(Version::getHPVersion());
     }
     if(Version::getEscalationId() != NULL) {
-	PUSH_BACK_CHAR(versionStr, ' ');
-	PUSH_BACK_CHAR(versionStr, '(');
-	versionStr.append(Version::getEscalationId());
-	PUSH_BACK_CHAR(versionStr, ')');
+        PUSH_BACK_CHAR(versionStr, ' ');
+        versionStr.append(Version::getEscalationId());
     }
-
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS, "%s",
-	     versionStr.c_str());
+             versionStr.c_str());
 
     if(Version::getBuildDate() != NULL) {
-	Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-		 "Build Date: %s", Version::getBuildDate());
+        Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
+                 "Build Date: %s", Version::getBuildDate());
+    }
+    if(Version::getBuildDate() != NULL) {
+        Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
+                 "Build Machine: %s", Version::getBuildMachine());
     }
     Log::log(Log::ALL_MODULES, Log::LOG_ALWAYS,
-	     "=======================================");
+             "=======================================");
 }
 
 /**

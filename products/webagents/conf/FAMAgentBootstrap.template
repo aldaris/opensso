@@ -20,6 +20,14 @@
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
+
+#------------------------------------------------------------------------------
+# Web Agents Bootstrap File
+#
+# Sun Federated Access Manager Policy Agent 
+#
+# Version: 3.0
+
 #########################################################################
 #
 # The syntax of this file is that of a standard Java properties file,
@@ -51,11 +59,16 @@ com.sun.identity.agents.config.naming.url = @AM_SERVICES_PROTO@://@AM_SERVICES_H
 #
 # AGENT USERNAME AND PASSWORD PROPERTIES
 #   These are the credentials used by the Agent to identify and
-#   authenticate itself before requesting any services that require the
-#   Agent to be authenticated.
-#
+#   authenticate itself before requesting any services. 
+#   - organization.name:  Specifies the organization or realm name to be used 
+#       for authenticating the Agent during runtime. 
+#       The default value "/" identifies the root organization or realm.
+#   - username: Agent profile name
+#   - password: Agent profile's password 
+#   - key: Encryption key to encrypt agent profile password
 # Hot-Swap Enabled: No
 #
+com.sun.identity.agents.config.organization.name = /
 com.sun.identity.agents.config.username = @AGENT_PROFILE_NAME@
 com.sun.identity.agents.config.password = @AGENT_ENCRYPTED_PASSWORD@
 com.sun.identity.agents.config.key = @AGENT_ENCRYPT_KEY@

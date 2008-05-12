@@ -20,6 +20,14 @@
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
+
+#------------------------------------------------------------------------------
+# Web Agents Configuration Property File
+#
+# Sun Federated Access Manager Policy Agent 
+#
+# Version: 3.0
+
 #########################################################################
 #
 # The syntax of this file is that of a standard Java properties file,
@@ -117,17 +125,6 @@ com.sun.identity.agents.config.log.level =
 #
 com.sun.identity.agents.config.local.log.rotate = @LOG_ROTATION@
 com.sun.identity.agents.config.local.log.size = 10000000 
-
-#
-# AGENT USERNAME AND PASSWORD PROPERTIES
-#   These are the credentials used by the Agent to identify and
-#   authenticate itself before requesting any services that require the
-#   Agent to be authenticated.
-#
-# Hot-Swap Enabled: No
-#
-com.sun.identity.agents.config.username = @AGENT_PROFILE_NAME@
-com.sun.identity.agents.config.password = @AGENT_ENCRYPTED_PASSWORD@
 
 #
 # AGENT URL ACCESS AUDIT TYPE

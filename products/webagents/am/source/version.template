@@ -29,51 +29,23 @@
 #include "internal_macros.h"
 
 BEGIN_PRIVATE_NAMESPACE
-/*
- * Abstract:
- *
- * Version and build information written in the agent log file are
- * defined here. They have to be defined before each build.
- *
- */
-
-
-/*
- * The major and minor version are fixed in a given branch
- * and should not be modified.
- * Those 4 variables should be updated before each build.
- *
- * - MICRO_VERSION:  third number
- *                   Ex:MICRO_VERSION "1" if version is 2.2.1
- *                      MICRO_VERSION "" if no micro version
- *
- * - PATCH_NUMBER:   number of a regular patch for web agents
- *                   Ex:PATCH_NUMBER "01" if agent is 2.1_01
- *                      PATCH_NUMBER "" if no patch number
- *
- * - ESCALATION_ID:  escalation ids when the build is not a regular patch
- *                   but a hotfix done for one or more escalations.
- *                   Ex: ESCALATION_ID "1-5705455,1-5705458"
- *                       ESCALATION_ID "" if not a hotfix
- *
- * - BUILD_DATE:     date and time when the build is done in the format
- *                   given in the example
- *                   Ex:BUILD_DATE "Fri Jan  7 14:33:30 PST 2005"
- */
-#define MICRO_VERSION NULL
-#define PATCH_NUMBER NULL
-#define ESCALATION_ID NULL
-
-/* Should not be modified */
 
 class Version {
 public:
     static const char* getMajorVersion() {return "MAJOR_VERSION";}
-    static const char* getMinorVersion() {return "MINOR_VERSION";}
-    static const char* getMicroVersion() {return MICRO_VERSION;}
-    static const char* getPatchNumber() {return PATCH_NUMBER;}
-    static const char* getEscalationId() {return ESCALATION_ID;}
+    static const char* getMinorVersion() {return "MINOR_VERSION";}   
+    static const char* getPatchVersion() {return "PATCH_VERSION";}
+    static const char* getHPVersion() {
+        char hpVersion[] = "HP_VERSION";
+        if ((hpVersion != NULL) && (strcmp(hpVersion,"") != 0) && (strcmp(hpVersion,"-") != 0)) {
+            return "HP_VERSION";
+        } else {
+            return NULL;
+        }
+    }
+    static const char* getEscalationId() {return "ESCALATION";}
     static const char* getBuildDate() {return "BUILD_DATE";}
+    static const char* getBuildMachine() {return "BUILD_MACHINE";}
 };
 
 END_PRIVATE_NAMESPACE

@@ -50,6 +50,7 @@ endif
 all: all_subdirs $(DEST_DROP_DIR)/$(DSAME_DROP_FILE) 
 
 clean: clean_subdirs
+	$(RM) .version
 	$(RM) -r $(DEST_DIR)
 
 drop: $(DEST_DROP_DIR)/$(DSAME_DROP_FILE)

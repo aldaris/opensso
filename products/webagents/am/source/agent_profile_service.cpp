@@ -136,6 +136,7 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
     const char *proxy_port = NULL;
     const char *proxy_user = NULL;
     const char *proxy_password = NULL;
+    const char *org_name = NULL;
 
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_PASSWORD_PROPERTY;
@@ -244,6 +245,14 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
                                    &proxy_password);
         am_properties_set(properties, parameter, proxy_password);
     }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_POLICY_ORG_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                                   &org_name);
+        am_properties_set(properties, parameter, org_name);
+    }
+
     return status;
 }
 

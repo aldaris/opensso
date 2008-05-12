@@ -202,7 +202,7 @@ CFLAGS += -DAM_BUILDING_LIB
 
 include $(USERX_ROOT)/arch/rules.mk
 
-all: version.h depends export_headers export_static_libs export_libs $(TEST_LIB) softlink_so $(DEST_BIN_DIR)/$(CRYPT_EXE) all_subdirs
+all: version.h $(USERX_ROOT)/.version depends export_headers export_static_libs export_libs $(TEST_LIB) softlink_so $(DEST_BIN_DIR)/$(CRYPT_EXE) all_subdirs
 
 $(EXPORTED_LIBS): $(OBJS) $(STD_LIB_MAP_FILE)
 	$(MAKE_SHARED_LIB)
@@ -215,8 +215,21 @@ $(TEST_LIB): $(OBJS) $(TEST_LIB_MAP_FILE)
 
 version.h: version.template
 	sed -e 's%BUILD_DATE%$(BUILD_DATE)%g' \
+	    -e 's%BUILD_MACHINE%$(BUILD_MACHINE)%g' \
 	    -e 's%MAJOR_VERSION%$(AGENT_MAJOR_VER)%g' \
-	    -e 's%MINOR_VERSION%$(AGENT_MINOR_VER)%g' $< > $@
+	    -e 's%MINOR_VERSION%$(AGENT_MINOR_VER)%g' \
+	    -e 's%PATCH_VERSION%$(AGENT_PATCH_VER)%g' \
+	    -e 's%HP_VERSION%$(AGENT_HP_VER)%g' \
+	    -e 's%ESCALATION%$(AGENT_ESCALATION)%g' $< > $@
+
+$(USERX_ROOT)/.version: $(USERX_ROOT)/version.template
+	sed -e 's%BUILD_DATE%$(BUILD_DATE)%g' \
+	    -e 's%BUILD_MACHINE%$(BUILD_MACHINE)%g' \
+	    -e 's%MAJOR_VERSION%$(AGENT_MAJOR_VER)%g' \
+	    -e 's%MINOR_VERSION%$(AGENT_MINOR_VER)%g' \
+	    -e 's%PATCH_VERSION%$(AGENT_PATCH_VER)%g' \
+	    -e 's%HP_VERSION%$(AGENT_HP_VER)%g' \
+	    -e 's%ESCALATION%$(AGENT_ESCALATION)%g' $< > $@
 
 softlink_so:
 ifeq ($(OS_ARCH), WINNT)

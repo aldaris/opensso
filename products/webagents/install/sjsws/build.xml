@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-04-08 23:56:10 subbae Exp $
+   $Id: build.xml,v 1.6 2008-05-12 23:02:49 subbae Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -51,8 +51,9 @@
                 <include name=".version"/>
             </fileset>
         </copy>
-
-        <concat destfile="${webagents.container.classes.dir}/.version" append="true">Build Date: ${nightly.date}&#10;&#10;</concat>
+        <concat destfile="${webagents.container.classes.dir}/.version" append="true">
+             <filelist dir="${webagents.base.dir}" files=".version"/>
+        </concat>
 
         <jar destfile="${webagents.container.archive.dir}/sjsws_agent.jar" 
              basedir="${webagents.container.classes.dir}"/>

@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.4 2008-01-29 15:14:50 subbae Exp $
+# $Id: defines.mk,v 1.5 2008-05-12 23:02:41 subbae Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -34,11 +34,18 @@ DEFINES_INCLUDED := true
 
 AGENT_MAJOR_VER := 3
 AGENT_MINOR_VER := 0
-AGENT_VER := $(AGENT_MAJOR_VER)_$(AGENT_MINOR_VER)
+# When setting the patch version use the format "-0x"
+AGENT_PATCH_VER :=
+# When setting the hotpatch version use the format "Hotpatch #"
+AGENT_HP_VER := 
+# When setting an escalation number for a verification binary, use the format "(#)"
+AGENT_ESCALATION :=
+AGENT_VER := $(AGENT_MAJOR_VER).$(AGENT_MINOR_VER)$(AGENT_PATCH_VER)
 
 OS_ARCH := $(shell uname -s)
 OS_ARCH_VER := $(shell uname -r)
 BUILD_DATE := $(shell date)
+BUILD_MACHINE := $(shell uname -n)
 MC_ARCH := $(shell uname -m)
 ifeq ($(strip $(patsubst CYGWIN_NT%, CYGWIN_NT, $(OS_ARCH))), CYGWIN_NT)
     OS_ARCH := WINNT
