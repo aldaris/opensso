@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.25 2008-04-29 19:52:39 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.26 2008-05-12 21:31:12 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,6 +115,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     static final String AGENT_ID = "agentName";
     static final String AGENT_IDTYPE = "IdType";
 
+    // Initialization exception
+    IdRepoException initializationException;
 
     public AgentsRepo() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -182,6 +184,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.create() called: " + type + ": "
                     + agentName);
+        }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.create: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
         }
         if (attrMap == null || attrMap.isEmpty()) {
             if (debug.messageEnabled()) {
@@ -281,6 +288,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.delete() called: " + type + ": "
                     + name);
         }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.delete: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
+        }
         ServiceConfig aCfg = null;
         try {
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
@@ -341,6 +353,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.getAttributes() with attrNames called: " 
                 + type + ": " + name);
         }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.getAttributes: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
+        }
         CaseInsensitiveHashMap allAtt = new CaseInsensitiveHashMap(
                 getAttributes(token, type, name));
         Map resultMap = new HashMap();
@@ -366,6 +383,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.getAttributes() called: " + type + ": "
                 + name);
+        }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.getAttributes: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
         }
         if (type.equals(IdType.AGENT) || type.equals(IdType.AGENTONLY) ||
             type.equals(IdType.AGENTGROUP)) {
@@ -496,6 +518,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.getMembers called" + type + ": " + name
                     + ": " + membersType);
         }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.getMembers: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
+        }
         Set results = new HashSet();
         if (type.equals(IdType.USER) || type.equals(IdType.AGENT)) {
             debug.error("AgentsRepo.getMembers: Membership operation is "
@@ -564,6 +591,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 name + ": " + membershipType);
         }
 
+        if (initializationException != null) {
+            debug.error("AgentsRepo.getMemberships: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
+        }
         // Memberships can be returned for agents.
         if (!type.equals(IdType.AGENT) && !type.equals(IdType.AGENTONLY) &&
             !type.equals(IdType.AGENTGROUP)) {
@@ -667,6 +699,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.isExists() called: " + type + ": " +
                 name);
         }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.isExists: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
+        }
         boolean exist = false;
         Map answer = getAttributes(token, type, name);
         if (answer != null && !answer.isEmpty()) {
@@ -698,6 +735,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
          if (debug.messageEnabled()) {
              debug.message("AgentsRepo: modifyMemberShip called " + type + ": "
                     + name + ": " + members + ": " + membersType);
+         }
+         if (initializationException != null) {
+             debug.error("AgentsRepo.modifyMemberShip: "
+                 + "Realm " + realmName + " does not exist.");
+             throw (initializationException);
          }
          if (members == null || members.isEmpty()) {
              debug.error("AgentsRepo.modifyMemberShip: Members set is empty");
@@ -781,6 +823,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.removeAttributes() called: " + type + 
                 ": " + name);
         }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.removeAttributes: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
+        }
         if (attrNames == null || attrNames.isEmpty()) {
             if (debug.messageEnabled()) {
                 debug.message("AgentsRepo.removeAttributes(): Attributes " +
@@ -844,6 +891,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.search() called: " + type + ": " +
                 pattern);
+        }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.search: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
         }
         Set agentRes = new HashSet(2);
         Map agentAttrs = new HashMap();
@@ -925,6 +977,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.setAttributes() called: " + type + ": "
                     + name);
+        }
+        if (initializationException != null) {
+            debug.error("AgentsRepo.setAttributes: "
+                + "Realm " + realmName + " does not exist.");
+            throw (initializationException);
         }
         if (attributes == null || attributes.isEmpty()) {
             if (debug.messageEnabled()) {
@@ -1011,7 +1068,15 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             // Initalize ServiceConfig with realm names
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            getOrgConfig(adminToken);
+            if (getOrgConfig(adminToken) == null) {
+                debug.error("AgentsRepo.getAgentGroupConfig: "
+                    + "Realm " + realmName + " does not exist.");
+                String slashRealmName;
+                slashRealmName = DNMapper.orgNameToRealmName(realmName);
+                Object[] args = { slashRealmName };
+                initializationException = 
+                    new IdRepoException(IdRepoBundle.BUNDLE_NAME, "312", args);    
+            }
             getAgentGroupConfig(adminToken);
         }
     }
@@ -1115,10 +1180,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } else {
             idType = IdType.AGENTGROUP;
         }
+
         // If notification URLs are present, send notifications
         sendNotificationSet(type, idType, 
             serviceComponent.substring(serviceComponent.indexOf('/') + 1));
-
         if (repoListener != null) { 
             repoListener.allObjectsChanged();
         }
@@ -1148,9 +1213,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             } else {
                 idType = IdType.AGENTGROUP;
             }
+
             // If notification URLs are present, send notifications
-            sendNotificationSet(type, idType, 
-                serviceComponent.substring(serviceComponent.indexOf('/') + 1));
+            sendNotificationSet(type, idType, serviceComponent.substring(
+                serviceComponent.indexOf('/') + 1));
 
             if (repoListener != null) { 
                 repoListener.allObjectsChanged();
@@ -1372,9 +1438,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 String agentGroupDN = constructDN(agentGroupNode, 
                     instancesNode, realmName, version, agentserviceName);
                 ServiceConfig orgConfig = getOrgConfig(token);
-                orgConfig.checkAndCreateGroup(agentGroupDN, agentGroupNode);
-                agentGroupConfig = 
-                    scm.getOrganizationConfig(realmName, agentGroupNode);
+                if (orgConfig != null) {
+                    orgConfig.checkAndCreateGroup(agentGroupDN, 
+                        agentGroupNode);
+                    agentGroupConfig = 
+                        scm.getOrganizationConfig(realmName, agentGroupNode);
+                }
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
