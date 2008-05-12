@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.24 2008-05-10 04:20:31 veiming Exp $
+ * $Id: SetupConstants.java,v 1.25 2008-05-12 16:37:17 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -510,4 +510,44 @@ public interface SetupConstants {
      * <code>rsa_api.properties</code> file name.
      */
     String SECURID_PROPERTIES = "rsa_api.properties";
+
+    /**
+     * Solaris operating system
+     */
+    String SOLARIS = "solaris";
+
+    /**
+     * Solaris/x86 operating system
+     */
+    String X86SOLARIS = "x86solaris";
+
+    /**
+     * SunOS operating system
+     */
+    String SUNOS = "sunos";
+
+    /**
+     * Linux operating system
+     */
+    String LINUX = "linux";
+
+    /**
+     * Windows operating system
+     */
+    String WINDOWS = "windows";
+
+    /**
+     * Default PAM Service Name for Linux
+     */
+    String LINUX_PAM_SVC_NAME = "password";
+
+    /**
+     * PAM Service Name tag String
+     */
+    String PAM_SERVICE_NAME = "PAM_SERVICE_NAME";
+
+    /**
+     * PC-based architecture
+     */
+    String X86 = "86";
 }
