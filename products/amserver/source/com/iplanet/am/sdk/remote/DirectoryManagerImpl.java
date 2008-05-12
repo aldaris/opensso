@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.13 2008-03-06 17:25:24 goodearth Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.14 2008-05-12 23:29:53 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1603,7 +1603,7 @@ public class DirectoryManagerImpl implements DirectoryManagerIF,
         Map notifications = new HashMap(notificationURLs); // Make a copy
         NotificationSet ns = null;
         synchronized (notificationURLs) {
-            for (Iterator entries = notificationURLs.entrySet().iterator(); 
+            for (Iterator entries = notifications.entrySet().iterator(); 
                 entries.hasNext();) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String id = (String) entry.getKey();
