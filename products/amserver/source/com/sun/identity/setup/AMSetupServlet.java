@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.56 2008-05-10 03:59:30 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.57 2008-05-12 16:38:07 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -433,6 +433,8 @@ public class AMSetupServlet extends HttpServlet {
 
             // do this here since initializeConfigProperties needs the dir
             setupSecurIDDirs(basedir,deployuri);
+            // do this here just because the SecurID dirs are done here
+            setupSafeWordDirs(basedir, deployuri);
             Map mapFileNameToConfig = initializeConfigProperties();
             String strAMConfigProperties = (String)
                 mapFileNameToConfig.get(SetupConstants.AMCONFIG_PROPERTIES);
@@ -1004,13 +1006,14 @@ public class AMSetupServlet extends HttpServlet {
             String file = (String)i.next();
             StringBuffer sbuf = null;
     
-            // if the file's not there, just output debug msg and skip it
+            /*
+             * if the file's not there, just skip it
+             * usually will be about a file included with FAM,
+             * so it's informational, rather than a "real" error.
+             */
             try {
                 sbuf = readFile(file);
             } catch (IOException ioex) {
-                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupServlet.initializeConfigProperties: " +
-                    "error reading " + file);
                 break;
             }
             
@@ -1041,6 +1044,15 @@ public class AMSetupServlet extends HttpServlet {
                             SetupConstants.CONFIG_VAR_DS_DATASTORE_CLASS);
                     }
                 }
+            }
+
+            /*
+             *  if Linux, the default PAM service name is "password",
+             *  rather than "other"
+             */
+            if (determineOS() == SetupConstants.LINUX) {
+                map.put(SetupConstants.PAM_SERVICE_NAME,
+                        SetupConstants.LINUX_PAM_SVC_NAME);
             }
             
             String swapped = ServicesDefaultValues.tagSwap(sbuf.toString(),
@@ -1926,19 +1938,39 @@ public class AMSetupServlet extends HttpServlet {
         /*
          * not rsa_api.properties, as it's tagged swapped and
          * written to <configdir>/<uri>/auth/ace/data earlier.
+         *
+         * if file isn't copied, it's probably because this is
+         * an OpenSSO deployment, rather than FAM, so it would
+         * just be informational, but at the debug error level.
+         * additionally, before some point, the debug stuff can't
+         * be invoked.
          */
         String [] propFiles = {"log4j.properties"};
         try {
             for (int i = 0; i < propFiles.length; i++) {
-                if (!copyCtxFile ("/WEB-INF/classes/", propFiles[i], destDir)){
-                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                        "AMSetupServlet.copyAuthSecurIDFiles:" +
-                        "file not copied: /WEB-INF/classes/" + propFiles[i]);
-                }
+                copyCtxFile ("/WEB-INF/classes/", propFiles[i], destDir);
             }
         } catch (IOException ioex) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.copyAuthSecurIDFiles:", ioex);
+        }
+    }
+
+    private static void setupSafeWordDirs(String basedir, String deployuri)
+    {
+        /*
+         *  make sure the
+         *  basedir + "/" + deployuri + "/auth/safeword/serverVerification" 
+         *  directory exists.
+         */
+
+        String safewordDir = basedir + "/" + deployuri +
+            "/auth/safeword/serverVerification";
+        File safewordFDir = new File(safewordDir);
+        if (!safewordFDir.mkdirs()) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.setupSafeWordDirs: " +
+                "failed to create SafeWord verification directory");
         }
     }
 
@@ -1986,5 +2018,23 @@ public class AMSetupServlet extends HttpServlet {
                 .append("\n");
         }
         return buff.toString();
+    }
+
+    private static String determineOS() {
+        String OS_ARCH = System.getProperty("os.arch");
+        String OS_NAME = System.getProperty("os.name");
+        if (OS_ARCH.toLowerCase().indexOf(SetupConstants.X86) >= 0) {
+            if (OS_NAME.toLowerCase().indexOf(SetupConstants.WINDOWS) >= 0) {
+                return SetupConstants.WINDOWS;
+            } else {
+                if (OS_NAME.toLowerCase().indexOf(SetupConstants.SUNOS) >= 0) {
+                    return SetupConstants.X86SOLARIS;
+                } else {
+                    return SetupConstants.LINUX;
+                }
+            }
+        } else {
+            return SetupConstants.SOLARIS;
+        }
     }
 }
