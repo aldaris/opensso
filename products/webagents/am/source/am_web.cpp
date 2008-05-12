@@ -857,9 +857,8 @@ am_bool_t in_not_enforced_list(URL &urlObj,
         if (url_str.find(sunwErrCode) != std::string::npos) {
             urlObj.removeQueryParameter(sunwErrCode);
             urlObj.getURLString(url_str);
-            if (url_str.find(
-	        (*agentConfigPtr)->url_redirect_param) != std::string::npos) {
-             urlObj.removeQueryParameter((*agentConfigPtr)->url_redirect_param);
+            if (url_str.find(URL_REDIRECT_PARAM) != std::string::npos) {
+             urlObj.removeQueryParameter(URL_REDIRECT_PARAM);
             }
             urlObj.getURLString(urlStr);
             accessUrl = urlStr.c_str();

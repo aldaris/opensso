@@ -101,7 +101,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
     const char *encrypt_passwd = NULL;
     char decrypt_passwd[100] = "";
     int decrypt_status;
-    const char *url_redirect_default = "goto";
     const char *user_id_default = "UserToken";
     const char *authLogType_default = LOG_TYPE_NONE;
     bool urlstatssl = false;
@@ -1169,7 +1168,6 @@ void AgentConfiguration::cleanup_properties()
     this->notification_url = NULL;
     this->unauthenticated_user = NULL;
 
-    this->url_redirect_param = NULL;
     this->user_id_param = NULL;
     this->authLogType_param = NULL;
     this->fqdn_default = NULL;
