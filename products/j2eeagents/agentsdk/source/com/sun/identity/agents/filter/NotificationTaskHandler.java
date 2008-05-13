@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationTaskHandler.java,v 1.5 2008-04-17 22:16:08 sean_brydon Exp $
+ * $Id: NotificationTaskHandler.java,v 1.6 2008-05-13 01:28:21 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,17 +149,19 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                 logMessage("NotificationTaskHandler.handleNotification:"
                         + " received " + serviceID + " notification");
             }
-            if (serviceID != null && isServiceNotificationEnabled(serviceID)) {
+            if (serviceID != null) {
                 String response = STR_NOTIFICATION_PROCESSING_FAILED;
-                NotificationHandler handler =
-                        PLLClient.getNotificationHandler(serviceID);
-                if (handler == null) {
-                    logError("NotificationTaskHandler.handleNotification:"
-                            + " NotificationHandler for "
-                            + serviceID + " not found");
-                } else {
-                    handler.process(notifications);
-                    response = STR_NOTIFICATION_PROCESSING_SUCCESS;
+                if (isServiceNotificationEnabled(serviceID)) {
+                    NotificationHandler handler =
+                            PLLClient.getNotificationHandler(serviceID);
+                    if (handler == null) {
+                        logError("NotificationTaskHandler.handleNotification:"
+                                + " NotificationHandler for "
+                                + serviceID + " not found");
+                    } else {
+                        handler.process(notifications);
+                        response = STR_NOTIFICATION_PROCESSING_SUCCESS;
+                    }
                 }
                 result = ctx.getServeDataResult(response);
             }
@@ -187,7 +189,11 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
             } else if(serviceID.equals(SERVICE_ID_AGENT_CONFIGURATION) 
                                          && isConfigNotificationEnabled()) {
                 enabled = true;
-            }                   
+            } else if (serviceID.equals(SERVICE_ID_SMSOBJECT)) {
+                enabled = true;
+            } else if (serviceID.equals(SERVICE_ID_IDREPOSERVICE)) {
+                enabled = true;
+            } 
         }
         return enabled;
     }
@@ -323,4 +329,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
     private static final String SERVICE_ID_AGENT_CONFIGURATION =  "agentconfig";
     private static final String SERVICE_ID_POLICY              =  "policy";
     private static final String SERVICE_ID_SESSION             =  "session";
+    private static final String SERVICE_ID_SMSOBJECT           =  "SMSObjectIF";
+    private static final String SERVICE_ID_IDREPOSERVICE       =  "IdRepoServiceIF";
 }
