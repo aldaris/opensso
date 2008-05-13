@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIDFFMetaDataTemplate.java,v 1.2 2008-04-15 16:13:35 veiming Exp $
+ * $Id: CreateIDFFMetaDataTemplate.java,v 1.3 2008-05-13 00:43:18 asyhuang Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -449,7 +449,7 @@ public class CreateIDFFMetaDataTemplate {
             .append("\">\n")
             .append("            <Value>context=")
             .append(IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD)
-            .append("|key=Module|value=DataStore|level=1</Value>\n")
+            .append("|key=Module|value=DataStore|level=0</Value>\n")
             .append("        </Attribute>\n")
             .append("        <Attribute name=\"")
             .append(IFSConstants.ENABLE_AUTO_FEDERATION)
@@ -640,7 +640,7 @@ public class CreateIDFFMetaDataTemplate {
             .append("\">\n")
             .append("            <Value>context=")
             .append(IFSConstants.DEFAULT_AUTHNCONTEXT_PASSWORD)
-            .append("|level=1</Value>\n")
+            .append("|level=0</Value>\n")
             .append("        </Attribute>\n")
             .append("        <Attribute name=\"")
             .append(IFSConstants.ENABLE_AUTO_FEDERATION)

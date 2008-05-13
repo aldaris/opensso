@@ -1,10 +1,27 @@
-
 <!--
-    Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved
-    Use is subject to license terms.
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: tblIDFFIDPAuthenticationContext.xml,v 1.2 2008-05-13 00:45:38 asyhuang Exp $
+
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
-
-
 
 <!DOCTYPE table SYSTEM "table.dtd">
 
@@ -18,29 +35,20 @@
     </column>
     <column name="tblColKey" >
         <cc name="tblDataKey" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
-            <option label="idff.authenticationContext.key.option.none" value="none" />
-            <option label="idff.authenticationContext.key.option.service" value="service" />
-            <option label="idff.authenticationContext.key.option.module" value="module" />
-            <option label="idff.authenticationContext.key.option.user" value="user" />
-            <option label="idff.authenticationContext.key.option.role" value="role" />
-            <option label="idff.authenticationContext.key.option.level" value="authlevel" />
+            <option label="idff.authenticationContext.key.option.none" value="None" />
+            <option label="idff.authenticationContext.key.option.service" value="Service" />
+            <option label="idff.authenticationContext.key.option.module" value="Module" />
+            <option label="idff.authenticationContext.key.option.user" value="User" />
+            <option label="idff.authenticationContext.key.option.role" value="Role" />
+            <option label="idff.authenticationContext.key.option.level" value="Authlevel" />
         </cc>
     </column>
     <column name="tblColValue" >
         <cc name="tblDataValue" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" />
     </column>
     <column name="tblColLevel" >
-        <cc name="tblDataLevel" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
-            <option label="idff.authenticationContext.priority.option.1" value="1" />
-            <option label="idff.authenticationContext.priority.option.2" value="2" />
-            <option label="idff.authenticationContext.priority.option.3" value="3" />
-            <option label="idff.authenticationContext.priority.option.4" value="4" />
-            <option label="idff.authenticationContext.priority.option.5" value="5" />
-            <option label="idff.authenticationContext.priority.option.6" value="6" />
-            <option label="idff.authenticationContext.priority.option.7" value="7" />
-            <option label="idff.authenticationContext.priority.option.8" value="8" />
-            <option label="idff.authenticationContext.priority.option.9" value="9" />
-            <option label="idff.authenticationContext.priority.option.10" value="10" />
-        </cc>
+        <cc name="tblDataLevel" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+            <attribute name="size" value="3" />
+        </cc>        
     </column>
 </table>
