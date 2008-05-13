@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModelImpl.java,v 1.2 2007-12-11 23:03:08 asyhuang Exp $
+ * $Id: IDFFModelImpl.java,v 1.3 2008-05-13 00:41:53 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,6 @@ package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.federation.IDFFAuthContexts;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
@@ -87,6 +86,13 @@ public class IDFFModelImpl
         federationProfileList.add("http://projectliberty.org/profiles/brws-post");
         federationProfileList.add("http://projectliberty.org/profiles/brws-art");
         federationProfileList.add("http://projectliberty.org/profiles/lecp");
+    }
+    private static List supportedSSOProfileList = new ArrayList(4);
+    static {
+        supportedSSOProfileList.add("http://projectliberty.org/profiles/brws-post");
+        supportedSSOProfileList.add("http://projectliberty.org/profiles/brws-art");
+        supportedSSOProfileList.add("http://projectliberty.org/profiles/wml-post");
+        supportedSSOProfileList.add("http://projectliberty.org/profiles/lecp");
     }
     
     // BOTH idp AND SP extended metadata
@@ -517,9 +523,18 @@ public class IDFFModelImpl
             Iterator iterator = entries.iterator();
             while (iterator.hasNext()) {
                 Map.Entry entry = (Map.Entry)iterator.next();
-                tmpMap.put((String)entry.getKey(),
-                    returnEmptySetIfValueIsNull(
-                    convertListToSet((List)entry.getValue())));
+                if(((String)entry.getKey()).equals(ATTR_SUPPORTED_SSO_PROFILE)){
+                    List supportedSSOProfileList = (List)entry.getValue();
+                    if(!supportedSSOProfileList.isEmpty()){                       
+                        tmpMap.put((String)entry.getKey(), 
+                            returnEmptySetIfValueIsNull(
+                            (String) supportedSSOProfileList.get(0)));                    
+                    }
+                }else{
+                    tmpMap.put((String)entry.getKey(),
+                        returnEmptySetIfValueIsNull(
+                        convertListToSet((List)entry.getValue())));
+                }
             }
             tmpMap.put(ATTR_PROVIDER_ALIAS,
                 returnEmptySetIfValueIsNull(metaAlias));
@@ -895,6 +910,24 @@ public class IDFFModelImpl
                     spDecConfigElement,
                     attrValues
                     );
+               //handle supported sso profile
+               List supportedSSOProfileList = new ArrayList();            
+               supportedSSOProfileList.add((String)AMAdminUtils.getValue(
+                   (Set)attrValues.get(ATTR_SUPPORTED_SSO_PROFILE))); 
+               int size = supportedSSOProfileList.size();
+               for (int i=0; i< size; i++) {
+                   if(!supportedSSOProfileList.get(i).equals(
+                    (String)AMAdminUtils.getValue((Set)attrValues.get(
+                    ATTR_SUPPORTED_SSO_PROFILE)))) { 
+                       supportedSSOProfileList.add(
+                           supportedSSOProfileList.get(i));
+                   }
+               } 
+               updateAttrInConfig(
+                    spDecConfigElement,
+                    ATTR_SUPPORTED_SSO_PROFILE,
+                    supportedSSOProfileList
+               ); 
             }
             
             //saves the attributes by passing the new entityConfig object

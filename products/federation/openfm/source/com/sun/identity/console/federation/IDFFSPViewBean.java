@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSPViewBean.java,v 1.7 2007-12-11 23:02:56 asyhuang Exp $
+ * $Id: IDFFSPViewBean.java,v 1.8 2008-05-13 00:40:55 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,7 +47,6 @@ import com.sun.web.ui.view.table.CCActionTable;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
 
 public class IDFFSPViewBean 
     extends IDFFViewBeanBase 
@@ -177,7 +176,7 @@ public class IDFFSPViewBean
             Map values = model.getEntitySPDescriptor(realm, name);
             values.putAll(model.getSPEntityConfig(realm, name,
                 location));
-            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);
+            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTES);            
             ps.setAttributeValues(values, model);
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
@@ -270,7 +269,7 @@ public class IDFFSPViewBean
                 realm,
                 entityName,
                 location);
-            Map extValues = ps.getAttributeValues(origExtMeta, false, model);
+            Map extValues = ps.getAttributeValues(origExtMeta, false, model);          
             model.updateSPEntityConfig(
                 realm,
                 entityName,
@@ -278,7 +277,10 @@ public class IDFFSPViewBean
             
             if (isHosted()) {
                 // update Authentication Contexts
-                model.updateSPAuthenticationContexts(realm, entityName, getAuthenticationContexts());
+                model.updateSPAuthenticationContexts(
+                    realm, 
+                    entityName, 
+                    getAuthenticationContexts());
             }
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
