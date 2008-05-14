@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.26 2008-05-12 21:31:12 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.27 2008-05-14 05:27:16 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1180,12 +1180,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } else {
             idType = IdType.AGENTGROUP;
         }
-
+        String name =
+            serviceComponent.substring(serviceComponent.indexOf('/') + 1);
         // If notification URLs are present, send notifications
-        sendNotificationSet(type, idType, 
-            serviceComponent.substring(serviceComponent.indexOf('/') + 1));
+        sendNotificationSet(type, idType, name);
+
         if (repoListener != null) { 
-            repoListener.allObjectsChanged();
+            repoListener.objectChanged(name, type, 
+                repoListener.getConfigMap());
         }
     }
 
@@ -1214,12 +1216,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 idType = IdType.AGENTGROUP;
             }
 
+            String name =
+            serviceComponent.substring(serviceComponent.indexOf('/') + 1);
             // If notification URLs are present, send notifications
-            sendNotificationSet(type, idType, serviceComponent.substring(
-                serviceComponent.indexOf('/') + 1));
+            sendNotificationSet(type, idType, name);
 
             if (repoListener != null) { 
-                repoListener.allObjectsChanged();
+                repoListener.objectChanged(name, type, 
+                    repoListener.getConfigMap());
             }
         }
     }
