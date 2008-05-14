@@ -21,7 +21,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: invokerservletresult.jsp,v 1.5 2008-05-05 17:12:08 huacui Exp $
+   $Id: invokerservletresult.jsp,v 1.6 2008-05-14 00:07:26 leiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -49,7 +49,6 @@
 %>
 <style type="text/css">
 <!-- 
-@import url("/agentsample/styles/default.css");
 
 body,td,p,div,span,a,input,big,small{font-family:arial,helvetica,sans-serif}
 body,td,p,div,span,a,input{font-size:10pt}

@@ -323,7 +323,7 @@
                     <validation name="VALID_CHOICE">
                         <class name="ChoiceValidator" type="system"/>
                         <property name="value1" value="J2EEAgent"/>
-                        <property name="value2" value="WEBAgent"/>
+                        <property name="value2" value="WebAgent"/>
                         <property name="ignorecase" value="false"/>
                     </validation>
                 </validations>

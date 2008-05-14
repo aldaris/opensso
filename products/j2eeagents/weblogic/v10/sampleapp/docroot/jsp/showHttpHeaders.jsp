@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showHttpHeaders.jsp,v 1.4 2008-05-05 17:34:30 huacui Exp $
+   $Id: showHttpHeaders.jsp,v 1.5 2008-05-14 00:08:32 leiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->        
@@ -31,7 +31,6 @@
         <style type="text/css">
             
             <!-- 
-@import url("/agentsample/styles/default.css");
 
 body,td,p,div,span,a,input,big,small{font-family:arial,helvetica,sans-serif}
 body,td,p,div,span,a,input{font-size:10pt}
