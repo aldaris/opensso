@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.5 2008-04-03 21:33:52 huacui Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.6 2008-05-14 21:14:25 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,17 +115,8 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     * Method declaration
-     *
-     *
-     * @param ctx
-     *            the <code>AmFilterRequestContext</code> that carries
+     * @param ctx  the <code>AmFilterRequestContext</code> that carries
      *            information about the incoming request and response objects.
-     *
-     * @return
-     * @throws AgentException
-     *
-     * @see
      */
     private boolean invokeApplicationLogoutHandler(AmFilterRequestContext ctx)
             throws AgentException {
@@ -189,8 +180,7 @@ implements IApplicationLogoutHandler {
     /**
      * Method getApplicationLogoutHandler
      *
-     * @param appName
-     *            Application Name
+     * @param appName Application Name
      *  @ return IJ2EELogoutHandler Mapped Local Logout Handler
      *
      * @see Returns the Application Logout Handler for the context URI. If the
@@ -242,11 +232,6 @@ implements IApplicationLogoutHandler {
         return localLogoutHandlerClass;
     }
 
-    /**
-     * Method getApplicationLogoutHandlers
-     *
-     * @return
-     */
     private Hashtable getApplicationLogoutHandlers() {
         return _localLogoutHandlers;
     }
@@ -284,13 +269,8 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     *
      * Returns a boolean value indicating if a match for logout parameter was
      * found
-     *
-     * @param request
-     * @param appName
-     * @return boolean true or false
      */
     private boolean searchForLogoutParam(HttpServletRequest request,
             String appName) {
@@ -340,17 +320,9 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     *
      * Returns a boolean value if logout param is in query string, try the two
      * variations ?param_name=, &param_name=
-     *
-     * @param logoutParam
-     * @param queryString
-     * @param appName
-     *            Application Name
-     * @return boolean true or false
      */
-
     private boolean getLogoutParamMatchResult(String logoutParam,
             String queryString, String appName) {
         String firstVariant = logoutParam + "=";
@@ -375,12 +347,7 @@ implements IApplicationLogoutHandler {
     }
 
     /**
-     *
      * Returns a boolean value indicating if a match for logout URI was found
-     *
-     * @param request
-     * @param appName
-     * @return boolean true or false
      */
     private boolean matchLogoutURI(HttpServletRequest request, String appName) {
         boolean result = false;
@@ -415,8 +382,6 @@ implements IApplicationLogoutHandler {
 
     /**
      * Caches the isActive flag
-     *
-     * @return
      */
     private void setIsActiveFlag() {
 
@@ -504,46 +469,15 @@ implements IApplicationLogoutHandler {
         return result;
     }
 
-
-    /**
-     * Method declaration
-     *
-     *
-     * @return
-     * @see
-     */
     private boolean getIntroSpectRequestAllowedFlag() {
         return _introSpectRequestAllow;
     }
 
-    /**
-     * Method declaration
-     *
-     *
-     * @return
-     * @see
-     */
     private void setIntroSpectRequestAllowedFlag(boolean allowed) {
         _introSpectRequestAllow = allowed;
         if (isLogMessageEnabled()) {
             logMessage("ApplicationLogoutHandler: request introspect: "
                     + allowed);
-        }
-    }
-
-
-    private void setEntryURL(String url) {
-        _entryURL = url;
-        if (url == null || url.trim().length() == 0) {
-            if (isLogWarningEnabled()) {
-                logWarning("ApplicationLogoutHandler: Entry URL is null");
-            }
-            _entryURL = null;
-        } else {
-            _entryURL = url;
-            if (isLogMessageEnabled()) {
-                logMessage("ApplicationLogoutHandler: entry url: " + url);
-            }
         }
     }
 
@@ -561,7 +495,6 @@ implements IApplicationLogoutHandler {
         }
     }
 
-    private String _entryURL;
     private boolean _isActiveFlag;
     private boolean _introSpectRequestAllow;
     private Hashtable _localLogoutHandlers = new Hashtable();

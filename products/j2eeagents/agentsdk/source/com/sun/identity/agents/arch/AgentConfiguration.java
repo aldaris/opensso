@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.23 2008-05-08 03:50:10 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.24 2008-05-14 21:14:24 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -539,7 +539,7 @@ public class AgentConfiguration implements
         }
     }
     
-    private static SSOToken getAppSSOToken() throws AgentException {
+    public static SSOToken getAppSSOToken() throws AgentException {
         if (_appSSOToken != null) {
             try {
                // check if token is still valid with the session server.
@@ -623,19 +623,25 @@ public class AgentConfiguration implements
                         String nextValue = 
                                 getProperties().getProperty(nextKey);
                         SystemProperties.initializeProperties(nextKey, nextValue);
+                        //save in sysPropertyMap for upcoming log messages
                         sysPropertyMap.put(nextKey, nextValue);
                     }
                 }
+                //app sso token provider plugin property and value are not 
+                //exposed to users so not in bootstrap property file
+                SystemProperties.initializeProperties(
+                      ClientSDKAppSSOProvider.CLIENT_SDK_ADMIN_TOKEN_PROPERTY, 
+                        ClientSDKAppSSOProvider.APP_SSO_PROVIDER_PLUGIN);
                 
-                // instantiate the instance of DebugPropertiesObserver
-                debugObserver = DebugPropertiesObserver.getInstance();
                 setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
                 setOrganizationName();
                 setServiceResolver();
                 setApplicationUser();
-                setApplicationPassword();
-                
+                setApplicationPassword();               
                 setAppSSOToken();
+                
+                // instantiate the instance of DebugPropertiesObserver
+                debugObserver = DebugPropertiesObserver.getInstance();
 
                 Vector attrServiceURLs = getAttributeServiceURLs();
                 //if fam 8.0 server

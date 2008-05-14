@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWebPolicyAppSSOProvider.java,v 1.1 2006-09-28 23:48:14 huacui Exp $
+ * $Id: AmWebPolicyAppSSOProvider.java,v 1.2 2008-05-14 21:14:25 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.agents.policy;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentBase;
+import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
@@ -53,13 +54,10 @@ public class AmWebPolicyAppSSOProvider extends AgentBase implements
     public SSOToken getAppSSOToken() {
         SSOToken result = null;
         try {
-            CommonFactory cf = new CommonFactory(getModule());
-            IApplicationSSOTokenProvider provider = 
-                cf.newApplicationSSOTokenProvider();
-            result = provider.getApplicationSSOToken();
-        } catch (Exception ex) {
-            logError("AmWebPolicyAppSSOProvider: Unable to create AppSSOToken",
-                    ex);
+            result = AgentConfiguration.getAppSSOToken();  
+        } catch (AgentException aex) {
+            logError("AmWebPolicyAppSSOProvider.getAppSSOToken: Unable"
+                    + " to create AppSSOToken", aex);  
         }
         return result;
     }
