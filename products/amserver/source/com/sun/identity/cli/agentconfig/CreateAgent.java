@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgent.java,v 1.6 2008-04-22 00:23:14 veiming Exp $
+ * $Id: CreateAgent.java,v 1.7 2008-05-15 03:56:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
+import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -42,6 +43,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +80,31 @@ public class CreateAgent extends AuthenticatedCommand {
         }
         
         if ((attributeValues == null) || attributeValues.isEmpty()) {
-            attributeValues = new HashMap();
+            throw new CLIException(
+                getResourceString("agent-creation-pwd-needed"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
+        boolean hasPassword = false;
+        for (Iterator i = attributeValues.keySet().iterator();
+            (i.hasNext() && !hasPassword);
+        ) {
+            String k = (String)i.next();
+            if (k.equals(CLIConstants.ATTR_SCHEMA_AGENT_PWD)) {
+                Set values = (Set)attributeValues.get(k);
+                if ((values != null) && !values.isEmpty()) {
+                    String pwd = (String)values.iterator().next();
+                    hasPassword = (pwd.trim().length() > 0);
+                }
+            }
         }
         
+        if (!hasPassword) {
+            throw new CLIException(
+                getResourceString("agent-creation-pwd-needed"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
         String[] params = {realm, agentType, agentName};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_CREATE_AGENT",
             params);

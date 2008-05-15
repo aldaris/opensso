@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.68 2008-04-24 00:57:07 veiming Exp $
+ * $Id: AccessManager.java,v 1.69 2008-05-15 03:57:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1718,6 +1718,7 @@ public class AccessManager {
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
             "does-not-support-agent-creation={0} did not support agent creation.",
+            "agent-creation-pwd-needed=Password for agent is required for creating agent. datafile or attributevalues needs to have value for userpassword.",
             "create-agent-succeeded=Agent configuration was created."
         }
     )
