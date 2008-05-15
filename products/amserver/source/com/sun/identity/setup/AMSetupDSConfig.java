@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.11 2008-04-25 22:27:21 ww203982 Exp $
+ * $Id: AMSetupDSConfig.java,v 1.12 2008-05-15 00:45:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
+import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.sun.identity.common.LDAPUtils;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
@@ -34,22 +35,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.io.IOException;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
 import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.util.DN;
-import netscape.ldap.util.LDIF;
-import netscape.ldap.util.LDIFAddContent;
-import netscape.ldap.util.LDIFAttributeContent;
-import netscape.ldap.util.LDIFContent;
-import netscape.ldap.util.LDIFModifyContent;
-import netscape.ldap.util.LDIFRecord;
 import netscape.ldap.util.RDN;
 
 /**
@@ -103,15 +93,18 @@ public class AMSetupDSConfig {
     }
 
    
+    boolean isDServerUp(boolean ssl) {
+        LDAPConnection ldc = getLDAPConnection(ssl);
+        return ((ldc != null) && ldc.isConnected()) ? true : false;
+    }
     /**
      * Validates if directory server is running and can be
      * connected at the specified host and port.
      *
      * @return <code>true</code> if directory server is running.
      */
-    public boolean isDServerUp() {
-        LDAPConnection ldc = getLDAPConnection();
-        return ((ldc != null) && ldc.isConnected()) ? true : false;
+    boolean isDServerUp() {
+        return isDServerUp(false);
     }
 
     /**
@@ -130,38 +123,6 @@ public class AMSetupDSConfig {
     }
 
     /**
-     * Returns the DB Name from the directory Server
-     *
-     * @return dBName from directory server. 
-     */
-    public String getDBName() { 
-        String baseDN = "cn=mapping tree,cn=config";
-        String filter = "cn=" + "\"" + suffix + "\"";
-        String[] attrs = { "nsslapd-backend" };
-        LDAPSearchResults results = null;
-        String dBName = null;
-        try {
-            LDAPConnection ldc = getLDAPConnection();
-            results = ldc.search(baseDN, LDAPConnection.SCOPE_SUB, filter, 
-                attrs, false);
-            LDAPEntry ldapEntry = results.next();
-            if (ldapEntry == null) {
-                filter = "cn=" + suffix;
-                results = ldc.search(baseDN, LDAPConnection.SCOPE_SUB, filter, 
-                    attrs, false);
-                ldapEntry = results.next();
-            }
-
-            LDAPAttribute attr = ldapEntry.getAttribute(attrs[0]);
-            String[] attrValues  = attr.getStringValueArray();
-            dBName = attrValues[0];
-        } catch (LDAPException e) {
-            //Use the default value in the property file
-        }
-        return dBName;
-    }
-
-    /**
      * Set the values required for Service Schema files.
      */
     public void setDSValues() {
@@ -172,7 +133,6 @@ public class AMSetupDSConfig {
             String canonicalizedDN = canonicalize(normalizedDN);
             String escapedDN = SMSSchema.escapeSpecialCharacters(normalizedDN);
             String peopleNMDN = "People_" + canonicalizedDN;
-            String underscoreDN = replaceDNDelimiter(normalizedDN, "_");
             map.put("People_" + SetupConstants.NORMALIZED_ROOT_SUFFIX, 
                 replaceDNDelimiter(peopleNMDN, "_"));
             map.put(SetupConstants.SM_ROOT_SUFFIX_HAT, 
@@ -241,15 +201,16 @@ public class AMSetupDSConfig {
     /**
      * Check if Directory Server has the suffix. 
      *
+     * @param ssl <code>true</code> if directory server is running on LDAPS.
      * @return <code>true</code> if specified suffix exists. 
      */
-    public boolean connectDSwithDN() {
+    public boolean connectDSwithDN(boolean ssl) {
         String filter = "cn=" + "\"" + suffix + "\"";
         String[] attrs = { "" };
         LDAPSearchResults results = null;
         boolean isValidSuffix = true;
         try {
-            results = getLDAPConnection().search(suffix, 
+            results = getLDAPConnection(ssl).search(suffix, 
                 LDAPConnection.SCOPE_BASE, filter, attrs, false);
         } catch (LDAPException e) {
             isValidSuffix = false;
@@ -261,17 +222,18 @@ public class AMSetupDSConfig {
     /**
      * Check if DS is loaded with AccessManager entries
      *
+     * @param ssl <code>true</code> of directory server is running on LDAPS.
      * @return <code>true</code> if Service Schema is loaded into
      *         Directory Server.
      */
-    public String isDITLoaded() {
+    String isDITLoaded(boolean ssl) {
         String baseDN = "ou=services," + suffix;
         String filter = "ou=DAI";
         String[] attrs = { "dn" };
         LDAPSearchResults results = null;
         String isLoaded = "false";
         try {
-            results = getLDAPConnection().search(baseDN, 
+            results = getLDAPConnection(ssl).search(baseDN, 
                 LDAPConnection.SCOPE_SUB, filter, attrs, false);
             if (results.getCount() > 0) {
                 isLoaded = "true";
@@ -343,12 +305,15 @@ public class AMSetupDSConfig {
     /**
      * Helper method to return Ldap connection 
      *
+     * @param ssl <code>true</code> if directory server is running SSL.
      * @return Ldap connection 
      */
-    private synchronized LDAPConnection getLDAPConnection() {
+    private synchronized LDAPConnection getLDAPConnection(boolean ssl) {
         if (ld == null) {
             try {
-                ld = new LDAPConnection();
+                ld = (ssl) ? new LDAPConnection(
+                    SSLSocketFactoryManager.getSSLSocketFactory()) :
+                    new LDAPConnection();
                 ld.setConnectTimeout(300);
                 ld.connect(3, dsHostName, getPort(), dsManager, dsAdminPwd);
                 ShutdownManager.getInstance().addShutdownListener(new
@@ -361,6 +326,9 @@ public class AMSetupDSConfig {
                 });
             } catch (LDAPException e) {
                 disconnectDServer();
+                dsConfigInstance = null;
+                ld = null;
+            } catch (Exception e) {
                 dsConfigInstance = null;
                 ld = null;
             }

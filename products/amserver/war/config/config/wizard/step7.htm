@@ -20,6 +20,7 @@
                 <table class="temp">
                     <tr>
                         <td>
+                            $page.getLocalizedString("ssl.label") <br>
                             $page.getLocalizedString("host.name.label") <br>
                             $page.getLocalizedString("local.port.label") <br>
                             $page.getLocalizedString("root.suffix.label") <br>
@@ -27,6 +28,7 @@
                             $page.getLocalizedString("directory.name.label")
                         </td>
                         <td>
+                            $configStoreSSL <br>
                             $configStoreHost <br>
                             $configStorePort <br>
                             $rootSuffix <br>
@@ -44,6 +46,7 @@
                         <tr>
                             #if ($userHostName)
                             <td>
+                                $page.getLocalizedString("ssl.label")<br>
                                 $page.getLocalizedString("host.name.label")<br>
                                 $page.getLocalizedString("local.port.label")<br>
                                 $page.getLocalizedString("root.suffix.label")<br>
@@ -51,6 +54,7 @@
                                 $page.getLocalizedString("store.type.label")
                             </td>
                             <td>
+                                $userHostSSL<br>
                                 $userHostName<br>
                                 $userHostPort<br>
                                 $userRootSuffix<br>

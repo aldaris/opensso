@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.25 2008-05-12 16:37:17 bigfatrat Exp $
+ * $Id: SetupConstants.java,v 1.26 2008-05-15 00:45:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,11 +103,6 @@ public interface SetupConstants {
      */
     String SSHA512_LDAP_USERPWD = "SSHA512LDAPUSERPWD";
 
-    /**
-     * Database name in directory server.
-     */
-    String DB_NAME = "DB_NAME";
-    
     /**
      * Properties file name that contains the names of all services that need
      * to be registered by the configurator.
@@ -207,6 +202,11 @@ public interface SetupConstants {
     String ORG_BASE = "ORG_BASE";
 
     /**
+     * Variable for Directory server protocol.
+     */
+    String DS_PROTO = "DS_PROTO";
+
+    /**
      * Variable for normalized organization base suffix.
      */
     String NORMALIZED_ORG_BASE = "NORMALIZED_ORGBASE";
@@ -285,6 +285,11 @@ public interface SetupConstants {
      * Configuration Variable for directory server administrator DN.
      */
     String CONFIG_VAR_DS_MGR_DN = "DS_DIRMGRDN";
+
+    /**
+     * Configuration Variable for directory server protocol.
+     */
+    String CONFIG_VAR_DIRECTORY_SERVER_SSL = "DIRECTORY_SSL";
 
     /**
      * Configuration Variable for directory server host.
@@ -475,6 +480,11 @@ public interface SetupConstants {
      * OpenDS Replication : remote OpenDS server port.
      */
     String DS_EMB_REPL_PORT2 = "DS_EMB_REPL_PORT2";
+    
+    /**
+     * Protocol of IDRepo entry to create for user data store.
+     */
+    String USER_STORE_SSL = "userStoreSSL";
     
     /**
      * Type of IDRepo entry to create for user data store.

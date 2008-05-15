@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.7 2008-05-10 04:20:30 veiming Exp $
+ * $Id: Step7.java,v 1.8 2008-05-15 00:45:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ public class Step7 extends AjaxPage {
         add("configDirectory", tmp);        
         tmp = getAttribute("configStoreHost", getHostName());
         add("configStoreHost", tmp);
+        tmp = getAttribute("configStoreSSL", "");
+        add("configStoreSSL", tmp);
         tmp = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
         add("rootSuffix", tmp);
         tmp = getAttribute("configStorePort", getAvailablePort(50389));
@@ -54,6 +56,9 @@ public class Step7 extends AjaxPage {
                 SetupConstants.USER_STORE_HOST);
             add("userHostName", tmp);
 
+            tmp = (String)ctx.getSessionAttribute(
+                SetupConstants.USER_STORE_SSL);
+            add("userHostSSL", tmp);
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_PORT);
             add("userHostPort", tmp);

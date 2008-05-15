@@ -17,19 +17,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.13 2008-05-10 04:20:29 veiming Exp $
+ * $Id: Step3.java,v 1.14 2008-05-15 00:45:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
 import com.sun.identity.setup.AMSetupServlet;
-import java.util.Iterator;
 import net.sf.click.control.ActionLink;
 import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.setup.BootstrapData;
 import java.util.Map;
-import java.util.HashMap;
 import com.sun.identity.setup.ConfiguratorException;
 
 /**
@@ -75,6 +73,15 @@ public class Step3 extends LDAPStoreWizardPage {
 
         val = getAttribute("existingRepPort", getAvailablePort(58990));
         addModel("existingRepPort", val);
+
+        val = getAttribute("configStoreSSL", "SIMPLE");
+        addModel("configStoreSSL", val);
+        
+        if (val.equals("SSL")) {
+            addModel("selectConfigStoreSSL", "checked=\"checked\"");
+        } else {
+            addModel("selectConfigStoreSSL", "");
+        }
 
         // initialize the data store type being used
         val = getAttribute(

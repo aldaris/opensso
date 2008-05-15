@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: serverconfig.xml,v 1.10 2007-02-20 22:53:54 goodearth Exp $
+   $Id: serverconfig.xml,v 1.11 2008-05-15 00:45:50 veiming Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,7 +28,7 @@
 
 <iPlanetDataAccessLayer>
     <ServerGroup name="default" minConnPool="1" maxConnPool="10">
-        <Server name="Server1" host="@DIRECTORY_SERVER@" port="@DIRECTORY_PORT@" type="SIMPLE" />
+        <Server name="Server1" host="@DIRECTORY_SERVER@" port="@DIRECTORY_PORT@" type="@DIRECTORY_SSL@" />
         <User name="User1" type="proxy">
             <DirDN>
                 cn=puser,ou=DSAME Users,@NORMALIZED_ORGBASE@
@@ -58,7 +58,7 @@
     -->
     <ServerGroup name="sms" minConnPool="1" maxConnPool="10">
         <Server name="Server1" host="@DIRECTORY_SERVER@" port="@DIRECTORY_PORT@"
-             type="SIMPLE" />
+             type="@DIRECTORY_SSL@" />
              <User name="User2" type="admin">
                 <DirDN>@DS_DIRMGRDN@</DirDN>
                 <DirPassword>@ENCADADMINPASSWD@</DirPassword>

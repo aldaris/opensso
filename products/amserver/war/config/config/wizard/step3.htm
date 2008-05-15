@@ -34,6 +34,18 @@
 	validate();
     }
 
+    function validateConfigStoreSSL() {
+        var value = ($('configStoreSSL').checked) ? "SSL" : "SIMPLE";
+        var callUrl =
+            "$context$path?actionLink=validateInput&key=configStoreSSL&value=" +
+            value;
+        AjaxUtils.call(callUrl, validateConfigSSL);
+    }       
+
+    function validateConfigSSL(response) {
+        // no ops
+    }
+
     function validateConfigStoreHost() {
         $('nextTabButton').disabled = true;
 	field = "configStoreHost";
@@ -168,9 +180,11 @@
         document.getElementById("password").style.display = display;
         
         if (display == "none") {
+            document.getElementById("configStoreSSL").disabled = true;
             document.getElementById("configStoreHost").disabled = true;
             document.getElementById("configStoreHost").value = "localhost";
         } else {
+            document.getElementById("configStoreSSL").disabled = false;
             document.getElementById("configStoreHost").disabled = false;
             if (remoteDSHost == undefined) {
                 remoteDSHost = 'localhost';
@@ -250,7 +264,7 @@
         <div class="headerBox">
             $page.getLocalizedString("step3.sub.title")
         </div>
-        <div class="bodyBox" style="height:250px;">	
+        <div class="bodyBox" style="height:260px;">	
              <span>  
              <!-- New Instances -->
              <div id="newInstanceOptions">            
@@ -272,6 +286,14 @@
             
                 <!-- Embedded Store -->
                 <table class="temp">                    
+                    <tr id="ssl">
+                        <td><label for="configStoreSSL"><em>*&nbsp;</em>$page.getLocalizedString("ssl.label")</label></td>
+                        <td>
+                            <input id="configStoreSSL" name="configStoreSSL" 
+                               type="checkbox" value="SSL" $selectConfigStoreSSL
+                               onClick="APP.callDelayed(this, validateConfigStoreSSL)"/>
+                        </td>
+                    </tr>
                     <tr id="host">
                         <td><label for="configStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
                         <td>

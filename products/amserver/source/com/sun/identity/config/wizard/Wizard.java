@@ -17,28 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.16 2008-05-10 04:20:30 veiming Exp $
+ * $Id: Wizard.java,v 1.17 2008-05-15 00:45:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
-import com.sun.identity.config.pojos.LDAPStore;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.setup.HttpServletRequestWrapper;
 import com.sun.identity.setup.HttpServletResponseWrapper;
-import com.sun.identity.setup.SetupProgress;
 import com.sun.identity.setup.SetupConstants;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.click.control.ActionLink;
-import net.sf.click.Context;
 
 public class Wizard extends AjaxPage {
 
@@ -139,14 +133,19 @@ public class Wizard extends AjaxPage {
         tmp = getAttribute("rootSuffix", defaultRootSuffix);
         request.addParameter(SetupConstants.CONFIG_VAR_ROOT_SUFFIX, tmp);
        
-        if (isEmbedded)
+        if (isEmbedded) {
             tmp = getHostName();
-        else
+            request.addParameter(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
+        } else {
             tmp = getAttribute("configStoreHost", hostName);
+            request.addParameter(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
+            tmp = getAttribute("configStoreSSL", "false");
+            request.addParameter(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL, tmp);
+        }
         
-        request.addParameter(
-            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
-
         tmp = getAttribute("configStoreLoginId", defaultUserName);
         request.addParameter(
             SetupConstants.CONFIG_VAR_DS_MGR_DN, tmp);
@@ -164,6 +163,10 @@ public class Wizard extends AjaxPage {
             tmp = (String)getContext().getSessionAttribute(
                 SetupConstants.USER_STORE_HOST);        
             store.put(SetupConstants.USER_STORE_HOST, tmp);
+            
+            tmp = (String)getContext().getSessionAttribute(
+                SetupConstants.USER_STORE_SSL);        
+            store.put(SetupConstants.USER_STORE_SSL, tmp);            
 
             tmp = (String)getContext().getSessionAttribute(
                 SetupConstants.USER_STORE_PORT);

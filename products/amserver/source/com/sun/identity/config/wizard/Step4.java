@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.9 2008-05-10 04:20:30 veiming Exp $
+ * $Id: Step4.java,v 1.10 2008-05-15 00:45:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,8 @@ import net.sf.click.Context;
  */
 public class Step4 extends AjaxPage {
     public static final String LDAP_STORE_SESSION_KEY = "wizardCustomUserStore";
+    public ActionLink setSSLLink = 
+        new ActionLink("setSSL", this, "setSSL");
     public ActionLink setUMEmbedded = 
         new ActionLink("setUMEmbedded", this, "setUMEmbedded");
     public ActionLink resetUMEmbedded = 
@@ -56,11 +58,15 @@ public class Step4 extends AjaxPage {
     public void onInit() {
         super.onInit();
         Context ctx = getContext();
-
+        
         if (ctx.getSessionAttribute(SetupConstants.USER_STORE_HOST) == null) {
             String val = getAttribute(SetupConstants.CONFIG_VAR_DATA_STORE,
                 SetupConstants.SMS_EMBED_DATASTORE);
             if (!val.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+
+                val = getAttribute("configStoreSSL", "SIMPLE");
+                ctx.setSessionAttribute(SetupConstants.USER_STORE_SSL, val);
+
                 val = getAttribute("configStoreHost", getHostName());
                 ctx.setSessionAttribute(SetupConstants.USER_STORE_HOST, val);
 
@@ -82,6 +88,14 @@ public class Step4 extends AjaxPage {
         String val = getAttribute(SetupConstants.USER_STORE_HOST,getHostName());
         ctx.setSessionAttribute(SetupConstants.USER_STORE_HOST, val);
         addModel("userStoreHost", val);
+        
+        val = getAttribute(SetupConstants.USER_STORE_SSL, "SIMPLE");
+        ctx.setSessionAttribute(SetupConstants.USER_STORE_SSL, val);
+        if (val.equals("SSL")) {
+            addModel("selectUserStoreSSL", "checked=\"checked\"");
+        } else {
+            addModel("selectUserStoreSSL", "");
+        }
 
         val = getAttribute(SetupConstants.USER_STORE_PORT, "389");
         ctx.setSessionAttribute(SetupConstants.USER_STORE_PORT, val);
@@ -122,6 +136,20 @@ public class Step4 extends AjaxPage {
         return false;
     }
     
+    public boolean setSSL() {
+        String ssl = toString("ssl");
+        if ((ssl != null) && ssl.length() > 0) {
+            getContext().setSessionAttribute(
+                SetupConstants.USER_STORE_SSL, ssl);
+        } else {
+            getContext().setSessionAttribute(
+                SetupConstants.USER_STORE_SSL, "SIMPLE");
+        }
+        writeToResponse(getLocalizedString(responseString));
+        setPath(null);
+        return false;
+    }
+
     public boolean setHost() {
         String host = toString("host");
         if ((host != null) && host.length() > 0) {

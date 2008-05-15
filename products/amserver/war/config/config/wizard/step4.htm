@@ -27,6 +27,18 @@
         field = "";
     }  
 
+    function validateUserStoreSSL() {
+        field = "userStoreSSL";
+        var callUrl = "$context$path?actionLink=setSSL";
+        var value = ($('userStoreSSL').checked) ? "SSL" : "SIMPLE";
+        var param = "&ssl=" + value;
+        AjaxUtils.call(callUrl+param, validateSSLField);
+    }
+
+    function validateSSLField() {
+        //no op
+    }
+
     function validateUserStoreHost() {
         field = "userStoreHost";
         var callUrl = "$context$path?actionLink=setHost";
@@ -127,7 +139,7 @@
             <b class="xt4"></b>
         </b>
         <div class="headerBox">$page.getLocalizedString("step4.sub.title")</div>
-        <div class="bodyBox" style="height:200px;">	
+        <div class="bodyBox" style="height:220px;">	
             <div id="embeddedConfigSettings"
                 style="margin-left:10px; display:none">
                 <br>
@@ -136,6 +148,14 @@
             </div>
             <span id="externalConfigSettings" style="display:none">
                 <table class="temp">
+                    <tr>
+                        <td><label for="userStoreSSL"><em>*&nbsp;</em>$page.getLocalizedString("directory.ssl.label")</label></td>
+                        <td>
+                            <input id="userStoreSSL" name="userStoreSSL"
+                                type="checkbox" value="SSL" $selectUserStoreSSL
+                                onClick="APP.callDelayed(this, validateUserStoreSSL)"/>
+                        </td>
+                    </tr>
                     <tr>
                         <td><label for="userStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("directory.name.label")</label></td>
                         <td>

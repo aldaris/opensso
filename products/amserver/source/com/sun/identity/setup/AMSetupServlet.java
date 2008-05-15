@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.57 2008-05-12 16:38:07 bigfatrat Exp $
+ * $Id: AMSetupServlet.java,v 1.58 2008-05-15 00:45:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -649,7 +649,11 @@ public class AMSetupServlet extends HttpServlet {
                 map.get(SetupConstants.CONFIG_VAR_ADMIN_PWD));
             initMap.put(BootstrapData.BASE_DIR, basedir);
         } else {
-            initMap.put(BootstrapData.PROTOCOL, BootstrapData.PROTOCOL_LDAP);
+            String tmp = (String)map.get(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL);
+            boolean ssl = (tmp != null) && tmp.equals("SSL");
+            initMap.put(BootstrapData.PROTOCOL, (ssl) ?
+                BootstrapData.PROTOCOL_LDAPS : BootstrapData.PROTOCOL_LDAP);
             initMap.put(BootstrapData.DS_HOST, 
                 map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
             initMap.put(BootstrapData.DS_PORT, 

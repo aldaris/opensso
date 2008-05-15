@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.6 2008-04-28 20:12:57 veiming Exp $
+ * $Id: BootstrapData.java,v 1.7 2008-05-15 00:45:47 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -397,7 +397,7 @@ public class BootstrapData {
             buff.append(URLEncoder.encode(
                 (String)configuration.get(FF_BASE_DIR), "UTF-8"));
         } else {
-            buff.append(PROTOCOL_LDAP);
+            buff.append(protocol);
             buff.append((String)configuration.get(DS_HOST));
             buff.append(":");
             buff.append((String)configuration.get(DS_PORT));

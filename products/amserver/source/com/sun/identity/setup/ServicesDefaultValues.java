@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.26 2008-05-10 03:59:31 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.27 2008-05-15 00:45:47 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,27 +130,27 @@ public class ServicesDefaultValues {
             dsConfig.setDSValues();
 
             //try to connect to the DS with the supplied host/port
-            if (embedded ==  false) {
-                if (!embedded && !dsConfig.isDServerUp()) {
+            if (!embedded) {
+                String sslEnabled = (String)map.get(
+                    SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL);
+                boolean ssl = (sslEnabled != null) && sslEnabled.equals("SSL");
+                if (!dsConfig.isDServerUp(ssl)) {
                     dsConfig = null;
                     throw new ConfiguratorException(
                         "configurator.dsconnnectfailure", null, locale);
                 }
                 if ((!DN.isDN((String) map.get(
                     SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
-                        (!dsConfig.connectDSwithDN())
+                        (!dsConfig.connectDSwithDN(ssl))
                 ) {
                     dsConfig = null;
                     throw new ConfiguratorException("configurator.invalidsuffix",
                         null, locale);
                 }
-                String dbName = dsConfig.getDBName();
-                if ((dbName != null) && (dbName.length() > 0)) {
-                    map.put(SetupConstants.DB_NAME, dbName);
-                }
                 
                 if (dbSunDS) {
-                    map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded());
+                    map.put(SetupConstants.DIT_LOADED, 
+                        dsConfig.isDITLoaded(ssl));
                     map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
                     map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, "");
                 } else {

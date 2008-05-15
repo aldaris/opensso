@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.1 2008-05-10 03:59:31 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.2 2008-05-15 00:45:47 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,14 @@ class UserIdRepo {
         String host = getHost(userRepo);
         addValueToMap("sun-idrepo-ldapv3-config-ldap-server", 
             host + ":" + getPort(userRepo), values);
-        
+
+        String ssl = (String)userRepo.get(SetupConstants.USER_STORE_SSL);
+        if ((ssl != null) && ssl.equals("SSL")) {
+            Set sslSet = new HashSet(2);
+            sslSet.add("true");
+            values.put("sun-idrepo-ldapv3-config-ssl-enabled", sslSet);
+        }
+
         if (!bFAMUserSchema) {
             values.put("sun-idrepo-ldapv3-config-group-container-name",
                 Collections.EMPTY_SET);
