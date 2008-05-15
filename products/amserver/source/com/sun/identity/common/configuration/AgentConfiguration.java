@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.25 2008-04-22 00:23:15 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.26 2008-05-15 03:59:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -657,6 +657,9 @@ public class AgentConfiguration {
         AMIdentity amid = new AMIdentity(ssoToken, agentGroupName,
             IdType.AGENTGROUP, realm, null);
         Map values = amid.getAttributes();
+        if (values != null) {  
+            values.remove(ATTR_NAME_PWD);
+        }
         return unparseAttributeMap(getAgentType(amid), values);
     }
 
