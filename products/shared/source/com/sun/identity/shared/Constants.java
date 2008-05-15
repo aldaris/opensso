@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.21 2008-04-24 23:49:46 manish_rustagi Exp $
+ * $Id: Constants.java,v 1.22 2008-05-15 04:02:26 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -768,6 +768,16 @@ public interface Constants {
      * User service name.
      */
     String SVC_NAME_USER = "iPlanetAMUserService";
+
+    /**
+     * Authentication Configuration service name.
+     */
+    String SVC_NAME_AUTH_CONFIG = "iPlanetAMAuthConfiguration";
+
+    /**
+     * SAML service name.
+     */
+    String SVC_NAME_SAML = "iPlanetAMSAMLService";
 
     /**
      * Certificate Alias name for SSL Client Auth 

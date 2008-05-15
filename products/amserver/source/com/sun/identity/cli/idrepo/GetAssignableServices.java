@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAssignableServices.java,v 1.2 2008-03-11 02:28:32 veiming Exp $
+ * $Id: GetAssignableServices.java,v 1.3 2008-05-15 04:02:26 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,11 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
@@ -81,6 +86,14 @@ public class GetAssignableServices extends IdentityCommand {
                 adminSSOToken, idName, idType, realm, null); 
             Set services = amid.getAssignableServices();
 
+            if (idType.equals(IdType.USER)) {
+                services.remove(Constants.SVC_NAME_USER);
+                services.remove(Constants.SVC_NAME_AUTH_CONFIG);
+                services.remove(Constants.SVC_NAME_SAML);
+            }
+
+                
+
             if ((services != null) && !services.isEmpty()) {
                 String msg = getResourceString("assignable-service-result");
                 String[] arg = {""};
@@ -109,4 +122,39 @@ public class GetAssignableServices extends IdentityCommand {
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
+
+    private void discardServicesWithoutAttributeSchema(
+        SSOToken adminSSOToken,
+        Set serviceNames,
+        IdType type
+    ) throws SMSException, SSOException {
+        for (Iterator iter = serviceNames.iterator(); iter.hasNext(); ) {
+            String serviceName = (String)iter.next();
+            ServiceSchemaManager mgr = new ServiceSchemaManager(
+                serviceName, adminSSOToken);
+            String url = mgr.getPropertiesViewBeanURL();
+
+            if (url == null) {
+                ServiceSchema serviceSchema = mgr.getSchema(type.getName());
+                Set attributes = serviceSchema.getAttributeSchemas();
+
+                if ((attributes == null) || attributes.isEmpty()) {
+                    iter.remove();
+                } else if (!hasI18nKeys(attributes)) {
+                    iter.remove();
+                }
+            }
+        }
+    }
+
+    private boolean hasI18nKeys(Set attributeSchemes) {
+        boolean has = false;
+        for (Iterator i = attributeSchemes.iterator(); (i.hasNext() && !has);){
+            AttributeSchema as = (AttributeSchema)i.next();
+            String i18nKey = as.getI18NKey();
+            has = (i18nKey != null) && (i18nKey.length() > 0);
+        }
+        return has;
+    }
+
 }
