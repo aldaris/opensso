@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoNotificationTests.java,v 1.5 2008-05-02 00:11:00 nithyas Exp $
+ * $Id: IDRepoNotificationTests.java,v 1.6 2008-05-15 22:10:33 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -364,8 +364,10 @@ public class IDRepoNotificationTests extends TestCommon implements
                 " identityChanged:" + universalId + " eventID is " + eventID);
         if ((eventID == 0) || (eventID == 1)) {
             log(Level.FINEST, "identityChanged", "strID: " + strID );
-            int index = universalId.indexOf(strID);
-            log(Level.FINEST, "identityChanged", "index of strID " + strID + 
+            String uid = universalId.toUpperCase().toLowerCase();
+            String struID = strID.toUpperCase().toLowerCase();
+            int index = uid.indexOf(struID);
+            log(Level.FINEST, "identityChanged", "index of strID " + struID + 
                     "is " + index);
             if (index != -1)
                 result = true;
@@ -380,8 +382,10 @@ public class IDRepoNotificationTests extends TestCommon implements
                 " identityDeleted:" + universalId + " eventID is " + eventID);
         if (eventID == 2) {
             log(Level.FINEST, "identityDeleted", "strID: " + strID );
-            int index = universalId.indexOf(strID);
-            log(Level.FINEST, "identityDeleted", "index of strID " + strID + 
+            String uid = universalId.toUpperCase().toLowerCase();
+            String struID = strID.toUpperCase().toLowerCase();
+            int index = uid.indexOf(struID);
+            log(Level.FINEST, "identityDeleted", "index of strID " + struID + 
                     "is " + index);
             if (index != -1)
                 result = true;
