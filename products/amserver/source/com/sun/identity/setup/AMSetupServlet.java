@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.58 2008-05-15 00:45:47 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.59 2008-05-15 04:51:02 kevinserwin Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,8 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.identity.sm.CachedSMSEntry;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -344,6 +346,7 @@ public class AMSetupServlet extends HttpServlet {
     
     private static boolean configure(Map map, Map userRepo) {
         boolean configured = false;
+        boolean existingConfiguration = false;
         try {
             String basedir = (String)map.get(
                 SetupConstants.CONFIG_VAR_BASE_DIR);
@@ -519,8 +522,22 @@ public class AMSetupServlet extends HttpServlet {
 
             if ((userRepo != null) && !userRepo.isEmpty()) {
                 try {
-                    UserIdRepo.configure(userRepo, basedir, servletCtx,
-                        adminSSOToken);
+                     // Construct the SMSEntry for the node to check to see if it this is an
+                     // existing configuration store, or new store
+                     ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
+                     if (sc != null) {                   
+                       CachedSMSEntry cEntry = CachedSMSEntry.getInstance(adminSSOToken,
+                            ("ou=" + userRepo.get("userStoreHostName") +","
+                            + sc.getDN()), null);
+                       SMSEntry entry = cEntry.getClonedSMSEntry();
+                       if (entry.isNewEntry()) {                  
+                            UserIdRepo.configure(userRepo, basedir, servletCtx,
+                                adminSSOToken);
+                       } else {
+                           existingConfiguration = true;
+                       }
+                      
+                     }
                 } catch (LDAPException e) {
                     throw new ConfiguratorException(e.getMessage());
                 }
@@ -536,8 +553,9 @@ public class AMSetupServlet extends HttpServlet {
             if ((userRepo == null) || userRepo.isEmpty()) {
                 createDemoUser();
             }
-
-            createIdentitiesForWSSecurity(serverURL, deployuri);
+            if (!existingConfiguration) {
+                 createIdentitiesForWSSecurity(serverURL, deployuri);
+            }
             updateSTSwsdl(basedir, deployuri);
 
             String aceDataDir = basedir + "/" + deployuri + "/auth/ace/data";

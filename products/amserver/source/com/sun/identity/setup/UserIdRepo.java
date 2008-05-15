@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.2 2008-05-15 00:45:47 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.3 2008-05-15 04:51:02 kevinserwin Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -136,7 +136,7 @@ class UserIdRepo {
         values.put(key, set);
     }
 
-    private static ServiceConfig getOrgConfig(SSOToken adminToken) 
+    static ServiceConfig getOrgConfig(SSOToken adminToken) 
         throws SMSException, SSOException {
         ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
             IdConstants.REPO_SERVICE, adminToken);
