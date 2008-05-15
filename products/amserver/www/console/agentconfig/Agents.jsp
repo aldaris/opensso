@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.5 2008-04-22 00:23:16 veiming Exp $
+   $Id: Agents.jsp,v 1.6 2008-05-15 04:03:56 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -91,33 +91,6 @@
 
 <cc:spacer name="spacer" height="10" newline="true" />
 
-<table border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-        <td nowrap><cc:textfield name="tfGroupFilter" defaultValue="*" /></td>
-        <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
-        <td><cc:button name="btnGroupSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
-    </tr>
-</table>
-
-<cc:spacer name="spacer" height="10" newline="true" />
-<cc:actiontable
-    name="tblSearchGroup"
-    title="table.agent.groups.title.name"
-    bundleID="amConsole"
-    summary="table.agent.groups.summary"
-    empty="table.agent.groups.empty.message"
-    selectionType="multiple"
-    showAdvancedSortingIcon="false"
-    showLowerActions="false"
-    showPaginationControls="true"
-    showPaginationIcon="true"
-    showSelectionIcons="true"
-    selectionJavascript="toggleTblButtonState('Agents', 'Agents.tblSearchGroup', 'tblButton', 'Agents.tblButtonGroupDelete', this)"
-    showSelectionSortIcon="false"
-    showSortingRow="false" />
-
-<cc:spacer name="spacer" height="20" newline="true" />
 
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
@@ -144,6 +117,35 @@
     selectionJavascript="toggleTblButtonState('Agents', 'Agents.tblSearch', 'tblButton', 'Agents.tblButtonDelete', this)"
     showSelectionSortIcon="false"
     showSortingRow="false" />
+
+<cc:spacer name="spacer" height="20" newline="true" />
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
+        <td nowrap><cc:textfield name="tfGroupFilter" defaultValue="*" /></td>
+        <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
+        <td><cc:button name="btnGroupSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
+    </tr>
+</table>
+
+<cc:spacer name="spacer" height="10" newline="true" />
+<cc:actiontable
+    name="tblSearchGroup"
+    title="table.agent.groups.title.name"
+    bundleID="amConsole"
+    summary="table.agent.groups.summary"
+    empty="table.agent.groups.empty.message"
+    selectionType="multiple"
+    showAdvancedSortingIcon="false"
+    showLowerActions="false"
+    showPaginationControls="true"
+    showPaginationIcon="true"
+    showSelectionIcons="true"
+    selectionJavascript="toggleTblButtonState('Agents', 'Agents.tblSearchGroup', 'tblButton', 'Agents.tblButtonGroupDelete', this)"
+    showSelectionSortIcon="false"
+    showSortingRow="false" />
+
 </cc:form>
 
 </cc:header>
