@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.70 2008-05-15 04:08:30 veiming Exp $
+ * $Id: AccessManager.java,v 1.71 2008-05-15 04:13:31 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1818,8 +1818,7 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.ShowAgentTypes",
         description="Show agent types.",
         webSupport="true",
-        mandatoryOptions={
-            "realm|e|s|Name of realm."},
+        mandatoryOptions={},
         optionAliases={},
         macro="authentication",
         optionalOptions={},

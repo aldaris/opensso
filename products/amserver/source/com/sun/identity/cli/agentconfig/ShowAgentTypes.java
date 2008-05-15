@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowAgentTypes.java,v 1.3 2008-04-22 00:23:14 veiming Exp $
+ * $Id: ShowAgentTypes.java,v 1.4 2008-05-15 04:13:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,12 +57,10 @@ public class ShowAgentTypes extends AuthenticatedCommand {
 
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
-        String realm = getStringOptionValue(IArgument.REALM_NAME);
-        String[] params = {realm};
 
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "ATTEMPT_SHOW_AGENT_TYPES", params);
+                "ATTEMPT_SHOW_AGENT_TYPES", null);
             Set agentTypes = AgentConfiguration.getAgentTypes();
 
             if (!agentTypes.isEmpty()) {
@@ -74,15 +72,15 @@ public class ShowAgentTypes extends AuthenticatedCommand {
                     "show-agent-type-no-results"));
             }
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "SUCCEED_SHOW_AGENT_TYPES", params);
+                "SUCCEED_SHOW_AGENT_TYPES", null);
         } catch (SMSException e) {
-            String[] args = {realm, e.getMessage()};
+            String[] args = {e.getMessage()};
             debugError("ShowAgentTypes.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SHOW_AGENT_TYPES", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
-            String[] args = {realm, e.getMessage()};
+            String[] args = {e.getMessage()};
             debugError("ShowAgentTypes.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SHOW_AGENT_TYPES", args);
