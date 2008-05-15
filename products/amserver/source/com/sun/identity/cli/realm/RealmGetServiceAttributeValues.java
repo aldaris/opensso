@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmGetServiceAttributeValues.java,v 1.2 2007-08-29 22:44:48 veiming Exp $
+ * $Id: RealmGetServiceAttributeValues.java,v 1.3 2008-05-15 04:08:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,12 +85,16 @@ public class RealmGetServiceAttributeValues extends AuthenticatedCommand {
                 attributeValues = ocm.getServiceAttributes(serviceName);
             }
             
-            outputWriter.printlnMessage(FormatUtils.printAttributeValues(
-                getResourceString("get-service-attr-values-of-realm-result"),
-                attributeValues, CLIUtil.getPasswordFields(serviceName)));
-            outputWriter.printlnMessage(MessageFormat.format(
-                getResourceString("get-service-attr-values-of-realm-succeed"),
-                (Object[])params));
+            if ((attributeValues != null) && !attributeValues.isEmpty()) {
+                outputWriter.printlnMessage(FormatUtils.printAttributeValues(
+                    getResourceString(
+                        "get-service-attr-values-of-realm-result"),
+                    attributeValues, CLIUtil.getPasswordFields(serviceName)));
+            } else {
+                outputWriter.printlnMessage(getResourceString(
+                    "get-service-attr-values-of-realm-no-attr"));
+            }
+
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_GET_REALM_SERVICE_ATTR_VALUES", params);
         } catch (IdRepoException e) {
