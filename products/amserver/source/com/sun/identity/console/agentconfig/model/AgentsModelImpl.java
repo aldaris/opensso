@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.8 2008-04-22 00:23:15 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.9 2008-05-15 03:52:53 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -540,7 +540,7 @@ public class AgentsModelImpl
      */
     public String getAgentGroup(String realmName, String universalId) 
         throws AMConsoleException {
-        String[] param = {realmName, universalId};
+        String[] param = {universalId};
         logEvent("ATTEMPT_GET_AGENT_ATTRIBUTE_VALUES", param);
         String groupName = null;
         try {
@@ -555,11 +555,11 @@ public class AgentsModelImpl
             logEvent("SUCCEED_GET_AGENT_ATTRIBUTE_VALUES", param);
             return groupName;
         } catch (SSOException e) {
-            String[] paramsEx = {realmName, universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {realmName, universalId, getErrorString(e)};
+            String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
@@ -633,7 +633,7 @@ public class AgentsModelImpl
      */
     public Map getGroupAttributeValues(String realmName, String groupName)
         throws AMConsoleException {
-        String[] param = {realmName, groupName};
+        String[] param = {groupName};
         logEvent("ATTEMPT_GET_AGENT_ATTRIBUTE_VALUES", param);
         
         try {
@@ -644,15 +644,15 @@ public class AgentsModelImpl
             logEvent("SUCCEED_GET_AGENT_ATTRIBUTE_VALUES", param);
             return values;
         } catch (SSOException e) {
-            String[] paramsEx = {realmName, groupName, getErrorString(e)};
+            String[] paramsEx = {groupName, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (SMSException e) {
-            String[] paramsEx = {realmName, groupName, getErrorString(e)};
+            String[] paramsEx = {groupName, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (IdRepoException e) {
-            String[] paramsEx = {realmName, groupName, getErrorString(e)};
+            String[] paramsEx = {groupName, getErrorString(e)};
             logEvent("EXCEPTION_GET_AGENT_ATTRIBUTE_VALUES", paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
