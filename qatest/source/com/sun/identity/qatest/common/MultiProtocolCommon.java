@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.11 2008-04-25 00:12:33 sridharev Exp $
+ * $Id: MultiProtocolCommon.java,v 1.12 2008-05-16 00:30:26 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -524,24 +524,24 @@ public class MultiProtocolCommon extends TestCommon {
                 specertalias = (String)m.get(TestConstants.KEY_SP_ECERTALIAS);
                 spattrqecertalias = (String)m.get(TestConstants.KEY_SP_ATTRQECERTALIAS);
                 cot = (String)m.get(TestConstants.KEY_SP_COT);
-                if (spattrqprovider.equals("") ||
-                        spattrqprovider.equals(null)) {
+                if (spattrqprovider.equals(null) ||
+                        spattrqprovider.equals("")) {
                     spattrqprovider = "/attrq";
                 }
-                if (spscertalias.equals("") ||
-                        spscertalias.equals(null)) {
+                if (spscertalias.equals(null) ||
+                        spscertalias.equals("")) {
                     spscertalias = spcertAlias;
                 }
-                if (spattqsceralias.equals("") ||
-                        spattqsceralias.equals(null)) {
+                if (spattqsceralias.equals(null) ||
+                        spattqsceralias.equals("")) {
                     spattqsceralias = spcertAlias;
                 }
-                if (specertalias.equals("") ||
-                        specertalias.equals(null)) {
+                if (specertalias.equals(null) ||
+                        specertalias.equals("")) {
                     specertalias = spcertAlias;
                 }
-                if (spattrqecertalias.equals("") ||
-                        spattrqecertalias.equals(null)) {
+                if (spattrqecertalias.equals(null) ||
+                        spattrqecertalias.equals("")) {
                     spattrqecertalias = spcertAlias;
                 }
             } else if (role.equalsIgnoreCase("IDP")) {
@@ -562,36 +562,36 @@ public class MultiProtocolCommon extends TestCommon {
                 idpattraecertalias = (String)m.get(TestConstants.KEY_IDP_ATTRAECERTALIAS);
                 idpauthnaecertalias = (String)m.get(TestConstants.KEY_IDP_AUTHNAECERTALIAS);
                 cot = (String)m.get(TestConstants.KEY_IDP_COT);
-                if (idpattrauthority.equals("") ||
-                        idpattrauthority.equals(null)) {
+                if (idpattrauthority == null ||
+                        idpattrauthority.equals("")) {
                     idpattrauthority = "/attra";
                 }
-                if (idpauthnauthority.equals("") ||
-                        idpauthnauthority.equals(null))  {
+                if (idpauthnauthority == null ||
+                        idpauthnauthority.equals(""))  {
                     idpauthnauthority = "/authna";
                 }
-                if (idpscertalias.equals("") ||
-                        idpscertalias.equals(null)) {
+                if (idpscertalias == null ||
+                        idpscertalias.equals("")) {
                     idpscertalias = idpcertAlias;
                 }
-                if (idpttrascertalias.equals("") ||
-                        idpttrascertalias.equals(null)) {
+                if (idpttrascertalias == null ||
+                        idpttrascertalias.equals("")) {
                     idpttrascertalias = idpcertAlias;
                 }
-                if (idpauthnascertalias.equals("") ||
-                        idpauthnascertalias.equals(null)) {
+                if (idpauthnascertalias == null ||
+                        idpauthnascertalias.equals("")) {
                     idpauthnascertalias = idpcertAlias;
                 }
-                if (idpecertalias.equals("") ||
-                        idpecertalias.equals(null)) {
+                if (idpecertalias == null ||
+                        idpecertalias.equals("")) {
                     idpecertalias = idpcertAlias;
                 }
-                if (idpattraecertalias.equals("") ||
-                        idpattraecertalias.equals(null)) {
+                if (idpattraecertalias == null ||
+                        idpattraecertalias.equals("")) {
                     idpattraecertalias = idpcertAlias;
                 }
-                if (idpauthnaecertalias.equals("") ||
-                        idpauthnaecertalias.equals(null)) {
+                if (idpauthnaecertalias == null ||
+                        idpauthnaecertalias.equals("")) {
                     idpauthnaecertalias = idpcertAlias;
                 }
             } else if (role.equalsIgnoreCase("IDPPROXY")) {

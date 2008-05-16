@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxySmokeTest.java,v 1.2 2008-04-25 15:15:48 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxySmokeTest.java,v 1.3 2008-05-16 00:34:01 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,8 +80,6 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void setup(String strSSOProfile, String strSLOProfile) 
     throws Exception {
-        Object[] params = {strSSOProfile, strSLOProfile};
-        Reporter.log("setup parameters: " + params);
         ArrayList list;
         try {
             ssoProfile = strSSOProfile;
@@ -234,6 +232,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     throws Exception {
         entering("SPInitSSO", null);
         try {
+            Reporter.log("Test Description: This test tests SP init SSO with " +
+                    ssoProfile + " in samlv2 IDP Proxy scenario");
             configMap.put(TestConstants.KEY_SP_USER,
                     configMap.get(TestConstants.KEY_SP_USER + 1));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -273,6 +273,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     throws Exception {
         entering("SPInitSLO", null);
         try {
+            Reporter.log("Test Description: This test tests SP init SLO with " +
+                    sloProfile + "in samlv2 IDP Proxy scenario");
             log(Level.FINEST, "SPInitSLO", "Running: SPInitSLO");
             xmlfile = baseDir + "SAMLv2IDPProxySPInitSLO.xml";
             SAMLv2Common.getxmlSPSLO(xmlfile, configMap, sloProfile, true);
@@ -297,6 +299,9 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     throws Exception {
         entering("SPInitSSOTransient", null);
         try {
+            Reporter.log("Test Description: This test tests SP init SSO " +
+                    ssoProfile + " with transient federation in samlv2 IDP " +
+                    "Proxy Scenario");
             getWebClient();
             configMap.put(TestConstants.KEY_SP_USER,
                     configMap.get(TestConstants.KEY_SP_USER + 1));
@@ -338,6 +343,9 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     throws Exception {
         entering("SPInitSLOTransient", null);
         try {
+            Reporter.log("Test Description: This test tests SP init SLO with " +
+                    sloProfile + " with transient federation in samlv2 IDP " +
+                    "Proxy Scenario");
             log(Level.FINEST, "SPInitSLOTransient", "Running: SPInitSLOTransient");
             xmlfile = baseDir + "SAMLv2IDPProxySPInitSLOTransient.xml";
             SAMLv2Common.getxmlSPSLO(xmlfile, configMap, sloProfile, true);
@@ -359,7 +367,6 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
-        ArrayList idList;
         try {
             getWebClient();
             // delete sp users

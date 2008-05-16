@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxyAutoFederationTests.java,v 1.1 2008-04-25 15:13:35 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxyAutoFederationTests.java,v 1.2 2008-05-16 00:32:58 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,8 +145,6 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     public void setup(String strSSOProfile, String strSLOProfile) 
     throws Exception {
         List<String> list;
-        Object[] params = {strSSOProfile, strSLOProfile};
-        Reporter.log("setup parameters: " + params);
         try {
             ssoProfile = strSSOProfile;
             sloProfile = strSLOProfile;
@@ -334,6 +332,10 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     throws Exception {
         entering("autoFedSPInit1", null);
         try {
+            Reporter.log("Test Description: Run SP initiated auto federation" +
+                    " SSO with " + ssoProfile + " & SLO with " + sloProfile + 
+                    " in SAMLv2 IDP Proxy setup. The auto federation is " +
+                    " turned on end to end.");
             consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -405,6 +407,10 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     throws Exception {
         entering("autoFedSPInit2", null);
         try {
+            Reporter.log("Test Description: Run SP initiated auto federation" +
+                    " SSO with " + ssoProfile + " & SLO with " + sloProfile + 
+                    " in SAMLv2 IDP Proxy setup. Auto federation is turned " +
+                    "only between IDP Proxy & IDP.");
             consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -483,6 +489,10 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     throws Exception {
         entering("autoFedSPInitTransient", null);
         try {
+            Reporter.log("Test Description: Run SP initiated transient SSO " +
+                    "with " + ssoProfile + " auto federation in SAMLv2 IDP " +
+                    "Proxy setup. Auto federation is turned  between IDP " +
+                    "Proxy & IDP and SP & IDP Proxy.");
             consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -557,6 +567,11 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     throws Exception {
         entering("autoFedSPInitTransient", null);
         try {
+            Reporter.log("Test Description: Run SP initiated auto federation" +
+                    " SSO with " + ssoProfile + " & SLO with " + sloProfile +
+                    " in SAMLv2 IDP Proxy setup where Dynamic user creation " +
+                    " is turned on at SP end. After auto federation is " +
+                    " succeeded new user will be created at the SP.");
             consoleLogin(webClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -636,6 +651,12 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     throws Exception {
         entering("autoFedSPInitDynamicUserCreationAtProxy", null);
         try {
+            Reporter.log("Test Description: Run SP initiated auto federation" +
+                    " SSO with " + ssoProfile + " & SLO with " + sloProfile +
+                    " in SAMLv2 IDP Proxy setup where Dynamic user creation " +
+                    "is turned on at SP end and at IDP Proxy.After auto " +
+                    "federation  is succeeded new user will be created at the" +
+                    " SP as well as at the IDP Proxy.");
             consoleLogin(webClient, idpproxyurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_PROXY_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_PROXY_AMADMIN_PASSWORD));
