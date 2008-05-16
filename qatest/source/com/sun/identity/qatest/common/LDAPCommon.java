@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.4 2007-10-29 23:38:51 bt199000 Exp $
+ * $Id: LDAPCommon.java,v 1.5 2008-05-16 22:21:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -330,7 +330,25 @@ public class LDAPCommon extends TestCommon {
         }
         exiting("createSchemaFromLDIF");
     }
-    
+
+    /**
+     * This method disconnects and terminate LDAP connection.
+     */
+    public void disconnectDServer()
+    throws Exception {
+        if ((ld != null) && ld.isConnected()) {
+            try {
+                ld.disconnect();
+                ld = null;
+            } catch (LDAPException e) {
+                log(Level.SEVERE, "disconnectDServer",
+                        "LDAP error with return code " + e.getLDAPResultCode());
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+
     /**
      * This method creates a LDAP connection.
      */
@@ -359,23 +377,5 @@ public class LDAPCommon extends TestCommon {
             }
         }
         return ld;
-    }
-    
-    /**
-     * This method disconnects and terminate LDAP connection.
-     */
-    private void disconnectDServer()
-    throws Exception {
-        if ((ld != null) && ld.isConnected()) {
-            try {
-                ld.disconnect();
-                ld = null;
-            } catch (LDAPException e) {
-                log(Level.SEVERE, "disconnectDServer",
-                        "LDAP error with return code " + e.getLDAPResultCode());
-                e.printStackTrace();
-                throw e;
-            }
-        }
     }
 }

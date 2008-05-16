@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.13 2008-04-03 19:40:58 cmwesley Exp $
+ * $Id: SetupProduct.java,v 1.14 2008-05-16 22:21:33 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,29 +132,42 @@ public class SetupProduct extends TestCommon {
                             consoleLogin(webClient, loginURL, adminUser,
                                     adminPassword);
 
-                            admintoken = getToken(adminUser, adminPassword, 
-                                    basedn);
-                            smsc = new SMSCommon(admintoken, "SMSGlobalConfig");
-                            Set datastoreSet = smsc.listDataStore(realm);
-                            String defDatastore1 = cfg1.getString(TestConstants.
-                                        KEY_ATT_CONFIG_DEFDATASTORENAME);
-                            //delete default datastore if createDatastore is
-                            //successful and default datastore exists
-                            if (createDataStoreUsingfamadm(webClient, famadm,
-                                    cfg1Data, 0, dCount) && 
-                                    datastoreSet.contains(defDatastore1)) {
-                                datastoreList.add(defDatastore1);
-                                if (FederationManager.getExitCode(
-                                        famadm.deleteDatastores(webClient,
-                                        realm, datastoreList)) != 0) {
-                                    log(Level.SEVERE, "SetupProduct",
-                                            "deleteDatastores famadm command" +
-                                            " failed");
+                            //delete default datastore if createDatastore
+                            //is successful and the default datastore exists
+                            if (createDataStoreUsingfamadm(webClient,
+                                    famadm, cfg1Data, 0, dCount)) {
+                                datastoreList.add(defDatastoreName1);
+                                HtmlPage pageDStore =
+                                        famadm.listDatastores(webClient,
+                                        realm);
+                                if (FederationManager.
+                                        getExitCode(pageDStore) != 0) {
+                                    log(Level.SEVERE, "setup",
+                                            "listDatastores famadm" +
+                                            " command failed");
                                     assert false;
+                                }
+                                if (getHtmlPageStringIndex(
+                                        pageDStore, defDatastoreName1) ==
+                                        -1) {
+                                    log(Level.FINEST, "setup", "Default" +
+                                            " Datastore doesn't exist " +
+                                            list);
+                                } else {
+                                    if (FederationManager.getExitCode(
+                                            famadm.deleteDatastores(
+                                            webClient, realm,
+                                            datastoreList)) != 0) {
+                                        log(Level.SEVERE, "setup",
+                                                "deleteDatastores famadm" +
+                                                " command failed");
+                                        assert false;
+                                    }
                                 }
                             } else {
                                 log(Level.SEVERE, "setup", "DataStore" +
-                                        " configuration didn't succeed.");
+                                    " configuration didn't succeed for " +
+                                    namingHost);
                             }
                         } catch (Exception e) {
                             log(Level.SEVERE, "setup", e.getMessage());
@@ -191,6 +204,7 @@ public class SetupProduct extends TestCommon {
                         if (datastoreSet2.contains(defDataStoreName2)) {
                             smsc.deleteDataStore(realm, defDataStoreName2);
                         }
+                        modifyPolicyService();
                     }
                 }
                 log(Level.FINE, "SetupProduct", "Check if multiprotocol " +
@@ -262,27 +276,43 @@ public class SetupProduct extends TestCommon {
                                 webClient = new WebClient();
                                 consoleLogin(webClient, loginURL, adminUser,
                                         adminPassword);
-                                admintoken = getToken(adminUser, adminPassword, 
-                                        basedn);
-                                smsc = new SMSCommon(admintoken, 
-                                        "SMSGlobalConfig");
-                                Set datastoreSet3 = smsc.listDataStore(realm);                               
+                                
                                 //delete default datastore if createDatastore
                                 //is successful and the default datastore exists
                                 if (createDataStoreUsingfamadm(webClient,
-                                        famadm, cfg1Data, 2, dCount) && 
-                                        datastoreSet3.contains(
-                                        defDatastoreName3)) {
+                                        famadm, cfg1Data, 2, dCount)) { 
                                     datastoreList.add(defDatastoreName3);
-                                    if (FederationManager.getExitCode(
-                                            famadm.deleteDatastores(webClient,
-                                            realm, datastoreList)) != 0) {
-                                        log(Level.SEVERE, "SetupProduct",
-                                                "deleteDatastores famadm" +
+                                    HtmlPage pageDStore =
+                                            famadm.listDatastores(webClient,
+                                            realm);
+                                    if (FederationManager.
+                                            getExitCode(pageDStore) != 0) {
+                                        log(Level.SEVERE, "setup",
+                                                "listDatastores famadm" +
                                                 " command failed");
                                         assert false;
                                     }
-                                }
+                                    if (getHtmlPageStringIndex(
+                                            pageDStore, defDatastoreName3) ==
+                                            -1) {
+                                        log(Level.FINEST, "setup", "Default" +
+                                                " Datastore doesn't exist " +
+                                                list);
+                                    } else {
+                                        if (FederationManager.getExitCode(
+                                                famadm.deleteDatastores(
+                                                webClient, realm,
+                                                datastoreList)) != 0) {
+                                            log(Level.SEVERE, "SetupProduct",
+                                                    "deleteDatastores famadm" +
+                                                    " command failed");
+                                            assert false;
+                                        }
+                                    }
+                                } else
+                                    log(Level.SEVERE, "setup", "DataStore" +
+                                        " configuration didn't succeed for " + 
+                                        namingHost);
                             } catch (Exception e) {
                                 log(Level.SEVERE, "setup", e.getMessage());
                                 e.printStackTrace();
@@ -351,27 +381,43 @@ public class SetupProduct extends TestCommon {
                                 webClient = new WebClient();
                                 consoleLogin(webClient, loginURL, adminUser,
                                         adminPassword);
-                                admintoken = getToken(adminUser, adminPassword, 
-                                        basedn);
-                                smsc = new SMSCommon(admintoken, 
-                                        "SMSGlobalConfig");
-                                Set datastoreSet4 = smsc.listDataStore(realm);                
+
                                 //delete default datastore if createDatastore
                                 //is successful and the default datastore exists
                                 if (createDataStoreUsingfamadm(webClient,
-                                        famadm, cfg1Data, 3, dCount) &&
-                                        datastoreSet4.contains(
-                                        defDatastoreName4)) {
+                                        famadm, cfg1Data, 3, dCount)) {
                                     datastoreList.add(defDatastoreName4);
-                                    if (FederationManager.getExitCode(
-                                            famadm.deleteDatastores(webClient,
-                                            realm, datastoreList)) != 0) {
-                                        log(Level.SEVERE, "SetupProduct",
-                                                "deleteDatastores famadm" +
+                                    HtmlPage pageDStore =
+                                            famadm.listDatastores(webClient,
+                                            realm);
+                                    if (FederationManager.
+                                            getExitCode(pageDStore) != 0) {
+                                        log(Level.SEVERE, "setup",
+                                                "listDatastores famadm" +
                                                 " command failed");
                                         assert false;
                                     }
-                                }
+                                    if (getHtmlPageStringIndex(
+                                            pageDStore, defDatastoreName4) ==
+                                            -1) {
+                                        log(Level.FINEST, "setup", "Default" +
+                                                " Datastore doesn't exist " +
+                                                list);
+                                    } else {
+                                        if (FederationManager.getExitCode(
+                                                famadm.deleteDatastores(
+                                                webClient, realm,
+                                                datastoreList)) != 0) {
+                                            log(Level.SEVERE, "SetupProduct",
+                                                    "deleteDatastores famadm" +
+                                                    " command failed");
+                                            assert false;
+                                        }
+                                    }
+                                } else
+                                    log(Level.SEVERE, "setup", "DataStore" +
+                                        " configuration didn't succeed for " +
+                                        namingHost);
                             } catch (Exception e) {
                                 log(Level.SEVERE, "setup", e.getMessage());
                                 e.printStackTrace();
@@ -413,6 +459,7 @@ public class SetupProduct extends TestCommon {
                         if (datastoreSetSingle.contains(defDataStoreName1)) {                        
                             smsc.deleteDataStore(realm, defDataStoreName1);
                         }
+                        modifyPolicyService();
                     }
                 }
             } else if ((serverName1.indexOf("SERVER_NAME1") != -1) &&
@@ -457,6 +504,10 @@ public class SetupProduct extends TestCommon {
         }
     }
     
+    /**
+     * In case product configuration fails, this method rewrites the client
+     * side AMConfig.properties file and sets product setup flag to false.
+     */
     public void setSingleServerSetupFailedFlag() {
         entering("setSingleServerSetupFailedFlag", null);
         try {
@@ -675,10 +726,130 @@ public class SetupProduct extends TestCommon {
                     SMSConstants.SMS_DATASTORE_TYPE_AMDS);
             ldc.loadAMUserSchema(schemaString,
                     schemaAttributes);
+            ldc.disconnectDServer();
         }
         return (dsCreated);
     }
-    
+
+    /**
+     * This method modifies Policy Service using SMS API. LDAP server name,
+     * port, bind bn, bind password, users base dn, roles base dn, ssl enabled
+     * will be modified based on the configGlobalData single server properties.
+     */
+    private void modifyPolicyService()
+    throws Exception {
+        entering("modifyPolicyService", null);
+        String dsRealm = null;
+        String adminId;
+        String ldapServer;
+        String ldapPort;
+        String dsAdminPassword;
+        String orgName;
+        String sslEnabled;
+        String authId;
+        String umDSType;
+        int index = 1;
+        int i = 0;
+        List svcAttrList = new ArrayList();
+        List removeSvcAttrList = new ArrayList();
+
+        ResourceBundle amCfgData = ResourceBundle.getBundle("AMConfig");
+        ResourceBundle cfgData = ResourceBundle.getBundle("configGlobalData");
+
+        umDSType = amCfgData.getString("umdatastore");
+
+        try {
+            if ((umDSType).equals("dirServer")) {
+                adminId = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_DATASTORE_ADMINID + "." + i);
+                dsRealm = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_DATASTORE_REALM + "." + i);
+                ldapServer = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_LDAPv3_LDAP_SERVER +
+                        "." + i);
+                ldapPort = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_LDAPv3_LDAP_PORT +
+                        "." + i);
+                dsAdminPassword = cfgData.getString(
+                        SMSConstants.SMS_DATASTORE_PARAMS_PREFIX +
+                        index + "." + SMSConstants.SMS_DATASTORE_ADMINPW +
+                        "." + i);
+                orgName = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME + "." + i);
+                sslEnabled = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED + "." + i);
+                authId = cfgData.getString(SMSConstants.
+                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
+                        SMSConstants.SMS_LDAPv3_AUTHID + "." + i);
+
+                Map scAttrMap =
+                        smsc.getAttributes("iPlanetAMPolicyConfigService",
+                        dsRealm, "Organization");
+                log(Level.FINEST, "modifyPolicyService",
+                        "Policy service attributes before modification: " +
+                        scAttrMap);
+
+                Map newPolicyAttrValuesMap = new HashMap();
+                Set newPolicyAttrValues = new HashSet();
+                newPolicyAttrValues.add(ldapServer + ":" + ldapPort);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-ldap-server",
+                        newPolicyAttrValues);
+                newPolicyAttrValues = new HashSet();
+                newPolicyAttrValues.add(dsAdminPassword);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-ldap-bind-password",
+                        newPolicyAttrValues);
+                newPolicyAttrValues = new HashSet();
+                newPolicyAttrValues.add(authId);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-ldap-bind-dn",
+                        newPolicyAttrValues);
+                newPolicyAttrValues = new HashSet();
+                newPolicyAttrValues.add(sslEnabled);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-ldap-ssl-enabled",
+                        newPolicyAttrValues);
+                newPolicyAttrValues = new HashSet();
+                newPolicyAttrValues.add(orgName);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-ldap-base-dn",
+                        newPolicyAttrValues);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-is-roles-base-dn",
+                        newPolicyAttrValues);
+                newPolicyAttrValuesMap.
+                        put("iplanet-am-policy-config-ldap-users-base-dn",
+                        newPolicyAttrValues);
+
+                log(Level.FINEST, "modifyPolicyService",
+                        "Policy attributes being modified: " +
+                        newPolicyAttrValuesMap);
+                smsc.updateSvcAttribute(dsRealm,
+                        "iPlanetAMPolicyConfigService", newPolicyAttrValuesMap,
+                        "Organization");
+
+                Map scAttrMapNew =
+                        smsc.getAttributes("iPlanetAMPolicyConfigService",
+                        dsRealm, "Organization");
+                log(Level.FINEST, "modifyPolicyService",
+                        "Policy service attributes after modification: "
+                        + scAttrMapNew);
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "modifyPolicyService", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("modifyPolicyService");
+    }
+
     public static void main(String args[]) {
         try {
             SetupProduct cp = new SetupProduct(args[0], args[1]);

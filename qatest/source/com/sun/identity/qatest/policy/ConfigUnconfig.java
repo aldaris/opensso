@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.2 2008-03-21 02:34:47 arunav Exp $
+ * $Id: ConfigUnconfig.java,v 1.3 2008-05-16 22:21:35 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,118 +69,6 @@ public class ConfigUnconfig extends TestCommon {
             log(Level.SEVERE, "ConfigUnconfig", e.getMessage());
             e.printStackTrace();
         }
-    }
-    
-    /**
-     * This method modifies Policy Service using SMS API. LDAP server name,
-     * port, bind bn, bind password, users base dn, roles base dn, ssl enabled
-     * will be modified based on the configGlobalData single server properties.
-     *
-     */
-    @BeforeSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void modifyPolicyService()
-    throws Exception {
-        entering("modifyPolicyService", null);
-        String dsRealm = null;
-        String adminId;
-        String ldapServer;
-        String ldapPort;
-        String dsAdminPassword;
-        String orgName;
-        String sslEnabled;
-        String authId;
-        String umDSType;
-        int index = 1;
-        int i = 0;
-        List svcAttrList = new ArrayList();
-        List removeSvcAttrList = new ArrayList();
-        
-        umDSType = amCfgData.getString("umdatastore");
-        try {
-            if ((umDSType).equals("dirServer")) {
-                adminId = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_DATASTORE_ADMINID + "." + i);
-                dsRealm = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_DATASTORE_REALM + "." + i);
-                ldapServer = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_LDAPv3_LDAP_SERVER +
-                        "." + i);
-                ldapPort = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_LDAPv3_LDAP_PORT +
-                        "." + i);
-                dsAdminPassword = cfgData.getString(
-                        SMSConstants.SMS_DATASTORE_PARAMS_PREFIX +
-                        index + "." + SMSConstants.SMS_DATASTORE_ADMINPW +
-                        "." + i);
-                orgName = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME + "." + i);
-                sslEnabled = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED + "." + i);
-                authId = cfgData.getString(SMSConstants.
-                        SMS_DATASTORE_PARAMS_PREFIX + index + "." +
-                        SMSConstants.SMS_LDAPv3_AUTHID + "." + i);
-                
-                strServiceName = "iPlanetAMPolicyConfigService";
-                scm = new ServiceConfigManager(token, strServiceName, "1.0");
-                sc = scm.getOrganizationConfig(dsRealm, null);
-                Map scAttrMap = sc.getAttributes();
-                log(Level.FINEST, "modifyPolicyService", "Map " +
-                        "returned from config is: " + scAttrMap);
-                
-                Map newPolicyAttrValuesMap = new HashMap();
-                Set newPolicyAttrValues = new HashSet();
-                newPolicyAttrValues.add(ldapServer + ":" + ldapPort);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-ldap-server",
-                        newPolicyAttrValues);
-                newPolicyAttrValues = new HashSet();
-                newPolicyAttrValues.add(dsAdminPassword);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-ldap-bind-password",
-                        newPolicyAttrValues);
-                newPolicyAttrValues = new HashSet();
-                newPolicyAttrValues.add(authId);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-ldap-bind-dn",
-                        newPolicyAttrValues);
-                newPolicyAttrValues = new HashSet();
-                newPolicyAttrValues.add(sslEnabled);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-ldap-ssl-enabled",
-                        newPolicyAttrValues);
-                newPolicyAttrValues = new HashSet();
-                newPolicyAttrValues.add(orgName);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-ldap-base-dn",
-                        newPolicyAttrValues);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-is-roles-base-dn",
-                        newPolicyAttrValues);
-                newPolicyAttrValuesMap.
-                        put("iplanet-am-policy-config-ldap-users-base-dn",
-                        newPolicyAttrValues);
-                
-                sc.setAttributes(newPolicyAttrValuesMap);
-                
-                Map scAttrMapNew = sc.getAttributes();
-                log(Level.FINEST, "modifyPolicyService", "Configuration" +
-                        " attributes after policy service modification" + 
-                        scAttrMapNew);
-            }
-        } catch (Exception e) {
-            log(Level.SEVERE, "modifyPolicyService", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            destroyToken(token);
-        }
-        exiting("modifyPolicyService");
     }
     
     /**
