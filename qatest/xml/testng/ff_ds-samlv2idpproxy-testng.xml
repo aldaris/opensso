@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-samlv2idpproxy-testng.xml,v 1.2 2008-04-25 15:23:58 mrudulahg Exp $
+ $Id: ff_ds-samlv2idpproxy-testng.xml,v 1.3 2008-05-16 00:24:05 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,8 +38,21 @@
         <classes>
             <class name="com.sun.identity.qatest.samlv2idpproxy.ConfigureSAMLv2IDPProxy"/>
             <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxySmokeTest"/>
-            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxyAutoFederationTests"/>
             <class name="com.sun.identity.qatest.samlv2idpproxy.UnconfigureSAMLv2IDPProxy"/> 
+        </classes>
+    </test>
+    <test name="SAMLv2IDPProxyFeatureTests">
+        <parameter name="ssoprofile" value="artifact"/>
+        <parameter name="sloprofile" value="http"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxyAutoFederationTests"/>
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxyRelayStateTests"/> 
+            <class name="com.sun.identity.qatest.samlv2idpproxy.SAMLv2IDPProxyDefaultRelayStateSPTests"/>
         </classes>
     </test>
 </suite>
