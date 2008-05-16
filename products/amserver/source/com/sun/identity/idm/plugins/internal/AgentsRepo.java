@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.27 2008-05-14 05:27:16 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.28 2008-05-16 17:52:11 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -181,6 +181,9 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     public String create(SSOToken token, IdType type, String agentName, 
         Map attrMap) throws IdRepoException, SSOException {
 
+        if (agentName.startsWith("\"")) {
+            agentName = "\\" + agentName ;
+        }
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.create() called: " + type + ": "
                     + agentName);
