@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.24 2008-05-14 21:14:24 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.25 2008-05-16 20:29:48 sean_brydon Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -685,7 +685,9 @@ public class AgentConfiguration implements
                         sysPropertyMap.put(nextKey, nextValue);
                     }
                 }
-
+                //used by agentsdk and clientsdk, not hot swappable
+                setClientNotificationURL();   
+                
                 String modIntervalString = getProperty(CONFIG_LOAD_INTERVAL);
                 try {
                     long modInterval = Long.parseLong(modIntervalString);
@@ -702,8 +704,6 @@ public class AgentConfiguration implements
                         + ex.getMessage());
             }
         
-            // Initilaize the Debug Engine
-            //setDebug(Debug.getInstance(IBaseModuleConstants.BASE_RESOURCE));
             if (isLogMessageEnabled()) {
                 if (sysPropertyMap != null) {
                     logMessage(
@@ -914,8 +914,7 @@ public class AgentConfiguration implements
         }
     }
     
-    private static synchronized void setApplicationPassword() {
-            
+    private static synchronized void setApplicationPassword() {           
         if (!isInitialized()) {
             try {
                     _crypt = ServiceFactory.getCryptProvider();
@@ -973,8 +972,9 @@ public class AgentConfiguration implements
     
 
     
-    //this property is a not yet a hot swappable ClientSDK property
+    //this property is used by both the agentsdk code and also the clientsdk
     private static synchronized void setClientNotificationURL() {
+        if (!isInitialized()) {
             String url = getProperty(SDKPROP_CLIENT_NOTIFICATION_URL);
             if (url != null && url.trim().length() > 0) {
                 _clientNotificationURL = url;
@@ -988,6 +988,7 @@ public class AgentConfiguration implements
                 logMessage("AgentConfiguration: Client notification URL: "
                         + _clientNotificationURL);
             }
+        }
     }
     
     //this property is a hot swappable ClientSDK property
@@ -1026,13 +1027,14 @@ public class AgentConfiguration implements
     private static synchronized void initializeConfiguration() {
         if (!isInitialized()) {
             //read in all properties, save all props & values in map to use 
-            //later and push some to JVM system for clientsdk
+            //later and push some to system for clientsdk
             bootStrapClientConfiguration();  
             registerAgentNotificationHandler();          
             //now set some class fields with property values         
             setHotSwappableConfigProps();          
-            //set some fields as some clientsdk props also used by agent code
-            setSSOTokenName();   
+            //set fields as some clientsdk props also used by agent code
+            setSSOTokenName();              
+            
             setHotSwappableClientSDKProps();     
             logAgentVersion();
             logServerVersion();
@@ -1111,12 +1113,11 @@ public class AgentConfiguration implements
     
     /**
      * some of clientSDK props are hot-swappable and are used by clientSDK thru
-     * JVM system properties are are ALSO used by agent code and hence we store
-     * their current values in some fields.
+     * SystemProperties helper class and are ALSO used by agent code and hence 
+     * we store their current values in some fields.
      */
     private static void setHotSwappableClientSDKProps() {
         setSessionNotificationEnabledFlag();
-        setClientNotificationURL();
         setPolicyNotificationEnabledFlag();
     }
     
