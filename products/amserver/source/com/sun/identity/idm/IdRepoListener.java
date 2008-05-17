@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.4 2006-11-04 00:08:25 kenwho Exp $
+ * $Id: IdRepoListener.java,v 1.5 2008-05-17 05:11:58 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,38 +109,39 @@ public final class IdRepoListener {
             // If Caching was enabled - then clear the cache!!
             dirtyCache = true;
         }
-        String[] changed = getChangedIds(name, cMap);
-        for (int i = 0; i < changed.length; i++) {
+        if (name.length() > 0) {
+            String[] changed = getChangedIds(name, cMap);
+            for (int i = 0; i < changed.length; i++) {
 
-            if (dirtyCache) {
-                ((IdCachedServices) idServices).dirtyCache(changed[i],
+                if (dirtyCache) {
+                    ((IdCachedServices) idServices).dirtyCache(changed[i],
                         type, false, false,
                         Collections.EMPTY_SET);
-            }
+                }
 
-            // Update any listeners registered with IdRepo
-            if (list != null) {
-                int size = list.size();
-                for (int j = 0; j < size; j++) {
-                    IdEventListener l = (IdEventListener) list.get(j);
-                    switch (type) {
-                    case AMEvent.OBJECT_CHANGED:
-                    case AMEvent.OBJECT_ADDED:
-                        l.identityChanged(changed[i]);
-                        break;
-                    case AMEvent.OBJECT_REMOVED:
-                        l.identityDeleted(changed[i]);
-                        break;
-                    case AMEvent.OBJECT_RENAMED:
-                        l.identityRenamed(changed[i]);
+                // Update any listeners registered with IdRepo
+                if (list != null) {
+                    int size = list.size();
+                    for (int j = 0; j < size; j++) {
+                        IdEventListener l = (IdEventListener) list.get(j);
+                        switch (type) {
+                        case AMEvent.OBJECT_CHANGED:
+                        case AMEvent.OBJECT_ADDED:
+                            l.identityChanged(changed[i]);
+                            break;
+                        case AMEvent.OBJECT_REMOVED:
+                            l.identityDeleted(changed[i]);
+                            break;
+                        case AMEvent.OBJECT_RENAMED:
+                            l.identityRenamed(changed[i]);
+                        }
                     }
                 }
-            }
-            if (remoteListener != null) {
-                remoteListener.objectChanged(changed[i], type, configMap);
+                if (remoteListener != null) {
+                    remoteListener.objectChanged(changed[i], type, configMap);
+                }
             }
         }
-
     }
 
     /*
