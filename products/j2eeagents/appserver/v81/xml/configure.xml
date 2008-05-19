@@ -267,20 +267,6 @@
                                 </validation>
                             </validations>
                         </interaction>
-                        <interaction lookupkey="AGENT_PROFILE_TYPE" persistent="false">
-                            <skipIf key="CREATE_AGENT_PROFILE_NAME" ignorecase="true">
-                                <value>false</value>
-                            </skipIf>
-                            <i18n key="INT_AGENT_PROFILE_TYPE" group="amToolsMessages"/>
-                            <validations>
-                                <validation name="VALID_CHOICE">
-                                    <class name="ChoiceValidator" type="system"/>
-                                    <property name="value1" value="J2EEAgent"/>
-                                    <property name="value2" value="WebAgent"/>
-                                    <property name="ignorecase" value="false"/>
-                                </validation>
-                            </validations>
-                        </interaction>
                         <interaction lookupkey="AGENT_ADMINISTRATOR_NAME" 
                                      persistent="false">
                             <skipIf key="CREATE_AGENT_PROFILE_NAME" ignorecase="true">
@@ -419,6 +405,7 @@
             </task>
             <task name="CREATE_AGENT_PROFILE">                      
             	<class name="CreateProfileTask" type="system"/>
+                <property name="AGENT_PROFILE_TYPE" value="J2EEAgent" />
             </task>      
             <task name="BACKUP_FILE">
            	 	<class name="BackupFileTask" type="system"/>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateProfileTask.java,v 1.1 2008-05-06 17:42:43 leiming Exp $
+ * $Id: CreateProfileTask.java,v 1.2 2008-05-19 23:13:05 leiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,11 +58,15 @@ public class CreateProfileTask implements ITask, InstallConstants {
                 "Agent profile will be created");
         try {
             
-            RESTUtils.RESTResponse response = createAgentProfile(stateAccess);
+            RESTUtils.RESTResponse response = createAgentProfile(stateAccess,
+                    properties);
             if (response.getResponseCode() != HTTP_RESPONSE_OK) {
                 Debug.log("CreateProfileTask.execute() - " +
                         "failed to create agent profile. response code = " +
                         response.getResponseCode());
+                Debug.log("CreateProfileTask.execute() - " +
+                        "failed to create agent profile. response message = " +
+                        response.toString());
                 return false;
                 
             } else {
@@ -84,8 +88,8 @@ public class CreateProfileTask implements ITask, InstallConstants {
      * create agent profile.
      * @param stateAccess
      */
-    private RESTUtils.RESTResponse createAgentProfile(IStateAccess stateAccess)
-    throws Exception {
+    private RESTUtils.RESTResponse createAgentProfile(IStateAccess stateAccess,
+            Map properties) throws Exception {
         
         String agentUserName = (String)stateAccess.get(STR_AGENT_PROFILE_NAME);
         String agentUserPasswordFile = (String)stateAccess.get(
@@ -103,7 +107,7 @@ public class CreateProfileTask implements ITask, InstallConstants {
         String agentAdminPasswordFile = (String)stateAccess.get(
                 STR_AGENT_ADMINISTRATOR_PASSWORD_FILE);
         String agentAdminPassword = null;
-        String agentProfileType = (String)stateAccess.get(
+        String agentProfileType = (String)properties.get(
                 STR_AGENT_PROFILE_TYPE);
         String ssoToken = null;
         String serverURL = (String) stateAccess.get(STR_AM_SERVER_URL);

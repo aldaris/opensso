@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RESTUtils.java,v 1.1 2008-05-06 17:42:43 leiming Exp $
+ * $Id: RESTUtils.java,v 1.2 2008-05-19 23:13:05 leiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,7 +147,7 @@ public class RESTUtils {
             if (content != null) {
                 buffer = new StringBuffer();
                 for (int i=0; i<content.size(); i++) {
-                    buffer.append(content.get(i));
+                    buffer.append(content.get(i) + "\n");
                 }
             } // end of if (...
             return buffer.toString();
