@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.15 2008-05-05 22:57:00 cmwesley Exp $
+ * $Id: SMSCommon.java,v 1.16 2008-05-19 18:11:27 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,6 +114,34 @@ public class SMSCommon extends TestCommon {
     }
     
     /**
+     * Returns all attributes and their values in a service
+     * which have sub configurations. Service type can be one of the following:
+     * Global or Organization.
+     * dsRealm - a String containing the name of the realm from which the
+     * service attribute value should be retrieved.
+     * serviceName - a String containing the name of service from which the
+     * attribute value should be retrieved.
+     * type - a String set to "Global" or "Organization".
+     * @return a Map containing all the atributes and their values
+     */
+    public Map getAttributes(String serviceName, String dsRealm,
+            String type)
+            throws Exception {
+        ServiceConfigManager scm = new ServiceConfigManager(admintoken,
+                serviceName, "1.0");
+        ServiceConfig sc = null;
+        if (type.equals("Global"))
+            sc = scm.getGlobalConfig(null);
+        else if (type.equals("Organization")) {
+            if (dsRealm != null)
+                sc = scm.getOrganizationConfig(dsRealm, null);
+            else
+                sc = scm.getOrganizationConfig(realm, null);
+        }
+        return (sc.getAttributes());
+    }
+
+    /**
      * Returns attribute value as a set for an attribute in a service
      * which have sub configurations. 
      * serviceRealm - a String containing the name of the realm from which the
@@ -155,6 +183,26 @@ public class SMSCommon extends TestCommon {
             String type)
     throws Exception {
         return getAttributeValue(realm, serviceName, attributeName, type);
+    }
+
+    /**
+     * Method updates a given set of attributes in any sepcified service.
+     * This is only valid for Global and Organization level attributes.
+     * It does not update Dynamic attributes. This updates attribute
+     * values for global and organization services which have sub
+     * configurations.
+     */
+    public void updateSvcAttribute(String serviceRealm, String serviceName,
+            Map map, String type)
+            throws Exception {
+        ServiceConfigManager scm = new ServiceConfigManager(serviceName,
+                admintoken);
+        ServiceConfig sc = null;
+        if (type.equals("Global"))
+            sc = scm.getGlobalConfig(null);
+        else if (type.equals("Organization"))
+            sc = scm.getOrganizationConfig(serviceRealm, null);
+        sc.setAttributes(map);
     }
     
     /**
@@ -934,10 +982,12 @@ public class SMSCommon extends TestCommon {
     throws Exception {
         entering("isPluginConfigured", null);
         ServiceConfig subConfig;
-        OrganizationConfigManager orgMgr = new OrganizationConfigManager(ssoToken,
-                subRealmName);
-        OrganizationConfigManager subrealm = orgMgr.getSubOrgConfigManager(subRealmName);
-        ServiceConfig sc = subrealm.getServiceConfig(SMSConstants.REALM_SERVICE);
+        OrganizationConfigManager orgMgr =
+                new OrganizationConfigManager(ssoToken, subRealmName);
+        OrganizationConfigManager subrealm =
+                orgMgr.getSubOrgConfigManager(subRealmName);
+        ServiceConfig sc =
+                subrealm.getServiceConfig(SMSConstants.REALM_SERVICE);
         boolean isPluginConfigured = false;
         if (sc != null) {
             try {
