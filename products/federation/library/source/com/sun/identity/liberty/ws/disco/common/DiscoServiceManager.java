@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoServiceManager.java,v 1.4 2008-02-26 22:23:02 mallas Exp $
+ * $Id: DiscoServiceManager.java,v 1.5 2008-05-19 22:26:47 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public class DiscoServiceManager implements ConfigurationListener {
     private static final String ATTR_ENTRY_HANDLER =
                                 "sunIdentityServerDiscoEntryHandler";
     private static final String ATTR_GLOBAL_ENTRY_HANDLER =
-                                "sunIdentityServerDiscoGlobalEntryHandler";
+                                "sunIdentityServerGlobalDiscoEntryHandler";
     private static final String ATTR_ID_MAPPER =
                         "sunIdentityServerDiscoProviderResourceIDMapper";
     private static final String KEY_PROVIDER_ID = "providerid";
