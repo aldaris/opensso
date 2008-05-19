@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-cli-testng.xml,v 1.9 2008-04-01 20:16:54 cmwesley Exp $
+ $Id: ds_ds_sec-cli-testng.xml,v 1.10 2008-05-19 21:03:50 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -798,50 +798,6 @@
             <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
         </classes>
     </test>    
-    <test name="CLI_create-identity36">
-        <parameter name="testName" value="createidentity-test36"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>      
-    <test name="CLI_create-identity37">
-        <parameter name="testName" value="createidentity-test37"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>      
-    <test name="CLI_create-identity38">
-        <parameter name="testName" value="createidentity-test38"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>      
-    <test name="CLI_create-identity39">
-        <parameter name="testName" value="createidentity-test39"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.CreateIdentityTest"/>
-        </classes>
-    </test>        
     <test name="CLI_delete-identities01">
         <parameter name="testName" value="deleteidentities-test1"/>
         <groups>
@@ -2618,50 +2574,6 @@
             <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
         </classes>
     </test>    
-    <test name="CLI_get-identity21">
-        <parameter name="testName" value="getidentity-test21"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
-        </classes>
-    </test>
-    <test name="CLI_get-identity22">
-        <parameter name="testName" value="getidentity-test22"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
-        </classes>
-    </test>
-    <test name="CLI_get-identity23">
-        <parameter name="testName" value="getidentity-test23"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
-        </classes>
-    </test>
-    <test name="CLI_get-identity24">
-        <parameter name="testName" value="getidentity-test24"/>
-        <groups>
-            <run>
-                <include name="ds_ds_sec"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
-        </classes>
-    </test>
     <test name="CLI_set-realm-attributes01">
         <parameter name="testName" value="setrealmattributes-test1"/>
         <groups>
@@ -3794,7 +3706,18 @@
         <classes>
             <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
         </classes>
-    </test>        
+    </test>
+    <test name="CLI_update-auth-instance57">
+        <parameter name="testName" value="updateauthinstance-test57"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>         
     <test name="CLI_delete-auth-instances01">
         <parameter name="testName" value="deleteauthinstances-test1"/>
         <groups>

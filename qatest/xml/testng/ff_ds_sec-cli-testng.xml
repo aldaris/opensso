@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-cli-testng.xml,v 1.9 2008-01-18 15:05:20 cmwesley Exp $
+ $Id: ff_ds_sec-cli-testng.xml,v 1.10 2008-05-19 21:03:51 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2952,6 +2952,17 @@
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.UpdateAuthInstanceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_update-auth-instance57">
+        <parameter name="testName" value="updateauthinstance-test57"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
             </run>
         </groups>
         <classes>
