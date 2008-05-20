@@ -19,21 +19,21 @@
 \@rem your own identifying information:
 \@rem "Portions Copyrighted [year] [name of copyright owner]"
 \@rem 
-\@rem $Id: setAgentEnv.cmd.template,v 1.2 2008-02-22 02:31:49 leiming Exp $
+\@rem $Id: setAgentEnv.cmd.template,v 1.3 2008-05-20 00:30:29 huacui Exp $
 \@rem
 \@rem Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 \@rem
 
 \@rem *************************************************************************
-\@rem This script is used to set up your environment for SJS Access Manager 
-\@rem WebLogic 10.0 policy agent. 
+\@rem This script is used to set up your environment for Sun Federated Access
+\@rem Manager Policy Agent 3.0 for WebLogic 10.0.
 \@rem Copy the server startup script to a server specific script. 
 \@rem e.g startWeblogic.sh
 \@rem Include this file in the server startup script after the 
 \@rem setDomainEnv.sh script inclusion. 
 \@rem Append AGENT_CLASSPATH and AGENT_JAVA_OPTIONS to the WebLogic server in 
 \@rem the startup script
-\@rem Please read 2.2 WebLogic 10.0 J2EE Agent Guide - Post-installation steps 
+\@rem Please refer to 3.0 WebLogic 10.0 Agent Guide - Post-installation steps 
 \@rem for detailed instructions.
 \@rem *************************************************************************
 

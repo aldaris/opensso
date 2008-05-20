@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainXMLBase.java,v 1.9 2008-02-05 20:59:01 leiming Exp $
+ * $Id: DomainXMLBase.java,v 1.10 2008-05-20 00:28:11 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -460,7 +460,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
     public static final String STR_LOG_CONFIG_FILE_OPTION_PREFIX =
         "-Djava.util.logging.config.file=";
     public static final String STR_LOG_CONFIG_FILENAME = 
-        "AMAgentLogConfig.properties";
+        "FAMAgentLogConfig.properties";
     public static final String STR_LOG_COMPATMODE_OPTION = 
         "-DLOG_COMPATMODE=Off";    
     public static final String STR_SERVERS_ELEMENT = "servers";

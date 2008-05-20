@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.9 2008-05-06 17:40:16 leiming Exp $
+ * $Id: InstallConstants.java,v 1.10 2008-05-20 00:42:18 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,7 +55,7 @@ public interface InstallConstants extends ICommonToolsConstants {
     
     /** Field STR_LOG_CONFIG_FILENAME **/
     public static final String STR_LOG_CONFIG_FILENAME =
-                    "AMAgentLogConfig.properties";
+                    "FAMAgentLogConfig.properties";
     
     /** Field STR_VERSION_FILE_NAME **/
     public static final String STR_VERSION_FILE_NAME = "/.version";

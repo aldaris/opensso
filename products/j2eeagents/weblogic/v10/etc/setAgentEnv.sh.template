@@ -24,15 +24,15 @@
 #
 
 # *************************************************************************
-# This script is used to set up your environment for SJS Access Manager 
-# WebLogic 10.0 policy agent. 
+# This script is used to set up your environment for Sun Federated Access 
+# Manager Policy Agent 3.0 for WebLogic 10.0.
 # Copy the server startup script to a server specific script. 
 # e.g startWeblogic.sh
 # Include this file in the server startup script after the 
 # setDomainEnv.sh script inclusion. 
 # Append AGENT_CLASSPATH and AGENT_JAVA_OPTIONS to the WebLogic server in 
 # the startup script
-# Please read 2.2 WebLogic 10.0 J2EE Agent Guide - Post-installation steps 
+# Please refer to 3.0 WebLogic 10.0 Agent Guide - Post-installation steps 
 # for detailed instructions.
 # *************************************************************************
 
