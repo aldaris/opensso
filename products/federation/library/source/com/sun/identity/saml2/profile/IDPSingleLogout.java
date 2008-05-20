@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.15 2008-05-02 21:46:28 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.16 2008-05-20 23:32:19 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -566,7 +566,7 @@ public class IDPSingleLogout {
             List partners = IDPProxyUtil.getSessionPartners(request);
             if (partners != null &&  !partners.isEmpty()) {
                 IDPProxyUtil.sendProxyLogoutRequest(request, response,
-                    logoutReq, partners, binding);
+                    logoutReq, partners, binding, relayState);
             } else {
                 LogoutUtil.sendSLOResponse(response, logoutRes, location, 
                     relayState, realm, idpEntityID, SAML2Constants.IDP_ROLE,

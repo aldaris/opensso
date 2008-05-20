@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.11 2008-02-21 23:18:55 hengming Exp $
+ * $Id: LogoutUtil.java,v 1.12 2008-05-20 23:32:19 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -256,7 +256,7 @@ public class LogoutUtil {
         }
         
         if (binding.equals(SAML2Constants.HTTP_REDIRECT)) {
-            try {
+            try { 
                 doSLOByHttpRedirect(logoutReq.toXMLString(true, true),
                                     location,
                                     relayState,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.15 2008-04-15 17:21:18 qcheng Exp $
+ * $Id: SPSingleLogout.java,v 1.16 2008-05-20 23:32:20 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -526,7 +526,7 @@ public class SPSingleLogout {
         }
         
         infoMap.put("inResponseTo" , inResponseTo);                         
-        
+        infoMap.put(SAML2Constants.RELAY_STATE, relayState);
         // destroy session
         SessionProvider sessionProvider = SessionManager.getProvider();
         Object session = sessionProvider.getSession(request);

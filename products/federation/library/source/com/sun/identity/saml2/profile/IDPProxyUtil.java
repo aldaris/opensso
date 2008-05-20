@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.8 2008-04-15 17:20:49 qcheng Exp $
+ * $Id: IDPProxyUtil.java,v 1.9 2008-05-20 23:32:19 weisun2 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -573,11 +573,10 @@ public class IDPProxyUtil {
         LogoutRequest logoutReq, 
         SOAPMessage msg,
         IDPSession idpSession,
-        String binding
+        String binding, 
+        String relayState
         ) 
     {
-        String RelayState = request.getParameter(
-            SAML2Constants.RELAY_STATE);
         Object ssoToken = idpSession.getSession();
    
         try {
@@ -610,8 +609,8 @@ public class IDPProxyUtil {
             }
             paramsMap.put("Consent", request.getParameter("Consent"));
             paramsMap.put("Extension", request.getParameter("Extension"));
-            if (RelayState != null) {
-                paramsMap.put(SAML2Constants.RELAY_STATE, RelayState);
+            if (relayState != null) {
+                paramsMap.put(SAML2Constants.RELAY_STATE, relayState);
             } 
             idpSession.removeSessionPartner(partner);
             SPSingleLogout.initiateLogoutRequest(request,response,
@@ -725,7 +724,8 @@ public class IDPProxyUtil {
         HttpServletResponse response,
         LogoutRequest logoutReq,
         List partners,
-        String binding)
+        String binding,
+        String relayState)
     {
         try { 
             Object tmpsession = sessionProvider.getSession(request);
@@ -753,7 +753,7 @@ public class IDPProxyUtil {
             String party = partner.getPartner();
             idpSession.removeSessionPartner(party);
             initiateSPLogoutRequest(request,response, party, metaAlias, realm,
-                logoutReq, null, idpSession, binding);
+                logoutReq, null, idpSession, binding, relayState);
         } catch (SessionException se) {
             SAML2Utils.debug.error(
                 "sendProxyLogoutRequest: ", se);
@@ -788,8 +788,9 @@ public class IDPProxyUtil {
        if (SAML2Utils.debug.messageEnabled()) {
            SAML2Utils.debug.message("Proxy to: " + location); 
        }    
+       String relayState = (String) infoMap.get(SAML2Constants.RELAY_STATE); 
        LogoutUtil.sendSLOResponse(response, logoutRes, 
-           location, null, "/", entityID, 
+           location, relayState, "/", entityID, 
            SAML2Constants.IDP_ROLE,
            remoteEntity, binding);       
    }  
@@ -819,7 +820,7 @@ public class IDPProxyUtil {
             String party = partner.getPartner();
             idpSession.removeSessionPartner(party);
             initiateSPLogoutRequest(request,response, party, metaAlias, realm,
-                null, msg ,idpSession, SAML2Constants.SOAP);
+                null, msg ,idpSession, SAML2Constants.SOAP, null);
        
    }
    
