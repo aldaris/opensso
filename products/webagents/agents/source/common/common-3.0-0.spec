@@ -1,6 +1,6 @@
 Summary: BASE_PRODUCT_NAME Access Manager C Development Kit
 Name: common
-Version: 2.2
+Version: 3.0
 Release: 0
 License: CDDL 
 Group: Applications/Internet
@@ -21,7 +21,8 @@ BASE_PRODUCT_NAME Access Manager C Development Kit
 /opt/agents/lib/libssl3.so
 /opt/agents/bin/crypt_util
 /opt/agents/lib/comlib_linux
-/opt/agents/config/FAMAgentBootstrap.properties.orig
+/opt/agents/config/FAMAgentBootstrap.template.orig
+/opt/agents/config/FAMAgentConfiguration.template.orig
 /opt/agents/include/am.h
 /opt/agents/include/am_auth.h
 /opt/agents/include/am_log.h

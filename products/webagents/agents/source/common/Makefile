@@ -193,7 +193,7 @@ $(RPM):
 	$(CP) THIRD_PARTY_LICENSE.TXT $(BUILDROOT_LIB_DIR)/..
 	$(CP) $(LIBXML_LIB_DIR)/libxml2.so.2 $(BUILDROOT_LIB_DIR)
 	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.template $(BUILDROOT_CONF_DIR)/FAMAgentBootstrap.template.orig
-	$(CP) $(USERX_ROOT)/conf/FAMAgentConfiguration.template $(BUILDROOT_CONF_DIR)/config/FAMAgentConfiguration.template.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentConfiguration.template $(BUILDROOT_CONF_DIR)/FAMAgentConfiguration.template.orig
 	$(CP) $(USERX_ROOT)/am/source/crypt_util $(BUILDROOT_BIN_DIR)
 	$(CP) comlib_linux $(BUILDROOT_LIB_DIR)
 	$(CP) $(DEST_SAMPLES_DIR)/README.TXT $(BUILDROOT_SAMPLES_DIR)
@@ -202,7 +202,7 @@ $(RPM):
 	$(CP) $(DEST_INC_DIR)/*.h $(BUILDROOT_INC_DIR)
 	if [ -f $(HOME)/.rpmmacros ] ; then mv $(HOME)/.rpmmacros $(HOME)/.rpmmacros.agent ; fi
 	echo "%_topdir $(BUILDROOT)" > $(HOME)/.rpmmacros
-	rpmbuild -bb --buildroot $(BUILDROOT) --target $(MC_ARCH) common-2.2-0.spec
+	rpmbuild -bb --buildroot $(BUILDROOT) --target $(MC_ARCH) common-3.0-0.spec
 	$(RM) $(HOME)/.rpmmacros
 	if [ -f $(HOME)/.rpmmacros.agent ] ; then mv $(HOME)/.rpmmacros.agent $(HOME)/.rpmmacros ; fi
 	$(MV) $(BUILDROOT_RPM_DIR)/$(DSAME_DROP_FILE).rpm $(RPM_DIR)

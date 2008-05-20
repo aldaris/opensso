@@ -18,7 +18,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.6 2008-05-20 00:30:11 madan_ranganath Exp $
+# $Id: defines.mk,v 1.7 2008-05-20 20:21:38 madan_ranganath Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -143,7 +143,7 @@ endif
 AGENT_JAR_FILE := $(DEST_JAR_DIR)/am_agent.jar
 NOTIFYAPI_JAR_FILE := $(DEST_JAR_DIR)/am_notifyapi.jar
 ifeq ($(OS_ARCH), Linux)
-DSAME_DROP_FILE := common-3_0.$(MC_ARCH)
+DSAME_DROP_FILE := common-3.0-0.$(MC_ARCH)
 else
 DSAME_DROP_FILE := common_3_0.$(OS_ARCH)
 endif
