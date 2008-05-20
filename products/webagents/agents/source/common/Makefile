@@ -109,7 +109,8 @@ $(DEST_PACKAGE_SCRATCH_DIR)/$(ZIP_DIR): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_H
 	$(RM) -r $(ZIP_DIR)
 	$(MKDIR) $(patsubst %, $(ZIP_DIR)/%, $(ZIP_SUB_DIRS))
 	$(CP) $(filter %$(SO_EXT).$(AGENT_MAJOR_VER), $^) $(ZIP_DIR)/lib
-	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.properties $(ZIP_DIR)/config/FAMAgentBootstrap.properties.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentBootstrap.template $(ZIP_DIR)/config/FAMAgentBootstrap.template.orig
+	$(CP) $(USERX_ROOT)/conf/FAMAgentConfiguration.template $(ZIP_DIR)/config/FAMAgentConfiguration.template.orig
 	$(CP) $(filter %.h, $^) $(ZIP_DIR)/include
 	$(CP) $(filter %THIRD_PARTY_LICENSE.TXT, $^) $(ZIP_DIR)
 	$(CP) $(filter %README.TXT, $^) $(ZIP_DIR)/samples

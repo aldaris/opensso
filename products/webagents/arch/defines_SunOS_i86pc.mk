@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines_SunOS_i86pc.mk,v 1.2 2006-10-06 18:27:28 subbae Exp $
+# $Id: defines_SunOS_i86pc.mk,v 1.3 2008-05-20 00:30:11 madan_ranganath Exp $
 #
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -38,4 +38,4 @@ DEST_LIB_DIR := $(DEST_DIR)/$(OSMC_ARCH)/lib
 DEST_PACKAGE_DIR := $(DEST_DIR)/$(OSMC_ARCH)/packages
 DEST_PACKAGE_SCRATCH_DIR := $(DEST_DIR)/$(OSMC_ARCH)/packages.scratch
 
-DSAME_DROP_FILE := common_2_2_$(OSMC_ARCH)
+DSAME_DROP_FILE := common_3_0_$(OSMC_ARCH)

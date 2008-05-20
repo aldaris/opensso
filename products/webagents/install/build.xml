@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-04-08 23:56:10 subbae Exp $
+   $Id: build.xml,v 1.7 2008-05-20 00:31:14 madan_ranganath Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,7 +57,7 @@
 
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.install.dir}/resources">
-                <include name="AMToolsConfig.properties"/>
+                <include name="FAMToolsConfig.properties"/>
             </fileset>
         </copy>
 

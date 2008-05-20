@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.StringBuffer;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashSet;
@@ -50,6 +51,7 @@ public class MigrateWebAgentConfigurePropertiesTask extends
     private static HashSet agentListParameters = new HashSet();
     private static HashSet agentMapParameters = new HashSet();
     private static HashSet agentResetCookieParameters = new HashSet();
+    private static HashSet nonMigratedParameters = new HashSet();
 
     // Properties that are of list type
     static {
@@ -82,6 +84,17 @@ public class MigrateWebAgentConfigurePropertiesTask extends
         agentResetCookieParameters.add(
                     "com.sun.identity.agents.config.logout.cookie.reset");
     }
+    
+    // parameters not to be migrated from previous product
+    static {
+        nonMigratedParameters.add("com.sun.identity.agents.config.local.logfile");
+    }
+    
+    // New property introduced in 3.0
+    public static String AGENT_ENCRYPT_KEY_PROPERTY =
+                                   "com.sun.identity.agents.config.key";
+    // 2.2 agent encrypt key value, used during migration
+    public static String AGENT_22_ENCRYPT_KEY_VALUE = "3137517";
 	
     public boolean execute(String name, IStateAccess stateAccess, 
             Map properties)
@@ -130,7 +143,6 @@ public class MigrateWebAgentConfigurePropertiesTask extends
             try {
                 mergeConfigFiles(instanceConfigFileMigrate, instanceConfigFile, 
                                  mappedProperties);
-                status = true;                
                 mergeConfigFiles(instanceConfigFileMigrate, configFile, 
                                  mappedProperties);
                 status = true;
@@ -186,15 +198,18 @@ public class MigrateWebAgentConfigurePropertiesTask extends
                 } else {                    
                     keyValue = new KeyValue(lineData);
                     
+                    if (nonMigratedParameters.contains(keyValue.getKey())) {
+                    	pw.println(lineData);
+                    	continue;
+                    }
+                    
 		    // For the new web agent property, get its corresponding
 		    // old property name
 		    oldPropertyName = mappedProperties.getProperty(
                                                        keyValue.getParameter());
-                    if (oldPropertyName != null) {
-                        migrateLines = getMigrateLines(keyValue.getParameter(),
-                                                     oldPropertyName,
-                                                     instanceConfigFileMigrate);
-                    }                    
+                    migrateLines = getMigrateLines(keyValue.getParameter(),
+                                                   oldPropertyName,
+                                                   instanceConfigFileMigrate);
                     Debug.log(
                     "MigrateWebAgentConfigurePropertiesTask.mergeConfigFiles()- " +
                     "parameter: " + keyValue.getParameter() +
@@ -205,8 +220,28 @@ public class MigrateWebAgentConfigurePropertiesTask extends
                             pw.println(migrateLines.get(i));
                         }
                     } else {
-                        // new parameter, write back.
-                        pw.println(lineData);
+                        if (lineData.indexOf(AGENT_ENCRYPT_KEY_PROPERTY) >= 0) {
+                            // encrypt key property
+                            StringBuffer newLineData = new StringBuffer();
+                            int count = 0;
+                            StringTokenizer st = 
+                                    new StringTokenizer(lineData, "=");
+                            while (st.hasMoreElements()) {
+                                String tok = st.nextToken();
+                                if (count == 0) {
+                                    newLineData.append(tok);
+                                    newLineData.append("= ");
+                                } else {
+                                    newLineData.append(
+                                                AGENT_22_ENCRYPT_KEY_VALUE);                                            
+                                }
+                                count++;
+                            }
+                            pw.println(newLineData);
+                        } else {                            
+                            // new parameter, write back.
+                            pw.println(lineData);
+                        }
                     }
                 } // end of if (lineData..
             } // end of while
@@ -249,6 +284,10 @@ public class MigrateWebAgentConfigurePropertiesTask extends
         
         FileReader fr = null;
         BufferedReader br = null;
+
+        if (oldPropertyName == null) {
+	    return migrateLines;
+        }
         try {
             fr = new FileReader(instanceConfigFileMigrate);
             br = new BufferedReader(fr);
@@ -370,7 +409,6 @@ public class MigrateWebAgentConfigurePropertiesTask extends
                     }
                 }
             }
-        } // end of getParameterName
-        
+        } // end of getParameterName        
     }
 }

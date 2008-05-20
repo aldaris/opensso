@@ -102,6 +102,9 @@ Note on Red Hat Linux Advanced Server release 2.1AS/i686 platform:
    ftp://rpmfind.net/linux/redhat/updates/enterprise/2.1AS/en/os/SRPMS/gcc-2.96-124.7.2.src.rpm
    ftp://rpmfind.net/linux/redhat/updates/enterprise/2.1AS/en/os/SRPMS/glibc-2.2.4-32.11.src.rpm
 
+   7. Rename ../config/FAMAgentBootstrap.template.orig as ../config/FAMAgentBootstrap.properties and update the tags appropriately.
+   8. Rename ../config/FAMAgentConfiguration.template.orig as ../config/FAMAgentConfiguration.properties and update the tags appropriately.
+
 
 Building Sample Program on Windows
 ----------------------------------

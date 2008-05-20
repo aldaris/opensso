@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines_Linux.mk,v 1.3 2008-03-18 00:52:00 subbae Exp $
+# $Id: defines_Linux.mk,v 1.4 2008-05-20 00:30:11 madan_ranganath Exp $
 # 
 # Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 #
@@ -96,6 +96,6 @@ endif
 #
 # the following is the name of the tar ball for dsame drop,.
 #
-DSAME_DROP_FILE_NAME := common_2_2_$(OS_ARCH)_$(MC_ARCH)
+DSAME_DROP_FILE_NAME := common_3_0_$(OS_ARCH)_$(MC_ARCH)
 
 MAKE_STATIC_LIB = $(AR) $(ARFLAGS) $@ $(filter %.o, $^)

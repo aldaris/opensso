@@ -385,7 +385,7 @@
                     <property name="CONFIG_FILENAME_AGENT_CONFIG"
                               value="FAMAgentConfiguration.properties"/>
                     <property name="CONFIG_FILENAME_AGENT_MIGRATE_PROPERTIES"
-                              value="AMAgentMigration.properties"/>
+                              value="FAMAgentMigration.properties"/>
                 </task>
                 <task name="CONFIGURE_MAGNUS_CONF">
                     <class name="ConfigureMagnusConfTask" type="custom"/> 

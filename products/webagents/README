@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
-README file for Open Web Single Sign-On - Web Agents
+README file for Web Agents 3.0
 ------------------------------------------------------------------------------
 #
 # The contents of this file are subject to the terms
@@ -29,8 +29,9 @@ README file for Open Web Single Sign-On - Web Agents
 **********************************************************************************
 
 NOTE: Currently only Webserver 7.0 Agent has Agent 3.0 features enabled. 
-Also this is the only agent that users can build and install (supported platforms are 
-Solaris sparc, Solaris x86 and RHAS Linux 3.0, support on windows is coming shortly). 
+Also this is the only agent that users can build and install 
+(supported platforms are Solaris sparc, Solaris x86 and RHAS Linux 4.0, 5.0 and 
+Windows 2003)
 Rest of the Agents for other containers viz. Apache, IIS are yet to have the 
 Agent 3.0 features enabled. They will be done in a timely manner.
 
@@ -46,7 +47,7 @@ Nightly and stable builds are available on opensso web site.
     %% 1. Platforms
     %% 1.1 Solaris Sparc
     %% 1.2 Solaris x86
-    %% 1.3 Red Hat Linux AS 3.0
+    %% 1.3 Red Hat Linux AS 4.0/5.0
     %% 1.4 Windows 2003 Enterprise Edition
 
 %% 1. Platforms
@@ -83,7 +84,7 @@ opensso/products/webagents/docs/SunOS_i86pc/sjsws/README.txt
 Sun Java System Web Server Agent Install instructions:
 opensso/products/webagents/docs/SunOS_i86pc/sjsws/INSTALL.txt
 
-%% 1.3 Red Hat Linux AS 3.0
+%% 1.3 Red Hat Linux AS 4.0/5.0
 
 External library location and Build instructions: 
 opensso/products/webagents/docs/Linux/apache/README.txt
@@ -114,5 +115,5 @@ opensso/products/webagents/docs/WINNT/sjsws/INSTALL.txt
 Microsoft Internet Information Services 6 Agent Build instructions: 
 opensso/products/webagents/docs/WINNT/iis/README.txt
 
-SunMicrosoft Internet Information Services 6 Agent tall instructions:
+Microsoft Internet Information Services 6 Agent tall instructions:
 opensso/products/webagents/docs/WINNT/iis/INSTALL.txt
