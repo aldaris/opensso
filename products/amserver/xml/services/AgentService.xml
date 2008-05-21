@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.38 2008-03-21 02:30:51 sean_brydon Exp $
+   $Id: AgentService.xml,v 1.39 2008-05-21 21:17:00 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -158,6 +158,19 @@
                         type="single"
                         syntax="boolean"
                         i18nKey="a405">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.change.notification.enable"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a246">
                         <BooleanValues>
                             <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
                             <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
@@ -2275,7 +2288,7 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.identity.agents.config.centralized.notification.enable"
+                        name="com.sun.identity.agents.config.change.notification.enable"
                         type="single"
                         syntax="boolean"
                         i18nKey="a246">

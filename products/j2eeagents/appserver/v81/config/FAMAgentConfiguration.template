@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.5 2008-05-05 17:06:19 huacui Exp $
+# $Id: FAMAgentConfiguration.template,v 1.6 2008-05-21 21:14:25 huacui Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -880,24 +880,9 @@ com.sun.identity.agents.config.policy.env.get.param[0]=
 com.sun.identity.agents.config.policy.env.post.param[0]=
 com.sun.identity.agents.config.policy.env.jsession.param[0]=
 
-#
-# AGENT CENTRALIZED NOTIFICATIONS PROPERTY
-#   -com.sun.identity.agents.config.centralized.notification.enable: allows 
-#    agents to receive notification messages from opensso/fam server, so that
-#    when a user changes an agents properties configuration on fam server, 
-#    agent can be notified at agent housekeeping application url, 
-#    (com.sun.identity.client.notification.url)and then agent can go and get
-#    the latest configuration and hotswap to use the new properties.
-#    Can only be used in centralized mode when agent properties are controlled 
-#    by fam server
-#
-# Hot-Swap Enabled: Yes
-#
-com.sun.identity.agents.config.centralized.notification.enable=true
-
 # AGENT NOTIFICATION URL PROPERTY
 #  -com.sun.identity.client.notification.url: URL for agent to receive
-#   notifications from the opensso/fam server for session, policy, and
+#   notifications from the OpenSSO/FAM server for session, policy, and
 #   configuration changes.
 # Hot-Swap Enabled: No
 #

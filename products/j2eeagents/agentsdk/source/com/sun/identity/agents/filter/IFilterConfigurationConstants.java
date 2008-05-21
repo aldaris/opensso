@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFilterConfigurationConstants.java,v 1.9 2008-04-03 21:34:37 huacui Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.10 2008-05-21 21:15:55 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -261,7 +261,7 @@ public interface IFilterConfigurationConstants {
         "amsso.cache.enable";
     
     public static final String CONFIG_CENTRALIZED_NOTIFICATION_ENABLE =
-        "centralized.notification.enable";
+        "change.notification.enable";
     
     public static final boolean DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE = true;    
     
