@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.11 2008-05-01 02:02:35 nithyas Exp $
+ * $Id: IDMCommon.java,v 1.12 2008-05-21 06:09:21 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -683,9 +683,13 @@ public class IDMCommon extends TestCommon {
             putSetIntoMap("givenname", tempMap, idName);
             putSetIntoMap("userpassword", tempMap, idName);
             putSetIntoMap("inetuserstatus", tempMap, "Active");
-        } else if (siaType.equals("agent") || siaType.equals("agentonly") ) {
+        } else if (siaType.equals("agent")) { 
             putSetIntoMap("userpassword", tempMap, idName);
             putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active");
+        } else if (siaType.equals("agentonly") ) { 
+            putSetIntoMap("userpassword", tempMap, idName);
+            putSetIntoMap("sunIdentityServerDeviceStatus", tempMap, "Active");
+            putSetIntoMap("AgentType", tempMap, "webagent");
         } else if (siaType.equals("filteredrole")) {
             putSetIntoMap("cn", tempMap, idName);
             putSetIntoMap("nsRoleFilter", tempMap,
