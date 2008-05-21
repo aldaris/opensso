@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.12 2008-05-15 00:45:47 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.13 2008-05-21 23:40:46 bina Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -228,7 +228,7 @@ public class AMSetupDSConfig {
      */
     String isDITLoaded(boolean ssl) {
         String baseDN = "ou=services," + suffix;
-        String filter = "ou=DAI";
+        String filter = "(|(ou=DAI) (ou=sunIdentityRepositoryService))";
         String[] attrs = { "dn" };
         LDAPSearchResults results = null;
         String isLoaded = "false";
