@@ -21,6 +21,12 @@
 
 </SchemaRequests>
 
+<SchemaRequests serviceName="sunIdentityRepositoryService"
+    SchemaType="Organization"
+    SubSchema="amSDK">
+    <AddAttributeSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaSDK.xml" />
+
+</SchemaRequests>
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"
     SchemaType="Organization">
@@ -37,12 +43,6 @@
 <SchemaRequests serviceName="sunIdentityRepositoryService"
                 SchemaType="Organization">
    <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddFiles.xml" />
-</SchemaRequests>
-
-
-<SchemaRequests serviceName="sunIdentityRepositoryService"
-    SchemaType="Organization">
-    <AddSubSchema fileName="BASEDIR/upgrade/services/99_sunIdentityRepositoryService/10_20/data/idRepoServiceAddSubSchemaAMSDK.xml"/>
 </SchemaRequests>
 
 <SchemaRequests serviceName="sunIdentityRepositoryService"
