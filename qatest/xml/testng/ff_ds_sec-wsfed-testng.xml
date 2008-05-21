@@ -20,12 +20,12 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-wsfed-testng.xml,v 1.1 2007-10-05 18:22:58 mrudulahg Exp $
+ $Id: ff_ds_sec-wsfed-testng.xml,v 1.2 2008-05-21 05:08:36 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ff_ds-wsfed" verbose="1">
+<suite name="ff_ds_sec-wsfed" verbose="1">
     <parameter name="groupName" value="ff_ds_sec"/>
     <test name="WSFedSmokeTests">
         <groups>
