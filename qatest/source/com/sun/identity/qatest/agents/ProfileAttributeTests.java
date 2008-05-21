@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributeTests.java,v 1.1 2008-04-18 20:04:03 nithyas Exp $
+ * $Id: ProfileAttributeTests.java,v 1.2 2008-05-21 17:21:33 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -192,20 +192,33 @@ public class ProfileAttributeTests extends TestCommon {
             Reporter.log("Resource: " + url);   
             Reporter.log("Username: " + "pauser");   
             Reporter.log("Password: " + "pauser");   
+            String strNsrole = "cn=filparole1," + basedn ;
+            String strNsrole1 = "cn=parole1," + basedn;
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute",
+                    "NSROLE expected: " + strNsrole);
+            Reporter.log("Expected Result(Role): " + strNsrole1); 
+            Reporter.log("Expected Result(Filtered Role): " + strNsrole);             
             HtmlPage page = consoleLogin(webClient, resource, "pauser",
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            String strNsrole = "HTTP_PROFILE_NSROLE:" +
-                    "cn=containerdefaulttemplaterole," + basedn +
-                    "|cn=filparole1," + basedn + "|cn=parole1," + basedn;
+            String s0 = page.asXml();
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "s0:\n" 
+                    + s0);
+            int i1 = s0.indexOf("HTTP_PROFILE_NSROLE:");            
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "i1: " + i1);
+            String s1 = s0.substring(i1, s0.length());
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "s1:\n" 
+                    + s1);
+            int i2 = s1.indexOf("$$");
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "i2: " + i2);
+            String s2 = s1.substring(20, i2);
             log(Level.FINEST, "evaluateNewNsRoleProfileAttribute",
-                    "NSROLE: " + strNsrole);
-            iIdx = getHtmlPageStringIndex(page, strNsrole);
-            Reporter.log("Expected Result: " + strNsrole); 
+                    "NSROLE from server : " + s2);
+            iIdx = s2.indexOf(strNsrole);
             assert (iIdx != -1);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "cn=parole1");
+            iIdx = s2.indexOf(strNsrole1);
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateNewNsRoleProfileAttribute",
@@ -231,19 +244,32 @@ public class ProfileAttributeTests extends TestCommon {
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            String strNsrole = "HTTP_PROFILE_NSROLE:" +
-                    "cn=containerdefaulttemplaterole," + basedn +
-                    "|cn=filparole1," + basedn + "|cn=parole1," + basedn;
-            log(Level.FINEST, "evaluateNewFilteredRoleProfileAttribute",
-                    "NSROLE: " + strNsrole);
+            String strNsrole = "cn=filparole1," + basedn ;
+            String strNsrole1 = "cn=parole1," + basedn;
+            String s0 = page.asXml();
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "s0:\n" 
+                    + s0);
+            int i1 = s0.indexOf("HTTP_PROFILE_NSROLE:");            
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "i1: " + i1);
+            String s1 = s0.substring(i1, s0.length());
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "s1:\n" 
+                    + s1);
+            int i2 = s1.indexOf("$$");
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute", "i2: " + i2);
+            String s2 = s1.substring(20, i2);
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute",
+                    "NSROLE from server : " + s2);
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute",
+                    "NSROLE expected: " + strNsrole + " and " + strNsrole1);
+            iIdx = s2.indexOf(strNsrole);
             Reporter.log("Resource: " + url);   
             Reporter.log("Username: " + "pauser");   
             Reporter.log("Password: " + "pauser");   
-            Reporter.log("Expected Result: " + strNsrole); 
-            iIdx = getHtmlPageStringIndex(page, strNsrole);
+            Reporter.log("Expected Result(Role): " + strNsrole); 
+            Reporter.log("Expected Result(Filtered Role): " + strNsrole1);             
             assert (iIdx != -1);
             iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "cn=filparole1");
+            iIdx = s2.indexOf("cn=filparole1");
             assert (iIdx != -1);
             iIdx = -1;
         } catch (Exception e) {
@@ -383,44 +409,78 @@ public class ProfileAttributeTests extends TestCommon {
             HtmlPage page = consoleLogin(webClient, resource, "pauser",
                     "pauser");
             page = (HtmlPage)webClient.getPage(url);
-            iIdx = -1;
-            String strNsrole = "HTTP_PROFILE_NSROLE:" +
-                    "cn=containerdefaulttemplaterole," + basedn +
-                    "|cn=filparole1," + basedn + "|cn=parole1," + basedn;
+            String strNsrole = "cn=filparole1," + basedn ;
+            String strNsrole1 = "cn=parole1," + basedn;
+            String strNsrole2 = "cn=parole2," + basedn;
             log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
-                    "NSROLE: "+ strNsrole);
-            iIdx = getHtmlPageStringIndex(page, strNsrole);
+                    "NSROLE: "+ strNsrole + ", " + strNsrole1 + ", " + 
+                    strNsrole2);
+            Reporter.log("Resource: " + url);   
+            Reporter.log("Username: " + "pauser");   
+            Reporter.log("Password: " + "pauser");   
+            Reporter.log("Expected Result(Filtered Role): " + strNsrole);                                     
+            Reporter.log("Expected Result(Role before updation): " + 
+                    strNsrole1); 
+            Reporter.log("Expected Result(Role after updation): " + strNsrole2); 
+            String s0;
+            int i1;
+            int i2;
+            s0 = page.asXml();
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute", "s0:\n" + 
+                    s0);
+            i1 = s0.indexOf("HTTP_PROFILE_NSROLE:");            
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute", "i1: " 
+                    + i1);
+            String s1 = s0.substring(i1, s0.length());
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute", "s1:\n" + 
+                    s1);
+            i2 = s1.indexOf("$$");
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute", "i2: " 
+                    + i2);
+            String s2 = s1.substring(20, i2);
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
+                    "NSROLE from server(before user profile updation) : " + s2);
+            log(Level.FINEST, "evaluateNewNsRoleProfileAttribute",
+                    "NSROLE expected(before user profile updation) : " + 
+                    strNsrole);
+            iIdx = s2.indexOf(strNsrole);
             assert (iIdx != -1);
-            iIdx = getHtmlPageStringIndex(page, "cn=parole1");
+            iIdx = s2.indexOf(strNsrole1);
             assert (iIdx != -1);
             idmc.createIdentity(admintoken, realm, IdType.ROLE, "parole2",
                     new HashMap());
             idmc.addUserMember(admintoken, "pauser", "parole2", IdType.ROLE);
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
-            strNsrole = "HTTP_PROFILE_NSROLE:" +
-                    "cn=containerdefaulttemplaterole," + basedn +
-                    "|cn=filparole1," + basedn +
-                    "|cn=parole1," + basedn + "|cn=parole2," + basedn;
-            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
-                    "NSROLE: "+ strNsrole);
             boolean isFound = false;
             long time = System.currentTimeMillis();
             while (System.currentTimeMillis() - time < pollingTime &&
                 !isFound) {
                 page = (HtmlPage)webClient.getPage(url);
-                iIdx = -1;
-                iIdx = getHtmlPageStringIndex(page, strNsrole, false);
-                if (iIdx != -1)
+                s0 = page.asXml();
+                i1 = s0.indexOf("HTTP_PROFILE_NSROLE:");            
+                s1 = s0.substring(i1, s0.length());
+                i2 = s1.indexOf("$$");
+                s2 = s1.substring(20, i2);
+                iIdx = -1;                
+                iIdx = s2.indexOf(strNsrole2);                
+                if (iIdx != -1) 
                     isFound = true;
             }
-            Reporter.log("Resource: " + url);   
-            Reporter.log("Username: " + "pauser");   
-            Reporter.log("Password: " + "pauser");   
-            Reporter.log("Expected Result: " + strNsrole); 
-            iIdx = getHtmlPageStringIndex(page, strNsrole);
-            assert (iIdx != -1);
-            iIdx = getHtmlPageStringIndex(page, "cn=parole2");
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
+                    "Ran loop for :" + (System.currentTimeMillis() - time));
+            s0 = page.asXml();
+            i1 = s0.indexOf("HTTP_PROFILE_NSROLE:");            
+            s1 = s0.substring(i1, s0.length());
+            i2 = s1.indexOf("$$");
+            s2 = s1.substring(20, i2);
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
+                    "NSROLE from server(after user profile updation) : " + s2);
+            log(Level.FINEST, "evaluateUpdatedNsRoleProfileAttribute",
+                    "NSROLE expected(after user profile updation) : " + 
+                    strNsrole2);
+            iIdx = -1;                
+            iIdx = s2.indexOf(strNsrole2);                
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedNsRoleProfileAttribute",
