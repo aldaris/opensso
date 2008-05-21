@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.5 2008-05-06 19:41:22 arunav Exp $
+ * $Id: AMSamples.java,v 1.6 2008-05-21 23:35:44 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +74,8 @@ public class AMSamples extends TestCommon {
     private String baseDir;
     private String userName;
     private String userPassword;
+    private String grpName;
+    private String roleName;
     private String resourceName;
     private String clientDomain;
     private String polName = "clientSamplePolicyTest";
@@ -111,72 +113,83 @@ public class AMSamples extends TestCommon {
     public void setup()
     throws Exception {
         entering("setup", null);
-        
-        clientDomain = rb_client.getString("client_domain_name");
-        log(Level.FINE, "setup", "Client host domain name: " + clientDomain);
-        
-        String deployPort = rb_client.getString("deploy_port");
-        log(Level.FINE, "setup", "Deploy port: " + deployPort);
-        
-        String deployURI = rb_client.getString("deploy_uri");
-        log(Level.FINE, "setup", "Deploy URI: " + deployURI);
-        
-        InetAddress addr = InetAddress.getLocalHost();
-        String hostname = addr.getCanonicalHostName();
-        
-        clientURL = protocol + "://" + hostname +  clientDomain + ":" +
-                deployPort + deployURI;
-        log(Level.FINE, "setup", "Client URL: " + clientURL);
-        
-        serviceconfigURL = clientURL + rb_ams.getString("serviceconfig_uri");
-        log(Level.FINE, "setup", "Service Configuration Sample Servlet URL: " +
-                serviceconfigURL);
-        
-        userprofileURL = clientURL + rb_ams.getString("userprofile_uri");
-        log(Level.FINE, "setup", "User Profile (Attributes) Sample Servlet" +
-                " URL: " + userprofileURL);
-        
-        policyURL = clientURL + rb_ams.getString("policy_uri");
-        log(Level.FINE, "setup", "Policy Evaluator Client Sample Servlet" +
-                " URL: " + policyURL);
-        
-        ssovalidationURL = clientURL + rb_ams.getString("ssovalidation_uri");
-        log(Level.FINE, "setup", "Single Sign On Token Verification Servlet" +
-                " URL: " + ssovalidationURL);
-        
-        stsclientvalidationURL = clientURL + 
-                rb_ams.getString("stsclientvalidation_uri");
-        log(Level.FINE, "setup", "STS Client Sample with End user Token JSP" +
-                " URL: " + stsclientvalidationURL);
-       
-        stswscvalidationURL = clientURL +
-                rb_ams.getString("stswscvalidation_uri");
-        log(Level.FINE, "setup", "STS Client Sample for WSC Token JSP" +
-                " URL: " + stswscvalidationURL);
-        
-        Map map = new HashMap();
-        Set set = new HashSet();
-        userName = rb_ams.getString("cs_username");
-        set.add(userName);
-        map.put("sn", set);
-        set = new HashSet();
-        set.add(userName);
-        map.put("cn", set);
-        set = new HashSet();
-        userPassword = rb_ams.getString("cs_password");
-        set.add(userPassword);
-        map.put("userpassword", set);
-        set = new HashSet();
-        set.add("Active");
-        map.put("inetuserstatus", set);
-        
-        idmc.createIdentity(admintoken, realm, IdType.USER, userName, map);
-        
-        resourceName = rb_ams.getString("policy_resource");
-        String xmlFile = "client-samples-policy-test.xml";
-        createPolicyXML(xmlFile);
-        assert(pc.createPolicy(xmlFile, realm));
-        
+        try {
+            clientDomain = rb_client.getString("client_domain_name");
+            log(Level.FINE, "setup", "Client host domain name: " +
+                    clientDomain);
+            
+            String deployPort = rb_client.getString("deploy_port");
+            log(Level.FINE, "setup", "Deploy port: " + deployPort);
+            
+            String deployURI = rb_client.getString("deploy_uri");
+            log(Level.FINE, "setup", "Deploy URI: " + deployURI);
+            
+            InetAddress addr = InetAddress.getLocalHost();
+            String hostname = addr.getCanonicalHostName();
+            
+            clientURL = protocol + "://" + hostname +  clientDomain + ":" +
+                    deployPort + deployURI;
+            log(Level.FINE, "setup", "Client URL: " + clientURL);
+            
+            serviceconfigURL = clientURL + rb_ams.getString("serviceconfig_uri");
+            log(Level.FINE, "setup", "Service Configuration Sample " +
+                    "Servlet URL: " +  serviceconfigURL);
+                  
+            userprofileURL = clientURL + rb_ams.getString("userprofile_uri");
+            log(Level.FINE, "setup", "User Profile (Attributes)" +
+                    " Sample Servlet URL: "  + userprofileURL);
+            
+            policyURL = clientURL + rb_ams.getString("policy_uri");
+            log(Level.FINE, "setup", "Policy Evaluator Client Sample Servlet" +
+                    " URL: " + policyURL);
+            
+            ssovalidationURL = clientURL + rb_ams.getString("ssovalidation_uri");
+            log(Level.FINE, "setup", "Single Sign On Token " +
+                    "Verification Servlet" +  " URL: " + ssovalidationURL);
+                  
+            stsclientvalidationURL = clientURL +
+                    rb_ams.getString("stsclientvalidation_uri");
+            log(Level.FINE, "setup", "STS Client Sample with End user " +
+                    "  Token JSP URL: " + stsclientvalidationURL);
+            
+            stswscvalidationURL = clientURL +
+                    rb_ams.getString("stswscvalidation_uri");
+            log(Level.FINE, "setup", "STS Client Sample for WSC Token JSP" +
+                    " URL: " + stswscvalidationURL);
+            
+            roleName = rb_ams.getString("cs_rolename");
+            grpName = rb_ams.getString("cs_groupname");
+            
+            Map map = new HashMap();
+            Set set = new HashSet();
+            userName = rb_ams.getString("cs_username");
+            set.add(userName);
+            map.put("sn", set);
+            set = new HashSet();
+            set.add(userName);
+            map.put("cn", set);
+            set = new HashSet();
+            userPassword = rb_ams.getString("cs_password");
+            set.add(userPassword);
+            map.put("userpassword", set);
+            set = new HashSet();
+            set.add("Active");
+            map.put("inetuserstatus", set);
+            
+            idmc.createIdentity(admintoken, realm, IdType.USER, userName, map);
+            
+            resourceName = rb_ams.getString("policy_resource");
+            String xmlFile = "client-samples-policy-test.xml";
+            createPolicyXML(xmlFile);
+            assert(pc.createPolicy(xmlFile, realm));
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "setup",
+                    "Calling cleanup due to exception in the setup ...");
+            cleanup();
+            e.printStackTrace();
+            throw e;
+        } 
         exiting("setup");
     }
     
@@ -695,7 +708,7 @@ public class AMSamples extends TestCommon {
             e.printStackTrace();
         } finally {
             Reporter.log("This test validates valid STS token generated for " +
-                    " valid admin user SSOToken");            
+                    " valid admin user SSOToken");
             consoleLogout(webClient, logoutURL);
         }
         exiting("testSTSClientAdminUser");
@@ -736,7 +749,107 @@ public class AMSamples extends TestCommon {
     }
     
     /**
-     * This test validates STS Token for a normal user.
+     * This test validates STS Token for a normal user with SAML attribute
+     * mapper. It also verifies the Memberships for the user
+     */
+    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void testSTSClientUserSAMLAttribute()
+    throws Exception {
+        entering("testSTSClientUserSAMLAttribute", null);
+        String logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
+                "/UI/Logout";
+        try {
+            String xmlFile = "testSTSClientUserSAMLAttribute.xml";
+            AMIdentity amid = new AMIdentity(admintoken, userName,
+                    IdType.USER, realm, null);
+            assert(amid.isExists());
+            
+            Map idmAttrMap = new HashMap();
+            idmAttrMap = amid.getAttributes();
+            idmAttrMap = new HashMap();
+            Set set = new HashSet();
+            set.add("Cupertino");
+            idmAttrMap.put("postaladdress", set);
+            set = new HashSet();
+            set.add("user@yahoo.com");
+            idmAttrMap.put("mail", set);
+            idmc.modifyIdentity(amid, idmAttrMap);
+            
+            //create group and add user to the group
+            String grpAttr = null;
+            assert(idmc.createID(grpName, "group", grpAttr, admintoken, realm));
+            AMIdentity grpid = new AMIdentity(admintoken, grpName,
+                    IdType.GROUP, realm, null);
+            idmc.addUserMember(admintoken, userName, grpName,
+                    IdType.GROUP, realm);
+            assert(amid.isMember(grpid));
+            
+            //create role and add user to the role
+            String roleAttr = null;
+            assert(idmc.createID(roleName, "role", grpAttr, admintoken, realm));
+            AMIdentity roleid = new AMIdentity(admintoken, roleName,
+                    IdType.ROLE, realm, null);
+            idmc.addUserMember(admintoken, userName, roleName,
+                    IdType.ROLE, realm);
+            assert(amid.isMember(roleid));
+            
+            ProviderConfig pc = ProviderConfig.
+                    getProvider("wsp", ProviderConfig.WSP);
+            assert (ProviderConfig.isProviderExists("wsp", ProviderConfig.WSP));
+            Set attributeSet = new HashSet();
+            attributeSet.add("address=postaladdress");
+            attributeSet.add("emailid=mail");
+            pc.setSAMLAttributeMapping(attributeSet);
+            boolean include = true;
+            pc.setIncludeMemberships(include);
+            ProviderConfig.saveProvider(pc);
+            
+            AMIdentity wspAmid = new AMIdentity(admintoken, "wsp",
+                    IdType.AGENTONLY, realm, null);
+            assert (wspAmid.isExists());
+            Map wspAttrMap;
+            wspAttrMap = new HashMap();
+            wspAttrMap = wspAmid.getAttributes();
+            log(Level.FINEST, "testSTSClientUserSAMLAttribute",
+                    "WSP attributes \n" + wspAttrMap);
+            
+            generateSTSClientXML(userName, userPassword, xmlFile, userName);
+            task = new DefaultTaskHandler(baseDir + xmlFile);
+            webClient = new WebClient();
+            page = task.execute(webClient);
+            log(Level.FINEST, "testSTSClientUserSAMLAttribute",
+                    "testSTSClientuserAttributes page after login\n" +
+                    page.getWebResponse().getContentAsString());
+            if (getHtmlPageStringIndex(page, userName) == -1)
+                assert false;
+            else if (getHtmlPageStringIndex(page, "Cupertino") == -1)
+                assert false;
+            else if (getHtmlPageStringIndex(page, "user@yahoo.com") == -1)
+                assert false;
+            else if (getHtmlPageStringIndex(page, roleName) == -1)
+                assert false;
+            else if (getHtmlPageStringIndex(page, grpName) == -1)
+                assert false;
+            else if (getHtmlPageStringIndex(page,
+                    "containerdefaulttemplaterole") == -1)
+                assert false;
+            
+        } catch (Exception e) {
+            log(Level.SEVERE, "testSTSClientUserSAMLAttribute", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            Reporter.log("This test validates valid STS token generated for " +
+                    " valid normal user SSOToken and the mapping of the" +
+                    " SAML attributes. It also verifies the Memberships " +
+                    "for the user ");
+            consoleLogout(webClient, logoutURL);
+        }
+        exiting("testSTSClientUserSAMLAttribute");
+    }
+    
+    /**
+     * This test validates STS Token for WSC of type SAMLv2
      */
     @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void testSTSwscSAMLv2Token()
@@ -747,7 +860,7 @@ public class AMSamples extends TestCommon {
             String expResult = "SAML:2.0:assertion";
             webClient = new WebClient();
             
-            AMIdentity stsAmid = new AMIdentity(admintoken, 
+            AMIdentity stsAmid = new AMIdentity(admintoken,
                     "SecurityTokenService", IdType.AGENTONLY, realm, null);
             assert(stsAmid.isExists());
             
@@ -776,40 +889,40 @@ public class AMSamples extends TestCommon {
             idmAttrMap = amid.getAttributes();
             log(Level.FINEST, "testSTSwscSAMLv2Token",
                     "WSC attributes \n" + idmAttrMap);
-
+            
             //Setup the WSP security mechanism to 2.0 token
-           
+            
             ProviderConfig pc = ProviderConfig.
                     getProvider("wsp", ProviderConfig.WSP);
             assert (ProviderConfig.isProviderExists("wsp", ProviderConfig.WSP));
-            List listSec = new ArrayList();            
+            List listSec = new ArrayList();
             listSec = pc.getSecurityMechanisms();
             if ((listSec.contains("urn:sun:wss:security:null:SAMLToken-HK"))) {
                 listSec.remove("urn:sun:wss:security:null:SAMLToken-HK");
-            }            
+            }
             if ((listSec.contains("urn:sun:wss:security:null:SAMLToken-SV"))) {
-               listSec.remove("urn:sun:wss:security:null:SAMLToken-SV");
+                listSec.remove("urn:sun:wss:security:null:SAMLToken-SV");
             }
             if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-HK"))) {
                 listSec.add("urn:sun:wss:security:null:SAML2Token-HK");
-            }            
+            }
             if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-SV"))) {
                 listSec.add("urn:sun:wss:security:null:SAML2Token-SV");
-            }            
-           
+            }
+            
             AMIdentity wspAmid = new AMIdentity(admintoken, "wsp",
                     IdType.AGENTONLY, realm, null);
             assert (wspAmid.isExists());
             Map wspAttrMap;
-            wspAttrMap = new HashMap();        
+            wspAttrMap = new HashMap();
             pc.setSecurityMechanisms(listSec);
-            ProviderConfig.saveProvider(pc);           
+            ProviderConfig.saveProvider(pc);
             wspAttrMap = wspAmid.getAttributes();
             log(Level.FINEST, "testSTSwscSAMLv2Token",
-                    "WSP attributes \n" + wspAttrMap);            
+                    "WSP attributes \n" + wspAttrMap);
             
-            URL cmdUrl = new URL(stswscvalidationURL);           
-            HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);           
+            URL cmdUrl = new URL(stswscvalidationURL);
+            HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);
             HtmlForm form = (HtmlForm) page.getForms().get(0);
             
             HtmlTextInput txtagentname = (HtmlTextInput) form.
@@ -819,24 +932,25 @@ public class AMSamples extends TestCommon {
             HtmlPage returnPage = (HtmlPage) form.submit();
             log(Level.FINEST, "testSTSwscSAMLv2Token",
                     " Page after login\n" +
-                    returnPage.getWebResponse().getContentAsString());            
+                    returnPage.getWebResponse().getContentAsString());
             int iIdx = getHtmlPageStringIndex(returnPage, expResult);
             assert (iIdx != -1);
             
         } catch (Exception e) {
             log(Level.SEVERE, "testSTSwscSAMLv2Token", e.getMessage());
             e.printStackTrace();
+            throw e;
         } finally {
             Reporter.log("Test Description: Verifying the WSC token " +
                     "(of type SAMLv2)from STS  which can be presented to " +
-                    "  the WSP for authentication purposes"); 
+                    "  the WSP for authentication purposes");
         }
         exiting("testSTSwscSAMLv2Token");
     }
     
-     /**
-      * This test validates STS Token for a normal user.
-      */
+    /**
+     * This test validates STS Token for WSC of type SAMLv1.
+     */
     @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
     dependsOnMethods = {"testSTSwscSAMLv2Token"})
     public void testSTSwscSAMLv1Token()
@@ -850,7 +964,7 @@ public class AMSamples extends TestCommon {
             ProviderConfig pc = null;
             pc = ProviderConfig.getProvider("wsp", ProviderConfig.WSP);
             assert (ProviderConfig.isProviderExists("wsp", ProviderConfig.WSP));
-            List listSec = new ArrayList();            
+            List listSec = new ArrayList();
             listSec = pc.getSecurityMechanisms();
             
             if ((listSec.contains("urn:sun:wss:security:null:SAML2Token-HK"))) {
@@ -866,8 +980,8 @@ public class AMSamples extends TestCommon {
                 listSec.add("urn:sun:wss:security:null:SAMLToken-SV");
             }
             pc.setSecurityMechanisms(listSec);
-            ProviderConfig.saveProvider(pc);           
-           
+            ProviderConfig.saveProvider(pc);
+            
             AMIdentity wspAmid = new AMIdentity(admintoken, "wsp",
                     IdType.AGENTONLY, realm, null);
             assert (wspAmid.isExists());
@@ -875,11 +989,11 @@ public class AMSamples extends TestCommon {
             wspAttrMap = new HashMap();
             wspAttrMap = wspAmid.getAttributes();
             log(Level.FINEST, "testSTSwscSAMLv1Token",
-                    "WSP attributes \n" +  wspAttrMap);            
+                    "WSP attributes \n" +  wspAttrMap);
             
-            URL cmdUrl = new URL(stswscvalidationURL);            
-            HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);            
-            HtmlForm form = (HtmlForm) page.getForms().get(0);            
+            URL cmdUrl = new URL(stswscvalidationURL);
+            HtmlPage page = (HtmlPage) webClient.getPage(cmdUrl);
+            HtmlForm form = (HtmlForm) page.getForms().get(0);
             HtmlTextInput txtagentname = (HtmlTextInput) form.
                     getInputByName("providerName");
             txtagentname.setValueAttribute("wsc");
@@ -894,10 +1008,11 @@ public class AMSamples extends TestCommon {
         } catch (Exception e) {
             log(Level.SEVERE, "testSTSwscSAMLv1Token", e.getMessage());
             e.printStackTrace();
+            throw e;
         } finally {
             Reporter.log("Test Description: Verifying the WSC token " +
                     "(of type SAMLv1)from STS  which can be presented to " +
-                    "  the WSP for authentication purposes ");            
+                    "  the WSP for authentication purposes ");
         }
         exiting("testSTSwscSAMLv1Token");
     }
@@ -913,10 +1028,38 @@ public class AMSamples extends TestCommon {
         entering("cleanup", null);
         try {
             log(Level.FINEST, "cleanup", "UserName:" + userName);
+            log(Level.FINEST, "cleanup", "roleName:" + roleName);
+            log(Level.FINEST, "cleanup", "groupName:" + grpName);
+            log(Level.FINEST, "cleanup", "PolicyName" + polName);
             Reporter.log("User name:" + userName);
             Reporter.log("Policy name:" + polName);
+            Reporter.log("User name:" + roleName);
+            Reporter.log("Group name:" + grpName);
             idmc.deleteIdentity(admintoken, realm, IdType.USER, userName);
+            idmc.deleteIdentity(admintoken, realm, IdType.ROLE, roleName);
+            idmc.deleteIdentity(admintoken, realm, IdType.GROUP, grpName);
             pc.deletePolicy(polName, realm);
+            
+            //unset the SAML attribute Mapper settings for WSP
+            AMIdentity wspid = new AMIdentity(admintoken, "wsp",
+                    IdType.AGENTONLY, realm, null);
+            Map wspMap= new HashMap();
+            Set tempSet = new HashSet();
+            tempSet.add("false");
+            wspMap.put("includeMemberships", tempSet);
+            wspid.setAttributes(wspMap);
+            wspid.store();
+            wspMap= new HashMap();
+            wspMap = wspid.getAttributes() ;
+            Set attrSet = new HashSet();
+            attrSet.add("SAMLAttributeMapping");
+            wspid.removeAttributes(attrSet);
+            wspid.store();
+            wspMap= new HashMap();
+            wspMap = wspid.getAttributes() ;
+            log(Level.FINEST, "cleanup", "WSP settings after cleanup: " + 
+                    wspMap);
+            
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
