@@ -18,7 +18,7 @@
  # your own identifying information:
  # "Portions Copyrighted [year] [name of copyright owner]"
  #
- # $Id: headers.cgi,v 1.4 2008-04-18 19:28:49 nithyas Exp $
+ # $Id: headers.cgi,v 1.5 2008-05-21 17:16:28 nithyas Exp $
  #
 
 # Please dont modify the script, the agents tests rely on the
@@ -57,11 +57,11 @@ for my $header ( sort keys %ENV) {
                 @sorted=sort(@array);
                 # put them back as | separated
                 $sorted_val=join("|",@sorted);
-                print "$header:$sorted_val<BR>\n";
+                print "$header:$sorted_val\$\$<BR>\n";
              }
         else
              {
                 # if not multi valued then print them as it is
-                print "$header:$ENV{$header}<BR>\n";
+                print "$header:$ENV{$header}\$\$<BR>\n";
              }
  }

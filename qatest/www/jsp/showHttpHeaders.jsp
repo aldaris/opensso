@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showHttpHeaders.jsp,v 1.1 2008-03-28 00:17:57 nithyas Exp $
+   $Id: showHttpHeaders.jsp,v 1.2 2008-05-21 17:14:46 nithyas Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->        
@@ -152,6 +152,7 @@ a:hover{text-decoration:underline}
                                                     break;
                                              }
                                         }
+                                        
                                         out.println("<b>FetchMode: </b>" +
                                                 fetchMode + "<br>\n" +
                                                 "<b>Request Method : </b>" +
@@ -174,11 +175,16 @@ a:hover{text-decoration:underline}
                                                 striPlanetDirectoryPro + "|<br>\n" +
                                                 "<br><br>\n");
                                         if (fetchMode == null) {
-                                            out.println("<h2>fetch_mode should be " +
-                                                    "<font color=\"blue\">HTTP_HEADER or " +
-                                                    " REQUEST_ATTRIBUTE or " +
-                                                    " HTTP_COOKIE</font><h2>");
-                                        } else if (fetchMode.equals("HTTP_HEADER") || 
+                                            out.println("<font color=\"blue\">Header Attributes can be fetched as either<b>" +
+                                                    " HTTP_HEADER or REQUEST_ATTRIBUTE or HTTP_COOKIE.</b>"
+                                                    + "<br>\n"                                            
+                                                    + " To view attributes specific to the fetch mode, append" + "<br>\n" +
+                                                    "\t \t <li> ?fetch_mode=HTTP_HEADER or" + "</il>\n" +
+                                                    "<li> ?fetch_mode=REQUEST_ATTRIBUTE or" + "</li>\n" +
+                                                    "<li> ?fetch_mode=HTTP_COOKIE</font></li>");
+                                            fetchMode="HTTP_HEADER";
+                                        } 
+                                        if (fetchMode.equals("HTTP_HEADER") || 
                                                 fetchMode.equals("ALL")) {
                                            out.println("<table border=1 align=\"+ " +
                                                 "left\" width=\"100%\">\n" +
@@ -202,8 +208,9 @@ a:hover{text-decoration:underline}
                                             out.print((String) alAttrNames.get(i)+"|");
                                             }
                                             alAttrNames = new ArrayList();
+                                            out.print("$$");
                                             }
-                                        out.print("</table>\n");
+                                            out.print("</table>\n");
                                         }else if(fetchMode.equals("REQUEST_ATTRIBUTE") ||
                                                 fetchMode.equals("ALL") ){
                                             
@@ -245,15 +252,17 @@ a:hover{text-decoration:underline}
                                                 for(int i=0;i<alAttrNames.size();i++){
                                                     out.print((String) alAttrNames.get(i)+"|");
                                                 }
-
+                                                out.print("$$");
                                             alAttrNames = new ArrayList();
-                                            }else{
+                                            } else{
                                                 out.print(request.getAttribute(attrName));
+                                                out.print("$$");
                                             }
                                             }
                                             out.println("<tr><td > cookie");
                                             out.print("    <td > cookie:");
                                             out.print(request.getHeader("cookie"));
+                                            out.print("$$");                                            
                                         out.print("</table>\n");
                                         } else if(fetchMode.equals("HTTP_COOKIE") ||
                                                 fetchMode.equals("ALL")){
@@ -300,7 +309,8 @@ a:hover{text-decoration:underline}
                                                             "|" );
                                                 }    
                                                 }
-                                             }else{
+                                                out.print("$$");
+                                             } else {
                                                 cookieValue = cookieValue + "|";
                                                // out.print(cookie.getValue() + "|");
                                                 //out.println();
@@ -317,9 +327,9 @@ a:hover{text-decoration:underline}
                                                             "|" );
                                                 }    
                                                 }                                                
-                                                                                                                                           }
-                                            
-                                            }
+                                                out.print("$$");
+                                             }
+                                        }
                                         out.print("</table>\n");                                    
                                         }
                                     %>
