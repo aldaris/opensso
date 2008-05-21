@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-03-20 17:21:09 bina Exp $
+   $Id: build.xml,v 1.7 2008-05-21 23:44:12 bina Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -146,14 +146,20 @@
         <copy todir="${upgrade.dist.dir}/upgrade/scripts">
              <fileset dir="${upgrade.src.dir}/scripts/">
                  <include name="famupgrade*"/>
+                 <include name="fampre80upgrade*"/>
              </fileset>
         </copy>
+        <chmod perm="ugo+rx">
+            <fileset dir="${upgrade.dist.dir}/upgrade/scripts"/>
+        </chmod>
          <copy file="${upgrade.src.dir}/resources/famUpgradeConfig.properties"
             todir="${upgrade.dist.dir}/upgrade/config"  />
          <copy file="${tools.built.dir}/amadm_setup.jar"
             todir="${upgrade.dist.dir}/upgrade/lib"  />
          <copy file="${legacy.src.dir}/resources/locale/amAdminCLI.properties"
 	    todir="${upgrade.dist.dir}/upgrade/locale" />
+         <copy file="${upgrade.src.dir}/README"
+	    todir="${upgrade.dist.dir}/upgrade/README" />
     </target>
 
      <target name="build-jar">
