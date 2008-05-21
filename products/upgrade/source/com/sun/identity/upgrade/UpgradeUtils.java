@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.4 2008-04-25 05:45:16 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.5 2008-05-21 23:42:21 bina Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,9 @@ import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPModification;
 import netscape.ldap.LDAPModificationSet;
 import netscape.ldap.LDAPSearchResults;
+import netscape.ldap.LDAPSearchConstraints;
 import netscape.ldap.LDAPv2;
+import netscape.ldap.LDAPv3;
 
 /**
  * This class contains utilities to upgrade the service schema
@@ -168,6 +170,7 @@ public class UpgradeUtils {
     // will be passed on from the main upgrade class
     static String adminDN = null;
     static String adminPasswd = null;
+    static String instanceType = null;
     // the following value will be passed down from the Main Upgrade program.
     // default dsMnanager dn.
     static String dsManager = "cn=Directory Manager";
@@ -191,7 +194,7 @@ public class UpgradeUtils {
     final static String AM_ID_SUBJECT = "AMIdentitySubject";
     final static String ATTR_SERVER_CONFIG = "serverconfig";
     final static String ATTR_SERVER_CONFIG_XML = "serverconfigxml";
-    final static String CONFIG_SERVER_DEFAULT = "serverdefaults";
+    final static String CONFIG_SERVER_DEFAULT = "server-default";
     final static String SUB_SCHEMA_SERVER = "server";
     final static String SERVER_CONFIG_XML = "serverconfig.xml";
     final static String BACKUP_SERVER_CONFIG_XML = "serverconfig.xml.bak";
@@ -201,6 +204,16 @@ public class UpgradeUtils {
     final static String ATTR_SUN_KEY_VALUE = "sunkeyvalue";
     final static String DIR_UPGRADE = "upgrade";
     final static String DIR_CONFIG = "config";
+    final static String APPLICATION_SERVICE = "sunAMAuthApplicationService";
+    final static String POLICY_CONFIG_XML = "amPolicyConfig.xml";
+    final static String POLICY_XML = "amPolicy.xml";
+    final static String PASSWORD_RESET_XML = "amPasswordReset.xml";
+    final static String USER_XML = "amUser.xml";
+    final static String REPO_XML = "idRepoService.xml";
+    final static String UMS_XML = "ums.xml";
+    final static String UNIX_XML = "amAuthUnix.xml";
+    final static String DAI_LDIF = "FM_DAI_ds_remote_schema.ldif";
+    final static String INSTALL_LDIF = "FM_DAI_install.ldif";
     static Hashtable propertyFileMap = new Hashtable();
     static {
         //bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
@@ -807,6 +820,9 @@ public class UpgradeUtils {
                 String value = (String) (hashSet.iterator().next());
                 if (debug.messageEnabled()) {
                     debug.message("realmMode is : " + value);
+                }
+                if (value != null && value.equalsIgnoreCase("true")) {
+                    isRealmMode = true;
                 }
             }
         } catch (Exception e) {
@@ -1491,7 +1507,12 @@ public class UpgradeUtils {
         if (serverName == null) {
             serverName = getServerName();
         }
-        return serverName + File.separator + configTags.get("DEPLOY_URI");
+        String deployURI = (String) configTags.get("DEPLOY_URI");
+        if (serverName !=null && !serverName.endsWith(deployURI)){
+            return serverName + File.separator + deployURI;
+        } else {
+            return serverName;
+        }
     }
 
     /** 
@@ -1502,24 +1523,18 @@ public class UpgradeUtils {
      * @throws UpgradeException if there is an error.
      */
     public static void createServiceInstance(
-            String serverInstance, String serverId)
-            throws UpgradeException {
+            String serverInstance, String serverId) {
         String classMethod = "UpgradeUtils:createServiceInstance : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod +  "serverInstance :" + serverInstance);
+            debug.message(classMethod + "serverId :" + serverId);
+        }
         try {
             ServerConfiguration.createServerInstance(
                     ssoToken, serverInstance,
                     serverId, Collections.EMPTY_SET, "");
-        } catch (UnknownPropertyNameException uce) {
-            throw new UpgradeException("Unknown property ");
-        } catch (ConfigurationException ce) {
-            throw new UpgradeException("Unable to create Service instance");
-        } catch (SMSException sme) {
-            throw new UpgradeException("Unable to create Service instance");
-        } catch (SSOException ssoe) {
-            throw new UpgradeException("Invalid SSO Token");
         } catch (Exception e) {
             debug.error(classMethod + " Error creating service instance ", e);
-            throw new UpgradeException(e.getMessage());
         }
     }
 
@@ -1532,20 +1547,25 @@ public class UpgradeUtils {
      */
     public static void createServiceInstance(
             String serverInstance, String serverId,
-            Set values,String serverConfigXML)
-            throws UpgradeException {
+            Set values,String serverConfigXML) {
+            //throws UpgradeException {
+        String classMethod = "UpgradeUtils:createServiceInstance : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "serverInstance :" + serverInstance);
+            debug.message(classMethod + "serverId :" + serverId);
+        }
         try {
             ServerConfiguration.createServerInstance(
                     ssoToken, serverInstance,
                     serverId, values,serverConfigXML);
         } catch (UnknownPropertyNameException uce) {
-            throw new UpgradeException("Unknwon property ");
+            //throw new UpgradeException("Unknwon property ");
         } catch (ConfigurationException ce) {
-            throw new UpgradeException("Unable to create Service instance");
+            //throw new UpgradeException("Unable to create Service instance");
         } catch (SMSException sme) {
-            throw new UpgradeException("Unable to create Service instance");
+            //throw new UpgradeException("Unable to create Service instance");
         } catch (SSOException ssoe) {
-            throw new UpgradeException("invalid ssotoken");
+            //throw new UpgradeException("invalid ssotoken");
         }
     }
     /**
@@ -2684,7 +2704,12 @@ public class UpgradeUtils {
                 while (e.hasMoreElements()) {
                     String oldPattern = (String) e.nextElement();
                     String newPattern = (String) p.getProperty(oldPattern);
-                    line = line.replaceAll(oldPattern, newPattern);
+                    String oldAtPattern = "@" + oldPattern + "@" ;
+                    if (line != null && line.contains(oldAtPattern)) {
+                         line = line.replaceAll(oldAtPattern, newPattern);
+                    } else {
+                         line = line.replaceAll(oldPattern, newPattern);
+                    }
                 }
                 sb.append(line + "\n");
             }
@@ -2747,6 +2772,26 @@ public class UpgradeUtils {
     }
 
     /**
+     * Returns the realm/organization name from the root suffix.
+     * 
+     * @return the name of the realm/organization.
+     */
+    public static String getRsDN() {
+        String org = getNormalizedRootSuffix();
+        String rsDN = org;
+        int i = org.indexOf("=");
+        if (i != -1) {
+            int j = org.indexOf(",");
+            if (j != -1) {
+                rsDN = org.substring(i+1,j);
+            } else {
+                rsDN = org.substring(i+1);
+            }
+        }
+        return rsDN;
+    }
+
+    /**
      * Creates the default server configuration .
      * The values are read from the AMConfig.properties and for each server
      * instance a subconfig is created under 
@@ -2765,6 +2810,14 @@ public class UpgradeUtils {
             String subConfigName, String instanceName, String instanceID,
             Set values,String serverConfigXML) throws UpgradeException {
         String classMethod = "UpgradeUtils:addServerDefaults : ";
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "serviceName :" + serviceName);
+            debug.message(classMethod + "subConfigName :" + subConfigName);
+            debug.message(classMethod + "instanceName:" + instanceName);
+            debug.message(classMethod + "instanceID:" + instanceID);
+            debug.message(classMethod + "values:" + values);
+        }
+
         try {
             ServiceConfigManager scm =
                     new ServiceConfigManager(serviceName, getSSOToken());
@@ -2928,7 +2981,8 @@ public class UpgradeUtils {
             String attributeSchemaFile) throws UpgradeException {
         String classMethod = "UpgradeUtils:addAttributeToSubSchema : ";
         if (debug.messageEnabled()) {
-            debug.message(classMethod + "Adding attribute schema : " + attributeSchemaFile);
+            debug.message(classMethod + "Adding attribute schema : " 
+                    + attributeSchemaFile);
             debug.message(" to subSchema " + subSchemaName +
                     " to service " + serviceName);
         }
@@ -3533,5 +3587,228 @@ public class UpgradeUtils {
                 attributeName);
         }
         return value;
+    }
+
+
+    /**
+     * Checks if the instance is FM.
+     * 
+     * @return true if the instance is FM.
+     */
+    public static boolean isFMInstance() {
+        if (instanceType == null) {
+            instanceType = (String) configTags.get("INSTANCE_TYPE");
+        }
+        return (instanceType != null && instanceType.equalsIgnoreCase("FM"));
+   }
+    
+    /**
+     * Loads new services schemas , ldifs and modifies/removes
+     * certain services on a FM instance.
+     * This method is invoked when the instance is
+     * FM. 
+     */
+    public static void createServicesForFM() {
+        String fileName = null;
+        getSSOToken();
+        String classMethod = "UpgradeUtils:createServicesForFM : ";
+        try {
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + " Deleting LDAP Entry for idrepo");
+            }
+            delete("ou=sunIdentityRepositoryService,ou=services," 
+                    + rootSuffix, getLDAPConnection(), true);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "Removing sunAMDelegation Service");
+            }
+            //load ldif file
+            String ldifFileName = new StringBuffer(basedir)
+                    .append(File.separator).append(DIR_UPGRADE)
+                    .append(File.separator).append(DIR_CONFIG)
+                    .append(File.separator)
+                    .append(DAI_LDIF).toString();
+            if (debug.messageEnabled()) {
+                debug.message("ldif filename is :" + ldifFileName);
+            }
+            loadLdif(ldifFileName);
+            ldifFileName = new StringBuffer().append(basedir)
+                    .append(File.separator).append(DIR_UPGRADE)
+                    .append(File.separator).append(DIR_CONFIG)
+                    .append(File.separator)
+                    .append(INSTALL_LDIF).toString();
+            UpgradeUtils.loadLdif(ldifFileName);
+            fileName = getNewServiceNamePath(UMS_XML);
+            createService(fileName);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        try {
+            fileName = getNewServiceNamePath(REPO_XML);
+            if (debug.messageEnabled()) {
+                debug.message(classMethod + "loading :" + fileName);
+            }
+            createService(fileName);
+            Map m = new HashMap();
+            createOrgSubConfig(IDREPO_SERVICE, "1.0", "amSDK", "amSDK1", m);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        try {
+            fileName = getNewServiceNamePath(UNIX_XML);
+            createService(fileName);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        try {
+            fileName = getNewServiceNamePath(USER_XML);
+            createService(fileName);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        try {
+            fileName = getNewServiceNamePath(POLICY_XML);
+            createService(fileName);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        try {
+            fileName = getNewServiceNamePath(POLICY_CONFIG_XML);
+            createService(fileName);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        try {
+            fileName = getNewServiceNamePath(PASSWORD_RESET_XML);
+            createService(fileName);
+        } catch (Exception e) {
+            debug.error("UpgradeUtils:createServicesFM: " + fileName, e);
+        }
+        removeService(DELEGATION_SERVICE);
+        removeService(APPLICATION_SERVICE);
+    }
+
+    /**
+     * Removes service schema from the config store.
+     * 
+     * @param serviceName name of the SMS service to be deleted.
+     */
+    public static void removeService(String serviceName) {
+        try {
+            ServiceManager scm = getServiceManager();
+            scm.removeService(serviceName,"1.0");
+        } catch (SSOException e) {
+            debug.error("invalid sso token" , e);
+        } catch (SMSException sme) {
+            debug.error("invalid service name " , sme);
+        } catch (Exception me) {
+            debug.error("invalid service name " , me);
+        }
+     }
+
+    /**
+     * Validates if the Directory server host and port are valid.
+     *
+     * @param dsHost the directory server host name.
+     * @param dsPort the directory server port name.
+     * @return true if the host and port are valid else false.
+     */
+    public  static boolean isValidServer(String dsHost,String  dsPort) {
+       boolean isValidServer = true;
+       try {
+            LDAPConnection ldapConn = new LDAPConnection();
+            ldapConn.connect(dsHost,new Integer(dsPort).intValue());
+            ldapConn.disconnect();
+        } catch (LDAPException lde) {
+            isValidServer =false;
+        } catch (Exception e) {
+            isValidServer =false;
+        }
+        if (!isValidServer) {
+            System.out.println("Invalid Directory Server Info!! ");
+        }
+        return isValidServer;
+    }
+
+    /**
+     * Validates the Directory Server Credentials.
+     * 
+     * @param dsHost the directory server host.
+     * @param dsPort the directory server port.
+     * @param bindDN the dn to bind with.
+     * @param bindPass the password.
+     * @return true if credentials are valid else false.
+     */
+    public static boolean isValidCredentials(String dsHost, String dsPort,
+            String bindDN, String bindPass) {
+        boolean isValidAuth = false;
+        try {
+            LDAPConnection ldapConn = new LDAPConnection();
+            ldapConn.connect(dsHost, new Integer(dsPort).intValue());
+            ldapConn.authenticate(bindDN, bindPass);
+            ldapConn.disconnect();
+            isValidAuth = true;
+        } catch (Exception e) {
+            // do nothing
+        }
+        if (!isValidAuth) {
+            System.out.println("Invalid Credentials !! ");
+        }
+        return isValidAuth;
+    }
+
+
+    /**
+     * Delete an entry, recursing if the entry has children
+     *
+     * @param dn DN of the entry to delete
+     * @param ld active connection to server
+     * @param doDelete true if the entries really
+     * are to be deleted
+     */
+    public static void delete(String dn, LDAPConnection ld, boolean doDelete ) {
+        String theDN = "";
+        try {
+            LDAPSearchConstraints cons = ld.getSearchConstraints();
+            // Retrieve all results at once
+            cons.setBatchSize( 0 );
+             // Find all immediate child nodes; return no
+             // attributes
+            LDAPSearchResults res = ld.search( dn, ld.SCOPE_ONE, 
+                "objectclass=*", new String[] {LDAPv3.NO_ATTRS}, false, cons );
+            // Recurse on entries under this entry
+            while ( res.hasMoreElements() ) {
+                try {
+                    // Next directory entry
+                    LDAPEntry entry = res.next();
+                    theDN = entry.getDN();
+                    // Recurse down
+                    delete( theDN, ld, doDelete );
+                } catch ( LDAPException e ) {
+                    continue;
+                } catch ( Exception ea ) {
+                    continue;
+                }
+            }
+            // At this point, the DN represents a leaf node,
+            // so stop recursing and delete the node
+            try {
+                if ( doDelete ) {
+                    ld.delete( dn );
+                    if (debug.messageEnabled()) {
+                        debug.message(dn + " deleted");
+                    }
+                }
+            } catch (LDAPException e) {
+                if (debug.messageEnabled()) {
+                    debug.message( e.toString() );
+                }
+            } catch( Exception e ) {
+                if (debug.messageEnabled()) {
+                    debug.message( e.toString() );
+                }
+            }
+        } catch (Exception me) {
+            // do nothing
+        }
     }
 }
