@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.10 2008-04-22 15:54:40 ww203982 Exp $
+ * $Id: DBHandler.java,v 1.11 2008-05-21 21:29:55 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,6 @@ public class DBHandler extends Handler {
     private void configure() throws NullLocationException,
     FormatterInitException {
         String cname = DBHandler.class.getName();
-        setLevel(Level.INFO);
         setFilter(null);
         try {
             setEncoding("UTF-8");

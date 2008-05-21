@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.11 2008-04-17 09:06:56 ww203982 Exp $
+ * $Id: RemoteHandler.java,v 1.12 2008-05-21 21:29:55 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class RemoteHandler extends Handler {
             timeBufferingEnabled = true;
         }
 
-        setLevel(Level.INFO);
+        setLevel(Level.ALL);
         setFilter(null);
 
         String urlString =
