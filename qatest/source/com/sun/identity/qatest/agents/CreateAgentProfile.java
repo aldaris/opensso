@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.1 2008-04-18 19:27:11 nithyas Exp $
+ * $Id: CreateAgentProfile.java,v 1.2 2008-05-22 21:33:24 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,6 +128,10 @@ public class CreateAgentProfile extends TestCommon {
             set = new HashSet();
             set.add(agentHost);
             map.put("com.sun.identity.agents.config.fqdn.default", set);
+            
+            set = new HashSet();
+            set.add("amAuthLog." + agentHost + "." + agentPort + ".log");
+            map.put("com.sun.identity.agents.config.remote.logfile", set);
 
             // Setting common qatest properties
             set = new HashSet();
@@ -183,6 +187,7 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("[statSingle] = HTTP_RESPONSE_STATSINGLE");
                 set.add("[statMultiple] = HTTP_RESPONSE_STATMULTIPLE");
                 set.add("[cn] = HTTP_RESPONSE_CN");
+                set.add("[mail] = HTTP_RESPONSE_MAIL");
                 map.put("com.sun.identity.agents.config.response." + 
                         "attribute.mapping", set);                        
                 
@@ -205,7 +210,7 @@ public class CreateAgentProfile extends TestCommon {
                 map.put("com.sun.identity.agents.config.notenforced.uri", set);                        
 
                 set = new HashSet();
-                set.add("true");
+                set.add("false");
                 map.put("com.sun.identity.agents.config.sso.decode", set);                        
 
                 // Setting default properties
@@ -343,7 +348,7 @@ public class CreateAgentProfile extends TestCommon {
                         set);            
 
                 set = new HashSet();
-                set.add("`0");
+                set.add("0");
                 map.put("com.sun.identity.policy.client.clockSkew", set);            
 
                 set = new HashSet();
@@ -685,9 +690,6 @@ public class CreateAgentProfile extends TestCommon {
             // Setting WEB agent specific properties
             } else if (agentType.contains("WEB")) {
                 set = new HashSet();
-                set.add("amAuthLog." + agentHost + "." + agentPort + ".log");
-                map.put("com.sun.identity.agents.config.remote.logfile", set);
-                set = new HashSet();
                 set.add(agentProtocol + "://" + agentHost + ":" + agentPort + 
                         "/UpdateAgentCacheServlet?shortcircuit=false");
                 map.put("com.sun.identity.client.notification.url", set);
@@ -740,8 +742,7 @@ public class CreateAgentProfile extends TestCommon {
 
                 // Adding notenf.html to the list of not enforced URLs        
                 set = new HashSet();
-                set.add("[0]=");
-                set.add("[1]=" + agentProtocol + "://" + agentHost + ":" + 
+                set.add("[0]=" + agentProtocol + "://" + agentHost + ":" + 
                         agentPort + "/notenf.html");
                 log(Level.FINE, "create", "[0]=" + agentProtocol + 
                         "://" + agentHost + ":" + agentPort + "/notenf.html");
