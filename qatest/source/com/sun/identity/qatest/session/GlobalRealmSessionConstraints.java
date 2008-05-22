@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalRealmSessionConstraints.java,v 1.3 2008-05-05 18:24:47 srivenigan Exp $
+ * $Id: GlobalRealmSessionConstraints.java,v 1.4 2008-05-22 00:55:47 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,10 +106,10 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             itr = set.iterator();
             quotaConst = (String) itr.next();
             if (quotaConst.equals("OFF")) {
-                log(Level.SEVERE, "setup", "ERROR: Session constraints " +
+                log(Level.CONFIG, "setup", "CONFIG FAILURE: Session constraints " +
                         "testcases must be run with enable session quota " +
                         "constraints attribute set to 'ON' " );
-                Reporter.log("ERROR: Session constraints " +
+                Reporter.log("CONFIG FAILURE: Session constraints " +
                         "testcases must be run with enable session quota " +
                         "constraints attribute set to 'ON' ");
                 assert false;

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSessionConstraints.java,v 1.3 2008-05-05 18:26:42 srivenigan Exp $
+ * $Id: UserSessionConstraints.java,v 1.4 2008-05-22 00:58:22 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,10 +109,10 @@ public class UserSessionConstraints extends TestCommon {
             log(Level.FINE, "setup", "Resulting behavior if session quota " +
                     "exhausted is set to: " + resultBehavior);  
             if (quotaConst.equals("OFF")) {
-                log(Level.SEVERE, "setup", "ERROR: Session constraints " +
+                log(Level.CONFIG, "setup", "CONFIG FAILURE: Session constraints " +
                         "testcases must be run with enable session quota " +
                         "constraints attribute set to 'ON' " );
-                Reporter.log("ERROR: Session constraints " +
+                Reporter.log("CONFIG FAILURE: Session constraints " +
                         "testcases must be run with enable session quota " +
                         "constraints attribute set to 'ON' ");
                 assert false;
