@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HotSwapProperties.java,v 1.1 2008-04-18 19:27:45 nithyas Exp $
+ * $Id: HotSwapProperties.java,v 1.2 2008-05-22 21:42:59 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,7 +187,7 @@ public class HotSwapProperties extends TestCommon {
                 idmc.hotSwapProperty(amid, strPropName, strPropValue);
             } else {
                 log(Level.SEVERE, "hotSwapProperty", "Property : " + 
-                        strPropName + "is NOT present. Check property name.");
+                        strPropName + " is NOT present. Check property name.");
                 assert(false);
             }
         } catch (Exception e) {
