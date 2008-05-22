@@ -90,8 +90,10 @@ class URL {
 	uri = newURI;
     }
 
-    inline void setQuery(const std::string& query) {
-	splitQParams(query);
+    inline void setQuery(const std::string& newQuery) {
+	splitQParams(newQuery);
+	query = newQuery;
+        checkQueryFormat();
     }
 
     void getBaseURL(std::string& baseURL, size_t capacity = 0) ;
@@ -163,6 +165,8 @@ class URL {
     void splitQParams(const std::string &qparam); 
 
     std::string construct_query_parameter_string() const;
+    void checkQueryFormat();
+    std::string get_query_parameter_string() const;
 
     Protocol protocol;
     std::string host;
@@ -170,6 +174,7 @@ class URL {
     std::size_t port;
     std::string uri;
     std::string path_info;
+    std::string query;
     KeyValueMap qParams;
     bool icase;
 };

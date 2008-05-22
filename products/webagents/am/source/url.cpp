@@ -205,23 +205,10 @@ void URL::parseURLStrNew(const std::string &urlString,
     if (port_ptr != NULL && 
 	    (uri_ptr != NULL && uri_ptr <= port_ptr) || 
 	    (query_ptr != NULL && query_ptr <= port_ptr)) {
-        // Commented below as this is causing an exception when URL doesn't
-        // contain a port(in case of default port) and if there is a colon in query string
-        //      throw InternalException(func, "Invalid character ':' in URL",
-        //                              AM_INVALID_RESOURCE_FORMAT);
         port_ptr = NULL; //as there is no port mentioned in URL.
 
     }
     
-    //Commented this check as this is causing an exception
-    //when an url is accessed if of the form: 
-    // http://hostname:port/?queryParam=value
-//     if (uri_ptr != NULL && query_ptr != NULL && 
-// 	    (query_ptr <= uri_ptr || query_ptr == &uri_ptr[1])) {
-// 	throw InternalException(func, "Invalid character '/' in URL " 
-// 				      "or missing URI in URL.",
-// 			        AM_INVALID_RESOURCE_FORMAT);
-//    }
 
     // Now check that / and ? comes after the port, and that 
     // ? comes after the uri.
@@ -329,6 +316,9 @@ void URL::parseURLStrNew(const std::string &urlString,
 
     // 4. parse query
     if (query_ptr != NULL && query_ptr[1] != '\0') {
+        query.reserve(strlen(query_ptr));
+        query.append(query_ptr);
+        checkQueryFormat();
 	splitQParams(&query_ptr[1]);
     }
 }
@@ -479,8 +469,9 @@ void URL::parseURLStrOld(const std::string &urlString,
     /* parse queryParameters */
     if(endPos != std::string::npos) {
 	startPos = tmpPos + 1;
-	std::string queryStr = urlStr.substr(startPos);
-	splitQParams(queryStr);
+	query = urlStr.substr(startPos);
+        checkQueryFormat();
+	splitQParams(query);
     }
 
     return;
@@ -493,7 +484,7 @@ void URL::getURLString(std::string& urlStr, size_t capacity) {
 	capacity = size;
     getBaseURL(urlStr, capacity);
     urlStr.append(path_info);
-    urlStr.append(construct_query_parameter_string());
+    urlStr.append(get_query_parameter_string());
 }
 
 void URL::getBaseURL(std::string& baseURL, size_t capacity) {
@@ -520,27 +511,9 @@ void URL::getRootURL(std::string& rootURL, size_t capacity) {
     rootURL.append(portStr);
 }
 
-std::string URL::construct_query_parameter_string() const 
+std::string URL::get_query_parameter_string() const 
 {
-    std::string retVal;
-    if(qParams.size() > 0) {
-	retVal.append("?");
-	KeyValueMap::const_iterator iter = qParams.begin();
-	for(; iter != qParams.end(); ++iter) {
-	
-	    const KeyValueMap::key_type &key = iter->first;
-	    const KeyValueMap::mapped_type &values = iter->second;
-	    std::size_t val_size = values.size();
-	    for(std::size_t i = 0; i < val_size; ++i) {
-	      if(i > 0 || retVal.size() > 1)
-		    retVal.append("&");
-		retVal.append(key);
-		retVal.append("=");
-		retVal.append(values[i]);
-	    }
-	}
-    }
-    return retVal;
+    return query;
 }
 
 /**
@@ -560,7 +533,29 @@ void URL::splitQParams(const std::string &qparam)
 
 void URL::removeQueryParameter(const std::string &key) {
     KeyValueMap::iterator iter = qParams.find(key);
+    size_t startPos = 0; size_t endPos = 0;
+    
     qParams.erase(iter);
+    
+    //Remove parameter from the query string
+    startPos=query.find(key);
+    if (startPos != std::string::npos) {
+        endPos=query.find("&");
+        if (endPos == std::string::npos) {
+            endPos = query.size();
+        }
+        query.erase (startPos, endPos);
+        if (query.compare("?") == 0) {
+            query.clear();
+        }
+    }
+}
+
+void URL::checkQueryFormat() {
+    // If there is a query, it must start with a question mark.
+    if ((!query.empty()) && (query[0] != '?')) {
+        query.insert(0,"?");
+    }
 }
 
 const char * URL::getProtocolString() const {

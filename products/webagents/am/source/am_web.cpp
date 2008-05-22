@@ -871,7 +871,12 @@ am_bool_t in_not_enforced_list(URL &urlObj,
 					access_denied_url, accessUrl, B_FALSE);
         if (AM_EXACT_MATCH == access_denied_url_match) {
             access_denied_url_match_flag = AM_TRUE;
-        }
+            am_web_log_debug("Matching %s with access_denied_url %s: TRUE",
+                             accessUrl, (*agentConfigPtr)->access_denied_url);
+        } else {
+            am_web_log_debug("Matching %s with access_denied_url %s: FALSE",
+                             accessUrl, (*agentConfigPtr)->access_denied_url);
+	}
     }
 
     // Check for dummy post url
