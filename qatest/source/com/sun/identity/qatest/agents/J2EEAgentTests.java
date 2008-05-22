@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentTests.java,v 1.3 2008-04-28 18:33:57 nithyas Exp $
+ * $Id: J2EEAgentTests.java,v 1.4 2008-05-22 21:41:30 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,6 @@ public class J2EEAgentTests extends TestCommon {
         idmc = new IDMCommon();
         pollingTime = new Integer(rbg.getString(strGblRB +
                 ".pollingInterval")).intValue();
-        admintoken = getToken(adminUser, adminPassword, basedn);
     }
     
     /**
@@ -103,6 +102,7 @@ public class J2EEAgentTests extends TestCommon {
                 "only. Skipping TCs");
         assert(false);
         }
+        admintoken = getToken(adminUser, adminPassword, basedn);
         if (executeAgainstOpenSSO) {
             try {
                 polIdx = new Integer(policyIdx).intValue();
@@ -151,6 +151,7 @@ public class J2EEAgentTests extends TestCommon {
     public void evaluatePolicy()
     throws Exception {
         entering("evaluatePolicy", null);
+        String expResult = "";
             try {
                 webClient = new WebClient();
                 webClient.setCookiesEnabled(true);
@@ -161,7 +162,7 @@ public class J2EEAgentTests extends TestCommon {
                 String username = rbp.getString(usernameIdx);
                 String passwordIdx = rbp.getString(strEvalIdx + ".password");
                 String password = rbp.getString(passwordIdx);
-                String expResult= rbp.getString(strEvalIdx + 
+                expResult= rbp.getString(strEvalIdx + 
                         ".expectedResult");
                 String expResultAdditionalCheck= rbp.getString(strEvalIdx + 
                         ".expectedResultAdditionalCheck");
@@ -185,6 +186,11 @@ public class J2EEAgentTests extends TestCommon {
                     iIdx = getHtmlPageStringIndex(page, 
                             expResultAdditionalCheck);
                     assert (iIdx != -1);
+                }
+            } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException 
+                    ee) {
+                if (!expResult.equals("Access Denied")) {
+                    assert(false);
                 }
             } catch (Exception e) {
                 log(Level.SEVERE, "evaluatePolicy", e.getMessage());
