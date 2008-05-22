@@ -200,8 +200,21 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
     throws Exception {
         entering("testMaxIdleTimeGlobal", null);
         try {
+            Map map = new HashMap();
+            Set set = new HashSet();
+            set.add("5");
+            map.put("iplanet-am-session-max-session-time", set);
+            smsc.updateGlobalServiceDynamicAttributes(
+                    "iPlanetAMSessionService", map);
+            Set setVal = smsc.getAttributeValueFromSchema(
+                    "iPlanetAMSessionService",
+                    "iplanet-am-session-max-session-time", "Dynamic");
+            log(Level.FINEST, "evaluateNewSessionAttribute", "setVal: " +
+                    setVal);
+            if (!setVal.contains("5"))
+                assert false;
             usertoken = getToken(userName, userName, basedn);
-            Thread.sleep(95000);
+            Thread.sleep(155000);
             assert (!validateToken(usertoken)); 
         } catch(Exception e) {
             log(Level.SEVERE, "testMaxIdleTimeGlobal", e.getMessage());
@@ -288,11 +301,13 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
             }
             log(Level.FINEST, "testMaxSessionTimeGlobal", "bVal: " + bVal);
             assert (bVal);
+            
+            smsc.unassignDynamicServiceRealm("iPlanetAMSessionService", realm);
         } catch(Exception e) {
             log(Level.SEVERE, "testMaxSessionTimeRealm", e.getMessage());
             e.printStackTrace();
             throw e;
-        }
+        } 
         exiting("testMaxSessionTimeRealm");
     }
 
@@ -306,8 +321,20 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
     throws Exception {
         entering("testMaxIdleTimeRealm", null);
         try {
+            Map map = new HashMap();
+            Set set = new HashSet();
+            set.add("5");
+            map.put("iplanet-am-session-max-session-time", set);
+            set = new HashSet();            
+            set.add("1");
+            map.put("iplanet-am-session-max-idle-time", set);
+            set = new HashSet();
+            set.add("1");
+            map.put("iplanet-am-session-max-caching-time", set);
+            smsc.assignDynamicServiceRealm("iPlanetAMSessionService", realm,
+                    map);
             usertoken = getToken(userName, userName, basedn);
-            Thread.sleep(95000);
+            Thread.sleep(155000);
             assert (!validateToken(usertoken));
         } catch(Exception e) {
             log(Level.SEVERE, "testMaxIdleTimeRealm", e.getMessage());
