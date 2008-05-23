@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showServerConfig.jsp,v 1.1 2008-05-21 23:28:10 rmisra Exp $
+   $Id: showServerConfig.jsp,v 1.2 2008-05-23 18:25:59 rmisra Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -107,11 +107,10 @@
                   </td>
                   <td>
               <%
-                  out.println(prop.getProperty("com.iplanet.am.server.protocol") + "://");
-                  out.println(prop.getProperty("com.iplanet.am.server.host") + "/");
-                  out.println(prop.getProperty("com.iplanet.am.server.port").trim());
-                  String strDD = prop.getProperty("com.iplanet.am.services.deploymentDescriptor");
-                  out.println(strDD.trim());
+                  out.println(prop.getProperty("com.iplanet.am.server.protocol").trim() + "://" +
+                  prop.getProperty("com.iplanet.am.server.host").trim() + ":" +
+                  prop.getProperty("com.iplanet.am.server.port").trim() +
+                  prop.getProperty("com.iplanet.am.services.deploymentDescriptor"));
               %>
                   </td>
                   </tr>
@@ -329,7 +328,7 @@
                   <tr>
                   <td>
               <%
-                  out.println("<B>Java VM Vendorr</B>");
+                  out.println("<B>Java VM Vendor</B>");
               %>
                   </td>
                   <td>
