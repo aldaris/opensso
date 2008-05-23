@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.45 2008-04-28 15:43:19 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.46 2008-05-23 04:52:31 kanduls Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1016,12 +1016,12 @@ public class TestCommon implements TestConstants {
         String strHost = strNamingURL.substring(iFirstSep + 3, iSecondSep);
         map.put("host", strHost);
         
-        int iThirdSep = strNamingURL.indexOf(fileseparator, iSecondSep + 1);
+        int iThirdSep = strNamingURL.indexOf(uriseparator, iSecondSep + 1);
         String strPort = strNamingURL.substring(iSecondSep + 1, iThirdSep);
         map.put("port", strPort);
         
-        int iFourthSep = strNamingURL.indexOf(fileseparator, iThirdSep + 1);
-        String strURI = fileseparator + strNamingURL.substring(iThirdSep + 1,
+        int iFourthSep = strNamingURL.indexOf(uriseparator, iThirdSep + 1);
+        String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
         map.put("uri", strURI);
         
