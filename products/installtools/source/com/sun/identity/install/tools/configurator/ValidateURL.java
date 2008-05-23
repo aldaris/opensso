@@ -52,6 +52,20 @@ public class ValidateURL extends ValidatorBase {
      */
     public ValidationResult isServerURLValid(String url, Map props,
             IStateAccess state) {
+           
+        // delegate this function to its proxy with timeout.
+        return new URLValidatorProxy(url, props, state).isServerURLValid();
+    }
+    
+    /*
+     * Checks if server url is valid
+     * 
+     * @param url @param props @param state
+     * 
+     * @return ValidationResult
+     */
+    private ValidationResult isServerURLValidIntenal(String url, Map props,
+            IStateAccess state) {
 
         LocalizedMessage returnMessage = null;
         ValidationResultStatus validRes = ValidationResultStatus.STATUS_FAILED;
@@ -228,6 +242,57 @@ public class ValidateURL extends ValidatorBase {
 
     }
 
+    /*
+     * This is a Runnable class used to validate url with timeout.
+     */
+    private class URLValidatorProxy implements Runnable {
+
+        private String url = null;
+        private Map props = null;
+        private IStateAccess state = null;
+        private ValidationResult result = null;
+        
+        public URLValidatorProxy(String url, Map props,
+                IStateAccess state) {
+            this.url = url;
+            this.props = props;
+            this.state = state;
+            
+            ValidationResultStatus validRes = 
+                    ValidationResultStatus.STATUS_WARNING;
+            LocalizedMessage returnMessage = LocalizedMessage.get(
+                                LOC_VA_WRN_UN_REACHABLE_SERVER_URL,
+                                new Object[] { url });
+            this.result = new ValidationResult(validRes, null, returnMessage);
+        }
+        
+        public ValidationResult isServerURLValid() {
+            
+            try {
+                long timeout = 10000;
+                Thread thread = new Thread(this);
+                thread.start();
+                thread.join(timeout);
+                
+                if (thread.isAlive()) {
+                    thread.interrupt();
+                }
+                
+            } catch (InterruptedException ex) {
+                Debug.log("ValidateURL$URLValidatorProxy.isServerURLValid(): " +
+                        "the url " + url + " is not available", ex);
+            }
+            
+            return this.result;
+        }
+        
+        public void run() {
+            result = ValidateURL.this.isServerURLValidIntenal(url, props,
+                    state);
+        }
+        
+    } // end of URLValidatorProxy class
+    
     public static String STR_AGENT_TYPE = "AGENT_TYPE";
     /*
      * Localized messages
