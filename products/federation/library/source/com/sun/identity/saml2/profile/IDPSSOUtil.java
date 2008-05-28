@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.27 2008-05-02 21:46:27 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.28 2008-05-28 18:18:15 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1425,8 +1425,6 @@ public class IDPSSOUtil {
         date = new Date();
         date.setTime(date.getTime() + effectiveTime * 1000);
         conditions.setNotOnOrAfter(date);
-    
-        conditions.setNotBefore(new Date());
     
         List list = new ArrayList();
         AudienceRestriction ar = getAudienceRestriction(audienceEntityID);
