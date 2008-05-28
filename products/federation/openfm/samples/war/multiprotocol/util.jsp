@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: util.jsp,v 1.5 2008-04-11 03:17:33 qcheng Exp $ 
+   $Id: util.jsp,v 1.6 2008-05-28 18:47:20 qcheng Exp $ 
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -494,6 +494,15 @@ import="java.io.IOException,
                 extendedXML.substring(exValueIdx + 8);
             // [END] modify extended config to set defaultRelayState 
 
+            // [START] modify extended config to set wantAssertionSigned=false
+            exStartIdx = extendedXML.indexOf(
+                "<Attribute name=\"wantAssertionSigned\">");
+            exValueIdx = extendedXML.indexOf("<Value>true</Value>",
+                exStartIdx);
+            extendedXML = extendedXML.substring(0, exValueIdx) + 
+                "<Value>false</Value>" + extendedXML.substring(exValueIdx + 19);
+            // [END] modify extended config to set defaultRelayState 
+
             // [START] Import these XMLs
             com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement
                 descriptor = (com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement)
@@ -956,6 +965,9 @@ import="java.io.IOException,
                  remoteSPEntityID + "\" hosted=\"false\" xmlns=\"urn:sun:fm:wsfederation:1.0:federationconfig\">" + "\n" + "    <SPSSOConfig>\n" +
                  "        <Attribute name=\"cotlist\">\n" +
                  "        </Attribute>\n" +  
+                 "        <Attribute name=\"wantAssertionSigned\">\n" +
+                 "            <Value>false</Value>\n" + 
+                 "        </Attribute>\n" +
                  "    </SPSSOConfig>\n" +
                  "</FederationConfig>\n";
             // [END] Construct a dummy IDP metadata

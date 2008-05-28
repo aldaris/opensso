@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationUtils.java,v 1.3 2007-08-28 00:37:59 qcheng Exp $
+ * $Id: WSFederationUtils.java,v 1.4 2008-05-28 18:47:06 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -357,10 +357,13 @@ public class WSFederationUtils {
             }
         } catch (SessionException ex) {
             // ignore;
+            debug.message("WSFederationUtils.processMultiProtocolLogout", ex);
         } catch (IOException ex) {
             // ignore;
+            debug.message("WSFederationUtils.processMultiProtocolLogout", ex);
         } catch (Exception ex) {
             // ignore;
+            debug.message("WSFederationUtils.processMultiProtocolLogout", ex);
         }
     }
 }

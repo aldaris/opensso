@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.2 2008-04-15 16:13:35 veiming Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.3 2008-05-28 18:50:08 qcheng Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -317,7 +317,7 @@ public class CreateWSFedMetaDataTemplate {
             { SAML2Constants.AUTH_MODULE_NAME, "" },
             { SAML2Constants.DEFAULT_RELAY_STATE, "" },
             { SAML2Constants.ASSERTION_TIME_SKEW, "300" },
-            { SAML2Constants.WANT_ARTIFACT_RESPONSE_SIGNED, "true" },
+            { WSFederationConstants.WANT_ASSERTION_SIGNED, "true" },
             { COTConstants.COT_LIST, null },
         };
 
