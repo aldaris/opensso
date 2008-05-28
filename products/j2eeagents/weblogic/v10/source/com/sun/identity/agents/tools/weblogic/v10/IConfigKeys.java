@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigKeys.java,v 1.6 2008-03-11 23:13:35 sean_brydon Exp $
+ * $Id: IConfigKeys.java,v 1.7 2008-05-28 17:05:36 huacui Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,18 +83,6 @@ public interface IConfigKeys {
     
     /** key for weblogic config.xml */
     public static final String STR_CONFIG_XML = "config.xml";
-    
-    /** Field version prefix for WL **/
-    public static final String  STR_VERSION_PREFIX = "WebLogic Server ";
-    
-    /** Valid major version for WL 10 **/
-    public static final String STR_WEBLOGIC_10_VERSION = "10.0";
-    
-    /** key for WL  major version **/
-    public static final String STR_KEY_WL_MAJOR_VERSION = "WL_MAJOR_VERSION";
-    
-    /** key for WL  minor version **/
-    public static final String STR_KEY_WL_MINOR_VERSION = "WL_MINOR_VERSION";
     
     /** key for WL domain **/
     public static final String STR_KEY_WL_DOMAIN = "WL_DOMAIN";
