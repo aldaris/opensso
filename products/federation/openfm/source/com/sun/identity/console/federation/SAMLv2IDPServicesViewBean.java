@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPServicesViewBean.java,v 1.1 2008-04-22 21:48:51 babysunil Exp $
+ * $Id: SAMLv2IDPServicesViewBean.java,v 1.2 2008-05-28 22:01:39 babysunil Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,8 +102,9 @@ public class SAMLv2IDPServicesViewBean extends SAMLv2Base {
                     realm, entityName), false, model);
             
             //save the standard metadata values for the Idp
-            model.setIDPStdAttributeValues(realm, entityName, idpStdValues);
-            
+            model.setIDPStdAttributeValues(realm, 
+                    entityName, idpStdValues, null, location);
+                     
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "samlv2.idp.property.updated");
         } catch (AMConsoleException e) {
