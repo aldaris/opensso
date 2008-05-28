@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amConsoleConfig.xml,v 1.9 2008-04-22 00:23:16 veiming Exp $
+   $Id: amConsoleConfig.xml,v 1.10 2008-05-28 18:41:51 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -39,7 +39,7 @@
 	label="tab.realm.label"
 	tooltip="tab.realm.tooltip"
 	status="tab.realm.status"
-	permissions="sunAMRealmService,sunIdentityRepositoryService,iPlanetAMPolicyService" />
+	permissions="sunAMRealmService,sunIdentityRepositoryService,iPlanetAMPolicyService,AgentService,sunIdentityRepositoryService/1.0/application/agent" />
 
     <tab id="7" viewbean="com.sun.identity.console.dm.OrganizationViewBean"
         url="../dm/Organization"
@@ -118,7 +118,7 @@
 	    label="realm.showmenu.label.properties"
 	    tooltip="tab.sub.realm.tooltip"
 	    status="tab.sub.realm.status"
-	    permissions="sunAMRealmService" />
+	    permissions="sunAMRealmService,AgentService" />
 	<tab id="12" 
 	    viewbean="com.sun.identity.console.authentication.AuthPropertiesViewBean" 
 	    label="realm.showmenu.label.authentication" 
@@ -169,7 +169,7 @@
 	    label="tab.configuration.agentconfig.label"
 	    tooltip="tab.configuration.agentconfig.tooltip"
 	    status="tab.configuration.agentconfig.status"
-    	    permissions="sunIdentityRepositoryService" />
+    	    permissions="sunIdentityRepositoryService/1.0/application/agent" />
     </profile>
     <profile id="cscGeneral">
         <tab id="421" 

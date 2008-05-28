@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.9 2008-04-17 17:50:26 veiming Exp $
+ * $Id: AMModelBase.java,v 1.10 2008-05-28 18:41:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1053,10 +1053,16 @@ public class AMModelBase
             return appendBaseDN(base,
                 orgMgr.getSubOrganizationNames(filter, true), filter);
         } catch (SMSException e) {
-            String strError = getErrorString(e);
-            String[] paramsEx = {base, strError};
-            logEvent("SMS_EXCEPTION_GET_REALM_NAMES", paramsEx);
-            throw new AMConsoleException(strError);
+            if (e.getExceptionCode() == SMSException.STATUS_NO_PERMISSION) {
+                Set result = new HashSet(2);
+                result.add(base);
+                return result;
+            } else {
+                String strError = getErrorString(e);
+                String[] paramsEx = {base, strError};
+                logEvent("SMS_EXCEPTION_GET_REALM_NAMES", paramsEx);
+                throw new AMConsoleException(strError);
+            }
         }
     }
      

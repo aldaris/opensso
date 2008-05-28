@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.10 2008-04-22 00:23:16 veiming Exp $
+   $Id: amAccessControl.xml,v 1.11 2008-05-28 18:41:50 veiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,11 +26,11 @@
 <accesscontrols>
     <!-- REALM -->
     <viewbean classname="com.sun.identity.console.realm.RMRealmViewBean"
-	view="sunAMRealmService" modify="sunAMRealmService">
+	view="sunAMRealmService,AgentService" modify="sunAMRealmService,AgentService">
 	<actionhandler name="tblButtonAdd,tblButtonDelete" />
 	<table name="tblSearch" />
     </viewbean>
-    <viewbean classname="com.sun.identity.console.realm.RealmPropertiesViewBean" view="sunAMRealmService" modify="sunAMRealmService">
+    <viewbean classname="com.sun.identity.console.realm.RealmPropertiesViewBean" view="sunAMRealmService,AgentService" modify="sunAMRealmService,AgentService">
 	<actionhandler name="button1,button2" />
     </viewbean>
     <viewbean classname="com.sun.identity.console.realm.IDRepoViewBean" view="sunIdentityRepositoryService" modify="sunIdentityRepositoryService">
@@ -150,7 +150,7 @@
     </viewbean>
 
     <!-- ENTITIES -->
-    <viewbean classname="com.sun.identity.console.agentconfig.AgentsViewBean" view="AgentService" modify="AgentService">
+    <viewbean classname="com.sun.identity.console.agentconfig.AgentsViewBean" view="sunIdentityRepositoryService/1.0/application/agent" modify="sunIdentityRepositoryService/1.0/application/agent">
 	<actionhandler name="tblButtonGroupAdd,tblButtonAdd,tblDataActionHref,tblDataActionGroupHref,tblDataActionGroupMembersHref,tblButtonDelete,tblButtonGroupDelete" />
 	<table name="tblSearch" />
     </viewbean>

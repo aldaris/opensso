@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewConfig.java,v 1.7 2008-04-22 21:38:17 babysunil Exp $
+ * $Id: AMViewConfig.java,v 1.8 2008-05-28 18:40:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -339,16 +339,8 @@ public class AMViewConfig {
 
 
     public Map getSupportedAgentTypesMap(AMModel model) {
-        Map supported = null;
-        AccessControlModel accessModel = new AccessControlModelImpl(
-            model.getUserSSOToken());
-        Set permission = new HashSet(2);
-        permission.add(AMAdminConstants.IDREPO_SERVICE_NAME);
-
-        if (accessModel.canView(permission, null, "/", false)) {
-            supported = model.getSupportedAgentTypes();
-        }
-
+        //supported agent type should be accessible by all users.
+        Map supported = model.getSupportedAgentTypes();
         return (supported == null) ? Collections.EMPTY_MAP : supported;
     }    
 
