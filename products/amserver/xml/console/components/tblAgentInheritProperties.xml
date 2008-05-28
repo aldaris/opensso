@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: tblAgentInheritProperties.xml,v 1.1 2007-12-17 19:42:46 veiming Exp $
+   $Id: tblAgentInheritProperties.xml,v 1.2 2008-05-28 18:43:26 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,7 +32,9 @@
             <attribute name="escape" value="false" />
             <attribute name="defaultValue" value="&lt;br /&gt;" />
         </cc>
-        <cc name="tblDataPropertyHelp" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+        <cc name="tblDataPropertyHelp" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="escape" value="false" />
+        </cc>
     </column>
     <column name="tblColValue" sortname="tblDataValue" rowheader="true">
         <cc name="tblDataValue" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
