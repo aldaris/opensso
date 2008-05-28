@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.8 2008-05-15 00:45:46 veiming Exp $
+ * $Id: Step7.java,v 1.9 2008-05-28 18:10:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,13 +35,25 @@ public class Step7 extends AjaxPage {
 
     public void onInit() {
         Context ctx = getContext();
+        String tmp = getAttribute(
+            SetupConstants.CONFIG_VAR_DATA_STORE, 
+            SetupConstants.SMS_EMBED_DATASTORE);
+        boolean isEmbedded = tmp.equals(SetupConstants.SMS_EMBED_DATASTORE);
+            
         // Config Store Properties
-        String tmp =(String)ctx.getSessionAttribute("configDirectory");
-        add("configDirectory", tmp);        
-        tmp = getAttribute("configStoreHost", getHostName());
-        add("configStoreHost", tmp);
+        tmp =(String)ctx.getSessionAttribute("configDirectory");
+        add("configDirectory", tmp);
+        
+        if (isEmbedded) {
+            add("configStoreHost", "localhost");
+        } else {
+            tmp = getAttribute("configStoreHost", getHostName());
+            add("configStoreHost", tmp);
+        }
         tmp = getAttribute("configStoreSSL", "");
-        add("configStoreSSL", tmp);
+        add("displayConfigStoreSSL", tmp.equals("SSL") ? 
+            getLocalizedString("yes.label") : 
+            getLocalizedString("no.label"));
         tmp = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
         add("rootSuffix", tmp);
         tmp = getAttribute("configStorePort", getAvailablePort(50389));
@@ -54,11 +66,14 @@ public class Step7 extends AjaxPage {
         if (tmp.equals("true")) {
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_HOST);
-            add("userHostName", tmp);
+            add("displayUserHostName", tmp);
 
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_SSL);
-            add("userHostSSL", tmp);
+            add("xuserHostSSL", tmp.equals("SSL") ? 
+                getLocalizedString("yes.label") : 
+                getLocalizedString("no.label"));
+                    
             tmp = (String)ctx.getSessionAttribute(
                 SetupConstants.USER_STORE_PORT);
             add("userHostPort", tmp);

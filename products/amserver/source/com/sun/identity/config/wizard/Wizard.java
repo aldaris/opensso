@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.17 2008-05-15 00:45:46 veiming Exp $
+ * $Id: Wizard.java,v 1.18 2008-05-28 18:10:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,7 +134,7 @@ public class Wizard extends AjaxPage {
         request.addParameter(SetupConstants.CONFIG_VAR_ROOT_SUFFIX, tmp);
        
         if (isEmbedded) {
-            tmp = getHostName();
+            tmp = getAttribute("configStoreHost", hostName);
             request.addParameter(
                 SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
         } else {
