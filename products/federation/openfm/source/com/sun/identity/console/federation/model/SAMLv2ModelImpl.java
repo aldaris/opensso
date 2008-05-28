@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.20 2008-04-22 21:44:42 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.21 2008-05-28 18:31:17 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import javax.servlet.http.HttpServletRequest;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
@@ -68,6 +69,10 @@ import com.sun.identity.saml2.jaxb.metadata.AuthnQueryServiceElement;
 import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
 import com.sun.identity.saml2.jaxb.entityconfig.AffiliationConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.KeyDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.EncryptionMethodElement;
+import com.sun.identity.saml2.jaxb.xmlenc.EncryptionMethodType;
+import com.sun.identity.saml2.jaxb.xmlenc.EncryptionMethodType.KeySize;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import javax.xml.bind.JAXBException;
 import com.iplanet.jato.RequestManager;
@@ -80,6 +85,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.math.BigInteger;
 
 public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private SAML2MetaManager metaManager;
@@ -544,6 +550,11 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             signElem.getLocation()));
                     }
                 }
+                
+                //retrieve key descriptor encryption details if present
+                if (idpssoDescriptor.getKeyDescriptor() != null ) {
+                    getKeyandAlgorithm(idpssoDescriptor, map);
+                }
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
@@ -796,6 +807,11 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     map.put(NAMEID_FORMAT, returnEmptySetIfValueIsNull(
                             convertListToSet(NameIdFormatList)));
                 }
+                
+                //retrieve key descriptor encryption details if present
+                if (spssoDescriptor.getKeyDescriptor() != null ) {
+                    getKeyandAlgorithm(spssoDescriptor, map);
+                }
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
@@ -855,12 +871,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param idpStdValues Map which contains the standard attribute values.
+     * @param idpExtValues Map which contain the extended attribute values.
+     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPStdAttributeValues(
             String realm,
             String entityName,
-            Map idpStdValues
+            Map idpStdValues,
+            Map idpExtValues,
+            String location
             )  throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "IDP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1069,6 +1089,25 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         signonList.add(slsElemSoap);
                     }
                 }
+                
+                //save key and encryption details if present for hosted
+                if (location.equals("hosted") && 
+                    idpStdValues.keySet().contains(TF_KEY_NAME)) 
+                {
+                    String keysize = getResult(idpStdValues, TF_KEY_NAME);
+                    String algorithm = getResult(idpStdValues, TF_ALGORITHM);      
+                    String e_certAlias = getResult(idpExtValues, 
+                            IDP_ENCRYPT_CERT_ALIAS);
+                    String s_certAlias = getResult(idpExtValues,
+                            IDP_SIGN_CERT_ALIAS); 
+                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
+                      entityName, e_certAlias, false, true, algorithm, 
+                            Integer.parseInt(keysize));
+                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
+                      entityName, s_certAlias, true, true, algorithm,
+                            Integer.parseInt(keysize)); 
+                }
+                
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1161,12 +1200,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param spStdValues Map which contains the standard attribute values.
+     * @param spExtValues Map which contain the extended attribute values.
+     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setSPStdAttributeValues(
             String realm,
             String entityName,
-            Map spStdValues
+            Map spStdValues,
+            Map spExtValues,
+            String location
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "SP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1356,7 +1399,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                           asconsServiceList.add(acsElemArti);  
                         }
                     }
-                    ;
+                  
                     if (paosLocation != null && paosLocation.length() > 0 ) {
                         acsElemPaos = 
                             objFact.createAssertionConsumerServiceElement();
@@ -1469,6 +1512,25 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     boolean assertValue = setToBoolean(
                             spStdValues, WANT_ASSERTIONS_SIGNED);
                     spssoDescriptor.setWantAssertionsSigned(assertValue);
+                }
+                
+                //save key descriptor encryption details if present
+                if (location.equals("hosted") && 
+                    spStdValues.keySet().contains(TF_KEY_NAME))
+                {
+                    String keysize = getResult(spStdValues, TF_KEY_NAME);
+                    String algorithm = getResult(spStdValues, TF_ALGORITHM);      
+                    String e_certAlias = getResult(spExtValues, 
+                            SP_ENCRYPT_CERT_ALIAS);
+                    String s_certAlias = getResult(spExtValues,
+                            SP_SIGN_CERT_ALIAS);
+                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
+                      entityName, e_certAlias, false, false, algorithm, 
+                            Integer.parseInt(keysize));
+                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
+                      entityName, s_certAlias, true, false, algorithm,
+                            Integer.parseInt(keysize));
+
                 }
                 
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
@@ -1645,6 +1707,47 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             String name =(String) itt.next();
             ssodescriptor.getNameIDFormat().add(name);
         }
+    }
+    
+    /**
+     * retrieves the encryption key size and algorithm
+     *
+     * @param ssodescriptor the SSODescriptorType which can be idpsso/spsso.
+     * @param map the Map which contains the attribute/value pairs.
+     */
+    private void getKeyandAlgorithm(
+            SSODescriptorType ssodescriptor,
+            Map map
+            )  {
+                List keyList = ssodescriptor.getKeyDescriptor();
+                for (int i=0; i<keyList.size(); i++) {
+                    KeyDescriptorElement keyOne =
+                            (KeyDescriptorElement)keyList.get(i);
+                    String type = keyOne.getUse();
+                    if (type.equals("encryption")) {
+                        List encryptMethod = keyOne.getEncryptionMethod();
+                        if (!encryptMethod.isEmpty()) {
+                            EncryptionMethodElement encrptElement = 
+                            (EncryptionMethodElement)encryptMethod.get(0);
+                            String alg = encrptElement.getAlgorithm();
+                            String size = null;
+                            List keySizeList = encrptElement.getContent();
+                            if (!keySizeList.isEmpty()) {
+                                EncryptionMethodType.KeySize keysizeElem =
+                                   (EncryptionMethodType.KeySize)
+                                   keySizeList.get(0);
+                                BigInteger keysize = keysizeElem.getValue();
+                                size = Integer.toString(keysize.intValue());
+                            }                    
+
+                            map.put(TF_KEY_NAME, 
+                                returnEmptySetIfValueIsNull(size));
+                            map.put(TF_ALGORITHM, 
+                                returnEmptySetIfValueIsNull(alg));
+
+                        }
+                    }
+                }
     }
     
     /**

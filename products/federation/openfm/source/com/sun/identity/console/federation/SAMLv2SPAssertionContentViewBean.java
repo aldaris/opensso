@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SPAssertionContentViewBean.java,v 1.1 2008-04-22 21:49:53 babysunil Exp $
+ * $Id: SAMLv2SPAssertionContentViewBean.java,v 1.2 2008-05-28 18:30:18 babysunil Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,9 +101,7 @@ public class SAMLv2SPAssertionContentViewBean extends SAMLv2Base {
         SAMLv2Model model = (SAMLv2Model)getModel();
         ps.setAttributeValues(getStandardValues(), model);
         ps.setAttributeValues(getExtendedValues(), model);
-        setDisplayFieldValue(model.TF_KEY_NAME, KEYNAMES);
-        setDisplayFieldValue(model.TF_ALGORITHM, ALGORITHM);
-        
+                
          if (isHosted()) {
             SAMLv2AuthContexts authContexts = null;
             try {
@@ -242,12 +240,13 @@ public class SAMLv2SPAssertionContentViewBean extends SAMLv2Base {
                     model.getStandardServiceProviderAttributes(
                     realm, entityName), false, model);
             
-            //save the standard metadata values for the Idp
-            model.setSPStdAttributeValues(realm, entityName, spStdValues);
-            
             //retrieve the extended metadata values from the property sheet
             Map spExtValues = ps.getAttributeValues(
                     model.getSPEXACDataMap(), false, model);
+            
+            //save the standard metadata values for the Idp
+            model.setSPStdAttributeValues(
+                realm, entityName, spStdValues, spExtValues, location);            
             
             //save the extended metadata values for the Idp
             model.setSPExtAttributeValues(realm, entityName, spExtValues,

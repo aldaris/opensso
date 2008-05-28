@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionContentHosted.xml,v 1.1 2008-04-22 21:59:43 babysunil Exp $
+   $Id: propertySAMLv2SPAssertionContentHosted.xml,v 1.2 2008-05-28 18:28:38 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -140,14 +140,22 @@
                            defaultValue="samlv2.attribute.label.keysize" 
                            labelFor="keySize" />
                     <cc name="keySize" 
-                        tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="25" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
                 </property>
                 <property>
                     <label name="lblEncrptionAlgorithm" 
                            defaultValue="samlv2.attribute.label.algorithm" 
                            labelFor="Algorithm" />
                     <cc name="Algorithm" 
-                        tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                        <attribute name="size" value="75" />
+                        <attribute name="autoSubmit" value="false" />
+                        <attribute name="localizeDisplayFieldValue" value="false" />
+                    </cc>
                 </property>
             </ccgroup>
         </property>

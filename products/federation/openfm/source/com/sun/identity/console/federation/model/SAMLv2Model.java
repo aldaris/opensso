@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.15 2008-04-22 21:44:31 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.16 2008-05-28 18:31:09 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -353,12 +353,16 @@ public interface SAMLv2Model
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param idpStdValues Map which contains the standard attribute values.
+     * @param idpExtValues Map which contain the extended attribute values.
+     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setIDPStdAttributeValues(
         String realm,
         String entityName,
-        Map idpStdValues
+        Map idpStdValues,
+        Map idpExtValues,
+        String location
         ) throws AMConsoleException;
     
     /**
@@ -383,12 +387,16 @@ public interface SAMLv2Model
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param spStdValues Map which contains the standard attribute values.
+     * @param spExtValues Map which contain the extended attribute values.
+     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setSPStdAttributeValues(
         String realm,
         String entityName,
-        Map spStdValues
+        Map spStdValues,
+        Map spExtValues,
+        String location
         ) throws AMConsoleException;
     
     /**
@@ -903,3 +911,4 @@ public interface SAMLv2Model
         Map affilaitionValues
         ) throws AMConsoleException;
 }
+

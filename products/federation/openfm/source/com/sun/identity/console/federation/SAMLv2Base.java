@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: SAMLv2Base.java,v 1.6 2008-02-12 21:54:28 asyhuang Exp $
+ * $Id: SAMLv2Base.java,v 1.7 2008-05-28 18:29:26 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,8 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public abstract class SAMLv2Base extends EntityPropertiesBase {
     protected static final String PROPERTIES = "propertyAttributes";
-    protected static final String KEYNAMES = "128, 192, 256";
-    protected static final String ALGORITHM = "AES, DESede";
     
     protected static List AUTH_CONTEXT_REF_NAMES = new ArrayList();    
     

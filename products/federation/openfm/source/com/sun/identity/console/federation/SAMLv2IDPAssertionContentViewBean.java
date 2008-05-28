@@ -17,11 +17,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPAssertionContentViewBean.java,v 1.1 2008-04-22 21:47:57 babysunil Exp $
+ * $Id: SAMLv2IDPAssertionContentViewBean.java,v 1.2 2008-05-28 18:29:52 babysunil Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
-
 package com.sun.identity.console.federation;
 
 import com.iplanet.jato.view.event.RequestInvocationEvent;
@@ -104,8 +103,6 @@ public class SAMLv2IDPAssertionContentViewBean extends SAMLv2Base {
         SAMLv2Model model = (SAMLv2Model)getModel();
         ps.setAttributeValues(getStandardValues(), model);
         ps.setAttributeValues(getExtendedValues(), model);
-        setDisplayFieldValue(model.TF_KEY_NAME, KEYNAMES);
-        setDisplayFieldValue(model.TF_ALGORITHM, ALGORITHM);
         if (isHosted()) {
             SAMLv2AuthContexts authContexts = null;
             try {
@@ -258,12 +255,14 @@ public class SAMLv2IDPAssertionContentViewBean extends SAMLv2Base {
                     model.getStandardIdentityProviderAttributes(
                     realm, entityName), false, model);
             
-            //save the standard metadata values for the Idp
-              model.setIDPStdAttributeValues(realm, entityName, idpStdValues);
-            
             //retrieve the extended metadata values from the property sheet
             Map idpExtValues = ps.getAttributeValues(
                 model.getIDPEXACDataMap(), false, model);
+            
+            //save the standard metadata values for the Idp
+              model.setIDPStdAttributeValues(realm, 
+                  entityName, idpStdValues, idpExtValues, location);
+            
             
             //save the extended metadata values for the Idp
             model.setIDPExtAttributeValues(realm, entityName, idpExtValues,
@@ -326,3 +325,4 @@ public class SAMLv2IDPAssertionContentViewBean extends SAMLv2Base {
     }
     
 }
+
