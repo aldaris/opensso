@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2COTUtils.java,v 1.2 2007-09-11 19:39:51 bina Exp $
+ * $Id: SAML2COTUtils.java,v 1.3 2008-05-28 18:41:05 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,8 +125,8 @@ public class SAML2COTUtils {
         } else {
             List elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
-            boolean foundCOT = false;
             for (Iterator iter = elist.iterator(); iter.hasNext();) {
+                boolean foundCOT = false;
                 BaseConfigType bConfig = (BaseConfigType)iter.next();
                 List list = bConfig.getAttribute();
                 for (Iterator iter2 = list.iterator(); iter2.hasNext();) {
