@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.7 2008-05-28 17:09:25 huacui Exp $
+# $Id: FAMAgentConfiguration.template,v 1.8 2008-05-28 22:13:22 huacui Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -811,10 +811,6 @@ com.iplanet.am.server.port=@AM_SERVICES_PORT@
 
 #
 # POLICY CLIENT PROPERTIES
-#   - com.sun.identity.agents.server.log.file.name: Name of the log file 
-#     to use for logging messages to Federated Access Manager. 
-#   - com.sun.identity.agents.logging.level: Granularity of remote policy 
-#     logging level. The valid values for are ALLOW, DENY, BOTH and NONE. 
 #   - com.sun.identity.agents.notification.enabled: A flag that specifies 
 #     if notifications are enabled or disabled for remote policy client.
 #   - com.sun.identity.agents.polling.interval: The duration in minutes 
@@ -836,8 +832,6 @@ com.iplanet.am.server.port=@AM_SERVICES_PORT@
 #     property com.sun.identity.client.notification.url.
 # Hot-Swap Enabled: No
 #
-com.sun.identity.agents.server.log.file.name=amRemotePolicyLog
-com.sun.identity.agents.logging.level=BOTH
 com.sun.identity.agents.notification.enabled=true
 com.sun.identity.agents.polling.interval=3
 com.sun.identity.policy.client.cacheMode=subtree

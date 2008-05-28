@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.4 2008-03-04 19:26:04 dillidorai Exp $
+ * $Id: PolicyProperties.java,v 1.5 2008-05-28 22:12:13 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,8 @@ class PolicyProperties {
 
     private final static String SERVER_LOG 
 	    = "com.sun.identity.agents.server.log.file.name";
+
+    private final static String DEFAULT_SERVER_LOG = "amRemotePolicyLog";
 
     private final static String LOGGING_LEVEL 
             = "com.sun.identity.agents.logging.level";
@@ -97,6 +99,7 @@ class PolicyProperties {
     final static String ALLOW = "ALLOW";
     final static String DENY = "DENY";
     final static String BOTH = "BOTH";
+    final static String DEFAULT_LOGGING_LEVEL = BOTH;
     final static String DECISION = "DECISION";
     final static String NONE = "NONE";
     final static String SUBTREE = "subtree";
@@ -155,8 +158,12 @@ class PolicyProperties {
         //initialize logName 
 	logName = SystemProperties.get(SERVER_LOG);
 	if ((logName == null) || (logName.length() == 0)) {
-	    throw new PolicyException(ResBundleUtils.rbName,
-		"no.log.filename", null, null);
+            logName = DEFAULT_SERVER_LOG;
+            if (debug.messageEnabled()) {
+                debug.message("PolicyProperties:property " + SERVER_LOG
+                        + " is not specified, use default value " 
+                        + DEFAULT_SERVER_LOG);
+            }
 	} else {
             if (debug.messageEnabled()) {
                 debug.message("PolicyProperties:logName=" 
@@ -255,8 +262,12 @@ class PolicyProperties {
         //initialize logging status
         String status = SystemProperties.get(LOGGING_LEVEL);
         if ((status == null) || (status.length() == 0)) {
-          throw new PolicyException(ResBundleUtils.rbName,
-              "no.policy.logging.level", null, null);
+            status = DEFAULT_LOGGING_LEVEL;
+            if (debug.messageEnabled()) {
+                debug.message("PolicyProperties:property " + LOGGING_LEVEL
+                        + " is not specified, use default value " 
+                        + DEFAULT_LOGGING_LEVEL);
+            }
         }
         if (status != null) {
             if (status.equalsIgnoreCase(ALLOW)) {

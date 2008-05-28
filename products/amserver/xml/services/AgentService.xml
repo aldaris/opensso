@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.40 2008-05-28 19:52:11 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.41 2008-05-28 22:16:36 huacui Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2170,24 +2170,6 @@
                         i18nKey="a232">
                         <DefaultValues>
                             <Value>@SERVER_PORT@</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.server.log.file.name"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a233">
-                        <DefaultValues>
-                            <Value>amRemotePolicyLog</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.logging.level"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a234">
-                        <DefaultValues>
-                            <Value>BOTH</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
