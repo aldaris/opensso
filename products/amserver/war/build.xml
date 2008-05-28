@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.45 2008-05-22 17:25:24 rmisra Exp $
+   $Id: build.xml,v 1.46 2008-05-28 20:43:41 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -73,7 +73,7 @@
         <copy file="${war.xml.dir}/template/sms/legacy.properties"
             tofile="${amserver.built.res.dir}/legacy.properties" />
 
-        <war destfile="${amserver.dist.dir}/opensso.war" webxml="${amserver.dist.dir}/web.xml">
+        <war destfile="${amserver.dist.dir}/opensso-amserver.war" webxml="${amserver.dist.dir}/web.xml">
             <lib dir="${extlib.dir}" includes="*.jar" excludes="mq4_1*.jar,j2ee.jar,db.jar,testng-5.1-jdk15.jar,fmsae.dll,jaxb-api.jar,jaxb-impl.jar,jaxb-xjc.jar,jaxb-libs.jar,jaxb1-impl.jar,saaj-api.jar,saaj-impl.jar" />
             <lib dir="${lockhart.dir}/lib" />
             <lib dir="${javahelp.dir}/lib" />
@@ -365,7 +365,7 @@
         <delete file="${amserver.dist.dir}/web.xml"/>
 
         <antcall target="war-legacy" />
-        <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${amserver.dist.dir}/opensso-amserver.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="createwebxml">
@@ -394,7 +394,7 @@
     </target>
 
     <target name="war-legacy" if="legacy">
-        <war destfile="${amserver.dist.dir}/opensso.war" update="true">
+        <war destfile="${amserver.dist.dir}/opensso-amserver.war" update="true">
             <zipfileset dir="${legacy.base.dir}/resources/locale" prefix="WEB-INF/classes">
                 <include name="*.properties" />
             </zipfileset>
@@ -408,8 +408,8 @@
 
     <target name="clean">
         <delete dir="${amserver.built.war.dir}"/>
-        <delete file="${amserver.dist.dir}/opensso.war" />
-        <delete file="${amserver.dist.dir}/opensso.war.sha" />
+        <delete file="${amserver.dist.dir}/opensso-amserver.war" />
+        <delete file="${amserver.dist.dir}/opensso-amserver.war.sha" />
     </target>
 
 </project>

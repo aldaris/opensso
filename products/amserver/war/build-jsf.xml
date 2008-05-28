@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jsf.xml,v 1.4 2007-12-08 01:16:32 cbasha Exp $
+   $Id: build-jsf.xml,v 1.5 2008-05-28 20:43:41 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -43,7 +43,7 @@
     <property name="war.www.dir" location="${amserver.warbase.dir}/www"/>
 
     <target name="all" depends="preparebuild">
-        <war destfile="${amserver.dist.dir}/opensso.war" webxml="${amserver.www.jsfconsole.dir}/WEB-INF/web.xml">
+        <war destfile="${amserver.dist.dir}/opensso-amserver.war" webxml="${amserver.www.jsfconsole.dir}/WEB-INF/web.xml">
             <lib dir="${extlib.dir}">
                 <exclude name="j2ee.jar"/>
                 <exclude name="db.jar"/>
@@ -257,7 +257,7 @@
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/zh_TW/help/graphics" />            
             
         </war>
-        <checksum file="${amserver.dist.dir}/opensso.war" algorithm="SHA" fileext=".sha" />
+        <checksum file="${amserver.dist.dir}/opensso-amserver.war" algorithm="SHA" fileext=".sha" />
     </target>
 
     <target name="preparebuild">
@@ -267,8 +267,8 @@
 
     <target name="clean">
         <delete dir="${amserver.built.war.dir}"/>
-        <delete file="${amserver.dist.dir}/opensso.war" />
-        <delete file="${amserver.dist.dir}/opensso.war.sha" />
+        <delete file="${amserver.dist.dir}/opensso-amserver.war" />
+        <delete file="${amserver.dist.dir}/opensso-amserver.war.sha" />
     </target>
 
 </project>
