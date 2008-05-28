@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetaTemplateParameters.java,v 1.1 2008-04-11 00:10:14 veiming Exp $
+ * $Id: MetaTemplateParameters.java,v 1.2 2008-05-28 21:13:48 asyhuang Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -44,6 +44,7 @@ public class MetaTemplateParameters {
     public static final String P_AUTHN_AUTHORITY_E_CERT = "authnaecert";
     public static final String P_AUTHN_AUTHORITY_S_CERT = "authnascert";
     public static final String P_AFFILIATION = "affiliation";
+    public static final String P_AFFI_OWNERID = "affiOwnerID";
     public static final String P_AFFI_MEMBERS = "affimembers";
     public static final String P_AFFI_E_CERT = "affiecert";
     public static final String P_AFFI_S_CERT = "affiscert";

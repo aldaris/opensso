@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedCLIConstants.java,v 1.7 2008-03-04 23:42:16 hengming Exp $
+ * $Id: FedCLIConstants.java,v 1.8 2008-05-28 21:17:06 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,6 +108,13 @@ public interface FedCLIConstants {
      */
     String ARGUMENT_AFFILIATION = "affiliation";
 
+    
+    /**
+     * Affiliation Owner ID.
+     */
+    String ARGUMENT_AFFI_OWNERID = "affiownerid";
+
+   
     /**
      * Affiliation Members.
      */

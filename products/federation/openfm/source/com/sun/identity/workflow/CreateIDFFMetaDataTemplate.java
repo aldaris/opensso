@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIDFFMetaDataTemplate.java,v 1.3 2008-05-13 00:43:18 asyhuang Exp $
+ * $Id: CreateIDFFMetaDataTemplate.java,v 1.4 2008-05-28 21:15:07 asyhuang Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,8 @@ import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,6 +75,14 @@ public class CreateIDFFMetaDataTemplate {
             String realm = IDFFMetaUtils.getRealmByMetaAlias(spAlias);
             addIDFFServiceProviderTemplate(buff, mapParams, url);
         }
+                
+        String affiAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFILIATION);       
+        if (affiAlias != null) {
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(affiAlias);
+            addAffiliationTemplate(buff, entityId, affiAlias, url, mapParams);
+        }
+
         buff.append("</EntityDescriptor>\n");
         return buff.toString();
     }
@@ -301,6 +311,13 @@ public class CreateIDFFMetaDataTemplate {
             buildIDFFSPConfigTemplate(mapParams, buff);
         }
         
+        String affiAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFILIATION);
+        if (affiAlias != null) {
+            String realm = IDFFMetaUtils.getRealmByMetaAlias(affiAlias);
+            buildAffiliationConfigTemplate(buff, affiAlias, mapParams);
+        }     
+       
         buff.append("</EntityConfig>\n");
         return buff.toString();
     }
@@ -678,9 +695,61 @@ public class CreateIDFFMetaDataTemplate {
             .append("        </Attribute>\n")
             .append("    </SPDescriptorConfig>\n");
     }
-    
+
     private static String buildMetaAliasInURI(String alias) {
         return "/" + SAML2MetaManager.NAME_META_ALIAS_IN_URI + alias;
     }
+    
+    private static void addAffiliationTemplate(
+        StringBuffer buff,
+        String entityID,        
+        String affiAlias,        
+        String url,
+        Map mapParams
+    ) throws IDFFMetaException {
+        String maStr = buildMetaAliasInURI(affiAlias);
+        String affiOwnerID = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_OWNERID);       
+        
+        buff.append("    <AffiliationDescriptor\n")
+            .append("        affiliationID=\"")
+            .append(entityID)
+            .append("\" \n")
+            .append("        affiliationOwnerID=\"")
+            .append(affiOwnerID)
+            .append("\">\n");
 
+        List affiMembers = (List)mapParams.get(
+            MetaTemplateParameters.P_AFFI_MEMBERS);
+        for(Iterator iter = affiMembers.iterator(); iter.hasNext(); ) {
+            String affiMember = (String)iter.next();
+            buff.append(
+                "        <AffiliateMember>" + affiMember + "</AffiliateMember>\n");
+        }
+
+        buff.append("    </AffiliationDescriptor>\n");
+    }
+    
+    private static void buildAffiliationConfigTemplate(
+        StringBuffer buff,
+        String affiAlias,       
+        Map mapParams
+    )  {
+        String affiECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_E_CERT);
+        String affiSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_S_CERT);
+        if (affiECertAlias == null) {
+            affiECertAlias = "";
+        }
+        if (affiSCertAlias == null) {
+            affiSCertAlias = "";
+        }
+        
+        buff.append("    <AffiliationDescriptorConfig metaAlias=\"")
+            .append(affiAlias)
+            .append("\">\n")
+            .append("    </AffiliationDescriptorConfig>\n");
+        
+    }
 }
