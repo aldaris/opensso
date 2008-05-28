@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.10 2008-04-22 00:23:15 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.11 2008-05-28 18:35:35 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -101,17 +101,17 @@ public class GenericAgentProfileViewBean
         AgentsModel model = (AgentsModel)getModel();
         String tabName = (String)getPageSessionAttribute(PS_TABNAME);
         String choice = (String)getPageSessionAttribute(
-                AgentsViewBean.LOCAL_OR_NOT);
+            AgentsViewBean.LOCAL_OR_NOT);
         AgentPropertyXMLBuilder blder = null;
         
         try {
             if (isLocalConfig(agentType)) {
                 agentType = AgentsViewBean.AGENT_2_2;  
                 blder = new AgentPropertyXMLBuilder(
-                agentType, isGroup, true, tabName, model);
+                    agentType, isGroup, true, tabName, model);
             } else {
                 blder = new AgentPropertyXMLBuilder(
-                agentType, isGroup, is2dot2Agent(), tabName, model);
+                    agentType, isGroup, is2dot2Agent(), tabName, model);
             }
             attributeSchemas = blder.getAttributeSchemas();
             return new AMPropertySheetModel(blder.getXML(

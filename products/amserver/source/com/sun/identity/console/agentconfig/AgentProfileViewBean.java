@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.7 2008-04-22 00:23:15 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.8 2008-05-28 18:35:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.AgentsModelImpl;
+import com.sun.identity.console.base.AMPostViewBean;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.model.CCTabsModel;
@@ -68,6 +69,7 @@ public abstract class AgentProfileViewBean
     protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     private static final String PG_SESSION_AGENT_TAB = "pgAgentConfigTab";
+    private static final String UPDATED_PROFILE = "uProfile";
     
     static final String UNIVERSAL_ID = "universalId";
     static final String IS_GROUP = "isGroup";
@@ -118,7 +120,7 @@ public abstract class AgentProfileViewBean
                 } else {
                     setPageSessionAttribute(IS_GROUP, "false");
                 }
-
+    
                 initialized = createPropertyModel();
 
                 if (initialized) {
@@ -230,6 +232,12 @@ public abstract class AgentProfileViewBean
         super.beginDisplay(event);
         setPropertySheetValues();
         setAgentTitle();
+        
+        String updated = (String)removePageSessionAttribute(UPDATED_PROFILE);
+        if ((updated != null) && updated.equals("true")) {
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                "message.updated");
+        }
     }
     
     protected void setPropertySheetValues(){
@@ -320,25 +328,26 @@ public abstract class AgentProfileViewBean
     public void handleButton1Request(RequestInvocationEvent event)
     throws ModelControlException {
         submitCycle = true;
+        boolean bRefresh = false;
         AgentsModel model = (AgentsModel)getModel();
         String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
         String type = getAgentType();
         String choice = (String) getPageSessionAttribute(
-                AgentsViewBean.LOCAL_OR_NOT);
+            AgentsViewBean.LOCAL_OR_NOT);
         try {
             Map values = getFormValues();
             if (checkAgentType(type)) {
                 if (!isGroup && !is2dot2Agent() && choice != null && 
                         !choice.equals(AgentsViewBean.PROP_LOCAL)) {
                     for (Iterator i = inheritedPropertyNames.iterator();
-                    i.hasNext(); ) {
+                        i.hasNext(); ) {
                         values.remove(i.next());
                     }
                 }
             } else {
                 if (!isGroup && !is2dot2Agent()) {
                     for (Iterator i = inheritedPropertyNames.iterator();
-                    i.hasNext(); ) {
+                        i.hasNext(); ) {
                         values.remove(i.next());
                     }
                 }
@@ -353,14 +362,14 @@ public abstract class AgentProfileViewBean
                     && choice != null && 
                     !choice.equals(AgentsViewBean.PROP_LOCAL)) {
                     String agentGroup = getDisplayFieldStringValue(
-                            CHILD_AGENT_GROUP);
-                    model.setGroup(curRealm, universalId, agentGroup);
+                        CHILD_AGENT_GROUP);
+                    bRefresh =model.setGroup(curRealm, universalId, agentGroup);
                 }
             } else {
                 if (!isGroup && !is2dot2Agent() && isFirstTab()) {
                     String agentGroup = getDisplayFieldStringValue(
-                            CHILD_AGENT_GROUP);
-                    model.setGroup(curRealm, universalId, agentGroup);
+                        CHILD_AGENT_GROUP);
+                    bRefresh =model.setGroup(curRealm, universalId, agentGroup);
                 }
             }
             
@@ -369,8 +378,22 @@ public abstract class AgentProfileViewBean
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     e.getMessage());
+            bRefresh = false;
         }
-        forwardTo();
+
+        if (bRefresh) {
+            setPageSessionAttribute(UPDATED_PROFILE, "true");
+            AMPostViewBean vb = (AMPostViewBean) getViewBean(
+                AMPostViewBean.class);
+            passPgSessionMap(vb);
+            String url = this.getDefaultDisplayURL();
+            int idx = url.indexOf("/", 1);
+            url = ".." + url.substring(idx);
+            vb.setTargetViewBeanURL(url);
+            vb.forwardTo(getRequestContext());
+        } else {
+            forwardTo();
+        }
     }
     
     /**

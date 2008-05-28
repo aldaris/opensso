@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.26 2008-05-15 03:59:43 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.27 2008-05-28 18:35:03 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1128,7 +1128,9 @@ public class AgentConfiguration {
         }
         Map origValues = getAgentAttributes(amid, false);
         Map values = amid.getAttributes(toInherit);
-        amid.removeAttributes(values.keySet());
+        if (!values.isEmpty()) {
+            amid.removeAttributes(values.keySet());
+        }
         
         String agentType = getAgentType(amid);
         Map attrSchemas = getAttributeSchemas(agentType, notToInherit);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.9 2008-05-15 03:52:53 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.10 2008-05-28 18:35:35 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -695,30 +695,41 @@ public class AgentsModelImpl
      * @param realmName realm where agent resides.
      * @param universalId Universal ID of the agent.
      * @param groupName Name of group.
+     * @return <code>true</code> if group is set.
      * @throws AMConsoleException if object cannot located.
      */
-    public void setGroup(String realmName, String universalId, String groupName)
-        throws AMConsoleException {
+    public boolean setGroup(
+        String realmName, 
+        String universalId, 
+        String groupName
+    ) throws AMConsoleException {
         String[] param = {realmName, universalId};
         logEvent("ATTEMPT_SET_AGENT_ATTRIBUTE_VALUE", param);
-        
+
         try {
+            boolean bSet = false;
             AMIdentity amid = IdUtils.getIdentity(
                 getUserSSOToken(), universalId);
+            Set groups = amid.getMemberships(IdType.AGENTGROUP);
+            
             if ((groupName != null) && (groupName.length() > 0)) {
                 AMIdentity group =  new AMIdentity(
                     getUserSSOToken(), groupName, IdType.AGENTGROUP, realmName,
                     null);
-                group.addMember(amid);
+                if (!groups.contains(group.getDN())) {
+                    group.addMember(amid);
+                    bSet = true;
+                }
             } else {
-                Set groups = amid.getMemberships(IdType.AGENTGROUP);
                 if ((groups != null) && !groups.isEmpty()) {
                     AMIdentity group = (AMIdentity)groups.iterator().next();
                     group.removeMember(amid);
+                    bSet = true;
                 }
             }
             
             logEvent("SUCCEED_SET_AGENT_ATTRIBUTE_VALUE", param);
+            return bSet;
         } catch (SSOException e) {
             String[] paramsEx = {realmName, universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);

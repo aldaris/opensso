@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.6 2008-04-22 00:23:15 veiming Exp $
+ * $Id: AgentsModel.java,v 1.7 2008-05-28 18:35:35 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -224,9 +224,10 @@ public interface AgentsModel
      * @param realmName realm where agent resides.
      * @param universalId Universal ID of the agent.
      * @param groupName Name of group.
+     * @return <code>true</code> if group is set.
      * @throws AMConsoleException if object cannot located.
      */
-    void setGroup(String realmName, String universalId, String groupName)
+    boolean setGroup(String realmName, String universalId, String groupName)
         throws AMConsoleException;
     
     /**
