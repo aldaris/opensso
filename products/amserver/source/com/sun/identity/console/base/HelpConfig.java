@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HelpConfig.java,v 1.1 2007-02-07 20:19:38 jonnelson Exp $
+ * $Id: HelpConfig.java,v 1.2 2008-05-28 19:52:10 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,7 +116,13 @@ public class HelpConfig {
             // Disable external DTD in crimson parser
             builder.setEntityResolver(ignoreDtdResolver);
         } catch (ParserConfigurationException pce) {
-            debug.error("HelpConfig.init", pce);
+            debug.error("HelpConfig.init : " , pce);
+            return;
+        } catch (IllegalArgumentException iae) {
+            debug.error("HelpConfig.init : " , iae);
+            return;
+        } catch (Exception e) {
+            debug.error("HelpConfig.init : " , e);
             return;
         }
         ServletContext context =

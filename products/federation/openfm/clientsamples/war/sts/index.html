@@ -28,7 +28,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.8 2008-03-31 21:19:30 mrudul_uchil Exp $
+   $Id: index.html,v 1.9 2008-05-28 19:54:36 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -105,9 +105,6 @@ and issues SAML 1.1 or SAML 2.0 token.</p>
           <p style="margin-bottom: 0in;">Configure OpenSSO web
 application</p>
         </li>
-        <li>
-          <p style="margin-bottom: 0in;">Restart OpenSSO server</p>
-        </li>
       </ol>
       <p style="margin-bottom: 0in;">STS client :</p>
       <ol>
@@ -116,7 +113,8 @@ application</p>
         </li>
         <li>
           <p style="margin-bottom: 0in;">This page → &lt;fam client web
-application protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/index.html</p>
+application
+protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/index.html</p>
         </li>
       </ol>
       <h3>JSP pages</h3>
@@ -163,15 +161,17 @@ protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/sts-client-wsc.jsp
 Administration console &lt;OpenSSO web application
 protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin” user
 and its password.</p>
-          <p style="margin-bottom: 0in;">Go to Configuration → Agents →
-Web Service Client → click “wsc” agent profile</p>
+          <p style="margin-bottom: 0in;">Go to Access Control → Default
+realm →
+Agents → Web Service Client → click “wsc” agent profile</p>
           <p style="margin-bottom: 0in;">Select Security Mechanism as
 “STSSecurity”, STS Configuration as “SecurityTokenService” and Web
 Service End Point as “default”.</p>
           <p style="margin-bottom: 0in;">Save changes and Logout of
 OpenSSO Administration console.</p>
           <p style="margin-bottom: 0in;">Access &lt;fam client web
-application protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/sts-client-wsc.jsp</p>
+application
+protocol://host:port&gt;/&lt;client-deployment-uri&gt;/sts/sts-client-wsc.jsp</p>
           <p style="margin-bottom: 0in;">Enter web service client name
 as
 "wsc" and click "GetToken".<br>
@@ -202,19 +202,65 @@ certificate subject DN of the STS client's X509 certificate.</p>
       </ol>
       <h3>NOTEs</h3>
       <p style="margin-bottom: 0in;">1) How to change WSP's profile to
-dictate SAML 1.1 or SAML 2.0 token ?</p>
+dictate SAML 1.1 or SAML 2.0 token ?<br>
+      <br>
+      </p>
+      <div style="margin-left: 40px;">Login to OpenSSO Administration
+console &lt;OpenSSO web application
+protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin” user
+and its password.<br>
+Go to Access Control → Default realm → Agents →
+Web Service Provider → click “wsp” agent profile<br>
+Select Security Mechanism as
+“SAML2-HolderOfKey” or “SAML2-SenderVouches” for SAML 2.0 token type.<br>
+Select Security Mechanism as
+“SAML-HolderOfKey” or “SAML-SenderVouches” for SAML 1.1 token type.<br>
+Save changes and Logout of OpenSSO Administration console.</div>
+      <p style="margin-bottom: 0in;">2) How to create agent profiles
+for WSC, STS client and WSP (if not created out of box) ?</p>
       <ol start="2">
         <p style="margin-bottom: 0in;">Login to OpenSSO Administration
 console &lt;OpenSSO web application
 protocol://host:port&gt;/&lt;opensso deploy uri&gt; as “amadmin” user
 and its password.</p>
-        <p style="margin-bottom: 0in;">Go to Configuration → Agents →
-Web Service Provider → click “wsp” agent profile</p>
-        <p style="margin-bottom: 0in;">Select Security Mechanism as
-“SAML2-HolderOfKey” or “SAML2-SenderVouches” for SAML 2.0 token type.</p>
-        <p style="margin-bottom: 0in;">Select Security Mechanism as
-“SAML-HolderOfKey” or “SAML-SenderVouches” for SAML 1.1 token type.</p>
-        <p>Save changes and Logout of OpenSSO Administration console.</p>
+        <p style="margin-bottom: 0in;">Go to Access Control → Default
+realm → Agents →
+        <br>
+        <br>
+        </p>
+a) Create "STS Client" profile<br>
+Select STS Client → under Agent, click "new" → select "Security Token
+Service" -&gt; enter name as "SecurityTokenService" and other required
+fields → Save.<br>
+Click on above saved profile to edit → Select Security Mechanism as
+“X509Token” and "Is Request Signed" as true (checked).<br>
+Save changes.<br>
+      </ol>
+      <div style="margin-left: 40px;">b) Create "WSC" profile<br>
+Select Web Service Client → under Agent, click "new" → enter name as
+"wsc" and other required fields → Save.<br>
+Click on above saved profile to edit → Select Security Mechanism as
+“STSSecurity”, STS Configuration as “SecurityTokenService”, Web
+Service End Point as “default” and "Is Request Signed" as true
+(checked).<br>
+Save changes.<br>
+      <br>
+      </div>
+      <div style="margin-left: 40px;">c) Create "WSP" profile<br>
+Select Web Service Provider → under Agent, click "new" → enter name as
+"wsp" and other required fields → Save.<br>
+Click on above saved profile to edit → Select Security Mechanism as
+"SAML2-HolderOfKey", “SAML-HolderOfKey” and "X509Token".<br>
+Select Web
+Service End Point as “default” and "Is Request Signature Verified" as
+true (checked).<br>
+Save changes.<br>
+      </div>
+      <ol start="2">
+        <p>Logout of OpenSSO Administration console.<br>
+        </p>
+        <p><br>
+        </p>
       </ol>
       </td>
     </tr>

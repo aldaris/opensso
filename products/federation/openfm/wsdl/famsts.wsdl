@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famsts.wsdl,v 1.5 2008-03-04 23:46:46 mrudul_uchil Exp $
+   $Id: famsts.wsdl,v 1.6 2008-05-28 19:54:44 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -84,10 +84,7 @@
 					</wsp:Policy>
 				</sp:Wss10>
                                 <!--sunsp:DisableStreamingSecurity xmlns:sunsp="http://schemas.sun.com/2006/03/wss/server"/-->
-
-				<sc:KeyStore xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="@KEYSTORE_LOCATION@/keystore.jks" storepass="secret" alias="test"/>
-                                <sc:TrustStore xmlns:sc="http://schemas.sun.com/2006/03/wss/server" location="@KEYSTORE_LOCATION@/keystore.jks" storepass="secret"/>
-
+                                
 				<wspe:Utf816FFFECharacterEncoding xmlns:wspe="http://schemas.xmlsoap.org/ws/2004/09/policy/encoding"/>
 				<wsap10:UsingAddressing/>
 			</wsp:All>

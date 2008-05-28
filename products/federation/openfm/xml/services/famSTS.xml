@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.5 2008-03-17 22:14:04 mrudul_uchil Exp $
+   $Id: famSTS.xml,v 1.6 2008-05-28 19:54:45 mrudul_uchil Exp $
                                                                                 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,7 +46,6 @@
                        <Value>SunSTS</Value>
                    </DefaultValues>
                </AttributeSchema>
-               
                <AttributeSchema name="stsEndPoint"
                    type="single"
                    syntax="string"
@@ -55,7 +54,6 @@
                        <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@/@SERVER_URI@/sts</Value>
                    </DefaultValues>
                </AttributeSchema>
-               
                <AttributeSchema name="stsEncryptIssuedKey"
                    type="single"
                    syntax="boolean"
@@ -64,7 +62,6 @@
                        <Value>true</Value>
                    </DefaultValues>
                </AttributeSchema>
-               
                <AttributeSchema name="stsEncryptIssuedToken"
                    type="single"
                    syntax="boolean"
@@ -73,7 +70,6 @@
                        <Value>false</Value>
                    </DefaultValues>
                </AttributeSchema>
-               
                <AttributeSchema name="stsLifetime"
                    type="single"
                    syntax="number"
@@ -82,7 +78,6 @@
                        <Value>36000</Value>
                    </DefaultValues>
                </AttributeSchema>
-               
                <AttributeSchema name="stsTokenImplClass"
                    type="single"
                    syntax="string"
@@ -91,11 +86,123 @@
                        <Value>com.sun.xml.ws.security.trust.impl.WSTrustContractImpl</Value>
                    </DefaultValues>
                </AttributeSchema>
-               
                <AttributeSchema name="stsCertAlias"
                    type="single"
                    syntax="string"
                    i18nKey="a107">
+                   <DefaultValues>
+                       <Value>test</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema name="com.sun.identity.wss.sts.clientusertoken"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a108">
+                   <DefaultValues>
+                       <Value>com.sun.identity.wss.sts.STSClientUserToken</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="SecurityMech"
+                   type="multiple_choice"
+                   syntax="string"
+                   i18nKey="a109">
+                   <ChoiceValues>
+                       <ChoiceValuesClassName
+                           className="com.sun.identity.wss.security.ConfiguredWSPSecurityMech" />
+                       </ChoiceValues>
+                   <DefaultValues>
+                       <Value>urn:sun:wss:security:null:X509Token</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="isRequestSign"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a110">
+                   <BooleanValues>
+                       <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                       <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                   </BooleanValues>
+                   <DefaultValues>
+                       <Value>true</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="isRequestHeaderEncrypt"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a111">
+                   <BooleanValues>
+                       <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                       <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                   </BooleanValues>
+                   <DefaultValues>
+                       <Value>false</Value>
+                   </DefaultValues>
+               </AttributeSchema> 
+               <AttributeSchema
+                   name="isRequestEncrypt"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a112">
+                   <BooleanValues>
+                       <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                       <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                   </BooleanValues>
+                   <DefaultValues>
+                       <Value>false</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="isResponseSign"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a113">
+                   <BooleanValues>
+                       <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                       <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                   </BooleanValues>
+                   <DefaultValues>
+                       <Value>false</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="isResponseEncrypt"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a114">
+                   <BooleanValues>
+                       <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                       <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                   </BooleanValues>
+                   <DefaultValues>
+                       <Value>false</Value>
+                   </DefaultValues>
+               </AttributeSchema>     
+               <AttributeSchema
+                   name="privateKeyAlias"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a115">
+                   <DefaultValues>
+                       <Value>test</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="privateKeyType"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a116">
+                   <DefaultValues>
+                       <Value>PublicKey</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema
+                   name="publicKeyAlias"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a117">
                    <DefaultValues>
                        <Value>test</Value>
                    </DefaultValues>

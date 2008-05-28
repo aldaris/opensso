@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.9 2008-03-11 20:12:16 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.10 2008-05-28 19:54:42 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -332,6 +332,9 @@ public class TrustAuthorityClient {
         "webservices-tools.jar",
         "webservices-extra-api.jar",
         "webservices-extra.jar",
-        "openssoclientsdk.jar"
+        "openssoclientsdk.jar",
+        "openssowssproviders.jar",
+        "xalan.jar",
+        "xercesImpl.jar"
     };        
 }

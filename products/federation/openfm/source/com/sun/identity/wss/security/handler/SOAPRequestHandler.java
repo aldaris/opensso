@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.12 2008-03-13 20:21:43 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.13 2008-05-28 19:54:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,6 +87,7 @@ import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.wss.sts.TrustAuthorityClient;
 import com.sun.identity.wss.sts.FAMSTSException;
+import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -173,11 +174,27 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             HttpServletResponse response)
             throws SecurityException {
 
-        debug.message("SOAPRequestHandler.validateRequest: Init");
-        ProviderConfig config = getWSPConfig();
+        if(debug.messageEnabled()) {
+            debug.message("SOAPRequestHandler.validateRequest: " + 
+                "sharedState map : " + sharedState);
+        }
+        
+        ProviderConfig config = null;
+        FAMSTSConfiguration stsConfig = null;
+        
+        Boolean isTrustMessage = (Boolean) sharedState.get("IS_TRUST_MSG");
+        boolean isSTS = 
+            (isTrustMessage != null) ? isTrustMessage.booleanValue(): false;
+        
+        if (isSTS) {
+            debug.message("ValidateRequest: This is WS-Trust Request");
+            stsConfig = new FAMSTSConfiguration();
+        } else {
+            config = getWSPConfig();
+        }
 
         if(isLibertyMessage(soapRequest)) {
-           if(debug.messageEnabled()) {
+            if(debug.messageEnabled()) {
                 debug.message("SOAPRequestHandler.validateRequest:: Incoming " +
                         "SOAPMessage is of liberty message type.");
             }
@@ -200,8 +217,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMsg.parseSecurityHeader(
                 (Node) (secureMsg.getSecurityHeaderElement()));
 
-        if ((config.isRequestEncryptEnabled()) ||
-                (config.isRequestHeaderEncryptEnabled())) {
+        if ( ((config != null) && ((config.isRequestEncryptEnabled()) ||
+                (config.isRequestHeaderEncryptEnabled()))) ||
+           ((stsConfig != null) && ((stsConfig.isRequestEncryptEnabled()) ||
+                (stsConfig.isRequestHeaderEncryptEnabled()))) ){
             secureMsg.decrypt((config.isRequestEncryptEnabled()),
                     (config.isRequestHeaderEncryptEnabled()));            
             soapRequest = secureMsg.getSOAPMessage();
@@ -210,7 +229,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     (Node)secureMsg.getSecurityHeaderElement());
         }
 
-        if (config.isRequestSignEnabled()) {
+        if ( ((config != null) && (config.isRequestSignEnabled())) || 
+           ((stsConfig != null) && (stsConfig.isRequestSignEnabled())) ){
             if (!secureMsg.verifySignature()) {
                 debug.error("SOAPRequestHandler.validateRequest:: Signature " +
                         "verification failed.");
@@ -223,7 +243,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 secureMsg.getSecurityMechanism();
         String uri = securityMechanism.getURI();
 
-        List list = config.getSecurityMechanisms();
+        List list = null;
+        if (config != null) {
+            list = config.getSecurityMechanisms();
+        } else if (stsConfig != null) {
+            list = stsConfig.getSecurityMechanisms();
+        }
 
         if(debug.messageEnabled()) {
             debug.message("List of getSecurityMechanisms : " + list);
@@ -279,8 +304,27 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     public SOAPMessage secureResponse (SOAPMessage soapMessage, 
             Map sharedState) throws SecurityException {
 
-        debug.message("SOAPRequestHandler.secureResponse: Init");
-        ProviderConfig config = getWSPConfig();
+        if(debug.messageEnabled()) {
+            debug.message("SOAPRequestHandler.secureResponse: " + 
+                "sharedState map : " + sharedState);
+            debug.message("SOAPRequestHandler.secureResponse - " + 
+                "Input SOAP message : " + 
+                WSSUtils.print(soapMessage.getSOAPPart()));
+        }
+
+        ProviderConfig config = null;
+        FAMSTSConfiguration stsConfig = null;
+        
+        Boolean isTrustMessage = (Boolean) sharedState.get("IS_TRUST_MSG");
+        boolean isSTS = 
+            (isTrustMessage != null) ? isTrustMessage.booleanValue(): false;
+        
+        if (isSTS) {
+            debug.message("SecureResponse: This is WS-Trust Response");
+            stsConfig = new FAMSTSConfiguration();
+        } else {
+            config = getWSPConfig();
+        }
 
         Object req = sharedState.get(SOAPBindingConstants.LIBERTY_REQUEST);
         if(req != null) {
@@ -294,8 +338,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             }
         }
 
-        if(!config.isResponseSignEnabled() && 
-                !config.isResponseEncryptEnabled()) {
+        if ( ((config != null) && 
+            (!config.isResponseSignEnabled() && 
+            !config.isResponseEncryptEnabled())) ||
+            ((stsConfig != null) && 
+            (!stsConfig.isResponseSignEnabled() && 
+            !stsConfig.isResponseEncryptEnabled())) ){
             return soapMessage;
         }
 
@@ -305,9 +353,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         String keyAlias = SystemConfigurationUtil.getProperty(
                 Constants.SAML_XMLSIG_CERT_ALIAS);
-        if(!config.useDefaultKeyStore()) {
+        
+        if (config != null && !config.useDefaultKeyStore()) {
             keyAlias = config.getKeyAlias();
+        } else if (stsConfig != null) {
+            keyAlias = stsConfig.getPrivateKeyAlias();
         }
+        
         String[] certAlias = {keyAlias};
         X509TokenSpec tokenSpec = new X509TokenSpec(certAlias,
                 BinarySecurityToken.X509V3,
@@ -323,14 +375,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMessage.setSecurityMechanism(
                 SecurityMechanism.WSS_NULL_X509_TOKEN);
 
-        if(config.isResponseSignEnabled()) {            
+        if ( (config != null && config.isResponseSignEnabled()) ||
+           (stsConfig != null && stsConfig.isResponseSignEnabled()) ){            
             secureMessage.sign(keyAlias);
         }
 
-        if(config.isResponseEncryptEnabled()) {            
-            secureMessage.encrypt(keyAlias,
-                    (config.isResponseEncryptEnabled()),
-                    false);
+        if ( (config != null && config.isResponseEncryptEnabled()) ||
+           (stsConfig != null && stsConfig.isResponseEncryptEnabled()) ) {            
+            secureMessage.encrypt(keyAlias,true,false);
         }
 
         soapMessage = secureMessage.getSOAPMessage();
@@ -357,10 +409,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             Subject subject,
             Map sharedState) throws SecurityException {
 
-        WSSUtils.debug.message("SOAPRequestHandler.secureRequest: Init");
         if(WSSUtils.debug.messageEnabled()) {
-            WSSUtils.debug.message("SOAPRequestHandler.secureRequest: " +
-                    "Shared Map" + sharedState);
+            debug.message("SOAPRequestHandler.secureRequest: " + 
+                "sharedState map : " + sharedState);
         }
 
         ProviderConfig config = getProviderConfig(sharedState);
@@ -467,7 +518,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     public void validateResponse (SOAPMessage soapMessage, 
             Map sharedState) throws SecurityException {
 
-        debug.message("SOAPRequestHandler.validateResponse:: Init");
+        if(debug.messageEnabled()) {
+            debug.message("SOAPRequestHandler.validateResponse: " + 
+                "sharedState map : " + sharedState);
+            debug.message("SOAPRequestHandler.validateResponse - " + 
+                "Input SOAP message : " + 
+                WSSUtils.print(soapMessage.getSOAPPart()));
+        }
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
@@ -489,26 +546,28 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             }
         }
 
-        SecureSOAPMessage secureMessage =
+        if (config.isResponseEncryptEnabled() 
+            || config.isResponseSignEnabled()) {
+            SecureSOAPMessage secureMessage =
                 new SecureSOAPMessage(soapMessage, false);
 
-        if(config.isResponseEncryptEnabled()) {
-            secureMessage.decrypt((config.isResponseEncryptEnabled()), false);
-            soapMessage = secureMessage.getSOAPMessage();
-        }
+            if(config.isResponseEncryptEnabled()) {
+                secureMessage.decrypt((config.isResponseEncryptEnabled()), false);
+                soapMessage = secureMessage.getSOAPMessage();
+            }
 
-        secureMessage.parseSecurityHeader(
-            (Node)(secureMessage.getSecurityHeaderElement()));
+            secureMessage.parseSecurityHeader(
+                (Node)(secureMessage.getSecurityHeaderElement()));
 
-        if(config.isResponseSignEnabled()) {           
-           if(!secureMessage.verifySignature()) {
+            if(config.isResponseSignEnabled()) {           
+                if(!secureMessage.verifySignature()) {
                 debug.error("SOAPRequestHandler.validateResponse:: Signature" +
                         " Verification failed");
                 throw new SecurityException(
                         bundle.getString("signatureValidationFailed"));
+                }
             }
         }
-
         removeValidatedHeaders(config, soapMessage);
     }
 
@@ -575,12 +634,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         ProviderConfig config = null;
         try {
             config = ProviderConfig.getProvider(providerName,
+                    ProviderConfig.WSP, true);
+            if (config == null) {
+                providerName = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.provider.defaultWSP", "wsp");
+                config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSP);
-            if(config == null) {
-                debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
+                if (config == null) {
+                    debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
                         " configuration is null");
-                throw new SecurityException(
+                    throw new SecurityException(
                         bundle.getString("noProviderConfig"));
+                }
             }
             if(!config.useDefaultKeyStore()) {
                 initializeSystemProperties(config);
@@ -607,11 +672,17 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         try {
             config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSC);
-            if(config == null) {
-                debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
+            if (config == null) {            
+                providerName = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.provider.defaultWSC", "wsc");
+                config = ProviderConfig.getProvider(providerName,
+                    ProviderConfig.WSC);
+                if (config == null) {   
+                    debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
                         " configuration is null");
-                throw new SecurityException(
+                    throw new SecurityException(
                         bundle.getString("noProviderConfig"));
+                }
             }
             if(!config.useDefaultKeyStore()) {
                 initializeSystemProperties(config);
@@ -1062,16 +1133,21 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             String serviceName = ThreadLocalService.getServiceName();
             if(serviceName == null) {
                 serviceName = getServiceName(sharedMap);
+                if(debug.messageEnabled()) {
+                    debug.message("SOAPRequestHandler.getServiceName: " +
+                        "Service Name from javax.xml.ws.wsdl.service : " 
+                        + serviceName);
+                }
             } else {
                 // If we find the service name, that is of TA service name
                 // So, create provider config from TA.
-               if(debug.messageEnabled()) {
+                if(debug.messageEnabled()) {
                     debug.message("SOAPRequestHandler.getProviderConfig: " +
                             "Service Name found in thread local" + serviceName);
                 }
                 ThreadLocalService.removeServiceName(serviceName);
-               STSConfig stsConfig = (STSConfig)
-                       TrustAuthorityConfig.getConfig(serviceName, 
+                STSConfig stsConfig = 
+                    (STSConfig) TrustAuthorityConfig.getConfig(serviceName, 
                         TrustAuthorityConfig.STS_TRUST_AUTHORITY);
                 ProviderConfig pc =
                     ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
@@ -1089,7 +1165,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             }
 
             ProviderConfig config =
-                    ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
+                ProviderConfig.getProvider(serviceName, ProviderConfig.WSC);
             if(!config.useDefaultKeyStore()) {
                 initializeSystemProperties(config);
             }
@@ -1146,13 +1222,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             Iterator iter = header.examineAllHeaderElements();
            while(iter.hasNext()) {
               SOAPHeaderElement headerElement = (SOAPHeaderElement)iter.next();
-              if(!config.preserveSecurityHeader()) {
+              if ((config == null) || (!config.preserveSecurityHeader())) {
                  if("Security".equalsIgnoreCase(
                             headerElement.getElementName().getLocalName())) {
                         headerElement.detachNode();
                     }
                 }
-              if("Correlation".equalsIgnoreCase(
+              if ("Correlation".equalsIgnoreCase(
                         headerElement.getElementName().getLocalName())) {
                     headerElement.detachNode();
                 }

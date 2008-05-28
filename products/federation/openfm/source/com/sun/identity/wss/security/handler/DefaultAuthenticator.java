@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.5 2007-08-28 00:20:06 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.6 2008-05-28 19:54:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,7 +117,10 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         debug.message("DefaultAuthenticator.authenticate: start");
         this.config = config;        
         
-        String authChain = config.getAuthenticationChain();
+        String authChain = null;
+        if (config != null) {
+            authChain = config.getAuthenticationChain();
+        }
 
         if(isLiberty) {
            return authenticateLibertyMessage(secureMessage, subject);
@@ -147,7 +150,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             
             if ((authChain == null) || (authChain.length() == 0) ||
                 (authChain.equals("none"))) {
-                if(!validateUser(usertoken, subject)) {
+                if((config != null) && (!validateUser(usertoken, subject)) ){
                     throw new SecurityException(
                         bundle.getString("authenticationFailed"));
                 }

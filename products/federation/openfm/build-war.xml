@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.39 2008-05-10 05:27:31 qcheng Exp $
+   $Id: build-war.xml,v 1.40 2008-05-28 19:54:35 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,7 @@
         </condition>
     </fail>
 
+    <import file="../../wssagents/wssagents.xml" />
     <property name="war.package.dir" location="${openfm.built.war.dir}/package"/>
     <property name="war.webinf.classes.dir" location="${openfm.built.war.dir}/package/WEB-INF/classes"/>
     <property name="war.packageweb.dir" location="${openfm.built.war.dir}/packageweb"/>
@@ -105,6 +106,10 @@
         <copy file="${fm.dist.dir}/fam.jar"
             tofile="${war.package.dir}/WEB-INF/lib/fam.jar" />
 
+        <ant dir="${wssagents.basedir}" target="jars" />
+        <copy todir="${war.package.dir}/WEB-INF/lib"
+              file="${wssagents.dist.dir}/openssowssproviders.jar"/>
+              
         <copy todir="${war.package.dir}/config/auth/default">
             <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
         </copy>

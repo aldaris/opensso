@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2008-03-04 23:44:44 mrudul_uchil Exp $
+   $Id: build.xml,v 1.18 2008-05-28 19:54:35 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,6 +36,8 @@
         </condition>
     </fail>
 
+    <import file="../../../wssagents/wssagents.xml" />
+    
     <property name="clientsamples.packages.dir" location="${openfm.built.dir}/clientsamples/package"/>
     <property name="clientsamples.war.packages.dir" location="${clientsamples.packages.dir}/war"/>
     <property name="clientsamples.sdk.packages.dir" location="${clientsamples.packages.dir}/sdk"/>
@@ -134,24 +136,20 @@
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/lib" />
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
               file="${fm.dist.dir}/openssoclientsdk.jar"/>
+              
+        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
+              file="${wssagents.dist.dir}/openssowssproviders.jar"/>
+              
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib">
-            <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xmlsec.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
-        </copy>
-        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
-            <fileset dir="${openfm.dir}/wsdl" includes="famsts-client.wsdl"/>
-        </copy>
-        <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes">
-            <fileset dir="${openfm.dir}/xml/wss" includes="wsit-client.xml"/>
+            <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xmlsec.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar" />
         </copy>
         
-        <!-- Commented since this hook will not work with classloader
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF"/>
         <mkdir dir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF/services"/>
        
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/classes/META-INF/services">
-            <fileset dir="${openfm.dir}/resources/META-INF/services" includes="com.sun.xml.ws.assembler.ClientPipelineHook"/>
+            <fileset dir="${openfm.dir}/resources/META-INF/services" includes="com.sun.xml.ws.assembler.ClientPipelineHook" />
         </copy>
-        -->
         
         <copy todir="${clientsamples.war.packages.dir}">
             <fileset dir="${openfm.clientsamples.dir}/war"
@@ -264,7 +262,7 @@
         <mkdir dir="${clientsamples.sdk.packages.dir}"/>
         <mkdir dir="${fm.dist.dir}"/>
     </target>
-
+    
     <target name="clean">
         <delete dir="${fm.dist.dir}"/>
         <delete dir="${clientsamples.packages.dir}"/>

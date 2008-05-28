@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.15 2008-03-08 03:03:18 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.16 2008-05-28 19:54:39 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -666,7 +666,8 @@ public abstract class ProviderConfig {
      * @exception ProviderException if there is any failure.
      */
     protected abstract void init(String providerName, 
-          String providerType, SSOToken token) throws ProviderException;
+        String providerType, SSOToken token, boolean isEndPoint) 
+        throws ProviderException;
 
     /**
      * Saves the Provider in the configuration repository.
@@ -694,7 +695,28 @@ public abstract class ProviderConfig {
 
          ProviderConfig pc = getConfigAdapter(); 
          SSOToken adminToken = getAdminToken();
-         pc.init(providerName, providerType, adminToken);
+         pc.init(providerName, providerType, adminToken, false);
+         return pc; 
+    }
+    
+    /**
+     * Returns the provider configuration for a given provider name.
+     *
+     * @param providerName the provider name.
+     *
+     * @param providerType the provider type.
+     * 
+     * @param isEndPoint flag to indicate search based on WSP end point.
+     *
+     * @exception ProviderException if unable to retrieve.
+     */
+    public static ProviderConfig getProvider(
+        String providerName, String providerType, boolean isEndPoint) 
+        throws ProviderException {
+
+         ProviderConfig pc = getConfigAdapter(); 
+         SSOToken adminToken = getAdminToken();
+         pc.init(providerName, providerType, adminToken, isEndPoint);
          return pc; 
     }
 
@@ -732,7 +754,7 @@ public abstract class ProviderConfig {
            String providerName, String providerType) throws ProviderException {
 
         ProviderConfig pc = getConfigAdapter();
-        pc.init(providerName, providerType, getAdminToken());
+        pc.init(providerName, providerType, getAdminToken(), false);
         pc.delete();
     }
 

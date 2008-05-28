@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.7 2008-03-12 22:30:49 mrudul_uchil Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.8 2008-05-28 19:54:43 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,7 @@ import com.sun.identity.wss.sts.ClientUserToken;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 
 /**
  * The STS attribute provider is used to retrieve an authenticated user or
@@ -319,9 +320,9 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                       }
                   }
                } else {
-                  String customToken = SystemConfigurationUtil.getProperty(
-                             STSConstants.STS_CLIENT_USER_TOKEN_PLUGIN); 
-                  if(customToken != null) {
+                  FAMSTSConfiguration stsConfig = new FAMSTSConfiguration();
+                  String customToken = stsConfig.getClientUserTokenClass();
+                  if(customToken != null && customToken.length() != 0) {
                      try {
                          Class customTokenClass = 
                              (Thread.currentThread().getContextClassLoader()).

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.4 2008-03-11 20:13:34 mrudul_uchil Exp $
+ * $Id: MaskingClassLoader.java,v 1.5 2008-05-28 19:54:38 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.io.IOException;
 import java.net.URL;
+import java.net.MalformedURLException;
 import sun.misc.CompoundEnumeration;
 
 /**
@@ -49,6 +50,14 @@ public class MaskingClassLoader extends ClassLoader {
         "META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory";
     private final String resource2 = 
         "META-INF/services/com.sun.xml.ws.policy.spi.PolicyAssertionValidator";
+    private final String resourceAuthConfigProvider = 
+        "META-INF/services/javax.security.auth.message.config.AuthConfigProvider";
+    private final String resourceTransformerFactory =
+        "META-INF/services/javax.xml.transform.TransformerFactory";
+    private final String resourceSAXParserFactory =
+        "META-INF/services/javax.xml.parsers.SAXParserFactory";
+    private final String resourceDocumentBuilderFactory =
+        "META-INF/services/javax.xml.parsers.DocumentBuilderFactory";
 
     /*public MaskingClassLoader(String[] masks) {
         this.masks = masks;
@@ -88,6 +97,50 @@ public class MaskingClassLoader extends ClassLoader {
     
     @Override
     public synchronized URL getResource(String name) {
+        if(name.startsWith(resourceAuthConfigProvider)) {
+            // Read the "resourceAuthConfigProvider" from openssowssproviders.jar
+            try {
+                URL jarURL =
+                    new URL("jar:" + (urls[6]).toString() + "!/" + 
+                    resourceAuthConfigProvider);
+                return jarURL;
+            } catch (MalformedURLException mue) {
+                // Continue
+            }
+        }
+        if(name.startsWith(resourceTransformerFactory)) {
+            // Read the "resourceTransformerFactory" from xalan.jar
+            try {
+                URL jarURL =
+                    new URL("jar:" + (urls[7]).toString() + "!/" + 
+                    resourceTransformerFactory);
+                return jarURL;
+            } catch (MalformedURLException mue) {
+                // Continue
+            }
+        }
+        if(name.startsWith(resourceSAXParserFactory)) {
+            // Read the "resourceSAXParserFactory" from xercesImpl.jar
+            try {
+                URL jarURL =
+                    new URL("jar:" + (urls[8]).toString() + "!/" + 
+                    resourceSAXParserFactory);
+                return jarURL;
+            } catch (MalformedURLException mue) {
+                // Continue
+            }
+        }
+        if(name.startsWith(resourceDocumentBuilderFactory)) {
+            // Read the "resourceDocumentBuilderFactory" from xercesImpl.jar
+            try {
+                URL jarURL =
+                    new URL("jar:" + (urls[8]).toString() + "!/" + 
+                    resourceDocumentBuilderFactory);
+                return jarURL;
+            } catch (MalformedURLException mue) {
+                // Continue
+            }
+        }
         for (String mask : maskResources) {
             if(name.startsWith(mask)) {
                 return null;
@@ -97,7 +150,7 @@ public class MaskingClassLoader extends ClassLoader {
     }
     
     @Override
-    public Enumeration<URL> getResources(String name) throws IOException {
+    public Enumeration<URL> getResources(String name) throws IOException { 
         Enumeration[] tmp = new Enumeration[1];
         if(name.startsWith(resource)) {
             Vector vec = new Vector(1);
@@ -113,6 +166,36 @@ public class MaskingClassLoader extends ClassLoader {
             // Read the "resource2" from webservices-rt.jar
             URL jarURL = 
                 new URL("jar:" + (urls[1]).toString() + "!/" + resource2);
+            vec.add(jarURL);
+            tmp[0] = vec.elements();
+            return new CompoundEnumeration(tmp);
+        }
+        if(name.startsWith(resourceTransformerFactory)) {
+            Vector vec = new Vector(1);
+            // Read the "resourceTransformerFactory" from xalan.jar
+            URL jarURL = 
+                new URL("jar:" + (urls[7]).toString() + "!/" + 
+                resourceTransformerFactory);
+            vec.add(jarURL);
+            tmp[0] = vec.elements();
+            return new CompoundEnumeration(tmp);
+        }
+        if(name.startsWith(resourceSAXParserFactory)) {
+            Vector vec = new Vector(1);
+            // Read the "resourceSAXParserFactory" from xercesImpl.jar
+            URL jarURL = 
+                new URL("jar:" + (urls[8]).toString() + "!/" + 
+                resourceSAXParserFactory);
+            vec.add(jarURL);
+            tmp[0] = vec.elements();
+            return new CompoundEnumeration(tmp);
+        }
+        if(name.startsWith(resourceDocumentBuilderFactory)) {
+            Vector vec = new Vector(1);
+            // Read the "resourceDocumentBuilderFactory" from xercesImpl.jar
+            URL jarURL = 
+                new URL("jar:" + (urls[8]).toString() + "!/" + 
+                resourceDocumentBuilderFactory);
             vec.add(jarURL);
             tmp[0] = vec.elements();
             return new CompoundEnumeration(tmp);

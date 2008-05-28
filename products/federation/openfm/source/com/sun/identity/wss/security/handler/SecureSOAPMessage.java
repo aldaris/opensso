@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.12 2008-03-20 05:35:11 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.13 2008-05-28 19:54:41 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,6 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.xmlenc.XMLEncryptionManager;
 import com.sun.identity.xmlenc.EncryptionConstants;
 import com.sun.identity.xmlenc.EncryptionException;
-
 
 
 /**
@@ -208,13 +207,6 @@ public class SecureSOAPMessage {
                     wsseHeader = (Element) currentNode;
                  }
              }
-             if(securityToken == null) {
-                if(debug.messageEnabled()) {
-                   debug.error("SecureSOAPMessage.parseSOAPMessage: " +
-                     "security token is null");
-                }
-                securityMechanism = SecurityMechanism.WSS_NULL_ANONYMOUS;
-             }
          } catch (SOAPException se) {
              debug.error("SecureSOAPMessage.parseSOAPMessage: SOAP" +
              "Exception in parsing the headers.", se);
@@ -330,6 +322,13 @@ public class SecureSOAPMessage {
                          }
                      }
 
+                 } else if(securityToken == null) {
+                     if(debug.messageEnabled()) {
+                         debug.message("SecureSOAPMessage.parseSecurityHeader: "
+                             + "security token is null, " + 
+                             "hence Security Mechanism is set to ANONYMOUS");
+                     }
+                     securityMechanism = SecurityMechanism.WSS_NULL_ANONYMOUS;
                  }
              }
          }

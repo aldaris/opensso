@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.2 2007-09-13 16:20:50 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.3 2008-05-28 19:54:44 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -483,8 +483,9 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @return true if the xml signature is verified, false otherwise
      * @throws XMLSignatureException if problem occurs during verification
      */
-    public boolean verifyWSSSignature(Document doc, String certAlias)
-                   throws XMLSignatureException {
+    public boolean verifyWSSSignature(org.w3c.dom.Document doc,
+                                       java.lang.String certAlias)
+        throws XMLSignatureException {
 
         if (doc == null) {
             WSSUtils.debug.error("WSSSignatureProvider.verifyWSSSignature: " +
@@ -492,7 +493,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             throw new XMLSignatureException(
                       WSSUtils.bundle.getString("nullInput"));
         }
-
+        
         try {
             Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
                     XMLUtils.createDSctx(doc, "wsu", WSSConstants.WSU_NS);

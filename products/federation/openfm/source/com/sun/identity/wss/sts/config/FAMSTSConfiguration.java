@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.2 2007-09-13 07:24:22 mrudul_uchil Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.3 2008-05-28 19:54:43 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,7 +30,10 @@ import com.sun.xml.ws.api.security.trust.config.TrustSPMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.StringTokenizer;
 import javax.security.auth.callback.CallbackHandler;
 
 import com.sun.identity.shared.debug.Debug;
@@ -56,6 +59,16 @@ public class FAMSTSConfiguration implements
     private static long issuedTokenTimeout;
     private static String stsEndpoint;
     private static String certAlias;
+    private static String clientUserToken;
+    private static List secMech = null;
+    private static boolean isResponseSign = false;
+    private static boolean isResponseEncrypt = false;
+    private static boolean isRequestSign = false;
+    private static boolean isRequestEncrypt = false;
+    private static boolean isRequestHeaderEncrypt = false;
+    private static String privateKeyType;
+    private static String privateKeyAlias;
+    private static String publicKeyAlias;
     
     private CallbackHandler callbackHandler;
     
@@ -71,6 +84,17 @@ public class FAMSTSConfiguration implements
     static final String LIFE_TIME = "stsLifetime";
     static final String TOKEN_IMPL_CLASS = "stsTokenImplClass";
     static final String CERT_ALIAS = "stsCertAlias";
+    static final String CLIENT_USER_TOKEN = 
+        "com.sun.identity.wss.sts.clientusertoken";
+    static final String SEC_MECH = "SecurityMech";
+    static final String RESPONSE_SIGN = "isResponseSign";
+    static final String RESPONSE_ENCRYPT = "isResponseEncrypt";
+    static final String REQUEST_SIGN = "isRequestSign";     
+    static final String REQUEST_ENCRYPT = "isRequestEncrypt";
+    static final String REQUEST_HEADER_ENCRYPT = "isRequestHeaderEncrypt";
+    static final String PRIVATE_KEY_TYPE = "privateKeyType";
+    static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
+    static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -160,9 +184,76 @@ public class FAMSTSConfiguration implements
         if (values != null && !values.isEmpty()) {
             certAlias = (String)values.iterator().next();
         }
+        
+        values = (Set)attrMap.get(CLIENT_USER_TOKEN);
+        if (values != null && !values.isEmpty()) {
+            clientUserToken = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(SEC_MECH);
+        if (values != null && !values.isEmpty()) {
+            String value = (String)values.iterator().next();
+            if (secMech == null) {
+               secMech = new ArrayList();
+            }
+
+            StringTokenizer st = new StringTokenizer(value, ","); 
+            while(st.hasMoreTokens()) {
+                secMech.add(st.nextToken());
+            }
+        }
+        
+        values = (Set)attrMap.get(RESPONSE_SIGN);
+        if (values != null && !values.isEmpty()) {
+            isResponseSign = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
+        values = (Set)attrMap.get(RESPONSE_ENCRYPT);
+        if (values != null && !values.isEmpty()) {
+            isResponseEncrypt = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
+        values = (Set)attrMap.get(REQUEST_SIGN);
+        if (values != null && !values.isEmpty()) {
+            isRequestSign = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
+        values = (Set)attrMap.get(REQUEST_ENCRYPT);
+        if (values != null && !values.isEmpty()) {
+            isRequestEncrypt = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
+        values = (Set)attrMap.get(REQUEST_HEADER_ENCRYPT);
+        if (values != null && !values.isEmpty()) {
+            isRequestHeaderEncrypt = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
+        values = (Set)attrMap.get(PRIVATE_KEY_TYPE);
+        if (values != null && !values.isEmpty()) {
+            privateKeyType = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(PRIVATE_KEY_ALIAS);
+        if (values != null && !values.isEmpty()) {
+            privateKeyAlias = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(PUBLIC_KEY_ALIAS);
+        if (values != null && !values.isEmpty()) {
+            publicKeyAlias = (String)values.iterator().next();
+        }
 
     }
-
     
     public void addTrustSPMetadata(final TrustSPMetadata data, 
                                    final String spEndpoint){
@@ -223,6 +314,176 @@ public class FAMSTSConfiguration implements
     
     public CallbackHandler getCallbackHandler(){
         return new FAMCallbackHandler(this.certAlias);
+    }
+    
+    public void setClientUserTokenClass(String clientUserTokenClass){
+        this.clientUserToken = clientUserTokenClass;
+    }
+        
+    public String getClientUserTokenClass(){
+        return this.clientUserToken;
+    }
+    
+    /**
+     * Returns the list of security mechanims that the STS service is configured.
+     *
+     * @return list of security mechanisms.
+     */
+    public List getSecurityMechanisms() {
+         return this.secMech;
+    }
+
+    /**
+     * Sets the list of security mechanisms.
+     *
+     * @param authMech the list of security mechanisms.
+     */
+    public void setSecurityMechanisms(List authMech) {
+        this.secMech = authMech;
+    }
+    
+    /**
+     * Checks if the response needs to be signed or not.
+     *
+     * @return true if the response needs to be signed.
+     */
+    public boolean isResponseSignEnabled() {
+        return this.isResponseSign;
+    }
+
+    /**
+     * Sets the response sign enable flag.
+     *
+     * @param enable enables the response signing.
+     */
+    public void setResponseSignEnabled(boolean enable) {
+         this.isResponseSign = enable;
+    }
+    
+    /**
+     * Checks if the response needs to be encrypted or not.
+     *
+     * @return true if the response needs to be encrypted.
+     */
+    public boolean isResponseEncryptEnabled() {
+        return this.isResponseEncrypt;
+    }
+
+    /**
+     * Sets the response encrypt enable flag.
+     *
+     * @param enable enables the response encryption.
+     */
+    public void setResponseEncryptEnabled(boolean enable) {
+         this.isResponseEncrypt = enable;
+    }
+    
+    /**
+     * Checks if the request needs to be signed or not.
+     *
+     * @return true if the request needs to be signed.
+     */
+    public boolean isRequestSignEnabled() {
+        return this.isRequestSign;
+    }
+
+    /**
+     * Sets the request sign enable flag.
+     *
+     * @param enable enables the request signing.
+     */
+    public void setRequestSignEnabled(boolean enable) {
+         this.isRequestSign = enable;
+    }
+    
+    /**
+     * Checks if the request needs to be encrypted or not.
+     *
+     * @return true if the request needs to be encrypted.
+     */
+    public boolean isRequestEncryptEnabled() {
+        return this.isRequestEncrypt;
+    }
+
+    /**
+     * Sets the request encrypt enable flag.
+     *
+     * @param enable enables the request encryption.
+     */
+    public void setRequestEncryptEnabled(boolean enable) {
+         this.isRequestEncrypt = enable;
+    }
+
+    /**
+     * Checks if the request header needs to be encrypted or not.
+     *
+     * @return true if the request header needs to be encrypted.
+     */
+    public boolean isRequestHeaderEncryptEnabled() {
+        return this.isRequestHeaderEncrypt;
+    }
+
+    /**
+     * Sets the request header encrypt enable flag.
+     *
+     * @param enable enables the request header encryption.
+     */
+    public void setRequestHeaderEncryptEnabled(boolean enable) {
+        this.isRequestHeaderEncrypt = enable;
+    }
+    
+    /**
+     * Returns the key type for the security provider at STS service.
+     * 
+     * @return the key type of the security provider at STS service.
+     */
+    public String getPrivateKeyType() {
+        return privateKeyType;
+    }
+   
+    /**
+     * Sets the key type for the security provider at STS service.
+     * 
+     * @param keyType the key type for the security provider at STS service.
+     */
+    public void setPrivateKeyType(String keyType) {
+        this.privateKeyType = keyType;
+    }
+
+    /**
+     * Returns the key alias for the security provider at STS service.
+     * 
+     * @return the key alias of the security provider at STS service.
+     */
+    public String getPrivateKeyAlias() {
+        return privateKeyAlias;
+    }
+   
+    /**
+     * Sets the key alias for the security provider at STS service.
+     * 
+     * @param alias the key alias for the security provider at STS service.
+     */
+    public void setPrivateKeyAlias(String alias) {
+        this.privateKeyAlias = alias;
+    }
+
+    /**
+     * Returns the Public key alias for this provider's partner.
+     * 
+     * @return the Public key alias of the provider's partner.
+     */
+    public String getPublicKeyAlias() {
+        return publicKeyAlias;
+    }
+   
+    /**
+     * Sets the Public key alias for this provider's partner.
+     * 
+     * @param alias the Public key alias for this provider's partner.
+     */
+    public void setPublicKeyAlias(String alias) {
+        this.publicKeyAlias = alias;
     }
     
     public Map<String, Object> getOtherOptions(){

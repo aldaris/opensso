@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.21 2008-04-21 20:12:29 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.22 2008-05-28 19:54:40 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
-
+import com.sun.identity.idm.IdSearchOpModifier;
 
 /**
  * This class <code>AgentProvider</code> extends from 
@@ -140,13 +140,63 @@ public class AgentProvider extends ProviderConfig {
      }
 
      public void init (String providerName, 
-           String providerType, SSOToken token) throws ProviderException {
+         String providerType, SSOToken token, boolean isEndPoint) 
+         throws ProviderException {
 
         this.providerName = providerName;
         this.providerType = providerType;
         this.token = token;
 
-        // Obtain the provider from Agent profile
+        if ((providerType.equals(ProviderConfig.WSP)) && (isEndPoint)) {
+            // Obtain the WSP Agent profile given its end point
+            try {
+                if (idRepo == null) {
+                    idRepo = new AMIdentityRepository(token, "/");
+                }
+                IdSearchControl control = new IdSearchControl();
+                control.setAllReturnAttributes(true);
+                control.setTimeOut(0);
+
+                Map kvPairMap = new HashMap();
+                Set set = new HashSet();
+                set.add(providerType);
+                kvPairMap.put(AGENT_TYPE_ATTR, set);
+
+                set = new HashSet();
+                set.add(providerName);
+                kvPairMap.put(WSP_ENDPOINT, set);
+
+                control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
+
+                IdSearchResults results = 
+                    idRepo.searchIdentities(IdType.AGENTONLY,
+                    "*", control);
+                Set agents = results.getSearchResults();
+                if (!agents.isEmpty()) {
+                    //Map attrs = (Map) results.getResultAttributes();
+                    AMIdentity provider = (AMIdentity) agents.iterator().next();
+                    Map attributes = null;
+                    if(attrNames != null) {
+                       attributes = (Map) provider.getAttributes(attrNames);
+                    } else {
+                       attributes = (Map) provider.getAttributes();
+                    }
+                    if (debug.messageEnabled()) {
+                        debug.message("Attributes from WSP end point : " 
+                            + attributes);
+                    }
+                    parseAgentKeyValues(attributes);                    
+                }
+
+            } catch (Exception ex) {
+                debug.error("AgentProvider.init: Unable to get idRepo", ex);
+                throw (new ProviderException("idRepo exception: "
+                    + ex.getMessage()));
+            }
+            return;
+        }
+        
+        // Obtain the provider from Agent profile based on ProviderName
         try {
             if (idRepo == null) {
                 idRepo = new AMIdentityRepository(token, "/");
@@ -163,6 +213,10 @@ public class AgentProvider extends ProviderConfig {
                 profilePresent = true;
                 //Map attributes = (Map) attrs.get(provider);
                 Map attributes = (Map) provider.getAttributes(attrNames);
+                if (debug.messageEnabled()) {
+                    debug.message("Attributes from provider name : " 
+                        + attributes);
+                }
                 parseAgentKeyValues(attributes);
             }
             

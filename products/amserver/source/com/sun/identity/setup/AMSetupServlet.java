@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.60 2008-05-28 18:14:04 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.61 2008-05-28 19:52:11 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -556,7 +556,7 @@ public class AMSetupServlet extends HttpServlet {
             if (!existingConfiguration) {
                  createIdentitiesForWSSecurity(serverURL, deployuri);
             }
-            updateSTSwsdl(basedir, deployuri);
+            //updateSTSwsdl(basedir, deployuri);
 
             String aceDataDir = basedir + "/" + deployuri + "/auth/ace/data";
             copyAuthSecurIDFiles(aceDataDir);
@@ -1753,7 +1753,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("privateKeyAlias","test");
         config.put("publicKeyAlias","test");
         config.put("isRequestSign","true");
-        config.put("keepSecurityHeaders","true");
+        //config.put("keepSecurityHeaders","true");
         config.put("WSPEndpoint","default");
         config.put("AgentType","WSCAgent");
         createAgent(idrepo, "wsc", "WSC", "", config);
@@ -1764,7 +1764,8 @@ public class AMSetupServlet extends HttpServlet {
         config.remove("SecurityMech");
         config.put("SecurityMech","urn:sun:wss:security:null:UserNameToken," +
                                   "urn:sun:wss:security:null:SAML2Token-HK," +
-                                  "urn:sun:wss:security:null:SAML2Token-SV");
+                                  "urn:sun:wss:security:null:SAML2Token-SV," +
+                                  "urn:sun:wss:security:null:X509Token");
         createAgent(idrepo, "wsp", "WSP", "", config);
 
         // Add localSTS configuration
@@ -1772,12 +1773,12 @@ public class AMSetupServlet extends HttpServlet {
         config.put("AgentType","STSAgent");
         config.remove("SecurityMech");
         config.remove("UserCredential");
-        config.remove("keepSecurityHeaders");
+        //config.remove("keepSecurityHeaders");
         config.remove("WSPEndpoint");
         config.put("SecurityMech","urn:sun:wss:security:null:X509Token");
         config.put("STSEndpoint",serverURL + deployuri + "/sts");
         config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
-        createAgent(idrepo, "defaultSTS", "STS", "", config);
+        //createAgent(idrepo, "defaultSTS", "STS", "", config);
         createAgent(idrepo, "SecurityTokenService", "STS", "", config);
 
         /*

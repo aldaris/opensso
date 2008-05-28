@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2008-03-20 05:33:26 mrudul_uchil Exp $
+   $Id: build.xml,v 1.10 2008-05-28 19:50:46 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,6 +29,7 @@
     <import file="../products.xml" />
     <import file="../amserver/amserver.xml" />
     <import file="../federation/openfm/openfm.xml" />
+    <import file="../federation/library/library.xml" />
     <import file="wssagents.xml" />
 
     <!-- user specific properties -->
@@ -46,7 +47,9 @@
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${wssagents.classes.dir}"/>
-        
+        <pathelement location="${openfm.classes.dir}"/>
+        <pathelement location="${library.classes.dir}"/>
+        <pathelement location="${sharedlib.classes.dir}"/>
         <fileset dir="${wssagents.extlib.dir}">
             <include name="**/*.jar"/>
         </fileset>
@@ -54,12 +57,8 @@
         <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
         </fileset>
-        
-        <fileset dir="${fm.dist.dir}">
-            <include name="openssoclientsdk.jar"/>
-        </fileset>
     </path>
-
+    
     <target name="checkjar">
         <ant antfile="${products.basedir}/build-checkjars.xml" inheritRefs="true" />
         <fail message="*** missing library ***">
@@ -110,9 +109,12 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
+            <fileset dir="${wssagents.res.dir}">
+                <filename name="META-INF/services/*"/>    
+            </fileset>
             <fileset dir="${wssagents.xml.dir}" includes="*.xml" />
             <zipfileset dir="${wssagents.classes.dir}" />
-            <zipfileset src="${fm.dist.dir}/openssoclientsdk.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class"/>
+            <zipfileset src="${fm.dist.dir}/fam.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class,com/sun/identity/classloader/FAMClassLoader.class,com/sun/identity/classloader/MaskingClassLoader.class"/>
         </jar>
 
         <checksum file="${wssagents.dist.dir}/openssowssproviders.jar" 
@@ -140,7 +142,7 @@
             <fileset file="${wssagents.src.dir}/com/sun/identity/wssagents/weblogic/famauthprovider.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xmlsec.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,ldapjdk.jar,j2ee.jar" />
+            <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,ldapjdk.jar,j2ee.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/samples">
             <fileset file="${wssagents.samples.dir}/**" />

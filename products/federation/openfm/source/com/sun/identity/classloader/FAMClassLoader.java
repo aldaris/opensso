@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.6 2008-04-14 23:54:24 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.7 2008-05-28 19:54:38 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import java.util.Arrays;
 import com.sun.identity.common.SystemConfigurationUtil;
-import com.sun.identity.wss.sts.STSConstants;
 
 /**
  * Federated Access Mananger class loader to overcome the class loading
@@ -39,7 +38,12 @@ import com.sun.identity.wss.sts.STSConstants;
  */
 public class FAMClassLoader {
     
-   public static ClassLoader cl;
+    public static ClassLoader cl;
+    
+    // Jar files path at FAM client, for FAM classloader to 
+    // load those jar files. 
+    public static final String FAM_CLASSLOADER_DIR_PATH = 
+        "com.sun.identity.classloader.client.jarsPath";
     
     /** Creates a new instance of FAMClassLoader */
     public FAMClassLoader() {
@@ -112,8 +116,7 @@ public class FAMClassLoader {
         String defaultJarsPath = installRoot + FILE_SEPARATOR + "addons" 
             + FILE_SEPARATOR + "accessmanager";
         String jarsPath = FILE_BEGIN + SystemConfigurationUtil.getProperty(
-            STSConstants.FAM_CLASSLOADER_DIR_PATH, defaultJarsPath) 
-            + FILE_SEPARATOR;
+            FAM_CLASSLOADER_DIR_PATH, defaultJarsPath) + FILE_SEPARATOR;
         try {
             for (int i=0; i < jars.length; i++) {
                 urls[i] = new URL(jarsPath + jars[i]);
@@ -136,10 +139,6 @@ public class FAMClassLoader {
             "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
         System.setProperty("javax.xml.soap.SOAPFactory", 
             "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl");
-        System.setProperty("javax.xml.parsers.SAXParserFactory", 
-            "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
-        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
-            "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
     }
 
     /**
@@ -151,7 +150,11 @@ public class FAMClassLoader {
         "webservices-tools.jar",
         "webservices-extra-api.jar",
         "webservices-extra.jar",
-        "fam.jar"
+        "fam.jar",
+        "openssowssproviders.jar",
+        "xalan.jar",
+        "xercesImpl.jar",
+        "openfedlib.jar"        
     };
 
     /**
@@ -185,7 +188,15 @@ public class FAMClassLoader {
         "javax.jws.soap.",
         "javax.xml.soap.",
         "com.sun.istack.",
-        "com.sun.identity.wss."
+        "com.sun.identity.wss.",
+        "com.sun.identity.wssagents.",
+        "com.sun.org.apache.xml.internal.",
+        "com/sun/org/apache/xml/internal/",
+        "com.sun.org.apache.xpath.internal.",
+        "com.sun.org.apache.xalan.internal.",
+        "com.sun.org.apache.xerces.internal.",
+        "com.sun.identity.saml.xmlsig.",
+        "com.sun.xml.stream."
     };
     
     /**
@@ -201,7 +212,8 @@ public class FAMClassLoader {
         "com/sun/xml/ws/",
         "com/sun/xml/wss/",
         "com/sun/xml/bind/",
-        "com/sun/xml/messaging/"
+        "com/sun/xml/messaging/",
+        "com/sun/org/apache/xml/internal/"
     };
     
     

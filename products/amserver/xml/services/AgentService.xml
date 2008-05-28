@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.39 2008-05-21 21:17:00 huacui Exp $
+   $Id: AgentService.xml,v 1.40 2008-05-28 19:52:11 mrudul_uchil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3035,12 +3035,18 @@
                         type="single"
                         syntax="string"
                         i18nKey="a330">
+                        <DefaultValues>
+                            <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@/@SERVER_URI@/sts</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="STSMexEndpoint"
                         type="single"
                         syntax="string"
                         i18nKey="a331">
+                        <DefaultValues>
+                            <Value>@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@/@SERVER_URI@/sts/mex</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="UserCredential"
