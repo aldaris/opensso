@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.59 2008-05-15 04:51:02 kevinserwin Exp $
+ * $Id: AMSetupServlet.java,v 1.60 2008-05-28 18:14:04 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -701,7 +701,7 @@ public class AMSetupServlet extends HttpServlet {
 
         // Do "chmod" only if it is on UNIX/Linux platform
         if (System.getProperty("path.separator").equals(":")) {
-            Runtime.getRuntime().exec("/bin/chmod 400" + fileName);
+            Runtime.getRuntime().exec("/bin/chmod 400 " + fileName);
         }
     }
 
