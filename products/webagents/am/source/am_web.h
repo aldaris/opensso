@@ -608,7 +608,8 @@ AM_WEB_EXPORT boolean_t am_web_is_valid_fqdn_url(const char *url, void* agent_co
  * occur during the processing of the notification.
  */
 AM_WEB_EXPORT void am_web_handle_notification(const char *data,
-					    size_t data_length);
+                                              size_t data_length,
+                                              void* agent_config);
 
 /*
  * This function returns a string representing the URL for redirection that

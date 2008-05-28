@@ -426,24 +426,36 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
 
-    /* Get the notification URL.*/
+    /* Get the notification.enable */
     if (AM_SUCCESS == status) {
         parameter = AM_COMMON_NOTIFICATION_ENABLE_PROPERTY;
         status = am_properties_get_boolean_with_default(this->properties,
                 parameter, B_FALSE,
                 reinterpret_cast<int *>(&this->notification_enable));
-        if (this->notification_enable) {
-            parameter = AM_COMMON_NOTIFICATION_URL_PROPERTY;
-            status = am_properties_get_with_default(this->properties,
-                    parameter, "",
-                    &this->notification_url);
-            if (this->notification_url == NULL ||
-                    strlen(this->notification_url) == 0) {
-                this->notification_enable = AM_FALSE;
-            }
+            am_web_log_error("SUBBA");
+    }
+
+    /* Get the change.notification.enable */
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_CONFIG_CHANGE_NOTIFICATION_ENABLE_PROPERTY;
+        status = am_properties_get_boolean_with_default(this->properties,
+                parameter, B_FALSE,
+                reinterpret_cast<int *>(&this->configChangeNotificationEnable));
+    }
+
+    /* Get the notification URL.*/
+    if (AM_SUCCESS == status) {
+        parameter = AM_COMMON_NOTIFICATION_URL_PROPERTY;
+        status = am_properties_get_with_default(this->properties,
+                parameter, "",
+                &this->notification_url);
+        if (this->notification_url == NULL ||
+                strlen(this->notification_url) == 0) {
+            this->notification_enable = AM_FALSE;
+            this->configChangeNotificationEnable = AM_FALSE;
         }
     }
-    
+ 
     /* Get url string comparision case sensitivity values. */
     if (AM_SUCCESS == status) {
         status = am_properties_get_boolean_with_default(this->properties,

@@ -367,11 +367,13 @@ am_policy_is_notification_enabled(am_policy_t policy_handle) {
 extern "C" am_status_t
 am_policy_notify(am_policy_t policy_handle,
 		    const char *notification_data,
-		    size_t notification_data_len)
+		    size_t notification_data_len,
+                    boolean_t configChangeNotificationEnabled)
 {
     try {
 	enginePtr->policy_notify(policy_handle, notification_data,
-				 notification_data_len);
+				 notification_data_len,
+                                 configChangeNotificationEnabled);
     } catch(InternalException &ie) {
 	Log::log(enginePtr->getModuleID(), Log::LOG_ERROR,
 		 "am_policy_notify: InternalException in %s with error message:%s and code:%d",

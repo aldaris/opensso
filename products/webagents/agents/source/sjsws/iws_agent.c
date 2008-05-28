@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.12 2008-03-14 00:12:41 madan_ranganath Exp $
+ * $Id: iws_agent.c,v 1.13 2008-05-28 21:53:48 subbae Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  *
@@ -356,7 +356,9 @@ NSAPI_PUBLIC int append_post_data(pblock *param, Session *sn, Request *rq)
  * valid state for the session would result on the cache being updated
  */
 
-static int handle_notification(Session *sn, Request *rq)
+static int handle_notification(Session *sn, 
+                               Request *rq,
+                               void* agent_config)
 {
     int result;
     char *content_length_header;
@@ -379,7 +381,7 @@ static int handle_notification(Session *sn, Request *rq)
 		}
 		buf[data_length] = (char) ch;
 	    }
-	    am_web_handle_notification(buf, data_length);
+	    am_web_handle_notification(buf, data_length, agent_config);
 	    system_free(buf);
 	} else {
 	    am_web_log_error("handle_notification() unable to allocate memory "
@@ -411,9 +413,12 @@ NSAPI_PUBLIC int process_notification(pblock *param, Session *sn, Request *rq)
     return REQ_PROCEED;
 }
 
-static int process_new_notification(pblock *param, Session *sn, Request *rq)
+static int process_new_notification(pblock *param, 
+                                    Session *sn, 
+                                    Request *rq,
+                                    void* agent_config)
 {
-    handle_notification(sn, rq);
+    handle_notification(sn, rq, agent_config);
 
     /* Use the protocol_status function to set the status of the
      * response before calling protocol_start_response.
@@ -909,7 +914,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 
     /* Check for magic notification URL */
     if (B_TRUE==am_web_is_notification(request_url, agent_config)) {
-	notifResult = process_new_notification(param, sn, rq);
+	notifResult = process_new_notification(param, sn, rq, agent_config);
 	am_web_free_memory(request_url);
         am_web_delete_agent_configuration(agent_config);
         return notifResult;

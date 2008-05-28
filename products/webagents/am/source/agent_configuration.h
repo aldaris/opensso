@@ -141,7 +141,8 @@ public:
     set_user_attrs_mode_t setUserResponseAttrsMode;
     std::list<std::string> attrList;
     const char * attrMultiValueSeparator;
-     unsigned long policy_clock_skew; // Policy Clock Skew
+    unsigned long policy_clock_skew; // Policy Clock Skew
+    PRBool configChangeNotificationEnable;
 
     
     AgentConfiguration();
@@ -218,6 +219,7 @@ public:
         this->setUserResponseAttrsMode = SET_ATTRS_NONE;
         this->attrMultiValueSeparator = ATTRIBUTES_SEPARATOR;
         this->policy_clock_skew = 0;
+        this->configChangeNotificationEnable = AM_FALSE;
 
     }
     

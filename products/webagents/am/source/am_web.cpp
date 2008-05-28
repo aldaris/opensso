@@ -1860,7 +1860,8 @@ am_web_is_notification(const char *request_url,
     boolean_t result = B_FALSE;
     std::string request_url_str;
 
-    if (am_policy_is_notification_enabled(boot_info.policy_handle)) {
+    if (am_policy_is_notification_enabled(boot_info.policy_handle) ||
+        (*agentConfigPtr)->configChangeNotificationEnable) {
 	try {
 	    // check override proto/host/port for notification url.
 	    // this would be true if notifications url is coming from
@@ -1874,7 +1875,8 @@ am_web_is_notification(const char *request_url,
             url.getURLString(request_url_str);
             request_url = request_url_str.c_str();
 
-            if ((*agentConfigPtr)->notification_enable) {
+            if ((*agentConfigPtr)->notification_enable ||
+                (*agentConfigPtr)->configChangeNotificationEnable) {
                 if (!strcasecmp(request_url, 
                                (*agentConfigPtr)->notification_url)) {
                     result = B_TRUE;
@@ -1901,16 +1903,28 @@ am_web_is_notification(const char *request_url,
 
 extern "C" AM_WEB_EXPORT void
 am_web_handle_notification(const char *data,
-			   size_t data_length)
+			   size_t data_length,
+                           void* agent_config)
 {
     am_status_t status;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
 
     Log::log(boot_info.log_module, Log::LOG_DEBUG,
 	     "am_web_handle_notification() data is: %.*s", data_length,
 	     data);
 
-    status = am_policy_notify(boot_info.policy_handle,
-				 data, data_length);
+    if((*agentConfigPtr)->configChangeNotificationEnable) {
+        status = am_policy_notify(boot_info.policy_handle,
+                              data, 
+                              data_length,
+                              B_TRUE);
+    } else {
+        status = am_policy_notify(boot_info.policy_handle,
+                              data, 
+                              data_length,
+                              B_FALSE);
+    }
     if (AM_SUCCESS != status) {
 	am_web_log_error("am_web_handle_notification() error processing "
 			"notification: status = %s (%d), notification data = "
@@ -4413,7 +4427,8 @@ process_notification(
     }
     // process notification
     else {
-	am_web_handle_notification(postdata, strlen(postdata));
+        //FIX IT with 3.0 Apache agent
+	//am_web_handle_notification(postdata, strlen(postdata));
 	am_web_log_debug("%s: process notification from URL [%s] "
 			   "returned.", thisfunc, url);
 	if (free_post_data.func != NULL) {

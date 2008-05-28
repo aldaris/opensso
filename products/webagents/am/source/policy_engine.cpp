@@ -195,8 +195,10 @@ PolicyEngine::getService(am_policy_t hdl)
  *	InternalException upon other errors
  */
 void
-PolicyEngine::policy_notify(am_policy_t policy_handle, const char *data,
-			    size_t len) 
+PolicyEngine::policy_notify(am_policy_t policy_handle, 
+                            const char *data,
+                            size_t len,
+                            bool configChangeNotificationEnabled) 
 {
 
     Service *serviceEntry = getService(policy_handle);
@@ -219,7 +221,8 @@ PolicyEngine::policy_notify(am_policy_t policy_handle, const char *data,
 			"PolicyEngine::policy_notify :"
 			"Handling notification.");
 		    policy_notification_handler(serviceEntry,
-						notificationData);
+						notificationData,
+                                                configChangeNotificationEnabled);
 
 		} else {
 		    log(Log::LOG_WARNING,
@@ -254,7 +257,8 @@ PolicyEngine::handleNotif(am_policy_t hdl, const std::string& notifData)
  */
 void
 PolicyEngine::policy_notification_handler(Service *serviceEntry,
-					  const std::string &data)
+					  const std::string &data,
+                                          bool configChangeNotificationEnabled)
 {
     try {
 	XMLTree tree(false, data.c_str(), data.size());
@@ -263,7 +267,9 @@ PolicyEngine::policy_notification_handler(Service *serviceEntry,
 
         // Agent Config Change notification.
 	if (rootElement.isNamed(AGENT_CONFIG_CHANGE_NOTIFICATION)) {
-            serviceEntry->agent_config_change_notify();
+            if(configChangeNotificationEnabled == true) {
+                serviceEntry->agent_config_change_notify();
+            }
             return;
         }
         

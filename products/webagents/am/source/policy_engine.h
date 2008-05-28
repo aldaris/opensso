@@ -99,7 +99,10 @@ class PolicyEngine {
      *	NSPRException upon NSPR error 
      *	InternalException upon other errors
      */
-    void policy_notify(am_policy_t, const char *, size_t);
+    void policy_notify(am_policy_t, 
+                       const char *, 
+                       size_t,
+                       bool configChangeNotificationEnabled = true);
 
     /* Throws:
      *	NSPRException upon NSPR error 
@@ -111,7 +114,9 @@ class PolicyEngine {
      *	NSPRException upon NSPR error 
      *	InternalException upon other errors
      */
-    void policy_notification_handler(Service *, const std::string&);
+    void policy_notification_handler(Service *, 
+                                     const std::string&,
+                                     bool configChangeNotificationEnabled = true);
 
     /* Throws:
      *	NSPRException upon NSPR error 

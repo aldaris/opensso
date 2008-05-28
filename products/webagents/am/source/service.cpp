@@ -653,6 +653,11 @@ Service::~Service() {
 	     "Service::Service(): Thread pool was not yet initialized.");
     }
     if (policySvc != NULL) {
+        policySvc->sendNotificationMsg(false,
+                        mPolicyEntry->namingInfo.getPolicySvcInfo(),
+                        serviceName, mPolicyEntry->cookies,
+                        notificationURL);
+
         delete(policySvc);
     	Log::log(logID, Log::LOG_MAX_DEBUG,
 	     "Service::Service(): Policy service destroyed.");

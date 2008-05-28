@@ -163,7 +163,8 @@ am_policy_is_notification_enabled(am_policy_t policy_handle);
 AM_EXPORT am_status_t
 am_policy_notify(am_policy_t policy_handle,
 		    const char *notification_data,
-		    size_t notification_data_len);
+		    size_t notification_data_len,
+		    boolean_t configChangeNotificationEnabled);
 
 /**
  * Method will take two url resources compare and return an appropriate

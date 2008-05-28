@@ -93,6 +93,8 @@ AM_BEGIN_EXTERN_C
 #define AM_COMMON_FORWARD_PROXY_USER AM_COMMON_PROPERTY_PREFIX "forward.proxy.user"
 #define AM_COMMON_FORWARD_PROXY_PASSWORD AM_COMMON_PROPERTY_PREFIX "proxy.password"
 
+#define AM_COMMON_CONFIG_CHANGE_NOTIFICATION_ENABLE_PROPERTY AM_COMMON_PROPERTY_PREFIX "change.notification.enable"
+
 
 /*
  * This function must be called at the end of the program to
