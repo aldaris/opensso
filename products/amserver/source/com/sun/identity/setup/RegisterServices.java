@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.10 2008-04-25 03:15:56 veiming Exp $
+ * $Id: RegisterServices.java,v 1.11 2008-05-28 18:15:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,12 +31,14 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
@@ -71,6 +73,10 @@ public class RegisterServices {
         throws IOException, SMSException, SSOException {
         System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
         ServiceManager serviceManager = new ServiceManager(adminToken);
+        Map map = ServicesDefaultValues.getDefaultValues();
+        String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
+        String dirXML = basedir + "/config/xml";
+        (new File(dirXML)).mkdirs();
 
         for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
             String serviceFileName = (String)i.next();
@@ -96,7 +102,7 @@ public class RegisterServices {
                     String line = null;
 
                     while ((line = rawReader.readLine()) != null) {
-                        buff.append(line);
+                        buff.append(line).append("\n");
                     }
 
                     rawReader.close();
@@ -104,26 +110,16 @@ public class RegisterServices {
 
                     String strXML = buff.toString();
 
-                    // Flatfile idrepo removed : Following code will be removed.
-                    //String strXML = manipulateServiceXML(
-                    //serviceFileName, buff.toString());
-
                     if (tagswap) {
-                        if (serviceFileName.equals("idRepoService.xml")) {
-                            // false because there are <!-- and --!>
-                            // IMO, adding these comments is a heck.
-                            strXML = ServicesDefaultValues.tagSwap(strXML,
-                                false);
-                        } else {
-                            strXML = ServicesDefaultValues.tagSwap(strXML, 
-                                true);
-                        }
+                        strXML = ServicesDefaultValues.tagSwap(strXML, true);
                     }
                     serviceStream = (InputStream) new ByteArrayInputStream(
                         strXML.getBytes());
                     serviceManager.registerServices(serviceStream);
                     serviceStream.close();
                     serviceStream = null;
+                    AMSetupServlet.writeToFile(dirXML + "/" + serviceFileName,
+                        strXML);
                     SetupProgress.reportEnd("emb.success", null);
                 } finally {
                     if (rawReader != null) {
