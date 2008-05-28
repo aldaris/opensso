@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.7 2008-04-15 16:13:36 veiming Exp $
+ * $Id: Task.java,v 1.8 2008-05-28 18:08:34 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -175,11 +175,12 @@ public abstract class Task
                 mgr.getAllHostedIdentityProviderMetaAliases(realm));
             metaAliases.addAll(
                 mgr.getAllHostedServiceProviderMetaAliases(realm));
-            String metaAlias = (realm.equals("/")) ? "/idp" : realm + "/idp";
+            String metaAliasBase = (realm.equals("/")) ? "/idp" : realm + "/idp";
+            String metaAlias = metaAliasBase;
             int counter = 1;
 
             while (metaAliases.contains(metaAlias)) {
-                metaAlias = metaAlias + Integer.toString(counter);
+                metaAlias = metaAliasBase + Integer.toString(counter);
                 counter++;
             }
             return metaAlias;
@@ -197,11 +198,12 @@ public abstract class Task
                 mgr.getAllHostedIdentityProviderMetaAliases(realm));
             metaAliases.addAll(
                 mgr.getAllHostedServiceProviderMetaAliases(realm));
-            String metaAlias = (realm.equals("/")) ? "/sp" : realm + "/sp";
+            String metaAliasBase = (realm.equals("/")) ? "/sp" : realm + "/sp";
+            String metaAlias = metaAliasBase;
             int counter = 1;
 
             while (metaAliases.contains(metaAlias)) {
-                metaAlias = metaAlias + Integer.toString(counter);
+                metaAlias = metaAliasBase + Integer.toString(counter);
                 counter++;
             }
             return metaAlias;
