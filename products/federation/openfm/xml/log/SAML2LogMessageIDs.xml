@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAML2LogMessageIDs.xml,v 1.2 2007-10-04 04:39:42 hengming Exp $
+   $Id: SAML2LogMessageIDs.xml,v 1.3 2008-05-28 19:00:24 qcheng Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2102,6 +2102,50 @@
         </datainfo>
         <triggers>
             <item>Send a PAOS request to ECP.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="SUCCESS_FED_TERMINATION" id="160"
+        loglevel="LL_INFO"
+        description="Federation termination succeeded.">
+        <datainfo>
+            <item>user id</item>
+        </datainfo>
+        <triggers>
+            <item>Federation termination succeeded.</item>
+        </triggers>
+        <actions/>
+    </logmessage>    
+    <logmessage name="SUCCESS_NEW_NAMEID" id="161"
+        loglevel="LL_INFO"
+        description="New name identifier succeeded.">
+        <datainfo>
+            <item>user id</item>
+        </datainfo>
+        <triggers>
+            <item>New name identifier succeeded.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="UNKNOWN_PRINCIPAL" id="162"
+        loglevel="LL_INFO"
+        description="Unknown princial in manage name ID request.">
+        <datainfo>
+            <item>Manage Name ID request XML</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to find old name id in the management name id request.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="UNABLE_TO_TERMINATE" id="163"
+        loglevel="LL_INFO"
+        description="Unable to terminate federation.">
+        <datainfo>
+            <item>user id</item>
+        </datainfo>
+        <triggers>
+            <item>Unable to terminate federation.</item>
         </triggers>
         <actions/>
     </logmessage>

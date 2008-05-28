@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.12 2008-04-15 16:44:30 qcheng Exp $
+ * $Id: DoManageNameID.java,v 1.13 2008-05-28 19:00:24 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,6 +130,12 @@ public class DoManageNameID {
         debug.error(SAML2Utils.bundle.getString(msgID));
         String[] data = {value};
         LogUtil.error(Level.INFO, key, data, null);
+    }
+
+    private static void logAccess(String msgID, String key, String value) {
+        debug.message(SAML2Utils.bundle.getString(msgID));
+        String[] data = {value};
+        LogUtil.access(Level.INFO, key, data, null);
     }
     
     /**
@@ -939,6 +945,9 @@ public class DoManageNameID {
         }
 
         if (oldNameID == null) {
+            // log manage name id failure
+            logError("unknownPrinciapl", LogUtil.UNKNOWN_PRINCIPAL, 
+                mniRequest.toXMLString(true, true));
             return SAML2Utils.generateStatus(SAML2Constants.REQUESTER,
                 SAML2Constants.UNKNOWN_PRINCIPAL, null);
         }
@@ -954,12 +963,16 @@ public class DoManageNameID {
         }
                 
         if (!AccountUtils.removeAccountFederation(oldNameIDInfo, userID)) {
-
-            return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
+            // log termination failure
+            logError("unableToTerminate", LogUtil.UNABLE_TO_TERMINATE, userID);
+            return SAML2Utils.generateStatus(SAML2Constants.RESPONDER,
                 SAML2Utils.bundle.getString("unableToTerminate"));
         }
 
         if (mniRequest.getTerminate()) {
+            // log termination success
+            logAccess("requestSuccess", LogUtil.SUCCESS_FED_TERMINATION, 
+                userID);
             return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
                 SAML2Utils.bundle.getString("requestSuccess"));
         }
@@ -990,6 +1003,8 @@ public class DoManageNameID {
                 List list = (List)idpSession.getNameIDandSPpairs();
                 list.add(pair);
             }
+            // log new name id success
+            logAccess("requestSuccess", LogUtil.SUCCESS_NEW_NAMEID, userID);
             return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
                 SAML2Utils.bundle.getString("requestSuccess"));
         }
@@ -1048,6 +1063,8 @@ public class DoManageNameID {
             SPCache.fedSessionListsByNameIDInfoKey.put(newInfoKeyStr,
                 spFedSessions);
         }
+        // log new name id success
+        logAccess("requestSuccess", LogUtil.SUCCESS_NEW_NAMEID, userID);
         return SAML2Utils.generateStatus(SAML2Constants.SUCCESS,
             SAML2Utils.bundle.getString("requestSuccess"));
     }
@@ -1471,10 +1488,16 @@ public class DoManageNameID {
             }
 
             if (!AccountUtils.removeAccountFederation(oldNameIDInfo, userID)) {
+                // log termination failure
+                logError("unableToTerminate", LogUtil.UNABLE_TO_TERMINATE, 
+                    userID);
                 return false;
             }
 
             if (origMniReq.getTerminate()) {
+                // log termination success
+                logAccess("requestSuccess", LogUtil.SUCCESS_FED_TERMINATION, 
+                    userID);
                 return true;
             }
 
@@ -1559,6 +1582,8 @@ public class DoManageNameID {
                     }
                 }
             }
+            // log manage name id success
+            logAccess("newNameIDSuccess", LogUtil.SUCCESS_NEW_NAMEID, userID);
             success = true;
 
         } else {

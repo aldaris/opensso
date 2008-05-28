@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.5 2007-10-04 04:30:43 hengming Exp $
+ * $Id: LogUtil.java,v 1.6 2008-05-28 19:00:11 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -349,6 +349,11 @@ public class LogUtil {
             "MISMATCH_ISSUER_IN_ASSERTION_FROM_PDP";
     public static final String INVALID_SIGNATURE_ASSERTION_FROM_PDP=
             "INVALID_SIGNATURE_ASSERTION_FROM_PDP";
+    public static final String SUCCESS_FED_TERMINATION = 
+            "SUCCESS_FED_TERMINATION";
+    public static final String SUCCESS_NEW_NAMEID = "SUCCESS_NEW_NAMEID";
+    public static final String UNKNOWN_PRINCIPAL = "UNKNOWN_PRINCIPAL";
+    public static final String UNABLE_TO_TERMINATE = "UNABLE_TO_TERMINATE";
                                           
     private static final String SAML2_LOG = "SAML2";
     private static Logger logger = null;
