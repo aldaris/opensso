@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.29 2008-05-15 03:58:15 veiming Exp $
+ * $Id: FederationManager.java,v 1.30 2008-05-28 21:25:32 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,6 +69,7 @@ public class FederationManager {
             "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
             "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
             "affiliation|F|s|Specify metaAlias for hosted affiliation. to be created. The format must be <realm name>/<identifier>",
+            "affiownerid|N|m|Affiliation Owner ID", 
             "affimembers|M|m|Affiliation members",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
@@ -90,6 +91,7 @@ public class FederationManager {
         resourceStrings={
             "create-meta-template-exception-role-null=Identity or Service Provider or Policy Enforcement Point or Policy Decision Point or Attribute Query Provider or Attribute Authority or Authentication Authority or Affiliation are required.",
             "create-meta-template-exception-affi-conflict=Affiliation and other providers can't coexist.",
+            "create-meta-template-exception-affi-ownerid-empty=Affiliation Owner ID is required.", 
             "create-meta-template-exception-affi-members-empty=Affiliation members is required.",
             "create-meta-template-exception-affi-null-with-cert-alias=Affiliation Certificate Alias was provided without Affiliation Name.",
             "create-meta-template-exception-idp-null-with-cert-alias=Identity Provider Certificate Alias was provided without Identity Provider Name.",

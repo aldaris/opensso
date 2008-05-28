@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.14 2008-04-22 21:43:15 babysunil Exp $
+ * $Id: EntityModelImpl.java,v 1.15 2008-05-28 21:27:02 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,11 +162,14 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     
                     data.put(PROTOCOL, IDFF);
                     data.put(ROLE, listToString(getIDFFRoles(name, realm)));
-                    if (hostedEntities.contains(name)) {
+                    if(isAffiliate(IDFF, realm, name)){
+                        data.put(LOCATION, "");
+                    } else if ((hostedEntities != null) && 
+                        hostedEntities.contains(name)) {
                         data.put(LOCATION, HOSTED);
                     } else {
                         data.put(LOCATION, REMOTE);
-                    }
+                    } 
                     
                     idffMap.put(name, (HashMap)data);
                 }
@@ -513,22 +516,22 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType
                 idff_ad = null;
         com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType
-                samlv2_sd = null;
+                samlv2_sd = null;        
         try {
             if (protocol.equals(IDFF)) {
                 IDFFMetaManager idffManager = new IDFFMetaManager(
                         getUserSSOToken());
                 idff_ad = (
                 com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType)
-                    idffManager.getAffiliationDescriptor(realm, name);
+                    idffManager.getAffiliationDescriptor(realm, name);                
             } else if (protocol.equals(SAMLV2)) {
                 SAML2MetaManager samlManager = new SAML2MetaManager();
                 samlv2_sd = (
                 com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType)
                     samlManager.getAffiliationDescriptor(realm, name);
-            }
+            }      
             if (idff_ad != null || samlv2_sd != null ) {
-                isAffiliate = true;
+                isAffiliate = true;               
             }
         } catch (IDFFMetaException  e) {
             if (debug.warningEnabled()) {

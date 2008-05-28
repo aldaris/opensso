@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.31 2008-04-15 16:13:35 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.32 2008-05-28 21:26:12 asyhuang Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,6 +77,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String attrqSCertAlias;
     private String attrqECertAlias;
     private String affiAlias;
+    private String affiOwnerID;
     private List   affiMembers;
     private String affiSCertAlias;
     private String affiECertAlias;
@@ -165,6 +166,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         pepAlias = getStringOptionValue(FedCLIConstants.ARGUMENT_PEP);
         affiAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_AFFILIATION);
+        affiOwnerID = getStringOptionValue(
+            FedCLIConstants.ARGUMENT_AFFI_OWNERID);
         affiMembers = (List)rc.getOption(
             FedCLIConstants.ARGUMENT_AFFI_MEMBERS);
         
@@ -325,6 +328,14 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
 
+        if ((affiAlias != null) &&
+            ((affiOwnerID == null))
+        ) {
+            throw new CLIException(getResourceString(
+                "create-meta-template-exception-affi-ownerid-empty"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+        
         if ((affiAlias == null) &&
             ((affiSCertAlias != null) || (affiECertAlias != null))
         ) {
@@ -661,6 +672,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             attrqAlias);
         map.put(MetaTemplateParameters.P_AUTHN_AUTHORITY, authnaAlias);
         map.put(MetaTemplateParameters.P_AFFILIATION, affiAlias);
+        map.put(MetaTemplateParameters.P_AFFI_OWNERID, affiOwnerID);
         map.put(MetaTemplateParameters.P_AFFI_MEMBERS, affiMembers);
         map.put(MetaTemplateParameters.P_PDP, pdpAlias);
         map.put(MetaTemplateParameters.P_PEP, pepAlias);
