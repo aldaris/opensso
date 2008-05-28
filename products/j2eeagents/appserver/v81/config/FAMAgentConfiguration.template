@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.6 2008-05-21 21:14:25 huacui Exp $
+# $Id: FAMAgentConfiguration.template,v 1.7 2008-05-28 17:09:25 huacui Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -377,7 +377,7 @@ com.sun.identity.agents.config.login.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES
 
 #
 # LOGOUT URL
-#   Specifies the login URLs to be used by the Agent to log out
+#   Specifies the logout URLs to be used by the Agent to log out
 #   the authenticated users from the Federated Access Manager 
 #   authentication service.
 # Hot-Swap Enabled: Yes
