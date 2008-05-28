@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigInheritViewBean.java,v 1.4 2008-04-22 00:23:15 veiming Exp $
+ * $Id: AgentConfigInheritViewBean.java,v 1.5 2008-05-28 18:29:23 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,11 +208,14 @@ public class AgentConfigInheritViewBean
                             displayName);
 
                         try {
-                            String help = rb.getString(as.getI18NKey() + ".help");
-                            tblPropertyNamesModel.setValue(TBL_DATA_PROPERTY_HELP,
-                                help);
+                            String help = rb.getString(as.getI18NKey() +
+                                ".help");
+                            tblPropertyNamesModel.setValue(
+                                TBL_DATA_PROPERTY_HELP, help);
                         } catch (MissingResourceException e) {
-                            //ignore if there are not help
+                            // need to clear the help value
+                            tblPropertyNamesModel.setValue(
+                                TBL_DATA_PROPERTY_HELP, "");
                         }
 
                         Object oValue = groupValues.get(name);
