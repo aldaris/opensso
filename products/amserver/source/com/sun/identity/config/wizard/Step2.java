@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.8 2008-04-17 17:27:29 veiming Exp $
+ * $Id: Step2.java,v 1.9 2008-05-28 18:18:00 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,11 +51,20 @@ public class Step2 extends AjaxPage {
         }
         add("platformLocale", val);
 
-        val = (String)getContext().getSessionAttribute("configDirectory");
-        if (val == null) {
-            val = getBaseDir(getContext().getRequest());
+        String presetDir = AMSetupServlet.getPresetConfigDir();
+        if ((presetDir == null) || (presetDir.trim().length() == 0)) {
+            add("fixDir",
+                "onkeyup=\"APP.callDelayed(this, validateConfigDir)\"");
+            val = (String)getContext().getSessionAttribute("configDirectory");
+            if (val == null) {
+                val = getBaseDir(getContext().getRequest());
+            }
+            add("configDirectory", val);
+        } else {
+            add("fixDir", "disabled");
+            add("configDirectory", presetDir);
         }
-        add("configDirectory", val);
+       
         super.onInit();
     }   
 
