@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.6 2008-01-18 23:06:04 babysunil Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.7 2008-05-28 18:41:57 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -221,14 +221,6 @@ public interface WSFedPropertiesModel extends EntityModel {
     String getClaimType(FederationElement fedElem);
     
     /**
-     * Returns Signing Certificate for the FederationElement passed.
-     *
-     * @param fedElem is the FederationElement Object.
-     * @return Signing Certificate for the FederationElement passed.
-     */
-    byte[] getSignCert(FederationElement fedElem);
-    
-    /**
      * Saves the extended metadata attribute values for the SP.
      *
      * @param realm to which the entity belongs.
@@ -263,15 +255,19 @@ public interface WSFedPropertiesModel extends EntityModel {
     /**
      * Saves the standard attribute values for the IDP.
      *
-     * @param fedElem is standard metadata object.
+     * @param entityName is entityid.
      * @param idpStdValues contain standard attribute values of idp.
      * @param realm to which the entity belongs.
-     * @throws AMConsoleException if saving of attribute value fails.
+     * @param idpExtValues contain extended attribute values.
+     * @param location the information whether remote or hosted.
+     * @throws AMConsoleException if saving of attribute value fails. 
      */
     void setIDPSTDAttributeValues(
-        FederationElement fedElem,
+        String entityName,
         Map idpStdValues,
-        String realm
+        String realm,
+        Map idpExtValues,
+        String location
     ) throws AMConsoleException;
     
     /**

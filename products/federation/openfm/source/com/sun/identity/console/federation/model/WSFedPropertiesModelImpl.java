@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.7 2008-01-18 23:06:18 babysunil Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.8 2008-05-28 18:42:13 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaSecurityUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
@@ -247,18 +248,6 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     }
     
     /**
-     * Returns Signing Certificate for the given <code>FederationElement</code>.
-     *
-     * @param fedElem is the FederationElement Object.
-     * @return Signing Certificate for the FederationElement passed.
-     */
-    public byte[] getSignCert(FederationElement fedElem) {
-        byte[] signCert = null;
-        signCert = WSFederationMetaManager.getTokenSigningCertificate(fedElem);
-        return signCert;
-    }
-    
-    /**
      * Saves the attribute values from the General page.
      *
      * @param realm to which the entity belongs.
@@ -434,16 +423,22 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     /**
      * Saves the standard attribute values for the IDP.
      *
-     * @param fedElem is standard metadata object
+     * @param entityName is entityid.
      * @param idpStdValues contain standard attribute values of idp.
      * @param realm to which the entity belongs.
+     * @param idpExtValues contain extended attribute values.
+     * @param location the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPSTDAttributeValues(
-        FederationElement fedElem,
+        String entityName,
         Map idpStdValues,
-        String realm
+        String realm,
+        Map idpExtValues,
+        String location
     ) throws AMConsoleException {
+        FederationElement fedElem =
+                    getEntityDesc(realm, entityName);
         List claimList = null;
         ClaimType claimType = null;
         DisplayNameType displayName = null;
@@ -491,6 +486,11 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             WSFederationConstants.NAMED_CLAIM_UPN]);
         }
         try {
+            if (location.equals("hosted")) {
+                String idp_certalias = getResult(idpExtValues, TFSIGNCERT_ALIAS);
+                WSFederationMetaSecurityUtils.updateProviderKeyInfo(
+                realm, entityName, idp_certalias, true);
+            }
             WSFederationMetaManager.setFederation(realm, fedElem);
         } catch (WSFederationMetaException e) {
             debug.warning
@@ -736,5 +736,24 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
      */
     public Map getIDPSTDDataMap() {
         return IDPSTD_DATA_MAP;
+    }
+
+    /**
+     * Returns value as a string corresponding to the key passed.
+     *
+     * @param map is a map of key/value pair.
+     * @param value is the key passed.
+     * @return value as a string corresponding to the key passed.
+     */
+    private String getResult(Map map, String value) {
+        Set set = (Set)map.get(value);
+        String val = null;
+        if (set != null  && !set.isEmpty() ) {
+            Iterator  i = set.iterator();
+            while ((i !=  null) && (i.hasNext())) {
+                val = (String)i.next();
+            }
+        }
+        return val;
     }
 }

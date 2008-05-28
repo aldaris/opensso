@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedIDPViewBean.java,v 1.5 2008-01-18 23:05:28 babysunil Exp $
+ * $Id: WSFedIDPViewBean.java,v 1.6 2008-05-28 18:42:48 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,20 +92,18 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
             //retrieve all the extended metadata values from the property sheet
             Map idpExtValues =
                 ps.getAttributeValues(model.getIDPEXDataMap(), false, model);
-            
-            //save the extended metadata values for the Idp
-            model.setIDPExtAttributeValues(realm, entityName, idpExtValues, 
-                location);
-            
+
             //retrieve all the standard metadata values from the property sheet
             Map idpStdValues =
                 ps.getAttributeValues(model.getIDPSTDDataMap(), false, model);
-            
+
             //save the standard metadata values for the Idp
-            //TBD--claimtype saving once backend api is complete
-            FederationElement fedElem =
-                    model.getEntityDesc(realm, entityName);
-            model.setIDPSTDAttributeValues(fedElem, idpStdValues, realm);
+            model.setIDPSTDAttributeValues(entityName, idpStdValues, realm,
+                idpExtValues, location);
+            
+            //save the extended metadata values for the Idp
+            model.setIDPExtAttributeValues(realm, entityName, idpExtValues, 
+                location); 
             
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "wsfed.idp.property.updated");
