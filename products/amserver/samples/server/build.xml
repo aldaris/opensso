@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2007-07-12 19:28:31 veiming Exp $
+   $Id: build.xml,v 1.7 2008-05-28 20:29:08 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -52,7 +52,7 @@
             <src path="${samples.server.source.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
-        <unjar src="${amserver.dist.dir}/opensso.war"
+        <unjar src="${amserver.dist.dir}/opensso-amserver.war"
             dest="${samples.server.package.dir}" />
 
         <copy file="${amserver.samples.dir}/clientsdk/www/sunLogo.gif"

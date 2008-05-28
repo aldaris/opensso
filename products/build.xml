@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.29 2008-04-03 16:13:14 bigfatrat Exp $
+   $Id: build.xml,v 1.30 2008-05-28 20:29:04 kevinserwin Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -146,7 +146,7 @@
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/opensso-test.jar"
             todir="${openfm.extlib.dir}"  />
-        <copy file="${amserver.dist.dir}/opensso.war"
+        <copy file="${amserver.dist.dir}/opensso-amserver.war"
             todir="${openfm.extlib.dir}"  />
             
         <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"

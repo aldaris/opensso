@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2006-12-08 21:02:12 veiming Exp $
+   $Id: build.xml,v 1.8 2008-05-28 20:29:11 kevinserwin Exp $
 
    Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,7 @@
 
     <target name="all" depends="build">
         <delete dir="${demo.package.dir}" />
-        <unjar src="${amserver.dist.dir}/opensso.war" dest="${demo.package.dir}" />
+        <unjar src="${amserver.dist.dir}/opensso-amserver.war" dest="${demo.package.dir}" />
         <copy file="${demo.www.dir}/jsp/EvaluatePolicy.jsp" todir="${demo.package.dir}" />
         <mkdir dir="${demo.package.dir}/WEB-INF/classes/com/sun/identity/demo/server" />
         <copy file="${demo.classes.dir}/com/sun/identity/demo/server/EvaluatePolicyServlet.class"
