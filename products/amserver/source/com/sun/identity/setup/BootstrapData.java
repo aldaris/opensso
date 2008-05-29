@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.7 2008-05-15 00:45:47 veiming Exp $
+ * $Id: BootstrapData.java,v 1.8 2008-05-29 23:19:26 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -373,59 +373,36 @@ public class BootstrapData {
     static String createBootstrapResource(Map configuration, boolean legacy)
         throws UnsupportedEncodingException
     {
-        StringBuffer buff = new StringBuffer();
+        if (legacy) {
+            return (String) configuration.get(FF_BASE_DIR);
+        }
+
         String protocol = (String)configuration.get(PROTOCOL);
-        String pwd = Crypt.encode((String)configuration.get(PWD),
+        // remove ://
+        protocol = protocol.substring(0, protocol.length() -3);
+        String pwd = Crypt.encode((String) configuration.get(PWD),
             Crypt.getHardcodedKeyEncryptor());
-        String serverInstance = (String)configuration.get(
+        String serverInstance = (String) configuration.get(
             SERVER_INSTANCE);
 
-        if (legacy) {
-            buff.append((String)configuration.get(FF_BASE_DIR));
-        } else if (protocol.equals(PROTOCOL_FILE)) {
-            buff.append(PROTOCOL_FILE);
-            buff.append((String)configuration.get(BASE_DIR));
-            buff.append("/");
-            buff.append(URLEncoder.encode(serverInstance, "UTF-8"));
-            buff.append("?");
-            buff.append(PWD);
-            buff.append("=");
-            buff.append(URLEncoder.encode(pwd, "UTF-8"));
-            buff.append("&");
-            buff.append(FF_BASE_DIR);
-            buff.append("=");
-            buff.append(URLEncoder.encode(
-                (String)configuration.get(FF_BASE_DIR), "UTF-8"));
-        } else {
-            buff.append(protocol);
-            buff.append((String)configuration.get(DS_HOST));
-            buff.append(":");
-            buff.append((String)configuration.get(DS_PORT));
-            buff.append("/");
-            buff.append(URLEncoder.encode(serverInstance, "UTF-8"));
-            buff.append("?");
-            buff.append(PWD);
-            buff.append("=");
-            buff.append(URLEncoder.encode(pwd, "UTF-8"));
+        String url = BootstrapCreator.template;
+        url = url.replaceAll("@DS_PROTO@", protocol);
 
-            buff.append("&");
-            buff.append(DS_BASE_DN);
-            buff.append("=");
-            buff.append(URLEncoder.encode((String)configuration.get(
-                DS_BASE_DN), "UTF-8"));
-            buff.append("&");
-            buff.append(DS_MGR);
-            buff.append("=");
-            buff.append(URLEncoder.encode((String)configuration.get(
-                DS_MGR), "UTF-8")); 
-            buff.append("&");
-            buff.append(DS_PWD);
-            buff.append("=");
-            buff.append(URLEncoder.encode(
-                Crypt.encode((String)configuration.get(DS_PWD),
-                    Crypt.getHardcodedKeyEncryptor()), "UTF-8")); 
-        }
-        return buff.toString();
+        String dsHost = (String)configuration.get(DS_HOST) + ":" +
+            (String)configuration.get(DS_PORT);
+        url = url.replaceAll("@DS_HOST@", dsHost);
+        url = url.replaceAll("@INSTANCE_NAME@",
+            URLEncoder.encode(serverInstance, "UTF-8"));
+        url = url.replaceAll("@DSAMEUSER_PWD@",
+            URLEncoder.encode(pwd, "UTF-8"));
+        url = url.replaceAll("@BASE_DN@",
+            URLEncoder.encode((String)configuration.get(DS_BASE_DN), "UTF-8"));
+        url = url.replaceAll("@BIND_DN@",
+            URLEncoder.encode((String)configuration.get(DS_MGR), "UTF-8")); 
+        url = url.replaceAll("@BIND_PWD@",
+            URLEncoder.encode(Crypt.encode((String)configuration.get(DS_PWD),
+                Crypt.getHardcodedKeyEncryptor()), "UTF-8")); 
+        return url;
     }
 
     private void readFile(String file) 

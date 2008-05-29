@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.4 2008-04-02 18:52:46 bina Exp $
+ * $Id: BootstrapCreator.java,v 1.5 2008-05-29 23:19:25 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 /**
  * This class is responsible for creating bootstrap file based on the
@@ -51,12 +50,13 @@ import java.util.StringTokenizer;
 public class BootstrapCreator {
     private static BootstrapCreator instance = new BootstrapCreator();
     
-    private static final String template =
+    static final String template =
         "@DS_PROTO@://@DS_HOST@/@INSTANCE_NAME@" +
         "?pwd=@DSAMEUSER_PWD@" +
         "&dsbasedn=@BASE_DN@" +
         "&dsmgr=@BIND_DN@" +
-        "&dspwd=@BIND_PWD@";
+        "&dspwd=@BIND_PWD@" +
+        "&ver=1.0";
      
     private BootstrapCreator() {
     }
