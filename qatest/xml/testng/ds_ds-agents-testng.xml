@@ -20,13 +20,13 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-agents-testng.xml,v 1.7 2008-04-18 19:28:51 nithyas Exp $: 
+ $Id: ds_ds-agents-testng.xml,v 1.8 2008-05-29 03:11:57 nithyas Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ds_ds-agents" verbose="5">
-   <test name="Hot Swap J2EE Agents Tests 1">
+<suite name="ds_ds-agents" verbose="1">
+     <test name="Hot Swap J2EE Agents Tests 1">
             <parameter name="policyIdx" value="0"/>
             <parameter name="evaluationIdx" value="0"/>
             <parameter name="testIdx" value="0"/>
@@ -39,9 +39,9 @@
             </groups>
             <classes>
                 <class name="com.sun.identity.qatest.agents.ConfigureUnconfigure"/>
-                <class name="com.sun.identity.qatest.agents.J2EEAgentHotSwapTests"/>
+               <class name="com.sun.identity.qatest.agents.J2EEAgentHotSwapTests"/>
             </classes>
-    </test>  
+    </test>
     <test name="Hot Swap J2EE Agents Tests 2">
             <parameter name="policyIdx" value="0"/>
             <parameter name="evaluationIdx" value="0"/>
@@ -71,7 +71,7 @@
             <classes>
                 <class name="com.sun.identity.qatest.agents.J2EEAgentHotSwapTests"/>
             </classes>
-    </test>  
+    </test>
     <test name="Hot Swap Web Agents Tests 1">
             <parameter name="policyIdx" value="0"/>
             <parameter name="evaluationIdx" value="0"/>
@@ -129,7 +129,7 @@
             <classes>
                 <class name="com.sun.identity.qatest.agents.AgentTests3_0_Local"/>
             </classes>
-    </test>  
+    </test>
     <test name="AgentsSample Test 1">
             <parameter name="policyIdx" value="0"/>
             <parameter name="evaluationIdx" value="0"/>
