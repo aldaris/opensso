@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.5 2007-11-29 07:53:04 mrudul_uchil Exp $
+$Id: README,v 1.6 2008-05-29 06:45:57 mrudul_uchil Exp $
 
 %% Contents:
     %% 1. Build requirements
@@ -53,12 +53,7 @@ is setup correctly pointing to its location.
        as -
        opensso/products/wssagents/extlib
        
-       For example, for "glassfish", you need to add
-       1) javaee.jar
-       2) appserv-rt.jar 
-       under opensso/products/wssagents/extlib
-       
-       For WebLogic Server, you need to add weblogic.jar under
+       For example, for WebLogic Server, you need to add weblogic.jar under
        opensso/products/wssagents/extlib
        You can get the weblogic.jar from a weblogic server installation.
 

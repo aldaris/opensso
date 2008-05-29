@@ -18,12 +18,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHttpAuthModule.java,v 1.1 2007-06-08 06:39:01 mrudul_uchil Exp $
+ * $Id: FAMHttpAuthModule.java,v 1.1 2008-05-29 06:46:01 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
  
-package com.sun.identity.wssagents.glassfish;
+package com.sun.identity.wssagents.common.provider;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -33,41 +33,28 @@ import java.net.URLClassLoader;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.xml.soap.SOAPMessage;
+import javax.security.auth.message.module.ServerAuthModule;
+import javax.security.auth.message.MessagePolicy;
+import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.AuthException;
+import javax.security.auth.message.AuthStatus;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.sun.enterprise.security.jauth.AuthParam;
-import com.sun.enterprise.security.jauth.AuthPolicy;
-import com.sun.enterprise.security.jauth.HttpServletAuthParam;
-import com.sun.enterprise.security.jauth.AuthException;
-import com.sun.enterprise.security.jauth.ServerAuthModule;
 
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import com.sun.identity.wssagents.common.FAMClientClassLoader;
+import com.sun.identity.classloader.FAMClassLoader;
 
 /**
- * This interface describes a module that can be configured
- * for a ServerAuthContext. The main purpose of this module
- * is to validate client requests and to secure responses back to the client.
- *
- * <p> A module implementation must assume it may be shared
- * across different requests from different clients.
- * It is the module implementation's responsibility to properly
- * store and restore any state necessary to associate new requests
- * with previous responses.  A module that does not need to do so
- * may remain completely stateless.
- *
- * <p> Modules are passed a shared state Map that can be used
- * to save state across a sequence of calls from <code>validateRequest</code>
- * to <code>secureResponse</code> to <code>disposeSubject</code>.
- * The same Map instance is guaranteed to be passed to all methods
- * in the call sequence.  Furthermore, it should be assumed that
- * each call sequence is passed its own unique shared state Map instance.
- *
+ * The <code>FAMHttpAuthModule</code> class implements an interface
+ * <code>ServerAuthModule</code> defined by the JSR196 and will be invoked
+ * by the JSR196 for Validating webservice requests and Securing the
+ * webservice responses.
  */
 public class FAMHttpAuthModule implements ServerAuthModule {
     // Pointer to HttpRequestHandler
@@ -80,39 +67,34 @@ public class FAMHttpAuthModule implements ServerAuthModule {
     
     // Instance of HttpRequestHandler
     private Object httpAuthModule;
+    private static ClassLoader cls;
     
     /**
-     * Initializes this module with a policy to enforce,
-     * a CallbackHandler, and administrative options.
-     *
-     * <p> Either the the request policy or the response policy (or both)
-     * must be non-null.
-     *
-     * @param requestPolicy the request policy this module is to enforce,
-     *		which may be null.
-     *
-     * @param responsePolicy the response policy this module is to enforce,
-     *		which may be null.
-     *
-     * @param handler CallbackHandler used to request information
-     *		from the caller.
-     *
-     * @param options administrative options.
+     * Initializes the module using the configuration defined through
+     * deployment descriptors.
+     * @param requestPolicy
+     * @param responsePolicy
+     * @param handler a
+     *     <code>javax.security.auth.callback.CallbackHandler</code>
+     * @param options
+     * @exception AuthException for any failures.
      */
-    public void initialize(AuthPolicy requestPolicy,
-        AuthPolicy responsePolicy,
-        CallbackHandler handler,
-        Map options) {
-        
+    public void initialize(MessagePolicy requestPolicy,
+	       MessagePolicy responsePolicy,
+	       CallbackHandler handler,
+	       Map options) throws AuthException {
+        /*
         if(_logger != null) {
             _logger.log(Level.INFO, "FAMHttpAuthModule.Init");
         }
         
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
             if (_handler == null) {
-                // Get the class loader
-                URLClassLoader cls =
-                    FAMClientClassLoader.getFAMClientClassLoader();
+                // Get the FAM Classloader
+                cls = FAMClassLoader.getFAMClassLoader(null,jars);
+                Thread.currentThread().setContextClassLoader(cls);
+                
                 // Get a pointer to the class
                 _handler = cls.loadClass(
                     "com.sun.identity.wss.security.handler.HTTPRequestHandler");
@@ -141,33 +123,28 @@ public class FAMHttpAuthModule implements ServerAuthModule {
                     "FAMHttpAuthModule.initialize failed");
             }
             ex.printStackTrace();
-        }
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldcc);
+        }*/
     }
     
     /**
-     * Authenticates a client request.
+     * Validates the SOAP Request based on the configuration
+     * enforcement on the webservice endpoint and exposes the principal
+     * and credentials for the application.
      *
-     * <p> The AuthParam input parameter encapsulates the client request and
-     * server response objects.  This ServerAuthModule validates the client
-     * request object (decrypts content and verifies a signature, for example).
-     *
-     * @param param an authentication parameter that encapsulates the
-     *          client request and server response objects.
-     *
-     * @param subject the subject may be used by configured modules
-     *		to store and Principals and credentials validated
-     *		in the request.
-     *
-     * @param sharedState a Map for modules to save state across
-     *		a sequence of calls from <code>validateRequest</code>
-     *		to <code>secureResponse</code> to <code>disposeSubject</code>.
-     *
-     * @exception AuthException if the operation failed.
+     * @param messageInfo that has a inbound <code>SOAPMessage</code>
+     * @param clientSubject Client J2EE <code>Subject</code>
+     * @param serviceSubject Service J2EE <code>Subject</code>
+     * @return AuthStatus if successful in validating the request.
+     * @exception AuthException if there is an error occured in validating
+     *            the request.
      */
-    public void validateRequest(AuthParam param,
-        Subject subject,
-        Map sharedState)
-        throws AuthException {
+    public AuthStatus validateRequest(MessageInfo messageInfo,
+			       Subject clientSubject,
+			       Subject serviceSubject) throws AuthException {
+        
+        /*ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         
         HttpServletAuthParam httpAuthParam = (HttpServletAuthParam)param;
         HttpServletRequest request = httpAuthParam.getRequest();
@@ -179,6 +156,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
         args[1] = request;
         Boolean authN = Boolean.FALSE;
         try {
+            Thread.currentThread().setContextClassLoader(cls);
             authN = (Boolean) shouldAuthenticate.invoke(httpAuthModule, args);
         } catch (Exception ex) {
             if(_logger != null) {
@@ -189,6 +167,8 @@ public class FAMHttpAuthModule implements ServerAuthModule {
             AuthException ae = new AuthException(ex.getMessage());
             ae.initCause(ex);
             throw (ae);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldcc);
         }
         
         if (authN.booleanValue()) {
@@ -196,6 +176,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
             args[0] = request;
             String loginURL = null;
             try {
+                Thread.currentThread().setContextClassLoader(cls);
                 loginURL = (String) getLoginURL.invoke(httpAuthModule, args);
             } catch (Exception ex) {
                 if(_logger != null) {
@@ -207,7 +188,10 @@ public class FAMHttpAuthModule implements ServerAuthModule {
                 AuthException ae = new AuthException(ex.getMessage());
                 ae.initCause(ex);
                 throw (ae);
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldcc);
             }
+            
             if(_logger != null) {
                 _logger.log(Level.FINE,
                     "FAMHttpAuthModule.validateRequest: LoginURL :" 
@@ -226,49 +210,42 @@ public class FAMHttpAuthModule implements ServerAuthModule {
                     throw (ae);
                 }
             }
+        }*/
+        return AuthStatus.SUCCESS;
+    }
+    
+    /**
+     * Secures the response sending by the application by reading
+     * the configuration from the application deployment descriptors.
+     *
+     * @param messageInfo that has a <code>SOAPMessage</code>.
+     * @param serviceSubject Service J2EE <code>Subject</code> that will have 
+     *        authenticated principal
+     * @return AuthStatus if successful
+     * @exception AuthException for any error while securing the response.
+     */
+    public AuthStatus secureResponse(MessageInfo messageInfo, 
+        Subject serviceSubject) throws AuthException {
+        return AuthStatus.SUCCESS;
+    }
+    
+    /**
+     * Diposes the subject and security credentials.
+     * @param messageInfo
+     * @param subject
+     * @exception AuthException if there is an error occured while disposing 
+     *     the subject.
+     */
+    public void cleanSubject(MessageInfo messageInfo, Subject subject)
+	throws AuthException {
+        
+        if(subject == null) {
+            throw new AuthException("nullSubject");
         }
     }
     
-    /**
-     * Secures the response to the client
-     * (sign and encrypt the response, for example).
-     *
-     * @param param an authentication parameter that encapsulates the
-     *          client request and server response objects.
-     *
-     * @param subject the subject may be used by configured modules
-     *		to obtain credentials needed to secure the response, or null.
-     *		If null, the module may use a CallbackHandler to obtain
-     *		the necessary information.
-     *
-     * @param sharedState a Map for modules to save state across
-     *		a sequence of calls from <code>validateRequest</code>
-     *		to <code>secureResponse</code> to <code>disposeSubject</code>.
-     *
-     * @exception AuthException if the operation failed.
-     */
-    public void secureResponse(AuthParam param,
-        Subject subject,
-        Map sharedState)
-        throws AuthException {
-    }
-    
-    /**
-     * Disposes of the Subject.
-     *
-     * <p> Remove Principals or credentials from the Subject object
-     * that were stored during <code>validateRequest</code>.
-     *
-     * @param subject the Subject instance to be disposed.
-     *
-     * @param sharedState a Map for modules to save state across
-     *		a sequence of calls from <code>validateRequest</code>
-     *		to <code>secureResponse</code> to <code>disposeSubject</code>.
-     *
-     * @exception AuthException if the operation failed.
-     */
-    public void disposeSubject(Subject subject, Map sharedState)
-    throws AuthException {
+    public Class[] getSupportedMessageTypes() {
+        return null;
     }
     
     private static Logger _logger = null;
@@ -279,4 +256,18 @@ public class FAMHttpAuthModule implements ServerAuthModule {
             "javax.enterprise.system.core.security");
     }
     
+    /**
+     * The list of jar files to be loaded by FAMClassLoader.
+     */
+    public static String[] jars = new String[]{
+        "webservices-api.jar",
+        "webservices-rt.jar",
+        "webservices-tools.jar",
+        "webservices-extra-api.jar",
+        "webservices-extra.jar",
+        "openssoclientsdk.jar",
+        "openssowssproviders.jar",
+        "xalan.jar",
+        "xercesImpl.jar"
+    };
 }

@@ -18,39 +18,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHttpServletResponse.java,v 1.1 2007-07-06 19:17:05 huacui Exp $
+ * $Id: FAMServletInputStream.java,v 1.1 2008-05-29 06:46:04 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.wssagents.common;
+package com.sun.identity.wssagents.weblogic;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.ServletOutputStream;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import javax.servlet.ServletInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
- * A helper class used to manage the servlet response content. 
+ * A helper class used to manage the servlet request content. 
  */
-public class FAMHttpServletResponse extends HttpServletResponseWrapper
+public class FAMServletInputStream extends ServletInputStream
 {
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    InputStream is;
 
-    public FAMHttpServletResponse(HttpServletResponse response) {
-        super(response);
+    public FAMServletInputStream(InputStream is) {
+        this.is = is;
     }
 
-    public ServletOutputStream getOutputStream() {
-        return new FAMServletOutputStream(bos);
-    }
-
-    /**
-     * Returns the contents of the response
-     */
-    public String getContents() {
-        return bos.toString();
+    public int read() throws IOException {
+        return is.read();
     }
 }

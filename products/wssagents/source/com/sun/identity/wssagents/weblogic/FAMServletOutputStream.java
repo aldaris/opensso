@@ -18,30 +18,30 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServletInputStream.java,v 1.1 2007-07-06 19:17:34 huacui Exp $
+ * $Id: FAMServletOutputStream.java,v 1.1 2008-05-29 06:46:04 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.wssagents.common;
+package com.sun.identity.wssagents.weblogic;
 
-import javax.servlet.ServletInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import javax.servlet.ServletOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 
 /**
- * A helper class used to manage the servlet request content. 
+ * A helper class used to manage the servlet response content. 
  */
-public class FAMServletInputStream extends ServletInputStream
+public class FAMServletOutputStream extends ServletOutputStream
 {
-    InputStream is;
+    OutputStream os;
 
-    public FAMServletInputStream(InputStream is) {
-        this.is = is;
+    public FAMServletOutputStream(OutputStream os) {
+        this.os = os;
     }
 
-    public int read() throws IOException {
-        return is.read();
+    public void write(int b) throws IOException {
+        os.write(b);
     }
 }

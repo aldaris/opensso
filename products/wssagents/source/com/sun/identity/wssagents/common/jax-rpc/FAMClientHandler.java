@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClientHandler.java,v 1.1 2007-07-06 19:18:50 huacui Exp $
+ * $Id: FAMClientHandler.java,v 1.2 2008-05-29 06:46:01 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,7 +39,7 @@ import com.sun.identity.wss.security.handler.SOAPRequestHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-import weblogic.logging.NonCatalogLogger;
+//import weblogic.logging.NonCatalogLogger;
 
 /**
  * This class implements a handler in the handler chain, used to access the SOAP
@@ -53,7 +53,7 @@ import weblogic.logging.NonCatalogLogger;
 
 public class FAMClientHandler extends GenericHandler {
 
-  private NonCatalogLogger log;
+  //private NonCatalogLogger log;
 
   private HandlerInfo handlerInfo;
   private SOAPRequestHandler soapHandler = null;
@@ -65,7 +65,7 @@ public class FAMClientHandler extends GenericHandler {
 
   public void init(HandlerInfo hi) {
 
-    log = new NonCatalogLogger("WebService-LogHandler");
+    //log = new NonCatalogLogger("WebService-LogHandler");
     handlerInfo = hi;
     QName qname1 = new QName(
     "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-01.xsd",

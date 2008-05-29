@@ -18,12 +18,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHttpServletRequest.java,v 1.1 2007-07-06 19:16:40 huacui Exp $
+ * $Id: FAMHttpServletRequest.java,v 1.1 2008-05-29 06:46:03 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
-package com.sun.identity.wssagents.common;
+package com.sun.identity.wssagents.weblogic;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
