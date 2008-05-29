@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSUtils.java,v 1.2 2007-03-21 22:33:47 veiming Exp $
+ * $Id: SMSUtils.java,v 1.3 2008-05-29 23:29:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -326,44 +326,45 @@ public class SMSUtils {
         if (attrs != null) {
             Set values = new HashSet();
             Set srchValues = new HashSet();
-            Iterator attrNames = attrs.keySet().iterator();
-            while (attrNames.hasNext()) {
+
+            for (Iterator attrNames = attrs.keySet().iterator();
+                attrNames.hasNext();
+            ) {
                 String attrName = (String) attrNames.next();
                 Object o = attrs.get(attrName);
+                boolean bSearch = !searchAttrNames.isEmpty() &&
+                    searchAttrNames.contains(attrName.toLowerCase());
+
                 if (o == null) {
                     // do nothing
                 } else if (o instanceof String) {
-                    if ((!searchAttrNames.isEmpty())
-                            && (searchAttrNames
-                                    .contains(attrName.toLowerCase()))) {
+                    if (bSearch) {
                         srchValues.add(attrName + "=" + (String) o);
                     } else {
                         values.add(attrName + "=" + (String) o);
                     }
                 } else if ((o instanceof Set)) {
-                    if (((Set) o).isEmpty()) {
+                    Set set = (Set)o;
+                    if (set.isEmpty()) {
                         // an attribute with no values
-                        if ((!searchAttrNames.isEmpty())
-                                && (searchAttrNames.contains(attrName
-                                        .toLowerCase()))) {
+                        if (bSearch) {
                             srchValues.add(attrName + "=");
                         } else {
                             values.add(attrName + "=");
                         }
-                    }
-                    Iterator items = ((Set) o).iterator();
-                    for (int i = 0; items.hasNext(); i++) {
-                        if ((!searchAttrNames.isEmpty())
-                                && (searchAttrNames.contains(attrName
-                                        .toLowerCase()))) {
-                            srchValues.add(attrName + "="
-                                    + (String) items.next());
-                        } else {
-                            values.add(attrName + "=" + (String) items.next());
+                    } else {
+                        for (Iterator i = set.iterator(); i.hasNext(); ) {
+                            String item = (String)i.next();
+                            if (bSearch) {
+                                srchValues.add(attrName + "=" + item);
+                            } else {
+                                values.add(attrName + "=" + item);
+                            }
                         }
                     }
                 }
             }
+
             if (!values.isEmpty()) {
                 e.setAttribute(SMSEntry.ATTR_KEYVAL, (String[]) values
                         .toArray(new String[values.size()]));

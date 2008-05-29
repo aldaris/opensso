@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.8 2008-01-03 00:22:27 veiming Exp $
+ * $Id: CLIConstants.java,v 1.9 2008-05-29 23:29:48 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -285,4 +285,9 @@ public interface CLIConstants {
      * Agent Password Attribute Schema name
      */
     String ATTR_SCHEMA_AGENT_PWD = "userpassword";
+
+    /**
+     * Import configuration data sub command name.
+     */
+    String CMD_NAME_IMPORT_SVC_CONFIG = "import_svc_cfg";
 }

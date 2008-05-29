@@ -17,42 +17,51 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.2 2007-04-16 07:14:13 veiming Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.3 2008-05-29 23:29:49 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli.schema;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.ldap.LDAPUser;
 import com.iplanet.services.ldap.ServerGroup;
 import com.iplanet.services.util.AMEncryption;
 import com.iplanet.services.util.ConfigurableKey;
+import com.iplanet.services.util.Crypt;
 import com.iplanet.services.util.JCEEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.common.LDAPUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
-import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
+import com.sun.identity.cli.InitializeSystem;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.CachedSubEntries;
+import com.sun.identity.sm.DirectoryServerVendor;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSSchema;
 import com.sun.identity.sm.ServiceManager;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
-import java.util.logging.Level;
+import java.util.Iterator;
+import java.util.Set;
+import javax.security.auth.login.LoginException;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.util.LDIF;
@@ -61,14 +70,7 @@ import netscape.ldap.util.LDIF;
  * Import service configuration data.
  */
 public class ImportServiceConfiguration extends AuthenticatedCommand {
-    static final String DB_TYPE = "datastoretype";
-    static final String TYPE_SUN_DS = "sunds";
-    static final String TYPE_AD = "ad";
-    static final String TYPE_FLATFILE = "file";
-
-    static final String DS_LDIF = "am_sm_ds_schema.ldif";
-    static final String AD_LDIF = "am_sm_ad_schema.ldif";
-
+    private static final String DS_LDIF = "am_sm_ds_schema.ldif";
 
     /**
      * Services a Commandline Request.
@@ -79,77 +81,197 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
     public void handleRequest(RequestContext rc) 
         throws CLIException {
         super.handleRequest(rc);
-        ldapLogin();
 
         String xmlFile = getStringOptionValue(IArgument.XML_FILE);
-        String dbType = getStringOptionValue(DB_TYPE);
         String encryptSecret = getStringOptionValue(IArgument.ENCRYPT_SECRET);
 
-        if (!dbType.equals(TYPE_SUN_DS) && !dbType.equals(TYPE_AD) &&
-            !dbType.equals(TYPE_FLATFILE)
-        ) {
-            throw new CLIException(
-                getResourceString(
-                    "import-service-configuration-directory-invalid-ds-type"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
-        }
+        // disable notification
+        SystemProperties.initializeProperties(
+            SMSEntry.SMS_ENABLE_DB_NOTIFICATION, "true");
+        SystemProperties.initializeProperties(
+            "com.sun.am.event.connection.disable.list", "sm,aci,um");
+
+        // disable error debug messsage
+        SystemProperties.initializeProperties(
+            Constants.SYS_PROPERTY_INSTALL_TIME, "true");
 
         LDAPConnection ldConnection = null;
+        IOutput outputWriter = getOutputWriter();
         try {
-            if (dbType.equals(TYPE_SUN_DS) || dbType.equals(TYPE_AD)) {
-                ldConnection = getLDAPConnection();
-                loadLDIF(dbType, ldConnection);
-                disconnectDServer(ldConnection);
-                ldConnection = null;
+            InitializeSystem initSys = CommandManager.initSys;
+   
+            SSOToken ssoToken = initSys.getSSOToken(getAdminPassword());
+            ldConnection = getLDAPConnection();
+            
+            DirectoryServerVendor.Vendor vendor = 
+                DirectoryServerVendor.getInstance().query(ldConnection);
+            if (!vendor.name.equals(DirectoryServerVendor.OPENDS) &&
+                !vendor.name.equals(DirectoryServerVendor.SUNDS)) {
+                throw new CLIException(getResourceString(
+                        "import-service-configuration-unknown-ds"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
-            importData(xmlFile, encryptSecret);
+            
+            loadLDIF(vendor, ldConnection);
+            String ouServices = "ou=services," + initSys.getRootSuffix();
+            
+            if (this.isOuServicesExists(ssoToken, ouServices)) {
+                System.out.print(getResourceString(
+                    "import-service-configuration-prompt-delete") + " ");
+                String value = (new BufferedReader(
+                    new InputStreamReader(System.in))).readLine();
+                value = value.trim();
+                if (value.equalsIgnoreCase("y") || value.equalsIgnoreCase("yes")
+                ) {
+                    outputWriter.printlnMessage(getResourceString(
+                        "import-service-configuration-processing"));
+                    deleteOuServicesDescendents(ssoToken, ouServices);
+                    importData(xmlFile, encryptSecret, ssoToken);
+                }
+            } else {
+                outputWriter.printlnMessage(getResourceString(
+                    "import-service-configuration-processing"));
+                importData(xmlFile, encryptSecret, ssoToken);
+            }
+        } catch (SMSException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (LDAPException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SSOException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (IOException e) {
+            throw new CLIException(e.getMessage(),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (LoginException e) {
+            throw new CLIException(
+                getCommandManager().getResourceBundle().getString(
+                "exception-LDAP-login-failed"), ExitCodes.LDAP_LOGIN_FAILED);
+        } catch (InvalidAuthContextException e) {
+            throw new CLIException(
+                getCommandManager().getResourceBundle().getString(
+                "exception-LDAP-login-failed"), ExitCodes.LDAP_LOGIN_FAILED);
         } finally {
             disconnectDServer(ldConnection);
         }
     }
-       
-    private void importData(String xmlFile, String encryptSecret)
-        throws CLIException { 
-        SSOToken adminSSOToken = getAdminSSOToken();
-        IOutput outputWriter = getOutputWriter();        
-        CommandManager mgr = getCommandManager();
-        String[] param = {xmlFile};
-        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "ATTEMPT_IMPORT_SM_CONFIG_DATA", param);
+    
+    private String getEncKey(String xmlFile)
+        throws IOException {
+        FileInputStream in = null;
+        String encKey = null;
+        
+        try {
+            in = new FileInputStream(xmlFile);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+ 
+            String line = reader.readLine();
+            String prefix = "<Value>" + Constants.ENC_PWD_PROPERTY + "=";
+            while ((line != null) && (encKey == null)) {
+                line = line.trim();
+                if (line.startsWith(prefix)) {
+                    encKey = line.substring(prefix.length());
+                    encKey = encKey.substring(0, encKey.indexOf("</Value>"));
+                    encKey = SMSSchema.unescapeName(encKey);
+                }
+                line = reader.readLine();
+            }
+            reader.close();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
+        }
+        return encKey;
+    }
+    
+    private boolean isOuServicesExists(SSOToken ssoToken, String ouServices)
+        throws SMSException, SSOException {
+        CachedSubEntries smsEntry = CachedSubEntries.getInstance(
+            ssoToken, ouServices);
+        Set children = smsEntry.getSubEntries(ssoToken, "*");
+        return (children != null) && !children.isEmpty();
+    }
+    
+    private void deleteOuServicesDescendents(
+        SSOToken ssoToken, 
+        String ouServices
+    ) throws SSOException, SMSException {
+        CachedSubEntries smsEntry = CachedSubEntries.getInstance(
+            ssoToken, ouServices);
+        Set children = smsEntry.getSubEntries(ssoToken, "*");
 
+        for (Iterator i = children.iterator(); i.hasNext();) {
+            String child = (String) i.next();
+            child = "ou=" + child + "," + ouServices;
+            SMSEntry s = new SMSEntry(ssoToken, child);
+            s.delete();
+        }
+
+        children = smsEntry.searchSubOrgNames(ssoToken, "*", false);
+        for (Iterator i = children.iterator(); i.hasNext();) {
+            String child = (String) i.next();
+            child = "o=" + child + "," + ouServices;
+            SMSEntry s = new SMSEntry(ssoToken, child);
+            s.delete();
+        }
+
+        { // hardcoding hidden realm, cannot find a better option.
+            SMSEntry s = new SMSEntry(ssoToken,
+                "o=sunamhiddenrealmdelegationservicepermissions," +
+                ouServices);
+            s.delete();
+        }
+
+        ServiceManager mgr = new ServiceManager(ssoToken);
+        mgr.clearCache();
+        AMIdentityRepository.clearCache();
+    }
+
+    private void importData(
+        String xmlFile, 
+        String encryptSecret, 
+        SSOToken ssoToken
+    ) throws CLIException, SSOException, SMSException, IOException {
+        // set the correct password encryption key.
+        // without doing so, the default encryption key will be used.
+        String encKey = getEncKey(xmlFile);
+        if (encKey != null) {
+            SystemProperties.initializeProperties(Constants.ENC_PWD_PROPERTY,
+                encKey);
+            Crypt.reinitialize();
+        }
+        IOutput outputWriter = getOutputWriter();        
         FileInputStream fis = null;
 
         try {
             AMEncryption encryptObj = new JCEEncryption();
             ((ConfigurableKey)encryptObj).setPassword(encryptSecret);
             
-            ServiceManager ssm = new ServiceManager(adminSSOToken);
+            ServiceManager ssm = new ServiceManager(ssoToken);
             fis = new FileInputStream(xmlFile);
             ssm.registerServices(fis, encryptObj);
-
+            
+            InitializeSystem initSys = CommandManager.initSys;
+            String instanceName = initSys.getInstanceName();
+            String serverConfigXML = initSys.getServerConfigXML();
+            ServerConfiguration.setServerConfigXML(ssoToken, instanceName, 
+                serverConfigXML);
             outputWriter.printlnMessage(getResourceString(
                 "import-service-configuration-succeeded"));
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "SUCCESS_IMPORT_SM_CONFIG_DATA", param);
         } catch (IOException e) {
-            String[] args = {xmlFile, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_IMPORT_SM_CONFIG_DATA", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
-            String[] args = {xmlFile, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_IMPORT_SM_CONFIG_DATA", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
-            String[] args = {xmlFile, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_IMPORT_SM_CONFIG_DATA", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (Exception e) {
-            String[] args = {xmlFile, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_IMPORT_SM_CONFIG_DATA", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } finally {
             if (fis != null) {
@@ -159,17 +281,6 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
                     //ignore if file input stream cannot be closed.
                 }
             }
-        }
-    }
-
-    private int validateDSPort(String port)
-        throws CLIException {
-        try {
-            return Integer.parseInt(port);
-        } catch (NumberFormatException e) {
-            throw new CLIException(
-                getResourceString("import-service-configuration-invalid-port"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
         }
     }
 
@@ -222,32 +333,17 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
     }
 
 
-    private void loadLDIF(String type, LDAPConnection ld)
-        throws CLIException {
+    private void loadLDIF(
+        DirectoryServerVendor.Vendor vendor, 
+        LDAPConnection ld
+    ) throws CLIException {
         DataInputStream d = null;
 
         try {
-            if (type.equals(TYPE_SUN_DS)) {
+            String vendorName = vendor.name;
+            if (vendorName.equals(DirectoryServerVendor.SUNDS)) {
                 d = new DataInputStream(
                     getClass().getClassLoader().getResourceAsStream(DS_LDIF));
-                LDIF ldif = new LDIF(d);
-                LDAPUtils.createSchemaFromLDIF(ldif, ld);
-            } else if (type.equals(TYPE_AD)) {
-                String rootDn = SMSEntry.getRootSuffix();
-                BufferedReader buff = new BufferedReader(
-                    new InputStreamReader(
-                        getClass().getClassLoader().getResourceAsStream(
-                            AD_LDIF)));
-                StringBuffer sb = new StringBuffer();
-
-                for (String s = buff.readLine(); (s != null);
-                    s = buff.readLine()
-                ) {
-                    sb.append(s.replaceAll("@ROOT_SUFFIX@", rootDn))
-                        .append("\n");
-                }
-                d = new DataInputStream(new ByteArrayInputStream(
-                    sb.toString().getBytes()));
                 LDIF ldif = new LDIF(d);
                 LDAPUtils.createSchemaFromLDIF(ldif, ld);
             }

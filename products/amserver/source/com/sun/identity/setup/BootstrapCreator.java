@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.5 2008-05-29 23:19:25 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.6 2008-05-29 23:29:50 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Iterator;
@@ -87,6 +88,35 @@ public class BootstrapCreator {
         } catch (LDAPServiceException e) {
             throw new ConfigurationException(e.getMessage());
         }
+    }
+
+    public static String generate(
+        boolean bSSL,
+        String dsHost,
+        String dsPort,
+        String dsameUserPassword,
+        String dsAdmin,
+        String basedn,
+        String dsPassword
+    ) throws UnsupportedEncodingException {
+        String protocol = (bSSL) ? "ldaps" : "ldap";
+        String dsameUserPwd = Crypt.encode(dsameUserPassword,
+            Crypt.getHardcodedKeyEncryptor());
+        String dsPwd = Crypt.encode(dsPassword,
+            Crypt.getHardcodedKeyEncryptor());
+        String dsHostPort = dsHost + ":" + dsPort;
+
+        String url = template.replaceAll("@DS_PROTO@", protocol);
+        url = url.replaceAll("@DS_HOST@", dsHostPort);
+        url = url.replaceAll("@INSTANCE_NAME@", URLEncoder.encode(
+            SystemProperties.getServerInstanceName(), "UTF-8"));
+        url = url.replaceAll("@DSAMEUSER_PWD@", URLEncoder.encode(
+            dsameUserPwd, "UTF-8"));
+        url = url.replaceAll("@BASE_DN@", URLEncoder.encode(basedn, "UTF-8"));
+        url = url.replaceAll("@BIND_DN@", URLEncoder.encode(dsAdmin, "UTF-8"));
+        url = url.replaceAll("@BIND_PWD@", URLEncoder.encode(
+            dsPwd, "UTF-8"));
+        return url;
     }
 
     private void update(IDSConfigMgr dsCfg)

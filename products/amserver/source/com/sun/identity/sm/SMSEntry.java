@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.35 2008-05-12 21:18:47 goodearth Exp $
+ * $Id: SMSEntry.java,v 1.36 2008-05-29 23:29:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,7 +147,7 @@ public class SMSEntry implements Cloneable {
     static final String FLATFILE_SMS_CLASS_NAME = 
         "com.sun.identity.sm.flatfile.SMSEnhancedFlatFileObject";
 
-    static final String SMS_ENABLE_DB_NOTIFICATION = 
+    public static final String SMS_ENABLE_DB_NOTIFICATION = 
         "com.sun.identity.sm.enableDataStoreNotification";
 
     // Flag to enable LDAP's proxy support

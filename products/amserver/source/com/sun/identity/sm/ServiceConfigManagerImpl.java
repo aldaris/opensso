@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.5 2007-03-21 22:33:48 veiming Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.6 2008-05-29 23:29:48 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -497,6 +497,11 @@ class ServiceConfigManagerImpl {
             }
             sudoPrincipals.add(t.getTokenID().toString());
         }
+    }
+
+    static void clearCache() {
+        configMgrImpls = new HashMap();
+        userPrincipals = new HashMap();
     }
 
     private static Map configMgrImpls = new HashMap();

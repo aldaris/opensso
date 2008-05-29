@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.8 2008-05-29 23:19:26 veiming Exp $
+ * $Id: BootstrapData.java,v 1.9 2008-05-29 23:29:50 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,7 +157,7 @@ public class BootstrapData {
     public void initSMS(boolean startDS) 
         throws UnsupportedEncodingException, LDAPServiceException,
         MalformedURLException {
-        String serverConfigXML = getServerConfigXML();
+        String serverConfigXML = getServerConfigXML(false);
         Properties prop = getBootstrapProperties();
         SystemProperties.initializeProperties(prop, true);
         Crypt.reinitialize();
@@ -220,7 +220,16 @@ public class BootstrapData {
         }
     }
     
-    private String getServerConfigXML()
+    /**
+     * Returns server configuration XML. It is generated from bootstrap file. 
+     * @param bCrypt <code>true</code> to decrypt the password with default key
+     *        and encrypt it with the key defined in 
+     *        <code>AMConfig.properties</code>.
+     * @return server configuration XML.
+     * @throws UnsupportedEncodingException if XML encoding is incorrect.
+     * @throws MalformedURLException if bootstrap URL is not well formed.
+     */
+    public String getServerConfigXML(boolean bCrypt)
         throws UnsupportedEncodingException, MalformedURLException {
         boolean first = true;
         StringBuffer buff = new StringBuffer();
@@ -242,8 +251,8 @@ public class BootstrapData {
             }
             URL url = new URL(info);
             if (first) {
-                buff.append(getServerConfigXMLUserBlob(url, ldaps));
-                serverBlob = getServerConfigXMLServerBlob(url, ldaps);
+                buff.append(getServerConfigXMLUserBlob(url, ldaps, bCrypt));
+                serverBlob = getServerConfigXMLServerBlob(url, ldaps, bCrypt);
                 first = false;
             }
             serverBuff.append(getServerEntryXMLBlob(url, ldaps, counter++));
@@ -257,8 +266,11 @@ public class BootstrapData {
         return buff.toString();
     }
 
-    private String getServerConfigXMLUserBlob(URL url, boolean ldaps)
-        throws UnsupportedEncodingException {
+    private String getServerConfigXMLUserBlob(
+        URL url, 
+        boolean ldaps, 
+        boolean bCrypt
+    ) throws UnsupportedEncodingException {
         Map mapQuery = queryStringToMap(url.getQuery());
         String dshost = url.getHost();
         String dsport = Integer.toString(url.getPort());
@@ -270,6 +282,14 @@ public class BootstrapData {
         instanceName = URLDecoder.decode(url.getPath(), "UTF-8");
         dsameUserPwd = (String)mapQuery.get(BootstrapData.PWD);
 
+        if (bCrypt) {
+            pwd = Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor());
+            pwd = Crypt.encode(pwd);
+            
+            dspwd = Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor());
+            dspwd = Crypt.encode(dspwd);
+        }
+        
         if (instanceName.startsWith("/")) {
             instanceName = instanceName.substring(1);
         }
@@ -308,8 +328,11 @@ public class BootstrapData {
         return map;
     }
 
-    private String getServerConfigXMLServerBlob(URL url, boolean ldaps) 
-        throws UnsupportedEncodingException {
+    private String getServerConfigXMLServerBlob(
+        URL url, 
+        boolean ldaps, 
+        boolean bCrypt
+    ) throws UnsupportedEncodingException {
         Map mapQuery = queryStringToMap(url.getQuery());
         String pwd = (String)mapQuery.get(BootstrapData.PWD);
         String dshost = url.getHost();
@@ -318,6 +341,14 @@ public class BootstrapData {
         String dsmgr = (String)mapQuery.get(DS_MGR);
         String dspwd = (String)mapQuery.get(DS_PWD);
         String template = BOOTSTRAP_SERVER_CONFIG_LDAP_SVR;
+        
+        if (bCrypt) {
+            pwd = Crypt.decode(pwd, Crypt.getHardcodedKeyEncryptor());
+            pwd = Crypt.encode(pwd);
+            
+            dspwd = Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor());
+            dspwd = Crypt.encode(dspwd);
+        }
 
         if (ldaps) {
             template = template.replaceAll("@" + DS_PROTO_TYPE + "@",

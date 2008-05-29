@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.16 2007-09-11 01:36:14 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.17 2008-05-29 23:29:47 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.SystemProperties;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.shared.Constants;
 
 /**
  * The class <code>OrganizationConfigManager</code> provides interfaces to
@@ -145,9 +147,13 @@ public class OrganizationConfigManager {
                 registeredForConfigNotifications = true;
             }
         } catch (SMSException s) {
-            SMSEntry.debug.error("OrganizationConfigManager: "
+            String installTime = SystemProperties.get(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+            if (!installTime.equals("true")) {
+                SMSEntry.debug.warning("OrganizationConfigManager: "
                     + "constructor. Unable to "
                     + "construct ServiceConfigManager for idRepoService ", s);
+            }
             throw s;
         } catch (SSOException ssoe) {
             SMSEntry.debug.error("OrganizationConfigManager:Constructor", ssoe);

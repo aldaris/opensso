@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.19 2008-03-13 18:50:15 veiming Exp $
+ * $Id: IdUtils.java,v 1.20 2008-05-29 23:29:49 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -164,12 +164,15 @@ public final class IdUtils {
                     }
                 }
             } catch (SMSException e) {
-                debug.error("IdUtils: Loading default types. Caught "
-                        + "exception..", e);
+                String installTime = SystemProperties.get(
+                    Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+                if (!installTime.equals("true")) {
+                    debug.error(
+                        "IdUtils.initialize: Loading default types.", e);
+                }
                 loadDefaultTypes();
-            } catch (SSOException ssoe) {
-                debug.error("IdUtils: Loading default types. Caught "
-                        + "exception..", ssoe);
+            } catch  (SSOException ssoe) {
+                debug.error("dUtils.initialize: Loading default types", ssoe);
                 loadDefaultTypes();
             }
         } else {
@@ -185,7 +188,12 @@ public final class IdUtils {
                     new OrganizationConfigManager(adminToken, "/");
                 notificationId = rootOrg.addListener(new IdUtilsListener());
             } catch (SMSException e) {
-                debug.error("IdUtils: Register notification:exception", e);
+                String installTime = SystemProperties.get(
+                    Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+                if (!installTime.equals("true")) {
+                    debug.error(
+                        "IdUtils.initialize: Register notification", e);
+                }
             }
         }
     }

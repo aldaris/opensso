@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.35 2008-05-02 16:17:52 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.36 2008-05-29 23:29:50 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -67,6 +68,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
@@ -2266,8 +2268,12 @@ public class IdServicesImpl implements IdServices {
         // First get the list of plugins that support the create operation.
         Set unionSupportedTypes = new HashSet();
         if (!orgExist(token, amOrgName)) {
-            debug.error("IdServicesImpl.getSupportedTypes: "
-                + "Realm " + amOrgName + " does not exist.");
+            String installTime = SystemProperties.get(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+            if (!installTime.equals("true")) {
+                debug.error("IdServicesImpl.getSupportedTypes: "
+                    + "Realm " + amOrgName + " does not exist.");
+            }
             Object[] args = { amOrgName };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
                     "312", args);
@@ -3080,8 +3086,12 @@ public class IdServicesImpl implements IdServices {
                 }
            }
         } catch (SMSException smse) {
-            getDebug().error("IdServicesImpl.orgExist: "
-                + " sms Exception: realm not found", smse);
+            String installTime = SystemProperties.get(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+            if (!installTime.equals("true")) {
+                getDebug().error("IdServicesImpl.orgExist: "
+                    + " sms Exception: realm not found", smse);
+            }
         } catch (SSOException ssoe) {
             getDebug().error("IdServicesImpl.orgExist: "
                 + " SSO  Exception: realm not found", ssoe);

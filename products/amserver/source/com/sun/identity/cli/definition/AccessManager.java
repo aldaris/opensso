@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.72 2008-05-29 01:01:53 veiming Exp $
+ * $Id: AccessManager.java,v 1.73 2008-05-29 23:29:49 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1649,22 +1649,47 @@ public class AccessManager {
         webSupport="false",
         mandatoryOptions={
             "encryptsecret|e|s|Secret key for decrypting password.",
-            "datastoretype|t|s|Type of datastore either file, sunds or ad. Flat File, Sun Directory Server and Microsoft's Active Directory respectively.",
             "xmlfile|X|s|XML file that contains configuration data."},
         optionAliases={},
         macro="authentication",
         optionalOptions={},
         resourceStrings={
+            "import-service-configuration-unknown-ds=Unable to import service configuration because we are unable to recognize the data store type. We support Sun Directory Server and Embedded OpenDS as service configuration data store.",
+            "import-service-configuration-processing=Please wait while we import the service configuration...",
             "import-service-configuration-succeeded=Service Configuration was imported.",
             "import-service-configuration-invalid-ds-type=Invalid datastore type.",
             "import-service-configuration-invalid-port=Invalid port number.",
             "import-service-configuration-not-connect-to-ds=Unable to connect to directory server.",
             "import-service-configuration-connecting-to-ds=Connecting to directory server.",
             "import-service-configuration-connected-to-ds=Connected to directory server.",
+            "import-service-configuration-prompt-delete=Directory Service contains existing data. Do you want to delete it? [y|N]",
             "import-service-configuration-cannot-load-lidf=Could not locate LDIF, {0}."
         }
     )
     private String import_svc_cfg;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.schema.GenerateBootstrapURL",
+        description="Create a bootstrap URL which can be used to bootsrap the product web application.",
+        webSupport="false",
+        mandatoryOptions={
+            "dshost|t|s|Directory Server host name",
+            "dsport|p|s|Directory Server port number",
+            "basedn|b|s|Directory Server base distinguished name.",
+            "dsadmin|a|s|Directory Server administrator distinguished name",
+            "dspassword-file|x|s|File that contains Directory Server administrator password"
+        },
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "ssl|s|u|Set this flag for LDAPS."
+        },
+        resourceStrings={
+            "create-bootstrap-url-succeeded=Bootstrap URL is."
+        }
+    )
+    private String create_boot_url;
+
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.CreateServerConfigXML",

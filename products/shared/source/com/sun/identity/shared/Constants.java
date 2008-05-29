@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.22 2008-05-15 04:02:26 veiming Exp $
+ * $Id: Constants.java,v 1.23 2008-05-29 23:29:51 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -796,4 +796,9 @@ public interface Constants {
      */
     String CDCSERVLET_LOGIN_URL =
         "com.sun.identity.cdcservlet.loginurl";        
+
+    /**
+     * Property name for data encryption key
+     */
+    String ENC_PWD_PROPERTY = "am.encryption.pwd";
 }

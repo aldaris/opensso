@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.23 2008-05-05 18:50:29 veiming Exp $
+ * $Id: CommandManager.java,v 1.24 2008-05-29 23:29:49 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,7 @@ package com.sun.identity.cli;
 
 
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -40,6 +41,7 @@ import com.sun.identity.tools.bundles.VersionCheck;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ import java.util.Vector;
  * This is the "engine" that drives the CLI. This is a singleton class.
  */
 public class CommandManager {
+    private final static String IMPORT_SVC_CMD = "import-svc-cfg";
     private final static String RESOURCE_BUNDLE_NAME = "cliBase";
     public static ResourceBundle resourceBundle;
     private static Debug debugger;        
@@ -70,6 +73,7 @@ public class CommandManager {
     private List definitionObjects;
     private List requestQueue = new Vector();
     private boolean bContinue;
+    public static InitializeSystem initSys;
     private Set ssoTokens = new HashSet();
 
     static {
@@ -80,18 +84,35 @@ public class CommandManager {
      * Entry point to the engine.
      */
     public static void main(String[] argv) {
-        try {
-            Bootstrap.load();
-        } catch (ConfiguratorException ex) {
-            System.err.println(ex.getL10NMessage(Locale.getDefault()));
-            System.exit(1);
-        } catch (Exception e) {
-            System.err.println("Cannot bootstrap the system" + e.getMessage());
-            System.exit(1);
-        }
-        
-        if (VersionCheck.isVersionValid() == 1) {
-            System.exit(1);
+        if ((argv.length > 0) && argv[0].equals(IMPORT_SVC_CMD)) {
+            try {
+                initSys = new InitializeSystem();
+            } catch (FileNotFoundException ex) {
+                System.err.println("Cannot bootstrap the system" +
+                    ex.getMessage());
+                System.exit(1);
+            } catch (IOException ex) {
+                System.err.println("Cannot bootstrap the system" +
+                    ex.getMessage());
+            } catch (LDAPServiceException ex) {
+                System.err.println("Cannot bootstrap the system" +
+                    ex.getMessage());
+            }
+        } else {
+            try {
+                Bootstrap.load();
+            } catch (ConfiguratorException ex) {
+                System.err.println(ex.getL10NMessage(Locale.getDefault()));
+                System.exit(1);
+            } catch (Exception e) {
+                System.err.println("Cannot bootstrap the system" +
+                    e.getMessage());
+                System.exit(1);
+            }
+
+            if (VersionCheck.isVersionValid() == 1) {
+                System.exit(1);
+            }
         }
         
         debugger = Debug.getInstance("amCLI");

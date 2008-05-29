@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceComparatorValidator.java,v 1.3 2006-08-25 21:21:04 veiming Exp $
+ * $Id: ResourceComparatorValidator.java,v 1.4 2008-05-29 23:29:50 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,11 @@ import com.sun.identity.sm.ServiceAttributeValidator;
 public class ResourceComparatorValidator implements ServiceAttributeValidator {
 
     String separator = "|";
-    private static final Debug debug = PolicyManager.debug;
+
+    // dereference debug object from Policy Manager so that Policy Manager
+    // class will not be initialized.
+    private static final Debug debug = Debug.getInstance("amPolicy");
+
     public ResourceComparatorValidator() {
     }
 
