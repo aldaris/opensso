@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmPropertiesBase.java,v 1.1 2007-02-07 20:25:52 jonnelson Exp $
+ * $Id: RealmPropertiesBase.java,v 1.2 2008-05-29 22:52:10 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,6 +169,6 @@ public abstract class RealmPropertiesBase
     }
 
     protected String getBackButtonLabel() {
-        return getBackButtonLabel("page.title.realms");
+        return getBackButtonLabel("page.title.back.realms");
     }
 }                                                                     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.3 2008-04-22 00:23:16 veiming Exp $
+ * $Id: EntitiesViewBean.java,v 1.4 2008-05-29 22:51:33 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -184,7 +184,7 @@ public class EntitiesViewBean
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/oneBtnPageTitle.xml"));
         ptModel.setValue("button1", 
-            getBackButtonLabel("page.title.realms"));
+            getBackButtonLabel("page.title.back.realms"));
     }
 
     private void addEntitiesTab() {

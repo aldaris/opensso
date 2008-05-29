@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: RMRealm.jsp,v 1.2 2008-03-20 06:21:16 asyhuang Exp $
+   $Id: RMRealm.jsp,v 1.3 2008-05-29 22:53:14 babysunil Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -57,6 +57,16 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
+<cc:spacer name="spacer" height="5" newline="true" />
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
+        <td><cc:text name="tfText" defaultValue="accesscontrol.tab.text" bundleID="amConsole"/></td>
+        <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
+    </tr>
+</table>
+<cc:spacer name="spacer" height="5" newline="true" />
+
 <cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.realms" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="false" showPageButtonsBottom="false" />
 
 <cc:spacer name="spacer" height="10" newline="true" />

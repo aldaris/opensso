@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.7 2008-04-29 22:49:43 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.8 2008-05-29 22:51:03 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -395,7 +395,7 @@ public class AgentsViewBean
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/oneBtnPageTitle.xml"));
         ptModel.setValue("button1", 
-            getBackButtonLabel("page.title.realms"));
+            getBackButtonLabel("page.title.back.realms"));
     }
 
     private CCNavNode addAgentsTab(int idx) {
