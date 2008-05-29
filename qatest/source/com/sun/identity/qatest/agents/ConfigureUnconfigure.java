@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.8 2008-04-18 19:28:49 nithyas Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.9 2008-05-29 03:15:23 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,7 +114,8 @@ public class ConfigureUnconfigure extends TestCommon {
                         agentId, IdType.AGENTONLY), agentId)) {
                     idmc.createIdentity(admintoken, realm, IdType.AGENTONLY,
                             agentId, map);
-                    if (agentConfigurationType.equals("centralized")) { 
+                    if (agentType.contains("3.0") && 
+                            agentConfigurationType.equals("centralized")) { 
                         create.create(agentId, agentType);
                     }
                 }
