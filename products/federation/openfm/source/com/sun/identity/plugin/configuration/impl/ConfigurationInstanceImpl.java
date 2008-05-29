@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.8 2008-05-02 21:46:28 weisun2 Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.9 2008-05-29 23:12:11 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -355,7 +355,7 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
 
                     if (sc == null) {
                         sc = scm.createOrganizationConfig(realm, null);
-                    } else if (sc.getSubConfig(configName) != null) {
+                    } else if (sc.getSubConfigNames().contains(configName)) {
                         String[] data = { componentName, realm, configName };
                         throw new ConfigurationException(RESOURCE_BUNDLE, 
                             "configExist", data);
