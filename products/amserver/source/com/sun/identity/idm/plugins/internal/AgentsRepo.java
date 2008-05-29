@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.28 2008-05-16 17:52:11 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.29 2008-05-29 23:12:35 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -246,8 +246,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 orgConfig = getOrgConfig(token);
-                aTypeConfig = orgConfig.getSubConfig(agentName);
-                if (aTypeConfig == null) {
+                if (!orgConfig.getSubConfigNames().contains(agentName)) {
                     orgConfig.addSubConfig(agentName, agentType, 0, attrMap);
                     aTypeConfig = orgConfig.getSubConfig(agentName);
                 } else {
@@ -258,8 +257,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 }
             } else if (type.equals(IdType.AGENTGROUP)) {
                 agentGroupConfig = getAgentGroupConfig(token);
-                aTypeConfig = agentGroupConfig.getSubConfig(agentName);
-                if (aTypeConfig == null) {
+                if (!agentGroupConfig.getSubConfigNames().
+                    contains(agentName)) {
                     agentGroupConfig.addSubConfig(agentName, agentType, 0, 
                         attrMap);
                     aTypeConfig = agentGroupConfig.getSubConfig(agentName);
