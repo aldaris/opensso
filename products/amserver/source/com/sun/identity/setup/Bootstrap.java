@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.10 2008-04-11 20:39:33 veiming Exp $
+ * $Id: Bootstrap.java,v 1.11 2008-05-29 23:24:02 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,10 @@ package com.sun.identity.setup;
 
 import com.iplanet.am.util.AdminUtils;
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.services.ldap.DSConfigMgr;
+import com.iplanet.services.ldap.LDAPServiceException;
+import com.iplanet.services.ldap.LDAPUser;
+import com.iplanet.services.ldap.ServerGroup;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.AuthContext;
@@ -53,6 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javax.security.auth.login.LoginException;
+import netscape.ldap.LDAPConnection;
 
 /**
  * This class is responsible for bootstrapping the WAR.
@@ -163,12 +168,26 @@ public class Bootstrap {
         boolean bStartDS
     ) throws Exception {
         Properties properties = null;
-        bootstrapData.initSMS(bStartDS);
+        bootstrapData.initSMS(bStartDS);       
         if (reinit) {
             AdminUtils.initialize();
             SMSAuthModule.initialize();
         }
 
+        LDAPConnection ld = null;
+        DSConfigMgr dsCfg = DSConfigMgr.getDSConfigMgr();
+        ServerGroup sg = dsCfg.getServerGroup("sms");
+        if (sg != null) {
+            try {
+                ld = dsCfg.getNewConnection("sms", LDAPUser.Type.AUTH_ADMIN);
+            } catch (LDAPServiceException e) {
+                // ignore, DS is down
+            }
+        }
+        if (ld == null) {
+            return null;
+        }
+        
         String dsbasedn = bootstrapData.getBaseDN();
         String pwd = bootstrapData.getDsameUserPassword();
         String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;

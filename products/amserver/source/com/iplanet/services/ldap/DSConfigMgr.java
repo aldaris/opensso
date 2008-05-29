@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.12 2008-02-26 01:21:22 veiming Exp $
+ * $Id: DSConfigMgr.java,v 1.13 2008-05-29 23:24:02 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -430,8 +431,12 @@ public class DSConfigMgr implements IDSConfigMgr {
         }
         
         if (exception != null) {
-            debugger.error("Connection to LDAP server threw exception:", 
-                exception);
+            String configTime = SystemProperties.get(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+            if (!configTime.equalsIgnoreCase("true")) {
+                debugger.error("Connection to LDAP server threw exception:", 
+                    exception);
+            }
             throw exception;
         }
         return conn;
@@ -475,8 +480,10 @@ public class DSConfigMgr implements IDSConfigMgr {
             } catch (LDAPException e) {
                 if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                         || retry == connNumRetry) {
-                    debugger.warning(
+                    if (debugger.warningEnabled()) {
+                        debugger.warning(
                             "Connection to LDAP server threw exception:", e);
+                    }
                     throw new LDAPServiceException(
                             getString(IUMSConstants.DSCFG_CONNECTFAIL), e);
                 }
