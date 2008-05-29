@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHaDB.java,v 1.2 2008-05-02 21:44:11 weisun2 Exp $
+ * $Id: FAMHaDB.java,v 1.3 2008-05-29 23:57:44 beomsuk Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,10 +26,7 @@ package com.sun.identity.ha.jmqdb.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,8 +53,6 @@ import com.sun.identity.ha.jmqdb.ConnectionFactoryProvider;
 import com.sun.identity.ha.jmqdb.ConnectionFactoryProviderFactory;
 
 import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.Transaction;
 import com.sleepycat.persist.EntityCursor;
 
@@ -65,10 +60,6 @@ import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.ConnectionFactory;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.SecondaryIndex;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 public class FAMHaDB implements Runnable {
     
@@ -302,7 +293,6 @@ public class FAMHaDB implements Runnable {
         processThread.setName(_id);
         processThread.start();
         System.out.println(bundle.getString("startsuccess"));
-        
     }
     
     private void initMasterDBNodeChecker() {
@@ -343,8 +333,10 @@ public class FAMHaDB implements Runnable {
         String id = message.getStringProperty(ID);
         String op = message.getStringProperty("op");
         String svc = message.getStringProperty("service");
-        System.out.println("OP=" + op);
-        System.out.println("service=" + svc);
+        if(verbose) {
+            System.out.println("OP=" + op);
+            System.out.println("service=" + svc);
+        }
         //showAllSessionRecords();
         PrimaryIndex recordByPrimaryKey = da.getPrimaryIndex(svc);
         if (op.indexOf(READ) >= 0) {
@@ -357,7 +349,9 @@ public class FAMHaDB implements Runnable {
             String pKey = getLenString(message);
             long random = message.readLong();
             
-            System.out.println(">>>>>>>>>>>>>> Read by Primary Key : " + pKey);
+            if(verbose) {
+                System.out.println(">>>>>>>>>>>>>> Read by Primary Key : " + pKey);
+            }
 
             BaseRecord baseRecord = null;
             try {
@@ -367,10 +361,12 @@ public class FAMHaDB implements Runnable {
                 System.out.println("READ exc: " + ex);
             }
             
-            if (baseRecord != null) { 
-                System.out.println(">>>>>>>>>>>>>> Found record !");
-            } else {
-                System.out.println(">>>>>>>>>>>>>> Not found record !");
+            if(verbose) {
+                if (baseRecord != null) { 
+                    System.out.println(">>>>>>>>>>>>>> Found record !");
+                } else {
+                    System.out.println(">>>>>>>>>>>>>> Not found record !");
+                }
             }
             
             if (baseRecord != null) { 
@@ -406,7 +402,9 @@ public class FAMHaDB implements Runnable {
             int state = message.readInt();
             byte[] stuff = getLenBytes(message);
             
-            System.out.println(">>>>>>>>>>>>>> Write by Primary Key : " + pKey);
+            if(verbose) {
+                System.out.println(">>>>>>>>>>>>>> Write by Primary Key : " + pKey);
+            }
 
             BaseRecord record = (BaseRecord) da.classes.get(svc).newInstance();   
             record.setPrimaryKey(pKey);
@@ -419,13 +417,17 @@ public class FAMHaDB implements Runnable {
             }   
             record.setState(state);
             record.setBlob(stuff);
+
             recordByPrimaryKey.put(record);
+            
         } else if (op.indexOf(DELETEBYDATE) >= 0) {
             if(verbose) {
                 System.out.println(bundle.getString("datemsgrecv"));
             }    
             long expDate = message.readLong();
-            System.out.println(">>>>>>>>>>>>>> Delete by Date : " + expDate);
+            if(verbose) {
+                System.out.println(">>>>>>>>>>>>>> Delete by Date : " + expDate);
+            }
             deleteByDate(expDate, numCleanSessions, svc); 
         } else if (op.indexOf(DELETE) >= 0) {
             if(verbose) {
@@ -435,9 +437,13 @@ public class FAMHaDB implements Runnable {
                 deleteCount++;
             }
             String pKey = getLenString(message);
-            System.out.println(">>>>>>>>>>>>>> Delete by Primary Key : " + pKey);
-            Transaction txn = haDbEnv.getEnv().beginTransaction(null, null);
+            if(verbose) {
+                System.out.println(">>>>>>>>>>>>>> Delete by Primary Key : " + pKey);
+            }
+
+            Transaction txn = null;
             try {
+                txn = haDbEnv.getEnv().beginTransaction(null, null);
                 recordByPrimaryKey.delete(txn, pKey);
                 txn.commit();
             } catch (Exception e) {
@@ -453,7 +459,8 @@ public class FAMHaDB implements Runnable {
             if(verbose) {
                 System.out.println(bundle.getString("getsessioncount"));
             }    
-	        if(statsEnabled) {
+	    
+            if(statsEnabled) {
                 scReadCount++;
             }
             getRecordsBySecondaryKey(message, id, svc);
@@ -473,7 +480,9 @@ public class FAMHaDB implements Runnable {
         }
 
         String secondKey = getLenString(message);
-        System.out.println("SEC"+ secondKey);
+        if(verbose) {
+            System.out.println("SEC"+ secondKey);
+        }
         long random = message.readLong();
         int nrows = 0;
         Vector rows = new Vector();
@@ -533,31 +542,52 @@ public class FAMHaDB implements Runnable {
     }
     
     public void deleteByDate(long expTime, int cleanCount, String svc) 
-    throws Exception {
-        
+    throws Exception {       
+        Transaction txn = haDbEnv.getEnv().beginTransaction(null, null);
         EntityCursor<? extends BaseRecord> records = 
-            da.getSecondaryIndex1(svc).entities();
-        Transaction txn = null;
+            da.getSecondaryIndex1(svc).entities(txn, null);
+        int count = 0;
         
-        for (BaseRecord record : records) {
-            Long expdate = record.getExpDate();
-            if (expdate.longValue() <= expTime) {
-                try {
-                    txn = haDbEnv.getEnv().beginTransaction(null, null);
-                    da.getSecondaryIndex1(svc).delete(txn, expdate);
-                    txn.commit();
-                } catch (Exception e) {
-                    txn.abort();
-                    System.out.println("Aborted txn: " + e.toString());
-                    e.printStackTrace();
-                }             
-                
-                System.out.println(">>>>> Delete the record has " + expdate);
-            } else {
-                break;
-            }
+        if (verbose) {
+            System.out.println("expTime : " + expTime);
+            System.out.println("cleanCount : " + cleanCount);
+            System.out.println("svc : " + svc);
         }
-        records.close();
+        
+        try {
+            for (BaseRecord record : records) {
+                Long expdate = record.getExpDate();
+                if (expdate.longValue() <= expTime) {
+                    records.delete();
+                    if (verbose) {
+                        System.out.println(">>>>> Delete the " + count 
+                            + "th record has " + expdate);
+                    }
+                    
+                    if (count++ >= cleanCount) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            records.close();
+            records = null;
+            txn.commit();
+            txn = null;
+        } catch (Exception e) {
+            System.out.println("Exception for delete record by cursor : "
+                + e.toString());
+            e.printStackTrace();
+            if (records != null) {
+                records.close();
+                records = null;
+            }
+            if (txn != null) {
+                txn.abort();
+                txn = null;
+            }
+        }             
     }
     
     public void deleteByDate(long expTime, int cleanCount) 
@@ -654,9 +684,14 @@ public class FAMHaDB implements Runnable {
                     int cleanCount = numCleanSessions * 5;
                     deleteByDate(curTime, cleanCount);
                     Thread.sleep(sleepTime);
-                    System.out.println(bundle.getString("reconnecttobroker"));
+
+                    if(verbose) {
+                        System.out.println(bundle.getString("reconnecttobroker"));
+                    }
                     initJMQ();
-                    System.out.println(bundle.getString("reconnectsuccessfull"));
+                    if(verbose) {
+                        System.out.println(bundle.getString("reconnectsuccessfull"));
+                    }
                 }
             } catch (Exception ex) {
                 isServerUp = false;
