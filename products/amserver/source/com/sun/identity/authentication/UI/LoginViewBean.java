@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.12 2008-04-25 23:23:26 dillidorai Exp $
+ * $Id: LoginViewBean.java,v 1.13 2008-05-29 23:51:27 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -319,10 +319,17 @@ public class LoginViewBean extends AuthViewBeanBase {
                      * redirect to 'goto' parameter or SPI hook or default
                      * redirect URL.
                      */
-                    redirect_url = ssoToken.getProperty(
-                        ISAuthConstants.SUCCESS_URL);
+                    if (request != null) {
+	                redirect_url = request.getParameter("goto");
+	                if ((redirect_url == null) || (redirect_url.length() 
+                            == 0)){
+                            redirect_url = ssoToken.getProperty(
+                                ISAuthConstants.SUCCESS_URL);
+                        }
+                    }
                     if (redirect_url == null) {
-                        ResultVal = rb.getString("authentication.already.login");
+                        ResultVal = rb.getString
+                            ("authentication.already.login");
                     }
                     LoginSuccess = true;
                     response.sendRedirect(redirect_url);
