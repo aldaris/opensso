@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthOptions.java,v 1.1 2007-02-23 22:36:55 veiming Exp $
+ * $Id: AuthOptions.java,v 1.2 2008-05-29 01:01:52 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,26 @@ public interface AuthOptions {
      * Authentication configuration entries.
      */
     String AUTH_CONFIG_ENTRIES = "entries";
+    
+    /**
+     * Authentication configuration module name.
+     */
+    String AUTH_CONFIG_MODULE_NAME = "modulename";
+    
+    /**
+     * Authentication configuration criteria.
+     */
+    String AUTH_CONFIG_CRITERIA = "criteria";
+    
+    /**
+     * Authentication configuration options.
+     */
+    String AUTH_CONFIG_OPTIONS = "options";
+    
+    /**
+     * Authentication configuration position/order.
+     */
+    String AUTH_CONFIG_POSITION = "position";
     
     /**
      * Type of authentication instance.

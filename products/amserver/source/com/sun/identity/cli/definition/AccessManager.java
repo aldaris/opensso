@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.71 2008-05-15 04:13:31 veiming Exp $
+ * $Id: AccessManager.java,v 1.72 2008-05-29 01:01:53 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1494,6 +1494,28 @@ public class AccessManager {
             "authentication-get-auth-config-entries-not-found=Authentication Configuration was not found."}
     )
     private String get_auth_cfg_entr;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.authentication.AddAuthConfigurationEntry",
+        description="Add authentication configuration entry",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of authentication configuration.",
+            "modulename|o|s|Module Name.",
+            "criteria|c|s|Criteria for this entry. Possible values are REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE"},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "options|t|s|Options for this entry.",
+            "position|p|s|Position where the new entry is to be added. This is option is not set, entry shall be added to the end of the list. If value of this option is 0, it will be inserted to the front of the list. If value is greater of the length of the list, entry shall be added to the end of the list."},
+        resourceStrings={
+            "authentication-add-auth-config-entry-criteria.invalid=Invalid value for criteria.",
+            "authentication-add-auth-config-entry-position.invalid=Invalid value for position. Value must be either 0 or a positive integer.",
+            "authentication-add-auth-config-entry-succeeded=Authentication Configuration's entry was created",
+            "authentication-add-auth-config-entry-not-found=Authentication Configuration {0} was not found."}
+    )
+    private String add_auth_cfg_entr;
     
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.authentication.UpdateAuthConfigurationEntries",
