@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.6 2006-09-13 22:37:47 goodearth Exp $
+ * $Id: SMSEventListenerManager.java,v 1.7 2008-05-29 22:54:31 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,8 @@ class SMSEventListenerManager implements SMSObjectListener {
 
     protected static HashMap allChanges = new HashMap();
 
-    protected static Map nodeChanges = new HashMap();
+    protected static Map nodeChanges = Collections
+            .synchronizedMap(new HashMap());
 
     protected static Map subNodeChanges = Collections
             .synchronizedMap(new HashMap());
