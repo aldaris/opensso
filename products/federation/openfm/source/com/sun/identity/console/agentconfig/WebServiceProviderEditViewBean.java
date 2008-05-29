@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.3 2008-04-22 00:23:17 veiming Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.4 2008-05-29 00:44:52 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,9 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCActionTableModelInterface;
+import com.sun.web.ui.model.CCEditableListModel;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.editablelist.CCEditableList;
 import com.sun.web.ui.view.html.CCSelectableList;
 import com.sun.web.ui.view.table.CCActionTable;
 import java.io.Serializable;
@@ -56,7 +58,7 @@ public class WebServiceProviderEditViewBean
     private static final String EDIT_LINK_TRACKER = "WebServiceEditTracker";
     private static final String PAGE_NAME = "WebServiceProviderEdit";
     private static final String TBL_USER_CRED = "tblUserCredential";
-
+    
     // table
     private static final String TBL_BUTTON_ADD = "tblButtonAdd";
     private static final String TBL_BUTTON_DELETE = "tblButtonDelete";
@@ -67,6 +69,8 @@ public class WebServiceProviderEditViewBean
     private static final String TBL_DATA_PWD = "tblDataPassword";
 
     private static final String CHILD_NAME_AUTH_CHAIN = "authenticationchain";
+    private static final String CHILD_NAME_SAML_ATTR_MAPPING =
+        "SAMLAttributeMapping";
     
     static final String DEFAULT_DISPLAY_URL =
         "/console/agentconfig/WebServiceProviderEdit.jsp";
@@ -144,6 +148,16 @@ public class WebServiceProviderEditViewBean
             cb.setOptions(getAuthChainOptionList());
         }
         propertySheetModel.setValue(CHILD_NAME_AUTH_CHAIN, authChains);
+        
+        if (!inheritedPropertyNames.contains(
+            WSSAttributeNames.SAML_ATTR_MAPPING)) {
+            CCEditableList list = (CCEditableList)getChild(
+                CHILD_NAME_SAML_ATTR_MAPPING);
+            CCEditableListModel m = (CCEditableListModel)list.getModel();
+            list.resetStateData();
+            m.setOptionList((Set)values.get(
+                WSSAttributeNames.SAML_ATTR_MAPPING));
+        }
 
         setExternalizeUIValues(providerUIProperties, values);
         setPageSessionAttribute(EDIT_LINK_TRACKER, (Serializable)values);
@@ -251,7 +265,14 @@ public class WebServiceProviderEditViewBean
         if ((authChain != null) && (authChain.length() > 0)) {
             setAuthChain.add(authChain);
         }
+        
         values.put(WSSAttributeNames.AUTH_CHAIN, setAuthChain);
+        
+        CCEditableList elist  = (CCEditableList)getChild(
+            CHILD_NAME_SAML_ATTR_MAPPING);
+        elist.restoreStateData();
+        Set samlAttrMapping = getValues(elist.getModel().getOptionList());
+        values.put(WSSAttributeNames.SAML_ATTR_MAPPING, samlAttrMapping);
 
         getExternalizeUIValues(providerUIProperties, values);
 

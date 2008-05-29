@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.3 2008-03-20 06:14:47 asyhuang Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.4 2008-05-29 00:42:22 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -57,7 +57,7 @@
         var visible = 'none';
         for (var i = 0; i <frm.elements.length && (visible == 'none'); i++) {
             var elt = frm.elements[i];
-            if (elt.name.indexOf('WebServiceProviderEdit.securitymech') == 0) {
+            if (elt.name && elt.name.indexOf('WebServiceProviderEdit.securitymech') == 0) {
                 if (((elt.name.indexOf('SAMLToken-') != -1) ||
                     (elt.name.indexOf('SAML2Token-') != -1)) &&
                     (elt.name.indexOf('jato_boolean') == -1)) {

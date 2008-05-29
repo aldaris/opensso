@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSAttributeNames.java,v 1.1 2007-12-17 20:17:35 veiming Exp $
+ * $Id: WSSAttributeNames.java,v 1.2 2008-05-29 00:44:53 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,4 +43,5 @@ public interface WSSAttributeNames {
     String PASSWORD = "userpassword";
     String STS = "STS";
     String DISCOVERY = "Discovery";
+    String SAML_ATTR_MAPPING = "SAMLAttributeMapping";
 }
