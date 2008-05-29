@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.9 2008-03-25 22:46:22 mrudulahg Exp $
+ * $Id: UnconfigureIDFF.java,v 1.10 2008-05-29 16:15:35 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.testng.annotations.AfterSuite;
+import org.testng.annotations.Parameters;
 
 /**
  * This class removes the configuration on SP & IDP 
@@ -71,13 +72,12 @@ public class UnconfigureIDFF extends TestCommon {
      * Configure sp & idp
      * @DocTest: IDFF|Unconfigure SP & IDP by deleting entities & COT's 
      */
+    @Parameters({"groupName"})
     @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void UnconfigureIDFF(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
         entering("UnconfigureIDFF", params);
-        String spurl;
-        String idpurl;
         try {
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
@@ -118,12 +118,11 @@ public class UnconfigureIDFF extends TestCommon {
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listEntities famadm" +
                        " command failed");
-               assert false;
-            }
+         }
             //Delete IDP & SP entities on IDP
             if (idpEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
-            {
+           {
                 log(Level.FINEST, "UnconfigureIDFF", "IDP entity exists at" +
                         " IDP.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
@@ -137,7 +136,6 @@ public class UnconfigureIDFF extends TestCommon {
                             "entity on IDP side");
                     log(Level.SEVERE, "UnconfigureIDFF", "deleteEntity famadm" +
                             " command failed");
-                    assert false;
                 }
             }
             
@@ -156,7 +154,6 @@ public class UnconfigureIDFF extends TestCommon {
                             "entity on IDP side");
                     log(Level.SEVERE, "UnconfigureIDFF", "deleteEntity famadm" +
                             " command failed");
-                    assert false;
                 }
             }
             
@@ -166,7 +163,6 @@ public class UnconfigureIDFF extends TestCommon {
             if (FederationManager.getExitCode(idpcotPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listCots famadm command" +
                        " failed");
-               assert false;
             }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
@@ -189,8 +185,7 @@ public class UnconfigureIDFF extends TestCommon {
             if (FederationManager.getExitCode(spEntityPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listEntities famadm" +
                        " command failed");
-               assert false;
-            }
+          }
             //Delete SP & IDP entities on sp
             if (spEntityPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_ENTITY_NAME))) {
@@ -207,7 +202,6 @@ public class UnconfigureIDFF extends TestCommon {
                             "entity on SP side");
                     log(Level.SEVERE, "UnconfigureIDFF", "deleteEntity famadm" +
                             " command failed");
-                    assert false;
                 }
             }
             
@@ -227,7 +221,6 @@ public class UnconfigureIDFF extends TestCommon {
                             "entity on SP side");
                     log(Level.SEVERE, "UnconfigureIDFF", "deleteEntity famadm" +
                             " command failed");
-                    assert false;
                 }
             }
             
@@ -237,7 +230,6 @@ public class UnconfigureIDFF extends TestCommon {
             if (FederationManager.getExitCode(spcotPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listCots famadm" +
                        " command failed");
-               assert false;
             }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
