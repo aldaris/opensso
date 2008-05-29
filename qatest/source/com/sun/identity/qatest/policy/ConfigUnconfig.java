@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.3 2008-05-16 22:21:35 rmisra Exp $
+ * $Id: ConfigUnconfig.java,v 1.4 2008-05-29 00:03:54 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,7 @@ public class ConfigUnconfig extends TestCommon {
     ServiceConfigManager scm;
     ServiceConfig sc;
     String strServiceName;
+    static private String uriseparator = "/";
     
     /**
      * Creates a new instance of ConfigUnconfig
@@ -82,6 +84,45 @@ public class ConfigUnconfig extends TestCommon {
         startNotificationServer();
         exiting("startServer");
     }
+    
+    /**
+     * Replaces the dn in the Policy xml files under the directory
+     * <QATESTHOME>/xml/policy
+     */
+    @BeforeSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void replaceDn()
+    throws Exception {
+        entering("replaceDn", null);
+        try {
+            File directory;
+            String[] files;
+            String ext = "xml";
+            String directoryName;
+            String fileName;
+            String absFileName;
+            Map replaceVals = new HashMap();
+            replaceVals.put("SM_SUFFIX", basedn);
+            directoryName = getBaseDir() + uriseparator + "xml" +
+                    uriseparator + "policy";
+            directory = new File(directoryName);
+            assert (directory.exists());
+            files = directory.list();            
+            for (int i = 0; i < files.length; i++) {
+                fileName = files[i];
+                if (fileName.endsWith(ext.trim())) {
+                    absFileName = directoryName + uriseparator + fileName;
+                    log(Level.FINEST, "replaceDn", "Replacing the file :" +
+                            absFileName);
+                    replaceString(absFileName, replaceVals, absFileName);
+                }
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "replaceDn", e.getMessage());
+            e.printStackTrace();
+        }
+        exiting("replaceDn");
+    }
+    
     
     /**
      * Stop the notification (jetty) server for getting notifications from the
