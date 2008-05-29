@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.21 2008-04-03 17:58:20 bigfatrat Exp $
+$Id: README,v 1.22 2008-05-29 06:48:45 mrudul_uchil Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -249,11 +249,11 @@ libraries/native to opensso/products/extlib.
 2.8.1 Visit http://click.sourceforge.net/, click on the Download hyperlink
       (under the Click tree) on the left panel
       You will be brought to sourceforge.net with the list of click binaries.
-2.8.2 Download click-1.4-RC1.zip
+2.8.2 Download click-1.4.2.zip
 2.8.3 Unzip this zip file in a temporary directory
-2.8.4 copy <temporary directory>/click.1.4-RC-1/dist/click-1.4-RC1.jar to
+2.8.4 copy <temporary directory>/click.1.4.2/dist/click-1.4.2.jar to
       <your workspace>/opensso/products/extlib/click.jar
-2.8.5 copy <temporary directory>/click.1.4-RC-1/dist/click-extras-1.4-RC1.jar to
+2.8.5 copy <temporary directory>/click.1.4.2/dist/click-extras-1.4.2.jar to
       <your workspace>/opensso/products/extlib/click-extras.jar
 
 %% 2.9 Obtaining ant-contrib-1.0b3.jar
