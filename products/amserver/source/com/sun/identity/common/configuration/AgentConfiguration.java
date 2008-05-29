@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.27 2008-05-28 18:35:03 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.28 2008-05-29 06:04:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.FQDNUrl;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -198,12 +199,13 @@ public class AgentConfiguration {
                 "create.agent.invalid.server.url", null);
         }
 
-        URL urlAgent = null;
+        FQDNUrl urlAgent = null;
         if ((agentURL != null) && (agentURL.trim().length() > 0)) {
-            urlAgent = new URL(agentURL);
+            urlAgent = new FQDNUrl(agentURL);
         }
-        createAgentGroupEx(ssoToken, realm, agentGroupName, agentType, 
-            attrValues, new URL(serverURL), urlAgent);
+
+        createAgentGroupEx(ssoToken, realm, agentGroupName, agentType,
+            attrValues, new FQDNUrl(serverURL), urlAgent);
     }
 
     /**
@@ -227,8 +229,8 @@ public class AgentConfiguration {
         String agentGroupName,
         String agentType,
         Map attrValues,
-        URL serverURL,
-        URL agentURL
+        FQDNUrl serverURL,
+        FQDNUrl agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
         validateAgentType(agentType, true);
@@ -285,8 +287,9 @@ public class AgentConfiguration {
             throw new ConfigurationException(
                 "create.agent.invalid.agent.url", null);
         }
+
         createAgentEx(ssoToken, realm, agentName, agentType, attrValues,
-            new URL(serverURL), new URL(agentURL));
+            new FQDNUrl(serverURL), new FQDNUrl(agentURL));
     }
 
     /**
@@ -339,8 +342,8 @@ public class AgentConfiguration {
         String agentName,
         String agentType,
         Map attrValues,
-        URL serverURL,
-        URL agentURL
+        FQDNUrl serverURL,
+        FQDNUrl agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
         validateAgentType(agentType);
@@ -364,19 +367,29 @@ public class AgentConfiguration {
     private static void tagswapAttributeValues(
         Map attributeValues,
         String agentType,
-        URL serverURL,
-        URL agentURL
+        FQDNUrl serverURL,
+        FQDNUrl agentURL
     ) throws ConfigurationException {
         Map map = new HashMap();
 
         if (serverURL != null) {
-            String uri = getURI(serverURL);
+            if (!serverURL.isValid()) {
+                throw new ConfigurationException(
+                    "create.agent.invalid.server.url", null);
+            }
+            
+            if (!serverURL.isFullyQualified()) {
+                throw new ConfigurationException(
+                    "create.agent.server.url.not.fqdn", null);
+            }
+            
+            String uri = serverURL.getURI();
             if (uri.length() == 0){
                 throw new ConfigurationException(
                     "create.agent.invalid.server.url.missing.uri", null);
             }
 
-            String port = Integer.toString(serverURL.getPort());
+            String port = serverURL.getPort();
             if (port.equals("-1")){
                 throw new ConfigurationException(
                     "create.agent.invalid.server.url.missing.port", null);
@@ -389,25 +402,40 @@ public class AgentConfiguration {
         }
 
         if (agentURL != null) {
-            String port = Integer.toString(agentURL.getPort());
+            String port = agentURL.getPort();
             map.put("AGENT_PROTO", agentURL.getProtocol());
             map.put("AGENT_HOST", agentURL.getHost());
             map.put("AGENT_PORT", port);
 
             if (agentType.equals(AGENT_TYPE_J2EE)) {
-                String uri = getURI(agentURL);
+                if (!agentURL.isValid()) {
+                    throw new ConfigurationException(
+                        "create.agent.invalid.agent.url", null);
+                }
+                if (!agentURL.isFullyQualified()) {
+                    throw new ConfigurationException(
+                        "create.agent.invalid.agent.url", null);
+                }
+                
+                String uri = agentURL.getURI();
                 if (uri.length() == 0) {
                     throw new ConfigurationException(
                         "create.agent.invalid.agent.url.missing.uri", null);
                 }
                 map.put("AGENT_APP_URI", uri);
-            }
 
-            if (agentType.equals(AGENT_TYPE_J2EE)) {
                 String logFileName = agentURL.getHost();
                 logFileName = "amAgent_" + logFileName.replaceAll("\\.", "_") +
                     "_" + port + ".log";
                 map.put("AUDIT_LOG_FILENAME", logFileName);
+            } else if (agentType.equals(AGENT_TYPE_WEB)) {
+                String uri = agentURL.getURI();
+                if (uri.length() > 0) {
+                    throw new ConfigurationException(
+                        "create.agent.invalid.agent.url.uri.not.required",
+                        null);
+                }
+                map.put("AGENT_APP_URI", uri);                
             }
         }
 
@@ -433,14 +461,7 @@ public class AgentConfiguration {
         return value;
     }
 
-    private static String getURI(URL url) {
-        String uri = url.getPath();
-        int idx = uri.indexOf('/', 1);
-        if (idx != -1) {
-            uri = uri.substring(0, idx);
-        }
-        return uri;
-    }
+
     
     /**
      * Updates agent attribute values.
