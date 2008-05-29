@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.10 2008-05-28 18:35:35 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.11 2008-05-29 23:22:06 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -249,7 +249,7 @@ public class AgentsModelImpl
 
         try {
             logEvent("ATTEMPT_CREATE_AGENT", params);
-            Map map = AgentConfiguration.getDefaultValues(type);
+            Map map = AgentConfiguration.getDefaultValues(type, false);
             Set set = new HashSet(2);
             map.put(AgentConfiguration.ATTR_NAME_PWD, set);
             set.add(password);
@@ -309,7 +309,7 @@ public class AgentsModelImpl
 
         try {
             logEvent("ATTEMPT_CREATE_AGENT", params);
-            Map map = AgentConfiguration.getDefaultValues(type);
+            Map map = AgentConfiguration.getDefaultValues(type, false);
             Set set = new HashSet(2);
             map.put(AgentConfiguration.ATTR_NAME_PWD, set);
             set.add(password);
@@ -367,7 +367,8 @@ public class AgentsModelImpl
             logEvent("ATTEMPT_CREATE_AGENT_GROUP", params);
             AgentConfiguration.createAgentGroup(getUserSSOToken(), realmName,
                 name, type,
-                AgentConfiguration.getDefaultValues(type), serverURL, agentURL);
+                AgentConfiguration.getDefaultValues(type, true), 
+                serverURL, agentURL);
             logEvent("SUCCEED_CREATE_AGENT_GROUP", params);
         } catch (MalformedURLException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
@@ -412,7 +413,7 @@ public class AgentsModelImpl
         try {
             logEvent("ATTEMPT_CREATE_AGENT_GROUP", params);
             AgentConfiguration.createAgentGroup(getUserSSOToken(), realmName,
-                name, type, AgentConfiguration.getDefaultValues(type));
+                name, type, AgentConfiguration.getDefaultValues(type, true));
             logEvent("SUCCEED_CREATE_AGENT_GROUP", params);
         } catch (ConfigurationException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};

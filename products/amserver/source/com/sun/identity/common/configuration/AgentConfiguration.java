@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.28 2008-05-29 06:04:26 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.29 2008-05-29 23:22:06 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -237,10 +237,16 @@ public class AgentConfiguration {
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
+
+        if (attributeValues.containsKey(ATTR_NAME_PWD)) {
+            throw new ConfigurationException(
+                "create.agent.group.cannot.have.password", null);
+        }
+
         Set setAgentType = new HashSet(2);
         setAgentType.add(agentType);
         attributeValues.put(IdConstants.AGENT_TYPE, setAgentType);
-        Map inheritedValues = getDefaultValues(agentType);
+        Map inheritedValues = getDefaultValues(agentType, true);
         //overwrite inherited values with what user has given
         inheritedValues.putAll(attributeValues);
             
@@ -353,7 +359,7 @@ public class AgentConfiguration {
         Set setAgentType = new HashSet(2);
         setAgentType.add(agentType);
         attributeValues.put(IdConstants.AGENT_TYPE, setAgentType);
-        Map inheritedValues = getDefaultValues(agentType);
+        Map inheritedValues = getDefaultValues(agentType, false);
         //overwrite inherited values with what user has given
         inheritedValues.putAll(attributeValues);
         
@@ -562,13 +568,16 @@ public class AgentConfiguration {
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if attribute values map contains invalid
+     *         values.
      */
     public static void updateAgentGroup(
         SSOToken ssoToken,
         String realm,
         String agentGroupName,
         Map attrValues
-    ) throws IdRepoException, SSOException, SMSException {
+    ) throws IdRepoException, SSOException, SMSException, ConfigurationException
+    {
         updateAgentGroup(ssoToken, realm, agentGroupName, attrValues, true);
     }
 
@@ -586,6 +595,8 @@ public class AgentConfiguration {
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if attribute values map contains invalid
+     *         values.
      */
     public static void updateAgentGroup(
         SSOToken ssoToken,
@@ -593,11 +604,18 @@ public class AgentConfiguration {
         String agentGroupName,
         Map attrValues,
         boolean bSet
-    ) throws IdRepoException, SSOException, SMSException {
+    ) throws IdRepoException, SSOException, SMSException, ConfigurationException
+    {
         AMIdentity amid = new AMIdentity(ssoToken, agentGroupName, 
             IdType.AGENTGROUP, realm, null); 
         String agentType = getAgentType(amid);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
+
+        if (attributeValues.containsKey(ATTR_NAME_PWD)) {
+            throw new ConfigurationException(
+                "update.agent.group.cannot.have.password", null);
+        }
+
         if (!bSet) {
             Map origValues = amid.getAttributes(attributeValues.keySet());
             for (Iterator i = attributeValues.keySet().iterator();
@@ -1034,11 +1052,12 @@ public class AgentConfiguration {
      * of a given agent type.
      *
      * @param agentType Type of agent.
+     * @param bGroup <code>true</code> if this is for a group.
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
      */
-    public static Map getDefaultValues(String agentType) 
+    public static Map getDefaultValues(String agentType, boolean bGroup) 
         throws SMSException, SSOException {
         Map mapDefault = new HashMap();
         Set attributeSchemas = getAgentAttributeSchemas(agentType);
@@ -1048,6 +1067,9 @@ public class AgentConfiguration {
                 AttributeSchema as = (AttributeSchema)i.next();
                 mapDefault.put(as.getName(), as.getDefaultValues());
             }
+        }
+        if (bGroup) {
+            mapDefault.remove(ATTR_NAME_PWD);
         }
         return mapDefault;
     }
