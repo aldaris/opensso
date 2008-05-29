@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.1 2008-05-10 05:27:30 qcheng Exp $
+   $Id: fedletSampleApp.jsp,v 1.2 2008-05-29 00:40:42 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -89,6 +89,15 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
         return;
     }
     // END : code is a must for Fedlet (SP) side application
+    
+    String relayUrl = (String) map.get(SAML2Constants.RELAY_STATE);
+    if ((relayUrl != null) && (relayUrl.length() != 0)) {
+        // something special for validation to send redirect
+        int stringPos  = relayUrl.indexOf("sendRedirectForValidationNow=true");
+        if (stringPos != -1) {
+            response.sendRedirect(relayUrl);
+        }
+    } 
 
     // Following are sample code to show how to retrieve information,
     // such as Reponse/Assertion/Attributes, from the returned map. 
@@ -97,7 +106,6 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     Assertion assertion = (Assertion) map.get(SAML2Constants.ASSERTION);
     Subject subject = (Subject) map.get(SAML2Constants.SUBJECT);
     String entityID = (String) map.get(SAML2Constants.IDPENTITYID);
-    String relayUrl = (String) map.get(SAML2Constants.RELAY_STATE);
     NameID nameId = assertion.getSubject().getNameID();
     String value = nameId.getValue();
     String format = nameId.getFormat();

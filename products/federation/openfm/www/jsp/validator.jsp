@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validator.jsp,v 1.1 2008-04-10 23:15:05 veiming Exp $
+   $Id: validator.jsp,v 1.2 2008-05-29 00:40:43 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -328,7 +328,7 @@ function singleLogin() {
     if (validator != null) {
         out.println("top.gotoURL('" + validator.getSSOURL() +
             "&RelayState=" + URLEncoder.encode(serverURL +
-            "/validatorStatus.jsp?s=sso&v=1") + "');");
+            "/validatorStatus.jsp?s=sso&v=1&sendRedirectForValidationNow=true") + "');");
         out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
             "validate.footer.single.login") + "\");");
     }
