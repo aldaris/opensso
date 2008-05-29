@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.46 2008-05-23 04:52:31 kanduls Exp $
+ * $Id: TestCommon.java,v 1.47 2008-05-29 00:05:28 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,8 +37,15 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -90,6 +97,8 @@ public class TestCommon implements TestConstants {
     static private Server server;
     static private String uriseparator = "/";
     private String productSetupResult;
+    static private FileInputStream in;
+    static private BufferedWriter out;
     
     protected static String newline = System.getProperty("line.separator");
     protected static String fileseparator =
@@ -130,22 +139,22 @@ public class TestCommon implements TestConstants {
                 uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
             } else {
                 String strDistAuthURL = rb_amconfig.getString(
-                         TestConstants.KEY_DIST_AUTH_NOTIFICATION_SVC);
-
+                        TestConstants.KEY_DIST_AUTH_NOTIFICATION_SVC);
+                
                 int iFirstSep = strDistAuthURL.indexOf(":");
                 protocol = strDistAuthURL.substring(0, iFirstSep);
-
+                
                 int iSecondSep = strDistAuthURL.indexOf(":", iFirstSep + 1);
                 host = strDistAuthURL.substring(iFirstSep + 3, iSecondSep);
-
+                
                 int iThirdSep = strDistAuthURL.indexOf(uriseparator,
-                         iSecondSep + 1);
+                        iSecondSep + 1);
                 port = strDistAuthURL.substring(iSecondSep + 1, iThirdSep);
-
+                
                 int iFourthSep = strDistAuthURL.indexOf(uriseparator,
-                         iThirdSep + 1);
+                        iThirdSep + 1);
                 uri = uriseparator +
-                        strDistAuthURL.substring(iThirdSep + 1, iFourthSep);                        
+                        strDistAuthURL.substring(iThirdSep + 1, iFourthSep);
             }
             realm = rb_amconfig.getString(TestConstants.KEY_ATT_REALM);
             cookieDomain = rb_amconfig.getString(
@@ -649,27 +658,27 @@ public class TestCommon implements TestConstants {
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
                     "IDToken1=" + adminUser + "&IDToken2=" +
                     map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-                    log(Level.FINE, "configureProduct", "strNewURL: " + 
-                            strNewURL);
-                    url = new URL(strNewURL);
-                    page = (HtmlPage)webclient.getPage(url);
-                    if (getHtmlPageStringIndex(page, 
-                            "Authentication Failed") != -1) {
-                        log(Level.FINE, "configureProduct", 
-                                "Product was already configured. " + 
-                                "Super admin login failed.");
-                        exiting("configureProduct");
-                        return false;
-                    } else {
-                        log(Level.FINE, "configureProduct", "Product was " + 
-                                "already configured. " + 
-                                "Super admin login successful.");
-                        strNewURL = (String)map.get("serverurl") +
-                                (String)map.get("serveruri") + "/UI/Logout";
-                        consoleLogout(webclient, strNewURL);
-                        exiting("configureProduct");
-                        return true;
-                    }
+            log(Level.FINE, "configureProduct", "strNewURL: " +
+                    strNewURL);
+            url = new URL(strNewURL);
+            page = (HtmlPage)webclient.getPage(url);
+            if (getHtmlPageStringIndex(page,
+                    "Authentication Failed") != -1) {
+                log(Level.FINE, "configureProduct",
+                        "Product was already configured. " +
+                        "Super admin login failed.");
+                exiting("configureProduct");
+                return false;
+            } else {
+                log(Level.FINE, "configureProduct", "Product was " +
+                        "already configured. " +
+                        "Super admin login successful.");
+                strNewURL = (String)map.get("serverurl") +
+                        (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strNewURL);
+                exiting("configureProduct");
+                return true;
+            }
         }
     }
     
@@ -724,7 +733,7 @@ public class TestCommon implements TestConstants {
     }
     
     /**
-     * Checks whether the string exists on the page and optionally logs page 
+     * Checks whether the string exists on the page and optionally logs page
      */
     protected int getHtmlPageStringIndex(
             HtmlPage page,
@@ -743,17 +752,17 @@ public class TestCommon implements TestConstants {
         if (isLog){
             log(Level.FINEST, "getHtmlPageStringIndex", "Search page\n:" +
                     strPage);
-        if (iIdx != -1)
-            log(Level.FINEST, "getHtmlPageStringIndex",
-                    "Search string found on page: " + iIdx);
-        else
-            log(Level.FINEST, "getHtmlPageStringIndex",
-                    "Search string not found on page: " + iIdx);
+            if (iIdx != -1)
+                log(Level.FINEST, "getHtmlPageStringIndex",
+                        "Search string found on page: " + iIdx);
+            else
+                log(Level.FINEST, "getHtmlPageStringIndex",
+                        "Search string not found on page: " + iIdx);
         }
         exiting("getHtmlPageStringIndex");
         return iIdx;
     }
-
+    
     /**
      * Reads data from a Map object, creates a new file and writes data to that
      * file
@@ -1209,22 +1218,122 @@ public class TestCommon implements TestConstants {
      */
     protected Set getAllUserTokens(SSOToken requester, String userId)
     throws Exception {
-       SSOToken stok = null;
-       Set setAllToken = new HashSet();
-       if (validateToken(requester)) {
-           SSOTokenManager stMgr = SSOTokenManager.getInstance();
-           Set set = stMgr.getValidSessions(requester, host);
-           Iterator it = set.iterator();
-           String strLocUserID;
-           while (it.hasNext()) {
-               stok = (SSOToken)it.next();
-               strLocUserID = stok.getProperty("UserId");
-               log(Level.FINEST, "getAllUserTokens", "UserID: " + strLocUserID);
-               if (strLocUserID.equalsIgnoreCase(userId)) {
-                   setAllToken.add(stok);
-               }
-           }
-       }
-       return setAllToken;
-   }
- }
+        SSOToken stok = null;
+        Set setAllToken = new HashSet();
+        if (validateToken(requester)) {
+            SSOTokenManager stMgr = SSOTokenManager.getInstance();
+            Set set = stMgr.getValidSessions(requester, host);
+            Iterator it = set.iterator();
+            String strLocUserID;
+            while (it.hasNext()) {
+                stok = (SSOToken)it.next();
+                strLocUserID = stok.getProperty("UserId");
+                log(Level.FINEST, "getAllUserTokens", "UserID: " + strLocUserID);
+                if (strLocUserID.equalsIgnoreCase(userId)) {
+                    setAllToken.add(stok);
+                }
+            }
+        }
+        return setAllToken;
+    }
+    
+    /**
+     * Replaces the strings given in the map in the input file and wirtes to the
+     * output file
+     * @param file input file (absolute file path)
+     * @param Map with name value pairs like ("SM_SUFFIX", basedn)
+     * @param file output file (absolute file path)
+     * @param encoding
+     */
+    protected static void replaceString(String inputFN, Map nvp,
+            String outputFN, String enc) 
+    throws Exception {        
+        try {
+            File file = new File(inputFN);
+            byte[] data = new byte[(int)file.length()];
+            in = new FileInputStream(file);
+            in.read(data);
+            StringBuffer buf = new StringBuffer(new String(data));
+            Set keys = nvp.keySet();
+            Object iter[] = sort(keys.toArray());
+            for (int i = 0; i < iter.length; i++){
+                String key = (String)iter[i];
+                String value = (String)nvp.get(key);
+                replaceToken(buf, key, value);
+            }
+            if(outputFN != null) {
+                try {
+                    out = new BufferedWriter(new OutputStreamWriter
+                            (new FileOutputStream(outputFN),enc));
+                } catch (java.io.UnsupportedEncodingException ex) {
+                    out = new BufferedWriter(new OutputStreamWriter
+                            (new FileOutputStream(outputFN),"ISO8859_1"));
+                }
+                String str = buf.toString();
+                out.write(str, 0, str.length());
+                out.flush();
+            }
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            in.close();
+            out.close();
+        }
+        return;
+    }
+    
+    /**
+     * Replaces the strings given in the map in the input file and wirtes to the
+     * output file
+     * @param file input file (absolute file path)
+     * @param Map with name value pairs like ("SM_SUFFIX", basedn)
+     * @param file output file (absolute file path)
+     */
+    protected static void replaceString(String inputFN, Map nvp,
+            String outputFN) 
+    throws Exception {
+        String enc = System.getProperty("file.encoding");
+        replaceString(inputFN, nvp, outputFN, enc);
+    }
+    
+    /**
+     * Replaces the strings in a string buffer
+     * @param String buffer
+     * @param key to be replaced
+     * @param value to be replaced
+     */
+    protected static void replaceToken(StringBuffer buf, String key,
+            String value) {
+        if (key == null || value == null || buf == null)
+            return;
+        int loc = 0, keyLen = key.length(), valLen = value.length();
+        while ((loc = buf.toString().indexOf(key, loc)) != -1) {
+            buf.replace(loc, loc + keyLen, value);
+            loc = loc + valLen;
+        }
+        return;
+    }
+    
+    /**
+     * Sorts the keys in the map
+     * returns sorted object []
+     */
+    private static Object[] sort(Object objArray[])  {
+        for (int i = objArray.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (((String)objArray[j]).length() <
+                        ((String)objArray[j+1]).length()) {
+                    Object T = (String)objArray[j+1];
+                    objArray[j+1] = objArray[j];
+                    objArray[j] = T;
+                }
+            }
+        }
+        return objArray;
+    }
+    
+}
