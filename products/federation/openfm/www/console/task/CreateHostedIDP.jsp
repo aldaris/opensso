@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.8 2008-05-29 00:49:50 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.9 2008-05-29 01:00:45 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -167,7 +167,7 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' + 
-            '&extendeddata=' + escape(extended);
+            '&extendeddata=' + escapeEx(extended);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 
@@ -245,19 +245,19 @@
                 frm.elements['CreateHostedIDP.tfExtendedFileURL'].value :
                 frm.elements['CreateHostedIDP.tfExtendedFile'].value;
 
-            return "&metadata=" + escape(meta) +
-                "&extendeddata=" + escape(extended) +
-                "&cot=" + escape(cot) +
-                "&attributemappings=" + escape(getNameAttributeMapping());
+            return "&metadata=" + escapeEx(meta) +
+                "&extendeddata=" + escapeEx(extended) +
+                "&cot=" + escapeEx(cot) +
+                "&attributemappings=" + escapeEx(getNameAttributeMapping());
         } else {
             var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
             return "&entityId=" +
-            escape(frm.elements['CreateHostedIDP.tfEntityId'].value) +
-            "&realm=" + escape(realm) +
+            escapeEx(frm.elements['CreateHostedIDP.tfEntityId'].value) +
+            "&realm=" + escapeEx(realm) +
             "&idpscert=" +
-            escape(frm.elements['CreateHostedIDP.tfSigningKey'].value) +
-            "&cot=" + escape(cot) +
-            "&attributemappings=" + escape(getNameAttributeMapping());
+            escapeEx(frm.elements['CreateHostedIDP.tfSigningKey'].value) +
+            "&cot=" + escapeEx(cot) +
+            "&attributemappings=" + escapeEx(getNameAttributeMapping());
         }
     }
 
@@ -277,7 +277,7 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' + 
-            '&realm=' + escape(realm);
+            '&realm=' + escapeEx(realm);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 

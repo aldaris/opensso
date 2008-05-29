@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.7 2008-05-29 00:49:50 veiming Exp $
+   $Id: CreateHostedSP.jsp,v 1.8 2008-05-29 01:00:45 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -144,7 +144,7 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' + 
-            '&extendeddata=' + escape(extended);
+            '&extendeddata=' + escapeEx(extended);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 
@@ -247,18 +247,18 @@
                 frm.elements['CreateHostedSP.tfExtendedFileURL'].value :
                 frm.elements['CreateHostedSP.tfExtendedFile'].value;
 
-            return "&metadata=" + escape(meta) +
-                "&extendeddata=" + escape(extended) +
-                "&cot=" + escape(cot) +
-                "&attributemappings=" + escape(getNameAttributeMapping()) +
+            return "&metadata=" + escapeEx(meta) +
+                "&extendeddata=" + escapeEx(extended) +
+                "&cot=" + escapeEx(cot) +
+                "&attributemappings=" + escapeEx(getNameAttributeMapping()) +
                 "&defaultattributemappings=" + defaultAttrMapping;
         } else {
             var realm = frm.elements['CreateHostedSP.tfRealm'].value;
             return "&entityId=" +
-            escape(frm.elements['CreateHostedSP.tfEntityId'].value) +
-            "&realm=" + escape(realm) +
-            "&cot=" + escape(cot) +
-            "&attributemappings=" + escape(getNameAttributeMapping()) +
+            escapeEx(frm.elements['CreateHostedSP.tfEntityId'].value) +
+            "&realm=" + escapeEx(realm) +
+            "&cot=" + escapeEx(cot) +
+            "&attributemappings=" + escapeEx(getNameAttributeMapping()) +
             "&defaultattributemappings=" + defaultAttrMapping;
         }
     }
@@ -284,7 +284,7 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' + 
-            '&realm=' + escape(realm);
+            '&realm=' + escapeEx(realm);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 

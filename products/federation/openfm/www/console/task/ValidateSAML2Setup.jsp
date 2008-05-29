@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.2 2008-05-29 00:50:52 veiming Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.3 2008-05-29 01:00:47 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -56,7 +56,7 @@
     }
 
     function realmSelect(radio) {
-        document.location.replace("../task/ValidateSAML2Setup?realm=" + escape(radio.value));
+        document.location.replace("../task/ValidateSAML2Setup?realm=" + escapeEx(radio.value));
     }
 </script>
 
@@ -130,10 +130,10 @@
         var idp = frm.elements['ValidateSAML2Setup.tfIDP'].value;
         var sp = frm.elements['ValidateSAML2Setup.tfSP'].value;
 
-        var url = "../validatorMain.jsp?realm=" + escape(realm) +
-            "&cot=" + escape(cotName) +
-            "&idp=" + escape(idp) +
-            "&sp=" + escape(sp);
+        var url = "../validatorMain.jsp?realm=" + escapeEx(realm) +
+            "&cot=" + escapeEx(cotName) +
+            "&idp=" + escapeEx(idp) +
+            "&sp=" + escapeEx(sp);
         top.location.replace(url);
     }
 
@@ -165,7 +165,7 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetIDPSPPairingInCOT' +
-            '&cot=' + escape(cotName) + "&realm=" + escape(realm) ;
+            '&cot=' + escapeEx(cotName) + "&realm=" + escapeEx(realm) ;
         ajaxPost(ajaxObj, url, params, gotEntities);
     }
 

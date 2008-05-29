@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: RegisterProduct.jsp,v 1.1 2008-04-02 20:06:22 bigfatrat Exp $
+   $Id: RegisterProduct.jsp,v 1.2 2008-05-29 01:00:47 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -135,7 +135,7 @@
     }
 
     function getFieldValue(name) {
-        return "&" + name + "=" + escape(
+        return "&" + name + "=" + escapeEx(
             frm.elements['RegisterProduct.' + name].value);
     }
 

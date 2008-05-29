@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.7 2008-05-29 00:50:51 veiming Exp $
+   $Id: CreateRemoteSP.jsp,v 1.8 2008-05-29 01:00:46 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -170,10 +170,10 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
             frm.elements['CreateRemoteSP.tfMetadataFileURL'].value :
             frm.elements['CreateRemoteSP.tfMetadataFile'].value;
 
-        return "&metadata=" + escape(meta) +
-            "&realm=" + escape(realm) +
-            "&cot=" + escape(cot) +
-            "&attributemappings=" + escape(getNameAttributeMapping());
+        return "&metadata=" + escapeEx(meta) +
+            "&realm=" + escapeEx(realm) +
+            "&cot=" + escapeEx(cot) +
+            "&attributemappings=" + escapeEx(getNameAttributeMapping());
     }
 
     function getNameAttributeMapping() {
@@ -208,7 +208,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' +
-            '&realm=' + escape(realm);
+            '&realm=' + escapeEx(realm);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 

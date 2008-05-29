@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.6 2008-04-15 03:54:42 veiming Exp $
+ * $Id: am.js,v 1.7 2008-05-29 01:00:44 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -277,5 +277,11 @@ function disableButton(frm, btnName, bDisable) {
             btn.disabled = 0;
         }
     }
+}
+
+
+function escapeEx(d) {
+    var escaped = escape(d);
+    return escaped.replace(/\+/g, "%2B");
 }
 

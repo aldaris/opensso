@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.3 2008-05-10 05:27:43 qcheng Exp $
+   $Id: CreateFedlet.jsp,v 1.4 2008-05-29 01:00:45 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -164,12 +164,12 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var entityId = frm.elements['CreateFedlet.tfEntityId'].value;
         var assertConsumer = frm.elements['CreateFedlet.tfAssertConsumer'].value + '/fedletapplication';
 
-        return "&realm=" + escape(realm) +
-            "&cot=" + escape(cot) +
-            "&idp=" + escape(idp) +
-            "&entityId=" + escape(entityId) +
-            "&assertionconsumer=" + escape(assertConsumer) +
-            "&attributemappings=" + escape(getNameAttributeMapping());
+        return "&realm=" + escapeEx(realm) +
+            "&cot=" + escapeEx(cot) +
+            "&idp=" + escapeEx(idp) +
+            "&entityId=" + escapeEx(entityId) +
+            "&assertionconsumer=" + escapeEx(assertConsumer) +
+            "&attributemappings=" + escapeEx(getNameAttributeMapping());
     }
 
     function getNameAttributeMapping() {
@@ -204,7 +204,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' +
-            '&realm=' + escape(realm);
+            '&realm=' + escapeEx(realm);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 
@@ -214,8 +214,8 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var realm = frm.elements['CreateFedlet.tfRealm'].value;
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetHostedIDPs' +
-            '&realm=' + escape(realm) +
-            '&cot=' + escape(cot);
+            '&realm=' + escapeEx(realm) +
+            '&cot=' + escapeEx(cot);
         ajaxPost(ajaxObj, url, params, gotIDPs);
     }
 

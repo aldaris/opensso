@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteIDP.jsp,v 1.3 2008-05-29 00:49:51 veiming Exp $
+   $Id: CreateRemoteIDP.jsp,v 1.4 2008-05-29 01:00:46 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -166,9 +166,9 @@
             frm.elements['CreateRemoteIDP.tfMetadataFileURL'].value :
             frm.elements['CreateRemoteIDP.tfMetadataFile'].value;
 
-        return "&metadata=" + escape(meta) +
-            "&realm=" + escape(realm) +
-            "&cot=" + escape(cot);
+        return "&metadata=" + escapeEx(meta) +
+            "&realm=" + escapeEx(realm) +
+            "&cot=" + escapeEx(cot);
     }
 
     function configured() {
@@ -190,7 +190,7 @@
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
             '&class=com.sun.identity.workflow.GetCircleOfTrusts' +
-            '&realm=' + escape(realm);
+            '&realm=' + escapeEx(realm);
         ajaxPost(ajaxObj, url, params, circleOfTrust);
     }
 
