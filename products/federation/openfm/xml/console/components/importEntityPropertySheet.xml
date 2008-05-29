@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: importEntityPropertySheet.xml,v 1.2 2008-03-20 05:00:17 veiming Exp $
+   $Id: importEntityPropertySheet.xml,v 1.3 2008-05-29 00:50:52 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -52,7 +52,7 @@
             </cc>
             <cc name="btnMetadata"
                 tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-                <attribute name="OnClick" value="openWindow('tfMetadataFile|metadatafilename'); return false;" />
+                <attribute name="OnClick" value="openWindow('tfMetadataFile_metadatafilename'); return false;" />
                     <attribute name="defaultValue" value="button.upload" />
             </cc>
             <cc name="tfMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
@@ -75,7 +75,7 @@
             </cc>
             <cc name="btnExtendeddata"
                 tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-                <attribute name="OnClick" value="openWindow('tfExtendeddataFile|extendeddatafilename'); return false;" />
+                <attribute name="OnClick" value="openWindow('tfExtendeddataFile_extendeddatafilename'); return false;" />
                     <attribute name="defaultValue" value="button.upload" />
             </cc>
             <cc name="tfExtendeddataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />

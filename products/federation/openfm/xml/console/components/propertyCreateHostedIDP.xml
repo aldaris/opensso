@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateHostedIDP.xml,v 1.4 2008-04-04 04:30:20 veiming Exp $
+   $Id: propertyCreateHostedIDP.xml,v 1.5 2008-05-29 00:50:53 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,7 +38,7 @@
 	    <option label="configure.provider.option.hasMetaData.yes" value="yes" />
 	    <option label="configure.provider.option.hasMetaData.no" value="no" />
 	    <attribute name="layout" value="horizontal" />
-            <attribute name="onChange" value="metadataOptionSelect(this);" />
+            <attribute name="onClick" value="metadataOptionSelect(this);" />
 	</cc>
         <fieldhelp name="helpHasMetaData" defaultValue="configure.provider.help.hasMetaData" />
     </property>
@@ -51,7 +51,7 @@
 	    <option label="configure.provider.option.url" value="url" />
 	    <option label="configure.provider.option.uploadfile" value="file" />
 	    <attribute name="layout" value="horizontal" />
-            <attribute name="onChange" value="metaOptionSelect(this);" />
+            <attribute name="onClick" value="metaOptionSelect(this);" />
 	</cc>
         <fieldhelp name="helpMetadataFile" defaultValue="configure.provider.help.metadata" />
     </property>
@@ -63,7 +63,7 @@
 	</cc>
         <cc name="btnMetadata"
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-            <attribute name="OnClick" value="openWindow('tfMetadataFile|metadatafilename'); return false;" />
+            <attribute name="OnClick" value="openWindow('tfMetadataFile_metadatafilename'); return false;" />
                 <attribute name="defaultValue" value="button.upload" />
         </cc>
 	<cc name="tfMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
@@ -74,7 +74,7 @@
 	    <option label="configure.provider.option.url" value="url" />
 	    <option label="configure.provider.option.uploadfile" value="file" />
 	    <attribute name="layout" value="horizontal" />
-            <attribute name="onChange" value="extendedOptionSelect(this);" />
+            <attribute name="onClick" value="extendedOptionSelect(this);" />
 	</cc>
         <fieldhelp name="helpExtendedFile" defaultValue="configure.provider.help.extendeddata" />
     </property>
@@ -87,7 +87,7 @@
 	</cc>
         <cc name="btnExtendedFile"
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-            <attribute name="OnClick" value="openWindow('tfExtendedFile|extendedfilename|getCircleOfTrustFromExt()'); return false;" />
+            <attribute name="OnClick" value="openWindow('tfExtendedFile_extendedfilename_getCircleOfTrustFromExt'); return false;" />
                 <attribute name="defaultValue" value="button.upload" />
         </cc>
 	<cc name="tfExtendedFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
@@ -131,7 +131,7 @@
 	    <option label="configure.provider.option.existing" value="yes" />
 	    <option label="configure.provider.option.new" value="no" />
 	    <attribute name="layout" value="horizontal" />
-            <attribute name="onChange" value="cotOptionSelect(this);" />
+            <attribute name="onClick" value="cotOptionSelect(this);" />
 	</cc>
     </property>
     <property required="true">

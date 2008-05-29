@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteIDP.jsp,v 1.2 2008-03-20 06:25:37 asyhuang Exp $
+   $Id: CreateRemoteIDP.jsp,v 1.3 2008-05-29 00:49:51 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -46,6 +46,7 @@
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
+
     function openWindow(fieldName) {
         selectWin = window.open('../federation/FileUploader', fieldName,
             'height=300,width=650,top=' +

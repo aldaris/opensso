@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateRemoteSP.xml,v 1.5 2008-03-12 15:14:07 veiming Exp $
+   $Id: propertyCreateRemoteSP.xml,v 1.6 2008-05-29 00:50:54 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,7 +45,7 @@
             <option label="configure.provider.option.url" value="url" />
             <option label="configure.provider.option.uploadfile" value="file" />
             <attribute name="layout" value="horizontal" />
-            <attribute name="onChange" value="metaOptionSelect(this);" />
+            <attribute name="onClick" value="metaOptionSelect(this);" />
         </cc>
         <fieldhelp name="helpMetadataFile" defaultValue="configure.provider.help.metadata" />
     </property>
@@ -58,7 +58,7 @@
         <fieldhelp name="helpMetadataFileURL" defaultValue="configure.provider.help.metadataurl" />
         <cc name="btnMetadata"
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
-            <attribute name="OnClick" value="openWindow('tfMetadataFile|metadatafilename'); return false;" />
+            <attribute name="OnClick" value="openWindow('tfMetadataFile_metadatafilename'); return false;" />
                 <attribute name="defaultValue" value="button.upload" />
         </cc>
         <cc name="tfMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCHiddenTag" />
@@ -77,7 +77,7 @@
             <option label="configure.provider.option.existing" value="yes" />
             <option label="configure.provider.option.new" value="no" />
             <attribute name="layout" value="horizontal" />
-            <attribute name="onChange" value="cotOptionSelect(this);" />
+            <attribute name="onClick" value="cotOptionSelect(this);" />
         </cc>
     </property>
     <property required="true">

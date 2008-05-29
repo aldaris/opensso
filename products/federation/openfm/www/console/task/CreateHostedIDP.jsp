@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedIDP.jsp,v 1.7 2008-04-10 23:15:05 veiming Exp $
+   $Id: CreateHostedIDP.jsp,v 1.8 2008-05-29 00:49:50 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -44,7 +44,29 @@
 
 <cc:form name="CreateHostedIDP" method="post">
 <jato:hidden name="szCache" />
+
+<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+    <tr>
+        <td>
+        <cc:alertinline name="ialertCommon" bundleID="amConsole" />
+        </td>
+    </tr>
+</table>
+
+<%-- PAGE CONTENT --------------------------------------------------------- --%>
+<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.hosted.idp" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+
+<cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
+
+</cc:form>
+</div>
+<div id="dlg" class="dvs" style="height:200px"></div>
+
 <script language="javascript">
+    metadiv = document.getElementById("meta");
+    metadivDisplay = metadiv.style.display;
+
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
@@ -59,19 +81,19 @@
 
     function metadataOptionSelect(radio) {
         var infodiv = document.getElementById("info");
-        var metadiv = document.getElementById("meta");
         hasMetaData = radio.value;
         if (radio.value == 'yes') {
             infodiv.style.display = 'none';
-            metadiv.style.display = 'block';
+            metadiv.style.display = '';
             document.getElementById('cotsection').style.display = 'none';
             document.getElementById('cotq').style.display = 'none';
             document.getElementById('cottf').style.display = 'none';
             document.getElementById('cotchoice').style.display = 'none';
         } else {
-            infodiv.style.display = 'block';
+            infodiv.style.display = '';
             metadiv.style.display = 'none';
-            document.getElementById('cotsection').style.display = 'display';
+            document.getElementById('cotsection').style.display = '';
+            document.getElementById('cotq').style.display = '';
             var realm = frm.elements['CreateHostedIDP.tfRealm'].value;
             getCircleOfTrust(realm);
         }
@@ -113,12 +135,12 @@
     function cotOptionSelect(radio) {
         var ans = radio.value;
         if (ans == 'yes') {
-            document.getElementById('cotchoice').style.display = 'block';
+            document.getElementById('cotchoice').style.display = '';
             document.getElementById('cottf').style.display = 'none';
             frm.elements['CreateHostedIDP.tfCOT'].value = '';
         } else {
             document.getElementById('cotchoice').style.display = 'none';
-            document.getElementById('cottf').style.display = 'block';
+            document.getElementById('cottf').style.display = '';
         }
     }
 
@@ -157,28 +179,6 @@
             document.getElementById('realmfld').style.display = 'none';
         }
     }
-</script>
-
-<cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
-<table border="0" cellpadding="10" cellspacing="0" width="100%">
-    <tr>
-        <td>
-        <cc:alertinline name="ialertCommon" bundleID="amConsole" />
-        </td>
-    </tr>
-</table>
-
-<%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.hosted.idp" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
-
-<cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
-
-</cc:form>
-</cc:header>
-</div>
-<div id="dlg" class="dvs" style="height:200px"></div>
-
-<script language="javascript">
     hideRealm();
 
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
@@ -205,7 +205,7 @@
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
         fade();
-        if (document.getElementById('cotsection').style.display != 'block') {
+        if (document.getElementById('cotsection').style.display != '') {
             var extended = getExtendedData();
             if (extended.length > 0) {
                 if (hasMetaData) {
@@ -288,13 +288,13 @@
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';
             if (status == 0) {
-                document.getElementById('cotsection').style.display = 'block';
+                document.getElementById('cotsection').style.display = '';
                 result = result.replace(/^\s+/, '');
                 result = result.replace(/\s+$/, '');
                 if (result.length == 0) {
                     document.getElementById('cotq').style.display = 'none';
                     document.getElementById('cotchoice').style.display = 'none';
-                    document.getElementById('cottf').style.display = 'block';
+                    document.getElementById('cottf').style.display = '';
                     chooseRadio(frm, 'CreateHostedIDP.radioCOT', 'no');
                 } else {
                     var cots = result.split('|');
@@ -302,8 +302,8 @@
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }
-                    document.getElementById('cotq').style.display = 'block';
-                    document.getElementById('cotchoice').style.display = 'block';
+                    document.getElementById('cotq').style.display = '';
+                    document.getElementById('cotchoice').style.display = '';
                     document.getElementById('cottf').style.display = 'none';
                     chooseRadio(frm, 'CreateHostedIDP.radioCOT', 'yes');
                 }
@@ -377,20 +377,10 @@
             addPropertyRow(name, assertn);
             frm.elements['CreateHostedIDP.tfAttrMappingName'].value = '';
             frm.elements['CreateHostedIDP.tfAttrMappingAssertion'].value = '';
-            var userAttrs = frm.elements['CreateHostedIDP.menuUserAttributes'];
-            if (userAttrs.options[0].values != '') {
-                var cache = new Array();
-                for (var i = 0; i < userAttrs.options.length; i++) {
-                    cache[i] = userAttrs.options[i];
-                }
-                userAttrs.options[0] = selectOptionCache;
-                for (var i = 0; i < cache.length; i++) {
-                    userAttrs.options[i+1] = cache[i];
-                }
-            }
-            userAttrs.selectedIndex = 0;
         }
     }
+
+    var runningNumber = 0;
 
     function addPropertyRow(name, assertn) {
         var table = getActionTable();
@@ -408,14 +398,15 @@
         var textnode2 = document.createTextNode(name);
         cb.setAttribute("type", "checkbox");
         cb.setAttribute("value", assertn + "=" + name);
-        cb.setAttribute("onclick", "toggleTblButtonState('CreateHostedIDP', 'CreateHostedIDP.tblattrmapping', 'tblButton', 'CreateHostedIDP.deleteAttrMappingBtn', this)");
         cell1.appendChild(cb);
         cell2.appendChild(textnode1);
         cell3.appendChild(textnode2);
+        cb.onclick = function() {toggleTblButtonState('CreateHostedIDP', 'CreateHostedIDP.tblattrmapping', 'tblButton', 'CreateHostedIDP.deleteAttrMappingBtn', this);};
         row.appendChild(cell1);
         row.appendChild(cell2);
         row.appendChild(cell3);
         tBody.appendChild(row);
+
     }
 
     function getActionTable() {
@@ -452,10 +443,6 @@
     }
 
     function userAttrSelect(menu) {
-        if (menu.options[0].value == '') {
-            selectOptionCache = menu.options[0];
-            menu.options[0] = null;
-        }
         frm.elements['CreateHostedIDP.tfAttrMappingName'].value = menu.value;
     }
 
@@ -465,4 +452,5 @@
     getActionTable().deleteRow(2);
 </script>
 
+</cc:header>
 </jato:useViewBean>

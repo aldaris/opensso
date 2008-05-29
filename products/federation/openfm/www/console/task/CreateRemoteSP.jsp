@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.6 2008-04-10 23:15:05 veiming Exp $
+   $Id: CreateRemoteSP.jsp,v 1.7 2008-05-29 00:50:51 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -81,12 +81,12 @@
     function cotOptionSelect(radio) {
         var ans = radio.value;
         if (ans == 'yes') {
-            document.getElementById('cotchoice').style.display = 'block';
+            document.getElementById('cotchoice').style.display = '';
             document.getElementById('cottf').style.display = 'none';
             frm.elements['CreateRemoteSP.tfCOT'].value = '';
         } else {
             document.getElementById('cotchoice').style.display = 'none';
-            document.getElementById('cottf').style.display = 'block';
+            document.getElementById('cottf').style.display = '';
         }
     }
 
@@ -219,13 +219,13 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
             var result = result.substring(result.indexOf('|') +1);
             var msg = '';
             if (status == 0) {
-                document.getElementById('cotsection').style.display = 'block';
+                document.getElementById('cotsection').style.display = '';
                 result = result.replace(/^\s+/, '');
                 result = result.replace(/\s+$/, '');
                 if (result.length == 0) {
                     document.getElementById('cotq').style.display = 'none';
                     document.getElementById('cotchoice').style.display = 'none';
-                    document.getElementById('cottf').style.display = 'block';
+                    document.getElementById('cottf').style.display = '';
                     chooseRadio(frm, 'CreateRemoteSP.radioCOT', 'no');
                 } else {
                     var cots = result.split('|');
@@ -233,8 +233,8 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
                     for (var i = 0; i < cots.length; i++) {
                         choiceCOT.options[i] = new Option(cots[i], cots[i]);
                     }
-                    document.getElementById('cotq').style.display = 'block';
-                    document.getElementById('cotchoice').style.display = 'block';
+                    document.getElementById('cotq').style.display = '';
+                    document.getElementById('cotchoice').style.display = '';
                     document.getElementById('cottf').style.display = 'none';
                     chooseRadio(frm, 'CreateRemoteSP.radioCOT', 'yes');
                 }
@@ -269,18 +269,6 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
             addPropertyRow(name, assertn);
             frm.elements['CreateRemoteSP.tfAttrMappingName'].value = '';
             frm.elements['CreateRemoteSP.tfAttrMappingAssertion'].value = '';
-            var userAttrs = frm.elements['CreateRemoteSP.menuUserAttributes'];
-            if (userAttrs.options[0].values != '') {
-                var cache = new Array();
-                for (var i = 0; i < userAttrs.options.length; i++) {
-                    cache[i] = userAttrs.options[i];
-                }
-                userAttrs.options[0] = selectOptionCache;
-                for (var i = 0; i < cache.length; i++) {
-                    userAttrs.options[i+1] = cache[i];
-                }
-            }
-            userAttrs.selectedIndex = 0;
         }
     }
 
@@ -300,10 +288,10 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var textnode2 = document.createTextNode(name);
         cb.setAttribute("type", "checkbox");
         cb.setAttribute("value", assertn + "=" + name);
-        cb.setAttribute("onclick", "toggleTblButtonState('CreateRemoteSP', 'CreateRemoteSP.tblattrmapping', 'tblButton', 'CreateRemoteSP.deleteAttrMappingBtn', this)");
         cell1.appendChild(cb);
         cell2.appendChild(textnode1);
         cell3.appendChild(textnode2);
+        cb.onclick = function() {toggleTblButtonState('CreateRemoteSP', 'CreateRemoteSP.tblattrmapping', 'tblButton', 'CreateRemoteSP.deleteAttrMappingBtn', this);};
         row.appendChild(cell1);
         row.appendChild(cell2);
         row.appendChild(cell3);

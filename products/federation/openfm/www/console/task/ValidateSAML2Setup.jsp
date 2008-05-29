@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.1 2008-04-10 23:15:05 veiming Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.2 2008-05-29 00:50:52 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -77,7 +77,6 @@
 </cc:form>
 <div id="cannotValidateDiv" class="bubble"><cc:text name="txtCannotValidateDiv" defaultValue="validate.cannot.validate.div" bundleID="amConsole" escape="false" /></div>
 </div>
-</cc:header>
 <iframe id="hiddenframe" style="display:none"></iframe>
 <div id="dlg" class="dvs"></div>
 
@@ -98,9 +97,14 @@
 
     function showCannotValidateDiv(e) {
         var vdiv = document.getElementById('cannotValidateDiv');
-        vdiv.style.display = 'block';
-        vdiv.style.left = (e.pageX +10) + 'px';
-        vdiv.style.top = (e.pageY +10) + 'px';
+        if (window.event) {
+            vdiv.style.left = (window.event.clientX +10) + 'px';
+            vdiv.style.top = (window.event.clientY +10) + 'px';
+        } else {
+            vdiv.style.left = (e.pageX +10) + 'px';
+            vdiv.style.top = (e.pageY +10) + 'px';
+        }
+        vdiv.style.display = '';
     }
 
     function hideCannotValidateDiv() {
@@ -229,5 +233,6 @@
         }
     }
 </script>
+</cc:header>
 
 </jato:useViewBean>

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FileUploader.jsp,v 1.5 2008-03-20 05:00:16 veiming Exp $
+   $Id: FileUploader.jsp,v 1.6 2008-05-29 00:47:49 veiming Exp $
    
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -40,7 +40,7 @@
 </script>
 
 <script language="javascript">    
-    var fileName = '';
+    var filename = '';
     var failUpload = "<cc:text name="txtConfigured" defaultValue="ajax.upload.file.failed" bundleID="amConsole" escape="false" />";
     var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
     function selectFile(data) {
@@ -60,12 +60,12 @@
                     failUpload + '<p>&nbsp;</p>' +  closeBtn + '</center>';
             } else {
                 var fldName = window.name;
-                var idx = fldName.indexOf('|');
+                var idx = fldName.indexOf('_');
                 if (idx != -1) {
                     labelName = fldName.substring(idx+1);
                     fldName = fldName.substring(0, idx);
                 }
-                var idx = labelName.indexOf('|');
+                var idx = labelName.indexOf('_');
                 if (idx != -1) {
                     methodName = labelName.substring(idx+1);
                     labelName = labelName.substring(0, idx);
@@ -77,7 +77,7 @@
                     opener.document.getElementById(labelName).innerHTML = filename;
                 }
                 if (methodName) {
-                    eval("opener." + methodName);
+                    eval("opener." + methodName + '()');
                 }
                 self.close();
             }
