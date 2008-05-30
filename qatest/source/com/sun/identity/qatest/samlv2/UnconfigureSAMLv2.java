@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.9 2008-02-26 01:56:11 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.10 2008-05-30 01:40:07 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,8 +39,8 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 
 /**
- * This class removes the configuration on SP & IDP 
- * It removes SP & IDP entities on both sides, and also removes the COT. 
+ * This class removes the configuration on SP & IDP
+ * It removes SP & IDP entities on both sides, and also removes the COT.
  */
 public class UnconfigureSAMLv2 extends TestCommon {
     private WebClient webClient;
@@ -56,7 +56,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    private void getWebClient() 
+    private void getWebClient()
     throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
@@ -69,7 +69,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
     
     /**
      * Configure sp & idp
-     * @DocTest: SAML2|Unconfigure SP & IDP by deleting entities & COT's 
+     * @DocTest: SAML2|Unconfigure SP & IDP by deleting entities & COT's
      */
     @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void UnconfigureSAMLv2()
@@ -85,11 +85,11 @@ public class UnconfigureSAMLv2 extends TestCommon {
             configMap = getMapFromResourceBundle("samlv2TestConfigData");
             log(Level.FINEST, "UnconfigureSAMLv2", "Map:" + configMap);
             
-            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 
+            spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" +
                     configMap.get(TestConstants.KEY_SP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_SP_PORT)
                     + configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
-            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) + "://" + 
+            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) + "://" +
                     configMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
@@ -113,21 +113,20 @@ public class UnconfigureSAMLv2 extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     "saml2");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
-               log(Level.SEVERE, "UnconfigureSAMLv2", "listEntities famadm" +
-                       " command failed");
+                log(Level.SEVERE, "UnconfigureSAMLv2", "listEntities famadm" +
+                        " command failed");
             }
             //Delete IDP & SP entities on IDP
             if (idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
-            {
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
                 log(Level.FINEST, "UnconfigureSAMLv2", "idp entity exists at" +
                         " sp.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         false, "saml2")) == 0) {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted IDP" +
                             " entity on IDP side");
@@ -145,7 +144,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
                         " idp. ");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         false, "saml2")) == 0) {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted SP" +
                             " entity on IDP side");
@@ -161,9 +160,9 @@ public class UnconfigureSAMLv2 extends TestCommon {
             HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM));
             if (FederationManager.getExitCode(idpcotPage) != 0) {
-               log(Level.SEVERE, "UnconfigureSAMLv2", "listCots famadm" +
-                       " command failed");
-               assert false;
+                log(Level.SEVERE, "UnconfigureSAMLv2", "listCots famadm" +
+                        " command failed");
+                assert false;
             }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
@@ -171,7 +170,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
                         " side");
                 if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM))) 
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM)))
                         != 0) {
                     log(Level.SEVERE, "UnconfigureSAMLv2", "Couldn't delete " +
                             "COT at IDP side");
@@ -179,16 +178,16 @@ public class UnconfigureSAMLv2 extends TestCommon {
                             " command failed");
                 } else {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
-                            "at IDP side");                    
+                            "at IDP side");
                 }
             }
             
             HtmlPage spEntityPage = spfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     "saml2");
             if (FederationManager.getExitCode(spEntityPage) != 0) {
-               log(Level.SEVERE, "UnconfigureSAMLv2", "listEntities famadm" +
-                       " command failed");
+                log(Level.SEVERE, "UnconfigureSAMLv2", "listEntities famadm" +
+                        " command failed");
             }
             //Delete SP & IDP entities on sp
             if (spEntityPage.getWebResponse().getContentAsString().
@@ -197,7 +196,7 @@ public class UnconfigureSAMLv2 extends TestCommon {
                         " sp. ");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         false, "saml2")) == 0) {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted sp entity" +
                             " on SP side");
@@ -209,13 +208,12 @@ public class UnconfigureSAMLv2 extends TestCommon {
                 }
             }
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)))
-            {
+                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
                 log(Level.FINEST, "UnconfigureSAMLv2", "idp entity exists at" +
                         " sp.");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         false, "saml2")) == 0) {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted idp" +
                             " entity on SP side");
@@ -231,14 +229,14 @@ public class UnconfigureSAMLv2 extends TestCommon {
             HtmlPage spcotPage = spfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM));
             if (FederationManager.getExitCode(spcotPage) != 0) {
-               log(Level.SEVERE, "UnconfigureSAMLv2", "listCots famadm" +
-                       " command failed");
+                log(Level.SEVERE, "UnconfigureSAMLv2", "listCots famadm" +
+                        " command failed");
             }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
                 if (FederationManager.getExitCode(spfm.deleteCot(webClient,
                         configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM))) 
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM)))
                         != 0) {
                     log(Level.SEVERE, "UnconfigureSAMLv2", "Couldn't delete " +
                             "COT at SP side");
@@ -246,18 +244,18 @@ public class UnconfigureSAMLv2 extends TestCommon {
                             " command failed");
                 } else {
                     log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
-                            "at SP side");                    
+                            "at SP side");
                 }
             }
-
+            
             IDMCommon idmC = new IDMCommon();
-            //If execution_realm is different than root realm (/) 
+            //If execution_realm is different than root realm (/)
             //then delete the realm at SP side
             idmC.deleteSubRealms(webClient, spfm, configMap.get(TestConstants.
                     KEY_SP_EXECUTION_REALM), configMap.get(TestConstants.
                     KEY_SP_SUBREALM_RECURSIVE_DELETE));
-             
-            //If execution_realm is different than root realm (/) 
+            
+            //If execution_realm is different than root realm (/)
             //then create the realm at IDP side
             idmC.deleteSubRealms(webClient, idpfm, configMap.get(TestConstants.
                     KEY_IDP_EXECUTION_REALM), configMap.get(TestConstants.
@@ -271,5 +269,17 @@ public class UnconfigureSAMLv2 extends TestCommon {
             consoleLogout(webClient, idpurl);
         }
         exiting("UnconfigureSAMLv2");
+    }
+    
+    /**
+     * Stop the notification (jetty) server for getting notifications from the
+     * server.
+     */
+    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void stopServer()
+    throws Exception {
+        entering("stopServer", null);
+        stopNotificationServer();
+        exiting("stopServer");
     }
 }

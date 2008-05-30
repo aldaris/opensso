@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Common.java,v 1.14 2008-04-25 15:17:08 mrudulahg Exp $
+ * $Id: SAMLv2Common.java,v 1.15 2008-05-30 01:40:51 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlSPInitSSO(String xmlFileName, Map m,
             String bindingType, boolean idpLoginOnly, boolean idpProxy)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
@@ -156,7 +156,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlIDPInitSSO(String xmlFileName, Map m,
             String bindingType, boolean idpLoginOnly)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String idp_proto = (String)m.get(TestConstants.KEY_IDP_PROTOCOL);
@@ -218,7 +218,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlSPSSO(String xmlFileName, Map m,
             String bindingType)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
@@ -271,7 +271,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlSPSLO(String xmlFileName, Map m,
             String bindingType, boolean idpProxy)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
@@ -326,7 +326,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlIDPSLO(String xmlFileName, Map m,
             String bindingType)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String idp_proto = (String)m.get(TestConstants.KEY_IDP_PROTOCOL);
@@ -376,7 +376,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlSPTerminate(String xmlFileName, Map m,
             String bindingType)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
@@ -386,7 +386,7 @@ public class SAMLv2Common extends TestCommon {
                 TestConstants.KEY_SP_DEPLOYMENT_URI);
         String sp_alias = (String)m.get(TestConstants.KEY_SP_METAALIAS);
         String idp_entity_name = (String)m.get(
-                    TestConstants.KEY_IDP_ENTITY_NAME);
+                TestConstants.KEY_IDP_ENTITY_NAME);
         String sp_user = (String)m.get(TestConstants.KEY_SP_USER);
         String sp_userpw = (String)m.get(TestConstants.KEY_SP_USER_PASSWORD);
         String strResult = (String)m.get(TestConstants.KEY_TERMINATE_RESULT);
@@ -434,7 +434,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlIDPTerminate(String xmlFileName, Map m,
             String bindingType)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String idp_proto = (String)m.get(TestConstants.KEY_IDP_PROTOCOL);
@@ -493,7 +493,7 @@ public class SAMLv2Common extends TestCommon {
      */
     public static void getxmlSPTerminate2(String xmlFileName, Map m,
             String bindingType)
-    throws Exception {
+            throws Exception {
         FileWriter fstream = new FileWriter(xmlFileName);
         BufferedWriter out = new BufferedWriter(fstream);
         String sp_proto = (String)m.get(TestConstants.KEY_SP_PROTOCOL);
@@ -900,15 +900,15 @@ public class SAMLv2Common extends TestCommon {
      * This method loads the IDP metadata on sp & idp
      * @param metadata is the standard metadata of IDP
      * @param metadataext is the extended metadata of IDP
-     * @param FederationManager object initiated with SP details. 
-     * @param FederationManager object initiated with IDP details. 
+     * @param FederationManager object initiated with SP details.
+     * @param FederationManager object initiated with IDP details.
      * @param MAP containing all the SP & IDP details
      * @param WebClient object after admin login is successful.
      */
     public void loadIDPMetadata(String metadata, String metadataext,
             FederationManager fmsp, FederationManager fmidp, Map configMap,
             WebClient webClient)
-    throws Exception {
+            throws Exception {
         try{
             
             if ((metadata.equals(null)) || (metadataext.equals(null)) ||
@@ -991,25 +991,25 @@ public class SAMLv2Common extends TestCommon {
     }
     
     /*
-     * This method loads the SP metadata on sp & idp 
+     * This method loads the SP metadata on sp & idp
      * @param metadata is the standard metadata of SP
      * @param metadataext is the extended metadata of SP
-     * @param FederationManager object initiated with SP details. 
-     * @param FederationManager object initiated with IDP details. 
+     * @param FederationManager object initiated with SP details.
+     * @param FederationManager object initiated with IDP details.
      * @param MAP containing all the SP & IDP details
      * @param WebClient object after admin login is successful.
      */
-    public void loadSPMetadata(String metadata, String metadataext, 
-            FederationManager fmsp, FederationManager fmidp, Map configMap, 
-            WebClient webClient) 
-    throws Exception {
+    public void loadSPMetadata(String metadata, String metadataext,
+            FederationManager fmsp, FederationManager fmidp, Map configMap,
+            WebClient webClient)
+            throws Exception {
         try {
-            if ((metadata.equals(null)) || (metadataext.equals(null)) || 
+            if ((metadata.equals(null)) || (metadataext.equals(null)) ||
                     (metadata.equals("")) & (metadataext.equals(""))) {
                 log(Level.SEVERE, "loadSPMetadata", "metadata cannot be empty");
-                log(Level.FINEST, "loadSPMetadata", "metadata is : " + 
+                log(Level.FINEST, "loadSPMetadata", "metadata is : " +
                         metadata);
-                log(Level.FINEST, "loadSPMetadata", "ext metadata is : " + 
+                log(Level.FINEST, "loadSPMetadata", "ext metadata is : " +
                         metadataext);
                 assert false;
             }
@@ -1026,7 +1026,7 @@ public class SAMLv2Common extends TestCommon {
                         " famadm command failed");
                 assert false;
             }
-
+            
             if (FederationManager.getExitCode(fmsp.importEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     metadata, metadataext, null, "saml2")) == 0) {
@@ -1039,7 +1039,7 @@ public class SAMLv2Common extends TestCommon {
                         " famadm command failed");
                 assert false;
             }
-
+            
             //delete & load sp metadata on IDP
             metadataext = metadataext.replaceAll(
                     (String)configMap.get(TestConstants.KEY_SP_COT), "");
@@ -1051,7 +1051,7 @@ public class SAMLv2Common extends TestCommon {
                     "on IDP" + metadataext);
             if (FederationManager.getExitCode(fmidp.deleteEntity(webClient,
                     (String)configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                    (String)configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     false, "saml2")) == 0) {
                 log(Level.FINE, "loadSPMetadata", "Deleted sp entity on " +
                         "IDP side");
@@ -1082,7 +1082,7 @@ public class SAMLv2Common extends TestCommon {
             throw e;
         }
     }
-   
+    
     /**
      * This method creates the hosted SP metadata template & loads it.
      * It returns the uploaded standard & extended metadata.
@@ -1121,7 +1121,7 @@ public class SAMLv2Common extends TestCommon {
                         null, null, null, null, null, null, "saml2");
             }
             if (FederationManager.getExitCode(spmetaPage) != 0) {
-               assert false;
+                assert false;
             }
             
             String spPage = spmetaPage.getWebResponse().getContentAsString();
@@ -1137,8 +1137,7 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = null;
                 assert false;
             }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
@@ -1148,8 +1147,7 @@ public class SAMLv2Common extends TestCommon {
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
                         (String)m.get(TestConstants.KEY_SP_EXECUTION_REALM),
                         arrMetadata[0], arrMetadata[1],
-                        (String)m.get(TestConstants.KEY_SP_COT), "saml2")) != 0)
-                {
+                        (String)m.get(TestConstants.KEY_SP_COT), "saml2")) != 0) {
                     arrMetadata[0] = null;
                     arrMetadata[1] = null;
                     assert(false);
@@ -1185,7 +1183,7 @@ public class SAMLv2Common extends TestCommon {
                         (String)m.get(TestConstants.KEY_IDP_ENTITY_NAME), true,
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
-                        null, null, null, null, null, null, null, 
+                        null, null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
                         null, null, null, null, null, null,
                         (String)m.get(TestConstants.KEY_IDP_CERTALIAS), null,
@@ -1196,11 +1194,11 @@ public class SAMLv2Common extends TestCommon {
                         true, null,
                         (String)m.get(TestConstants.KEY_IDP_METAALIAS), null,
                         null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null, null, 
+                        null, null, null, null, null, null, null, null, null,
                         null, null, null, null, "saml2");
             }
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
-               assert false;
+                assert false;
             }
             String idpPage = idpmetaPage.getWebResponse().getContentAsString();
             if (idpPage.indexOf("EntityDescriptor") != -1) {
@@ -1215,8 +1213,7 @@ public class SAMLv2Common extends TestCommon {
                 arrMetadata[1] = null;
                 assert false;
             }
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
-            {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
@@ -1239,7 +1236,7 @@ public class SAMLv2Common extends TestCommon {
         return arrMetadata;
     }
     
-        
+    
     /**
      * This method returns the termination URL based on the termination initiated
      * either by SP or IDP and binding for termination can be SOAP or HTTP
@@ -1276,13 +1273,13 @@ public class SAMLv2Common extends TestCommon {
             }
         } else {
             if (binding.equalsIgnoreCase("HTTP")) {
-                terminateURL = idpurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                terminateURL = idpurl + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=" +
                         m.get(TestConstants.KEY_IDP_METAALIAS) +
                         "&spEntityID=" + m.get(TestConstants.KEY_SP_ENTITY_NAME) +
                         "&requestType=Terminate&binding=urn:oasis:names:tc:SAML:2.0:" +
                         "bindings:HTTP-Redirect";
             } else {
-                terminateURL = idpurl + "/saml2/jsp/spMNIRequestInit.jsp?metaAlias=" +
+                terminateURL = idpurl + "/saml2/jsp/idpMNIRequestInit.jsp?metaAlias=" +
                         m.get(TestConstants.KEY_IDP_METAALIAS) +
                         "&spEntityID=" + m.get(TestConstants.KEY_SP_ENTITY_NAME) +
                         "&requestType=Terminate&binding=urn:oasis:names:tc:SAML:2.0:" +
