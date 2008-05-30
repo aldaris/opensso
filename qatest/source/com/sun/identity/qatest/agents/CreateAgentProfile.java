@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.2 2008-05-22 21:33:24 nithyas Exp $
+ * $Id: CreateAgentProfile.java,v 1.3 2008-05-30 04:57:44 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -337,10 +337,6 @@ public class CreateAgentProfile extends TestCommon {
                 map.put("com.sun.identity.agents.config.auth.handler", set);            
 
                 set = new HashSet();
-                set.add("amRemotePolicyLog");
-                map.put("com.sun.identity.agents.server.log.file.name", set);            
-
-                set = new HashSet();
                 set.add("serviceType=iPlanetAMWebAgentService|class=com.sun." + 
                         "identity.policy.plugins.HttpURLResourceName|" + 
                         "wildcard=*|delimiter=/|caseSensitive=false");
@@ -419,8 +415,9 @@ public class CreateAgentProfile extends TestCommon {
 
                 set = new HashSet();
                 set.add("true");
-                map.put("com.sun.identity.agents.notification.enabled", set);            
-
+                map.put("com.sun.identity.agents.config.change.notification." +
+                        "enable", set);
+                
                 set = new HashSet();
                 set.add("52428800");
                 map.put("com.sun.identity.agents.config.local.log.size", set);            
@@ -488,10 +485,6 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("true");
                 map.put("com.sun.identity.agents.config.amsso.cache.enable", 
                         set);            
-
-                set = new HashSet();
-                set.add("BOTH");
-                map.put("com.sun.identity.agents.logging.level", set);            
 
                 set = new HashSet();
                 set.add("iPlanetAMWebAgentService|GET|allow|deny:" + 
@@ -604,9 +597,9 @@ public class CreateAgentProfile extends TestCommon {
 
                 set = new HashSet();
                 set.add("true");
-                map.put("com.sun.identity.agents.config.centralized." + 
-                        "notification.enable", set);            
-
+                map.put("com.sun.identity.agents.config.change.notification." + 
+                        "enable", set);
+                
                 set = new HashSet();
                 set.add("true");
                 map.put("com.sun.identity.agents.config.notenforced.uri." + 
@@ -792,8 +785,8 @@ public class CreateAgentProfile extends TestCommon {
 
                 set = new HashSet();
                 set.add("true");
-                map.put("com.sun.identity.agents.config.notification.enable",
-                        set);            
+                map.put("com.sun.identity.agents.config.change.notification." +
+                        "enable", set);            
 
                 set = new HashSet();
                 set.add("true");
@@ -915,7 +908,8 @@ public class CreateAgentProfile extends TestCommon {
 
                 set = new HashSet();
                 set.add("session");
-                map.put("com.sun.identity.agents.config.userid.param.type", set);            
+                map.put("com.sun.identity.agents.config.userid.param.type", 
+                        set);            
 
                 set = new HashSet();
                 set.add("[0]=");
@@ -956,7 +950,8 @@ public class CreateAgentProfile extends TestCommon {
 
                 set = new HashSet();
                 set.add("0");
-                map.put("com.sun.identity.agents.config.policy.clock.skew", set);            
+                map.put("com.sun.identity.agents.config.policy.clock.skew",
+                        set);            
 
                 set = new HashSet();
                 set.add("false");
