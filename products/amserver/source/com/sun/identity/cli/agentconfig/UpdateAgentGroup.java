@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAgentGroup.java,v 1.4 2008-04-22 00:23:14 veiming Exp $
+ * $Id: UpdateAgentGroup.java,v 1.5 2008-05-30 00:45:58 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.AgentConfiguration;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.sm.SMSException;
 import java.util.List;
@@ -85,6 +86,12 @@ public class UpdateAgentGroup extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_UPDATE_AGENT_GROUP", params);
         } catch (IdRepoException e) {
+            String[] args = {realm, agentGroupName, e.getMessage()};
+            debugError("UpdateAgent.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO, 
+                "FAILED_UPDATE_AGENT_GROUP", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (ConfigurationException e) {
             String[] args = {realm, agentGroupName, e.getMessage()};
             debugError("UpdateAgent.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO, 
