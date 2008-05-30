@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2NameIdMngtTests.java,v 1.1 2008-04-25 00:15:10 sridharev Exp $
+ * $Id: SAMLv2NameIdMngtTests.java,v 1.2 2008-05-30 01:39:01 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.net.URL;
+import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -228,6 +229,12 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
         String nidnamekey = null;
         String nidnameinfo = null;
         try {
+            log(Level.FINE, "nameIdMgntProfileTest", "Running: " + testName );
+            Reporter.log("Test Description: This test will run to make sure " +
+                    " Termination with: " + termInit +
+                    " Termination binding: "  + termBind + " and " +
+                    " NewID Requestor: " + newIdInit +
+                    " NewID binding:  " + newIdBind + " will work fine");
             ssopage = configMap.get(TestConstants.KEY_SSO_RESULT);
             mnipage = configMap.get(TestConstants.KEY_TERMINATE_RESULT);
             //Federate the users
@@ -294,9 +301,8 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
             log(Level.FINEST, "nameIdMgntProfileTest", "FINALSSO " + nidnamekey);
             log(Level.FINEST, "nameIdMgntProfileTest", "FINALSSO" + nidnameinfo);
             //Compare and validate
-            if (fednameidkey.equals(fednameidkey)) {
-                assert false;
-            } else if (fednameinfo.equals(nidnameinfo)){
+            if ((fednameidkey.equals(nidnamekey)) ||
+                    (fednameinfo.equals(nidnameinfo))) {
                 assert false;
             }
         } catch (Exception e){
@@ -328,7 +334,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                 log(Level.SEVERE, "setup", "deleteIdentity famadm command" +
                         " failed");
                 assert false;
-            }   
+            }
             consoleLogin(webcClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
