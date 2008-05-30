@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoServiceListener.java,v 1.5 2008-04-18 15:43:24 kenwho Exp $
+ * $Id: IdRepoServiceListener.java,v 1.6 2008-05-30 04:28:13 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,11 +45,16 @@ public class IdRepoServiceListener implements ServiceListener {
             debug.message("IdRepoServiceListener: Global Config changed"
                     + " called");
         }
+        if (serviceComponent.equals("") || serviceComponent.equals("/")) {
+            return;
+        }
         // FIXME: Clients don't have to call this !!
         if (!serviceComponent.startsWith("/users/") && 
             !serviceComponent.startsWith("/roles/")
         ) {
-            idServices.clearIdRepoPlugins();
+            if (type != 1) {
+                idServices.clearIdRepoPlugins();
+            }
         }
 
         // Clear IdUtils.getOrganization(...) cache
@@ -66,7 +71,16 @@ public class IdRepoServiceListener implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("IdRepoServiceListener: Org Config changed called");
         }
-        idServices.clearIdRepoPlugins(orgName, serviceComponent);
+        // ignore componenet is "". 
+        // if component is /" and type is 2(delete), need to remove hidden
+        // plugins.
+        if ((type == ServiceListener.REMOVED) &&
+                serviceComponent.equals("/")) {
+            idServices.clearIdRepoPlugins(orgName, serviceComponent, type);
+        } else if (!serviceComponent.equals("") && 
+                   !serviceComponent.equals("/")) {
+            idServices.clearIdRepoPlugins(orgName, serviceComponent, type);
+        }
 
         // Clear IdUtils.getOrganization(...) cache
         IdUtils.clearOrganizationNamesCache();

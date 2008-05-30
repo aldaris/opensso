@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.36 2008-05-29 23:29:50 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.37 2008-05-30 04:28:13 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,6 +77,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -2324,7 +2325,48 @@ public class IdServicesImpl implements IdServices {
         return unionSupportedOps;
     }
 
-    public void clearIdRepoPlugins(String orgName, String serviceComponent) {
+    void clearIdRepoOrgPlugin(String orgName, String serviceComponent) {
+        if (serviceComponent.equalsIgnoreCase("/")) {
+             // remove the whole realm. all dirty
+            synchronized (idRepoMap) {
+                Set keys = idRepoMap.keySet();
+                Set keysToRemove = new HashSet();
+                for (Iterator it = keys.iterator(); it.hasNext(); ) {
+                    String cachekey = (String) it.next();
+                    String [] cachedOrgName = cachekey.split(":");
+                    if (cachedOrgName[0].equalsIgnoreCase(orgName)) {
+                        keysToRemove.add(cachekey);
+                    }
+                }
+                // we will need to remove all its content/instance as well.
+                // including special repo.
+                Set removeInstance = new HashSet();
+                for (Iterator it = keysToRemove.iterator();it.hasNext();) {
+                    //get all the instance to shutdown 
+                    //then remove key from idrepomap
+                    String cachekey = (String) it.next();
+                    Object o = idRepoMap.get(cachekey);
+                    if (o instanceof IdRepo) {
+                        // special repo.
+                        removeInstance.add(o);
+                    } else {
+                        Map rMap = (Map) o;
+                        removeInstance.addAll(rMap.values());
+                    }
+                    idRepoMap.remove(cachekey);
+                }
+
+                for (Iterator it =  removeInstance.iterator(); it.hasNext();) {
+                    IdRepo repo = (IdRepo) it.next();
+                    repo.removeListener();
+                    repo.shutdown();
+                }
+            }  // sync
+        }
+    }
+
+    public void clearIdRepoPlugins(String orgName, 
+        String serviceComponent, int type) {
 
         if (getDebug().messageEnabled()) {
             getDebug().message("IdServicesImpl.clearIdRepoPlugins(): " +
@@ -2333,8 +2375,13 @@ public class IdServicesImpl implements IdServices {
                 " Cleaning up the map.." + idRepoMap);
         }
 
+        if (serviceComponent.equalsIgnoreCase("/")) {
+            clearIdRepoOrgPlugin(orgName, serviceComponent);
+            return;
+        }
 
-        Set localSet = new HashSet();
+        Set dsNameSet = new HashSet();
+        Set removeInstance = new HashSet();
         synchronized (idRepoMap) {
             Set keys = idRepoMap.keySet();
             Set keysToRemove = new HashSet();
@@ -2365,7 +2412,9 @@ public class IdServicesImpl implements IdServices {
                             if (dsName.equalsIgnoreCase(serviceComponent) 
                                 || slashDsName.equalsIgnoreCase(
                                 serviceComponent) ) {
-                                localSet.addAll(rMap.values());
+                                dsNameSet.add(dsName);  // save the instance name
+                                // get all the instance for this datastore
+                                removeInstance.add(rMap.get(dsName)); 
                                 keysToRemove.add(cachekey);
                                 break;
                             }
@@ -2374,16 +2423,34 @@ public class IdServicesImpl implements IdServices {
                 }
             }
             for (Iterator it = keysToRemove.iterator(); it.hasNext(); ) {
-                String removeIt = (String) it.next();
-                idRepoMap.remove(removeIt);
+                String cachekey = (String) it.next();
+                Object o = idRepoMap.get(cachekey);
+                if (o instanceof IdRepo) {
+                    // do nothing this is a special repo.
+                    // special repos do not change.
+                } else {
+                    Map rMap = (Map) o;
+                    for (Iterator it2 = dsNameSet.iterator(); it2.hasNext(); ) {
+                        String localName = (String) it2.next();
+                        rMap.remove(localName);
+                    }
+                }
             }
         }
 
         // shutdown the datastore that changed.
-        for (Iterator it = localSet.iterator(); it.hasNext(); ) {
+        for (Iterator it = removeInstance.iterator(); it.hasNext(); ) {
             IdRepo repo = (IdRepo) it.next();
             repo.removeListener();
             repo.shutdown();
+        }
+        // restart the necessary datastore
+        if (type == ServiceListener.ADDED ||
+                type == ServiceListener.MODIFIED) {
+            SSOToken stoken = (SSOToken) AccessController
+                .doPrivileged(AdminTokenAction.getInstance());
+            Set pluginsNames = getIdRepoPlugins(orgName);
+            getInitializedPlugins(stoken, orgName, pluginsNames);
         }
     }
     
@@ -2476,7 +2543,9 @@ public class IdServicesImpl implements IdServices {
                         String pName = (String) it2.next();
                         pClass = (IdRepo) classMap.get(pName);
                         pluginClasses.add(pClass);
+                        pNames.remove(pName);
                     }
+                    
                 } else {
                     // Not in cache. Invoke and initialize this class.
                     if (pNames == null) {
@@ -2484,6 +2553,8 @@ public class IdServicesImpl implements IdServices {
                         idRepoMap.put(cacheKey, Collections.EMPTY_MAP);
                         continue; // go to start of while
                     }
+                }
+                if (pNames != null) {
                     Iterator it2 = pNames.iterator();
                     while (it2.hasNext()) {
                         String pn = (String) it2.next();
@@ -2530,9 +2601,9 @@ public class IdServicesImpl implements IdServices {
                             }
                         }
                     } // end inner while it.hasNext()
-                } // end else
-            } // end while
-        }
+                } // if
+            } // end sync
+        } // end while
         
         return pluginClasses;
     }

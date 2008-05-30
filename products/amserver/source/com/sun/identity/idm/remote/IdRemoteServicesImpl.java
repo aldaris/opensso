@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.15 2008-04-18 15:43:55 kenwho Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.16 2008-05-30 04:28:14 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -691,7 +691,8 @@ public class IdRemoteServicesImpl implements IdServices {
         }
     }
 
-    public void clearIdRepoPlugins(String orgName, String serviceComponent) {
+    public void clearIdRepoPlugins(String orgName, String serviceComponent,
+        int type) {
         // Nothing to do!
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServices.java,v 1.6 2008-04-18 15:43:55 kenwho Exp $
+ * $Id: IdServices.java,v 1.7 2008-05-30 04:28:13 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,7 +143,8 @@ public interface IdServices {
     
     public void clearIdRepoPlugins();
     
-    public void clearIdRepoPlugins(String orgName, String serviceComponent);
+    public void clearIdRepoPlugins(String orgName, String serviceComponent,
+            int type);
     
     public void reloadIdRepoServiceSchema();
     
