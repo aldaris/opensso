@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.3 2008-04-11 17:09:31 mrudulahg Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.4 2008-05-30 23:12:35 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.qatest.multiprotocol;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
@@ -34,7 +33,6 @@ import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
-import com.sun.identity.qatest.common.WSFedCommon;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -85,7 +84,6 @@ public class MultiProtocolSmokeTest extends TestCommon {
     @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"})
     public void setup()
     throws Exception {
-        URL url;
         ArrayList list;
         entering("setup", null);
         try {
@@ -372,6 +370,9 @@ public class MultiProtocolSmokeTest extends TestCommon {
         try {
             log(Level.FINE, "MultiProtocolSPSSOSAMLv2Init",
                     "Running: MultiProtocolSPSSOSAMLv2Init");
+            Reporter.log("Test Description: MultiProtocolSPSSOSAMLv2Init test" +
+                    " executes SAMLv2, SP initiated SSO,  then check for " +
+                    "IDFF & WSFed SSO without SP or IDP login");
             getWebClient();
             log(Level.FINE, "MultiProtocolSPSSOSAMLv2Init", "Run SAMLv2 SSO " +
                     "Init first");
@@ -419,18 +420,38 @@ public class MultiProtocolSmokeTest extends TestCommon {
         try {
             log(Level.FINE, "MultiProtocolSPSLOSAMLv2Init", "Run SAMLv2 SLO " +
                     "first");
-            
+            Reporter.log("Test Description: MultiProtocolSPSLOSAMLv2Init test" +
+                    " executes SAMLv2, SP initiated SLO, then check to see " +
+                    "SAMLv2, IDFF & WSfed SP sessions are terminated or not.");
             String samlv2SLOurl = samlv2ConfigMap.get(TestConstants.
                     KEY_SP_PROTOCOL) +"://" + samlv2ConfigMap.get(TestConstants.
                     KEY_SP_HOST) + ":" + samlv2ConfigMap.get(TestConstants.
                     KEY_SP_PORT) + samlv2ConfigMap.get(TestConstants.
                     KEY_SP_DEPLOYMENT_URI) +
-                    "/saml2/jsp/spSingleLogoutInit.jsp" + "?metaAlias=/" +
+                    "/saml2/jsp/spSingleLogoutInit.jsp" + "?metaAlias=" +
                     samlv2ConfigMap.get(TestConstants.
                     KEY_SP_METAALIAS) + "&idpEntityID=" + samlv2ConfigMap.
                     get(TestConstants.KEY_IDP_ENTITY_NAME);
+            log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "SAMLv2 SLO " +
+                    "URL is " + samlv2SLOurl);            
             page = (HtmlPage)webClient.getPage(samlv2SLOurl);
-            
+            log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "SAMLv2 SLO " +
+                    "page is " + page.getWebResponse().getContentAsString());            
+
+            Thread.sleep(5000);
+            HtmlPage idpPage = (HtmlPage)webClient.getPage(idpurl);
+            if (idpPage.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "IDP " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "IDP " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+            log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "SAMLv2 " +
+                        "SP url is " + samlv2spurl);
             page = (HtmlPage)webClient.getPage(samlv2spurl + "/UI/Login");
             if (page.getTitleText().contains("(Login)")) {
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "SAMLv2 " +
@@ -499,7 +520,6 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     idList, "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
                         " command failed");
-                assert false;
             }
             
             //Delete SAMLv2 SP User
@@ -517,7 +537,6 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     idList, "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
-                assert false;
             }
             
             //Delete WSFed SP User
@@ -535,7 +554,6 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     idList, "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
                         " command failed");
-                assert false;
             }
             
             // Create idp users
@@ -552,7 +570,6 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm" +
                         " command failed");
-                assert false;
             }
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());

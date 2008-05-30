@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.12 2008-05-16 00:30:26 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.13 2008-05-30 23:11:44 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -364,7 +364,7 @@ public class MultiProtocolCommon extends TestCommon {
         
         out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri
-                + "/WSFederationServlet/metaAlias/" + sp_alias
+                + "/WSFederationServlet/metaAlias" + sp_alias
                 + "?goto=" + sp_proto +"://" + sp_host + ":"
                 + sp_port + sp_deployment_uri);
         out.write("\">");
