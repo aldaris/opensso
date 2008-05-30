@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.28 2008-05-28 18:18:15 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.29 2008-05-30 05:48:18 hengming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -557,7 +557,7 @@ public class IDPSSOUtil {
             LogUtil.access(Level.INFO, 
                 LogUtil.POST_RESPONSE, logdata1, session, props);
             try {
-                IDPSSOUtil.postToTarget(response, "SAMLResponse",
+                SAML2Utils.postToTarget(response, "SAMLResponse",
                    encodedResMsg, "RelayState", relayState, acsURL);
             } catch (Exception e) {
                 SAML2Utils.debug.error(classMethod +
@@ -570,7 +570,7 @@ public class IDPSSOUtil {
             }
         } else if (acsBinding.equals(SAML2Constants.HTTP_ARTIFACT)) {
             IDPSSOUtil.sendResponseArtifact(response, idpEntityID, 
-                realm, acsURL, relayState, res, session, props);
+                spEntityID, realm, acsURL, relayState, res, session, props);
         } else if (acsBinding.equals(SAML2Constants.PAOS)) {
             // signing assertion is a must for ECP profile.
             // encryption is optional based on SP config settings.
@@ -1719,48 +1719,6 @@ public class IDPSSOUtil {
         }
         return acsURL;
     }
-   
-
-    /**
-     * This method opens a URL connection to the target specified and 
-     * posts assertion response to it using the HttpServletResponse 
-     * object.
-     *
-     * @param response the <code>HttpServletResponse</code> object
-     * @param SAMLmessageName the name of the <code>SAML</code> message
-     * @param SAMLmessageValue the value of the <code>SAML</code> message
-     * @param relayStateName the name of the <code>RelayState</code>
-     * @param relayStateValue the value of the <code>RelayState</code>
-     * @param targetURL the <code>URL</code> of the target location
-     * 
-     * @exception IOException if there is any network I/O problem
-     */
-    public static void postToTarget(HttpServletResponse response,
-                                    String SAMLmessageName,
-                                    String SAMLmessageValue,
-                                    String relayStateName,
-                                    String relayStateValue,
-                                    String targetURL)
-        throws IOException {
-
-        PrintWriter out = response.getWriter();
-        out.println("<HTML>");
-        out.println("<HEAD>\n");
-        out.println("<TITLE>Access rights validated</TITLE>\n");
-        out.println("</HEAD>\n");
-        out.println("<BODY Onload=\"document.forms[0].submit()\">");
-
-        out.println("<FORM METHOD=\"POST\" ACTION=\"" + targetURL + "\">");
-        out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+ SAMLmessageName 
-            + "\" " + "VALUE=\"" + SAMLmessageValue + "\">");
-        if (relayStateValue != null && relayStateValue.length() != 0) {
-            out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+ 
-                relayStateName + "\" " +
-                "VALUE=\"" + relayStateValue + "\">");
-        }
-        out.println("</FORM></BODY></HTML>");
-        out.close();
-    }
 
     /**
      * This method opens a URL connection to the target specified and 
@@ -1778,15 +1736,9 @@ public class IDPSSOUtil {
      * 
      * @exception SAML2Exception if the operation is not successful
      */
-    public static void sendResponseArtifact(
-                                       HttpServletResponse response,
-                                       String idpEntityID,
-                                       String realm,
-                                       String acsURL,
-                                       String relayState,
-                                       Response res,
-                                       Object session,
-                                       Map props) 
+    public static void sendResponseArtifact(HttpServletResponse response,
+        String idpEntityID, String spEntityID, String realm, String acsURL,
+        String relayState, Response res, Object session, Map props) 
         throws SAML2Exception {
     
         String classMethod = "IDPSSOUtil.sendResponseArtifact: ";
@@ -1850,14 +1802,6 @@ public class IDPSSOUtil {
             return;
         }
         String artStr = art.getArtifactValue();        
-        String redirectURL = acsURL + "?SAMLart="+ URLEncDec.encode(artStr);
-        if (relayState != null && relayState.trim().length() != 0) {
-            redirectURL += "&RelayState="+ URLEncDec.encode(relayState);
-        }
-        if (SAML2Utils.debug.messageEnabled()) {
-            SAML2Utils.debug.message(classMethod + 
-                "Redirect URL = "+ redirectURL);
-        }
         try {
             IDPCache.responsesByArtifacts.put(artStr, res);
             long expireTime = getValidTimeofResponse(realm, idpEntityID,
@@ -1871,10 +1815,43 @@ public class IDPSSOUtil {
                     "Save Response to DB!");
             }
 
-            String[] logdata = { idpEntityID, realm, redirectURL };
-            LogUtil.access(Level.INFO, 
-                LogUtil.SEND_ARTIFACT, logdata, session, props);
-            response.sendRedirect(redirectURL);    
+            String messageEncoding = SAML2Utils.getAttributeValueFromSSOConfig(
+                realm, spEntityID, SAML2Constants.SP_ROLE, 
+                SAML2Constants.RESPONSE_ARTIFACT_MESSAGE_ENCODING);
+
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(classMethod + 
+                    "messageEncoding = "+ messageEncoding);
+                SAML2Utils.debug.message(classMethod + 
+                    "artStr = "+ artStr);
+            }
+
+            if ((messageEncoding != null) &&
+                (messageEncoding.equals(SAML2Constants.FORM_ENCODING))) {
+
+                String[] logdata = { idpEntityID, realm, acsURL };
+                LogUtil.access(Level.INFO, LogUtil.SEND_ARTIFACT, logdata,
+                    session, props);
+
+                SAML2Utils.postToTarget(response, SAML2Constants.SAML_ART,
+                    artStr, "RelayState", relayState, acsURL);
+            } else {
+                String redirectURL = acsURL + "?SAMLart=" +
+                    URLEncDec.encode(artStr);
+                if ((relayState != null) && (relayState.trim().length() != 0)){
+                    redirectURL += "&RelayState=" +
+                        URLEncDec.encode(relayState);
+                }
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod + 
+                        "Redirect URL = "+ redirectURL);
+                }
+
+                String[] logdata = { idpEntityID, realm, redirectURL };
+                LogUtil.access(Level.INFO, LogUtil.SEND_ARTIFACT, logdata,
+                    session, props);
+                response.sendRedirect(redirectURL);
+            }  
         } catch (IOException ioe) {
             SAML2Utils.debug.error(classMethod + 
                 "Unable to send redirect: ", ioe);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.30 2008-05-10 05:26:24 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.31 2008-05-30 05:48:18 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1187,6 +1187,22 @@ public interface SAML2Constants {
      */
     public String DISCO_BOOTSTRAPPING_ENABLED =
         "discoveryBootstrappingEnabled";
+
+    /**
+     * Constant for Response Artifact message encoding property
+     */
+    public String RESPONSE_ARTIFACT_MESSAGE_ENCODING =
+        "responseArtifactMessageEncoding";
+
+    /**
+     * URI encoding
+     */
+    public String URI_ENCODING = "URI";
+
+    /**
+     * FORM encoding 
+     */
+    public String FORM_ENCODING = "FORM";
 
     /**
      * Cache Assertion

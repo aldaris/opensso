@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.20 2008-05-10 05:27:13 qcheng Exp $
+ * $Id: SPACSUtils.java,v 1.21 2008-05-30 05:48:18 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,6 +140,7 @@ public class SPACSUtils {
                 throws SAML2Exception,IOException
     {
         ResponseInfo respInfo = null;
+
         String method = request.getMethod();
         if (method.equals("GET")) {
             respInfo = getResponseFromGet(request, response, orgName,
@@ -150,8 +151,8 @@ public class SPACSUtils {
                 respInfo = getResponseFromPostECP(request, response, orgName,
                     hostEntityId, metaManager);
             } else {
-                respInfo = new ResponseInfo(getResponseFromPost(request,
-                    response), SAML2Constants.HTTP_POST, null);
+                respInfo = getResponseFromPost(request, response, orgName,
+                    hostEntityId, metaManager);
             }
         } else {
             // not supported
@@ -224,8 +225,23 @@ public class SPACSUtils {
                         SAML2Utils.bundle.getString("missingArtifact"));
         }
 
+        return new ResponseInfo(getResponseFromArtifact(samlArt, hostEntityId,
+            response, orgName, metaManager), SAML2Constants.HTTP_ARTIFACT,
+            null);
+    }
+
+    // Retrieves response using artifact profile.
+    private static Response getResponseFromArtifact(String samlArt,
+        String hostEntityId, HttpServletResponse response, String orgName,
+        SAML2MetaManager sm) throws SAML2Exception,IOException
+    {
+
         // Try to get source ID and endpointIndex, and then
         // decide which IDP and which artifact resolution service
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message("SPACSUtils.getResponseFromArtifact: " +
+                "samlArt = " + samlArt);
+        }
 
         Artifact art = null;
         try {
@@ -236,18 +252,17 @@ public class SPACSUtils {
                         data,
                         null);
         } catch (SAML2Exception se) {
-            SAML2Utils.debug.error("SPACSUtils.getResponseFromGet: "
+            SAML2Utils.debug.error("SPACSUtils.getResponseFromArtifact: "
                  + "Unable to decode and parse artifact string:" + samlArt);
             response.sendError(response.SC_BAD_REQUEST,
                         SAML2Utils.bundle.getString("errorObtainArtifact"));
             throw se;
         }
 
-        String idpEntityID = getIDPEntityID(
-                                art, response, orgName, metaManager);
+        String idpEntityID = getIDPEntityID(art, response, orgName, sm);
         IDPSSODescriptorElement idp = null;
         try {
-            idp = metaManager.getIDPSSODescriptor(orgName, idpEntityID);
+            idp = sm.getIDPSSODescriptor(orgName, idpEntityID);
         } catch (SAML2MetaException se) {
             String[] data = {orgName, idpEntityID};
             LogUtil.error(Level.INFO,
@@ -265,23 +280,6 @@ public class SPACSUtils {
                         idp,
                         response);
 
-        return new ResponseInfo(
-                getResponseFromArtifact(art, location, hostEntityId,
-                        idpEntityID, idp, response, orgName, metaManager),
-                SAML2Constants.HTTP_ARTIFACT, null);
-    }
-
-    // Retrieves response using artifact profile.
-    private static Response getResponseFromArtifact(Artifact art,
-                                                String location,
-                                                String hostEntityId,
-                                                String idpEntityID,
-                                                IDPSSODescriptorElement idp,
-                                                HttpServletResponse response,
-                                                String orgName,
-                                                SAML2MetaManager sm)
-        throws SAML2Exception,IOException
-    {
         // create ArtifactResolve message
         ArtifactResolve resolve = null;
         SOAPMessage resMsg = null;
@@ -325,7 +323,7 @@ public class SPACSUtils {
 
             String resolveString = resolve.toXMLString(true, true);
             if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("SPACSUtils.getResponseFromGet: "
+                SAML2Utils.debug.message("SPACSUtils.getResponseFromArtifact: "
                     + "ArtifactResolve=" + resolveString);
             }
 
@@ -338,7 +336,7 @@ public class SPACSUtils {
                 config, location);
             resMsg = con.call(msg, location);
         } catch (SAML2Exception s2e) {
-            SAML2Utils.debug.error("SPACSUtils.getResponseFromGet: "
+            SAML2Utils.debug.error("SPACSUtils.getResponseFromArtifact: "
                 + "couldn't create ArtifactResolve:", s2e);
             String[] data = {hostEntityId, art.getArtifactValue()};
             LogUtil.error(Level.INFO,
@@ -792,11 +790,19 @@ public class SPACSUtils {
     }
 
     // Obtains SAML Response from POST.
-    private static Response getResponseFromPost(HttpServletRequest request,
-                                HttpServletResponse response)
-                        throws SAML2Exception,IOException
+    private static ResponseInfo getResponseFromPost(HttpServletRequest request,
+        HttpServletResponse response, String orgName, String hostEntityId,
+        SAML2MetaManager metaManager) throws SAML2Exception,IOException
     {
         SAML2Utils.debug.message("SPACSUtils:getResponseFromPost");
+
+        String samlArt = request.getParameter(SAML2Constants.SAML_ART);
+        if ((samlArt != null) && (samlArt.trim().length() != 0)) {
+            return new ResponseInfo(getResponseFromArtifact(samlArt,
+                hostEntityId, response, orgName, metaManager),
+                SAML2Constants.HTTP_ARTIFACT, null);
+        }
+
         String samlResponse = request.getParameter(
                         SAML2Constants.SAML_RESPONSE);
         if (samlResponse == null) {
@@ -868,7 +874,8 @@ public class SPACSUtils {
                         LogUtil.GOT_RESPONSE_FROM_POST,
                         data,
                         null);
-        return resp;
+
+        return (new ResponseInfo(resp, SAML2Constants.HTTP_POST, null));
     }
 
     /**
@@ -1751,7 +1758,7 @@ public class SPACSUtils {
         }
         return attrList;
     }
-    
+
     /**
      * Processes response from Identity Provider to Fedlet (SP).
      * This will do all required protocol processing, include signature,

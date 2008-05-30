@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.17 2008-04-22 17:41:16 asyhuang Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.18 2008-05-30 05:49:55 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -430,6 +430,10 @@ public class CreateSAML2HostedProviderTemplate {
             "       <Attribute name=\"" +
             SAML2Constants.WANT_MNI_RESPONSE_SIGNED + "\">\n" +
             "           <Value></Value>\n" +
+            "       </Attribute>\n" +
+            "       <Attribute name=\"" +
+            SAML2Constants.RESPONSE_ARTIFACT_MESSAGE_ENCODING + "\">\n" +
+            "           <Value>" + SAML2Constants.URI_ENCODING + "</Value>\n" +
             "       </Attribute>\n" +
             "       <Attribute name=\"" + COTConstants.COT_LIST + "\">\n" +
             "       </Attribute>\n" +
