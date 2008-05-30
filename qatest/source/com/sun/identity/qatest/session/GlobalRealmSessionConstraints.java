@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalRealmSessionConstraints.java,v 1.4 2008-05-22 00:55:47 srivenigan Exp $
+ * $Id: GlobalRealmSessionConstraints.java,v 1.5 2008-05-30 23:01:54 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -64,10 +65,10 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     private String quotaConst;
     private String btladmin;
     private String resultBehavior;
-    private String sessionsrvc = "iPlanetAMSessionService";
-    private String dynSrvcType = "Dynamic";
-    private String globalSrvcType = "Global";
-    private String quotaAttr = "iplanet-am-session-quota-limit";
+    private String sessionsrvc = SessionConstants.SESSION_SRVC;
+    private String dynSrvcType = SessionConstants.DYNAMIC_SRVC_TYPE;
+    private String globalSrvcType = SessionConstants.GLOBAL_SRVC_TYPE;
+    private String quotaAttr = SessionConstants.SESSION_QUOTA_ATTR;
     private boolean dynSrvcRealmAssigned = false;
     private boolean cleanedUp = false;
     
@@ -101,7 +102,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         entering("setup", null);
         try {
             set = smsc.getAttributeValueFromSchema(sessionsrvc,
-                    "iplanet-am-session-enable-session-constraint",
+                    SessionConstants.ENABLE_SESSION_CONST,
                     globalSrvcType);
             itr = set.iterator();
             quotaConst = (String) itr.next();
@@ -112,17 +113,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                 Reporter.log("CONFIG FAILURE: Session constraints " +
                         "testcases must be run with enable session quota " +
                         "constraints attribute set to 'ON' ");
+                destroyToken(admintoken);
                 assert false;
             }
             set = smsc.getAttributeValueFromSchema(sessionsrvc,
-                    "iplanet-am-session-enable-session-constraint-bypass-" +
-                    "topleveladmin", globalSrvcType);
+                    SessionConstants.BYPASS_TOPLEVEL_ADMIN, globalSrvcType);
             itr = set.iterator();
             btladmin = (String) itr.next();
             log(Level.FINE, "setup", "Exempt top-level admin from constraint " +
                     "checking is set to: " + btladmin);
             set = smsc.getAttributeValueFromSchema(sessionsrvc,
-                    "iplanet-am-session-constraint-resulting-behavior", 
+                    SessionConstants.RESULTING_BEHAVIOR, 
                     globalSrvcType);
             itr = set.iterator();
             resultBehavior = (String) itr.next();     
@@ -146,7 +147,10 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                         "updating dynamic service attributes: "
                         + activeSessionsBU);
                 if (!activeSessionsBU.equals("1")) {
-                    quotamap = fillQuotaMap(quotaAttr, "1");
+                    quotamap.clear();
+                    set = new HashSet();
+                    set.add("1");
+                    quotamap.put(quotaAttr, set);
                     smsc.updateGlobalServiceDynamicAttributes(sessionsrvc,
                             quotamap);
                     String activeSessionsAU = getGlobalSessionQuotaAttribute(
@@ -163,18 +167,29 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                 String globalActiveSessions = getGlobalSessionQuotaAttribute(
                         sessionsrvc, quotaAttr, dynSrvcType);
                 if (globalActiveSessions.equals("1")) {
-                    quotamap = fillQuotaMap(quotaAttr, "5");
+                    quotamap.clear();
+                    set = new HashSet();
+                    set.add("5");
+                    quotamap.put(quotaAttr, set);
                     smsc.updateGlobalServiceDynamicAttributes(sessionsrvc,
                             quotamap);
                     globalActiveSessions = getGlobalSessionQuotaAttribute(
                             sessionsrvc, quotaAttr, dynSrvcType);
                 }
-                quotamap = fillQuotaMap(quotaAttr, "1");
+                quotamap.clear();
+                set = new HashSet();
+                set.add("1");
+                quotamap.put(quotaAttr, set);                
                 smsc.assignDynamicServiceRealm(sessionsrvc, realm, quotamap);
                 dynSrvcRealmAssigned = true;
                 smsc.updateServiceAttrsRealm(sessionsrvc, realm, quotamap);
-                String realmActiveSessions = getRealmSessionQuotaAttribute(
-                        sessionsrvc, realm);
+                
+                map = new HashMap();
+                map = smsc.getDynamicServiceAttributeRealm(sessionsrvc, realm);
+                set = (Set)map.get(quotaAttr);
+                Iterator iter = set.iterator();
+                String realmActiveSessions = (String)iter.next();
+                
                 assert !globalActiveSessions.equals("1");                
                 assert realmActiveSessions.equals("1");
                 log(Level.FINE, "setup", "Number of active sessions at " +
@@ -186,7 +201,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
-        }
+        } 
         exiting("setup");
     }
     
@@ -195,7 +210,62 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      * (a) Max session quota set to "1" in global/realm session service
      * (b) Set Exempt top-level admins from constraint checking to Yes
      * (c) Set Resulting behavior if session quota exhausted to
-     *     DESTROY_OLD_SESSION
+     *     DENY_ACCESS
+     * (d) User is amadmin
+     * (e) Validates that atleast ten sessions can be created for amadmin.
+     *     
+     * @throws java.lang.Exception
+     */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void testMaxSessionQuotaGlobalRealmYDAAmAdmin()
+    throws Exception {
+        entering("testMaxSessionQuotaGlobalRealmYDADOSAmAdmin", null);
+        Vector<SSOToken> tokenVector = new Vector<SSOToken>();
+        log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAAmAdmin", 
+                "This testcase validates session quota for amadmin when exempt " +
+                "top-level admin is Yes and resulting behavior is " +
+                "DENY_ACCESS");
+        Reporter.log("Test Description: This testcase validates session quota " +
+                "for amadmin when exempt top-level admin is Yes and resulting " +
+                "behavior is DENY_ACCESS");
+        try {
+            if (btladmin.equals("YES")&& 
+                    resultBehavior.equals("DENY_ACCESS")) {
+                for ( int count = 0; count < 10; count++ ) {
+                    SSOToken token = getToken(adminUser, adminPassword, basedn);
+                    tokenVector.add(token);
+                }
+                log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAAmAdmin", 
+                        "Successfully created ten tokens for amadmin ");
+            } else {
+                log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAAmAdmin",
+                        "Resulting behaviour and top level " +
+                        "exempt attributes do not apply for this testcase");
+                Reporter.log("Note: Resulting behaviour and top level " +
+                        "exempt attributes do not apply for this testcase");
+            }
+        } catch (Exception e) {
+        	assert false;
+            cleanup();
+            log(Level.SEVERE, "testMaxSessionQuotaGlobalRealmYDAAmAdmin",
+                    e.getMessage()); 
+            e.printStackTrace();
+        } finally {
+            while (tokenVector.size() != 0) {
+                destroyToken(tokenVector.get(0));
+                tokenVector.remove(0);
+            }
+        }
+        exiting("testMaxSessionQuotaGlobalRealmYDAAmAdmin");
+    }
+
+    
+    /**
+     *  Tests the following case:
+     * (a) Max session quota set to "1" in global/realm session service
+     * (b) Set Exempt top-level admins from constraint checking to Yes
+     * (c) Set Resulting behavior if session quota exhausted to
+     *     DESTROY_OLD_SESSION OR DENY_ACCESS
      * (d) User is super admin
      * (e) Validates that only one session can be created for user and old
      *     session is destroyed when a new session is created
@@ -413,15 +483,15 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         try {
             if (btladmin.equals("YES") && 
                     resultBehavior.equals("DESTROY_OLD_SESSION")) {
-                ssotokenOrig = getToken(testAdminUser, 
-                        testAdminUser, basedn);
+                ssotokenOrig = getToken(testUser, 
+                        testUser, basedn);
                 set = new HashSet();
                 set = getAllUserTokens(admintoken, testUser);
                 if (set.size() >= 2) {
                     assert false;
                 } else {
-                    ssotokenNew = getToken(testAdminUser, 
-                            testAdminUser, basedn);
+                    ssotokenNew = getToken(testUser, 
+                            testUser, basedn);
                     log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDOSUser", 
                             "Original token is invalid and new " +
                             "token is valid here");
@@ -443,7 +513,6 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             throw e;
         } finally {
             if (!cleanedUp) {
-                destroyToken(ssotokenOrig);
                 destroyToken(ssotokenNew);
             }
         }
@@ -479,15 +548,15 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         try {
             if (btladmin.equals("NO") && 
                     resultBehavior.equals("DESTROY_OLD_SESSION")) {
-                ssotokenOrig = getToken(testAdminUser, 
-                        testAdminUser, basedn);
+                ssotokenOrig = getToken(testUser, 
+                        testUser, basedn);
                 set = new HashSet();
                 set = getAllUserTokens(admintoken, testUser);
                 if (set.size() >= 2) {
                     assert false;
                 } else {
-                    ssotokenNew = getToken(testAdminUser, 
-                            testAdminUser, basedn);
+                    ssotokenNew = getToken(testUser, 
+                            testUser, basedn);
                     log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDOSUser", 
                             "Original token is invalid and new " +
                             "token is valid here");
@@ -551,8 +620,8 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                     assert false;
                 } else {
                     try {
-                        ssotokenNew = getToken(adminUser, 
-                                adminPassword, basedn);
+                        ssotokenNew = getToken(testUser, 
+                                testUser, basedn);
                         log(Level.SEVERE, "testMaxSessionQuotaGlobalRealmNDAUser",
                                 "ERROR: Deny access case failed for user");
                         assert false;
@@ -687,7 +756,10 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             log(Level.FINEST, "cleanup", "Cleaning User: " + testUser);
             idmc.deleteIdentity(admintoken, realm, IdType.USER,
                     testUser);
-            quotamap = fillQuotaMap(quotaAttr, defActiveSessions);
+            quotamap.clear();
+            set = new HashSet();
+            set.add(defActiveSessions);
+            quotamap.put(quotaAttr, set);
             smsc.updateGlobalServiceDynamicAttributes(
                     sessionsrvc, quotamap);
         } catch (Exception e) {
@@ -718,40 +790,5 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         Iterator itr = set.iterator();
         globalActiveSessions = (String)itr.next();
         return globalActiveSessions;
-    }
-
-    /**
-     * @param serviceName contains servicename as String
-     * @param realm contains realm name as String
-     * @return String containing realm active sessions
-     * 
-     * @throws java.lang.Exception
-     */
-    private String getRealmSessionQuotaAttribute(String serviceName, 
-            String realm) 
-    throws Exception {
-        String realmActiveSessions = "0";
-        map = new HashMap();
-        map = smsc.getDynamicServiceAttributeRealm(serviceName, realm);
-        set = (Set)map.get(quotaAttr);
-        Iterator iter = set.iterator();
-        realmActiveSessions = (String)iter.next();
-        return realmActiveSessions;
-    }
-    
-    /**
-     * @param quotaattr Quota Schema Attribute
-     * @param quotavalue Value to be set 
-     * @return Map map with quota value set
-     * 
-     * @throws java.lang.Exception
-     */
-    private Map fillQuotaMap(String quotaattr, String quotavalue) 
-    throws Exception {
-        Map quotaMap = new HashMap();
-        set = new HashSet();
-        set.add(quotavalue);
-        quotaMap.put(quotaattr, set);
-        return quotaMap;
     }
 }
