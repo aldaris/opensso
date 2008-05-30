@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMEncProvider.java,v 1.3 2007-12-15 06:24:18 hengming Exp $
+ * $Id: FMEncProvider.java,v 1.4 2008-05-30 05:45:24 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -332,13 +332,17 @@ public final class FMEncProvider implements EncProvider {
 		SAML2SDKUtils.bundle.getString(
 		    "failedMartialingEncryptedKey"));
 	}
-	Element outerElement =
-	    resultDoc.createElementNS(
-		SAML2Constants.ASSERTION_NAMESPACE_URI,
-		"saml:"+outerElementName);
-	outerElement.setAttributeNS(
-	    SAML2Constants.NS_XML, "xmlns:saml",
-	    SAML2Constants.ASSERTION_NAMESPACE_URI);
+
+        String outerElemNS = SAML2Constants.ASSERTION_NAMESPACE_URI;
+        String outerElemPrefix = "saml";
+        if (outerElementName.equals("NewEncryptedID")) {
+            outerElemNS = SAML2Constants.PROTOCOL_NAMESPACE;
+            outerElemPrefix = "samlp";
+        }
+        Element outerElement = resultDoc.createElementNS(outerElemNS,
+            outerElemPrefix + ":" + outerElementName);
+        outerElement.setAttributeNS(SAML2Constants.NS_XML,
+            "xmlns:" + outerElemPrefix, outerElemNS);
         Element ed = resultDoc.getDocumentElement();	
         resultDoc.replaceChild(outerElement, ed);
         outerElement.appendChild(ed);
