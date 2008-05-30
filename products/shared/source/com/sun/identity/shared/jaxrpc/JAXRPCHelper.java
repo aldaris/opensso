@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCHelper.java,v 1.3 2007-10-17 23:01:00 veiming Exp $
+ * $Id: JAXRPCHelper.java,v 1.4 2008-05-30 03:38:19 arviranga Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
@@ -112,22 +113,27 @@ public class JAXRPCHelper {
                 return (null);
             }
 
-            while ((serverList != null) && !serverList.isEmpty()) {
-                try {
-                    URL url = new URL((String)serverList.iterator().next());
-                    URL weburl = SystemPropertiesManager.getSystemProperties().
-                        getServiceURL(JAXRPC_SERVICE, url.getProtocol(), 
+            if (serverList != null) {
+                Iterator it = serverList.iterator();
+                while (it.hasNext()) {
+                    try {
+                        URL url = new URL((String) it.next());
+                        URL weburl = SystemPropertiesManager
+                            .getSystemProperties().getServiceURL(
+                            JAXRPC_SERVICE, url.getProtocol(),
                             url.getHost(), url.getPort(), url.getPath());
-                    String surl = weburl.toString();
-                    if (!surl.endsWith("/"))
-                        surl += "/";
-                    if (isServerValid(surl)) {
-                        return (surl);
+                        String surl = weburl.toString();
+                        if (!surl.endsWith("/")) {
+                            surl += "/";
+                        }
+                        if (isServerValid(surl)) {
+                            return (surl);
+                        }
+                    } catch (MalformedURLException e) {
+                        debug.warning("JAXRPCHelper:getValidServerURL", e);
+                    } catch (Exception e) {
+                        debug.warning("JAXRPCHelper:getValidServerURL", e);
                     }
-                } catch (MalformedURLException e) {
-                    debug.warning("JAXRPCHelper:getValidServerURL", e);
-                } catch (Exception e) {
-                    debug.warning("JAXRPCHelper:getValidServerURL", e);
                 }
             }
         }
