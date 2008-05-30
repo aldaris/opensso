@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: NT.xml,v 1.3 2008-04-25 18:53:59 mahesh_prasad_r Exp $
+    $Id: NT.xml,v 1.4 2008-05-30 06:36:23 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,10 +32,10 @@
     <Callbacks length="2" order="1" timeout="120" header="This server uses NT Authentication" >
         
         <NameCallback>
-            <Prompt> ç”¨æˆ·å: </Prompt>
+            <Prompt> ‡ö¿†ê¸…Éì: </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> å¯†ç : </Prompt>
+            <Prompt> …¯å‡áü: </Prompt>
         </PasswordCallback>
 
     </Callbacks>

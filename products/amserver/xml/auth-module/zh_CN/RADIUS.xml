@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: RADIUS.xml,v 1.3 2008-04-25 18:53:59 mahesh_prasad_r Exp $
+    $Id: RADIUS.xml,v 1.4 2008-05-30 06:36:24 mahesh_prasad_r Exp $
 
     Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,12 +34,12 @@
             <Prompt> RADIUS ID </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> RADIUS ε―†η  </Prompt>
+            <Prompt> RADIUS …―ε‡αό </Prompt>
         </PasswordCallback>
     </Callbacks>
     <Callbacks length="1" order="2" timeout="60" header="RADIUS Login Challenge" >
         <PasswordCallback echoPassword="false" >
-            <Prompt> RADIUS ζ¥θ―Άε―†η  </Prompt>
+            <Prompt> RADIUS †–Ρ―σ…―ε‡αό </Prompt>
         </PasswordCallback>
     </Callbacks>
 </ModuleProperties>
