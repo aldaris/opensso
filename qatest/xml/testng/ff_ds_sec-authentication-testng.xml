@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-authentication-testng.xml,v 1.6 2008-04-28 18:20:18 cmwesley Exp $
+ $Id: ff_ds_sec-authentication-testng.xml,v 1.7 2008-06-01 18:54:20 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -818,6 +818,8 @@
         </classes>
     </test>    
     <test name="SessionUpgradeTest">
+        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="testRealm" value="/"/>        
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
@@ -827,6 +829,42 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
+    <test name="SessionUpgradeTestForceClientAuth">
+        <parameter name="forceClientAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>        
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+   <test name="SessionUpgradeTestSubRealm">
+        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeTestForceClientAuthSubRealm">
+        <parameter name="forceClientAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>        
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>    
     <test name="ApplicationAuthTest">
         <groups>
             <run>
