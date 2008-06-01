@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.2 2008-05-05 22:57:35 cmwesley Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.3 2008-06-01 18:52:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,8 +89,8 @@ public class PostAuthProcessingTest extends TestCommon {
 
     /**
      * Reads the necessary test configuration and prepares the system
-     * for Authentication related properties for testing
-     * - Create module instance and create users wutg required attributes
+     * for Authentication related properties for testing.
+     * Create module instance and create users with required attributes.
      */
     @Parameters({"testModule", "testRealm"})
     @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -202,6 +202,9 @@ public class PostAuthProcessingTest extends TestCommon {
                       
             serviceToken = getToken(adminUser, adminPassword, realm);
             SMSCommon smsc = new SMSCommon(serviceToken);
+            log(Level.FINE, "setup", "Retrieving the attribute value of " + 
+                    mappingAttrName + " from " + strServiceName + " in realm " +
+                    testRealm + "...");
             oriAuthAttrValues = (Set) smsc.getAttributeValue(testRealm, 
                     strServiceName, mappingAttrName, "Organization");
             log(Level.FINEST, "setup", "Original value of " + mappingAttrName +

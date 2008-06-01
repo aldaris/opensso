@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.5 2008-04-30 16:28:20 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.6 2008-06-01 18:52:22 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,6 +111,9 @@ public class RedirectTest extends TestCommon {
                 testModule + "-goto-passmsg");
         moduleOnFailPassMsg = testResources.getString("am-auth-test-" +
                 testModule + "-gotoOnFail-passmsg");
+        ResourceBundle configBundle = ResourceBundle.getBundle(configrbName);
+        moduleSubConfig = configBundle.getString(testModule + 
+                ".module-subconfig-name");
         userName = testResources.getString("am-auth-test-" +
                 testModule + "-user");
         userName.trim();
