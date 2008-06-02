@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FQDNUrl.java,v 1.2 2008-05-31 06:00:35 veiming Exp $
+ * $Id: FQDNUrl.java,v 1.3 2008-06-02 19:10:46 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,11 @@ public class FQDNUrl {
             uri = uri.substring(1);
         }
         int idx = uri.indexOf('/');
-        return (idx != -1) ? "/" + uri.substring(0, idx) : "/" + uri;
+        if (idx != -1) {
+            uri = uri.substring(0, idx);
+        }
+        
+        return (uri.length() > 0) ? "/" + uri : uri;
     }
 
     /**
