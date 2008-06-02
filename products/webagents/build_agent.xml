@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.11 2008-05-20 00:28:07 madan_ranganath Exp $
+   $Id: build_agent.xml,v 1.12 2008-06-02 17:33:25 leiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -71,7 +71,7 @@
     <property name="container.web_agent.locale.dir" 
         location="${container.web_agent.dir}/locale"/>   
     <property name="container.web_agent.logs.dir" 
-        location="${container.web_agent.dir}/logs"/>   
+        location="${container.web_agent.dir}/installer-logs"/>   
 
     <!-- build class path for container -->
     <path id="build.class.path">

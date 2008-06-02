@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminToolLauncher.java,v 1.2 2007-03-09 21:34:44 huacui Exp $
+ * $Id: AdminToolLauncher.java,v 1.3 2008-06-02 17:34:43 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -479,7 +479,7 @@ public class AdminToolLauncher {
 
     private static final String STR_LOCALE_DIR_PREFIX = "/locale/";
 
-    private static final String STR_LOGS_DIR_PREFIX = "/logs/";
+    private static final String STR_LOGS_DIR_PREFIX = "/installer-logs/";
 
     private static final String STR_DATA_DIR_PREFIX = "/data/";
 

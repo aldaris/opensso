@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2008-05-20 00:32:49 madan_ranganath Exp $
+   $Id: build.xml,v 1.5 2008-06-02 17:33:26 leiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -101,7 +101,7 @@
         <delete dir="${container.web_agent.etc.dir}"/>
         <delete dir="${container.web_agent.data.dir}"/>
         <delete dir="${container.web_agent.logs.dir}"/>
-        <delete file="${container.web_agent.config.dir}/FAMToolsConfig.properties"/>
+        <delete file="${container.web_agent.config.dir}/FAMInstallerConfig.properties"/>
         <delete file="${container.web_agent.bin.dir}/agentadmin.bat"/>
 
         <!-- Generate IIS6 agent install archive -->

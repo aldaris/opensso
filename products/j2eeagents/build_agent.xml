@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.7 2007-10-08 17:46:51 leiming Exp $
+   $Id: build_agent.xml,v 1.8 2008-06-02 17:31:04 leiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,7 @@
     <property name="container.j2ee_agent.etc.dir" location="${container.j2ee_agent.dir}/etc"/>      
     <property name="container.j2ee_agent.lib.dir" location="${container.j2ee_agent.dir}/lib"/>   
     <property name="container.j2ee_agent.locale.dir" location="${container.j2ee_agent.dir}/locale"/>   
-    <property name="container.j2ee_agent.logs.dir" location="${container.j2ee_agent.dir}/logs"/>   
+    <property name="container.j2ee_agent.logs.dir" location="${container.j2ee_agent.dir}/installer-logs"/>   
     <property name="container.j2ee_agent.sampleapp.dir" location="${container.j2ee_agent.dir}/sampleapp"/>   
 
 

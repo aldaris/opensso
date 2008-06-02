@@ -186,9 +186,6 @@
                     <validation name="VALID_WL_HOME_DIR">
                         <class name="WeblogicHomeDirValidator" type="custom"/>
                     </validation>
-                    <validation name="VALID_WL_VERSION">
-                        <class name="WeblogicHomeDirValidator" type="custom"/>
-                    </validation>		
                 </validations>
                 <value-normalizer>
                     <class name="PathNormalizer" type="system"/>

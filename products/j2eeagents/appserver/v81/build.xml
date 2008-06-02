@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2008-05-20 00:27:31 huacui Exp $
+   $Id: build.xml,v 1.16 2008-06-02 17:31:06 leiming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -62,7 +62,7 @@
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/config">
                 <include name="FAMAgentBootstrap.template"/>
                 <include name="FAMAgentConfiguration.template"/>
-                <include name="FAMToolsConfig.properties"/>
+                <include name="FAMInstallerConfig.properties"/>
                 <include name="FAMAgentLogConfig.properties"/>
             </fileset>
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/xml">

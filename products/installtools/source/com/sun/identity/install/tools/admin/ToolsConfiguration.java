@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ToolsConfiguration.java,v 1.2 2008-05-20 00:41:44 huacui Exp $
+ * $Id: ToolsConfiguration.java,v 1.3 2008-06-02 17:34:42 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,7 +188,7 @@ public class ToolsConfiguration {
     private static IAdminTool adminTool = null;
 
     private static final String TOOLSCONFIG_FILE_NAME = 
-        "FAMToolsConfig.properties";
+        "FAMInstallerConfig.properties";
 
     private static final String STR_CONFIG_TOOLS_RESOLVER_KEY = 
         "com.sun.identity.install.tools.resolver";
