@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.4 2008-05-29 01:00:45 veiming Exp $
+   $Id: CreateFedlet.jsp,v 1.5 2008-06-02 20:24:12 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -125,12 +125,12 @@
 </cc:form>
 </cc:header>
 </div>
-<div id="dlg" class="dvs" style="width:600px; margin-left:-300px"></div>
+<div id="dlg" class="dvs" style="width:600px; height: 225px; margin-left:-300px"></div>
 
 <script language="javascript">
 
     var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="creating.fedlet.waiting" bundleID="amConsole" escape="false" />";
-
+    var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="fedlet.created.title" escape="false" bundleID="amConsole" /></h3>";
     var msgCreated = '<p>&nbsp;</p><input name="btnOK" type="submit" class="Btn1" value="<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
     var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
 
@@ -192,7 +192,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
             if (status == 0) {
-                msg = msg + '<center>' +  msgCreated + '</center>';
+                msg = '<center>' + ttlCreated + msg + msgCreated + '</center>';
             } else {
                 msg = msg + '<center>' +  closeBtn + '</center>';
             }
