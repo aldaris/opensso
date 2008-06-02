@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Membership.xml,v 1.4 2008-05-30 06:36:22 mahesh_prasad_r Exp $
+    $Id: Membership.xml,v 1.5 2008-06-02 16:39:36 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,18 +31,18 @@
 
     <Callbacks length="3" order="1" timeout="120" header="Self Registration Module" template="membership.jsp" >
         <NameCallback>
-            <Prompt> ƒβªƒβ­ƒιµƒβ­…Ιμ:  </Prompt>
+            <Prompt> γƒ¦γƒΌγ‚¶γƒΌε:  </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> ƒβζƒι ƒβ―ƒβ­ƒβλ:  </Prompt>    
+            <Prompt> γƒ‘γ‚Ήγƒ―γƒΌγƒ‰:  </Prompt>    
         </PasswordCallback>
         <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
-                    <Value> ƒβ΅ƒι—ƒιρƒβώ </Value>
+                    <Value> γƒ­γ‚°γ‚¤γƒ³ </Value>
                 </OptionValue>
                 <OptionValue>
-                    <Value> †ϋ—ªΕƒβªƒβ­ƒιµƒβ­ </Value>
+                    <Value> ζ–°θ¦γƒ¦γƒΌγ‚¶γƒΌ </Value>
                 </OptionValue>
              </OptionValues>
         </ConfirmationCallback>
@@ -50,21 +50,21 @@
 
     <Callbacks length="4" order="2" timeout="240" header="Password Expiring Please Change&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
-            <Prompt> ‡ΕΎ…£Ώƒό«ƒβζƒι ƒβ―ƒβ­ƒβλ:  </Prompt>
+            <Prompt> ηΎε¨γ®γƒ‘γ‚Ήγƒ―γƒΌγƒ‰:  </Prompt>
         </PasswordCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> †ϋ—ƒόωƒόδƒβζƒι ƒβ―ƒβ­ƒβλ:  </Prompt>
+            <Prompt> ζ–°γ—γ„γƒ‘γ‚Ήγƒ―γƒΌγƒ‰:  </Prompt>
         </PasswordCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> †ϋ—ƒόωƒόδƒβζƒι ƒβ―ƒβ­ƒβλƒό«‡σ¦¬μ:  </Prompt>
+            <Prompt> ζ–°γ—γ„γƒ‘γ‚Ήγƒ―γƒΌγƒ‰γ®ηΆΊθª:  </Prompt>
         </PasswordCallback>
         <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
-                    <Value> ‰Ηό„ΐν </Value>
+                    <Value> ι€δΏ΅ </Value>
                 </OptionValue>
                 <OptionValue>
-                    <Value> …Εϋ†µκƒόω </Value>
+                    <Value> ε–ζ¶γ— </Value>
                 </OptionValue>
             </OptionValues>
         </ConfirmationCallback>
@@ -98,33 +98,33 @@
     
     <Callbacks length="8" order="16" timeout="300" header="Self Registration" template="register.jsp" >
         <NameCallback isRequired="true" attribute="uid" >
-            <Prompt> ƒβªƒβ­ƒιµƒβ­…Ιμ:  </Prompt>
+            <Prompt> γƒ¦γƒΌγ‚¶γƒΌε:  </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" isRequired="true" attribute="userPassword" >
-            <Prompt> ƒβζƒι ƒβ―ƒβ­ƒβλ:  </Prompt>    
+            <Prompt> γƒ‘γ‚Ήγƒ―γƒΌγƒ‰:  </Prompt>    
         </PasswordCallback>
         <PasswordCallback echoPassword="false" isRequired="true" >
-            <Prompt> ƒβζƒι ƒβ―ƒβ­ƒβλƒό«‡σ¦¬μ:  </Prompt>    
+            <Prompt> γƒ‘γ‚Ήγƒ―γƒΌγƒ‰γ®ηΆΊθª:  </Prompt>    
         </PasswordCallback>
         <NameCallback isRequired="true" attribute="givenname" >
-            <Prompt> …Ιμ:  </Prompt>
+            <Prompt> ε:  </Prompt>
         </NameCallback>
         <NameCallback isRequired="true" attribute="sn" >
-            <Prompt> …Ίτ:  </Prompt>
+            <Prompt> ε§“:  </Prompt>
         </NameCallback>
         <NameCallback isRequired="true" attribute="cn" >
-            <Prompt> ƒβςƒβ½ƒβμƒβ­ƒβα:  </Prompt>
+            <Prompt> γƒ•γƒ«γƒγƒΌγƒ :  </Prompt>
         </NameCallback>
         <NameCallback attribute="mail" >
-            <Prompt> ‰Ά©…΅Ιƒβνƒβ­ƒβ½ƒισƒβλƒβΌƒι :  </Prompt>
+            <Prompt> ι›»ε­γƒ΅γƒΌγƒ«γ‚Άγƒ‰γƒ¬γ‚Ή:  </Prompt>
         </NameCallback>
         <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
-                    <Value> ‡Φ©‰ξ™ </Value>
+                    <Value> η™»ι² </Value>
                 </OptionValue>
                 <OptionValue>
-                    <Value> …Εϋ†µκƒόω </Value>
+                    <Value> ε–ζ¶γ— </Value>
                 </OptionValue>
              </OptionValues>
         </ConfirmationCallback>
@@ -132,17 +132,17 @@
     
     <Callbacks length="2" order="17" timeout="120" header="Self Registration" >
         <ChoiceCallback attribute="uid" >
-            <Prompt>…ΰΡ…θΆƒόωƒό–ƒβªƒβ­ƒιµƒβ­…Ιμƒό«&lt;BR&gt;ƒβªƒβ­ƒιµƒβ­ƒόξƒόΦƒόΊƒό½…΅ÿ…£ΏƒόωƒόΎƒόΦƒΗι&lt;BR&gt;†Όνƒό«ƒβªƒβ­ƒιµƒβ­…Ιμƒό«&lt;BR&gt;ƒόδƒόάƒιξƒόοƒιΖ‰όΉ†θ¤ƒόΦƒιοƒόοƒΗό&lt;BR&gt;‡οΌη¬ƒό½„»£†κΙƒόωƒόªƒόΕƒόαƒόςƒόδƒΗι</Prompt>
+            <Prompt>ε…¥ε›γ—γγƒ¦γƒΌγ‚¶γƒΌεγ®&lt;BR&gt;γƒ¦γƒΌγ‚¶γƒΌγγ™γ§γ«ε­ε¨γ—γΎγ™γ€‚&lt;BR&gt;ζ¬΅γ®γƒ¦γƒΌγ‚¶γƒΌεγ®&lt;BR&gt;γ„γγ‚γ‹γ‚’ιΈζγ™γ‚‹γ‹γ€&lt;BR&gt;η‹¬θ‡ªγ«δ½ζγ—γ¦γγ γ•γ„γ€‚</Prompt>
             <ChoiceValues>
               <ChoiceValue>
-                  <Value>η¬…κε‡οΌη¬ƒό«ƒιιƒό«ƒιΖ„»£†κΙ</Value>
+                  <Value>θ‡ªε†η‹¬θ‡ªγ®γ‚‚γ®γ‚’δ½ζ</Value>
               </ChoiceValue>
             </ChoiceValues>
         </ChoiceCallback>
         <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
-                    <Value> ‰Ηό„ΐν </Value>
+                    <Value> ι€δΏ΅ </Value>
                 </OptionValue>
             </OptionValues>
         </ConfirmationCallback>
@@ -152,10 +152,10 @@
         <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
-                    <Value> …Ιξ†δΕƒόΦƒιο </Value>
+                    <Value> εζ„γ™γ‚‹ </Value>
                 </OptionValue>
                 <OptionValue>
-                    <Value> …Ιξ†δΕƒόωƒό¬ƒόδ </Value>
+                    <Value> εζ„γ—γªγ„ </Value>
                 </OptionValue>
             </OptionValues>
         </ConfirmationCallback>

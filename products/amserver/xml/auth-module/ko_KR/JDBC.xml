@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: JDBC.xml,v 1.4 2008-05-30 06:36:23 mahesh_prasad_r Exp $
+    $Id: JDBC.xml,v 1.5 2008-06-02 16:39:37 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,10 +33,10 @@
     <Callbacks length="2" order="1" timeout="120" 
         header="This server uses JDBC Authentication" >
         <NameCallback> 
-            <Prompt> Œé¼ŒÜ¨Œ¤É Œ¥³‹ªä </Prompt> 
+            <Prompt> ì‚¬ìš©ìž ì´ë¦„ </Prompt> 
         </NameCallback>
         <PasswordCallback echoPassword="false" > 
-            <Prompt> ‹ ä‹—Ç‹™êÿ¹ </Prompt>
+            <Prompt> ë¹„ë°€ë²ˆí˜¸ </Prompt>
         </PasswordCallback>
     </Callbacks>
 </ModuleProperties>

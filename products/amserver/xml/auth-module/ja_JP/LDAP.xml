@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: LDAP.xml,v 1.4 2008-05-30 06:36:22 mahesh_prasad_r Exp $
+    $Id: LDAP.xml,v 1.5 2008-06-02 16:39:36 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,29 +31,29 @@
 <ModuleProperties moduleName="LDAP" version="1.0" >
     <Callbacks length="2" order="1" timeout="120" header="This server uses LDAP Authentication" >
         <NameCallback>
-            <Prompt> ƒβªƒβ­ƒιµƒβ­…Ιμ:  </Prompt>
+            <Prompt> γƒ¦γƒΌγ‚¶γƒΌε:  </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> ƒβζƒι ƒβ―ƒβ­ƒβλ:  </Prompt>
+            <Prompt> γƒ‘γ‚Ήγƒ―γƒΌγƒ‰:  </Prompt>
         </PasswordCallback>
     </Callbacks>
     <Callbacks length="4" order="2" timeout="120" header="Change Password&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
-            <Prompt>…Ερƒόδƒβζƒι ƒβ―ƒβ­ƒβλ </Prompt>
+            <Prompt>ε¤γ„γƒ‘γ‚Ήγƒ―γƒΌγƒ‰ </Prompt>
         </PasswordCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> †ϋ—ƒόωƒόδƒβζƒι ƒβ―ƒβ­ƒβλ </Prompt>
+            <Prompt> ζ–°γ—γ„γƒ‘γ‚Ήγƒ―γƒΌγƒ‰ </Prompt>
         </PasswordCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> ƒβζƒι ƒβ―ƒβ­ƒβλƒό«‡σ¦¬μ </Prompt>
+            <Prompt> γƒ‘γ‚Ήγƒ―γƒΌγƒ‰γ®ηΆΊθª </Prompt>
         </PasswordCallback>
         <ConfirmationCallback>
             <OptionValues>
                 <OptionValue>
-                    <Value> ‰Ηό„ΐν </Value>
+                    <Value> ι€δΏ΅ </Value>
                 </OptionValue>
                 <OptionValue>
-                    <Value> …Εϋ†µκƒόω </Value>
+                    <Value> ε–ζ¶γ— </Value>
                 </OptionValue>
             </OptionValues>
         </ConfirmationCallback>
