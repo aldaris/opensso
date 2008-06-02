@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.73 2008-05-29 23:29:49 veiming Exp $
+ * $Id: AccessManager.java,v 1.74 2008-06-02 23:54:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "filter|x|s|Filter (Pattern).",
-            "quiet|q|s|Do not prompt for session invalidation."},
+            "quiet|q|u|Do not prompt for session invalidation."},
         resourceStrings={
             "session-invalid-host-name=Invalid Host Name {0}. Expected format was <protocol>://<host>:<port>.",
             "sizeLimitExceeded=Search size limit exceeded. Please refine your search.",
