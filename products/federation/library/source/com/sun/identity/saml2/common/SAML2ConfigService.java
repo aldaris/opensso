@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ConfigService.java,v 1.2 2008-05-10 05:26:23 qcheng Exp $
+ * $Id: SAML2ConfigService.java,v 1.3 2008-06-02 23:48:30 weisun2 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,6 +52,7 @@ public class SAML2ConfigService implements ConfigurationListener {
     static Debug debug = Debug.getInstance("libSAML2");
     static ConfigurationInstance ci = null;
     static final String SAML2_FAILOVER_ATTR = "failOverEnabled"; 
+    static final String SAML2_BUFFER_LENGTH = "bufferLength"; 
 
     private static Map attributes = new HashMap();
 
@@ -95,6 +96,7 @@ public class SAML2ConfigService implements ConfigurationListener {
         
         if (ci == null) {
             attributes.put(SAML2_FAILOVER_ATTR, "false"); 
+            attributes.put(SAML2_BUFFER_LENGTH, "2048"); 
         } else {
             Map attrMap = null; 
             try {
@@ -111,6 +113,12 @@ public class SAML2ConfigService implements ConfigurationListener {
                      value = (String) values.iterator().next(); 
                 } 
                 attributes.put(SAML2_FAILOVER_ATTR, value); 
+                values = (Set)attrMap.get(SAML2_BUFFER_LENGTH);
+                value = "2048" ; 
+                if ((values != null) && (values.size() == 1)) {
+                     value = (String) values.iterator().next(); 
+                } 
+                attributes.put(SAML2_BUFFER_LENGTH, value); 
             }
         }
     }

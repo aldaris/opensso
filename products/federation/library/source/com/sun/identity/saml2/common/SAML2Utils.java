@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.27 2008-05-10 05:26:24 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.28 2008-06-02 23:48:31 weisun2 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,7 +169,9 @@ public class SAML2Utils extends SAML2SDKUtils {
     private static int int_server_port = 0;
     
     public static SOAPConnectionFactory scf = null;
-    
+    private static String bufferLen = (String) SAML2ConfigService.
+            getAttribute(SAML2ConfigService.SAML2_BUFFER_LENGTH);
+
     // Dir server info for CRL entry
     private static boolean checkCertStatus = false;
     private static boolean checkCAStatus = false;
@@ -1134,8 +1136,15 @@ public class SAML2Utils extends SAML2SDKUtils {
         // Decompress the bytes
         Inflater inflater = new Inflater(true);
         inflater.setInput(input);
-        byte[] result = new byte[2048]; // Note that this is fixed length
-        // buffer, could be a problem
+        int resultLen = 2048; 
+        try {
+            if ((bufferLen != null) && (!bufferLen.equals(""))) {
+                resultLen = Integer.parseInt(bufferLen);
+            }   
+        } catch (NumberFormatException nfe) {
+            debug.error("Unable to parse buffer length.", nfe);
+        }
+        byte[] result = new byte[resultLen]; 
         int resultLength = 0;
         try {
             resultLength = inflater.inflate(result);
