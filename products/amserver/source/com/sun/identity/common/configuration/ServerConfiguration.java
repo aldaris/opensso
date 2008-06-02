@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.7 2008-04-24 00:46:48 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.8 2008-06-02 20:00:55 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,6 +140,46 @@ public class ServerConfiguration extends ConfigurationBase {
         }
         return serverInfo;
     }
+    
+    /**
+    * Returns a map of server name to its load balancer cookie value.
+    * @param ssoToken Single Sign-On Token which is used to query the service
+    *        management datastore.
+    * @return a map of server id to its load balancer cookie value.
+    * @throws SMSException if errors access in the service management
+    *         datastore.
+    * @throws SSOException if the <code>ssoToken</code> is not valid.
+    */
+    public static Map getLBCookieValues(SSOToken ssoToken)
+        throws SMSException, SSOException, IOException {
+        Map results = new HashMap();
+
+        if (!isLegacy(ssoToken)) {
+            ServiceConfig sc = getRootServerConfig(ssoToken);
+
+            if (sc != null) {
+                Set names = sc.getSubConfigNames("*");
+                for (Iterator i = names.iterator(); i.hasNext(); ) {
+                    String name = (String)i.next();
+                    ServiceConfig cfg = sc.getSubConfig(name);
+                    Map attrs = cfg.getAttributes();
+                    Set setID = (Set)attrs.get(ATTR_SERVER_ID);
+                    String serverId = (String)setID.iterator().next();
+
+                    if (!serverId.equals(DEFAULT_SERVER_ID)) {
+                        Properties propMap = getProperties(
+                            (Set)attrs.get(ATTR_SERVER_CONFIG));
+                        String cValue = (String)propMap.get(
+                            Constants.PROPERTY_NAME_LB_COOKIE_VALUE);
+                        if ((cValue != null) && (cValue.length() > 0)) {
+                            results.put(serverId, cValue);
+                        }
+                    }
+                }
+            }
+        }
+        return results;
+    }         
 
     /**
      * Returns a set of server instance name (String).
@@ -600,6 +640,9 @@ public class ServerConfiguration extends ConfigurationBase {
             Set setServerId = new HashSet(2);
             setServerId.add(instanceId);
             serverValues.put(ATTR_SERVER_ID, setServerId);
+            
+            values.add(Constants.PROPERTY_NAME_LB_COOKIE_VALUE + "=" +
+                instanceId);             
             
             Set setServerConfigXML = new HashSet(2);
             setServerConfigXML.add(serverConfigXML);

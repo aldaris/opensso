@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.12 2008-04-25 23:23:26 dillidorai Exp $
+ * $Id: AuthClientUtils.java,v 1.13 2008-06-02 20:03:59 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1042,13 +1042,20 @@ public class AuthClientUtils {
     }
 
     public static String getlbCookieName() {
+        loadBalanceCookieName =
+            SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
+        if(utilDebug.messageEnabled()){
+        	utilDebug.message("AuthClientUtils.getlbCookieName()" +
+                "loadBalanceCookieName is:" + loadBalanceCookieName);        	
+        }
         return (loadBalanceCookieName);
     }
 
     public static String getlbCookieValue() {
         if (SystemProperties.isServerMode()) {
             try {
-                return (WebtopNaming.getAMServerID());
+                return (WebtopNaming.getLBCookieValue(
+                    WebtopNaming.getAMServerID()));
             } catch (Exception e) {
                 return (null);
             }

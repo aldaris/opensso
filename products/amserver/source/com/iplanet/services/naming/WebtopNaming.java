@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.14 2008-03-13 18:50:15 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.15 2008-06-02 20:07:50 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,10 @@ public class WebtopNaming {
     private static Hashtable serverIdTable = null;
 
     private static Hashtable siteIdTable = null;
+
+    //This is created for storing server id and lbcookievalue mapping
+    //key:serverid | value:lbcookievalue      
+    private static Hashtable lbCookieValuesTable = null;
 
     private static Vector platformServers = new Vector();
 
@@ -530,6 +534,59 @@ public class WebtopNaming {
         return platformServerIDs;
     }
 
+    private static void updateLBCookieValueMappings() {
+        lbCookieValuesTable = new Hashtable();
+        String serverSet = (String) namingTable.get(
+                           Constants.SERVERID_LBCOOKIEVALUE_LIST);
+
+        if ((serverSet == null) || (serverSet.length() == 0)) {
+            return;
+        }
+
+        StringTokenizer tok = new StringTokenizer(serverSet, ",");
+        while (tok.hasMoreTokens()) {
+            String serverid = tok.nextToken();
+            String lbCookieValue = serverid;
+            int idx = serverid.indexOf(NODE_SEPARATOR);
+            if (idx != -1) {
+                lbCookieValue = serverid.substring(idx + 1, serverid.length());
+                serverid = serverid.substring(0, idx);
+            }
+            lbCookieValuesTable.put(serverid, lbCookieValue);
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("WebtopNaming.updateLBCookieValueMappings():" +
+                "LBCookieValues table -> " + lbCookieValuesTable.toString());
+        }
+
+        return;
+    }
+
+    /**
+     * Returns the lbCookieValue corresponding to serverid
+     * 
+     * @param serverid
+     *            The server id
+     * @return The lbCookieValue corresponding to serverid
+     */     
+    public static String getLBCookieValue(String serverid) {
+        String lbCookieValue = null;
+
+        if (lbCookieValuesTable == null) {
+            return null;
+        }
+
+        lbCookieValue = (String) lbCookieValuesTable.get(serverid);
+
+        if (debug.messageEnabled()) {
+            debug.message("WebtopNaming.getLBCookieValue(): lbCookieValue"
+            + "for " + serverid + " is "  + lbCookieValue);
+        }
+
+        return lbCookieValue;
+    }
+
     /**
      * This function gets the server id that is there in the platform server
      * list for a corresponding server. One use of this function is to keep this
@@ -798,7 +855,8 @@ public class WebtopNaming {
         updateServerIdMappings();
         updateSiteIdMappings();
         updatePlatformServerIDs();
-
+        updateLBCookieValueMappings();
+		
         if (debug.messageEnabled()) {
             debug.message("Naming table -> " + namingTable.toString());
             debug.message("Platform Servers -> " + platformServers.toString());

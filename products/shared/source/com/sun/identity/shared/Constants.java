@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.23 2008-05-29 23:29:51 veiming Exp $
+ * $Id: Constants.java,v 1.24 2008-06-02 19:54:45 manish_rustagi Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -801,4 +801,16 @@ public interface Constants {
      * Property name for data encryption key
      */
     String ENC_PWD_PROPERTY = "am.encryption.pwd";
+
+    /**
+     * Property string for load balancer cookie value.
+     */
+    String PROPERTY_NAME_LB_COOKIE_VALUE =
+        "com.iplanet.am.lbcookie.value";
+
+    /**
+     * Key name for serverid-cookievalue list in naming table.
+     */
+    String SERVERID_LBCOOKIEVALUE_LIST =
+        "iplanet-am-platform-lb-cookie-value-list";
 }

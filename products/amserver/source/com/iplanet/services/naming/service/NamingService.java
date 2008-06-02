@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.8 2008-02-15 01:02:24 veiming Exp $
+ * $Id: NamingService.java,v 1.9 2008-06-02 20:06:08 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -207,7 +207,7 @@ public class NamingService implements RequestHandler, ServiceListener {
                 storeServerList(sites, namingAttrs);
             }
 
-            // To reduce risk convert from a Map to a Hastable since the rest
+			// To reduce risk convert from a Map to a Hastable since the rest
             // of the naming code expects it in this format. Note there is
             // tradeoff based on whether or not short circuiting is being used.
 
@@ -217,6 +217,8 @@ public class NamingService implements RequestHandler, ServiceListener {
                     .get(Constants.SITE_ID_LIST);
                 nametable.put(Constants.SITE_ID_LIST, siteList);
             }
+
+            insertLBCookieValues(nametable);
         } catch (Exception ex) {
             namingDebug.error("Can't get naming table", ex);
             throw new SMSException(ex.getMessage());
@@ -662,4 +664,33 @@ public class NamingService implements RequestHandler, ServiceListener {
 
         return clustertbl;
     }
+
+    private static void insertLBCookieValues(Hashtable nametable)
+            throws Exception {
+        Map lbCookieMappings = null;
+
+        lbCookieMappings = ServerConfiguration.getLBCookieValues(sso);
+       
+        if (namingDebug.messageEnabled()) {
+            namingDebug.message("NamingService.insertLBCookieValues()" +
+            "LBCookie Mappings : " + lbCookieMappings.toString());
+        }
+
+        StringBuffer strBuffer = new StringBuffer(); 
+        Set s = lbCookieMappings.keySet();
+        Iterator iter = s.iterator();
+        while (iter.hasNext()) {
+            String key = (String) iter.next();
+            String val = (String) lbCookieMappings.get(key);
+            strBuffer.append(key).append(delimiter).append(val).append(",");
+        }
+
+        String strCookieMappings = "";
+        if(strBuffer.length() > 0){
+            strCookieMappings = strBuffer.substring(0,strBuffer.length()-1);
+        }
+        nametable.put(
+            Constants.SERVERID_LBCOOKIEVALUE_LIST, strCookieMappings);
+    }
+    
 }

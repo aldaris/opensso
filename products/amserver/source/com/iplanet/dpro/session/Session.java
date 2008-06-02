@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.14 2008-04-22 15:54:40 ww203982 Exp $
+ * $Id: Session.java,v 1.15 2008-06-02 20:11:42 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,7 +217,7 @@ public class Session extends GeneralTaskRunnable {
     private static String cookieName = 
 	SystemProperties.get("com.iplanet.am.cookie.name");
 
-    public static final String lbCookieName = 
+    public static String lbCookieName = 
         SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
 
     private static final boolean resetLBCookie = 
@@ -497,17 +497,32 @@ public class Session extends GeneralTaskRunnable {
     public static String getLBCookie(SessionID sid)
              throws SessionException {
         String cookieValue = null;
+        lbCookieName = 
+            SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
+        if(sessionDebug.messageEnabled()){
+            sessionDebug.message("Session.getLBCookie()" +
+                "lbCookieName is:" + lbCookieName);
+        }
+        
         if(sid == null || sid.toString() == null || 
             sid.toString().length() == 0) {
             throw new SessionException(SessionBundle.rbName, 
         	    "invalidSessionID", null);
         }
          
+        if(isServerMode() && 
+            !SessionService.getSessionService().isSiteEnabled()) {
+                cookieValue = WebtopNaming.getLBCookieValue(
+                                  sid.getSessionServerID());
+                return lbCookieName + "=" + cookieValue;
+        }
+
         if(resetLBCookie) {
             if (isServerMode()) {
                 SessionService ss = SessionService.getSessionService();            
                 if (ss.isSessionFailoverEnabled() && ss.isLocalSite(sid)) {
-                    cookieValue = ss.getCurrentHostServer(sid);
+                    cookieValue = WebtopNaming.getLBCookieValue(
+                        ss.getCurrentHostServer(sid));
                 }    
             } else {            
                 Session sess = (Session) sessionTable.get(sid);
@@ -518,8 +533,10 @@ public class Session extends GeneralTaskRunnable {
         }    
         
         if(cookieValue == null || cookieValue.length() == 0) {
-            cookieValue = sid.getExtension(SessionID.PRIMARY_ID);
+            cookieValue = WebtopNaming.getLBCookieValue(
+                sid.getExtension(SessionID.PRIMARY_ID));
         }
+
         return lbCookieName + "=" + cookieValue;
     }
     
