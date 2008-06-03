@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.62 2008-06-03 18:31:02 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.63 2008-06-03 21:14:36 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -323,8 +323,11 @@ public class AMSetupServlet extends HttpServlet {
                          * first.
                          */
                         if ((primaryURL != null) && (primaryURL.length() > 0)) {
-                            SiteConfiguration.createSite(adminToken,
-                                site, primaryURL, Collections.EMPTY_SET);
+                            Set sites = SiteConfiguration.getSites(adminToken);
+                            if (!sites.contains(site)) {
+                                SiteConfiguration.createSite(adminToken,
+                                    site, primaryURL, Collections.EMPTY_SET);
+                            }
                         } 
 
                         if (!ServerConfiguration.belongToSite( 
@@ -1279,8 +1282,10 @@ public class AMSetupServlet extends HttpServlet {
       *     702=Connection Error - failed to connect
       */
     public static Map getRemoteServerInfo(
-                      String server, String userid, String pwd)
-    {
+        String server,
+        String userid,
+        String pwd
+    ) {
         HttpURLConnection conn = null;
         try {
             // Construct data
@@ -1294,9 +1299,9 @@ public class AMSetupServlet extends HttpServlet {
                        new OutputStreamWriter(conn.getOutputStream());
             wr.write(data);
             wr.flush();
-            // Get the response
-            BufferedReader rd = 
-                new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            BufferedReader rd = new BufferedReader(
+                new InputStreamReader(conn.getInputStream()));
             String line;
             Map info = null;
             while ((line = rd.readLine()) != null) {
