@@ -29,6 +29,9 @@
 #include "naming_service.h"
 #include "xml_tree.h"
 
+#if defined(WINNT)
+#define strtok_r(s1, s2, p) strtok(s1, s2);
+#endif
 USING_PRIVATE_NAMESPACE
 
 namespace {
