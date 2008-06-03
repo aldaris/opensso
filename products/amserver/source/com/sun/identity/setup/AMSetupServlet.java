@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.61 2008-05-28 19:52:11 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.62 2008-06-03 18:31:02 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1756,7 +1756,7 @@ public class AMSetupServlet extends HttpServlet {
         //config.put("keepSecurityHeaders","true");
         config.put("WSPEndpoint","default");
         config.put("AgentType","WSCAgent");
-        createAgent(idrepo, "wsc", "WSC", "", config);
+        createAgent(token, idrepo, "wsc", "WSC", "", config);
 
         // Add WSP configuration
         config.remove("AgentType");
@@ -1766,7 +1766,7 @@ public class AMSetupServlet extends HttpServlet {
                                   "urn:sun:wss:security:null:SAML2Token-HK," +
                                   "urn:sun:wss:security:null:SAML2Token-SV," +
                                   "urn:sun:wss:security:null:X509Token");
-        createAgent(idrepo, "wsp", "WSP", "", config);
+        createAgent(token, idrepo, "wsp", "WSP", "", config);
 
         // Add localSTS configuration
         config.remove("AgentType");
@@ -1779,7 +1779,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("STSEndpoint",serverURL + deployuri + "/sts");
         config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
         //createAgent(idrepo, "defaultSTS", "STS", "", config);
-        createAgent(idrepo, "SecurityTokenService", "STS", "", config);
+        createAgent(token, idrepo, "SecurityTokenService", "STS", "", config);
 
         /*
         // Add UsernameToken profile
@@ -1863,35 +1863,39 @@ public class AMSetupServlet extends HttpServlet {
 
 
     private static void createAgent(
+        SSOToken adminToken,
         AMIdentityRepository idrepo,
         String name,
         String type,
         String desc,
         Map config
-    ) throws IdRepoException, SSOException 
-    {
-        Map attributes = new HashMap();
+    ) throws IdRepoException, SSOException {
+        AMIdentity amid = new AMIdentity(adminToken, name, IdType.AGENTONLY, 
+            "/", null);
+        if (!amid.isExists()) {
+            Map attributes = new HashMap();
 
-        Set values = new HashSet();
-        values.add(name);
-        attributes.put("userpassword", values);
+            Set values = new HashSet();
+            values.add(name);
+            attributes.put("userpassword", values);
 
-        for (Iterator i = config.keySet().iterator(); i.hasNext(); ) {
-            String key = (String)i.next();
-            String value = (String)config.get(key);
-            values = new HashSet();
-            if (value.indexOf(",") != -1) {
-                StringTokenizer st = new StringTokenizer(value, ",");
-                while(st.hasMoreTokens()) {
-                    values.add(st.nextToken());
+            for (Iterator i = config.keySet().iterator(); i.hasNext();) {
+                String key = (String) i.next();
+                String value = (String) config.get(key);
+                values = new HashSet();
+                if (value.indexOf(",") != -1) {
+                    StringTokenizer st = new StringTokenizer(value, ",");
+                    while (st.hasMoreTokens()) {
+                        values.add(st.nextToken());
+                    }
+                } else {
+                    values.add(value);
                 }
-            } else {
-                values.add(value);
+                attributes.put(key, values);
             }
-            attributes.put(key, values);
+
+            idrepo.createIdentity(IdType.AGENTONLY, name, attributes);
         }
-        
-        idrepo.createIdentity(IdType.AGENTONLY, name, attributes);
     }
 
     private static void startRegistrationProcess(String basedir,

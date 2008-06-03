@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.15 2008-05-15 04:51:02 kevinserwin Exp $
+ * $Id: Step3.java,v 1.16 2008-06-03 18:31:02 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -246,10 +246,6 @@ public class Step3 extends LDAPStoreWizardPage {
                         "existingPort", existing);
                     addObject(sb, "existingPort", existing);
 
-                    // set the configuration store port
-                    getContext().setSessionAttribute(
-                        "configStorePort", existing);   
-                    addObject(sb, "configStorePort", existing);                        
                     // set the configuration store port
                     getContext().setSessionAttribute(
                         "existingStorePort", existing);   

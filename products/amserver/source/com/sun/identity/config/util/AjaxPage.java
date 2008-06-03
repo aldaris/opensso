@@ -17,13 +17,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.17 2008-05-15 00:45:45 veiming Exp $
+ * $Id: AjaxPage.java,v 1.18 2008-06-03 18:30:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.util;
 
-import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.config.Configurator;
 import com.sun.identity.config.DummyConfigurator;
 import com.sun.identity.setup.AMSetupServlet;
