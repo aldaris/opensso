@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step5.java,v 1.6 2008-02-04 20:57:19 jonnelson Exp $
+ * $Id: Step5.java,v 1.7 2008-06-03 21:00:35 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,24 +68,22 @@ public class Step5 extends AjaxPage {
      * port = primary loadURL
      */
     public boolean validateURL() {
-        boolean returnVal = true;
         String primaryURL = toString("port");
         if (primaryURL == null) {
-            writeInvalid(getLocalizedString("missing.primary.url"));
+            writeToResponse(getLocalizedString("missing.primary.url"));
         } else {
             try {
                 URL hostURL =  new URL(primaryURL);
                 getContext().setSessionAttribute( 
                     SetupConstants.LB_PRIMARY_URL, primaryURL);
-                writeValid("OK"); 
+                writeToResponse("ok");
             } catch (MalformedURLException m) {
-                writeInvalid("Primary URL is not reachable");
-                returnVal = false;
+                writeToResponse(getLocalizedString("primary.url.is.invalid"));
             }
         }
 
         setPath(null);
-        return returnVal;
+        return false;
     }
 
     public boolean validateSite() {

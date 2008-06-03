@@ -23,20 +23,24 @@
         $('loadBalancerPort').disabled = false;
     }
 
-    function urlValidated( body ) {
-        $('nextTabButton').disabled = eval(loadBalancerValid);
-        $('loadBalancerStatus').innerHTML = okString;
-    }
+    function urlValidated(response) {
+        var message = response.responseText;
 
-    function urlInvalidated(body) {
-        loadBalancerValid = false;
-        $('nextTabButton').disabled = true;
-        $('loadBalancerStatus').innerHTML = errorImage+'<small>'+body+'</small>';
+        if (message == "ok") {
+            $('nextTabButton').disabled = false;
+            $('loadBalancerStatus').innerHTML = okString;
+            loadBalancerValid = true;
+        } else {
+            $('nextTabButton').disabled = true;
+            $('loadBalancerStatus').innerHTML = errorImage +
+                "<small>" + message + "</small>";
+            loadBalancerValid = false;
+        }
     }
 
     function validatePrimaryURL() {
-        var params = "port=" + $('loadBalancerPort').value;
-        APP.call("$context$path", "validateURL", params, urlValidated, urlInvalidated);
+        AjaxUtils.call("$context$path?actionLink=validateURL&port=" + 
+            $('loadBalancerPort').value, urlValidated);
     }
 
 
