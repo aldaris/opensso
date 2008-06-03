@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.6 2008-05-21 23:35:44 arunav Exp $
+ * $Id: AMSamples.java,v 1.7 2008-06-03 19:16:32 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -157,7 +157,7 @@ public class AMSamples extends TestCommon {
             log(Level.FINE, "setup", "STS Client Sample for WSC Token JSP" +
                     " URL: " + stswscvalidationURL);
             
-            roleName = rb_ams.getString("cs_rolename");
+	    roleName = rb_ams.getString("cs_rolename");
             grpName = rb_ams.getString("cs_groupname");
             
             Map map = new HashMap();
@@ -184,9 +184,7 @@ public class AMSamples extends TestCommon {
             assert(pc.createPolicy(xmlFile, realm));
             
         } catch (Exception e) {
-            log(Level.SEVERE, "setup",
-                    "Calling cleanup due to exception in the setup ...");
-            cleanup();
+            log(Level.SEVERE, "setup", "Exception in the setup ...");
             e.printStackTrace();
             throw e;
         } 
@@ -829,9 +827,6 @@ public class AMSamples extends TestCommon {
             else if (getHtmlPageStringIndex(page, roleName) == -1)
                 assert false;
             else if (getHtmlPageStringIndex(page, grpName) == -1)
-                assert false;
-            else if (getHtmlPageStringIndex(page,
-                    "containerdefaulttemplaterole") == -1)
                 assert false;
             
         } catch (Exception e) {
