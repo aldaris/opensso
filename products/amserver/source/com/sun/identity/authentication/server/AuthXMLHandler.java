@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.13 2008-04-17 18:41:13 manish_rustagi Exp $
+ * $Id: AuthXMLHandler.java,v 1.14 2008-06-03 22:12:46 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,10 +38,13 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.service.LoginState;
+import com.sun.identity.authentication.service.LoginStatus;
+import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -58,6 +61,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -505,18 +509,126 @@ public class AuthXMLHandler implements RequestHandler {
                 }
                 break;
             case AuthXMLRequest.Logout:
-                try {
-                    authContext.logout();
-                    loginStatus = authContext.getStatus();
-                    authResponse.setLoginStatus(loginStatus);
-                    checkACException(authResponse, authContext);
-                } catch (AuthLoginException le) {
-                    debug.error("Error logging out", le);
-                    if (messageEnabled) {
-                        debug.message("Exception " , le);
-                    }
-                    setErrorCode(authResponse, le);
+                Object loginContext = null;
+                InternalSession intSess = null;
+                SSOToken token = null;
+                boolean logoutCalled = false;
+                if (sessionID != null && !sessionID.equals("0")) {
+                    intSess = AuthD.getSession(sessionID);
+                    try {
+                        token = SSOTokenManager.getInstance().
+                            createSSOToken(sessionID);
+                        if (debug.messageEnabled()) {
+                            debug.message("AuthXMLHandler."
+                                + "processAuthXMLRequest: Created token " 
+                                + "during logout = "+token);
+                        }
+	            } catch (com.iplanet.sso.SSOException ssoExp) {
+                       if (debug.messageEnabled()) {
+		           debug.message("AuthXMLHandler.processAuthXMLRequest:"
+                           + "SSOException checking validity of SSO Token");
+                       }
+	            }
                 }
+                if (intSess != null) {
+                    loginContext = intSess.getObject(ISAuthConstants.
+                        LOGIN_CONTEXT);
+                }
+                try {
+                    if (loginContext != null) {
+                        if (loginContext instanceof 
+                            javax.security.auth.login.LoginContext) {
+                            javax.security.auth.login.LoginContext lc = 
+                                (javax.security.auth.login.LoginContext) 
+                                 loginContext;
+                            lc.logout();
+                        } else {
+                            com.sun.identity.authentication.jaas.LoginContext 
+                                jlc = (com.sun.identity.authentication.jaas.
+                                LoginContext) loginContext;
+                            jlc.logout();
+                        }
+                        logoutCalled = true;
+                    }
+                } catch (javax.security.auth.login.LoginException loginExp) {
+                    debug.error("AuthXMLHandler.processAuthXMLRequest: "
+                        + "Cannot Execute module Logout", loginExp);
+                }
+                Set postAuthSet = null;
+                if (intSess != null) {
+                    postAuthSet = (Set) intSess.getObject(ISAuthConstants.
+                        POSTPROCESS_INSTANCE_SET);
+                }
+                if ((postAuthSet != null) && !(postAuthSet.isEmpty())) {
+                    AMPostAuthProcessInterface postLoginInstance=null;
+                    for(Iterator iter = postAuthSet.iterator();
+                    iter.hasNext();) {
+                        try {
+	                    postLoginInstance =
+	 	                (AMPostAuthProcessInterface) iter.next();
+                             postLoginInstance.onLogout(servletRequest, 
+                                 servletResponse, token);
+                        } catch (Exception exp) {
+                           debug.error("AuthXMLHandler.processAuthXMLRequest: "
+                               + "Failed in post logout.", exp);
+                        }
+	            }
+                } else {
+                    String plis = null;
+                    if (intSess != null) {
+                        plis = intSess.getProperty(
+                            ISAuthConstants.POST_AUTH_PROCESS_INSTANCE);
+                    }
+                    if (plis != null && plis.length() > 0) {
+                        StringTokenizer st = new StringTokenizer(plis, "|");
+                        if (token != null) {
+                            while (st.hasMoreTokens()) {
+                                String pli = (String)st.nextToken();
+                                try {
+                                    AMPostAuthProcessInterface postProcess = 
+                                            (AMPostAuthProcessInterface)
+                                            Thread.currentThread().
+                                            getContextClassLoader().
+                                            loadClass(pli).newInstance();
+                                    postProcess.onLogout(servletRequest, 
+                                        servletResponse, token);
+                                } catch (Exception e) {
+                                    debug.error("AuthXMLHandler."
+                                        + "processAuthXMLRequest:" + pli, e);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!logoutCalled) {
+                    try {
+                        boolean isTokenValid = SSOTokenManager.getInstance().
+                            isValidToken(token);
+                        if ((token != null) && isTokenValid) {
+                            Session session = Session.getSession(
+                                new SessionID(sessionID));
+                            session.logout();
+                            debug.message("logout successful.");
+                        }
+	            } catch (com.iplanet.dpro.session.SessionException 
+                        sessExp) {
+                        if (debug.messageEnabled()) {
+                            debug.message("AuthXMLHandler."
+                                + "processAuthXMLRequest: SessionException"
+                                + " checking validity of SSO Token");
+                        }
+	            } catch (com.iplanet.sso.SSOException ssoExp) {
+                        if (debug.messageEnabled()) {
+                            debug.message("AuthXMLHandler."
+                                + "processAuthXMLRequest: SSOException "
+                                + "checking validity of SSO Token");
+                        }
+                    }
+
+
+                }
+                authResponse.setLoginStatus(AuthContext.Status.COMPLETED);
+                checkACException(authResponse, authContext);
                 break;
             case AuthXMLRequest.Abort:
                 try {
