@@ -1,6 +1,34 @@
+<%--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: getServerInfo.jsp,v 1.2 2008-06-03 19:45:52 veiming Exp $
+
+   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+--%>
+
 <%@ page
-import="com.sun.identity.authentication.AuthContext,
-        com.iplanet.am.util.SystemProperties,
+import="com.iplanet.am.util.SystemProperties,
+        com.iplanet.sso.SSOException,
+        com.iplanet.sso.SSOToken,
+        com.iplanet.sso.SSOTokenManager,
+        com.sun.identity.authentication.AuthContext,
         com.sun.identity.setup.AMSetupServlet,
         com.sun.identity.setup.BootstrapData,
         com.sun.identity.setup.EmbeddedOpenDS,
@@ -64,15 +92,18 @@ import="com.sun.identity.authentication.AuthContext,
     if (lc.getStatus() != AuthContext.Status.SUCCESS) {
         response.sendError(401);
         return;
+    } else {
+        try {
+            SSOTokenManager mgr = SSOTokenManager.getInstance();
+            mgr.destroyToken(lc.getSSOToken());
+        } catch (SSOException e) {
+            // ignore
+        }
     }
-
-    // Read the local bootstrap file.
-    //ldap://localhost:52389/http%3A%2F%2Fwww.idp.com%3A8080%2Fopensso?pwd=AQIC5wM2LY4Sfcy%2BAQBQxghVwhBE92i78cqf&embeddedds=%2FUsers%2Frajeevangal%2FTopenssoGF%2Fopends&dsbasedn=dc%3Dopensso%2Cdc%3Djava%2Cdc%3Dnet&dsmgr=cn%3DDirectory+Manager&dspwd=AQIC5wM2LY4Sfcy%2BAQBQxghVwhBE92i78cqf
 
     String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
     String encKey = SystemProperties.get("am.encryption.pwd");
     BootstrapData bootstrapData = new BootstrapData(baseDir);
-    //String dsbasedn = bootstrapData.getBaseDN();
     boolean isEmbeddedDS = (new File(baseDir + "/opends")).exists();
     // Assumption : opends entry is the 1st
     Map bMap = bootstrapData.getDataAsMap(0);
