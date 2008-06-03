@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.11 2008-04-05 16:41:09 pawand Exp $
+ * $Id: AMLoginContext.java,v 1.12 2008-06-03 23:11:34 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -507,7 +507,7 @@ public class AMLoginContext {
             if (failedUserId != null) {
                 amAccountLockout = new AMAccountLockout(loginState);
                 accountLocked = amAccountLockout.isLockedOut(failedUserId);
-                if (!accountLocked) {
+                if ((!accountLocked) && (amAccountLockout.isLockoutEnabled())) {
                     amAccountLockout.invalidPasswd(failedUserId);
                     checkWarningCount(amAccountLockout);
                     accountLocked =

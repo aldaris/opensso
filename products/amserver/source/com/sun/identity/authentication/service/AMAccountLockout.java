@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.5 2008-02-20 06:42:36 superpat7 Exp $
+ * $Id: AMAccountLockout.java,v 1.6 2008-06-03 23:11:34 pawand Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -272,9 +272,6 @@ class AMAccountLockout {
         try {
             if (isAccountLockout.isMemoryLocking()) {
                 locked = isMemoryLockout(normUserDN);
-            }
-            else {
-                locked = isAccountLocked(normUserDN);
             }
         } catch (Exception e) {
             if (debug.messageEnabled()) {
