@@ -432,7 +432,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
         status = am_properties_get_boolean_with_default(this->properties,
                 parameter, B_FALSE,
                 reinterpret_cast<int *>(&this->notification_enable));
-            am_web_log_error("SUBBA");
     }
 
     /* Get the change.notification.enable */
