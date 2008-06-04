@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.26 2008-05-15 00:45:47 veiming Exp $
+ * $Id: SetupConstants.java,v 1.27 2008-06-04 18:08:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -143,7 +143,22 @@ public interface SetupConstants {
      * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
      * Sun Directory Server Schema File for user management data.
      */
-    String SDK_PROPERTY_FILENAME = "sdkSchema";
+    String SUNDS_LDIF = "sundsSchema";
+
+    /**
+     * User Management datastore option - Embedded DS
+     */
+    String UM_EMBEDDED = "embedded";
+
+    /**
+     * User Management datastore option - Sun DS with FAM Schema.
+     */
+    String UM_LDAPv3ForAMDS = "LDAPv3ForAMDS";
+
+    /**
+     * User Management datastore option - Generic LDAPv3.
+     */
+    String UM_LDAPv3 = "LDAPv3";
 
     /**
      * Type of Data store used for storing the configuration files.
@@ -382,11 +397,6 @@ public interface SetupConstants {
      */
     String LB_PRIMARY_URL = "wizardLoadBalancerURL";
 
-    /**
-     * SDK Schema Option Flag.
-     */
-    String OPT_SDK_SCHEMA = "sdkSchema";
-    
     /**
      * Schema Template Directory.
      */

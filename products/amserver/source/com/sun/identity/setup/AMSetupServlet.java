@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.63 2008-06-03 21:14:36 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.64 2008-06-04 18:08:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -522,30 +522,30 @@ public class AMSetupServlet extends HttpServlet {
             SystemProperties.setServerInstanceName(serverInstanceName);
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
-
-            if ((userRepo != null) && !userRepo.isEmpty()) {
-                try {
-                     // Construct the SMSEntry for the node to check to see if it this is an
-                     // existing configuration store, or new store
-                     ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
-                     if (sc != null) {                   
-                       CachedSMSEntry cEntry = CachedSMSEntry.getInstance(adminSSOToken,
-                            ("ou=" + userRepo.get("userStoreHostName") +","
-                            + sc.getDN()), null);
-                       SMSEntry entry = cEntry.getClonedSMSEntry();
-                       if (entry.isNewEntry()) {                  
-                            UserIdRepo.configure(userRepo, basedir, servletCtx,
-                                adminSSOToken);
-                       } else {
-                           existingConfiguration = true;
-                       }
-                      
-                     }
-                } catch (LDAPException e) {
-                    throw new ConfiguratorException(e.getMessage());
-                }
-            }
             
+            try {
+                if ((userRepo != null) && !userRepo.isEmpty()) {
+                    // Construct the SMSEntry for the node to check to see if 
+                    // this is an existing configuration store, or new store
+                    ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
+                    if (sc != null) {
+                        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(
+                            adminSSOToken,
+                            ("ou=" + userRepo.get("userStoreHostName") + "," +
+                                sc.getDN()), null);
+                        SMSEntry entry = cEntry.getClonedSMSEntry();
+                        if (entry.isNewEntry()) {
+                            UserIdRepo.getInstance().configure(
+                                userRepo, basedir, servletCtx, adminSSOToken);
+                        } else {
+                            existingConfiguration = true;
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                throw new ConfiguratorException(e.getMessage());
+            }
 
             /*
              * requiring the keystore.jks file in OpenSSO workspace. The

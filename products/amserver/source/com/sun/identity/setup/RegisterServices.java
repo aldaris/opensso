@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.11 2008-05-28 18:15:44 veiming Exp $
+ * $Id: RegisterServices.java,v 1.12 2008-06-04 18:08:00 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,8 @@ import java.util.StringTokenizer;
 public class RegisterServices {
     
     private static final List serviceNames = new ArrayList();
-
+    private static final String umEmbeddedDS;
+        
     static {
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.PROPERTY_FILENAME);
@@ -57,6 +58,7 @@ public class RegisterServices {
         while (st.hasMoreTokens()) {
             serviceNames.add(st.nextToken());
         }
+        umEmbeddedDS = rb.getString("umEmbeddedDS");
     }
 
     /**
@@ -79,59 +81,29 @@ public class RegisterServices {
         (new File(dirXML)).mkdirs();
 
         for (Iterator i = serviceNames.iterator(); i.hasNext(); ) {
-            String serviceFileName = (String)i.next();
-            if (!bUseExtUMDS || 
-                !serviceFileName.equals("idRepoEmbeddedOpenDS.xml")
-            ) {
-                boolean tagswap = true;
-                if (serviceFileName.startsWith("*")) {
-                    serviceFileName = serviceFileName.substring(1);
-                    tagswap = false;
-                }
-
-                SetupProgress.reportStart("emb.registerservice", 
-                    serviceFileName);
-                BufferedReader rawReader = null;
-                InputStream serviceStream = null;
-
-                try {
-                    rawReader = new BufferedReader(new InputStreamReader(
-                        this.getClass().getClassLoader().getResourceAsStream(
-                        serviceFileName)));
-                    StringBuffer buff = new StringBuffer();
-                    String line = null;
-
-                    while ((line = rawReader.readLine()) != null) {
-                        buff.append(line).append("\n");
-                    }
-
-                    rawReader.close();
-                    rawReader = null;
-
-                    String strXML = buff.toString();
-
-                    if (tagswap) {
-                        strXML = ServicesDefaultValues.tagSwap(strXML, true);
-                    }
-                    serviceStream = (InputStream) new ByteArrayInputStream(
-                        strXML.getBytes());
-                    serviceManager.registerServices(serviceStream);
-                    serviceStream.close();
-                    serviceStream = null;
-                    AMSetupServlet.writeToFile(dirXML + "/" + serviceFileName,
-                        strXML);
-                    SetupProgress.reportEnd("emb.success", null);
-                } finally {
-                    if (rawReader != null) {
-                        rawReader.close();
-                    }
-                    if (serviceStream != null) {
-                        serviceStream.close();
-                    }
-                    serviceManager.clearCache();
-                }
+            String serviceFileName = (String) i.next();
+            boolean tagswap = true;
+            if (serviceFileName.startsWith("*")) {
+                serviceFileName = serviceFileName.substring(1);
+                tagswap = false;
             }
+
+            SetupProgress.reportStart("emb.registerservice",
+                serviceFileName);
+            String strXML = getResourceContent(serviceFileName);
+            if (tagswap) {
+                strXML = ServicesDefaultValues.tagSwap(strXML,
+                    true);
+            }
+            AMSetupServlet.writeToFile(dirXML + "/" + serviceFileName, strXML);
+            registerService(strXML, adminToken);
+            SetupProgress.reportEnd("emb.success", null);
         }
+        
+        if (!bUseExtUMDS) {
+            addSubConfigForEmbeddedDS(adminToken);
+        }
+ 
         // Set installTime to false, to avoid in-memory notification from
         // SMS in cases where not needed, and to denote that service  
         // registration got completed during configuration phase and it 
@@ -139,6 +111,70 @@ public class RegisterServices {
         System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "false");
     }
 
+    private void addSubConfigForEmbeddedDS(SSOToken adminSSOToken)
+        throws SSOException, SMSException, IOException {
+        Map data = ServicesDefaultValues.getDefaultValues();
+        String xml = getResourceContent(umEmbeddedDS);
+
+        xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
+            (String) data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX));
+        xml = xml.replaceAll("@UM_DIRECTORY_SERVER@",
+            (String) data.get(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
+        xml = xml.replaceAll("@UM_DIRECTORY_PORT@",
+            (String) data.get(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
+        xml = xml.replaceAll("@UM_DS_DIRMGRDN@",
+            (String) data.get(SetupConstants.CONFIG_VAR_DS_MGR_DN));
+        xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
+            (String) data.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD));
+
+        registerService(xml, adminSSOToken);
+    }
+    
+    private void registerService(String xml, SSOToken adminSSOToken) 
+        throws SSOException, SMSException, IOException {
+        ServiceManager serviceManager = new ServiceManager(adminSSOToken);
+        InputStream serviceStream = null;
+        try {
+            serviceStream = (InputStream) new ByteArrayInputStream(
+                xml.getBytes());
+            serviceManager.registerServices(serviceStream);
+        } finally {
+            if (serviceStream != null) {
+                serviceStream.close();
+            }
+            serviceManager.clearCache();
+        }
+    }
+    
+    private String getResourceContent(String resName) 
+        throws IOException {
+        BufferedReader rawReader = null;
+        
+        String content = null;
+
+        try {
+            rawReader = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(resName)));
+            StringBuffer buff = new StringBuffer();
+            String line = null;
+
+            while ((line = rawReader.readLine()) != null) {
+                buff.append(line);
+            }
+
+            rawReader.close();
+            rawReader = null;
+            content = buff.toString();
+        } finally {
+            if (rawReader != null) {
+                rawReader.close();
+            }
+        }
+        return content;
+    }
+    
     private String manipulateServiceXML(String serviceFileName, String strXML){
         if (serviceFileName.equals("idRepoService.xml")) {
             strXML = strXML.replaceAll(IDREPO_SUB_CONFIG_MARKER,

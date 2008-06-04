@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.3 2008-05-15 04:51:02 kevinserwin Exp $
+ * $Id: UserIdRepo.java,v 1.4 2008-06-04 18:08:00 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.setup;
 
+import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.LDAPUtils;
@@ -33,109 +34,118 @@ import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
+import netscape.ldap.LDAPAttribute;
+import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPSearchResults;
 
 /**
  * This class does Directory Server related tasks for 
  * Access Manager deployed as single web-application. 
  */
 class UserIdRepo {
+    private static final String umSunDSForAM;
+    private static final String umSunDSGeneric;
+    private static UserIdRepo instance = new UserIdRepo();
+
+    static {
+        ResourceBundle rb = ResourceBundle.getBundle(
+            SetupConstants.PROPERTY_FILENAME);
+        umSunDSForAM = rb.getString("umSunDSForAM");
+        umSunDSGeneric = rb.getString("umSunDSGeneric");
+    }
    
     private UserIdRepo() {
     }
-
-    static void configure(
+    
+    public static UserIdRepo getInstance() {
+        return instance;
+    }
+    
+    void configure(
         Map userRepo, 
         String basedir,
         ServletContext servletCtx,
         SSOToken adminToken
-    ) throws SMSException, SSOException, LDAPException, IOException {
-        String type = (String)userRepo.get(SetupConstants.USER_STORE_TYPE);
+    ) throws Exception {
+        String type = (String) userRepo.get(SetupConstants.USER_STORE_TYPE);
         if (type == null) {
-            type = "LDAPv3ForAMDS";
+            type = SetupConstants.UM_LDAPv3ForAMDS;
         }
-        
-        boolean bFAMUserSchema = type.equals("LDAPv3ForAMDS");
+
+        boolean bFAMUserSchema = type.equals(SetupConstants.UM_LDAPv3ForAMDS);
         if (bFAMUserSchema) {
             loadSchema(userRepo, basedir, servletCtx);
         }
 
-        addSubConfig(userRepo, type, bFAMUserSchema, adminToken);
+        addSubConfig(userRepo, type, adminToken);
     }
 
-    private static void addSubConfig(
+    private void addSubConfig(
         Map userRepo, 
         String type, 
-        boolean bFAMUserSchema,
         SSOToken adminToken
-    ) throws SMSException, SSOException {
-        ServiceConfig cfg = getOrgConfig(adminToken);
-        
-        Map values = new HashMap();
-        
-        addValueToMap("sun-idrepo-ldapv3-config-authid", getBindDN(userRepo),
-            values);
-        addValueToMap("sun-idrepo-ldapv3-config-authpw", 
-            getBindPassword(userRepo), values);
-        addValueToMap("sun-idrepo-ldapv3-config-organization_name", 
-            userRepo.get(SetupConstants.USER_STORE_ROOT_SUFFIX), values);
-        addValueToMap("sun-idrepo-ldapv3-config-psearchbase", 
-            userRepo.get(SetupConstants.USER_STORE_ROOT_SUFFIX), values);
-
-        String host = getHost(userRepo);
-        addValueToMap("sun-idrepo-ldapv3-config-ldap-server", 
-            host + ":" + getPort(userRepo), values);
-
-        String ssl = (String)userRepo.get(SetupConstants.USER_STORE_SSL);
-        if ((ssl != null) && ssl.equals("SSL")) {
-            Set sslSet = new HashSet(2);
-            sslSet.add("true");
-            values.put("sun-idrepo-ldapv3-config-ssl-enabled", sslSet);
+    ) throws SMSException, SSOException, IOException {
+        String xml = null;
+        if (type.equals(SetupConstants.UM_LDAPv3ForAMDS)) {
+            xml = getResourceContent(umSunDSForAM);
+        } else if (type.equals(SetupConstants.UM_LDAPv3)) {
+            xml = getResourceContent(umSunDSGeneric);
         }
 
-        if (!bFAMUserSchema) {
-            values.put("sun-idrepo-ldapv3-config-group-container-name",
-                Collections.EMPTY_SET);
-            values.put("sun-idrepo-ldapv3-config-group-container-value",
-                Collections.EMPTY_SET);
+        if (xml != null) {
+            xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
+                (String) userRepo.get(
+                SetupConstants.USER_STORE_ROOT_SUFFIX));
+            xml = xml.replaceAll("@UM_DIRECTORY_SERVER@", getHost(userRepo));
+            xml = xml.replaceAll("@UM_DIRECTORY_PORT@", getPort(userRepo));
+            xml = xml.replaceAll("@UM_DS_DIRMGRDN@", getBindDN(userRepo));
+            xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
+                getBindPassword(userRepo));
 
-            Set objectClasses = new HashSet(12);
-            objectClasses.add("inetadmin");
-            objectClasses.add("inetorgperson");
-            objectClasses.add("inetuser");
-            objectClasses.add("organizationalperson");
-            objectClasses.add("person");
-            objectClasses.add("top");
-            values.put("sun-idrepo-ldapv3-config-user-objectclass", 
-                objectClasses);
+            String s = (String) userRepo.get(SetupConstants.USER_STORE_SSL);
+            String ssl = ((s != null) && s.equals("SSL")) ? "true" : "false";
+            xml = xml.replaceAll("@UM_SSL@", ssl);
+            registerService(xml, adminToken);
         }
-        
-        cfg.addSubConfig(host, type, 0, values);
     }
     
-    private static void addValueToMap(String key, Object val, Map values) {
-        Set set = new HashSet(2);
-        set.add(val);
-        values.put(key, set);
+    private void registerService(String xml, SSOToken adminSSOToken) 
+        throws SSOException, SMSException, IOException {
+        ServiceManager serviceManager = new ServiceManager(adminSSOToken);
+        InputStream serviceStream = null;
+        try {
+            serviceStream = (InputStream) new ByteArrayInputStream(
+                xml.getBytes());
+            serviceManager.registerServices(serviceStream);
+        } finally {
+            if (serviceStream != null) {
+                serviceStream.close();
+            }
+        }
     }
-
+    
     static ServiceConfig getOrgConfig(SSOToken adminToken) 
         throws SMSException, SSOException {
         ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
@@ -160,31 +170,32 @@ class UserIdRepo {
         return cfg;
     }
     
-    private static String getHost(Map userRepo) {
+    private String getHost(Map userRepo) {
         return (String)userRepo.get(SetupConstants.USER_STORE_HOST);
     }
     
-    private static String getPort(Map userRepo) {
+    private String getPort(Map userRepo) {
         return (String)userRepo.get(SetupConstants.USER_STORE_PORT);
     }
     
-    private static String getBindDN(Map userRepo) {
+    private String getBindDN(Map userRepo) {
         return (String) userRepo.get(SetupConstants.USER_STORE_LOGIN_ID);
     }
     
-    private static String getBindPassword(Map userRepo) {
+    private String getBindPassword(Map userRepo) {
         return (String) userRepo.get(SetupConstants.USER_STORE_LOGIN_PWD);
     }
     
-    private static void loadSchema(
+    private void loadSchema(
         Map userRepo, 
         String basedir,
         ServletContext servletCtx
-    ) throws LDAPException, IOException {
+    ) throws Exception {
         LDAPConnection ld = null;
         try {
             ld = getLDAPConnection(userRepo);
-            List schemas = writeSchemaFiles(basedir, servletCtx);
+            String dbName = getDBName(userRepo, ld);
+            List schemas = writeSchemaFiles(basedir, dbName, servletCtx);
             for (Iterator i = schemas.iterator(); i.hasNext(); ) {
                 String file = (String)i.next();
                 LDAPUtils.createSchemaFromLDIF(file, ld);
@@ -194,15 +205,15 @@ class UserIdRepo {
         }
     }
     
-    private static List writeSchemaFiles(
+    private List writeSchemaFiles(
         String basedir, 
+        String dbName,
         ServletContext servletCtx
     ) throws IOException {
         List files = new ArrayList();
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
-        String strFiles = rb.getString(
-            SetupConstants.SDK_PROPERTY_FILENAME);
+        String strFiles = rb.getString(SetupConstants.SUNDS_LDIF);
 
         StringTokenizer st = new StringTokenizer(strFiles);
         while (st.hasMoreTokens()) {
@@ -222,6 +233,7 @@ class UserIdRepo {
                 String outfile = basedir + "/" + absFile;
                 fout = new FileWriter(outfile);
                 String inpStr = sbuf.toString();
+                inpStr = inpStr.replaceAll("@DB_NAME@", dbName);
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
                 files.add(outfile);
             } finally {
@@ -244,20 +256,80 @@ class UserIdRepo {
         return files;
     }
     
-    private static void disconnectDServer(LDAPConnection ld)
+    private String getResourceContent(String resName) 
+        throws IOException {
+        BufferedReader rawReader = null;
+        
+        String content = null;
+
+        try {
+            rawReader = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(resName)));
+            StringBuffer buff = new StringBuffer();
+            String line = null;
+
+            while ((line = rawReader.readLine()) != null) {
+                buff.append(line);
+            }
+
+            rawReader.close();
+            rawReader = null;
+            content = buff.toString();
+        } finally {
+            if (rawReader != null) {
+                rawReader.close();
+            }
+        }
+        return content;
+    }
+    
+    private void disconnectDServer(LDAPConnection ld)
         throws LDAPException {
         if ((ld != null) && ld.isConnected()) {
             ld.disconnect();
         }
     }
     
-    private static LDAPConnection getLDAPConnection(Map userRepo)
-        throws LDAPException {
-        LDAPConnection ld = new LDAPConnection();
+    private LDAPConnection getLDAPConnection(Map userRepo)
+        throws Exception {
+        String s = (String) userRepo.get(SetupConstants.USER_STORE_SSL);
+        boolean ssl = ((s != null) && s.equals("SSL"));
+        LDAPConnection ld = (ssl) ? new LDAPConnection(
+            SSLSocketFactoryManager.getSSLSocketFactory()) :
+            new LDAPConnection();
         ld.setConnectTimeout(300);
+
         int port = Integer.parseInt(getPort(userRepo));
         ld.connect(3, getHost(userRepo), port,
             getBindDN(userRepo), getBindPassword(userRepo));
         return ld;
+    }
+
+    private String getDBName(Map userRepo, LDAPConnection ld)
+        throws LDAPException {
+        String dbName = null;
+        String suffix = (String) userRepo.get(
+            SetupConstants.USER_STORE_ROOT_SUFFIX);
+        String filter = "cn=" + "\"" + suffix + "\"";
+
+        LDAPSearchResults results = ld.search("cn=mapping tree,cn=config",
+            LDAPConnection.SCOPE_SUB, filter, null, false);
+        while (results.hasMoreElements()) {
+            LDAPEntry entry = results.next();
+            String dn = entry.getDN();
+            LDAPAttributeSet set = entry.getAttributeSet();
+            Enumeration e = set.getAttributes();
+            while (e.hasMoreElements() && (dbName == null)) {
+                LDAPAttribute attr = (LDAPAttribute) e.nextElement();
+                String name = attr.getName();
+                if (name.equals("nsslapd-backend")) {
+                    String[] value = attr.getStringValueArray();
+                    if (value.length > 0) {
+                        dbName = value[0];
+                    }
+                }
+            }
+        }
+        return (dbName != null) ? dbName : "userRoot";
     }
 }

@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoEmbeddedOpenDS.xml,v 1.5 2008-04-22 20:53:20 veiming Exp $
+   $Id: idRepoEmbeddedOpenDS.xml,v 1.6 2008-06-04 18:08:00 veiming Exp $
   
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,23 +31,23 @@
 <ServicesConfiguration>
   <Service name="sunIdentityRepositoryService" version="1.0">
     <Configuration>
-      <OrganizationConfiguration name="@SM_CONFIG_ROOT_SUFFIX@">
+      <OrganizationConfiguration name="@UM_CONFIG_ROOT_SUFFIX@">
         <SubConfiguration name="embedded" id="LDAPv3">
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-ldap-server"/>
-            <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+            <Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-authid"/>
-            <Value>@DS_DIRMGRDN@</Value>
+            <Value>@UM_DS_DIRMGRDN@</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-authpw"/>
-            <Value>@DS_DIRMGRPASSWD@</Value>
+            <Value>@UM_DS_DIRMGRPASSWD@</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-organization_name"/>
-            <Value>@SM_CONFIG_ROOT_SUFFIX@</Value>
+            <Value>@UM_CONFIG_ROOT_SUFFIX@</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sunIdRepoSupportedOperations"/>
@@ -189,7 +189,7 @@
           </AttributeValuePair>
           <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-psearchbase"/>
-             <Value>@SM_CONFIG_ROOT_SUFFIX@</Value>
+             <Value>@UM_CONFIG_ROOT_SUFFIX@</Value>
           </AttributeValuePair>
           <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-people-container-name"/>
