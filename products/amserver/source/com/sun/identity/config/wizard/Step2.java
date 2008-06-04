@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.9 2008-05-28 18:18:00 veiming Exp $
+ * $Id: Step2.java,v 1.10 2008-06-04 01:22:17 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,9 +26,13 @@ package com.sun.identity.config.wizard;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.SetupConstants;
+import java.io.File;
+import net.sf.click.control.ActionLink;
 
 public class Step2 extends AjaxPage {
-
+    public ActionLink validateConfigDirLink = 
+        new ActionLink("validateConfigDir", this, "validateConfigDir");
+    
     public Step2() {
     }
     
@@ -51,6 +55,7 @@ public class Step2 extends AjaxPage {
         }
         add("platformLocale", val);
 
+        String baseDir = null;
         String presetDir = AMSetupServlet.getPresetConfigDir();
         if ((presetDir == null) || (presetDir.trim().length() == 0)) {
             add("fixDir",
@@ -60,13 +65,45 @@ public class Step2 extends AjaxPage {
                 val = getBaseDir(getContext().getRequest());
             }
             add("configDirectory", val);
+            baseDir = val;
         } else {
             add("fixDir", "disabled");
             add("configDirectory", presetDir);
+            baseDir = presetDir;
         }
-       
+
+        if (hasWritePermission(baseDir)) {
+            add("canWriteDir", "");
+        } else {
+            add("canWriteDir", getLocalizedString(
+                "configuration.wizard.step2.no.write.permission.to.basedir"));
+        }
+        
         super.onInit();
-    }   
+    }
+
+    private static boolean hasWritePermission(String dirName) {
+        File f = new File(dirName);
+        while ((f != null) && !f.exists()) {
+            f = f.getParentFile();
+        }
+        return (f == null) ? false : f.isDirectory() && f.canWrite();
+    }
+    
+    public boolean validateConfigDir() {
+        String configDir = toString("dir");
+        
+        if (configDir == null) {
+            writeToResponse(getLocalizedString("missing.required.field"));
+        } else if (!hasWritePermission(configDir)) {
+            writeToResponse(getLocalizedString(
+                "configuration.wizard.step2.no.write.permission.to.basedir"));
+        } else {
+            writeToResponse("true");
+        }
+        setPath(null);        
+        return false;    
+    }
 
     private String getServerURL() {        
         String hostname = (String)getContext().getRequest().getServerName();

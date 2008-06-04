@@ -20,7 +20,8 @@
         var key = "&key=" + field;
         var value = "&value=" + $(field).value;
         AjaxUtils.call(callUrl+key+value, serverFieldValidated);
-    }       
+    }
+
     function serverFieldValidated(response) {
         if (response.responseText == "true") { 
             eval(field + "Valid = true;" );
@@ -45,8 +46,10 @@
     } 
 
     function validateConfigDir() {
-	field = "configDirectory";
-        validateServerFields();       
+        field = "configDirectory";
+        var callUrl = "$context$path?actionLink=validateConfigDir&dir=" +
+            escape($(field).value);
+        AjaxUtils.call(callUrl, serverFieldValidated);
     } 
 
     function validateEncryptionKey() {
@@ -106,7 +109,7 @@
                         <input id="configDirectory" name="configDirectory" 
                         type="text" class="text" size="60" 
                         value="$configDirectory" $fixDir />
-                        <span id="configDirectoryStatus"></span>
+                        <span id="configDirectoryStatus">$canWriteDir</span>
                     </td>
                 </tr> 
             </table>
