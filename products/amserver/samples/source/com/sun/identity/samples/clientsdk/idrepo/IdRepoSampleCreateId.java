@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.10 2008-02-21 23:59:18 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.11 2008-06-04 06:13:03 goodearth Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,6 +49,8 @@ public class IdRepoSampleCreateId {
 
     IdRepoSampleUtils sampleUtils = null;
     AMIdentityRepository idRepo = null;
+    private static final String AGENT_TYPE_ATTR = "AgentType"; 
+    private static final String WSP_ENDPOINT = "WSPEndpoint"; 
 
     public IdRepoSampleCreateId (AMIdentityRepository idrepo) {
         sampleUtils = new IdRepoSampleUtils();
@@ -109,12 +111,13 @@ public class IdRepoSampleCreateId {
 
                 String tmpS = sampleUtils.getLine(idName + "'s agentType: ");
                 vals.add(tmpS);
-                attrs.put("AgentType", vals);
+                attrs.put(AGENT_TYPE_ATTR, vals);
                 if (tmpS.equalsIgnoreCase("webagent")) {
-                    tmpS = sampleUtils.getLine(idName +"'s polling interval: ");
+                    tmpS = sampleUtils.getLine(idName +"'s log size(def:10): ");
                     vals = new HashSet();
                     vals.add(tmpS);
-                    attrs.put("com.sun.am.policy.am.polling.interval", vals);
+                    attrs.put("com.sun.identity.agents.config.local.log.size", 
+                        vals);
                 }
                 tmpS = sampleUtils.getLine(idName + "'s password: ");
                 vals = new HashSet();
@@ -225,7 +228,7 @@ public class IdRepoSampleCreateId {
 
                     vals = new HashSet();
                     vals.add("WebAgent");
-                    attrs.put("AgentType", vals);
+                    attrs.put(AGENT_TYPE_ATTR, vals);
                     AMIdentity agroupIdentity = null; 
 
                     System.out.println("\nChecking membership operations");
@@ -289,7 +292,7 @@ public class IdRepoSampleCreateId {
                 Map kvPairMap = new HashMap();
                 Set avset = new HashSet();
                 avset.add("WSCAgent");           
-                kvPairMap.put("AgentType", avset);
+                kvPairMap.put(AGENT_TYPE_ATTR, avset);
 
                 avcontrol.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
@@ -300,7 +303,34 @@ public class IdRepoSampleCreateId {
                 System.out.println("WSC Agents with avpairs as filter: " + 
                     avagents); 
 
+                // Test : Search for WSPAgent type with its WSP End point 
+                // attribute value known. This search should not return 
+                // multiple WSP profies instead should return just one that 
+                // has given WSP end point attribute value.
 
+                IdSearchControl wspcontrol = new IdSearchControl();
+                wspcontrol.setAllReturnAttributes(true);
+                wspcontrol.setTimeOut(0);
+
+                Map wspkvPairMap = new HashMap();
+                Set wspset = new HashSet();
+                wspset.add("WSPAgent");
+                wspkvPairMap.put(AGENT_TYPE_ATTR, wspset);
+
+                wspset = new HashSet();
+                //String endpoint = "default";
+                String endpoint = "testendpoint1";
+                wspset.add(endpoint);
+                wspkvPairMap.put(WSP_ENDPOINT, wspset);
+
+                wspcontrol.setSearchModifiers(IdSearchOpModifier.OR, 
+                    wspkvPairMap);
+                IdSearchResults wspresults = 
+                    idRepo.searchIdentities(IdType.AGENTONLY,"*", wspcontrol);
+               
+                Set wspagents = wspresults.getSearchResults();
+                System.out.println("WSP Agents with avpairs as filter: " + 
+                    wspagents); 
             }
         } catch (IdRepoException ire) {
             System.err.println("idRepoProcessing IdRepoException " +
