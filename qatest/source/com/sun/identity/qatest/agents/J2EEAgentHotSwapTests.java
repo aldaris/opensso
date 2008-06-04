@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentHotSwapTests.java,v 1.2 2008-04-28 18:33:08 nithyas Exp $
+ * $Id: J2EEAgentHotSwapTests.java,v 1.3 2008-06-04 16:59:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -271,7 +271,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
      * Evaluates updated response attribute which holds a single dynamic value
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
-    dependsOnMethods={"evaluateDynamicResponseAttribute"})
+        dependsOnMethods={"evaluateDynamicResponseAttribute"})
     public void evaluateUpdatedDynamicResponseAttribute()
     throws Exception {
         resp.evaluateUpdatedDynamicResponseAttribute();
@@ -348,7 +348,6 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         profile = new ProfileAttributeTests(strScriptURL, resource); 
         log(Level.FINE, "getProfileAttrFetchMode", "Profile Attribute fetch " + 
                 "mode is " + strHeaderFetchMode);
-        
     }
     
     /**
@@ -484,6 +483,9 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             page = (HtmlPage)webClient.getPage(new URL(strUrl));                
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page, strEvalValue);
+            if (strEvalValue.equals("Forbidden") && iIdx == -1) {
+                 iIdx = getHtmlPageStringIndex(page, "Access Denied");
+            }
             assert (iIdx != -1);
         } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException 
                 ee) {
@@ -591,6 +593,10 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
                         IdType.USER).size() != 0)
                    idmc.deleteIdentity(admintoken, realm, IdType.USER,
                            "rauser");
+                if (idmc.searchIdentities(admintoken, "rauser1",
+                        IdType.USER).size() != 0)
+                   idmc.deleteIdentity(admintoken, realm, IdType.USER,
+                           "rauser1");
             }
             if (session != null) { 
                 session.cleanup();

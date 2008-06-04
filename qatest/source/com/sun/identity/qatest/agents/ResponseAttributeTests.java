@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseAttributeTests.java,v 1.2 2008-04-21 20:20:02 nithyas Exp $
+ * $Id: ResponseAttributeTests.java,v 1.3 2008-06-04 16:58:31 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -214,18 +214,31 @@ public class ResponseAttributeTests extends TestCommon {
         entering("evaluateUpdatedDynamicResponseAttribute", null);
         webClient = new WebClient();
         try {
-            HtmlPage page = consoleLogin(webClient, resource, "rauser",
-                    "rauser");
-            page = (HtmlPage)webClient.getPage(url);
-            iIdx = -1;
-            iIdx = getHtmlPageStringIndex(page, "HTTP_RESPONSE_CN:rauser");
-            assert (iIdx != -1);
+            Reporter.log("Test Description: This tests updates a dynamic " +
+                    "response attribute attached to a policy, " +
+                    "and checks if the updated value is available after " +
+                    "waiting for 1 min (TTL value in Policy Service)");   
+            Reporter.log("Resource: " + url);   
+            Reporter.log("Username: " + "rauser1");   
+            Reporter.log("Password: " + "rauser1");   
+            Reporter.log("Expected Result: " + 
+                    "HTTP_RESPONSE_MAIL:abc.def@sun.com"); 
+            Reporter.log("Expected Result: " + 
+                    "HTTP_RESPONSE_CN:rauser1updated");
             Set set = new HashSet();
+            Map map = new HashMap();
             set.add("1");
             smsc.updateSvcAttribute("iPlanetAMPolicyConfigService",
                     "iplanet-am-policy-config-subjects-result-ttl", set,
                     "Organization");
-            AMIdentity amid = idmc.getFirstAMIdentity(admintoken, "rauser"
+            Thread.sleep(pollingTime);
+            HtmlPage page = consoleLogin(webClient, resource, "rauser1",
+                    "rauser1");
+            page = (HtmlPage)webClient.getPage(url);
+            iIdx = -1;
+            iIdx = getHtmlPageStringIndex(page, "HTTP_RESPONSE_CN:rauser1");
+            assert (iIdx != -1);
+            AMIdentity amid = idmc.getFirstAMIdentity(admintoken, "rauser1"
                     , IdType.USER, realm);
             Set set1 = amid.getAttribute("cn");
             Iterator itr = set1.iterator();
@@ -233,10 +246,12 @@ public class ResponseAttributeTests extends TestCommon {
                 log(Level.FINEST, "evaluateUpdatedDynamicResponseAttribute",
                         " Attribute cn= " + (String)itr.next());
             }            
-            Map map = new HashMap();
             set = new HashSet();
-            set.add("rauserupdated");
-            map.put("cn", set);
+            set.add("abc.def@sun.com");
+            map.put("mail", set);
+            set = new HashSet();
+            set.add("rauser1updated");
+            map.put("cn", set);            
             log(Level.FINEST, "evaluateUpdatedDynamicResponseAttribute",
                     "Update Attribute List: " + map);
             set1 = amid.getAttribute("cn");
@@ -246,29 +261,15 @@ public class ResponseAttributeTests extends TestCommon {
                         "Attribute cn= " + (String)itr.next());
             }            
             idmc.modifyIdentity(amid, map);
-            boolean isFound = false;
-            long time = System.currentTimeMillis();
-            while (System.currentTimeMillis() - time < pollingTime &&
-                !isFound) {
-                page = (HtmlPage)webClient.getPage(url);
-                iIdx = -1;
-                iIdx = getHtmlPageStringIndex(page, 
-                        "HTTP_RESPONSE_CN:rauserupdated", false);
-                if (iIdx != -1) {
-                    isFound = true;
-                }
-            }
-            log(Level.FINEST, "evaluateUpdatedDynamicResponseAttribute",
-                    "waited for : " + (System.currentTimeMillis() - time) );
+            Thread.sleep(70100);
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
-                    "HTTP_RESPONSE_CN:rauserupdated");
-            Reporter.log("Resource: " + url);   
-            Reporter.log("Username: " + "rauser");   
-            Reporter.log("Password: " + "rauser");   
-            Reporter.log("Expected Result: " + 
-                    "HTTP_RESPONSE_CN:rauserupdated"); 
+                    "HTTP_RESPONSE_MAIL:abc.def@sun.com");
+            assert (iIdx != -1);
+            iIdx = -1;
+            iIdx = getHtmlPageStringIndex(page,
+                    "HTTP_RESPONSE_CN:rauser1updated");
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedDynamicResponseAttribute",
@@ -300,6 +301,10 @@ public class ResponseAttributeTests extends TestCommon {
             if (idmc.searchIdentities(admintoken, "rauser",
                     IdType.USER).size() != 0)
                idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser");
+            if (idmc.searchIdentities(admintoken, "rauser1",
+                    IdType.USER).size() != 0)
+               idmc.deleteIdentity(admintoken, realm, IdType.USER, "rauser1");
+            
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
