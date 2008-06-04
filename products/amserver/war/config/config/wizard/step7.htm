@@ -44,7 +44,7 @@
                 <div style="margin-left:10px">
                     <table class="temp">
                         <tr>
-                            #if ($userHostName)
+                            #if ($displayUserHostName)
                             <td>
                                 $page.getLocalizedString("ssl.label")<br>
                                 $page.getLocalizedString("host.name.label")<br>
@@ -54,8 +54,8 @@
                                 $page.getLocalizedString("store.type.label")
                             </td>
                             <td>
+                                $xuserHostSSL<br>
                                 $displayUserHostName<br>
-                                $userHostName<br>
                                 $userHostPort<br>
                                 $userRootSuffix<br>
                                 $userLoginID<br>
