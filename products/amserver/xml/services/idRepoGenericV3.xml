@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoGenericV3.xml,v 1.1 2008-05-10 00:53:49 kenwho Exp $
+   $Id: idRepoGenericV3.xml,v 1.2 2008-06-04 18:00:06 kenwho Exp $
   
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -57,7 +57,7 @@
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-search-scope"/>
-            <Value>SCOPE_SUB</Value>
+            <Value>SCOPE_ONE</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-users-search-attribute"/>
@@ -65,16 +65,23 @@
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-user-objectclass"/>
-            <Value>inetorgperson</Value>
             <Value>organizationalPerson</Value>
+            <Value>inetorgperson</Value>
             <Value>person</Value>
             <Value>top</Value>
+            <Value>inetUser</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-user-attributes"/>
+            <Value>adminRole</Value>
+            <Value>authorityRevocationList</Value>
+            <Value>caCertificate</Value>
             <Value>cn</Value>
+            <Value>dn</Value>
+            <Value>distinguishedName</Value>
             <Value>employeenumber</Value>
             <Value>givenname</Value>
+            <Value>inetUserStatus</Value>
             <Value>mail</Value>
             <Value>manager</Value>
             <Value>memberOf</Value>
@@ -84,19 +91,20 @@
             <Value>sn</Value>
             <Value>telephonenumber</Value>
             <Value>uid</Value>
+            <Value>userCertificate</Value>
             <Value>userpassword</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-group-objectclass"/>
               <Value>groupofuniquenames</Value>
               <Value>top</Value>
-              <Value>groupofurls</Value>
           </AttributeValuePair>
           <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-group-attributes"/>
              <Value>cn</Value>
+             <Value>description</Value>
              <Value>dn</Value>
-             <Value>memberURL</Value>
+             <Value>memberUrl</Value>
              <Value>objectClass</Value>
              <Value>uniqueMember</Value>
           </AttributeValuePair>
