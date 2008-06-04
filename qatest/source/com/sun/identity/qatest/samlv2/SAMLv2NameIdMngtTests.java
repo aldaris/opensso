@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2NameIdMngtTests.java,v 1.2 2008-05-30 01:39:01 sridharev Exp $
+ * $Id: SAMLv2NameIdMngtTests.java,v 1.3 2008-06-04 20:59:48 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -249,7 +249,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                         "federate users");
                 assert false;
             }
-            Thread.sleep(5000);
+            Thread.sleep(15000);
             attrMap = idmc.getIdentityAttributes(spuser, realm);
             Set kattrSet = (Set) attrMap.get("sun-fm-saml2-nameid-infokey");
             for (Iterator itr = kattrSet.iterator(); itr.hasNext();) {
@@ -263,6 +263,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
             log(Level.FINEST, "nameIdMgntProfileTest", "FIRSTSSO" + fednameinfo);
             String sphttp = SAMLv2Common.getTerminateURL(termInit, termBind,
                     configMap);
+            Thread.sleep(15000);
             // Terminate
             URL turl = new URL(sphttp);
             HtmlPage page = (HtmlPage)webClient.getPage(turl);
@@ -271,6 +272,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                         "Terminate");
                 assert false;
             }
+            Thread.sleep(15000);
             // Single Signon
             URL surl = new URL(fedSSOURL);
             HtmlPage spage = (HtmlPage)webClient.getPage(surl);
@@ -279,6 +281,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                         "SSO after termination");
                 assert false;
             }
+            Thread.sleep(15000);
             //NewID Request
             String newIdURL = SAMLv2Common.getNewIDRequestURL(newIdInit,
                     newIdBind, configMap);
@@ -289,6 +292,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                         "getting the newId request");
                 assert false;
             }
+            Thread.sleep(15000);
             nidattrMap = idmc.getIdentityAttributes(spuser, realm);
             Set anitattrSet = (Set) nidattrMap.get("sun-fm-saml2-nameid-infokey");
             for (Iterator itr = anitattrSet.iterator(); itr.hasNext();) {

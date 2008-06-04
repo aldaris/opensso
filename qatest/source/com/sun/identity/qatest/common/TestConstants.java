@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.21 2008-05-05 19:28:01 rmisra Exp $
+ * $Id: TestConstants.java,v 1.22 2008-06-04 21:00:23 sridharev Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
@@ -427,7 +427,119 @@ public interface TestConstants {
      * SAMLv2, IDFF Property key for <code>sp_mail</code>
      */
     String KEY_SP_USER_MAIL = "sp_mail";
-
+    
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>KEY_SP_GIVEN_NAME</code>
+     */
+    String KEY_SP_GIVEN_NAME = "sp_givenname";
+    
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_employeenumber</code>
+     */
+    String KEY_SP_USER_EMPLOYEE = "sp_employeenumber";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_postaladdress</code>
+     */
+    String KEY_SP_USER_POSTAL = "sp_post";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_telephonenumber</code>
+     */
+    String KEY_SP_USER_TELE = "sp_telephonenumber";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_homephone</code>
+     */
+    String KEY_SP_USER_HOMEPHONE = "sp_homephone";
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_homepostaladdress</code>
+     */
+    String KEY_SP_USER_HOMEPOSTAL = "sp_homepostaladdress";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_mobile</code>
+     */
+    String KEY_SP_USER_MOBILE = "sp_mobile";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_telephonenumber</code>
+     */
+    String KEY_SP_USER_TELEPHONE = "sp_telephonenumber";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_pager</code>
+     */
+    String KEY_SP_USER_PAGER = "sp_pager";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_secretary</code>
+     */
+    String KEY_SP_USER_SECRETARY = "sp_secretary";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_sunIdentityMSISDNNumber</code>
+     */
+    String KEY_SP_USER_MSISDN = "sp_sunIdentityMSISDNNumber";
+    
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_employeenumber</code>
+     */
+    String KEY_IDP_USER_EMPLOYEE = "idp_employeenumber";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_mail</code>
+     */
+    String KEY_IDP_GIVEN_NAME = "idp_givenname";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_postaladdress</code>
+     */
+    String KEY_IDP_USER_POSTAL = "idp_post";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_telephonenumber</code>
+     */
+    String KEY_IDP_USER_TELE = "idp_telephonenumber";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_homephone</code>
+     */
+    String KEY_IDP_USER_HOMEPHONE = "idp_homephone";
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_homepostaladdress</code>
+     */
+    String KEY_IDP_USER_HOMEPOSTAL = "idp_homepostaladdress";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_mobile</code>
+     */
+    String KEY_IDP_USER_MOBILE = "idp_mobile";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_telephonenumber</code>
+     */
+    String KEY_IDP_USER_TELEPHONE = "idp_telephonenumber";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_pager</code>
+     */
+    String KEY_IDP_USER_PAGER = "idp_pager";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_secretary</code>
+     */
+    String KEY_IDP_USER_SECRETARY = "idp_secretary";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>sp_sunIdentityMSISDNNumber</code>
+     */
+    String KEY_IDP_USER_MSISDN = "idp_sunIdentityMSISDNNumber";
+    
+    
     /**
      * SAMLv2, IDFF Property key for <code>attrqprovider</code>
      */
