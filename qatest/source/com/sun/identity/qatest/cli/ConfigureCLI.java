@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureCLI.java,v 1.2 2007-08-16 19:39:19 cmwesley Exp $
+ * $Id: ConfigureCLI.java,v 1.3 2008-06-04 21:11:30 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,12 +27,12 @@ package com.sun.identity.qatest.cli;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.cli.CLIUtility;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
-import java.util.Map;
 import org.testng.Reporter;
 import org.testng.annotations.BeforeSuite;
 
@@ -71,14 +71,6 @@ public class ConfigureCLI extends CLIUtility {
                         fqdnElements[0]);
                 log(Level.FINEST, "configureCLI", "Hostname from getHostName: " + 
                         fqdnHostname);
-                if (!fqdnElements[0].equals(fqdnHostname)) {
-                    log(Level.SEVERE, "configureCLI", 
-                            "ERROR: The CLI tests must be run on the same host " +
-                            "on which Federated Access Manager is deployed.");
-                    Reporter.log("ERROR: The CLI tests must be run on the same host " +
-                            "on which Federated Access Manager is deployed.");
-                    assert false;
-                }
                 
                 ResourceBundle rb_cli = ResourceBundle.getBundle("cliTest");
                 File cliDir = new File(rb_cli.getString("cli-path"));
@@ -103,6 +95,26 @@ public class ConfigureCLI extends CLIUtility {
                                 cliAbsPath + " is not a directory.");
                         assert false;
                     }
+                }
+                File cliPassFile = new File(passwdFile);
+                if (!cliPassFile.exists()) {
+                    BufferedWriter out = 
+                            new BufferedWriter(new FileWriter(cliPassFile));
+                    out.write(adminPassword);
+                    out.close();
+                    clearArguments(2);
+                    String osName = System.getProperty("os.name").toLowerCase();
+                    if (!osName.contains("windows")) {
+                        setArgument(0, "/bin/chmod");
+                        setArgument(1, "400");
+                        setArgument(2, passwdFile);
+                    } else {
+                        setArgument(0, "attrib");
+                        setArgument(1, "+r");
+                        setArgument(2, passwdFile);
+                    }
+                    executeCommand(60);
+                    logCommand("configureTools");
                 }
             } else {
                 log(Level.SEVERE, "configureCLI", "ERROR: Unable to get host " +

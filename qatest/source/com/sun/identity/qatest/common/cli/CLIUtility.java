@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.7 2008-02-07 20:52:05 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.8 2008-06-04 21:09:28 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,7 +27,6 @@ package com.sun.identity.qatest.common.cli;
 import com.sun.identity.qatest.common.TestCommon;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -57,7 +56,11 @@ public class CLIUtility extends TestCommon {
             timeout = rbCLI.getString("command-timeout"); 
             localeValue = rbCLI.getString("locale");
             cliPath = rbCLI.getString("cli-path");
-            passwdFile = rbCLI.getString("password-file");
+            passwdFile = System.getProperty("user.dir") + 
+                    System.getProperty("file.separator") + serverName +
+                    System.getProperty("file.separator") + "built" + 
+                    System.getProperty("file.separator") + "classes" + 
+                    System.getProperty("file.separator") + "cli.pass";
         } catch (Exception e) {
             e.printStackTrace();
         }

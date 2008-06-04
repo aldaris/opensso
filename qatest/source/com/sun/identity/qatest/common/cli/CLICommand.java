@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLICommand.java,v 1.2 2007-06-29 13:49:03 cmwesley Exp $
+ * $Id: CLICommand.java,v 1.3 2008-06-04 21:09:28 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,8 @@ public class CLICommand extends Thread {
             try {
                 Map<String,String> env = cliProcessBuilder.environment(); 
                 env.put("PATH", workingDir.getPath() + 
-                        System.getProperty("path.separator") + env.get("PATH")); 
+                        System.getProperty("path.separator") + env.get("PATH"));
+                env.put("JAVA_HOME", System.getProperty("java.home"));
                 cliProcess = cliProcessBuilder.start();
                 startTime = new Date();
                 outputRedirector.setInputStream(cliProcess.getInputStream());

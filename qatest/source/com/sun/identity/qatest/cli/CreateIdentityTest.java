@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.7 2008-01-18 15:03:02 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.8 2008-06-04 21:11:30 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -333,10 +333,13 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                 log(logLevel, "cleanup", "identityToDelete: "  + 
                         idNameToCreate);
                 Reporter.log("IdentityNameToDelete: " + idNameToCreate);
-                cli.deleteIdentities(realmForId, idNameToCreate, 
+                FederationManagerCLI idCli = 
+                                    new FederationManagerCLI(useDebugOption, 
+                                    useVerboseOption, useLongOptions);
+                idCli.deleteIdentities(realmForId, idNameToCreate, 
                         idTypeToCreate);
-                cli.logCommand("cleanup");
-                cli.resetArgList();
+                idCli.logCommand("cleanup");
+                idCli.resetArgList();
             }
 
             if (setupIdentities != null) {
