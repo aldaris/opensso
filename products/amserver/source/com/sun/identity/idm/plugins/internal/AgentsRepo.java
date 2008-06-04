@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.30 2008-05-30 21:54:06 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.31 2008-06-04 06:11:58 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -907,28 +907,16 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         int errorCode = RepoSearchResults.SUCCESS;
         ServiceConfig aCfg = null;
         try {
-            if (type.equals(IdType.AGENTONLY)) {
+            if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 // Get the config from 'default' group.
                 orgConfig = getOrgConfig(token);
-
-                if (isAgentTypeSearch(orgConfig, pattern)) {
-                    agentRes.add(pattern);
-                } else {
-                    aCfg = orgConfig;
-                    agentRes = getAgentPattern(aCfg, pattern, avPairs);
-                }
+                agentRes = getAgentPattern(token, type, orgConfig, pattern, 
+                    avPairs);
             } else if (type.equals(IdType.AGENTGROUP)) {
                 // Get the config from specified group.
                 agentGroupConfig = getAgentGroupConfig(token);
-
-                if (isAgentTypeSearch(agentGroupConfig, pattern)) {
-                    agentRes.add(pattern);
-                } else {
-                    aCfg = agentGroupConfig;
-                    agentRes = getAgentPattern(aCfg, pattern, avPairs);
-                }
-            } else if (type.equals(IdType.AGENT)) {
-                    agentRes.add(pattern);
+                agentRes = getAgentPattern(token, type, agentGroupConfig, 
+                    pattern, avPairs);
             }
             if (agentRes != null && (!agentRes.isEmpty())) {
                 Iterator it = agentRes.iterator();
@@ -1270,7 +1258,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.authenticate() called");
         }
-
         // Obtain user name and password from credentials and compare
         // with the ones from the agent profile to authorize the agent.
         String username = null;
@@ -1495,58 +1482,93 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         return (agentTypeflg);
     }
 
-
-    private Set getAgentPattern(ServiceConfig aConfig, String pattern,
-        Map avPairs) 
+    private Set getAgentPattern(SSOToken token, IdType type, 
+        ServiceConfig aConfig, String pattern, Map avPairs)
         throws IdRepoException {
 
         if (debug.messageEnabled()) {
-            debug.message("AgentsRepo.getAgentPattern() called: " + pattern);
+            debug.message("AgentsRepo.getAgentPattern() called: pattern : " + 
+                pattern + "\navPairs : " + avPairs);
         }
-        Set agentRes = new HashSet(2);
-        try {
-            if (aConfig != null) {
-                // Support search through avpairs.. just for AgentType.
-                if (pattern.equals("*") && avPairs != null
-                    && !avPairs.isEmpty()) {
-                    Set atypeVals = (Set) avPairs.get(IdConstants.AGENT_TYPE);
-                    if (atypeVals != null && !atypeVals.isEmpty()) {
-                        pattern = (String) atypeVals.iterator().next();
-                    } else {
-                        return (agentRes);
-                    }
-                }
 
-                // If wild card is used for pattern, do a search else a lookup
-                if (pattern.indexOf('*') != -1) {
-                    agentRes = aConfig.getSubConfigNames(pattern);
-                } else {
-                    for (Iterator items = aConfig.getSubConfigNames()
-                        .iterator(); items.hasNext();) {
-                        String name = (String) items.next();
-                        if (name.equalsIgnoreCase(pattern)) {
-                            agentRes.add(pattern);
-                            break;
-                        } else {
-                            // if pattern is AgentType, look for the AgentType
-                            // value in the profile and compare. If they are 
-                            // the same, add that Agent that belongs to that 
-                            // AgentType. 
-                            
-                            Map attrMap = getAgentAttrs(aConfig, name);
-                            if (attrMap != null && !attrMap.isEmpty()) {
-                                Set aSet = (HashSet) attrMap.get(
-                                    IdConstants.AGENT_TYPE);
-                                if ((aSet != null) && (!aSet.isEmpty()) &&
-                                    ((String) aSet.iterator().next()).
-                                    equalsIgnoreCase(pattern)) {
-                                    agentRes.add(name);
-                                }
+        if (aConfig == null) {
+            return (Collections.EMPTY_SET);
+        }
+        Set agentRes;
+        // Get AgentType
+        String agentType = null;
+        if (avPairs != null && !avPairs.isEmpty()) {
+            Set set = (Set) avPairs.get(IdConstants.AGENT_TYPE);
+            if (set != null && !set.isEmpty()) {
+                agentType = set.iterator().next().toString();
+                avPairs.remove(IdConstants.AGENT_TYPE);
+            }
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("AgentsRepo.getAgentPattern() agentType : " + 
+                agentType);
+        }
+
+        // Search for agents matching the pattern and agenttype
+        try {
+            if (agentType != null) {
+                agentRes = aConfig.getSubConfigNames(pattern, agentType);
+            } else {
+                agentRes = aConfig.getSubConfigNames(pattern);
+            }
+
+            if (debug.messageEnabled()) {
+                debug.message("AgentsRepo.getAgentPattern() agentRes : " + 
+                    agentRes);
+            }
+
+            // Check if there are agents and if more attributes are present
+            if (agentRes == null || agentRes.isEmpty() ||
+                avPairs == null || avPairs.isEmpty()) {
+                return (agentRes == null ? Collections.EMPTY_SET : agentRes);
+            }
+
+            /* if there are agents matching the pattern and agenttype and
+             * if avPairs is not empty, search for other attributes in the
+             * avPairs and add that Agent if search results are positive.
+             * ie., if avPairs matches with the attributes in store.
+            */
+            Set agents = new HashSet(2);
+            for (Iterator itr = agentRes.iterator(); itr.hasNext();) {
+                String name = (String) itr.next();
+                Map attrMap = getAttributes(token, type, name);
+                if (attrMap == null || attrMap.isEmpty()) {
+                    continue;
+                }
+                for (Iterator it = avPairs.keySet().iterator();
+                    it.hasNext();) {
+                    String attr = (String) it.next();
+                    
+                     /* 'attrValues' are values from avPairs sent by client.
+                      * 'presentValues' are from Directory Server.
+                      * The element in attrValues is compared with the
+                      * values from DS, and then the agent name is added to 
+                      * resultant set to be returned if matches.
+                     */
+   
+                    Set attrValues = (Set) avPairs.get(attr);
+                    Set presentSet = (Set) attrMap.get(attr);
+                    if (presentSet != null && !presentSet.isEmpty()) {
+                        Set presentValues = new CaseInsensitiveHashSet(
+                            presentSet);
+                        for (Iterator i = attrValues.iterator();i.hasNext();) {
+                            String avName = (String) i.next();
+                            if ((presentValues != null) && 
+                                (presentValues.contains(avName))) {
+                                agents.add(name);
+                                break;
                             }
                         }
                     }
                 }
             }
+            return (agents);
         } catch (SSOException sse) {
             debug.error("AgentsRepo.getAgentPattern(): Error occurred while "
                 + "checking AgentName sent for pattern "+ pattern, sse);
@@ -1556,7 +1578,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 + "checking AgentName sent for pattern "+ pattern, sme);
             throw new IdRepoException(sme.getMessage());
         }
-        return (agentRes);
     }
 
     String constructDN(String groupName, String configName, String orgName, 
