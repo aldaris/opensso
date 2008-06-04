@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebAgentHotSwapTests.java,v 1.2 2008-04-28 18:32:23 nithyas Exp $
+ * $Id: WebAgentHotSwapTests.java,v 1.3 2008-06-04 17:15:39 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -423,6 +423,9 @@ public class WebAgentHotSwapTests extends TestCommon {
             page = (HtmlPage)webClient.getPage(new URL(strUrl));                
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page, strEvalValue);
+            if (strEvalValue.equals("Forbidden") && iIdx == -1) {
+                 iIdx = getHtmlPageStringIndex(page, "Access Denied");
+            }
             assert (iIdx != -1);
 
         } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException 
