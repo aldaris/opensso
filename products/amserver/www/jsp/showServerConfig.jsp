@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showServerConfig.jsp,v 1.2 2008-05-23 18:25:59 rmisra Exp $
+   $Id: showServerConfig.jsp,v 1.3 2008-06-04 01:28:12 rmisra Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,6 +36,7 @@
 <%@ page import="com.sun.identity.sm.ServiceConfigManager" %>
 <%@ page import="java.security.AccessController" %>
 <%@ page import="java.io.File" %>
+<%@ page import="java.net.URL" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.util.Properties" %>
 <%@ page import="java.util.Enumeration" %>
@@ -73,6 +74,7 @@
         SSOTokenManager manager = SSOTokenManager.getInstance();
         SSOToken ssoToken = manager.createSSOToken(request);
         manager.validateToken(ssoToken);
+        String strURL = request.getRequestURL().toString();
 
         if (ssoToken.getPrincipal().getName().equals(
             "id=amadmin,ou=user," + SMSEntry.getRootSuffix())
@@ -96,11 +98,28 @@
                   <tr>
                   <td>
               <%
-                  String strURL = request.getRequestURL().toString();
-                  int i1 = strURL.indexOf("/showServerConfig.jsp");
-                  String strServerName = strURL.substring(0, i1);
+                  Properties prop = null;
+                  try {
+                      URL url = new URL(strURL);
+                      int port = url.getPort();
+                      String protocol = url.getProtocol();
+                      String host = url.getHost();
+                      String path = url.getPath();
 
-                  Properties prop = ServerConfiguration.getServerInstance(ssoToken, strServerName);
+                      if (port == -1) {
+                          port = protocol.equals("https") ? 443 : 80;
+                      }
+
+                      int idx = path.indexOf("/showServerConfig.jsp");
+                      if (idx != -1) {
+                          path = path.substring(0, idx);
+                      }
+
+                      prop = ServerConfiguration.getServerInstance(ssoToken,
+                          protocol + "://" + host + ":" + port + path);
+                  } catch (java.net.MalformedURLException e) {
+                      //ignore
+                  }
 
                   out.println("<B>Server Name</B>");
               %>
