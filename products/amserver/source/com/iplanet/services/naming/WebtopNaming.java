@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.15 2008-06-02 20:07:50 manish_rustagi Exp $
+ * $Id: WebtopNaming.java,v 1.16 2008-06-04 00:01:20 manish_rustagi Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -573,7 +573,7 @@ public class WebtopNaming {
     public static String getLBCookieValue(String serverid) {
         String lbCookieValue = null;
 
-        if (lbCookieValuesTable == null) {
+        if (lbCookieValuesTable == null || serverid == null) {
             return null;
         }
 
