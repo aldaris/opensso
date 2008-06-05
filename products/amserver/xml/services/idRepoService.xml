@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.22 2008-05-10 03:59:32 veiming Exp $
+   $Id: idRepoService.xml,v 1.23 2008-06-05 05:03:42 arviranga Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,6 +55,9 @@
                         <Value>iPlanetAMAuthLDAPService</Value>
                         <Value>iPlanetAMAuthConfiguration</Value>
                         <Value>iPlanetAMPolicyConfigService</Value>
+                        <!-- Delegation Service added to manage delegation
+                        permissions during realm creation and delegation -->
+                        <Value>sunAMDelegationService</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <SubSchema name="SupportedIdentities"

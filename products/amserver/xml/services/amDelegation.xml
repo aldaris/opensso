@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.6 2008-04-19 20:42:05 goodearth Exp $
+   $Id: amDelegation.xml,v 1.7 2008-06-05 05:03:41 arviranga Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -254,6 +254,10 @@
                     </SubConfiguration>
                 </SubConfiguration>
             </GlobalConfiguration>
+            <OrganizationConfiguration name="/">
+                <!-- Create empty organization configuration for
+                     management of delegation policies -->
+            </OrganizationConfiguration>
         </Configuration>
     </Service>
 </ServicesConfiguration>

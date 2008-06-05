@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.17 2008-05-29 23:29:47 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.18 2008-06-05 05:03:43 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,7 +40,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
-import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.Constants;
 
@@ -72,8 +71,6 @@ public class OrganizationConfigManager {
     private OrganizationConfigManagerImpl orgConfigImpl;
 
     static String orgNamingAttrInLegacyMode;
-
-    static Pattern svcDNpattern = Pattern.compile(DNMapper.serviceDN);
 
     static Pattern baseDNpattern = Pattern.compile(SMSEntry.getRootSuffix());
 
@@ -567,72 +564,6 @@ public class OrganizationConfigManager {
                 amsdkName = convOrg + SMSEntry.COMMA + amSDKOrgDN;
             }
             amsdk.deleteSubOrganization(amsdkName);
-        }
-
-        // remove the delegation privileges for the subrealms.
-        if ((recursive) && (subRlmSet !=null) && (!subRlmSet.isEmpty())) {
-            // if recursive check if there are sub organization entries
-            // and if exist delete the delegation privileges for the
-            // sub realms.
-            // This is for both realm and legacy modes.
-
-            try {
-                Iterator subRlms = subRlmSet.iterator();
-                while (subRlms.hasNext()) {
-                    String subRlmDN =
-                        normalizeDN((String) subRlms.next(), subOrgDN);
-                    if (subRlmDN.indexOf(subOrgDN) < 0) {
-                        subRlmDN =
-                            svcDNpattern.matcher(subRlmDN).replaceAll(subOrgDN);
-                    }
-                    // In legacy mode, the 'ou=services' is removed by
-                    // the normalizeDN code while
-                    // converting the realm to sdk name. Look for that
-                    // and add again to delete the privileges.
-
-                    if (subRlmDN.indexOf(DNMapper.serviceDN) < 0) {
-                        subRlmDN = baseDNpattern.matcher(subRlmDN).
-                            replaceAll(DNMapper.serviceDN);
-                    }
-                    com.sun.identity.delegation.DelegationUtils
-                        .deleteRealmPrivileges(token, subRlmDN);
-                }
-            } catch (SSOException ssoe) {
-                SMSEntry.debug.error("OrganizationConfigManager" +
-                    "::deleteSubOrganization "+
-                        "SSOException in deleting permissions for subrealms",
-                            ssoe);
-                throw (new SMSException(SMSEntry.bundle.getString(
-                    "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
-            } catch (DelegationException de) {
-                SMSEntry.debug.error("OrganizationConfigManager" +
-                    "::deleteSubOrganization " +
-                        "DelegationException in deleting permission " +
-                            "for subrealms", de);
-                throw (new SMSException(SMSEntry.bundle.getString(
-                    "sms-invalid_delegation_privilege"),
-                        "sms-invalid_delegation_privilege"));
-            }
-        }
-
-        // remove the delegation privileges for the realm.
-        try {
-            com.sun.identity.delegation.DelegationUtils.deleteRealmPrivileges(
-                    token, subOrgDN);
-        } catch (SSOException ssoe) {
-            SMSEntry.debug.error("OrganizationConfigManager"
-                + "::deleteSubOrganization "
-                    + "SSOException in deleting permissions for realms", ssoe);
-            throw (new SMSException(SMSEntry.bundle.getString(
-                "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
-
-        } catch (DelegationException de) {
-            SMSEntry.debug.error("OrganizationConfigManager"
-                + "::deleteSubOrganization "
-                 + "DelegationException in deleting permission for realms", de);
-            throw (new SMSException(SMSEntry.bundle.getString(
-                "sms-invalid_delegation_privilege"),
-                    "sms-invalid_delegation_privilege"));
         }
     }
 
@@ -1560,29 +1491,6 @@ public class OrganizationConfigManager {
                 throw (new SMSException(SMSEntry.bundle
                         .getString("sms-INVALID_SSO_TOKEN"),
                         "sms-INVALID_SSO_TOKEN"));
-            }
-        }
-
-        // Load the delegation privileges
-        try {
-            if (coexistMode) {
-                com.sun.identity.delegation.DelegationUtils
-                    .createRealmPrivileges(token, ocm.getOrganizationName());
-            } else {
-                com.sun.identity.delegation.DelegationUtils
-                        .copyRealmPrivilegesFromParent(token, parentOrg, ocm);
-            }
-        } catch (SSOException ssoe) {
-            if (SMSEntry.debug.messageEnabled()) {
-                SMSEntry.debug.message("OrganizationConfigManager"
-                        + "::loadDefaultServices "
-                        + "SSOException in copying permissions ", ssoe);
-            }
-        } catch (DelegationException de) {
-            if (SMSEntry.debug.messageEnabled()) {
-                SMSEntry.debug.message("OrganizationConfigManager"
-                        + "::loadDefaultServices "
-                        + "DelegationException in copying permission ", de);
             }
         }
     }

@@ -17,14 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationServiceNameProviderImpl.java,v 1.1 2006-07-17 18:11:27 veiming Exp $
+ * $Id: AuthenticationServiceNameProviderImpl.java,v 1.2 2008-06-05 05:03:42 arviranga Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.sm;
 
-import com.sun.identity.authentication.config.AMAuthenticationManager;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.debug.Debug;
+import java.security.AccessController;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -36,15 +43,67 @@ import java.util.Set;
  */
 public class AuthenticationServiceNameProviderImpl implements
         AuthenticationServiceNameProvider {
+    
+    private static boolean initialized;
+    private static HashSet authNmodules = new HashSet();
+    private static Debug debug = SMSEntry.debug;
+    
     /**
      * Provides a collection of authentication module service names that are
      * loaded by default. This implementation uses the authentication 
-     * service specific configuration manager to retrieve the relevant 
+     * service specific configuration to retrieve the relevant 
      * module service name information.
      * 
      * @return a <code>Set</code> of authentication module service names.
      */
-    public Set getAuthenticationServiceNames() {        
-        return AMAuthenticationManager.getAuthenticationServiceNames();
+    public Set getAuthenticationServiceNames() {
+        if (initialized) {
+            return authNmodules;
+        }
+        try {
+            SSOToken token = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            ServiceSchemaManager scm = new ServiceSchemaManager(
+                ISAuthConstants.AUTH_SERVICE_NAME, token);
+            ServiceSchema schema = scm.getGlobalSchema();
+            Set authenticators = (Set) schema.getAttributeDefaults().get(
+                ISAuthConstants.AUTHENTICATORS);
+            for (Iterator it = authenticators.iterator(); it.hasNext();) {
+                String module = (String) it.next();
+                int index = module.lastIndexOf(".");
+                if (index != -1) {
+                    module = module.substring(index + 1);
+                }
+                String serviceName = "iPlanetAMAuth" + module + "Service";
+                // Check if the service name exisits with organization schema
+                try {
+                    ServiceSchemaManager ssm = new ServiceSchemaManager(
+                        serviceName, token);
+                    if (ssm.getOrganizationSchema() != null) {
+                        authNmodules.add(serviceName);
+                    }
+                } catch (Exception e) {
+                    // Try with "sunAMAuth"
+                    serviceName = "sunAMAuth" + module + "Service";
+                    try {
+                        ServiceSchemaManager ssm = new ServiceSchemaManager(
+                            serviceName, token);
+                        if (ssm.getOrganizationSchema() != null) {
+                            authNmodules.add(serviceName);
+                        }
+                    } catch (Exception ee) {
+                        // Ignore the Exception and donot add to authmodules
+                        // 1) Service does not exisit
+                        // 2) OrganizationSchema does not exisit
+                    }
+                }
+            }
+            initialized = true;
+        } catch (SMSException ex) {
+            debug.error("AuthenticationServiceNameProviderImpl error", ex);
+        } catch (SSOException ex) {
+            debug.error("AuthenticationServiceNameProviderImpl error", ex);
+        }
+        return authNmodules;
     }
 }

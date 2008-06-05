@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.9 2007-11-21 01:21:15 goodearth Exp $
+ * $Id: DelegationEvaluator.java,v 1.10 2008-06-05 05:03:43 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -67,6 +67,9 @@ public class DelegationEvaluator {
         } catch (Exception e) {
             debug.error("DelegationEvaluator:", e);
         }
+        // Register for notifications
+        SMServiceListener listener = SMServiceListener.getInstance();
+        listener.registerForNotifications();
     }
  
     private DelegationInterface pluginInstance = null;
