@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.10 2008-06-04 01:22:17 veiming Exp $
+ * $Id: Step2.java,v 1.11 2008-06-05 06:22:38 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,6 +99,7 @@ public class Step2 extends AjaxPage {
             writeToResponse(getLocalizedString(
                 "configuration.wizard.step2.no.write.permission.to.basedir"));
         } else {
+            getContext().setSessionAttribute("configDirectory", configDir);
             writeToResponse("true");
         }
         setPath(null);        
