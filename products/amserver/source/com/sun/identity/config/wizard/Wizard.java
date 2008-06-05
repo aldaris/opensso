@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.18 2008-05-28 18:10:46 veiming Exp $
+ * $Id: Wizard.java,v 1.19 2008-06-05 03:56:07 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -218,6 +218,11 @@ public class Wizard extends AjaxPage {
         }
         request.addParameter(
             SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, tmp);
+        tmp = (String)getContext().getSessionAttribute("ENCLDAPUSERPASSWD");
+        if (tmp != null) {
+            request.addParameter(
+                SetupConstants.ENCRYPTED_LDAP_USER_PWD, tmp);
+        }
 
         String cookie = 
             (String)getContext().getSessionAttribute("cookieDomain");

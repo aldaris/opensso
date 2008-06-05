@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.16 2008-06-03 18:31:02 veiming Exp $
+ * $Id: Step3.java,v 1.17 2008-06-05 03:56:07 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,6 +208,9 @@ public class Step3 extends LDAPStoreWizardPage {
                     
                     String key = (String)data.get("enckey");
                     getContext().setSessionAttribute("encryptionKey",key);
+
+                    getContext().setSessionAttribute("ENCLDAPUSERPASSWD",
+                         (String)data.get("ENCLDAPUSERPASSWD"));
                     
                     // true for embedded, false for sunds
                     String embedded = 

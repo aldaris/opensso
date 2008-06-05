@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: getServerInfo.jsp,v 1.2 2008-06-03 19:45:52 veiming Exp $
+   $Id: getServerInfo.jsp,v 1.3 2008-06-05 03:56:08 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -103,6 +103,7 @@ import="com.iplanet.am.util.SystemProperties,
 
     String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
     String encKey = SystemProperties.get("am.encryption.pwd");
+    String defAgentPwd = SystemProperties.get("com.iplanet.am.service.secret");
     BootstrapData bootstrapData = new BootstrapData(baseDir);
     boolean isEmbeddedDS = (new File(baseDir + "/opends")).exists();
     // Assumption : opends entry is the 1st
@@ -121,12 +122,12 @@ import="com.iplanet.am.util.SystemProperties,
     String replPort = null;
     String replPortAvailable = null;
     if (isEmbeddedDS) {
-       replPort = EmbeddedOpenDS.getReplicationPort(username, password, 
-                      "localhost", dsport);
-       replPortAvailable = "true";
-       if (replPort == null) {
-           replPortAvailable = "false";
-           replPort = ""+ AMSetupServlet.getUnusedPort("localhost", 50889, 1000);
+        replPort = EmbeddedOpenDS.getReplicationPort(username, password, 
+            "localhost", dsport);
+        replPortAvailable = "true";
+        if (replPort == null) {
+            replPortAvailable = "false";
+            replPort = ""+ AMSetupServlet.getUnusedPort("localhost", 50889, 1000);
         }
     }
     // We have collected all the data - return a response
@@ -171,5 +172,10 @@ import="com.iplanet.am.util.SystemProperties,
         buf.append(BootstrapData.ENCKEY).append("=").
             append(URLEncoder.encode(encKey, "UTF-8"));
     }
+    if (defAgentPwd != null) {
+        buf.append("&ENCLDAPUSERPASSWD=").append(
+            URLEncoder.encode(defAgentPwd, "UTF-8"));
+    }
+
     out.println(buf.toString());
 %>
