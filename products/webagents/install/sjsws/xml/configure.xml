@@ -162,6 +162,21 @@
 					</validation>
 				</validations>
 			</interaction>
+            <interaction lookupkey="AGENT_ENCRYPT_KEY" persistent="false">
+				<i18n key="INT_AGENT_ENCRYPT_KEY" group="amToolsMessages"/>
+				<default-value-finder>
+					<class name="RandomKeyGenerator" type="system"/>
+				</default-value-finder>
+				<validations>
+					<validation name="VALID_STRING">
+						<class name="StringValidator" type="system"/>
+					</validation>
+					<validation name="VALID_KEY">
+						<class name="StringValidator" type="system"/>
+						<property name="minLen" value="7"/>
+					</validation>
+				</validations>
+            </interaction>
 			<interaction lookupkey="AGENT_PROFILE_NAME" persistent="false">
 				<i18n key="INT_AGENT_PROFILE_NAME" group="amToolsMessages"/>
 				<validations>

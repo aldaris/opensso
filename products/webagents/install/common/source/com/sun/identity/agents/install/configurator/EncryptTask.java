@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptTask.java,v 1.3 2008-05-02 20:07:30 robertis Exp $
+ * $Id: EncryptTask.java,v 1.4 2008-06-05 22:39:30 robertis Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,6 +58,9 @@ public class EncryptTask implements ITask, InstallConstants {
     private static final String STR_ENCRYPTED_DATA_LOOKUP_KEY = 
         "ENCRYPTED_VALUE_KEY_LOOKUP_KEY";
     
+    public static final String STR_ENCRYPTION_KEY_LOOKUP_KEY =    
+        "ENCRYPTION_KEY_LOOKUP_KEY";
+
     // Localiziation keys
     private static final String LOC_TK_ERR_PASSWD_FILE_READ = 
         "TSK_ERR_PASSWD_FILE_READ";
@@ -92,11 +95,16 @@ public class EncryptTask implements ITask, InstallConstants {
     public boolean execute(String name, IStateAccess stateAccess, 
         Map properties) throws InstallException 
     {
-        //Generate the encryption key
-	    encryptionKey = EncryptionKeyGenerator.generateRandomString();
-            stateAccess.put("AGENT_ENCRYPT_KEY", encryptionKey);
-        System.setProperty(STR_ENCRYPTION_KEY_PROP_KEY, encryptionKey);
 
+        String encryptionKeyLookUpKey = (String) properties.get(
+            STR_ENCRYPTION_KEY_LOOKUP_KEY);
+        Debug.log("EncryptTask.execute() - Obtained encryption lookup key = " + 
+            encryptionKeyLookUpKey);        
+        encryptionKey = (String) stateAccess.get(encryptionKeyLookUpKey);
+        if (encryptionKey == null) {
+            encryptionKey = EncryptionKeyGenerator.generateRandomString();
+            stateAccess.put("AGENT_ENCRYPT_KEY", encryptionKey);
+        }
         // Set the encrypted value key
         String encryptedDataKey = (String) properties.get(
             STR_ENCRYPTED_DATA_LOOKUP_KEY);
