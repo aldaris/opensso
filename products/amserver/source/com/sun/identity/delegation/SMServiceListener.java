@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMServiceListener.java,v 1.1 2008-06-05 05:03:44 arviranga Exp $
+ * $Id: SMServiceListener.java,v 1.2 2008-06-05 16:46:32 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public class SMServiceListener implements ServiceListener {
             Set assignedServices = ocm.getAssignedServices();
             for (Iterator items = assignedServices.iterator();
                 items.hasNext();) {
-                if (items.toString().equalsIgnoreCase(
+                if (items.next().toString().equalsIgnoreCase(
                     DelegationManager.DELEGATION_SERVICE)) {
                     scm = new ServiceConfigManager(
                         DelegationManager.DELEGATION_SERVICE, token);
