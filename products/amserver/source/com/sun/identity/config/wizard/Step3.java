@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.17 2008-06-05 03:56:07 veiming Exp $
+ * $Id: Step3.java,v 1.18 2008-06-05 04:01:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -139,7 +139,7 @@ public class Step3 extends LDAPStoreWizardPage {
         } else {
             writeToResponse("true");
         }
-        setPath(null);        
+        setPath(null);
         return false;    
     }
     

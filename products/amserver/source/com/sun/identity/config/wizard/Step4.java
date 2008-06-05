@@ -17,20 +17,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.10 2008-05-15 00:45:46 veiming Exp $
+ * $Id: Step4.java,v 1.11 2008-06-05 04:01:43 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
+import com.iplanet.am.util.SSLSocketFactoryManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.click.control.ActionLink;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
 import net.sf.click.Context;
+import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPSearchResults;
 /**
  * Step 4 is the input of the remote user data store properties.
  */
 public class Step4 extends AjaxPage {
     public static final String LDAP_STORE_SESSION_KEY = "wizardCustomUserStore";
+    public ActionLink validateUMHostLink = 
+        new ActionLink("validateUMHost", this, "validateUMHost");
     public ActionLink setSSLLink = 
         new ActionLink("setSSL", this, "setSSL");
     public ActionLink setUMEmbedded = 
@@ -242,5 +250,54 @@ public class Step4 extends AjaxPage {
         writeToResponse(responseString);
         setPath(null);
         return false;
-    }    
+    }
+    
+    public boolean validateUMHost() {
+        Context ctx = getContext();
+        String strSSL = (String)ctx.getSessionAttribute(
+            SetupConstants.USER_STORE_SSL);
+        boolean ssl = (strSSL != null) && (strSSL.equals("SSL"));
+             
+        String host = (String)ctx.getSessionAttribute(
+            SetupConstants.USER_STORE_HOST);
+        String strPort = (String)ctx.getSessionAttribute(
+            SetupConstants.USER_STORE_PORT);
+        int port = Integer.parseInt(strPort);
+        String bindDN = (String)ctx.getSessionAttribute(
+            SetupConstants.USER_STORE_LOGIN_ID);
+        String rootSuffix = (String)ctx.getSessionAttribute(
+            SetupConstants.USER_STORE_ROOT_SUFFIX);
+        String bindPwd = (String)ctx.getSessionAttribute(
+            SetupConstants.USER_STORE_LOGIN_PWD);
+        
+        LDAPConnection ld = null;
+        try {
+            ld = (ssl) ? new LDAPConnection(
+                SSLSocketFactoryManager.getSSLSocketFactory()) :
+                new LDAPConnection();
+            ld.setConnectTimeout(300);
+            ld.connect(3, host, port, bindDN, bindPwd);
+            
+            String filter = "cn=" + "\"" + rootSuffix + "\"";
+            String[] attrs = {""};
+            ld.search(rootSuffix, LDAPConnection.SCOPE_BASE, filter, 
+                attrs, false);
+            writeToResponse("ok");
+        } catch (Exception e) {
+            writeToResponse(
+                getLocalizedString("cannot.connect.to.UM.datastore"));
+        } finally {
+            if (ld != null) {
+                try {
+                    ld.disconnect();
+                } catch (LDAPException ex) {
+                    //ignore
+                }
+            }
+        }
+
+        
+        setPath(null);
+        return false;
+    }
 }

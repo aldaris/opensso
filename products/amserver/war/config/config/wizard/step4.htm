@@ -6,24 +6,38 @@
     var userStorePasswordValid = false;
  
     function allValid() {
-        $('nextTabButton').disabled = 
-	    !(userStoreHostValid && 
-		userStorePortValid &&
-		userStoreRootSuffixValid &&
-		userStoreLoginIdValid &&
-		userStorePasswordValid);
+        var allFieldsValid = (userStoreHostValid && userStorePortValid &&
+            userStoreRootSuffixValid && userStoreLoginIdValid &&
+            userStorePasswordValid);
+        if (allFieldsValid) {
+            AjaxUtils.call("$context$path?actionLink=validateUMHost",
+                validateUMHost);
+        } else {
+            $('nextTabButton').disabled = true;
+        }
+    }
+
+    function validateUMHost(response) {
+        if (response.responseText == "ok") { 
+            $('nextTabButton').disabled = false;
+            $('userStoreHostStatus').innerHTML = "";
+        } else {
+            $('nextTabButton').disabled = true;
+            $('userStoreHostStatus').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
+        }
     }
     
     function validateUserFields(response) {
         if (response.responseText == "ok") { 
 	    eval(field + "Valid = true;" );
             $(field + 'Status').innerHTML = okString;
+            allValid();
         } else {
             eval(field + "Valid = false;" );
             $(field + 'Status').innerHTML = errorImage +
                 '<small>' + response.responseText + '</small>';
         }                
-        allValid();
         field = "";
     }  
 
@@ -36,7 +50,7 @@
     }
 
     function validateSSLField() {
-        //no op
+        allValid();
     }
 
     function validateUserStoreHost() {
