@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.4 2008-06-04 18:08:00 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.5 2008-06-05 21:42:57 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -115,6 +115,9 @@ class UserIdRepo {
         }
 
         if (xml != null) {
+            Map data = ServicesDefaultValues.getDefaultValues();
+            xml = xml.replaceAll("@SM_CONFIG_ROOT_SUFFIX@",
+                (String)data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX));
             xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
                 (String) userRepo.get(
                 SetupConstants.USER_STORE_ROOT_SUFFIX));
