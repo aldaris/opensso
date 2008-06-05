@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.9 2008-05-05 17:08:12 huacui Exp $
+   $Id: readme.txt,v 1.10 2008-06-05 01:11:09 huacui Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -118,9 +118,9 @@ Configure the agent properties
 
    If the agent configuration is centralized, then do the following steps.
    1). login to Opensso/FAM console as amadmin user
-   2). navigate to Configuration/Agents/J2EE, and click on the agent instance 
-       link (assume the agent instance is already created, otherwise refer to
-       the agent doc to create the agent instance).
+   2). navigate to Access Control/realm/Agents/J2EE, and click on the agent 
+       instance link (assume the agent instance is already created, otherwise 
+       refer to the agent doc to create the agent instance).
    3). in tab "Global", section "General", property "Resource Access Denied URI"
        enter /agentsample/authentication/accessdenied.html, and SAVE the change.
    4). in tab "Application", section "Login Processing", property "Login Form URI",
