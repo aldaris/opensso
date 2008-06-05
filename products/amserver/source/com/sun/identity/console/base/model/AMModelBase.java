@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.10 2008-05-28 18:41:49 veiming Exp $
+ * $Id: AMModelBase.java,v 1.11 2008-06-05 06:20:52 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.LogRecord;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.EncryptAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -720,8 +721,10 @@ public class AMModelBase
         }
 
         try {
+             SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+                 AdminTokenAction.getInstance());
             AMIdentityRepository repo = new AMIdentityRepository(
-                getUserSSOToken(), realmName);
+                adminToken, realmName);
             Set supportedTypes = repo.getSupportedIdTypes();
             map = new HashMap(supportedTypes.size() *2);
 
