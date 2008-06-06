@@ -1158,9 +1158,7 @@ Service::getPolicyResult(const char *userSSOToken,
                         strdup(remoteUserPasswd.c_str());
                 }
  	    } catch(std::invalid_argument &ex) {
-                 Log::log(logID, Log::LOG_WARNING,
- 		    "%s:No passwd value in session response.", func);
-             }
+            }
  	}
 
 	// Assign the user's IP as known to dsame to to the remote IP variable.
@@ -1233,6 +1231,13 @@ Service::getPolicyResult(const char *userSSOToken,
 	}
     } while(justUpdated);
 
+    int counter = 0;
+    while ((results.size() == 0) && (++counter < 6)) {
+        // Server is in the process of updating the policy cache.
+        // Wait till the cache is populated
+        PR_Sleep(PR_TicksPerSecond());
+        uPolicyEntry->getAllPolicyDecisions(resName, results);
+    }
 
     // now set remote user and ldap attributes if any.
     setRemUserAndAttrs(policy_res, uPolicyEntry, uSessionInfo,

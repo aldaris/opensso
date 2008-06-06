@@ -127,6 +127,7 @@ class URL {
     void getURLString(std::string& urlString, size_t capacity = 0);
 
     void removeQueryParameter(const std::string &key);
+    bool findQueryParameter(const std::string &key);
 
  private:
     static const char * protocolStr[];

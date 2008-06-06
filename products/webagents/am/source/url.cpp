@@ -59,6 +59,7 @@ URL::URL(const std::string &urlStr, std::size_t url_len,
       uri(),
       path_info(),
       qParams(),
+      query(),
       icase(ignore_case) 
 {
     parseURLStr(std::string(urlStr.c_str(), url_len), "", useOld);
@@ -80,6 +81,7 @@ URL::URL(const std::string &urlStr,
       uri(),
       path_info(pathInfo),
       qParams(),
+      query(),
       icase(ignore_case) 
 {
     parseURLStr(urlStr, pathInfo, useOld);
@@ -100,6 +102,7 @@ URL::URL(const std::string &urlStr,
       uri(),
       path_info(),
       qParams(),
+      query(),
       icase(ignore_case) 
 {
     parseURLStr(urlStr, "", useOld);
@@ -114,6 +117,7 @@ URL::URL(const URL &srcURL):
 			    uri(srcURL.uri),
 			    path_info(srcURL.path_info),
 			    qParams(srcURL.qParams),
+			    query(srcURL.query),
 			    icase(srcURL.icase){}
 
 void URL::parseURLStr(const std::string &urlString,
@@ -535,9 +539,10 @@ void URL::removeQueryParameter(const std::string &key) {
     KeyValueMap::iterator iter = qParams.find(key);
     size_t startPos = 0; size_t endPos = 0;
     
+    // Remove parameter from KeyValueMap
     qParams.erase(iter);
     
-    //Remove parameter from the query string
+    // Remove parameter from the query string
     startPos=query.find(key);
     if (startPos != std::string::npos) {
         endPos=query.find("&");
@@ -556,6 +561,26 @@ void URL::checkQueryFormat() {
     if ((!query.empty()) && (query[0] != '?')) {
         query.insert(0,"?");
     }
+}
+
+bool URL::findQueryParameter(const std::string &key) {
+    bool retValue = false;
+    size_t pos;
+    std::string tmpStr;
+
+    tmpStr= "?";
+    tmpStr.append(key).append("=");
+    pos = query.find(tmpStr);
+    if (pos == 0) {
+        retValue= true;
+    } else {
+        tmpStr.replace(0,1,"&");
+        pos = query.find(tmpStr);
+        if (pos != std::string::npos) {
+            retValue= true;
+        }
+    }
+    return retValue;
 }
 
 const char * URL::getProtocolString() const {

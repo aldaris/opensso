@@ -290,8 +290,11 @@ encode_base64(const char *p, size_t in_size, char *c) {
 unsigned char
 getindex(char x) {
     unsigned char i = 0xff;
-    while(vec[++i] != x);
-    return i;
+    while(vec[++i] != '\0') {
+        if (vec[i] == x)
+            return i;
+    }
+    return -1;
 }
 
 extern int 
@@ -300,6 +303,7 @@ decode_base64(const char *c, char *p) {
     int i =0;
     int px =0;
     int loop = 0;
+    int cmpr = 0;
     unsigned char in_arr[4] = {0, 0, 0, 0};
     unsigned short numeq = 0;
 
@@ -312,7 +316,12 @@ decode_base64(const char *c, char *p) {
     if(numeq != 0) loop = len - 4;
     
     for(i = 0; i < loop; ++i) {
-	in_arr[i%4] = getindex(c[i]);
+	cmpr = getindex(c[i]);
+        if (cmpr == -1) {
+            p[++px] = '\0';
+	    return px;
+        }
+	in_arr[i%4] = (unsigned char)cmpr;
         if(i % 4 == 3) {
             p[++px] = ((in_arr[0] & 0x3f) << 2) | ((in_arr[1] & 0x30) >> 4);
             p[++px] = ((in_arr[1]  & 0xf) << 4) | ((in_arr[2] & 0x3c) >> 2);
@@ -321,15 +330,31 @@ decode_base64(const char *c, char *p) {
     }
 
     if(loop != len) {
-        in_arr[0] = getindex(c[i]);
-        in_arr[1] = getindex(c[++i]);
+        cmpr = getindex(c[i]);
+        if (cmpr == -1) {
+            p[0] = '\0';
+	    return 0;
+        }
+        in_arr[0] = (unsigned char)cmpr;
+
+        cmpr = getindex(c[++i]);
+        if (cmpr == -1) {
+            p[0] = '\0';
+	    return 0;
+        }
+        in_arr[1] = (unsigned char)cmpr;
         
         if(numeq == 2) {
             p[++px] = ((in_arr[0] & 0x3f) << 2) | ((in_arr[1] & 0x30) >> 4);
         }
         
         if(numeq == 1) {
-	    in_arr[2] = getindex(c[++i]);
+	    cmpr = getindex(c[++i]);
+            if (cmpr == -1) {
+                p[0] = '\0';
+	        return 0;
+            }
+	    in_arr[2] = (unsigned char)cmpr;
             p[++px] = ((in_arr[0] & 0x3f) << 2) | ((in_arr[1] & 0x30) >> 4);
             p[++px] = ((in_arr[1]  & 0xf) << 4) | ((in_arr[2] & 0x3c) >> 2);
         }

@@ -222,6 +222,11 @@ AM_BEGIN_EXTERN_C
  */
 #define	AM_WEB_AUTH_TYPE_VALUE		"DSAME"
 
+/*
+ * Liberty like Authn Response parameter
+ */
+#define	LARES_PARAM		"LARES"
+
 
 /*
  * For logging access to remote IS
@@ -494,13 +499,21 @@ typedef struct {
 AM_WEB_EXPORT void* am_web_get_agent_configuration();
 
 /**
- * Agent plugin init function calls to load bootstrap properties fiile.
+ * Method to delete ref counted object associated with
+ * the latest instance of agent configuration. 
+ */
+AM_WEB_EXPORT void am_web_delete_agent_configuration(void *);
+
+/**
+ * Agent plugin init function calls to load bootstrap properties file.
  */
 AM_WEB_EXPORT am_status_t am_web_init(const char *agent_bootstrap_file, 
                                           const char *agent_config_file);
 
 /**
- * Initializes agent during first request. 
+ * Initializes agent during first request. Creates the agent profile object 
+ * and performs agent authentication to receive the initial agent configuration
+ * data either from the FAM server or from the local configuration file
  */
 AM_WEB_EXPORT am_status_t am_agent_init(boolean_t *pAgentAuthenticated);
 

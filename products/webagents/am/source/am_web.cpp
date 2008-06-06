@@ -842,9 +842,11 @@ am_bool_t in_not_enforced_list(URL &urlObj,
     
     /* First check is the access denied URL */
     if ((*agentConfigPtr)->access_denied_url != NULL) {
-        /*we append the sunwerrorcode as a querystring to the access denied url
-        if the policy denies access to the resouce. This query parameter
-        needs to be removed from the url if present before comparison */
+        /* We append the sunwerrorcode as a querystring to the 
+	 * access denied url if the policy denies access to the resource. 
+	 * This query parameter needs to be removed from the url if 
+	 * present before comparison.
+	 */
         std::string urlStr;
         const char* accessUrl = url;
         std::string accessDeniedUrlStr;
@@ -854,10 +856,10 @@ am_bool_t in_not_enforced_list(URL &urlObj,
         accessDeniedUrlObj.getURLString(accessDeniedUrlStr);
         access_denied_url = accessDeniedUrlStr.c_str();
 
-        if (url_str.find(sunwErrCode) != std::string::npos) {
+        if (urlObj.findQueryParameter(sunwErrCode)) {
             urlObj.removeQueryParameter(sunwErrCode);
             urlObj.getURLString(url_str);
-            if (url_str.find(URL_REDIRECT_PARAM) != std::string::npos) {
+            if (urlObj.findQueryParameter(URL_REDIRECT_PARAM)) {
              urlObj.removeQueryParameter(URL_REDIRECT_PARAM);
             }
             urlObj.getURLString(urlStr);
@@ -905,18 +907,21 @@ am_bool_t in_not_enforced_list(URL &urlObj,
         found = AM_TRUE;
     } else {
         for (i = 0;
-	    (i < (*agentConfigPtr)->not_enforced_list.size) && (AM_FALSE == found);
+	    (i < (*agentConfigPtr)->not_enforced_list.size) 
+	     && (AM_FALSE == found);
 	     i++) {
 	    am_resource_match_t match_status;
 
-	    if ((*agentConfigPtr)->not_enforced_list.list[i].has_patterns==AM_TRUE) {
+	    if ((*agentConfigPtr)->not_enforced_list.list[i].has_patterns
+		 == AM_TRUE) {
 	        match_status = am_policy_compare_urls(
-	            &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
+                    &rsrcTraits, 
+                    (*agentConfigPtr)->not_enforced_list.list[i].url,
 	            baseURL, B_TRUE);
 	    } else {
 	        match_status = am_policy_compare_urls(
-	            &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
-	            url, B_FALSE);
+                &rsrcTraits, (*agentConfigPtr)->not_enforced_list.list[i].url,
+                url, B_FALSE);
 	    }
 
 	    if (AM_EXACT_MATCH == match_status ||
@@ -924,12 +929,12 @@ am_bool_t in_not_enforced_list(URL &urlObj,
 	        Log::log(boot_info.log_module, Log::LOG_DEBUG, "%s(%s): "
 			 "matched '%s' entry in not-enforced list", thisfunc,
 			 url, (*agentConfigPtr)->not_enforced_list.list[i].url);
-
 	        found = AM_TRUE;
 	    }
         }
 
-        if ((*agentConfigPtr)->reverse_the_meaning_of_not_enforced_list == AM_TRUE) {
+        if ((*agentConfigPtr)->reverse_the_meaning_of_not_enforced_list 
+	     == AM_TRUE) {
             Log::log(boot_info.log_module, Log::LOG_DEBUG,
 		     "%s: not enforced list is reversed, "
 		     "only matches will be enforced.", thisfunc);
@@ -948,7 +953,6 @@ am_bool_t in_not_enforced_list(URL &urlObj,
 		     "%s: enforcing access control for %s ", thisfunc, url);
         }
     }
-
     return found;
 }
 
@@ -1067,10 +1071,16 @@ am_web_get_token_from_assertion(char * enc_assertion,
 
     dec_assertion = am_web_http_decode(enc_assertion, strlen(enc_assertion));
     tmp1 = strchr(dec_assertion, '=');
-    if(tmp1 != NULL) {
+    if ((tmp1 != NULL)  &&
+      !(strncmp(dec_assertion, LARES_PARAM, strlen(LARES_PARAM)))) {
         tmp2 = tmp1 + 1;
         decode_base64(tmp2, tmp1);
 	am_web_log_debug("Received Authn Response = %s", tmp1);
+	if (*tmp1 == NULL) {
+	    am_web_log_error("Improper LARES param received");
+	    status = AM_FAILURE;
+	    return status;
+	}
         str = tmp1;
 
         try {
