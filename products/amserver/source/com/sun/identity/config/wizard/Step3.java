@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.19 2008-06-09 16:12:32 veiming Exp $
+ * $Id: Step3.java,v 1.20 2008-06-09 22:07:16 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -227,8 +227,13 @@ public class Step3 extends LDAPStoreWizardPage {
                     String embedded = 
                         (String)data.get(BootstrapData.DS_ISEMBEDDED);
                     addObject(sb, "embedded", embedded);           
-                     
+                    String host = (String)data.get(BootstrapData.DS_HOST);
+                    
                     if (embedded.equals("true")) {
+                        getContext().setSessionAttribute(
+                            "configStoreHost", getHostName());
+                        addObject(sb, "configStoreHost", "localhost");
+
                         // set the multi embedded flag 
                         getContext().setSessionAttribute(
                             SetupConstants.CONFIG_VAR_DATA_STORE, 
@@ -253,6 +258,9 @@ public class Step3 extends LDAPStoreWizardPage {
                     } else {
                         getContext().setSessionAttribute("configStorePort", 
                             (String) data.get(BootstrapData.DS_PORT));
+                        getContext().setSessionAttribute(
+                            "configStoreHost", host);   
+                        addObject(sb, "configStoreHost", host);
                     }
 
                     // set the replication ports pulled from the remote
@@ -267,14 +275,8 @@ public class Step3 extends LDAPStoreWizardPage {
                     getContext().setSessionAttribute(
                         "existingStorePort", existing);   
                     addObject(sb, "existingStorePort", existing);
-
-                    String host = (String)data.get(BootstrapData.DS_HOST);
+                    
                     getContext().setSessionAttribute("existingHost",host);
-
-                    // set the configuration store host
-                    getContext().setSessionAttribute(
-                        "configStoreHost", host);   
-                    addObject(sb, "configStoreHost", host);
 
                     // set the configuration store host
                     getContext().setSessionAttribute(
