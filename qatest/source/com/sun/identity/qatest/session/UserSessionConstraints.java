@@ -17,9 +17,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSessionConstraints.java,v 1.5 2008-05-30 23:03:58 srivenigan Exp $
+ * $Id: UserSessionConstraints.java,v 1.6 2008-06-09 23:24:54 srivenigan Exp $
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.session;
@@ -51,20 +51,12 @@ public class UserSessionConstraints extends TestCommon {
 
     private SSOToken admintoken;
     private IDMCommon idmc;
-    private Iterator itr;
     private SMSCommon smsc;
     private DelegationCommon delc;
-    private Map map;
-    private Map quotamap;
-    private Set set;
     private String testUserWithSrvc = "sessConsTestWithSrvc";
     private String testUserWithoutSrvc = "sessConsTestWithoutSrvc";
-    private String quotaConst;
     private String resultBehavior;
-    private String sessionsrvc = SessionConstants.SESSION_SRVC;
-    private String dynSrvcType = SessionConstants.DYNAMIC_SRVC_TYPE;
-    private String globalSrvcType = SessionConstants.GLOBAL_SRVC_TYPE;
-    private String quotaAttr = SessionConstants.SESSION_QUOTA_ATTR;
+    private boolean consTurnedOn = false;
     private boolean dynSrvcRealmAssigned = false;
     private boolean cleanedUp = false;
     
@@ -80,7 +72,6 @@ public class UserSessionConstraints extends TestCommon {
         idmc = new IDMCommon();  
         delc = new DelegationCommon("UserSessionConstraints");
         smsc = new SMSCommon(admintoken);
-        quotamap = new HashMap();
     }
 
     /**
@@ -98,26 +89,27 @@ public class UserSessionConstraints extends TestCommon {
     throws Exception {
         entering("setup", null);
         try {
-            set = smsc.getAttributeValueFromSchema(sessionsrvc,
-                    SessionConstants.ENABLE_SESSION_CONST, globalSrvcType);
-            itr = set.iterator();
-            quotaConst = (String) itr.next();            
-            set = smsc.getAttributeValueFromSchema(sessionsrvc,
+            Set set = smsc.getAttributeValueFromSchema(
+                    SessionConstants.SESSION_SRVC,
+                    SessionConstants.ENABLE_SESSION_CONST, 
+                    SessionConstants.GLOBAL_SRVC_TYPE);
+            Iterator itr = set.iterator();
+            String quotaConst = (String) itr.next();            
+            set = smsc.getAttributeValueFromSchema(SessionConstants.SESSION_SRVC,
                     SessionConstants.RESULTING_BEHAVIOR, 
-                    globalSrvcType);
+                    SessionConstants.GLOBAL_SRVC_TYPE);
             itr = set.iterator();
             resultBehavior = (String) itr.next();     
             log(Level.FINE, "setup", "Resulting behavior if session quota " +
                     "exhausted is set to: " + resultBehavior);  
             if (quotaConst.equals("OFF")) {
-                log(Level.CONFIG, "setup", "CONFIG FAILURE: Session constraints " +
-                        "testcases must be run with enable session quota " +
-                        "constraints attribute set to 'ON' " );
-                Reporter.log("CONFIG FAILURE: Session constraints " +
-                        "testcases must be run with enable session quota " +
-                        "constraints attribute set to 'ON' ");
-                destroyToken(admintoken);
-                assert false;
+                Map attrMap = new HashMap();
+                set.clear();
+                set.add("ON");
+                attrMap.put(SessionConstants.ENABLE_SESSION_CONST, set);
+                smsc.updateSvcSchemaAttribute(SessionConstants.SESSION_SRVC,
+                        attrMap, SessionConstants.GLOBAL_SRVC_TYPE);                 
+                consTurnedOn = true;
             }
             idmc.createDummyUser(admintoken, realm, "", testUserWithSrvc);
             log(Level.FINE,"setup", "Created user " + 
@@ -126,16 +118,15 @@ public class UserSessionConstraints extends TestCommon {
             idmc.createDummyUser(admintoken, realm, "", testUserWithoutSrvc);
             log(Level.FINE,"setup", "Created user " + 
                     testUserWithoutSrvc + " identity");
-            quotamap.clear();
+            Map quotamap = new HashMap();
             set = new HashSet();
             set.add("1");
-            quotamap.put(quotaAttr, set);
+            quotamap.put(SessionConstants.SESSION_QUOTA_ATTR, set);
             delc.assignServiceToUser(admintoken, testUserWithSrvc, 
-                        sessionsrvc, quotamap, realm);
+                        SessionConstants.SESSION_SRVC, quotamap, realm);
             log(Level.FINEST, "setup", "Session Service Successfully " +
             		"assigned to user " + testUserWithSrvc);
         } catch(Exception e) {
-            log(Level.SEVERE, "setup", e.getMessage());
             cleanup();
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -172,23 +163,28 @@ public class UserSessionConstraints extends TestCommon {
                 "for one user with session service at user level and for other " +
                 "user at global level when resulting behavior set to DENY_ACCESS");
         try {
-            if (smsc.isServiceAssigned(sessionsrvc, realm)) {
-                smsc.unassignDynamicServiceRealm(sessionsrvc, realm);
+            if (smsc.isServiceAssigned(SessionConstants.SESSION_SRVC, realm)) {
+                smsc.unassignDynamicServiceRealm(SessionConstants.SESSION_SRVC,
+                        realm);
             }
-            set = smsc.getAttributeValueFromSchema(sessionsrvc,
-            		quotaAttr, dynSrvcType);
+            Set set = smsc.getAttributeValueFromSchema(
+                    SessionConstants.SESSION_SRVC,
+                    SessionConstants.SESSION_QUOTA_ATTR,
+                    SessionConstants.DYNAMIC_SRVC_TYPE);
             Iterator itr = set.iterator();
             String globalActiveSessions = (String)itr.next();
             if (globalActiveSessions.equals("1")) {
-                quotamap.clear();
                 set = new HashSet();
                 set.add("5");
-                quotamap.put(quotaAttr, set);
-                smsc.updateGlobalServiceDynamicAttributes(sessionsrvc,
-                            quotamap);
+                Map quotamap = new HashMap();
+                quotamap.put(SessionConstants.SESSION_QUOTA_ATTR, set);
+                smsc.updateGlobalServiceDynamicAttributes(
+                        SessionConstants.SESSION_SRVC, quotamap);
                 
-                set = smsc.getAttributeValueFromSchema(sessionsrvc,
-                		quotaAttr, dynSrvcType);
+                set = smsc.getAttributeValueFromSchema(
+                        SessionConstants.SESSION_SRVC, 
+                        SessionConstants.SESSION_QUOTA_ATTR, 
+                        SessionConstants.DYNAMIC_SRVC_TYPE);
                 itr = set.iterator();
                 globalActiveSessions = (String)itr.next();
             }
@@ -339,18 +335,21 @@ public class UserSessionConstraints extends TestCommon {
                 "for one user with session service at user level and for other " +
                 "user at realm level when resulting behavior set to DENY_ACCESS");        
         try {
-            if (smsc.isServiceAssigned(sessionsrvc, realm)) {
-                smsc.unassignDynamicServiceRealm(sessionsrvc, realm);
+            if (smsc.isServiceAssigned(SessionConstants.SESSION_SRVC, realm)) {
+                smsc.unassignDynamicServiceRealm(SessionConstants.SESSION_SRVC,
+                        realm);
             }
-            quotamap.clear();
-            set = new HashSet();
+            Map quotamap = new HashMap();
+            Set set = new HashSet();
             set.add("5");
-            quotamap.put(quotaAttr, set);  
-            smsc.assignDynamicServiceRealm(sessionsrvc, realm, quotamap);
+            quotamap.put(SessionConstants.SESSION_QUOTA_ATTR, set);  
+            smsc.assignDynamicServiceRealm(SessionConstants.SESSION_SRVC, 
+                    realm, quotamap);
             dynSrvcRealmAssigned = true;
-            map = new HashMap();
-            map = smsc.getDynamicServiceAttributeRealm(sessionsrvc, realm);
-            set = (Set)map.get(quotaAttr);
+            Map map = new HashMap();
+            map = smsc.getDynamicServiceAttributeRealm(
+                    SessionConstants.SESSION_SRVC, realm);
+            set = (Set)map.get(SessionConstants.SESSION_QUOTA_ATTR);
             Iterator iter = set.iterator();
             String realmActiveSessions = (String)iter.next();
             assert !realmActiveSessions.equals("1");
@@ -484,8 +483,17 @@ public class UserSessionConstraints extends TestCommon {
         entering("cleanup", null);
         try {
             if (dynSrvcRealmAssigned) {
-                smsc.unassignDynamicServiceRealm(sessionsrvc, realm);
+                smsc.unassignDynamicServiceRealm(SessionConstants.SESSION_SRVC, 
+                        realm);
             } 
+            if (consTurnedOn) {
+                Map attrMap = new HashMap();
+                Set set = new HashSet();
+                set.add("OFF");
+                attrMap.put(SessionConstants.ENABLE_SESSION_CONST, set);
+                smsc.updateSvcSchemaAttribute(SessionConstants.SESSION_SRVC,
+                        attrMap, SessionConstants.GLOBAL_SRVC_TYPE);             
+            }            
             log(Level.FINEST, "cleanup", "Cleaning User:" 
                     + testUserWithSrvc);
             idmc.deleteIdentity(admintoken, realm, IdType.USER, testUserWithSrvc);
