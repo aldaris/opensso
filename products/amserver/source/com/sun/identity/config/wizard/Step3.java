@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.18 2008-06-05 04:01:43 veiming Exp $
+ * $Id: Step3.java,v 1.19 2008-06-09 16:12:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,6 +105,17 @@ public class Step3 extends LDAPStoreWizardPage {
 
         val = getAttribute("configStoreLoginId", Wizard.defaultUserName);
         addModel("configStoreLoginId", val);
+
+         val = getAttribute(SetupConstants.DS_EMB_REPL_FLAG, "");
+         if (val.equals(SetupConstants.DS_EMP_REPL_FLAG_VAL)) {
+             addModel("FIRST_INSTANCE", "1");
+             addModel("selectFirstSetup", "");
+             addModel("selectExistingSetup", "checked=\"checked\"");
+         } else {
+             addModel("FIRST_INSTANCE", "0");
+             addModel("selectFirstSetup", "checked=\"checked\"");
+             addModel("selectExistingSetup", "");
+         }
 
         super.onInit();
     }       
@@ -239,7 +250,10 @@ public class Step3 extends LDAPStoreWizardPage {
                         getContext().setSessionAttribute(
                             "existingRepPort", existingRep);
                         addObject(sb, "replicationPort", existingRep);
-                    } 
+                    } else {
+                        getContext().setSessionAttribute("configStorePort", 
+                            (String) data.get(BootstrapData.DS_PORT));
+                    }
 
                     // set the replication ports pulled from the remote
                     // server in the session and pass back to the client

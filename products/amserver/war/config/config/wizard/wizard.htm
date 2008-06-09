@@ -84,11 +84,15 @@
                 $('nextTabButton').disabled = false;
                 if ( !firstFAMInstance && currentTab == 5 ) {
                     nextTab = 7;
+                } else if (!firstFAMInstance && (currentTab == 3)) {
+                    nextTab = 5;
                 } else {
                     nextTab = rangeCheck(currentTab + 1);
                 }
                 if ( !firstFAMInstance && currentTab == 7 ) {
                     previousTab = 5;
+                } else if (!firstFAMInstance && (currentTab == 5)) {
+                    previousTab = 3;
                 } else {
                     previousTab = rangeCheck(currentTab - 1);
                 }

@@ -167,9 +167,12 @@
 
     function enableExisting() {
         multiServer = "true";
+        $('nextTabButton').disabled = true;
         // controls for displaying step6
         firstFAMInstance = false;
+        $('tab4').style.color = "#D3D3D3";
         $('tab6').style.color = "#D3D3D3";
+        nextTab = 5;
         
         document.getElementById("newInstanceOptions").style.display = "none";
         document.getElementById("existingInstanceURL").style.display = "";
@@ -180,10 +183,13 @@
     }
 
     function disableExisting() {
+        enableNextButton();
         multiServer = "false";
         // controls for displaying step6
         firstFAMInstance = true;
         $('tab6').style.color = "";
+        $('tab4').style.color = "";
+        nextTab = 4;
         
         document.getElementById("newInstanceOptions").style.display = "";
         document.getElementById("existingInstanceURL").style.display = "none";
@@ -231,6 +237,10 @@
         } else {
             enableRemote();
         }
+
+        if ("$FIRST_INSTANCE" == "1") {
+            enableExisting();
+        }
     }
 
     function enableNextButton() {
@@ -264,9 +274,9 @@
     <h1>$page.getLocalizedString("step3.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
     <p>$page.getLocalizedString("step3.description")</p> 
     <input type="radio" id="existingNo" name="existingInstance" 
-        value="false" checked="checked" onclick="disableExisting();"/>
+        value="false" $selectFirstSetup onclick="disableExisting();"/>
         $page.getLocalizedString("create.new.instance")
-    <input type="radio" id="existingYes" name="existingInstance" 
+    <input type="radio" $selectExistingSetup id="existingYes" name="existingInstance" 
         value="true" onclick="enableExisting();"/>
         $page.getLocalizedString("add.existing.instance")
        
@@ -482,4 +492,6 @@
         </div>
     </div>
 </div>
+
+
 

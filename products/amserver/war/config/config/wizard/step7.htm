@@ -38,7 +38,8 @@
                     </tr>
                 </table>
                 </div>
-                
+
+                #if ($firstInstance)
                 <b>$page.getLocalizedString("step4.sub.title")</b>
                 <a href="#" onclick="showTab(4); return false;">$page.getLocalizedString("edit.label")</a>
                 <div style="margin-left:10px">
@@ -69,7 +70,8 @@
                         </tr>
                     </table>
                 </div>
-                
+                #end
+
                 <b>$page.getLocalizedString("step5.sub.title")</b>
                 <a href="#" onclick="showTab(5); return false;">$page.getLocalizedString("edit.label")</a>
                 <div style="margin-left:10px">

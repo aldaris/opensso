@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.27 2008-06-04 18:08:00 veiming Exp $
+ * $Id: SetupConstants.java,v 1.28 2008-06-09 16:12:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -429,14 +429,6 @@ public interface SetupConstants {
      * Datastore notification flag.
      */
     String DATASTORE_NOTIFICATION = "DATASTORE_NOTIFICATION";
-
-    /**
-     * Variable to determine amsdk plugin to be loaded/displayed based
-     * on commenting/uncommenting the subschema. 
-     */
-
-    String XML_COMMENT_START = "XML_COMMENT_START";
-    String XML_COMMENT_END = "XML_COMMENT_END";
 
     /**
      * Properties file that contain bootstrap information.

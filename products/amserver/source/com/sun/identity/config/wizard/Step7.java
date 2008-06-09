@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step7.java,v 1.9 2008-05-28 18:10:46 veiming Exp $
+ * $Id: Step7.java,v 1.10 2008-06-09 16:12:32 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,39 +61,44 @@ public class Step7 extends AjaxPage {
         tmp = getAttribute("configStoreLoginId", Wizard.defaultUserName);
         add("configStoreLoginId", tmp);
 
-        // User Config Store Properties
-        tmp = (String)ctx.getSessionAttribute("EXT_DATA_STORE");
-        if (tmp.equals("true")) {
-            tmp = (String)ctx.getSessionAttribute(
-                SetupConstants.USER_STORE_HOST);
-            add("displayUserHostName", tmp);
+        tmp = getAttribute(SetupConstants.DS_EMB_REPL_FLAG, "");
+        if (!tmp.equals(SetupConstants.DS_EMP_REPL_FLAG_VAL)) {
+            // User Config Store Properties
+            tmp = (String) ctx.getSessionAttribute("EXT_DATA_STORE");
+            if (tmp.equals("true")) {
+                tmp = (String) ctx.getSessionAttribute(
+                    SetupConstants.USER_STORE_HOST);
+                add("displayUserHostName", tmp);
 
-            tmp = (String)ctx.getSessionAttribute(
-                SetupConstants.USER_STORE_SSL);
-            add("xuserHostSSL", tmp.equals("SSL") ? 
-                getLocalizedString("yes.label") : 
-                getLocalizedString("no.label"));
-                    
-            tmp = (String)ctx.getSessionAttribute(
-                SetupConstants.USER_STORE_PORT);
-            add("userHostPort", tmp);
+                tmp = (String) ctx.getSessionAttribute(
+                    SetupConstants.USER_STORE_SSL);
+                add("xuserHostSSL", tmp.equals("SSL") ? 
+                    getLocalizedString("yes.label") : 
+                    getLocalizedString("no.label"));
 
-            tmp = (String)ctx.getSessionAttribute(
-                SetupConstants.USER_STORE_ROOT_SUFFIX);        
-            add("userRootSuffix", tmp);
+                tmp = (String) ctx.getSessionAttribute(
+                    SetupConstants.USER_STORE_PORT);
+                add("userHostPort", tmp);
 
-            tmp = (String)ctx.getSessionAttribute(
-                SetupConstants.USER_STORE_LOGIN_ID);
-            add("userLoginID", tmp);
-            
-            tmp = (String)ctx.getSessionAttribute(SetupConstants.USER_STORE_TYPE);
-            if (tmp.equals("LDAPv3ForAMDS")) {
-                add("userStoreType", getLocalizedString("am.ldap.schema"));
-            } else {
-                add("userStoreType", getLocalizedString("generic.ldap.schema"));
+                tmp = (String) ctx.getSessionAttribute(
+                    SetupConstants.USER_STORE_ROOT_SUFFIX);
+                add("userRootSuffix", tmp);
+
+                tmp = (String) ctx.getSessionAttribute(
+                    SetupConstants.USER_STORE_LOGIN_ID);
+                add("userLoginID", tmp);
+
+                tmp = (String) ctx.getSessionAttribute(
+                    SetupConstants.USER_STORE_TYPE);
+                if (tmp.equals("LDAPv3ForAMDS")) {
+                    add("userStoreType", getLocalizedString("am.ldap.schema"));
+                } else {
+                    add("userStoreType", 
+                        getLocalizedString("generic.ldap.schema"));
+                }
             }
+            add("firstInstance", "1");
         }
-        
         
         // Load Balancer Properties
         add("loadBalancerHost", 

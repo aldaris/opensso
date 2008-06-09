@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.64 2008-06-04 18:08:00 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.65 2008-06-09 16:12:32 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -524,7 +524,7 @@ public class AMSetupServlet extends HttpServlet {
             postInitialize(adminSSOToken);
             
             try {
-                if ((userRepo != null) && !userRepo.isEmpty()) {
+                if (!isDITLoaded && (userRepo != null) && !userRepo.isEmpty()) {
                     // Construct the SMSEntry for the node to check to see if 
                     // this is an existing configuration store, or new store
                     ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
@@ -553,13 +553,14 @@ public class AMSetupServlet extends HttpServlet {
              * integration that we had done.
              */
             createPasswordFiles(basedir, deployuri);
-            if ((userRepo == null) || userRepo.isEmpty()) {
-                createDemoUser();
+            if (!isDITLoaded) {
+                if ((userRepo == null) || userRepo.isEmpty()) {
+                    createDemoUser();
+                }
+                if (!existingConfiguration) {
+                    createIdentitiesForWSSecurity(serverURL, deployuri);
+                }
             }
-            if (!existingConfiguration) {
-                 createIdentitiesForWSSecurity(serverURL, deployuri);
-            }
-            //updateSTSwsdl(basedir, deployuri);
 
             String aceDataDir = basedir + "/" + deployuri + "/auth/ace/data";
             copyAuthSecurIDFiles(aceDataDir);
