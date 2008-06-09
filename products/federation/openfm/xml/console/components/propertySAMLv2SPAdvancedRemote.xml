@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAdvancedRemote.xml,v 1.1 2008-04-22 21:59:25 babysunil Exp $
+   $Id: propertySAMLv2SPAdvancedRemote.xml,v 1.2 2008-06-09 18:35:17 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -42,24 +42,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-        </property>           
-        <subsection name="elistSAEAppSecretList" defaultValue="" >
-            <property>
-                <label name="lblSAEAppSecretList" 
-                       defaultValue="samlv2sp.attribute.label.sae.saeAppSecretList" 
-                       labelFor="saeAppSecretList" />
-                <ccgroup>
-                    <property>
-                        <cc name="saeAppSecretList"
-                            tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                            <attribute name="name" value="list" />
-                            <attribute name="listboxLabel" value="label.current.value" />
-                            <attribute name="textboxLabel" value="label.new.value" />
-                        </cc>                      
-                    </property>
-                </ccgroup>                
-            </property>
-        </subsection>                
+        </property>
     </section>
       
      <section name="idpproxy" defaultValue="samlv2sp.provider.section.title.idpproxy" >

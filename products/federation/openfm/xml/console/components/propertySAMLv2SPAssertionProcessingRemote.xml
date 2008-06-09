@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionProcessingRemote.xml,v 1.1 2008-04-22 22:00:46 babysunil Exp $
+   $Id: propertySAMLv2SPAssertionProcessingRemote.xml,v 1.2 2008-06-09 18:36:18 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,10 +26,24 @@
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-    <section name="dummy" defaultValue="">
-        <property >
-            <label name="lblName" defaultValue="Remote entity has no attributes to configure here..." labelFor="tfName" />
-            <cc name="tfName" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
-        </property>
+    <section name="AttributeMapper" defaultValue="samlv2sp.attribute.label.spAttributeMapper" >
+        <property>
+            <label name="lblSPAttributeMap"
+                   defaultValue="samlv2sp.attribute.label.spattributeMap"
+                   labelFor="attributeMap" />
+            <ccgroup>
+                <property>
+                    <cc name="attributeMap" 
+                        tagclass=
+                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" 
+                                   value="label.current.value" />
+                        <attribute name="textboxLabel"
+                                   value="label.new.value" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>            
     </section>
 </propertysheet>
