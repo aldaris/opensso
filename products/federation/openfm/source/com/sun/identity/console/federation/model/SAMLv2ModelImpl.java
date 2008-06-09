@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.21 2008-05-28 18:31:17 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.22 2008-06-09 18:30:53 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -552,6 +552,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 
                 //retrieve key descriptor encryption details if present
+                map.put(TF_KEY_NAME, Collections.EMPTY_SET);
+                map.put(TF_ALGORITHM, Collections.EMPTY_SET);
                 if (idpssoDescriptor.getKeyDescriptor() != null ) {
                     getKeyandAlgorithm(idpssoDescriptor, map);
                 }
@@ -809,6 +811,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 
                 //retrieve key descriptor encryption details if present
+                map.put(TF_KEY_NAME, Collections.EMPTY_SET);
+                map.put(TF_ALGORITHM, Collections.EMPTY_SET);
                 if (spssoDescriptor.getKeyDescriptor() != null ) {
                     getKeyandAlgorithm(spssoDescriptor, map);
                 }
@@ -1099,13 +1103,15 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     String e_certAlias = getResult(idpExtValues, 
                             IDP_ENCRYPT_CERT_ALIAS);
                     String s_certAlias = getResult(idpExtValues,
-                            IDP_SIGN_CERT_ALIAS); 
+                            IDP_SIGN_CERT_ALIAS);
+                    int keysi = (keysize != null && keysize.length() > 0) ? 
+                        Integer.parseInt(keysize) : 128;
+                    String alg = (algorithm == null || algorithm.length() == 0) ?
+                        "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
                     SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, e_certAlias, false, true, algorithm, 
-                            Integer.parseInt(keysize));
+                      entityName, e_certAlias, false, true, alg, keysi);
                     SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, s_certAlias, true, true, algorithm,
-                            Integer.parseInt(keysize)); 
+                      entityName, s_certAlias, true, true, alg, keysi); 
                 }
                 
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
@@ -1524,12 +1530,14 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             SP_ENCRYPT_CERT_ALIAS);
                     String s_certAlias = getResult(spExtValues,
                             SP_SIGN_CERT_ALIAS);
+                    int keysi = (keysize != null && keysize.length() > 0) ? 
+                        Integer.parseInt(keysize) : 128;
+                    String alg = (algorithm == null || algorithm.length() == 0) ?
+                        "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
                     SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, e_certAlias, false, false, algorithm, 
-                            Integer.parseInt(keysize));
+                      entityName, e_certAlias, false, false, alg, keysi);
                     SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, s_certAlias, true, false, algorithm,
-                            Integer.parseInt(keysize));
+                      entityName, s_certAlias, true, false, alg, keysi);
 
                 }
                 
