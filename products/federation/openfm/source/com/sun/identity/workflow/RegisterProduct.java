@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterProduct.java,v 1.1 2008-04-03 03:16:55 bigfatrat Exp $
+ * $Id: RegisterProduct.java,v 1.2 2008-06-09 21:55:55 bigfatrat Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,14 +29,14 @@ import com.sun.scn.client.comm.RegistrationWrapper;
 import com.sun.scn.dao.Domain;
 import com.sun.scn.servicetags.AuthenticationCredential;
 
-import com.sun.enterprise.registration.RegistrationAccount;
-import com.sun.enterprise.registration.RegistrationAccountConfig;
-import com.sun.enterprise.registration.RegistrationAccountFactory;
-import com.sun.enterprise.registration.RegistrationException;
-import com.sun.enterprise.registration.RegistrationService;
-import com.sun.enterprise.registration.RegistrationServiceConfig;
-import com.sun.enterprise.registration.RegistrationServiceFactory;
-import com.sun.enterprise.util.RegistrationUtil;
+import com.sun.identity.servicetag.registration.RegistrationAccount;
+import com.sun.identity.servicetag.registration.RegistrationAccountConfig;
+import com.sun.identity.servicetag.registration.RegistrationAccountFactory;
+import com.sun.identity.servicetag.registration.RegistrationException;
+import com.sun.identity.servicetag.registration.RegistrationService;
+import com.sun.identity.servicetag.registration.RegistrationServiceConfig;
+import com.sun.identity.servicetag.registration.RegistrationServiceFactory;
+import com.sun.identity.servicetag.util.RegistrationUtil;
 
 import com.sun.identity.shared.debug.Debug;
 
@@ -88,7 +88,7 @@ public class RegisterProduct extends Task {
                 }
                 RegistrationAccountConfig accountConfig =
                     new RegistrationAccountConfig(
-                        "com.sun.enterprise.registration.SOAccount",
+                        "com.sun.identity.servicetag.registration.SOAccount",
                         accountParams);
                 RegistrationAccount account =
                     RegistrationAccountFactory.getInstance().
@@ -134,7 +134,7 @@ public class RegisterProduct extends Task {
                     new RegistrationWrapper(REGISTRATOR_ID);
                 RegistrationAccountConfig accountConfig =
                     new RegistrationAccountConfig(
-                        "com.sun.enterprise.registration.SOAccount",
+                        "com.sun.identity.servicetag.registration.SOAccount",
                         accountParams);
                 account =
                     RegistrationAccountFactory.getInstance().
@@ -145,6 +145,7 @@ public class RegisterProduct extends Task {
                 }
                 regWrapper.setInventoryEnvironmentTarget(
                     InventoryEnvironmentTarget.valueOf("DEVALPHA22"));
+		    // change to "BETA" for EA
                 AuthenticationCredential ac =
                     regService.getAuthCredential(account);
                 domains = regWrapper.getDomains(ac);
@@ -289,12 +290,13 @@ public class RegisterProduct extends Task {
                 new Object[] {registryFile, proxyHost, proxyPort};
             /*
              * the first param used to be:
-             * "com.sun.enterprise.registration.SysnetRegistrationService"
+             * "com.sun.identity.servicetag.registration.\
+             * SysnetRegistrationService"
              */
 
             RegistrationServiceConfig config =
                 new RegistrationServiceConfig(
-                    "com.sun.enterprise.registration.SysnetRegistrationService",
+                    "com.sun.identity.servicetag.registration.SysnetRegistrationService",
                     params);
             RegistrationService registrationService =
                 RegistrationServiceFactory.getInstance().
@@ -314,7 +316,7 @@ public class RegisterProduct extends Task {
             Object params[] = new Object[] { registryFile };
             RegistrationServiceConfig config =
                 new RegistrationServiceConfig(
-                   "com.sun.enterprise.registration.SysnetRegistrationService",
+                   "com.sun.identity.servicetag.registration.SysnetRegistrationService",
                     params);
             RegistrationService registrationService =
                 RegistrationServiceFactory.getInstance().

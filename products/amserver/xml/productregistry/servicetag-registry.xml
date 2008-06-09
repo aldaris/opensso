@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <registry>
   <service_tag>
-    <instance_urn>urn:st:3da1f415-f015-4cd8-8c59-f36bd9c725bb</instance_urn>
+    <instance_urn></instance_urn>
     <product_name>Sun Federated Access Manager</product_name>
     <product_version>8.0</product_version>
     <product_urn>urn:uuid:58a2bfb9-03bf-11dc-b7cf-080020a9ed93</product_urn>
     <product_parent_urn/>
     <product_parent/>
-    <product_defined_inst_id>os.name=SunOS;os.version=5.9;java.version=1.5.0_12;java.home=/usr/jdk/instances/jdk1.5.0/jre;</product_defined_inst_id>
+    <product_defined_inst_id></product_defined_inst_id>
     <product_vendor>Sun Microsystems Inc.</product_vendor>
     <platform_arch>sparc</platform_arch>
     <container>global</container>

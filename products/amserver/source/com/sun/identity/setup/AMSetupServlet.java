@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.65 2008-06-09 16:12:32 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.66 2008-06-09 21:55:05 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.LDAPServiceException;
-import com.sun.enterprise.registration.StartRegister;
 import com.sun.identity.authentication.UI.LoginLogoutMapping;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
@@ -49,6 +48,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.servicetag.registration.StartRegister;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
@@ -1076,7 +1076,7 @@ public class AMSetupServlet extends HttpServlet {
              *  if Linux, the default PAM service name is "password",
              *  rather than "other"
              */
-            if (determineOS() == SetupConstants.LINUX) {
+            if (determineOS().equals(SetupConstants.LINUX)) {
                 map.put(SetupConstants.PAM_SERVICE_NAME,
                         SetupConstants.LINUX_PAM_SVC_NAME);
             }

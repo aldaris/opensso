@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyRegisterProduct.xml,v 1.1 2008-04-02 20:07:03 bigfatrat Exp $
+   $Id: propertyRegisterProduct.xml,v 1.2 2008-06-09 21:56:36 bigfatrat Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -125,14 +125,14 @@
             <attribute name="size" value="15" />
         </cc>
     </property>
-    <property>
+    <property required="true">
         <label name="lblFirstName" defaultValue="register.product.label.firstName" labelFor="tfFirstName" />
         <cc name="tfFirstName" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
             <attribute name="localizeDisplayFieldValue" value="false" />
             <attribute name="size" value="75" />
         </cc>
     </property>
-    <property>
+    <property required="true">
         <label name="lblLastName" defaultValue="register.product.label.lastName" labelFor="tfLastName" />
         <cc name="tfLastName" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
             <attribute name="localizeDisplayFieldValue" value="false" />

@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.5 2008-04-02 20:09:07 bigfatrat Exp $
+   $Id: build-jars.xml,v 1.6 2008-06-09 21:53:22 bigfatrat Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -133,7 +133,7 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/enterprise/**" />
+            <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/identity/servicetag/**" />
         </jar>
         <checksum file="${amserver.dist.dir}/opensso-register.jar" 
             algorithm="SHA" fileext=".sha" />
