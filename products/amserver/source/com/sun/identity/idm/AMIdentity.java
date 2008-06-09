@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.25 2007-12-13 18:36:48 goodearth Exp $
+ * $Id: AMIdentity.java,v 1.26 2008-06-09 17:25:45 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1204,17 +1204,18 @@ public final class AMIdentity {
                     isEqual = true;
                 }
             }
+
             if (!isEqual && !type.equals(IdType.REALM) &&
                 type.equals(compareTo.getType())) {
                 // Check fully qualified names
                 Set sfqn = getFullyQualifiedNames();
                 Set cfqn = compareTo.getFullyQualifiedNames();
-
                 if ((sfqn != null) && (cfqn != null) &&
                     !sfqn.isEmpty() && !cfqn.isEmpty()) {
                     for (Iterator items = sfqn.iterator();
                         items.hasNext();) {
-                        if (cfqn.contains(items.next())) {
+                        String next = (String)items.next();
+                        if (next != null && cfqn.contains(next)) {
                             isEqual = true;
                             break;
                         }

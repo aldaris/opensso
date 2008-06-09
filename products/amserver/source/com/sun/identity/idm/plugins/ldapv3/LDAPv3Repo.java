@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.42 2008-05-02 20:59:50 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.43 2008-06-09 17:25:44 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1056,8 +1056,8 @@ public class LDAPv3Repo extends IdRepo {
         if ((attrSet != null) && (attrSet.size() == 1)) {
             // in case of AD, we need to check if ADS_UF_ACCOUNTDISABLE
             // bits is on. 0x00000002 => account is disabled.
-            if ((dsType == LDAPv3Config_LDAPV3AD) &&
-                (type.equals(IdType.USER))) {
+            if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) &&
+                type.equals(IdType.USER)) {
                 int attrValue = Integer.parseInt(
                             (String) attrSet.iterator().next());
                 boolean disable = (attrValue & disableMask) != 0;
@@ -1106,8 +1106,8 @@ public class LDAPv3Repo extends IdRepo {
         Map attrs = new HashMap();
         Set vals = new HashSet();
 
-        if ((dsType == LDAPv3Config_LDAPV3AD) &&
-                (type.equals(IdType.USER))) {
+        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) &&
+                type.equals(IdType.USER)) {
             // AD the active status is the second bit of
             // userAccountControl.
             HashSet attrNameSet = new HashSet();
@@ -1607,7 +1607,7 @@ public class LDAPv3Repo extends IdRepo {
                 + ";  attrValueSet=" + attrValueSet);
         }
         Set newAttrVal = new HashSet();
-        if ((dsType == LDAPv3Config_LDAPV3AD)
+        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
             && attrName.equalsIgnoreCase(isActiveAttrName)
             && attrNames.contains(defaultStatusAttribute) ) {
             int attrValue = Integer.parseInt(
@@ -1637,7 +1637,7 @@ public class LDAPv3Repo extends IdRepo {
                 attrName + "; values=" + values);
         }
         byte[][] newAttrVal = new byte[1][];
-        if ((dsType == LDAPv3Config_LDAPV3AD)
+        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
             && attrName.equalsIgnoreCase(isActiveAttrName)
             && attrNames.contains(defaultStatusAttribute) ) {
             Set attrValueSet = new HashSet();
@@ -1677,7 +1677,7 @@ public class LDAPv3Repo extends IdRepo {
             userAccountControl to the list of attributes.
         */
 
-        if (dsType == LDAPv3Config_LDAPV3AD) {
+        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
             if (attributes.containsKey(defaultStatusAttribute) &&
                 (!attributes.containsKey(isActiveAttrName))) {
                 // read userAccountControl so we can mask the active bit.
@@ -1973,7 +1973,7 @@ public class LDAPv3Repo extends IdRepo {
                 } else {
                     predefinedAttr = userAtttributesAllowed;
                 }
-                if ((dsType == LDAPv3Config_LDAPV3AD)
+                if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
                     && attrNamesCase.contains(defaultStatusAttribute)) {
                     if (!attrNamesCase.contains(isActiveAttrName)) {
                         addActiveAttrName = true;
@@ -2063,7 +2063,7 @@ public class LDAPv3Repo extends IdRepo {
                             String value = (String) enumVals.nextElement();
                             attrValueSet.add(value);
                         }
-                        if ((dsType == LDAPv3Config_LDAPV3AD)
+                        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
                             && attrName.equalsIgnoreCase(isActiveAttrName)
                             && attrNamesCase.contains(defaultStatusAttribute)) {
                             if (!addActiveAttrName) {
@@ -2082,7 +2082,7 @@ public class LDAPv3Repo extends IdRepo {
                     } else {
                         byte[][] values = ldapAttr.getByteValueArray();
 
-                        if ((dsType == LDAPv3Config_LDAPV3AD)
+                        if (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)
                             && attrName.equalsIgnoreCase(isActiveAttrName)
                             && attrNamesCase.contains(defaultStatusAttribute)) {
                             if (!addActiveAttrName) {
@@ -4134,12 +4134,15 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         String userDN = searchForName(type, name);
-        if (firstHostAndPort.length() == 0) {
-            StringTokenizer tk = new StringTokenizer(ldapServerName);
-            firstHostAndPort = tk.nextToken();
+        if (userDN == null || (userDN.length() == 0)) {
+            return null;
+        } else {
+            if (firstHostAndPort.length() == 0) {
+                StringTokenizer tk = new StringTokenizer(ldapServerName);
+                firstHostAndPort = tk.nextToken();
+            }
+            return ("ldap://" +  firstHostAndPort + "/" + userDN);
         }
-
-        return ("ldap://" +  firstHostAndPort + "/" + userDN);
     }
 
 
