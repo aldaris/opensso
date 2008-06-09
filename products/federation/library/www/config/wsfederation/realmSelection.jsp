@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realmSelection.jsp,v 1.3 2007-08-01 21:04:47 superpat7 Exp $
+   $Id: realmSelection.jsp,v 1.4 2008-06-09 23:50:14 superpat7 Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -255,6 +255,10 @@
             debug.message(jspFile + "account realm key: " + issuerName + 
                 " display name: " + displayName);
         }
+        
+        if (displayName == null || displayName.length() == 0){
+            displayName = issuerName;
+        }        
 %>
         <option value="<%=issuerName%>" <%=((accountRealmCookieValue != null) && 
             (accountRealmCookieValue.equals(issuerName))?"selected":"")%>>
