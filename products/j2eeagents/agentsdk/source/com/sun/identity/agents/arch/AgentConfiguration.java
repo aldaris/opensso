@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.25 2008-05-16 20:29:48 sean_brydon Exp $
+ * $Id: AgentConfiguration.java,v 1.26 2008-06-10 17:51:20 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -329,7 +329,7 @@ public class AgentConfiguration implements
     */
     public static void updatePropertiesUponNotification() {       
         if(isAgentConfigurationRemote()) {
-            hotSwapAgentConfiguration();
+            hotSwapAgentConfiguration(true);
             if (isLogMessageEnabled()) {
                 logMessage(
                     "AgentConfiguration.updatePropertiesUponNotification():" +
@@ -1166,12 +1166,12 @@ public class AgentConfiguration implements
                     return; 
                 } 
             }
-            hotSwapAgentConfiguration();
+            hotSwapAgentConfiguration(false);
         }
     }
     
-    private static void hotSwapAgentConfiguration() {
-        if (loadProperties()) {
+    private static void hotSwapAgentConfiguration(boolean fromNotification) {
+        if (loadProperties(fromNotification)) {
             notifyModuleConfigurationListeners();
             // notify possible debug level change
             debugObserver.notifyChanges();
@@ -1200,7 +1200,8 @@ public class AgentConfiguration implements
         }
     }    
 
-    private synchronized static boolean loadProperties() {
+    private synchronized static boolean loadProperties(
+            boolean fromNotification) {
         boolean result = false;
         try {
             Properties properties = new Properties();
@@ -1209,21 +1210,21 @@ public class AgentConfiguration implements
             //agent initial start up
             properties.putAll(getBootstrapProperties());
             
-            if (!isAgentConfigurationRemote()) {                        
-                properties.putAll(getPropertiesFromLocal());
+            Properties tempProperties;
+            if (!isAgentConfigurationRemote()) {          
+                tempProperties = getPropertiesFromLocal();
             } else {
-                properties.putAll(getPropertiesFromRemote(
-                    getAttributeServiceURLs()));
+                tempProperties = getPropertiesFromRemote(
+                        getAttributeServiceURLs());
             }
 
-            String modIntervalString = properties.getProperty(
+            String modIntervalString = tempProperties.getProperty(
                     CONFIG_LOAD_INTERVAL);
             if (isLogMessageEnabled()) {
                 logMessage("AgentConfiguration: interval=" + modIntervalString);
             }
             if (modIntervalString != null && 
-                    modIntervalString.trim().length()>0) 
-            {
+                    modIntervalString.trim().length()>0) {
                 modIntervalString = modIntervalString.trim();
             } else {
                 logWarning("AgentConfiguration: No mod interval setting found");
@@ -1236,6 +1237,14 @@ public class AgentConfiguration implements
                 logWarning("AgentConfiguration: Exception while reading "
                         + "new mod interval: \"" + modIntervalString + "\"");
             }
+            
+            if (!fromNotification && modInterval == 0) {
+                setModInterval(modInterval);
+                return false;
+            }
+            
+            properties.putAll(tempProperties);
+            
             setModInterval(modInterval*1000L);
             getProperties().clear();
             getProperties().putAll(properties);
@@ -1288,21 +1297,20 @@ public class AgentConfiguration implements
                 logMessage("AgentConfiguration: Monitor started");
             }
 
-            while(getModInterval() > 0L) {
+            // Change this thread to be always on.
+            while(true) {
+                long interval = getModInterval();
+                if (interval == 0L) { interval = 3600000L; } // 1 hour.
                 updatePropertiesUponPolling();
-
+                
                 try {
-                    Thread.sleep(getModInterval());
+                    Thread.sleep(interval);
                 } catch(InterruptedException ex) {
                     if(isLogMessageEnabled()) {
                         logMessage("AgentConfiguration: Monitor interrupted",
-                                   ex);
+                                ex);
                     }
                 }
-            }
-
-            if(isLogMessageEnabled()) {
-                logMessage("AgentConfiguration: Monitor is exiting");
             }
         }
     }    

@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.7 2008-05-28 22:14:16 huacui Exp $
+# $Id: FAMAgentConfiguration.template,v 1.8 2008-06-10 17:51:22 leiming Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -227,7 +227,7 @@ com.sun.identity.agents.config.client.hostname.header =
 #   set to 0, the hot-swap mechanism will be disabled.
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.load.interval = 0
+com.sun.identity.agents.config.load.interval = 3600
 
 #
 # LOCALE IDENTIFICATION PROPERTIES
