@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-authentication-testng.xml,v 1.8 2008-06-01 18:54:19 cmwesley Exp $
+ $Id: ds_ds-authentication-testng.xml,v 1.9 2008-06-10 18:14:20 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -386,6 +386,66 @@
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
     </test>
+    <test name="AuthTestUnixUser">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testMode" value="user"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestUnixModule">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testMode" value="module"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestUnixService">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testMode" value="service"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestUnixRole">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestUnixAuthLevel">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testMode" value="authlevel"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>    
     <test name="ChainTestRequired">
         <parameter name="testChainName" value="chain1"/>
         <groups>
