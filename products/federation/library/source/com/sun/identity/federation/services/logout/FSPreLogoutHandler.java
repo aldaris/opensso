@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.7 2007-10-16 21:49:17 exu Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.8 2008-06-10 06:26:57 exu Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -669,7 +669,6 @@ public  class FSPreLogoutHandler {
             responseLogout.setResponseTo(inResponseTo);
             responseLogout.setRelayState(relayState);
             responseLogout.setProviderId(hostedEntityId);
-            responseLogout.setStatus(gLogoutStatus);
             if (gLogoutStatus != null ) {
                 responseLogout.setStatus(logoutStatus);
             }

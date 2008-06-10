@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.9 2007-11-28 18:18:27 exu Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.10 2008-06-10 06:26:58 exu Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -408,13 +408,22 @@ public class FSSingleLogoutHandler {
 
             FSSessionManager sMgr = 
                 FSSessionManager.getInstance(metaAlias);
+            if (ssoToken == null) {
+                try {
+                    //this is HTTP based protocol, get from HTTP servlet request
+                    ssoToken = SessionManager.getProvider().getSession(request);
+                } catch (SessionException ex) {
+                    FSUtils.debug.error(
+                        "FSSLOHandler.doHttpRedirect: null ssoToken:", ex);
+                }
+            }
             FSSession session = sMgr.getSession(ssoToken);
 
             FSAccountFedInfo acctObj = null;
             if (session!=null) {
                 acctObj = session.getAccountFedInfo();
             }
-            if (acctObj == null && !session.getOneTime()) {
+            if (acctObj == null && session != null && !session.getOneTime()) {
                 acctObj = FSLogoutUtil.getCurrentWorkingAccount(
                     userID, entityId, metaAlias);
             }
