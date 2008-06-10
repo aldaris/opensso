@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaImpl.java,v 1.5 2008-03-20 04:48:37 veiming Exp $
+ * $Id: ServiceSchemaImpl.java,v 1.6 2008-06-10 05:54:45 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -526,10 +526,12 @@ class ServiceSchemaImpl {
                 try {
                     serverEndAttrValidation(as, attrName, values, javaClass);
                 } catch (SMSException e) {
-                    if (isServerMode) {
+                    if (!isServerMode) {
                         clientEndAttrValidation(
                             token, as, attrName, values, javaClass);
 
+                    } else {
+                        throw e;
                     }
                 }
             }
