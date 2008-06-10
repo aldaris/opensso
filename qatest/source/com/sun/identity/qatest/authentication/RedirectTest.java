@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.6 2008-06-01 18:52:22 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.7 2008-06-10 15:54:54 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,15 +73,17 @@ public class RedirectTest extends TestCommon {
     private String moduleServiceName;
     private String moduleSubConfig;
     private String moduleSubConfigId;
-    private String testModule;
     private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
+    private boolean isValidTest = true;
+    private AuthTestConfigUtil moduleConfig;
     
     /**
      * Default Constructor
      **/
     public RedirectTest() {
         super("RedirectTest");
+        moduleConfig = new AuthTestConfigUtil(configrbName);        
     }
         
     /**
@@ -98,71 +100,78 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testRealm};
         entering("setup", params);
-        testResources = ResourceBundle.getBundle("RedirectTest");
-        moduleOnSuccess = testResources.getString("am-auth-test-" +
-                testModule + "-goto");
-        moduleOnFail = testResources.getString("am-auth-test-" +
-                testModule + "-gotoOnFail");
-        modulePassMsg = testResources.getString("am-auth-test-" +
-                testModule + "-module-passmsg");
-        moduleFailMsg = testResources.getString("am-auth-test-" +
-                testModule + "-module-failmsg");
-        moduleGotoPassMsg = testResources.getString("am-auth-test-" +
-                testModule + "-goto-passmsg");
-        moduleOnFailPassMsg = testResources.getString("am-auth-test-" +
-                testModule + "-gotoOnFail-passmsg");
-        ResourceBundle configBundle = ResourceBundle.getBundle(configrbName);
-        moduleSubConfig = configBundle.getString(testModule + 
-                ".module-subconfig-name");
-        userName = testResources.getString("am-auth-test-" +
-                testModule + "-user");
-        userName.trim();
-        password = testResources.getString("am-auth-test-" +
-                testModule + "-password");
-        password.trim();
-        cleanupFlag = testResources.getString("am-auth-test-debug");
-        debug = new Boolean(cleanupFlag).booleanValue();
-        log(Level.FINEST, "setup", "ModuleName: " + testModule);
-        log(Level.FINEST, "setup", "RealmName: " + testRealm);
-        log(Level.FINEST, "setup", "Success URL: " + moduleOnSuccess);
-        log(Level.FINEST, "setup", "Failure URL: " + moduleOnFail);
-        log(Level.FINEST, "setup", "modulePassMsg: " + modulePassMsg);
-        log(Level.FINEST, "setup", "moduleFailMsg: " + moduleFailMsg);
-        log(Level.FINEST, "setup", "modulePassMsg: " + moduleGotoPassMsg);
-        log(Level.FINEST, "setup", "modulePassMsg: " + moduleOnFailPassMsg);
-        log(Level.FINEST, "setup", "userName: " + userName);
-        log(Level.FINEST, "setup", "password: " + password);
-        log(Level.FINEST, "setup", "debug: " + debug);
-        Reporter.log("testModuleName: " + testModule);
-        Reporter.log("Realm: " + testRealm);
-        Reporter.log("testModuleName: " + moduleOnSuccess);
-        Reporter.log("moduleOnFail: " + moduleOnFail);
-        Reporter.log("modulePassMsg: " + modulePassMsg);
-        Reporter.log("moduleFailMsg: " + moduleFailMsg);
-        Reporter.log("moduleFailMsg: " + moduleGotoPassMsg);
-        Reporter.log("moduleFailMsg: " + moduleOnFailPassMsg);
-        Reporter.log("moduleuserName: " + userName);
-        Reporter.log("modulepassword: " + password);
-        Reporter.log("cleanupFlag: " + debug);
         try {
-            if (!testRealm.equals("/")) {
-                createTestRealm(testRealm);
-                uniqueIdentifier = testRealm + "_" + testModule;
-                redirectURL = getLoginURL(testRealm) + "&amp;"
-                        + "module=" + moduleSubConfig;
+            isValidTest = moduleConfig.isValidModuleTest(testModule);            
+            if (isValidTest) {
+                testResources = ResourceBundle.getBundle("RedirectTest");
+                moduleOnSuccess = testResources.getString("am-auth-test-" +
+                        testModule + "-goto");
+                moduleOnFail = testResources.getString("am-auth-test-" +
+                        testModule + "-gotoOnFail");
+                modulePassMsg = testResources.getString("am-auth-test-" +
+                        testModule + "-module-passmsg");
+                moduleFailMsg = testResources.getString("am-auth-test-" +
+                        testModule + "-module-failmsg");
+                moduleGotoPassMsg = testResources.getString("am-auth-test-" +
+                        testModule + "-goto-passmsg");
+                moduleOnFailPassMsg = testResources.getString("am-auth-test-" +
+                        testModule + "-gotoOnFail-passmsg");
+                ResourceBundle configBundle = ResourceBundle.getBundle(configrbName);
+                moduleSubConfig = configBundle.getString(testModule + 
+                        ".module-subconfig-name");
+                userName = testResources.getString("am-auth-test-" +
+                        testModule + "-user");
+                userName.trim();
+                password = testResources.getString("am-auth-test-" +
+                        testModule + "-password");
+                password.trim();
+                cleanupFlag = testResources.getString("am-auth-test-debug");
+                debug = new Boolean(cleanupFlag).booleanValue();
+                log(Level.FINEST, "setup", "ModuleName: " + testModule);
+                log(Level.FINEST, "setup", "RealmName: " + testRealm);
+                log(Level.FINEST, "setup", "Success URL: " + moduleOnSuccess);
+                log(Level.FINEST, "setup", "Failure URL: " + moduleOnFail);
+                log(Level.FINEST, "setup", "modulePassMsg: " + modulePassMsg);
+                log(Level.FINEST, "setup", "moduleFailMsg: " + moduleFailMsg);
+                log(Level.FINEST, "setup", "modulePassMsg: " + moduleGotoPassMsg);
+                log(Level.FINEST, "setup", "modulePassMsg: " + moduleOnFailPassMsg);
+                log(Level.FINEST, "setup", "userName: " + userName);
+                log(Level.FINEST, "setup", "password: " + password);
+                log(Level.FINEST, "setup", "debug: " + debug);
+                Reporter.log("testModuleName: " + testModule);
+                Reporter.log("Realm: " + testRealm);
+                Reporter.log("testModuleName: " + moduleOnSuccess);
+                Reporter.log("moduleOnFail: " + moduleOnFail);
+                Reporter.log("modulePassMsg: " + modulePassMsg);
+                Reporter.log("moduleFailMsg: " + moduleFailMsg);
+                Reporter.log("moduleFailMsg: " + moduleGotoPassMsg);
+                Reporter.log("moduleFailMsg: " + moduleOnFailPassMsg);
+                Reporter.log("moduleuserName: " + userName);
+                Reporter.log("modulepassword: " + password);
+                Reporter.log("cleanupFlag: " + debug);
+
+                if (!testRealm.equals("/")) {
+                    createTestRealm(testRealm);
+                    uniqueIdentifier = testRealm + "_" + testModule;
+                    redirectURL = getLoginURL(testRealm) + "&amp;"
+                            + "module=" + moduleSubConfig;
+                } else {
+                    redirectURL = getLoginURL(testRealm) + "?" + "module="
+                            + moduleSubConfig;
+                    uniqueIdentifier = "rootrealm" + "_" + testModule;
+                }
+
+                createModule(testRealm, testModule);
+                createUserProp = testResources.getString("am-auth-test-" +
+                        testModule + "-createTestUser");
+                userExists = new Boolean(createUserProp).booleanValue();
+                testUserList.add(userName);
+                if (!userExists) {
+                    createUser(testRealm, userName, password);
+                }
             } else {
-                redirectURL = getLoginURL(testRealm) + "?" + "module="
-                        + moduleSubConfig;
-                uniqueIdentifier = "rootrealm" + "_" + testModule;
-            }
-            
-            createModule(testRealm, testModule);
-            createUserProp = testResources.getString("am-auth-test-" +
-                    testModule + "-createTestUser");
-            userExists = new Boolean(createUserProp).booleanValue();
-            testUserList.add(userName);
-            if (!userExists) {
-                createUser(testRealm, userName, password);
+                log(Level.FINEST, "setup", "Skipping setup of " + testModule + 
+                     " auth module test on a Windows based server");                
             }
         } catch (AssertionError ae) {
             log(Level.SEVERE, "setup", 
@@ -183,16 +192,21 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testRealm};        
         entering("validateModuleTestsPositive", params);
-        Map executeMap = new HashMap();
-        executeMap.put("redirectURL", redirectURL);
-        executeMap.put("userName", userName);
-        executeMap.put("password", password);
-        executeMap.put("modulePassMsg", modulePassMsg);
-        executeMap.put("moduleFailMsg", moduleFailMsg);
-        executeMap.put("uniqueIdentifier", uniqueIdentifier);
-        AuthTestsValidator authTestValidator =
-                new AuthTestsValidator(executeMap);
-        authTestValidator.testModulebasedPostive();
+        if (isValidTest) {
+            Map executeMap = new HashMap();
+            executeMap.put("redirectURL", redirectURL);
+            executeMap.put("userName", userName);
+            executeMap.put("password", password);
+            executeMap.put("modulePassMsg", modulePassMsg);
+            executeMap.put("moduleFailMsg", moduleFailMsg);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier);
+            AuthTestsValidator authTestValidator =
+                    new AuthTestsValidator(executeMap);
+            authTestValidator.testModulebasedPostive();
+        } else {
+            log(Level.FINEST, "validateModuleTestsPositive", "Skipping " + 
+                    testModule + " auth module test on a Windows based server");             
+        }
         exiting("validateModuleTestsPositive");
     }
     
@@ -206,16 +220,21 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testRealm};
         entering("validateModuleTestsNegative", params);
-        Map executeMap = new HashMap();
-        executeMap.put("redirectURL", redirectURL);
-        executeMap.put("userName", userName);
-        executeMap.put("password", password);
-        executeMap.put("modulePassMsg", modulePassMsg);
-        executeMap.put("moduleFailMsg", moduleFailMsg);
-        executeMap.put("uniqueIdentifier", uniqueIdentifier);
-        AuthTestsValidator authTestValidator =
-                new AuthTestsValidator(executeMap);
-        authTestValidator.testModulebasedNegative();
+        if (isValidTest) {        
+            Map executeMap = new HashMap();
+            executeMap.put("redirectURL", redirectURL);
+            executeMap.put("userName", userName);
+            executeMap.put("password", password);
+            executeMap.put("modulePassMsg", modulePassMsg);
+            executeMap.put("moduleFailMsg", moduleFailMsg);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier);
+            AuthTestsValidator authTestValidator =
+                    new AuthTestsValidator(executeMap);
+            authTestValidator.testModulebasedNegative();
+        } else {
+            log(Level.FINEST, "validateModuleTestsNegative", "Skipping " + 
+                    testModule + " auth module test on a Windows based server");             
+        }
         exiting("validateModuleTestsNegative");
     }
     
@@ -229,18 +248,23 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         Object params[] = {testModule, testRealm};
         entering("validateGotoTests", params);
-        Map executeMap = new HashMap();
-        String gotoURL = redirectURL + "&amp;goto=" + moduleOnSuccess;
-        executeMap.put("redirectURL", redirectURL);
-        executeMap.put("userName", userName);
-        executeMap.put("password", password);
-        executeMap.put("modulePassMsg", moduleGotoPassMsg);
-        executeMap.put("moduleFailMsg", moduleOnFailPassMsg);
-        executeMap.put("gotoURL", gotoURL);
-        executeMap.put("uniqueIdentifier", uniqueIdentifier);
-        AuthTestsValidator authTestValidator =
-                new AuthTestsValidator(executeMap);
-        authTestValidator.testModuleGoto();
+        if (isValidTest) {
+            Map executeMap = new HashMap();
+            String gotoURL = redirectURL + "&amp;goto=" + moduleOnSuccess;
+            executeMap.put("redirectURL", redirectURL);
+            executeMap.put("userName", userName);
+            executeMap.put("password", password);
+            executeMap.put("modulePassMsg", moduleGotoPassMsg);
+            executeMap.put("moduleFailMsg", moduleOnFailPassMsg);
+            executeMap.put("gotoURL", gotoURL);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier);
+            AuthTestsValidator authTestValidator =
+                    new AuthTestsValidator(executeMap);
+            authTestValidator.testModuleGoto();
+        } else {
+            log(Level.FINEST, "validateGotoTests", "Skipping " + testModule + 
+                    " auth module test on a Windows based server");             
+        }
         exiting("validateGotoTests");
     }
     
@@ -255,18 +279,23 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testRealm};
         entering("validateGotoOnFailTests", params);
-        Map executeMap = new HashMap();
-        String gotoURL = redirectURL + "&amp;gotoOnFail=" + moduleOnFail;
-        executeMap.put("redirectURL", redirectURL);
-        executeMap.put("userName", userName);
-        executeMap.put("password", password);
-        executeMap.put("modulePassMsg", moduleGotoPassMsg);
-        executeMap.put("moduleFailMsg", moduleOnFailPassMsg);
-        executeMap.put("gotoURL", gotoURL);
-        executeMap.put("uniqueIdentifier", uniqueIdentifier);
-        AuthTestsValidator authTestValidator = 
-                new AuthTestsValidator(executeMap);
-        authTestValidator.testModuleGotoOnFail();
+        if (isValidTest) {        
+            Map executeMap = new HashMap();
+            String gotoURL = redirectURL + "&amp;gotoOnFail=" + moduleOnFail;
+            executeMap.put("redirectURL", redirectURL);
+            executeMap.put("userName", userName);
+            executeMap.put("password", password);
+            executeMap.put("modulePassMsg", moduleGotoPassMsg);
+            executeMap.put("moduleFailMsg", moduleOnFailPassMsg);
+            executeMap.put("gotoURL", gotoURL);
+            executeMap.put("uniqueIdentifier", uniqueIdentifier);
+            AuthTestsValidator authTestValidator = 
+                    new AuthTestsValidator(executeMap);
+            authTestValidator.testModuleGotoOnFail();
+        } else {
+            log(Level.FINEST, "validateGotoOnFailTests", "Skipping " + 
+                    testModule + " auth module test on a Windows based server");               
+        }
         exiting("validateGotoOnFailTests");
     }
     
@@ -286,57 +315,62 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         Object[] params = {testModule, testRealm};
         entering("cleanup", params);
-        if (!debug) {
-            try {
-                log(Level.FINEST, "cleanup", "TestRealm: " + testRealm);
-                log(Level.FINEST, "cleanup", "TestModule: " + testModule);
-                Reporter.log("TestRealm: " + testRealm);
-                Reporter.log("TestModule: " + testModule);                
-                String url = getLoginURL("/"); 
-       		String famadmURL  = protocol + ":" + "//" + host + ":"
-                                + port + uri ;
-                log(Level.FINE, "cleanup", "Login URL: " + url);
-                log(Level.FINE, "cleanup", "famadm.jsp URL" + famadmURL);
-                FederationManager am = new FederationManager(famadmURL);
-                WebClient webClient = new WebClient();
-                deleteModule(testRealm, testModule);                
-                consoleLogin(webClient, url, adminUser, adminPassword);
+        if (isValidTest) {
+            if (!debug) {
+                try {
+                    log(Level.FINEST, "cleanup", "TestRealm: " + testRealm);
+                    log(Level.FINEST, "cleanup", "TestModule: " + testModule);
+                    Reporter.log("TestRealm: " + testRealm);
+                    Reporter.log("TestModule: " + testModule);                
+                    String url = getLoginURL("/"); 
+                    String famadmURL  = protocol + ":" + "//" + host + ":"
+                                    + port + uri ;
+                    log(Level.FINE, "cleanup", "Login URL: " + url);
+                    log(Level.FINE, "cleanup", "famadm.jsp URL" + famadmURL);
+                    FederationManager am = new FederationManager(famadmURL);
+                    WebClient webClient = new WebClient();
+                    deleteModule(testRealm, testModule);                
+                    consoleLogin(webClient, url, adminUser, adminPassword);
 
-                String delRealm = testRealm;
-                if (!testRealm.equals("/")) {
-                    delRealm = "/" + testRealm;
-                }
-                if ((testUserList != null) && !testUserList.isEmpty()) {
-                    log(Level.FINE, "cleanup", "Deleting user " + userName + 
-                            " from realm " + delRealm + " ...");
-                    if (FederationManager.getExitCode(am.deleteIdentities(
-                            webClient, delRealm, testUserList, "User")) != 0) {
-                        log(Level.SEVERE, "cleanup", 
-                                "deleteIdentities famadm command failed");
+                    String delRealm = testRealm;
+                    if (!testRealm.equals("/")) {
+                        delRealm = "/" + testRealm;
                     }
-                }
-                    
-                if (!testRealm.equals("/")) {
-                    log(Level.FINE, "cleanup", "Deleting realm " + delRealm + 
-                            " ...");                    
-                    if (FederationManager.getExitCode(am.deleteRealm(webClient, 
-                            delRealm, true)) != 0) {
-                        log(Level.SEVERE, "cleanup", 
-                                "deleteRealm famadm command failed");
+                    if ((testUserList != null) && !testUserList.isEmpty()) {
+                        log(Level.FINE, "cleanup", "Deleting user " + userName + 
+                                " from realm " + delRealm + " ...");
+                        if (FederationManager.getExitCode(am.deleteIdentities(
+                                webClient, delRealm, testUserList, "User")) != 0) {
+                            log(Level.SEVERE, "cleanup", 
+                                    "deleteIdentities famadm command failed");
+                        }
                     }
-                }
 
-            String logoutUrl = protocol + ":" + "//" + host + ":" + port + uri +
-                    "/UI/Logout";
-                consoleLogout(webClient, logoutUrl);
-            } catch(Exception e) {
-                log(Level.SEVERE, "cleanup", e.getMessage());
-                e.printStackTrace();
-                throw e;
+                    if (!testRealm.equals("/")) {
+                        log(Level.FINE, "cleanup", "Deleting realm " + 
+                                delRealm + " ...");                    
+                        if (FederationManager.getExitCode(am.deleteRealm(
+                                webClient, delRealm, true)) != 0) {
+                            log(Level.SEVERE, "cleanup", 
+                                    "deleteRealm famadm command failed");
+                        }
+                    }
+
+                    String logoutUrl = protocol + ":" + "//" + host + ":" + 
+                            port + uri + "/UI/Logout";
+                    consoleLogout(webClient, logoutUrl);
+                } catch(Exception e) {
+                    log(Level.SEVERE, "cleanup", e.getMessage());
+                    e.printStackTrace();
+                    throw e;
+                }
+            } else {
+                log(Level.FINEST, "cleanup", 
+                        "Debug flag was set cleanup method was not performed");
             }
         } else {
-            log(Level.FINEST, "cleanup", 
-                    "Debug flag was set cleanup method was not performed ...");
+            log(Level.FINEST, "setup", "Skipping cleanup for " + testModule + 
+                     " auth module test on a Windows based server");                
         }
         exiting("cleanup");
     }
@@ -351,8 +385,6 @@ public class RedirectTest extends TestCommon {
      */
     private void createModule(String mRealm, String mName) {
         try {
-            AuthTestConfigUtil moduleConfig =
-                    new AuthTestConfigUtil(configrbName);
             moduleConfig.setTestConfigRealm(mRealm);
             Map modMap = moduleConfig.getModuleData(mName);
             moduleServiceName = moduleConfig.getModuleServiceName();
@@ -390,8 +422,6 @@ public class RedirectTest extends TestCommon {
     throws Exception {
         WebClient webClient = new WebClient();
         try {
-            AuthTestConfigUtil moduleConfig =
-                    new AuthTestConfigUtil(configrbName);
             moduleConfig.setTestConfigRealm(mRealm);
             Map modMap = moduleConfig.getModuleData(mName);
             moduleServiceName = moduleConfig.getModuleServiceName();

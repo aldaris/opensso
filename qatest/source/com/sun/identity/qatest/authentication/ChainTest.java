@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.6 2008-02-28 04:06:14 inthanga Exp $
+ * $Id: ChainTest.java,v 1.7 2008-06-10 15:54:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,11 +163,11 @@ public class ChainTest extends TestCommon {
             log(Level.FINEST, "setup", "ChainName " + testChainName);
             Map users = createUserMap(chainUserNames);
             createUsers(users, testChainName);
-        } catch (AssertionError ae) {
+        } catch (Exception e) {
             log(Level.SEVERE, "setup", 
                     "Calling cleanup due to failed famadm exit code ...");
             cleanup(testChainName); 
-            throw ae;            
+            throw e;            
         }
         exiting("setup");
     }

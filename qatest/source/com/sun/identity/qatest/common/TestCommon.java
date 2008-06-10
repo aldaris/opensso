@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.47 2008-05-29 00:05:28 arunav Exp $
+ * $Id: TestCommon.java,v 1.48 2008-06-10 15:59:14 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,6 +103,7 @@ public class TestCommon implements TestConstants {
     protected static String newline = System.getProperty("line.separator");
     protected static String fileseparator =
             System.getProperty("file.separator");
+    private static String tableContents;
     
     static {
         try {
@@ -1335,5 +1336,109 @@ public class TestCommon implements TestConstants {
         }
         return objArray;
     }
-    
+
+    /**
+     * Get the property value of a property in showServerConfig.jsp
+     * @webClient - the WebClient object that will used to emulate the client
+     * browser
+     * @propName - the name of the property whose value should be retrieved 
+     * from the contents of showServerConfig.jsp
+     */
+    public String getServerConfigValue(WebClient webClient, String propName) 
+    throws Exception {
+        String propValue = null;
+        boolean accessConsole = false;
+        try {
+            if (tableContents == null) {
+                accessConsole = true;
+                HtmlPage consolePage = consoleLogin(webClient, getLoginURL(realm), 
+                        adminUser, adminPassword);
+                if (consolePage != null) {
+                    String configJSPUrl = protocol + ":" + "//" + host + ":" + 
+                            port + uri + "/showServerConfig.jsp";
+                    HtmlPage configJSPPage = 
+                            (HtmlPage) webClient.getPage(configJSPUrl);
+                    if (configJSPPage != null) {
+                        String jspContents = 
+                                configJSPPage.getWebResponse().
+                                getContentAsString();
+                        int tableStartIndex = 
+                                jspContents.indexOf("<table border=\"1\">");
+                        if (tableStartIndex != -1) {
+                            int tableEndIndex = jspContents.indexOf("</table>", 
+                                    tableStartIndex);
+                            if (tableEndIndex != -1) {
+                                tableContents = 
+                                        jspContents.substring(tableStartIndex, 
+                                        tableEndIndex);
+                            } else {
+                                log(Level.SEVERE, "getServerConfigValue", 
+                                        "Did not find the end of the table " + 
+                                        "in " + configJSPPage + ".");
+                            }
+                        } else {
+                            log(Level.SEVERE, "getServerConfigValue", 
+                                    "Did not find the start of the table " + 
+                                    "in " + configJSPPage + ".");
+                        }
+                    } else {
+                        log(Level.SEVERE, "getServerConfigValue", 
+                        "Unable to access " + configJSPPage + ".");
+                    }
+                } else {
+                    log(Level.SEVERE, "getServerConfigValue", 
+                            "Unable to login to the console");
+                }
+            }
+            
+            int propIndex = tableContents.indexOf(propName);
+            if (propIndex != -1) {
+                int valueStartIndex = 
+                        tableContents.indexOf("<td>", propIndex + 
+                        propName.length());
+                if (valueStartIndex != -1) {
+                    int valueEndIndex = 
+                            tableContents.indexOf("</td>",
+                            valueStartIndex);
+                    if (valueEndIndex != -1) {
+                        propValue = 
+                                tableContents.substring(
+                                valueStartIndex + 4, 
+                                valueEndIndex).trim();
+                        propValue = propValue.replace('\n', ' ').
+                                replace("\r", "");
+                       
+                        log(Level.FINEST, 
+                                "getServerConfigValue",
+                                "The value of " + propName + 
+                                " is " + propValue  + ".");
+                    } else {
+                        log(Level.SEVERE, 
+                                "getServerConfigValue",
+                                "Did not find end tag for " +
+                                "property " + propName + ".");
+                    }
+                } else {
+                    log(Level.SEVERE, "getServerConfigValue",
+                            "Did not find start tag for " +
+                            "property " + propName + ".");
+                }
+            } else {
+                log(Level.SEVERE, "getServerConfigValue", 
+                        "Did not find the configuration " +
+                        "property " + propName + ".");
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "setup", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (accessConsole) {
+                String logoutURL = protocol + ":" + "//" + host + ":" + port +
+                            uri + "/UI/Logout";
+                consoleLogout(webClient, logoutURL);
+            }
+            return propValue;
+        }
+    }
 }

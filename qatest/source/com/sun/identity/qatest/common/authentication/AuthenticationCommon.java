@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.6 2008-02-06 18:48:27 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.7 2008-06-10 15:57:00 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -249,4 +249,6 @@ public class AuthenticationCommon extends TestCommon {
      * @return <code>SMSCommon</code>
      */
     public SMSCommon getSMSCommon() { return smsCommon; }
+    
+    
 }

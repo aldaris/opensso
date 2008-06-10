@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.9 2008-04-28 18:22:22 cmwesley Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.10 2008-06-10 15:57:00 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -480,4 +480,24 @@ public class AuthTestConfigUtil extends TestCommon {
            return userToken;
        }
     }
+    
+    /**
+     * Verify if a Unix or NT authentication module will be used on Windows.
+     * moduleType - a String containing the module type 
+     * (e.g. LDAP, AD, NT, etc.) that will be used in the test
+     * @return false if the module type is unix or nt and the operating system
+     * of the FAM deployment is not Windows based or true otherwise.
+     */
+    public boolean isValidModuleTest(String moduleType) 
+    throws Exception {
+        boolean validTest = true;
+        if (moduleType.equalsIgnoreCase("unix") || 
+                moduleType.equalsIgnoreCase("nt")) {
+            webClient = new WebClient();
+            String osType = getServerConfigValue(webClient, "Operating System");
+            validTest = !osType.toLowerCase().contains("windows");
+        }
+        return validTest;
+    }
+    
 }
