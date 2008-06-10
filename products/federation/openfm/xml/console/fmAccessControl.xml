@@ -21,3 +21,4 @@
 <neednodealwith classname="com.sun.identity.console.federation.FileUploaderViewBean" />
 <neednodealwith classname="com.sun.identity.console.federation.CreateSAML2MetaDataViewBean" />
 <neednodealwith classname="com.sun.identity.console.task.CompleteCreateHostedIDPViewBean" />
+<neednodealwith classname="com.sun.identity.console.task.ValidateSAML2SetupViewBean" />
