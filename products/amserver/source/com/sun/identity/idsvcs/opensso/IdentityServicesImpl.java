@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.9 2008-05-01 20:08:44 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.10 2008-06-10 01:52:14 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -601,10 +601,20 @@ public class IdentityServicesImpl
                 objectIdType.equals(IdType.AGENTGROUP)) {
                 // Get agenttype, serverurl & agenturl
                 String agentType = null, serverUrl = null, agentUrl = null;
+                /*
+                 * To be backward compatible, look for 'AgentType' attribute
+                 * in the attribute map which is passed as a parameter and if
+                 * not present/sent, check if the IdType.AGENTONLY or AGENT
+                 * and then assume that it is '2.2_Agent' type to create 
+                 * that agent under the 2.2_Agent node.
+                 */
                 Set set = idAttrs.get("agenttype");
                 if ((set != null) && !set.isEmpty()) {
                     agentType = set.iterator().next().toString();
                     idAttrs.remove("agenttype");
+                } else if (objectIdType.equals(IdType.AGENTONLY) ||
+                    objectIdType.equals(IdType.AGENT)) {
+                    agentType = "2.2_Agent";
                 } else {
                     throw new UnsupportedOperationException("Unsupported: " +
                         "Agent Type required for " + idType);
