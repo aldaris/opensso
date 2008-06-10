@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.31 2008-06-04 06:11:58 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.32 2008-06-10 01:51:30 goodearth Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -224,7 +224,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 // assume that it is '2.2_Agent' type and create that agent 
                 // under the 2.2_Agent node.  
 
-                if (type.equals(IdType.AGENTONLY)) {
+                if (type.equals(IdType.AGENTONLY) || 
+                    type.equals(IdType.AGENT)) {
                     agentType = "2.2_Agent";
                 } else {
                     debug.error("AgentsRepo.create():Unable to create agents."
@@ -986,7 +987,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
         ServiceConfig aCfg = null;
         try {
-            if (type.equals(IdType.AGENTONLY)) {
+            if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 orgConfig = getOrgConfig(token);
                 aCfg = orgConfig.getSubConfig(name);
             } else if (type.equals(IdType.AGENTGROUP)) {
@@ -1136,17 +1137,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         opSet.add(IdOperation.CREATE);
         opSet.add(IdOperation.DELETE);
 
-        Set opSet2 = new HashSet(opSet);
-        opSet2.remove(IdOperation.EDIT);
-        opSet2.remove(IdOperation.CREATE);
-        opSet2.remove(IdOperation.DELETE);
-
         supportedOps.put(IdType.AGENTONLY, Collections.unmodifiableSet(
             opSet));
         supportedOps.put(IdType.AGENTGROUP, Collections.unmodifiableSet(
             opSet));
-            
-        supportedOps.put(IdType.AGENT, Collections.unmodifiableSet(opSet2));
+        supportedOps.put(IdType.AGENT, Collections.unmodifiableSet(opSet));
 
         if (debug.messageEnabled()) {
             debug.message("AgentsRepo.loadSupportedOps() called: "
