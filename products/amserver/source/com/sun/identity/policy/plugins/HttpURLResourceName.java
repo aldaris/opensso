@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpURLResourceName.java,v 1.1 2006-04-26 05:14:47 dillidorai Exp $
+ * $Id: HttpURLResourceName.java,v 1.2 2008-06-10 23:08:09 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,9 @@
 
 package com.sun.identity.policy.plugins;
 
+import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.ResourceMatch;
+import com.sun.identity.shared.debug.Debug;
 
 /** 
   * This implementation of <code>ResourceName</code> extends <code>
@@ -44,6 +46,8 @@ import com.sun.identity.policy.ResourceMatch;
   */
 
 public class HttpURLResourceName extends URLResourceName {
+
+    private Debug debug = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
 
     /**
      * Compares two resources.
@@ -77,6 +81,71 @@ public class HttpURLResourceName extends URLResourceName {
                                  String targetResource, 
                                  boolean wildcardCompare) 
     {
+        if ((requestResource == null) || (targetResource == null)) {
+            return ResourceMatch.NO_MATCH;
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("HttpURLResourceName.compare: "
+                          + "request resource=" + requestResource
+                          + "; policy resource=" + targetResource);
+        }
+
+        // The wildcards should not match the special character '?' if present
+        // in the resources. 
+        int requestIndex = requestResource.indexOf("?");
+        int targetIndex = targetResource.indexOf("?");
+        if ((requestIndex >= 0) || (targetIndex >= 0)) {
+            ResourceMatch result = ResourceMatch.NO_MATCH;
+            // separate the resources at '?' if any.
+            String requestSubstring1 = requestResource;
+            String requestSubstring2 = null;
+            if (requestIndex >= 0) {
+                requestSubstring1 = requestResource.substring(0, requestIndex);
+                if (requestResource.length() > (requestIndex+1)) { 
+                    requestSubstring2 = requestResource.substring(requestIndex+1);
+                }
+            }
+            String targetSubstring1 = targetResource;
+            String targetSubstring2 = null;
+            if (targetIndex >= 0) {
+                targetSubstring1 = targetResource.substring(0, targetIndex);
+                if (targetResource.length() > (targetIndex+1)) {
+                    targetSubstring2 = targetResource.substring(targetIndex+1);
+                }
+            }
+            if (debug.messageEnabled()) {
+                debug.message("HttpURLResourceName.compare: "
+                          + "request resource substring1=" + requestSubstring1
+                          + "; request resource substring2=" + requestSubstring2
+                          + "; policy resource substring1=" + targetSubstring1
+                          + "; policy resource substring2=" + targetSubstring2);
+            }
+
+            ResourceMatch substring1Res =
+                compare(requestSubstring1, targetSubstring1, wildcardCompare);
+            if ((substring1Res == ResourceMatch.EXACT_MATCH)
+                || (substring1Res == ResourceMatch.WILDCARD_MATCH)) {
+                ResourceMatch substring2Res =
+                    compare(requestSubstring2, targetSubstring2, wildcardCompare);
+                if ((substring2Res == ResourceMatch.EXACT_MATCH)
+                    || (substring2Res == ResourceMatch.WILDCARD_MATCH)) {
+                    if (substring1Res == substring2Res) {
+                        result = substring2Res;
+                    } else { 
+                        result = ResourceMatch.WILDCARD_MATCH;
+                    }
+                }
+            } else {
+                result = substring1Res;
+            }
+            if (debug.messageEnabled()) {
+                debug.message("HttpURLResourceName.compare: with query string "
+                              + "; result=" + result);
+            }
+            return result;
+        }
+    
         /* if it is a non-wildcard comparison or the target
            resource doesn't end with delimiter plus wildcard
            then use the result from PrefixResourceName.compare()
@@ -99,6 +168,9 @@ public class HttpURLResourceName extends URLResourceName {
             res = ResourceMatch.SUB_RESOURCE_MATCH;
         } else {
             res = ResourceMatch.NO_MATCH;
+        }
+        if (debug.messageEnabled()) {
+            debug.message("HttpURLResourceName.compare: result=" + res);
         }
         return res;
     }    
