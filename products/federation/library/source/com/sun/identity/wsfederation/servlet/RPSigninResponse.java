@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninResponse.java,v 1.3 2007-10-06 00:57:09 superpat7 Exp $
+ * $Id: RPSigninResponse.java,v 1.4 2008-06-10 22:56:44 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -126,8 +126,9 @@ public class RPSigninResponse extends WSFederationAction {
                     LogUtil.CONFIG_ERROR_GET_ENTITY_CONFIG,
                     data,
                     null);
-            throw new WSFederationException(WSFederationUtils.bundle.
-                getString("invalidMetaAlias"));
+            String[] args = {metaAlias, realm};
+            throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                "invalidMetaAlias", args);
         }
         
         if (realm == null || realm.length() == 0) {

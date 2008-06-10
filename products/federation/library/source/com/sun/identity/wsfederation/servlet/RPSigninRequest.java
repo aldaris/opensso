@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninRequest.java,v 1.4 2008-02-20 00:49:51 superpat7 Exp $
+ * $Id: RPSigninRequest.java,v 1.5 2008-06-10 22:56:44 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,20 +95,28 @@ public class RPSigninRequest extends WSFederationAction {
         String spMetaAlias = WSFederationMetaUtils.getMetaAliasByUri(
                                             request.getRequestURI());
 
-        if ( spMetaAlias==null || spMetaAlias.length()==0) {
+        if ( spMetaAlias==null || spMetaAlias.length()==0 ) {
             throw new WSFederationException(
-                WSFederationUtils.bundle.getString("nullSPEntityID"));
+                WSFederationUtils.bundle.getString("MetaAliasNotFound"));
         }
 
-        String spEntityId = 
-            WSFederationMetaManager.getEntityByMetaAlias(spMetaAlias);
         String spRealm = SAML2MetaUtils.getRealmByMetaAlias(spMetaAlias);
+        
+        String spEntityId = 
+            WSFederationMetaManager.getEntityByMetaAlias(spMetaAlias);        
+        if ( spEntityId==null || spEntityId.length()==0 )
+        {
+            String[] args = {spMetaAlias, spRealm};
+            throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                "invalidMetaAlias", args);
+        }
 
         SPSSOConfigElement spConfig = 
             WSFederationMetaManager.getSPSSOConfig(spRealm,spEntityId);
         if ( spConfig==null ) {
-            throw new WSFederationException(
-                WSFederationUtils.bundle.getString("badSPEntityID"));
+            String[] args = {spEntityId, spRealm};
+            throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                "badSPEntityID",args);
         }
 
         Map<String,List<String>> spConfigAttributes = 
