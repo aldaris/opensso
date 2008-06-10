@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.66 2008-06-09 21:55:05 bigfatrat Exp $
+ * $Id: AMSetupServlet.java,v 1.67 2008-06-10 17:17:23 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,6 +127,18 @@ public class AMSetupServlet extends HttpServlet {
     final static String OPENDS_DIR = "/opends";
 
     private static String errorMessage = null;
+
+    private static Set passwordParams = new HashSet();
+
+    static {
+        passwordParams.add(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+        passwordParams.add(SetupConstants.CONFIG_VAR_ADMIN_PWD);
+        passwordParams.add(SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD);
+        passwordParams.add(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+        passwordParams.add(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
+        passwordParams.add(SetupConstants.USER_STORE_LOGIN_PWD);
+        passwordParams.add(SetupConstants.CONFIG_VAR_ENCRYPTION_KEY);
+    }
 
     /*
      * Initializes the servlet.
@@ -269,7 +281,7 @@ public class AMSetupServlet extends HttpServlet {
         Map userRepo = (Map)map.remove("UserStore");
         
         try {
-            isConfiguredFlag = configure(map, userRepo);
+            isConfiguredFlag = configure(request, map, userRepo);
             if (isConfiguredFlag) {
                 //postInitialize was called at the end of configure????
                 postInitialize(getAdminSSOToken());
@@ -346,8 +358,49 @@ public class AMSetupServlet extends HttpServlet {
         }
         return isConfiguredFlag;
     }
+
+    private static void writeInputToFile(IHttpServletRequest request)
+        throws IOException {
+        StringBuffer buff = new StringBuffer();
+        Map map = request.getParameterMap();
+        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+            String key = (String)i.next();
+            if (!key.equals("actionLink")) {
+                Object val = map.get(key);
+                if (val instanceof String) {
+                    buff.append(key).append("=");
+
+                    if (passwordParams.contains(key)) {
+                        buff.append("********");
+                    } else {
+                        buff.append((String)val);
+                    }
+                    buff.append("\n");
+                } else if (val instanceof Map) {
+                    Map valMap = (Map)val;
+                    for (Iterator j = valMap.keySet().iterator(); j.hasNext();){
+                        String k = (String)j.next();
+                        buff.append(key).append(".").append(k).append("=");
+
+                        if (passwordParams.contains(k)) {
+                            buff.append("********");
+                        } else {
+                            buff.append((String)valMap.get(k));
+                        }
+                        buff.append("\n");
+                    }
+                }
+            }
+        }
+        String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
+        writeToFile(basedir + "/.configParam", buff.toString());
+    }
     
-    private static boolean configure(Map map, Map userRepo) {
+    private static boolean configure(
+        IHttpServletRequest request,
+        Map map,
+        Map userRepo
+    ) {
         boolean configured = false;
         boolean existingConfiguration = false;
         try {
@@ -356,6 +409,7 @@ public class AMSetupServlet extends HttpServlet {
             File baseDirectory = new File(basedir);
             if (!baseDirectory.exists()) {
                 baseDirectory.mkdirs();
+                writeInputToFile(request);
             } else {
                 SetupProgress.reportStart("emb.checkingbasedir",basedir);
                 File bootstrapFile = new File(basedir + "/" + BOOTSTRAP_EXTRA);
