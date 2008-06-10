@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: logout.jsp,v 1.2 2007-08-28 00:37:57 qcheng Exp $
+   $Id: logout.jsp,v 1.3 2008-06-10 22:56:05 superpat7 Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -39,43 +39,95 @@
     Map<String, String> providerList = 
         (Map<String, String>)request.getAttribute(
         WSFederationConstants.LOGOUT_PROVIDER_LIST);
+    String contextPath = request.getContextPath();
 %>
-<html xmlns="https://www.w3.org/1999/xhtml">
-  <head>
-    <title>Signing Out</title>
-  </head>
-  <body>
-    <p>Signed out of <%=displayName%></p>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Signing Out</title>
+        <script language="JavaScript">
   <%
     if ( wreply!=null && wreply.length()>0 )
     {
   %>
-    <p>Click <a href="<%=wreply%>">here to continue</p>
+            function startTimer() {
+                document.getElementById("logoutPrompt").innerHTML = 
+                    'Signed out of <%=displayName%>. <a href="<%=wreply%>">Click here</a> to continue or just wait a few seconds.';
+                setTimeout(redirectToWReply,5000);
+            }
+            function redirectToWReply () {
+                document.location.href="<%=wreply%>";
+            } 
+  <%
+    } else {
+  %>
+            function startTimer() {
+                // do nothing - nowhere to go!
+            }
   <%
     }
   %>
-  <%
-    for ( String url : providerList.keySet() )
-    {
-  %>
-    <p>Signing out from <%=providerList.get(url)%></p>
-    <iframe width="500" src="<%=url%>"></iframe>
-  <%
-    }
+        </script>
+        <link rel="stylesheet" type="text/css" href="<%= contextPath %>/com_sun_web_ui/css/css_ns6up.css">
+        <link rel="shortcut icon" href="<%= contextPath %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
+    </head>
+    <body class="DefBdy" onload="startTimer();">
+        <div class="SkpMedGry1"><a href="#SkipAnchor3860"><img src="<%= contextPath %>/com_sun_web_ui/images/other/dot.gif" alt="Jump to End of Masthead" border="0" height="1" width="1"></a></div><div class="MstDiv">
+            <table class="MstTblBot" title="" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td class="MstTdTtl" width="99%">
+                        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="<%= contextPath %>/console/images/PrimaryProductName.png" alt="Sun Java System Federated Access Manager" border="0"></div>
+                    </td>
+                    <td class="MstTdLogo" width="1%"><img name="AMConfig.configurator.BrandLogo" src="<%= contextPath %>/com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo" border="0" height="55" width="31"></td>
+                </tr>
+            </table>
+            <table class="MstTblEnd" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><img name="RMRealm.mhCommon.EndorserLogo" src="<%= contextPath %>/com_sun_web_ui/images/masthead/masthead-sunname.gif" alt="Sun(TM) Microsystems, Inc." align="right" border="0" height="10" width="108" /></td></tr></table>
+        </div>
+        <table class="SkpMedGry1" border="0" cellpadding="5" cellspacing="0" width="100%"><tr><td><img src="<%= contextPath %>/com_sun_web_ui/images/other/dot.gif" alt="Jump to End of Masthead" border="0" height="1" width="1"></td></tr></table>
+        <table border="0" cellpadding="10" cellspacing="0" width="100%"><tr><td></td></tr></table>
+        <table cellpadding=5>
+            <tr>
+                <td>
+                  <%
+                    if ( wreply!=null && wreply.length()>0 )
+                    {
+                  %>
+                        <script>
+                            document.write("<p id=\"logoutPrompt\">Signing out of <%=displayName%></p>");
+                        </script>
+                        <noscript>
+                            <p><a href="<%=wreply%>">Click here</a> to continue</p>
+                        </noscript>
+                  <%
+                    }
+                  %>
+                  <%
+                    for ( String url : providerList.keySet() )
+                    {
+                  %>
+                        <p>Signing out from <%=providerList.get(url)%></p>
+                        <iframe width="500" src="<%=url%>"></iframe>
+                  <%
+                    }
 
-    // handle multi-federation protocol case
-    Object uSession = null;
-    try {
-        uSession = SessionManager.getProvider().getSession(request);
-    } catch (Exception e) {
-        // ignore
-    }
-    if ((uSession != null) && SessionManager.getProvider().isValid(uSession) &&
-        MultiProtocolUtils.isMultipleProtocolSession(uSession, 
-            SingleLogoutManager.WS_FED)) {
-        WSFederationUtils.processMultiProtocolLogout(request, 
-            response, uSession);
-    }
-  %>
-  </body>
+                    // handle multi-federation protocol case
+                    Object uSession = null;
+                    try {
+                        uSession = 
+                            SessionManager.getProvider().getSession(request);
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    if ((uSession != null) && 
+                        SessionManager.getProvider().isValid(uSession) &&
+                        MultiProtocolUtils.isMultipleProtocolSession(uSession, 
+                            SingleLogoutManager.WS_FED)) {
+                        WSFederationUtils.processMultiProtocolLogout(request, 
+                            response, uSession);
+                    }
+                  %>
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>

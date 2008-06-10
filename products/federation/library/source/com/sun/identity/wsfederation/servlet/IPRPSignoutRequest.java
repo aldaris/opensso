@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPRPSignoutRequest.java,v 1.2 2007-08-28 00:37:59 qcheng Exp $
+ * $Id: IPRPSignoutRequest.java,v 1.3 2008-06-10 22:56:05 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,7 @@ public class IPRPSignoutRequest extends WSFederationAction {
             String displayName = 
                 WSFederationMetaUtils.getAttribute(config,
                 WSFederationConstants.DISPLAY_NAME);
-            if ( displayName == null )
+            if ( displayName == null || displayName.length() == 0 )
             {
                 displayName = entityId;
             }
