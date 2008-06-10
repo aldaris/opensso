@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBCConnectionPool.java,v 1.2 2006-08-25 21:19:39 veiming Exp $
+ * $Id: JDBCConnectionPool.java,v 1.3 2008-06-10 05:27:04 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -622,6 +622,15 @@ public class JDBCConnectionPool implements DataSource, ConnectionEventListener {
      */
     public int getIsolationLevel() {
         return isolationLevel;
+    }
+
+    public boolean isWrapperFor(Class c) {
+        return false;
+    }
+
+    public Object unwrap(Class iface)
+        throws SQLException {
+        throw new SQLException();
     }
 
 }
