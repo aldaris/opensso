@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.3 2008-04-30 23:00:12 qcheng Exp $
+ * $Id: CreateFedlet.java,v 1.4 2008-06-10 05:51:22 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -441,10 +441,11 @@ public class CreateFedlet
             idx = xml.indexOf("hosted=\"", idx);
          
             if (idx != -1) {
+                int idx2 = xml.indexOf("\"", idx+9);
                 if (bHosted) {
-                    xml = xml.substring(0, idx+8) + "1" + xml.substring(idx+9);
+                    xml = xml.substring(0, idx+8) + "1" + xml.substring(idx2);
                 } else {
-                    xml = xml.substring(0, idx+8) + "0" + xml.substring(idx+9);
+                    xml = xml.substring(0, idx+8) + "0" + xml.substring(idx2);
                 }
             }
         }
