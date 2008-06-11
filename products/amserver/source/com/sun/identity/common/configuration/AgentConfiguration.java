@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.29 2008-05-29 23:22:06 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.30 2008-06-11 17:17:25 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -482,6 +482,7 @@ public class AgentConfiguration {
      * @throws SSOException if the Single Sign On token is invalid or has
      *         expired.
      * @throws SMSException if there are errors in service management layers.
+     * @throws ConfigurationException if agent does not exist.
      */
     public static void updateAgent(
         SSOToken ssoToken,
@@ -489,9 +490,14 @@ public class AgentConfiguration {
         String agentName,
         Map attrValues,
         boolean bSet
-    ) throws IdRepoException, SSOException, SMSException {
+    ) throws IdRepoException, SSOException, SMSException,
+        ConfigurationException {
         AMIdentity amid = new AMIdentity(ssoToken, agentName, 
             IdType.AGENTONLY, realm, null); 
+        if (!amid.isExists()) {
+            String[] param = {agentName};
+            throw new ConfigurationException("agent.does.not.exists", param);
+        }
         String agentType = getAgentType(amid);
         Map attributeValues = parseAttributeMap(agentType, attrValues);
 
