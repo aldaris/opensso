@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAuthnContextMapper.java,v 1.6 2008-04-09 06:25:04 hengming Exp $
+ * $Id: DefaultIDPAuthnContextMapper.java,v 1.7 2008-06-11 05:41:08 exu Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,6 +38,7 @@ import com.sun.identity.saml2.profile.IDPCache;
 import com.sun.identity.saml2.profile.IDPSSOUtil;
 import com.sun.identity.saml2.protocol.AuthnRequest;
 import com.sun.identity.saml2.protocol.RequestedAuthnContext;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -112,17 +113,28 @@ public class DefaultIDPAuthnContextMapper
                 requestedAuthnContext.getAuthnContextClassRef();
             String comparison = requestedAuthnContext.getComparison();
 
-            for(Iterator iter = classRefSchemesMap.keySet().iterator();
-                iter.hasNext();){
-                String tmpClassRef = (String)iter.next();
+            for (Iterator iter1 = requestedClassRefs.iterator();
+                 iter1.hasNext();)
+            {
+                List singleClassRef = new ArrayList();
+                singleClassRef.add((String) iter1.next());
 
-                if (isAuthnContextMatching(requestedClassRefs, tmpClassRef,
-                    comparison, realm, idpEntityID)) {
+                for(Iterator iter = classRefSchemesMap.keySet().iterator();
+                    iter.hasNext();)
+                {
+                    String tmpClassRef = (String)iter.next();
 
-                    authTypeAndValues =
-                        (Set)classRefSchemesMap.get(tmpClassRef);
-                    classRef = tmpClassRef;
+                    if (isAuthnContextMatching(singleClassRef, tmpClassRef,
+                       comparison, realm, idpEntityID)) 
+                    {
+                        authTypeAndValues =
+                            (Set)classRefSchemesMap.get(tmpClassRef);
+                        classRef = tmpClassRef;
 
+                        break;
+                    }
+                }
+                if (classRef != null) {
                     break;
                 }
             }
