@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteAwareInteractionConfig.java,v 1.3 2007-10-17 23:00:59 veiming Exp $
+ * $Id: SiteAwareInteractionConfig.java,v 1.4 2008-06-11 17:45:26 qcheng Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,7 +71,7 @@ public class SiteAwareInteractionConfig extends InteractionConfig {
             String serverId = WebtopNaming.getServerID(protocol, host, port,
                 contextPath);
             String server = WebtopNaming.getServerFromID(serverId);
-            wspRedirectHandler = server + "/" + contextPath + "/" 
+            wspRedirectHandler = server + "/"  
                     + WSP_REDIRECT_HANDLER_SERVLET;
 
 
@@ -88,8 +88,7 @@ public class SiteAwareInteractionConfig extends InteractionConfig {
             if (siteEnabled) {
                 String siteId = WebtopNaming.getSiteID(serverId);
                 lbWspRedirectHandler = WebtopNaming.getServerFromID(siteId)
-                        + "/" + contextPath + "/" 
-                        + WSP_REDIRECT_HANDLER_SERVLET;
+                        + "/" + WSP_REDIRECT_HANDLER_SERVLET;
                 Set siteNodes = WebtopNaming.getSiteNodes(siteId); 
                 trustedWspRedirectHandlers.clear(); 
                 if ((siteNodes !=null) && !siteNodes.isEmpty()) {
@@ -98,8 +97,7 @@ public class SiteAwareInteractionConfig extends InteractionConfig {
                         serverId = (String)iter.next();
                         trustedWspRedirectHandlers.put(serverId,
                                 WebtopNaming.getServerFromID(serverId)
-                                + "/" + contextPath + "/"
-                                + WSP_REDIRECT_HANDLER_SERVLET);
+                                + "/" + WSP_REDIRECT_HANDLER_SERVLET);
                     }
                 }
             }
