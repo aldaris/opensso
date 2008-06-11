@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.8 2008-05-29 22:51:03 babysunil Exp $
+ * $Id: AgentsViewBean.java,v 1.9 2008-06-11 04:39:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,7 +141,7 @@ public class AgentsViewBean
     public static String DEVICE_KEY = "sunIdentityServerDeviceKeyValue";
     public static String DESCRIPTION = "description";
     public static final String LOCAL_OR_NOT = "localornot";
-    private final static String ATTR_CONFIG_REPO =
+    final static String ATTR_CONFIG_REPO =
         "com.sun.identity.agents.config.repository.location";
     public static final String PROP_LOCAL="local";
     public static final String PROP_CENTRAL="centralized";

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.8 2008-05-28 18:35:34 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.9 2008-06-11 04:39:46 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -364,6 +364,14 @@ public abstract class AgentProfileViewBean
                     String agentGroup = getDisplayFieldStringValue(
                         CHILD_AGENT_GROUP);
                     bRefresh =model.setGroup(curRealm, universalId, agentGroup);
+                    
+                    String status = getDisplayFieldStringValue(
+                        AgentsViewBean.ATTR_CONFIG_REPO);
+                    if (status.equals("local")) {
+                        setPageSessionAttribute(AgentsViewBean.LOCAL_OR_NOT, 
+                            AgentsViewBean.PROP_LOCAL);
+                        bRefresh = true;
+                    }
                 }
             } else {
                 if (!isGroup && !is2dot2Agent() && isFirstTab()) {
