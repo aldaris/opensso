@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.24 2008-06-02 19:54:45 manish_rustagi Exp $
+ * $Id: Constants.java,v 1.25 2008-06-12 22:33:50 manish_rustagi Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -813,4 +813,10 @@ public interface Constants {
      */
     String SERVERID_LBCOOKIEVALUE_LIST =
         "iplanet-am-platform-lb-cookie-value-list";
+        
+    /**
+     * Configuration Variable for distauth bootstrap file base directory.
+     */
+    String CONFIG_VAR_DISTAUTH_BOOTSTRAP_BASE_DIR = "FAMDistAuth";
+        
 }
