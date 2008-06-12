@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupDistAuthWAR.java,v 1.2 2008-03-21 06:30:49 manish_rustagi Exp $
+ * $Id: SetupDistAuthWAR.java,v 1.3 2008-06-12 22:41:28 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,9 +25,11 @@
 package com.sun.identity.distauth.setup;
 
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.encode.Base64;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -35,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Properties;
@@ -50,15 +53,24 @@ public class SetupDistAuthWAR {
     private static final String TRUST_ALL_CERTS =
         "com.iplanet.am.jssproxy.trustAllServerCerts=true\n";
     private static final String CONFIG_VAR_DEFAULT_SHARED_KEY =
-        "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";        
-
+        "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
+    private static String configFile = null;
+    private static String configFileDir = null; 
     ServletContext servletContext;
 
     /**
      * Constructor
      */
-    public SetupDistAuthWAR(ServletContext context) {
-        servletContext = context; 
+    public SetupDistAuthWAR(ServletContext context)
+        throws ServletException {
+        servletContext = context;
+        configFile = System.getProperty("user.home") + File.separator
+                     + Constants.CONFIG_VAR_DISTAUTH_BOOTSTRAP_BASE_DIR 
+                     + File.separator
+                     + getNormalizedRealPath(servletContext) + 
+                     "AMDistAuthConfig.properties";
+        configFileDir = System.getProperty("user.home") + File.separator
+                     + Constants.CONFIG_VAR_DISTAUTH_BOOTSTRAP_BASE_DIR;         
     }
 
     /**
@@ -67,7 +79,7 @@ public class SetupDistAuthWAR {
      * @param templateFile Template file for AMDistAuthConfig.properties
      * @param properties Properties to be swapped in the template
      */
-    public void createAMDistAuthConfigProperties(String configFile, 
+    public void createAMDistAuthConfigProperties( 
         String templateFile, Properties properties) throws IOException {
         String content = getFileContent(templateFile);
         for (Iterator i = properties.keySet().iterator(); i.hasNext(); ) {
@@ -132,6 +144,10 @@ public class SetupDistAuthWAR {
             content += TRUST_ALL_CERTS;
         }
 
+        File configFileDirectory = new File(configFileDir);
+        if (!configFileDirectory.exists()) {
+            configFileDirectory.mkdirs();
+        }
         BufferedWriter out = new BufferedWriter(new FileWriter(configFile));
         out.write(content);
         out.close();
@@ -161,7 +177,7 @@ public class SetupDistAuthWAR {
      * @param configFile path to the AMDistAuthConfig.properties file
      * @throws ServletException when error occurs
      */
-    public void setAMDistAuthConfigProperties(String configFile) 
+    public void setAMDistAuthConfigProperties() 
         throws ServletException {
         FileInputStream fileStr = null;
         try {
@@ -204,4 +220,47 @@ public class SetupDistAuthWAR {
         }
         return (randomStr != null) ? randomStr : CONFIG_VAR_DEFAULT_SHARED_KEY;
     }
+    
+    public static String getNormalizedRealPath(ServletContext servletCtx)
+        throws ServletException {    
+        String path = null;
+        if (servletCtx != null) {
+            path = getAppResource(servletCtx);
+            
+            if (path != null) {
+                String realPath = servletCtx.getRealPath("/");
+                if ((realPath != null) && (realPath.length() > 0)) {
+                    realPath = realPath.replace('\\', '/');
+                    path = realPath.replaceAll("/", "_");
+                } else {
+                    path = path.replaceAll("/", "_");
+                }
+                int idx = path.indexOf(":");
+                if (idx != -1) {
+                    path = path.substring(idx + 1);
+                }
+            }
+        }
+        return path;
+    }
+
+    /**
+     * Returns URL of the default resource.
+     *
+     * @return URL of the default resource. Returns null if servlet context is
+     *         null.
+     */
+    private static String getAppResource(ServletContext servletCtx)
+        throws ServletException {
+        if (servletCtx != null) {
+            try {
+                java.net.URL turl = servletCtx.getResource("/");
+                return turl.getPath();
+            } catch (MalformedURLException mue) {
+                throw new ServletException(mue.getMessage());
+            }
+        }
+        return null;
+    }
+    
 }

@@ -17,13 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DistAuthConfiguratorFilter.java,v 1.2 2008-03-21 06:30:49 manish_rustagi Exp $
+ * $Id: DistAuthConfiguratorFilter.java,v 1.3 2008-06-12 22:39:06 manish_rustagi Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.distauth.setup;
 
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.Constants;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,9 +52,7 @@ public final class DistAuthConfiguratorFilter implements Filter {
     // see if the configure.jsp page is executed
     public static boolean isConfigured = false;
     private static final String SETUP_URI = "/distAuthConfigurator.jsp";
-    private static final String configFile = 
-        System.getProperty("user.home") + File.separator + 
-        "AMDistAuthConfig.properties"; 
+    private static String configFile = null;
     private boolean passThrough = false;
     private static String[] fList = { 
         ".htm", ".css", ".js", ".jpg", ".gif", ".png" 
@@ -112,6 +111,11 @@ public final class DistAuthConfiguratorFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         setFilterConfig(filterConfig);
         servletCtx = filterConfig.getServletContext();
+        configFile = System.getProperty("user.home") + File.separator
+                     + Constants.CONFIG_VAR_DISTAUTH_BOOTSTRAP_BASE_DIR 
+                     + File.separator
+                     + SetupDistAuthWAR.getNormalizedRealPath(servletCtx) + 
+                     "AMDistAuthConfig.properties";
         File file = new File(configFile);
         if (file.exists()) {
             setAMDistAuthConfigProperties(configFile);

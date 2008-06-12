@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: distAuthConfigurator.jsp,v 1.3 2008-04-24 23:38:36 manish_rustagi Exp $
+   $Id: distAuthConfigurator.jsp,v 1.4 2008-06-12 22:36:14 manish_rustagi Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -33,18 +33,24 @@
 
 <%@ page import="
 com.iplanet.am.util.SystemProperties,
-com.sun.identity.security.EncodeAction,
 com.iplanet.services.util.Crypt,
 com.sun.identity.distauth.setup.SetupDistAuthWAR,
+com.sun.identity.security.EncodeAction,
+com.sun.identity.shared.Constants,
 java.io.*,
 java.security.AccessController,
 java.util.Properties"
 %>
 
 <%
-    String configFile = System.getProperty("user.home") +
-        File.separator + "AMDistAuthConfig.properties";
-    String configTemplate = "/WEB-INF/classes/AMDistAuthConfig.properties.template";
+    String configFile = System.getProperty("user.home") + File.separator
+                     + Constants.CONFIG_VAR_DISTAUTH_BOOTSTRAP_BASE_DIR 
+                     + File.separator    
+                     + SetupDistAuthWAR.getNormalizedRealPath(
+                           getServletConfig().getServletContext()) 
+                     + "AMDistAuthConfig.properties";
+    String configTemplate = 
+        "/WEB-INF/classes/AMDistAuthConfig.properties.template";
     String errorMsg = null;
     boolean configured = false;
     String famProt = null; 
@@ -142,12 +148,13 @@ java.util.Properties"
                     SetupDistAuthWAR configurator = 
                         new SetupDistAuthWAR(
                         getServletConfig().getServletContext());
-                    configurator.createAMDistAuthConfigProperties(configFile, 
+                    configurator.createAMDistAuthConfigProperties(
                         configTemplate, props);
-                    configurator.setAMDistAuthConfigProperties(configFile);
+                    configurator.setAMDistAuthConfigProperties();
                 } catch (IOException ioex) {
                     ioex.printStackTrace();
-                    errorMsg = "Unable to create sample AMDistAuthConfig.properties " +
+                    errorMsg = "Unable to create sample " + 
+                       "AMDistAuthConfig.properties " +
                        "file: " + ioex.getMessage();
                 }
                 configured = true;
