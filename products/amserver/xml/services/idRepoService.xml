@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.23 2008-06-05 05:03:42 arviranga Exp $
+   $Id: idRepoService.xml,v 1.24 2008-06-12 17:18:20 kenwho Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -879,7 +879,7 @@
                     <AttributeSchema name="sun-idrepo-ldapv3-config-psearch-scope"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="">
+                        i18nKey="a20432">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
                             <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
@@ -1553,7 +1553,7 @@
                     <AttributeSchema name="sun-idrepo-ldapv3-config-psearch-scope"
                         type="single_choice"
                         syntax="string"
-                        i18nKey="">
+                        i18nKey="a20432">
                         <ChoiceValues>
                             <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
                             <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
