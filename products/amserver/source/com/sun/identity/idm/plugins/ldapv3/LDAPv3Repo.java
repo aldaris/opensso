@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.43 2008-06-09 17:25:44 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.44 2008-06-12 23:04:40 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -116,6 +116,10 @@ public class LDAPv3Repo extends IdRepo {
     private static SOAPClient mySoapClient = new SOAPClient("dummy");
 
     private String ldapServerName = null;
+
+    private String ldapHost = null;
+
+    private int ldapPort = 389;
 
     private String firstHostAndPort = "";
 
@@ -242,8 +246,6 @@ public class LDAPv3Repo extends IdRepo {
 
     private final int MAX_CONNECTION_POOL_SIZE = 10;
 
-    private final int DEFAULTPORT = 389;
-
     private final int PS_OP = LDAPPersistSearchControl.ADD 
                 | LDAPPersistSearchControl.MODIFY
                 | LDAPPersistSearchControl.DELETE
@@ -280,9 +282,6 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_LDAP_SERVER = 
         "sun-idrepo-ldapv3-config-ldap-server";
-
-    private static final String LDAPv3Config_LDAP_PORT = 
-        "sun-idrepo-ldapv3-config-ldap-port";
 
     private static final String LDAPv3Config_AUTHID =
         "sun-idrepo-ldapv3-config-authid";
@@ -508,7 +507,7 @@ public class LDAPv3Repo extends IdRepo {
         }
     }
 
-    private String getLDAPServerName(Map configParams) {
+    private void getLDAPServerName(Map configParams) {
         String siteID = "";
         String serverID = "";
         try {
@@ -585,7 +584,27 @@ public class LDAPv3Repo extends IdRepo {
                     + "; siteID:" + siteID + "; serverID:" + serverID
                     + "; ldapServerSet:" + ldapServerSet);
         }
-        return ldapServer;
+
+        ldapServerName = ldapServer;
+        ldapHost = ldapServer;
+        int index = ldapServer.indexOf(':');
+        if (index > -1) {
+            ldapHost = ldapServer.substring(0, index);
+            try {
+                String portSub = ldapServer.substring(index+1);
+                int portindex = portSub.indexOf(' ');
+                if (portindex > -1) {
+                    String portStr = portSub.substring(0, portindex); 
+                    ldapPort = Integer.parseInt(portStr);
+                } else {
+                    ldapPort = Integer.parseInt(portSub);
+                }
+            } catch(NumberFormatException e) {
+                if (debug.messageEnabled()) {
+                    debug.message("LDAPv3Repo:authenticate use default 389");
+                }
+            }
+        }
     }
 
     private void initConnectionPool(Map configParams) {
@@ -598,14 +617,13 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         if (ldapServerName == null) {
-            ldapServerName = getLDAPServerName(configParams);
+            getLDAPServerName(configParams);
         }
         // ldapServerName is list of server names seperated by sapce for
         // failover purposes. LDAPConnection will automatcially handle failover.
 
         // port will not be used since ldapserver is in the following format:
         // nameOfLDAPhost:portNumber.
-        int ldapPort = DEFAULTPORT;
         String authid = getPropertyStringValue(configParams,
                 LDAPv3Config_AUTHID);
         String authpw = getPropertyStringValue(configParams,
@@ -1282,7 +1300,7 @@ public class LDAPv3Repo extends IdRepo {
         }
         HashSet tobeRemoveListener = new HashSet();
         if (ldapServerName == null) {
-            ldapServerName = getLDAPServerName(myConfigMap);
+            getLDAPServerName(myConfigMap);
         }
         if (ldapServerName == null) {
             debug.error("LDAPv3Repo: removeListener failed. missing ldap " +
@@ -1375,7 +1393,7 @@ public class LDAPv3Repo extends IdRepo {
 
         // see if we already have an event service for this server.
         if (ldapServerName == null) {
-            ldapServerName = getLDAPServerName(myConfigMap);
+            getLDAPServerName(myConfigMap);
         }
         if (ldapServerName == null) {
             debug.error("LDAPv3Repo: addListener failed. missing ldap server " 
@@ -4296,7 +4314,7 @@ public class LDAPv3Repo extends IdRepo {
                         Locale.getDefaultLocale());
         String sslStr = getPropertyStringValue(myConfigMap,
                 LDAPv3Config_LDAP_SSL_ENABLED);
-        boolean ssl = ((sslStr == null) && sslStr.equalsIgnoreCase("true"));
+        boolean ssl = ((sslStr != null) && sslStr.equalsIgnoreCase("true"));
 
         // ldapServerName is list of server names seperated by sapce for
         // failover purposes. LDAPConnection will automatcially
@@ -4304,9 +4322,8 @@ public class LDAPv3Repo extends IdRepo {
         // port will not be used since ldapserver is in the following format:
         // nameOfLDAPhost:portNumber.
         if (ldapServerName == null) {
-            ldapServerName = getLDAPServerName(myConfigMap);
+            getLDAPServerName(myConfigMap);
         }
-        int ldapPort = DEFAULTPORT;
 
         LDAPAuthUtils ldapAuthUtil = null;
         try {
