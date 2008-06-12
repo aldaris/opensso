@@ -29,9 +29,6 @@
 #include "naming_service.h"
 #include "xml_tree.h"
 
-#if defined(WINNT)
-#define strtok_r(s1, s2, p) strtok(s1, s2);
-#endif
 USING_PRIVATE_NAMESPACE
 
 namespace {
@@ -341,40 +338,56 @@ am_status_t NamingService::getProfile(const ServiceInfo& service,
 void NamingService::addLoadBalancerCookie(NamingInfo& namingInfo, 
 					  Http::CookieList& cookieList)
 {    
-    int i = 0;
-    char *pch = NULL; char *cookieName = NULL;
-    char *cookieValue = NULL; char *tmplbCookie = NULL;
-    char *lbcookie_holder = NULL; 
+    int i = 0; 
+    int j = 0; 
+    int cookieLen = 0;
+    char *pch = NULL; 
+    char *cookieName = NULL;
+    char *cookieValue = NULL;
+    char *tmplbCookie = NULL;
+    char *tmpPtr = NULL; 
+    
     const std::string lbCookieStr = namingInfo.getlbCookieStr();
     if (!lbCookieStr.empty()) {
-        tmplbCookie = (char *)malloc(lbCookieStr.size()+1);
-	if (tmplbCookie != NULL) {
-            memset(tmplbCookie,'\0',lbCookieStr.size()+1);
-            strcpy(tmplbCookie, lbCookieStr.c_str());
-            pch = strtok_r(tmplbCookie,"=", &lbcookie_holder);
-            while (pch != NULL) {
-                if (i == 0) cookieName = pch;
-                else cookieValue = pch;
-                pch = strtok_r(NULL, "=", &lbcookie_holder);
-                i++;
-            }
+        cookieLen = lbCookieStr.size()+1;
+        tmplbCookie = (char *)malloc(cookieLen);
+        cookieName = (char *)malloc(cookieLen);
+        cookieValue = (char *)malloc(cookieLen); 
+	if (tmplbCookie != NULL && cookieName != NULL && cookieValue != NULL) {
+            memset(tmplbCookie,'\0',cookieLen);
+            memset(cookieName,'\0',cookieLen);
+            memset(cookieValue,'\0',cookieLen);
+            
+            strcpy(tmplbCookie, lbCookieStr.c_str()); 
+            tmpPtr = tmplbCookie;
+            
+            tmpPtr = strchr(tmplbCookie,'=');
+            if (tmpPtr != NULL) {
+                // Retrieve the cookie name
+               strncpy(cookieName, tmplbCookie, tmpPtr-tmplbCookie);
+           
+               // Retrieve the cookie value
+               tmpPtr++;
+               strcpy(cookieValue,tmpPtr);           
+            
+               std::string tmpCookieName(cookieName);
+               std::string tmpCookieValue(cookieValue);
+    
+               if (!tmpCookieName.empty() && !tmpCookieValue.empty()) {
+                   namingInfo.lbCookieName = tmpCookieName;
+                   namingInfo.lbCookieValue = tmpCookieValue;
+                   Http::Cookie lbCookie(namingInfo.lbCookieName, 
+                                         namingInfo.lbCookieValue);
+                   cookieList.push_back(lbCookie);
+              }
+            }    
             free(tmplbCookie);
-
-            std::string tmpCookieName(cookieName);
-            std::string tmpCookieValue(cookieValue);
-    
-            if (!tmpCookieName.empty() && !tmpCookieValue.empty()) {
-                namingInfo.lbCookieName = tmpCookieName;
-                namingInfo.lbCookieValue = tmpCookieValue;
-    
-                Http::Cookie lbCookie(namingInfo.lbCookieName, 
-                                      namingInfo.lbCookieValue);
-                cookieList.push_back(lbCookie);
-            }
+            free(cookieName);
+            free(cookieValue);
         } else {
             Log::log(logModule, Log::LOG_ERROR,
                      "NamingService::addLoadBalancerCookie() - Unable "
-		     "to allocate memory for tmplbCookie");
+		     "to allocate memory");
 	}
     }
 
