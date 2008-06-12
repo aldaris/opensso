@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.13 2008-05-29 23:51:27 pawand Exp $
+ * $Id: LoginViewBean.java,v 1.14 2008-06-12 23:51:30 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2055,8 +2055,6 @@ public class LoginViewBean extends AuthViewBeanBase {
 
    /**
     * Enables AM session cookie time to live
-    * @param flag if <code>true</code> enables AM session cookie time to live,
-    *      otherwise disables AM session cookie time to live
     */
    public void enableCookieTimeToLive() {
        int cookieTimeToLive = 0;

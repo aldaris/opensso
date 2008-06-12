@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.6 2008-05-29 23:29:50 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.7 2008-06-12 23:51:31 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,7 +123,8 @@ public class BootstrapCreator {
         throws ConfigurationException {
         try {
             String bootstrapString = getBootStrapURL(dsCfg);
-            AMSetupServlet.writeToFile(AMSetupServlet.getBootStrapFile(),
+            String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
+            AMSetupServlet.writeToFile(baseDir + "/" + BootstrapData.BOOTSTRAP,
                 bootstrapString);
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage());

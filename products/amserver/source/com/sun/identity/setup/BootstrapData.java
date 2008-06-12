@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.9 2008-05-29 23:29:50 veiming Exp $
+ * $Id: BootstrapData.java,v 1.10 2008-06-12 23:51:31 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,7 +50,7 @@ import java.util.StringTokenizer;
 public class BootstrapData {
     private List data = new ArrayList();
     
-    private final static String BOOTSTRAP = "bootstrap";
+    final static String BOOTSTRAP = "bootstrap";
     
     static final String PROTOCOL = "protocol";
     static final String SERVER_INSTANCE = "serverinstance";

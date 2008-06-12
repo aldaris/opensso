@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.8 2008-04-17 17:27:28 veiming Exp $
+ * $Id: DefaultSummary.java,v 1.9 2008-06-12 23:51:31 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,7 +57,8 @@ public class DefaultSummary extends AjaxPage {
         request.addParameter(
             SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM, agentPassword);
         
-        
+        request.addParameter(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL, "SIMPLE");
         request.addParameter(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, getHostName());
         request.addParameter(
