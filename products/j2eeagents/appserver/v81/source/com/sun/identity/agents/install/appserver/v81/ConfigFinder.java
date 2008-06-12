@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigFinder.java,v 1.1 2006-09-29 00:33:58 huacui Exp $
+ * $Id: ConfigFinder.java,v 1.2 2008-06-12 22:27:49 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,10 +64,10 @@ public class ConfigFinder implements IDefaultValueFinder {
     }
     
     public static final String STR_CONFIG_DIR_WINDOWS = 
-        "C:\\Sun\\ApplicationServer\\domains\\domain1\\config";
+        "C:\\Sun\\AppServer\\domains\\domain1\\config";
     public static final String STR_CONFIG_DIR_SOLARIS = 
-        "/var/opt/SUNWappserver/domains/domain1/config";
+        "/opt/SUNWappserver/domains/domain1/config";
     public static final String STR_CONFIG_DIR_LINUX    = 
-        "/var/opt/sun/appserver/domains/domain1/config";
+        "/opt/SUNWappserver/domains/domain1/config";
  
 }
