@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.5 2008-06-05 21:42:57 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.6 2008-06-13 18:17:47 kenwho Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -313,7 +313,7 @@ class UserIdRepo {
         String dbName = null;
         String suffix = (String) userRepo.get(
             SetupConstants.USER_STORE_ROOT_SUFFIX);
-        String filter = "cn=" + "\"" + suffix + "\"";
+        String filter = "cn=" + suffix; 
 
         LDAPSearchResults results = ld.search("cn=mapping tree,cn=config",
             LDAPConnection.SCOPE_SUB, filter, null, false);
