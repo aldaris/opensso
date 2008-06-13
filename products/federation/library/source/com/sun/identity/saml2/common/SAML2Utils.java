@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.28 2008-06-02 23:48:31 weisun2 Exp $
+ * $Id: SAML2Utils.java,v 1.29 2008-06-13 06:39:36 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -3693,19 +3693,26 @@ public class SAML2Utils extends SAML2SDKUtils {
                 args);
         }
 
-        List idpNameIDFormatList = idpsso.getNameIDFormat();
-        if (idpNameIDFormatList.isEmpty()) {
-            if (debug.messageEnabled()) {
-                debug.message("SAML2Utils.verifyNameIDFormat: " +
-                    "NameIDFormat not supported by IDP: " + nameIDFormat);
+        List idpNameIDFormatList = null;
+        // idpsso is null for ECP case
+        if (idpsso != null) {
+            idpNameIDFormatList = idpsso.getNameIDFormat();
+            if (idpNameIDFormatList.isEmpty()) {
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2Utils.verifyNameIDFormat: " +
+                        "NameIDFormat not supported by IDP: " + nameIDFormat);
+                }
+                Object[] args = { nameIDFormat };
+                throw new SAML2Exception(BUNDLE_NAME,
+                    "unsupportedNameIDFormatIDP", args);
             }
-            Object[] args = { nameIDFormat };
-            throw new SAML2Exception(BUNDLE_NAME, "unsupportedNameIDFormatIDP",
-                args);
         }
 
         if ((nameIDFormat == null) || (nameIDFormat.length() == 0)) {
 
+            if (idpNameIDFormatList == null) {
+                return (String)spNameIDFormatList.get(0);
+            }
             nameIDFormat = null;
             for(Iterator iter = spNameIDFormatList.iterator();iter.hasNext();){
                 String spNameIDFormat = (String)iter.next();
@@ -3734,7 +3741,9 @@ public class SAML2Utils extends SAML2SDKUtils {
                     "unsupportedNameIDFormatSP", args);
             }
 
-            if  (!idpNameIDFormatList.contains(nameIDFormat)) {
+            if ((idpNameIDFormatList != null) &&
+               (!idpNameIDFormatList.contains(nameIDFormat))) {
+
                 if (debug.messageEnabled()) {
                     debug.message("SAML2Utils.verifyNameIDFormat: " +
                         "NameIDFormat not supported by IDP: " + nameIDFormat);
