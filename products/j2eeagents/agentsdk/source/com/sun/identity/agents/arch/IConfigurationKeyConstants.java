@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.5 2008-01-16 00:55:50 sean_brydon Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.6 2008-06-13 18:29:02 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,6 +147,12 @@ public interface IConfigurationKeyConstants {
      */
      public static final String CONFIG_SUBKEY_ORG_NAME =
          "organization.name";
+     
+     public static final String CONFIG_CENTRALIZED_NOTIFICATION_ENABLE =
+        AGENT_CONFIG_PREFIX + "change.notification.enable";
+
+     public static final String DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE = 
+        "true";    
      
     /**
      * A list of all configuration subkeys that do not participate in hot-swap.

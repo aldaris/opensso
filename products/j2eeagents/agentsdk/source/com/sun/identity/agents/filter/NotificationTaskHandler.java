@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotificationTaskHandler.java,v 1.6 2008-05-13 01:28:21 huacui Exp $
+ * $Id: NotificationTaskHandler.java,v 1.7 2008-06-13 18:29:03 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         super.initialize(context, mode);
         initSessionNotificationEnabledFlag();
         initPolicyNotificationEnabledFlag();
-        initConfigNotificationEnabledFlag();
         initNotificationURI();
         if (isLogMessageEnabled()) {
             String message = 
@@ -82,9 +81,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
 
             message += " and Policy Notifications";
             message += (isPolicyNotificationEnabled()) ? " are enabled" : 
-                                                         " are not enabled";
-            message += " and Centralized Configuration Notifications";
-            message += (isConfigNotificationEnabled()) ? " are enabled" : 
                                                          " are not enabled";
             logMessage(message);
         }
@@ -107,7 +103,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
     throws AgentException {
         AmFilterResult result = null;
         String requestURI = ctx.getHttpServletRequest().getRequestURI();    
-        if (isActive() && requestURI.equals(getNotificationURI())) {
+        if (requestURI.equals(getNotificationURI())) {
             result = handleNotification(ctx);
         }   
         return result;
@@ -119,9 +115,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
      * @return true if Notifications are enabled, false otherwise
      */
     public boolean isActive() {
-        return (isSessionNotificationEnabled() ||
-                isPolicyNotificationEnabled()  ||
-                isConfigNotificationEnabled());   
+        return true;
     }
     
     /**
@@ -186,8 +180,7 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
             } else if(serviceID.equals(SERVICE_ID_SESSION) 
                                          && isSessionNotificationEnabled()) {
                 enabled = true;
-            } else if(serviceID.equals(SERVICE_ID_AGENT_CONFIGURATION) 
-                                         && isConfigNotificationEnabled()) {
+            } else if(serviceID.equals(SERVICE_ID_AGENT_CONFIGURATION)) {
                 enabled = true;
             } else if (serviceID.equals(SERVICE_ID_SMSOBJECT)) {
                 enabled = true;
@@ -232,18 +225,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         setPolicyNotificationEnabledFlag(flag);
     }
     
-    /** 
-     * For receiving agent configuration properties changed xml notifications 
-     * when in centralized mode.
-     */ 
-    private void initConfigNotificationEnabledFlag() {
-        //uses Manager instead of AgentConfiguration since hotswap property
-        boolean flag = getConfigurationBoolean(
-                CONFIG_CENTRALIZED_NOTIFICATION_ENABLE,
-                DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE);      
-        setConfigNotificationEnabledFlag(flag);
-    }
-    
     //URI used for session, policy, and agent configuration notices
     private void initNotificationURI() {     
         if (isActive()) {
@@ -275,7 +256,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
                  //since no valid url, ensure flags set to false
                  setSessionNotificationEnabledFlag(false);
                  setPolicyNotificationEnabledFlag(false);
-                 setConfigNotificationEnabledFlag(false);
             }
         } else {
             if (isLogMessageEnabled()) {
@@ -302,14 +282,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
         return _policyNotificationEnabled;
     }
     
-    private void  setConfigNotificationEnabledFlag(boolean flag) {
-        _configNotificationEnabled = flag;
-    }
-    
-    private boolean isConfigNotificationEnabled() {
-        return _configNotificationEnabled;
-    }
-    
     //URI used for session, policy, and agent configuration notices
     private void setNotificationURI(String uri) {
          _notificationURI = uri;
@@ -322,7 +294,6 @@ public class NotificationTaskHandler extends AmFilterTaskHandler
     
     private boolean                         _sessionNotificationEnabled = false;
     private boolean                         _policyNotificationEnabled  = false;
-    private boolean                         _configNotificationEnabled  = false;
     private String                          _notificationURI;
     
     //serviceID attribute values inside notification xml messages

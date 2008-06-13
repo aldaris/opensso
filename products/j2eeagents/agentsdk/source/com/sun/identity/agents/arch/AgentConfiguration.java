@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.26 2008-06-10 17:51:20 leiming Exp $
+ * $Id: AgentConfiguration.java,v 1.27 2008-06-13 18:29:02 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1218,6 +1218,20 @@ public class AgentConfiguration implements
                         getAttributeServiceURLs());
             }
 
+            // check and return if notification.enabled is false.
+            String notificationEnabled = tempProperties.getProperty(
+                CONFIG_CENTRALIZED_NOTIFICATION_ENABLE,
+                DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE);      
+            if (fromNotification &&
+                    !notificationEnabled.equalsIgnoreCase("true")) {
+                if (isLogMessageEnabled()) {
+                    logMessage("AgentConfiguration: received config " + 
+                        "notification, but no update " + 
+                        "since notification enabled is false");
+                }
+                return false;
+            }
+            
             String modIntervalString = tempProperties.getProperty(
                     CONFIG_LOAD_INTERVAL);
             if (isLogMessageEnabled()) {
