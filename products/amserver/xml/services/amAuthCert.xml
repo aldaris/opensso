@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthCert.xml,v 1.7 2008-01-12 01:07:17 dillidorai Exp $
+    $Id: amAuthCert.xml,v 1.8 2008-06-13 21:31:30 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -99,7 +99,7 @@
                     syntax="string"
                     i18nKey="a104">
                     <DefaultValues>
-                        <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+                        <Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-cert-start-search-loc"
@@ -125,7 +125,7 @@
                     syntax="string"
                     i18nKey="a107">
                     <DefaultValues>
-                         <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                         <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-cert-principal-passwd"
@@ -270,7 +270,7 @@
                         syntax="string"
                         i18nKey="a104">
                         <DefaultValues>
-                            <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+                            <Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-cert-start-search-loc"
@@ -296,7 +296,7 @@
                         syntax="string"
                         i18nKey="a107">
                         <DefaultValues>
-                             <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                             <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-cert-principal-passwd"

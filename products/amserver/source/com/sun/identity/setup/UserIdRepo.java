@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.6 2008-06-13 18:17:47 kenwho Exp $
+ * $Id: UserIdRepo.java,v 1.7 2008-06-13 21:31:30 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,8 +121,10 @@ class UserIdRepo {
             xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
                 (String) userRepo.get(
                 SetupConstants.USER_STORE_ROOT_SUFFIX));
-            xml = xml.replaceAll("@UM_DIRECTORY_SERVER@", getHost(userRepo));
-            xml = xml.replaceAll("@UM_DIRECTORY_PORT@", getPort(userRepo));
+            xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
+                getHost(userRepo));
+            xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_PORT + "@",
+                getPort(userRepo));
             xml = xml.replaceAll("@UM_DS_DIRMGRDN@", getBindDN(userRepo));
             xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
                 getBindPassword(userRepo));
@@ -173,11 +175,11 @@ class UserIdRepo {
         return cfg;
     }
     
-    private String getHost(Map userRepo) {
+    static String getHost(Map userRepo) {
         return (String)userRepo.get(SetupConstants.USER_STORE_HOST);
     }
     
-    private String getPort(Map userRepo) {
+    static String getPort(Map userRepo) {
         return (String)userRepo.get(SetupConstants.USER_STORE_PORT);
     }
     

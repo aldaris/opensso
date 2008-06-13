@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthAD.xml,v 1.3 2008-01-15 04:17:56 bina Exp $
+    $Id: amAuthAD.xml,v 1.4 2008-06-13 21:31:30 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -46,7 +46,7 @@
                     syntax="string"
                     i18nKey="a101">
                     <DefaultValues>
-                        <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+                        <Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-server2"
@@ -59,7 +59,7 @@
                     syntax="dn"
                     i18nKey="a103">
                     <DefaultValues>
-                        <Value>@NORMALIZED_ORGBASE@</Value>
+                        <Value>@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-bind-dn"
@@ -67,7 +67,7 @@
                     syntax="dn"
                     i18nKey="a104">
                     <DefaultValues>
-                        <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                        <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-bind-passwd"
@@ -160,7 +160,7 @@
                         syntax="string"
                         i18nKey="a101">
                         <DefaultValues>
-                            <Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+                            <Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-ldap-server2"
@@ -173,7 +173,7 @@
                         syntax="dn"
                         i18nKey="a103">
                         <DefaultValues>
-                            <Value>@NORMALIZED_ORGBASE@</Value>
+                            <Value>@UM_NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-ldap-bind-dn"
@@ -181,7 +181,7 @@
                         syntax="dn"
                         i18nKey="a104">
                         <DefaultValues>
-                            <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                            <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-ldap-bind-passwd"

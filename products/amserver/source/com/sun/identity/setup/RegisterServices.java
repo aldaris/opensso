@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.12 2008-06-04 18:08:00 veiming Exp $
+ * $Id: RegisterServices.java,v 1.13 2008-06-13 21:31:29 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,10 +118,10 @@ public class RegisterServices {
 
         xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
             (String) data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX));
-        xml = xml.replaceAll("@UM_DIRECTORY_SERVER@",
+        xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
             (String) data.get(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
-        xml = xml.replaceAll("@UM_DIRECTORY_PORT@",
+        xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_PORT + "@",
             (String) data.get(
             SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
         xml = xml.replaceAll("@UM_DS_DIRMGRDN@",

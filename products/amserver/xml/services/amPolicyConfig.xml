@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicyConfig.xml,v 1.3 2008-01-15 04:17:56 bina Exp $
+    $Id: amPolicyConfig.xml,v 1.4 2008-06-13 21:31:31 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -110,7 +110,7 @@
                     syntax="string"
                     i18nKey="a101">
 		    <DefaultValues>
-			<Value>@DIRECTORY_SERVER@:@DIRECTORY_PORT@</Value>
+			<Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
 		    </DefaultValues>
 		</AttributeSchema>
                 <AttributeSchema name="iplanet-am-policy-config-ldap-base-dn"
@@ -118,7 +118,7 @@
                     syntax="string"
 		    i18nKey="a102">
 		    <DefaultValues>
-                        <Value>@NORMALIZED_ORGBASE@</Value>
+                        <Value>@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
 		</AttributeSchema>
                 <AttributeSchema name="iplanet-am-policy-config-ldap-users-base-dn"
@@ -126,7 +126,7 @@
                     syntax="string"
                     i18nKey="a1021">
                     <DefaultValues>
-                        <Value>@NORMALIZED_ORGBASE@</Value>
+                        <Value>@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-policy-config-is-roles-base-dn"
@@ -134,7 +134,7 @@
                     syntax="string"
                     i18nKey="a1022">
                     <DefaultValues>
-                        <Value>@NORMALIZED_ORGBASE@</Value>
+                        <Value>@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-policy-config-ldap-bind-dn"
@@ -142,7 +142,7 @@
                     syntax="string"
 		    i18nKey="a103">
 		    <DefaultValues>
-                        <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                        <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
                     </DefaultValues>
 		</AttributeSchema>
                 <AttributeSchema name="iplanet-am-policy-config-ldap-bind-password"
@@ -420,7 +420,7 @@
 	    <OrganizationConfiguration name="/">
 		<AttributeValuePair>
 		    <Attribute name="iplanet-am-policy-config-ldap-bind-dn"/>
-		    <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+		    <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
 		</AttributeValuePair>
 		<AttributeValuePair>
 		    <Attribute name="iplanet-am-policy-config-ldap-bind-password"/>

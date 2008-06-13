@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.28 2008-06-09 16:12:32 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.29 2008-06-13 21:31:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.sun.identity.shared.encode.Hash;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.sm.SMSSchema;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
+import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 /**
@@ -165,6 +167,29 @@ public class ServicesDefaultValues {
         } else {
             map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
         }
+
+        Map userRepo = (Map)map.remove("UserStore");
+        String umRootSuffix = null;
+        boolean bUseExtUMDS = (userRepo != null) && !userRepo.isEmpty();
+        if (bUseExtUMDS) {
+            map.put(SetupConstants.UM_DIRECTORY_SERVER,
+                UserIdRepo.getHost(userRepo));
+            map.put(SetupConstants.UM_DIRECTORY_PORT,
+                UserIdRepo.getPort(userRepo));
+            umRootSuffix =(String)userRepo.get(
+                SetupConstants.USER_STORE_ROOT_SUFFIX);
+        } else {
+            map.put(SetupConstants.UM_DIRECTORY_SERVER,
+                map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
+            map.put(SetupConstants.UM_DIRECTORY_PORT,
+                map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
+            umRootSuffix = (String)map.get(
+                SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
+        }
+        umRootSuffix = umRootSuffix.trim();
+        String normalizedDN = LDAPDN.normalize(umRootSuffix);
+        String escapedDN = SMSSchema.escapeSpecialCharacters(normalizedDN);
+        map.put(SetupConstants.UM_NORMALIZED_ORGBASE, escapedDN);
     }
 
     /**

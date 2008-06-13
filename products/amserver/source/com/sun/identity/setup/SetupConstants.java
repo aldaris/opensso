@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.28 2008-06-09 16:12:32 veiming Exp $
+ * $Id: SetupConstants.java,v 1.29 2008-06-13 21:31:30 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -562,4 +562,19 @@ public interface SetupConstants {
      * PC-based architecture
      */
     String X86 = "86";
+
+    /**
+     * User Management Datastore Host tag.
+     */
+    String UM_DIRECTORY_SERVER = "UM_DIRECTORY_SERVER";
+
+    /**
+     * User Management Datastore Port tag.
+     */
+    String UM_DIRECTORY_PORT = "UM_DIRECTORY_PORT";
+
+    /**
+     * User Management Datastore Normalized Root Suffix tag.
+     */
+    String UM_NORMALIZED_ORGBASE = "UM_NORMALIZED_ORGBASE";
 }
