@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Anonymous - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -40,19 +46,19 @@ server. The Anonymous authentication attributes are realm attributes. The attrib
 <p>Contains a list of user IDs that have permission to login without providing
 credentials. If a user's login name matches a user ID in this list,
 access is granted and the session is assigned to the specified user ID.</p><p>If this list is empty, accessing the following default module instance login URL
-will be authenticated as the Default Anonymous User Name:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&amp;org=org_name</tt></p><p>If this list is not empty, accessing Default module instance login URL (same
+will be authenticated as the Default Anonymous User Name:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name</tt></p><p>If this list is not empty, accessing Default module instance login URL (same
 as above) will prompt the user to enter any valid Anonymous user name.
 If this list is not empty, the user can log in without seeing
-the login page by accessing the following URL:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&amp;org=org_name&amp;IDToken1=&lt;valid Anonymous username></tt> </p>
+the login page by accessing the following URL:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1=&#60;valid Anonymous username></tt> </p>
 
 <a name="fwbnz"></a><h5>Default Anonymous User Name</h5>
 <p>Defines the user ID that a session is assigned to if Valid
 Anonymous User List is empty and the following default module instance login URL is
-accessed:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&amp;org=org_name</tt></p><p>The default value is anonymous. An Anonymous user must also be created in
+accessed:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name</tt></p><p>The default value is anonymous. An Anonymous user must also be created in
 the realm.</p>
-<hr><p><b>Note - </b>If Valid Anonymous User List is not empty, you can login without accessing
+<hr><p><b>Note &#8211; </b>If Valid Anonymous User List is not empty, you can login without accessing
 the login page by using the user defined in Default Anonymous User Name.
-This can be done by accessing the following URL:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&amp;org=org_name&amp;IDToken1=</tt> <tt></tt><i>DefaultAnonymous User Name</i><tt></tt></p>
+This can be done by accessing the following URL:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1=</tt> <tt></tt><i>DefaultAnonymous User Name</i><tt></tt></p>
 <hr>
 
 
@@ -70,7 +76,7 @@ grant the user access. If the authentication level stored in an SSO token does
 not meet the minimum value required, the application can prompt the user to
 authenticate again through a service with a higher authentication level. The default value
 is 0.</p>
-<hr><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value specified
+<hr><p><b>Note &#8211; </b>If no authentication level is specified, the SSO token stores the value specified
 in the Core Authentication attribute <a href="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</a>.</p>
 <hr>
 

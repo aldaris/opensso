@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Naming - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamnamingservice"></a><h4>Naming</h4>
-<p><a name="indexterm-210"></a>The Naming service is used to get and set URLs, plug-ins and configurations
+<p><a name="indexterm-212"></a>The Naming service is used to get and set URLs, plug-ins and configurations
 as well as request notifications for various other Federated Access Manager services such
 as session, authentication, logging, SAML and Federation.</p><p>This service enables clients to find the correct service URL if the platform
 is running more than one Federated Access Manager. When a naming URL is
@@ -94,6 +100,22 @@ on the specific session parameters. </p>
 <a name="fwfgo"></a><h5>JAXRPC Endpoint URL</h5>
 <p>This field takes a value equal to:</p><p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p><p>This syntax allows for dynamic substitution of the JAXRPC Endpoint URL based on
 the specific session parameters.</p>
+
+<a name="gguep"></a><h5>Identity Web Services Endpoint URL</h5>
+<p>This field takes a value equal to:</p><p><tt>%protocol://%host:%port%uri/identityservices/</tt></p><p>This syntax allows for dynamic substitution of the Identity Web Services Endpoint URL
+based on the specific session parameters.</p>
+
+<a name="ggudo"></a><h5>Identity REST Services Endpoint URL</h5>
+<p>This field takes a value equal to:</p><p><tt>%protocol://%host:%port%uri/identity//</tt></p><p>This syntax allows for dynamic substitution of the Identity REST Services Endpoint URL
+based on the specific session parameters.</p>
+
+<a name="ggueo"></a><h5>Security Token Service Endpoint URL</h5>
+<p>This field takes a value equal to:</p><p><tt>%protocol://%host:%port%uri/sts</tt></p><p>This syntax allows for dynamic substitution of the Security Token Service Endpoint URL
+based on the specific session parameters.</p>
+
+<a name="gguff"></a><h5>Security Token Service MEX Endpoint URL</h5>
+<p>This field takes a value equal to:</p><p><tt>%protocol://%host:%port%uri/sts/mex</tt></p><p>This syntax allows for dynamic substitution of the Security Token Service MEX Endpoint
+URL based on the specific session parameters.</p>
 <br/>
 
 </body>

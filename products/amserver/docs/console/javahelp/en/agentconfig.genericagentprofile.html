@@ -1,12 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Discovery Agent - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
+  <title>Discovery Agent Attributes - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -18,13 +23,14 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="agentconfig.genericagentprofile"></a><h4>Discovery Agent</h4>
+<a name="agentconfig.genericagentprofile"></a><h4>Discovery Agent Attributes</h4>
 <p>The Discovery Agent profile holds a trust authority configuration that is used by
 the web services' client/profile to communicate with the Liberty Discovery service for web
 service lookups, registration, and for obtaining security credentials.</p>
@@ -35,18 +41,24 @@ agents. The group must defined before including the particular agent into a coll
 </p>
 
 <a name="gglpn"></a><h5>Password</h5>
-<p>Defines the password for the Discover Agent.</p>
+<p>Defines the password for the Discovery Agent.</p>
 
 <a name="ggloy"></a><h5>Password Confirm</h5>
 <p>Confirm the password.</p>
+
+<a name="ggtwd"></a><h5>Status</h5>
+<p>Defines whether the agent will be active or inactive in the system. By
+default, this attribute is set to active, meaning that the agent will participate
+in securing outbound web service requests from web service clients and will validate
+web service responses from a web service provider.</p>
 
 <a name="ggloo"></a><h5>Location of Agent Configuration Repository</h5>
 <p>This attribute defines the agent location of the configuration repository for the Discovery
 Agent. </p>
 
 <a name="gglqv"></a><h5>Private Key Alias</h5>
-<p>This attributed defines the certificate alias used by the trust authority client to
-sign the SOAP message requests to the Discovery service.</p>
+<p>This attribute defines the private certificate key alias that is used to sign
+the web service request or decrypt the web service response.</p>
 
 <a name="gglny"></a><h5>Discovery Service End Point</h5>
 <p>This attribute defines the Discovery service end point where the trust authority client

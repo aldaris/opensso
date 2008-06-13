@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Platform - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,36 +31,15 @@
 
 
 <a name="service.scplatform"></a><h4>Platform</h4>
-<p><a name="indexterm-211"></a>The Platform service is where additional servers can be added to the Federated
+<p><a name="indexterm-213"></a>The Platform service is where additional servers can be added to the Federated
 Access Manager configuration as well as other options applied at the top level
 of the Federated Access Manager application. The Platform service attributes are global attributes.
 The attributes are:</p>
-<ul><li><p><a href="#fxcsy">Site Name</a></p></li>
-<li><p><a href="#fxcqf">Instance Name</a></p></li>
-<li><p><a href="#fxcgy">Platform Locale</a></p></li>
+<ul><li><p><a href="#fxcgy">Platform Locale</a></p></li>
 <li><p><a href="#fxcpo">Cookie Domains</a></p></li>
-<li><p><a href="#fxcsh">Login Service URL</a></p></li>
-<li><p><a href="#fxcrt">Logout Service URL</a></p></li>
 <li><p><a href="#fxcmi">Available Locales</a></p></li>
 <li><p><a href="#fxctg">Client Character Sets</a></p></li></ul>
 
-
-<a name="fxcsy"></a><h5>Site Name</h5>
-<p>The naming service reads this attribute at initialization time. This list uniquely identifies
-the FQDN with the port number of the load balancer or SRA for
-load balancing on the back-end Federated Access Manager servers. If the host specified
-in a request for a service URL is not in this list, the
-naming service will reject the request. Only the naming service protocol should be
-used in this attribute. See <b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>.</p>
-
-<a name="fxcqf"></a><h5>Instance Name</h5>
-<p>The naming service reads this attribute at initialization time. This list contains the
-Federated Access Manager session servers in a single Federated Access Manager configuration. For
-example, if two Federated Access Managers are installed and should work as one,
-they must both be included in this list. If the host specified in
-a request for a service URL is not in this list, the naming
-service will reject the request. Only the naming service protocol should be used
-in this attribute. See <b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>.</p>
 
 <a name="fxcgy"></a><h5>Platform Locale</h5>
 <p>The platform locale value is the default language subtype that Federated Access Manager
@@ -74,14 +59,6 @@ cookie domains in this attribute. If a load balancer is used, the cookie
 domain must be that of the load balancer's domain, not the servers behind
 the load balancer. The default value for this field is the domain of
 the installed Federated Access Manager.</p>
-
-<a name="fxcsh"></a><h5>Login Service URL</h5>
-<p>This field specifies the URL of the login page. The default value for
-this attribute is <tt>/Service_DEPLOY_URI/UI/Login</tt>.</p>
-
-<a name="fxcrt"></a><h5>Logout Service URL</h5>
-<p>This field specifies the URL of the logout page. The default value for
-this attribute is <tt>/Service_DEPLOY_URI/UI/Logout</tt>.</p>
 
 <a name="fxcmi"></a><h5>Available Locales</h5>
 <p>This attribute stores all available locales configured for the platform. Consider an application

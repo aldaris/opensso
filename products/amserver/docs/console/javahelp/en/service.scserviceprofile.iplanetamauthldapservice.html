@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>LDAP - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthldapservice"></a><h4>LDAP</h4>
-<p><a name="indexterm-181"></a>This module enables authentication using LDAP bind, a Directory Server operation which associates
+<p><a name="indexterm-182"></a>This module enables authentication using LDAP bind, a Directory Server operation which associates
 a user ID password with a particular LDAP entry. You can define multiple
 LDAP authentication configurations for a realm. The LDAP authentication attributes are realm attributes. The
 attributes are:</p>
@@ -63,7 +69,7 @@ respond to a request for authentication, this server would then be contacted. If
 the primary server is up, Federated Access Manager will switch back to the
 primary server. The format is also <tt></tt><i>hostname:port</i><tt></tt>. Multiple entries must be prefixed by the
 local server name.</p>
-<hr><p><b>Caution - </b>When authenticating users from a Directory Server that is remote from the Federated
+<hr><p><b>Caution &#8211; </b>When authenticating users from a Directory Server that is remote from the Federated
 Access Manager enterprise, it is important that both the Primary and Secondary LDAP
 Server Ports have values. The value for one Directory Server location can be
 used for both fields.</p>
@@ -148,7 +154,7 @@ not enabled.</p>
 
 <a name="fwbaf"></a><h5>LDAP Server Check Interval</h5>
 <p>This attribute is used for LDAP Server failback. It defines the number of
-minutes in which a thread will &ldquo;sleep&rdquo; before verifying that the LDAP primary
+minutes in which a thread will &#8220;sleep&#8221; before verifying that the LDAP primary
 server is running.</p>
 
 <a name="fwbah"></a><h5>User Creation Attribute List</h5>
@@ -173,7 +179,7 @@ grant the user access. If the authentication level stored in an SSO token does
 not meet the minimum value required, the application can prompt the user to
 authenticate again through a service with a higher authentication level. The default value
 is 0.</p>
-<hr><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value specified
+<hr><p><b>Note &#8211; </b>If no authentication level is specified, the SSO token stores the value specified
 in the Core Authentication attribute <a href="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</a>.</p>
 <hr>
 

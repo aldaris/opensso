@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Web Policy Agent - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -31,7 +37,7 @@ was selected, the attributes related to this agent can only be edited from
 a file in the agent.</p><p>The types of configuration available are divided into the following categories:</p>
 <ul><li><p><a href="#ggmrx">Global</a></p></li>
 <li><p><a href="#ggmna">Application</a></p></li>
-<li><p><b>Broken Link (Target ID: GGMUQ)</b></p></li>
+<li><p><a href="#ggphk">SSO</a></p></li>
 <li><p><a href="#ggmtu">Advanced</a></p></li></ul>
 
 
@@ -108,11 +114,11 @@ incorrect URL is entered by the user or when a virtual host is
 used for protected resources.</p>
 
 <a name="ggmox"></a><h5>Ignore Server Check</h5>
-<p>When enabled, meaning that &ldquo;ignore&rdquo; is enabled, the agent does <b>not</b> ensure that
+<p>When enabled, meaning that &#8220;ignore&#8221; is enabled, the agent does <b>not</b> ensure that
 Federated Access Manager is running before performing a 302 redirect.</p>
 
 <a name="ggmqs"></a><h5>Ignore Preferred Naming URL in Naming Request</h5>
-<p>When enabled, meaning that &ldquo;ignore&rdquo; is enabled, the agent does NOT send the
+<p>When enabled, meaning that &#8220;ignore&#8221; is enabled, the agent does NOT send the
 preferred naming URL as an attribute in the naming request.</p>
 
 <a name="ggmql"></a><h5>Deny Resource Access on Remote Log Failure</h5>
@@ -148,7 +154,7 @@ list by performing policy evaluation.</p>
 <a name="ggmna"></a><h5>Application</h5>
 <p>The Application attributes tend to be application specific.</p>
 
-<a name="ggnej"></a><h5>Agent Connection Timeout:</h5>
+<a name="ggnej"></a><h5>Agent Connection Timeout</h5>
 <p>The timeout period in seconds for an agent connection with the Federated
 Access Manager authentication server. The default value is 2 seconds. The error related
 to this setting is as follows: <tt>unable to find active Access Manager Auth server.</tt></p>
@@ -250,8 +256,8 @@ evaluation.</p>
 <a name="ggmse"></a><h5>Ignore Path Info in Request URL</h5>
 <p>When enabled, path information is not stripped from the request URL even if
 a wild character exists in the not enforced list or policy URLs.</p>
-<hr><p><b>Caution - </b>To prevent a security loop, when this attribute is enabled, ensure that nothing
-follows the wildcard character &ldquo;*&rdquo; in either the not-enforced list or the policy.</p>
+<hr><p><b>Caution &#8211; </b>To prevent a security loop, when this attribute is enabled, ensure that nothing
+follows the wildcard character &#8220;*&#8221; in either the not-enforced list or the policy.</p>
 <hr>
 
 
@@ -312,7 +318,7 @@ with the attribute labeled Anonymous User Default Value</p>
 <a name="ggmsf"></a><h5>Cookie Name</h5>
 <p>The name of the SSO cookie token used between Federated Access Manager
 and the agent.</p>
-<hr><p><b>Caution - </b>Changing this attribute in the agent without correspondingly changing Federated Access Manager disables
+<hr><p><b>Caution &#8211; </b>Changing this attribute in the agent without correspondingly changing Federated Access Manager disables
 the SDK.</p>
 <hr>
 

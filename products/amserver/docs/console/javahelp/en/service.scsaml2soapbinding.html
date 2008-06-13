@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>SAMLv2 SOAP Binding - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,32 +31,23 @@
 
 
 <a name="service.scsaml2soapbinding"></a><h4>SAMLv2 SOAP Binding</h4>
-
+<p>The SAMLv2 SOAP Binding service provides SOAP-based exchange of SAMLv2 Request and Response
+message between a Federated Access Manager Client and the Federated Access Manager Server.
+The requests received are delegated to the request handler for further processing. The key
+to the Request Handler the meta alias is in the SOAP Binding service
+URL. A mapping of the meta alias and the RequestHandler is stored in
+the SAMLv2 SOAP Binding service which can be read from the  Federated
+Access Manager configuration store. </p>
 
 <a name="ggokv"></a><h5>Request Handler List</h5>
-<a name="indexterm-198"></a><a name="indexterm-199"></a><p>The SOAP Binding Service provides the <tt>RequestHandler</tt> interface to process the request message
-and return a response. This interface must be implemented on the server side
-by each Liberty-based identity service that uses the SOAP Binding Service. The Request
-Handler List attribute stores information about the implementation classes of the web services
-that implement the Request Handler. The Request Handler List displays entries that contain key/value
-pairs separated by a pipe as in: <tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>. The parameters are explained
-in the following table.</p><table><col width="50*"><col width="50*"><tr><th align="left" valign="top" scope="column"><p>Parameter</p></th>
-<th align="left" valign="top" scope="column"><p>Header</p></th>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
-<td align="left" valign="top" scope="row"><p>The required <tt>key</tt> parameter is the last part of the
-URI path to a SOAP endpoint. The SOAP endpoint in Access Manager
-is the SOAP Receiver servlet. The URI to the SOAP Receiver is: <tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt>
-If you define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint
-for the corresponding Discovery Service would be: <tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/amserver/Liberty/disco</b></tt>. Different service clients use different
-keys when connecting to the SOAP Receiver.</p></td>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>The required <tt>class</tt> parameter specifies the name
-of the Request Handler implementation class for the particular identity service. For example:
-<tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>.</p></td>
-</tr>
-</table><p>To add a new Request Handler, see <b>Broken Link (Target ID: SERVICE.SCSAML2SOAPBINDINGREQUESTHANDLERLISTADD)</b>.</p>
+<a name="indexterm-200"></a><a name="indexterm-201"></a><p>The RequestHandlerList is a list of key/value pair entries containing the mapping of
+the meta alias to the  RequestHandler implementation.  This attribute must be
+set if a Federated Access Manager 8.0 server is being configured to act
+as Policy Decision Point (PDP). </p><p>The <i>Key</i> is the Policy Decision Point meta alias and the <i>Class</i> is
+the Java class name, which is the implementation of  RequestHandler Interface which can
+process XACML Requests.  </p><p>For example, If the meta Alias of the XACML Policy Decision Point is
+<tt>/pdp </tt>and the implementation of the interface is <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>, then the key should be
+set to <tt>/pdp</tt> and the class should be set to <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>. </p>
 <br/>
 
 </body>

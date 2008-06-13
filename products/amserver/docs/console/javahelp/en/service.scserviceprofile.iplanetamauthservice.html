@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Core - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -79,7 +85,7 @@ is as follows:</p><p><tt>clientType | module1,module2,module3</tt></p><p>This at
 <p>Specifies the minimum and maximum connection pool to be used on a specific
 LDAP server and port. This attribute is for LDAP and Membership authentication services
 only. The format is as follows:</p><p><tt>host:port:min:max</tt></p>
-<hr><p><b>Note - </b>This connection pool is different than the SDK connection pool configured in <tt>serverconfig.xml</tt>.</p>
+<hr><p><b>Note &#8211; </b>This connection pool is different than the SDK connection pool configured in <tt>serverconfig.xml</tt>.</p>
 <hr>
 
 
@@ -102,6 +108,20 @@ are:</p><dl><dt><b>Required</b></dt>
 </dl>
 
 
+<a name="ggukq"></a><h5>Remote Auth Security</h5>
+<p>If enabled, Federated Access Manger requires the remote authentication client to send the
+Application SSO Token with each request.</p>
+
+<a name="ggull"></a><h5>Keep Post Process Objects for Logout Processing</h5>
+<p>If enabled, this attribute will determine if the user session should hold the
+instances of post processing classes after authentication is complete. This may be needed
+for special logout processing.</p>
+
+<a name="gguji"></a><h5>Keep Authentication Module Objects for Logout Processing</h5>
+<p>If enabled, this attribute will determine if the user session should hold the
+instances of authentication modules after authentication is complete. This may be needed for
+special logout processing.</p>
+
 <a name="gcnks"></a><h5>Administrator Authentication Configuration</h5>
 <p>Defines the authentication service for administrators only. This attribute can be used if
 the authentication module for administrators needs to be different from the module for
@@ -113,7 +133,7 @@ Federated Access Manager console is accessed. For example:</p><p><tt><b>http://<
 created if Dynamic Creation is selected through the User Profile. There is no
 default value. The administrator must specify the DNs of the roles that will
 be assigned to the new user.  </p>
-<hr><p><b>Note - </b>The role specified must be under the realm for which authentication is being
+<hr><p><b>Note &#8211; </b>The role specified must be under the realm for which authentication is being
 configured. This role can be either an Federated Access Manager or LDAP role,
 but it cannot be a filtered role.</p><p>If you wish to automatically assign specific services to the user, you have to
 configure the Required Services attribute in the User Profile.</p>
@@ -128,7 +148,7 @@ expire until its persistent cookie expires, or the user explicitly logs out. The
 time is specified in Persistent Cookie Maximum Time. The default value is that
 Persistent Cookie Mode is not enabled and the authentication service uses only memory
 cookies.</p>
-<hr><p><b>Note - </b>A persistent cookie must be explicitly requested by the client using the <i>iPSPCookie=yes</i>
+<hr><p><b>Note &#8211; </b>A persistent cookie must be explicitly requested by the client using the <i>iPSPCookie=yes</i>
 parameter in the login URL.</p>
 <hr>
 
@@ -186,6 +206,12 @@ sends a warning message that the user will be locked out.</p>
 (after a login failure) defined in  <i>Lockout Attribute Name</i>. If the value of
 Login Failure Lockout Duration is greater than 0, then its memory locking and
 the user account will be locked for the number of minutes specified.</p>
+
+<a name="ggulj"></a><h5>Lockout Duration Multiplier</h5>
+<p>This attribute defines the value multiplied to the Login Failure Lockout Duration for
+each successive lockout. For example, if Login Failure Lockout Duration is set to
+3 minutes, and the Lockout Duration Multiplier is set to 2, the user
+will be locked out of the account for 6 minutes.</p>
 
 <a name="gcnjy"></a><h5>Lockout Attribute Name</h5>
 <p>Designates any LDAP attribute that is to be set for lockout. The value
@@ -245,13 +271,16 @@ during the authentication process. The following status changes are supported:</
 identity repository that is shared by multiple Federated Access Manager instances. For example,
 if the identity repository that is used for a specific deployment is Directory
 Server, the invalid attempts are stored in the <tt>sunAMAuthInvalidAttemptsData</tt> (which belongs to <tt>sunAMAuthAccountLockout</tt>objectclass). The format
-of the data is stored as:</p><p><tt>&lt;InvalidPassword>&lt;InvalidCount>&lt;/InvalidCount>&lt;LastInvalidAt>&lt;/LastInvalidAt>&lt;LockedoutAt>&lt;/LockedoutAt>&lt;ActualLockoutDuration>&lt;/ActualLockoutDuration>&lt;/InvalidPassword></tt></p><p>This information is maintained in the Directory Server for each user. As the
-invalid attempts occur, <tt>&lt;InvalidCount></tt> is increased.</p>
+of the data is stored as:</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword></tt></p><p>This information is maintained in the Directory Server for each user. As the
+invalid attempts occur, <tt>&#60;InvalidCount></tt> is increased.</p>
 
 <a name="gcnjo"></a><h5>Module-based Authentication</h5>
 <p>If enabled, this attribute allows users to authenticate through module-based authentication. If this
 attribute is not enabled, module-based login is not allowed. All login attempts with
-<tt>module=&lt; </tt><i>module_instance_name</i><tt>></tt> will result in login failure.</p>
+<tt>module=&#60; </tt><i>module_instance_name</i><tt>></tt> will result in login failure.</p>
+
+<a name="ggurt"></a><h5>User Attribute Mapping to Session Attribute</h5>
+<p>Specifies the UserProfile Attributes that will be set in Session. The format is:</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p>
 
 <a name="fwbfn"></a><h5>Default Authentication Level</h5>
 <p>The authentication level value indicates how much to trust authentications. Once a user

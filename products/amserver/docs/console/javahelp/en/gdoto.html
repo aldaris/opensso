@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Generic LDAPv3 Attributes - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -29,7 +35,7 @@
 
 <a name="gdoug"></a><h5>LDAP Server</h5>
 <p>Enter the name of the LDAP server to which you will be
-connection. The format should be <tt>hostname.domainname:portnumber</tt>.</p><p>If more than one <tt>host:portnumber</tt> entries are entered, an attempt is made to
+connected. The format should be <tt>hostname.domainname:portnumber</tt>.</p><p>If more than one <tt>host:portnumber</tt> entries are entered, an attempt is made to
 connect to the first host in the list. The next entry in the
 list is tried only if the attempt to connect to the current host
 fails.</p>
@@ -78,7 +84,7 @@ automatically.</p>
 <a name="gdoud"></a><h5>LDAPv3 Repository Plugin Class Name</h5>
 <p>Specifies the location of the class file which implements the LDAPv3 repository.</p>
 
-<a name="gdosu"></a><h5>General Attribute Name Mapping</h5>
+<a name="gdosu"></a><h5>Attribute Name Mapping</h5>
 <p>Enables common attributes known to the framework to be mapped to the native
 data store. For example, if the framework uses <tt>inetUserStatus</tt>  to determine
 user status, it is possible that the native data store actually uses <tt>userStatus</tt>.
@@ -89,16 +95,16 @@ The attribute definitions are case-sensitive.</p>
 LDAP server. The default operations that are the only operations that are supported
 by this LDAPv3 repository plug-in. The following are operations supported by LDAPv3 Repository
 Plugin:</p>
-<ul><li><p>agent &mdash; read, create, edit, delete</p></li>
-<li><p>group &mdash; read, create, edit, delete</p></li>
-<li><p>realm&mdash; read, create, edit, delete, service</p></li>
-<li><p>user &mdash; read, create, edit, delete, service</p></li></ul>
+<ul><li><p>agent &#8212; read, create, edit, delete</p></li>
+<li><p>group &#8212; read, create, edit, delete</p></li>
+<li><p>realm&#8212; read, create, edit, delete, service</p></li>
+<li><p>user &#8212; read, create, edit, delete, service</p></li></ul>
 <p>You can remove permissions from the above list based on your LDAP server
-settings and the tasks, but you can not add more permissions.</p><p>If the configured LDAPv3 Repository plug&mdash;in is pointing to an instance of Sun
+settings and the tasks, but you can not add more permissions.</p><p>If the configured LDAPv3 Repository plug&#8212;in is pointing to an instance of Sun
 Directory Server, then permissions for the type <tt>role</tt> can be added. Otherwise,
 this permission may not be added because other data stores may not support
 roles. The permission for the type 'role' is:</p>
-<ul><li><p>role &mdash; read, create, edit, delete </p></li></ul>
+<ul><li><p>role &#8212; read, create, edit, delete </p></li></ul>
 <p>If you have <tt>user</tt> as a supported type for the LDAPv3 repository, the
 read, create, edit, and delete service operations are possible for that user. In
 other words, if <tt>user</tt> is a supported type, then the read, edit, create,
@@ -108,21 +114,21 @@ in user entries.  Additionally, the user is allowed to access the dynamic
 service attributes if the service is assigned to the realm or role to
 which the user belongs. </p><p>The user is also allowed to manage the user attributes for any assigned
 service.  If the user has <tt>service</tt> as the operation (<tt>user=service</tt>), then it
-specifies that all service-related operations are supported. These operations are<tt>assignService,</tt> <tt>unassignService,</tt> <tt>getAssignedServices,</tt> <tt>getServiceAttributes, removeServiceAttributes</tt> and
-<tt>modifyService.</tt></p>
+specifies that all service-related operations are supported. These operations are <tt>assignService,</tt> <tt>unassignService,</tt> <tt>getAssignedServices,</tt> <tt>getServiceAttributes, removeServiceAttributes</tt>
+and <tt>modifyService.</tt></p>
 
 <a name="gdosx"></a><h5>LDAPv3 Plug-in Search Scope</h5>
 <p>Defines the scope to be used to find LDAPv3 plug-in entries. The scope
 must be one of the following:</p>
-<ul><li><p>SCOPE_BASE</p></li>
-<li><p>SCOPE_ONE</p></li>
-<li><p>SCOPE_SUB (default)</p></li></ul>
+<ul><li><p>SCOPE_BASE &#8211; searches only the base DN.</p></li>
+<li><p>SCOPE_ONE &#8211; searches only the entries under the base DN.</p></li>
+<li><p>SCOPE_SUB (default) &#8211; searched the base DN and all entries within its subtree.</p></li></ul>
 
 
-<a name="gdotm"></a><h5>LDAP Users Search Attribute</h5>
-<p>This field defines the attribute type for which to conduct a search on
-a user. For example, if the user's DN is <tt>uid=user1,ou=people,dc=iplanet,dc=com</tt> , then
-the naming attribute is <tt>uid</tt>.  </p>
+<a name="ggufy"></a><h5>LDAP Users Search Attribute</h5>
+<p>This field defines the attribute type to conduct a search for a user.
+For example, if the user's DN is <tt>uid=user1, ou=people, dc=example, dc=com</tt>, then you would specify
+<tt>uid</tt> in this field.  </p>
 
 <a name="gdotz"></a><h5>LDAP Users Search Filter</h5>
 <p>Specifies the search filter to be used to find user entries.</p>
@@ -137,14 +143,14 @@ user attributes that are not on this list is not allowed. The attributes
 are case-sensitive. The object classes and attribute schema must be defined in Directory
 Server before you define the object classes and attribute schema here.</p>
 
-<a name="gdovx"></a><h5>LDAP User Creation Attribute Mappings</h5>
+<a name="gdovx"></a><h5>Create user Attribute Mapping</h5>
 <p>Specifies which attributes are required when a user is created. This attribute uses
 the following syntax:</p><p><tt>DestinationAttributeName=SourceAttributeName</tt></p><p>If the source attribute name is missing, the default is the user ID
 (<tt>uid</tt>). For example:</p>cn sn=givenName<p>Both <tt>cn</tt> and <tt>sn</tt> are required in order to create a user profile.
 <tt>cn</tt> gets the value of the attribute named <tt>uid</tt>, and <tt>sn</tt> gets the
 value of the attribute named <tt>givenName.</tt></p>
 
-<a name="gdovm"></a><h5>User Status Attribute</h5>
+<a name="gdovm"></a><h5>Attribute Name of User Status </h5>
 <p>Specifies the attribute name to indicate the user's status. </p>
 
 <a name="gdoup"></a><h5>User Status Active Value</h5>
@@ -181,17 +187,20 @@ group attributes that are not on this list is not allowed. The attributes
 are case-sensitive. The object classes and attribute schema must be defined in Directory
 Server before you define the object classes and attribute schema here.</p>
 
-<a name="gdovn"></a><h5>Group Membership Attribute</h5>
+<a name="gdovn"></a><h5>Attribute Name for Group Membership</h5>
 <p>Specifies the name of the attribute whose values are the names of all
 the groups to which DN belongs. The default is <tt>memberOf</tt>.</p>
 
-<a name="gdour"></a><h5>Unique Member Attribute</h5>
+<a name="gdour"></a><h5>Attribute Name of Unique Member</h5>
 <p>Specifies the attribute name whose values is a DN belonging to this group.
 The default is <tt>uniqueMember</tt>.</p>
 
-<a name="gdovi"></a><h5>Group Member URL Attribute</h5>
+<a name="gdovi"></a><h5>Attribute Name of Group Member URL</h5>
 <p>Specifies the name of the attribute whose value is an LDAP URL which
 resolves to members belonging to this group. The default is  <tt>memberUrl</tt>.</p>
+
+<a name="ggtqf"></a><h5>Default Group Member's User DN</h5>
+<p>CONTENT???</p>
 
 <a name="gdout"></a><h5>LDAP People Container Naming Attribute</h5>
 <p>Specifies the naming attribute of the people container if a user resides in
@@ -201,35 +210,7 @@ reside in a people container.</p>
 <a name="gdovo"></a><h5>LDAP People Container Value</h5>
 <p>Specifies the value of the people container. The default is  <tt>people</tt>.</p>
 
-<a name="gdovy"></a><h5>LDAP Agents Search Attribute</h5>
-<p>This field defines the attribute type for which to conduct a search on
-an agent. The default is <tt>uid</tt>.</p>
-
-<a name="gdovj"></a><h5>LDAP Agents Container Naming Attribute</h5>
-<p>The naming attribute of agent container if the agent resides in a agent
-container. This field is left blank if the agent does not reside in
-agent container.</p>
-
-<a name="gdowg"></a><h5>LDAP Agents Container Value</h5>
-<p>Specifies the value of the agent container. The default is  <tt>agents</tt>.</p>
-
-<a name="gdouz"></a><h5>LDAP Agents Search Filter</h5>
-<p>Defines the filter used to search for an agent. The LDAP Agent Search
-attribute is prepended to this field to form the actual agent search filter.</p><p>For example, if the LDAP Agents Search Attribute is <tt>uid</tt> and LDAP Users
-Search Filter is <tt>(objectClass=sunIdentityServerDevice)</tt> , then the actual user search filter will
-be: <tt>(&amp;(uid=*)(objectClass=sunIdentityServ erDevice))</tt></p>
-
-<a name="gdove"></a><h5>LDAP Agents Object Class</h5>
-<p>Defines the object classes for agents. When an agent is created, the list
-of user object classes will be added to the agent's attributes list</p>
-
-<a name="gdous"></a><h5>LDAP Agents Attributes</h5>
-<p>Defines the list of attributes associated with an agent. Any attempt to read/write
-agent attributes that are not on this list is not allowed. The attributes
-are case-sensitive. The object classes and attribute schema must be defined in Directory
-Server before you define the object classes and attribute schema here.</p>
-
-<a name="gdovt"></a><h5>Identity Types that can be Authenticated</h5>
+<a name="gdovt"></a><h5>Identity Types That Can Be Authenticated</h5>
 <p>Specifies that this data store can authenticate user and/or agent identity types when
 the authentication module mode for the realm is set to Data Store.</p>
 
@@ -240,6 +221,14 @@ support persistent search at the root suffix level.</p>
 <a name="gdovu"></a><h5>Persistent Search Filter</h5>
 <p>Defines the filter that will return the specific changes to directory server entries.
 The data store will only receive the changes that match the defined filter.</p>
+
+<a name="ggugb"></a><h5>Persistent Search Scope</h5>
+<p>Defines the scope to be used in a persistent search. The scope must
+be one of the following:</p>
+<ul><li><p>SCOPE_BASE &#8211; searches only the base DN.</p></li>
+<li><p>SCOPE_ONE &#8211; searches only the entries under the base DN.</p></li>
+<li><p>SCOPE_SUB (default) &#8211; searched the base DN and all entries within its subtree.</p></li></ul>
+
 
 <a name="gdouw"></a><h5>Persistent Search Maximum Idle Time Before Restart</h5>
 <p>Defines the maximum idle time before restarting the persistence search. The value must

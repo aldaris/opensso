@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>To Modify Hosted Service Provider Attributes in a Provider Entity - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -41,7 +47,7 @@ The starting point is Entities under the Federation interface.</p><ol>
 </dd>
 <dt>Server Name Identifier Mapping Binding</dt>
 <dd><p>Name identifier mapping allows a service provider to obtain a name identifier for a principal that has federated in the namespace of a different service provider. Thus, the requesting provider can communicate with the other service provider about the principal without an identity federation for the principal between them. Type a URI that identifies the communication protocol used to obtain the identifier and click Add.</p>
-<hr><p><b>Note - </b>Currently, the Name Identifier Mapping profile in Access Manager only supports SOAP. If this attribute is used, its value must be <tt>http://projectliberty.org/profiles/nim-sp-http</tt> .</p>
+<hr><p><b>Note &#8211; </b>Currently, the Name Identifier Mapping profile in Access Manager only supports SOAP. If this attribute is used, its value must be <tt>http://projectliberty.org/profiles/nim-sp-http</tt> .</p>
 <hr>
 </dd>
 <dt>Signing Key: Key Alias</dt>
@@ -62,7 +68,7 @@ The starting point is Entities under the Federation interface.</p><ol>
 </li>
 <li><b>Modify values for the Communication URLs attributes.</b><p>Communication URLs attributes contain locations to which providers can send transmissions earmarked for
 this identity provider.</p><dl><dt>SOAP Endpoint</dt>
-<dd><p>Type a URL to the identity provider&rsquo;s SOAP message receiver. This value communicates the location of the SOAP receiver in non browser communications.</p></dd>
+<dd><p>Type a URL to the identity provider&#8217;s SOAP message receiver. This value communicates the location of the SOAP receiver in non browser communications.</p></dd>
 <dt>Single Logout Service</dt>
 <dd><p>Type a URL to which service providers can send logout requests. Single logout synchronizes the logout functionality across all sessions authenticated by this identity provider.</p></dd>
 <dt>Single Logout Return</dt>
@@ -80,12 +86,12 @@ this identity provider.</p><dl><dt>SOAP Endpoint</dt>
 <li><b>Modify values for the Communication Profiles attributes.</b><p>A Liberty Alliance Project <b>profile</b> defines the combination of a message's content and
 the mechanism used to transport it. The following Communication Profiles attributes define the
 profiles used by the identity provider for each functionality.</p><dl><dt>Federation Termination</dt>
-<dd><p>Select a profile for the identity provider to use in order to notify other providers of a principal&rsquo;s federation termination.</p>
+<dd><p>Select a profile for the identity provider to use in order to notify other providers of a principal&#8217;s federation termination.</p>
 <ul><li><p>HTTP Redirect</p></li>
 <li><p>SOAP</p></li></ul>
 </dd>
 <dt>Single Logout</dt>
-<dd><p>Select a profile for the identity provider to use in order to notify other providers of a principal&rsquo;s logout.</p>
+<dd><p>Select a profile for the identity provider to use in order to notify other providers of a principal&#8217;s logout.</p>
 <ul><li><p>HTTP Redirect</p></li>
 <li><p>HTTP Get</p></li>
 <li><p>SOAP</p></li></ul>
@@ -177,7 +183,7 @@ Manager.</p><dl><dt>Service Provider Adapter</dt>
 <dt>Liberty Version URI</dt>
 <dd><p>Type a URI specifying the version of the Liberty Alliance Project specification being used. The default value is <tt>http://projectliberty.org/specs/v1</tt> .</p></dd>
 <dt>Name Identifier Implementation</dt>
-<dd><p>This field defines the class used by a service provider to participate in name registration. Name registration is a profile by which service providers specify a principal&rsquo;s name identifier that an identity provider will use when communicating to the service provider. The value is <tt>com.sun.identity.federation.services.util.FSNameIdentifierImpl</tt> .</p></dd>
+<dd><p>This field defines the class used by a service provider to participate in name registration. Name registration is a profile by which service providers specify a principal&#8217;s name identifier that an identity provider will use when communicating to the service provider. The value is <tt>com.sun.identity.federation.services.util.FSNameIdentifierImpl</tt> .</p></dd>
 <dt>Home Page URL</dt>
 <dd><p>Type the URL of the home page for the provider hosted locally.</p></dd>
 <dt>Single Sign-on Failure Redirect URL</dt>
@@ -207,13 +213,13 @@ Authentication Configuration attributes define values for dynamic identity provi
 </li>
 <li><b>Modify values for the Organization Profiles attributes.</b><p>The Organizations Profile attributes provide basic information that may be required when interacting
 with a principal. These attributes are optional.</p>
-<hr><p><b>Note - </b>If the Names attribute contains a value, it is required to add values
+<hr><p><b>Note &#8211; </b>If the Names attribute contains a value, it is required to add values
 to the Display Names and URL attributes.</p>
 <hr>
 <dl><dt>Names</dt>
-<dd><p>Enter the legal name for the entity&rsquo;s organization and click Add. The value is defined in the format <i>locale</i>| <i>organization-name</i>. For example, <tt>en</tt>| <tt>example.com</tt>.</p></dd>
+<dd><p>Enter the legal name for the entity&#8217;s organization and click Add. The value is defined in the format <i>locale</i>| <i>organization-name</i>. For example, <tt>en</tt>| <tt>example.com</tt>.</p></dd>
 <dt>Display Names</dt>
-<dd><p>Enter a name for the entity&rsquo;s organization that is suitable for display to a principal and click Add. The value is defined in the format <i>locale</i>|<i>organization-display-name</i> . For example, <tt>en</tt>|<tt>example.com</tt>.</p></dd>
+<dd><p>Enter a name for the entity&#8217;s organization that is suitable for display to a principal and click Add. The value is defined in the format <i>locale</i>|<i>organization-display-name</i> . For example, <tt>en</tt>|<tt>example.com</tt>.</p></dd>
 <dt>URL</dt>
 <dd><p>Enter the URL of the organization and click Add. The value is defined in the format <i>locale</i>|<i>organization-URL</i> . For example, <tt>en</tt>|<tt>http://www.example.com</tt> .</p></dd>
 </dl>

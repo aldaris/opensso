@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>SAMLv2 Service Configuration - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -39,7 +45,7 @@ entry. If nothing is specified, the default attribute (<tt>sun-fm-saml2-nameid-i
 entry. If not specified, the default attribute (<tt>sun-fm-saml2-nameid-infokey</tt>) will be used.</p>
 
 <a name="ggojr"></a><h5>Cookie Domain for IDP Discovery Service</h5>
-<p>Specifies the cookie domain used in SAMLv2 IDP discovery service.</p>
+<p>Specifies the cookie domain for the SAMLv2 IDP discovery cookie. </p>
 
 <a name="ggomp"></a><h5>Cookie Type for IDP Discovery Service</h5>
 <p>Specifies cookie type used in SAMLv2 IDP Discovery Service, either Persistent or Session.
@@ -48,9 +54,9 @@ Default is Session.</p>
 <a name="ggomt"></a><h5>URL Scheme for IDP Discovery Service</h5>
 <p>Specifies URL scheme used in SAMLv2 IDP Discovery Service. </p>
 
-<a name="ggoje"></a><h5>SML Encryption SPI Implementation Class</h5>
+<a name="ggoje"></a><h5>XML Encryption SPI Implementation Class</h5>
 <p>Specifies implementation class name for the SAMLv2 Encryption Provider interface. The class is
-used to perform XML encryption and decryption in SAMLv2 profiles.</p>
+used to perform XML encryption and decription in SAMLv2 profiles.</p>
 
 <a name="ggomb"></a><h5>Include Encrypted Key Inside KeyInfo Element</h5>
 <p>This is used in the <tt>com.sun.identity.saml2.xmlenc.FMEncProvider</tt> class. If enabled, it will include
@@ -59,8 +65,11 @@ it is not enabled, <tt>EncryptedKey</tt> is paralleled to the <tt>EncryptedData<
 enabled.</p>
 
 <a name="ggoks"></a><h5>XML Signing Implementation Class</h5>
-<p>Specifies implementation class name for SAMLv2 Signature Provider interface. The class is used
-to perform XML signing and verification in SAMLv2 profiles.</p>
+<p>If enabled, the singing certificate used by identity provider and service provider will
+be validated against certificate revocation list (CRL) configured in the Security settings under
+the Sites and Servers tab. If the certificate is not validated and accepted,
+it will  stop and return a validation error without doing further XML signature
+validation. </p>
 
 <a name="ggokx"></a><h5>XML Signing Certificate Validation</h5>
 <p>If enabled, the SAML identity provider or service provider will validate the certificate
@@ -69,10 +78,10 @@ accepted, the provider will validate the signature. If not, it will stop and
 return a validation error. </p>
 
 <a name="ggoiv"></a><h5>CA Certificate Validation</h5>
-<p>If enabled, the SAML identity provider or service provider will validate the CA
-certificate together with the certificate that is used in signing.  If the
-certificate is validated, , the provider will validate the signature. If not, it
-will stop and return validation error.</p>
+<p>If enabled, the singing certificate used by identity provider and service provider will
+be validated against the trusted CA list. If the certificate is not validated
+and accepted, it will  stop and return a validation error without doing
+further XML signature validation. </p>
 <br/>
 
 </body>

@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Web Service Client Attributes - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -26,8 +32,8 @@
 
 <a name="agentconfig.webserviceclientedit"></a><h4>Web Service Client Attributes</h4>
 <p>The Web Service Client agent profile describes the configuration that is used for
-securing outbound web service requests from a web service client. The names of
-the web services must be unique to each web service client.</p>
+securing outbound web service requests from a web service client. The name of
+the web service client must be unique across all agents.</p>
 
 <a name="gglmr"></a><h5>General</h5>
 <p>The following General attributes define basic web service client properties:</p>
@@ -38,14 +44,16 @@ agents. The group must defined before including the particular agent into a coll
 </p>
 
 <a name="ggowm"></a><h5>Password</h5>
-<p>Defines the password for the web service client attribute.</p>
+<p>Defines the password for the web service client agent.</p>
 
 <a name="ggoti"></a><h5>Password Confirm</h5>
 <p>Confirm the password.</p>
 
 <a name="ggllf"></a><h5>Status</h5>
-<p>Defines whether web service client agent will participate in securing outbound service requests.
-By default, it is set to <tt>Active</tt>, meaning it will participate. </p>
+<p>Defines whether the web service client agent will be active or inactive in
+the system. By default, this attribute is set to active, meaning that the
+agent will participate in securing outbound web service requests from web service clients
+and will validate web service responses from a web service provider.</p>
 
 <a name="gglje"></a><h5>Universal Identifier</h5>
 <p>Lists the basic LDAP properties, that uniquely define the web service client agent.</p>
@@ -55,23 +63,24 @@ By default, it is set to <tt>Active</tt>, meaning it will participate. </p>
 
 <a name="ggliy"></a><h5>Security Mechanism</h5>
 <p>Defines the type of security credential that is used to secure the web
-services client request. You can choose from the following security types:</p>
-<ul><li><p>Anonymous &mdash; The anonymous security mechanism contains no security credentials.</p></li>
-<li><p>LibertyDiscoverySecurity &mdash; Uses Liberty-based security tokens for securing the request.</p></li>
-<li><p>SAML-HolderOfKey &mdash; Uses the SAML 1.1 assertion type Holder-Of-Key for securing the request.</p></li>
-<li><p>SAML-SenderVouches &mdash; Uses the SAML 1.1 assertion type Sender Vouches for securing the request.</p></li>
-<li><p>SAML2&ndash;HolderOfKey &mdash; Uses the SAML 2.0 assertion token type Holder-Of-Key for securing the request.</p></li>
-<li><p>SAML2&ndash;SenderVouches &mdash; Uses the SAML 2.0 assertion token type Sender Vouches for securing the request.</p></li>
-<li><p>STSSecurity &mdash; Defines that the web service client obtains the security token from the Security Token service.</p></li>
-<li><p>UserNameToken &mdash; Uses a user name token to secure the web service client requests.</p></li>
-<li><p>UserNameToken-Plain &mdash; Uses a user name token with a clear text password for securing web service requests.</p></li>
-<li><p>X509Token &mdash; Uses the X509 certificate to secure the web service requests.</p></li></ul>
+service client request. You can choose one of the following security credential types:</p>
+<ul><li><p>Anonymous &#8212; The anonymous security mechanism contains no security credentials.</p></li>
+<li><p>LibertyDiscoverySecurity &#8212; Uses Liberty-based security tokens.</p></li>
+<li><p>SAML-HolderOfKey &#8212; Uses the SAML 1.1 assertion type Holder-Of-Key.</p></li>
+<li><p>SAML-SenderVouches &#8212; Uses the SAML 1.1 assertion type Sender Vouchest.</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; Uses the SAML 2.0 assertion token type Holder-Of-Key.</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; Uses the SAML 2.0 assertion token type Sender Vouches.</p></li>
+<li><p>STSSecurity &#8212; Uses the security token generated from the Security Token service for a given web service provider.</p></li>
+<li><p>UserNameToken &#8212; Uses User Name Token with digest password.</p></li>
+<li><p>UserNameToken-Plain &#8212; Uses a user name token with a clear text password for securing web service requests.</p></li>
+<li><p>X509Token &#8212; Uses the X509 certificate.</p></li></ul>
 
 
 <a name="gglmn"></a><h5>STS Configuration</h5>
 <p>This attribute is enabled when the web service client uses Security Token service
-(STS). This configuration describes a list of STS agent profiles that are used
-to secure the requests to the STS service.</p>
+(STS) as the Security Mechanism. This configuration describes a list of STS agent
+profiles that are used to communicate with and secure the web service requests
+to the STS service.</p>
 
 <a name="ggljq"></a><h5>Discovery Configuration</h5>
 <p>This attribute is enabled when the web service client is enabled for Discovery
@@ -83,7 +92,7 @@ used to secure requests made to the Discovery service.</p>
 user to be authenticated in order to gain access.</p>
 
 <a name="gglmd"></a><h5>Preserve Security Headers in Message</h5>
-<p>When enabled, this attribute defines that the SOAP security headers are preserved to
+<p>When enabled, this attribute defines that the SOAP security headers are preserved by
 the web service client for further processing.</p>
 
 <a name="ggllx"></a><h5>Liberty Service Type URN</h5>
@@ -105,7 +114,7 @@ type.</p>
 <p>When enabled, the web services client security header will be encrypted.</p>
 
 <a name="gglnh"></a><h5>Is Request Encrypted</h5>
-<p>When enabled, the web services client request will be enabled.</p>
+<p>When enabled, the web services client request will be encrypted.</p>
 
 <a name="ggljs"></a><h5>Is Response Signature Verified</h5>
 <p>When enabled, the web services response signature is verified.</p>
@@ -118,12 +127,12 @@ type.</p>
 retrieval: </p>
 
 <a name="ggllda"></a><h5>Public Key Alias of Web Service Provider</h5>
-<p>This attribute defines the public certificate key alias that is sued to encrypt
-the web service request.</p>
+<p>This attribute defines the public certificate key alias that is used to encrypt
+the web service request or verify the signature of the web service response.</p>
 
 <a name="gglmca"></a><h5>Private Key Alias</h5>
-<p>This attribute defines the private certificate key alias that is used to sign/decrypt
-the web service response.</p>
+<p>This attribute defines the private certificate key alias that is used to sign
+the web service request or decrypt the web service response.</p>
 
 <a name="ggljfa"></a><h5>Key Storage Usage</h5>
 <p>This configuration defines whether to use the default keystore, or a custom keystore.
@@ -136,9 +145,10 @@ The following values must be defined for a custom key store:</p>
 <a name="endpoint"></a><h5>End Points</h5>
 <p>The following attributes define web service endpoints:</p>
 
-<a name="gglmpa"></a><h5>Web Service End Point</h5>
+<a name="gglmpa"></a><h5>Web Service Proxy End Point</h5>
 <p>This attribute defines a web service end point to which the web service
-client is making a request.</p>
+client is making a request. This end point is optional unless it is
+configured as a web security proxy.</p>
 <br/>
 
 </body>

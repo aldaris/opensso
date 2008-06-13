@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Trusted Partners: Configuring Trusted Partner Attributes - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -29,7 +35,7 @@
 The starting point is <a href="federation.fssamlselecttrustedpartnertype.html">Trusted Partners: Selecting Partner Type and Profile</a>. Based on the role(s) selected in the first
 part, any of the subattributes listed in the following sections may need to
 be defined.</p>
-<hr><p><b>Note - </b>If you reached this page by clicking Edit or Duplicate on the SAML
+<hr><p><b>Note &#8211; </b>If you reached this page by clicking Edit or Duplicate on the SAML
 configuration screen under Federation, modify the trusted partner profile based on the steps
 below and click Save to change the values. Click Save on the SAML
 Profile page to complete the modification.</p>
@@ -39,7 +45,7 @@ Profile page to complete the modification.</p>
 <dd><p>This is a 20 byte sequence (encoded using the Base64 format) that comes from the partner site. It is generally the same value as that used for the Site ID attribute when configuring the Site Identifiers attribute.</p></dd>
 <dt>Target</dt>
 <dd><p>This is the domain of the partner site (with or without a port number). If you want to contact a web page that is hosted in this domain, the redirect URL is picked up from the values defined in the Trusted Partner attribute.</p>
-<hr><p><b>Note - </b>If there are two defined entries for the same domain (one containing a port number and one without a port number), the entry with the port number takes precedence. For example, assume the following two trusted partner definitions: <tt>target=sun.com</tt> and  <tt>target=sun.com:8080</tt>. If the principal is seeking <tt>http://machine.sun.com:8080/index.html</tt> , the second definition will be chosen.</p>
+<hr><p><b>Note &#8211; </b>If there are two defined entries for the same domain (one containing a port number and one without a port number), the entry with the port number takes precedence. For example, assume the following two trusted partner definitions: <tt>target=sun.com</tt> and  <tt>target=sun.com:8080</tt>. If the principal is seeking <tt>http://machine.sun.com:8080/index.html</tt> , the second definition will be chosen.</p>
 <hr>
 </dd>
 <dt>Site Attribute Mapper</dt>
@@ -54,7 +60,7 @@ Profile page to complete the modification.</p>
 <dt>Certificate</dt>
 <dd><p>A certificate alias that is used to verify the signature in an assertion when it is signed by the partner and the certificate cannot be found in the <tt>KeyInfo</tt> portion of the signed assertion.</p></dd>
 <dt>Host List</dt>
-<dd><p>A list of the IP addresses, the DNS host name, or the alias of the client authentication certificate used by the partner. This is configured for all hosts within the partner site that can send requests to this authority. This list helps to ensure that the requestor is indeed the intended receiver of the artifact. If the requester is defined in this list, the interaction will continue. If the requester&rsquo;s information does not match any hosts defined in the host list, the request will be rejected.</p></dd>
+<dd><p>A list of the IP addresses, the DNS host name, or the alias of the client authentication certificate used by the partner. This is configured for all hosts within the partner site that can send requests to this authority. This list helps to ensure that the requestor is indeed the intended receiver of the artifact. If the requester is defined in this list, the interaction will continue. If the requester&#8217;s information does not match any hosts defined in the host list, the request will be rejected.</p></dd>
 <dt>Issuer</dt>
 <dd><p>The creator of a generated assertion. The default syntax is <i>hostname</i><tt>:</tt> <i>port</i>.</p></dd>
 </dl>
@@ -78,13 +84,13 @@ Profile page to complete the modification.</p>
 <li><p>Specify <tt>SSL</tt> if the URL to the SAML SOAP receiver is accessed using HTTPS, and the SAML SOAP receiver is not protected by HTTP basic authentication.</p></li>
 <li><p>Specify <tt>SSLWITHBASICAUTH</tt> if the URL to the SAML SOAP receiver is accessed using HTTPS, and the SAML SOAP receiver is protected by HTTP basic authentication.</p></li></ul>
 
-<hr><p><b>Note - </b>If you are protecting the SAML SOAP receiver URL with HTTP basic authentication, you do so in the web container configuration and not in the Federated Access Manager configuration. You do, however, supply the HTTP basic authentication user ID and password in the Federated Access Manager configuration.</p>
+<hr><p><b>Note &#8211; </b>If you are protecting the SAML SOAP receiver URL with HTTP basic authentication, you do so in the web container configuration and not in the Federated Access Manager configuration. You do, however, supply the HTTP basic authentication user ID and password in the Federated Access Manager configuration.</p>
 <hr>
 <p>This attribute is optional. If not specified, the default is  <tt>NOAUTH</tt>. If <tt>BASICAUTH</tt> or <tt>SSLWITHBASICAUTH</tt> is specified, the Trusted Partners attribute is required and should be <tt>HTTPS</tt>.</p></dd>
 <dt>User</dt>
-<dd><p>When <tt>BASICAUTH</tt> is chosen as the Authentication Type, the value of this attribute defines the user identifier of the partner being used to protect the partner&rsquo;s SOAP receiver.</p></dd>
+<dd><p>When <tt>BASICAUTH</tt> is chosen as the Authentication Type, the value of this attribute defines the user identifier of the partner being used to protect the partner&#8217;s SOAP receiver.</p></dd>
 <dt>User's Password</dt>
-<dd><p>When <tt>BASICAUTH</tt> is chosen as the Authentication Type, the value of this attribute defines the password for the user identifier of the partner being used to protect the partner&rsquo;s SOAP receiver.</p></dd>
+<dd><p>When <tt>BASICAUTH</tt> is chosen as the Authentication Type, the value of this attribute defines the password for the user identifier of the partner being used to protect the partner&#8217;s SOAP receiver.</p></dd>
 <dt>User's Password (reenter)</dt>
 <dd><p>Reenter the password defined previously.</p></dd>
 </dl>

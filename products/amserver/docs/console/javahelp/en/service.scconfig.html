@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Configuration Attributes - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,21 +23,22 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
-<a name="service.scconfig"></a><h3>Configuration Attributes</h3><p><a name="indexterm-171"></a>The Configuration page contains all of the attributes to configure Federated Access Manager's default
-services. The attributes that comprise an Federated Access Manager service are classified as
-one of the following types (some services may have more than one type):</p><p><b>Global</b> &ndash; Applied across the Federated Access Manager configuration. They cannot be applied
+<a name="service.scconfig"></a><h3>Configuration Attributes</h3><p><a name="indexterm-171"></a>The Configuration page allows administrators to manage attribute values of the services that Federated
+Access Manager offers. The attributes that comprise an Federated Access Manager service are
+classified as one of the following types:</p><p><b>Global</b> &#8211; Applied across the Federated Access Manager configuration. They cannot be applied
 to users, roles or realms as the goal of global attributes is to
-customize the Identity Server application.</p><p><b>Realm</b> &ndash; Realm attributes are only assigned to realms. No object classes are
-associated with realm attributes. Attributes listed in the authentication services are defined as
-realm attributes because authentication is done at the realm level rather than at a
-subtree or user level.</p><p><b>Dynamic</b> &ndash; Assigned to an Federated Access Manager configured role or realm. When
+customize Federated Access Manager.</p><p><b>Realm</b> &#8211; Realm attributes are only assigned to realms. No object classes are
+associated with realm attributes. For instance, ttributes listed in the authentication services are defined
+as realm attributes because authentication is done at the realm level rather than
+at a subtree or user level.</p><p><b>Dynamic</b> &#8211; Applies to an Federated Access Manager configured role or realm. When
 the role is assigned to a user or a user is created in
-an realm, the dynamic attribute then becomes a characteristic of the user.</p><p><b>User</b> &ndash; Assigned directly to each user. They are not inherited from a
-role or an realm and, typically, are different for each user.</p><p>The Configuration properties you can modify are:</p>
+an realm, the dynamic attribute then becomes a characteristic of the user.</p><p><b>User</b> &#8211; Applies directly to each user. They are not inherited from a
+role or an realm and, typically, are different for each user.</p><p>The Configuration attributes you can modify are:</p>
 <ul><li><p><a href="authattrs.html">Authentication</a></p></li>
 <li><p><a href="consoleprops.html">Console Properties</a></p></li>
 <li><p><a href="global.html">Global Properties</a></p></li>

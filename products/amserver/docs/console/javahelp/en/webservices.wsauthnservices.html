@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Authentication Web Service - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -40,8 +46,8 @@ Service (a WSP).</p>
 <li><p>The Authentication Web Service replies by approving or disproving the authentication.</p><p> If approved, the response includes the credentials the WSC needs to invoke other web services (like the Discovery Service). </p></li></ol>
 <p>The following Authentication Web Service global attributes can be configured for your implementation.</p>
 <ul><li><p><a href="mechanismhandlerslist.html">Mechanism Handlers List</a></p></li>
-<li><p>Challenge Cleanup Interval &mdash; This specifies cleanup interval (in seconds) in the default CRAM-MD5 mechanism handler implementation class <tt>com.sun.identity.liberty.ws.authnsvc.mechanism.CramMD5MechanismHandler</tt>. The internal thread will start to cleanup the challenge map based on this value.</p></li>
-<li><p>Transform Classes &mdash; This specifies the transform name to the implementation class mapping. Values are comma separated with "|" as delimiter for the transform name and implementation class name. For example, <tt>name1|class1, name2|class2</tt>.</p></li></ul>
+<li><p>Challenge Cleanup Interval &#8212; This specifies cleanup interval (in seconds) in the default CRAM-MD5 mechanism handler implementation class <tt>com.sun.identity.liberty.ws.authnsvc.mechanism.CramMD5MechanismHandler</tt>. The internal thread will start to cleanup the challenge map based on this value.</p></li>
+<li><p>Transform Classes &#8212; This specifies the transform name to the implementation class mapping. Values are comma separated with "|" as delimiter for the transform name and implementation class name. For example, <tt>name1|class1, name2|class2</tt>.</p></li></ul>
 <p>The following task is associated with configuring the Authentication Web Service:</p>
 <ul><li><p><a href="webservices.wsauthnserviceshandlersadd.html">To Configure a New Mechanism Handler</a></p></li></ul>
 

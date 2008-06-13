@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Membership - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,25 +31,13 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthmembershipservice"></a><h4>Membership</h4>
-<p><a name="indexterm-182"></a>The Membership Authentication module is implemented for personalized sites. When membership authentication is
+<p><a name="indexterm-183"></a>The Membership Authentication module is implemented for personalized sites. When membership authentication is
 enabled, a user can self-register. This means the user can create an account, personalize
 it, and access it as a registered user without the help of an
 administrator. The attributes are realm attributes. The attributes are:</p>
 <ul><li><p><a href="#fumys">Minimum Password Length</a></p></li>
 <li><p><a href="#fumyr">Default User Roles</a></p></li>
 <li><p><a href="#fumyt">User Status After Registration</a></p></li>
-<li><p><a href="#fumzt">Primary LDAP Server</a></p></li>
-<li><p><a href="#fumza">Secondary LDAP Server</a></p></li>
-<li><p><a href="#fumyz">DN to Start User Search</a></p></li>
-<li><p><a href="#fumzb">DN for Root User Bind</a></p></li>
-<li><p><a href="#fumze">Password for Root User Bind</a></p></li>
-<li><p><a href="#fumzd">Password for Root User Bind (confirm)</a></p></li>
-<li><p><a href="#fumzc">Attribute Used to Retrieve User Profile</a></p></li>
-<li><p><a href="#fumzh">Attributes Used to Search for a User to be Authenticated</a></p></li>
-<li><p><a href="#fumzg">User Search Filter</a></p></li>
-<li><p><a href="#fumzj">Search Scope</a></p></li>
-<li><p><a href="#fumzi">Enable SSL to Access LDAP Server</a></p></li>
-<li><p><a href="#fumzk">Return User DN to Authenticate</a></p></li>
 <li><p><a href="#fumzm">Authentication Level</a></p></li></ul>
 
 
@@ -56,7 +50,7 @@ registration and error text in the following file:</p><p><tt></tt><i>AcessManage
 <p>Specifies the roles assigned to new users whose profiles are created through self-registration.
 There is no default value. The administrator must specify the DNs of the
 roles that will be assigned to the new user.</p>
-<hr><p><b>Note - </b>The role specified must be under the realm for which authentication is being
+<hr><p><b>Note &#8211; </b>The role specified must be under the realm for which authentication is being
 configured. Only the roles that can be assigned to the user will be
 added during self-registration. All other DNs will be ignored. The role can be
 either an Federated Access Manager role or an LDAP role, but filtered roles
@@ -70,106 +64,6 @@ The default value is Active and services are available to the new user.
 By selecting Inactive, the administrator chooses to make no services available to a
 new user.</p>
 
-<a name="fumzt"></a><h5>Primary LDAP Server</h5>
-<p>Specifies the host name and port number of the primary LDAP server specified
-during Federated Access Manager installation. This is the first server contacted for authentication.
-The format is<tt></tt><i>hostname:port</i><tt></tt>. If there is no port number, assume <tt>389</tt>.</p><p>If you have Federated Access Manager deployed with multiple domains, you can specify
-the communication link between specific instances of Federated Access Manager and Directory Server
-in the following format (multiple entries must be prefixed by the local server
-name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two Federated Access Manager instances deployed in different
-locations (L1-machine1-IS and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and
-L2-machine2-DS), it would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
-
-<a name="fumza"></a><h5>Secondary LDAP Server</h5>
-<p>Specifies the host name and port number of a secondary LDAP server available
-to the Federated Access Manager platform. If the primary LDAP server does not
-respond to a request for authentication, this server would then be contacted. If
-the primary server is up, Federated Access Manager will switch back to the
-primary server. The format is also <tt></tt><i>hostname:port</i><tt></tt>. Multiple entries must be prefixed by the
-local server name.</p>
-<hr><p><b>Caution - </b>When authenticating users from a Directory Server that is remote from the Federated
-Access Manager enterprise, it is important that both the Primary and Secondary LDAP
-Server Ports have values. The value for one Directory Server location can be
-used for both fields.</p>
-<hr>
-
-
-<a name="fumyz"></a><h5>DN to Start User Search</h5>
-<p>Specifies the DN of the node where the search for a user
-would start. (For performance reasons, this DN should be as specific as possible.) The
-default value is the root of the directory tree. Any valid DN will
-be recognized. If OBJECT is selected in the Search Scope attribute, the DN
-should specify one level above the level in which the profile exists. Multiple
-entries must be prefixed by the local server name. The format is <tt></tt><i>servername|search dn</i><tt></tt>.</p><p>For multiple entries:</p><p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn</i><tt>...</tt></p><p>If multiple entries exist under the root organization with the same user ID,
-then this parameter should be set so that the only one entry can
-be searched for or found in order to be authenticated. For example, in
-the case where the agent ID and user ID is same under root
-org, this parameter should be <tt>ou=Agents</tt> for the root organization to authenticate using
-Agent ID and <tt>ou=People,</tt> for the root organization to authenticate using User
-ID.</p>
-
-<a name="fumzb"></a><h5>DN for Root User Bind</h5>
-<p>Specifies the DN of the user that will be used to bind
-to the Directory Server specified in the Primary LDAP Server and Port field as
-administrator. The authentication service needs to bind as this DN in order to
-search for a matching user DN based on the user login ID. The
-default is <tt>amldapuser.</tt> Any valid DN will be recognized.</p>
-
-<a name="fumze"></a><h5>Password for Root User Bind</h5>
-<p>Carries the password for the administrator profile specified in the DN for Root
-User Bind field. There is no default value. Only the administrator's valid LDAP
-password will be recognized.</p>
-
-<a name="fumzd"></a><h5>Password for Root User Bind (confirm)</h5>
-<p>Confirmation of the password.</p>
-
-<a name="fumzc"></a><h5>Attribute Used to Retrieve User Profile</h5>
-<p>Specifies the attribute used for the naming convention of user entries. By default,
-Federated Access Manager assumes that user entries are identified by the uid attribute.
-If your Directory Server uses a different attribute (such as <i>givenname</i>) specify the attribute
-name in this field.</p>
-
-<a name="fumzh"></a><h5>Attributes Used to Search for a User to be Authenticated</h5>
-<p>Lists the attributes to be used to form the search filter for a
-user that is to be authenticated, and allows the user to authenticate with
-more than one attribute in the user's entry. For example, if this field
-is set to <i>uid</i>, <i>employeenumber</i> , and <i>mail</i>, the user could authenticate with
-any of these names.</p>
-
-<a name="fumzg"></a><h5>User Search Filter</h5>
-<p>Specifies an attribute to be used to find the user under the DN
-to Start User Search field. It works with the User Naming Attribute. There
-is no default value. Any valid user entry attribute will be recognized.</p>
-
-<a name="fumzj"></a><h5>Search Scope</h5>
-<p>Indicates the number of levels in the Directory Server that will be searched
-for a matching user profile. The search begins from the node specified in
-the attribute "DN to Start User Search" on page 315. The default value
-is SUBTREE. One of the following choices can be selected from the list:</p><dl><dt>OBJECT</dt>
-<dd><p>Searches only the specified node.</p></dd>
-<dt>ONELEVEL</dt>
-<dd><p>Searches at the level of the specified node and one level down.</p></dd>
-<dt>SUBTREE</dt>
-<dd><p>Search all entries at and below the specified node.</p></dd>
-</dl>
-
-
-<a name="fumzi"></a><h5>Enable SSL to Access LDAP Server</h5>
-<p>Enables SSL access to the Directory Server specified in the Primary and Secondary
-LDAP Server and Port field. By default, the box is not checked and
-the SSL protocol will not be used to access the Directory Server.</p><p>If the LDAP Server is running with SSL enabled (LDAPS), you must make
-sure that Federated Access Manager is configured with proper SSL trusted certificates so
-that AM could connect to Directory server over LDAPS protocol</p>
-
-<a name="fumzk"></a><h5>Return User DN to Authenticate</h5>
-<p>When the Federated Access Manager directory is the same as the directory configured
-for LDAP, this option may be enabled. If enabled, this option allows the
-LDAP authentication module to return the DN instead of the User ID, and
-no search is necessary. Normally, an authentication module returns only the User ID,
-and the authentication service searches for the user in the local Federated Access
-Manager LDAP. If an external LDAP directory is used, this option is typically
-not enabled.</p>
-
 <a name="fumzm"></a><h5>Authentication Level</h5>
 <p>The authentication level is set separately for each method of authentication. The value
 indicates how much to trust an authentication mechanism. Once a user has authenticated,
@@ -180,7 +74,7 @@ grant the user access. If the authentication level stored in an SSO token does
 not meet the minimum value required, the application can prompt the user to
 authenticate again through a service with a higher authentication level. The default value
 is 0.</p>
-<hr><p><b>Note - </b>If no authentication level is specified, the SSO token stores the value specified
+<hr><p><b>Note &#8211; </b>If no authentication level is specified, the SSO token stores the value specified
 in the Core Authentication attribute <a href="service.scserviceprofile.iplanetamauthservice.html#fwbfn">Default Authentication Level</a>.</p>
 <hr>
 

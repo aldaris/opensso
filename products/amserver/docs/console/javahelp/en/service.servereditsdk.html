@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>SDK - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -79,12 +85,12 @@ will not be restarted. Only the connections that are timed out will be reset.</p
 
 <a name="ggndm"></a><h5>Disabled Event Service Connection</h5>
 <p>Specifies which event connection can be disabled. Values (case insensitive) can be: </p>
-<ul><li><p>aci &mdash; Changes to the aci attribute, with the search using the LDAP filter (aci=*).</p></li>
-<li><p>sm &mdash; Changes in the Federated Access Manager information tree (or service management node), which includes objects with the <tt>sunService</tt> or <tt>sunServiceComponent</tt> marker object class. For example, you might create a policy to define access privileges for a protected resource, or you might modify the rules, subjects, conditions, or response providers for an existing policy.</p></li>
-<li><p>um &mdash; Changes in the user directory (or user management node). For example, you might change a user's name or address.</p></li></ul>
+<ul><li><p>aci &#8212; Changes to the aci attribute, with the search using the LDAP filter (aci=*).</p></li>
+<li><p>sm &#8212; Changes in the Federated Access Manager information tree (or service management node), which includes objects with the <tt>sunService</tt> or <tt>sunServiceComponent</tt> marker object class. For example, you might create a policy to define access privileges for a protected resource, or you might modify the rules, subjects, conditions, or response providers for an existing policy.</p></li>
+<li><p>um &#8212; Changes in the user directory (or user management node). For example, you might change a user's name or address.</p></li></ul>
 <p>For example, to disable persistent searches for changes to the Access Manager information
 tree (or service management node):  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
-<hr><p><b>Caution - </b>Persistent searches cause some performance overhead on Directory Server. If you determine that
+<hr><p><b>Caution &#8211; </b>Persistent searches cause some performance overhead on Directory Server. If you determine that
 removing some of this performance overhead is absolutely critical in a production environment,
 you can disable one or more persistent searches using this property.  </p><p>However, before disabling a persistent search, you should understand the limitations described above.
 It is strongly recommended that this property not be changed unless absolutely required.

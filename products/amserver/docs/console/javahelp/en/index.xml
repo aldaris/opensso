@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "index_1_0.dtd">
 <index version="2.0">
@@ -19,12 +19,14 @@
     <indexitem target="service.scserviceprofile.iplanetamauthcertservice" text="Certificate"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthservice" text="Core"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthdatastoreservice" text="Data Store"></indexitem>
+    <indexitem target="ggulh" text="Federation"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Membership"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS"></indexitem>
+    <indexitem target="service.scserviceprofile.sunamauthsaeservice" text="SAE"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></indexitem>
@@ -169,7 +171,7 @@
     <indexitem target="authentication.newauthinstance" text="To create a new authentication module"></indexitem></indexitem>
  <indexitem target="fyfby" text="Referral Policies"></indexitem>
  <indexitem target="requesthandlerlist" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbinding" text="request handler list">
-    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="configure"></indexitem><indexitem target="ggojs" text="configure"></indexitem></indexitem>
+    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="configure"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="configure"></indexitem></indexitem>
  <indexitem target="requiremodify" text="require modify policyeval"></indexitem>
  <indexitem target="requirequery" text="require query policyeval"></indexitem>
  <indexitem target="resourceofferingsbootstrapping" text="resource offerings for bootstrapping">
@@ -195,7 +197,7 @@
  <indexitem target="federation.fssamlsiteidadd" text="site identifiers"></indexitem>
  <indexitem target="service.scsoapbinding" text="SOAP binding service">
     <indexitem target="mechanismhandlerslist" text="mechanism handlers list"></indexitem><indexitem target="webservices.wsauthnserviceshandlersadd" text="mechanism handlers list"></indexitem>
-    <indexitem target="requesthandlerlist" text="request handler list"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbinding" text="request handler list"></indexitem><indexitem target="ggojs" text="request handler list"></indexitem>
+    <indexitem target="requesthandlerlist" text="request handler list"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbinding" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="request handler list"></indexitem>
     <indexitem target="ggodb" text="supported authentication mechanisms"></indexitem>
     <indexitem target="ggodb" text="web service authenticator"></indexitem></indexitem>
  <indexitem target="normalsubject" text="Subjects"></indexitem><indexitem target="idm.entities" text="Subjects">

@@ -1,9 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
   <title>Administration - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
@@ -18,6 +23,7 @@
     }
   </script>
   <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,8 +31,8 @@
 
 
 <a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administration</h4>
-<p><a name="indexterm-193"></a>The Administration service enables you to configure the Federated Access Manager console at
-both the application level as well as at a configured realm level (Preferences
+<p><a name="indexterm-195"></a>The Administration service enables you to configure the Federated Access Manager console at
+both the global level as well as at a configured realm level (Preferences
 or Options specific to a configured realm). The Administration service attributes are global and
 realm attributes. The attributes are:</p>
 <ul><li><p><a href="#fufly">Federation Management</a></p></li>
@@ -120,10 +126,10 @@ only be created within the User Management view by choosing Membership by Filter
 <p>Defines a list of default access control instructions (ACIs) or <b>permissions</b> that are
 used to grant administrator privileges when creating new roles. Select one of these
 ACIs for the level of privilege you wish. Federated Access Manager ships with
-four default role permissions:</p><p>No Permissions &mdash; No permissions are to be set on the role.</p><p>Organization Admin &mdash; The Organization Administrator has read and write access to all
-entries in the configured organization.</p><p>Organization Help Desk Admin &mdash; The Organization Help Desk Administrator has read access
+four default role permissions:</p><p>No Permissions &#8212; No permissions are to be set on the role.</p><p>Organization Admin &#8212; The Organization Administrator has read and write access to all
+entries in the configured organization.</p><p>Organization Help Desk Admin &#8212; The Organization Help Desk Administrator has read access
 to all entries in the configured organization and write access to the <tt>userPassword</tt>
-attribute.</p><p>Organization Policy Admin &mdash; The Organization Policy Administrator has read and write access
+attribute.</p><p>Organization Policy Admin &#8212; The Organization Policy Administrator has read and write access
 to all policies in the realm. The Organization Policy Administrator can not create
 a referral policy.  </p>
 
@@ -153,7 +159,7 @@ behavior, however, does not work in reverse. Adding or removing a user to
 one of these groups will not add or remove the user in the
 user's associated roles.</p><p>The DomainAdministrators and DomainHelpDeskAdministrators groups are only created in realms that are created
 after this option is enabled.  </p>
-<hr><p><b>Note - </b>This option does not apply to subrealms, with the exception of the root
+<hr><p><b>Note &#8211; </b>This option does not apply to subrealms, with the exception of the root
 realm. At the root realm, the ServiceAdministrators and ServiceHelpDesk Administrators groups are created
 and associated with the Top-level Admin and Top-level Help Desk Admin roles, respectively. The
 same behavior applies.</p>
@@ -174,7 +180,7 @@ deleted from the directory.</p>
 created dynamically when a group or realm is configured using Federated Access Manager.
 These roles are used for granting administrative privileges for the specific grouping of entries
 created. The default ACIs can be modified only under this attribute listing.</p>
-<hr><p><b>Note - </b>Administrators at the realm level have a wider scope of access than do
+<hr><p><b>Note &#8211; </b>Administrators at the realm level have a wider scope of access than do
 group administrators. But, by default, when a user is added to a group
 administrator role, that user can change the password of anyone in the group.
 This would include any realm administrator who is a member of that group.</p>
@@ -182,7 +188,7 @@ This would include any realm administrator who is a member of that group.</p>
 <p>The Container Help Desk Admin role has read access to all entries in a realm and write
 access to the <i>userPassword</i> attribute in user entries only in this container
 unit.</p><p>The Realm Help Desk Admin has read access to all entries in a
-realm and write access to the <i>userPassword</i> attribute.  When a sub&mdash;realm is created,
+realm and write access to the <i>userPassword</i> attribute.  When a sub&#8212;realm is created,
 remember that the administration roles are created in the sub-realm, not in the
 parent realm.</p><p>The Container Admin role has read and write access to all entries in
 an LDAP organizational unit. In Federated Access Manager, the LDAP organizational unit is
@@ -331,7 +337,7 @@ in the console.</p>
 <p>This field defines the maximum number of results returned from a search. The
 default value is 200.  </p><p>Do not set this attribute to a large value (greater than 1000) unless
 sufficient system resources are allocated.</p>
-<hr><p><b>Note - </b>Federated Access Manager is preconfigured to return a maximum size of 4000 search
+<hr><p><b>Note &#8211; </b>Federated Access Manager is preconfigured to return a maximum size of 4000 search
 entries.  This value can be changed through the console or by using
 <tt>ldapmodify</tt>. If you wish to change it using <tt>ldapmodify,</tt>create a <tt>newConfig.xml</tt>, with the
 following values (in this example, <tt>nsSizeLimit</tt>: -1 means unlimited):</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>Then, run <tt>ldapmodify</tt>. For example:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml<p>Modifications to this attribute done through <tt>LDAPModify</tt> will take precedence to those
@@ -344,7 +350,7 @@ made through the Federated Access Manager Console. </p>
 continue before timing out. It is used to stop potentially long searches. After
 the maximum search time is reached, the search terminates and returns an error.
 The default is 5 seconds.</p>
-<hr><p><b>Note - </b>Directory Server is been preconfigured with a timeout value of 120 seconds. This
+<hr><p><b>Note &#8211; </b>Directory Server is been preconfigured with a timeout value of 120 seconds. This
 value can be changed through the Directory Server console or by using <tt>ldapmodify.</tt>
  If you wish to change it using <tt>ldapmodify,</tt>create a <tt>newConfig.xml</tt>, with the
 following values (this example changes the timeout from 120 seconds to 3600 seconds):</p>dn: cn=config changetype: modify replace:nsslapd-timelimit nsslapd-timelimit: 3600<p>Then, run <tt>ldapmodify</tt>. For example:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml
@@ -441,7 +447,7 @@ is not enabled</p>
 
 <a name="fsvib"></a><h5>Invalid User ID Characters</h5>
 <p>This attribute defines a list of characters that are not allowed in a
-user's name. Each character must be separated by the | character. For example:</p><p><tt>*|(|)|&amp;|!</tt></p>
+user's name. Each character must be separated by the | character. For example:</p><p><tt>*|(|)|&#38;|!</tt></p>
 
 <a name="fsvie"></a><h5>UserID and Password Validation Plug-in Class</h5>
 <p>This class provides a userID and password validation plug-in mechanism. The methods of
