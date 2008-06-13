@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoEmbeddedOpenDS.xml,v 1.6 2008-06-04 18:08:00 veiming Exp $
+   $Id: idRepoEmbeddedOpenDS.xml,v 1.7 2008-06-13 00:18:06 kenwho Exp $
   
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,6 +67,7 @@
             <Attribute name="sun-idrepo-ldapv3-config-user-objectclass"/>
             <Value>inetorgperson</Value>
             <Value>inetuser</Value>
+            <Value>iplanet-am-managed-person</Value>
             <Value>iplanet-am-user-service</Value>
             <Value>iPlanetPreferences</Value>
             <Value>organizationalPerson</Value>

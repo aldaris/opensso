@@ -348,6 +348,36 @@ objectClass: attributeSchema
 oMSyntax: 22
 systemOnly: FALSE
 
+dn: CN=iplanet-am-modifiable-by,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+changetype: add
+adminDisplayName: iplanet-am-modifiable-by
+adminDescription: Attribute Modified by
+attributeID: 2.16.840.1.113730.3.1.1094
+attributeSyntax: 2.5.5.5
+cn: iplanet-am-modifiable-by
+instanceType: 4
+isSingleValued: FALSE
+lDAPDisplayName: iplanet-am-modifiable-by
+objectCategory: CN=Attribute-Schema,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+objectClass: attributeSchema
+oMSyntax: 22
+systemOnly: FALSE
+
+dn: CN=iplanet-am-static-group-dn,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+changetype: add
+adminDisplayName: iplanet-am-static-group-dn
+adminDescription: Static group DN
+attributeID: 2.16.840.1.113730.3.1.1096
+attributeSyntax: 2.5.5.5
+cn: iplanet-am-static-group-dn
+instanceType: 4
+isSingleValued: FALSE
+lDAPDisplayName: iplanet-am-static-group-dn
+objectCategory: CN=Attribute-Schema,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+objectClass: attributeSchema
+oMSyntax: 22
+systemOnly: FALSE
+
 dn: CN=iplanet-am-user-auth-config,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
 changetype: add
 adminDisplayName: iplanet-am-user-auth-config
@@ -618,6 +648,27 @@ add: schemaUpdateNow
 schemaUpdateNow: 1
 -
 
+dn: CN=iplanet-am-managed-person,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+changetype: add
+adminDisplayName: iplanet-am-managed-person
+adminDescription: Object Class to managed person
+cn: iplanet-am-managed-person
+governsID: 2.16.840.1.113730.3.2.184
+instanceType: 4
+lDAPDisplayName: iplanet-am-managed-person
+mayContain: iplanet-am-modifiable-by
+mayContain: iplanet-am-static-group-dn
+mayContain: iplanet-am-user-account-life
+objectCategory: CN=Class-Schema,CN=Schema,CN=Configuration,@ROOT_SUFFIX@
+objectClass: classSchema
+objectClassCategory: 3
+rDNAttID: cn
+subClassOf: top
 
+dn:
+changetype: modify
+add: schemaUpdateNow
+schemaUpdateNow: 1
+-
 
 
