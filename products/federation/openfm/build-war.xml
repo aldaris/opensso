@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.40 2008-05-28 19:54:35 mrudul_uchil Exp $
+   $Id: build-war.xml,v 1.41 2008-06-13 10:48:59 mahesh_prasad_r Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -345,20 +345,6 @@
             <arg value="&lt;/accesscontrols&gt;" />
         </java>
 
-	<!-- merge am and fm console properties -->
-        <java classname="com.sun.identity.setup.MergeProperties" fork="true">
-            <classpath refid="build.class.path"/>
-            <classpath>
-                <pathelement path="${war.package.dir}/WEB-INF/classes"/>
-                <pathelement path="resources"/>
-            </classpath>
-            <arg value="amConsole" />
-            <arg value="fmConsole" />
-            <arg value="${war.webinf.classes.dir}/amConsole.properties" />
-        </java>
-
-        <delete file="${war.webinf.classes.dir}/fmConsole.properties" />
-        
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>
