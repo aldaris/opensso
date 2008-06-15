@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.67 2008-06-10 17:17:23 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.68 2008-06-15 07:30:22 mrudul_uchil Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1813,7 +1813,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("privateKeyAlias","test");
         config.put("publicKeyAlias","test");
         config.put("isRequestSign","true");
-        //config.put("keepSecurityHeaders","true");
+        config.put("keepSecurityHeaders","true");
         config.put("WSPEndpoint","default");
         config.put("AgentType","WSCAgent");
         createAgent(token, idrepo, "wsc", "WSC", "", config);
@@ -1828,12 +1828,12 @@ public class AMSetupServlet extends HttpServlet {
                                   "urn:sun:wss:security:null:X509Token");
         createAgent(token, idrepo, "wsp", "WSP", "", config);
 
-        // Add localSTS configuration
+        // Add STS Client configuration
         config.remove("AgentType");
         config.put("AgentType","STSAgent");
         config.remove("SecurityMech");
         config.remove("UserCredential");
-        //config.remove("keepSecurityHeaders");
+        config.remove("keepSecurityHeaders");
         config.remove("WSPEndpoint");
         config.put("SecurityMech","urn:sun:wss:security:null:X509Token");
         config.put("STSEndpoint",serverURL + deployuri + "/sts");
