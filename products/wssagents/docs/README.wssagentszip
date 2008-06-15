@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.5 2008-03-20 05:33:26 mrudul_uchil Exp $
+   $Id: README.wssagentszip,v 1.6 2008-06-15 07:24:31 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,20 +26,14 @@
 Federated Access Manager Web Services Security Agents / Providers - Zip file
 
 openssowssproviders.zip
-             |____ lib/openssoclientsdk.jar (complete clientsdk jar)
-             |____ lib/openssowssproviders.jar (complete WSSAgents jar, including glassfish, weblogic, websphere, proxy plugin code binaries)
-             |____ lib/famauthprovider.jar (for weblogic only)
+             |____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
+             |____ lib/openssowssproviders.jar (complete WSS Providers/Agents jar - currently supported on Glassfish / AS 9.1 only)
              |____ lib/*.jar (other jar files required for OpenSSO client and WSS Providers/Agents)
-             |____ resources/AMConfig.properties (complete client properties)
+             |____ resources/AMConfig.properties (complete OpenSSO client properties)
              |____ resources/keystore.jks (client keystore file)
              |____ resources/.keypass (password file for key)
              |____ resources/.storepass (password file for keystore)
              |____ README (this file)
-             |____ README.common (common / top level README for common instructions, like modifying AMClient.properties, etc.)
-             |____ README.glassfish (instructions to install, deploy and configure glassfish plugins)
-             |____ README.weblogic (instructions to install, deploy and configure weblogic plugins)
-             |____ README.websphere (instructions to install, deploy and configure websphere plugins)
-             |____ README.proxy (instructions to install, create war, deploy and configure proxy web application)
-             |____ xml/web.xml (for proxy only)
+             |____ README.glassfish (instructions to setup glassfish environment for WSS Providers/Agents)
              |____ license.txt
-             |____ samples/glassfish/* (WSS samples on Glassfish container)
+             |____ samples/glassfish/* (WSC/WSP samples using WSS Providers/Agents on Glassfish / AS 9.1 container)

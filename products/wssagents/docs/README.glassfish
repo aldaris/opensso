@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.6 2008-03-20 05:33:26 mrudul_uchil Exp $
+   $Id: README.glassfish,v 1.7 2008-06-15 07:24:30 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,181 +27,168 @@
 README.glassfish
 =================
 
-This README contains instructions on how to secure web services using FAM WSS plugins on SUN Application Server 9.1 (Glassfish).
+This README contains instructions on how to secure web services using 
+FAM WSS providers on SUN Application Server 9.1 (Glassfish V2).
 
 This document assumes that users have already done the following:
 
 1. Installed the SUN Application Server 9.1 that host the web services client (WSC) 
    and web services provider (WSP). 
 2. Implemented the web services client and the web services provider.
-3. Set up the FAM server and profiles for the WSC and the WSP. If not, please 
-   refer to the README.common file for details on setting up FAM server and the
-   profiles of WSC and WSP.
+3. Installed and configured the Federated Access Manager server. 
 
+Follow the steps below to secure the web services using FAM WSS providers.
 
-Follow the steps below to secure the web services using FAM WSS plugins.
+I. Federated Access Manager server (OpenSSO server)
 
-I. Federated Access Manager server
-
-If the Security Manager is "on", add the following as Java security permissions to the server.policy file of the Application Server.
+If the Security Manager is "on", add the following as Java security permissions 
+to the server.policy file of the Application Server.
 
 Each Application Server domain has its own standard J2SE policy file named server.policy. 
 It is located in the /ApplicationServer-install/domains/<domain-name>/config directory. 
 More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
 
 // ADDITIONS FOR Federated Access Manager
- grant codeBase "file:\${com.sun.aas.instanceRoot}/applications/j2ee-modules/fam/-" {
-      permission java.net.SocketPermission "*", "connect,accept,resolve";
-      permission java.util.PropertyPermission "*", "read, write";
-      permission java.lang.RuntimePermission "modifyThreadGroup";
-      permission java.lang.RuntimePermission "setFactory";
-      permission java.lang.RuntimePermission "accessClassInPackage.*";
-      permission java.util.logging.LoggingPermission "control";
-      permission java.lang.RuntimePermission "shutdownHooks";
-      permission javax.security.auth.AuthPermission "insertProvider.Mozilla-JSS";
-      permission java.security.SecurityPermission "putProviderProperty.Mozilla-JSS";
-      permission javax.security.auth.AuthPermission "getLoginConfiguration";
-      permission javax.security.auth.AuthPermission "setLoginConfiguration";
-      permission javax.security.auth.AuthPermission "modifyPrincipals";
-      permission javax.security.auth.AuthPermission "createLoginContext.*";
-      permission java.security.SecurityPermission "insertProvider.Mozilla-JSS";
-      permission javax.security.auth.AuthPermission "putProviderProperty.Mozilla-JSS";
-      permission java.io.FilePermission "<<ALL FILES>>", "execute,delete";
-      permission java.util.PropertyPermission "java.util.logging.config.class", "write";
-      permission java.security.SecurityPermission "removeProvider.SUN";
-      permission java.security.SecurityPermission "insertProvider.SUN";
-      permission java.security.SecurityPermission "removeProvider.Mozilla-JSS";
-      permission javax.security.auth.AuthPermission "doAs";
-      permission java.util.PropertyPermission "java.security.krb5.realm", "write";
-      permission java.util.PropertyPermission "java.security.krb5.kdc", "write";
-      permission java.util.PropertyPermission "java.security.auth.login.config", "write";
-      permission java.util.PropertyPermission "user.language", "write";
-      permission javax.security.auth.kerberos.ServicePermission "*", "accept";
-      permission javax.net.ssl.SSLPermission "setHostnameVerifier";
-      permission java.security.SecurityPermission "putProviderProperty.IAIK";
-      permission java.security.SecurityPermission "removeProvider.IAIK";
-      permission java.security.SecurityPermission "insertProvider.IAIK";
-      
-   };
-   // END OF ADDITIONS FOR Federated Access Manager
+grant {
+
+permission java.net.SocketPermission "*", "listen,connect,accept,resolve";
+permission java.util.PropertyPermission "*", "read, write";
+permission java.lang.RuntimePermission "modifyThreadGroup";
+permission java.lang.RuntimePermission "setFactory";
+permission java.lang.RuntimePermission "accessClassInPackage.*";
+permission java.util.logging.LoggingPermission "control";
+permission java.lang.RuntimePermission "shutdownHooks";
+permission javax.security.auth.AuthPermission "getLoginConfiguration";
+permission javax.security.auth.AuthPermission "setLoginConfiguration";
+permission javax.security.auth.AuthPermission "modifyPrincipals";
+permission javax.security.auth.AuthPermission "createLoginContext.*";
+permission java.io.FilePermission "<<ALL FILES>>", "read,write,execute,delete";
+permission java.util.PropertyPermission "java.util.logging.config.class", "write";
+permission java.security.SecurityPermission "removeProvider.SUN";
+permission java.security.SecurityPermission "insertProvider.SUN";
+permission javax.security.auth.AuthPermission "doAs";
+permission java.util.PropertyPermission "java.security.krb5.realm", "write";
+permission java.util.PropertyPermission "java.security.krb5.kdc", "write";
+permission java.util.PropertyPermission "java.security.auth.login.config", "write";
+permission java.util.PropertyPermission "user.language", "write";
+permission javax.security.auth.kerberos.ServicePermission "*", "accept";
+permission javax.net.ssl.SSLPermission "setHostnameVerifier";
+permission java.security.SecurityPermission "putProviderProperty.IAIK";
+permission java.security.SecurityPermission "removeProvider.IAIK";
+permission java.security.SecurityPermission "insertProvider.IAIK";
+permission java.lang.RuntimePermission "setDefaultUncaughtExceptionHandler";
+permission javax.management.MBeanServerPermission "newMBeanServer";
+permission javax.management.MBeanPermission "*", "registerMBean";
+permission java.lang.RuntimePermission "createClassLoader";
+permission java.lang.RuntimePermission "accessDeclaredMembers";
+permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+permission javax.security.auth.AuthPermission "getSubject";
+
+permission javax.management.MBeanTrustPermission "register";
+permission java.lang.management.ManagementPermission "monitor";
+permission javax.management.MBeanServerPermission "createMBeanServer";
+permission java.util.PropertyPermission "javax.xml.soap.MetaFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.MessageFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.SOAPConnectionFactory", "write";
+permission java.util.PropertyPermission "javax.xml.soap.SOAPFactory", "write";
+permission java.net.NetPermission "getProxySelector";
+permission java.security.SecurityPermission "getProperty.authconfigprovider.factory";
+permission java.security.SecurityPermission "setProperty.authconfigprovider.factory";
+permission javax.security.auth.AuthPermission "doAsPrivileged";
+permission javax.security.auth.AuthPermission "modifyPublicCredentials";
+permission java.security.SecurityPermission "insertProvider.XMLDSig";
+permission java.security.SecurityPermission "putProviderProperty.WSS_TRANSFORM";
+permission java.security.SecurityPermission "insertProvider.WSS_TRANSFORM";
+
+};
+// END OF ADDITIONS FOR Federated Access Manager
    
 
-II. SUN Application Server (Glassfish)
+II. Unzip openssowssproviders.zip to a desired directory, 
+say <unizip_dir_of_openssowssproviders.zip>
 
-Add the following web services security providers configurations to the domain.xml file as per Application Server guidelines.
+III. Modify <unizip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows:
 
-domain.xml is located in the /ApplicationServer-install/domains/<domain-name>/config directory and 
-contains most of the Application Server configuration information.
+# FAM Server Information
+# Protocol can be either http or https
+com.iplanet.am.server.protocol=famserver_protocol
+com.iplanet.am.server.host=famserver_host
+com.iplanet.am.server.port=famserver_port
+com.iplanet.am.services.deploymentDescriptor=famserver_deploy_uri
 
+# Application username and password
+com.sun.identity.agents.app.username=amadmin
+com.iplanet.am.service.password=<amadmin password>
 
-The following provider code fragment needs to be added under the <message-security-config auth-layer="HttpServlet"> tag:
-Note : Create the tag <message-security-config auth-layer="HttpServlet">, if not already present.
+am.encryption.pwd=<empty or null value>
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMHttpAuthModule"
-provider-id="FAMHttpProvider" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-</provider-config>
+com.iplanet.am.naming.url=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/namingservice
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMHttpAuthModule"
-provider-id="FAMAuthHttpProvider" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="wsc"/>
-</provider-config>
+# Debug information
+com.iplanet.services.debug.level=message
+com.iplanet.services.debug.directory=/tmp/wssclient
 
+# Cookie information
+com.iplanet.am.cookie.name=iPlanetDirectoryPro
 
-The following provider code fragments need to be added under the <message-security-config auth-layer="SOAP"> tag:
+# SAML xml signature keystore file, keystore password file,
+# key password file and Liberty trusted CA aliases.
+com.sun.identity.saml.xmlsig.keystore=<unizip_dir_of_openssowssproviders.zip>/resources/keystore.jks
+com.sun.identity.saml.xmlsig.storepass=<unizip_dir_of_openssowssproviders.zip>/resources/.storepass
+com.sun.identity.saml.xmlsig.keypass=<unizip_dir_of_openssowssproviders.zip>/resources/.keypass
+com.sun.identity.liberty.ws.trustedca.certaliases=test:<famserver_host>
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-SAML-HolderOfKey" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="SAML-HolderOfKey"/>
-</provider-config>
+# Login URL and Authentication service URL for Liberty use case
+com.sun.identity.loginurl=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/UI/Login
+com.sun.identity.liberty.authnsvc.url=famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri/Liberty/authnsvc
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-SAML-SenderVouches" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="SAML-SenderVouches"/>
-</provider-config>
+NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different 
+than the one specified as the value for BASE_DIR (or CONFIG_DIR) in Installing Federated Access Manager.
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-X509Token" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="X509Token"/>
-</provider-config>
+IV. Copy files
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-LibertySAMLToken" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="LibertySAMLToken"/>
-</provider-config>
+1. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-rt.jar to
+   /ApplicationServer-install/lib
+2. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-tools.jar to
+   /ApplicationServer-install/lib
+3. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-api.jar to
+   /ApplicationServer-install/lib/endorsed
+4. Create /ApplicationServer-install/addons/fam directory if not already present.
+5. Copy <unizip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties to 
+   /ApplicationServer-install/addons/fam
+6. Copy all jar files from <unizip_dir_of_openssowssproviders.zip>/lib/ directory 
+   to /ApplicationServer-install/addons/fam
+7. Add the /ApplicationServer-install/addons/fam/openssowssproviders.jar path in 
+   classpath suffix (global JVM settings) for Application server.
+    You can do this step (9) via Application Server's Admin Console -
+    For GF V2 : Application Server -> JVM Settings tab -> Path Settings tab
+    For AS 9.1 : Configurations -> server-config -> JVM Settings -> Path Settings tab
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMClientAuthModule"
-provider-id="FAMClientProvider" provider-type="client">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="wsc"/>
-</provider-config>
+V. Restart the SUN Application Server (Glassfish).
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-UserNameToken" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="UserNameToken"/>
-</provider-config>
+VI. Configure the web services client and the web services provider for Web services security.
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-UserNameToken-Plain" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="UserNameToken-Plain"/>
-</provider-config>
+1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-LibertyX509Token" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="LibertyX509Token"/>
-</provider-config>
+    famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-LibertyBearerToken" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="LibertyBearerToken"/>
-</provider-config>
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="wsp"/>
-</provider-config>
+    Create agent profiles for WSC and WSP (if not created out of box) :
 
-<provider-config class-name="com.sun.identity.wssagents.glassfish.FAMServerAuthModule"
-provider-id="FAMServerProvider-Anonymous" provider-type="server">
-<request-policy auth-source="content"/>
-<response-policy auth-source="content"/>
-<property name="providername" value="Anonymous"/>
-</provider-config>
+      Go to Access Control → Default realm → Agents →
 
+        a) Create "WSC" profile
+        Select Web Service Client → under Agent, click "new" → enter name as "wsc" and other required fields → Save.
+        Click on above saved profile to edit → Select required Security Mechanism and "Is Request Signed" as true (checked).
+        Save changes.
+        Note : If the required or selected Security Mechanism is “STSSecurity”, then 
+        select STS Configuration as “SecurityTokenService" and Web Service End Point as “default”.
 
-III. Copy files
+        b) Create "WSP" profile
+        Select Web Service Provider → under Agent, click "new" → enter name as "wsp" and other required fields → Save.
+        Click on above saved profile to edit → Select all Security Mechanisms.
+        Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
+        Save changes.
 
-1. Copy resources/AMConfig.properties to /ApplicationServer-install/domains/<domain-name>/config
-2. Create /ApplicationServer-install/addons/accessmanager directory if not already present.
-3. Copy all jar files from lib/ directory to /ApplicationServer-install/addons/accessmanager
-4. Put the /ApplicationServer-install/addons/accessmanager/openssowssproviders.jar in 
-classpath suffix (global JVM settings) for Application server
-
-
-IV. Restart server
-
-Restart the SUN Application Server (Glassfish).
-
-
+2.  Logout of Federated Access Manager Administration console.

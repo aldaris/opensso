@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2008-05-29 07:32:47 mrudul_uchil Exp $
+   $Id: build.xml,v 1.12 2008-06-15 07:24:30 mrudul_uchil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -67,8 +67,8 @@
 
     <target name="build" depends="checkjar, preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-            destdir="${wssagents.classes.dir}" source="1.4" target="1.4"
-            debug="${build.debug}" debuglevel="${build.debuglevel}">
+            destdir="${wssagents.classes.dir}" source="1.5" target="1.5"
+            debug="${build.debug}" debuglevel="${build.debuglevel}" excludes="com/sun/identity/wssagents/weblogic/*.*">
             <src path="${wssagents.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
@@ -111,7 +111,7 @@
             </fileset>
             <fileset dir="${wssagents.xml.dir}" includes="*.xml" />
             <zipfileset dir="${wssagents.classes.dir}" />
-            <zipfileset src="${fm.dist.dir}/fam.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class,com/sun/identity/classloader/FAMClassLoader.class,com/sun/identity/classloader/MaskingClassLoader.class"/>
+            <zipfileset src="${fm.dist.dir}/fam.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class,com/sun/identity/classloader/MaskingClassLoader.class"/>
         </jar>
 
         <checksum file="${wssagents.dist.dir}/openssowssproviders.jar" 
@@ -126,19 +126,15 @@
             tofile="${zip.temp.dir}/license.txt" />
         <copy file="${wssagents.basedir}/docs/README.wssagentszip"
             tofile="${zip.temp.dir}/README" />
-        <copy file="${wssagents.basedir}/docs/README.common"
-            tofile="${zip.temp.dir}/README.common" />
         <copy file="${wssagents.basedir}/docs/README.glassfish"
             tofile="${zip.temp.dir}/README.glassfish" />
-        <copy file="${wssagents.basedir}/docs/README.weblogic"
-            tofile="${zip.temp.dir}/README.weblogic" />
 
         <copy todir="${zip.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
             <fileset file="${wssagents.dist.dir}/openssowssproviders.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="mail.jar,relaxngDatatype.jar,xsdlib.jar,webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,ldapjdk.jar,j2ee.jar" />
+            <fileset dir="${extlib.dir}" includes="webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,ldapjdk.jar,j2ee.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/samples">
             <fileset file="${wssagents.samples.dir}/**" />

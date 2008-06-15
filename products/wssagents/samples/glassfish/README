@@ -1,3 +1,28 @@
+<!--
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: README,v 1.6 2008-06-15 07:24:31 mrudul_uchil Exp $
+
+   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
+-->
+
 README
 =======
 
@@ -8,24 +33,8 @@ Before you begin:
 =================
 
 The web services security for JAX-WS based web services is achieved using
-JSR196 providers. Before you begin, follow the README.common and 
-README.glassfish from the install directory of the zip file to configure the 
-JSR 196 providers(also known as JMAC Providers) and necessary federation
-access manager runtime components. You can configure FAM JSR196 providers
-as the default security providers in Glassfish environment. 
-
-Steps for making FAM JSR 196 providers as default: 
-
-i) Go to Glassfish administration console
-
-ii) From left navigation frame, click on Configuration->Security->Message
-    Security-> SOAP
- 
-iii) Select Default Provider as FAMServerProvider and Default Client
-    Provider as FAMClientProvider.
-
-iv) Save the configuration. 
-
+JSR196 providers. Before you begin, follow the README.glassfish from the 
+install directory of the zip file. 
 
 General Description: 
 ====================
@@ -37,25 +46,7 @@ a stock ticker symbol it obtains stock data. The secure communication
 between stock quote web services client is achieved using Federation
 Access Manager web services security agents. The web services security
 agents profile configuation is stored in backend repository information
-like regular FAM agents. 
-
-
-Setup required for STS : 
-========================
-
-Following steps are required if client is configured to retrieve the 
-Security token from STS (Security Token Service).
-
-1. Add following property and its value in 
-<glassfish_home_dir>/domains/<domain-name>/config/AMConfig.properties
-
-com.sun.identity.classloader.client.jarsPath=<glassfish_home_dir>/addons/accessmanager
-
-2. Copy resources/wsit-client.xml and resources/famsts-client.wsdl 
-to <glassfish_home_dir>/domains/<domain-name>/config
-
-3. Update this <glassfish_home_dir>/domains/<domain-name>/config/famsts-client.wsdl 
-to give actual path of keystore.jks for "@KEYSTORE_LOCATION@" 
+like regular FAM agents.  
 
 Deployment of samples:
 ======================
@@ -78,14 +69,44 @@ I. Deploy the samples
    2. Make sure that JAVA_HOME is set to JDK1.5 installation and similarly
       make sure java and javac are in the PATH you are executing it.
 
-   3. cd StockQuoteClient and run "ant -f build.xml". This will build
+   3. Use "ant" from <ApplicationServer-install>/lib/ant/bin/ant
+
+   4. cd StockQuoteClient and run "ant -f build.xml". This will build
       and deploy the StockQuoteClient onto glassfish container.
 
-   4. cd StockService and run "ant -f build.xml". This will build
+   5. cd StockService and run "ant -f build.xml". This will build
       and deploy the StockService onto glassfish container.
 
 
-II. Run the samples
+II. Configure the web services client for "StockService".
+
+1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
+
+    famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
+
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
+
+    Create agent profiles for "StockService" WSC :
+
+      Go to Access Control → Default realm → Agents →
+
+        a) Create "WSC" profile for "StockService"
+        Select Web Service Client → under Agent, click "new" → enter name as "StockService" and other required fields → Save.
+        Click on above saved profile to edit → Select required Security Mechanism, "Preserve Security Headers in Message" as
+        true (checked) and "Is Request Signed" as true (checked).
+        Save changes.
+        Note : If the required or selected Security Mechanism is “STSSecurity”, then 
+        select STS Configuration as “SecurityTokenService" and Web Service End Point as “default”. 
+
+        b) Create "WSP" profile (if not already created)
+        Select Web Service Provider → under Agent, click "new" → enter name as "wsp" and other required fields → Save.
+        Click on above saved profile to edit → Select all Security Mechanisms.
+        Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
+        Save changes.
+
+2.  Logout of Federated Access Manager Administration console.
+
+III. Run the samples
 
   a) Web Service Client sample :
     1. Access the stock quote client page.
@@ -101,5 +122,4 @@ II. Run the samples
 
     2. run "ant -f build.xml". 
     This will build and run the Standalone client sample.
-
 

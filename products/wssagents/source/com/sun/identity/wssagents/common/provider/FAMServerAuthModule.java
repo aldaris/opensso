@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.1 2008-05-28 19:50:53 mrudul_uchil Exp $
+ * $Id: FAMServerAuthModule.java,v 1.2 2008-06-15 07:24:33 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,6 @@ import com.sun.xml.ws.api.message.HeaderList;
 import com.sun.xml.ws.api.message.Message;
 import com.sun.xml.wss.impl.ProcessingContextImpl;
 import com.sun.xml.ws.security.IssuedTokenContext;
-import com.sun.identity.classloader.FAMClassLoader;
 
 /**
  * The <code>FAMServerAuthModule</code> class implements an interface
@@ -93,8 +92,28 @@ public class FAMServerAuthModule implements ServerAuthModule {
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
             if (_handler == null) {
-                // Obtain the FAM class loader
-                cls = FAMClassLoader.getFAMClassLoader(null,jars);
+                try {
+                    oldcc.loadClass("com.sun.identity.classloader.FAMClassLoader");
+                    // Get the FAM Classloader
+                    cls = 
+                        com.sun.identity.classloader.FAMClassLoader.
+                            getFAMClassLoader(null,jars);
+                } catch (ClassNotFoundException cnfe) {
+                    System.out.println("FAMServerAuthModule : " + 
+                        "ClassNotFoundException, will load " + 
+                            "wssagents.classloader.FAMClassLoader");
+                    cls = 
+                        com.sun.identity.wssagents.classloader.FAMClassLoader.
+                            getFAMClassLoader(jars);
+                } catch (java.lang.NoClassDefFoundError ncdfe) {
+                    System.out.println("FAMServerAuthModule : " + 
+                        "NoClassDefFoundError, will load " + 
+                            "wssagents.classloader.FAMClassLoader");
+                    cls = 
+                        com.sun.identity.wssagents.classloader.FAMClassLoader.
+                            getFAMClassLoader(jars);
+                }
+                
                 Thread.currentThread().setContextClassLoader(cls);
                 
                 // Obtain in the instance of class
@@ -344,14 +363,8 @@ public class FAMServerAuthModule implements ServerAuthModule {
      * The list of jar files to be loaded by FAMClassLoader.
      */
     public static String[] jars = new String[]{
-        "webservices-api.jar",
         "webservices-rt.jar",
-        "webservices-tools.jar",
-        "webservices-extra-api.jar",
-        "webservices-extra.jar",
         "openssoclientsdk.jar",
-        "openssowssproviders.jar",
-        "xalan.jar",
-        "xercesImpl.jar"
+        "xalan.jar"
     };
 }

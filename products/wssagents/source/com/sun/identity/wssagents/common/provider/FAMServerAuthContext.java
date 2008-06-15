@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthContext.java,v 1.1 2008-05-28 19:50:52 mrudul_uchil Exp $
+ * $Id: FAMServerAuthContext.java,v 1.2 2008-06-15 07:24:33 mrudul_uchil Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -58,11 +58,6 @@ public class FAMServerAuthContext implements ServerAuthContext {
         // "appContext" issue.
         String appContext = (String)map.get("providername");
         System.out.println("FAMServerAuthContext appContext : " + appContext);
-        
-        WSDLPort port2 = (WSDLPort)map.get("WSDL_MODEL");
-        String endpoint2 = port2.getAddress().getURL().toString();
-        System.out.println("FAMServerAuthContext endpoint from WSDL model : " + 
-            endpoint2);
         
         WSEndpoint endPoint = (WSEndpoint)map.get("ENDPOINT");
         WSDLPort port = endPoint.getPort();

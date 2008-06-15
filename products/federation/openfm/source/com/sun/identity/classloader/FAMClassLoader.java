@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.7 2008-05-28 19:54:38 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.8 2008-06-15 07:25:36 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,17 @@ public class FAMClassLoader {
     
     public static ClassLoader getFAMClassLoader(ServletContext context, 
         String[] reqJars) {
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
+        
+        URL res = oldcc.getResource("com/sun/xml/ws/security/trust/impl/ic/ICContractImpl.class");
+        if (res != null) {
+            if (!(res.toString().contains("/WEB-INF/lib/webservices-rt.jar"))) {
+                System.out.println("FAMClassLoader : found new Metro class in global classpath");
+                cl = oldcc;
+                return cl;
+            }
+        }
+        
         setSystemProperties();
         if (cl == null) {
             try {
@@ -109,12 +120,16 @@ public class FAMClassLoader {
         if (reqJars != null) {
             jars = reqJars;
         }
-        URL[] urls = new URL[jars.length];
+        URL[] urls = new URL[jars.length + 1];
         String FILE_BEGIN = "file:";
+        String osName = System.getProperty("os.name");
+        if ((osName != null) && (osName.toLowerCase().startsWith("windows"))) {
+            FILE_BEGIN = "file:/";
+        }
         String FILE_SEPARATOR = "/";
         String installRoot = System.getProperty("com.sun.aas.installRoot");
         String defaultJarsPath = installRoot + FILE_SEPARATOR + "addons" 
-            + FILE_SEPARATOR + "accessmanager";
+            + FILE_SEPARATOR + "fam";
         String jarsPath = FILE_BEGIN + SystemConfigurationUtil.getProperty(
             FAM_CLASSLOADER_DIR_PATH, defaultJarsPath) + FILE_SEPARATOR;
         try {
@@ -123,6 +138,9 @@ public class FAMClassLoader {
                 System.out.println("FAM urls[" + i + "] : " + 
                                    (urls[i]).toString());
             }
+            urls[jars.length] = new URL(jarsPath);
+            System.out.println("FAM urls[" + jars.length + "] : " + 
+                                   (urls[jars.length]).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-03-20 05:33:26 mrudul_uchil Exp $
+   $Id: build.xml,v 1.2 2008-06-15 07:24:31 mrudul_uchil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,11 +38,11 @@
             classpath="xyz.jar"
             debug="on">
             <classpath>
-                <pathelement location="${glassfish.home}/lib/appserv-rt.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/j2ee.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/webservices-rt.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/openssoclientsdk.jar"/>
-                <pathelement location="${glassfish.home}/domains/domain1/config"/>
+                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/webservices-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/openssoclientsdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/xalan.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam"/>
                 <pathelement path="build/classes"/>
             </classpath>
          </javac>
@@ -52,12 +52,12 @@
             <echo>java.home=${java.home}</echo>
         <java classname="com.samples.SecuringWS" fork="true">
             <classpath>
-                <pathelement location="${glassfish.home}/lib/appserv-rt.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/j2ee.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/ldapjdk.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/webservices-rt.jar"/>
-                <pathelement location="${glassfish.home}/addons/accessmanager/openssoclientsdk.jar"/>
-                <pathelement location="${glassfish.home}/domains/domain1/config"/>
+                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/ldapjdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/webservices-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/openssoclientsdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/xalan.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam"/>
                 <pathelement path="build/classes"/>
             </classpath>
         </java>

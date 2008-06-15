@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.7 2008-03-08 03:03:19 mallas Exp $
+ * $Id: WSSUtils.java,v 1.8 2008-06-15 07:25:36 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -508,7 +508,7 @@ public class WSSUtils {
         try {
             SSOToken adminToken = getAdminToken();
             if(adminToken == null) {
-               debug.error("WSSUtils.getRoleMemberShips: " +
+               debug.message("WSSUtils.getRoleMemberShips: " +
                "Admin Token is null");
                 return roles;
             }
@@ -555,11 +555,11 @@ public class WSSUtils {
             return roles;
 
         } catch (SSOException se) {
-            debug.error("WSSUtils.getRoleMemberShips: " +
-            "SSOException" + se);
+            debug.message("WSSUtils.getRoleMemberShips: " +
+            "SSOException : " + se);
         } catch (IdRepoException ire) {
-            debug.error("WSSUtils.getRoleMemberShips: " +
-            "IdRepoException" + ire);
+            debug.message("WSSUtils.getRoleMemberShips: " +
+            "IdRepoException : " + ire);
         }
         return roles;
     }    
@@ -573,7 +573,7 @@ public class WSSUtils {
                SSOTokenManager.getInstance().refreshSession(adminToken);
             }
         } catch (Exception se) {
-            debug.message("DefaultAuthenticator.getAdminToken::" +
+            debug.message("WSSUtils.getAdminToken::" +
                "Trying second time ....");
             adminToken = (SSOToken) AccessController.doPrivileged(
                AdminTokenAction.getInstance());

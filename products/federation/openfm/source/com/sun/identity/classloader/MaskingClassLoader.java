@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.5 2008-05-28 19:54:38 mrudul_uchil Exp $
+ * $Id: MaskingClassLoader.java,v 1.6 2008-06-15 07:25:36 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,8 +80,18 @@ public class MaskingClassLoader extends ClassLoader {
                               Collection<String> masks,
                               Collection<String> maskResources,
                               URL[] urls) {
-        this(parent, masks.toArray(new String[masks.size()]) , 
-            maskResources.toArray(new String[maskResources.size()]), urls);
+        //this(parent, masks.toArray(new String[masks.size()]) , 
+        //    maskResources.toArray(new String[maskResources.size()]), urls);
+        super(parent);
+        this.parent = parent;
+        this.masks = masks.toArray(new String[masks.size()]);
+        if (maskResources != null) {
+            this.maskResources = 
+                maskResources.toArray(new String[maskResources.size()]);
+        } else {
+            this.maskResources = null;
+        }
+        this.urls = urls;
     }
 
     @Override
@@ -97,6 +107,10 @@ public class MaskingClassLoader extends ClassLoader {
     
     @Override
     public synchronized URL getResource(String name) {
+        if (maskResources == null) {
+            return super.getResource(name);
+        }
+        
         if(name.startsWith(resourceAuthConfigProvider)) {
             // Read the "resourceAuthConfigProvider" from openssowssproviders.jar
             try {
@@ -150,7 +164,11 @@ public class MaskingClassLoader extends ClassLoader {
     }
     
     @Override
-    public Enumeration<URL> getResources(String name) throws IOException { 
+    public Enumeration<URL> getResources(String name) throws IOException {
+        if (maskResources == null) {
+            return super.getResources(name);
+        }
+        
         Enumeration[] tmp = new Enumeration[1];
         if(name.startsWith(resource)) {
             Vector vec = new Vector(1);

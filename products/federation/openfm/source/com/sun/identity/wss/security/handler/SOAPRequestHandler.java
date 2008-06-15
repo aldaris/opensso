@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.13 2008-05-28 19:54:41 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.14 2008-06-15 07:25:37 mrudul_uchil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -633,19 +633,20 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         ProviderConfig config = null;
         try {
-            config = ProviderConfig.getProvider(providerName,
+            if (!ProviderConfig.isProviderExists(
+                    providerName, ProviderConfig.WSP)) {
+                config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSP, true);
-            if (config == null) {
-                providerName = SystemConfigurationUtil.getProperty(
-                    "com.sun.identity.wss.provider.defaultWSP", "wsp");
+                if (!ProviderConfig.isProviderExists(
+                    providerName, ProviderConfig.WSP)) {
+                    providerName = SystemConfigurationUtil.getProperty(
+                        "com.sun.identity.wss.provider.defaultWSP", "wsp");
+                    config = ProviderConfig.getProvider(providerName,
+                        ProviderConfig.WSP);
+                }
+            } else {
                 config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSP);
-                if (config == null) {
-                    debug.error("SOAPRequestHandler.getWSPConfig:: Provider" +
-                        " configuration is null");
-                    throw new SecurityException(
-                        bundle.getString("noProviderConfig"));
-                }
             }
             if(!config.useDefaultKeyStore()) {
                 initializeSystemProperties(config);
@@ -670,20 +671,15 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         ProviderConfig config = null;
         try {
-            config = ProviderConfig.getProvider(providerName,
-                    ProviderConfig.WSC);
-            if (config == null) {            
+            config = 
+                ProviderConfig.getProvider(providerName,ProviderConfig.WSC);
+            if (!ProviderConfig.isProviderExists(
+                providerName, ProviderConfig.WSC)) {            
                 providerName = SystemConfigurationUtil.getProperty(
                     "com.sun.identity.wss.provider.defaultWSC", "wsc");
                 config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSC);
-                if (config == null) {   
-                    debug.error("SOAPRequestHandler.getWSCConfig:: Provider" +
-                        " configuration is null");
-                    throw new SecurityException(
-                        bundle.getString("noProviderConfig"));
-                }
-            }
+            }        
             if(!config.useDefaultKeyStore()) {
                 initializeSystemProperties(config);
             }
