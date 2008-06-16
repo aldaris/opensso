@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.8 2008-06-02 20:00:55 manish_rustagi Exp $
+ * $Id: ServerConfiguration.java,v 1.9 2008-06-16 20:58:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -380,7 +380,7 @@ public class ServerConfiguration extends ConfigurationBase {
         SSOToken ssoToken,
         String instanceName,
         String xml
-    ) throws SMSException, SSOException {
+    ) throws SMSException, SSOException, ConfigurationException {
         if (!isLegacy(ssoToken)) {
             ServiceConfig cfg = getServerConfig(ssoToken, instanceName);
             if (cfg != null) {
@@ -397,6 +397,7 @@ public class ServerConfiguration extends ConfigurationBase {
                     } catch (ConfigurationException e) {
                         Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                             "ServerConfiguration.setServerConfigXML", e);
+                        throw e;
                     }
                 }
             }

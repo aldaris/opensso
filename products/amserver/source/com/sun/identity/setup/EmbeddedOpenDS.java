@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.12 2008-04-28 20:09:32 veiming Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.13 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,14 +90,15 @@ public class EmbeddedOpenDS {
     public static void setup(Map map, ServletContext servletCtx)
         throws Exception {
         // Determine Cipher to be used
-        SetupProgress.reportStart("emb.installingemb", null);
+        SetupProgress.reportStart("emb.installingemb.null", null);
         String xform =  getSupportedTransformation();
         if (xform == null) {
             SetupProgress.reportEnd("emb.noxform", null);
             throw new Exception("No transformation found");
         } else {
             map.put(OPENDS_TRANSFORMATION, xform);
-            SetupProgress.reportEnd("emb.success", xform);
+            Object[] params = {xform};
+            SetupProgress.reportEnd("emb.success.param", params);
         }
 
         String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
@@ -156,7 +157,7 @@ public class EmbeddedOpenDS {
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
             } catch (IOException e) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "EmbeddedOpenDS.setup(). Error loading ldifs:", e);
+                    "EmbeddedOpenDS.setup(): Error loading ldifs", e);
                 throw e;
             } finally {
                 if (fin != null) {
@@ -175,9 +176,10 @@ public class EmbeddedOpenDS {
                 }
             }
         }
-        SetupProgress.reportStart("emb.installingemb", odsRoot);
+
+        Object[] params = {odsRoot};
+        SetupProgress.reportStart("emb.installingemb", params);
         EmbeddedOpenDS.startServer(odsRoot);
-        SetupProgress.reportEnd("emb.done", null);
 
         // Check: If adding a new server to a existing cluster
 
@@ -187,7 +189,6 @@ public class EmbeddedOpenDS {
             EmbeddedOpenDS.shutdownServer("to load ldif");
             EmbeddedOpenDS.loadLDIF(odsRoot, odsRoot+ "/config/famsuffix.ldif");
             EmbeddedOpenDS.startServer(odsRoot);
-            SetupProgress.reportEnd("emb.done", null);
         }
     }
 
@@ -304,16 +305,16 @@ public class EmbeddedOpenDS {
         // Setup replication
         SetupProgress.reportStart("emb.creatingreplica", null);
         int ret = setupReplicationEnable(map);
-        if (ret == 0)
-            ret = setupReplicationInitialize(map);
         if (ret == 0) {
+            ret = setupReplicationInitialize(map);
             SetupProgress.reportEnd("emb.success", null);
             Debug.getInstance(SetupConstants.DEBUG_NAME).message(
-                "EmbeddedOpenDS.setupReplication(). replication setup succeeded.");
+                "EmbeddedOpenDS.setupReplication: replication setup succeeded.");
         } else {
-            SetupProgress.reportEnd("emb.failed", new Integer(ret));
+            Object[] params = {Integer.toString(ret)};
+            SetupProgress.reportEnd("emb.failed.param", params);
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "EmbeddedOpenDS.setupReplication(). Error setting up replication");
+                "EmbeddedOpenDS.setupReplication. Error setting up replication");
             throw new ConfiguratorException(
                     "configurator.embreplfailed");
         }
@@ -376,7 +377,8 @@ public class EmbeddedOpenDS {
         enableCmd[21] = (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT1);
         enableCmd[27] = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
 
-        SetupProgress.reportStart("emb.replcommand",concat(enableCmd));
+        Object[] params = {concat(enableCmd)};
+        SetupProgress.reportStart("emb.replcommand", params);
 
         enableCmd[9] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         enableCmd[19] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
@@ -426,23 +428,26 @@ public class EmbeddedOpenDS {
             "51389"                       // 15
         };
         initializeCmd[3] = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
-        initializeCmd[9] = (String) map.get(SetupConstants.DS_EMB_REPL_HOST2);
-        initializeCmd[11] = (String) map.get(SetupConstants.DS_EMB_REPL_PORT2);
-        //initializeCmd[13] = "localhost";
-        initializeCmd[13] = (String) map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
-        initializeCmd[15] = (String) map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT);
+        initializeCmd[9] = (String)map.get(SetupConstants.DS_EMB_REPL_HOST2);
+        initializeCmd[11] = (String)map.get(SetupConstants.DS_EMB_REPL_PORT2);
+        initializeCmd[13] = (String)map.get(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST);
+        initializeCmd[15] = (String)map.get(
+            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT);
 
-        SetupProgress.reportStart("emb.replcommand",concat(initializeCmd));
+        Object[] params = {concat(initializeCmd)};
+        SetupProgress.reportStart("emb.replcommand", params);
 
-        initializeCmd[7] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
-        int ret = ReplicationCliMain.mainCLI(initializeCmd, false, 
-                                            SetupProgress.getOutputStream(), 
-                                            SetupProgress.getOutputStream(), 
-                                            null); 
-        if (ret == 0)
+        initializeCmd[7] =(String)map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
+        int ret = ReplicationCliMain.mainCLI(initializeCmd, false,
+            SetupProgress.getOutputStream(), SetupProgress.getOutputStream(),
+            null); 
+
+        if (ret == 0) {
             SetupProgress.reportEnd("emb.success", null);
-        else
+        } else {
             SetupProgress.reportEnd("emb.failed", null);
+        }
         return ret;
     }
  

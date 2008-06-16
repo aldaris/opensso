@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.21 2008-06-12 23:51:31 veiming Exp $
+ * $Id: Wizard.java,v 1.22 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -255,9 +255,6 @@ public class Wizard extends AjaxPage {
             }
         } catch (ConfiguratorException cfe) {
             writeToResponse(cfe.getMessage());
-        } catch (Exception e) {
-            writeToResponse("Error during configuration. Consult debug files for more information");
-            debug.error("Wizard.createConfig() : error in processRequest: ", e);
         }
         
         setPath(null);

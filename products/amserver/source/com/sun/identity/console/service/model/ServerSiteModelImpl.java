@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerSiteModelImpl.java,v 1.2 2008-02-27 05:46:02 veiming Exp $
+ * $Id: ServerSiteModelImpl.java,v 1.3 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -689,6 +689,10 @@ public class ServerSiteModelImpl
             logEvent("SMS_EXCEPTION_SET_SERVER_CONFIG_XML", params);
             throw new AMConsoleException(getErrorString(e));
         } catch (SSOException e) {
+            String[] params = {serverName, e.getMessage()};
+            logEvent("SSO_EXCEPTION_SET_SERVER_CONFIG_XML", params);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (ConfigurationException e) {
             String[] params = {serverName, e.getMessage()};
             logEvent("SSO_EXCEPTION_SET_SERVER_CONFIG_XML", params);
             throw new AMConsoleException(getErrorString(e));

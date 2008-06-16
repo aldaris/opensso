@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.25 2008-06-12 22:33:50 manish_rustagi Exp $
+ * $Id: Constants.java,v 1.26 2008-06-16 20:58:28 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,11 @@ public interface Constants {
      * Property string for debug level.
      */
     String SERVICES_DEBUG_LEVEL = "com.iplanet.services.debug.level";
+
+    /**
+     * property string for debug directory
+     */
+    String SERVICES_DEBUG_DIRECTORY = "com.iplanet.services.debug.directory";
 
     /**
      * Property string for interval of <code>Stats</code> service.

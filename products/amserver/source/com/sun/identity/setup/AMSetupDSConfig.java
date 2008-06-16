@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.13 2008-05-21 23:40:46 bina Exp $
+ * $Id: AMSetupDSConfig.java,v 1.14 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -255,14 +255,17 @@ public class AMSetupDSConfig {
      * Loads the schema files into the directory Server.
      *
      * @param schemaFiles Array of schema files to load.
+     * @throws ConfiguratorException if unable to load schema.
      */
-    public void loadSchemaFiles(List schemaFiles) {
+    public void loadSchemaFiles(List schemaFiles)
+        throws ConfiguratorException {
         try {
             for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
                 String file = (String)i.next();
                 int idx = file.lastIndexOf("/");
                 String schemaFile = (idx != -1) ? file.substring(idx+1) : file;
-                SetupProgress.reportStart("emb.loadingschema",schemaFile);
+                Object[] params = {schemaFile};
+                SetupProgress.reportStart("emb.loadingschema", params);
                 LDAPUtils.createSchemaFromLDIF(basedir + "/" + schemaFile, ld);
                 SetupProgress.reportEnd("emb.success", null);
             }
@@ -270,12 +273,16 @@ public class AMSetupDSConfig {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                  "AMSetupDSConfig.loadSchemaFiles:failed", e);
             SetupProgress.reportEnd("emb.failed", null);
+            InstallLog.getInstance().write(
+                 "AMSetupDSConfig.loadSchemaFiles:failed", e);
             throw new ConfiguratorException("configurator.ldiferror",
                 null, locale);
         } catch (LDAPException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                  "AMSetupDSConfig.loadSchemaFiles:failed", e);
             SetupProgress.reportEnd("emb.failed", null);
+            InstallLog.getInstance().write(
+                 "AMSetupDSConfig.loadSchemaFiles:failed", e);
             throw new ConfiguratorException(e.getMessage());
         }
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.13 2008-06-13 21:31:29 veiming Exp $
+ * $Id: RegisterServices.java,v 1.14 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,12 +88,11 @@ public class RegisterServices {
                 tagswap = false;
             }
 
-            SetupProgress.reportStart("emb.registerservice",
-                serviceFileName);
+            Object[] params = {serviceFileName};
+            SetupProgress.reportStart("emb.registerservice", params);
             String strXML = getResourceContent(serviceFileName);
             if (tagswap) {
-                strXML = ServicesDefaultValues.tagSwap(strXML,
-                    true);
+                strXML = ServicesDefaultValues.tagSwap(strXML, true);
             }
             AMSetupServlet.writeToFile(dirXML + "/" + serviceFileName, strXML);
             registerService(strXML, adminToken);

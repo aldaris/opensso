@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.9 2008-06-12 23:51:31 veiming Exp $
+ * $Id: DefaultSummary.java,v 1.10 2008-06-16 20:58:26 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public class DefaultSummary extends AjaxPage {
                 responseString = AMSetupServlet.getErrorMessage();
             }
         } catch (Exception e) {
-            responseString = "Error during configuration. Consult debug files for more information";
+            responseString = e.getMessage();
             debug.error("DefaultSummary.createDefaultConfig()", e);
         }
         writeToResponse(responseString);

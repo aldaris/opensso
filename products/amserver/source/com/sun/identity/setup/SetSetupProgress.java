@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetSetupProgress.java,v 1.1 2008-04-24 00:04:10 rajeevangal Exp $
+ * $Id: SetSetupProgress.java,v 1.2 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.setup;
 
 import com.sun.identity.config.SetupWriter;
-import com.sun.identity.setup.SetupProgress;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.*;

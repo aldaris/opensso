@@ -128,19 +128,10 @@
 
             function onPushNewInstanceConfigResponse( response ) {
                 if ( response.responseText == "true" ) {
-                    //operation was successful, hide the writing dialog, show the confComplete:
-
-                    //in actuality, this usually happens very fast, so put a delay when removing the testUrlPanel.
-                    //if we don't do this, the window blinks and looks unsightly, so we actually impose an unnecessary
-                    //gui delay for a slightly cleaner 'expected' UI experience:
                     setTimeout("YAHOO.sun.identity.config.options.wizard.pushingConfig.hide()", 1500);
                     setTimeout("YAHOO.sun.identity.config.options.confComplete.show()", 1500);
                 } else {
-                    //TODO - show a specific (nice looking) error message dialog that explains why pushing the config failed.
-                    //for now, just alert:
-                    alert( "Unexpected error: [" + response.responseText + "].  Please contact your System " +
-                           "Administrator.  If you are the System Administrator, please direct your questions to the " +
-                           "OpenSSO user's mailing list for help.");
+                    alert(response.responseText);
                 }
             }
 

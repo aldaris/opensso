@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.68 2008-06-15 07:30:22 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.69 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,6 +87,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -106,7 +107,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import netscape.ldap.LDAPException;
 
 /**
  * This class is the first class to get loaded by the Servlet container. 
@@ -264,6 +264,7 @@ public class AMSetupServlet extends HttpServlet {
         IHttpServletRequest request,
         IHttpServletResponse response
     ) {
+        InstallLog.getInstance().open();
         /*
          * This logic needs refactoring later. setServiceConfigValues()
          * attempts to check if directory is up and makes a call
@@ -272,7 +273,13 @@ public class AMSetupServlet extends HttpServlet {
          * intertwined together.
          */
         ServicesDefaultValues.setServiceConfigValues(request);
+
+        // set debug directory
         Map map = ServicesDefaultValues.getDefaultValues();
+        String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR); 
+        String uri = (String)map.get(SetupConstants.CONFIG_VAR_SERVER_URI);
+        SystemProperties.initializeProperties(
+            Constants.SERVICES_DEBUG_DIRECTORY, basedir + uri + "/debug");
 
         // used for site configuration later
         Map siteMap = (Map)map.remove(
@@ -292,9 +299,7 @@ public class AMSetupServlet extends HttpServlet {
                 boolean legacy = ServerConfiguration.isLegacy();
                 Map bootstrapRes = createBootstrapResource(legacy);
                 String url = BootstrapData.createBootstrapResource(
-                    bootstrapRes, legacy);
-                String basedir = (String) map.get(
-                    SetupConstants.CONFIG_VAR_BASE_DIR);   
+                    bootstrapRes, legacy);  
                 String fileBootstrap = getBootstrapLocator();
                 if (fileBootstrap != null) {
                    writeToFileEx(fileBootstrap, basedir);
@@ -352,10 +357,17 @@ public class AMSetupServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
+            InstallLog.getInstance().write(
+                 "AMSetupServlet.processRequest: error", e);
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.processRequest: error.", e);
-            e.printStackTrace();
+                "AMSetupServlet.processRequest: error", e);
+            Object[] params = {e.getMessage(), basedir};
+            throw new ConfiguratorException("configuration.failed",
+                params, Locale.getDefault());
+        } finally {
+            InstallLog.getInstance().close();
         }
+        
         return isConfiguredFlag;
     }
 
@@ -396,105 +408,159 @@ public class AMSetupServlet extends HttpServlet {
         writeToFile(basedir + "/.configParam", buff.toString());
     }
     
+    private static void checkBaseDir(String basedir, IHttpServletRequest req)
+        throws IOException {
+        Object[] params = {basedir};
+        SetupProgress.reportStart("emb.checkingbasedir", params);
+
+        File baseDirectory = new File(basedir);
+        if (!baseDirectory.exists()) {
+            baseDirectory.mkdirs();
+            writeInputToFile(req);
+        } else {
+            File bootstrapFile = new File(basedir + "/" + BOOTSTRAP_EXTRA);
+            File opendsDir = new File(basedir + OPENDS_DIR);
+            if (bootstrapFile.exists() || opendsDir.exists()) {
+                SetupProgress.reportEnd("emb.basedirfailed", null);
+                throw new ConfiguratorException(
+                    "Base directory specified :" +
+                    basedir +
+                    " cannot be used - has preexisting config data.");
+            }
+        }
+        SetupProgress.reportEnd("emb.success", null);
+    }
+
+    // (i) install, configure and start an embedded instance.
+    // or
+    // (ii) install, configure, and replicate embedded instance
+    private static boolean setupEmbeddedDS(Map map, String dataStore)
+        throws ConfigurationException, Exception {
+        boolean ditLoaded = false;
+        EmbeddedOpenDS.setup(map, servletCtx);
+        AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+
+        // wait for at most 10 seconds for OpenDS to come up
+        int sleepTime = 10;
+        while (!dsConfig.isDServerUp() && (sleepTime-- > 0)) {
+            // sleep one second a time
+            Thread.sleep(1000);
+        }
+        if (!dsConfig.isDServerUp()) {
+            throw new ConfigurationException(
+                "OpenDS cannot be started.");
+        }
+
+        // Determine if DITLoaded flag needs to be set: multi instance
+        if (EmbeddedOpenDS.isMultiServer(map)) {
+            // Replication 
+            // TOFIX: Temporary fix until OpenDS auto-loads schema
+            List schemaFiles = getSchemaFiles(dataStore);
+            String basedir = (String) map.get(
+                SetupConstants.CONFIG_VAR_BASE_DIR);
+            writeSchemaFiles(basedir, schemaFiles);
+            EmbeddedOpenDS.setupReplication(map);
+            ditLoaded = true;
+        }
+        return ditLoaded;
+    }
+    
+    private static boolean setupSMDatastore(Map map) 
+        throws Exception {
+        boolean isDITLoaded = ((String) map.get(
+            SetupConstants.DIT_LOADED)).equals("true");
+        String dataStore = (String) map.get(
+            SetupConstants.CONFIG_VAR_DATA_STORE);
+
+        if (dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+            isDITLoaded = setupEmbeddedDS(map, dataStore);
+        }
+
+        if (!isDITLoaded) {
+            List schemaFiles = getSchemaFiles(dataStore);
+            String basedir = (String)map.get(
+                SetupConstants.CONFIG_VAR_BASE_DIR);
+            writeSchemaFiles(basedir, schemaFiles);
+        }
+        return isDITLoaded;
+    }
+    
+    private static void configureServerInstance(
+        SSOToken adminSSOToken,
+        String serverInstanceName,
+        String strAMConfigProperties,
+        boolean isDITLoaded,
+        String basedir,
+        String strServerConfigXML,
+        Map propAMConfig,
+        Map map
+    ) throws SMSException, SSOException, IOException, ConfigurationException {
+        SetupProgress.reportStart(
+            "configurator.progress.configure.server.instance", null);
+        if (ServerConfiguration.isLegacy(adminSSOToken)) {
+            Map mapProp = ServerConfiguration.getDefaultProperties();
+            mapProp.putAll(propAMConfig);
+            appendLegacyProperties(mapProp);
+            Properties tmp = new Properties();
+            tmp.putAll(mapProp);
+            SystemProperties.initializeProperties(tmp, true, false);
+
+            writeToFile(basedir + "/" + SetupConstants.AMCONFIG_PROPERTIES,
+                mapToString(mapProp));
+            writeToFile(basedir + "/serverconfig.xml", strServerConfigXML);
+            String hostname = (String) map.get(
+                SetupConstants.CONFIG_VAR_SERVER_HOST);
+            updatePlatformServerList(serverInstanceName, hostname);
+        } else {
+            try {
+                if (!isDITLoaded) {
+                    ServerConfiguration.createDefaults(adminSSOToken);
+                }
+                if (!isDITLoaded ||
+                    !ServerConfiguration.isServerInstanceExist(
+                    adminSSOToken, serverInstanceName)) {
+                    ServerConfiguration.createServerInstance(adminSSOToken,
+                        serverInstanceName,
+                        ServerConfiguration.getPropertiesSet(
+                        strAMConfigProperties),
+                        strServerConfigXML);
+                }
+            } catch (UnknownPropertyNameException ex) {
+            // ignore, property names are valid because they are
+            // gotten from template.
+            }
+
+            ServiceConfigManager scm = new ServiceConfigManager(
+                Constants.SVC_NAME_PLATFORM, (SSOToken) 
+                AccessController.doPrivileged(AdminTokenAction.getInstance()));
+            scm.addListener(ConfigurationObserver.getInstance());
+        }
+        SetupProgress.reportEnd("emb.done", null);
+    }
+    
     private static boolean configure(
         IHttpServletRequest request,
         Map map,
         Map userRepo
-    ) {
+    ) throws Exception {
         boolean configured = false;
         boolean existingConfiguration = false;
         try {
             String basedir = (String)map.get(
                 SetupConstants.CONFIG_VAR_BASE_DIR);
-            File baseDirectory = new File(basedir);
-            if (!baseDirectory.exists()) {
-                baseDirectory.mkdirs();
-                writeInputToFile(request);
-            } else {
-                SetupProgress.reportStart("emb.checkingbasedir",basedir);
-                File bootstrapFile = new File(basedir + "/" + BOOTSTRAP_EXTRA);
-                File opendsDir = new File(basedir + OPENDS_DIR);
-                if (bootstrapFile.exists() || opendsDir.exists()) {
-                    SetupProgress.reportEnd("emb.basedirfailed", null);
-                    throw new ConfiguratorException(
-                        "Base directory specified :"+
-                        basedir+
-                        " cannot be used - has preexisting config data.");
-                }
-                SetupProgress.reportEnd("emb.success", null);
-            }
-            boolean isDITLoaded = ((String)map.get(
-                SetupConstants.DIT_LOADED)).equals("true");
-                
-            String dataStore = (String)map.get(
-                SetupConstants.CONFIG_VAR_DATA_STORE);
-            boolean embedded = 
-                  dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE);
-            boolean isDSServer = false;
-            boolean isADServer = false;
-            if (embedded) {
-                isDSServer = true;
-            } else { // Keep old behavior for now.
-                isDSServer = dataStore.equals(SetupConstants.SMS_DS_DATASTORE);
-                isADServer = dataStore.equals(SetupConstants.SMS_AD_DATASTORE);
-            }
-
-            if (embedded) {
-                // (i) install, configure and start an embedded instance.
-                // or
-                // (ii) install, configure, and replicate embedded instance
-                try {
-                    EmbeddedOpenDS.setup(map, servletCtx);
-                    // Now create the AMSetupDSConfig instance.Abort on failure
-                    AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
-                    // wait for at most 10 seconds for OpenDS to come up
-                    int sleepTime = 10;
-                    while (!dsConfig.isDServerUp() && (sleepTime-- > 0)) {
-                        // sleep one second a time
-                        Thread.sleep(1000);
-                    }
-                    if (!dsConfig.isDServerUp()) {
-                        Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                         "AMSetupServlet.processRequest:OpenDS conn failed.");
-                        return false;
-                    }
-
-                    // Determine if DITLoaded flag needs to be set :
-                    // multi instance
-                    if (EmbeddedOpenDS.isMultiServer(map)) {
-                        // Replication 
-                        // Temporary fix until OpenDS auto-loads schema
-                        //
-                        List schemaFiles = getSchemaFiles(dataStore);
-                        writeSchemaFiles(basedir, schemaFiles);
-                        EmbeddedOpenDS.setupReplication(map);
-                        isDITLoaded = true;
-                    }
-                } catch (Exception ex) {
-                    Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                        "AMSetupServlet.configure: embedded = true", ex);
-                    ex.printStackTrace();
-                    throw new ConfiguratorException(
-                        "Error setting up Embedded Directory Server: " + 
-                        ex.getLocalizedMessage());
-                }
-            }
-            
-            if ((isDSServer || isADServer ) && !isDITLoaded) {
-                List schemaFiles = getSchemaFiles(dataStore);
-                writeSchemaFiles(basedir, schemaFiles);
-            }
+            checkBaseDir(basedir, request);
+            boolean isDITLoaded = setupSMDatastore(map);
 
             String serverURL = (String)map.get(
                 SetupConstants.CONFIG_VAR_SERVER_URL);
             String deployuri = (String)map.get(
                 SetupConstants.CONFIG_VAR_SERVER_URI);
-            String serverInstanceName = serverURL + deployuri;
-
             // do this here since initializeConfigProperties needs the dir
             setupSecurIDDirs(basedir,deployuri);
             // do this here just because the SecurID dirs are done here
             setupSafeWordDirs(basedir, deployuri);
+
+            SetupProgress.reportStart("configurator.progress.reinit.system", null);
             Map mapFileNameToConfig = initializeConfigProperties();
             String strAMConfigProperties = (String)
                 mapFileNameToConfig.get(SetupConstants.AMCONFIG_PROPERTIES);
@@ -502,59 +568,29 @@ public class AMSetupServlet extends HttpServlet {
                 SystemProperties.CONFIG_FILE_NAME);
             Properties propAMConfig = ServerConfiguration.getProperties(
                 strAMConfigProperties);
-            
+            String serverInstanceName = serverURL + deployuri;
             reInitConfigProperties(serverInstanceName,
                 propAMConfig, strServerConfigXML);
+            SetupProgress.reportEnd("emb.done", null);
+            
             SSOToken adminSSOToken = getAdminSSOToken();
-            boolean bUseExtUMDS = (userRepo != null) && !userRepo.isEmpty();
 
             if (!isDITLoaded) {
                 RegisterServices regService = new RegisterServices();
+                boolean bUseExtUMDS = (userRepo != null) && !userRepo.isEmpty();
                 regService.registers(adminSSOToken, bUseExtUMDS);
                 processDataRequests("/WEB-INF/template/sms");
             }
-
-            if (ServerConfiguration.isLegacy(adminSSOToken)) {
-                Map mapProp = ServerConfiguration.getDefaultProperties();
-                mapProp.putAll(propAMConfig);
-                appendLegacyProperties(mapProp);
-                Properties tmp = new Properties();
-                tmp.putAll(mapProp);
-                SystemProperties.initializeProperties(tmp, true, false);
-
-                writeToFile(basedir + "/" + SetupConstants.AMCONFIG_PROPERTIES,
-                    mapToString(mapProp));
-                writeToFile(basedir + "/serverconfig.xml", strServerConfigXML);
-                String hostname = (String)map.get(
-                    SetupConstants.CONFIG_VAR_SERVER_HOST);
-                updatePlatformServerList(serverURL + deployuri, hostname);
-            } else {
-                try {
-                    if (!isDITLoaded) {
-                        ServerConfiguration.createDefaults(adminSSOToken);
-                    }
-                    if (!isDITLoaded ||
-                        !ServerConfiguration.isServerInstanceExist(
-                            adminSSOToken, serverInstanceName)
-                    ) {
-                        ServerConfiguration.createServerInstance(adminSSOToken, 
-                            serverInstanceName,
-                            ServerConfiguration.getPropertiesSet(
-                                strAMConfigProperties),
-                            strServerConfigXML);
-                    }
-                } catch (UnknownPropertyNameException ex) {
-                    // ignore, property names are valid because they are
-                    // gotten from template.
-                }
-
-                ServiceConfigManager scm = new ServiceConfigManager(
-                    Constants.SVC_NAME_PLATFORM, (SSOToken)AccessController.
-                        doPrivileged(AdminTokenAction.getInstance()));
-                scm.addListener(ConfigurationObserver.getInstance());
-            }
+            
+            configureServerInstance(adminSSOToken, serverInstanceName,
+                strAMConfigProperties, isDITLoaded, basedir, strServerConfigXML,
+                propAMConfig, map);
 
             // Embedded :get our serverid and configure embedded idRepo
+            String dataStore = (String)map.get(
+                SetupConstants.CONFIG_VAR_DATA_STORE);
+            boolean embedded = dataStore.equals(
+                SetupConstants.SMS_EMBED_DATASTORE);
             if (embedded) {
                 try {
                     String serverID = WebtopNaming.getAMServerID();
@@ -569,36 +605,30 @@ public class AMSetupServlet extends HttpServlet {
                 } catch (Exception ex) {
                     Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                         "EmbeddedDS : failed to setup serverid", ex);
-                    throw new ConfiguratorException(
-                        "EmbeddedDS : failed to gsetup serverid;ex="+ex);
+                    throw ex;
                 }
             } 
             SystemProperties.setServerInstanceName(serverInstanceName);
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
-            
-            try {
-                if (!isDITLoaded && (userRepo != null) && !userRepo.isEmpty()) {
-                    // Construct the SMSEntry for the node to check to see if 
-                    // this is an existing configuration store, or new store
-                    ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
-                    if (sc != null) {
-                        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(
-                            adminSSOToken,
-                            ("ou=" + userRepo.get("userStoreHostName") + "," +
-                                sc.getDN()), null);
-                        SMSEntry entry = cEntry.getClonedSMSEntry();
-                        if (entry.isNewEntry()) {
-                            UserIdRepo.getInstance().configure(
-                                userRepo, basedir, servletCtx, adminSSOToken);
-                        } else {
-                            existingConfiguration = true;
-                        }
-
+           
+            if (!isDITLoaded && (userRepo != null) && !userRepo.isEmpty()) {
+                // Construct the SMSEntry for the node to check to see if 
+                // this is an existing configuration store, or new store
+                ServiceConfig sc = UserIdRepo.getOrgConfig(adminSSOToken);
+                if (sc != null) {
+                    CachedSMSEntry cEntry = CachedSMSEntry.getInstance(
+                        adminSSOToken,
+                        ("ou=" + userRepo.get("userStoreHostName") + "," +
+                        sc.getDN()), null);
+                    SMSEntry entry = cEntry.getClonedSMSEntry();
+                    if (entry.isNewEntry()) {
+                        UserIdRepo.getInstance().configure(
+                            userRepo, basedir, servletCtx, adminSSOToken);
+                    } else {
+                        existingConfiguration = true;
                     }
                 }
-            } catch (Exception e) {
-                throw new ConfiguratorException(e.getMessage());
             }
 
             /*
@@ -623,56 +653,12 @@ public class AMSetupServlet extends HttpServlet {
 
             isConfiguredFlag = true;
             configured = true;
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) { 
+            // catch all because we want all exception to be logged
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
             errorMessage = e.getMessage();
-        } catch (ConfigurationException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (SecurityException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (LDAPServiceException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (IOException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (SMSException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (PolicyException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (ConfiguratorException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (SSOException e) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", e);
-            e.printStackTrace();
-            errorMessage = e.getMessage();
-        } catch (IdRepoException idrepoe) {
-            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "AMSetupServlet.configure: error", idrepoe);
-            idrepoe.printStackTrace();
-            errorMessage = idrepoe.getMessage();
+            throw e;
         }
         return configured;
     }
@@ -763,7 +749,10 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    private static void handlePostPlugins(SSOToken adminSSOToken) {
+    private static void handlePostPlugins(SSOToken adminSSOToken)
+        throws IllegalAccessException, InstantiationException,
+            ClassNotFoundException 
+    {
         List plugins = getConfigPluginClasses();
         for (Iterator i = plugins.iterator(); i.hasNext(); ) {
             ConfiguratorPlugin plugin  = (ConfiguratorPlugin)i.next();
@@ -771,7 +760,10 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    private static List getConfigPluginClasses() {
+    private static List getConfigPluginClasses()
+        throws IllegalAccessException, InstantiationException,
+            ClassNotFoundException
+    {
         List plugins = new ArrayList();
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
@@ -790,15 +782,15 @@ public class AMSetupServlet extends HttpServlet {
         } catch (IllegalAccessException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.getConfigPluginClasses: error", e);
-            e.printStackTrace();
+            throw e;
         } catch (InstantiationException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.getConfigPluginClasses: error", e);
-            e.printStackTrace();
+            throw e;
         } catch (ClassNotFoundException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.getConfigPluginClasses: error", e);
-            e.printStackTrace();
+            throw e;
         } catch (MissingResourceException e) {
             //ignore if there are no configurator plugins.
         }
@@ -810,7 +802,9 @@ public class AMSetupServlet extends HttpServlet {
         Properties prop,
         String strServerConfigXML
     ) throws FileNotFoundException, SMSException, IOException, SSOException,
-        LDAPServiceException {
+        LDAPServiceException,IllegalAccessException, InstantiationException,
+        ClassNotFoundException
+    {
         SystemProperties.initializeProperties(prop, true, false);
         Crypt.reinitialize();
         initDSConfigMgr(strServerConfigXML);
@@ -828,7 +822,8 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    public static String getPresetConfigDir() {
+    public static String getPresetConfigDir() 
+        throws ConfiguratorException {
         String configDir = null;
         try {
             ResourceBundle rb = ResourceBundle.getBundle(
@@ -921,7 +916,8 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
     
-    private static String getBaseDir() {
+    private static String getBaseDir()
+        throws ConfiguratorException {
         String configDir = getPresetConfigDir();
         if ((configDir != null) && (configDir.length() > 0)) {
             return configDir;
@@ -1021,6 +1017,8 @@ public class AMSetupServlet extends HttpServlet {
     private static void processDataRequests(String xmlBaseDir)
         throws SMSException, SSOException, IOException, PolicyException
     {
+        SetupProgress.reportStart("configurator.progress.configure.system",
+            null);
         SSOToken ssoToken = getAdminSSOToken();
         try {
             Map map = ServicesDefaultValues.getDefaultValues();
@@ -1029,18 +1027,16 @@ public class AMSetupServlet extends HttpServlet {
             ConfigureData configData = new ConfigureData(
                 xmlBaseDir, servletCtx, hostname, ssoToken);
             configData.configure();
+            SetupProgress.reportEnd("emb.done", null);
         } catch (SMSException e) {
-            e.printStackTrace();
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processDataRequests", e);
             throw e;
         } catch (SSOException e) {
-            e.printStackTrace();
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processDataRequests", e);
             throw e;
         } catch (IOException e) {
-            e.printStackTrace();
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.processDataRequests", e);
             throw e;
@@ -1236,7 +1232,6 @@ public class AMSetupServlet extends HttpServlet {
             Debug.getInstance(SetupConstants.DEBUG_NAME).message(
                 "AMSetupServlet.getRandomString:" +
                 "Exception in generating encryption key.", e);
-            e.printStackTrace();
         }
         return (randomStr != null) ? randomStr : 
             SetupConstants.CONFIG_VAR_DEFAULT_SHARED_KEY;
@@ -1340,7 +1335,7 @@ public class AMSetupServlet extends HttpServlet {
         String server,
         String userid,
         String pwd
-    ) {
+    ) throws ConfigurationException {
         HttpURLConnection conn = null;
         try {
             // Construct data
@@ -1433,9 +1428,7 @@ public class AMSetupServlet extends HttpServlet {
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
         String strFiles;
 
-        boolean embedded = 
-              dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE);
-        boolean isDSServer = false;
+        boolean embedded = dataStore.equals(SetupConstants.SMS_EMBED_DATASTORE);
         if (embedded) {
             strFiles = rb.getString(
                 SetupConstants.OPENDS_SMS_PROPERTY_FILENAME); 
@@ -1482,6 +1475,30 @@ public class AMSetupServlet extends HttpServlet {
         return isIPAddr;
     }
 
+    private static String getResourceContent(String file) throws IOException {
+        String content = null;
+        InputStreamReader fin = new InputStreamReader(
+            servletCtx.getResourceAsStream(file));
+        try {
+            StringBuffer sbuf = new StringBuffer();
+            char[] cbuf = new char[1024];
+            int len;
+            while ((len = fin.read(cbuf)) > 0) {
+                sbuf.append(cbuf, 0, len);
+            }
+            content = sbuf.toString();
+        } finally {
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (Exception ex) {
+                    //No handling requried
+                }
+            }
+        }
+        return content;
+    }
+    
     /**
      * Tag swaps strings in schema files.
      *
@@ -1492,39 +1509,25 @@ public class AMSetupServlet extends HttpServlet {
     private static void writeSchemaFiles(
         String basedir,
         List schemaFiles
-    )   throws IOException
-    {
+    )  throws IOException {
+        SetupProgress.reportStart("configurator.progress.tagswap.schemafiles", 
+            null);
         for (Iterator i = schemaFiles.iterator(); i.hasNext(); ) {
             String file = (String)i.next();
-            InputStreamReader fin = new InputStreamReader(
-                servletCtx.getResourceAsStream(file));
-
-            StringBuffer sbuf = new StringBuffer();
-            char[] cbuf = new char[1024];
-            int len;
-            while ((len = fin.read(cbuf)) > 0) {
-                sbuf.append(cbuf, 0, len);
-            }
+            String content = getResourceContent(file);
             FileWriter fout = null;
+            
             try {
                 int idx = file.lastIndexOf("/");
                 String absFile = (idx != -1) ? file.substring(idx+1) : file;
                 fout = new FileWriter(basedir + "/" + absFile);
-                String inpStr = sbuf.toString();
-                fout.write(ServicesDefaultValues.tagSwap(inpStr));
+                fout.write(ServicesDefaultValues.tagSwap(content));
             } catch (IOException ioex) {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                     "AMSetupServlet.writeSchemaFiles: " +
                     "Exception in writing schema files:" , ioex);
                 throw ioex;
             } finally {
-                if (fin != null) {
-                    try {
-                        fin.close();
-                    } catch (Exception ex) {
-                        //No handling requried
-                    }
-                }
                 if (fout != null) {
                     try {
                         fout.close();
@@ -1534,6 +1537,8 @@ public class AMSetupServlet extends HttpServlet {
                 }
             }
         }
+        SetupProgress.reportEnd("emb.success", null);
+        
         AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
         dsConfig.loadSchemaFiles(schemaFiles);
     }
@@ -1759,7 +1764,10 @@ public class AMSetupServlet extends HttpServlet {
         }
     }
 
-    private static void createDemoUser() {
+    private static void createDemoUser() 
+        throws IdRepoException, SSOException {
+        SetupProgress.reportStart("configurator.progress.create.demo.user", 
+            null);
         Map attributes = new HashMap();
         Set setSN = new HashSet(2);
         setSN.add("demo");
@@ -1780,10 +1788,13 @@ public class AMSetupServlet extends HttpServlet {
         } catch (IdRepoException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.createDemoUser", e);
+            throw e;
         } catch (SSOException e) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.createDemoUser", e);
+            throw e;
         }
+        SetupProgress.reportEnd("emb.done", null);
     }
 
     /**
@@ -1800,6 +1811,9 @@ public class AMSetupServlet extends HttpServlet {
         if (!isAgentServiceLoad(token)) {
             return;
         }
+        
+        SetupProgress.reportStart("configurator.progress.create.wss.agents",
+            null);
         AMIdentityRepository idrepo = new AMIdentityRepository(token, "/");
         //createUser(idrepo, "jsmith", "John", "Smith");
         //createUser(idrepo, "jondoe", "Jon", "Doe");
@@ -1891,6 +1905,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("Endpoint", serverURL + deployuri + "/Liberty/disco");
         createAgent(idrepo, "LocalDisco", "Discovery",
             "Local Liberty Discovery Service Configuration", config);*/
+        SetupProgress.reportEnd("emb.done", null);
     }
 
     private static void createUser(
@@ -1961,26 +1976,32 @@ public class AMSetupServlet extends HttpServlet {
     private static void startRegistrationProcess(String basedir,
         String deployuri)
     {
+        SetupProgress.reportStart("configurator.progress.setup.registration",
+            null);
         /*
          *  make sure the basedir + "/" + deployuri + "/lib/registration"
          *  directory exists, and then put the registration jar and xml
          *  files there, before starting the registration process.
          */
-
         String libRegDir = basedir + "/" + deployuri + "/lib/registration";
         File reglibDir = new File(libRegDir);
         if (reglibDir.mkdirs()) {
             if (copyRegFiles(libRegDir)) {
                 StartRegister sr = new StartRegister();
                 sr.servicetagTransfer();
+                SetupProgress.reportEnd("emb.done", null);
             } else {
                 Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "configure: failed to copy registration files to " +
+                    "AMSetupServlet.startRegistrationProcess: " +
+                    "failed to copy registration files to " +
                     reglibDir.getPath());
+                SetupProgress.reportEnd("emb.failed", null);
             }
         } else {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                "configure: failed to create registration lib directory");
+                "AMSetupServlet.startRegistrationProcess:" +
+                "failed to create registration lib directory");
+            SetupProgress.reportEnd("emb.failed", null);
         }
     }
 

@@ -17,18 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.20 2008-06-09 22:07:16 veiming Exp $
+ * $Id: Step3.java,v 1.21 2008-06-16 20:58:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.setup.AMSetupServlet;
-import net.sf.click.control.ActionLink;
-import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.setup.BootstrapData;
-import java.util.Map;
 import com.sun.identity.setup.ConfiguratorException;
+import com.sun.identity.setup.SetupConstants;
+import java.util.Map;
+import net.sf.click.control.ActionLink;
 
 /**
  * Step 3 is for selecting the embedded or external configuration store 
@@ -291,6 +292,15 @@ public class Step3 extends LDAPStoreWizardPage {
                     getContext().setSessionAttribute(
                         "configStorePassword", password);     
                 }
+            } catch (ConfigurationException c) {
+                String code = c.getErrorCode();
+                String message = getLocalizedString(code);
+                if (code == null) {
+                    code = "999";
+                    message = c.getMessage();
+                }
+                addObject(sb, "code", code);
+                addObject(sb, "message", message);
             } catch (ConfiguratorException c) {
                 String code = c.getErrorCode();
                 String message = getLocalizedString(code);
@@ -299,7 +309,7 @@ public class Step3 extends LDAPStoreWizardPage {
                     message = c.getMessage();
                 }
                 addObject(sb, "code", code);
-                addObject(sb, "message", message);                                                       
+                addObject(sb, "message", message);
             }
         }
         sb.append(" }");           

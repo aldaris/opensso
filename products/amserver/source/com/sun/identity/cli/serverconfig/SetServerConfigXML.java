@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetServerConfigXML.java,v 1.1 2008-01-02 20:09:05 veiming Exp $
+ * $Id: SetServerConfigXML.java,v 1.2 2008-06-16 20:58:26 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Properties;
@@ -80,6 +81,12 @@ public class SetServerConfigXML extends AuthenticatedCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_SET_SERVER_CONFIG_XML", params);
         } catch (SSOException e) {
+            String[] args = {serverName, e.getMessage()};
+            debugError("SetServerConfigXML.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_SET_SERVER_CONFIG_XML", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (ConfigurationException e) {
             String[] args = {serverName, e.getMessage()};
             debugError("SetServerConfigXML.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
