@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.9 2007-01-09 06:52:39 veiming Exp $
+ * $Id: ISLocaleContext.java,v 1.10 2008-06-16 23:49:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.iplanet.services.cdm.ClientsManager;
 import com.iplanet.services.cdm.G11NSettings;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.locale.Locale;
@@ -120,8 +121,7 @@ public class ISLocaleContext {
             SystemProperties.get(AdminTokenAction.AMADMIN_MODE, "false");
         if (installTime.equalsIgnoreCase("false")) {
             clientDt = new AMClientDetector();
-            if (clientDt != null 
-                && (clientDt.detectionEnabled()).equalsIgnoreCase("true")) {
+            if ((clientDt != null ) && clientDt.isDetectionEnabled()) {
                 defaultClient = ClientsManager.getDefaultInstance();
             }
         }
@@ -248,18 +248,18 @@ public class ISLocaleContext {
         if (request != null) {
             String superLocale = request.getParameter("locale");
             String agentType = Client.CDM_DEFAULT_CLIENT_TYPE;
-            if (clientDt != null) {
+            if ((clientDt != null) && clientDt.isDetectionEnabled()) {
                 agentType = clientDt.getClientType(request);
-            }
 
-            try {
-                client = ClientsManager.getInstance(agentType);
-            } catch (ClientException ex) {
-                // Unable to determine the client hence we fall back
-                // to default client . It is performed at initalization
-            } catch (Exception e) {
-                // Unable to determine the client hence we fall back
-                // to default client . It is performed at initalization
+                try {
+                    client = ClientsManager.getInstance(agentType);
+                } catch (ClientException ex) {
+                    // Unable to determine the client hence we fall back
+                    // to default client . It is performed at initalization
+                } catch (Exception e) {
+                    // Unable to determine the client hence we fall back
+                    // to default client . It is performed at initalization
+                }
             }
 
             if (superLocale != null && superLocale.length() > 0) {

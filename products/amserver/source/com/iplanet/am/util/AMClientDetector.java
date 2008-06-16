@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientDetector.java,v 1.5 2006-08-25 21:19:30 veiming Exp $
+ * $Id: AMClientDetector.java,v 1.6 2008-06-16 23:49:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,12 +163,12 @@ public class AMClientDetector {
     }
 
     /**
-     * Return the client detection enabled/disabled
+     * Returns <code>true</code> if the client detection is enabled.
      * 
-     * @return specifies whether client detection was enabled/disabled
+     * @return <code>true</code> if the client detection is enabled.
      */
-    public String detectionEnabled() {
-        return detectionEnabled ? "true" : "false";
+    public boolean isDetectionEnabled() {
+        return detectionEnabled;
     }
 
     /**

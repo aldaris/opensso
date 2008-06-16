@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.13 2008-06-02 20:03:59 manish_rustagi Exp $
+ * $Id: AuthClientUtils.java,v 1.14 2008-06-16 23:49:13 veiming Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -764,8 +764,7 @@ public class AuthClientUtils {
         boolean clientDetectionEnabled = false;
 
         if (clientDetector != null) {
-            String detectionEnabled = clientDetector.detectionEnabled();
-            clientDetectionEnabled = detectionEnabled.equalsIgnoreCase("true");
+            clientDetectionEnabled = clientDetector.isDetectionEnabled();
         } else {
             utilDebug.message("getClientDetector,Service does not exist");
         }
