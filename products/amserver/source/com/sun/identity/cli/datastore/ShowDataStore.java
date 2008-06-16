@@ -17,34 +17,36 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateDataStore.java,v 1.2 2008-06-16 14:49:54 veiming Exp $
+ * $Id: ShowDataStore.java,v 1.1 2008-06-16 14:49:53 veiming Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.cli.datastore;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.FormatUtils;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.log.Level;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * List the names of data store under a realm.
  */
-public class UpdateDataStore extends AuthenticatedCommand {
+public class ShowDataStore extends AuthenticatedCommand {
     
     /**
      * Handles request.
@@ -61,21 +63,9 @@ public class UpdateDataStore extends AuthenticatedCommand {
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         String name = getStringOptionValue(DatastoreOptions.DATASTORE_NAME);
         
-        String datafile = getStringOptionValue(IArgument.DATA_FILE);
-        List listValues = rc.getOption(IArgument.ATTRIBUTE_VALUES);
-        
-        if ((datafile == null) && (listValues == null)) {
-            throw new CLIException(
-                getResourceString("datastore-update-datastore-missing-data"),
-                ExitCodes.INCORRECT_OPTION, rc.getSubCommand().getName());
-        }
-        
-        Map attributeValues = AttributeValues.parse(getCommandManager(),
-            datafile, listValues);
-        
         String[] params = {realm, name};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "ATTEMPT_UPDATE_DATASTORE", params);
+            "ATTEMPT_SHOW_DATASTORE", params);
         try {
             ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
                 IdConstants.REPO_SERVICE, adminSSOToken);
@@ -84,33 +74,37 @@ public class UpdateDataStore extends AuthenticatedCommand {
                 ServiceConfig ss = cfg.getSubConfig(name);
 
                 if (ss != null) {
-                    ss.setAttributes(attributeValues);
-                    getOutputWriter().printlnMessage(getResourceString(
-                        "datastore-update-datastore-succeeded"));
+                    Set passwords = CLIUtil.getPasswordFields(
+                        IdConstants.REPO_SERVICE, SchemaType.ORGANIZATION,
+                        ss.getSchemaID());
+
+                    Map attributesValues = ss.getAttributes();
+                    getOutputWriter().printlnMessage(
+                        FormatUtils.printAttributeValues("{0}={1}",
+                            attributesValues, passwords));
                 } else {
                     getOutputWriter().printlnMessage(getResourceString(
-                        "datastore-update-datastore-not-found"));
+                        "datastore-show-datastore-not-found"));
                 }
             } else{
                 getOutputWriter().printlnMessage(getResourceString(
-                    "datastore-update-datastore-not-found"));
+                    "datastore-show-datastore-not-found"));
             }
             
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "SUCCEEDED_UPDATE_DATASTORE", params);
+                "SUCCEEDED_SHOW_DATASTORE", params);
         } catch (SMSException e) {
             String[] p = {realm, name, e.getMessage()};
-            debugError("UpdateDataStore.handleRequest", e);
+            debugError("ShowDataStore.handleRequest", e);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_UPDATE_DATASTORE", p);
+                "FAILED_SHOW_DATASTORE", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             String[] p = {realm, name, e.getMessage()};
-            debugError("UpdateDataStore.handleRequest", e);
+            debugError("ShowDataStore.handleRequest", e);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-                "FAILED_UPDATE_DATASTORE", p);
+                "FAILED_SHOW_DATASTORE", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-
     }
 }

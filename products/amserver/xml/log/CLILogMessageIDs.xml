@@ -18,7 +18,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.23 2008-05-29 23:29:51 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.24 2008-06-16 14:49:55 veiming Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3915,6 +3915,7 @@
         <datainfo>
             <item>name of realm</item>
             <item>name of datastore</item>
+            <item>error message</item>
         </datainfo>
         <triggers>
             <item>Execute update datastore Commandline interface.</item>
@@ -5851,5 +5852,45 @@
             <item>Look under debug file for more information.</item>
         </actions>
     </logmessage>
-</logmessages>
 
+    <logmessage name="ATTEMPT_SHOW_DATASTORE" id="5000"
+        loglevel="LL_INFO"
+        description="Attempt to show datastore profile.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show datastore Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SHOW_DATASTORE" id="5001"
+        loglevel="LL_INFO"
+        description="Show datastore succeeded.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show datastore Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_DATASTORE" id="5002"
+        loglevel="LL_INFO"
+        description="Failed to show datastore profile.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of datastore</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show datastore Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+</logmessages>

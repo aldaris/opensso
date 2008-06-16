@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.74 2008-06-02 23:54:32 veiming Exp $
+ * $Id: AccessManager.java,v 1.75 2008-06-16 14:49:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1627,6 +1627,22 @@ public class AccessManager {
         }
     )
     private String update_datastore;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.ShowDataStore",
+        description="Show data store profile.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "name|m|s|Name of datastore."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "datastore-show-datastore-not-found=Datastore was not found."
+        }
+    )
+    private String show_datastore;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.ExportServiceConfiguration",

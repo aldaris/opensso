@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtil.java,v 1.5 2007-11-02 01:08:04 veiming Exp $
+ * $Id: CLIUtil.java,v 1.6 2008-06-16 14:49:54 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.BufferedReader;
@@ -138,6 +139,47 @@ public class CLIUtil {
         }
         return setPasswords;
     }
+    
+    /**
+     * Returns a set of attributes (of password syntax) of a given service.
+     *
+     * @param serviceName Name of service.
+     * @param schemaType Type of Schema.
+     * @param subSchema Name of SubSchema
+     * @return a set of attributes (of password syntax) of a given service.
+     * @throws SMSException if error occurs when reading the service schema 
+     *         layer
+     * @throws SSOException if Single sign-on token is invalid.
+     */
+    public static Set getPasswordFields(
+        String serviceName,
+        SchemaType schemaType,
+        String subSchema) 
+        throws SMSException, SSOException
+    {
+        Set setPasswords = new HashSet();
+        SSOToken ssoToken = (SSOToken)AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceSchemaManager ssm = new ServiceSchemaManager(
+            serviceName, ssoToken);
+        if (ssm != null) {
+            ServiceSchema schema = ssm.getSchema(schemaType);
+            if (schema != null) {
+                ServiceSchema ss = schema.getSubSchema(subSchema);
+                Set attributeSchemas = ss.getAttributeSchemas();
+                
+                for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
+                    AttributeSchema as = (AttributeSchema)i.next();
+                    if (as.getSyntax().equals(AttributeSchema.Syntax.PASSWORD)){
+                        setPasswords.add(as.getName());
+                    }
+                }
+            }
+        }
+        return setPasswords;
+    }
+    
+    
     
     /**
      * Writes to a file.
