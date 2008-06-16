@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.37 2008-05-30 04:28:13 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.38 2008-06-16 21:16:11 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2543,7 +2543,9 @@ public class IdServicesImpl implements IdServices {
                         String pName = (String) it2.next();
                         pClass = (IdRepo) classMap.get(pName);
                         pluginClasses.add(pClass);
-                        pNames.remove(pName);
+                        if (pNames != null) {
+                            pNames.remove(pName);
+                        }
                     }
                     
                 } else {
