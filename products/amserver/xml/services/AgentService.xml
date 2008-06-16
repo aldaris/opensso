@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.41 2008-05-28 22:16:36 huacui Exp $
+   $Id: AgentService.xml,v 1.42 2008-06-16 20:13:32 sean_brydon Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -69,6 +69,13 @@
                         syntax="string">
                         <DefaultValues>
                             <Value>com.sun.identity.common.configuration.ListValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="MapValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.common.configuration.MapValueValidator</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -264,7 +271,7 @@
                         name="com.sun.identity.agents.config.profile.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a413">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -288,7 +295,7 @@
                         name="com.sun.identity.agents.config.session.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a415">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -312,7 +319,7 @@
                         name="com.sun.identity.agents.config.response.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a417">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -483,7 +490,7 @@
                         name="com.sun.identity.agents.config.fqdn.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a432">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1001,6 +1008,27 @@
                             <Value>com.sun.identity.common.configuration.ListValueValidator</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema name="FilterModeValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.common.configuration.FilterModeValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema> 
+                    <AttributeSchema name="MapValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.common.configuration.MapValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="GlobalMapValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.common.configuration.GlobalMapValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>                                      
                     <AttributeSchema
                         name="com.sun.identity.agents.config.repository.location"
                         type="single_choice"
@@ -1018,6 +1046,7 @@
                         name="com.sun.identity.agents.config.filter.mode"
                         type="list"
                         syntax="string"
+                        validator="FilterModeValueValidator"
                         i18nKey="a113">
                         <DefaultValues>
                             <Value>ALL</Value>
@@ -1292,7 +1321,7 @@
                         name="com.sun.identity.agents.config.auth.handler"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a143">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1302,7 +1331,7 @@
                         name="com.sun.identity.agents.config.logout.handler"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a144">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1312,7 +1341,7 @@
                         name="com.sun.identity.agents.config.verification.handler"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a145">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1519,7 +1548,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.domain"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a162">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1529,7 +1558,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.path"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a163">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1613,7 +1642,7 @@
                         name="com.sun.identity.agents.config.logout.application.handler"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a171">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1623,7 +1652,7 @@
                         name="com.sun.identity.agents.config.logout.uri"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a172">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1633,7 +1662,7 @@
                         name="com.sun.identity.agents.config.logout.request.param"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a173">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1656,7 +1685,7 @@
                         name="com.sun.identity.agents.config.logout.entry.uri"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a175">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1688,7 +1717,7 @@
                         name="com.sun.identity.agents.config.fqdn.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a178">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1730,7 +1759,7 @@
                         name="com.sun.identity.agents.config.response.header"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a183">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1771,7 +1800,7 @@
                         name="com.sun.identity.agents.config.port.check.setting"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a187">
                         <DefaultValues>
                             <Value>[@AGENT_PORT@]=@AGENT_PROTO@</Value>
@@ -1917,7 +1946,7 @@
                         name="com.sun.identity.agents.config.profile.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a202">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1942,7 +1971,7 @@
                         name="com.sun.identity.agents.config.session.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a204">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1967,7 +1996,7 @@
                         name="com.sun.identity.agents.config.response.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a206">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -2007,7 +2036,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.tolowercase"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a211">
                         <DefaultValues>
                             <Value>[Group]=false</Value>
@@ -2040,7 +2069,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.mapping"
                         type="list"
                         syntax="string"
-                        validator="ListValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a214">
                         <DefaultValues>
                             <Value>[]=</Value>
