@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.11 2008-05-02 16:11:56 goodearth Exp $
+ * $Id: ServiceConfig.java,v 1.12 2008-06-16 21:14:52 goodearth Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -563,7 +563,21 @@ public class ServiceConfig {
         SMSEntry e = sc.getSMSEntry();
         if (attrNames != null && !attrNames.isEmpty()) {
             for (Iterator items = attrNames.iterator(); items.hasNext();) {
-                SMSUtils.removeAttribute(e, (String) items.next());
+                String attrName = (String) items.next();
+                String[] sAttrs = e.getAttributeValues(attrName);
+                // Throw an error msg. if value of that attribute to be
+                // removed is null in DS from the existing SMSEntry e.
+                if (sAttrs == null) {
+                    if (SMSEntry.debug.warningEnabled()) {
+                        SMSEntry.debug.warning("ServiceConfig." +
+                        "removeAttributes: "+
+                        "Cannot delete. Attribute value already removed.");
+                    }
+                    Object [] args = { attrName };
+                    throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                        "sms-CANNOT_DELETE_NO_VALUE", args));
+                }
+                SMSUtils.removeAttribute(e, attrName);
             }
             saveSMSEntry(e);
         }
