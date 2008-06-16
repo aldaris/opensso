@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentBootstrap.template,v 1.4 2008-05-08 03:50:13 sean_brydon Exp $
+# $Id: FAMAgentBootstrap.template,v 1.5 2008-06-16 23:50:47 leiming Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -104,3 +104,15 @@ com.sun.identity.agents.config.local.logfile = @AUDIT_LOGS_DIR@/@AUDIT_LOG_FILEN
 # Hot-Swap Enabled: No
 #
 com.sun.identity.agents.config.organization.name = /
+
+#
+# LOCK OF AGENT CONFIGURATION
+#    When it's set to true, agent config in run-time is locked.
+#    Agent has to be restarted to let agent config change take effective 
+#    whether the changed config parameter is Hot-Swap or not.
+#    When it's set to false, change of Hot-Swap agent config parameter can be 
+#    updated into run-time.
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.lock.enable = false
+

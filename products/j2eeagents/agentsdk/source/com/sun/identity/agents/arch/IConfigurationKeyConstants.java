@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.6 2008-06-13 18:29:02 leiming Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.7 2008-06-16 23:50:47 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,6 +154,13 @@ public interface IConfigurationKeyConstants {
      public static final String DEFAULT_CENTRALIZED_NOTIFICATION_ENABLE = 
         "true";    
      
+     /**
+      * Configuration subkey to lock agent config in run-time.
+      */
+     public static final String CONFIG_SUBKEY_LOCK_ENABLE = 
+        "lock.enable";    
+     
+             
     /**
      * A list of all configuration subkeys that do not participate in hot-swap.
      */
@@ -162,7 +169,8 @@ public interface IConfigurationKeyConstants {
              CONFIG_SUBKEY_SERVICE_RESOLVER,
              CONFIG_SUBKEY_LOCALE_LANG,
              CONFIG_SUBKEY_LOCALE_COUNTRY,
-             CONFIG_SUBKEY_ORG_NAME
+             CONFIG_SUBKEY_ORG_NAME,
+             CONFIG_SUBKEY_LOCK_ENABLE
      };
      
     //------- Configuration Key and Format Definitions -----------//
@@ -244,5 +252,11 @@ public interface IConfigurationKeyConstants {
       */
       public static final String CONFIG_ORG_NAME =
           AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_ORG_NAME;
-     
+
+     /**
+      * Configuration key for locking agent config.
+      */
+      public static final String CONFIG_LOCK_ENABLE =
+          AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_LOCK_ENABLE;
+
 }

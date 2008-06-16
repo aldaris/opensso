@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.27 2008-06-13 18:29:02 leiming Exp $
+ * $Id: AgentConfiguration.java,v 1.28 2008-06-16 23:50:47 leiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -639,6 +639,7 @@ public class AgentConfiguration implements
                 setApplicationUser();
                 setApplicationPassword();               
                 setAppSSOToken();
+                setLockConfig();
                 
                 // instantiate the instance of DebugPropertiesObserver
                 debugObserver = DebugPropertiesObserver.getInstance();
@@ -719,7 +720,7 @@ public class AgentConfiguration implements
             }
         
             //Start the Configuration Monitor if necessary
-            if (getModInterval() > 0L) {
+            if (!getLockConfig()) {
                 Thread monitorThread = new Thread(
                         new ConfigurationMonitor(), "AgentConfigMonitor");
                 monitorThread.setDaemon(true);
@@ -1171,6 +1172,16 @@ public class AgentConfiguration implements
     }
     
     private static void hotSwapAgentConfiguration(boolean fromNotification) {
+        
+        // if lock config is enabled, there will be no config change.
+        if (getLockConfig()) {
+            if (isLogMessageEnabled()) {
+                logMessage("AgentConfiguration.hotSwapAgentConfiguration() - " +
+                        "Agent config is locked, there's no config update.");
+            }
+            return;
+        }
+        
         if (loadProperties(fromNotification)) {
             notifyModuleConfigurationListeners();
             // notify possible debug level change
@@ -1409,7 +1420,19 @@ public class AgentConfiguration implements
         return _bootstrapProperties;
     }
      
+    private static boolean getLockConfig() {
+        return _lockConfig;
+    }
     
+    private static void setLockConfig() {
+        if (!isInitialized()) {
+            String lockConfig = getProperty(CONFIG_LOCK_ENABLE);
+            if (lockConfig != null && lockConfig.equalsIgnoreCase("true")) {
+                _lockConfig = true;
+            }
+        }
+    }
+      
     private static boolean _isAgentConfigurationRemote = false;
     private static boolean _initialized;
     private static String _configFilePath;
@@ -1440,6 +1463,7 @@ public class AgentConfiguration implements
     private static SSOToken _appSSOToken = null;
     private static Vector _attributeServiceURLs = null;
     private static DebugPropertiesObserver debugObserver; 
+    private static boolean _lockConfig = false;
     
     static {
         initializeConfiguration();
