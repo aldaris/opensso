@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.12 2008-06-10 23:04:34 veiming Exp $
+   $Id: amAccessControl.xml,v 1.13 2008-06-17 00:10:40 asyhuang Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -427,13 +427,25 @@
     <neednodealwith classname="com.sun.identity.console.policy.PMAuthenticatedUsersSubjectAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.SelectRealmViewBean" />
 
-<neednodealwith classname="com.sun.identity.console.federation.FSAuthDomainsEditViewBean" />
-<neednodealwith classname="com.sun.identity.console.federation.FileChooserViewBean" />
-<neednodealwith classname="com.sun.identity.console.federation.FederationViewBean" />
-<neednodealwith classname="com.sun.identity.console.federation.ImportEntityViewBean" />
-<neednodealwith classname="com.sun.identity.console.federation.SAMLv2GeneralViewBean" />
-<neednodealwith classname="com.sun.identity.console.federation.SAMLv2SPViewBean" />
-<neednodealwith classname="com.sun.identity.console.federation.SAMLv2IDPViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.CreateCOTViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.FSAuthDomainsEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.FileChooserViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.FederationViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.ImportEntityViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.IDFFIDPViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.IDFFSPViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.IDFFAffiliateViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2GeneralViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2SPAssertionContentViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2SPAssertionProcessingViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2SPServicesViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2SPAdvancedViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2IDPAssertionContentViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2IDPAssertionProcessingViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2IDPServicesViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2IDPAdvancedViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2PDPViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.SAMLv2PEPViewBean" />
 
     <neednodealwith classname="com.sun.identity.console.service.ServerAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.ServerCloneViewBean" />
