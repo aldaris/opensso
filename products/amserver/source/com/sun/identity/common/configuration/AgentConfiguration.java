@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.30 2008-06-11 17:17:25 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.31 2008-06-17 20:35:39 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -162,8 +162,8 @@ public class AgentConfiguration {
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
-        createAgentGroupEx(ssoToken, realm, agentGroupName, agentType, attrValues,
-            null, null);
+        createAgentGroupEx(ssoToken, realm, agentGroupName, agentType,
+            attrValues, null, null);
     }
 
     /**
@@ -233,6 +233,12 @@ public class AgentConfiguration {
         FQDNUrl agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
+
+        if ((agentGroupName == null) || (agentGroupName.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.group.missing.name", null);
+        }
+
         validateAgentType(agentType, true);
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
@@ -352,6 +358,12 @@ public class AgentConfiguration {
         FQDNUrl agentURL
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
+
+        if ((agentName == null) || (agentName.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.missing.name", null);
+        }
+
         validateAgentType(agentType);
         AMIdentityRepository amir = new AMIdentityRepository(
             ssoToken, realm);
