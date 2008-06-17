@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.11 2008-05-29 23:22:06 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.12 2008-06-17 20:38:27 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -602,6 +602,27 @@ public class AgentsModelImpl
                     }
                     Map groupValues = AgentConfiguration.getAgentAttributes(
                         group, false);
+                    //flatten the inherited values so that it will be displayed
+                    //correctly.
+                    for (Iterator i = groupValues.keySet().iterator(); 
+                        i.hasNext(); ) {
+                        String key = (String)i.next();
+                        Set val = (Set)groupValues.get(key);
+                        if (val.size() > 1) {
+                            StringBuffer buff = new StringBuffer();
+                            boolean bFirst = true;
+                            for (Iterator j = val.iterator(); j.hasNext(); ) {
+                                if (!bFirst) {
+                                    buff.append(", ");
+                                } else {
+                                    bFirst = false;
+                                }
+                                buff.append((String)j.next());
+                            }
+                            val.clear();
+                            val.add(buff.toString());
+                        }
+                    }
                     groupValues.putAll(values);
                     values = groupValues;
                 }
