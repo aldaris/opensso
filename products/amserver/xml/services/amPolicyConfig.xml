@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicyConfig.xml,v 1.4 2008-06-13 21:31:31 veiming Exp $
+    $Id: amPolicyConfig.xml,v 1.5 2008-06-17 05:03:08 dillidorai Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -333,7 +333,6 @@
                         <ChoiceValue i18nKey="a145">AMIdentitySubject</ChoiceValue>
                     </ChoiceValues>
                     <DefaultValues>
-                        <Value>IdentityServerRoles</Value>
 			<Value>AuthenticatedUsers</Value>
                         <Value>AMIdentitySubject</Value>
                     </DefaultValues>
