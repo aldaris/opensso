@@ -2083,7 +2083,7 @@ am_web_check_cookie_in_post(void **args, char **dpro_cookie,
 	} else {
 	    status = am_web_get_token_from_assertion(response, &recv_token, agent_config);
 	}
-
+    
 	if(status == AM_SUCCESS) {
 	    am_web_log_debug("am_web_check_cookie_in_post(): "
 			     "recv_token : \"%s\"", recv_token);
@@ -2096,10 +2096,7 @@ am_web_check_cookie_in_post(void **args, char **dpro_cookie,
 				 "Unable to allocate memory.");
 		status = AM_NO_MEMORY;
 	    } else {
-		free(recv_token);
-		status = am_web_remove_parameter_from_query(*request_url,
-							    REQUEST_METHOD_TYPE,
-							    request_url);
+		free(recv_token);	
 		strcpy(method, *orig_req);
 		set_method(args, *orig_req);
 		status = AM_SUCCESS;
@@ -2437,11 +2434,6 @@ am_web_get_url_to_redirect(am_status_t status,
 			if((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
 				method != NULL) {
 			    string temp_url = goto_url;
-			    temp_url.append(
-				(temp_url.find("?") == string::npos)?"?":"&");
-			    temp_url.append(REQUEST_METHOD_TYPE);
-			    temp_url.append("=");
-			    temp_url.append(method);
 			    encoded_url =
 				PRIVATE_NAMESPACE_NAME::Http::encode(temp_url);
 			} else {
@@ -4566,7 +4558,6 @@ remove_cdsso_params_from_query(char **query,
     am_status_t remove_sts = AM_SUCCESS;
     const char *cookieName = am_web_get_cookie_name(agent_config);
     const char *cdsso_params[] = {
-		    REQUEST_METHOD_TYPE,
 		    cookieName,
 		    "RequestID",
 		    "MajorVersion",
