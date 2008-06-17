@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAccountMapper.java,v 1.2 2007-08-01 21:04:03 superpat7 Exp $
+ * $Id: DefaultAccountMapper.java,v 1.3 2008-06-17 22:50:01 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class DefaultAccountMapper {
      * @exception <code>WSFederationException</code> if any failure.
      */
     protected Map getSearchParameters(NameIdentifier nameID, 
-         String hostEntityID, String remoteEntityID) 
+         String realm, String hostEntityID, String remoteEntityID) 
          throws WSFederationException {
 
          if(nameID == null) {

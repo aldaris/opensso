@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.5 2008-02-20 00:49:51 superpat7 Exp $
+ * $Id: WSFederationConstants.java,v 1.6 2008-06-17 22:50:01 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -280,4 +280,29 @@ public final class WSFederationConstants {
      * Common Name
      */
     public static final int NAMED_CLAIM_COMMONNAME = 2;
+    
+    /**
+     * Configuration attribute for NameID attribute.
+     */ 
+    public static final String NAMEID_ATTRIBUTE = "nameIdAttribute";
+    
+    /**
+     * Configuration attribute for NameID format.
+     */ 
+    public static final String NAMEID_FORMAT = "nameIdFormat";
+    
+    /**
+     * Configuration attribute for Trim domain.
+     */ 
+    public static final String NAME_INCLUDES_DOMAIN = "nameIncludesDomain";
+    
+    /**
+     * Configuration attribute for Domain attribute.
+     */ 
+    public static final String DOMAIN_ATTRIBUTE = "domainAttribute";
+    
+    /**
+     * The default attribute for short user name
+     */
+    public static final String UID = "uid";
 }

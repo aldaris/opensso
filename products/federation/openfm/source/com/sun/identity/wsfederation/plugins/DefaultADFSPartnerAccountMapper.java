@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultADFSPartnerAccountMapper.java,v 1.2 2007-08-01 21:04:51 superpat7 Exp $
+ * $Id: DefaultADFSPartnerAccountMapper.java,v 1.3 2008-06-17 22:50:01 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,18 +30,23 @@ import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.saml.assertion.NameIdentifier;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
+import com.sun.identity.wsfederation.common.WSFederationException;
+import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 /**
- * This default <code>PartnerAccountMapper</code> for ADFS simply extracts
- * the username portion of an incoming UPN and matches it to the uid attribute
- * in the repository.
+ * This default <code>PartnerAccountMapper</code> for ADFS uses configuration 
+ * to determine the attribute on which to search for the incoming user 
+ * identifier.
  */
 public class DefaultADFSPartnerAccountMapper 
     extends DefaultLibrarySPAccountMapper {
-    private String UID = "uid";
 
      /**
       * Default constructor
@@ -52,47 +57,85 @@ public class DefaultADFSPartnerAccountMapper
     }
     
     /**
-     * This method simply extracts the username portion of the UPN and returns
-     * a Map with a single entry: "uid" => {username}
+     * This method simply extracts the NameIDValue and constructs a search map
+     * according to the configuration.
      * @param nameID NameIdentifier for the subject
      * @param hostEntityID entity ID of the identity provider
      * @param remoteEntityID entity ID of the service provider
      */
     protected Map getSearchParameters(NameIdentifier nameID, 
-        String hostEntityID, String remoteEntityID) 
+        String realm, String hostEntityID, String remoteEntityID) 
+        throws WSFederationException
     {
         String classMethod = 
-            "DefaultADFSPartnerAccountMapper.getSearchParameters";
+            "DefaultADFSPartnerAccountMapper.getSearchParameters: ";
+        
+        // Get configuration for this IdP
+        IDPSSOConfigElement idpConfig = null;
+        try {
+            idpConfig = 
+                WSFederationMetaManager.getIDPSSOConfig(realm, remoteEntityID);
+        } catch (WSFederationMetaException wsfme) {
+            throw new WSFederationException(wsfme);
+        }
+        
+        String nameIdAttribute = WSFederationMetaUtils.getAttribute(idpConfig,
+                WSFederationConstants.NAMEID_ATTRIBUTE);
+        // Search on uid by default
+        if ( nameIdAttribute == null || nameIdAttribute.length() == 0) {
+            nameIdAttribute = WSFederationConstants.UID;
+        }
+        String domainAttribute = WSFederationMetaUtils.getAttribute(idpConfig,
+                WSFederationConstants.DOMAIN_ATTRIBUTE);
+        String strNameIncludesDomain = 
+            WSFederationMetaUtils.getAttribute(idpConfig,
+            WSFederationConstants.NAME_INCLUDES_DOMAIN);
+        boolean nameIncludesDomain = Boolean.valueOf(strNameIncludesDomain);
+
+        String nameValue = nameID.getName();
+        if (nameValue == null || nameValue.length() == 0 ) {
+            throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                "nullNameID",null);
+        }
+        
+        // Now construct the key map
         Map keyMap = new HashMap();  
+        String name = null;
 
-        // name comes as a upn of form login@domain, where login is windows 
-        // login name - e.g. alansh, and domain is windows domain - 
-        // e.g. adatum.com
-        String upn = nameID.getName();
-        if (upn != null && upn.length() > 0 ) {
-            int atSign = upn.indexOf('@');
-            if ( atSign == -1 )
-            {
-                debug.error(classMethod + "No @ in name");
+        if ( nameID.getFormat().equals(WSFederationConstants.NAMED_CLAIM_TYPES[
+            WSFederationConstants.NAMED_CLAIM_UPN]) && ! nameIncludesDomain) {
+            int atSign = nameValue.indexOf('@');
+            if ( atSign == -1 ) {
+                String[] args = {nameValue};
+                throw new 
+                    WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                    "missingAtInUpn",args);
             }
-            else
-            {
-                String name = upn.substring(0,atSign);
-                String domain = upn.substring(atSign+1);
+            
+            name = nameValue.substring(0,atSign);
+            String upnDomain = nameValue.substring(atSign+1);
 
-                if ( debug.messageEnabled() )
-                {
-                    debug.message(classMethod + "name is "+name);
-                    debug.message(classMethod + "domain is "+domain);
-                }
+            if ( domainAttribute != null && domainAttribute.length() > 0) {
                 HashSet set = new HashSet();
-                set.add(name);
-                
-                keyMap.put(UID, set); 
+                set.add(upnDomain);
+                keyMap.put(domainAttribute, set); 
+            }
+
+            if ( debug.messageEnabled() ) {
+                debug.message(classMethod + "domain is "+upnDomain);
             }
         } else {
-            debug.error(classMethod + "name is null");
+            name = nameValue;
+        } 
+
+        if ( debug.messageEnabled() ) {
+            debug.message(classMethod + "name is "+name);
         }
+
+        HashSet set = new HashSet();
+        set.add(name);
+        keyMap.put(nameIdAttribute, set); 
+
         return keyMap;
     }
 

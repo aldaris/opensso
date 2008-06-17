@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.3 2008-01-11 19:23:53 superpat7 Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.4 2008-06-17 22:50:01 superpat7 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,24 +25,24 @@
 
 package com.sun.identity.wsfederation.plugins;
 
+import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.common.SAMLException;
-import com.sun.identity.saml2.profile.IDPSSOUtil;
 
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
 
-import com.sun.identity.saml2.common.SAML2Constants;
-import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
-
-
 import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class <code>DefaultIDPAccountMapper</code> is the default
@@ -83,33 +83,92 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
         String userID = null;
         try {
             SessionProvider sessionProv = SessionManager.getProvider();
-            String[] values = sessionProv.getProperty(session,"UserId");
-            if ((values != null) && (values.length > 0)) {
-                userID = values[0]; 
-            }
+            userID = sessionProv.getPrincipalName(session);
         } catch (SessionException se) {
             throw new WSFederationException(WSFederationUtils.bundle.getString(
                    "invalidSSOToken")); 
         }
         
-        NameIdentifier nameID = null;
-        try {        
-            IDPSSOConfigElement idpConfig = 
-                WSFederationMetaManager.getIDPSSOConfig(realm, hostEntityID);
+        IDPSSOConfigElement idpConfig = 
+            WSFederationMetaManager.getIDPSSOConfig(realm, hostEntityID);
 
-            // Need to check that this is safe in e.g. LDAP case!
-            String upn = userID + "@" 
-                + WSFederationMetaUtils.getAttribute(idpConfig,
-                WSFederationConstants.UPN_DOMAIN);
+        String name2 = null;
+        String attrName = WSFederationMetaUtils.getAttribute(idpConfig,
+                WSFederationConstants.NAMEID_ATTRIBUTE);
+        if (attrName == null || attrName.length() == 0) {
+            attrName = WSFederationConstants.UID;
+        }
+        
+        try {
+            Set attrValues = dsProvider.getAttribute(userID, attrName);
+            if ((attrValues != null) && (!attrValues.isEmpty())) {
+                name2 = (String)attrValues.iterator().next();
+            } else {
+                String [] args = { attrName, userID };
+                throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                    "missingNameAttribute",args);
+            }
+        } catch (DataStoreProviderException dspe) {
+            throw new WSFederationException(dspe);
+        }
 
-            nameID = new NameIdentifier(upn, null, 
-                WSFederationConstants.NAMED_CLAIM_TYPES[
-                WSFederationConstants.NAMED_CLAIM_UPN]);
+        String nameIdFormat = WSFederationMetaUtils.getAttribute(idpConfig,
+            WSFederationConstants.NAMEID_FORMAT);
+        if ( nameIdFormat == null || nameIdFormat.length() == 0 ) {
+            nameIdFormat = WSFederationConstants.NAMED_CLAIM_TYPES[
+                WSFederationConstants.NAMED_CLAIM_UPN];
+        }
+
+        String strNameIncludesDomain = 
+            WSFederationMetaUtils.getAttribute(idpConfig,
+            WSFederationConstants.NAME_INCLUDES_DOMAIN);
+        boolean nameIncludesDomain = Boolean.valueOf(strNameIncludesDomain);
+
+        String name = null;
+        if ( nameIdFormat.equals(WSFederationConstants.NAMED_CLAIM_TYPES[
+            WSFederationConstants.NAMED_CLAIM_UPN]) && ! nameIncludesDomain) {
+            // Need to get a domain from somewhere and append it to name2
+            // Try user profile first
+            String domainAttribute = 
+                WSFederationMetaUtils.getAttribute(idpConfig,
+                WSFederationConstants.DOMAIN_ATTRIBUTE);
+            String upnDomain = null;
+            if ( domainAttribute != null && domainAttribute.length() > 0 )
+            {
+                Set attrValues;
+                try {
+                    attrValues = dsProvider.getAttribute(userID, domainAttribute);
+                } catch (DataStoreProviderException dspe) {
+                    throw new WSFederationException(dspe);
+                }
+                if ((attrValues != null) && (!attrValues.isEmpty())) {
+                    upnDomain = (String)attrValues.iterator().next();
+                }
+            }
+            
+            if ( upnDomain == null || upnDomain.length() == 0 ) {
+                // Nothing on the user profile - get from config
+                upnDomain = WSFederationMetaUtils.getAttribute(idpConfig,
+                    WSFederationConstants.UPN_DOMAIN);
+            }
+            
+            if ( upnDomain == null || upnDomain.length() == 0 )
+            {
+                // OK - now we have a problem
+                throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
+                    "noDomainConfigured",null);
+            }
+            
+            name = name2 + "@" + upnDomain;
+        } else {
+            name = name2;
+        }
+
+        try {
+           return new NameIdentifier(name, null, nameIdFormat);
         }
         catch (SAMLException se){
             throw new WSFederationException(se);
         }
-
-        return nameID;
     }
 }
