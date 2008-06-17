@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amClientDetection.xml,v 1.1 2006-08-29 07:52:30 veiming Exp $
+   $Id: amClientDetection.xml,v 1.2 2008-06-17 20:37:06 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -65,7 +65,7 @@
                     syntax="url"
                     uitype="link"
                     propertiesViewBeanURL="../service/MAPClientManager"
-                    i18nKey="a100">
+                    i18nKey="">
                     <DefaultValues>
                         <Value/>
                     </DefaultValues>
