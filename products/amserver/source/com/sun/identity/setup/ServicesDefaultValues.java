@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.29 2008-06-13 21:31:30 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.30 2008-06-17 21:57:58 veiming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -168,7 +168,7 @@ public class ServicesDefaultValues {
             map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
         }
 
-        Map userRepo = (Map)map.remove("UserStore");
+        Map userRepo = (Map)map.get("UserStore");
         String umRootSuffix = null;
         boolean bUseExtUMDS = (userRepo != null) && !userRepo.isEmpty();
         if (bUseExtUMDS) {
