@@ -251,14 +251,29 @@
                 !isFieldOK('encryptionKey') ||
                 !isFieldOK('rootSuffix');
         } else {
-            $('nextTabButton').disabled =
-                !isFieldOK('configStoreHost') ||
-                !isFieldOK('configStorePort') ||
-                !isFieldOK('encryptionKey') ||
-                !isFieldOK('rootSuffix') ||
-                !isFieldOK('configStoreLoginId') ||
-                !(isFieldOK('configStorePassword') &&
-                  document.getElementById('configStorePassword').value != '');
+            var allFieldsValid = isFieldOK('configStoreHost') &&
+                isFieldOK('configStorePort') && isFieldOK('encryptionKey') &&
+                isFieldOK('rootSuffix') && isFieldOK('configStoreLoginId') &&
+                isFieldOK('configStorePassword') &&
+                (document.getElementById('configStorePassword').value != '');
+            if (allFieldsValid) {
+                AjaxUtils.call("$context$path?actionLink=validateSMHost",
+                    validateSMHost);
+            } else {
+                $('nextTabButton').disabled = true;
+            }
+        }
+    }
+
+    function validateSMHost(response) {
+        if (response.responseText == "ok") { 
+            $('nextTabButton').disabled = false;
+            $('configStoreHostStatusEx').innerHTML = "";
+        } else {
+            $('nextTabButton').disabled = true;
+            $('configStoreHostStatus').innerHTML = "";
+            $('configStoreHostStatusEx').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
         }
     }
 
@@ -330,6 +345,7 @@
                                value="$configStoreHost"
                                onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
                             <span id="configStoreHostStatus"></span>
+                            <span id="configStoreHostStatusEx"></span>
                         </td>
                     </tr>  
                     <tr>

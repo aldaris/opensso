@@ -17,12 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.21 2008-06-16 20:58:27 veiming Exp $
+ * $Id: Step3.java,v 1.22 2008-06-17 00:17:24 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.wizard;
 
+import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.BootstrapData;
@@ -30,13 +31,20 @@ import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.setup.SetupConstants;
 import java.util.Map;
 import net.sf.click.control.ActionLink;
+import net.sf.click.Context;
+import netscape.ldap.LDAPConnection;
+import netscape.ldap.LDAPException;
 
 /**
  * Step 3 is for selecting the embedded or external configuration store 
  */
 public class Step3 extends LDAPStoreWizardPage {
 
-    public static final String LDAP_STORE_SESSION_KEY = "wizardCustomConfigStore";
+    public static final String LDAP_STORE_SESSION_KEY =
+        "wizardCustomConfigStore";
+
+    public ActionLink validateSMHostLink =
+        new ActionLink("validateSMHost", this, "validateSMHost");
     public ActionLink validateRootSuffixLink = 
         new ActionLink("validateRootSuffix", this, "validateRootSuffix");
     public ActionLink setReplicationLink = 
@@ -351,5 +359,47 @@ public class Step3 extends LDAPStoreWizardPage {
         getContext().setSessionAttribute(
             SetupConstants.CONFIG_VAR_DATA_STORE, 
             SetupConstants.SMS_DS_DATASTORE);    
+    }
+
+    public boolean validateSMHost() {
+        Context ctx = getContext();
+        String strSSL = (String)ctx.getSessionAttribute("configStoreSSL");
+        boolean ssl = (strSSL != null) && (strSSL.equals("SSL"));
+
+        String host = (String)ctx.getSessionAttribute("configStoreHost");
+        String strPort = (String)ctx.getSessionAttribute("configStorePort");
+        int port = Integer.parseInt(strPort);
+        String bindDN = (String)ctx.getSessionAttribute("configStoreLoginId");
+        String rootSuffix = (String)ctx.getSessionAttribute("rootSuffix");
+        String bindPwd = (String)ctx.getSessionAttribute("configStorePassword");
+
+        LDAPConnection ld = null;
+        try {
+            ld = (ssl) ? new LDAPConnection(
+                SSLSocketFactoryManager.getSSLSocketFactory()) :
+                new LDAPConnection();
+            ld.setConnectTimeout(300);
+            ld.connect(3, host, port, bindDN, bindPwd);
+
+            String filter = "cn=" + "\"" + rootSuffix + "\"";
+            String[] attrs = {""};
+            ld.search(rootSuffix, LDAPConnection.SCOPE_BASE, filter,
+                attrs, false);
+            writeToResponse("ok");
+        } catch (Exception e) {
+            writeToResponse(
+                getLocalizedString("cannot.connect.to.SM.datastore"));
+        } finally {
+            if (ld != null) {
+                try {
+                    ld.disconnect();
+                } catch (LDAPException ex) {
+                    //ignore
+                }
+            }
+        }
+
+        setPath(null);
+        return false;
     }
 }
