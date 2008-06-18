@@ -1615,7 +1615,7 @@ am_web_is_access_allowed(const char *sso_token,
     if (isNotEnforced == AM_TRUE &&
 	(*agentConfigPtr)->notenforced_url_attributes_enable == AM_FALSE &&
         isLogoutURL == AM_FALSE ) {
-           am_web_log_debug("URL = %s is in notenforced list and  "
+           am_web_log_debug("URL = %s is in not-enforced list and  "
                            "notenforced.url.attributes.enable is set to "
 			   "false", url);
     } else {
@@ -1644,9 +1644,10 @@ am_web_is_access_allowed(const char *sso_token,
 	    if (client_ip != NULL && *client_ip != '\0') {
 		set_host_ip_in_env_map(client_ip, env_parameter_map, agent_config);
 	    }
-            if (isNotEnforced == AM_TRUE &&
-		(*agentConfigPtr)->setUserProfileAttrsMode == SET_ATTRS_NONE)  {
-		  am_web_log_debug("URL = %s is in notenforced list and ldap "
+            if ((isNotEnforced == AM_TRUE &&
+              ((*agentConfigPtr)->notenforced_url_attributes_enable == AM_FALSE) && 
+               (*agentConfigPtr)->setUserProfileAttrsMode == SET_ATTRS_NONE)) {
+                  am_web_log_debug("URL = %s is in not-enforced list and ldap "
                                    "attribute mode is NONE", url);
             } else {
                if ((*agentConfigPtr)->encode_url_special_chars == AM_TRUE ) {
