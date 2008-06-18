@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,16 +31,16 @@
 
 
 <a name="authorizer"></a><h4>Autorizador</h4>
-<a name="indexterm-97"></a><a name="indexterm-98"></a><p>Antes de procesar una solicitud, el Servicio de perfil personal de Liberty
+<a name="indexterm-96"></a><a name="indexterm-97"></a><p>Antes de procesar una solicitud, el Servicio de perfil personal de Liberty
 verificar&#225; la autorizaci&#243;n del WSC que realiza la solicitud. Para ello, se
 pueden llevar a cabo dos niveles de comprobaci&#243;n de la autorizaci&#243;n:</p>
 <ol><li><p>&#191;Dispone la entidad emisora de la solicitud de autorizaci&#243;n para acceder a la informaci&#243;n del perfil del recurso solicitado?</p></li>
 <li><p>&#191;Se ha publicado el recurso solicitado para el solicitante?</p></li></ol>
 <p>Las autorizaciones tienen lugar mediante un complemento del Servicio de perfil personal
 de Liberty: una implementaci&#243;n de la interfaz <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt>. Aunque es posible crear
-una implementaci&#243;n nueva, Access Manager proporcionar&#225; la predeterminada: <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer </tt>. Este complemento define
-cuatro valores de acci&#243;n de pol&#237;tica para la solicitud y las operaciones
-de modificaci&#243;n:</p>
+una implementaci&#243;n nueva, Federated Access Manager proporcionar&#225; la predeterminada: <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer </tt>. Este complemento
+define cuatro valores de acci&#243;n de pol&#237;tica para la solicitud y las
+operaciones de modificaci&#243;n:</p>
 <ul><li><p>Permitir</p></li>
 <li><p>Denegar</p></li>
 <li><p>Interactuar para consentir</p></li>

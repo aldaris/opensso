@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsidentityproviderhostedprofile"></a><h4>So &#228;ndern Sie einen Host-Identity-Anbieter in einer Anbieter-Entity</h4><a name="indexterm-78"></a><p>Nach dem Erstellen einer Entity und dem Hinzuf&#252;gen eines Identity-Anbieters k&#246;nnen Sie
+<a name="federation.fsidentityproviderhostedprofile"></a><h4>So &#228;ndern Sie einen Host-Identity-Anbieter in einer Anbieter-Entity</h4><a name="indexterm-77"></a><p>Nach dem Erstellen einer Entity und dem Hinzuf&#252;gen eines Identity-Anbieters k&#246;nnen Sie
 das Profil des Identity-Anbieters bearbeiten. Hierbei ist es m&#246;glicherweise erforderlich, Werte zu
 Attributen hinzuzuf&#252;gen, die bei der anf&#228;nglichen Erstellung des Identity-Anbieters nicht konfiguriert werden
 konnten, oder konfigurierte Daten zu &#228;ndern. Der Ausgangspunkt ist "Entities" in der
@@ -54,7 +60,7 @@ geh&#246;rt.</b><p>Die Profilseite der Entity wird angezeigt.</p></li>
 <dd><p>Geben Sie die Schl&#252;ssell&#228;nge ein, die f&#252;r die Interaktion eines Webdienstbenutzers mit einer anderen Entity verwendet wird.</p></dd>
 <dt>Verschl&#252;sselungsschl&#252;ssel: Verschl&#252;sselungsmethode</dt>
 <dd><p>W&#228;hlen Sie eine Verschl&#252;sselungsmethode aus. Zur Auswahl stehen:</p>
-<ul><li><p>Keinen</p></li>
+<ul><li><p>Keine</p></li>
 <li><p>AES</p></li>
 <li><p>DESede</p></li></ul>
 </dd>
@@ -107,11 +113,11 @@ die Profile fest, die vom Identity-Anbieter f&#252;r die einzelnen Funktionen ve
 </dd>
 </dl>
 </li>
-<li><b>W&#228;hlen Sie eine der zur Verf&#252;gung stehenden Authentifizierungsdom&#228;nen aus, um sie dem
-Anbieter zuzuweisen.</b><p>Anbieter k&#246;nnen zu einer oder mehreren Authentifizierungsdom&#228;nen geh&#246;ren. Ein Anbieter, bei dem
-keine Authentifizierungsdom&#228;ne angegeben ist, kann jedoch nicht an Kommunikationen teilnehmen, die auf
-den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Authentifizierungsdom&#228;nen erstellt wurden, k&#246;nnen
-Sie dieses Attribut sp&#228;ter definieren.</p></li>
+<li><b>W&#228;hlen Sie einen der verf&#252;gbaren Circles of Trust aus, der dem Anbieter
+zugewiesen werden soll.</b><p>Ein Anbieter kann zu mehreren Circles of Trust geh&#246;ren. Ein Anbieter, f&#252;r
+den kein Circle of Trust angegeben ist, kann jedoch nicht an Kommunikationen
+teilnehmen, die auf den Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Circles of
+Trust erstellt wurden, k&#246;nnen Sie dieses Attribut sp&#228;ter definieren.</p></li>
 <li><b>W&#228;hlen Sie den Authentifizierungskontext aus, der verwendet werden soll, falls der Identity-Anbieter
 diese Information nicht als Teil einer Dienstanbieteranforderung erh&#228;lt.</b><p>Dieses Attribut ordnet die in den Liberty Alliance Project-Spezifikationen definierten Authentifizierungskontext-Klassen den
 beim Identity-Anbieter verf&#252;gbaren Authentifizierungsmethoden zu. Au&#223;erdem wird dieser Authentifizierungskontext vom Dienstanbieter verwendet,
@@ -140,7 +146,8 @@ wenn ein unbekannter Benutzer versucht, auf eine gesch&#252;tzte Ressource zuzug
 </li>
 <li><b>W&#228;hlen Sie einen der zur Verf&#252;gung stehenden vertrauensw&#252;rdigen Anbieter aus und f&#252;gen
 Sie ihn der Entity hinzu.</b><p>Die Liste enth&#228;lt konfigurierte Entities mit Anbietern.</p></li>
-<li><b>&#196;ndern Sie die Werte f&#252;r die Access Manager-Konfigurationsattribute.</b><p>Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Access Manager fest.</p><dl><dt>Anbieter-Alias</dt>
+<li><b>Bearbeiten Sie Werte f&#252;r die Attribute der Federated Access Manager-Konfiguration.</b><p>Federated Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Federated Access Manager
+fest.</p><dl><dt>Anbieter-Alias</dt>
 <dd><p>Der Anbieter-Alias ist ein Name, der verwendet wird, um den Host-Anbieter innerhalb eines Entity-Profils zu identifizieren und zu bestimmen, ob es sich um einen Dienstanbieter oder eine Identity-Anbieter-Konfiguration handelt. Der Wert muss eindeutig sein und als URL dargestellt werden k&#246;nnen. Beispiel: <tt>sunAlias</tt>.</p></dd>
 <dt>Authentifizierungstyp</dt>
 <dd><p>W&#228;hlen Sie den Anbietertyp aus, der f&#252;r Authentifizierungsanforderungen eines lokalen Host-Anbieters verwendet werden soll.</p>

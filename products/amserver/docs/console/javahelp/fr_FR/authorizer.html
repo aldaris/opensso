@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,14 +31,14 @@
 
 
 <a name="authorizer"></a><h4>Agent d'autorisation</h4>
-<a name="indexterm-97"></a><a name="indexterm-98"></a><p>Avant de traiter une demande, Service de profil personnel Liberty v&#233;rifie l'autorisation
+<a name="indexterm-96"></a><a name="indexterm-97"></a><p>Avant de traiter une demande, Service de profil personnel Liberty v&#233;rifie l'autorisation
 du WSC ayant &#233;mis cette demande. Le contr&#244;le d'autorisation peut &#234;tre effectu&#233;
 &#224; deux niveaux :</p>
 <ol><li><p>L'entit&#233; demandeuse est-elle autoris&#233;e &#224; acc&#233;der aux informations de profil de la ressource requise ?</p></li>
 <li><p>La ressource requise est-elle publi&#233;e pour le demandeur ?</p></li></ol>
 <p>L'autorisation est transmise via un plug-in &#224; Service de profil personnel Liberty,
 une impl&#233;mentation de la classe <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt>. Bien qu'une nouvelle impl&#233;mentation puisse &#234;tre
-d&#233;velopp&#233;e, Access Manager fournit la classe par d&#233;faut <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt>. Ce plug-in d&#233;finit
+d&#233;velopp&#233;e, Federated Access Manager fournit l'interface par d&#233;faut&#160;: <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt>. Ce plug-in d&#233;finit
 quatre valeurs d'action de strat&#233;gie pour les op&#233;rations de requ&#234;te et de
 modification :</p>
 <ul><li><p>Autoriser</p></li>

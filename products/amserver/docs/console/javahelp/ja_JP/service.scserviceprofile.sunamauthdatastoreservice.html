@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthdatastoreservice"></a><h4>データストア</h4>
-<p><a name="indexterm-179"></a>「データストア」認証モジュールにより、レルムのアイデンティティーリポジトリを使用したログインでユーザーを認証できるようになります。データストアモジュールを使用すると、認証プラグインモジュールを記述してロードしたあと、同じデータストアリポジトリに対して認証する必要がある場合に認証モジュールを設定する手順が不要になります。また、そのレルム内の対応するリポジトリに対してフラットファイル認証が必要な、カスタムの認証モジュールを記述する必要もありません。</p>
+<p><a name="indexterm-178"></a>「データストア」認証モジュールにより、レルムのアイデンティティーリポジトリを使用したログインでユーザーを認証できるようになります。データストアモジュールを使用すると、認証プラグインモジュールを記述してロードしたあと、同じデータストアリポジトリに対して認証する必要がある場合に認証モジュールを設定する手順が不要になります。また、そのレルム内の対応するリポジトリに対してフラットファイル認証が必要な、カスタムの認証モジュールを記述する必要もありません。</p>
 
 <a name="funad"></a><h5>認証レベル</h5>
 <p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>

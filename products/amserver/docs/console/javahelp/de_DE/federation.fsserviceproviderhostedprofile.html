@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedprofile"></a><h4>So &#228;ndern Sie einen Host-Dienstanbieter in einer Anbieter-Entity</h4><a name="indexterm-80"></a><p>Nach dem Erstellen einer Entity und dem Hinzuf&#252;gen eines Dienstanbieters k&#246;nnen Sie
+<a name="federation.fsserviceproviderhostedprofile"></a><h4>So &#228;ndern Sie einen Host-Dienstanbieter in einer Anbieter-Entity</h4><a name="indexterm-79"></a><p>Nach dem Erstellen einer Entity und dem Hinzuf&#252;gen eines Dienstanbieters k&#246;nnen Sie
 das Profil des Dienstanbieters bearbeiten. Hierbei ist es m&#246;glicherweise erforderlich, Werte zu
 Attributen hinzuzuf&#252;gen, die beim anf&#228;nglichen Hinzuf&#252;gen des Dienstanbieters nicht konfiguriert werden konnten,
 oder konfigurierte Daten zu &#228;ndern. Der Ausgangspunkt ist "Entities" in der Verbindungsschnittstelle.</p><ol>
@@ -53,7 +59,7 @@ oder konfigurierte Daten zu &#228;ndern. Der Ausgangspunkt ist "Entities" in der
 <dd><p>Geben Sie die Schl&#252;ssell&#228;nge ein, die f&#252;r die Interaktion eines Webdienstbenutzers mit einer anderen Entity verwendet wird.</p></dd>
 <dt>Verschl&#252;sselungsschl&#252;ssel: Verschl&#252;sselungsmethode</dt>
 <dd><p>W&#228;hlen Sie eine Verschl&#252;sselungsmethode aus. Zur Auswahl stehen:</p>
-<ul><li><p>Keinen</p></li>
+<ul><li><p>Keine</p></li>
 <li><p>AES</p></li>
 <li><p>DESede</p></li></ul>
 </dd>
@@ -104,11 +110,11 @@ die Profile fest, die vom Identity-Anbieter f&#252;r die einzelnen Funktionen ve
 </dd>
 </dl>
 </li>
-<li><b>W&#228;hlen Sie eine der zur Verf&#252;gung stehenden Authentifizierungsdom&#228;nen aus, um sie dem
-Anbieter zuzuweisen.</b><p>Anbieter k&#246;nnen zu einer oder mehreren Authentifizierungsdom&#228;nen geh&#246;ren. Ein Anbieter, bei dem
-keine Authentifizierungsdom&#228;ne angegeben ist, kann jedoch nicht an Kommunikationen teilnehmen, die auf
-den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Authentifizierungsdom&#228;nen erstellt wurden, k&#246;nnen
-Sie dieses Attribut sp&#228;ter definieren.</p></li>
+<li><b>W&#228;hlen Sie einen der verf&#252;gbaren Circles of Trust aus, der dem Anbieter
+zugewiesen werden soll.</b><p>Ein Anbieter kann zu mehreren Circles of Trust geh&#246;ren. Ein Anbieter, f&#252;r
+den kein Circle of Trust angegeben ist, kann jedoch nicht an Kommunikationen
+teilnehmen, die auf den Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Circles of
+Trust erstellt wurden, k&#246;nnen Sie dieses Attribut sp&#228;ter definieren.</p></li>
 <li><b>Geben Sie f&#252;r jeden Kontextverweis im Authentifizierungskontext-Attribut eine positive Zahl in das
 Feld "Ebene" ein.</b><p>Die Zahl entspricht der f&#252;r das Authentifizierungsmodul festgelegten Authentifizierungsebene. Der Benutzer wird
 zu einem Modul mit der definierten Authentifizierungsebene umgeleitet.</p>
@@ -148,7 +154,7 @@ Sie ihn der Entity hinzu.</b><p>Die Liste enth&#228;lt konfigurierte Entities mi
 <dd><p>Aktivieren Sie dieses Kontrollk&#228;stchen, wenn Sie die Zuordnungsf&#246;derierung aktivieren m&#246;chten.</p></dd>
 </dl>
 </li>
-<li><b>&#196;ndern Sie die Werte f&#252;r die Access Manager-Konfigurationsattribute.</b><p>Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Access Manager fest.</p><dl><dt>Dienstanbieter-Adapter</dt>
+<li><b>Bearbeiten Sie Werte f&#252;r die Attribute der Federated Access Manager-Konfiguration.</b><p>Federated Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Access Manager fest.</p><dl><dt>Dienstanbieter-Adapter</dt>
 <dd><p>Definiert die Implementierungsklasse f&#252;r com.sun.identity.federation.plugins.FederationSPAdapter , die zum Hinzuf&#252;gen anwendungsspezifischer Verarbeitungsschritte w&#228;hrend des Verbindungs-Vorgangs (Federation) verwendet wird.</p></dd>
 <dt>Anbieter-Alias</dt>
 <dd><p>Der Anbieter-Alias ist ein Name, der verwendet wird, um den Host-Anbieter innerhalb eines Entity-Profils zu identifizieren und zu bestimmen, ob es sich um einen Dienstanbieter oder eine Identity-Anbieter-Konfiguration handelt. Der Wert muss eindeutig sein und als URL dargestellt werden k&#246;nnen. Beispiel: <tt>sunAlias</tt>.</p></dd>

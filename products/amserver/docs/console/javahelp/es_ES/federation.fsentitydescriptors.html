@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,21 +31,21 @@
 
 
 <a name="federation.fsentitydescriptors"></a><h3>Entidades: proveedor o afiliado</h3>
-<a name="indexterm-63"></a><a name="indexterm-64"></a><a name="indexterm-65"></a><a name="indexterm-66"></a><p>Una <b>entidad</b> puede configurarse con <b>metadatos</b> (informaci&#243;n de configuraci&#243;n que define una
+<a name="indexterm-62"></a><a name="indexterm-63"></a><a name="indexterm-64"></a><a name="indexterm-65"></a><p>Una <b>entidad</b> puede configurarse con <b>metadatos</b> (informaci&#243;n de configuraci&#243;n que define una
 determinada arquitectura de servicios de identidades) para un proveedor de identidades o
 un proveedor de servicios individual, o para cada uno de ellos. Por
 el contrario, una entidad tambi&#233;n puede configurarse como una afiliaci&#243;n, es decir,
 un grupo seleccionado de proveedores de cualquiera de los dos tipos. Tanto
 las entidades de proveedores como de afiliaci&#243;n pueden configurarse en la consola
-de Access Manager. </p>
+de Federation Access Manager.</p>
 <hr><p><b>Nota &#8211; </b>Se puede crear una entidad, pero no estar&#225; disponible para asignarla a
-un dominio de autenticaci&#243;n hasta que se hayan agregado los proveedores.</p>
+un c&#237;rculo de confianza hasta que se hayan agregado los proveedores.</p>
 <hr>
-<p>Los dos tipos de entidades se describen en la siguiente tabla.</p><a name="gbxxa"></a><h6>Tabla&#160;1 Tipo de entidades</h6><table><col width="50*"><col width="50*"><tr><td align="left" valign="top" scope="row"><p><b>Entidad de proveedores</b></p></td>
+<p>Los dos tipos de entidades se describen en la siguiente tabla.</p><a name="gbxxa"></a><h6>Tabla&#160;1 Tipo de entidades</h6><table><col width="50%"><col width="50%"><tr><td align="left" valign="top" scope="row"><p><b>Entidad de proveedores</b></p></td>
 <td align="left" valign="top" scope="row"><p>Una <b>entidad de proveedores</b>
 contiene los metadatos para los proveedores individuales de cada tipo. Todos los
 proveedores de identidades y servicios deben configurarse en una entidad de proveedores
-para poder asociarlos a un dominio de autenticaci&#243;n o seleccionarlos para incluirlos
+para poder asociarlos a un c&#237;rculo de confianza o seleccionarlos para incluirlos
 en una <b>entidad de afiliaci&#243;n</b>. Mediante los atributos proporcionados en la consola de Access
 Manager, un proveedor de identidades o un proveedor de servicios individual, o
 una de cada tipo puede definirse en una entidad de proveedores. Un
@@ -56,7 +62,7 @@ asociados. Por ejemplo, cuando un proveedor de servicios emite una solicitud de
 autenticaci&#243;n para un usuario en nombre de una afiliaci&#243;n, y se ha
 protegido la autenticaci&#243;n, el usuario puede realizar un inicio de sesi&#243;n &#250;nico
 con todos los miembros de la afiliaci&#243;n. La afiliaci&#243;n se forma sin
-tener en cuenta los l&#237;mites de un dominio de autenticaci&#243;n.</p><p>Una <b>entidad de afiliaci&#243;n</b> contiene
+tener en cuenta los l&#237;mites de un c&#237;rculo de confianza.</p><p>Una <b>entidad de afiliaci&#243;n</b> contiene
 los metadatos que definen el grupo de una o varias de las
 entidades de proveedores que conforman la aplicaci&#243;n. No contiene la informaci&#243;n de
 configuraci&#243;n de ning&#250;n proveedor, s&#243;lo la informaci&#243;n de configuraci&#243;n del propio afiliado.

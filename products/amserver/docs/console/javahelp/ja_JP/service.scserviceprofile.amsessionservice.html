@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.amsessionservice"></a><h4>セッション</h4>
-<p><a name="indexterm-199"></a>セッションサービスは、認証されたユーザーのセッションについて、最大セッション時間や最大アイドル時間などの値を定義します。セッションの属性は、グローバル属性、動的属性、ユーザー属性のいずれかです。属性は次のとおりです。</p>
+<p><a name="indexterm-202"></a>セッションサービスは、認証されたユーザーのセッションについて、最大セッション時間や最大アイドル時間などの値を定義します。セッションの属性は、グローバル属性、動的属性、ユーザー属性のいずれかです。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwfeu">「セカンダリ設定インスタンス」</a></p></li>
 <li><p><a href="#fwfew">「検索結果の最大数」</a></p></li>
 <li><p><a href="#fwfex">「検索のタイムアウト」</a></p></li>
@@ -60,7 +66,7 @@
 <p>接続中のユーザーセッション数のセッションリポジトリに対する照会がタイムアウトするまでの時間 (ミリ秒単位) を定義します。</p><p>最大読み込み時間に達すると、エラーが返されます。この属性は、セッションフェイルオーバー配備でセッション割り当て制限が有効になっている場合のみ、機能します。デフォルト値は 6000 ミリ秒です。設定を変更した場合は、サーバーを再起動する必要があります。</p>
 
 <a name="fwffb"></a><h5>最上位管理者は制限の確認を免除</h5>
-<p>「Top-level Admin」ロールを持つユーザーに対して、セッション制限の確認を免除するべきかどうかを指定します。YES に設定した場合は、セッション制限が有効になっていても、その管理者に対してセッション割り当て制限の確認は行われません。</p><p>この属性のデフォルト設定は「いいえ」です。設定を変更した場合は、サーバーを再起動する必要があります。この属性は、セッション割り当て制限が有効になっている場合にのみ機能します。</p>
+<p>「Top-level Admin」ロールを持つユーザーに対して、セッション制限の確認を免除するべきかどうかを指定します。「はい」に設定した場合は、セッション制限が有効になっていても、その管理者に対してセッション割り当て制限の確認は行われません。</p><p>この属性のデフォルト設定は「いいえ」です。設定を変更した場合は、サーバーを再起動する必要があります。この属性は、セッション割り当て制限が有効になっている場合にのみ機能します。</p>
 <hr><p><b>注 &#8211; </b><tt>AMConfig.properties</tt> で Federated Access Manager に対して定義されるスーパーユーザー (<tt>com.sun.identity.authentication.super.user</tt>) は常に、セッションの割り当て制限確認を免除されます。</p>
 <hr>
 

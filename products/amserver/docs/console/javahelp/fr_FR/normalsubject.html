@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -36,13 +42,13 @@ Les objets par d&#233;faut sont les suivants :</p><dl><dt>Objet d'identit&#233; 
 <dt>Clients de services Web</dt>
 <dd><p>Ce type d'objet implique qu'un client de service Web (WSC) identifi&#233; par le jeton SSO soit membre de cet objet si le DN de toute entit&#233; principale contenue dans le jeton SSO correspond &#224; une valeur s&#233;lectionn&#233;e quelconque de cet objet. Les valeurs valides sont les DN des certificats de confiance dans le fichier keystore JKS local, qui correspondent aux certificats des WSC de confiance. Cet objet pr&#233;sente une d&#233;pendance vis &#224; vis de Liberty Web Services Framework et ne doit &#234;tre utilis&#233; que par les fournisseurs de services Liberty pour autoriser les WSC.</p><p>Assurez-vous d'avoir cr&#233;&#233; le fichier keystore avant d'ajouter cet objet &#224; une strat&#233;gie. Vous pouvez consulter les informations relatives &#224; la configuration d'un fichier keystore &#224; l'emplacement suivant :</p><p><tt></tt><i>FederatedAccessManager-base</i><tt></tt> <tt> /SUNWam/samples/saml/xmlsig/keytool.html</tt></p></dd>
 </dl>
-<p>Les autres objets suivants sont disponibles en les s&#233;lectionnant dans le <a href="ggdbu.html#ggdcj">service de configuration de strat&#233;gie</a>du
+<p>Les autres objets suivants sont disponibles en les s&#233;lectionnant dans le service de configuration de strat&#233;giedu
 domaine :</p><dl><dt>R&#244;les Federated Access Manager</dt>
 <dd><p>Ce type d'objet implique que tout membre d'un r&#244;le Federated Access Manager soit un membre de cet objet. Un r&#244;le Federated Access Manager est cr&#233;&#233; en ex&#233;cutant Federated Access Manager en mode h&#233;rit&#233; et en utilisant la console 6.3. Ces r&#244;les ont des classes d'objet impos&#233;es par Federated Access Manager. Les r&#244;les Federated Access Manager sont accessibles uniquement par le biais du service de strat&#233;gie Federated Access Manager d'h&#233;bergement.</p></dd>
 <dt>Groupes LDAP</dt>
 <dd><p>Ce type de sous-objet implique que tout membre d'un groupe LDAP soit membre de cet objet.</p></dd>
 <dt>R&#244;les LDAP</dt>
-<dd><p>Ce type de sous-objet implique que tout membre d'un r&#244;le LDAP soit membre de cet objet. Un r&#244;le LDAP est une d&#233;finition de r&#244;le quelconque utilisant la fonctionnalit&#233; de r&#244;le de Directory Server. Ces r&#244;les ont des classes d'objet impos&#233;es par la d&#233;finition de r&#244;le Directory Server. Le filtre de recherche de r&#244;le LDAP peut &#234;tre modifi&#233; dans le <a href="ggdbu.html#ggdcj">service de configuration des strat&#233;gies</a>, afin de restreindre l'&#233;tendue de la recherche et d'am&#233;liorer les performances.</p></dd>
+<dd><p>Ce type de sous-objet implique que tout membre d'un r&#244;le LDAP soit membre de cet objet. Un r&#244;le LDAP est une d&#233;finition de r&#244;le quelconque utilisant la fonctionnalit&#233; de r&#244;le de Directory Server. Ces r&#244;les ont des classes d'objet impos&#233;es par la d&#233;finition de r&#244;le Directory Server. Le filtre de recherche de r&#244;le LDAP peut &#234;tre modifi&#233; dans le service de configuration des strat&#233;gies, afin de restreindre l'&#233;tendue de la recherche et d'am&#233;liorer les performances.</p></dd>
 <dt>Utilisateurs LDAP</dt>
 <dd><p>Ce type de sous-objet implique que tout utilisateur LDAP soit membre de cet objet.</p></dd>
 <dt>Organisation</dt>

@@ -12,11 +12,11 @@
         <indexitem target="federation.fssamltrustedpartnersadd" text="設定の第 2 段階"></indexitem></indexitem>
     <indexitem target="federation.fssamltargeturlsadd" text="ターゲット URL"></indexitem></indexitem>
  <indexitem target="service.scsoapbinding" text="SOAP バインドサービス">
-    <indexitem target="webserviceauthenticator" text="Web サービス認証"></indexitem>
-    <indexitem target="soapsuppauthmech" text="サポートされている認証メカニズム"></indexitem>
+    <indexitem target="ggodb" text="Web サービス認証"></indexitem>
+    <indexitem target="ggodb" text="サポートされている認証メカニズム"></indexitem>
     <indexitem target="mechanismhandlerslist" text="メカニズムハンドラリスト"></indexitem><indexitem target="webservices.wsauthnserviceshandlersadd" text="メカニズムハンドラリスト"></indexitem>
-    <indexitem target="requesthandlerlist" text="要求ハンドラリスト"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="要求ハンドラリスト"></indexitem></indexitem>
- <indexitem target="webserviceauthenticator" text="Web サービス認証"></indexitem>
+    <indexitem target="requesthandlerlist" text="要求ハンドラリスト"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="要求ハンドラリスト"></indexitem><indexitem target="service.scsaml2soapbinding" text="要求ハンドラリスト"></indexitem><indexitem target="ggojs" text="要求ハンドラリスト"></indexitem></indexitem>
+ <indexitem target="ggodb" text="Web サービス認証"></indexitem>
  <indexitem text="アイデンティティー管理">
     <indexitem text="ユーザー">
         <indexitem target="addusertogroup" text="サービス、ロール、およびグループへの追加"></indexitem></indexitem></indexitem>
@@ -26,9 +26,9 @@
     <indexitem target="federation.fsentitydescriptorsprofile" text="一般属性"></indexitem>
     <indexitem target="federation.fsentitydescriptorsadd" text="作成"></indexitem></indexitem>
  <indexitem target="useimpliedresource" text="暗黙のリソース"></indexitem>
- <indexitem target="federation.fsentitydescriptorsaffiliate" text="エンティティ, アフィリエイトエンティティーでのアフィリエイトの作成"></indexitem>
  <indexitem text="エンティティー">
     <indexitem target="federation.fsentitydescriptors" text="アフィリエイト"></indexitem>
+    <indexitem target="federation.fsentitydescriptorsaffiliate" text="アフィリエイトエンティティーでのアフィリエイトの作成"></indexitem>
     <indexitem target="federation.fsentitydescriptorsadd" text="アフィリエイトの作成"></indexitem>
     <indexitem target="federation.fsentitydescriptorsprofile" text="一般属性の変更"></indexitem>
     <indexitem target="federation.fscreatecontactperson" text="担当者の追加"></indexitem>
@@ -54,7 +54,7 @@
     <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセット"></indexitem>
     <indexitem target="service.scpolicy" text="ポリシー設定"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamuserservice" text="ユーザー"></indexitem></indexitem>
- <indexitem target="delegation.delegation" text="権限"></indexitem>
+ <indexitem target="delegation.delegation" text="権限"></indexitem><indexitem target="delegation.delegationproperties" text="権限"></indexitem>
  <indexitem target="sessionsearch" text="検索"></indexitem>
  <indexitem target="webservices.wspersonalprofileservice" text="個人プロファイルサービス">
     <indexitem target="ppldapattributemaplist" text="PPLDAP 属性マップリスト"></indexitem>
@@ -83,7 +83,7 @@
  <indexitem target="supportedlang" text="サポートされている言語ロケール"></indexitem>
  <indexitem target="supportedcontainers" text="サポートされているコンテナ"></indexitem>
  <indexitem target="supporteddirectives" text="サポートされているディレクティブ (ディスカバリサービス)"></indexitem>
- <indexitem target="soapsuppauthmech" text="サポートされている認証メカニズム (SOAP バインド)"></indexitem>
+ <indexitem target="ggodb" text="サポートされている認証メカニズム (SOAP バインド)"></indexitem>
  <indexitem target="supportedauthmechanisms" text="サポートされている認証メカニズム (ディスカバリサービス)"></indexitem>
  <indexitem target="fyfby" text="参照ポリシー"></indexitem>
  <indexitem text="システムプロパティー">
@@ -93,7 +93,7 @@
     <indexitem target="service.scserviceprofile.iplanetamloggingservice" text="ログ"></indexitem></indexitem>
  <indexitem target="policyconditions" text="条件">
     <indexitem target="policy.pmdefaultipcondition" text="IP アドレス/DNS 名"></indexitem>
-    <indexitem target="gdkmp" text="LDAP フィルタ"></indexitem>
+    <indexitem target="policy.conditionadd" text="LDAP フィルタ"></indexitem>
     <indexitem target="policy.pmdefaulttimeconditionadd" text="時間"></indexitem>
     <indexitem target="policy.pmdefaultsessioncondtionadd" text="セッション"></indexitem>
     <indexitem target="policy.sessionpropertyconditionadd" text="セッションプロパティー"></indexitem>
@@ -115,7 +115,6 @@
  <indexitem target="attributemapper" text="属性マッパー"></indexitem>
  <indexitem target="federation.fssamltargeturlsadd" text="ターゲット URL"></indexitem>
  <indexitem target="normalsubject" text="対象"></indexitem><indexitem target="idm.entities" text="対象">
-    <indexitem target="subjectagents" text="エージェント"></indexitem>
     <indexitem target="subject.group" text="グループ"></indexitem>
     <indexitem target="subject.filteredrole" text="フィルタロール"></indexitem>
     <indexitem target="subjectuser" text="ユーザー"></indexitem>
@@ -143,10 +142,13 @@
  <indexitem target="realm.idrepo" text="データストア">
     <indexitem target="sundirattrs" text="Access Manager スキーマ属性を含んだ Sun Directory Server"></indexitem>
     <indexitem target="adattrs" text="Active Directory の属性"></indexitem>
-    <indexitem target="amrepoattrs" text="Federated Access Manager リポジトリプラグインの属性"></indexitem>
     <indexitem target="gdoto" text="LDPAv3 リポジトリプラグイン属性"></indexitem>
-    <indexitem target="realm.idreposelecttype" text="新しいデータストアを作成する"></indexitem>
-    <indexitem target="flatfileattr" text="フラットファイルリポジトリの属性"></indexitem></indexitem>
+    <indexitem target="realm.idreposelecttype" text="新しいデータストアを作成する"></indexitem></indexitem>
+ <indexitem target="federation.fsauthdomains" text="トラストサークル">
+    <indexitem target="deleteauthdomain" text="削除"></indexitem>
+    <indexitem target="federation.createcot" text="作成"></indexitem>
+    <indexitem target="federation.fsauthdomainsselectprovider" text="プロバイダの追加"></indexitem>
+    <indexitem target="federation.fsauthdomainsedit" text="変更"></indexitem></indexitem>
  <indexitem target="webservices.wsauthnservices" text="認証 Web サービス"></indexitem>
  <indexitem text="認証属性">
     <indexitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></indexitem>
@@ -167,21 +169,13 @@
     <indexitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="匿名"></indexitem>
     <indexitem target="authentication.authconfig" text="認証設定"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="メンバーシップ"></indexitem></indexitem>
- <indexitem target="federation.fsauthdomains" text="認証ドメイン">
-    <indexitem target="deleteauthdomain" text="削除"></indexitem>
-    <indexitem target="federation.fsauthdomainsadd" text="作成"></indexitem>
-    <indexitem target="federation.fsauthdomainsselectprovider" text="プロバイダの追加"></indexitem>
-    <indexitem target="federation.fsauthdomainsedit" text="変更"></indexitem></indexitem>
  <indexitem target="namescheme" text="ネーミング方式"></indexitem>
  <indexitem target="namespaceprefix" text="ネームスペースプレフィックス"></indexitem>
  <indexitem target="generatesessioncontext" text="ブートストラップ用のセッションコンテキストステートメント"></indexitem>
  <indexitem target="encryptnameidentifier" text="ブートストラップ用のセッションコンテキスト内での NameIdentifier の暗号化"></indexitem>
  <indexitem target="resourceofferingsbootstrapping" text="ブートストラップ用のリソースオファリング">
-    <indexitem target="service.smdiscoverybootstraprefoffadd" text="設定"></indexitem></indexitem>
- <indexitem text="プラットフォーム">
-    <indexitem target="service.scplatformserverlistadd" text="新しいインスタンス名を作成する"></indexitem>
-    <indexitem target="service.scplatformsitelistadd" text="新しいサイト名を作成する"></indexitem>
-    <indexitem target="service.scplatformclientcharsetsadd" text="新しい文字セットを作成する"></indexitem></indexitem>
+    <indexitem target="service.smdiscoverybootstraprefoffadd" text="設定する"></indexitem></indexitem>
+ <indexitem target="service.scplatformclientcharsetsadd" text="プラットフォーム, 新しい文字セットを作成する"></indexitem>
  <indexitem target="ppproviderid" text="プロバイダ ID"></indexitem>
  <indexitem target="dsproviderid" text="プロバイダ ID (ディスカバリサービス)"></indexitem>
  <indexitem target="federation.fsentitydescriptors" text="プロバイダエンティティー">
@@ -196,7 +190,7 @@
     <indexitem target="policy.selectreferraltype" text="参照の追加"></indexitem>
     <indexitem target="fyfby" text="参照ポリシー"></indexitem>
     <indexitem target="policyconditions" text="条件"></indexitem>
-    <indexitem target="policy.conditionadd" text="条件を追加する"></indexitem>
+    <indexitem target="policy.selectconditiontype" text="条件を追加する"></indexitem>
     <indexitem target="normalsubject" text="対象"></indexitem>
     <indexitem target="policy.subjectadd" text="対象を追加する"></indexitem>
     <indexitem target="normalpolicy" text="標準ポリシー"></indexitem>
@@ -208,8 +202,8 @@
     <indexitem target="webservices.wsauthnserviceshandlersadd" text="設定する"></indexitem></indexitem>
  <indexitem target="addusertogroup" text="ユーザー, サービス、ロール、およびグループへの追加"></indexitem>
  <indexitem target="dm.home" text="ユーザー管理"></indexitem>
- <indexitem target="requesthandlerlist" text="要求ハンドラリスト">
-    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="設定する"></indexitem></indexitem>
+ <indexitem target="requesthandlerlist" text="要求ハンドラリスト"></indexitem><indexitem target="service.scsaml2soapbinding" text="要求ハンドラリスト">
+    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="設定する"></indexitem><indexitem target="ggojs" text="設定する"></indexitem></indexitem>
  <indexitem target="resourceidmapper" text="リソース ID マッパー"></indexitem>
  <indexitem target="resourceidmapperpluginclass" text="リソース ID マッパープラグイン用のクラス"></indexitem>
  <indexitem target="normalrule" text="ルール"></indexitem>
@@ -218,7 +212,7 @@
     <indexitem target="authentication.newauthconfig" text="新しい認証連鎖を作成する"></indexitem>
     <indexitem target="realm.rmrealmadd" text="新しく作成する"></indexitem>
     <indexitem target="realm.realmproperties" text="一般プロパティー"></indexitem>
-    <indexitem target="delegation.delegation" text="権限"></indexitem>
+    <indexitem target="delegation.delegation" text="権限"></indexitem><indexitem target="delegation.delegationproperties" text="権限"></indexitem>
     <indexitem target="realm.services" text="サービス"></indexitem>
     <indexitem target="realm.servicesadd" text="サービスを追加する"></indexitem>
     <indexitem target="idm.entities" text="対象"></indexitem>

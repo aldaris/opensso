@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Certificado </h4>
-<p><a name="indexterm-177"></a>Este m&#243;dulo permite a un usuario iniciar una sesi&#243;n mediante un certificado
+<p><a name="indexterm-176"></a>Este m&#243;dulo permite a un usuario iniciar una sesi&#243;n mediante un certificado
 digital personal (PDC, Personal Digital Certificate). La instancia del m&#243;dulo puede necesitar
 la utilizaci&#243;n del Protocolo de estado de certificado en l&#237;nea (OCSP, Online
 Certificate Status Protocol) para determinar el estado de un certificado. La utilizaci&#243;n
@@ -43,7 +49,7 @@ de autenticaci&#243;n de certificado son atributos de dominio. Los atributos son
 <li><p><a href="#fwbqp">Usuario principal del servidor LDAP</a></p></li>
 <li><p><a href="#fwbst">Contrase&#241;a principal del servidor LDAP</a></p></li>
 <li><p><a href="#fwbiu">Contrase&#241;a principal del servidor LDAP (confirmar)</a></p></li>
-<li><p><a href="#fwblo">Atributo LDAP para el Id. de perfil</a></p></li>
+<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">Utilizar SSL para el acceso LDAP</a></p></li>
 <li><p><a href="#fwbof">Campo de certificado utilizado para acceder al perfil de un usuario</a></p></li>
 <li><p><a href="#fwbna">Otro campo de certificado utilizado para acceder al perfil de un usuario</a></p></li>
@@ -142,13 +148,6 @@ en el directorio.</p>
 
 <a name="fwbiu"></a><h5>Contrase&#241;a principal del servidor LDAP (confirmar)</h5>
 <p> Confirme la contrase&#241;a.</p>
-
-<a name="fwblo"></a><h5>Atributo LDAP para el Id. de perfil</h5>
-<p>Especifica el atributo en la entrada de Directory Server que coincide con
-el certificado cuyo valor se deber&#237;a utilizar para identificar el perfil de
-usuario correcto. No existe ning&#250;n valor predeterminado para este campo, que reconocer&#225;
-cualquier atributo v&#225;lido en una entrada de usuario (<i>cn</i>, <i> sn</i>, etc.) que
-se pueda utilizar como Id. de usuario.</p>
 
 <a name="fwblm"></a><h5>Utilizar SSL para el acceso LDAP</h5>
 <p>Especifica si se utiliza SSL para acceder al servidor LDAP. De forma

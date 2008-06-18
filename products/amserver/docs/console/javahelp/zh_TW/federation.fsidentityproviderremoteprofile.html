@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsidentityproviderremoteprofile"></a><h4>修改提供者實體內的遠端識別提供者屬性</h4><a name="indexterm-79"></a><p>建立實體並新增識別提供者之後，您可以編輯識別提供者的設定檔。這可能需要向最初建立實體提供者時或修改已配置的資料時無法配置的那些屬性新增值。起點為聯合介面下的實體。</p><ol>
+<a name="federation.fsidentityproviderremoteprofile"></a><h4>修改提供者實體內的遠端識別提供者屬性</h4><a name="indexterm-78"></a><p>建立實體並新增識別提供者之後，您可以編輯識別提供者的設定檔。這可能需要向最初建立實體提供者時或修改已配置的資料時無法配置的那些屬性新增值。起點為聯合介面下的實體。</p><ol>
 <li><b>在配置的提供者實體名稱上按一下以修改其設定檔。</b><p>會顯示實體的設定檔頁面。</p></li>
 <li><b>從 [檢視] 功能表選取 [識別提供者]。</b></li>
 <li><b>修改 [共用屬性] 的值。</b><p>[共用屬性] 包含通常定義識別提供者本身的值。</p><dl><dt>提供者類型</dt>
@@ -99,7 +105,7 @@
 </dd>
 </dl>
 </li>
-<li><b>選取任何一個可用的認證網域以指定給提供者。</b><p>提供者可以屬於一或多個認證網域。然而，沒有指定認證網域的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立認證網域，您稍後可以定義此屬性。</p></li>
+<li><b>選取任何可用的信任圈以指定給提供者。</b><p>提供者可以屬於一或多個信任圈。然而，沒有指定信任圈的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立信任圈，您稍後可以定義此屬性。</p></li>
 <li><b>提供 [代理伺服器認證配置] 屬性的資訊。</b><p>識別提供者若被要求認證已經過另一個識別提供者認證的主體，則可以代表請求服務提供者代理認證識別提供者的認證請求。這是<b>動態識別提供者代理作業</b>。代理伺服器認證配置屬性定義動態識別提供者代理作業的值。</p><dl><dt>啟用代理伺服器認證</dt>
 <dd><p>選取此核取方塊以啟用動態識別提供者代理作業。</p></dd>
 <dt>代理伺服器識別提供者清單</dt>

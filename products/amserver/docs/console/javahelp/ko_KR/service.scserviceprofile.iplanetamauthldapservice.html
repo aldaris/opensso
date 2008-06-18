@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthldapservice"></a><h4>LDAP </h4>
-<p><a name="indexterm-182"></a>이 모듈은 사용자 아이디 비밀번호를 특정 LDAP 항목과 연결하는 Directory Server 작업인
+<p><a name="indexterm-181"></a>이 모듈은 사용자 아이디 비밀번호를 특정 LDAP 항목과 연결하는 Directory Server 작업인
 LDAP 바인드를 사용하여 인증을 허용합니다. 한 영역에 대해 여러 개의 LDAP 인증
 구성을 정의할 수 있습니다. LDAP 인증 속성은 영역 속성입니다. 속성은 다음과 같습니다.</p>
 <ul><li><p><a href="#fwazv">기본 LDAP 서버</a></p></li>
@@ -51,7 +57,7 @@ LDAP 바인드를 사용하여 인증을 허용합니다. 한 영역에 대해 �
 포트 번호가 없는 경우 포트 번호를 <tt>389</tt>라고 가정합니다.</p><p>Federated Access Manager를 여러 도메인으로 배포한 경우 Federated Access Manager의 특정 인스턴스와
 Directory Server의 특정 인스턴스 간의 통신 링크를 다음 형식으로 지정할 수 있습니다(항목이
 여러 개이면 로컬 서버 이름을 접두어로 사용해야 함).</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>예를 들어, 서로 다른 위치(L1-machine1-IS 및 L2-machine2-IS)에 배포된 두 개의 Federated Access
-Manager 인스턴스가 Directory Server(L1-machine1-DS 및 L2-machine2-DS)의 여러 인스턴스와 통신하는 경우 다음 형식으로
+Manager 인스턴스가 Directory Server(L1-machine1-DS 및 L2-machine2-DS)의 여러 인스턴스와 통신하는 경우 다음과 같이
 지정할 수 있습니다.</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fwbac"></a><h5>보조 LDAP 서버</h5>

@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -27,15 +33,8 @@
 <a name="idrepoadd"></a><h4>Federated Access Manager 資料存放區類型</h4>
 <p>在 [Federated Access Manager 資料存放區選取] 畫面中，可以建立下列資料存放區類型：</p>
 
-<a name="gdlnj"></a><h5>Federated Access Manager 儲存庫外掛程式</h5>
-<p>此資料存放區類型位於 Sun Java System Directory Server 實例中，並擁有 Federated Access Manager 資訊樹狀結構。此資料存放區類型使用不屬於 LDAP
-版本 3 規格的 Directory Server 功能 (如角色及服務類別)，並與先前版本的 Federated Access Manager 相容。</p><p>如需屬性定義的相關資訊，請參閱<a href="amrepoattrs.html">Federated Access Manager 儲存庫屬性</a>。</p>
-
 <a name="gdlmv"></a><h5>Active Directory</h5>
 <p>此資料存放區類型使用 LDAP 版本 3 規格向 Microsoft Active Directory 的實例寫入識別資料。</p><p>如需屬性定義的相關資訊，請參閱<a href="adattrs.html">Active Directory 屬性</a>。</p>
-
-<a name="gdlml"></a><h5>平面檔案儲存庫</h5>
-<p>此儲存庫可讓您在 Federated Access Manager 的本機安裝實例上，以平面 DIT 結構儲存資料及識別，而不必建立個別的資料存放區。它通常用來測試或驗證概念部署。</p><p>如需屬性定義的相關資訊，請參閱<a href="flatfileattr.html">平面檔案儲存庫屬性</a>。</p>
 
 <a name="gdlmr"></a><h5>通用 LDAPv3</h5>
 <p>此資料存放區類型可讓您向任何與 LDAPv3 相容的資料庫寫入識別資料。如果您使用的 LDAPv3 資料庫不支援持續搜尋，則無法使用快取功能。</p><p>如需屬性定義的相關資訊，請參閱<a href="gdoto.html">通用 LDAPv3 屬性</a>。</p>

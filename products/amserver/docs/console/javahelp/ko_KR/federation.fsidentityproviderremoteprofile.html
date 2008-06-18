@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsidentityproviderremoteprofile"></a><h4>공급자 엔티티의 원격 Identity 공급자 속성 수정</h4><a name="indexterm-79"></a><p>엔티티를 작성하고 Identity 공급자를 추가한 후 Identity 공급자의 프로필을 편집할 수 있습니다.
+<a name="federation.fsidentityproviderremoteprofile"></a><h4>공급자 엔티티의 원격 Identity 공급자 속성 수정</h4><a name="indexterm-78"></a><p>엔티티를 작성하고 Identity 공급자를 추가한 후 Identity 공급자의 프로필을 편집할 수 있습니다.
 Identity 공급자를 처음으로 만들거나 구성된 데이터를 수정할 경우 구성할 수 없는 속성에
 값이 추가될 수 있습니다. 시작 위치는 연합 인터페이스 아래의 엔티티입니다.</p><ol>
 <li><b>구성된 공급자 엔티티의 이름을 눌러 해당 프로필을 수정합니다.</b><p>엔티티 프로필 페이지가 표시됩니다.</p></li>
@@ -104,9 +110,11 @@ Identity 공급자를 처음으로 만들거나 구성된 데이터를 수정할
 </dd>
 </dl>
 </li>
-<li><b>공급자에 할당할 사용 가능한 인증 도메인을 선택합니다.</b><p>공급자는 하나 이상의 인증 도메인에 속할 수 있습니다. 그러나 지정된 인증 도메인이
-없는 공급자는 Liberty Alliance Project 사양에 기초한 통신에 참여할 수 없습니다. 인증
-도메인을 작성하지 않은 경우 나중에 이 속성을 정의할 수 있습니다.</p></li>
+<li><b>사용 가능한 CoT(Circle of Trust) 중에 공급자에 할당할 CoT(Circle of Trust)를 하나
+선택합니다.</b><p>공급자는 하나 이상의 CoT(Circle of Trust)에 속할 수 있습니다. 그러나 지정된 CoT(Circle
+of Trust)가 없는 공급자는 Liberty Alliance Project 사양에 기초한 통신에 참여할 수
+없습니다. CoT(Circle of Trust)를 작성하지 않은 경우 나중에 이 속성을 정의할 수
+있습니다.</p></li>
 <li><b>프록시 인증 구성 속성에 대한 정보를 제공합니다.</b><p>다른 Identity 공급자로 이미 인증한 기본에 대한 인증 요청을 받은 Identity 공급자는
 요청하는 서비스 공급자를 대신하여 인증하는 Identity 공급자에 대해 인증 요청의 프록시 작업을
 수행할 수 있습니다. 이는 <b>동적 Identity 공급자 프록시</b>입니다. 프록시 인증 구성 속성은 동적 Identity 공급자

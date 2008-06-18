@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>記錄</h4>
-<p><a name="indexterm-206"></a>記錄服務提供與 Federated Access Manager 管理相關的狀態及錯誤訊息。管理員可以配置如記錄檔大小及位置的值。Federated Access Manager 可以將事件記錄在平型文字檔或關聯式資料庫。記錄服務屬性為全域屬性。這些屬性包括：</p>
+<p><a name="indexterm-209"></a>記錄服務提供與 Federated Access Manager 管理相關的狀態及錯誤訊息。管理員可以配置如記錄檔大小及位置的值。Federated Access Manager 可以將事件記錄在平型文字檔或關聯式資料庫。記錄服務屬性為全域屬性。這些屬性包括：</p>
 <ul><li><p><a href="#fxbsv">最大記錄大小</a></p></li>
 <li><p><a href="#fxbsg">歷史檔案數量</a></p></li>
 <li><p><a href="#fxbzh">記錄檔位置</a></p></li>
@@ -108,7 +114,7 @@
 <p>此屬性設定 Java  LogReader 介面傳回的最大記錄數，無論有多少記錄與讀取查詢相符。依預設，設定為 500。記錄 API 的呼叫者可以透過 <i>LogQuery</i> 類別置換此屬性。</p>
 
 <a name="fxbwp"></a><h5>各歸檔檔案的檔案數</h5>
-<p>此屬性僅適用於安全記錄。它指定對於後續的安全記錄，何時需要歸檔記錄檔與鍵值儲存區、何時重新產生安全鍵值儲存區。預設為每個記錄程式有五個檔案。</p>
+<p>此屬性僅適用於安全記錄。它指定對於後續的安全記錄，何時需要歸檔記錄檔與金鑰庫、何時重新產生安全金鑰庫。預設為每個記錄程式有五個檔案。</p>
 
 <a name="fxbyw"></a><h5>緩衝區大小</h5>
 <p>此屬性指定在記錄服務嘗試將其寫入記錄儲存庫前，記錄檔記錄在記憶體中緩衝的最大數目。預設為一條記錄。</p>

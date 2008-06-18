@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthadservice"></a><h4>Active Directory</h4>
-<p><a name="indexterm-175"></a>このモジュールタイプは、LDAP 認証モジュールタイプと同様に機能しますが、LDAP ディレクトリの代わりに Microsoft Active Directory を使用します。このモジュールタイプを使用すると、LDAP と Active Directory の両方を同じレルムの下に置くことが可能になります。Active Directory
+<p><a name="indexterm-173"></a>このモジュールタイプは、LDAP 認証モジュールタイプと同様に機能しますが、LDAP ディレクトリの代わりに Microsoft Active Directory を使用します。このモジュールタイプを使用すると、LDAP と Active Directory の両方を同じレルムの下に置くことが可能になります。Active Directory
 認証属性はレルム属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwfdx">「プライマリ Active Directory サーバー」</a></p></li>
 <li><p><a href="#fwbmo">「セカンダリ Active Directory サーバー」</a></p></li>
@@ -92,7 +98,7 @@ DN でバインドする必要があります。デフォルトは <tt>amldapuse
 
 <a name="fwbmt"></a><h5>Active Directory サーバーへの SSL アクセス</h5>
 <p>プライマリとセカンダリのサーバーおよびポートフィールドで指定される Directory Server への SSL アクセスを有効にします。デフォルトでは、このチェックボックスはオフなので、Directory Server へのアクセスに SSL プロトコルは使用されません。</p><p>Active Directory サーバーが SSL 有効 (LDAPS) で実行中の場合、Federated Access Manager が LDAPS プロトコルで
-Directory Server に接続できるように、適切な SSL- 信頼証明書で設定されていることを確認する必要があります。</p>
+Directory Server に接続できるように、適切な SSL 信頼証明書で設定されていることを確認する必要があります。</p>
 
 <a name="fwbpx"></a><h5>認証するユーザー DN を返す</h5>
 <p>Federated Access Manager ディレクトリが Active Directory 用に設定されたディレクトリと同じ場合、このオプションを有効にすることができます。オプションを有効にすると、このオプションによって Active Directory 認証モジュールインスタンスがユーザー ID ではなく

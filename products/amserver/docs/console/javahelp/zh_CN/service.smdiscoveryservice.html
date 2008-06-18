@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.smdiscoveryservice"></a><h3>搜索服务</h3>
-<a name="indexterm-127"></a><p>访问身份数据的第一步是确定信息所处的位置。（例如，哪个身份服务保留主体的信用卡信息，或者哪个服务器存储主体的日历服务。）通常，网络上有一个或多个服务允许其他条目对身份数据执行操作。由于客户机不能记录这些服务或不知道哪个服务可以信任，因此他们需要搜索服务。<b>搜索服务</b>实质上是搜索资源的 Web 服务接口。<b>搜索资源</b>是资源提供的注册表。<b>资源提供</b>用于定义身份数据与服务实例之间的关联，该服务实例应能提供对该数据的访问。<b>资源标识符</b>是在搜索服务中注册的唯一资源标识符 (unique resource identifier，URI)，它指向特定搜索资源。当客户机发送某种类型数据的请求时，它将包含 Access Manager 搜索服务为请求的属性查找 Web 服务提供者所使用的资源标识符。搜索服务将返回其中包含查找数据所需信息的资源提供。</p>
+<a name="indexterm-126"></a><p>访问身份数据的第一步是确定信息所处的位置。（例如，哪个身份服务保留主体的信用卡信息，或者哪个服务器存储主体的日历服务。）通常，网络上有一个或多个服务允许其他条目对身份数据执行操作。由于客户机不能记录这些服务或不知道哪个服务可以信任，因此他们需要搜索服务。<b>搜索服务</b>实质上是搜索资源的 Web 服务接口。<b>搜索资源</b>是资源提供的注册表。<b>资源提供</b>用于定义身份数据与服务实例之间的关联，该服务实例应能提供对该数据的访问。<b>资源标识符</b>是在搜索服务中注册的唯一资源标识符 (unique resource identifier，URI)，它指向特定搜索资源。当客户机发送某种类型数据的请求时，它将包含 Federated Access Manager 搜索服务为请求的属性查找 Web 服务提供者所使用的资源标识符。搜索服务将返回其中包含查找数据所需信息的资源提供。</p>
 <hr><p><b>注 &#8211; </b>为了进行访问，Liberty 个人配置文件服务 的托管提供者需代表各身份主体在 搜索服务 中注册。</p>
 <hr>
 <p>可为您的实现配置以下搜索服务全局属性。</p>
@@ -43,7 +49,7 @@
 <li><p><a href="useimpliedresource.html">隐含资源</a></p></li>
 <li><p><a href="resourceofferingsbootstrapping.html">用于引导的资源提供</a></p></li></ul>
 <p>以下任务与配置搜索服务关联：</p>
-<ul><li><p><a href="service.smdiscoveryproviderresourceidmapadd.html">配置资源 ID 映射程序</a></p></li>
+<ul><li><p><b>Broken Link (Target ID: SERVICE.SMDISCOVERYPROVIDERRESOURCEIDMAPADD)</b></p></li>
 <li><p><a href="service.smdiscoverybootstraprefoffadd.html">配置用于引导的资源提供</a></p></li>
 <li><p><a href="service.smdiscoverydescriptionadd.html">配置服务说明</a></p></li></ul>
 

@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsidentityproviderremoteadd"></a><h4>So f&#252;gen Sie einer Anbieter-Entity einen neuen Remote-Identity-Anbieter hinzu</h4><p>Ein <b>Remote-Anbieter</b> befindet sich nicht auf demselben Server wie Access Manager. Das
+<a name="federation.fsidentityproviderremoteadd"></a><h4>So f&#252;gen Sie einer Anbieter-Entity einen neuen Remote-Identity-Anbieter hinzu</h4><p>Ein <b>Remote-Anbieter</b> befindet sich auf einem anderen Server als Access Manager. Das
 Konfigurieren der Attribute eines neuen Remote-Identity-Anbieters beinhaltet das Hinzuf&#252;gen der Metadaten des
 Identity-Anbieters zum Anbieter-Entity-Profil. Der Ausgangspunkt ist <a href="federation.fsidentityprovider.html">So f&#252;gen Sie einer Anbieter-Entity einen Identity-Anbieter hinzu</a>.</p>
 <hr><p><b>Hinweis &#8211; </b>Zus&#228;tzliche Attribute k&#246;nnen konfiguriert werden, sie werden jedoch auf der Seite f&#252;r
@@ -55,11 +61,11 @@ die Profile fest, die vom Identity-Anbieter f&#252;r die einzelnen Funktionen ve
 </dd>
 </dl>
 </li>
-<li><b>W&#228;hlen Sie eine der zur Verf&#252;gung stehenden Authentifizierungsdom&#228;nen aus, um sie dem
-Anbieter zuzuweisen.</b><p>Anbieter k&#246;nnen zu einer oder mehreren Authentifizierungsdom&#228;nen geh&#246;ren. Ein Anbieter, bei dem
-keine Authentifizierungsdom&#228;ne angegeben ist, kann jedoch nicht an Kommunikationen teilnehmen, die auf
-den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Authentifizierungsdom&#228;nen erstellt wurden, k&#246;nnen
-Sie dieses Attribut sp&#228;ter definieren.</p></li>
+<li><b>W&#228;hlen Sie einen der verf&#252;gbaren Circles of Trust aus, der dem Anbieter
+zugewiesen werden soll.</b><p>Ein Anbieter kann zu mehreren Circles of Trust geh&#246;ren. Ein Anbieter, f&#252;r
+den kein Circle of Trust angegeben ist, kann jedoch nicht an Kommunikationen
+teilnehmen, die auf den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Circles
+of Trust erstellt wurden, k&#246;nnen Sie dieses Attribut sp&#228;ter definieren.</p></li>
 <li><b>Klicken Sie auf "OK", um den Anbieter zur Entity hinzuzuf&#252;gen.</b></li>
 <li><b>W&#228;hlen Sie eine andere Option aus dem Men&#252; "Ansicht" aus, um weitere
 Einstellungen der Entity zu konfigurieren, oder klicken Sie auf "Speichern", um die

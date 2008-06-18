@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,17 +22,18 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedadd"></a><h4>Ajout d'un nouveau fournisseur de services h&#233;berg&#233; &#224; une entit&#233; fournisseur</h4><p>Un <b>fournisseur h&#233;berg&#233;</b> est h&#233;berg&#233; sur le m&#234;me serveur qu'Access Manager. La configuration
-des attributs d'un nouveau fournisseur de services h&#233;berg&#233; inclut l'ajout, au profil
-de l'entit&#233;, de m&#233;tadonn&#233;es concernant le fournisseur de services. Le point de
-d&#233;part de cette proc&#233;dure est <a href="federation.fsserviceprovider.html">Ajout d'un fournisseur de services &#224; une entit&#233; fournisseur</a>.</p>
+<a name="federation.fsserviceproviderhostedadd"></a><h4>Ajout d'un nouveau fournisseur de services h&#233;berg&#233; &#224; une entit&#233; fournisseur</h4><p>Un <b>fournisseur h&#233;berg&#233;</b> est h&#233;berg&#233; sur le m&#234;me serveur que Federated Access Manager.
+La configuration des attributs d'un nouveau fournisseur de services h&#233;berg&#233; inclut l'ajout,
+au profil de l'entit&#233;, de m&#233;tadonn&#233;es concernant le fournisseur de services. Le
+point de d&#233;part de cette proc&#233;dure est <a href="federation.fsserviceprovider.html">Ajout d'un fournisseur de services &#224; une entit&#233; fournisseur</a>.</p>
 <hr><p><b>Remarque &#8211; </b>D'autres attributs peuvent &#234;tre configur&#233;s mais n'apparaissent pas dans cette premi&#232;re page
 de configuration. Reportez-vous &#224; <a href="federation.fsserviceproviderhostedprofile.html">Modification des attributs d'un fournisseur de services h&#233;berg&#233; dans une entit&#233; fournisseur</a>.</p>
 <hr>
@@ -41,10 +47,10 @@ de configuration. Reportez-vous &#224; <a href="federation.fsserviceproviderhost
 </dd>
 </dl>
 </li>
-<li><b>S&#233;lectionnez un des domaines d'authentification disponibles pour l'assigner au fournisseur.</b><p>Un fournisseur peut appartenir &#224; un ou plusieurs domaines d'authentification. Cependant, un
-fournisseur qui n'a pas de domaine d'authentification ne peut pas participer &#224;
-des communications bas&#233;es sur les sp&#233;cifications Liberty Alliance Project. Si aucun domaine
-d'authentification n'a &#233;t&#233; cr&#233;&#233;, vous pouvez d&#233;finir cet attribut plus tard.</p></li>
+<li><b>S&#233;lectionnez l'un des cercles d'approbation disponibles &#224; attribuer au fournisseur.</b><p>Un fournisseur peut appartenir &#224; un ou plusieurs cercles d'approbation. Cependant, un
+fournisseur sans cercle d'approbation sp&#233;cifi&#233; ne peut pas participer &#224; des communications
+bas&#233;es sur les sp&#233;cifications Liberty Alliance Project. Si aucun cercle d'approbation n'a
+&#233;t&#233; cr&#233;&#233;, vous pouvez d&#233;finir cet attribut plus tard.</p></li>
 <li><b>Donnez les informations des attributs du fournisseur de services.</b><p>Ces attributs d&#233;finissent les informations g&#233;n&#233;rales concernant le fournisseur de services.</p><dl><dt>URL de consommateur d'assertion</dt>
 <dd><p>Tapez un URL dirig&#233; sur le point d'extr&#233;mit&#233; qui va recevoir et traiter toutes les assertions SAML envoy&#233;es au fournisseur de services.</p></dd>
 <dt>ID d'URL du service consommateur d'assertion</dt>
@@ -53,7 +59,7 @@ d'authentification n'a &#233;t&#233; cr&#233;&#233;, vous pouvez d&#233;finir ce
 <dd><p>Cochez cette case pour utiliser l'URL du service consommateur d'assertion comme valeur par d&#233;faut si aucun identificateur n'est fourni dans la demande.</p></dd>
 </dl>
 </li>
-<li><b>Fournissez les informations des attributs de configuration Access Manager.</b><p>Ces attributs donnent des informations relatives &#224; cette instance h&#233;berg&#233;e d'Access Manager.</p><dl><dt>URL fournisseur</dt>
+<li><b>Fournissez les informations relatives aux attributs de configuration de Federated Access Manager.</b><p>Ces attributs donnent des informations relatives &#224; cette instance h&#233;berg&#233;e d'Access Manager.</p><dl><dt>URL fournisseur</dt>
 <dd><p>Tapez l'URL du fournisseur h&#233;berg&#233; localement.</p></dd>
 <dt>Alias du fournisseur</dt>
 <dd><p>L'alias du fournisseur est un nom qui permet d'identifier le fournisseur h&#233;berg&#233; dans le profil d'entit&#233; auquel il appartient. Il d&#233;finit s'il s'agit d'un fournisseur de services ou d'un fournisseur d'identit&#233;s. Cette valeur ne doit correspondre &#224; aucune autre et pouvoir &#234;tre repr&#233;sent&#233;e dans un URL. Par exemple : <tt>sunAlias</tt>.</p></dd>

@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -36,12 +42,12 @@ sind:</p><dl><dt>Federated Access Manager-Identit&#228;ts-Betreff</dt>
 <dt>Webdienste-Clients</dt>
 <dd><p>Dieser Betrefftyp impliziert, dass ein vom SSOToken identifizierter Web Service Client (WSC) ein Mitglied dieses Betreffs ist, wenn der DN eines im SSOToken enthaltenen Principal einem ausgew&#228;hlten Wert dieses Betreffs entspricht. G&#252;ltige Werte sind die DNs vertrauensw&#252;rdiger Zertifikate im lokalen JKS-Schl&#252;sselspeicher, die den Zertifikaten vertrauensw&#252;rdiger WSCs entsprechen. Dieser Betreff h&#228;ngt vom Liberty Web Services Framework ab und sollte nur von Liberty-Dienstanbietern zur Autorisierung von WSCs verwendet werden.</p><p>Bevor Sie diesen Betreff in einer Richtlinie verwenden, m&#252;ssen Sie den Schl&#252;sselspeicher erstellen. Informationen zur Einrichtung des Schl&#252;sselspeichers finden Sie unter:</p><p><tt></tt><i>FederatedAccessManager-base</i><tt></tt> <tt> /SUNWam/samples/saml/xmlsig/keytool.html</tt></p></dd>
 </dl>
-<p>Folgende zus&#228;tzlichen Betreffe sind durch Auswahl im <a href="ggdbu.html#ggdcj">Policy Configuration Service</a> des Bereichs verf&#252;gbar:</p><dl><dt>Federated Access Manager-Rollen</dt>
+<p>Folgende zus&#228;tzlichen Betreffe sind durch Auswahl im Policy Configuration Service des Bereichs verf&#252;gbar:</p><dl><dt>Federated Access Manager-Rollen</dt>
 <dd><p>Dieser Betrefftyp impliziert, dass jedes Mitglied einer Federated Access Manager-Rolle ein Mitglied dieses Betreffs ist. Eine Federated Access Manager-Rolle wird mit Federated Access Manager im Legacymodus und der auf 6.3 basierenden Konsole erstellt. Diese Rollen besitzen von Federated Access Manager zugewiesene Objektklassen. Der Zugriff auf Federated Access Manager-Rollen kann nur &#252;ber den als Host fungierenden Richtliniendienst von Federated Access Manager erfolgen.</p></dd>
 <dt>LDAP-Gruppen</dt>
 <dd><p>Dieser Betrefftyp impliziert, dass jedes Mitglied einer LDAP-Gruppe Mitglied dieses Betreffs ist.</p></dd>
 <dt>LDAP-Rollen</dt>
-<dd><p>Dieser Betrefftyp impliziert, dass jedes Mitglied einer LDAP-Gruppe Mitglied dieses Betreffs ist. Eine LDAP-Rolle ist jede beliebige Rollendefinition, die die Rollenfunktion des Directory Server verwendet. Diese Rollen verf&#252;gen &#252;ber Objektklassen, die von der Rollendefinition von Directory Server zugewiesen wurden. Der Suchfilter f&#252;r die LDAP-Rolle kann im <a href="ggdbu.html#ggdcj">Policy Configuration Service</a> ge&#228;ndert werden, um den Bereich einzugrenzen und die Leistung zu verbessern.</p></dd>
+<dd><p>Dieser Betrefftyp impliziert, dass jedes Mitglied einer LDAP-Gruppe Mitglied dieses Betreffs ist. Eine LDAP-Rolle ist jede beliebige Rollendefinition, die die Rollenfunktion des Directory Server verwendet. Diese Rollen verf&#252;gen &#252;ber Objektklassen, die von der Rollendefinition von Directory Server zugewiesen wurden. Der Suchfilter f&#252;r die LDAP-Rolle kann im Policy Configuration Service ge&#228;ndert werden, um den Bereich einzugrenzen und die Leistung zu verbessern.</p></dd>
 <dt>LDAP-Benutzer</dt>
 <dd><p>Dieser Betrefftyp impliziert, dass jeder LDAP-Benutzer ein Mitglied dieses Betreffs ist.</p></dd>
 <dt>Organisation</dt>

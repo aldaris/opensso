@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID </h4>
-<p><a name="indexterm-188"></a>このモジュールにより、RSA ACE/Server ソフトウェアおよび RSA SecurID 認証を使用した認証が可能になります。SecurID 認証モジュールは Linux または Solaris x86 プラットフォームでは利用できません。これら
+<p><a name="indexterm-187"></a>このモジュールにより、RSA ACE/Server ソフトウェアおよび RSA SecurID 認証を使用した認証が可能になります。SecurID 認証モジュールは Linux または Solaris x86 プラットフォームでは利用できません。これら
 2 つのプラットフォーム上ではこのモジュールを登録、設定、または有効化しないでください。このモジュールは Solaris でのみ使用できます。SecurID 認証属性はレルム属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwbpt">「ACE/サーバー設定パス」</a></p></li>
 <li><p><a href="#fwbkv">「ヘルパー設定ポート」</a></p></li>
@@ -41,7 +47,7 @@
 ACE/サーバーと通信している各レルムには、個別の SecurID ヘルパーが必要です。</p>
 
 <a name="fwbpq"></a><h5>ヘルパー認証ポート</h5>
-<p>レルムの SecurID 認証モジュールが、SecurID ヘルパインスタンスが認証要求を待機するように設定するポートを指定します。このポート番号は、SecurID 認証または UNIX 認証を使用するレルム全体の中で一意でなければなりません。デフォルトポートは 57943 です。</p>
+<p>レルムの SecurID 認証モジュールが、SecurID ヘルパーインスタンスが認証要求を待機するように設定するポートを指定します。このポート番号は、SecurID 認証または UNIX 認証を使用するレルム全体の中で一意でなければなりません。デフォルトポートは 57943 です。</p>
 
 <a name="fwbma"></a><h5>認証レベル</h5>
 <p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>

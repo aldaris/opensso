@@ -18,12 +18,11 @@
 	<mapID target="realm.idrepo" url="realm.idrepo.html"/>
 	<mapID target="realm.idreposelecttype" url="realm.idreposelecttype.html"/>
 	<mapID target="idrepoadd" url="idrepoadd.html"/>
-	<mapID target="amrepoattrs" url="amrepoattrs.html"/>
 	<mapID target="adattrs" url="adattrs.html"/>
-	<mapID target="flatfileattr" url="flatfileattr.html"/>
 	<mapID target="gdoto" url="gdoto.html"/>
 	<mapID target="sundirattrs" url="sundirattrs.html"/>
 	<mapID target="delegation.delegation" url="delegation.delegation.html"/>
+	<mapID target="delegation.delegationproperties" url="delegation.delegationproperties.html"/>
 	<mapID target="policy.policy" url="policy.policy.html"/>
 	<mapID target="normalpolicy" url="normalpolicy.html"/>
 	<mapID target="policy.policynormaladd" url="policy.policynormaladd.html"/>
@@ -32,7 +31,7 @@
 	<mapID target="normalsubject" url="normalsubject.html"/>
 	<mapID target="policy.subjectadd" url="policy.subjectadd.html"/>
 	<mapID target="policyconditions" url="policyconditions.html"/>
-	<mapID target="policy.conditionadd" url="policy.conditionadd.html"/>
+	<mapID target="policy.selectconditiontype" url="policy.selectconditiontype.html"/>
 	<mapID target="policy.pmdefaultsessioncondtionadd" url="policy.pmdefaultsessioncondtionadd.html"/>
 	<mapID target="policy.authtoserviceadd" url="policy.authtoserviceadd.html"/>
 	<mapID target="policy.pmdefaultauthlevelconditionadd" url="policy.pmdefaultauthlevelconditionadd.html"/>
@@ -40,7 +39,7 @@
 	<mapID target="policy.pmdefaultauthschemeconditionadd" url="policy.pmdefaultauthschemeconditionadd.html"/>
 	<mapID target="policy.sessionpropertyconditionadd" url="policy.sessionpropertyconditionadd.html"/>
 	<mapID target="policy.pmdefaultipcondition" url="policy.pmdefaultipcondition.html"/>
-	<mapID target="gdkmp" url="gdkmp.html"/>
+	<mapID target="policy.conditionadd" url="policy.conditionadd.html"/>
 	<mapID target="policy.authtorealmadd" url="policy.authtorealmadd.html"/>
 	<mapID target="policy.pmdefaulttimeconditionadd" url="policy.pmdefaulttimeconditionadd.html"/>
 	<mapID target="responseprovider" url="responseprovider.html"/>
@@ -54,8 +53,6 @@
 	<mapID target="subjectcreateuser" url="subjectcreateuser.html"/>
 	<mapID target="addusertogroup" url="addusertogroup.html"/>
 	<mapID target="idm.entityservices" url="idm.entityservices.html"/>
-	<mapID target="subjectagents" url="subjectagents.html"/>
-	<mapID target="subjectcreateagent" url="subjectcreateagent.html"/>
 	<mapID target="subject.filteredrole" url="subject.filteredrole.html"/>
 	<mapID target="subject.createfiltrole" url="subject.createfiltrole.html"/>
 	<mapID target="subject.role" url="subject.role.html"/>
@@ -63,12 +60,11 @@
 	<mapID target="idm.entitymembers" url="idm.entitymembers.html"/>
 	<mapID target="subject.group" url="subject.group.html"/>
 	<mapID target="subject.creategroup" url="subject.creategroup.html"/>
-	<mapID target="ggdbu" url="ggdbu.html"/>
 	<mapID target="dirmang" url="dirmang.html"/>
 	<mapID target="dm.home" url="dm.home.html"/>
-	<mapID target="federation" url="federation.html"/>
+	<mapID target="federation.federation" url="federation.federation.html"/>
 	<mapID target="federation.fsauthdomains" url="federation.fsauthdomains.html"/>
-	<mapID target="federation.fsauthdomainsadd" url="federation.fsauthdomainsadd.html"/>
+	<mapID target="federation.createcot" url="federation.createcot.html"/>
 	<mapID target="federation.fsauthdomainsedit" url="federation.fsauthdomainsedit.html"/>
 	<mapID target="federation.fsauthdomainsselectprovider" url="federation.fsauthdomainsselectprovider.html"/>
 	<mapID target="deleteauthdomain" url="deleteauthdomain.html"/>
@@ -133,7 +129,7 @@
 	<mapID target="authorizerpluginclass" url="authorizerpluginclass.html"/>
 	<mapID target="entryhandlerpluginclass" url="entryhandlerpluginclass.html"/>
 	<mapID target="resourceidmapperpluginclass" url="resourceidmapperpluginclass.html"/>
-	<mapID target="service.smdiscoveryproviderresourceidmapadd" url="service.smdiscoveryproviderresourceidmapadd.html"/>
+	<mapID target="service.smdiscoveryproviderresourceidmapperadd" url="service.smdiscoveryproviderresourceidmapperadd.html"/>
 	<mapID target="authresponsemessage" url="authresponsemessage.html"/>
 	<mapID target="generatesessioncontext" url="generatesessioncontext.html"/>
 	<mapID target="encryptnameidentifier" url="encryptnameidentifier.html"/>
@@ -144,15 +140,14 @@
 	<mapID target="service.scsoapbinding" url="service.scsoapbinding.html"/>
 	<mapID target="requesthandlerlist" url="requesthandlerlist.html"/>
 	<mapID target="service.scsoapbindingrequesthandlerlistadd" url="service.scsoapbindingrequesthandlerlistadd.html"/>
-	<mapID target="webserviceauthenticator" url="webserviceauthenticator.html"/>
-	<mapID target="soapsuppauthmech" url="soapsuppauthmech.html"/>
+	<mapID target="ggodb" url="ggodb.html"/>
 	<mapID target="webservices.wsauthnservices" url="webservices.wsauthnservices.html"/>
 	<mapID target="mechanismhandlerslist" url="mechanismhandlerslist.html"/>
 	<mapID target="webservices.wsauthnserviceshandlersadd" url="webservices.wsauthnserviceshandlersadd.html"/>
 	<mapID target="service.scconfig" url="service.scconfig.html"/>
 	<mapID target="authattrs" url="authattrs.html"/>
-	<mapID target="service.scserviceprofile.iplanetamauthanonymousservice" url="service.scserviceprofile.iplanetamauthanonymousservice.html"/>
 	<mapID target="service.scserviceprofile.sunamauthadservice" url="service.scserviceprofile.sunamauthadservice.html"/>
+	<mapID target="service.scserviceprofile.iplanetamauthanonymousservice" url="service.scserviceprofile.iplanetamauthanonymousservice.html"/>
 	<mapID target="authentication.authconfig" url="authentication.authconfig.html"/>
 	<mapID target="service.scserviceprofile.iplanetamauthcertservice" url="service.scserviceprofile.iplanetamauthcertservice.html"/>
 	<mapID target="service.scserviceprofile.iplanetamauthservice" url="service.scserviceprofile.iplanetamauthservice.html"/>
@@ -175,8 +170,16 @@
 	<mapID target="service.scserviceprofile.amadminconsoleservice" url="service.scserviceprofile.amadminconsoleservice.html"/>
 	<mapID target="service.smg11n" url="service.smg11n.html"/>
 	<mapID target="global" url="global.html"/>
+	<mapID target="service.scserviceprofile.sunfamfederationcommon" url="service.scserviceprofile.sunfamfederationcommon.html"/>
+	<mapID target="service.scserviceprofile.sunfamidffconfiguration" url="service.scserviceprofile.sunfamidffconfiguration.html"/>
+	<mapID target="service.scserviceprofile.sunfamlibertysecurityservice" url="service.scserviceprofile.sunfamlibertysecurityservice.html"/>
+	<mapID target="service.scserviceprofile.sunfamlibertyinteractionservice" url="service.scserviceprofile.sunfamlibertyinteractionservice.html"/>
+	<mapID target="service.scserviceprofile.sunmultifederationprotocol" url="service.scserviceprofile.sunmultifederationprotocol.html"/>
 	<mapID target="service.scserviceprofile.iplanetampasswordresetservice" url="service.scserviceprofile.iplanetampasswordresetservice.html"/>
 	<mapID target="service.scpolicy" url="service.scpolicy.html"/>
+	<mapID target="service.scserviceprofile.sunfamsaml2configuration" url="service.scserviceprofile.sunfamsaml2configuration.html"/>
+	<mapID target="service.scsaml2soapbinding" url="service.scsaml2soapbinding.html"/>
+	<mapID target="ggojs" url="ggojs.html"/>
 	<mapID target="service.scserviceprofile.amsessionservice" url="service.scserviceprofile.amsessionservice.html"/>
 	<mapID target="service.subconfigadd" url="service.subconfigadd.html"/>
 	<mapID target="service.scserviceprofile.iplanetamuserservice" url="service.scserviceprofile.iplanetamuserservice.html"/>
@@ -186,9 +189,29 @@
 	<mapID target="service.scserviceprofile.iplanetamloggingservice" url="service.scserviceprofile.iplanetamloggingservice.html"/>
 	<mapID target="service.scserviceprofile.iplanetamnamingservice" url="service.scserviceprofile.iplanetamnamingservice.html"/>
 	<mapID target="service.scplatform" url="service.scplatform.html"/>
-	<mapID target="service.scplatformsitelistadd" url="service.scplatformsitelistadd.html"/>
-	<mapID target="service.scplatformserverlistadd" url="service.scplatformserverlistadd.html"/>
 	<mapID target="service.scplatformclientcharsetsadd" url="service.scplatformclientcharsetsadd.html"/>
+	<mapID target="service.serversite" url="service.serversite.html"/>
+	<mapID target="service.serveradd" url="service.serveradd.html"/>
+	<mapID target="service.serverconfiginherit" url="service.serverconfiginherit.html"/>
+	<mapID target="service.servereditgeneral" url="service.servereditgeneral.html"/>
+	<mapID target="service.servereditsecurity" url="service.servereditsecurity.html"/>
+	<mapID target="service.servereditsession" url="service.servereditsession.html"/>
+	<mapID target="service.servereditsdk" url="service.servereditsdk.html"/>
+	<mapID target="service.serverconfigxml" url="service.serverconfigxml.html"/>
+	<mapID target="service.siteadd" url="service.siteadd.html"/>
+	<mapID target="service.siteedit" url="service.siteedit.html"/>
+	<mapID target="agentconfig.agents" url="agentconfig.agents.html"/>
+	<mapID target="ggobs" url="ggobs.html"/>
+	<mapID target="ggobg" url="ggobg.html"/>
+	<mapID target="agentconfig.agentadd" url="agentconfig.agentadd.html"/>
+	<mapID target="ggouy" url="ggouy.html"/>
+	<mapID target="ggmok" url="ggmok.html"/>
+	<mapID target="ggmui" url="ggmui.html"/>
+	<mapID target="agentconfig.webserviceprovideredit" url="agentconfig.webserviceprovideredit.html"/>
+	<mapID target="agentconfig.webserviceclientedit" url="agentconfig.webserviceclientedit.html"/>
+	<mapID target="agentconfig.webservicestsedit" url="agentconfig.webservicestsedit.html"/>
+	<mapID target="agentconfig.genericagentprofile" url="agentconfig.genericagentprofile.html"/>
+	<mapID target="ggnbx" url="ggnbx.html"/>
 	<mapID target="sessions" url="sessions.html"/>
 	<mapID target="sessionpage" url="sessionpage.html"/>
 	<mapID target="sessionsearch" url="sessionsearch.html"/>
@@ -197,5 +220,4 @@
 	<mapID target="invalidatesession" url="invalidatesession.html"/>
 	<mapID target="idx-1" url="idx-1.html"/>
 	<mapID target="idx-2" url="idx-2.html"/>
-	<mapID target="idx-3" url="idx-3.html"/>
 </map>

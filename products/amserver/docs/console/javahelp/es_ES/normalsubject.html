@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -36,13 +42,13 @@ un asunto en la pol&#237;tica. Los asuntos predeterminados son:</p><dl><dt>Asunt
 <dt>Clientes de servicios Web</dt>
 <dd><p>Este tipo de asunto implica que un cliente de servicio Web (WSC, siglas en ingl&#233;s) identificado por el token SSO es miembro de este asunto, si el DN de cualquier entidad principal incluido en el token SSO coincide con alguno de los valores seleccionados de este asunto. Entre los valores v&#225;lidos, se encuentran los DN de certificados de confianza del almac&#233;n de claves JKS local que se correspondan con los certificados de los WSC de confianza. Este asunto tiene una dependencia con la Estructura de servicios Web de Liberty y s&#243;lo deber&#237;an utilizarlo los proveedores de servicios Liberty para autorizar los WSC.</p><p>Aseg&#250;rese de que ha creado el almac&#233;n de claves antes de agregar este asunto a una pol&#237;tica. Puede encontrar informaci&#243;n sobre la configuraci&#243;n del almac&#233;n de claves en la siguiente ubicaci&#243;n:</p><p><tt></tt><i>FederatedAccessManager-base</i><tt></tt> <tt> /SUNWam/samples/saml/xmlsig/keytool.html</tt></p></dd>
 </dl>
-<p>Los siguientes asuntos est&#225;n disponibles mediante su selecci&#243;n en el <a href="ggdbu.html#ggdcj">Policy Configuration Service</a> del
+<p>Los siguientes asuntos est&#225;n disponibles mediante su selecci&#243;n en el Policy Configuration Service del
 dominio:</p><dl><dt>Roles de Federated Access Manager</dt>
 <dd><p>Este tipo de asunto implica que cualquier miembro de un rol de Federated Access Manager tambi&#233;n lo es de este asunto. Se puede crear un rol utilizando Federated Access Manager en el modo tradicional y la consola basada en 6.3. Estos roles tienen clases de objeto controladas por Federated Access Manager. S&#243;lo se puede acceder a los roles mediante el servicio de pol&#237;tica de Federated Access Manager que los aloja.</p></dd>
 <dt>Grupos de LDAP</dt>
 <dd><p>Este tipo de asunto implica que cualquier miembro de un grupo de LDAP tambi&#233;n lo es de este asunto.</p></dd>
 <dt>Roles de LDAP</dt>
-<dd><p>Este tipo de asunto implica que cualquier miembro de un rol de LDAP tambi&#233;n lo es de este asunto. Un rol de LDAP es cualquier definici&#243;n de rol que utilice la funci&#243;n de asignaci&#243;n de roles de Directory Server. Estos roles tienen clases de objeto controladas por la definici&#243;n de rol de Directory Server. El filtro de b&#250;squeda de roles de LDAP puede modificarse en el <a href="ggdbu.html#ggdcj">Policy Configuration Service</a> para restringir el &#225;mbito de b&#250;squeda y mejorar el rendimiento.</p></dd>
+<dd><p>Este tipo de asunto implica que cualquier miembro de un rol de LDAP tambi&#233;n lo es de este asunto. Un rol de LDAP es cualquier definici&#243;n de rol que utilice la funci&#243;n de asignaci&#243;n de roles de Directory Server. Estos roles tienen clases de objeto controladas por la definici&#243;n de rol de Directory Server. El filtro de b&#250;squeda de roles de LDAP puede modificarse en el Policy Configuration Service para restringir el &#225;mbito de b&#250;squeda y mejorar el rendimiento.</p></dd>
 <dt>Usuarios de LDAP</dt>
 <dd><p>Este tipo de asunto implica que cualquier usuario de LDAP es miembro de este asunto.</p></dd>
 <dt>Organizaci&#243;n</dt>

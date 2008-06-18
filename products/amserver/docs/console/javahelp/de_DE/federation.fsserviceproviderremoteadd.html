@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderremoteadd"></a><h4>So f&#252;gen Sie einer Anbieter-Entity einen neuen Remote-Dienstanbieter hinzu</h4><p>Ein <b>Remote-Anbieter</b> befindet sich nicht auf demselben Server wie Access Manager. Die
+<a name="federation.fsserviceproviderremoteadd"></a><h4>So f&#252;gen Sie einer Anbieter-Entity einen neuen Remote-Dienstanbieter hinzu</h4><p>Ein <b>Remote-Anbieter</b> befindet sich auf einem anderen Server als Access Manager. Die
 Konfiguration der Attribute eines neuen Remote-Dienstanbieters beinhaltet das Hinzuf&#252;gen der Metadaten des
 Dienstanbieters zum Entity-Profil. Der Ausgangspunkt f&#252;r dieses Verfahren ist <a href="federation.fsserviceprovider.html">So f&#252;gen Sie einer Anbieter-Entity einen Dienstanbieter hinzu</a>.</p>
 <hr><p><b>Hinweis &#8211; </b>Zus&#228;tzliche Attribute k&#246;nnen konfiguriert werden, sie werden jedoch auf der Seite f&#252;r
@@ -40,11 +46,11 @@ die anf&#228;ngliche Konfiguration nicht angezeigt. Siehe <a href="federation.fs
 </dd>
 </dl>
 </li>
-<li><b>W&#228;hlen Sie eine der zur Verf&#252;gung stehenden Authentifizierungsdom&#228;nen aus, um sie dem
-Anbieter zuzuweisen.</b><p>Anbieter k&#246;nnen zu einer oder mehreren Authentifizierungsdom&#228;nen geh&#246;ren. Ein Anbieter, bei dem
-keine Authentifizierungsdom&#228;ne angegeben ist, kann jedoch nicht an Kommunikationen teilnehmen, die auf
-den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Authentifizierungsdom&#228;nen erstellt wurden, k&#246;nnen
-Sie dieses Attribut sp&#228;ter definieren.</p></li>
+<li><b>W&#228;hlen Sie einen der verf&#252;gbaren Circles of Trust aus, der dem Anbieter
+zugewiesen werden soll.</b><p>Ein Anbieter kann zu mehreren Circles of Trust geh&#246;ren. Ein Anbieter, f&#252;r
+den kein Circle of Trust angegeben ist, kann jedoch nicht an Kommunikationen
+teilnehmen, die auf den Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Circles of
+Trust erstellt wurden, k&#246;nnen Sie dieses Attribut sp&#228;ter definieren.</p></li>
 <li><b>Geben Sie Informationen f&#252;r die Dienstanbieterattribute an.</b><p>Dienstanbieterattribute legen allgemeine Informationen zum Dienstanbieter fest.</p><dl><dt>Assertion Consumer-URL</dt>
 <dd><p>Geben Sie einen URL zu dem Endpunkt ein, der alle SAML-Assertionen empf&#228;ngt und verarbeitet, die an den Dienstanbieter gesendet werden.</p></dd>
 <dt>URL-ID des Assertion Consumer-Dienstes</dt>

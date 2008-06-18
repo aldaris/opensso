@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="federation.fssamltrustedpartnersadd"></a><h5>可信任的合作夥伴：配置可信任的合作夥伴屬性</h5>
-<a name="indexterm-91"></a><p>以下是配置信任夥伴第二部份的程序。起點是<a href="federation.fssamlselecttrustedpartnertype.html">可信任的合作夥伴：選取夥伴類型及設定檔</a>。根據第一部份選取的角色，可能需要定義在以下區段列出的任何子屬性。</p>
+<a name="indexterm-90"></a><p>以下是配置信任夥伴第二部份的程序。起點是<a href="federation.fssamlselecttrustedpartnertype.html">可信任的合作夥伴：選取夥伴類型及設定檔</a>。根據第一部份選取的角色，可能需要定義在以下區段列出的任何子屬性。</p>
 <hr><p><b>備註 &#8211; </b>如果您在聯合下的 SAML 配置畫面上按一下 [編輯] 或 [複製] 而進入此頁面，請根據以下的步驟修改可信任的合作夥伴設定檔，然後按一下 [儲存] 以變更這些值。按一下 [SAML 設定檔 ]
 頁面上的 [儲存] 以完成修改。</p>
 <hr>
@@ -44,7 +50,7 @@
 <ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
 <li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
 </dd>
-<dt>帳號對映程式</dt>
+<dt>名稱識別碼對映程式</dt>
 <dd><p>該類別定義指定的主體如何與目標網站中的識別相關聯。需要從 <tt>com.sun.identity.saml.plugins.</tt> <tt>PartnerAccountMapper</tt> 介面實作帳號對應程式。預設值為 <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>。</p><p>如果未定義任何類別，則指定中將不會包含任何屬性。</p></dd>
 <dt>憑證</dt>
 <dd><p>當指定中的簽名是由夥伴所簽署，並且在已簽署指定的 <tt>KeyInfo</tt> 部份找不到憑證時，用來驗證該簽名的憑證別名。</p></dd>
@@ -73,7 +79,7 @@
 <li><p>如果使用 HTTPS 存取 SAML SOAP 收件者的 URL，並且沒有透過 HTTP 基本認證保護 SAML SOAP 收件者，則可指定 <tt>SSL</tt>。</p></li>
 <li><p>如果使用 HTTPS 存取 SAML SOAP 收件者的 URL，並且透過 HTTP 基本認證保護 SAML SOAP 收件者，則可指定 <tt>SSLWITHBASICAUTH</tt>。</p></li></ul>
 
-<hr><p><b>備註 &#8211; </b>如果您正在使用 HTTP 基本認證保護 SAML SOAP 收件者的 URL，則需要在 Web 容器配置而非 Access Manager 配置中執行此操作。然而，您還是要在 Access Manager 配置中提供 HTTP 基本認證使用者 ID 與密碼。</p>
+<hr><p><b>備註 &#8211; </b>如果您正在使用 HTTP 基本認證保護 SAML SOAP 收件者的 URL，則需要在 Web 容器配置而非 Federated Access Manager 配置中執行此操作。然而，您還是要在 Federated Access Manager 配置中提供 HTTP 基本認證使用者 ID 與密碼。</p>
 <hr>
 <p>此為選用屬性。如果未指定，預設值為 <tt>NOAUTH</tt>。如果指定 <tt>BASICAUTH</tt> 或 <tt>SSLWITHBASICAUTH</tt>，則需要 [可信任的合作夥伴] 屬性，而且此屬性應為 <tt>HTTPS</tt>。</p></dd>
 <dt>使用者</dt>

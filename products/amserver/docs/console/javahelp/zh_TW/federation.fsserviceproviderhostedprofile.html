@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedprofile"></a><h4>修改提供者實體內的代管服務提供者屬性</h4><a name="indexterm-80"></a><p>建立實體並新增服務提供者之後，您可以編輯服務提供者的設定檔。這可能需要向最初新增服務提供者時或修改已配置的資料時無法配置的那些屬性新增值。起點為聯合介面下的實體。</p><ol>
+<a name="federation.fsserviceproviderhostedprofile"></a><h4>修改提供者實體內的代管服務提供者屬性</h4><a name="indexterm-79"></a><p>建立實體並新增服務提供者之後，您可以編輯服務提供者的設定檔。這可能需要向最初新增服務提供者時或修改已配置的資料時無法配置的那些屬性新增值。起點為聯合介面下的實體。</p><ol>
 <li><b>在配置的提供者實體名稱上按一下以修改其設定檔。</b></li>
 <li><b>從 [檢視] 功能表選取 [服務提供者]。</b></li>
 <li><b>修改 [共用屬性] 的值。</b><p>[共用屬性] 包含通常定義識別提供者本身的值。</p><dl><dt>提供者類型</dt>
@@ -97,7 +103,7 @@
 </dd>
 </dl>
 </li>
-<li><b>選取任何一個可用的認證網域以指定給提供者。</b><p>提供者可以屬於一或多個認證網域。然而，沒有指定認證網域的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立認證網域，您稍後可以定義此屬性。</p></li>
+<li><b>選取任何可用的信任圈以指定給提供者。</b><p>提供者可以屬於一或多個信任圈。然而，沒有指定信任圈的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立信任圈，您稍後可以定義此屬性。</p></li>
 <li><b>在 [認證環境] 屬性的每一個 [環境參考] 的 [層級] 方塊中鍵入一個正數。</b><p>此數字與為特定認證模組定義的認證層級對應。使用者將重新導向至此定義的認證層級的模組。</p>
 <ul><li><p>行動合約</p></li>
 <li><p>行動數位 ID</p></li>
@@ -134,7 +140,7 @@
 <dd><p>選取核取方塊以啟用附屬提供者聯合。</p></dd>
 </dl>
 </li>
-<li><b>修改 Access Manager 配置屬性的值。</b><p>Access Manager 配置屬性定義此代管 Access Manager 實例的相關資訊。</p><dl><dt>服務提供者介面</dt>
+<li><b>修改 Federated Access Manager 配置屬性的值。</b><p>Federated Access Manager 配置屬性定義此代管 Access Manager 實例的相關資訊。</p><dl><dt>服務提供者介面</dt>
 <dd><p>定義 com.sun.identity.federation.plugins.FederationSPAdapter 的實作類別，用於在聯合程序期間新增特定於應用程式的處理過程。</p></dd>
 <dt>提供者別名</dt>
 <dd><p>提供者別名是用來識別實體設定檔內的代管提供者的名稱，並定義它是服務提供者還是識別提供者配置。此值必須是唯一的，而且能夠以 URL 代表。例如 <tt>sunAlias</tt>。</p></dd>

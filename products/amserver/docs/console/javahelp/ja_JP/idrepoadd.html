@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -27,15 +33,8 @@
 <a name="idrepoadd"></a><h4>Federated Access Manager データストアの種類</h4>
 <p>Federated Access Manager のデータストア選択画面で作成できるデータストアの種類は次のとおりです。</p>
 
-<a name="gdlnj"></a><h5>Federated Access Manager リポジトリプラグイン</h5>
-<p>このタイプのデータストアは Sun Java System Directory Server インスタンス内に存在し、そこに Federated Access Manager 情報ツリーが格納されます。このタイプのデータストアは、ロールやサービスのクラスなど LDAP
-version 3 の仕様に含まれない Directory Server 機能を使用します。また、Federated Access Manager の以前のバージョンとの互換性があります。</p><p>属性の定義については、<a href="amrepoattrs.html">「Federated Access Manager リポジトリの属性」</a>を参照してください。</p>
-
 <a name="gdlmv"></a><h5>Active Directory</h5>
 <p>このタイプのデータストアは、LDAP version 3 仕様に基づいて、Microsoft Active Directory インスタンスにアイデンティティーデータを書き込みます。</p><p>属性の定義については、<a href="adattrs.html">「Active Directory の属性」</a>を参照してください。</p>
-
-<a name="gdlml"></a><h5>フラットファイルリポジトリ</h5>
-<p>このリポジトリでは、別途にデータストアを作成することなく、Federated Access Manager のローカルインストールインスタンスのフラット DIT 構造内にデータとアイデンティティーを保存することができます。これは一般に、概念展開のテストまたは検証に使用されます。</p><p>属性の定義については、<a href="flatfileattr.html">「フラットファイルリポジトリの属性」</a>を参照してください。</p>
 
 <a name="gdlmr"></a><h5>汎用 LDAPv3</h5>
 <p>このタイプのデータストアは、アイデンティティーデータを任意の LDAPv3 準拠データベースに書き込むことができます。使用している LDAPv3 データベースが持続検索をサポートしない場合は、キャッシュ機能を利用できません。</p><p>属性の定義については、<a href="gdoto.html">「汎用 LDAPv3 属性」</a>を参照してください。</p>

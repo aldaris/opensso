@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedprofile"></a><h4>プロバイダエンティティーに含まれるホストサービスプロバイダ属性を変更する</h4><a name="indexterm-80"></a><p>エンティティーを作成しサービスプロバイダを追加した後に、サービスプロバイダのプロファイルを編集できます。始めにアイデンティティープロバイダを追加したときには設定できなかった属性に値を追加したり、設定済みデータを変更したりする作業が必要な場合があります。連携インタフェースの「エンティティー」から作業を始めます。</p><ol>
+<a name="federation.fsserviceproviderhostedprofile"></a><h4>プロバイダエンティティーに含まれるホストサービスプロバイダ属性を変更する</h4><a name="indexterm-79"></a><p>エンティティーを作成しサービスプロバイダを追加した後に、サービスプロバイダのプロファイルを編集できます。始めにサービスプロバイダを追加したときには設定できなかった属性に値を追加したり、設定済みデータを変更したりする作業が必要な場合があります。連携インタフェースの「エンティティー」から作業を始めます。</p><ol>
 <li><b>プロファイルを変更する設定済みプロバイダエンティティーの名前をクリックします。</b></li>
 <li><b>「表示」メニューから「サービスプロバイダ」を選択します。</b></li>
 <li><b>「共通属性」の値を変更します。</b><p>「共通属性」の値は、アイデンティティープロバイダ自体の一般的な定義です。</p><dl><dt>プロバイダタイプ</dt>
@@ -97,7 +103,7 @@
 </dd>
 </dl>
 </li>
-<li><b>利用可能な認証ドメインのいずれかを選択し、プロバイダに割り当てます。</b><p>プロバイダは 1 つまたは複数の認証ドメインに所属することができます。しかし、認証ドメインが指定されていないプロバイダは、Liberty Alliance Project 仕様に基づく通信に参加できません。認証ドメインがまだ作成されていない場合は、後でこの属性を定義することができます。</p></li>
+<li><b>利用可能なトラストサークルのいずれかを選択し、プロバイダに割り当てます。</b><p>プロバイダは 1 つまたは複数のトラストサークルに所属することができます。しかし、トラストサークルが指定されていないプロバイダは、Liberty Alliance Project 仕様に基づく通信に参加できません。トラストサークルがまだ作成されていない場合は、あとでこの属性を定義することができます。</p></li>
 <li><b>「認証コンテキスト」属性で、各「コンテキスト参照」について「レベル」ボックスに正数を入力します。</b><p>この数値は、特定の認証モジュールに定義されている認証レベルに対応します。ユーザーは、この認証レベルが定義されているモジュールにリダイレクトされます。</p>
 <ul><li><p>Mobile Contract</p></li>
 <li><p>Mobile Digital ID</p></li>
@@ -134,7 +140,7 @@
 <dd><p>アフィリエイト連携を有効にするには、このチェックボックスをオンにします。</p></dd>
 </dl>
 </li>
-<li><b>「Access Manager 設定」属性の値を変更します。</b><p>「Access Manager 設定」属性は、このホストされている Access Manager インスタンスに関する情報を定義します。</p><dl><dt>サービスプロバイダアダプタ</dt>
+<li><b>「Federated Access Manager 設定」属性の値を変更します。</b><p>「Federated Access Manager  設定」属性は、このホストされている Access Manager インスタンスに関する情報を定義します。</p><dl><dt>サービスプロバイダアダプタ</dt>
 <dd><p>com.sun.identity.federation.plugins.FederationSPAdapter の実装クラスを定義します。これは、連携処理中にアプリケーション固有の処理を追加するのに使用されます。</p></dd>
 <dt>プロバイダエイリアス</dt>
 <dd><p>「プロバイダエイリアス」は、エンティティープロファイル内でホストプロバイダを識別し、サービスプロバイダとアイデンティティープロバイダのどちらの設定であるかを見分けるために使用される名前です。値は一意で、URL で表すことができる必要があります。たとえば、<tt>sunAlias</tt> とすることができます。</p></dd>

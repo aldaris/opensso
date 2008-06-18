@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scplatform"></a><h4>平台</h4>
-<p><a name="indexterm-208"></a>“平台”服务是可将其他服务器添加到 Federated Access Manager 配置的位置，也是其他应用于 Federated Access Manager 应用程序顶层的选项。平台服务属性是全局属性。这些属性包括：</p>
+<p><a name="indexterm-211"></a>“平台”服务是可将其他服务器添加到 Federated Access Manager 配置的位置，也是其他应用于 Federated Access Manager 应用程序顶层的选项。平台服务属性是全局属性。这些属性包括：</p>
 <ul><li><p><a href="#fxcsy">站点名称</a></p></li>
 <li><p><a href="#fxcqf">实例名称</a></p></li>
 <li><p><a href="#fxcgy">平台语言环境</a></p></li>
@@ -37,11 +43,11 @@
 
 
 <a name="fxcsy"></a><h5>站点名称</h5>
-<p>命名服务在初始化时读取该属性。该列表用后端 Federated Access Manager 服务器的负载平衡器或用于负载平衡的 SRA 的端口号唯一标识 FQDN。如果列表中不存在服务 URL 请求中指定的主机，则命名服务将拒绝请求。此属性中应仅使用命名服务协议。参见<a href="service.scplatformsitelistadd.html">创建新的站点名称</a>。</p>
+<p>命名服务在初始化时读取该属性。该列表用后端 Federated Access Manager 服务器的负载平衡器或用于负载平衡的 SRA 的端口号唯一标识 FQDN。如果列表中不存在服务 URL 请求中指定的主机，则命名服务将拒绝请求。此属性中应仅使用命名服务协议。参见<b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>。</p>
 
 <a name="fxcqf"></a><h5>实例名称</h5>
 <p>命名服务在初始化时读取该属性。该列表包含单个 Federated Access Manager 配置中的 Federated Access Manager 会话服务器。例如，如果安装了两个 Federated Access Manager，且二者应作为一个
-Federated Access Manager 工作，则必须将它们都包含在该列表中。如果列表中不存在服务 URL 请求中指定的主机，则命名服务将拒绝请求。此属性中应仅使用命名服务协议。参见<a href="service.scplatformserverlistadd.html">创建新的实例名称</a>。</p>
+Federated Access Manager 工作，则必须将它们都包含在该列表中。如果列表中不存在服务 URL 请求中指定的主机，则命名服务将拒绝请求。此属性中应仅使用命名服务协议。参见<b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>。</p>
 
 <a name="fxcgy"></a><h5>平台语言环境</h5>
 <p>平台语言环境的值是安装 Federated Access Manager 时使用的默认语言子类型。验证、记录和管理服务是用该默认值的语言进行管理的。默认值为 en_US。有关支持的语言子类型列表，参见<a href="supportedlang.html">支持的语言环境</a>。</p>

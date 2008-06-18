@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Certificat </h4>
-<p><a name="indexterm-177"></a>Ce module permet &#224; un utilisateur de se connecter gr&#226;ce &#224; un
+<p><a name="indexterm-176"></a>Ce module permet &#224; un utilisateur de se connecter gr&#226;ce &#224; un
 certificat num&#233;rique personnel (CNP). Cette instance de module peut exiger l'utilisation du
 protocole OCSP (Online Certificate Status Protocol) pour d&#233;terminer l'&#233;tat d'un certificat. L'utilisation
 du protocole OCSP est facultatif. L'utilisateur se voit accorder ou refuser l'acc&#232;s
@@ -43,7 +49,7 @@ suivants :</p>
 <li><p><a href="#fwbqp">Utilisateur principal du serveur LDAP</a></p></li>
 <li><p><a href="#fwbst">Mot de passe principal du serveur LDAP</a></p></li>
 <li><p><a href="#fwbiu">Mot de passe principal du serveur LDAP (confirmer)</a></p></li>
-<li><p><a href="#fwblo">Attribut LDAP pour l'ID de profil</a></p></li>
+<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">Utiliser SSL pour l'acc&#232;s LDAP</a></p></li>
 <li><p><a href="#fwbof">Champ de certificat utilis&#233; pour acc&#233;der au profil utilisateur</a></p></li>
 <li><p><a href="#fwbna">Autre champ de certificat utilis&#233; pour acc&#233;der au profil utilisateur</a></p></li>
@@ -140,12 +146,6 @@ la forme de texte lisible dans l'annuaire.</p>
 
 <a name="fwbiu"></a><h5>Mot de passe principal du serveur LDAP (confirmer)</h5>
 <p>Confirmez le mot de passe.</p>
-
-<a name="fwblo"></a><h5>Attribut LDAP pour l'ID de profil</h5>
-<p>Sp&#233;cifie l'attribut de l'entr&#233;e Directory Server correspondant au certificat dont la valeur
-doit &#234;tre utilis&#233;e pour identifier le profil utilisateur correct. Il n'y a
-pas de valeur par d&#233;faut pour ce champ qui reconna&#238;t tout attribut
-valide dans une entr&#233;e utilisateur (<i>cn</i>, <i>sn</i>, etc.) utilisable comme ID utilisateur.</p>
 
 <a name="fwblm"></a><h5>Utiliser SSL pour l'acc&#232;s LDAP</h5>
 <p>Indique si la fonction SSL doit &#234;tre utilis&#233;e pour acc&#233;der au serveur

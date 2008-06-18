@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedprofile"></a><h4>공급자 엔티티의 호스트 서비스 공급자 속성 수정</h4><a name="indexterm-80"></a><p>엔티티를 작성하고 서비스 공급자를 추가한 후 서비스 공급자의 프로필을 편집할 수 있습니다.
+<a name="federation.fsserviceproviderhostedprofile"></a><h4>공급자 엔티티의 호스트 서비스 공급자 속성 수정</h4><a name="indexterm-79"></a><p>엔티티를 작성하고 서비스 공급자를 추가한 후 서비스 공급자의 프로필을 편집할 수 있습니다.
 서비스 공급자를 처음으로 만들거나 구성된 데이터를 수정할 경우 구성할 수 없는 속성에
 값이 추가됩니다. 시작 위치는 연합 인터페이스 아래의 엔티티입니다.</p><ol>
 <li><b>구성된 공급자 엔티티의 이름을 눌러 해당 프로필을 수정합니다.</b></li>
@@ -102,9 +108,11 @@
 </dd>
 </dl>
 </li>
-<li><b>공급자에 할당할 사용 가능한 인증 도메인을 선택합니다.</b><p>공급자는 하나 이상의 인증 도메인에 속할 수 있습니다. 그러나 지정된 인증 도메인이
-없는 공급자는 Liberty Alliance Project 사양에 기초한 통신에 참여할 수 없습니다. 인증
-도메인을 작성하지 않은 경우 나중에 이 속성을 정의할 수 있습니다.</p></li>
+<li><b>사용 가능한 CoT(Circle of Trust) 중에 공급자에 할당할 CoT(Circle of Trust)를 하나
+선택합니다.</b><p>공급자는 하나 이상의 CoT(Circle of Trust)에 속할 수 있습니다. 그러나 지정된 CoT(Circle
+of Trust)가 없는 공급자는 Liberty Alliance Project 사양에 기초한 통신에 참여할 수
+없습니다. CoT(Circle of Trust)를 작성하지 않은 경우 나중에 이 속성을 정의할 수
+있습니다.</p></li>
 <li><b>인증 컨텍스트 속성에서 각 컨텍스트 참조에 대한 [수준] 상자에 양수를 입력합니다.</b><p>이 숫자는 특정 인증 모듈에 대해 정의된 인증 수준에 해당합니다. 사용자는 정의된
 인증 수준과 함께 모듈로 리디렉션됩니다.</p>
 <ul><li><p>모바일 연락처</p></li>
@@ -142,7 +150,8 @@
 <dd><p>제휴 연합을 사용 가능하게 설정하려면 이 확인란을 선택합니다.</p></dd>
 </dl>
 </li>
-<li><b>Access Manager 구성 속성에 대한 값을 수정합니다.</b><p>Access Manager 구성 속성은 Access Manager의 이 호스트 인스턴스에 대한 정보를 정의합니다.</p><dl><dt>서비스 공급자 어댑터</dt>
+<li><b>Federated Access Manager 구성 속성 값을 수정합니다.</b><p>Federated Access Manager 구성 속성은 Access Manager의 이 호스트 인스턴스에 대한 정보를
+정의합니다.</p><dl><dt>서비스 공급자 어댑터</dt>
 <dd><p>연합 프로세스 중에 응용 프로그램 관련 처리를 추가하는 데 사용되는 com.sun.identity.federation.plugins.FederationSPAdapter 에 대한 구현 클래스를 정의합니다.</p></dd>
 <dt>공급자 별칭</dt>
 <dd><p>공급자 별칭은 엔티티 프로필 내에서 호스트 공급자를 식별하는 데 사용하는 이름으로서 서비스 공급자 또는 Identity 공급자 구성인지 여부를 정의합니다. 값은 고유해야 하며 URL로 표시할 수 있어야 합니다(예: <tt>sunAlias</tt>).</p></dd>

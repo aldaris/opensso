@@ -1,12 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Modification d'un profil de domaine d'authentification - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Modification d'un profil de cercle d'approbation - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -17,36 +22,39 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsauthdomainsedit"></a><h4>Modification d'un profil de domaine d'authentification</h4><a name="indexterm-60"></a><p>Suivez cette proc&#233;dure pour modifier les attributs globaux d'un domaine d'authentification existant
-ou pour lui ajouter des fournisseurs. Le point de d&#233;part est Domaines
-d'authentification sous l'interface F&#233;d&#233;ration.</p><ol>
-<li><b>Cliquez sur le nom d'un domaine d'authentification configur&#233; afin de modifier son
-profil ou de lui ajouter des fournisseurs.</b><p>La page &#201;diter le domaine d'authentification s'affiche.</p></li>
+<a name="federation.fsauthdomainsedit"></a><h4>Modification d'un profil de cercle d'approbation</h4><a name="indexterm-59"></a><p>Suivez cette proc&#233;dure pour modifier les attributs globaux d'un cercle d'approbation existant
+ou pour lui ajouter des fournisseurs. Le point de d&#233;part est Cercle
+d'approbation sous l'interface F&#233;d&#233;ration.</p><ol>
+<li><b>Cliquez sur le nom d'un cercle d'approbation configur&#233; afin de modifier son
+profil ou de lui ajouter des fournisseurs.</b><p>La page Modification du cercle d'approbation s'affiche.</p></li>
 <li><b>Tapez les nouvelles valeurs ou modifiez celles pr&#233;sentes dans les attributs g&#233;n&#233;raux
-du domaine d'authentification :</b><dl><dt>Nom</dt>
-<dd><p>La valeur statique de cet attribut est le nom fourni lors de la cr&#233;ation du domaine d'authentification.</p></dd>
+du cercle d'approbation :</b><dl><dt>Nom</dt>
+<dd><p>La valeur statique de cet attribut est le nom fourni lors de la cr&#233;ation du cercle d'approbation.</p></dd>
 <dt>Description</dt>
-<dd><p>Cet attribut est une description du domaine d'authentification. Si n&#233;cessaire, vous pouvez modifier la description d&#233;j&#224; saisie.</p></dd>
-<dt>URL du service &#233;criture</dt>
+<dd><p>La valeur de cet attribut est une description du cercle d'approbation. Si n&#233;cessaire, vous pouvez modifier la description d&#233;j&#224; saisie.</p></dd>
+<dt>URL du service &#233;criture IDFF</dt>
 <dd><p>Cet attribut indique l'emplacement du service qui &#233;crit le cookie du domaine commun. L'URL a le format <tt><b> http://</tt><i>common-domain-host</i><tt>:</tt><i>port</i><tt>/common/writer </b></tt>.</p></dd>
-<dt>URL du service lecture</dt>
+<dt>URL du service lecture IDFF</dt>
 <dd><p>Cet attribut indique l'emplacement du service qui lit le cookie du domaine commun. L'URL a le format <tt><b> http://</tt><i>common-domain-host</i><tt>:</tt><i>port</i><tt>/common/transfer </b></tt> .</p></dd>
+<dt>URL du service &#233;criture SAML2</dt>
+<dd><p>Cet attribut sp&#233;cifie l'emplacement du service &#233;criture SAML2 qui &#233;crit le cookie dans le domaine commun.</p></dd>
+<dt>URL du service lecture SAML2</dt>
+<dd><p>Cet attribut sp&#233;cifie l'emplacement du service &#233;criture SAML2 qui &#233;crit le cookie dans le domaine commun.</p></dd>
 <dt>Statut</dt>
-<dd><p>Le statut par d&#233;faut est Actif. La s&#233;lection de Inactif d&#233;sactive les communications au sein du domaine d'authentification.</p></dd>
+<dd><p>Le statut par d&#233;faut est Actif. S&#233;lectionner Inactif d&#233;sactive la communication avec le cercle d'approbation.</p></dd>
 </dl>
 </li>
-<li><b>Cliquez sur Ajouter pour ajouter des fournisseurs au domaine d'authentification.</b><p>La page de s&#233;lection d'un partenaire de confiance s'affiche.</p></li>
 <li><b>Choisissez un ou plusieurs fournisseurs disponibles et cliquez sur la fl&#232;che Ajouter
 pour les s&#233;lectionner.</b><p>La liste fournie contient les noms des entit&#233;s cr&#233;&#233;es et renseign&#233;es avec
-des fournisseurs. Pour plus d'informations, voir <a href="federation.fsauthdomainsselectprovider.html">Ajout de fournisseurs &#224; un domaine d'authentification</a>.</p></li>
-<li><b>Cliquez sur OK pour enregistrer les fournisseurs du domaine d'authentification.</b><p>Vous revenez &#224; l'&#233;cran Profil du domaine d'authentification.</p></li>
+des fournisseurs. Pour plus d'informations, voir <a href="federation.fsauthdomainsselectprovider.html">Ajouts de fournisseurs &#224; un cercle d'approbation</a></p></li>
 <li><b>Cliquez sur Enregistrer pour terminer l'op&#233;ration.</b></li></ol>
 <br/>
 

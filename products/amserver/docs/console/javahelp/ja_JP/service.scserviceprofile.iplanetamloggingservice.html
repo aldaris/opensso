@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,10 +31,10 @@
 
 
 <a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>ログ</h4>
-<p><a name="indexterm-206"></a>ログサービスは、Federated Access Manager の管理に関連する状態メッセージやエラーメッセージを提供します。管理者は、ログファイルのサイズや場所などの値を設定できます。Federated Access Manager は、フラットテキストファイルかリレーショナルデータベースにイベントを記録できます。ログサービス属性はグローバル属性です。属性は次のとおりです。</p>
+<p><a name="indexterm-209"></a>ログサービスは、Federated Access Manager の管理に関連する状態メッセージやエラーメッセージを提供します。管理者は、ログファイルのサイズや場所などの値を設定できます。Federated Access Manager は、フラットテキストファイルかリレーショナルデータベースにイベントを記録できます。ログサービス属性はグローバル属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fxbsv">「最大ログサイズ」</a></p></li>
 <li><p><a href="#fxbsg">「履歴ファイルの数」</a></p></li>
-<li><p><a href="#fxbzh">「ログファイルの位置」</a></p></li>
+<li><p><a href="#fxbzh">「ログファイルの場所」</a></p></li>
 <li><p><a href="#fxbwg">「ログタイプ」</a></p></li>
 <li><p><a href="#fxbrd">「データベースユーザー名」</a></p></li>
 <li><p><a href="#fxcdf">「データベースユーザーパスワード」</a></p></li>
@@ -41,7 +47,7 @@
 <li><p><a href="#fxbxt">「レコードの最大数」</a></p></li>
 <li><p><a href="#fxbwp">「アーカイブあたりのファイル数」</a></p></li>
 <li><p><a href="#fxbyw">「バッファーサイズ」</a></p></li>
-<li><p><a href="#fxbvh">「DB 失敗メモリバッファサイズ」</a></p></li>
+<li><p><a href="#fxbvh">「DB 失敗メモリーバッファーサイズ」</a></p></li>
 <li><p><a href="#fxcea">「バッファー時間」</a></p></li>
 <li><p><a href="#fxbsn">「時間バッファリング」</a></p></li></ul>
 
@@ -55,7 +61,7 @@
 <hr>
 
 
-<a name="fxbzh"></a><h5>ログファイルの位置</h5>
+<a name="fxbzh"></a><h5>ログファイルの場所</h5>
 <p>ファイルベースのログ機能には、ログファイルを格納する場所が必要です。このフィールドは、その場所の完全なディレクトリパスを指定します。デフォルトの場所は次に示すとおりです。</p><p><tt>/var/opt/SUNWam/logs</tt></p><p>デフォルト以外のディレクトリを指定した場合、そのディレクトリが存在しなければ、Federated Access Manager によってそのディレクトリが作成されます。したがって、「0700」などの適切なアクセス権をそのディレクトリに対して設定する必要があります。</p><p>DB (データベース) ログ (Oracle または MySQL など) のログの場所を設定する場合、ログの場所は大文字と小文字が区別されます。たとえば、Oracle データベースにログを書き込む場合、ログの場所は次のようになります。大文字と小文字は区別されますので、注意してください。</p><p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p><p>DB にログを書き込むようにするには、JDBC ドライバファイルを Web コンテナの JVM クラスパスに追加してください。手動で JDBC ドライバファイルを <tt>amadmin</tt> スクリプトのクラスパスに追加する必要があります。そうしないと、<tt>amadmin</tt> ログでは
 JDBC ドライバをロードできません。</p><p>通常、ログ属性に対する変更内容は、保存が完了すると有効になります。その場合、サーバーを再起動する必要はありません。ただし、セキュリティー保護されたログに切り替える場合には、サーバーを再起動する必要があります。</p>
 
@@ -113,7 +119,7 @@ JDBC ドライバをロードできません。</p><p>通常、ログ属性に�
 <a name="fxbyw"></a><h5>バッファーサイズ</h5>
 <p>この属性は、メモリー内にバッファリングするログレコードの最大数を指定します。この数を超えると、ログサービスはそれらのレコードをログリポジトリに書き込もうとします。デフォルトは、1 レコードです。</p>
 
-<a name="fxbvh"></a><h5>DB 失敗メモリバッファサイズ</h5>
+<a name="fxbvh"></a><h5>DB 失敗メモリーバッファーサイズ</h5>
 <p>この属性は、データベース (DB) ログに失敗した場合にメモリーに保持されるログレコードの最大数を指定します。この属性は DB ログが指定されている場合にのみ適用されます。Federated Access Manager ログサービスと DB との接続が切断された場合、指定された件数までのレコードがバッファーに保存されます。この属性は、デフォルトでは「バッファーサイズ」属性に定義された値の 2 倍の値に設定されます。</p>
 
 <a name="fxcea"></a><h5>バッファー時間</h5>

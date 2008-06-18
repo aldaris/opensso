@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>证书 </h4>
-<p><a name="indexterm-177"></a>该模块允许用户通过个人数字证书 (personal digital certificate, PDC) 进行登录。该模块实例可能需要使用“联机证书状态协议 (OCSP)”来确定证书的状态。使用 OCSP 是可选的。基于证书是否有效来允许或拒绝用户访问某种资源。证书验证属性是领域属性。这些属性包括：</p>
+<p><a name="indexterm-176"></a>该模块允许用户通过个人数字证书 (personal digital certificate, PDC) 进行登录。该模块实例可能需要使用“联机证书状态协议 (OCSP)”来确定证书的状态。使用 OCSP 是可选的。基于证书是否有效来允许或拒绝用户访问某种资源。证书验证属性是领域属性。这些属性包括：</p>
 <ul><li><p><a href="#fwbia">在 LDAP 中匹配证书</a></p></li>
 <li><p><a href="#fwbiq">用于在 LDAP 中搜索证书的主题 DN 属性</a></p></li>
 <li><p><a href="#fwbim">将证书与 CRL 匹配</a></p></li>
@@ -37,7 +43,7 @@
 <li><p><a href="#fwbqp">LDAP Server 主体用户</a></p></li>
 <li><p><a href="#fwbst">LDAP Server 主体密码</a></p></li>
 <li><p><a href="#fwbiu">LDAP Server 主体密码（确认）</a></p></li>
-<li><p><a href="#fwblo">配置文件 ID 的 LDAP 属性</a></p></li>
+<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">使用 SSL 进行 LDAP 访问</a></p></li>
 <li><p><a href="#fwbof">用于访问用户配置文件的证书字段</a></p></li>
 <li><p><a href="#fwbna">用于访问用户配置文件的其他证书字段</a></p></li>
@@ -56,7 +62,7 @@
 <p>指定证书的 <i>SubjectDN</i> 值的属性，该属性用于在 LDAP 中搜索证书。该属性必须唯一标识用户条目。搜索将使用实际值。默认值为 <tt>cn</tt>。</p>
 
 <a name="fwbim"></a><h5>将证书与 CRL 匹配</h5>
-<p>指定是否将用户证书与 LDAP Server 中的证书撤回列表 (CRL) 进行对照。通过发布者的 <i>SubjectDN</i> 中的一个属性名查找 CRL。如果 CRL 中存在该证书，用户将被拒绝访问；如果不存在，则允许用户继续进行操作。在默认情况下，该属性被禁用。</p><p>发生以下情况时，应该撤消证书：证书所有者的状态发生变化，不再拥有使用证书的权限；或证书所有者的专用密钥已经损坏。</p>
+<p>指定是否将用户证书与 LDAP Server 中的证书撤回列表 (CRL) 进行对照。通过发布者的 <i>SubjectDN</i> 中的一个属性名查找 CRL。如果 CRL 中存在该证书，用户将被拒绝访问；如果不存在，则允许用户继续进行操作。在默认情况下，该属性被禁用。</p><p>发生以下情况时，应该撤销证书：证书所有者的状态发生变化，不再拥有使用证书的权限；或证书所有者的专用密钥已经损坏。</p>
 
 <a name="fwbik"></a><h5>用于在 LDAP 中搜索 CRL 的发送者 DN 属性</h5>
 <p>指定所接收证书的发送者 <i>subjectDN</i> 值的属性，该属性用于在 LDAP 中搜索 CRL。仅在启用“将证书与 CRL 匹配”属性时，才能使用该字段。搜索将使用实际值。默认值为 <tt>cn</tt>。</p>
@@ -87,9 +93,6 @@ OCSP 响应器的时间。例如：</p><p><tt>OCSP responder machine - 12:00:00 
 
 <a name="fwbiu"></a><h5>LDAP Server 主体密码（确认）</h5>
 <p>确认密码。</p>
-
-<a name="fwblo"></a><h5>配置文件 ID 的 LDAP 属性</h5>
-<p>指定 Directory Server 条目中与证书匹配的属性，其值将用于标识正确的用户配置文件。该字段可识别用户条目中任何可用作用户 ID 的有效属性（如 <i>cn</i>、<i>sn</i> 等），但它没有默认值。</p>
 
 <a name="fwblm"></a><h5>使用 SSL 进行 LDAP 访问</h5>
 <p>指定是否使用 SSL 来访问 LDAP 服务器。在默认情况下，证书验证服务不使用 SSL 进行 LDAP 访问。</p>

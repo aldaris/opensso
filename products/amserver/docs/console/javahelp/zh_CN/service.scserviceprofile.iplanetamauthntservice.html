@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthntservice"></a><h4>Windows NT</h4>
-<p><a name="indexterm-191"></a>Windows NT 验证模块允许通过 Microsoft Windows NT 服务器进行验证。这些属性是领域属性。它们在“服务配置”下采用的值将成为 Windows NT 验证模板的默认值。为领域注册服务之后，需要创建服务模板。注册后，领域管理员可以更改这些默认值。领域属性不会被领域子树中的条目所继承。</p><p>为了激活 Windows NT 验证模块，必须下载 Samba Client 2.2.2 并将其安装到以下目录：</p><p><tt></tt><i>AcessManager-base</i><tt>/SUNWam/bin</tt></p><p>Samba Client 是文件服务器和打印服务器，它将 Windows 计算机和 UNIX 计算机融合在一起而无需使用单独的 Windows NT/2000 服务器。</p><p>Red Hat Linux 产品随附有 Samba 客户机，它位于 <tt>/usr/bin</tt> 目录下。</p><p>要使用适用于 Linux 的 Windows NT 验证服务进行验证，请将客户机二进制文件复制到 <tt></tt><i>FederatedAccessManager-base </i><tt> /identity/bin</tt>。</p><p>Windows NT 属性包括：</p>
+<p><a name="indexterm-190"></a>Windows NT 验证模块允许通过 Microsoft Windows NT 服务器进行验证。这些属性是领域属性。它们在“服务配置”下采用的值将成为 Windows NT 验证模板的默认值。为领域注册服务之后，需要创建服务模板。注册后，领域管理员可以更改这些默认值。领域属性不会被领域子树中的条目所继承。</p><p>为了激活 Windows NT 验证模块，必须下载 Samba Client 2.2.2 并将其安装到以下目录：</p><p><tt></tt><i>AcessManager-base</i><tt>/SUNWam/bin</tt></p><p>Samba Client 是文件服务器和打印服务器，它将 Windows 计算机和 UNIX 计算机融合在一起而无需使用单独的 Windows NT/2000 服务器。</p><p>Red Hat Linux 产品随附有 Samba 客户机，它位于 <tt>/usr/bin</tt> 目录下。</p><p>要使用适用于 Linux 的 Windows NT 验证服务进行验证，请将客户机二进制文件复制到 <tt></tt><i>FederatedAccessManager-base </i><tt> /identity/bin</tt>。</p><p>Windows NT 属性包括：</p>
 <ul><li><p><a href="#fumve">验证域</a></p></li>
 <li><p><a href="#fumvp">验证主机</a></p></li>
 <li><p><a href="#fumvq">Samba 配置文件名称</a></p></li>

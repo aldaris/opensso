@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedadd"></a><h4>新しいホストサービスプロバイダをプロバイダエンティティーに追加する</h4><p><b>ホストプロバイダ</b>は、Access Manager と同じサーバーにホストされます。「新規ホストサービスプロバイダ」属性を設定する際に、エンティティープロファイルにサービスプロバイダに関するメタデータを追加する必要があります。この手順は、<a href="federation.fsserviceprovider.html">「サービスプロバイダをプロバイダエンティティーに追加する」</a>ことから始めます。</p>
+<a name="federation.fsserviceproviderhostedadd"></a><h4>新しいホストサービスプロバイダをプロバイダエンティティーに追加する</h4><p><b>ホストプロバイダ</b>は、Federated Access Manager と同じサーバーにホストされます。「新規ホストサービスプロバイダ」属性を設定する際に、エンティティープロファイルにサービスプロバイダに関するメタデータを追加する必要があります。この手順は、<a href="federation.fsserviceprovider.html">「サービスプロバイダをプロバイダエンティティーに追加する」</a>ことから始めます。</p>
 <hr><p><b>注 &#8211; </b>このほかにも設定可能な属性がありますが、この初期設定ページには表示されません。<a href="federation.fsserviceproviderhostedprofile.html">「プロバイダエンティティーに含まれるホストサービスプロバイダ属性を変更する」</a>を参照してください。</p>
 <hr>
 <ol>
@@ -37,7 +43,7 @@
 </dd>
 </dl>
 </li>
-<li><b>利用可能な認証ドメインのいずれかを選択し、プロバイダに割り当てます。</b><p>プロバイダは 1 つまたは複数の認証ドメインに所属することができます。しかし、認証ドメインが指定されていないプロバイダは、Liberty Alliance Project 仕様に基づく通信に参加できません。認証ドメインがまだ作成されていない場合は、後でこの属性を定義することができます。</p></li>
+<li><b>利用可能なトラストサークルのいずれかを選択し、プロバイダに割り当てます。</b><p>プロバイダは 1 つまたは複数のトラストサークルに所属することができます。しかし、トラストサークルが指定されていないプロバイダは、Liberty Alliance Project 仕様に基づく通信に参加できません。トラストサークルがまだ作成されていない場合は、あとでこの属性を定義することができます。</p></li>
 <li><b>「サービスプロバイダ」属性に情報を設定します。</b><p>「サービスプロバイダ」属性は、サービスプロバイダに関する一般情報を定義します。</p><dl><dt>表明コンシューマ URL</dt>
 <dd><p>サービスプロバイダに送信されるすべての SAML 表明を受信し処理するエンドポイントの URL を入力します。</p></dd>
 <dt>表明コンシューマサービス URL ID</dt>
@@ -46,7 +52,7 @@
 <dd><p>要求に ID が指定されていない場合にデフォルト値として「表明コンシューマサービス URL」を使用するには、このチェックボックスをオンにします。</p></dd>
 </dl>
 </li>
-<li><b>「Access Manager 設定」属性に情報を設定します。</b><p>「Access Manager 設定」属性は、このホストされている Access Manager インスタンスに関する情報を定義します。</p><dl><dt>プロバイダ URL</dt>
+<li><b>「Federated Access Manager 設定」属性に情報を設定します。</b><p>「Access Manager 設定」属性は、このホストされている Access Manager インスタンスに関する情報を定義します。</p><dl><dt>プロバイダ URL</dt>
 <dd><p>ローカルホストプロバイダの URL を入力します。</p></dd>
 <dt>プロバイダエイリアス</dt>
 <dd><p>「プロバイダエイリアス」は、所属するエンティティープロファイル内でホストプロバイダを識別するために使用する名前です。プロバイダがサービスプロバイダまたはアイデンティティープロバイダ設定かどうかを定義します。値は一意で、URL で表すことができる必要があります。たとえば、<tt>sunAlias</tt> とすることができます。</p></dd>

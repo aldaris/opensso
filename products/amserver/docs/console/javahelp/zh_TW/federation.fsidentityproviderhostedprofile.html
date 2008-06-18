@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsidentityproviderhostedprofile"></a><h4>修改提供者實體內的代管識別提供者屬性</h4><a name="indexterm-78"></a><p>建立實體並新增識別提供者之後，您可以編輯識別提供者的設定檔。這可能需要向最初建立實體提供者時或修改已配置的資料時無法配置的那些屬性新增值。起點為聯合介面下的實體。</p><ol>
+<a name="federation.fsidentityproviderhostedprofile"></a><h4>修改提供者實體內的代管識別提供者屬性</h4><a name="indexterm-77"></a><p>建立實體並新增識別提供者之後，您可以編輯識別提供者的設定檔。這可能需要向最初建立實體提供者時或修改已配置的資料時無法配置的那些屬性新增值。起點為聯合介面下的實體。</p><ol>
 <li><b>按一下識別提供者所屬的已配置提供者實體的名稱。</b><p>會顯示實體的設定檔頁面。</p></li>
 <li><b>從 [檢視] 功能表選取 [識別提供者]。</b></li>
 <li><b>修改 [共用屬性] 的值。</b><p>[共用屬性] 包含通常定義識別提供者本身的值。</p><dl><dt>提供者類型</dt>
@@ -99,7 +105,7 @@
 </dd>
 </dl>
 </li>
-<li><b>選取任何一個可用的認證網域以指定給提供者。</b><p>提供者可以屬於一或多個認證網域。然而，沒有指定認證網域的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立認證網域，您稍後可以定義此屬性。</p></li>
+<li><b>選取任何可用的信任圈以指定給提供者。</b><p>提供者可以屬於一或多個信任圈。然而，沒有指定信任圈的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立信任圈，您稍後可以定義此屬性。</p></li>
 <li><b>選取識別提供者未接收包含於服務提供者請求的資訊時所要使用的認證環境。</b><p>此屬性會將 Liberty Alliance Project 規格中定義的認證環境類別對映至可在該識別提供者中使用的認證方法。這個值還指定在未知使用者嘗試存取受保護資源時，服務提供者使用的認證環境。</p><dl><dt>支援的</dt>
 <dd><p>如果識別提供者支援認證環境類別，請選取它旁邊的核取方塊。</p></dd>
 <dt>環境參考</dt>
@@ -124,7 +130,7 @@
 </dl>
 </li>
 <li><b>從可用的信任提供者中選擇，並新增至實體。</b><p>該清單包含已寫入了提供者的配置實體。</p></li>
-<li><b>修改 Access Manager 配置屬性的值。</b><p>Access Manager 配置屬性定義此代管 Access Manager 實例的相關資訊。</p><dl><dt>提供者別名</dt>
+<li><b>修改 Federated Access Manager 配置屬性的值。</b><p>Federated Access Manager 配置屬性定義此代管 Federated Access Manager 實例的相關資訊。</p><dl><dt>提供者別名</dt>
 <dd><p>提供者別名是用來識別實體設定檔內的代管提供者的名稱，並定義它是服務提供者還是識別提供者配置。此值必須是唯一的，而且能夠以 URL 代表。例如 <tt>sunAlias</tt>。</p></dd>
 <dt>認證類型</dt>
 <dd><p>選擇用於本極代管的提供者之認證請求的提供者類型。</p>

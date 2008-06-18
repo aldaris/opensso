@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="federation.fssamltrustedpartnersadd"></a><h5>信頼パートナー: 信頼パートナー属性を設定する</h5>
-<a name="indexterm-91"></a><p>信頼パートナーを設定するための後半の手順は、次のとおりです。<a href="federation.fssamlselecttrustedpartnertype.html">「信頼パートナー: パートナータイプおよびプロファイルを選択する」</a>ことから始めます。第 1 段階で選択したロールに基づいて、次のセクションに一覧表示された副属性を定義することが必要になる場合があります。</p>
+<a name="indexterm-90"></a><p>信頼パートナーを設定するための後半の手順は、次のとおりです。<a href="federation.fssamlselecttrustedpartnertype.html">「信頼パートナー: パートナータイプおよびプロファイルを選択する」</a>ことから始めます。第 1 段階で選択したロールに基づいて、次のセクションに一覧表示された副属性を定義することが必要になる場合があります。</p>
 <hr><p><b>注 &#8211; </b>連携の「SAML」設定画面で「編集」または「複製」をクリックしてこのページが表示された場合は、次の手順に従って信頼パートナープロファイルを変更し、「保存」をクリックして値を変更します。「SAML プロファイル」ページで「保存」をクリックして、変更を完了します。</p>
 <hr>
 <ol>
@@ -43,7 +49,7 @@
 <ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
 <li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
 </dd>
-<dt>アカウントマッパー</dt>
+<dt>名前識別子マッパー</dt>
 <dd><p>表明の対象と送信先サイト側のアイデンティティーとを関連付ける方法を定義するクラス。アカウントマッパーを <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper </tt> インタフェースから実装する必要があります。デフォルトは <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper </tt> です。</p><p>クラスが 1 つも定義されていない場合、表明に属性は含められません。</p></dd>
 <dt>証明書</dt>
 <dd><p>パートナーが表明に署名しているのに、署名された表明の <tt>KeyInfo</tt> 部分にパートナーの証明書が見つからない場合に、表明の署名を検証するために使用する証明書エイリアス。</p></dd>
@@ -72,7 +78,7 @@
 <li><p>SAML SOAP 受信者を指す URL へのアクセスに HTTPS が使用され、かつ SAML SOAP 受信者が HTTP 基本認証で保護されない場合は、<tt>SSL</tt> を指定します。</p></li>
 <li><p>SAML SOAP 受信者を指す URL へのアクセスに HTTPS が使用され、かつ SAML SOAP 受信者が HTTP 基本認証で保護される場合は、<tt>SSLWITHBASICAUTH</tt> を指定します。</p></li></ul>
 
-<hr><p><b>注 &#8211; </b>SAML SOAP 受信者の URL を HTTP 基本認証で保護する場合、この保護設定は、Access Manager 設定ではなく Web コンテナ設定で行います。ただし、HTTP 基本認証のユーザー ID とパスワードは Access Manager 設定で指定します。</p>
+<hr><p><b>注 &#8211; </b>SAML SOAP 受信者の URL を HTTP 基本認証で保護する場合、この保護設定は、Federated Access Manager 設定ではなく Web コンテナ設定で行います。ただし、HTTP 基本認証のユーザー ID とパスワードは Federated Access Manager 設定で指定します。</p>
 <hr>
 <p>この属性はオプションです。指定されていない場合、デフォルトは「<tt>なし</tt>」です。<tt>基本</tt>または <tt>SSLWITHBASICAUTH</tt> が指定されている場合は、「信頼パートナー」属性が必須となり <tt>HTTPS</tt> にする必要があります。</p></dd>
 <dt>ユーザー</dt>

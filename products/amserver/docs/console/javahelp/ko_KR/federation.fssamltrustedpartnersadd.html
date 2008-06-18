@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="federation.fssamltrustedpartnersadd"></a><h5>신뢰할 수 있는 파트너: 신뢰할 수 있는 파트너 속성 구성</h5>
-<a name="indexterm-91"></a><p>다음은 신뢰할 수 있는 파트너를 구성하는 절차의 두 번째 부분입니다. 시작 위치는
+<a name="indexterm-90"></a><p>다음은 신뢰할 수 있는 파트너를 구성하는 절차의 두 번째 부분입니다. 시작 위치는
 <a href="federation.fssamlselecttrustedpartnertype.html">신뢰할 수 있는 파트너: 파트너 유형 및 프로필 선택</a>입니다. 첫 번째 부분에서 선택한 역할을 기반으로 다음 절에 나열된 하위 속성이
 정의되어야 합니다.</p>
 <hr><p><b>주 &#8211; </b>연합 아래의 SAML 구성 화면에서 [편집] 또는 [복제]를 눌러 이 페이지로 이동한
@@ -47,7 +53,7 @@
 <ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
 <li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
 </dd>
-<dt>계정 매퍼</dt>
+<dt>이름 식별자 매퍼</dt>
 <dd><p>명제의 주제가 대상 사이트에서 아이디와 관련되는 방법을 정의하는 클래스입니다. 계정 매퍼는 <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper</tt> 인터페이스에서 구현되어야 합니다. 기본값은 <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>입니다.</p><p>클래스가 정의되지 않은 경우 명제에 속성이 포함되지 않습니다.</p></dd>
 <dt>인증서</dt>
 <dd><p>파트너가 명제에 서명했고 서명된 명제의 <tt>KeyInfo</tt> 부분에서 인증서를 찾을 수 없는 경우 명제의 서명을 확인하는 데 사용되는 인증서 별칭을 지정합니다.</p></dd>
@@ -76,7 +82,7 @@
 <li><p>HTTPS를 사용하여 SAML SOAP 수신기의 URL에 액세스하는 경우 HTTP 기본 인증으로 SAML SOAP 수신기가 보호되지 않으면 <tt>SSL</tt>을 지정하십시오.</p></li>
 <li><p>HTTPS를 사용하여 SAML SOAP 수신기의 URL에 액세스하는 경우 HTTP 기본 인증으로 SAML SOAP 수신기가 보호되면 <tt>SSLWITHBASICAUTH</tt>를 지정하십시오.</p></li></ul>
 
-<hr><p><b>주 &#8211; </b>HTTP 기본 인증을 사용하여 SAML SOAP 수신기 URL을 보호하는 경우에는 Access Manager 구성이 아니라 웹 컨테이너 구성에서 보호할 수 있습니다. 그러나 Access Manager 구성에서는 HTTP 기본 인증 사용자 아이디와 비밀번호를 제공해야 합니다.</p>
+<hr><p><b>주 &#8211; </b>HTTP 기본 인증을 사용하여 SAML SOAP 수신기 URL을 보호하는 경우에는 Federated Access Manager 구성이 아니라 웹 컨테이너 구성에서 보호할 수 있습니다. 그러나 Federated Access Manager 구성에서는 HTTP 기본 인증 사용자 아이디와 비밀번호를 제공해야 합니다.</p>
 <hr>
 <p>이 속성은 선택 사항입니다. 지정되지 않은 경우 기본값은 <tt>NOAUTH</tt>입니다. <tt>BASICAUTH</tt> 또는 <tt>SSLWITHBASICAUTH</tt>가 지정된 경우 신뢰할 수 있는 파트너 속성이 필요하며 <tt>HTTPS</tt>여야 합니다.</p></dd>
 <dt>사용자</dt>

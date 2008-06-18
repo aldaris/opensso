@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="webservices.wsauthnservices"></a><h3>Servicio Web de autenticaci&#243;n</h3>
-<a name="indexterm-167"></a><p>El Servicio Web de autenticaci&#243;n define c&#243;mo realizar la autenticaci&#243;n mediante SOAP.
+<a name="indexterm-166"></a><p>El Servicio Web de autenticaci&#243;n define c&#243;mo realizar la autenticaci&#243;n mediante SOAP.
 El intercambio de informaci&#243;n de autenticaci&#243;n entre un consumidor de servicios Web
 (WSC) y el proveedor de servicios Web (WSP) se realiza mediante mensajes
 enlazados con SOAP. Los mensajes son una serie de solicitudes de clientes
@@ -42,7 +48,9 @@ el Servicio Web de autenticaci&#243;n (WSP).</p>
 <li><p>El Servicio Web de autenticaci&#243;n responde aprobando o rechazando la autenticaci&#243;n. </p><p>Si se aprueba, la respuesta incluye las credenciales que el WSC necesita para invocar otros servicios Web (como el Servicio de detecci&#243;n). </p></li></ol>
 <p>Se pueden configurar los siguientes atributos globales del Servicio Web de autenticaci&#243;n
 para la implementaci&#243;n.</p>
-<ul><li><p><a href="mechanismhandlerslist.html">Lista de administradores de mecanismos</a></p></li></ul>
+<ul><li><p><a href="mechanismhandlerslist.html">Lista de administradores de mecanismos</a></p></li>
+<li><p>Intervalo de limpieza de desaf&#237;os: especifica el intervalo de limpieza (en segundos) de la clase de implementaci&#243;n del administrador de mecanismos CRAM-MD5 predeterminada <tt>com.sun.identity.liberty.ws.authnsvc.mechanism.CramMD5MechanismHandler </tt>. El subproceso interno iniciar&#225; la limpieza de la asignaci&#243;n de desaf&#237;os en funci&#243;n de este valor.</p></li>
+<li><p>Clases de transformaci&#243;n: especifica el nombre de transformaci&#243;n de la asignaci&#243;n de clases de implementaci&#243;n. Los valores se separan mediante comas con el car&#225;cter "|" como delimitador del nombre de transformaci&#243;n y el nombre de la clase de implementaci&#243;n. Por ejemplo, <tt>name1|class1, name2|class2</tt>.</p></li></ul>
 <p>A continuaci&#243;n, se muestran distintas tareas asociadas a la configuraci&#243;n del Servicio
 Web de autenticaci&#243;n:</p>
 <ul><li><p><a href="webservices.wsauthnserviceshandlersadd.html">Para configurar un administrador de mecanismos nuevo</a></p></li></ul>

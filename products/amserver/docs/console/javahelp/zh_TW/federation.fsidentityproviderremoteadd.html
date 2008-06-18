@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsidentityproviderremoteadd"></a><h4>新增一個新的遠端識別提供者至提供者實體</h4><p><b>遠端提供者</b>不代管在與 Access Manager 相同的伺服器。配置 [新增遠端識別提供者] 屬性將需要新增有關識別提供者的中介資料至提供者實體設定檔。起點為<a href="federation.fsidentityprovider.html">新增識別提供者至提供者實體</a>。</p>
+<a name="federation.fsidentityproviderremoteadd"></a><h4>新增一個新的遠端識別提供者至提供者實體</h4><p><b>遠端提供者</b>不是在與 Federated Access Manager 相同的伺服器上代管。配置 [新增遠端識別提供者] 屬性將需要新增有關識別提供者的中介資料至提供者實體設定檔。起點為<a href="federation.fsidentityprovider.html">新增識別提供者至提供者實體</a>。</p>
 <hr><p><b>備註 &#8211; </b>還可以配置其他屬性，但在初始配置頁面中看不見它們。請參閱<a href="federation.fsidentityproviderremoteprofile.html">修改提供者實體內的遠端識別提供者屬性</a>。</p>
 <hr>
 <ol>
@@ -49,7 +55,7 @@
 </dd>
 </dl>
 </li>
-<li><b>選取任何一個可用的認證網域以指定給提供者。</b><p>提供者可以屬於一或多個認證網域。然而，沒有指定認證網域的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立認證網域，您稍後可以定義此屬性。</p></li>
+<li><b>選取任何可用的信任圈以指定給提供者。</b><p>提供者可以屬於一或多個信任圈。然而，沒有指定信任圈的提供者不能參與以 Liberty Alliance Project 規格為基礎的通訊。如果未建立信任圈，您稍後可以定義此屬性。</p></li>
 <li><b>按一下 [確定] 以新增提供者至實體。</b></li>
 <li><b>從 [檢視] 功能表選取其他選項以繼續配置實體，或按一下 [儲存] 完成配置。</b></li></ol>
 <br/>

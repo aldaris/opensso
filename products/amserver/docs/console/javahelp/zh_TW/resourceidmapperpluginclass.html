@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,10 +31,10 @@
 
 
 <a name="resourceidmapperpluginclass"></a><h4>ResourceID 對映程式外掛程式類別</h4>
-<a name="indexterm-142"></a><a name="indexterm-143"></a><p>此屬性的值是一個類別清單，其中列出為針對組織或角色而配置的資源提供產生識別碼的類別。<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> 是用來將使用者識別碼對映至與其相關聯之資源識別碼的介面。探索服務為此介面提供兩種實作：</p>
+<a name="indexterm-141"></a><a name="indexterm-142"></a><p>此屬性的值是一個類別清單，其中列出為針對組織或角色而配置的資源提供產生識別碼的類別。<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> 是用來將使用者識別碼對映至與其相關聯之資源識別碼的介面。探索服務為此介面提供兩種實作：</p>
 <ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper</tt> (格式：<i>providerID</i> + "/" + <i>Base64 編碼的使用者 ID</i>)</p></li>
 <li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt> (格式：<i>providerID</i> + "/" + <i>使用者 ID 的十六進位字串</i>)</p></li></ul>
-<p>可以利用實作類別開發不同的實作，然後按一下 [新建] 並使用下列格式，將這些實作新增為此屬性的值：</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p>請參閱<a href="service.smdiscoveryproviderresourceidmapadd.html">配置 ResourceID 對映程式</a>。</p>
+<p>可以利用實作類別開發不同的實作，然後按一下 [新建] 並使用下列格式，將這些實作新增為此屬性的值：</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p>請參閱<b>Broken Link (Target ID: SERVICE.SMDISCOVERYPROVIDERRESOURCEIDMAPADD)</b>。</p>
 <br/>
 
 </body>

@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>憑證 </h4>
-<p><a name="indexterm-177"></a>此模組可讓使用者透過個人數位憑證 (PDC) 來登入。模組實例需要使用線上憑證狀態通訊協定 (OCSP)，才能判定憑證的狀態。使用 OCSP 是選擇性的。根據憑證是否有效，來授予或拒絕使用者存取資源的權限。憑證認證屬性為範圍屬性。這些屬性包括：</p>
+<p><a name="indexterm-176"></a>此模組可讓使用者透過個人數位憑證 (PDC) 來登入。模組實例需要使用線上憑證狀態通訊協定 (OCSP)，才能判定憑證的狀態。使用 OCSP 是選擇性的。根據憑證是否有效，來授予或拒絕使用者存取資源的權限。憑證認證屬性為範圍屬性。這些屬性包括：</p>
 <ul><li><p><a href="#fwbia">符合 LDAP 中的憑證</a></p></li>
 <li><p><a href="#fwbiq">用於在 LDAP 中搜尋憑證的主體 DN 屬性</a></p></li>
 <li><p><a href="#fwbim">使憑證符合 CRL</a></p></li>
@@ -34,10 +40,10 @@
 <li><p><a href="#fwbil">OCSP 驗證</a></p></li>
 <li><p><a href="#fwbij">儲存憑證的 LDAP 伺服器</a></p></li>
 <li><p><a href="#fwbtp">LDAP 起始搜尋 DN</a></p></li>
-<li><p><a href="#fwbqp">LDAP 伺服器首要使用者</a></p></li>
-<li><p><a href="#fwbst">LDAP 伺服器首要密碼</a></p></li>
-<li><p><a href="#fwbiu">LDAP 伺服器首要密碼 (確認)</a></p></li>
-<li><p><a href="#fwblo">設定檔 ID 的 LDAP 屬性</a></p></li>
+<li><p><a href="#fwbqp">LDAP 伺服器主體使用者</a></p></li>
+<li><p><a href="#fwbst">LDAP 伺服器主體密碼</a></p></li>
+<li><p><a href="#fwbiu">LDAP 伺服器主體密碼 (確認)</a></p></li>
+<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">將 SSL 用於 LDAP 存取</a></p></li>
 <li><p><a href="#fwbof">用於存取使用者設定檔的憑證欄位</a></p></li>
 <li><p><a href="#fwbna">用於存取使用者設定檔的其他憑證欄位</a></p></li>
@@ -79,17 +85,14 @@ OCSP 回應者機器上的時間。例如：</p><p><tt>OCSP responder machine - 
 <p>指定應該開始搜尋使用者之憑證的節點 DN。此欄位沒有預設值。此欄位將識別任何有效 DN。</p><p>多重項目必須以本機伺服器名稱為字首。格式如下所示：</p><p><tt>servername|search dn</tt></p><p>對於多個項目：</p><p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p><p>如果在具有同一使用者 ID 的根組織之下有多個項目，則應該將此參數設定為只能搜尋或尋找一個項目進行認證。例如，當代理程式 ID 與使用者 ID 都在根組織下時，若根組織使用代理程式 ID 進行認證，此參數應該為 <tt>ou=Agents</tt>；若根組織採用使用者 ID 進行認證，此參數應該為
 <tt>ou=People</tt>。</p>
 
-<a name="fwbqp"></a><h5>LDAP 伺服器首要使用者</h5>
-<p>此欄位會接受儲存憑證的 LDAP 伺服器之首要使用者 DN。將辨識任何有效 DN 的此欄位沒有預設值。必須授與主體使用者讀取與搜尋儲存於 Directory Server 中之憑證資訊的權限。</p>
+<a name="fwbqp"></a><h5>LDAP 伺服器主體使用者</h5>
+<p>此欄位會接受儲存憑證的 LDAP 伺服器之主體使用者 DN。將辨識任何有效 DN 的此欄位沒有預設值。必須授與主體使用者讀取與搜尋儲存於 Directory Server 中之憑證資訊的權限。</p>
 
-<a name="fwbst"></a><h5>LDAP 伺服器首要密碼</h5>
-<p>此欄位具有與 [LDAP 伺服器首要使用者] 欄位中指定的使用者關聯的 LDAP 密碼。此欄位沒有預設值，它將辨識指定的首要使用者之有效 LDAP 密碼。此值做為可讀文字儲存在目錄中。</p>
+<a name="fwbst"></a><h5>LDAP 伺服器主體密碼</h5>
+<p>此欄位具有與 [LDAP 伺服器主體使用者] 欄位中指定的使用者關聯的 LDAP 密碼。此欄位沒有預設值，它將辨識指定的主體使用者之有效 LDAP 密碼。此值做為可讀文字儲存在目錄中。</p>
 
-<a name="fwbiu"></a><h5>LDAP 伺服器首要密碼 (確認)</h5>
+<a name="fwbiu"></a><h5>LDAP 伺服器主體密碼 (確認)</h5>
 <p>確認密碼。</p>
-
-<a name="fwblo"></a><h5>設定檔 ID 的 LDAP 屬性</h5>
-<p>指定與憑證 (應該使用其值識別正確的使用者設定檔) 相符的 Directory Server 項目中之屬性。此欄位沒有預設值，它可辨識使用者項目中可以做為使用者 ID 之任何有效屬性 (<i>cn</i>、<i>sn</i> 等)。</p>
 
 <a name="fwblm"></a><h5>將 SSL 用於 LDAP 存取</h5>
 <p>指定是否使用 SSL 來存取 LDAP 伺服器。預設情況下，憑證認證服務不使用 SSL 存取 LDAP。</p>

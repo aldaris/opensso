@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>コア</h4>
-<p><a name="indexterm-178"></a>このモジュールは、Federated Access Manager の認証サービス全般に対してベースとなるものです。特定の認証モジュールインスタンスを使用する前に、このモジュールを登録して設定する必要があります。コアモジュールでは、管理者は、Federated Access Manager のデフォルト認証モジュールで特に設定されていない値に適用されるデフォルト値を定義できます。コア属性にはグローバル属性とレルム属性があります。属性は次のとおりです。</p>
+<p><a name="indexterm-177"></a>このモジュールは、Federated Access Manager の認証サービス全般に対してベースとなるものです。特定の認証モジュールインスタンスを使用する前に、このモジュールを登録して設定する必要があります。コアモジュールでは、管理者は、Federated Access Manager のデフォルト認証モジュールで特に設定されていない値に適用されるデフォルト値を定義できます。コア属性にはグローバル属性とレルム属性があります。属性は次のとおりです。</p>
 <ul><li><p><a href="#gcnje">「プラグイン可能な認証モジュールクラス」</a></p></li>
 <li><p><a href="#gcnjc">「クライアント用にサポートされている認証モジュール」</a></p></li>
 <li><p><a href="#gcnir">「LDAP 接続のプールサイズ」</a></p></li>
@@ -39,14 +45,14 @@
 <li><p><a href="#gcnkt">「デフォルト認証ロケール」</a></p></li>
 <li><p><a href="#gcnjj">「組織認証設定」</a></p></li>
 <li><p><a href="#gcnkl">「ログイン失敗時のロックアウトモード」</a></p></li>
-<li><p><a href="#gcnjz">「ログイン失敗時のロックアウト回数」</a></p></li>
-<li><p><a href="#gcnko">「ログイン失敗時のロックアウト間隔」</a></p></li>
+<li><p><a href="#gcnjz">「ログイン失敗が右の回数に達したらロックアウト」</a></p></li>
+<li><p><a href="#gcnko">「ログイン失敗回数を加算する間隔」</a></p></li>
 <li><p><a href="#gcnkd">「ロックアウト通知を送信する電子メールアドレス」</a></p></li>
 <li><p><a href="#gcnkr">「ユーザーに警告を出すまでの失敗回数」</a></p></li>
 <li><p><a href="#gcnkc">「ログイン失敗時のロックアウト持続時間」</a></p></li>
 <li><p><a href="#gcnjy">「ロックアウト属性名」</a></p></li>
 <li><p><a href="#gcnle">「ロックアウト属性値」</a></p></li>
-<li><p><a href="#gcnkz">「デフォルト成功ログイン URL」</a></p></li>
+<li><p><a href="#gcnkz">「ログイン成功時に返すデフォルトの URL」</a></p></li>
 <li><p><a href="#gcnlf">「ログイン失敗時に返すデフォルトの URL」</a></p></li>
 <li><p><a href="#gcnlb">「認証ポストプロセスクラス」</a></p></li>
 <li><p><a href="#gcnjl">「ユーザー ID 生成モード」</a></p></li>
@@ -102,7 +108,7 @@ Access Manager Developer's Guide』を参照してください。新しいサー
 
 
 <a name="gcnke"></a><h5>Cookie の最大持続時間</h5>
-<p>持続 Cookie の期限が切れた後の間隔を指定します。この間隔は、ユーザーのセッションの認証が成功したときに始まります。最大値は 2147483647 (秒) です。このフィールドには、最大値よりも小さい任意の整数値を入力できます。</p>
+<p>持続 Cookie の期限が切れるまでの間隔を指定します。この間隔は、ユーザーのセッションの認証が成功したときに始まります。最大値は 2147483647 (秒) です。このフィールドには、最大値よりも小さい任意の整数値を入力できます。</p>
 
 <a name="gcnlc"></a><h5>エイリアス検索属性名</h5>
 <p>ユーザー認証が成功したあと、ユーザーのプロファイルを検索します。このフィールドは、最初の LDAP 属性に対する検索で一致するユーザープロファイルを見つけられなかった場合に、次に検索する LDAP 属性を指定します。この属性は主に、認証モジュールから返されたユーザーアイデンティティーがユーザーネーミング属性で指定したものと異なる場合に使用します。たとえば、RADIUS サーバーが <tt>abc1234</tt> を返しても、ユーザー名が <tt>abc</tt> である場合があります。この属性のデフォルト値はありません。</p><p>このフィールドは有効な LDAP 属性をすべて受け入れます (たとえば、cn)。</p>
@@ -116,10 +122,10 @@ Access Manager Developer's Guide』を参照してください。新しいサー
 <a name="gcnkl"></a><h5>ログイン失敗時のロックアウトモード</h5>
 <p>ユーザーが最初の認証に失敗した場合、2 回目の認証を試行できるかどうかを指定します。この属性を選択すると、ロックアウトが有効になり、ユーザーは 1 回だけ認証を行うことができます。デフォルトでは、ロックアウト機能は無効になっています。この属性は、ロックアウト関連属性および通知属性とともに機能します。</p>
 
-<a name="gcnjz"></a><h5>ログイン失敗時のロックアウト回数</h5>
-<p>ログイン失敗時のロックアウト間隔」で定義された時間内に、ユーザーが認証を試みることができる回数を定義します。</p>
+<a name="gcnjz"></a><h5>ログイン失敗が右の回数に達したらロックアウト</h5>
+<p>「ログイン失敗時のロックアウト間隔」で定義された時間内に、ユーザーが認証を試みることができる回数を定義します。この回数を超えると、ユーザーはロックアウトされます。</p>
 
-<a name="gcnko"></a><h5>ログイン失敗時のロックアウト間隔</h5>
+<a name="gcnko"></a><h5>ログイン失敗回数を加算する間隔</h5>
 <p>ログイン失敗回数を加算する時間を分単位で指定します。指定した時間内にログインに失敗した数だけ、失敗の回数が加算されていきます。そうでない場合は、ロックアウト回数がリセットされます。</p>
 
 <a name="gcnkd"></a><h5>ロックアウト通知を送信する電子メールアドレス</h5>
@@ -138,7 +144,7 @@ Access Manager Developer's Guide』を参照してください。新しいサー
 <a name="gcnle"></a><h5>ロックアウト属性値</h5>
 <p>ここでは、「ロックアウト属性名」で定義された属性に対してロックアウトを有効にするか無効にするかを指定します。デフォルトの実装では、LDAP 属性 <i>inetuserstatus</i> に対して inactive が設定されるようになっています。</p>
 
-<a name="gcnkz"></a><h5>デフォルト成功ログイン URL</h5>
+<a name="gcnkz"></a><h5>ログイン成功時に返すデフォルトの URL</h5>
 <p>このフィールドは、認証の成功後にユーザーをリダイレクトする URL を指定する複数の値のリストを受け付けます。HTML のデフォルトタイプとなっている URL の値だけを指定できますが、この属性の形式は <tt>clientType|URL</tt> です。デフォルト値は <i>/amserver/console</i> です。</p>
 
 <a name="gcnlf"></a><h5>ログイン失敗時に返すデフォルトの URL</h5>

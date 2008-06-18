@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="federation.fssamltrustedpartnersadd"></a><h5>Vertrauensw&#252;rdige Partner: Konfigurieren von Attributen f&#252;r vertrauensw&#252;rdige Partner</h5>
-<a name="indexterm-91"></a><p>Der zweite Teil der Konfiguration eines vertrauensw&#252;rdigen Partners umfasst die nachfolgend beschriebenen
+<a name="indexterm-90"></a><p>Der zweite Teil der Konfiguration eines vertrauensw&#252;rdigen Partners umfasst die nachfolgend beschriebenen
 Schritte. Der Ausgangspunkt ist <a href="federation.fssamlselecttrustedpartnertype.html">Vertrauensw&#252;rdige Partner: Ausw&#228;hlen von Partnertyp und -profil</a>. Je nachdem, welche Rolle(n) im ersten Teil
 der Konfiguration ausgew&#228;hlt wurden, m&#252;ssen f&#252;r den vertrauensw&#252;rdigen Partner die nachfolgend aufgelisteten
 Unterattribute festgelegt werden.</p>
@@ -50,7 +56,7 @@ um die &#196;nderung abzuschlie&#223;en. </p>
 <ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
 <li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
 </dd>
-<dt>Konto-Mapper</dt>
+<dt>Namensbezeichner-Zuordnung (Mapper)</dt>
 <dd><p>Die Klasse, die festlegt, in welchem Zusammenhang das Subjekt einer Assertion mit einer Identit&#228;t der Ziel-Site steht. Es muss ein Konto-Maper aus <tt> com.sun.identity.saml.plugins</tt> implementiert werden.<tt>PartnerAccountMapper </tt>-Schnittstelle Der Standardwert lautet: <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper</tt>.</p><p>Wenn keine Klasse angegeben ist, werden keine Attribute in die Assertion eingeschlossen.</p></dd>
 <dt>Zertifikat</dt>
 <dd><p>Ein Zertifikatalias, der zur &#220;berpr&#252;fung der Signatur einer Assertion verwendet wird, wenn die Assertion vom Partner signiert wurde und das Zertifikat nicht im <tt>KeyInfo</tt>-Teil der signierten Assertion gefunden wird.</p></dd>
@@ -79,7 +85,7 @@ um die &#196;nderung abzuschlie&#223;en. </p>
 <li><p>Geben Sie <tt>SSL</tt> an, wenn der Zugriff auf den URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTPS erfolgt und der SAML-SOAP-Empf&#228;nger nicht durch HTTP-Basis-Authentifizierung gesch&#252;tzt ist.</p></li>
 <li><p>Geben Sie <tt>SSLWITHBASICAUTH</tt> an, wenn der Zugriff auf den URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTPS erfolgt und der SAML-SOAP-Empf&#228;nger durch HTTP-Basis-Authentifizierung gesch&#252;tzt ist.</p></li></ul>
 
-<hr><p><b>Hinweis &#8211; </b>Wenn Sie den URL des SAML-SOAP-Empf&#228;ngers durch HTTP-Basis-Authentifizierung sch&#252;tzen, f&#252;hren Sie dies in der Web-Container-Konfiguration und nicht in der Access Manager-Konfiguration durch. Benutzer-ID und Passwort der HTTP-Basis-Authentifizierung geben Sie allerdings in der Access Manager-Konfiguration an.</p>
+<hr><p><b>Hinweis &#8211; </b>Wenn Sie den URL des SAML-SOAP-Empf&#228;ngers durch HTTP-Basis-Authentifizierung sch&#252;tzen, f&#252;hren Sie dies in der Web-Container-Konfiguration und nicht in der Federated Access Manager-Konfiguration durch. Benutzer-ID und Passwort der HTTP-Basis-Authentifizierung geben Sie allerdings in der Federated Access Manager-Konfiguration an.</p>
 <hr>
 <p>Dieses Attribut ist optional. Wenn nicht anders angegeben, lautet der Standardwert <tt>NOAUTH</tt>. Wenn <tt>BASICAUTH</tt> oder <tt>SSLWITHBASICAUTH </tt> angegeben ist, ist das Attribut "Vertrauensw&#252;rdige Partner" mit dem Wert <tt>HTTPS</tt> erforderlich.</p></dd>
 <dt>Benutzer</dt>

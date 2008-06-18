@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scpolicy"></a><h4>ポリシー設定</h4>
-<p><a name="indexterm-198"></a>「ポリシー設定」属性により、管理者はポリシーサービスによって使用されるグローバル属性およびレルム属性を設定できます。</p>
+<p><a name="indexterm-197"></a>「ポリシー設定」属性により、管理者はポリシーサービスによって使用されるグローバル属性およびレルム属性を設定できます。</p>
 <ul><li><p><a href="#fufnk">「グローバル属性」</a></p></li>
 <li><p><a href="#fufmb">「レルム属性」</a></p></li></ul>
 
@@ -43,9 +49,9 @@
 <dt>ワイルドカード</dt>
 <dd><p>リソース名に使用可能なワイルドカードを指定します。</p></dd>
 <dt>1 レベルのワイルドカード</dt>
-<dd><p>同じ区切り文字境界に位置する 0 個または 1 個の文字に一致します。</p></dd>
+<dd><p>同じ区切り文字境界に位置する 0 個以上の文字に一致します。</p></dd>
 <dt>大文字と小文字を区別</dt>
-<dd><p>リソースを比較する際に、大文字と小文字を区別するかどうかを指定します。False の場合は区別せず、True の場合は区別します。</p></dd>
+<dd><p>リソースを比較する際に、大文字と小文字を区別するかどうかを指定します。このオプションのチェックボックスを選択しない場合は区別せず、選択した場合は区別します。</p></dd>
 </dl>
 
 
@@ -146,7 +152,7 @@
 
 <a name="fufmi"></a><h5>LDAP SSL</h5>
 <p>LDAP サーバーが SSL を実行するかどうかを指定します。選択した場合、SSL は有効になり、選択しない場合 (デフォルト)、SSL は無効になります。</p><p>LDAP サーバーが SSL 有効 (LDAPS) で実行中の場合、Federated Access Manager が LDAPS プロトコルで Directory
-Server に接続できるように、Federated Access Manager が適切な SSL- 信頼証明書で設定されていることを確認する必要があります。</p>
+Server に接続できるように、Federated Access Manager が適切な SSL 信頼証明書で設定されていることを確認する必要があります。</p>
 
 <a name="fufmk"></a><h5>LDAP 接続プールの最小サイズ</h5>
 <p>LDAP サーバー属性に指定されたとおり、Directory Server への接続に使用する接続プールの最小サイズを指定します。デフォルトは 1 です。</p>

@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,16 +31,16 @@
 
 
 <a name="service.scserviceprofile.sunamauthmsisdnservice"></a><h4>MSISDN </h4>
-<p><a name="indexterm-184"></a>「行動台整體服務數位網路 (Mobile Station Integrated Services Digital Network, MSISDN)」認證模組可讓您使用與如行動電話之裝置相關聯的行動訂閱者 ISDN 來進行認證。這是非互動式模組。此模組擷取用戶 ISDN 並利用
+<p><a name="indexterm-183"></a>「行動台整體服務數位網路 (Mobile Station Integrated Services Digital Network, MSISDN)」認證模組可讓您使用與如行動電話之裝置相關聯的行動訂閱者 ISDN 來進行認證。這是非互動式模組。此模組擷取用戶 ISDN 並利用
 Directory Server 進行驗證，以找到符合該號碼的使用者。MSISDN 認證屬性為範圍屬性。MSISDN 認證屬性包括：</p>
 <ul><li><p><a href="#fumxe">可信任的閘道 IP 位址</a></p></li>
 <li><p><a href="#fumxg">MSISDN 號碼引數</a></p></li>
 <li><p><a href="#fumxf">LDAP 伺服器與連接埠</a></p></li>
 <li><p><a href="#fumxi">LDAP 起始搜尋 DN</a></p></li>
 <li><p><a href="#fumxk">用於搜尋 LDAP 的屬性</a></p></li>
-<li><p><a href="#fumxl">LDAP 伺服器首要使用者</a></p></li>
-<li><p><a href="#fumxn">LDAP 伺服器首要密碼</a></p></li>
-<li><p><a href="#fumxm">LDAP 伺服器首要密碼 (確認)</a></p></li>
+<li><p><a href="#fumxl">LDAP 伺服器主體使用者</a></p></li>
+<li><p><a href="#fumxn">LDAP 伺服器主體密碼</a></p></li>
+<li><p><a href="#fumxm">LDAP 伺服器主體密碼 (確認)</a></p></li>
 <li><p><a href="#fumxo">啟用 SSL 以存取 LDAP</a></p></li>
 <li><p><a href="#fumxp">用於擷取使用者設定檔的 LDAP 屬性</a></p></li>
 <li><p><a href="#fumxr">傳回認證的使用者 DN</a></p></li>
@@ -59,13 +65,13 @@ Directory Server 進行驗證，以找到符合該號碼的使用者。MSISDN �
 <a name="fumxk"></a><h5>用於搜尋 LDAP 的屬性</h5>
 <p>指定在使用者設定檔中的屬性名稱，此使用者設定檔包含了用於搜尋特定使用者的 MSISDN 號碼。預設值為 <i>sunIdentityMSISDNNumber</i>。不應變更此值，除非已確定使用者設定檔的另一個屬性包含相同的 MSISDN 號碼。</p>
 
-<a name="fumxl"></a><h5>LDAP 伺服器首要使用者</h5>
+<a name="fumxl"></a><h5>LDAP 伺服器主體使用者</h5>
 <p>指定 LDAP 連結 DN，以允許在 Directory Server 中進行 MSISDN 搜尋。預設連結 DN 為 <tt>cn=amldapuser,ou=DSAME Users,dc=sun,dc=com</tt>。</p>
 
-<a name="fumxn"></a><h5>LDAP 伺服器首要密碼</h5>
-<p>指定連結 DN 的 LDAP 連結密碼，如 LDAP 伺服器首要使用者所定義。</p>
+<a name="fumxn"></a><h5>LDAP 伺服器主體密碼</h5>
+<p>指定連結 DN 的 LDAP 連結密碼，如 LDAP 伺服器主體使用者所定義。</p>
 
-<a name="fumxm"></a><h5>LDAP 伺服器首要密碼 (確認)</h5>
+<a name="fumxm"></a><h5>LDAP 伺服器主體密碼 (確認)</h5>
 <p>確認密碼。</p>
 
 <a name="fumxo"></a><h5>啟用 SSL 以存取 LDAP</h5>

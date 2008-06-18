@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,14 +22,15 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="federation.fsserviceproviderhostedprofile"></a><h4>Modification des attributs d'un fournisseur de services h&#233;berg&#233; dans une entit&#233; fournisseur</h4><a name="indexterm-80"></a><p>Apr&#232;s avoir cr&#233;&#233; une entit&#233; et avoir ajout&#233; un fournisseur de services,
+<a name="federation.fsserviceproviderhostedprofile"></a><h4>Modification des attributs d'un fournisseur de services h&#233;berg&#233; dans une entit&#233; fournisseur</h4><a name="indexterm-79"></a><p>Apr&#232;s avoir cr&#233;&#233; une entit&#233; et avoir ajout&#233; un fournisseur de services,
 vous pouvez modifier le profil du fournisseur de services. Ceci peut impliquer
 l'ajout de valeurs aux attributs qu'il n'&#233;tait pas possible de configurer lors
 de l'ajout du fournisseur de services ou la modification des donn&#233;es configur&#233;es.
@@ -105,10 +111,10 @@ chaque fonctionnalit&#233;.</p><dl><dt>Interruption de la f&#233;d&#233;ration</
 </dd>
 </dl>
 </li>
-<li><b>S&#233;lectionnez un des domaines d'authentification disponibles pour l'assigner au fournisseur.</b><p>Un fournisseur peut appartenir &#224; un ou plusieurs domaines d'authentification. Cependant, un
-fournisseur qui n'a pas de domaine d'authentification ne peut pas participer &#224;
-des communications bas&#233;es sur les sp&#233;cifications Liberty Alliance Project. Si aucun domaine
-d'authentification n'a &#233;t&#233; cr&#233;&#233;, vous pouvez d&#233;finir cet attribut plus tard.</p></li>
+<li><b>S&#233;lectionnez l'un des cercles d'approbation disponibles &#224; attribuer au fournisseur.</b><p>Un fournisseur peut appartenir &#224; un ou plusieurs cercles d'approbation. Cependant, un
+fournisseur sans cercle d'approbation sp&#233;cifi&#233; ne peut pas participer &#224; des communications
+bas&#233;es sur les sp&#233;cifications Liberty Alliance Project. Si aucun cercle d'approbation n'a
+&#233;t&#233; cr&#233;&#233;, vous pouvez d&#233;finir cet attribut plus tard.</p></li>
 <li><b>Tapez un nombre positif dans la zone Niveau pour chaque R&#233;f&#233;rence du
 contexte dans l'attribut Contexte d'authentification.</b><p>Ce nombre correspond au niveau d'authentification d&#233;fini pour le module d'authentification sp&#233;cifique.
 L'utilisateur sera redirig&#233; vers un module ayant ce niveau d'authentification.</p>
@@ -147,7 +153,8 @@ L'utilisateur sera redirig&#233; vers un module ayant ce niveau d'authentificati
 <dd><p>Cochez cette case pour activer la f&#233;d&#233;ration d'affiliation.</p></dd>
 </dl>
 </li>
-<li><b>Modifiez les valeurs des attributs de configuration d'Access Manager.</b><p>Ces attributs donnent des informations relatives &#224; cette instance h&#233;berg&#233;e d'Access Manager.</p><dl><dt>Adaptateur fournisseur de services</dt>
+<li><b>Modifiez les valeurs relatives aux attributs de configuration de Federated Access Manager.</b><p>Les attributs de configuration de Federated Access Manager d&#233;finissent des informations relatives
+&#224; cette instance h&#233;berg&#233;e de Access Manager.</p><dl><dt>Adaptateur fournisseur de services</dt>
 <dd><p>D&#233;finit la classe d'impl&#233;mentation de com.sun.identity.federation.plugins.FederationSPAdapter  qui est utilis&#233; pour ajouter un traitement sp&#233;cifique &#224; l'application pendant le processus de f&#233;d&#233;ration.</p></dd>
 <dt>Alias du fournisseur</dt>
 <dd><p>L'alias du fournisseur est le nom utilis&#233; pour identifier le fournisseur h&#233;berg&#233; dans un profil d'entit&#233; et pour d&#233;finir s'il s'agit d'une configuration de fournisseur de services ou d'identit&#233;s. Cette valeur ne doit correspondre &#224; aucune autre et pouvoir &#234;tre repr&#233;sent&#233;e dans un URL. Par exemple : <tt>sunAlias</tt>.</p></dd>
@@ -170,7 +177,7 @@ L'utilisateur sera redirig&#233; vers un module ayant ce niveau d'authentificati
 <li><p>Transport prot&#233;g&#233; par mot de passe</p></li></ul>
 </dd>
 <dt>Authentification forc&#233;e du fournisseur d'identit&#233;s</dt>
-<dd><p>Cochez cette case pour indiquer que le fournisseur d'identit&#233;s doit r&#233;authentifier un utilisateur (m&#234;me pendant une session en direct) lorsqu'il re&#231;oit une nouvelle demande d'authentification. Par d&#233;faut, cet attribut est activ&#233;.</p></dd>
+<dd><p>Cochez cette case pour indiquer que le fournisseur d'identit&#233;s doit r&#233;-authentifier un utilisateur (m&#234;me pendant une session en direct) lorsqu'il re&#231;oit une nouvelle demande d'authentification. Par d&#233;faut, cet attribut est activ&#233;.</p></dd>
 <dt>Demander que le fournisseur d'identit&#233;s soit passif</dt>
 <dd><p>Cochez cette case pour sp&#233;cifier que le fournisseur d'identit&#233;s ne doit pas interf&#233;rer avec l'utilisateur.</p></dd>
 <dt>Domaine</dt>

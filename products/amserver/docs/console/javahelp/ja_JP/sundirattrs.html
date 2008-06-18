@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="sundirattrs"></a><h4>Federated Access Manager スキーマ属性を含んだ Sun Directory Server</h4>
-<p><a name="indexterm-17"></a>Federated Access Manager スキーマを含んだ Directory Server の設定に使用される属性は次のとおりです。</p>
+<p><a name="indexterm-15"></a>Federated Access Manager スキーマを含んだ Directory Server の設定に使用される属性は次のとおりです。</p>
 
 <a name="gdosl"></a><h5>LDAP サーバー</h5>
 <p>接続先 LDAP サーバーの名前を入力します。形式は <tt>hostname.domainname:portnumber</tt> です。</p><p><tt>host:portnumber</tt> エントリを複数入力した場合、リストの先頭にあるホストへの接続が試みられます。リスト内の次のエントリへの接続が試みられるのは、現在のホストへの接続が失敗した場合だけです。</p>
@@ -52,7 +58,7 @@
 <p>使用可能な接続の最大数を指定します。</p>
 
 <a name="gdosp"></a><h5>検索で返される結果の最大数</h5>
-<p>1 回の検索操作で返されるエントリの最大数を指定します。検索要求に一致するエントリがこの制限値に達した時点で、Directory Server はそれをすべて返します。</p>
+<p>1 回の検索操作で返されるエントリの最大数を指定します。この制限値に達すると、Directory Server は検索要求に一致するすべてのエントリを返します。</p>
 
 <a name="gdori"></a><h5>検索タイムアウト</h5>
 <p>1 回の検索要求に割り当てられる秒数の最大値を指定します。この制限値に達すると、Directory Server はその時点で検索要求に一致しているすべての検索エントリを返します。</p>
@@ -93,10 +99,10 @@
 <p>ユーザーのオブジェクトクラスを指定します。ユーザー作成時に、このユーザーオブジェクトクラスのリストがユーザーの属性リストに追加されます。</p>
 
 <a name="gdoro"></a><h5>LDAP ユーザー属性</h5>
-<p>ユーザーと関連付けられる属性のリストを定義します。このリストに含まれていないユーザー属性の読み取りや書き込みは許可されません。これらの属性では大文字と小文字が区別されます。オブジェクトクラスと属性スキーマをここで定義する前に、それらが Directory Server 内で定義されている必要があります。</p>
+<p>ユーザーに関連付けられた属性のリストを定義します。このリストに含まれていないユーザー属性の読み取りや書き込みは許可されません。これらの属性では大文字と小文字が区別されます。オブジェクトクラスと属性スキーマをここで定義する前に、それらが Directory Server 内で定義されている必要があります。</p>
 
 <a name="gdosa"></a><h5>LDAP ユーザー作成属性マッピング</h5>
-<p>ユーザーの作成時に必要となる属性を指定します。この属性で使用する構文は次のとおりです。</p><p><tt>DestinationAttributeName=SourceAttributeName</tt></p><p>ソース属性名を指定しないと、ユーザー ID (<tt>uid</tt>) がデフォルトになります。たとえば、次のように指定します。</p>cn sn=givenName<p>この場合、ユーザープロファイルを作成するには、<tt>cn</tt> と <tt>sn</tt> の両方が必要です。<tt>cn</tt> には <tt>uid</tt> という名前の属性の値が設定され、<tt>sn</tt> には <tt>givenName</tt> という名前の属性の値が設定されます。</p>
+<p>ユーザーの作成時に必要となる属性を指定します。この属性で使用する構文は次のとおりです。</p><p><tt>DestinationAttributeName=SourceAttributeName</tt></p><p>ソース属性名を指定しないと、ユーザー ID (<tt>uid</tt>) がデフォルトになります。次に例を示します。</p>cn sn=givenName<p>この場合、ユーザープロファイルを作成するには、<tt>cn</tt> と <tt>sn</tt> の両方が必要です。<tt>cn</tt> には <tt>uid</tt> という名前の属性の値が設定され、<tt>sn</tt> には <tt>givenName</tt> という名前の属性の値が設定されます。</p>
 
 <a name="gdora"></a><h5>ユーザー状態属性</h5>
 <p>ユーザーの状態を示す属性名を指定します。</p>
@@ -123,7 +129,7 @@
 <p>グループのオブジェクトクラスを指定します。グループ作成時に、このグループオブジェクトクラスのリストがグループの属性リストに追加されます。</p>
 
 <a name="gdoty"></a><h5>LDAP グループ属性</h5>
-<p>グループと関連付けられる属性のリストを定義します。このリストに含まれていないグループ属性の読み取りや書き込みは許可されません。これらの属性では大文字と小文字が区別されます。オブジェクトクラスと属性スキーマをここで定義する前に、それらが Directory Server 内で定義されている必要があります。</p>
+<p>グループに関連付けられた属性のリストを定義します。このリストに含まれていないグループ属性の読み取りや書き込みは許可されません。これらの属性では大文字と小文字が区別されます。オブジェクトクラスと属性スキーマをここで定義する前に、それらが Directory Server 内で定義されている必要があります。</p>
 
 <a name="gdotx"></a><h5>グループメンバーシップ属性</h5>
 <p>DN が属するすべてのグループの名前をその値に持つ属性の名前を指定します。デフォルトは <tt>memberOf</tt> です。</p>

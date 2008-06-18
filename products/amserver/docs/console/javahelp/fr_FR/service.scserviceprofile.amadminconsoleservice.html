@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administration </h4>
-<p><a name="indexterm-194"></a>Le service d'administration vous permet de configurer la console Federated Access Manager
+<p><a name="indexterm-193"></a>Le service d'administration vous permet de configurer la console Federated Access Manager
 au niveau de l'application et du domaine configur&#233; (Pr&#233;f&#233;rences ou Options propres
 &#224; un domaine configur&#233;). Les attributs de service Administration comprennent des attributs
 globaux et de domaine. Ces attributs sont les suivants :</p>
@@ -112,7 +118,7 @@ cet attribut.) La valeur par d&#233;faut est dynamique.</p>
 <ul><li><p>Un groupe statique r&#233;pertorie de mani&#232;re explicite tous les membres du groupe, en utilisant la classe d'objets <tt>groupOfNames</tt> ou <tt>groupOfUniqueNames</tt>. L'entr&#233;e de groupe contient l'attribut <i>uniqueMember</i> de chaque membre du groupe. Les membres d'un groupe statique sont ajout&#233;s manuellement ; l'entr&#233;e utilisateur proprement dite reste inchang&#233;e. Les groupes statiques conviennent aux groupes contenant peu de membres. </p></li>
 <li><p>Un groupe dynamique utilise un attribut <tt>memberOf</tt> dans l'entr&#233;e de chaque membre du groupe. Les membres de groupes dynamiques sont g&#233;n&#233;r&#233;s &#224; l'aide d'un filtre LDAP qui recherche et renvoie toutes les entr&#233;es contenant l'attribut <tt>memberOf</tt>. Les groupes dynamiques conviennent aux groupes comprenant de nombreux membres. </p></li>
 <li><p>Un groupe filtr&#233; utilise un filtre LDAP pour rechercher et renvoyer les membres satisfaisant aux conditions du filtre. Par exemple, le filtre peut g&#233;n&#233;rer des membres avec un uid (<tt>uid=g*</tt>) ou un adresse e-mail (<tt>mail=*@example.com</tt>) sp&#233;cifique. </p></li></ul>
-<p>Dans les exemples ci-dessis, le filtre LDAP renvoie tous les utilisateurs dont
+<p>Dans les exemples ci-dessus, le filtre LDAP renvoie tous les utilisateurs dont
 l'uid commence par <tt>g</tt> ou dont l'adresse e-mail se termine par <tt>example.com</tt>,
 respectivement. Les groupes filtr&#233;s ne peuvent &#234;tre cr&#233;&#233;s dans la vue Gestion
 des utilisateurs qu'en choisissant l'option Appartenance par filtre.</p><p>Un administrateur peut s&#233;lectionner l'une des options suivantes :</p>
@@ -423,8 +429,8 @@ adresses e-mail, en utilisant la syntaxe ci-dessous : </p><p><tt>adresse_e-mail|
 <a name="fsvhw"></a><h5>Liste de notification de la suppression d'utilisateur</h5>
 <p>Ce champ d&#233;finit une liste d'adresses e-mail auxquelles des notifications seront envoy&#233;es
 en cas de suppression d'un utilisateur. Il est possible d'indiquer plusieurs adresses
-e-mail, en utilisant la syntaxe ci-dessous : </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt></p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.</p><p>Pour consulter la liste des langues disponibles, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Vous pouvez changer l'ID dadresse e-mail de l'exp&#233;diteur en modifiant la propri&#233;t&#233;
-497 dans le fichier <tt>amProfile.properties</tt> situ&#233; par d&#233;faut &#224; l'emplacement <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale</tt>.</p><p>L'ID d'exp&#233;diteur par d&#233;faut est <tt>DSAME</tt>.</p>
+e-mail, en utilisant la syntaxe ci-dessous : </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt></p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.</p><p>Pour consulter la liste des langues disponibles, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Vous pouvez changer l'ID d'adresse e-mail de l'exp&#233;diteur en modifiant la propri&#233;t&#233;
+497 dans le fichier <tt>amProfile.properties</tt> situ&#233; par d&#233;faut &#224; l'emplacement <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale </tt>.</p><p>L'ID d'exp&#233;diteur par d&#233;faut est <tt>DSAME</tt>.</p>
 
 <a name="fsvhx"></a><h5>Liste de notification de la modification d'utilisateur</h5>
 <p>D&#233;finit une liste d'attributs et d'adresses e-mail associ&#233;es &#224; l'attribut. Lorsqu'une modification

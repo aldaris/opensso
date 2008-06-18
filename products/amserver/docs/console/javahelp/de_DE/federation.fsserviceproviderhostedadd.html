@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -40,11 +46,11 @@ die anf&#228;ngliche Konfiguration nicht angezeigt. Siehe <a href="federation.fs
 </dd>
 </dl>
 </li>
-<li><b>W&#228;hlen Sie eine der zur Verf&#252;gung stehenden Authentifizierungsdom&#228;nen aus, um sie dem
-Anbieter zuzuweisen.</b><p>Anbieter k&#246;nnen zu einer oder mehreren Authentifizierungsdom&#228;nen geh&#246;ren. Ein Anbieter, bei dem
-keine Authentifizierungsdom&#228;ne angegeben ist, kann jedoch nicht an Kommunikationen teilnehmen, die auf
-den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Authentifizierungsdom&#228;nen erstellt wurden, k&#246;nnen
-Sie dieses Attribut sp&#228;ter definieren.</p></li>
+<li><b>W&#228;hlen Sie einen der verf&#252;gbaren Circles of Trust aus, der dem Anbieter
+zugewiesen werden soll.</b><p>Ein Anbieter kann zu mehreren Circles of Trust geh&#246;ren. Ein Anbieter, f&#252;r
+den kein Circle of Trust angegeben ist, kann jedoch nicht an Kommunikationen
+teilnehmen, die auf den  Liberty Alliance Project-Spezifikationen beruhen. Wenn keine Circles
+of Trust erstellt wurden, k&#246;nnen Sie dieses Attribut sp&#228;ter definieren.</p></li>
 <li><b>Geben Sie Informationen f&#252;r die Dienstanbieterattribute an.</b><p>Dienstanbieterattribute legen allgemeine Informationen zum Dienstanbieter fest.</p><dl><dt>Assertion Consumer-URL</dt>
 <dd><p>Geben Sie einen URL zu dem Endpunkt ein, der alle SAML-Assertionen empf&#228;ngt und verarbeitet, die an den Dienstanbieter gesendet werden.</p></dd>
 <dt>URL-ID des Assertion Consumer-Dienstes</dt>
@@ -53,7 +59,7 @@ Sie dieses Attribut sp&#228;ter definieren.</p></li>
 <dd><p>Aktivieren Sie dieses Kontrollk&#228;stchen, wenn Sie den URL des Assertion Consumer-Dienstes als Standardwert verwenden m&#246;chten, falls eine Anforderung keinen Bezeichner enth&#228;lt.</p></dd>
 </dl>
 </li>
-<li><b>Geben Sie Informationen f&#252;r die Access Manager-Konfigurationsattribute an.</b><p>Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Access Manager fest.</p><dl><dt>Anbieter-URL</dt>
+<li><b>Geben Sie Informationen f&#252;r die Attribute der Federated Access Manager-Konfiguration an.</b><p>Access Manager-Konfigurationsattribute legen Informationen zu dieser Host-Instanz von Access Manager fest.</p><dl><dt>Anbieter-URL</dt>
 <dd><p>Geben Sie den URL des Anbieters ein, der sich an einem lokalen Ort befindet.</p></dd>
 <dt>Anbieter-Alias</dt>
 <dd><p>Der Anbieter-Alias ist ein Name, der verwendet wird, um den Host-Anbieter innerhalb des Entity-Profils zu identifizieren, zu dem er geh&#246;rt. Er legt fest, ob es sich bei dem Anbieter um einen Dienstanbieter oder eine Identit&#228;tsanbieter-Konfiguration handelt. Der Wert muss eindeutig sein und als URL dargestellt werden k&#246;nnen. Beispiel: <tt>sunAlias</tt>.</p></dd>

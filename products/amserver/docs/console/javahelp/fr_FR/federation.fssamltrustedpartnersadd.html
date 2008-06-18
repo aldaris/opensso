@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="federation.fssamltrustedpartnersadd"></a><h5>Partenaires de confiance : configuration des attributs du partenaire de confiance</h5>
-<a name="indexterm-91"></a><p>Voici la seconde partie de la proc&#233;dure de configuration d'un partenaire de
+<a name="indexterm-90"></a><p>Voici la seconde partie de la proc&#233;dure de configuration d'un partenaire de
 confiance. Le point de d&#233;part est <a href="federation.fssamlselecttrustedpartnertype.html">Partenaires de confiance : s&#233;lection du type et du profil de partenaire</a> Selon le(s) r&#244;le(s) s&#233;lectionn&#233;(s) au
 cours de la premi&#232;re partie, vous pouvez avoir &#224; d&#233;finir certains des
 sous-attributs r&#233;pertori&#233;s dans les sections suivantes.</p>
@@ -50,7 +56,7 @@ pour terminer la modification. </p>
 <ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
 <li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
 </dd>
-<dt>Mappeur de comptes</dt>
+<dt>Mappeur d'identificateur de nom</dt>
 <dd><p>Classe qui d&#233;finit comment l'objet d'une assertion est associ&#233; &#224; une identit&#233; sur le site de destination. Un mappeur de comptes doit &#234;tre impl&#233;ment&#233; &#224; partir de l'interface <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper </tt>. La valeur par d&#233;faut est <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper </tt> .</p><p>Si aucune classe n'est d&#233;finie, aucun attribut ne sera inclus dans l'assertion.</p></dd>
 <dt>Certificat</dt>
 <dd><p>Alias de certificat utilis&#233; pour v&#233;rifier la signature dans une assertion lorsque celle-ci est sign&#233;e par le partenaire et que le certificat est introuvable dans la partie <tt>KeyInfo</tt> de l'assertion sign&#233;e.</p></dd>
@@ -79,7 +85,7 @@ pour terminer la modification. </p>
 <li><p>Sp&#233;cifiez <tt>SSL</tt> si l'URL vers le r&#233;cepteur SOAP SAML est accessible via HTTPS, et si le r&#233;cepteur SOAP SAML n'est pas prot&#233;g&#233; par une authentification de base HTTP.</p></li>
 <li><p>Sp&#233;cifiez <tt>SSLWITHBASICAUTH</tt> si l'URL vers le r&#233;cepteur SOAP SAML est accessible via HTTPS, et si le r&#233;cepteur SOAP SAML est prot&#233;g&#233; par une authentification de base HTTP.</p></li></ul>
 
-<hr><p><b>Remarque &#8211; </b>Si vous prot&#233;gez l'URL du r&#233;cepteur SOAP SAML avec une authentification de base HTTP, vous devez le faire &#224; partir de la configuration du conteneur Web et pas depuis la configuration Access Manager. Cependant, vous devez effectivement fournir l'ID utilisateur d'authentification de base HTTP et le mot de passe dans la configuration Access Manager.</p>
+<hr><p><b>Remarque &#8211; </b>Si vous prot&#233;gez l'URL du r&#233;cepteur SOAP SAML avec une authentification de base HTTP, vous devez le faire &#224; partir de la configuration du conteneur Web et pas depuis la configuration de Federated Access Manager. Cependant, vous devez effectivement fournir l'ID utilisateur d'authentification de base HTTP et le mot de passe dans la configuration de Federated Access Manager.</p>
 <hr>
 <p>Cet attribut est facultatif. S'il n'est pas sp&#233;cifi&#233;, la valeur par d&#233;faut est <tt>NOAUTH</tt>. Si <tt>BASICAUTH</tt> ou <tt>SSLWITHBASICAUTH</tt> est sp&#233;cifi&#233;, l'attribut Partenaires de confiance est requis et doit &#234;tre <tt>HTTPS</tt>.</p></dd>
 <dt>Utilisateur</dt>

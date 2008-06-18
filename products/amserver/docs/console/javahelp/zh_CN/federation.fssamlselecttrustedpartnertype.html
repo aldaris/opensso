@@ -1,6 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -17,7 +22,8 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
@@ -25,7 +31,7 @@
 
 
 <a name="federation.fssamlselecttrustedpartnertype"></a><h5>可信赖的伙伴：选择伙伴类型和配置文件</h5>
-<a name="indexterm-89"></a><a name="indexterm-90"></a><p>此属性定义了即将与 Access Manager 进行通信的任何可信赖伙伴（需远程访问装有 Access Manager 的服务器）。</p>
+<a name="indexterm-88"></a><a name="indexterm-89"></a><p>此属性定义了将与 Federated Access Manager 进行通信的所有可信赖的伙伴（远程至安装了 Federated Access Manager 的服务器）。</p>
 <hr><p><b>注 &#8211; </b>必须预先在可信赖的伙伴站点与“站点标识符”属性中配置的一个或多个站点之间安排某种信赖关系。</p>
 <hr>
 <p>配置可信赖伙伴的第一步是确定伙伴在信赖关系中的角色。可信赖伙伴可以是源站点（生成单点登录声明）或目标站点（使用单点登录声明）。例如，如果该伙伴是源站点，则根据它发送声明的方式来配置此属性。如果该伙伴是目标站点，则根据它接收声明的配置文件来配置此属性。以下是配置可信赖伙伴的步骤的第一部分。起点是联合下的 "SAML" 屏幕。</p>

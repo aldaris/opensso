@@ -1,12 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
+<!--
+
+-->
+
 <head>
 
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>承認 - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>オーサライザ - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -17,23 +22,24 @@
         }
     }
   </script>
-  <meta name="Copyright" content="Copyright &#169; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
 </head>
 
 <body class="HlpBdy">
 
 
 
-<a name="authorizer"></a><h4>承認</h4>
-<a name="indexterm-97"></a><a name="indexterm-98"></a><p>要求を処理する前に、Liberty 個人プロファイルサービスは要求を行っている WSC の承認を検証します。実行できる認証チェックには、次の 2 つのレベルがあります。</p>
+<a name="authorizer"></a><h4>オーサライザ</h4>
+<a name="indexterm-96"></a><a name="indexterm-97"></a><p>要求を処理する前に、Liberty 個人プロファイルサービスは要求を行なっている WSC の承認を検証します。実行できる認証チェックには、次の 2 つのレベルがあります。</p>
 <ol><li><p>要求元のエンティティーは、要求しているリソースのプロファイル情報へのアクセスを許可されているかどうか</p></li>
 <li><p>要求されたリソースが要求者に公開されているかどうか</p></li></ol>
-<p>承認は Liberty 個人プロファイルサービスへのプラグインを介して行われます。このプラグインは、<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> インタフェースの実装です。新しい実装を作成できますが、Access Manager ではデフォルトの <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt> が提供されます。このプラグインは、クエリー操作と変更操作のための 4 つのポリシーアクション値を定義します。</p>
+<p>承認は Liberty 個人プロファイルサービスへのプラグインを介して行われます。このプラグインは、<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> インタフェースの実装です。新しい実装を作成できますが、Federated Access Manager ではデフォルトの <tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt> が提供されます。このプラグインは、クエリー操作と変更操作のための 4 つのポリシーアクション値を定義します。</p>
 <ul><li><p>許可</p></li>
 <li><p>拒否</p></li>
 <li><p>同意を求める対話プロトコルの呼び出し</p></li>
 <li><p>値を求める対話プロトコルの呼び出し</p></li></ul>
-<p>ルールのリソース値は、Liberty 個人プロファイルサービスで定義されている <tt>x-path</tt> 式に似ています。</p>/PP/CommonName/AnalyzedName/FN     クエリー     同意を求める対話プロトコルの呼 び出し /PP/CommonName/*                          変更     値を求める対話プロトコルの呼び出し /PP/InformalName                            クエリー     拒否<p>認証は、次の属性のいずれかまたは両方を選択解除することによって無効にできます。これらの属性も Liberty 個人プロファイルサービスに定義されています。</p>
+<p>ルールのリソース値は、Liberty 個人プロファイルサービスで定義されている <tt>x-path</tt> 式に似ています。</p>/PP/CommonName/AnalyzedName/FN     クエリー     同意を求める対話プロトコルの呼び出し /PP/CommonName/*                          変更     値を求める対話プロトコルの呼び出し /PP/InformalName                            クエリー     拒否<p>認証は、次の属性のいずれかまたは両方を選択解除することによって無効にできます。これらの属性も Liberty 個人プロファイルサービスに定義されています。</p>
 <ul><li><p><a href="requirequery.html">「ポリシー評価のクエリーが必要:」</a></p></li>
 <li><p><a href="requiremodify.html">「ポリシー評価の変更が必要:」</a></p></li></ul>
 
