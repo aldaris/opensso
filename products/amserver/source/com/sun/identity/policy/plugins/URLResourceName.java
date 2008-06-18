@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLResourceName.java,v 1.2 2006-08-25 21:21:11 veiming Exp $
+ * $Id: URLResourceName.java,v 1.3 2008-06-18 22:32:38 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -156,7 +156,7 @@ public class URLResourceName
         }
         
         if (query != null) {
-            int indexQuery = urlPath.indexOf(query); 
+            int indexQuery = urlPath.lastIndexOf(query); 
             String prefix = super.canonicalize(
                 urlPath.substring(0, indexQuery));
             // check if there are more than one query parameters
