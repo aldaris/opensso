@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleServletBase.java,v 1.1 2007-02-07 20:19:38 jonnelson Exp $
+ * $Id: ConsoleServletBase.java,v 1.2 2008-06-18 20:52:32 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,7 @@ public abstract class ConsoleServletBase
     
     // The deployment uri for the admin console, set at install time.
     protected static String consoleURI = 
-        SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        SystemProperties.get(Constants.AM_CONSOLE_DEPLOYMENT_DESCRIPTOR);
 
     // Console URL
     protected static String consoleURL = 
