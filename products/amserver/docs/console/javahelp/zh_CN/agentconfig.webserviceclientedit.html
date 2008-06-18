@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Web 服务客户机属性 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webserviceclientedit"></a><h4>Web 服务客户机属性</h4>
+<p>Web 服务客户机代理配置文件描述用于保护 Web 服务客户机的 Web 服务请求的配置。对每个 Web 服务客户机而言，Web 服务的名称必须唯一。</p>
+
+<a name="gglmr"></a><h5>常规</h5>
+<p>以下“常规”属性定义 Web 服务客户机的基本属性：</p>
+
+<a name="ggoue"></a><h5>组</h5>
+<p>可通过“组”机制来定义相似代理类型的集合。组必须在将特定代理纳入集合之前进行定义。</p>
+
+<a name="ggowm"></a><h5>密码</h5>
+<p>定义 Web 服务客户机属性的密码。</p>
+
+<a name="ggoti"></a><h5>密码确认</h5>
+<p>确认密码。</p>
+
+<a name="ggllf"></a><h5>状态</h5>
+<p>定义 Web 服务客户机是否参与保护外部服务请求。默认情况下，该属性设置为<tt>激活</tt>，即参与保护。</p>
+
+<a name="gglje"></a><h5>通用标识符</h5>
+<p>列出用于唯一定义 Web 服务客户机代理的基本 LDAP 属性。</p>
+
+<a name="gglnb"></a><h5>安全</h5>
+<p>以下属性定义 Web 服务客户机的安全属性：</p>
+
+<a name="ggliy"></a><h5>安全机制</h5>
+<p>定义用于保护 Web 服务客户机请求的安全证书类型。可选择以下安全类型：</p>
+<ul><li><p>匿名 &#8212; 匿名安全机制不包含安全证书。</p></li>
+<li><p>LibertyDiscoverySecurity &#8212; 使用基于 Liberty 的安全令牌来保护请求。</p></li>
+<li><p>SAML-HolderOfKey &#8212; 使用 SAML 1.1 声明类型 Holder-Of-Key 来保护请求。</p></li>
+<li><p>SAML-SenderVouches &#8212; 使用 SAML 1.1 声明类型 Sender Vouches 来保护请求。</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; 使用 SAML 2.0 声明令牌类型 Holder-Of-Key 来保护请求。</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; 使用 SAML 2.0 声明令牌类型 Sender Vouches 来保护请求。</p></li>
+<li><p>STSSecurity &#8212; 定义 Web 服务客户机从安全令牌服务获取安全令牌。</p></li>
+<li><p>UserNameToken &#8212; 使用用户名令牌来保护 Web 服务客户机请求。</p></li>
+<li><p>UserNameToken-Plain &#8212; 使用带有明文密码的用户名令牌来保护 Web 服务请求。</p></li>
+<li><p>X509Token &#8212; 使用 X509 证书来保护 Web 服务请求。</p></li></ul>
+
+
+<a name="gglmn"></a><h5>STS 配置</h5>
+<p>当 Web 服务客户机使用安全令牌服务 (Security Token service, STS) 时，启用该属性。该配置描述用于保护 STS 服务请求的 STS 代理配置文件列表。</p>
+
+<a name="ggljq"></a><h5>搜索配置</h5>
+<p>当为搜索服务安全启用 Web 服务客户机时，启用该属性。该配置描述用于保护向搜索服务所作请求的搜索代理配置文件列表。</p>
+
+<a name="ggljr"></a><h5>需要进行用户验证</h5>
+<p>启用后，该属性定义服务客户机保护页面要求用户经过验证才能获取访问权限。</p>
+
+<a name="gglmd"></a><h5>保留消息中的安全头</h5>
+<p>启用后，该属性定义为 Web 服务客户机保留 SOAP 安全头，以进行进一步处理。</p>
+
+<a name="ggllx"></a><h5>Liberty 服务类型 URN</h5>
+<p>URN（Universal Resource Name，通用资源名称）描述 Web 服务客户机用于服务查找的 Liberty 服务类型。</p>
+
+<a name="gglji"></a><h5>用户令牌的证书</h5>
+<p>该属性表示 Web 服务客户机用来生成用户名安全令牌的用户名/密码共享密钥。</p>
+
+<a name="ggliu"></a><h5>签署和加密</h5>
+<p>以下属性定义 Web 服务安全的签署和加密配置：</p>
+
+<a name="gglna"></a><h5>请求是否已签名</h5>
+<p>启用后，Web 服务客户机使用给定的令牌类型签署请求。</p>
+
+<a name="ggllb"></a><h5>请求标头是否已加密</h5>
+<p>启用后，将加密 Web 服务客户机的安全标头。</p>
+
+<a name="gglnh"></a><h5>请求是否已加密</h5>
+<p>启用后，将启用 Web 服务客户机请求。</p>
+
+<a name="ggljs"></a><h5>响应签名是否已验证</h5>
+<p>启用后，会验证 Web 服务响应签名。</p>
+
+<a name="gglks"></a><h5>响应是否已解密</h5>
+<p>启用后，将解密 Web 服务响应。</p>
+
+<a name="ggllsa"></a><h5>密钥库</h5>
+<p>以下属性配置用于证书存储和检索的密钥库：</p>
+
+<a name="ggllda"></a><h5>Web 服务提供者的公钥别名</h5>
+<p>该属性定义用于加密 Web 服务请求的公共证书密钥别名。</p>
+
+<a name="gglmca"></a><h5>私钥别名</h5>
+<p>该属性定义用于签署/解密 Web 服务响应的私有证书密钥别名。</p>
+
+<a name="ggljfa"></a><h5>密钥存储库用法</h5>
+<p>该配置定义是使用默认的密钥库，还是使用自定义的密钥库。必须为自定义密钥库定义以下值：</p>
+<ul><li><p>密钥库位置</p></li>
+<li><p>密钥库密码</p></li>
+<li><p>密钥密码</p></li></ul>
+
+
+<a name="endpoint"></a><h5>端点</h5>
+<p>以下属性定义 Web 服务端点：</p>
+
+<a name="gglmpa"></a><h5>Web 服务端点</h5>
+<p>该属性定义 Web 服务客户机发送请求的 Web 服务端点。</p>
+<br/>
+
+</body>
+</html>

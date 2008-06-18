@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>安全令牌服务 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webservicestsedit"></a><h4>安全令牌服务</h4>
+<p>安全令牌服务是提供颁发和管理安全令牌的 Web 服务。即它常常以加密的设置发出安全性语句或声明，即使这些安全性语句或声明并非必要。这些语句以能够直接验证的证据或从信任授权机构获得的安全令牌为基础。要断言信任，服务可能会通过提供 STS 发布的一个或一组安全令牌来证明其权利，或者它可以发布带有自己信任语句的安全令牌（请注意，对于某些安全令牌格式，这可能只是重新发布或联合签名）。这构成了信任代理的基础。</p>
+
+<a name="ggpce"></a><h5>常规</h5>
+<p>以下“常规”属性定义安全令牌服务的基本属性：</p>
+
+<a name="ggpct"></a><h5>组</h5>
+<p>可通过“组”机制来定义相似代理类型的集合。组必须在将特定代理纳入集合之前进行定义。</p>
+
+<a name="ggpec"></a><h5>密码</h5>
+<p>定义安全令牌服务属性的密码。</p>
+
+<a name="ggpex"></a><h5>密码确认</h5>
+<p>确认密码。</p>
+
+<a name="ggpdu"></a><h5>状态</h5>
+<p>定义安全令牌服务代理是否参与保护外部服务请求。默认情况下，该属性设置为<tt>激活</tt>，即参与保护。</p>
+
+<a name="ggpdg"></a><h5>通用标识符</h5>
+<p>列出用于唯一定义安全令牌服务代理的基本 LDAP 属性。</p>
+
+<a name="ggpfe"></a><h5>安全</h5>
+<p>以下属性定义安全令牌服务的安全属性：</p>
+
+<a name="ggpdy"></a><h5>安全机制</h5>
+<p>定义用于保护安全令牌服务请求的安全证书类型。可选择以下安全类型：</p>
+<ul><li><p>匿名 &#8212; 匿名安全机制不包含安全证书。</p></li>
+<li><p>LibertyDiscoverySecurity &#8212; 使用基于 Liberty 的安全令牌来保护请求。</p></li>
+<li><p>SAML-HolderOfKey &#8212; 使用 SAML 1.1 声明类型 Holder-Of-Key 来保护请求。</p></li>
+<li><p>SAML-SenderVouches &#8212; 使用 SAML 1.1 声明类型 Sender Vouches 来保护请求。</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; 使用 SAML 2.0 声明令牌类型 Holder-Of-Key 来保护请求。</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; 使用 SAML 2.0 声明令牌类型 Sender Vouches 来保护请求。</p></li>
+<li><p>STSSecurity &#8212; 定义安全令牌服务代理从安全令牌服务获取安全令牌。</p></li>
+<li><p>UserNameToken &#8212; 使用用户名令牌来保护安全令牌服务请求。</p></li>
+<li><p>UserNameToken-Plain &#8212; 使用带有明文密码的用户名令牌来保护安全令牌服务请求。</p></li>
+<li><p>X509Token &#8212; 使用 X509 证书来保护安全令牌服务代理请求。</p></li></ul>
+
+
+<a name="ggpdk"></a><h5>STS 配置</h5>
+<p>当安全令牌服务代理使用安全令牌服务 (Security Token service, STS) 时，启用该属性。该配置描述用于保护 STS 服务请求的 STS 代理配置文件列表。</p>
+
+<a name="ggpfs"></a><h5>保留消息中的安全头</h5>
+<p>启用后，该属性定义为安全令牌服务保留 SOAP 安全头，以进行进一步处理。</p>
+
+<a name="ggpej"></a><h5>用户令牌的证书</h5>
+<p>该属性表示安全令牌服务代理用来生成用户名安全令牌的用户名/密码共享密钥。</p>
+
+<a name="ggpbt"></a><h5>签署和加密</h5>
+<p>以下属性定义安全令牌服务的签署和加密配置：</p>
+
+<a name="ggpdp"></a><h5>请求是否已签名</h5>
+<p>启用后，安全令牌服务代理使用给定的令牌类型签署请求。</p>
+
+<a name="ggpcn"></a><h5>请求标头是否已加密</h5>
+<p>启用后，将加密安全令牌服务代理的安全标头。</p>
+
+<a name="ggpca"></a><h5>请求是否已加密</h5>
+<p>启用后，将启用安全令牌服务请求。</p>
+
+<a name="ggpfo"></a><h5>响应签名是否已验证</h5>
+<p>启用后，将验证安全令牌服务响应签名。</p>
+
+<a name="ggpdo"></a><h5>响应是否已解密</h5>
+<p>启用后，将解密安全令牌服务响应。</p>
+
+<a name="ggpeh"></a><h5>密钥库</h5>
+<p>以下属性配置用于证书存储和检索的密钥库：</p>
+
+<a name="ggpcg"></a><h5>Web 服务提供者的公钥别名</h5>
+<p>该属性定义用于加密 Web 服务请求的公共证书密钥别名。</p>
+
+<a name="ggpfg"></a><h5>私钥别名</h5>
+<p>该属性定义用于签署/解密 Web 服务响应的私有证书密钥别名。</p>
+
+<a name="ggpdc"></a><h5>密钥存储库用法</h5>
+<p>该配置定义是使用默认的密钥库，还是使用自定义的密钥库。必须为自定义密钥库定义以下值：</p>
+<ul><li><p>密钥库位置</p></li>
+<li><p>密钥库密码</p></li>
+<li><p>密钥密码</p></li></ul>
+
+
+<a name="ggpbr"></a><h5>端点</h5>
+<p>以下属性定义 Web 服务端点：</p>
+
+<a name="ggpfc"></a><h5>Web 服务端点</h5>
+<p>该属性定义 Web 服务客户机发送请求的 Web 服务端点。</p>
+<br/>
+
+</body>
+</html>

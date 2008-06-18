@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>보안 토큰 서비스 - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webservicestsedit"></a><h4>보안 토큰 서비스</h4>
+<p>보안 토큰 서비스는 보안 토큰을 발급하고 관리하는 웹 서비스입니다. 이 서비스는 반드시
+필요하지는 않지만 종종 암호화된 집합에서 보안 명령문이나 요청을 수행하는 데 사용됩니다. 이러한
+명령문은 수신하여 직접 확인할 수 있는 증거 또는 신뢰할 수 있는 기관의
+보안 토큰을 바탕으로 합니다. 신뢰를 확인하기 위해 서비스는 STS가 발급한 보안 토큰
+또는 보안 토큰 집합을 제공하여 일련의 요청을 확인할 권리가 있음을 증명할 수
+있으며, 자체 신뢰 명령문이 있는 보안 토큰을 발급할 수도 있습니다(일부 보안 토큰
+형식의 경우 재발급 또는 공동 서명에 불과할 수 있음). 이를 통해 신뢰
+브로커링의 기초를 형성합니다.</p>
+
+<a name="ggpce"></a><h5>일반</h5>
+<p>다음 일반 속성은 기본 보안 토큰 서비스 등록 정보를 정의합니다.</p>
+
+<a name="ggpct"></a><h5>그룹</h5>
+<p>그룹 메커니즘을 사용하면 유사한 에이전트 유형 모음을 정의할 수 있습니다. 그룹은 특정
+에이전트를 에이전트 유형 모음에 포함하기 전에 정의해야 합니다. </p>
+
+<a name="ggpec"></a><h5>비밀번호</h5>
+<p>보안 토큰 서비스 속성의 비밀번호를 정의합니다.</p>
+
+<a name="ggpex"></a><h5>비밀번호 확인</h5>
+<p>비밀번호를 확인합니다.</p>
+
+<a name="ggpdu"></a><h5>상태</h5>
+<p>보안 토큰 서비스 에이전트가 아웃바운드 서비스 요청 보호에 참여할지 여부를 정의합니다. 기본적으로
+<tt>활성</tt>으로 설정되며, 이는 아웃바운드 서비스 요청 보호에 참여함을 의미합니다. </p>
+
+<a name="ggpdg"></a><h5>범용 식별자</h5>
+<p>보안 토큰 서비스 에이전트를 고유하게 정의하는 기본 LDAP 등록 정보를 나열합니다.</p>
+
+<a name="ggpfe"></a><h5>보안</h5>
+<p>다음 속성은 보안 토큰 서비스 보안 속성을 정의합니다.</p>
+
+<a name="ggpdy"></a><h5>보안 메커니즘</h5>
+<p>보안 토큰 서비스 요청을 보호하는 데 사용할 보안 자격 증명 유형을 정의합니다.
+다음 보안 유형 중에서 선택할 수 있습니다.</p>
+<ul><li><p>익명 &#8212; 익명 보안 메커니즘에 보안 자격 증명이 포함되지 않습니다.</p></li>
+<li><p>LibertyDiscoverySecurity &#8212; 리버티 기반 보안 토큰을 사용하여 요청을 보호합니다.</p></li>
+<li><p>SAML-HolderOfKey &#8212; SAML 1.1 명제 유형 Holder-Of-Key를 사용하여 요청을 보호합니다.</p></li>
+<li><p>SAML-SenderVouches &#8212; SAML 1.1 명제 유형 Sender Vouches를 사용하여 요청을 보호합니다.</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; SAML 2.0 명제 토큰 유형 Holder-Of-Key를 사용하여 요청을 보호합니다.</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; SAML 2.0 명제 토큰 유형 Sender Vouches를 사용하여 요청을 보호합니다.</p></li>
+<li><p>STSSecurity &#8212; 보안 토큰 서비스 에이전트가 보안 토큰 서비스에서 보안 토큰을 가져옵니다. </p></li>
+<li><p>UserNameToken &#8212; 사용자 이름 토큰을 사용하여 보안 토큰 서비스 요청을 보호합니다.</p></li>
+<li><p>UserNameToken-Plain &#8212; 일반 텍스트 비밀번호가 있는 사용자 이름 토큰을 사용하여 보안 토큰 서비스 요청을 보호합니다.</p></li>
+<li><p>X509Token &#8212; X509 인증서를 사용하여 보안 토큰 서비스 에이전트 요청을 보호합니다.</p></li></ul>
+
+
+<a name="ggpdk"></a><h5>STS 구성</h5>
+<p>보안 토큰 서비스 에이전트가 보안 토큰 서비스(STS)를 사용하는 경우 이 속성을 사용합니다.
+이 구성은 STS 서비스에 대한 요청을 보호하는 데 사용하는 STS 에이전트 프로필
+목록을 설명합니다.</p>
+
+<a name="ggpfs"></a><h5>메시지의 보안 헤더 보존</h5>
+<p>이 속성을 사용하면 향후 처리를 위해 보안 토큰 서비스 에이전트가 SOAP 보안
+헤더를 보존합니다.</p>
+
+<a name="ggpej"></a><h5>사용자 토큰의 자격 증명</h5>
+<p>이 속성은 보안 토큰 서비스 에이전트가 사용자 이름 보안 토큰을 생성하는 데
+사용할 사용자 이름/비밀번호 공유 비밀을 나타냅니다.</p>
+
+<a name="ggpbt"></a><h5>서명 및 암호화</h5>
+<p>다음 속성은 보안 토큰 서비스에 대한 서명 및 암호화 구성을 정의합니다.</p>
+
+<a name="ggpdp"></a><h5>요청 서명됨</h5>
+<p>이 속성을 사용하면 보안 토큰 서비스 에이전트가 해당 토큰 유형을 사용하여 요청에
+서명합니다.</p>
+
+<a name="ggpcn"></a><h5>요청 헤더 암호화됨</h5>
+<p>이 속성을 사용하면 보안 토큰 서비스 에이전트 보안 헤더가 암호화됩니다.</p>
+
+<a name="ggpca"></a><h5>요청 암호화됨</h5>
+<p>이 속성을 사용하면 보안 토큰 서비스 요청이 활성화됩니다.</p>
+
+<a name="ggpfo"></a><h5>응답 서명 확인됨</h5>
+<p>이 속성을 사용하면 보안 토큰 서비스 응답 서명을 확인합니다.</p>
+
+<a name="ggpdo"></a><h5>응답 해독됨</h5>
+<p>이 속성을 사용하면 보안 토큰 서비스 응답이 해독됩니다. </p>
+
+<a name="ggpeh"></a><h5>키 저장소</h5>
+<p>다음 속성은 인증서 저장소 및 검색에 사용할 키 저장소를 구성합니다. </p>
+
+<a name="ggpcg"></a><h5>웹 서비스 공급자의 공개 키 별칭</h5>
+<p>이 속성은 웹 서비스 요청을 암호화하는 데 사용하는 공개 인증서 키 별칭을
+정의합니다.</p>
+
+<a name="ggpfg"></a><h5>개인 키 별칭</h5>
+<p>이 속성은 웹 서비스 응답을 서명/해독하는 데 사용하는 개인 인증서 키 별칭을
+정의합니다.</p>
+
+<a name="ggpdc"></a><h5>키 저장소 사용</h5>
+<p>이 구성은 기본 키 저장소를 사용할지 또는 사용자 정의 키 저장소를 사용할지
+정의합니다. 사용자 정의 키 저장소에 대해 다음 값을 정의해야 합니다.</p>
+<ul><li><p>키 저장소 위치</p></li>
+<li><p>키 저장소 비밀번호</p></li>
+<li><p>키 비밀번호</p></li></ul>
+
+
+<a name="ggpbr"></a><h5>엔드포인트</h5>
+<p>다음 속성은 웹 서비스 엔드포인트를 정의합니다.</p>
+
+<a name="ggpfc"></a><h5>웹 서비스 엔드포인트</h5>
+<p>이 속성은 웹 서비스 클라이언트가 요청을 보낼 웹 서비스 엔드포인트를 정의합니다.</p>
+<br/>
+
+</body>
+</html>

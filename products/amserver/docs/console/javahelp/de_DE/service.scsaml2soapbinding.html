@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>SAMLv2 SOAP Binding - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="service.scsaml2soapbinding"></a><h4>SAMLv2 SOAP Binding</h4>
+
+
+<a name="ggokv"></a><h5>Anforderungs-Handler-Liste</h5>
+<a name="indexterm-198"></a><a name="indexterm-199"></a><p>Zur Verarbeitung einer Anforderungsnachricht und zur R&#252;ckgabe einer Antwort stellt der 
+SOAP Binding-Dienst die <tt>RequestHandler</tt>-Schnittstelle bereit. Die Schnittstelle muss serverseitig von jedem Liberty-basierten
+Identit&#228;tsdienst implementiert sein, der den SOAP Binding-Dienst nutzt. Das Attribut "Anforderungs-Handler-Liste" speichert
+Informationen &#252;ber die Implementierungsklassen der Webdienste, die den Anforderungs-Handler implementieren. Die Anforderungs-Handler-Liste
+enth&#228;lt Eintr&#228;ge mit Schl&#252;ssel-/Wertepaaren, die durch ein Pipe-Zeichen getrennt sind. Zum Beispiel:
+<tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>. Die Parameter werden in der folgenden Tabelle erl&#228;utert.</p><table><col width="50%"><col width="50%"><tr><th align="left" valign="top" scope="column"><p>Parameter</p></th>
+<th align="left" valign="top" scope="column"><p>Kopfzeile</p></th>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
+<td align="left" valign="top" scope="row"><p>Der erforderliche <tt>key</tt>-Parameter ist
+der letzte Teil des URI-Pfads eines SOAP-Endpunkts. In Access Manager  ist
+der SOAP-Endpunkt das SOAP-Empf&#228;nger-Servlet. Der URI des SOAP Empf&#228;ngers lautet wie folgt:
+<tt><b></tt><i>protocol</i><tt>://</tt><i> host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key </b></tt> Wenn Sie <tt><b>disco</b></tt> als Schl&#252;ssel definieren, w&#252;rde der URI-Pfad zum SOAP-Endpunkt
+f&#252;r den entsprechenden Discovery-Dienst wie folgt lauten: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Die einzelnen Dienstclients verwenden
+beim Verbindungsaufbau mit dem SOAP-Empf&#228;nger unterschiedliche Schl&#252;ssel.</p></td>
+</tr>
+<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
+<td align="left" valign="top" scope="row"><p>Der erforderliche <tt>class</tt>-Parameter gibt den Namen
+der Implementierungsklasse des Anforderungs-Handlers f&#252;r den jeweiligen Identit&#228;tsdienst an. Beispiel: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></td>
+</tr>
+</table><p>Informationen zum Hinzuf&#252;gen eines neuen Anforderungs-Handlers finden Sie unter <b>Broken Link (Target ID: SERVICE.SCSAML2SOAPBINDINGREQUESTHANDLERLISTADD)</b>.</p>
+<br/>
+
+</body>
+</html>

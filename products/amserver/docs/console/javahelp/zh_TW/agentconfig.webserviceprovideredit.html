@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Web 服務提供者 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webserviceprovideredit"></a><h4>Web 服務提供者</h4>
+<p>Web 服務提供者代理程式設定檔說明用來保護 Web 服務提供者之 Web 服務請求的配置。Web 服務的名稱對於每個 Web 服務提供者來說必須是唯一的。</p>
+
+<a name="ggouz"></a><h5>一般</h5>
+<p>下列 [一般] 屬性定義基本的 Web 服務提供者特性：</p>
+
+<a name="ggovu"></a><h5>群組</h5>
+<p>群組機制可讓您定義一個相似類型的代理程式的集合。您必須先定義群組，才能將特定代理程式加入集合中。</p>
+
+<a name="ggotz"></a><h5>密碼</h5>
+<p>定義 Web 服務提供者屬性的密碼。</p>
+
+<a name="ggotl"></a><h5>密碼確認</h5>
+<p>確認密碼。</p>
+
+<a name="ggova"></a><h5>狀態</h5>
+<p>定義 Web 服務提供者代理程式是否將參與保護離埠服務請求。依預設，代理程式會設定為 <tt>[使用中]</tt>，表示將會參與。</p>
+
+<a name="ggowp"></a><h5>通用識別碼</h5>
+<p>列出基本 LDAP 特性，對 Web 服務提供者代理程式進行唯一定義。</p>
+
+<a name="gglej"></a><h5>安全性</h5>
+<p>下列屬性定義 Web 服務提供者安全屬性：</p>
+
+<a name="gglhw"></a><h5>安全機制</h5>
+<p>定義安全憑證的類型，用來保護 Web 服務提供者請求。您可以選擇下列安全類型：</p>
+<ul><li><p>匿名 &#8212; 匿名安全機制不包含安全憑證。</p></li>
+<li><p>LibertyBearerToken</p></li>
+<li><p>LibertySAMLToken</p></li>
+<li><p>LibertyX509Token &#8212; 使用 Liberty 定義的 X509 憑證保護 Web 提供者請求。</p></li>
+<li><p>SAML-HolderOfKey &#8212; 使用 SAML 1.1 指定類型 Holder-Of-Key 來保護請求。</p></li>
+<li><p>SAML-SenderVouches &#8212; 使用 SAML 1.1 指定類型 Sender Vouches 保護請求。</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; 使用 SAML 2.0 指定記號類型 Holder-Of-Key 保護請求。</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; 使用 SAML 2.0 指定標記類型 Sender Vouches 保護請求。</p></li>
+<li><p>UserNameToken &#8212; 使用使用者名稱記號保護 Web 提供者用戶端請求。</p></li>
+<li><p>UserNameToken-Plain &#8212; 使用使用者名稱記號搭配明文密碼保護 Web 提供者請求。</p></li>
+<li><p>X509Token &#8212; 使用 X509 憑證保護 Web 提供者請求。</p></li></ul>
+
+
+<a name="gglfy"></a><h5>認證鏈接</h5>
+<p>定義 &#8211; </p>
+
+<a name="ggoum"></a><h5>保留訊息中的安全性標頭</h5>
+<p>啟用時，此屬性會定義對 Web 服務提供者保留 SOAP 安全性標頭以供進一步處理。</p>
+
+<a name="ggovi"></a><h5>Liberty 服務類型 URN</h5>
+<p>URN (Universal Resource Name，通用資源名稱) 說明 Web 服務提供者用來進行服務查找的 Liberty 服務類型。</p>
+
+<a name="ggovn"></a><h5>使用者記號的憑證</h5>
+<p>此屬性代表 Web 服務提供者用來產生「使用者名稱」安全記號的使用者名稱/密碼的共用密碼。</p>
+
+<a name="gglhq"></a><h5>私有金鑰類型</h5>
+<p>定義 &#8211; </p>
+
+<a name="gglfz"></a><h5>SAML 配置</h5>
+<p>下列屬性會配置 Web 服務提供者的安全宣示標記語言 (Security Assertion Markup Language, SAML)：</p>
+
+<a name="gglfx"></a><h5>SAML 屬性對映</h5>
+<p>此配置代表需要在由 [安全性記號服務] 建立指定時產生的 SAML 屬性。Web 服務提供者會使用相同的對映將其填入 SSOToken。</p>
+
+<a name="gglgf"></a><h5>SAML NameID 對映程式外掛程式</h5>
+<p>定義 NameID 對映程式外掛程式類別，用於 SAML 帳號對映。</p>
+
+<a name="gglhk"></a><h5>SAML 屬性名稱空間</h5>
+<p>定義用來產生 SAML 屬性的名稱空間。</p>
+
+<a name="gglfv"></a><h5>包含成員身份</h5>
+<p>如果啟用，此屬性會定義主體的成員身份必須當作 SAML 屬性包含。</p>
+
+<a name="ggovx"></a><h5>簽署與加密</h5>
+<p>下列屬性會為 Web 提供者的安全定義簽署與加密配置：</p>
+
+<a name="ggowr"></a><h5>回應是否已簽署</h5>
+<p>啟用時，Web 服務提供者會使用提供的記號類型簽署回應。</p>
+
+<a name="ggouo"></a><h5>回應是否已加密</h5>
+<p>啟用時，Web 服務回應將會加密。</p>
+
+<a name="ggowz"></a><h5>請求簽名是否已驗證</h5>
+<p>啟用時，會驗證 Web 服務請求簽名。</p>
+
+<a name="ggouw"></a><h5>請求標頭是否已加密</h5>
+<p>啟用時，Web 服務用戶端安全性標頭將會加密。</p>
+
+<a name="ggotr"></a><h5>請求是否已解密</h5>
+<p>啟用時，Web 服務提供者請求將會被解密。</p>
+
+<a name="gglls"></a><h5>金鑰庫</h5>
+<p>下列屬性配置用於憑證儲存和擷取的金鑰庫：</p>
+
+<a name="gglld"></a><h5>Web 服務用戶端的公開金鑰別名</h5>
+<p>此屬性定義用來加密 Web 服務回應的公開憑證金鑰別名。</p>
+
+<a name="gglmc"></a><h5>私有金鑰別名</h5>
+<p>此屬性定義用來簽署/解密 Web 服務請求的私有憑證金鑰別名。</p>
+
+<a name="ggljf"></a><h5>金鑰庫用法</h5>
+<p>此配置定義要使用預設的金鑰庫還是自訂金鑰庫。必須為自訂金鑰庫定義以下值：</p>
+<ul><li><p>金鑰庫位置</p></li>
+<li><p>金鑰庫密碼</p></li>
+<li><p>金鑰密碼</p></li></ul>
+
+
+<a name="gglko"></a><h5>端點</h5>
+<p>下列屬性可定義 Web 服務端點：</p>
+
+<a name="gglmp"></a><h5>Web 服務端點</h5>
+<p>此屬性定義 Web 服務端點，Web 服務用戶端會對此端點發出請求。</p>
+<br/>
+
+</body>
+</html>

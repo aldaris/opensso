@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Servicio de testigos de seguridad - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webservicestsedit"></a><h4>Servicio de testigos de seguridad</h4>
+<p>Un servicio de testigos de seguridad es un servicio web que proporciona
+la emisi&#243;n y la administraci&#243;n de testigos de seguridad. En otras palabras,
+realiza instrucciones o reclamaciones de seguridad, a menudo, aunque no sea necesario,
+en conjuntos cifrados. Estas instrucciones se basan en la recepci&#243;n de pruebas
+que pueden verificarse directamente o de testigos de seguridad de entidades emisoras
+de confianza. Para garantizar la confianza, un servicio puede probar su derecho
+a declarar un conjunto de reclamaciones proporcionando un testigo de seguridad o
+un conjunto de testigos de seguridad emitido por un STS o puede
+emitir un testigo de seguridad con su propia instrucci&#243;n de confianza (tenga
+en cuenta que, para algunos formatos de testigos de seguridad, este proceso
+puede tratarse de una nueva emisi&#243;n o una firma conjunta). Esto conforma
+la base de la creaci&#243;n de agentes de confianza.</p>
+
+<a name="ggpce"></a><h5>General</h5>
+<p>Los siguientes atributos generales definen las propiedades b&#225;sicas del servicio de testigos
+de seguridad:</p>
+
+<a name="ggpct"></a><h5>Grupo</h5>
+<p>El mecanismo de grupo permite definir un conjunto de tipos de agentes
+similares. Debe definirse el grupo antes de incluir un agente espec&#237;fico en
+un conjunto. </p>
+
+<a name="ggpec"></a><h5>Password (Contrase&#241;a)</h5>
+<p>Define la contrase&#241;a del atributo del servicio de testigos de seguridad.</p>
+
+<a name="ggpex"></a><h5>Confirmar contrase&#241;a</h5>
+<p> Confirme la contrase&#241;a.</p>
+
+<a name="ggpdu"></a><h5>Estado</h5>
+<p>Define si el agente del servicio de testigos de seguridad participar&#225; en
+la protecci&#243;n de las solicitudes de servicios salientes. Se establece de forma
+predeterminada en <tt> Active</tt>, lo que implica que el agente participar&#225;. </p>
+
+<a name="ggpdg"></a><h5>Identificador universal</h5>
+<p>Enumera las propiedades de LDAP b&#225;sicas, que definen de forma exclusiva al
+agente del servicio de testigos de seguridad.</p>
+
+<a name="ggpfe"></a><h5>Seguridad</h5>
+<p>Los siguientes atributos definen los atributos de seguridad del servicio de testigos
+de seguridad:</p>
+
+<a name="ggpdy"></a><h5>Mecanismo de seguridad</h5>
+<p>Define el tipo de credenciales de seguridad que se utilizar&#225; para proteger
+la solicitud del servicio de testigos de seguridad. Puede elegir entre los
+siguientes tipos de seguridad:</p>
+<ul><li><p>Anonymous: el mecanismo de seguridad an&#243;nimo no contiene ninguna credencial de seguridad.</p></li>
+<li><p>LibertyDiscoverySecurity: utiliza los testigos de seguridad basados en Liberty para proteger la solicitud.</p></li>
+<li><p>SAML-HolderOfKey: utiliza el tipo de aserci&#243;n de SAML 1.1 "Holder-Of-Key" (Contenedor de clave) para proteger la solicitud.</p></li>
+<li><p>SAML-SenderVouches: utiliza el tipo de aserci&#243;n de SAML 1.1 "Sender Vouches" (Confirmaciones del remitente) para proteger la solicitud.</p></li>
+<li><p>SAML2&#8211;HolderOfKey: utiliza el tipo de testigo de aserci&#243;n de SAML 2.0 "Holder-Of-Key" (Contenedor de clave) para proteger la solicitud.</p></li>
+<li><p>SAML2&#8211;SenderVouches: utiliza el tipo de testigo de aserci&#243;n de SAML 2.0 "Sender Vouches" (Confirmaciones del remitente) para proteger la solicitud.</p></li>
+<li><p>STSSecurity: establece que el agente del servicio de testigos de seguridad debe obtener el testigo de seguridad de este servicio. </p></li>
+<li><p>UserNameToken: utiliza un testigo de nombre de usuario para proteger las solicitudes del servicio de testigos de seguridad.</p></li>
+<li><p>UserNameToken-Plain: utiliza un testigo de nombre de usuario con una contrase&#241;a de texto sin formato para proteger las solicitudes del servicio de testigos de seguridad.</p></li>
+<li><p>X509Token: utiliza el certificado X509 para proteger las solicitudes del agente del servicio de testigos de seguridad.</p></li></ul>
+
+
+<a name="ggpdk"></a><h5>Configuraci&#243;n de STS</h5>
+<p>Este atributo se habilita cuando el agente del servicio de testigos de
+seguridad utiliza el servicio STS. Esta configuraci&#243;n describe una lista de los
+perfiles de agentes de STS utilizados para proteger las solicitudes realizadas al
+servicio STS.</p>
+
+<a name="ggpfs"></a><h5>Conservar encabezados de seguridad del mensaje</h5>
+<p>Si se habilita, este atributo permite conservar los encabezados de seguridad SOAP
+en el servicio de testigos de seguridad para su posterior procesamiento.</p>
+
+<a name="ggpej"></a><h5>Credencial del testigo de usuario</h5>
+<p>Este atributo representa los secretos compartidos de nombre de usuario/contrase&#241;a que utiliza
+el agente del servicio de testigos de seguridad para generar un testigo
+de seguridad de nombre de usuario.</p>
+
+<a name="ggpbt"></a><h5>Firma y cifrado</h5>
+<p>Los siguientes atributos definen la configuraci&#243;n de firma y cifrado para el
+servicio de testigos de seguridad:</p>
+
+<a name="ggpdp"></a><h5>Se ha firmado la solicitud</h5>
+<p>Si se habilita, el servicio de testigos de seguridad firma la solicitud
+mediante un determinado tipo de testigo.</p>
+
+<a name="ggpcn"></a><h5>Se ha cifrado el encabezado de la solicitud</h5>
+<p>Si se habilita, se cifrar&#225; el encabezado de seguridad del agente del
+servicio de testigos de seguridad.</p>
+
+<a name="ggpca"></a><h5>Se ha cifrado la solicitud</h5>
+<p>Si se habilita, la solicitud del servicio de testigos de seguridad se
+habilitar&#225;.</p>
+
+<a name="ggpfo"></a><h5>Se ha verificado la firma de la respuesta</h5>
+<p>Si se habilita, se verificar&#225; la firma de la respuesta del servicio
+de testigos de seguridad.</p>
+
+<a name="ggpdo"></a><h5>Se ha descifrado la respuesta</h5>
+<p>Si se habilita, se descifrar&#225; la solicitud del servicio de testigos de
+seguridad. </p>
+
+<a name="ggpeh"></a><h5>Almac&#233;n de claves</h5>
+<p>Los siguientes atributos configuran el almac&#233;n de claves que se utilizar&#225; para
+el almacenamiento y la recuperaci&#243;n de los certificados: </p>
+
+<a name="ggpcg"></a><h5>Alias de clave p&#250;blica del proveedor de servicios web</h5>
+<p>Este atributo define el alias de clave p&#250;blica del certificado que se
+ha utilizado para cifrar la solicitud de servicios web.</p>
+
+<a name="ggpfg"></a><h5>Alias de clave privada</h5>
+<p>Este atributo define el alias de clave privada del certificado que se
+ha utilizado para firmar/descifrar la respuesta del servicio web.</p>
+
+<a name="ggpdc"></a><h5>Uso del almac&#233;n de claves</h5>
+<p>Esta configuraci&#243;n define si se debe utilizar el almac&#233;n de claves predeterminado
+o uno personalizado. Deben definirse los siguientes valores para un almac&#233;n de
+claves personalizado:</p>
+<ul><li><p>Ubicaci&#243;n del almac&#233;n de claves</p></li>
+<li><p>Contrase&#241;a del almac&#233;n de claves</p></li>
+<li><p>Contrase&#241;a de la clave</p></li></ul>
+
+
+<a name="ggpbr"></a><h5>Puntos finales</h5>
+<p>Los siguientes atributos definen los puntos finales del servicio web:</p>
+
+<a name="ggpfc"></a><h5>Punto final del servicio web</h5>
+<p>Este atributo define el punto final del servicio web en el que
+el cliente de servicios web realiza una solicitud.</p>
+<br/>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Web 服務用戶端屬性 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.webserviceclientedit"></a><h4>Web 服務用戶端屬性</h4>
+<p>Web 服務用戶端代理程式設定檔說明用來保護離埠 Web 服務用戶端之 Web 服務請求的配置。Web 服務的名稱對於每個 Web 服務用戶端來說必須是唯一的。</p>
+
+<a name="gglmr"></a><h5>一般</h5>
+<p>下列 [一般] 屬性定義基本的 Web 服務用戶端特性：</p>
+
+<a name="ggoue"></a><h5>群組</h5>
+<p>[群組] 機制可讓您定義一個相似類型的代理程式的集合。您必須先定義群組，才能將特定代理程式加入集合中。</p>
+
+<a name="ggowm"></a><h5>密碼</h5>
+<p>定義 Web 服務用戶端屬性的密碼。</p>
+
+<a name="ggoti"></a><h5>密碼確認</h5>
+<p>確認密碼。</p>
+
+<a name="ggllf"></a><h5>狀態</h5>
+<p>定義 Web 服務用戶端代理程式是否將參與保護離埠服務請求。依預設，代理程式會設定為 <tt>[使用中]</tt>，表示將會參與。</p>
+
+<a name="gglje"></a><h5>通用識別碼</h5>
+<p>列出基本 LDAP 特性，對 Web 服務用戶端代理程式進行唯一定義。</p>
+
+<a name="gglnb"></a><h5>安全性</h5>
+<p>下列屬性定義 Web 服務用戶端安全屬性：</p>
+
+<a name="ggliy"></a><h5>安全機制</h5>
+<p>定義安全憑證的類型，用來保護 Web 服務用戶端請求。您可以選擇下列安全類型：</p>
+<ul><li><p>匿名 &#8212; 匿名安全機制不包含安全憑證。</p></li>
+<li><p>LibertyDiscoverySecurity &#8212; 使用 Liberty 為基礎的安全性記號保護請求。</p></li>
+<li><p>SAML-HolderOfKey &#8212; 使用 SAML 1.1 指定類型 Holder-Of-Key 來保護請求。</p></li>
+<li><p>SAML-SenderVouches &#8212; 使用 SAML 1.1 指定類型 Sender Vouches 保護請求。</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; 使用 SAML 2.0 指定記號類型 Holder-Of-Key 保護請求。</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; 使用 SAML 2.0 指定標記類型 Sender Vouches 保護請求。</p></li>
+<li><p>STSSecurity &#8212; 定義 Web 服務用戶端取得來自「安全性記號」服務的安全性記號。</p></li>
+<li><p>UserNameToken &#8212; 使用使用者名稱記號保護 Web 服務用戶端請求。</p></li>
+<li><p>UserNameToken-Plain &#8212; 使用使用者名稱記號搭配明文密碼保護 Web 服務請求。</p></li>
+<li><p>X509Token &#8212; 使用 X509 憑證保護 Web 服務請求。</p></li></ul>
+
+
+<a name="gglmn"></a><h5>STS 配置</h5>
+<p>此屬性會在 Web 服務用戶端使用安全性記號服務 (Security Token service, STS) 時啟用。此配置說明了用來保護 STS 服務請求的 STS 代理程式設定檔清單。</p>
+
+<a name="ggljq"></a><h5>探索配置</h5>
+<p>此屬性會在針對「探索服務」安全性啟用 Web 服務用戶端時啟用。此配置說明「探索代理程式」設定檔清單，用來保護對探索服務發出的請求。</p>
+
+<a name="ggljr"></a><h5>需要使用者認證</h5>
+<p>啟用時，此屬性定義：服務用戶端受保護的頁面會要求使用者先經過認證才能存取。</p>
+
+<a name="gglmd"></a><h5>保留訊息中的安全性標頭</h5>
+<p>啟用時，此屬性會定義對 Web 服務用戶端保留 SOAP 安全性標頭以供進一步處理。</p>
+
+<a name="ggllx"></a><h5>Liberty 服務類型 URN</h5>
+<p>URN (Universal Resource Name，通用資源名稱) 說明 Web 服務用戶端用來進行服務查找的 Liberty 服務類型。</p>
+
+<a name="gglji"></a><h5>使用者記號的憑證</h5>
+<p>此屬性代表 Web 服務用戶端用來產生「使用者名稱」安全記號的使用者名稱/密碼的共用密碼。</p>
+
+<a name="ggliu"></a><h5>簽署與加密</h5>
+<p>下列屬性會為 Web 服務的安全定義簽署與加密配置：</p>
+
+<a name="gglna"></a><h5>請求是否已簽署</h5>
+<p>啟用時，Web 服務用戶端會使用提供的記號類型簽署請求。</p>
+
+<a name="ggllb"></a><h5>請求標頭是否已加密</h5>
+<p>啟用時，Web 服務用戶端安全性標頭將會加密。</p>
+
+<a name="gglnh"></a><h5>請求是否已加密</h5>
+<p>啟用時，Web 服務用戶端請求將會加密。</p>
+
+<a name="ggljs"></a><h5>回應簽名是否已驗證</h5>
+<p>啟用時，會驗證 Web 服務回應簽名。</p>
+
+<a name="gglks"></a><h5>回應是否已解密</h5>
+<p>啟用時，Web 服務回應將會被解密。</p>
+
+<a name="ggllsa"></a><h5>金鑰庫</h5>
+<p>下列屬性配置用於憑證儲存和擷取的金鑰庫：</p>
+
+<a name="ggllda"></a><h5>Web 服務提供者的公開金鑰別名</h5>
+<p>此屬性定義用來加密 Web 服務請求的公開憑證金鑰別名。</p>
+
+<a name="gglmca"></a><h5>私有金鑰別名</h5>
+<p>此屬性定義用來簽署/解密 Web 服務回應的私有憑證金鑰別名。</p>
+
+<a name="ggljfa"></a><h5>金鑰庫用法</h5>
+<p>此配置定義要使用預設的金鑰庫還是自訂金鑰庫。必須為自訂金鑰庫定義以下值：</p>
+<ul><li><p>金鑰庫位置</p></li>
+<li><p>金鑰庫密碼</p></li>
+<li><p>金鑰密碼</p></li></ul>
+
+
+<a name="endpoint"></a><h5>端點</h5>
+<p>下列屬性可定義 Web 服務端點：</p>
+
+<a name="gglmpa"></a><h5>Web 服務端點</h5>
+<p>此屬性定義 Web 服務端點，Web 服務用戶端會對此端點發出請求。</p>
+<br/>
+
+</body>
+</html>

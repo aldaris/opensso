@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>建立新代理程式 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.agentadd"></a><h5>建立新代理程式</h5>
+<p>建立新代理程式也稱為建立新代理程式設定檔。您可以在 Federated Access Manager 管理主控台中執行這項作業。這項作業適用於 Web 代理程式、J2EE 代理程式和 2.2 代理程式。不過，某些個別步驟不適用 2.2 代理程式。</p><ol>
+<li><b>按一下 [配置] 標籤下的 [代理程式]。</b></li>
+<li><b>如有必要，請選取適當代理程式類型的標籤。</b><ul>
+<li><b>Web 代理程式：</b><p>[Web] 標籤用於 Web 代理程式，且為預設選項。不需要再進行選取。</p></li>
+<li><b>J2EE 代理程式：</b><p>[J2EE] 標籤用於 J2EE 代理程式。如果適用，請按一下此標籤。</p></li>
+<li><b>2.2 代理程式：</b><p>[2.2 代理程式] 標籤用於「策略代理程式 2.2」軟體集中的代理程式。如果適用，請按一下此標籤。</p></li></ul></li>
+<li><b>在 [代理程式] 區段中，按一下 [新建]。</b></li>
+<li><b>在 [名稱] 欄位中，輸入新代理程式設定檔的名稱。</b></li>
+<li><b>輸入並確認 [密碼]。</b>
+<hr><p><b>注意 &#8211; </b>此密碼必須與您執行 <tt>agentadmin</tt> 程式安裝代理程式時，在指定的代理程式設定檔密碼檔中輸入的密碼相同。</p>
+<hr>
+</li>
+<li><b>選取適當的配置：[本機] 或 [集中式] (不適用於 2.2 代理程式)。</b><p>此外，選取 [本機] 時，與此代理程式相關的屬性只能從代理程式中的檔案編輯。這些屬性無法從主控台編輯。</p></li>
+<li><b>在 [伺服器 URL] 欄位中，輸入 Federated Access Manager 伺服器 URL (不適用於 2.2 代理程式)。</b><p>例如：</p><pre>http://fam.example.com:8080/fam</pre></li>
+<li><b>在 [代理程式 URL] 欄位中，輸入代理程式應用程式 <tt>agentapp</tt> 的 URL (不適用於 2.2 代理程式)。</b><p>例如：</p><pre>http://fam.example.com:8090/agentapp</pre></li>
+<li><b>按一下 [建立]。</b><p>主控台會建立代理程式設定檔，並且再次顯示代理程式 (WebAgent、J2EEAgent 或 2.2_Agent) 頁面，其中含有新代理程式設定檔的連結。</p><p>若要進行額外的代理程式設定檔配置，請按一下此連結，以顯示 [編輯] 代理程式頁面。</p></li></ol>
+<br/>
+
+</body>
+</html>

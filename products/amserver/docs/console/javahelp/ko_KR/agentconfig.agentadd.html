@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>새 에이전트를 만들려면 - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.agentadd"></a><h5>새 에이전트를 만들려면</h5>
+<p>새 에이전트를 만드는 것은 새 에이전트 프로필을 만드는 것입니다. Federated Access Manager
+관리 콘솔에서 이 작업을 수행할 수 있습니다. 이 작업은 웹 에이전트, J2EE
+에이전트 및 2.2 에이전트에 적용됩니다. 그러나 일부 개별 단계는 2.2 에이전트에 적용되지
+않습니다.</p><ol>
+<li><b>[구성] 탭의 [에이전트]를 누릅니다.</b></li>
+<li><b>필요한 경우 적절한 에이전트 유형에 해당하는 탭을 선택합니다.</b><ul>
+<li><b>웹 에이전트:</b><p>[웹] 탭은 웹 에이전트용이며, 기본적으로 선택됩니다. 다른 선택은 필요하지 않습니다.</p></li>
+<li><b>J2EE 에이전트:</b><p>[J2EE] 탭은 J2EE 에이전트용입니다. 해당하는 경우 이 탭을 누릅니다.</p></li>
+<li><b>2.2 에이전트:</b><p>[2.2 에이전트] 탭은 정책 에이전트 2.2 소프트웨어 집합에서 에이전트용으로 사용됩니다. 해당하는 경우
+이 탭을 누릅니다.</p></li></ul></li>
+<li><b>[에이전트] 섹션에서 [새로 만들기]를 누릅니다.</b></li>
+<li><b>[이름] 필드에 새 에이전트 프로필의 이름을 입력합니다.</b></li>
+<li><b>비밀번호를 입력하고 확인합니다.</b>
+<hr><p><b>주의 &#8211; </b>이 비밀번호는 <tt>agentadmin</tt> 프로그램을 실행하여 에이전트를 설치할 때 지정한 에이전트 프로필 비밀번호
+파일에 입력한 비밀번호와 동일해야 합니다.</p>
+<hr>
+</li>
+<li><b>적용 가능한 구성을 로컬 또는 중앙 집중화됨(2.2 에이전트에 적용되지 않음) 중에 선택합니다.</b><p>또한 로컬 구성을 선택한 경우에는 이 에이전트와 관련된 속성을 에이전트의 파일에서만 편집할
+수 있으며 콘솔에서는 편집할 수 없습니다.</p></li>
+<li><b>[서버 URL] 필드에 Federated Access Manager 서버 URL(2.2 에이전트에 적용되지 않음)을 입력합니다.</b><p>예를 들면 다음과 같습니다.</p><pre>http://fam.example.com:8080/fam</pre></li>
+<li><b>[에이전트 URL] 필드에 해당 에이전트 응용 프로그램 <tt>agentapp</tt>의 URL을 입력합니다(2.2 에이전트에 적용되지
+않음).</b><p>예를 들면 다음과 같습니다.</p><pre>http://fam.example.com:8090/agentapp</pre></li>
+<li><b>[만들기]를 누릅니다.</b><p>콘솔이 에이전트 프로필을 만들고 새 에이전트 프로필에 대한 링크가 있는 에이전트(WebAgent, J2EEAgent
+또는 2.2_Agent) 페이지를 다시 표시합니다.</p><p>에이전트 프로필을 추가로 구성하려면 이 링크를 눌러 에이전트 편집 페이지를 표시합니다.</p></li></ol>
+<br/>
+
+</body>
+</html>

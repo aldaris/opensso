@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>So erstellen Sie einen neuen Agenten - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.agentadd"></a><h5>So erstellen Sie einen neuen Agenten</h5>
+<p>Das Erstellen eines neuen Agenten wird auch als Erstellen eines neuen Agentenprofils
+bezeichnet. Sie k&#246;nnen diese Aufgabe an der Federated Access Manager -Administrationskonsole ausf&#252;hren. Diese
+Aufgabe bezieht sich auf Webagenten,  J2EE-Agenten und 2.2-Agenten. Allerdings gelten einige
+der Einzelschritte nicht f&#252;r die 2.2-Agenten.</p><ol>
+<li><b>Klicken Sie auf der Registerkarte  f&#252;r die Konfiguration auf "Agenten".</b></li>
+<li><b>W&#228;hlen Sie gegebenenfalls die Registerkarte f&#252;r den entsprechenden Agententyp aus.</b><ul>
+<li><b>Webagenten:</b><p>Die Registerkarte "Web" bezieht sich auf Webagenten und ist standardm&#228;&#223;ig ausgew&#228;hlt. Es
+ist keine weitere Auswahl erforderlich.</p></li>
+<li><b>J2EE-Agenten:</b><p>Die Registerkarte "J2EE" bezieht sich auf  J2EE-Agenten. Klicken Sie bei Bedarf
+auf diese Registerkarte.</p></li>
+<li><b>2.2-Agenten</b><p>Die Registerkarte "2.2-Agenten" bezieht sich auf Agenten im Policy Agent 2.2-Software-Set. Klicken
+Sie bei Bedarf auf diese Registerkarte.</p></li></ul></li>
+<li><b>Klicken Sie im Abschnitt "Agent" auf "Neu".</b></li>
+<li><b>Geben Sie im Feld "Name" den Namen des neuen Agentenprofils ein.</b></li>
+<li><b>Geben Sie das Passwort ein, und best&#228;tigen Sie es.</b>
+<hr><p><b>Achtung &#8211; </b>Dieses Passwort muss mit dem Passwort in der Datei f&#252;r das Agentenprofilpasswort
+&#252;bereinstimmen, die Sie angeben, wenn Sie den Agenten durch Ausf&#252;hrung des Programms
+<tt> agentadmin</tt> installieren.</p>
+<hr>
+</li>
+<li><b>W&#228;hlen Sie die entsprechende Konfiguration aus: "Lokal" oder "Zentralisiert" (Gilt nicht f&#252;r
+2.2-Agenten).</b><p>Au&#223;erdem k&#246;nnen bei Auswahl von "Lokal" die zu diesem Agenten geh&#246;renden Attribute
+nur &#252;ber eine Datei im Agenten bearbeitet werden. Eine Bearbeitung &#252;ber die
+Konsole ist nicht m&#246;glich.</p></li>
+<li><b>Geben Sie im Feld f&#252;r die Server-URL die Server-URL des Federated Access
+Manager ein. (Gilt nicht f&#252;r 2.2-Agenten.)</b><p>Beispiel:</p><pre>http://fam.example.com:8080/fam</pre></li>
+<li><b>Geben Sie im Feld f&#252;r die Agenten-URL die URL f&#252;r die Agentenanwendung,
+<tt> agentapp</tt> ein. (Gilt nicht f&#252;r 2.2-Agenten.)</b><p>Beispiel:</p><pre>http://fam.example.com:8090/agentapp</pre></li>
+<li><b>Klicken Sie auf "Erstellen".</b><p>Die Konsole erstellt das Agentenprofil und zeigt die Agentenseite (WebAgent, J2EEAgent bzw.
+2.2_Agent) mit einer Verkn&#252;pfung zum neuen Agentenprofil an.</p><p>Wenn Sie weitere Konfigurationen am Agentenprofil vornehmen m&#246;chten, klicken Sie auf diese
+Verkn&#252;pfung, um die Seite zur Bearbeitung des Agenten anzuzeigen.</p></li></ol>
+<br/>
+
+</body>
+</html>

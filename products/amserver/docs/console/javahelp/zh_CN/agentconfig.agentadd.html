@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>创建新代理 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.agentadd"></a><h5>创建新代理</h5>
+<p>创建新代理也称为创建新的代理配置文件。您可以在 Federated Access Manager 管理控制台中执行该任务。该任务适用于 Web 代理、J2EE 代理和 2.2 代理。但是，某些个别步骤不适用于 2.2 代理。</p><ol>
+<li><b>单击“配置”选项卡下的“代理”。</b></li>
+<li><b>如有必要，选择适当代理类型的选项卡。</b><ul>
+<li><b>Web 代理：</b><p>"Web" 选项卡适用于 Web 代理且为默认选项。无需再次选择。</p></li>
+<li><b>J2EE 代理：</b><p>"J2EE" 选项卡适用于 J2EE 代理。如果适用，单击该选项卡。</p></li>
+<li><b>2.2 代理</b><p>“2.2 代理”选项卡适用于“策略代理 2.2”软件集中的代理。如果适用，单击该选项卡。</p></li></ul></li>
+<li><b>在“代理”部分中单击“新建”。</b></li>
+<li><b>在“名称”字段中输入新代理配置文件的名称。</b></li>
+<li><b>输入“密码”并确认。</b>
+<hr><p><b>注意 &#8211; </b>此密码必须与您运行 <tt>agentadmin</tt> 程序以安装代理时在指定的代理配置文件密码文件中输入的密码相同。</p>
+<hr>
+</li>
+<li><b>选择适当的配置：“本地”或“集中”（不适用于 2.2 代理）。</b><p>此外，如果选择“本地”，则只能从代理的文件中编辑与此代理相关的属性。而无法从控制台编辑它们。</p></li>
+<li><b>在“服务器 URL”字段中，输入 Federated Access Manager 服务器 URL（不适用于 2.2 代理）。</b><p>例如：</p><pre>http://fam.example.com:8080/fam</pre></li>
+<li><b>在“代理 URL”字段中，输入代理应用程序 <tt>agentapp</tt> 的 URL（不适用于 2.2 代理）。</b><p>例如：</p><pre>http://fam.example.com:8090/agentapp</pre></li>
+<li><b>单击“创建”。</b><p>控制台创建代理配置文件，并再次显示代理（WebAgent、J2EEAgent 或 2.2_Agent）页面，其中包含指向新代理配置文件的链接。</p><p>要对代理配置文件进行其他配置，单击该链接显示“编辑”代理页面。</p></li></ol>
+<br/>
+
+</body>
+</html>

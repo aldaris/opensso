@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>Cr&#233;ation d'un agent - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="agentconfig.agentadd"></a><h5>Cr&#233;ation d'un agent</h5>
+<p>Cr&#233;er un agent est &#233;galement appel&#233; cr&#233;er un profil d'agent. Vous pouvez
+effectuer cette t&#226;che dans la console d'administration de Federated Access Manager . Cette
+t&#226;che s'applique aux agents Web, J2EE et 2.2. Cependant, certaines &#233;tapes particuli&#232;res
+ne s'appliquent pas aux agents&#160;2.2.</p><ol>
+<li><b>Cliquez sur Agents dans l'onglet Configuration.</b></li>
+<li><b>Si n&#233;cessaire, s&#233;lectionnez l'onglet correspondant au type d'agent appropri&#233;.</b><ul>
+<li><b>Agents Web&#160;:</b><p>L'onglet Web est destin&#233; aux agents Web et est s&#233;lectionn&#233; par d&#233;faut.
+Aucune autre s&#233;lection n'est n&#233;cessaire.</p></li>
+<li><b>Agents J2EE&#160;:</b><p>L'onglet J2EE est destin&#233; aux agents J2EE. Le cas &#233;ch&#233;ant, cliquez sur
+cet onglet.</p></li>
+<li><b>Agents 2.2</b><p>L'onglet Agents&#160;2.2 est destin&#233; aux agents de la suite logicielle Policy Agent&#160;2.2.
+Le cas &#233;ch&#233;ant, cliquez sur cet onglet.</p></li></ul></li>
+<li><b>Dans la section Agent, cliquez sur Nouveau.</b></li>
+<li><b>Dans le champ Nom, entrez le nom du nouveau profil d'agent.</b></li>
+<li><b>Entrez et confirmez le mot de passe.</b>
+<hr><p><b>Attention &#8211; </b>Ce mot de passe doit &#234;tre le mot de passe entr&#233; dans
+le fichier de mots de passe de profil d'agent que vous sp&#233;cifiez
+lorsque vous ex&#233;cutez le programme <tt>agentadmin</tt> pour installer l'agent.</p>
+<hr>
+</li>
+<li><b>S&#233;lectionnez la configuration applicable&#160;: locale ou centralis&#233;e (ne s'applique pas aux agents&#160;2.2).</b><p>De plus, si une configuration locale est s&#233;lectionn&#233;e, les attributs associ&#233;s &#224;
+cet agent ne peuvent &#234;tre modifi&#233;s qu'&#224; partir d'un fichier dans l'agent.
+Ils ne peuvent pas &#234;tre modifi&#233;s &#224; partir de la console.</p></li>
+<li><b>Dans le champ URL de serveur, entrez l'URL du serveur de Federated
+Access Manager (ne s'applique pas aux agents&#160;2.2).</b><p>Par exemple :</p><pre>http://fam.example.com:8080/fam</pre></li>
+<li><b>Dans le champ URL d'agent, entrez l'URL de l'application d'agent, <tt> agentapp</tt> (ne
+s'applique pas aux agents&#160;2.2).</b><p>Par exemple :</p><pre>http://fam.example.com:8090/agentapp</pre></li>
+<li><b>Cliquez sur Cr&#233;er.</b><p>La console cr&#233;e le profil d'agent et affiche de nouveau la page
+d'agent (Web, J2EE ou 2.2) avec un lien vers le nouveau profil
+d'agent.</p><p>Pour effectuer d'autres t&#226;ches de configuration du profil d'agent, cliquez sur ce
+lien afin d'afficher la page Modification de groupe d'agents.</p></li></ol>
+<br/>
+
+</body>
+</html>
