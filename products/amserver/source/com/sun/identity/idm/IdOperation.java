@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdOperation.java,v 1.2 2005-12-08 01:16:41 veiming Exp $
+ * $Id: IdOperation.java,v 1.3 2008-06-18 23:16:35 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,10 @@ package com.sun.identity.idm;
 public class IdOperation {
 
     private String op;
+
+    /**
+     * Constructs an IdOperation of type string
+     */
 
     public IdOperation(String operation) {
         op = operation;
@@ -98,6 +102,18 @@ public class IdOperation {
      */
     public static final IdOperation SERVICE = new IdOperation("service");
 
+    /**
+     * The <code> equals </code> method compares the current IdOperation with
+     * the IdOperation passed in and returns true if the operations are same.
+     * it will return false if the operations are different.
+     *
+     * @param opObject 
+     *     an IdOperation
+     * @return
+     *     <code>true</code> if name opObject is same
+     *     else <code>false</code>
+     */
+
     public boolean equals(Object opObject) {
         if (opObject instanceof IdOperation) {
             return (((IdOperation) opObject).op.equalsIgnoreCase(this.op));
@@ -105,16 +121,38 @@ public class IdOperation {
         return (false);
     }
 
+    /**
+     * The <code> toString </code> method returns the same representation of 
+     * the current IdOperation. The string returned is preceeded by the 
+     * the substring "Operation: ". For example: if the current IdOperation 
+     * is "CREATE"  toString will return "Operation: create".
+     *
+     * @return
+     *     String representaton of IdOperation.
+     */
+
     public String toString() {
         return ("Operation: " + op);
     }
 
     /**
      * Returns the hash code of the object
+     *
+     * @return
+     *     int hash code of IdOperation.
      */
     public int hashCode() {
         return op.hashCode();
     }
+
+    /**
+     * The <code> getName </code> method returns the name of the IdOperation 
+     * in string representaion. For example  if the current IdOperation 
+     * is "CREATE" getName will return "create".
+     *
+     * @return
+     *     String name of IdOperation.
+     */
 
     public String getName() {
         return op;
