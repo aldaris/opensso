@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.9 2008-03-11 21:33:45 veiming Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.10 2008-06-18 20:48:44 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -321,7 +321,6 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
             <attribute name="autoSubmit" value="false" />
         </cc>
-        <fieldhelp name="helpwspendpoint" defaultValue="a317.help" />
     </property>
 </section>
 

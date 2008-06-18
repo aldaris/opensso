@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.3 2008-03-20 06:14:47 asyhuang Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.4 2008-06-18 20:48:43 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -68,7 +68,6 @@
                 break;
             }
         }
-        frm.elements['WebServiceClientEdit.wspendpoint'].disabled = disableSTS;
         frm.elements['WebServiceClientEdit.libertyservicetype'].disabled = disableLibertyServiceURN;
         frm.elements['WebServiceClientEdit.sts'].disabled = disableSTS;
         frm.elements['WebServiceClientEdit.discovery'].disabled = disableDiscovery;
