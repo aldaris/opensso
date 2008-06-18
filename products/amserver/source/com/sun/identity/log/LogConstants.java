@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.8 2008-04-02 19:54:36 bigfatrat Exp $
+ * $Id: LogConstants.java,v 1.9 2008-06-18 21:29:33 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -463,6 +463,15 @@ public class LogConstants {
      * @supported.api
      */
     public static final String NAME_ID = "NameID";
+
+    /**
+     * The maximum number of fields in a "regular" record.
+     * Includes Time, Data, LogLevel, Domain, LoginID, IPAddr,
+     * HostName, ModuleName, LoggedBy, ContextID, MessageID, NameID.
+     * Be sure to increment if more fields are added.
+     * @supported.api
+     */
+    public static final int MAX_FIELDS = 12;
 
     public static final String LOGIN_ID_SID = "LoginIDSid";
     public static final String LOGGED_BY_SID = "LoggedBySid";

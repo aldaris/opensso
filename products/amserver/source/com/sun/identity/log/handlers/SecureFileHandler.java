@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.6 2008-04-17 09:06:56 ww203982 Exp $
+ * $Id: SecureFileHandler.java,v 1.7 2008-06-18 21:30:35 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -503,8 +503,13 @@ public class SecureFileHandler extends java.util.logging.Handler {
             Debug.error(logName +
                 ":SecureFileHandler: could not generate signature");
         }
+	/*
+	 * periodic signer is creating log record at Level.SEVERE, so
+	 * do it here, too.
+	 */
         com.sun.identity.log.LogRecord lr =
-        new com.sun.identity.log.LogRecord(Level.INFO, "Signature");
+        new com.sun.identity.log.LogRecord(Level.SEVERE, "Signature");
+
         lr.setLoggerName(logName);
         lr.addLogInfo(LogConstants.SIGNATURE_FIELDNAME, signature);
         message = getFormatter().format(lr);

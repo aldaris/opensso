@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.8 2008-04-11 20:39:32 veiming Exp $
+ * $Id: ISArchiveVerify.java,v 1.9 2008-06-18 21:30:02 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -378,6 +378,16 @@ public class ISArchiveVerify{
                     // Now check each record to see if it is a signature record 
                     // or a log record.
                     for(int k = 1; k < result.length ; k++) {
+			// add 2 for MAC and Signature fields
+			if (result[k].length < (LogConstants.MAX_FIELDS+2)) {
+			    System.err.println(
+                                bundle.getString("recordVerificationFailed")
+				+ (String)logFiles.elementAt(j)
+				+ "\n\t #fields in record #" + (k-1) + " ("
+				+ result[k].length + ") < 14\n");
+			    verified = false;
+			    break;
+			}
                         if(result[k][signPos].equals("-")) {
                             verified = verifyLogRecord(result[k], macPos);
                             if(!verified){
@@ -416,7 +426,7 @@ public class ISArchiveVerify{
                                 bundle.getString("signatureVerificationPassed")
                                 + (String)logFiles.elementAt(j) + 
                                 bundle.getString("atRecordNumber") + k);
-                        }
+			}
                     }// end of loop k i.e. end of records for this logFile.
                 }else{
                     System.err.println(
