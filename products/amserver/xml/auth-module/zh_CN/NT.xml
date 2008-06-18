@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: NT.xml,v 1.5 2008-06-02 16:39:38 mahesh_prasad_r Exp $
+    $Id: NT.xml,v 1.6 2008-06-18 08:58:06 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 
 <ModuleProperties moduleName="NT" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="This server uses NT Authentication" >
+    <Callbacks length="2" order="1" timeout="120" header="此服务器使用 NT 验证" >
         
         <NameCallback>
             <Prompt> 用户名: </Prompt>

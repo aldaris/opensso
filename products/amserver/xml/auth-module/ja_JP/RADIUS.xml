@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: RADIUS.xml,v 1.5 2008-06-02 16:39:36 mahesh_prasad_r Exp $
+    $Id: RADIUS.xml,v 1.6 2008-06-18 08:58:05 mahesh_prasad_r Exp $
 
     Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 
 <ModuleProperties moduleName="RADIUS" version="1.0" >
-    <Callbacks length="2" order="1" timeout="60" header="This server uses RADIUS Authentication" >
+    <Callbacks length="2" order="1" timeout="60" header="このサーバーは RADIUS 認証を使用します" >
         <NameCallback>
             <Prompt> RADIUS ID </Prompt>
         </NameCallback>
@@ -37,7 +37,7 @@
             <Prompt> RADIUS パスワード </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="2" timeout="60" header="RADIUS Login Challenge" >
+    <Callbacks length="1" order="2" timeout="60" header="RADIUS ログインチャレンジ" >
         <PasswordCallback echoPassword="false" >
             <Prompt> RADIUS チャレンジパスワード </Prompt>
         </PasswordCallback>

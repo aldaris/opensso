@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: DataStore.xml,v 1.5 2008-06-02 16:39:38 mahesh_prasad_r Exp $
+    $Id: DataStore.xml,v 1.6 2008-06-18 08:58:06 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 
 <ModuleProperties moduleName="DataStore" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="This server uses Data Store Authentication" >
+    <Callbacks length="2" order="1" timeout="120" header="此伺服器使用資料存放區認證" >
         <NameCallback>
             <Prompt> 使用者名稱: </Prompt>
         </NameCallback>

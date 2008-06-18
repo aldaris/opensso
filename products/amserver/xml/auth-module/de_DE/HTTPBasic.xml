@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: HTTPBasic.xml,v 1.3 2008-04-25 18:53:57 mahesh_prasad_r Exp $
+    $Id: HTTPBasic.xml,v 1.4 2008-06-18 08:58:03 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 
 <ModuleProperties moduleName="HTTPBasic" version="1.0" >
-    <Callbacks length="1" order="1" timeout="120" header="This server uses HTTPBasic Authentication">
+    <Callbacks length="1" order="1" timeout="120" header="Auf diesem Server kommt die HTTPBasic-Authentifizierung zum Einsatz.">
         <HttpCallback>
             <HttpHeader>Autorisierung</HttpHeader>
             <Negotiation>WWW-Authentifizierung:BASIC-Bereich=&quot;basic_realm&quot;</Negotiation>

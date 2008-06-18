@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: WindowsDesktopSSO.xml,v 1.5 2008-06-02 16:39:37 mahesh_prasad_r Exp $
+    $Id: WindowsDesktopSSO.xml,v 1.6 2008-06-18 08:58:05 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 
 <ModuleProperties moduleName="WindowsDesktopSSO" version="1.0" >
-    <Callbacks length="1" order="1" timeout="120" header="This server uses WindowsDesktopSSO Authentication" >
+    <Callbacks length="1" order="1" timeout="120" header="이 서버는 Windows 데스크탑 SSO 인증을 사용합니다." >
         <HttpCallback>
             <HttpHeader>인증</HttpHeader>
             <Negotiation>WWW-Authenticate:Negotiate</Negotiation> 

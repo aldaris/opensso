@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: LDAP.xml,v 1.5 2008-06-02 16:39:36 mahesh_prasad_r Exp $
+    $Id: LDAP.xml,v 1.6 2008-06-18 08:58:05 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 
 <ModuleProperties moduleName="LDAP" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="This server uses LDAP Authentication" >
+    <Callbacks length="2" order="1" timeout="120" header="このサーバーは LDAP 認証を使用します" >
         <NameCallback>
             <Prompt> ユーザー名:  </Prompt>
         </NameCallback>
@@ -37,7 +37,7 @@
             <Prompt> パスワード:  </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="4" order="2" timeout="120" header="Change Password&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
+    <Callbacks length="4" order="2" timeout="120" header="パスワードの変更&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
             <Prompt>古いパスワード </Prompt>
         </PasswordCallback>
@@ -58,7 +58,7 @@
             </OptionValues>
         </ConfirmationCallback>
     </Callbacks>
-    <Callbacks length="0" order="3" timeout="120" header=" Your password has expired. Please contact service desk to reset your password" error="true" />
+    <Callbacks length="0" order="3" timeout="120" header="パスワードが期限切れになりました。パスワードをリセットするには、サービスデスクにお問い合わせください。" error="true"  />
     <Callbacks length="0" order="4" timeout="120" template="user_inactive.jsp" error="true"/>
 
 </ModuleProperties>

@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: Membership.xml,v 1.5 2008-06-02 16:39:38 mahesh_prasad_r Exp $
+    $Id: Membership.xml,v 1.6 2008-06-18 08:58:06 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -29,7 +29,7 @@
 
 <ModuleProperties moduleName="Membership" version="1.0" >
 
-    <Callbacks length="3" order="1" timeout="120" header="Self Registration Module" template="membership.jsp" >
+    <Callbacks length="3" order="1" timeout="120" header="自我註冊模組" template="membership.jsp" >
         <NameCallback>
             <Prompt> 使用者名稱: </Prompt>
         </NameCallback>
@@ -48,7 +48,7 @@
         </ConfirmationCallback>
     </Callbacks>
 
-    <Callbacks length="4" order="2" timeout="240" header="Password Expiring Please Change&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
+    <Callbacks length="4" order="2" timeout="240" header="密碼過期，請變更&lt;BR&gt;&lt;/BR&gt;#REPLACE#&lt;BR&gt;&lt;/BR&gt;" >
         <PasswordCallback echoPassword="false" >
             <Prompt> 目前密碼: </Prompt>
         </PasswordCallback>
@@ -94,9 +94,9 @@
 
     <Callbacks length="0" order="14" timeout="120" template="invalidPassword.jsp" />
     
-    <Callbacks length="0" order="15" timeout="120" header="Your password has expired. Please contact service desk to reset your password" error="true" />
+    <Callbacks length="0" order="15" timeout="120" header="您的密碼已過期。請連絡服務台以重設您的密碼" error="true"  />
     
-    <Callbacks length="8" order="16" timeout="300" header="Self Registration" template="register.jsp" >
+    <Callbacks length="8" order="16" timeout="300" header="自我註冊" template="register.jsp" >
         <NameCallback isRequired="true" attribute="uid" >
             <Prompt> 使用者名稱: </Prompt>
         </NameCallback>
@@ -130,7 +130,7 @@
         </ConfirmationCallback>
     </Callbacks>
     
-    <Callbacks length="2" order="17" timeout="120" header="Self Registration" >
+    <Callbacks length="2" order="17" timeout="120" header="自我註冊" >
         <ChoiceCallback attribute="uid" >
             <Prompt>具有您輸入之使用者名稱&lt;BR&gt;的使用者已存在。&lt;BR&gt;請選擇下列其中一個&lt;BR&gt;使用者名稱或&lt;BR&gt;自行建立名稱:</Prompt>
             <ChoiceValues>

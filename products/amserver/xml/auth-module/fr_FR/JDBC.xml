@@ -19,7 +19,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: JDBC.xml,v 1.3 2008-04-25 18:53:58 mahesh_prasad_r Exp $
+    $Id: JDBC.xml,v 1.4 2008-06-18 08:58:04 mahesh_prasad_r Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,7 +31,7 @@
 
 <ModuleProperties moduleName="JDBC" version="1.0" > 
     <Callbacks length="2" order="1" timeout="120" 
-        header="This server uses JDBC Authentication" >
+        header="Ce serveur utilise l&apos;authentification JDBC." >
         <NameCallback> 
             <Prompt> userName </Prompt> 
         </NameCallback>
