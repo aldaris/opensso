@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXMLViewBean.java,v 1.3 2008-04-17 17:50:26 veiming Exp $
+ * $Id: ServerConfigXMLViewBean.java,v 1.4 2008-06-18 20:46:48 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,8 +108,8 @@ public class ServerConfigXMLViewBean
         "tblServerConfigXMLUserDataPort";
     private static final String TBL_USERS_TYPE_DATA =
         "tblServerConfigXMLUserDataType";
-    private static final String TF_USERS_BIND_DN = "tfbinddn";
-    private static final String TF_USERS_BIND_PWD = "tfbindpwd";
+    private static final String TF_SERVER_BIND_DN = "tfbinddn";
+    private static final String TF_SERVER_BIND_PWD = "tfbindpwd";
 
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
 
@@ -256,27 +256,27 @@ public class ServerConfigXMLViewBean
             ServerConfigXML.ServerGroup smsServerGroup = 
                 xmlObj.getSMSServerGroup();
 
-            propertySheetModel.setValue(TF_SERVER_MIN_POOL, 
+            propertySheetModel.setValue(TF_USER_MIN_POOL, 
                 Integer.toString(defaultServerGroup.minPool));
-            propertySheetModel.setValue(TF_SERVER_MAX_POOL, 
+            propertySheetModel.setValue(TF_USER_MAX_POOL, 
                 Integer.toString(defaultServerGroup.maxPool));
             
-            propertySheetModel.setValue(TF_USER_MIN_POOL, 
+            propertySheetModel.setValue(TF_SERVER_MIN_POOL, 
                 Integer.toString(smsServerGroup.minPool));
-            propertySheetModel.setValue(TF_USER_MAX_POOL, 
+            propertySheetModel.setValue(TF_SERVER_MAX_POOL, 
                 Integer.toString(smsServerGroup.maxPool));
             
             List bindInfo = smsServerGroup.dsUsers;
             if (!bindInfo.isEmpty()) {
                 ServerConfigXML.DirUserObject bind = 
                     (ServerConfigXML.DirUserObject)bindInfo.iterator().next();
-                propertySheetModel.setValue(TF_USERS_BIND_DN, bind.dn);
-                propertySheetModel.setValue(TF_USERS_BIND_PWD, 
+                propertySheetModel.setValue(TF_SERVER_BIND_DN, bind.dn);
+                propertySheetModel.setValue(TF_SERVER_BIND_PWD, 
                     Crypt.decrypt(bind.password));
             }
         
-            populateServerTableModel(defaultServerGroup.hosts);
-            populateUserTableModel(smsServerGroup.hosts);
+            populateUserTableModel(defaultServerGroup.hosts);
+            populateServerTableModel(smsServerGroup.hosts);
         }
     }
 
@@ -310,52 +310,51 @@ public class ServerConfigXMLViewBean
     }
     
     private void populateServerTableModel(List entries) {
-        if (bAMSDKEnabled) {
-            tblServerModel.clearAll();
-            SerializedField szCache = (SerializedField)getChild(
-                SZ_CACHE_SERVER);
-            int counter = 0;
-
-            if ((entries != null) && !entries.isEmpty()) {
-                for (Iterator i = entries.iterator(); i.hasNext(); counter++) {
-                    if (counter > 0) {
-                        tblServerModel.appendRow();
-                    }
-
-                    ServerConfigXML.ServerObject entry =
-                        (ServerConfigXML.ServerObject) i.next();
-                    tblServerModel.setValue(TBL_SERVERS_NAME_DATA, entry.name);
-                    tblServerModel.setValue(TBL_SERVERS_HOST_DATA, entry.host);
-                    tblServerModel.setValue(TBL_SERVERS_PORT_DATA, entry.port);
-                    tblServerModel.setValue(TBL_SERVERS_TYPE_DATA, entry.type);
-                    tblServerModel.setSelectionVisible(counter, true);
-                }
-            }
-            szCache.setValue(entries);
-        }
-    }
-    
-    private void populateUserTableModel(List entries) {
-        tblUserModel.clearAll();
-        SerializedField szCache = (SerializedField)getChild(SZ_CACHE_USER);
+        tblServerModel.clearAll();
+        SerializedField szCache = (SerializedField)getChild(SZ_CACHE_SERVER);
         int counter = 0;
 
         if ((entries != null) && !entries.isEmpty()) {
             for (Iterator i = entries.iterator(); i.hasNext(); counter++) {
                 if (counter > 0) {
-                    tblUserModel.appendRow();
+                    tblServerModel.appendRow();
                 }
-                
+
                 ServerConfigXML.ServerObject entry =
-                    (ServerConfigXML.ServerObject)i.next();
-                tblUserModel.setValue(TBL_USERS_NAME_DATA, entry.name);
-                tblUserModel.setValue(TBL_USERS_HOST_DATA, entry.host);
-                tblUserModel.setValue(TBL_USERS_PORT_DATA, entry.port);
-                tblUserModel.setValue(TBL_USERS_TYPE_DATA, entry.type);
-                tblUserModel.setSelectionVisible(counter, true);
+                    (ServerConfigXML.ServerObject) i.next();
+                tblServerModel.setValue(TBL_SERVERS_NAME_DATA, entry.name);
+                tblServerModel.setValue(TBL_SERVERS_HOST_DATA, entry.host);
+                tblServerModel.setValue(TBL_SERVERS_PORT_DATA, entry.port);
+                tblServerModel.setValue(TBL_SERVERS_TYPE_DATA, entry.type);
+                tblServerModel.setSelectionVisible(counter, true);
             }
         }
         szCache.setValue(entries);
+    }
+    
+    private void populateUserTableModel(List entries) {
+        if (bAMSDKEnabled) {
+            tblUserModel.clearAll();
+            SerializedField szCache = (SerializedField)getChild(SZ_CACHE_USER);
+            int counter = 0;
+
+            if ((entries != null) && !entries.isEmpty()) {
+                for (Iterator i = entries.iterator(); i.hasNext(); counter++) {
+                    if (counter > 0) {
+                        tblUserModel.appendRow();
+                    }
+                
+                    ServerConfigXML.ServerObject entry =
+                        (ServerConfigXML.ServerObject)i.next();
+                    tblUserModel.setValue(TBL_USERS_NAME_DATA, entry.name);
+                    tblUserModel.setValue(TBL_USERS_HOST_DATA, entry.host);
+                    tblUserModel.setValue(TBL_USERS_PORT_DATA, entry.port);
+                    tblUserModel.setValue(TBL_USERS_TYPE_DATA, entry.type);
+                    tblUserModel.setSelectionVisible(counter, true);
+                }
+            }
+            szCache.setValue(entries);
+        }
     }
     
     /**
@@ -365,10 +364,10 @@ public class ServerConfigXMLViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event) {
         submitCycle = true;
-        String userMinPool = (String)getDisplayFieldValue(TF_USER_MIN_POOL);
-        String userMaxPool = (String)getDisplayFieldValue(TF_USER_MAX_POOL);
-        String bindDN = (String)getDisplayFieldValue(TF_USERS_BIND_DN);
-        String bindPwd = (String)getDisplayFieldValue(TF_USERS_BIND_PWD);
+        String svrMinPool = (String)getDisplayFieldValue(TF_SERVER_MIN_POOL);
+        String svrMaxPool = (String)getDisplayFieldValue(TF_SERVER_MAX_POOL);
+        String bindDN = (String)getDisplayFieldValue(TF_SERVER_BIND_DN);
+        String bindPwd = (String)getDisplayFieldValue(TF_SERVER_BIND_PWD);
         
         String serverName = (String)getPageSessionAttribute(
             ServerEditViewBeanBase.PG_ATTR_SERVER_NAME);
@@ -380,19 +379,19 @@ public class ServerConfigXMLViewBean
                 xmlObj.getSMSServerGroup();
             
             if (bAMSDKEnabled) {
-                String serverMinPool = (String)
-                    getDisplayFieldValue(TF_SERVER_MIN_POOL);
-                String serverMaxPool = (String)
-                    getDisplayFieldValue(TF_SERVER_MAX_POOL);
+                String userMinPool = (String)
+                    getDisplayFieldValue(TF_USER_MIN_POOL);
+                String userMaxPool = (String)
+                    getDisplayFieldValue(TF_USER_MAX_POOL);
                 ServerConfigXML.ServerGroup defaultServerGroup = 
                     xmlObj.getDefaultServerGroup();
 
-                defaultServerGroup.minPool = Integer.parseInt(serverMinPool);
-                defaultServerGroup.maxPool = Integer.parseInt(serverMaxPool);
+                defaultServerGroup.minPool = Integer.parseInt(userMinPool);
+                defaultServerGroup.maxPool = Integer.parseInt(userMaxPool);
             }
 
-            smsServerGroup.minPool = Integer.parseInt(userMinPool);
-            smsServerGroup.maxPool = Integer.parseInt(userMaxPool);
+            smsServerGroup.minPool = Integer.parseInt(svrMinPool);
+            smsServerGroup.maxPool = Integer.parseInt(svrMaxPool);
             List userGroup = smsServerGroup.dsUsers;
             ServerConfigXML.DirUserObject bind = (ServerConfigXML.DirUserObject)
                 userGroup.iterator().next();
@@ -434,20 +433,20 @@ public class ServerConfigXMLViewBean
         ServerSiteModel model = (ServerSiteModel)getModel();
         try {
             ServerConfigXML xmlObj = model.getServerConfigObject(serverName);
-            ServerConfigXML.ServerGroup smsServerGroup = 
-                xmlObj.getSMSServerGroup();
+            ServerConfigXML.ServerGroup defaultServerGroup = 
+                xmlObj.getDefaultServerGroup();
             
             CCActionTable table = (CCActionTable)getChild(TBL_USERS);
             table.restoreStateData();
             Integer[] selected = tblUserModel.getSelectedRows();
             
-            if (selected.length >= smsServerGroup.hosts.size()) {
+            if (selected.length >= defaultServerGroup.hosts.size()) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     model.getLocalizedString(
                     "exception.cannot,delete.all.servers"));
             } else {
                 for (int i = selected.length -1; i >= 0; --i) {
-                    smsServerGroup.hosts.remove(selected[i].intValue());
+                    defaultServerGroup.hosts.remove(selected[i].intValue());
                 }
                 model.setServerConfigXML(serverName, xmlObj.toXML());
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
@@ -474,8 +473,7 @@ public class ServerConfigXMLViewBean
             ServerConfigXMLAddServerViewBean.class);
         unlockPageTrail();
         vb.setPageSessionAttribute(
-            ServerConfigXMLAddServerViewBean.PG_ATTR_SERVER_GROUP_TYPE,
-            DSConfigMgr.DEFAULT);
+            ServerConfigXMLAddServerViewBean.PG_ATTR_SERVER_GROUP_TYPE, "sms");
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
@@ -493,7 +491,8 @@ public class ServerConfigXMLViewBean
             ServerConfigXMLAddServerViewBean.class);
         unlockPageTrail();
         vb.setPageSessionAttribute(
-            ServerConfigXMLAddServerViewBean.PG_ATTR_SERVER_GROUP_TYPE, "sms");
+            ServerConfigXMLAddServerViewBean.PG_ATTR_SERVER_GROUP_TYPE, 
+            DSConfigMgr.DEFAULT);
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
@@ -511,20 +510,20 @@ public class ServerConfigXMLViewBean
         ServerSiteModel model = (ServerSiteModel)getModel();
         try {
             ServerConfigXML xmlObj = model.getServerConfigObject(serverName);
-            ServerConfigXML.ServerGroup defaultServerGroup = 
-                xmlObj.getDefaultServerGroup();
+            ServerConfigXML.ServerGroup smsServerGroup = 
+                xmlObj.getSMSServerGroup();
             
             CCActionTable table = (CCActionTable)getChild(TBL_SERVERS);
             table.restoreStateData();
             Integer[] selected = tblServerModel.getSelectedRows();
             
-            if (selected.length >= defaultServerGroup.hosts.size()) {
+            if (selected.length >= smsServerGroup.hosts.size()) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     model.getLocalizedString(
                     "exception.cannot,delete.all.servers"));
             } else {
                 for (int i = selected.length -1; i >= 0; --i) {
-                    defaultServerGroup.hosts.remove(selected[i].intValue());
+                    smsServerGroup.hosts.remove(selected[i].intValue());
                 }
                 model.setServerConfigXML(serverName, xmlObj.toXML());
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
