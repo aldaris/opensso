@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.5 2008-04-24 22:48:08 asyhuang Exp $
+   $Id: Debug.jsp,v 1.6 2008-06-18 05:14:02 veiming Exp $
   
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,7 +28,6 @@
         com.iplanet.sso.SSOException,
         com.iplanet.sso.SSOToken,
         com.iplanet.sso.SSOTokenManager,
-        com.iplanet.am.util.Debug,
         com.iplanet.am.util.SystemProperties,
         com.sun.identity.common.DNUtils,
         com.sun.identity.idm.AMIdentity,
@@ -36,6 +35,7 @@
         com.sun.identity.idm.IdType,
         com.sun.identity.idm.IdUtils,
         com.sun.identity.security.AdminTokenAction,
+        com.sun.identity.shared.debug.Debug,
         java.security.AccessController,
         java.text.MessageFormat,
         java.util.ArrayList,
