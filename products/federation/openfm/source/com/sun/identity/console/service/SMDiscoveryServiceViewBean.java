@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceViewBean.java,v 1.3 2008-04-16 00:17:03 asyhuang Exp $
+ * $Id: SMDiscoveryServiceViewBean.java,v 1.4 2008-06-19 07:34:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class SMDiscoveryServiceViewBean
     extends AMServiceProfileViewBeanBase
 {
     public static final String DEFAULT_DISPLAY_URL =
-	"/console/service/SMDiscoveryService.jsp";
+        "/console/service/SMDiscoveryService.jsp";
     public static final String PAGE_MODIFIED = "pageModified";
 
     private static final String TBL_PROVIDER_RESOURCEID_MAPPER_COL_PROVIDERID =
@@ -77,7 +77,7 @@ public class SMDiscoveryServiceViewBean
     private static final String TBL_PROVIDER_RESOURCEID_MAPPER_COL_ID_MAPPER =
         "tblProviderResourceIdMapperColIdMapper";
     private static final String TBL_PROVIDER_RESOURCEID_MAPPER_DATA_PROVIDERID =
-	"tblProviderResourceIdMapperDataProviderId";
+        "tblProviderResourceIdMapperDataProviderId";
     private static final String TBL_PROVIDER_RESOURCEID_MAPPER_DATA_ID_MAPPER =
         "tblProviderResourceIdMapperDataIdMapper";
     private static final String TBL_PROVIDER_RESOURCEID_MAPPER_HREF_ACTION =
@@ -88,19 +88,19 @@ public class SMDiscoveryServiceViewBean
         "tblProviderResourceIdMapperButtonDelete";
 
     private static final String TBL_BOOTSTRAP_RES_OFF_COL_SERVICE_TYPE =
-	"tblBootstrapResOffColServiceType";
+        "tblBootstrapResOffColServiceType";
     private static final String TBL_BOOTSTRAP_RES_OFF_COL_ABSTRACT =
-	"tblBootstrapResOffColAbstract";
+        "tblBootstrapResOffColAbstract";
     private static final String TBL_BOOTSTRAP_RES_OFF_DATA_SERVICE_TYPE =
-	"tblBootstrapResOffDataServiceType";
+        "tblBootstrapResOffDataServiceType";
     private static final String TBL_BOOTSTRAP_RES_OFF_DATA_ABSTRACT =
-	"tblBootstrapResOffDataAbstract";
+        "tblBootstrapResOffDataAbstract";
     private static final String TBL_BOOTSTRAP_RES_OFF_HREF_ACTION =
-	"tblBootstrapResOffHrefAction";
+        "tblBootstrapResOffHrefAction";
     private static final String TBL_BOOTSTRAP_RES_OFF_ADD_BTN =
-	"tblBootstrapResOffButtonAdd";
+        "tblBootstrapResOffButtonAdd";
     private static final String TBL_BOOTSTRAP_RES_OFF_DELETE_BTN =
-	"tblBootstrapResOffButtonDelete";
+        "tblBootstrapResOffButtonDelete";
 
     private boolean tablePopulated = false;
 
@@ -108,8 +108,8 @@ public class SMDiscoveryServiceViewBean
      * Creates a personal profile service profile view bean.
      */
     public SMDiscoveryServiceViewBean() {
-	super("SMDiscoveryService", DEFAULT_DISPLAY_URL,
-	    AMAdminConstants.DISCOVERY_SERVICE);
+        super("SMDiscoveryService", DEFAULT_DISPLAY_URL,
+            AMAdminConstants.DISCOVERY_SERVICE);
     }
 
     /**
@@ -118,151 +118,154 @@ public class SMDiscoveryServiceViewBean
      * @param rc Request Context.
      */
     public void forwardTo(RequestContext rc) {
-	HttpServletRequest req = rc.getRequest();
-	String location = req.getParameter("Location");
+        HttpServletRequest req = rc.getRequest();
+        String location = req.getParameter("Location");
 
-	if ((location != null) && (location.trim().length() > 0)) {
-	    handleRealmOperationRequest(location, rc);
-	} else {
-	    String user = req.getParameter("User");
+        if ((location != null) && (location.trim().length() > 0)) {
+            handleRealmOperationRequest(location, rc);
+        } else {
+            String user = req.getParameter("User");
 
-	    if ((user != null) && (user.trim().length() > 0)) {
-		handleUserOperationRequest(location, user, rc);
-	    } else {
-		super.forwardTo(rc);
-	    }
-	}
+            if ((user != null) && (user.trim().length() > 0)) {
+                handleUserOperationRequest(location, user, rc);
+            } else {
+                super.forwardTo(rc);
+            }
+        }
     }
 
     private void handleEntityOperationRequest(
-	String realm,
-	String univId,
-	RequestContext rc
+        String realm,
+        String univId,
+        RequestContext rc
     ) {
-	HttpServletRequest req = rc.getRequest();
-	String op = req.getParameter("Op");
-	if (op.equals(AMAdminConstants.OPERATION_EDIT)) {
-	    setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
-		req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
-	    setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID, univId);
-	    setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
-	    unlockPageTrail();
-	    EntityResourceOfferingViewBean vb =
-		(EntityResourceOfferingViewBean)getViewBean(
-		EntityResourceOfferingViewBean.class);
-	    passPgSessionMap(vb);
-	    vb.forwardTo(rc);
-	} else {
-	    setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
-		req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
-	    setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID, univId);
-	    setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
+        HttpServletRequest req = rc.getRequest();
+        String op = req.getParameter("Op");
+        if (op.equals(AMAdminConstants.OPERATION_EDIT)) {
+            setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
+                req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
+            setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID, univId);
+            setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
+            unlockPageTrail();
+            EntityResourceOfferingViewBean vb =
+                (EntityResourceOfferingViewBean)getViewBean(
+                EntityResourceOfferingViewBean.class);
+            passPgSessionMap(vb);
+            vb.forwardTo(rc);
+        } else {
+            setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
+                req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
+            setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID, univId);
+            setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
 
-	    EntityResourceOfferingModel entityModel = new
-		EntityResourceOfferingModelImpl(
-		    req, getPageSessionAttributes());
-	    try {
-		entityModel.assignService(univId);
-	    } catch (AMConsoleException e) {
-		debug.error(
-		   "SMDiscoveryServiceViewBean.handleEntityOperationRequest",e);
-	    }
+            EntityResourceOfferingModel entityModel = new
+                EntityResourceOfferingModelImpl(
+                    req, getPageSessionAttributes());
+            try {
+                entityModel.assignService(univId);
+            } catch (AMConsoleException e) {
+                debug.error(
+                   "SMDiscoveryServiceViewBean.handleEntityOperationRequest",e);
+            }
 
-	    backTrail();
-	    AMPostViewBean vb = (AMPostViewBean)getViewBean(
-		AMPostViewBean.class);
-	    passPgSessionMap(vb);
-	    vb.setTargetViewBeanURL("../idm/EntityServices");
-	    vb.forwardTo(rc);
-	}
+            backTrail();
+            AMPostViewBean vb = (AMPostViewBean)getViewBean(
+                AMPostViewBean.class);
+            passPgSessionMap(vb);
+            vb.setTargetViewBeanURL("../idm/EntityServices");
+            vb.forwardTo(rc);
+        }
     }
 
     private void handleRealmOperationRequest(String realm, RequestContext rc) {
-	HttpServletRequest req = rc.getRequest();
-	String op = req.getParameter("Op");
-	if (op.equals(AMAdminConstants.OPERATION_EDIT)) {
-	    setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
-		req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
-	    setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
-	    unlockPageTrail();
-	    RealmResourceOfferingViewBean vb =
-		(RealmResourceOfferingViewBean)getViewBean(
-		RealmResourceOfferingViewBean.class);
-	    passPgSessionMap(vb);
-	    vb.forwardTo(rc);
-	} else {
-	    setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
-		req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
-	    setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
+        HttpServletRequest req = rc.getRequest();
+        String op = req.getParameter("Op");
+        if (op.equals(AMAdminConstants.OPERATION_EDIT)) {
+            setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
+                req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
+            setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
+            unlockPageTrail();
+            RealmResourceOfferingViewBean vb =
+                (RealmResourceOfferingViewBean)getViewBean(
+                RealmResourceOfferingViewBean.class);
+            passPgSessionMap(vb);
+            vb.forwardTo(rc);
+        } else {
+            setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
+                req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
+            setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
 
-	    RealmResourceOfferingModel realmModel = new
-		RealmResourceOfferingModelImpl(
-		    req, getPageSessionAttributes());
-	    try {
-		realmModel.assignService(realm);
-	    } catch (AMConsoleException e) {
-		debug.error(
-		   "SMDiscoveryServiceViewBean.handleRealmOperationRequest", e);
-	    }
+            RealmResourceOfferingModel realmModel = new
+                RealmResourceOfferingModelImpl(
+                    req, getPageSessionAttributes());
+            try {
+                realmModel.assignService(realm);
+            } catch (AMConsoleException e) {
+                debug.error(
+                   "SMDiscoveryServiceViewBean.handleRealmOperationRequest", e);
+            }
 
-	    backTrail();
-	    AMPostViewBean vb = (AMPostViewBean)getViewBean(
-		AMPostViewBean.class);
-	    passPgSessionMap(vb);
-	    vb.setTargetViewBeanURL("../realm/Services");
-	    vb.forwardTo(rc);
-	}
+            backTrail();
+            AMPostViewBean vb = (AMPostViewBean)getViewBean(
+                AMPostViewBean.class);
+            passPgSessionMap(vb);
+            vb.setTargetViewBeanURL("../realm/Services");
+            vb.forwardTo(rc);
+        }
     }
     
     private void handleUserOperationRequest(
-	String realm,
-	String univId,
-	RequestContext rc
+        String realm,
+        String univId,
+        RequestContext rc
     ) {
-	HttpServletRequest req = rc.getRequest();
-	SMDiscoveryServiceModel model = (SMDiscoveryServiceModel)getModel();
-	try {
-	    AMIdentity amid = IdUtils.getIdentity(
-		model.getUserSSOToken(), univId);
-	    if (amid.getType().getName().equalsIgnoreCase("user")) {
-		UMUserResourceOfferingViewBean vb = (UMUserResourceOfferingViewBean)
-		    getViewBean(UMUserResourceOfferingViewBean.class);
-		vb.unlockPageTrail();
-		vb.setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID,
-		    univId);
-		vb.setPageSessionAttribute(
-		    UMUserResourceOfferingViewBean.SERVICE_NAME, 
-		    AMAdminConstants.DISCOVERY_SERVICE);
-		vb.setPageSessionAttribute(AMAdminConstants.CURRENT_REALM,
-		    req.getParameter("realm"));
-		vb.setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
-		    req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
-		vb.forwardTo(rc);
-	    } else {
-		handleEntityOperationRequest(realm, univId, rc);
-	    }
-	} catch (IdRepoException e) {
-	    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-		model.getErrorString(e));
-	    super.forwardTo(rc);
-	}
+        HttpServletRequest req = rc.getRequest();
+        SMDiscoveryServiceModel model = (SMDiscoveryServiceModel)getModel();
+        try {
+            AMIdentity amid = IdUtils.getIdentity(
+                model.getUserSSOToken(), univId);
+            if (amid.getType().getName().equalsIgnoreCase("user")) {
+                UMUserResourceOfferingViewBean vb =
+                    (UMUserResourceOfferingViewBean)
+                    getViewBean(UMUserResourceOfferingViewBean.class);
+                vb.unlockPageTrail();
+                vb.setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID,
+                    univId);
+                vb.setPageSessionAttribute(EntityEditViewBean.ENTITY_TYPE, 
+                    "user");
+                vb.setPageSessionAttribute(
+                    UMUserResourceOfferingViewBean.SERVICE_NAME, 
+                    AMAdminConstants.DISCOVERY_SERVICE);
+                vb.setPageSessionAttribute(AMAdminConstants.CURRENT_REALM,
+                    req.getParameter("realm"));
+                vb.setPageSessionAttribute(PG_SESSION_PAGE_TRAIL_ID,
+                    req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
+                vb.forwardTo(rc);
+            } else {
+                handleEntityOperationRequest(realm, univId, rc);
+            }
+        } catch (IdRepoException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                model.getErrorString(e));
+            super.forwardTo(rc);
+        }
     }
 
     protected View createChild(String name) {
-	if (!tablePopulated) {
-	    prePopulateTable();
-	}
-	return super.createChild(name);
+        if (!tablePopulated) {
+            prePopulateTable();
+        }
+        return super.createChild(name);
     }
 
     protected void createPropertyModel() {
-	super.createPropertyModel();
-	createProviderResourceIdMapperTableModel();
-	createBootstrapResOffTableModel();
+        super.createPropertyModel();
+        createProviderResourceIdMapperTableModel();
+        createBootstrapResOffTableModel();
     }
 
     protected void createPageTitleModel() {
-	createTwoButtonPageTitleModel();
+        createTwoButtonPageTitleModel();
     }
 
     private void createProviderResourceIdMapperTableModel() {
@@ -279,47 +282,47 @@ public class SMDiscoveryServiceViewBean
         tblModel.setActionValue(TBL_PROVIDER_RESOURCEID_MAPPER_DELETE_BTN,
             "discovery.service.table.providerResourceIdMapper.delete.button");
         propertySheetModel.setModel(
-	    AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER,
+            AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER,
             tblModel);
     }
 
     private void createBootstrapResOffTableModel() {
-	CCActionTableModel tblModel = new CCActionTableModel(
-	    getClass().getClassLoader().getResourceAsStream(
-	    "com/sun/identity/console/tblDiscoveryBootstrapResOff.xml"));
-	tblModel.setTitleLabel("label.items");
-	tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_COL_SERVICE_TYPE,
-	    "discovery.service.table.bootstrapResOff.serviceType");
-	tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_COL_ABSTRACT,
-	    "discovery.service.table.bootstrapResOff.abstract");
-	tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_ADD_BTN,
-	    "discovery.service.table.bootstrapResOff.add.button");
-	tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_DELETE_BTN,
-	    "discovery.service.table.bootstrapResOff.delete.button");
-	propertySheetModel.setModel(
-	    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
-	    tblModel);
+        CCActionTableModel tblModel = new CCActionTableModel(
+            getClass().getClassLoader().getResourceAsStream(
+            "com/sun/identity/console/tblDiscoveryBootstrapResOff.xml"));
+        tblModel.setTitleLabel("label.items");
+        tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_COL_SERVICE_TYPE,
+            "discovery.service.table.bootstrapResOff.serviceType");
+        tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_COL_ABSTRACT,
+            "discovery.service.table.bootstrapResOff.abstract");
+        tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_ADD_BTN,
+            "discovery.service.table.bootstrapResOff.add.button");
+        tblModel.setActionValue(TBL_BOOTSTRAP_RES_OFF_DELETE_BTN,
+            "discovery.service.table.bootstrapResOff.delete.button");
+        propertySheetModel.setModel(
+            AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
+            tblModel);
     }
 
     private void prePopulateTable() {
-	Map attributeValues = (Map)removePageSessionAttribute(
-	    PROPERTY_ATTRIBUTE);
-	if (attributeValues != null) {
-	    AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
-	    ps.setAttributeValues(attributeValues, getModel());
-	}
-	prePopulateProviderResourceIdTable(attributeValues);
-	prePopulateBootstrapResOffTable(attributeValues);
+        Map attributeValues = (Map)removePageSessionAttribute(
+            PROPERTY_ATTRIBUTE);
+        if (attributeValues != null) {
+            AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
+            ps.setAttributeValues(attributeValues, getModel());
+        }
+        prePopulateProviderResourceIdTable(attributeValues);
+        prePopulateBootstrapResOffTable(attributeValues);
     }
 
     private void prePopulateProviderResourceIdTable(Map attributeValues) {
         if (attributeValues != null) {
             Set mapper = (Set)attributeValues.get(
-		AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
-	    populateProviderResourceIdMapperTable(mapper);
+                AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+            populateProviderResourceIdMapperTable(mapper);
         } else {
             Set mapper = (Set)removePageSessionAttribute(
-		AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+                AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
             if ((mapper != null) && !mapper.isEmpty()) {
                 populateProviderResourceIdMapperTable(mapper);
             }
@@ -327,49 +330,49 @@ public class SMDiscoveryServiceViewBean
     }
 
     private void prePopulateBootstrapResOffTable(Map attributeValues) {
-	Set resoff = null;
+        Set resoff = null;
 
-	if (attributeValues != null) {
-	    resoff = (Set)attributeValues.get(
-		AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-	    populateBootstrapResOffTable(resoff);
-	} else {
-	    resoff = (Set)removePageSessionAttribute(
-		AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-	    if ((resoff != null) && !resoff.isEmpty()) {
-		populateBootstrapResOffTable(resoff);
-	    }
-	}
+        if (attributeValues != null) {
+            resoff = (Set)attributeValues.get(
+                AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+            populateBootstrapResOffTable(resoff);
+        } else {
+            resoff = (Set)removePageSessionAttribute(
+                AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+            if ((resoff != null) && !resoff.isEmpty()) {
+                populateBootstrapResOffTable(resoff);
+            }
+        }
     }
 
     public void beginDisplay(DisplayEvent event)
-	throws ModelControlException {
-	super.beginDisplay(event);
-	resetButtonState(TBL_BOOTSTRAP_RES_OFF_DELETE_BTN);
-	resetButtonState(TBL_PROVIDER_RESOURCEID_MAPPER_DELETE_BTN);
+        throws ModelControlException {
+        super.beginDisplay(event);
+        resetButtonState(TBL_BOOTSTRAP_RES_OFF_DELETE_BTN);
+        resetButtonState(TBL_PROVIDER_RESOURCEID_MAPPER_DELETE_BTN);
 
-	if (!tablePopulated) {
-	    if (!isSubmitCycle()) {
-		SMDiscoveryServiceModel model = (SMDiscoveryServiceModel)
-		    getModel();
+        if (!tablePopulated) {
+            if (!isSubmitCycle()) {
+                SMDiscoveryServiceModel model = (SMDiscoveryServiceModel)
+                    getModel();
 
-		if (model != null) {
-		    populateProviderResourceIdMapperTable(
-			model.getProviderResourceIdMapper());
-		    Set resoff = new OrderedSet();
-		    resoff.addAll(model.getDiscoEntry(false));
-		    populateBootstrapResOffTable(resoff);
-		}
-	    }
-	}
+                if (model != null) {
+                    populateProviderResourceIdMapperTable(
+                        model.getProviderResourceIdMapper());
+                    Set resoff = new OrderedSet();
+                    resoff.addAll(model.getDiscoEntry(false));
+                    populateBootstrapResOffTable(resoff);
+                }
+            }
+        }
 
-	if (!isInlineAlertMessageSet()) {
-	    String flag = (String)getPageSessionAttribute(PAGE_MODIFIED);
-	    if ((flag != null) && flag.equals("1")) {
-		setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-		    "message.profile.modified");
-	    }
-	}
+        if (!isInlineAlertMessageSet()) {
+            String flag = (String)getPageSessionAttribute(PAGE_MODIFIED);
+            if ((flag != null) && flag.equals("1")) {
+                setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "message.profile.modified");
+            }
+        }
     }
 
     private void populateProviderResourceIdMapperTable(Collection mapper) {
@@ -379,8 +382,8 @@ public class SMDiscoveryServiceViewBean
         if (mapper != null) {
             CCActionTableModel tblModel =
                 (CCActionTableModel)propertySheetModel.getModel(
-	    AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
-	    tblModel.clearAll();
+            AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+            tblModel.clearAll();
             boolean firstEntry = true;
             int counter = 0;
 
@@ -408,105 +411,105 @@ public class SMDiscoveryServiceViewBean
                     tblModel.setValue(
                         TBL_PROVIDER_RESOURCEID_MAPPER_HREF_ACTION,
                             Integer.toString(counter));
-		    counter++;
+                    counter++;
                     cache.add(val);
                 }
             }
-	}
+        }
         setPageSessionAttribute(AMAdminConstants.
-	    DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER, cache);
+            DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER, cache);
     }
 
     private void populateBootstrapResOffTable(Set resoff) {
-	tablePopulated = true;
+        tablePopulated = true;
 
-	if (resoff != null) {
-	    CCActionTableModel tblModel =
-		(CCActionTableModel)propertySheetModel.getModel(
-		AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-	    tblModel.clearAll();
-	    boolean firstEntry = true;
-	    int counter = 0;
+        if (resoff != null) {
+            CCActionTableModel tblModel =
+                (CCActionTableModel)propertySheetModel.getModel(
+                AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+            tblModel.clearAll();
+            boolean firstEntry = true;
+            int counter = 0;
 
-	    try {
-		SMDiscoveryServiceData smEntry =
-		    SMDiscoveryServiceData.getEntries(resoff);
+            try {
+                SMDiscoveryServiceData smEntry =
+                    SMDiscoveryServiceData.getEntries(resoff);
 
-		List resourceList = smEntry.getResourceData();
-		if ((resourceList != null) && !resourceList.isEmpty()) {
-		    for (Iterator i = resourceList.iterator(); i.hasNext(); ) {
-			SMDiscoEntryData smDisco = (SMDiscoEntryData)i.next();
+                List resourceList = smEntry.getResourceData();
+                if ((resourceList != null) && !resourceList.isEmpty()) {
+                    for (Iterator i = resourceList.iterator(); i.hasNext(); ) {
+                        SMDiscoEntryData smDisco = (SMDiscoEntryData)i.next();
 
-			if (!firstEntry) {
-			    tblModel.appendRow();
-			} else {
-			    firstEntry = false;
-			}
+                        if (!firstEntry) {
+                            tblModel.appendRow();
+                        } else {
+                            firstEntry = false;
+                        }
 
-			tblModel.setValue(
-			    TBL_BOOTSTRAP_RES_OFF_DATA_SERVICE_TYPE,
-			    smDisco.serviceType);
-			tblModel.setValue(TBL_BOOTSTRAP_RES_OFF_DATA_ABSTRACT,
-			    smDisco.abstractValue);
-			tblModel.setValue(TBL_BOOTSTRAP_RES_OFF_HREF_ACTION,
-			    Integer.toString(counter));
-			counter++;
-		    }
-		    disableButton(TBL_BOOTSTRAP_RES_OFF_ADD_BTN, true);
-		} else {
-		    disableButton(TBL_BOOTSTRAP_RES_OFF_ADD_BTN, false);
-		}
-	    } catch (AMConsoleException e) {
-		setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-		    e.getMessage());
-	    }
-	}
+                        tblModel.setValue(
+                            TBL_BOOTSTRAP_RES_OFF_DATA_SERVICE_TYPE,
+                            smDisco.serviceType);
+                        tblModel.setValue(TBL_BOOTSTRAP_RES_OFF_DATA_ABSTRACT,
+                            smDisco.abstractValue);
+                        tblModel.setValue(TBL_BOOTSTRAP_RES_OFF_HREF_ACTION,
+                            Integer.toString(counter));
+                        counter++;
+                    }
+                    disableButton(TBL_BOOTSTRAP_RES_OFF_ADD_BTN, true);
+                } else {
+                    disableButton(TBL_BOOTSTRAP_RES_OFF_ADD_BTN, false);
+                }
+            } catch (AMConsoleException e) {
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+            }
+        }
 
-	setPageSessionAttribute(
-	    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
-	    (OrderedSet)resoff);
+        setPageSessionAttribute(
+            AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
+            (OrderedSet)resoff);
     }
 
 
     protected AMModel getModelInternal() {
-	HttpServletRequest req =
-	    RequestManager.getRequestContext().getRequest();
-	try {
-	    return new SMDiscoveryServiceModelImpl(
-		req, serviceName, getPageSessionAttributes());
-	} catch (AMConsoleException e) {
-	    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-		e.getMessage());
-	}
-	return null;
+        HttpServletRequest req =
+            RequestManager.getRequestContext().getRequest();
+        try {
+            return new SMDiscoveryServiceModelImpl(
+                req, serviceName, getPageSessionAttributes());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        }
+        return null;
     }
 
 
     protected boolean onBeforeSaveProfile(Map attrValues) {
-	Set mapper = (Set)getPageSessionAttribute(
-	    AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
-	if ((mapper != null) && !mapper.isEmpty()) {
-	    attrValues.put(
-		AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER,
-		    mapper);
-	}
-	Set resoff = (Set)getPageSessionAttribute(
-	    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-	if ((resoff != null) && !resoff.isEmpty()) {
-	    attrValues.put(
-		AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
-		resoff);
-	}
+        Set mapper = (Set)getPageSessionAttribute(
+            AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+        if ((mapper != null) && !mapper.isEmpty()) {
+            attrValues.put(
+                AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER,
+                    mapper);
+        }
+        Set resoff = (Set)getPageSessionAttribute(
+            AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+        if ((resoff != null) && !resoff.isEmpty()) {
+            attrValues.put(
+                AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
+                resoff);
+        }
 
-	return true;
+        return true;
     }
 
     protected void onBeforeResetProfile() {
-	removePageSessionAttribute(
-	    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-	removePageSessionAttribute(
-	    AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
-	tablePopulated = false;
+        removePageSessionAttribute(
+            AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+        removePageSessionAttribute(
+            AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+        tablePopulated = false;
     }
 
     /**
@@ -515,10 +518,10 @@ public class SMDiscoveryServiceViewBean
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event)
-	throws ModelControlException
+        throws ModelControlException
     {
-	removePageSessionAttribute(PAGE_MODIFIED);
-	super.handleButton1Request(event);
+        removePageSessionAttribute(PAGE_MODIFIED);
+        super.handleButton1Request(event);
     }
 
     /**
@@ -527,10 +530,10 @@ public class SMDiscoveryServiceViewBean
      * @param event Request invocation event
      */
     public void handleButton2Request(RequestInvocationEvent event)
-	throws ModelControlException
+        throws ModelControlException
     {
-	removePageSessionAttribute(PAGE_MODIFIED);
-	super.handleButton2Request(event);
+        removePageSessionAttribute(PAGE_MODIFIED);
+        super.handleButton2Request(event);
     }
 
     /**
@@ -539,37 +542,37 @@ public class SMDiscoveryServiceViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblBootstrapResOffButtonDeleteRequest(
-	RequestInvocationEvent event
+        RequestInvocationEvent event
     ) throws ModelControlException {
-	setSubmitCycle(true);
-	CCActionTable table = (CCActionTable)getChild(
-	    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-	table.restoreStateData();
-	CCActionTableModel tblModel =
-	    (CCActionTableModel)propertySheetModel.getModel(
-		AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+        setSubmitCycle(true);
+        CCActionTable table = (CCActionTable)getChild(
+            AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+        table.restoreStateData();
+        CCActionTableModel tblModel =
+            (CCActionTableModel)propertySheetModel.getModel(
+                AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
 
-	Integer[] selected = tblModel.getSelectedRows();
+        Integer[] selected = tblModel.getSelectedRows();
 
-	if ((selected != null) && (selected.length > 0)) {
-	    try {
-		OrderedSet tblValues = (OrderedSet)getPageSessionAttribute(
-		    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
-		SMDiscoveryServiceData smEntry =
-		    SMDiscoveryServiceData.getEntries(tblValues);
-		smEntry.deleteDiscoEntries(selected);
-		tblValues = (OrderedSet)smEntry.getDiscoveryEntries();
-		setPageSessionAttribute(
-		    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
-		    tblValues);
-		populateBootstrapResOffTable(tblValues);
-	    } catch (AMConsoleException e) {
-		setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-		    e.getMessage());
-	    }
-	}
+        if ((selected != null) && (selected.length > 0)) {
+            try {
+                OrderedSet tblValues = (OrderedSet)getPageSessionAttribute(
+                    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF);
+                SMDiscoveryServiceData smEntry =
+                    SMDiscoveryServiceData.getEntries(tblValues);
+                smEntry.deleteDiscoEntries(selected);
+                tblValues = (OrderedSet)smEntry.getDiscoveryEntries();
+                setPageSessionAttribute(
+                    AMAdminConstants.DISCOVERY_SERVICE_NAME_BOOTSTRAP_RES_OFF,
+                    tblValues);
+                populateBootstrapResOffTable(tblValues);
+            } catch (AMConsoleException e) {
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+            }
+        }
 
-	forwardTo();
+        forwardTo();
     }
 
     /**
@@ -578,25 +581,25 @@ public class SMDiscoveryServiceViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblProviderResourceIdMapperButtonDeleteRequest(
-	RequestInvocationEvent event
+        RequestInvocationEvent event
     ) throws ModelControlException {
-	setSubmitCycle(true);
-	CCActionTable table = (CCActionTable)getChild(
-	    AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
-	table.restoreStateData();
-	CCActionTableModel tblModel =
-	    (CCActionTableModel)propertySheetModel.getModel(
-		AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+        setSubmitCycle(true);
+        CCActionTable table = (CCActionTable)getChild(
+            AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+        table.restoreStateData();
+        CCActionTableModel tblModel =
+            (CCActionTableModel)propertySheetModel.getModel(
+                AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
 
-	Integer[] selected = tblModel.getSelectedRows();
+        Integer[] selected = tblModel.getSelectedRows();
 
-	if ((selected != null) && (selected.length > 0)) {
-	    OrderedSet tblValues = (OrderedSet)getPageSessionAttribute(
-		AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
-	    tblValues.removeAll(selected);
+        if ((selected != null) && (selected.length > 0)) {
+            OrderedSet tblValues = (OrderedSet)getPageSessionAttribute(
+                AMAdminConstants.DISCOVERY_SERVICE_PROVIDER_RESOURCE_ID_MAPPER);
+            tblValues.removeAll(selected);
             populateProviderResourceIdMapperTable(tblValues);
-	}
-	forwardTo();
+        }
+        forwardTo();
     } 
 
     /**
@@ -607,22 +610,22 @@ public class SMDiscoveryServiceViewBean
     public void handleTblBootstrapResOffButtonAddRequest(
         RequestInvocationEvent event
     ) throws ModelControlException {
-	try {
-	    Map values = getValues();
-	    onBeforeSaveProfile(values);
-	    setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
-	    SMDiscoveryBootstrapRefOffAddViewBean vb =
-		(SMDiscoveryBootstrapRefOffAddViewBean)
-		getViewBean(SMDiscoveryBootstrapRefOffAddViewBean.class);
-	    removePageSessionAttribute(
-		SMDiscoveryBootstrapRefOffAddViewBean.PROPERTY_ATTRIBUTE);
-	    unlockPageTrail();
-	    passPgSessionMap(vb);
-	    vb.forwardTo(getRequestContext());
-	} catch (AMConsoleException e) {
-	    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-		e.getMessage());
-	}
+        try {
+            Map values = getValues();
+            onBeforeSaveProfile(values);
+            setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
+            SMDiscoveryBootstrapRefOffAddViewBean vb =
+                (SMDiscoveryBootstrapRefOffAddViewBean)
+                getViewBean(SMDiscoveryBootstrapRefOffAddViewBean.class);
+            removePageSessionAttribute(
+                SMDiscoveryBootstrapRefOffAddViewBean.PROPERTY_ATTRIBUTE);
+            unlockPageTrail();
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        }
     }
 
     /**
@@ -639,10 +642,10 @@ public class SMDiscoveryServiceViewBean
             setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
             SMDiscoveryProviderResourceIdMapperAddViewBean vb =
                 (SMDiscoveryProviderResourceIdMapperAddViewBean)getViewBean(
-		SMDiscoveryProviderResourceIdMapperAddViewBean.class);
+                SMDiscoveryProviderResourceIdMapperAddViewBean.class);
             removePageSessionAttribute(
-	    SMDiscoveryProviderResourceIdMapperAddViewBean.PROPERTY_ATTRIBUTE);
-	    unlockPageTrail();
+            SMDiscoveryProviderResourceIdMapperAddViewBean.PROPERTY_ATTRIBUTE);
+            unlockPageTrail();
             passPgSessionMap(vb);
             vb.forwardTo(getRequestContext());
         } catch (AMConsoleException e) {
@@ -660,22 +663,22 @@ public class SMDiscoveryServiceViewBean
     public void handleTblBootstrapResOffHrefActionRequest(
         RequestInvocationEvent event
     ) throws ModelControlException {
-	try {
-	    Map values = getValues();
-	    onBeforeSaveProfile(values);
-	    setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
-	    SMDiscoveryBootstrapRefOffEditViewBean vb =
-		(SMDiscoveryBootstrapRefOffEditViewBean)getViewBean(
-		    SMDiscoveryBootstrapRefOffEditViewBean.class);
-	    unlockPageTrail();
-	    passPgSessionMap(vb);
-	    vb.populateValues((String)getDisplayFieldValue(
-		TBL_BOOTSTRAP_RES_OFF_HREF_ACTION));
-	    vb.forwardTo(getRequestContext());
-	} catch (AMConsoleException e) {
-	    setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-		e.getMessage());
-	}
+        try {
+            Map values = getValues();
+            onBeforeSaveProfile(values);
+            setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
+            SMDiscoveryBootstrapRefOffEditViewBean vb =
+                (SMDiscoveryBootstrapRefOffEditViewBean)getViewBean(
+                    SMDiscoveryBootstrapRefOffEditViewBean.class);
+            unlockPageTrail();
+            passPgSessionMap(vb);
+            vb.populateValues((String)getDisplayFieldValue(
+                TBL_BOOTSTRAP_RES_OFF_HREF_ACTION));
+            vb.forwardTo(getRequestContext());
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        }
     }
 
     /**
@@ -693,10 +696,10 @@ public class SMDiscoveryServiceViewBean
             SMDiscoveryProviderResourceIdMapperEditViewBean vb =
                 (SMDiscoveryProviderResourceIdMapperEditViewBean)getViewBean(
                     SMDiscoveryProviderResourceIdMapperEditViewBean.class);
-	    unlockPageTrail();
+            unlockPageTrail();
             passPgSessionMap(vb);
             vb.populateValues((String)getDisplayFieldValue(
-		TBL_PROVIDER_RESOURCEID_MAPPER_HREF_ACTION));
+                TBL_PROVIDER_RESOURCEID_MAPPER_HREF_ACTION));
             vb.forwardTo(getRequestContext());
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
@@ -705,6 +708,6 @@ public class SMDiscoveryServiceViewBean
     }
 
     protected String getBreadCrumbDisplayName() {
-	return "breadcrumbs.webservices.discovery";
+        return "breadcrumbs.webservices.discovery";
     }
 }

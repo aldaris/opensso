@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesEditViewBean.java,v 1.1 2007-02-07 20:21:56 jonnelson Exp $
+ * $Id: ServicesEditViewBean.java,v 1.2 2008-06-19 07:34:33 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.idm.model.EntitiesModel;
 import com.sun.identity.console.idm.model.EntitiesModelImpl;
+import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -78,9 +79,12 @@ public class ServicesEditViewBean
     }
 
     protected void createPageTitleModel() {
-        super.createPageTitleModel();
+        ptModel = new CCPageTitleModel(
+            getClass().getClassLoader().getResourceAsStream(
+                "com/sun/identity/console/threeBtnsPageTitle.xml"));
         ptModel.setValue("button1", "button.save");
         ptModel.setValue("button2", "button.reset");
+        ptModel.setValue("button3", "button.back");
     }
 
     /**
@@ -106,6 +110,18 @@ public class ServicesEditViewBean
                 e.getMessage());
         }
         forwardTo();
+    }
+
+    /**
+     * Handles back to previous view request.
+     *
+     * @param event Request invocation event.
+     */
+    public void handleButton3Request(RequestInvocationEvent event) {
+        EntityServicesViewBean vb = (EntityServicesViewBean)getViewBean(
+            com.sun.identity.console.idm.EntityServicesViewBean.class);
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
 
     protected String getPageTitle() {

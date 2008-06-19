@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserResourceOfferingViewBean.java,v 1.1 2008-04-16 00:28:18 asyhuang Exp $
+ * $Id: UMUserResourceOfferingViewBean.java,v 1.2 2008-06-19 07:34:34 veiming Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,8 +93,9 @@ public class UMUserResourceOfferingViewBean
     private void createPageTitleModel() {
 	ptModel = new CCPageTitleModel(
 	    getClass().getClassLoader().getResourceAsStream(
-		"com/sun/identity/console/oneBtnPageTitle.xml"));
+		"com/sun/identity/console/twoBtnsPageTitle.xml"));
 	ptModel.setValue("button1", "button.reset");
+	ptModel.setValue("button2", "button.back");
     }
 
     protected void createTableModel() {
@@ -158,7 +159,7 @@ public class UMUserResourceOfferingViewBean
                 if (counter > 0) {
                     tblModel.appendRow();
                 }
-                                                                                
+
                 SMDiscoEntryData entry = (SMDiscoEntryData)i.next();
                 tblModel.setValue(TBL_DATA_SERVICE_TYPE, entry.serviceType);
                 tblModel.setValue(TBL_DATA_ABSTRACT, entry.abstractValue);
@@ -196,6 +197,7 @@ public class UMUserResourceOfferingViewBean
 	return new UMUserResourceOfferingModelImpl(
 	    req, getPageSessionAttributes());
     }
+
     /**
      * Handles back button request.
      *
@@ -203,7 +205,18 @@ public class UMUserResourceOfferingViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event) {        
         forwardTo();
-
+    }
+        
+    /**
+     * Handles back button request.
+     *
+     * @param event Request Invocation Event.
+     */
+    public void handleButton2Request(RequestInvocationEvent event) {        
+        EntityServicesViewBean vb = (EntityServicesViewBean)getViewBean(
+            com.sun.identity.console.idm.EntityServicesViewBean.class);
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
         
     public void handleTblButtonAddRequest(RequestInvocationEvent event) {
