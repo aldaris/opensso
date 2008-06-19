@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.6 2006-12-20 23:06:17 rarcot Exp $
+ * $Id: CachedSubEntries.java,v 1.7 2008-06-19 16:40:40 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,8 +46,6 @@ public class CachedSubEntries {
 
     protected SMSEntry entry;
 
-    protected DN dn;
-
     protected String notificationID;
 
     // Debug & I18n variables
@@ -58,7 +56,6 @@ public class CachedSubEntries {
         try {
             cEntry = CachedSMSEntry.getInstance(t, dn, null);
             entry = cEntry.smsEntry;
-            this.dn = cEntry.dn;
             update();
             Class c = this.getClass();
             notificationID = SMSEventListenerManager.notifyChangesToSubNodes(
@@ -99,8 +96,8 @@ public class CachedSubEntries {
     public Set getSubEntries(SSOToken token, String pattern)
             throws SMSException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("CachedSubEntries: reading sub-entries DN: " + dn
-                    + " pattern: " + pattern);
+            debug.message("CachedSubEntries: reading sub-entries DN: " + 
+               cEntry.dn2Str + " pattern: " + pattern);
         }
         return (entry.subEntries(token, pattern, 0, true, true));
     }
@@ -112,7 +109,7 @@ public class CachedSubEntries {
         if (token == null) {
             // Need to remove this entry from the cache
             synchronized (smsEntries) {
-                smsEntries.remove(dn.toRFCString());
+                smsEntries.remove(cEntry.dnRFCStr);
             }
             SMSEventListenerManager.removeNotification(notificationID);
             throw (new SMSException(SMSEntry.bundle
@@ -125,8 +122,8 @@ public class CachedSubEntries {
     public Set getSchemaSubEntries(SSOToken token, String pattern,
             String serviceidPattern) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("CachedSubEntries: reading sub-entries DN: " + dn
-                    + " pattern: " + serviceidPattern);
+            debug.message("CachedSubEntries: reading sub-entries DN: " + 
+                cEntry.dn2Str + " pattern: " + serviceidPattern);
         }
         return (entry.schemaSubEntries(token, pattern, serviceidPattern, 0,
                 true, true));
@@ -157,7 +154,8 @@ public class CachedSubEntries {
 
     protected void update() {
         if (debug.messageEnabled()) {
-            debug.message("CachedSubEntries::update called for dn: " + dn);
+            debug.message("CachedSubEntries::update called for dn: " 
+                + cEntry.dn2Str);
         }
         // Clear the cache, will be updated in the next lookup
         ssoTokenToSubEntries = new Cache(100);
@@ -199,13 +197,13 @@ public class CachedSubEntries {
     public Set searchSubOrgNames(SSOToken token, String pattern,
             boolean recursive) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("CachedSubEntries: reading subOrgNames DN: " + dn
-                    + " pattern: " + pattern);
+            debug.message("CachedSubEntries: reading subOrgNames DN: " + 
+                cEntry.dn2Str + " pattern: " + pattern);
         }
         if (token == null) {
             // Need to remove this entry from the cache
             synchronized (smsEntries) {
-                smsEntries.remove(dn.toRFCString());
+                smsEntries.remove(cEntry.dnRFCStr);
             }
             SMSEventListenerManager.removeNotification(notificationID);
             throw (new SMSException(SMSEntry.bundle
@@ -225,8 +223,8 @@ public class CachedSubEntries {
     public Set searchOrgNames(SSOToken token, String serviceName,
             String attrName, Set values) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
-            debug.message("CachedSubEntries: reading orgNames DN: " + dn
-                    + " attrName: " + attrName);
+            debug.message("CachedSubEntries: reading orgNames DN: " + 
+                cEntry.dn2Str + " attrName: " + attrName);
         }
 
         return (entry.searchOrganizationNames(token, 0, true, true,

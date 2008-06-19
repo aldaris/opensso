@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.38 2008-06-16 21:16:11 goodearth Exp $
+ * $Id: IdServicesImpl.java,v 1.39 2008-06-19 16:40:39 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,8 +29,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import javax.security.auth.callback.Callback;
 
@@ -297,7 +299,22 @@ public class IdServicesImpl implements IdServices {
             // exception. If caused it would be fatal one - report it.
             throw new IdRepoFatalException(ssoe.getL10NMessage());
         }
+
+        Vector orderedPlugins = new Vector();
+        IdRepo savedAgentRepo = null;
         for (Iterator items = cPlugins.iterator(); items.hasNext();) {
+              IdRepo idRepo = (IdRepo) items.next();
+              if (idRepo instanceof com.sun.identity.idm.plugins.internal.AgentsRepo) {
+                  savedAgentRepo = idRepo;
+              } else {
+                  orderedPlugins.add(idRepo);
+              }
+        }
+        if (savedAgentRepo != null){
+             orderedPlugins.add(savedAgentRepo);
+        }
+
+        for (ListIterator items = orderedPlugins.listIterator(); items.hasNext();) {
             IdRepo idRepo = (IdRepo) items.next();
             if (idRepo.supportsAuthentication()) {
                 if (getDebug().messageEnabled()) {

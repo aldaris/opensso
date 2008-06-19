@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.26 2008-04-25 23:23:26 dillidorai Exp $
+ * $Id: LoginState.java,v 1.27 2008-06-19 16:40:40 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,9 +81,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.servlet.http.Cookie;
@@ -2216,20 +2218,33 @@ public class LoginState {
             
                     if (messageEnabled) {
                         debug.message("Search for Identity " + userTokenID);
-                        }
-                    Iterator identityIterator = identityTypes.iterator();
-                    while (identityIterator.hasNext()) {
-                        String strIdType = (String) identityIterator.next();
-                        // Get identity by searching
-                        searchResults = searchIdentity(
-                        IdUtils.getType(strIdType),userTokenID);
+                    }
+
+                    Set tmpIdentityTypes = new HashSet(identityTypes);
+                    if (identityTypes.contains("user")) {
+                        tmpIdentityTypes.remove("user");
+                        searchResults = searchIdentity(IdUtils.getType("user"),
+                            userTokenID);
                         if (searchResults != null) {
                             amIdentitySet = searchResults.getSearchResults();
                         }
-                        if (!amIdentitySet.isEmpty()) {
-                            break;
-                        }
                     }
+                    if (amIdentitySet.isEmpty()) {
+                         Iterator identityIterator = tmpIdentityTypes.iterator();
+                         while (identityIterator.hasNext()) {
+                             String strIdType = (String) identityIterator.next();
+                             // Get identity by searching
+                             searchResults = searchIdentity(
+                                 IdUtils.getType(strIdType),userTokenID);
+                             if (searchResults != null) {
+                                amIdentitySet = searchResults.getSearchResults();
+                             }
+                             if (!amIdentitySet.isEmpty()) {
+                                 break;
+                             }
+                         }
+                    }
+
                 }
             }
             

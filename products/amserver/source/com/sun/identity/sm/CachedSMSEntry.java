@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.6 2008-05-05 21:16:24 goodearth Exp $
+ * $Id: CachedSMSEntry.java,v 1.7 2008-06-19 16:40:40 kenwho Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,9 @@ public class CachedSMSEntry {
 
     protected SSOToken token; // Valid SSOToken used for read
 
-    protected DN dn;
+    protected String dn2Str;
+
+    protected String dnRFCStr;
 
     protected SMSEntry smsEntry;
 
@@ -75,7 +77,9 @@ public class CachedSMSEntry {
     // Private constructor, can be instantiated only via getInstance
     private CachedSMSEntry(SMSEntry e) {
         smsEntry = e;
-        dn = new DN(e.getDN());
+        DN dn = new DN(e.getDN());
+        dn2Str = dn.toString();
+        dnRFCStr = dn.toRFCString();
         serviceObjects = new HashSet();
         token = e.getSSOToken();
         principals = new HashSet();
@@ -114,7 +118,7 @@ public class CachedSMSEntry {
     void update() {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry: update "
-                    + "method called: " + dn);
+                    + "method called: " + dn2Str );
         }
         // Read the LDAP attributes and update listeners
         try {
@@ -125,7 +129,7 @@ public class CachedSMSEntry {
             } else {
                 // this entry is no long valid, remove from cache
                 synchronized (cachedSMSEntriesMutex) {
-                    smsEntries.remove(dn.toRFCString());
+                    smsEntries.remove(dnRFCStr);
                 }
                 SMSEventListenerManager.removeNotification(notificationID);
                 notificationID = null;
@@ -134,10 +138,10 @@ public class CachedSMSEntry {
         } catch (SMSException e) {
             // Error in reading the attribtues, entry could be deleted
             // or does not have permissions to read the object
-            SMSEntry.debug.error("Error in reading entry attributes: " + dn, e);
+            SMSEntry.debug.error("Error in reading entry attributes: " + dn2Str, e);
             // Remove this entry from the cache
             synchronized (cachedSMSEntriesMutex) {
-                smsEntries.remove(dn.toRFCString());
+                smsEntries.remove(dnRFCStr);
             }
             SMSEventListenerManager.removeNotification(notificationID);
             notificationID = null;
@@ -146,10 +150,10 @@ public class CachedSMSEntry {
             // Error in reading the attribtues, SSOToken problem
             // Might have timed-out
             SMSEntry.debug.error("SSOToken problem in reading entry "
-                    + "attributes: " + dn, ssoe);
+                    + "attributes: " + dn2Str, ssoe);
             // Remove this entry from the cache
             synchronized (cachedSMSEntriesMutex) {
-                smsEntries.remove(dn.toRFCString());
+                smsEntries.remove(dnRFCStr);
             }
             SMSEventListenerManager.removeNotification(notificationID);
             notificationID = null;
@@ -192,7 +196,7 @@ public class CachedSMSEntry {
     void updateServiceListeners(String method) {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry::updateServiceListeners "
-                    + "method called: " + dn);
+                    + "method called: " + dn2Str);
         }
         // Inform the ServiceSchemaManager's of changes to attributes
         HashSet origServiceObjects = (HashSet) serviceObjects.clone();
@@ -206,7 +210,7 @@ public class CachedSMSEntry {
                     m.invoke(obj, (Object[])null);
                 } catch (Exception e) {
                     SMSEntry.debug.error("CachedSMSEntry::unable to "
-                        + "deliver notification(" + dn + ")", e);
+                        + "deliver notification(" + dn2Str+ ")", e);
                 }
             }
         }
@@ -272,7 +276,7 @@ public class CachedSMSEntry {
     }
 
     String getDN() {
-        return (dn.toString());
+        return (dn2Str);
     }
 
     void refresh(SMSEntry e) throws SMSException {
