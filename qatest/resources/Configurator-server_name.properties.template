@@ -1,236 +1,61 @@
 # Properties utilized for configuration and execution.
-
-# The exact domain in which test host is residing.
-cookiedomain=
-
-# The port on which the client server (jetty) will listen for notifications
-# from server. Ensure that the port is not in use. The format is
-# '<notification port>/<notification uri>'. The server name defaults to the
-# name of host on/from where client sdk calls are being made.
-notification_uri=
-
-# The number of milliseconds client calls should wait for notification
-# from server to dirty the client side cache. The minimum should be set
-# to at least 5000 (5 seconds).
-notification_sleep=
+#
+#############################################################################
 
 # The naming service of the server aganist which qatest is being executed. This
 # should have the following form:
 # '<protocol>://<fqdn>:<port>/<deploy-uri>/namingservice'
-namingservice=
+#for eg: http://myserver.example.com:8080/opensso/namingservice
+com.iplanet.am.naming.url=
 
-# Will distributed authentication be used in the installation under test.
-# Value should be "true" if distributed authentication is used and "false" 
-# if not.
-dist_auth_enabled=false
+# This is the domain cookie value where the opensso server is (being) configured
+# This value will be the same that is stored in the iPlanetAMPlatformService
+# This value must precede with a dot with atleast 2 level domains
+# eg: .example.com is valid but not example.com or .com
+cookiedomain=
 
-# The notification URL of the distributed authentication deployment.
-# This value should have the following form:
-# '<da-protocol>://<da-fqdn>:<da-port>/<da-deploy-uri>/notificationservice
-# This value is only used if dist_auth_enabled is set to "true".
-dist_auth_notification_service=
+# Top level admin user amadmin's password, used for various internal verification
+# procedures. Typically it is amadmin but any toplevel admin user's password is 
+# as long as the amadmin_username property value is matched  
+amadmin_password=
 
 # The password to set for UrlAccessAgent user. This should be different from the
-# amadmin password. This property is utilized only at the time of configuring
-# the deployed war.
-urlaccessagent_password=
+# amadmin password. This property is utilized both at the time of configuring
+# the deployed war and while running the qatest framework, this password is being 
+# used to obtain the app ssotoken. This overrides the AMConfig.properties generated
+# by the clientsdksamples module. Counter part to this property is 
+# com.sun.identity.agents.app.username 
+com.iplanet.am.service.password=
 
-# The configuration directory for server. This is used only at the time of 
-# configuring the war.
+#############################################################################
+# This section contains different properties used for war configuration
+#############################################################################
+# The SMS configuration directory for server. This is used to place the 
+# bootstrap file and other files while configuring the product. CLI module 
+#also rely on this property to locate the bootstrap file to configure the CLI famadm.
+
 config_dir=
-
-# The encryption key to use for server configuration and by IDM test to fill in
-# the value of am.encryption.pwd in AMClient.properties.
-encryption_key=
-
-# The name of datastore created under root realm when system is configured. This
-# is used if umdatastore property is set to dirServer. This is used each time
-# qatest is executed.
-defaultdatastorename=
-
-# User Management Datastore. This can take only two values: embedded or
-# dirServer. If embedded it uses the default datatsore configured when embedded 
-# configuration is selected. If dirServer is used, qatest deletes the default 
-# datastore and creates new datastore(s). The data to create this datastore(s)
-# is picked from the resources/config/configGlobalData.properties file.
-# This value is used each time qatest is executed. This is used each time
-# qatest is executed.
-umdatastore=
-
-# Service Management Datastore. This can take only two values: embedded or
-# dirServer. If set to embedded, embedded OpenDS is used as the datastore. If
-# set to dirServer, remote directory is used as the datastore. This is used
-# only at the time of configuring the war.
-datastore=
 
 #
 # Following properties list the details of the directory server, where services
 # data will be stored. These are used, both for embedded and dirServer. For 
 # embedded, only directory_port and config_root_suffix are used. For dirServer
-# all the properties are used. These are used only at the time of configuring
-# the war.
+# all the properties are used. These property values  are also used to set
+# the UM Datastore properties in case of embedded
 #
-# FQDN of directory server.
+# fully qualified host name(FQHN) of directory server.
 directory_server=
 
 # Port on which directory is running.
 directory_port=
 
-# Configuration root suffix.
+# Configuration root suffix. eg: dc=example,dc=com
 config_root_suffix=
 
-# User DN to use for directory configuration.
-ds_dirmgrdn=
+# Password for user dn used in the property ds_dirmgrdn
 
-# Password for user dn used above.
 ds_dirmgrpasswd=
 
 # Whether to load User schema or not. Values can be yes or no.
 load_ums=
 
-#
-# Properties utilized globally
-#
-# amadmin user name
-amadmin_username=
-
-# amadmin password
-amadmin_password=
-
-# Root realm (default is set to "/")
-realm=/
-
-# Execution realm against which the tests should be run (default is set to "/")
-execution_realm=/
-
-# This flag indicates if the execution realm tree should be deleted recursivly
-# or not. 
-# If execution_realm is set to /sub1/sub2/sub3 
-# and this flag is set to true then /sub1 realm will be deleted recursivly. 
-# But if this flag is set to false then only /sub3 realm will be deleted. 
-subrealm_recursive_delete=false
-
-# Logging level for the framework. Framework user the following log levels:
-# SEVERE, CONFIG, FINE and FINEST
-log_level=
-
-# Flag used internally by qatest. Not to be changed.
-productSetupResult=pass
-
-#
-# Properties utilized for coupled configurations like saml, idff, multi protocol
-# etc. By default the values for these properties are set using the values
-# listed above but they can be changed to whatever the end user desires. User
-# defined values will override the default values. These properties do not
-# become part of client side AMConfig.properties file. This is becuase multi 
-# server tests do not use client sdk to talk to the server. Currently that 
-# communication happens through famadm.jsp.
-#
-# Meta alias to use when configurating the metadata. By default it is set to 
-# FQDN of the host name.
-metaalias=@COPY_FROM_CONFIG@
-
-# The name of entity to be created. By default it is set to FQDN of the host
-# name.
-entity_name=@COPY_FROM_CONFIG@
-
-# Name of circle of trust. By default it is set as spcot for SP and idpcot for
-# IDP.
-cot=@COPY_FROM_CONFIG@
-
-# Certificate alias used for XML signing and encryption.
-certalias=
-
-# If this flag is set to true, Multiprotocol testcases will use one IDP 
-# & three SP's. 
-multiprotocol_enabled=false
-
-# SP points to the hostname. Configurator-<hostname>.properties file should 
-# exist under resources directory
-# These properties should be mentioned in IDP's Configurator file, 
-# i.e. SERVER_NAME1's Configurator file
-# SERVER_NAME2 will be used as samklv2 SP. 
-# idff_sp points to the SP where IDFF SP metadata will be hosted.
-# wsfed_sp points to the SP where WSFed SP metadata will be hosted.
-idff_sp=
-wsfed_sp=
-
-# Protocol for SP or IDP. By default the protcocl is picked from the
-# namingservice attribute.
-protocol=@COPY_FROM_CONFIG@
-
-# Host name for SP or IDP. By default the protcocl is picked from the
-# namingservice attribute.
-host=@COPY_FROM_CONFIG@
-
-# Port for SP or IDP. By default the protcocl is picked from the
-# namingservice attribute.
-port=@COPY_FROM_CONFIG@
-
-# Deployment URI for SP or IDP. By default the protcocl is picked from the
-# namingservice attribute.
-deployment_uri=@COPY_FROM_CONFIG@
-
-#
-# Properties utilized by tests which use keystore configuration (WSS). These 
-# properties become part of AMConfig.properties and used by client sdk.
-#
-# Location of the keystore file.
-com.sun.identity.saml.xmlsig.keystore=
-
-# Location of keypass file.
-com.sun.identity.saml.xmlsig.keypass=
-
-# Location of storepass file.
-com.sun.identity.saml.xmlsig.storepass=
-
-# Certificate alias used for XML signing and encryption.
-com.sun.identity.saml.xmlsig.certalias=
-
-# Default certificate alias for issuing web service security token for this
-# web service client
-com.sun.identity.liberty.ws.wsc.certalias=
-
-# Enable client side idm caching or not.
-com.sun.identity.idm.cache.enabled=
-
-# Flag for checking the Certificate which is embedded in the
-# KeyInfo against the certificates in the keystore (specified
-# by the "com.sun.identity.saml.xmlsig.keystore" property).
-# Possible values for the key are: on|off. If the flag is "on",
-# the certification must be presented in the keystore for
-# XML signature validation. If the flag is "off", skip
-# the presence checking.
-com.sun.identity.saml.checkcert=off
-
-#
-# XML signature algorithm. Used for SAML XML Signature generation and
-# verification. When not specified, or value is empty, default value will be
-# used. The following is the list of supported algorithms:
-# http://www.w3.org/2000/09/xmldsig#rsa-sha1    (default)
-# http://www.w3.org/2000/09/xmldsig#hmac-sha1
-# http://www.w3.org/2000/09/xmldsig#dsa-sha1
-# http://www.w3.org/2001/04/xmldsig-more#rsa-md5
-# http://www.w3.org/2001/04/xmldsig-more#rsa-ripemd160
-# http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
-# http://www.w3.org/2001/04/xmldsig-more#rsa-sha384
-# http://www.w3.org/2001/04/xmldsig-more#rsa-sha512
-# http://www.w3.org/2001/04/xmldsig-more#hmac-md5
-# http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160
-# http://www.w3.org/2001/04/xmldsig-more#hmac-sha256
-# http://www.w3.org/2001/04/xmldsig-more#hmac-sha384
-# http://www.w3.org/2001/04/xmldsig-more#hmac-sha512
-com.sun.identity.saml.xmlsig.xmlSigAlgorithm=
-
-#
-# SAML2 XML Signing Certificate Validation.
-com.sun.identity.saml2.crl.check=false
-
-#
-# SAML2 XML Signing Certificate Validation.
-com.sun.identity.saml2.crl.check.ca=false
-
-
-# Client ceritificate alias that will be used in SSL connection for Liberty
-# SOAP Binding
-com.sun.identity.liberty.ws.soap.certalias=

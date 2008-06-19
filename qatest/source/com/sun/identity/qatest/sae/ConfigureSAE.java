@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.4 2008-01-31 22:06:28 rmisra Exp $
+ * $Id: ConfigureSAE.java,v 1.5 2008-06-19 22:43:39 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -401,7 +401,7 @@ public class ConfigureSAE extends TestCommon {
                     confMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             spMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
                     confMap.get(TestConstants.KEY_SP_DATASTORE));
-            spMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
+            spMap.put(TestConstants.KEY_ATT_AM_ENC_PWD,
                     confMap.get(TestConstants.KEY_SP_ENC_KEY));
             spMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
                     confMap.get(TestConstants.KEY_SP_DIRECTORY_SERVER));
@@ -442,7 +442,7 @@ public class ConfigureSAE extends TestCommon {
                     confMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             idpMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
                     confMap.get(TestConstants.KEY_IDP_DATASTORE));
-            idpMap.put(TestConstants.KEY_ATT_AM_ENC_KEY,
+            idpMap.put(TestConstants.KEY_ATT_AM_ENC_PWD,
                 confMap.get(TestConstants.KEY_IDP_ENC_KEY));
             idpMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
                     confMap.get(TestConstants.KEY_IDP_DIRECTORY_SERVER));

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.14 2008-05-16 22:21:33 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.15 2008-06-19 22:45:01 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,13 +36,11 @@ import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.util.logging.Level;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -78,10 +76,20 @@ public class SetupProduct extends TestCommon {
                     (serverName2.indexOf("SERVER_NAME2") == -1)) {
                 log(Level.FINE, "SetupProduct", "Initiating setup for " +
                         serverName1);
+                Map<String, String> configMapServer1 = new HashMap<String, 
+                        String>();
+                configMapServer1 = getMapFromResourceBundle(
+                        "ConfiguratorCommon");
+                configMapServer1.putAll(getMapFromResourceBundle(
+                        "Configurator-" + serverName1));
+                createFileFromMap(configMapServer1, serverName + fileseparator +
+                        "built" + fileseparator + "classes" + fileseparator + 
+                        "Configurator-" + serverName1 + 
+                        "-Generated.properties");
                 ResourceBundle cfg1 = ResourceBundle.
-                        getBundle("Configurator-" + serverName1);
-                String strURL = cfg1.
-                        getString(TestConstants.KEY_ATT_NAMING_SVC);
+                        getBundle("Configurator-" + serverName1 + "-Generated");
+                String strURL = cfg1.getString(TestConstants.
+                        KEY_AMC_NAMING_URL);
                 log(Level.FINE, "SetupProduct", "Server URL: " + strURL);
                 Map map = getURLComponents(strURL);
                 log(Level.FINE, "SetupProduct", "Server URL Components: " +
@@ -91,8 +99,8 @@ public class SetupProduct extends TestCommon {
                 namingPort = (String)map.get("port");
                 namingURI = (String)map.get("uri");
                 bserver1 = configureProduct(getConfigurationMap("Configurator-"
-                        + serverName1, namingProtocol, namingHost, namingPort, 
-                        namingURI));
+                        + serverName1 + "-Generated", namingProtocol, 
+                        namingHost, namingPort, namingURI));
                 list = new ArrayList();
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct",
@@ -181,8 +189,19 @@ public class SetupProduct extends TestCommon {
                 //Configure second server.
                 log(Level.FINE, "SetupProduct", "Initiating setup for " +
                         serverName2);
+                Map<String, String> configMapServer2 = new HashMap<String, 
+                        String>();
+                configMapServer2 = getMapFromResourceBundle
+                        ("ConfiguratorCommon");
+                configMapServer2.putAll(getMapFromResourceBundle
+                        ("Configurator-" + serverName2));
+                createFileFromMap(configMapServer2, serverName + fileseparator +
+                        "built" + fileseparator + "classes" + fileseparator + 
+                        "Configurator-" + serverName2 + 
+                        "-Generated.properties");
                 bserver2 = configureProduct(
-                        getConfigurationMap("Configurator-" + serverName2));
+                        getConfigurationMap("Configurator-" + serverName2 + 
+                        "-Generated"));
                 if (!bserver2) {
                     log(Level.FINE, "SetupProduct", "Configuration failed" +
                             " for " + serverName2);
@@ -190,7 +209,7 @@ public class SetupProduct extends TestCommon {
                 } else {
                     ResourceBundle cfg2 =
                             ResourceBundle.getBundle("Configurator-" +
-                            serverName2);
+                            serverName2 + "-Generated");
                     String strUMDatastore2 = cfg2.getString("umdatastore");
                     String defDataStoreName2 = cfg2.getString(TestConstants.
                             KEY_ATT_CONFIG_DEFDATASTORENAME);
@@ -219,10 +238,21 @@ public class SetupProduct extends TestCommon {
                     String serverName4 = cfg1.getString(TestConstants.
                             KEY_ATT_WSFED_SP);
                     
+                    Map<String, String> configMapServer3 = new HashMap<String, 
+                            String>();
+                    configMapServer3 = getMapFromResourceBundle
+                            ("ConfiguratorCommon");
+                    configMapServer3.putAll(getMapFromResourceBundle
+                            ("Configurator-" + 
+                            serverName3));
+                    createFileFromMap(configMapServer3, serverName + 
+                            fileseparator + "built" + fileseparator + "classes" 
+                            + fileseparator + "Configurator-" + serverName3 + 
+                            "-Generated");
                     ResourceBundle cfg3 = ResourceBundle.
                             getBundle("Configurator-" + serverName3);
                     strURL = cfg3.
-                            getString(TestConstants.KEY_ATT_NAMING_SVC);
+                            getString(TestConstants.KEY_AMC_NAMING_URL);
                     log(Level.FINE, "SetupProduct", "Server 3 URL: " + strURL);
                     map = getURLComponents(strURL);
                     log(Level.FINE, "SetupProduct", "Server3 URL Components: " +
@@ -231,11 +261,11 @@ public class SetupProduct extends TestCommon {
                     namingHost = (String)map.get("host");
                     namingPort = (String)map.get("port");
                     namingURI = (String)map.get("uri");
-                    
+
                     boolean bserver3 = configureProduct(
-                            getConfigurationMap("Configurator-" + serverName3,
-                            namingProtocol, namingHost, namingPort, 
-                            namingURI));
+                            getConfigurationMap("Configurator-" + serverName3 + 
+                            "-Generated", namingProtocol, namingHost, 
+                            namingPort, namingURI));
                     if (!bserver3) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName3);
@@ -323,11 +353,22 @@ public class SetupProduct extends TestCommon {
                     }
                     
                     //Configure SP for WSFed
+                    Map<String, String> configMapServer4 = new HashMap<String, 
+                            String>();
+                    configMapServer4 = getMapFromResourceBundle
+                            ("ConfiguratorCommon");
+                    configMapServer4.putAll(getMapFromResourceBundle
+                            ("Configurator-" + serverName4));
+                    createFileFromMap(configMapServer4, serverName + 
+                            fileseparator + "built" + fileseparator + "classes" 
+                            + fileseparator + "Configurator-" + serverName4 + 
+                            "-Generated.properties");
                     ResourceBundle cfg4 =
                             ResourceBundle.getBundle("Configurator-" +
-                            serverName4);
-                    strURL = cfg4.
-                            getString(TestConstants.KEY_ATT_NAMING_SVC);
+                            serverName4 + "-Generated");
+                    
+                    strURL = configMapServer4.
+                            get(TestConstants.KEY_AMC_NAMING_URL);
                     log(Level.FINE, "SetupProduct", "Server 4 URL: " + strURL);
                     map = getURLComponents(strURL);
                     log(Level.FINE, "SetupProduct", "Server 4 URL Components:" +
@@ -340,9 +381,9 @@ public class SetupProduct extends TestCommon {
                     ResourceBundle cfg1Data =
                             ResourceBundle.getBundle("configGlobalData");
                     boolean bserver4 = configureProduct(
-                            getConfigurationMap("Configurator-" + serverName4,
-                            namingProtocol, namingHost, namingPort,
-                            namingURI));
+                            getConfigurationMap("Configurator-" + serverName4 +
+                            "-Generated", namingProtocol, namingHost, 
+                            namingPort, namingURI));
                     if (!bserver4) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName4);
@@ -429,17 +470,29 @@ public class SetupProduct extends TestCommon {
                 }
             } else if ((serverName1.indexOf("SERVER_NAME1") == -1) &&
                     (serverName2.indexOf("SERVER_NAME2") != -1)) {
+                Map<String, String> configMapServer1 = new HashMap<String, 
+                        String>();
+                configMapServer1 = getMapFromResourceBundle
+                        ("ConfiguratorCommon");
+                configMapServer1.putAll(getMapFromResourceBundle
+                        ("Configurator-" + 
+                        serverName1));
+                createFileFromMap(configMapServer1, serverName + fileseparator 
+                        + "built" + fileseparator + "classes" + fileseparator 
+                        + "Configurator-" + serverName1 + 
+                        "-Generated.properties");
                 ResourceBundle cfg1 = ResourceBundle.getBundle("Configurator-" +
-                        serverName1);                
-                String namingURL = cfg1.getString(KEY_ATT_NAMING_SVC);
+                        serverName1 + "-Generated");                
+
+                String namingURL = cfg1.getString(KEY_AMC_NAMING_URL);
                 Map namingURLMap = getURLComponents(namingURL);
                 namingProtocol = (String) namingURLMap.get("protocol");
                 namingHost = (String) namingURLMap.get("host");
                 namingPort = (String) namingURLMap.get("port");
                 namingURI = (String) namingURLMap.get("uri");
                 bserver1 = configureProduct(getConfigurationMap("Configurator-"
-                        + serverName1, namingProtocol, namingHost, namingPort,
-                        namingURI));
+                        + serverName1 + "-Generated", namingProtocol, 
+                        namingHost, namingPort, namingURI));
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct", "Configuration failed for" +
                             " " + serverName1);

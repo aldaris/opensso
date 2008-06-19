@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-authentication-testng.xml,v 1.8 2008-06-10 18:15:02 cmwesley Exp $
+ $Id: ff_ds_sec-authentication-testng.xml,v 1.9 2008-06-19 22:48:14 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -35,6 +35,7 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.authentication.ConfigUnconfig"/>
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
     </test>

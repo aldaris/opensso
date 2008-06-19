@@ -17,12 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.2 2008-06-19 22:43:13 mrudulahg Exp $
+ * $Id: ConfigUnconfig.java,v 1.1 2008-06-19 22:41:41 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
-
-package com.sun.identity.qatest.notification;
+package com.sun.identity.qatest.samlv2idpproxy;
 
 import com.sun.identity.qatest.common.TestCommon;
 import java.util.Map;
@@ -31,8 +30,11 @@ import org.testng.annotations.BeforeSuite;
 
 /**
  * This class starts and stops the notification server.
+ * Also tag-swaps the REDIRECT_URI tags in properties files
  */
 public class ConfigUnconfig extends TestCommon {
+    
+    String clientURL;
     Map notificationMap;
     
     /**
@@ -46,19 +48,20 @@ public class ConfigUnconfig extends TestCommon {
      * Start the notification (jetty) server for getting notifications from the
      * server.
      */
-    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void startServer()
     throws Exception {
         entering("startServer", null);
         notificationMap = startNotificationServer();
+        replaceRedirectURIs("federation");
         exiting("startServer");
     }
-
+    
     /**
      * Stop the notification (jetty) server for getting notifications from the
      * server.
      */
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void stopServer()
     throws Exception {
         entering("stopServer", null);

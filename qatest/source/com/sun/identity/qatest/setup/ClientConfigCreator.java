@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.19 2008-04-11 05:09:39 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.20 2008-06-19 22:45:01 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,7 +28,11 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +59,6 @@ import java.util.PropertyResourceBundle;
  */
 public class ClientConfigCreator { 
 
-    private String newline = System.getProperty("line.separator");
     private String fileseparator = System.getProperty("file.separator");
     private String uriseparator = "/";
     private String hostname;
@@ -95,20 +98,23 @@ public class ClientConfigCreator {
         if ((serverName2.indexOf("SERVER_NAME2")) != -1) {
             getDefaultValues(testDir, serverName1);
         } else {
-            PropertyResourceBundle configDef1 = new PropertyResourceBundle(
-                    new FileInputStream(testDir + fileseparator + "resources" +
-                    fileseparator + "Configurator-" +
-                    serverName1 + ".properties"));
-            if (configDef1.getString(TestConstants.
+            Map<String, String> configMap = new HashMap<String, String>();
+            configMap = getMapFromResourceBundle(testDir + fileseparator + 
+                    "resources" + fileseparator + "default" + fileseparator + 
+                    "ConfiguratorCommon.properties");
+            configMap.putAll(getMapFromResourceBundle(testDir + fileseparator + 
+                    "resources" + fileseparator + "Configurator-" + serverName1 
+                    + ".properties"));
+            if (configMap.get(TestConstants.
                     KEY_ATT_MULTIPROTOCOL_ENABLED).equalsIgnoreCase("true")) {
                 getDefaultValues(testDir, serverName1, 
-                        configDef1.getString(TestConstants.KEY_ATT_IDFF_SP), 
+                        configMap.get(TestConstants.KEY_ATT_IDFF_SP), 
                         serverName2, properties_idff);
                 getDefaultValues(testDir, serverName1, 
-                        configDef1.getString(TestConstants.KEY_ATT_WSFED_SP), 
+                        configMap.get(TestConstants.KEY_ATT_WSFED_SP), 
                         properties_wsfed);
                 getDefaultValues(testDir, serverName1, serverName2, 
-                        configDef1.getString(TestConstants.KEY_ATT_IDFF_SP),
+                        configMap.get(TestConstants.KEY_ATT_IDFF_SP),
                         properties_saml);
             } else {
                 getDefaultValues(testDir, serverName1, serverName2, 
@@ -117,9 +123,9 @@ public class ClientConfigCreator {
                         properties_idff);
                 getDefaultValues(testDir, serverName1, serverName2, 
                         properties_wsfed);
+            }
                 getDefaultValues(testDir, serverName1, serverName2, 
                         properties_sae);
-            }
             createFileFromMap(properties_saml, SAML_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_idff, IDFF_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_wsfed, WSFED_FILE_CLIENT_PROPERTIES);
@@ -134,18 +140,17 @@ public class ClientConfigCreator {
      */
     private void getDefaultValues(String testDir, String serverName)
         throws Exception {
-
-        PropertyResourceBundle configDef = new PropertyResourceBundle(
-            new FileInputStream(testDir + fileseparator + "resources" +
-                fileseparator + "Configurator-" + serverName + ".properties"));
-
-        PropertyResourceBundle clientDef = new PropertyResourceBundle(
-            new FileInputStream(testDir + fileseparator + "resources" +
-                fileseparator + "AMClient.properties"));
-
-        String strNamingURL = configDef.getString(
-                TestConstants.KEY_ATT_NAMING_SVC);
-
+        Map<String, String> configMap = new HashMap<String, String>();
+        configMap = getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "default" + fileseparator + 
+                "ConfiguratorCommon.properties");
+        configMap.putAll(getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "Configurator-" + serverName
+                + ".properties"));
+        CheckValues(configMap);
+        
+        String strNamingURL = configMap.get(
+                TestConstants.KEY_AMC_NAMING_URL);
         int iFirstSep = strNamingURL.indexOf(":");
         String strProtocol = strNamingURL.substring(0, iFirstSep);  
 
@@ -159,9 +164,10 @@ public class ClientConfigCreator {
         String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
-        for (Enumeration e = clientDef.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)clientDef.getString(key);
+        for (Iterator iter = configMap.entrySet().iterator(); iter.hasNext();) { 
+            Map.Entry entry = (Map.Entry)iter.next();
+            String key = (String)entry.getKey();
+            String value = (String)entry.getValue();
 
             if (value.equals("@COPY_FROM_CONFIG@")) {
                 if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
@@ -175,81 +181,72 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_AMC_NAMING_URL))
                     value = strNamingURL;
                 else if (key.equals(TestConstants.KEY_AMC_BASEDN))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX);
                 else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
-                    value = configDef.getString(
-                            TestConstants.KEY_ATT_SERVICE_PASSWORD);
+                    value = configMap.get(
+                            TestConstants.KEY_AMC_SERVICE_PASSWORD);
                 else if (key.equals(TestConstants.KEY_ATT_AM_ENC_PWD))
-                    value = configDef.getString(
-                            TestConstants.KEY_ATT_AM_ENC_KEY);
+                    value = configMap.get(
+                            TestConstants.KEY_ATT_AM_ENC_PWD);
                 else if (key.equals(TestConstants.KEY_AMC_WSC_CERTALIAS))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_AMC_WSC_CERTALIAS);
                 else if (key.equals(TestConstants.KEY_AMC_KEYSTORE))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_AMC_KEYSTORE);
                 else if (key.equals(TestConstants.KEY_AMC_KEYPASS))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_AMC_KEYPASS);
                 else if (key.equals(TestConstants.KEY_AMC_STOREPASS))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_AMC_STOREPASS);
                 else if (key.equals(TestConstants.KEY_AMC_XMLSIG_CERTALIAS))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_AMC_XMLSIG_CERTALIAS);
                 else if (key.equals(TestConstants.KEY_AMC_IDM_CACHE_ENABLED))
-                    value = configDef.getString(
+                    value = configMap.get(
                             TestConstants.KEY_AMC_IDM_CACHE_ENABLED);
                 else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
                     value = strProtocol + "://" + strHost + ":" + strPort +
                             strURI + "/" + "Liberty/authnsvc";
                 else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
-                    value = "http://" + hostname + ":" + configDef.getString(
+                    value = "http://" + hostname + ":" + configMap.get(
                             TestConstants.KEY_ATT_NOTIFICATION_URI);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
             properties_ss.put(key, value);
         }
-
-        for (Enumeration e = configDef.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)configDef.getString(key);
-            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
-                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
-                    !key.equals(TestConstants.KEY_ATT_METAALIAS)  &&
-                    !key.equals(TestConstants.KEY_ATT_ENTITY_NAME) &&
-                    !key.equals(TestConstants.KEY_ATT_COT) &&
-                    !key.equals(TestConstants.KEY_ATT_CERTALIAS) &&
-                    !key.equals(TestConstants.KEY_ATT_PROTOCOL) &&
-                    !key.equals(TestConstants.KEY_ATT_HOST) &&
-                    !key.equals(TestConstants.KEY_ATT_PORT) &&
-                    !key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI)) {
-                properties_ss.put(key, value);
-            }
-        }
   
         properties_ss.put(TestConstants.KEY_ATT_SERVER_NAME, serverName);
+        int unusedPort = getUnusedPort();
+        String notificationURL = "http://" + hostname + ":" + unusedPort 
+                + (String)configMap.get(TestConstants.KEY_INTERNAL_WEBAPP_URI) + 
+                uriseparator + "notificationservice";
+        properties_ss.put(TestConstants.KEY_AMC_NOTIFICATION_URL, 
+                notificationURL);
     }
 
     /**
      * Method to do the actual transfer of properties from  default
      * configuration files to single multi server execution mode config data
      * file.
-     * serverName3 will be used as IDP proxy
      */
     private void getDefaultValues(String testDir, String serverName1,
             String serverName2, Map properties_protocol)
         throws Exception {
 
-        PropertyResourceBundle configDef1 = new PropertyResourceBundle(
-            new FileInputStream(testDir + fileseparator + "resources" +
-                fileseparator + "Configurator-" +
-                serverName1 + ".properties"));
+        Map<String, String> configMap1 = new HashMap<String, String>();
+        configMap1 = getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "default" + fileseparator + 
+                "ConfiguratorCommon.properties");
+        configMap1.putAll(getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "Configurator-" + serverName1 
+                + ".properties"));
+        CheckValues(configMap1);
 
-        String strNamingURL = configDef1.getString(
-                TestConstants.KEY_ATT_NAMING_SVC);
+        String strNamingURL = configMap1.get(TestConstants.KEY_AMC_NAMING_URL);
 
         int iFirstSep = strNamingURL.indexOf(":");
         String strProtocol = strNamingURL.substring(0, iFirstSep);  
@@ -264,18 +261,20 @@ public class ClientConfigCreator {
         String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
-        for (Enumeration e = configDef1.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)configDef1.getString(key);
+        for (Iterator iter = configMap1.entrySet().iterator(); 
+                iter.hasNext();) { 
+            Map.Entry entry = (Map.Entry)iter.next();
+            String key = (String)entry.getKey();
+            String value = (String)entry.getValue();
 
             if (value.equals("@COPY_FROM_CONFIG@")) {
-                if (key.equals(TestConstants.KEY_ATT_PROTOCOL))
+                if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
                     value = strProtocol;
-                else if (key.equals(TestConstants.KEY_ATT_HOST))
+                else if (key.equals(TestConstants.KEY_AMC_HOST))
                     value = strHost;
-                else if (key.equals(TestConstants.KEY_ATT_PORT))
+                else if (key.equals(TestConstants.KEY_AMC_PORT))
                     value = strPort;
-                else if (key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI))
+                else if (key.equals(TestConstants.KEY_AMC_URI))
                     value = strURI;
                 else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
                     value = strHost;
@@ -284,31 +283,40 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "idpcot";
             }
+            value = value.replace("@BASE_DIR@", testDir + fileseparator +
+                    serverName1 + "_" + serverName2);
             if (key.equals(TestConstants.KEY_ATT_METAALIAS)) {
-                if (!configDef1.getString(TestConstants.
+                if (!configMap1.get(TestConstants.
                         KEY_ATT_EXECUTION_REALM).endsWith("/")) {
-                    value = configDef1.getString(
+                    value = configMap1.get(
                             TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
                             value;
                 } else {
-                    value = configDef1.getString(
-                            TestConstants.KEY_ATT_EXECUTION_REALM) + 
-                            value;
+                    value = configMap1.get(
+                            TestConstants.KEY_ATT_EXECUTION_REALM) + value;
                 }
             }
-            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+            if (!key.equals(TestConstants.KEY_AMC_NAMING_URL) &&
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
             properties_protocol.put("idp_" + key, value);
         }
 
+        Map<String, String> configMap2 = new HashMap<String, String>();
+        configMap2 = getMapFromResourceBundle(testDir + fileseparator 
+                + "resources" + fileseparator + "default" + fileseparator + 
+                "ConfiguratorCommon.properties");
+        configMap2.putAll(getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "Configurator-" + serverName2 
+                + ".properties"));
         PropertyResourceBundle configDef2 = new PropertyResourceBundle(
             new FileInputStream(testDir + fileseparator + "resources" +
                 fileseparator + "Configurator-" +
                 serverName2 + ".properties"));
+        CheckValues(configMap2);
 
-        strNamingURL = configDef2.getString(TestConstants.KEY_ATT_NAMING_SVC);
+        strNamingURL = configMap2.get(TestConstants.KEY_AMC_NAMING_URL);
  
         iFirstSep = strNamingURL.indexOf(":");
         strProtocol = strNamingURL.substring(0, iFirstSep);
@@ -323,13 +331,11 @@ public class ClientConfigCreator {
         strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
-        PropertyResourceBundle clientDef = new PropertyResourceBundle(
-            new FileInputStream(testDir + fileseparator + "resources" +
-                fileseparator + "AMClient.properties"));
-
-        for (Enumeration e = clientDef.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)clientDef.getString(key);
+        for (Iterator iter = configMap2.entrySet().iterator(); 
+                iter.hasNext();) { 
+            Map.Entry entry = (Map.Entry)iter.next();
+            String key = (String)entry.getKey();
+            String value = (String)entry.getValue();
 
             if (value.equals("@COPY_FROM_CONFIG@")) {
                 if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
@@ -343,76 +349,47 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_AMC_NAMING_URL))
                     value = strNamingURL;
                 else if (key.equals(TestConstants.KEY_AMC_BASEDN))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX);
                 else if (key.equals(TestConstants.KEY_AMC_SERVICE_PASSWORD))
-                    value = configDef2.getString(
-                            TestConstants.KEY_ATT_SERVICE_PASSWORD);
+                    value = configMap2.get(
+                            TestConstants.KEY_AMC_SERVICE_PASSWORD);
                 else if (key.equals(TestConstants.KEY_ATT_AM_ENC_PWD))
-                    value = configDef2.getString(
-                            TestConstants.KEY_ATT_AM_ENC_KEY);
+                    value = configMap2.get(
+                            TestConstants.KEY_ATT_AM_ENC_PWD);
                 else if (key.equals(TestConstants.KEY_AMC_WSC_CERTALIAS))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_AMC_WSC_CERTALIAS);
                 else if (key.equals(TestConstants.KEY_AMC_KEYSTORE))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_AMC_KEYSTORE);
                 else if (key.equals(TestConstants.KEY_AMC_KEYPASS))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_AMC_KEYPASS);
                 else if (key.equals(TestConstants.KEY_AMC_STOREPASS))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_AMC_STOREPASS);
                 else if (key.equals(TestConstants.KEY_AMC_XMLSIG_CERTALIAS))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_AMC_XMLSIG_CERTALIAS);
                 else if (key.equals(TestConstants.KEY_AMC_IDM_CACHE_ENABLED))
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_AMC_IDM_CACHE_ENABLED);
                 else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
                     value = strProtocol + "://" + strHost + ":" + strPort +
                             strURI + "/" + "Liberty/authnsvc";
                 else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
-                    value = "http://" + hostname + ":" + configDef2.getString(
+                    value = "http://" + hostname + ":" + configMap2.get(
                             TestConstants.KEY_ATT_NOTIFICATION_URI);
             }
-            value = value.replace("@BASE_DIR@", testDir + fileseparator +
-                    serverName1 + "_" + serverName2);
-            properties_ss.put(key, value);
-        }
-
-        for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)configDef2.getString(key);
-            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
-                    !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
-                    !key.equals(TestConstants.KEY_ATT_METAALIAS)  &&
-                    !key.equals(TestConstants.KEY_ATT_ENTITY_NAME) &&
-                    !key.equals(TestConstants.KEY_ATT_COT) &&
-                    !key.equals(TestConstants.KEY_ATT_CERTALIAS) &&
-                    !key.equals(TestConstants.KEY_ATT_PROTOCOL) &&
-                    !key.equals(TestConstants.KEY_ATT_HOST) &&
-                    !key.equals(TestConstants.KEY_ATT_PORT) &&
-                    !key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI)) {
-                properties_ss.put(key, value);
-            }
-        }
-
-        properties_ss.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
-                serverName2);
-
-        for (Enumeration e = configDef2.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)configDef2.getString(key);
-
             if (value.equals("@COPY_FROM_CONFIG@")) {
-                if (key.equals(TestConstants.KEY_ATT_PROTOCOL))
+                if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
                     value = strProtocol;
-                else if (key.equals(TestConstants.KEY_ATT_HOST))
+                else if (key.equals(TestConstants.KEY_AMC_HOST))
                     value = strHost;
-                else if (key.equals(TestConstants.KEY_ATT_PORT))
+                else if (key.equals(TestConstants.KEY_AMC_PORT))
                     value = strPort;
-                else if (key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI))
+                else if (key.equals(TestConstants.KEY_AMC_URI))
                     value = strURI;
                 else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
                     value = strHost;
@@ -422,36 +399,61 @@ public class ClientConfigCreator {
                     value = "spcot";
             }
             if (key.equals(TestConstants.KEY_ATT_METAALIAS)) {
-                if (!configDef2.getString(TestConstants.
+                if (!configMap2.get(TestConstants.
                         KEY_ATT_EXECUTION_REALM).endsWith("/")) {
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
                             value;
                 } else {
-                    value = configDef2.getString(
+                    value = configMap2.get(
                             TestConstants.KEY_ATT_EXECUTION_REALM) +  value;
                 }
             }
-            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+            value = value.replace("@BASE_DIR@", testDir + fileseparator +
+                    serverName1 + "_" + serverName2);
+            if (!key.equals(TestConstants.KEY_AMC_NAMING_URL) &&
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
             properties_protocol.put("sp_" + key, value);
+
+            properties_ss.put(key, value);
         }
+        properties_ss.put(TestConstants.KEY_ATT_SERVER_NAME, serverName1 + "_" +
+                serverName2);
+                int unusedPort = getUnusedPort();
+        String notificationURL = "http://" + hostname + ":" + unusedPort +
+                (String)configMap2.get(TestConstants.KEY_INTERNAL_WEBAPP_URI) + 
+                uriseparator + "notificationservice";
+        properties_ss.put(TestConstants.KEY_AMC_NOTIFICATION_URL, 
+                notificationURL);
+
     }
     
+    /**
+     * Method to do the actual transfer of properties from  default
+     * configuration files to single multi server execution mode config data
+     * file.
+     * serverName1 will be used for IDP
+     * serverName2 will be used for SP
+     * serverName3 will be used as IDP proxy
+     */
     public void getDefaultValues(String testDir, String serverName1, String 
             serverName2, String serverName3, Map properties_protocol)
             throws Exception
     {
-        getDefaultValues(testDir, serverName1, serverName2, properties_protocol);
-        PropertyResourceBundle configDef3 = new PropertyResourceBundle(
-            new FileInputStream(testDir + fileseparator + "resources" +
-                fileseparator + "Configurator-" +
-                serverName3 + ".properties"));
+        getDefaultValues(testDir, serverName1, serverName2, 
+                properties_protocol);
+        Map<String, String> configMap3 = new HashMap<String, String>();
+        configMap3 = getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "default" + fileseparator + 
+                "ConfiguratorCommon.properties");
+        configMap3.putAll(getMapFromResourceBundle(testDir + fileseparator + 
+                "resources" + fileseparator + "Configurator-" + serverName3 
+                + ".properties"));
+        CheckValues(configMap3);
 
-        String strNamingURL = configDef3.getString(
-                TestConstants.KEY_ATT_NAMING_SVC);
+        String strNamingURL = configMap3.get(TestConstants.KEY_AMC_NAMING_URL);
 
         int iFirstSep = strNamingURL.indexOf(":");
         String strProtocol = strNamingURL.substring(0, iFirstSep);  
@@ -466,18 +468,20 @@ public class ClientConfigCreator {
         String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
 
-        for (Enumeration e = configDef3.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
-            String value = (String)configDef3.getString(key);
+        for (Iterator iter = configMap3.entrySet().iterator(); 
+                iter.hasNext();) { 
+            Map.Entry entry = (Map.Entry)iter.next();
+            String key = (String)entry.getKey();
+            String value = (String)entry.getValue();
 
             if (value.equals("@COPY_FROM_CONFIG@")) {
-                if (key.equals(TestConstants.KEY_ATT_PROTOCOL))
+                if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
                     value = strProtocol;
-                else if (key.equals(TestConstants.KEY_ATT_HOST))
+                else if (key.equals(TestConstants.KEY_AMC_HOST))
                     value = strHost;
-                else if (key.equals(TestConstants.KEY_ATT_PORT))
+                else if (key.equals(TestConstants.KEY_AMC_PORT))
                     value = strPort;
-                else if (key.equals(TestConstants.KEY_ATT_DEPLOYMENT_URI))
+                else if (key.equals(TestConstants.KEY_AMC_URI))
                     value = strURI;
                 else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
                     value = strHost;
@@ -486,27 +490,105 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "proxycot";
             }
+            value = value.replace("@BASE_DIR@", testDir + fileseparator +
+                    serverName1 + "_" + serverName2);
+
             if (key.equals(TestConstants.KEY_ATT_METAALIAS)) {
-                if (!configDef3.getString(TestConstants.
+                if (!configMap3.get(TestConstants.
                         KEY_ATT_EXECUTION_REALM).endsWith("/")) {
-                    value = configDef3.getString(
+                    value = configMap3.get(
                             TestConstants.KEY_ATT_EXECUTION_REALM) + "/" + 
                             value;
                 } else {
-                    value = configDef3.getString(
+                    value = configMap3.get(
                             TestConstants.KEY_ATT_EXECUTION_REALM) + 
                             value;
                 }
             properties_protocol.put("idpProxy_sp_" + key, value + "proxysp");
             properties_protocol.put("idpProxy_idp_" + key, value + "proxyidp");
             }
-            if (!key.equals(TestConstants.KEY_ATT_NAMING_SVC) &&
+            if (!key.equals(TestConstants.KEY_AMC_NAMING_URL) &&
                     !key.equals(TestConstants.KEY_ATT_DEFAULTORG) &&
                     !key.equals(TestConstants.KEY_ATT_PRODUCT_SETUP_RESULT) &&
                     !key.equals(TestConstants.KEY_ATT_LOG_LEVEL))
             properties_protocol.put("idpProxy_" + key, value);
         }       
     }
+
+    /**
+     * Reads data from a Map object, creates a new file and writes data to that
+     * file
+     */
+    private void CheckValues(Map properties)
+        throws Exception
+    {
+        if ((properties.get(TestConstants.KEY_AMC_NAMING_URL).equals(null)) ||
+               (properties.get(TestConstants.KEY_AMC_NAMING_URL).equals(""))) {
+            System.out.println(TestConstants.KEY_AMC_NAMING_URL + 
+                    " should have some value\n");
+            assert false;
+        }
+        if ((properties.get(TestConstants.KEY_ATT_COOKIE_DOMAIN).equals(null)) 
+                || (properties.get(TestConstants.KEY_ATT_COOKIE_DOMAIN).
+                equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_COOKIE_DOMAIN + 
+                    " value should not be empty\n");
+            assert false;
+        }
+               
+        if ((properties.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_ATT_AMADMIN_PASSWORD).equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_AMADMIN_PASSWORD + 
+                    " value should not be empty\n");
+            assert false;
+        }
+               
+        if ((properties.get(TestConstants.KEY_AMC_SERVICE_PASSWORD).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_AMC_SERVICE_PASSWORD).equals(""))) {
+            System.out.println(TestConstants.KEY_AMC_SERVICE_PASSWORD + 
+                    " value should not be empty\n");
+            assert false;
+        }
+            
+        if ((properties.get(TestConstants.KEY_ATT_CONFIG_DIR).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_ATT_CONFIG_DIR).equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_CONFIG_DIR + 
+                    " value should not be empty\n");
+            assert false;
+        }
+
+        if ((properties.get(TestConstants.KEY_ATT_CONFIG_DIR).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_ATT_CONFIG_DIR).equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_CONFIG_DIR + 
+                    " value should not be empty\n");
+            assert false;
+        }
+        if ((properties.get(TestConstants.KEY_ATT_DIRECTORY_PORT).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_ATT_DIRECTORY_PORT).equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_DIRECTORY_PORT + 
+                    " value should not be empty\n");
+            assert false;
+        }
+        if ((properties.get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_ATT_CONFIG_ROOT_SUFFIX).equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX + 
+                    " value should not be empty\n");
+            assert false;
+        }
+         if ((properties.get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD).
+                equals(null)) || (properties.get(TestConstants.
+                KEY_ATT_DS_DIRMGRPASSWD).equals(""))) {
+            System.out.println(TestConstants.KEY_ATT_DS_DIRMGRPASSWD + 
+                    " value should not be empty\n");
+            assert false;
+        }
+   }
 
     /**
      * Reads data from a Map object, creates a new file and writes data to that
@@ -529,6 +611,93 @@ public class ClientConfigCreator {
         out.write(buff.toString());
         out.close();
     }
+
+    /**
+     * Reads data from a ResourceBundle object and creates a Map containing all
+     * the attribute keys and values.
+     * @param resourcebundle name
+     */
+    protected Map getMapFromResourceBundle(String rbName)
+    throws Exception {
+        Map map = new HashMap();
+        PropertyResourceBundle rb = new PropertyResourceBundle(
+            new FileInputStream(rbName));
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)rb.getString(key);
+                map.put(key, value);
+         }
+        return (map);
+    }
+
+    /**
+      * Returns a unused port on a given host.
+      *    @param hostname (eg localhost)
+      *    @param start: starting port number to check (eg 389).
+      *    @param incr : port number increments to check (eg 1000).
+      *    @return available port num if found. -1 of not found.
+      */
+    private int getUnusedPort()
+        throws Exception
+    {
+        int defaultPort = -1;
+        int start = 44444;
+        int incr = 1000;
+        for (int i = start; i < 65500 && (defaultPort == -1);i += incr) {
+            if (canUseAsPort("localhost", i))
+            {
+                defaultPort = i;
+            }
+        }
+        return defaultPort;
+    }
+
+    /**
+      * Checks whether the given host:port is currenly under use.
+      *    @param hostname (eg localhost)
+      *    @param incr : port number.
+      *    @return  true if not in use, false if in use.
+      */
+    public static boolean canUseAsPort(String hostname, int port)
+    {
+        boolean canUseAsPort = false;
+        ServerSocket serverSocket = null;
+        try {
+            InetSocketAddress socketAddress =
+                new InetSocketAddress(hostname, port);
+            serverSocket = new ServerSocket();
+            serverSocket.bind(socketAddress);
+            canUseAsPort = true;
+     
+            serverSocket.close();
+       
+            Socket s = null;
+            try {
+              s = new Socket();
+              s.connect(socketAddress, 1000);
+              canUseAsPort = false;
+            } catch (Throwable t) {
+            }
+            finally {
+              if (s != null) {
+                try {
+                  s.close();
+                } catch (Throwable t) { }
+              }
+            }
+        } catch (IOException ex) {
+          canUseAsPort = false;
+        } finally {
+            try {
+                if (serverSocket != null) {
+                    serverSocket.close();
+                }
+            } catch (Exception ex) { }
+        }
+     
+        return canUseAsPort;
+    }
+
 
     public static void main(String args[]) {
         try {
