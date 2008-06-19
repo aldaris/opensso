@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.22 2008-06-04 21:00:23 sridharev Exp $
+ * $Id: TestConstants.java,v 1.23 2008-06-19 22:44:28 mrudulahg Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,11 +45,6 @@ public interface TestConstants {
      * Property key for <code>amadmin</code> user password.
      */
     String KEY_ATT_AMADMIN_PASSWORD = "amadmin_password";
-    
-    /**
-     * Property key for <code>UrlAccessAgent</code> user password.
-     */
-    String KEY_ATT_SERVICE_PASSWORD = "urlaccessagent_password";
     
     /**
      * Property key for <code>com.iplanet.am.defaultOrg</code>.
@@ -168,11 +163,6 @@ public interface TestConstants {
     String KEY_ATT_CONFIG_DIR = "config_dir";
     
     /**
-     * Property key for <code>encryption_key</code>.
-     */
-    String KEY_ATT_AM_ENC_KEY = "encryption_key";
-    
-    /**
      * Property key for <code>am.encryption.pwd</code>.
      */
     String KEY_ATT_AM_ENC_PWD = "am.encryption.pwd";
@@ -268,26 +258,6 @@ public interface TestConstants {
     String KEY_ATT_WSFED_SP="wsfed_sp";
     
     /**
-     * Property key for <code>protocol</code>.
-     */
-    String KEY_ATT_PROTOCOL = "protocol";
-    
-    /**
-     * Property key for <code>host</code>.
-     */
-    String KEY_ATT_HOST = "host";
-    
-    /**
-     * Property key for <code>port</code>.
-     */
-    String KEY_ATT_PORT = "port";
-    
-    /**
-     * Property key for <code>deployment_uri</code>.
-     */
-    String KEY_ATT_DEPLOYMENT_URI = "deployment_uri";
-    
-    /**
      * Property key for <code>notification_uri</code>.
      */
     String KEY_ATT_NOTIFICATION_URI = "notification_uri";
@@ -298,25 +268,30 @@ public interface TestConstants {
     String KEY_ATT_NOTIFICATION_SLEEP = "notification_sleep";
     
     /**
+     * Property key for <code>internal.webapp.uri</code>.
+     */
+    String KEY_INTERNAL_WEBAPP_URI = "internal.webapp.uri";
+
+    /**
      * SAMLv2, IDFF SP related constants
      * Property key for <code>sp_host</code>
      */
-    String KEY_SP_HOST = "sp_host";
+    String KEY_SP_HOST = "sp_com.iplanet.am.server.host";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_protocol</code>
      */
-    String KEY_SP_PROTOCOL = "sp_protocol";
+    String KEY_SP_PROTOCOL = "sp_com.iplanet.am.server.protocol";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_port</code>
      */
-    String KEY_SP_PORT = "sp_port";
+    String KEY_SP_PORT = "sp_com.iplanet.am.server.port";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_deployment_uri</code>
      */
-    String KEY_SP_DEPLOYMENT_URI = "sp_deployment_uri";
+    String KEY_SP_DEPLOYMENT_URI = "sp_com.iplanet.am.services.deploymentDescriptor";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_metaalias</code>
@@ -569,22 +544,22 @@ public interface TestConstants {
      * SAMLv2, IDFF IDP related constants
      * Property key for <code>idp_host</code>
      */
-    String KEY_IDP_HOST = "idp_host";
+    String KEY_IDP_HOST = "idp_com.iplanet.am.server.host";
     
     /**
      * SAMLv2, IDFF Property key for <code>idp_port</code>
      */
-    String KEY_IDP_PORT = "idp_port";
+    String KEY_IDP_PORT = "idp_com.iplanet.am.server.port";
     
     /**
      * SAMLv2, IDFF Property key for <code>idp_protocol</code>
      */
-    String KEY_IDP_PROTOCOL = "idp_protocol";
+    String KEY_IDP_PROTOCOL = "idp_com.iplanet.am.server.protocol";
     
     /**
      * SAMLv2, IDFF Property key for <code>idp_deployment_uri</code>
      */
-    String KEY_IDP_DEPLOYMENT_URI = "idp_deployment_uri";
+    String KEY_IDP_DEPLOYMENT_URI = "idp_com.iplanet.am.services.deploymentDescriptor";
     
     /**
      * SAMLv2, IDFF Property key for <code>idp_metaalias</code>
@@ -740,22 +715,22 @@ public interface TestConstants {
      * SAMLv2, IDFF IDP related constants
      * Property key for <code>idpProxy_host</code>
      */
-    String KEY_IDP_PROXY_HOST = "idpProxy_host";
+    String KEY_IDP_PROXY_HOST = "idpProxy_com.iplanet.am.server.host";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_port</code>
      */
-    String KEY_IDP_PROXY_PORT = "idpProxy_port";
+    String KEY_IDP_PROXY_PORT = "idpProxy_com.iplanet.am.server.port";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_protocol</code>
      */
-    String KEY_IDP_PROXY_PROTOCOL = "idpProxy_protocol";
+    String KEY_IDP_PROXY_PROTOCOL = "idpProxy_com.iplanet.am.server.protocol";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_deployment_uri</code>
      */
-    String KEY_IDP_PROXY_DEPLOYMENT_URI = "idpProxy_deployment_uri";
+    String KEY_IDP_PROXY_DEPLOYMENT_URI = "idpProxy_com.iplanet.am.services.deploymentDescriptor";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_metaalias</code>

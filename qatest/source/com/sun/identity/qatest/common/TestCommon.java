@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.48 2008-06-10 15:59:14 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.49 2008-06-19 22:44:28 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,9 +32,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.iplanet.am.sdk.remote.RemoteServicesImpl;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.jaxrpc.JAXRPCUtil;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +49,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -66,9 +70,13 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.deployer.ContextDeployer;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.webapp.WebAppContext;
 import org.testng.Reporter;
 
 /**
@@ -394,14 +402,14 @@ public class TestCommon implements TestConstants {
                 TestConstants.KEY_ATT_AMADMIN_USER));
         map.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD, cfg.getString(
                 TestConstants.KEY_ATT_AMADMIN_PASSWORD));
-        map.put(TestConstants.KEY_ATT_SERVICE_PASSWORD, cfg.getString(
-                TestConstants.KEY_ATT_SERVICE_PASSWORD));
+        map.put(TestConstants.KEY_AMC_SERVICE_PASSWORD, cfg.getString(
+                TestConstants.KEY_AMC_SERVICE_PASSWORD));
         map.put(TestConstants.KEY_ATT_CONFIG_DIR, cfg.getString(
                 TestConstants.KEY_ATT_CONFIG_DIR));
         map.put(TestConstants.KEY_ATT_CONFIG_DATASTORE, cfg.getString(
                 TestConstants.KEY_ATT_CONFIG_DATASTORE));
-        map.put(TestConstants.KEY_ATT_AM_ENC_KEY,
-                cfg.getString(TestConstants.KEY_ATT_AM_ENC_KEY));
+        map.put(TestConstants.KEY_ATT_AM_ENC_PWD,
+                cfg.getString(TestConstants.KEY_ATT_AM_ENC_PWD));
         map.put(TestConstants.KEY_ATT_DIRECTORY_SERVER, cfg.getString(
                 TestConstants.KEY_ATT_DIRECTORY_SERVER));
         map.put(TestConstants.KEY_ATT_DIRECTORY_PORT, cfg.getString(
@@ -525,12 +533,12 @@ public class TestCommon implements TestConstants {
             HtmlPasswordInput txtUrlAccessAgentPassword =
                     (HtmlPasswordInput)form.getInputByName("AMLDAPUSERPASSWD");
             txtUrlAccessAgentPassword.setValueAttribute((String)map.get(
-                    TestConstants.KEY_ATT_SERVICE_PASSWORD));
+                    TestConstants.KEY_AMC_SERVICE_PASSWORD));
             HtmlPasswordInput txtUrlAccessAgentPasswordR =
                     (HtmlPasswordInput)form.getInputByName(
                     "AMLDAPUSERPASSWD_CONFIRM");
             txtUrlAccessAgentPasswordR.setValueAttribute((String)map.get(
-                    TestConstants.KEY_ATT_SERVICE_PASSWORD));
+                    TestConstants.KEY_AMC_SERVICE_PASSWORD));
             
             HtmlTextInput txtConfigDir =
                     (HtmlTextInput)form.getInputByName("BASE_DIR");
@@ -540,7 +548,7 @@ public class TestCommon implements TestConstants {
             HtmlTextInput txtEncryptionKey =
                     (HtmlTextInput)form.getInputByName("AM_ENC_KEY");
             String strEncryptKey = (String)map.get(
-                    TestConstants.KEY_ATT_AM_ENC_KEY);
+                    TestConstants.KEY_ATT_AM_ENC_PWD);
             if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals("")))
                 txtEncryptionKey.setValueAttribute(strEncryptKey);
             
@@ -1094,45 +1102,187 @@ public class TestCommon implements TestConstants {
      * Start the notification (jetty) server for getting notifications from the
      * server.
      */
-    protected void startNotificationServer()
+    protected Map startNotificationServer()
     throws Exception {
-        String strNotURI = rb_amconfig.getString(
-                TestConstants.KEY_ATT_NOTIFICATION_URI);
+        Map map = new HashMap();
+        String strNotURL = rb_amconfig.getString(
+                TestConstants.KEY_AMC_NOTIFICATION_URL);
         log(Level.FINEST, "startNotificationServer", "Notification URI: " +
-                strNotURI);
-        
-        String strPort = strNotURI.substring(0, strNotURI.indexOf("/"));
+                strNotURL);
+        Map notificationURLMap = getURLComponents(strNotURL + "/");
+
+        String  strPort = (String)notificationURLMap.get("port");
+        String  strURI = (String)notificationURLMap.get("uri");
+       
         log(Level.FINEST, "startNotificationServer", "Notification Port: " +
-                strPort);
-        
-        String strURI = strNotURI.substring(strNotURI.indexOf("/"),
-                strNotURI.length());
-        log(Level.FINEST, "startNotificationServer", "Notification end point: "
-                + strURI);
-        
-        int port  = new Integer(strPort).intValue();
-        server = new Server(port);
-        Context root = new Context(server, "/", Context.SESSIONS);
-        root.addServlet(new ServletHolder(
-                new com.iplanet.services.comm.client.PLLNotificationServlet()),
-                strURI);
+                strPort + ", uri is " + strURI);
+ 
+        int deployPort  = new Integer(strPort).intValue();
+        server = new Server(deployPort);
         log(Level.FINE, "startNotificationServer", "Starting the notification" +
                 " (jetty) server");
+
+        String deployURI = rb_amconfig.getString(TestConstants.
+                KEY_INTERNAL_WEBAPP_URI);
+        log(Level.FINE, "startNotificationServer", "Deploy URI: " + 
+                deployURI);
+
+        WebAppContext wac = new WebAppContext();
+        wac.setContextPath(deployURI);
+        String warFile = getBaseDir() + "/data/common/internalwebapp.war";
+        log(Level.FINE, "startNotificationServer", "WAR File: " + 
+                warFile);
+        wac.setWar(warFile);           
+        log(Level.FINE, "startNotificationServer", "Deploy URI: " + 
+                deployURI);
+        server.setHandler(wac);
         server.start();
+
+        map = registerNotificationServerURL();
+        log(Level.FINE, "startNotificationServer", "Registered the " +
+               "notification url");
+        return map;
     }
     
     /**
      * Stop the notification (jetty) server for getting notifications from the
      * server.
      */
-    protected void stopNotificationServer()
+    protected void stopNotificationServer(Map notificationIDMap)
     throws Exception {
-        log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
+       log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
                 " (jetty) server");
+        String strNotURL = rb_amconfig.getString(
+                TestConstants.KEY_AMC_NOTIFICATION_URL);
         server.stop();
-        
-        // Time delay required by the jetty server process to die
-        Thread.sleep(30000);
+        WebClient wc = new WebClient();
+        HtmlPage jettypage = (HtmlPage)wc.getPage(strNotURL);
+        int i = 0;
+        while((jettypage.getWebResponse().getContentAsString().contains("jetty"))
+                && (i < 60)){
+            log(Level.FINE, "startNotificationServer", "Jetty server is up. " +
+                    "Waiting for the jetty process to die");
+            Thread.sleep(5000);
+            jettypage = (HtmlPage)wc.getPage(strNotURL);
+            i++;
+        }
+        if (jettypage.getWebResponse().getContentAsString().contains("jetty")) {
+             log(Level.SEVERE, "startNotificationServer", "Jetty server is " +
+                     "Still up. Couldn't shut down the server");
+        }
+        deregisterNotificationServerURL(notificationIDMap);
+    }
+    
+    /**
+     * Register the notification (jetty) server for getting notifications from 
+     * the server.
+     */
+    protected Map registerNotificationServerURL()
+    throws Exception {
+        Map notificationIDMap = new HashMap();
+        log(Level.FINE, "registerNotificationServerURL", "Register the " +
+                "notification (jetty) server");
+        String strNotURL = rb_amconfig.getString(
+                TestConstants.KEY_AMC_NOTIFICATION_URL);
+         //For SMS
+        SOAPClient client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
+        String strNotificationID1 = (String)client.
+                send("registerNotificationURL", strNotURL, null, null);
+        notificationIDMap.put("ID1", strNotificationID1);
+        //For IDRepo
+        client = new SOAPClient("DirectoryManagerIF");
+        // Register for AMSDK notifications
+        String strNotificationID2 = (String)client.
+                send("registerNotificationURL", strNotURL, null, null);
+        notificationIDMap.put("ID2", strNotificationID2);
+        // Register for IdRepo Service
+        String strNotificationID3 = (String)client.
+                send("registerNotificationURL_idrepo", strNotURL, null, null);       
+        notificationIDMap.put("ID3", strNotificationID3);
+        return notificationIDMap;
+    }
+
+    /**
+     * Deregister the notification (jetty) server for getting notifications from 
+     * the server.
+     */
+    protected void deregisterNotificationServerURL(Map notificationIDMap)
+    throws Exception {
+        log(Level.FINE, "deregisterNotificationServerURL", "Deregister the " +
+                "notification (jetty) server");
+        String strID1 = (String)notificationIDMap.get("ID1");
+        SOAPClient client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
+        client.send("deRegisterNotificationURL", strID1, null, null);
+        //For IDRepo
+        client = new SOAPClient("DirectoryManagerIF");
+        // Register for AMSDK notifications
+        String strID2 = (String)notificationIDMap.get("ID2");
+        client.send("deRegisterNotificationURL", strID2, null, null);
+        // Register for IdRepo Service
+        String strID3 = (String)notificationIDMap.get("ID3");
+        client.send("deRegisterNotificationURL_idrepo", strID3, null, null);       
+        log(Level.FINE, "deregisterNotificationServerURL", "Completed " +
+                "deregistering the notification url's");
+    }
+
+    /**
+     * Replaces the Redirect uri & the search strings in the authentication 
+     * properites files under the directory 
+     * <QATESTHOME>/<SERVER_NAME1>/built/classes
+     */
+    public void replaceRedirectURIs(String strModule)
+    throws Exception {
+        entering("replaceRedirectURIs", null);
+        try {
+            File directory;
+            String[] files;
+            String ext = "properties";
+            String directoryName;
+            String fileName;
+            String absFileName;
+            String redirecturi[] = new String[6];
+            for (int i = 0; i < 6; i++) {
+                redirecturi[i] = "redirecturl" + i + ".html";
+            }
+
+            String strNotURL = rb_amconfig.getString(TestConstants.
+                    KEY_AMC_NOTIFICATION_URL);
+            Map notificationURLMap = getURLComponents(strNotURL + "/");
+
+            String  deployProto = (String)notificationURLMap.get("protocol");
+            String  strPort = (String)notificationURLMap.get("port");
+            String strHostname = (String)notificationURLMap.get("hostname");
+            int deployPort  = new Integer(strPort).intValue();
+            String deployURI = rb_amconfig.getString(TestConstants.
+                    KEY_INTERNAL_WEBAPP_URI);
+
+            String clientURL = deployProto + "://" + strHostname +  ":" + deployPort + 
+                    deployURI + strModule;
+             
+            Map replaceVals = new HashMap();
+            for (int j = 0; j < 6; j++) {
+                replaceVals.put("REDIRECT_URI" + j, clientURL + "/" + 
+                        redirecturi[j]);
+              replaceVals.put("REDIRECT_URI_SEARCH_STRING" + j, redirecturi[j]);
+            }
+            directoryName = getTestBase();
+            directory = new File(directoryName);
+            assert (directory.exists());
+            files = directory.list();            
+            for (int i = 0; i < files.length; i++) {
+                fileName = files[i];
+                if (fileName.endsWith(ext.trim())) {
+                    absFileName = directoryName + fileseparator + fileName;
+                    log(Level.FINEST, "replaceRedirectURIs", "Replacing the file :" +
+                            absFileName);
+                    replaceString(absFileName, replaceVals, absFileName);
+                }
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "replaceRedirectURIs", e.getMessage());
+            e.printStackTrace();
+        }
+        exiting("replaceRedirectURIs");
     }
     
     /**
