@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaServiceListener.java,v 1.1 2006-10-30 23:14:18 qcheng Exp $
+ * $Id: IDFFMetaServiceListener.java,v 1.2 2008-06-19 17:53:12 asyhuang Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,7 +31,7 @@ import com.sun.identity.shared.debug.Debug;
 
 import com.sun.identity.plugin.configuration.ConfigurationListener;
 import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
-
+import com.sun.identity.federation.key.KeyUtil;
 /**
  * The <code>IDFFMetaServiceListener</code> implements
  * <code>ConfigurationListener</code> interface . This class listens
@@ -64,6 +64,7 @@ public class IDFFMetaServiceListener implements ConfigurationListener {
                 debug.message("IDFFMetaListener.configChanged: update cache"); 
             } 
             IDFFMetaCache.clearCache();
+            KeyUtil.encHash.clear();
         }
     }
 }

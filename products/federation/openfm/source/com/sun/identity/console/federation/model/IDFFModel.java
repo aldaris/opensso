@@ -17,30 +17,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModel.java,v 1.3 2007-12-17 19:42:55 veiming Exp $
+ * $Id: IDFFModel.java,v 1.4 2008-06-19 17:58:31 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.console.federation.model;
 
-import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.federation.IDFFAuthContexts;
-import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
-import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
+
 import java.util.Set;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
 
 public interface IDFFModel
-    extends EntityModel 
-{
-    
+    extends EntityModel {
+
     public static final String ATTR_PROVIDER_ALIAS = "tfAlias";
     public static final String ATTR_PROVIDER_TYPE = "tfProviderType";
-    
     public static final String ATTR_SERVER_NAME_IDENTIFIER_MAPPING =
         "elistServerNameIdentifierMapping";
     
@@ -63,31 +57,28 @@ public interface IDFFModel
         "tfFederationTerminationReturnURL";
     public static final String ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL =
         "tfNameRegistrationServiceURL";
-    public static final
-        String ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL =
+    public static final String ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL =
         "tfNameRegistrationReturnURL";
     
     // communication profiles
-    public static final String
-        ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE =
+    public static final String ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE =
         "singleChoiceFederationTerminationProfile";
     public static final String ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE =
         "singleChoiceSingleLogoutProfile";
-    public static final
-        String ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE =
+    public static final String ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE =
         "singleChoiceNameRegistrationProfile";
     public static final String ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE =
         "singleChoiceFederationProfile";
     
     //KeyDescriptor property.
     public static final String ATTR_SIGNING_KEY_ALIAS =
-        "tfSigningKeyAlias";
+        "signingCertAlias";
     public static final String ATTR_ENCRYPTION_KEY_ALIAS =
-        "tfEncryptionKeyAlias";
-    public static final String ATTR_EMCRYPTION_KEY_SIZE =
-        "tfEncryptionKeySize";
-    public static final String ATTR_ENCRYPTION_METHOD =
-        "singleChoiceEncryptionMethod";
+        "encryptionCertAlias";
+    public static final String ATTR_ENCRYPTION_KEY_SIZE =
+        "encryptionKeySize";
+    public static final String ATTR_ENCRYPTION_ALGORITHM =
+        "encryptionAlgorithm";
     public static final String ATTR_ENABLE_NAME_IDENTIFIER_ENCRYPTION =
         "cbEnableNameIdentifierEncryption";
     
@@ -152,7 +143,6 @@ public interface IDFFModel
         "providerHomePageURL";
     
     // IDP extend meta attribute ONLY IDP
-    
     // idp
     public static final String ATTR_ASSERTION_LIMIT =
         "assertionLimit";
@@ -173,9 +163,7 @@ public interface IDFFModel
     public static final String ATTR_ASSERTION_INTERVAL =
         "assertionInterval";
     
-    
     // SP extend meta attribute.. ONLY SP
-    
     public static final String ATTR_IS_PASSIVE =
         "isPassive";
     public static final String ATTR_SP_ATTRIBUTE_MAP =
@@ -214,49 +202,37 @@ public interface IDFFModel
     
     /* Attribute Name for Entity Descriptor Cache Duration.  */
     String ATTR_CACHE_DURATION = "tfCacheDuration";
-    
-    
     /**
      * Affiliate
      */
-    
     /* Attribute name of affiliate ID. */
     public static final String ATTR_AFFILIATE_ID =
         "tfAffiliateID";
-    
     /* Attribute name of affiliate Owner ID. */
     public static final String ATTR_AFFILIATE_OWNER_ID =
         "tfAffiliateOwnerID";
-    
     /* Attribute name of affiliate's Valid Until. */
     public static final String ATTR_AFFILIATE_VALID_UNTIL =
         "tfAffiliateValidUntil";
-    
     /* Attribute name of affiliate's Cache Duration.  */
     public static final String ATTR_AFFILIATE_CACHE_DURATION =
         "tfAffiliateCacheDuration";
-    
     /* Attribute name of Signing Key's Key Alias.   */
-    public static final String ATTR_AFFILIATE_SIGNING_KEY_ALIAS =
-        "tfSigningKeyAlias";
-    
+    public static final String ATTR_AFFILIATE_SIGNING_CERT_ALIAS =
+        "signingCertAlias";
     /* Attribute name of Encryption Key's Key Alias.  */
-    public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_ALIAS =
-        "tfEncryptionKeyAlias";
-    
+    public static final String ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS =
+        "encryptionCertAlias";
     /* Attribute name of Encryption Key's Key Size. */
     public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE =
-        "tfEncryptionKeySize";
-    
+        "encryptionKeySize";
     /* Attribute name of Encryption Key's Key Method.  */
     public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD =
-        "tfEncryptionMethod";
-    
+        "encryptionMethod";
     /* Attribute name of Affiliate Members. */
     public static final String ATTR_AFFILIATE_MEMBERS =
         "arlistAffiliateMembers";
-    
-    
+
     /**
      * Returns provider-affiliate common attribute values.
      *
@@ -267,7 +243,7 @@ public interface IDFFModel
      */
     public Map getCommonAttributeValues(String realm, String entityName)
         throws AMConsoleException;
-    
+
     /**
      * Modifies entity descriptor profile.
      *
@@ -278,7 +254,7 @@ public interface IDFFModel
      */
     public void modifyEntityProfile(String realm, String entityName, Map map)
         throws AMConsoleException;
-    
+
     /**
      * Returns Map values of IDP Descriptor.
      *
@@ -287,7 +263,7 @@ public interface IDFFModel
      */
     public Map getEntityIDPDescriptor(String realm, String entityName)
         throws AMConsoleException;
-    
+
     /**
      * Returns Map values of SP Descriptor.
      *
@@ -296,7 +272,7 @@ public interface IDFFModel
      */
     public Map getEntitySPDescriptor(String entityName, String realm)
         throws AMConsoleException;
-    
+
     /**
      * Returns attributes values of provider.
      *
@@ -308,9 +284,8 @@ public interface IDFFModel
     public Map getIDPEntityConfig(
         String entityName,
         String realm,
-        String location
-    ) throws AMConsoleException ;
-    
+        String location) throws AMConsoleException;
+
     /**
      * Returns attributes values of provider.
      *
@@ -322,9 +297,8 @@ public interface IDFFModel
     public Map getSPEntityConfig(
         String realm,
         String entityName,
-        String location
-    ) throws AMConsoleException ;
-    
+        String location) throws AMConsoleException;
+
     /**
      * updateEntitySPDescriptor
      * Modifies a service provider's standard metadata.
@@ -337,9 +311,10 @@ public interface IDFFModel
     public void updateEntitySPDescriptor(
         String realm,
         String entityName,
-        Map attrValues
-    ) throws AMConsoleException ;
-    
+        Map attrValues,
+        Map extendedValues,
+        boolean ishosted) throws AMConsoleException;
+
     /**
      * updateEntityIDPDescriptor
      * Modifies a identity provider's standard metadata.
@@ -352,9 +327,10 @@ public interface IDFFModel
     public void updateEntityIDPDescriptor(
         String realm,
         String entityName,
-        Map attrValues
-    ) throws AMConsoleException ;
-    
+        Map attrValues,
+        Map extendedValues,
+        boolean ishosted) throws AMConsoleException;
+
     /**
      * updateIDPEntityConfig
      * Modifies a provider's extended metadata.
@@ -367,9 +343,8 @@ public interface IDFFModel
     public void updateIDPEntityConfig(
         String realm,
         String entityName,
-        Map attrValues
-    ) throws AMConsoleException;
-    
+        Map attrValues) throws AMConsoleException;
+
     /**
      * updateSPEntityConfig
      * Modifies a provider's extended metadata.
@@ -382,8 +357,7 @@ public interface IDFFModel
     public void updateSPEntityConfig(
         String realm,
         String entityName,
-        Map attrValues
-    ) throws AMConsoleException;
+        Map attrValues) throws AMConsoleException;
 
     /**
      * createEntityConfig
@@ -398,9 +372,8 @@ public interface IDFFModel
         String realm,
         String entityName,
         String role,
-        String location
-    ) throws AMConsoleException;
-    
+        String location) throws AMConsoleException;
+
     /**
      * Returns the object of Auththentication Contexts in IDP.
      *
@@ -410,9 +383,8 @@ public interface IDFFModel
      */
     public IDFFAuthContexts getIDPAuthenticationContexts(
         String realm,
-        String entityName       
-    ) throws AMConsoleException ;
-    
+        String entityName) throws AMConsoleException;
+
     /**
      * Returns  the object of Auththentication Contexts in SP.
      *
@@ -422,10 +394,9 @@ public interface IDFFModel
      */
     public IDFFAuthContexts getSPAuthenticationContexts(
         String realm,
-        String entityName       
-    ) throws AMConsoleException ;
-            
-     /**
+        String entityName) throws AMConsoleException;
+
+    /**
      * update IDP Authentication Contexts
      *
      * @param realm Realm of Entity
@@ -435,11 +406,10 @@ public interface IDFFModel
      */
     public void updateIDPAuthenticationContexts(
         String realm,
-        String entityName, 
-        IDFFAuthContexts cxt
-    ) throws AMConsoleException;
-    
-     /**
+        String entityName,
+        IDFFAuthContexts cxt) throws AMConsoleException;
+
+    /**
      * update SP Authentication Contexts
      *
      * @param realm Realm of Entity
@@ -449,10 +419,9 @@ public interface IDFFModel
      */
     public void updateSPAuthenticationContexts(
         String realm,
-        String entityName, 
-        IDFFAuthContexts cxt
-    ) throws AMConsoleException;
-    
+        String entityName,
+        IDFFAuthContexts cxt) throws AMConsoleException;
+
     /**
      * Returns true if entity descriptor is an affiliate.
      *
@@ -462,7 +431,7 @@ public interface IDFFModel
      */
     public boolean isAffiliate(String realm, String entityName)
         throws AMConsoleException;
-    
+
     /**
      * Returns affiliate profile attribute values.
      *
@@ -473,7 +442,7 @@ public interface IDFFModel
      */
     public Map getAffiliateProfileAttributeValues(String realm, String entityName)
         throws AMConsoleException;
-    
+
     /**
      * Modifies affiliate profile.
      *
@@ -487,27 +456,26 @@ public interface IDFFModel
         String realm,
         String entityName,
         Map values,
-        Set members
-    ) throws AMConsoleException;
-    
+        Set members) throws AMConsoleException;
+
     /*
      * Returns a Set of all the idff entities
      *
      * @param realm the realm in which the entity resides.
      * @throws AMConsoleException if value cannot be obtained.
      */
-    public  Set getAllEntityDescriptorNames(String realm)
+    public Set getAllEntityDescriptorNames(String realm)
         throws AMConsoleException;
-    
-     /*
-      * Returns a Set of all the affiliate entity name
-      *
-      * @param realm the realm in which the entity resides.
-      * @throws AMConsoleException if value cannot be obtained.
-      */
-    public  Set getAllAffiliateEntityDescriptorNames(String realm)
-        throws AMConsoleException ;
-    
+
+    /*
+     * Returns a Set of all the affiliate entity name
+     *
+     * @param realm the realm in which the entity resides.
+     * @throws AMConsoleException if value cannot be obtained.
+     */
+    public Set getAllAffiliateEntityDescriptorNames(String realm)
+        throws AMConsoleException;
+
     /*
      * Returns a Set of all the affiliate members
      *
@@ -516,5 +484,5 @@ public interface IDFFModel
      * @throws AMConsoleException if values cannot be obtained.
      */
     public Set getAllAffiliateMembers(String realm, String entityName)
-        throws AMConsoleException ;
+        throws AMConsoleException;
 }

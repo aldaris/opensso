@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.1 2006-10-30 23:14:05 qcheng Exp $
+ * $Id: KeyUtil.java,v 1.2 2008-06-19 17:52:24 asyhuang Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,7 +62,7 @@ public class KeyUtil {
 
     // key is EntityID|Role
     // value is EncInfo
-    protected static Hashtable encHash = new Hashtable();
+    public static Hashtable encHash = new Hashtable();
 
     // key is EntityID|Role
     // value is X509Certificate
