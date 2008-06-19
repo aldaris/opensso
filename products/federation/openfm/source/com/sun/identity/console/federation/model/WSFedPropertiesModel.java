@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.7 2008-05-28 18:41:57 babysunil Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.8 2008-06-19 22:04:45 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,7 @@ public interface WSFedPropertiesModel extends EntityModel {
     String TFSPAUTOFED_ENABLED = "autofedEnabled";
     
     // attribute for ArtificatResponseSigned
-    String TFARTI_SIGNED = "wantArtifactResponseSigned";
+    String TFASSERT_SIGNED = "wantAssertionSigned";
     
     // attribute for AutofedAttribute
     String TFSPAUTOFED_ATTR = "autofedAttribute";

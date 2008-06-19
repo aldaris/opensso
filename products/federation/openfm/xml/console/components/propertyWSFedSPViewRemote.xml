@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedSPViewRemote.xml,v 1.3 2008-02-19 23:49:23 babysunil Exp $
+   $Id: propertyWSFedSPViewRemote.xml,v 1.4 2008-06-19 22:03:59 babysunil Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -26,13 +26,13 @@
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-        <section name="artrespsigned" defaultValue="wsfedsp.provider.section.title.artrespsigned">
+        <section name="assertsigned" defaultValue="wsfedsp.provider.section.title.assertionsigned">
             <property>
-                <label name="lblSPArtificatResponseSigned"
+                <label name="lblSPAssertionSigned"
                        defaultValue=
-                       "wsfedsp.attribute.label.spartificatresponsesigned"
-                       labelFor="wantArtifactResponseSigned" />
-                <cc name="wantArtifactResponseSigned" 
+                       "wsfedsp.attribute.label.spassertionsigned"
+                       labelFor="wantAssertionSigned" />
+                <cc name="wantAssertionSigned" 
                     tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
             </property>
         </section>

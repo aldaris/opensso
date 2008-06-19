@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.8 2008-05-28 18:42:13 babysunil Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.9 2008-06-19 22:04:53 babysunil Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     
     static {
         SPEX_DATA_MAP.put(TFSPAUTOFED_ENABLED, Collections.EMPTY_SET);
-        SPEX_DATA_MAP.put(TFARTI_SIGNED, Collections.EMPTY_SET);
+        SPEX_DATA_MAP.put(TFASSERT_SIGNED, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFSPAUTOFED_ATTR, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFASSERTEFFECT_TIME, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFSPACCT_MAPPER, Collections.EMPTY_SET);
