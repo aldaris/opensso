@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.11 2008-04-02 19:54:36 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.12 2008-06-19 02:05:05 bigfatrat Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -415,11 +415,25 @@ public class LogConfigReader implements ServiceListener{
                 debug.warning("LogConfigReader: LogLocation string is null");
             } else {
                 value = value.replace('\\','/');
+                if (value.startsWith(LogConstants.DEF_FF_LOG_LOC_BASE)) {
+                    String famuri = SystemProperties.get(
+                        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+                    String configdir = SystemProperties.get(
+                        SystemProperties.CONFIG_PATH);
+                    famuri = famuri.replace('\\','/');
+                    configdir = configdir.replace('\\','/');
+                    if (!configdir.endsWith("/") && !famuri.startsWith("/")) {
+                        configdir += "/";
+                    }
+                    String basedir = configdir + famuri;
+                    value = value.replace(LogConstants.DEF_FF_LOG_LOC_BASE,
+                        basedir);
+                }
+                if (fileBackend && !value.endsWith(File.separator)) {
+                    value += File.separator;
+                }
                 if ((locSubdir != null) && (locSubdir.trim().length() > 0))
                 {
-                    if (!value.endsWith(File.separator)) {
-                        value += File.separator;
-                    }
                     // locSubdir already ensured trailing slash, above
                     value += locSubdir;
                 }

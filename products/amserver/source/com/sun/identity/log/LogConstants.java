@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.9 2008-06-18 21:29:33 bigfatrat Exp $
+ * $Id: LogConstants.java,v 1.10 2008-06-19 02:04:37 bigfatrat Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,6 +45,12 @@ public class LogConstants {
      * @supported.api
      */
     public static final String LOG_LOCATION = "iplanet-am-logging-location";
+    /**
+     * Constant for the default base directory "prefix"
+     * for Flat File logging, indicating that the instance's
+     * Configuration directory + server URI should be used.
+     */
+    public static final String DEF_FF_LOG_LOC_BASE = "CONFIG_DIR_SERVER_URI";
     /**
      * Attribute defining whether the logs to be stored in
      * flat-files or to a Database.
