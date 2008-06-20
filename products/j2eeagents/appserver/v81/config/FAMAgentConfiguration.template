@@ -17,7 +17,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.10 2008-06-19 19:27:00 sean_brydon Exp $
+# $Id: FAMAgentConfiguration.template,v 1.11 2008-06-20 23:51:22 sean_brydon Exp $
 #
 # Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 #
@@ -345,14 +345,13 @@ com.sun.identity.agents.config.verification.handler[] =
 
 #
 # HTTP SESSION BINDING
-#   Its default value is true, in which case the agent will invalidate
-#   the http session when agent identifies that login has failed,
-#   user does not have SSO session or pincipal user name does not
-#   match SSO user name.
-#   If its value is false, agent will not be invloved in invalidating 
-#   http session.
+#   Its default value is false so the agent will not invalidate http session,
+#   and session data will be maintained.
+#   If its value is true, then the agent will invalidate the http session when
+#   the agent identifies that login has failed, user does not have SSO session
+#   or pincipal user name does not match SSO user name.
 # Hot-Swap Enabled: Yes
-com.sun.identity.agents.config.httpsession.binding = true 
+com.sun.identity.agents.config.httpsession.binding = false
 
 #
 # GOTO PARAMETER NAME
