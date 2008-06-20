@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.43 2008-06-19 19:27:00 sean_brydon Exp $
+   $Id: AgentService.xml,v 1.44 2008-06-20 20:47:31 mallas Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -2563,6 +2563,31 @@
                             <Value>UserName:test|UserPassword:test</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosDomainServer"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a350">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosDomain"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a351">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosServicePrincipal"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a352">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosTicketCacheDir"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a353">
+                    </AttributeSchema>
+
                 </SubSchema>
                 
                 <SubSchema name="WSPAgent" inheritance="multiple">
@@ -2832,6 +2857,45 @@
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosDomainServer"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a338">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosDomain"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a339">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosServicePrincipal"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a340">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosKeyTabFile"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a341">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isVerifyKrbSignature"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a342">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+
+                    </AttributeSchema>
+
 
                 </SubSchema>
                 
