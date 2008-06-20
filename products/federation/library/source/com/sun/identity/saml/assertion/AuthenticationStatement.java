@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationStatement.java,v 1.1 2006-10-30 23:15:36 qcheng Exp $
+ * $Id: AuthenticationStatement.java,v 1.2 2008-06-20 20:43:19 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,8 +107,9 @@ public class AuthenticationStatement extends SubjectStatement {
                             "AuthenticationStatement:" +
                             "Attribute name is either null or empty.");
                     }
-                    throw new SAMLRequesterException(
-                        SAMLUtilsCommon.bundle.getString("nullInput"));
+                    continue;
+                    //throw new SAMLRequesterException(
+                      //  SAMLUtilsCommon.bundle.getString("nullInput"));
                 }
                 if (attName.equals("AuthenticationMethod")) {
                     _authenticationMethod = ((Attr)att).getValue().trim();

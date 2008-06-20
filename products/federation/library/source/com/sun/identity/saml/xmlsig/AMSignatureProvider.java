@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.4 2007-07-11 06:16:59 mrudul_uchil Exp $
+ * $Id: AMSignatureProvider.java,v 1.5 2008-06-20 20:43:19 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1853,6 +1853,15 @@ public class AMSignatureProvider implements SignatureProvider {
         throws XMLSignatureException {
         return null;
     }
+    
+    public org.w3c.dom.Element signWithKerberosToken(
+            org.w3c.dom.Document doc,
+            java.security.Key key,
+            java.lang.String algorithm,
+            java.util.List ids)
+            throws XMLSignatureException {
+        return null;
+    }
 
     /**
      * Sign part of the xml document referered by the supplied a list
@@ -1908,6 +1917,21 @@ public class AMSignatureProvider implements SignatureProvider {
         throws XMLSignatureException {
         return false;
     }
+    
+    /**
+     * Verify web services message signature using specified key
+     * @param document the document to be validated
+     * @param key the secret key to be used for validating signature
+     * @return true if verification is successful.
+     * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
+     */
+    public boolean verifyWSSSignature(org.w3c.dom.Document document,
+            java.security.Key key)
+            throws XMLSignatureException {
+        return false;
+        
+    }
+    
     
     /**
      * Return algorithm URI for the given algorithm.

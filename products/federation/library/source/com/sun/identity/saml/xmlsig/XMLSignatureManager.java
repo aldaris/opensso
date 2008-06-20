@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.4 2007-07-11 06:17:00 mrudul_uchil Exp $
+ * $Id: XMLSignatureManager.java,v 1.5 2008-06-20 20:43:19 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -416,6 +416,15 @@ public class XMLSignatureManager {
         return sp.signWithSAMLToken(doc, cert, assertionID, algorithm, ids);
 
     }
+    
+    public org.w3c.dom.Element signWithKerberosToken(
+            org.w3c.dom.Document doc,
+            java.security.Key key,
+            java.lang.String algorithm,
+            java.util.List ids)
+       throws XMLSignatureException {
+       return sp.signWithKerberosToken(doc, key, algorithm, ids); 
+    }
 
     /**
      * Sign part of the XML document wth binary security token using 
@@ -471,7 +480,7 @@ public class XMLSignatureManager {
         String algorithm, java.util.List ids) throws XMLSignatureException {
         return sp.signWithWSSX509TokenProfile(doc, cert, algorithm, ids);
     }
-
+        
     /**
      *
      * Sign part of the XML document referred by the supplied a list
@@ -654,6 +663,20 @@ public class XMLSignatureManager {
         throws XMLSignatureException {
 
         return sp.verifyWSSSignature(document, certAlias);
+    }
+    
+    /**
+     * Verify web services message signature using specified key
+     * @param document the document to be validated
+     * @param key the secret key to be used for validating signature
+     * @return true if verification is successful.
+     * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
+     */
+    public boolean verifyWSSSignature(org.w3c.dom.Document document,
+            java.security.Key key)
+            throws XMLSignatureException {
+        return sp.verifyWSSSignature(document, key);
+        
     }
     
     /**

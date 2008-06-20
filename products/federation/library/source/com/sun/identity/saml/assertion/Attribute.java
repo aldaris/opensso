@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.1 2006-10-30 23:15:35 qcheng Exp $
+ * $Id: Attribute.java,v 1.2 2008-06-20 20:43:18 mallas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,13 +74,17 @@ public class Attribute extends AttributeDesignator {
             Node att = atts.item(i);
             if (att.getNodeType() == Node.ATTRIBUTE_NODE) {
                 String attName = att.getLocalName();
+                if(attName == null) {
+                   attName = att.getNodeName();
+                }
                 if (attName == null || attName.length() == 0) {
                     if (SAMLUtilsCommon.debug.messageEnabled()) {
                         SAMLUtilsCommon.debug.message("Attribute:" +
                                     "Attribute Name is either null or empty.");
                     }
-                    throw new SAMLRequesterException(
-                              SAMLUtilsCommon.bundle.getString("nullInput"));
+                    continue;
+                    //throw new SAMLRequesterException(
+                            //  SAMLUtilsCommon.bundle.getString("nullInput"));
                 }
                 if (attName.equals("AttributeName")) {
                     this._attributeName =((Attr)att).getValue().trim();
@@ -116,7 +120,7 @@ public class Attribute extends AttributeDesignator {
             for (i = 0; i < nodeCount; i++) {
                 Node currentNode = nodes.item(i);               
                 if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
-                    String tagName = currentNode.getLocalName();
+                    String tagName = currentNode.getLocalName();                    
                     String tagNS = currentNode.getNamespaceURI(); 
                     if ((tagName == null) || tagName.length() == 0 ||
                         tagNS == null || tagNS.length() == 0) {
