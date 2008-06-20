@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web.xml,v 1.4 2008-05-05 17:41:16 huacui Exp $
+   $Id: web.xml,v 1.5 2008-06-20 20:34:25 leiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -175,10 +175,20 @@
         <web-resource-collection>
             <web-resource-name>Security Aware Servlets</web-resource-name>
             <url-pattern>/securityawareservlet</url-pattern>
-            <url-pattern>/invokerservlet</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>MANAGER_ROLE</role-name>
+            <role-name>EMPLOYEE_ROLE</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Security Aware Servlets</web-resource-name>
+            <url-pattern>/invokerservlet</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>EMPLOYEE_ROLE</role-name>
         </auth-constraint>
     </security-constraint>
 
