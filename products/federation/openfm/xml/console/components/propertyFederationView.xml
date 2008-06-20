@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFederationView.xml,v 1.2 2007-07-10 09:57:33 asyhuang Exp $
+   $Id: propertyFederationView.xml,v 1.3 2008-06-20 01:34:44 veiming Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,7 @@
                     <attribute name="empty" value="cot.empty.table.message" />
                     <attribute name="showPaginationControls" value="false" />
                     <attribute name="selectionType" value="multiple" />
-                    <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.tblSearch', 'tblButton', 'Federation.deleteCOTButton', this)"/>
+                    <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.cotTable', 'tblButton', 'Federation.deleteCOTButton', this)"/>
                     <attribute name="showAdvancedSortingIcon" value="false" />
                     <attribute name="showLowerActions" value="false" />
                     <attribute name="showPaginationControls" value="false" />
@@ -60,7 +60,7 @@
                     <attribute name="empty" value="entity.empty.table.message" />
                     <attribute name="showPaginationControls" value="false" />
                     <attribute name="selectionType" value="multiple" />
-                    <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.tblSearch', 'tblButton', 'Federation.deleteEntityButton', this)"/>
+                    <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.entityTable', 'tblButton', 'Federation.deleteEntityButton', this)"/>
                     <attribute name="showAdvancedSortingIcon" value="false" />
                     <attribute name="showLowerActions" value="false" />
                     <attribute name="showPaginationControls" value="false" />
@@ -92,7 +92,7 @@
                 <attribute name="empty" value="saml.empty.table.message" />
                 <attribute name="showPaginationControls" value="false" />
                 <attribute name="selectionType" value="multiple" />
-                <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.tblSearch', 'tblButton', 'Federation.deleteTPButton', this)"/>
+                <attribute name="selectionJavascript" value="toggleTblButtonState('Federation', 'Federation.samlTable', 'tblButton', 'Federation.deleteTPButton', this)"/>
                 <attribute name="showAdvancedSortingIcon" value="false" />
                 <attribute name="showLowerActions" value="false" />
                 <attribute name="showPaginationControls" value="false" />
