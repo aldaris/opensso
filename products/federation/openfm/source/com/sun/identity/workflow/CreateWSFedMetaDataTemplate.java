@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.3 2008-05-28 18:50:08 qcheng Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.4 2008-06-20 01:33:36 veiming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -301,7 +301,7 @@ public class CreateWSFedMetaDataTemplate {
             { WSFederationConstants.HOME_REALM_DISCOVERY_SERVICE, 
                   url + "/RealmSelection" + maStr },
             { SAML2Constants.SIGNING_CERT_ALIAS, 
-                  ( spSCertAlias.length() > 0 ) ? spSCertAlias : "" },
+                  ( spSCertAlias != null ) ? spSCertAlias : "" },
             { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
             { SAML2Constants.SP_ACCOUNT_MAPPER, 
                   "com.sun.identity.wsfederation.plugins.DefaultADFSPartnerAccountMapper" },
