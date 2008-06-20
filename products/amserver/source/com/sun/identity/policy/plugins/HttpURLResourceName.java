@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpURLResourceName.java,v 1.2 2008-06-10 23:08:09 huacui Exp $
+ * $Id: HttpURLResourceName.java,v 1.3 2008-06-20 01:48:20 huacui Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,9 +63,9 @@ public class HttpURLResourceName extends URLResourceName {
      *     ResourceMatch.NO_MATCH means two resources don't match.
      *     ResourceMatch.EXACT_MATCH means two resources match.
      *     ResourceMatch.SUB_RESOURCE_MATCH means targetResource is 
-     *         the sub resource of the requestResource.
+     *         a sub resource of the requestResource.
      *     ResourceMatch.SUPER_RESOURCE_MATCH means targetResource 
-     *         is the super resource of the requestResource.
+     *         is a super resource of the requestResource.
      *     ResourceMatch.WILDCARD_MATCH means two resources match 
      *         with respect to the wildcard.
      *
@@ -126,6 +126,14 @@ public class HttpURLResourceName extends URLResourceName {
                 compare(requestSubstring1, targetSubstring1, wildcardCompare);
             if ((substring1Res == ResourceMatch.EXACT_MATCH)
                 || (substring1Res == ResourceMatch.WILDCARD_MATCH)) {
+                if ((requestSubstring2 == null) 
+                    || (requestSubstring2.trim().length() == 0)) {
+                    return ResourceMatch.SUB_RESOURCE_MATCH;
+                }
+                if ((targetSubstring2 == null) 
+                    || (targetSubstring2.trim().length() == 0)) {
+                    return ResourceMatch.SUPER_RESOURCE_MATCH;
+                }
                 ResourceMatch substring2Res =
                     compare(requestSubstring2, targetSubstring2, wildcardCompare);
                 if ((substring2Res == ResourceMatch.EXACT_MATCH)
