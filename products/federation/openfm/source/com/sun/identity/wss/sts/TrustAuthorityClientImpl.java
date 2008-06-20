@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClientImpl.java,v 1.1 2008-03-11 20:12:16 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClientImpl.java,v 1.2 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -31,6 +31,7 @@ import com.sun.xml.ws.security.Token;
 import com.sun.xml.ws.api.security.trust.client.IssuedTokenManager;
 import com.sun.xml.ws.security.IssuedTokenContext;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.wss.security.SecurityToken;
 
 /**
  * The class <code>TrustAuthorityClientImpl</code> is the implementation of
@@ -53,13 +54,19 @@ public class TrustAuthorityClientImpl {
     public Element getSTSTokenElement(String wspEndPoint,
                                       String stsEndpoint,
                                       String stsMexAddress,
-                                      Object ssoToken) 
+                                      Object credential) 
                                       throws FAMSTSException {
 
         STSClientConfiguration config =
             new STSClientConfiguration(stsEndpoint, stsMexAddress);
-        if(ssoToken != null) {
-            config.setOBOToken(getClientUserToken(ssoToken));
+        if(credential != null) {
+           if(credential instanceof Element) {
+              Element credE = (Element)credential;
+              if(credE.getLocalName().equals("Assertion")) {
+                 config.setTokenType(SecurityToken.WSS_FAM_SSO_TOKEN);
+              }
+           }
+           config.setOBOToken(getClientUserToken(credential));
         }
         try {
             IssuedTokenManager manager = IssuedTokenManager.getInstance();
@@ -85,7 +92,7 @@ public class TrustAuthorityClientImpl {
     /**
      * Returns Client's or End user's token to be converted to Security token.
      */
-    private static Token getClientUserToken(Object ssoTokenObj) 
+    private Token getClientUserToken(Object credential) 
                 throws FAMSTSException {
         if (clientTokenClass == null) {
             String className =   SystemConfigurationUtil.getProperty(
@@ -93,7 +100,7 @@ public class TrustAuthorityClientImpl {
                 "com.sun.identity.wss.sts.STSClientUserToken");
             try {                
                 clientTokenClass = 
-                    (Thread.currentThread().getContextClassLoader()).
+                       (Thread.currentThread().getContextClassLoader()).
                         loadClass(className);                               
             } catch (Exception ex) {
                  debug.error("TrustAuthorityClientImpl.getClientUserToken:"
@@ -105,7 +112,7 @@ public class TrustAuthorityClientImpl {
         try {
             ClientUserToken userToken =
                 (ClientUserToken) clientTokenClass.newInstance();
-            userToken.init(ssoTokenObj);
+            userToken.init(credential);
             if(debug.messageEnabled()) {
                 debug.message("TrustAuthorityClientImpl:getClientUserToken: " + 
                     "Client User Token : " + userToken);

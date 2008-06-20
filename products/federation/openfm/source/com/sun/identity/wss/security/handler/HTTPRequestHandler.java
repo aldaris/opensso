@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.4 2008-01-25 21:39:55 mrudul_uchil Exp $
+ * $Id: HTTPRequestHandler.java,v 1.5 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,7 +188,11 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
         String loginURL = 
             SystemConfigurationUtil.getProperty(Constants.LOGIN_URL);
         StringBuffer requestURL = request.getRequestURL();
-        loginURL = loginURL + "?" + GOTO + "=" + requestURL.toString();
+        
+        // This is useful for SAML2 integrations.
+        String gotoparam = SystemConfigurationUtil.getProperty(
+                "com.sun.identity.httpprovider.goto", GOTO);
+        loginURL = loginURL + "?" + gotoparam + "=" + requestURL.toString();
         String query = request.getQueryString();
         if(query != null) {
            loginURL = loginURL + "&" + query;
@@ -214,7 +218,8 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
                     subj.getPrivateCredentials().add(sToken);
                     return null;
                 }
-            });
+         });
+         ThreadLocalService.setSSOToken(ssoToken);
     }
 
     // Sets the authenticated principal to the subject.

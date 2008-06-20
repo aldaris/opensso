@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.22 2008-05-28 19:54:40 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.23 2008-06-20 20:42:35 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,15 @@ public class AgentProvider extends ProviderConfig {
                                  "SAMLAttributeMapping";
      private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
      private static final String SAML_ATTRIBUTE_NS = "AttributeNamespace";
-     private static final String NAMEID_MAPPER = "NameIDMapper"; 
+     private static final String NAMEID_MAPPER = "NameIDMapper";
+     private static final String KDC_SERVER = "KerberosDomainServer";
+     private static final String KDC_DOMAIN = "KerberosDomain";
+     private static final String KRB_SERVICE_PRINCIPAL = 
+             "KerberosServicePrincipal";
+     private static final String KRB_TICKET_CACHE_DIR = 
+             "KerberosTicketCacheDir";
+     private static final String KRB_KEYTAB_FILE = "KerberosKeyTabFile";     
+     private static final String VERIFY_KRB_SIGNATURE = "isVerifyKrbSignature";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -137,6 +145,12 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(SAML_ATTRIBUTE_MAPPING);
          attrNames.add(SAML_ATTRIBUTE_NS);
          attrNames.add(NAMEID_MAPPER);
+         attrNames.add(KDC_DOMAIN);
+         attrNames.add(KDC_SERVER);
+         attrNames.add(KRB_SERVICE_PRINCIPAL);
+         attrNames.add(KRB_TICKET_CACHE_DIR);         
+         attrNames.add(KRB_KEYTAB_FILE);
+         attrNames.add(VERIFY_KRB_SIGNATURE);
      }
 
      public void init (String providerName, 
@@ -374,9 +388,14 @@ public class AgentProvider extends ProviderConfig {
             if(samlAttributes == null) {
                samlAttributes = new HashSet();
             }
-            if((value != null) && !(value.equals(""))) {                
-               samlAttributes.add(value);
+            if(value == null) {
+               return;
             }
+            StringTokenizer st = new StringTokenizer(value, ","); 
+            while(st.hasMoreTokens()) {
+               samlAttributes.add(st.nextToken());
+            }
+            
         } else if(attr.equals(INCLUDE_MEMBERSHIPS)) {
             if ((value != null) && (value.length() != 0)) {
                 this.includeMemberships = Boolean.valueOf(value).booleanValue();
@@ -385,6 +404,20 @@ public class AgentProvider extends ProviderConfig {
            this.attributeNS = value;
         } else if(attr.equals(NAMEID_MAPPER)) {
            this.nameIDMapper = value;
+        } else if(attr.equals(KDC_DOMAIN)) {
+            this.kdcDomain = value;
+        } else if(attr.equals(KRB_SERVICE_PRINCIPAL)) {
+            this.servicePrincipal = value;
+        } else if(attr.equals(KRB_KEYTAB_FILE)) {
+            this.keytabFile = value;
+        } else if(attr.equals(KRB_TICKET_CACHE_DIR)) {
+            this.ticketCacheDir = value;
+        } else if(attr.equals(KDC_SERVER)) {
+            this.kdcServer = value;
+        } else if(attr.equals(VERIFY_KRB_SIGNATURE)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.verifyKrbSignature = Boolean.valueOf(value).booleanValue();
+            }            
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -523,6 +556,31 @@ public class AgentProvider extends ProviderConfig {
                        Boolean.toString(includeMemberships));
         }
         
+        if(verifyKrbSignature) {
+           config.put(VERIFY_KRB_SIGNATURE,
+                       Boolean.toString(verifyKrbSignature));            
+        }
+        
+        if(kdcServer != null) {
+           config.put(KDC_SERVER, kdcServer); 
+        }
+        
+        if(kdcDomain != null) {
+           config.put(KDC_DOMAIN, kdcDomain); 
+        }
+        
+        if(servicePrincipal != null) {
+           config.put(KRB_SERVICE_PRINCIPAL, servicePrincipal);
+        }
+        
+        if(ticketCacheDir != null) {
+           config.put(KRB_TICKET_CACHE_DIR, ticketCacheDir); 
+        }
+        
+        if(keytabFile != null) {
+           config.put(KRB_KEYTAB_FILE, keytabFile);  
+        }
+                
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
@@ -541,7 +599,7 @@ public class AgentProvider extends ProviderConfig {
             
             if(samlAttributes != null && !samlAttributes.isEmpty()) {
                attributes.put(SAML_ATTRIBUTE_MAPPING,samlAttributes); 
-            }
+            }                      
 
             if (profilePresent) {
                 attributes.remove(AGENT_TYPE_ATTR);

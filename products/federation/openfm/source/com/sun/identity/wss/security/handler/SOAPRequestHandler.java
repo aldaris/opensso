@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.14 2008-06-15 07:25:37 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.15 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +75,7 @@ import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.identity.wss.security.SecurityTokenFactory;
 import com.sun.identity.wss.security.BinarySecurityToken;
 import com.sun.identity.wss.security.X509TokenSpec;
+import com.sun.identity.wss.security.KerberosTokenSpec;
 import com.sun.identity.wss.security.UserNameTokenSpec;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.PasswordCredential;
@@ -140,9 +142,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         providerName = (String)config.get(PROVIDER_NAME);
         if( (providerName == null) || (providerName.length() == 0) ) {
-            debug.error("SOAPRequestHandler.init:: provider name is null");
-            throw new SecurityException(
-                    bundle.getString("SOAPRequestHandlerInitFailed"));
+            providerName = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.clientagent.profile", "wsc");
+            if(debug.messageEnabled()) {
+               debug.message("SOAPRequestHandler.Init map: " +
+                       "default provider name:" + providerName);
+            }
         }
     }
 
@@ -228,20 +233,24 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             secureMsg.parseSecurityHeader(
                     (Node)secureMsg.getSecurityHeaderElement());
         }
-
-        if ( ((config != null) && (config.isRequestSignEnabled())) || 
-           ((stsConfig != null) && (stsConfig.isRequestSignEnabled())) ){
-            if (!secureMsg.verifySignature()) {
-                debug.error("SOAPRequestHandler.validateRequest:: Signature " +
-                        "verification failed.");
-                throw new SecurityException(
-                        bundle.getString("signatureValidationFailed"));
-            }
-        }
-
+        
         SecurityMechanism securityMechanism =
                 secureMsg.getSecurityMechanism();
         String uri = securityMechanism.getURI();
+        
+        if ( ((config != null) && (config.isRequestSignEnabled())) || 
+           ((stsConfig != null) && (stsConfig.isRequestSignEnabled())) ){
+            // delay the signature verification after authentication
+            // for kerberos token.
+            if(!uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI)) {               
+               if (!secureMsg.verifySignature()) {
+                   debug.error("SOAPRequestHandler.validateRequest:: Signature"
+                           + "verification failed.");                
+                   throw new SecurityException(
+                        bundle.getString("signatureValidationFailed"));
+               }
+            }
+        }
 
         List list = null;
         if (config != null) {
@@ -285,6 +294,26 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 secureMsg.getSecurityToken(),
                 config, secureMsg, false);
 
+        if(uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) &&
+                config.isValidateKerberosSignature()) {
+           java.security.Key secretKey = null;
+           Iterator iter = subject.getPublicCredentials().iterator();
+           while(iter.hasNext()) {
+               Object obj = iter.next();
+               if (obj instanceof java.security.Key) {
+                   secretKey = (java.security.Key)obj;
+                   break;
+               }
+           }                      
+           
+           if (!secureMsg.verifyKerberosTokenSignature(secretKey)) {
+               debug.error("SOAPRequestHandler.validateRequest::Signature"
+                           + "verification failed.");
+               throw new SecurityException(
+                     bundle.getString("signatureValidationFailed"));
+           }                         
+        }
+        
         removeValidatedHeaders(config, soapRequest);
 
         return subject;
@@ -444,25 +473,32 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             if (securityMechanism.isTALookupRequired()) {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken ssoToken = subjectSecurity.ssoToken;
-           if(securityMechanism.getURI().equals
-                   (SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
-               if(subjectSecurity.ssoToken == null) {
-                        throw new SecurityException(
+                if(ssoToken == null) {
+                   if(debug.messageEnabled()) {
+                      debug.message("SOAPRequestHandler.secureRequest:: " +
+                              "using thread local for SSOToken");
+                   }
+                   ssoToken = (SSOToken)ThreadLocalService.getSSOToken(); 
+                }
+                if(securityMechanism.getURI().equals
+                     (SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
+                   if(ssoToken == null) {
+                      throw new SecurityException(
                                 bundle.getString("invalidSSOToken"));
-                    }
-               return getSecureMessageFromLiberty(subjectSecurity.ssoToken, subject,
+                   }
+                   return getSecureMessageFromLiberty(ssoToken, subject,
                             soapMessage, sharedState, config);
                 } else {
-                    try {
+                   try {
                         TrustAuthorityClient client = new TrustAuthorityClient();
                         TrustAuthorityConfig taconfig =
                                 config.getTrustAuthorityConfig();
                         String taName = taconfig.getName();
-                   if(taName != null) {
+                        if(taName != null) {
                             ThreadLocalService.setServiceName(taName);
                         }
                         securityToken = client.getSecurityToken(config,
-                                subjectSecurity.ssoToken);
+                                        ssoToken);                                
                     } catch (FAMSTSException stsEx) {
                         debug.error("SOAPRequestHandler.secureRequest: exception" +
                                 "in obtaining STS Token", stsEx);
@@ -671,12 +707,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         ProviderConfig config = null;
         try {
-            config = 
-                ProviderConfig.getProvider(providerName,ProviderConfig.WSC);
             if (!ProviderConfig.isProviderExists(
-                providerName, ProviderConfig.WSC)) {            
-                providerName = SystemConfigurationUtil.getProperty(
-                    "com.sun.identity.wss.provider.defaultWSC", "wsc");
+                    providerName, ProviderConfig.WSC)) {
+                config = ProviderConfig.getProvider(providerName,
+                    ProviderConfig.WSC, true);
+                if (!ProviderConfig.isProviderExists(
+                    providerName, ProviderConfig.WSC)) {
+                    providerName = SystemConfigurationUtil.getProperty(
+                        "com.sun.identity.wss.provider.defaultWSC", "wsc");
+                    config = ProviderConfig.getProvider(providerName,
+                        ProviderConfig.WSC);
+                }
+            } else {
                 config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSC);
             }        
@@ -723,7 +765,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 AdminTokenAction.getInstance());
 
         SecurityTokenFactory factory = SecurityTokenFactory.getInstance(token);
-
+        //remove
+        //uri = SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI;
         if(SecurityMechanism.WSS_NULL_X509_TOKEN_URI.equals(uri) ||
            SecurityMechanism.WSS_TLS_X509_TOKEN_URI.equals(uri) ||
            SecurityMechanism.WSS_CLIENT_TLS_X509_TOKEN_URI.equals(uri)) {
@@ -852,6 +895,20 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     secMech, certAlias);
            securityToken = factory.getSecurityToken(tokenSpec);                                 
 
+        } else if(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI.equals(uri) ||
+           SecurityMechanism.WSS_TLS_KERBEROS_TOKEN_URI.equals(uri) ||
+           SecurityMechanism.WSS_CLIENT_TLS_KERBEROS_TOKEN_URI.equals(uri)) {
+
+           if(debug.messageEnabled()) {
+                debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
+                        "Kerberos token");
+            }            
+            KerberosTokenSpec tokenSpec = new KerberosTokenSpec();
+            tokenSpec.setKDCDomain(config.getKDCDomain());
+            tokenSpec.setKDCServer(config.getKDCServer());
+            tokenSpec.setServicePrincipal(config.getKerberosServicePrincipal());
+            tokenSpec.setTicketCacheDir(config.getKerberosTicketCacheDir());
+            securityToken = factory.getSecurityToken(tokenSpec);   
         } else {
             throw new SecurityException(
                     bundle.getString("unsupportedSecurityMechanism"));

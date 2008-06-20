@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.1 2008-03-17 22:16:46 mrudul_uchil Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.2 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.HashMap;
 import java.util.TimeZone;
 import com.sun.xml.ws.security.trust.logging.LogStringsMessages;
 
@@ -81,6 +83,22 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.xml.ws.security.trust.WSTrustElementFactory;
 import java.security.PrivateKey;
 import com.sun.org.apache.xml.internal.security.exceptions.XMLSecurityException;
+import com.sun.identity.wss.sts.STSConstants;
+import com.sun.identity.plugin.session.impl.FMSessionProvider;
+import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.plugin.session.SessionException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOException;
+import com.sun.identity.wss.sts.FAMSTSException;
+import com.sun.identity.wss.sts.STSClientUserToken;
+import com.sun.identity.wss.security.SAML11AssertionValidator;
+import com.sun.identity.wss.security.SAML2AssertionValidator;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.wss.security.SecurityException;
+import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
+import com.sun.identity.wss.security.SecurityToken;
+
 
 
 public class FAMSTSTokenProvider implements STSTokenProvider {
@@ -92,6 +110,13 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         String issuer = ctx.getTokenIssuer();
         String appliesTo = ctx.getAppliesTo();
         String tokenType = ctx.getTokenType(); 
+        
+        //Check
+        if(tokenType != null && tokenType.equals(
+                          SecurityToken.WSS_FAM_SSO_TOKEN)) {
+           generateSSOToken(ctx);
+           return;
+        }
         String keyType = ctx.getKeyType();
         int tokenLifeSpan = 
             (int)(ctx.getExpirationTime().getTime() - ctx.getCreationTime().
@@ -225,16 +250,18 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             notOnOrAfter.add(Calendar.MILLISECOND, lifeSpan);
             
             List<AudienceRestrictionCondition> arc = null;
+            if (appliesTo != null){
+                arc = new ArrayList<AudienceRestrictionCondition>();
+                List<String> au = new ArrayList<String>();
+                au.add(appliesTo);
+                arc.add(samlFac.createAudienceRestrictionCondition(au));
+            }
+            
             final List<String> confirmMethods = new ArrayList<String>();
             if (confirMethod == null){
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
                      confirMethod = STSConstants.SAML_BEARER_1_0;
-                     if (appliesTo != null){
-                         arc = new ArrayList<AudienceRestrictionCondition>();
-                         List<String> au = new ArrayList<String>();
-                         au.add(appliesTo);
-                         arc.add(samlFac.createAudienceRestrictionCondition(au));
-                     }
+            
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_1_0;
                 }
@@ -310,7 +337,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
     }
     
     protected Assertion createSAML20Assertion(final WSTrustVersion wstVer, 
-        final int lifeSpan, String confirMethod, final String assertionId, 
+        int lifeSpan, String confirMethod, final String assertionId, 
         final String issuer, final String appliesTo, final KeyInfo keyInfo, 
         final  Map<QName, List<String>> claimedAttrs, String keyType, 
         String authnCtx) throws WSTrustException {
@@ -326,6 +353,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 new GregorianCalendar(utcTimeZone);
             final GregorianCalendar notOnOrAfter = 
                 new GregorianCalendar(utcTimeZone);
+            //remove later, read this from a config by the token provider
+            lifeSpan = lifeSpan + (5 * 60 * 1000);
             notOnOrAfter.add(Calendar.MILLISECOND, lifeSpan);
             
             List<AudienceRestriction> arc = null;
@@ -333,12 +362,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             if (confirMethod == null){
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
                      confirMethod = STSConstants.SAML_BEARER_2_0;
-                     if (appliesTo != null){
-                         arc = new ArrayList<AudienceRestriction>();
-                         List<String> au = new ArrayList<String>();
-                         au.add(appliesTo);
-                         arc.add(samlFac.createAudienceRestriction(au));
-                     }
+                    
 
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_2_0;
@@ -348,7 +372,12 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                     }
                 }
             }
-            
+            if (appliesTo != null){
+                         arc = new ArrayList<AudienceRestriction>();
+                         List<String> au = new ArrayList<String>();
+                         au.add(appliesTo);
+                         arc.add(samlFac.createAudienceRestriction(au));
+            }
             final Conditions conditions = 
                 samlFac.createConditions(issueInst, notOnOrAfter, null, arc, 
                 null, null);
@@ -359,6 +388,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             
             com.sun.xml.wss.saml.Subject subj = null;
             final List<Attribute> attrs = new ArrayList<Attribute>();
+            
+           // if(claimedAttrs != null) {
             final Set<Map.Entry<QName, List<String>>> entries = 
                 claimedAttrs.entrySet();
             for(Map.Entry<QName, List<String>> entry : entries){
@@ -380,7 +411,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                     }
                 }
             }
-        
+            //}   
             final List<Object> statements = new ArrayList<Object>();
             if (attrs.isEmpty()){
                 // To Do: create AuthnContext with proper content. 
@@ -481,5 +512,109 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         }
         
         return keyInfo;
+    }
+    
+    /**
+     * Generates FAM SSOToken by consuming SAML Assertion.
+     * @param ctx Issued Token Context from WS-Trust Request
+     * @throws com.sun.xml.ws.api.security.trust.WSTrustException
+     */
+    private void generateSSOToken(IssuedTokenContext ctx) 
+             throws WSTrustException {
+        
+        javax.security.auth.Subject subject = ctx.getRequestorSubject();
+        if(subject == null) {
+           throw new WSTrustException("Subject is null"); 
+        }        
+        
+        String subjectName = null;
+        Map attributeMap = null;
+        Map config = new HashMap();
+        FAMSTSConfiguration stsConfig = new FAMSTSConfiguration();
+        config.put(STSConstants.TRUSTED_ISSUERS, stsConfig.getTrustedIssuers());
+        config.put(STSConstants.TRUSTED_IPADDRESSES,
+                                   stsConfig.getTrustedIPAddresses());
+        
+        Iterator iter = subject.getPublicCredentials().iterator();
+        while(iter.hasNext()) {
+            Object object = iter.next();
+            if(object instanceof Element) {
+               Element famToken = (Element)object;
+               if(!famToken.getLocalName().equals("FAMToken")) {
+                  continue; 
+               }
+               Element assertionE = null;
+               try {
+                   STSClientUserToken oboToken = 
+                           new STSClientUserToken(famToken);
+                   String tokenID = oboToken.getTokenId();
+                   assertionE = XMLUtils.toDOMDocument(
+                           tokenID, STSUtils.debug).getDocumentElement();                   
+               } catch (FAMSTSException se) {
+                   throw new WSTrustException(se.getMessage());
+               }
+               if(assertionE == null) {
+                  throw new WSTrustException(
+                          STSUtils.bundle.getString("nullAssertion"));
+               }
+               if(assertionE.getLocalName().equals("Assertion")) {                   
+                  String namespace = assertionE.getNamespaceURI();
+                  try {
+                      if(SAMLConstants.assertionSAMLNameSpaceURI.equals(
+                              namespace)) {                
+                         SAML11AssertionValidator validator = 
+                             new SAML11AssertionValidator(assertionE, config);
+                         subjectName = validator.getSubjectName();
+                         attributeMap = validator.getAttributes();                      
+                      } else if (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(
+                              namespace)) {
+                         SAML2AssertionValidator validator =
+                             new SAML2AssertionValidator(assertionE, config);
+                         subjectName = validator.getSubjectName();
+                         attributeMap = validator.getAttributes();
+                      }
+                  } catch (SecurityException se) {                      
+                      throw new WSTrustException(se.getMessage());
+                  }
+               }
+            }
+        }
+        if(subjectName == null) {
+           throw new WSTrustException(
+                   STSUtils.bundle.getString("assertion subject is null")); 
+        }
+        Map info = new HashMap();
+        info.put(SessionProvider.REALM, "/");
+        info.put(SessionProvider.PRINCIPAL_NAME, subjectName);
+        info.put(SessionProvider.AUTH_LEVEL, "0");
+        FMSessionProvider sessionProvider = new FMSessionProvider();
+        try {
+            SSOToken ssoToken = (SSOToken)sessionProvider.createSession(
+                    info, null, null, null);
+            if(attributeMap != null && !attributeMap.isEmpty()) {
+               for(Iterator attrIter =  attributeMap.keySet().iterator();
+                            attrIter.hasNext();) {
+                   String attrName = (String)attrIter.next();
+                   String attrValue = (String)attributeMap.get(attrName);
+                   ssoToken.setProperty(attrName, attrValue);
+                   
+               }
+            }
+            STSClientUserToken wscToken = new STSClientUserToken();
+            wscToken.init(ssoToken);
+            ctx.setSecurityToken(wscToken);            
+        } catch (SessionException se) {
+            STSUtils.debug.error("FAMSTSTokenProvider.generateSSOToken: " +
+                    "session exception ", se);
+            throw new WSTrustException(se.getMessage());                    
+        } catch (FAMSTSException fe) {
+            STSUtils.debug.error("FAMSTSTokenProvider.generateSSOToken: " +
+                    "FAMSTSException ", fe);
+            throw new WSTrustException(fe.getMessage());                    
+        } catch (SSOException ssoe) {
+            STSUtils.debug.error("FAMSTSTokenProvider.generateSSOToken: " +
+                    "SSOException ", ssoe);
+            throw new WSTrustException(ssoe.getMessage());                    
+        }
     }
 }

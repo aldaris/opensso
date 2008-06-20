@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.2 2008-03-08 03:03:19 mallas Exp $
+ * $Id: STSUtils.java,v 1.3 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.idm.AMIdentity;
@@ -48,6 +49,7 @@ public class STSUtils {
     private static final String AGENT_TYPE_ATTR = "AgentType"; 
     private static final String WSP_ENDPOINT = "WSPEndpoint"; 
     public static Debug debug = Debug.getInstance("famSTS");
+    public static ResourceBundle bundle = ResourceBundle.getBundle("famSTS");
 
     /**
      * Returns the WSP agent attributes for a given end point.

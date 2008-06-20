@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.4 2007-09-13 07:24:21 mrudul_uchil Exp $
+ * $Id: AMTokenProvider.java,v 1.5 2008-06-20 20:42:35 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,9 @@ public class AMTokenProvider implements TokenProvider {
         } else if(tokenSpec instanceof X509TokenSpec) {
            return  new BinarySecurityToken(
                   (X509TokenSpec)tokenSpec);
-
+        } else if(tokenSpec instanceof KerberosTokenSpec) {
+           return  new BinarySecurityToken(
+                  (KerberosTokenSpec)tokenSpec);
         } else if(tokenSpec instanceof UserNameTokenSpec) {
            return new UserNameToken((UserNameTokenSpec)tokenSpec);
            

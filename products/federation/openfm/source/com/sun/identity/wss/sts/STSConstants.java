@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.7 2008-03-17 22:16:45 mrudul_uchil Exp $
+ * $Id: STSConstants.java,v 1.8 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,8 @@ public class STSConstants {
             
     public static final String SAML10_ASSERTION = 
         "urn:oasis:names:tc:SAML:1.0:assertion";
+    public static final String SAML20_ASSERTION = 
+        "urn:oasis:names:tc:SAML:2.0:assertion";
             
     public static final String SSO_TOKEN_TYPE = "FAMSSOToken";
     
@@ -81,6 +83,14 @@ public class STSConstants {
     // load those jar files. 
     public static final String FAM_CLASSLOADER_DIR_PATH = 
         "com.sun.identity.classloader.client.jarsPath";
+    
+    public static final String TRUSTED_ISSUERS = "trustedIssuers";
+    
+    public static final String TRUSTED_IPADDRESSES = "trustedIPAddresses";
+    
+    public static final String WSIT_VERSION_CLASS = 
+            "com.sun.xml.ws.security.trust.impl.ic.ICContractImpl";
+    
 
 }
 

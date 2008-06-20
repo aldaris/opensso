@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.8 2008-05-28 19:54:43 mrudul_uchil Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.9 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,10 +51,21 @@ import com.sun.identity.wss.sts.FAMSTSException;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.sts.ClientUserToken;
-import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
+import javax.xml.stream.XMLStreamReader;
+import com.sun.xml.wss.saml.util.SAMLUtil;
+import com.sun.identity.saml.assertion.Assertion;
+import com.sun.identity.saml.assertion.AuthenticationStatement;
+import com.sun.identity.saml.assertion.AttributeStatement;
+import com.sun.identity.saml.assertion.Attribute;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.wss.security.SecurityToken;
+import com.sun.identity.wss.security.SAML11AssertionValidator;
+import com.sun.identity.wss.security.SAML2AssertionValidator;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml2.common.SAML2Constants;
 
 /**
  * The STS attribute provider is used to retrieve an authenticated user or
@@ -79,6 +90,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
     private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
     private static final String defaultNS = "http://example.com";
     
+    private Map attributeMap = new HashMap();        
     private SSOToken ssoToken = null;
     
     /**
@@ -101,14 +113,30 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
               STSUtils.debug.message("FAMSTSAttributeProvider.getClaimed" +
               "Attributes: subject is null from custom tokens");
            }
+           Element samlAssertionE = null;
            Iterator iter = subject.getPublicCredentials().iterator();
            Object  object = iter.next();
            if(object instanceof X509Certificate) {
               X509Certificate cert = (X509Certificate)object;
               subjectName = CertUtils.getSubjectName(cert); 
+           } else if (object instanceof XMLStreamReader) {
+              XMLStreamReader reader = (XMLStreamReader) object;
+              X509Certificate cert = null;
+              //To create a DOM Element representing the Assertion :                      
+              try {
+                  samlAssertionE = SAMLUtil.createSAMLAssertion(reader);
+                  parseSAMLAssertion(samlAssertionE, subject);
+                  } catch (Exception ex) {
+                       STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed"
+                               +  "Attributes: assertion validation failed"); 
+                 }                                               
+           } else if (object instanceof Element) {
+               samlAssertionE = (Element)object;
+               if(samlAssertionE.getLocalName().equals("Assertion")) {
+                  parseSAMLAssertion(samlAssertionE, subject);
+               }
            }
         }
-
         if(subjectName == null) {
            if(STSUtils.debug.messageEnabled()) {
               STSUtils.debug.message("FAMSTSAttributeProvider.getClaimed" +
@@ -160,7 +188,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
 	List<String> nameIdAttrs = new ArrayList<String>();
 	nameIdAttrs.add(getUserPseduoName(subjectName, agentConfig));
 	attrs.put(nameIdQName, nameIdAttrs);
-
+        
         tmp = (Set)agentConfig.get(SAML_ATTRIBUTE_MAP);
         Map samlAttributeMap = null;
         if(tmp != null && !tmp.isEmpty()) {
@@ -168,6 +196,20 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         }
         if(samlAttributeMap != null) {
            attrs.putAll(samlAttributeMap);
+        }
+        
+        //Adding the attributes from authenticated SAML Assertion to the
+        //newly created assertion.
+        if(attributeMap != null && !attributeMap.isEmpty()) {
+           Set entries = attributeMap.keySet();
+           for(Iterator  attrIter = entries.iterator(); attrIter.hasNext();) {
+               String key = (String)attrIter.next();
+               String val = (String)attributeMap.get(key);
+               QName attrQName = new QName(namespace, key);
+               List<String> valList = new ArrayList<String>();
+               valList.add(val);
+               attrs.put(attrQName, valList);
+           }
         }
 
         boolean includeMemberships = Boolean.valueOf(
@@ -298,6 +340,10 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                   try {
                       STSClientUserToken userToken =
                           new STSClientUserToken(credential);
+                      if(!userToken.getType().equals(
+                              SecurityToken.WSS_FAM_SSO_TOKEN)) {
+                          return null;
+                      }
                       String tokenId = userToken.getTokenId();
                       SSOTokenManager manager = SSOTokenManager.getInstance();
                       SSOToken currentToken = manager.createSSOToken(tokenId);
@@ -393,4 +439,34 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
         }
         return null;
     }
+    
+    private void parseSAMLAssertion(Element samlAssertionE, Subject subject) {
+                              
+         X509Certificate cert = null;
+         //To create a DOM Element representing the Assertion :                      
+         try {
+             //samlAssertionE = SAMLUtil.createSAMLAssertion(reader);
+             String namespace = samlAssertionE.getNamespaceURI();
+             if(SAMLConstants.assertionSAMLNameSpaceURI.equals(
+                          namespace)) {
+                SAML11AssertionValidator validator =
+                   new SAML11AssertionValidator(samlAssertionE, new HashMap());
+                cert = validator.getKeyInfoCert();
+                attributeMap = validator.getAttributes();
+             } else if (
+                SAML2Constants.ASSERTION_NAMESPACE_URI.equals(namespace)) {
+                SAML2AssertionValidator validator =
+                     new SAML2AssertionValidator(samlAssertionE, new HashMap());
+                cert = validator.getKeyInfoCert();
+                attributeMap = validator.getAttributes();
+             }                          
+             if(cert != null) {
+                subject.getPublicCredentials().add(cert); 
+             }
+         } catch (Exception ex) {
+             STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed"
+                           +  "Attributes: assertion validation failed"); 
+         }
+    }
 }
+

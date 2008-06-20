@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.5 2007-09-13 16:20:50 mallas Exp $
+ * $Id: WSSConstants.java,v 1.6 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,6 +147,10 @@ public class WSSConstants {
      public static final String TAG_USERNAME_VALUE_TYPE = 
              "http://docs.oasis-open.org/wss/2004/01/" + 
              "oasis-200401-wss-username-token-profile-1.0#UsernameToken";
+     
+     public static final String KERBEROS_VALUE_TYPE = 
+         "http://docs.oasis-open.org/wss/oasis-wss-kerberos-token-profile-1.1"
+         + "#Kerberosv5_AP_REQ";
 
 }
 

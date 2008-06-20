@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.3 2007-07-11 06:12:43 mrudul_uchil Exp $
+ * $Id: BinarySecurityToken.java,v 1.4 2008-06-20 20:42:35 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,11 +28,14 @@ import java.util.ResourceBundle;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.Iterator;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtilsCommon;
 import com.iplanet.am.util.Locale;
 
@@ -47,6 +50,22 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertPath;
+import java.security.Key;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.Oid;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import javax.security.auth.Subject;
+import java.security.PrivilegedExceptionAction;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.kerberos.KerberosTicket;
+import sun.security.krb5.EncryptionKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.AccessController;
 
 /**
  * This class <code>BinarySecurityToken</code> represents an X509
@@ -71,6 +90,10 @@ public class BinarySecurityToken implements SecurityToken {
     private static final String ID = "Id";
     private static Debug debug = WSSUtils.debug;
     private static ResourceBundle bundle = WSSUtils.bundle;
+    private String tokenType = SecurityToken.WSS_X509_TOKEN;
+    private String kerberosToken = null;
+    private Key secretKey = null;    
+    private KerberosTokenSpec kbSpec = null;
 
     /**
      * Default constructor
@@ -158,6 +181,23 @@ public class BinarySecurityToken implements SecurityToken {
     }
 
     /**
+     * Constructor to create Kerberos Token
+     * @param kbSpec The Kerberos Token Specification
+     * @throws com.sun.identity.wss.security.SecurityException
+     */
+    public BinarySecurityToken(KerberosTokenSpec kbSpec) 
+                      throws SecurityException {
+         
+         getKerberosToken();
+         this.value = kerberosToken;
+         this.valueType = kbSpec.getValueType();
+         this.encodingType = kbSpec.getEncodingType();
+         this.tokenType = SecurityToken.WSS_KERBEROS_TOKEN;
+         this.id = SAMLUtils.generateID();
+         this.kbSpec = kbSpec;
+                 
+    }
+    /**
      * Constructor
      * @param token Binary Security Token Element
      * @exception SecurityException if token Element is not a valid binary 
@@ -219,7 +259,7 @@ public class BinarySecurityToken implements SecurityToken {
             throw new SecurityException(
                   bundle.getString("missingAttribute") + " : " + ENCODING_TYPE);
         }
-
+        
         if (valueType == null) {
             debug.error("BinarySecurityToken: valueType missing");
             throw new SecurityException(
@@ -251,16 +291,96 @@ public class BinarySecurityToken implements SecurityToken {
             debug.error("BinarySecurityToken: value missing");
             throw new SecurityException(bundle.getString("missingValue"));
         }
- 
+               
         // save the original string for toString()
         xmlString = XMLUtils.print(token);
 
     }
+    
+    /**
+     * Returns Kerberos Token
+     * @throws com.sun.identity.wss.security.SecurityException
+     */
+    private void getKerberosToken() throws SecurityException {
+        Subject clientSubject = getKerberosSubject();
+        // Obtain the session key to sign using kerberos ticket.
+        Set creds = clientSubject.getPrivateCredentials();
+        Iterator<Object> iter2 = creds.iterator();
+        while(iter2.hasNext()){
+                Object privObject = iter2.next();
+                if(privObject instanceof KerberosTicket){
+                    KerberosTicket kerbTicket = (KerberosTicket)privObject;                                         
+                    secretKey = kerbTicket.getSessionKey();                                                        
+                    break;                  
+                }
+        }
+
+        try {
+            Subject.doAs(clientSubject, new PrivilegedExceptionAction(){                
+                public Object run() throws Exception {
+                   
+                    final GSSManager manager = GSSManager.getInstance();
+                    final Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
+                    String serviceName = kbSpec.getServicePrincipal();                    
+                    GSSName serverName = manager.createName(serviceName, null);                                        
+                    GSSContext context = manager.createContext(serverName,
+                                         krb5Oid,
+                                         null,
+                                         GSSContext.DEFAULT_LIFETIME);
+                    byte[] token = new byte[0];
+                    token = context.initSecContext(token, 0, token.length);            
+                    String encodeToken =  Base64.encode(token);
+                    kerberosToken = encodeToken;            
+                    return null;
+                }
+            });
+        } catch (Exception ge) {
+            debug.error("BinarySecurityToken.getKerberosToken: GSS Error", ge);
+            throw new SecurityException(ge.getMessage());
+        }
+       
+    }
+    
+    private Subject getKerberosSubject() throws SecurityException {
+        
+        String kdcRealm = kbSpec.getKDCDomain();
+        String kdcServer = kbSpec.getKDCServer();
+               
+        System.setProperty("java.security.krb5.realm", kdcRealm);
+        System.setProperty("java.security.krb5.kdc", kdcServer);
+        System.setProperty("java.security.auth.login.config", "/dev/null");
+        Configuration config = Configuration.getConfiguration();
+        KerberosConfiguration kc = null;
+        if (config instanceof KerberosConfiguration) {
+            kc = (KerberosConfiguration) config;
+            kc.setRefreshConfig("true");            
+        } else {
+            kc = new KerberosConfiguration(config);
+            kc.setRefreshConfig("true");
+            kc.setPrincipalName(kbSpec.getServicePrincipal());
+            kc.setTicketCacheDir(kbSpec.getTicketCacheDir());
+            
+        }
+        Configuration.setConfiguration(kc);
+
+        // perform service authentication using JDK Kerberos module
+        try {
+            LoginContext lc = new LoginContext(
+                KerberosConfiguration.WSC_CONFIGURATION);
+            lc.login();
+            return lc.getSubject();
+        } catch (LoginException ex) {
+            throw new SecurityException(ex.getMessage());
+        }        
+    }    
 
     /**
      * trim prefix and get the value, e.g, for wsse:X509v3 will return X509v3 
      */
     private String trimPrefix(String val) {
+        if(val.indexOf("wsse") == -1) {
+           return val; 
+        }
         int pos = val.indexOf(":");
         if (pos == -1) {
             return val;
@@ -306,7 +426,15 @@ public class BinarySecurityToken implements SecurityToken {
     public java.lang.String getTokenValue() { 
         return value;
     }
-
+    
+    /**
+     * Returns the secret key for kerberos token.
+     * @return the secret key
+     */
+    public Key getSecretKey() {
+        return secretKey;
+    }
+       
     /**
      * Returns a String representation of the token 
      * @return A string containing the valid XML for this element
@@ -339,7 +467,7 @@ public class BinarySecurityToken implements SecurityToken {
      * @return String the token type.
      */
     public String getTokenType() {
-        return SecurityToken.WSS_X509_TOKEN;
+        return tokenType;        
     }
 
     /**
@@ -367,7 +495,7 @@ public class BinarySecurityToken implements SecurityToken {
         }
         return document.getDocumentElement();
     }
-    
+            
     /**
      * The <code>X509V3</code> value type indicates that
      * the value name given corresponds to a X509 Certificate

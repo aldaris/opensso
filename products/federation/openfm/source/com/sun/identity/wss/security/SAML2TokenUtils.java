@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenUtils.java,v 1.2 2007-05-30 20:12:14 mallas Exp $
+ * $Id: SAML2TokenUtils.java,v 1.3 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,6 +118,11 @@ public class SAML2TokenUtils {
 
         Principal principal = new SecurityPrincipal(ni.getValue()); 
         subject.getPrincipals().add(principal);
+        Element keyInfo = getKeyInfo(assertion);
+        if(keyInfo != null) {
+           X509Certificate cert = WSSUtils.getCertificate(keyInfo);
+           subject.getPublicCredentials().add(cert);
+        }
         WSSUtils.setRoles(subject, ni.getValue());
         return true;
     }

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.3 2008-05-28 19:54:44 mrudul_uchil Exp $
+ * $Id: WSSSignatureProvider.java,v 1.4 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -706,6 +706,203 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                   "getPublicKeyFromWSSToken Exception: ", e);
         }
         return pubKey;
+    }
+    
+    /**
+     * Sign with Kerberos Token
+     * @param doc
+     * @param key
+     * @param algorithm
+     * @param ids
+     * @return
+     * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
+     */
+    public org.w3c.dom.Element signWithKerberosToken(
+            org.w3c.dom.Document doc,
+            java.security.Key key,
+            java.lang.String algorithm,
+            java.util.List ids)
+            throws XMLSignatureException {
+        
+        if (doc == null) {
+            SAMLUtils.debug.error("WSSSignatureProvider.signWithKerberos" +
+            "Token:: XML doc is null.");
+            throw new XMLSignatureException(
+                      SAMLUtils.bundle.getString("nullInput"));
+        }
+
+        if (SAMLUtils.debug.messageEnabled()) {
+            SAMLUtils.debug.message("WSSSignatureProvider.signWithKerberosToken:" +                   
+               "Document to be signed : " +
+                XMLUtils.print(doc.getDocumentElement()));
+        }
+
+        org.w3c.dom.Element root = (Element) doc.getDocumentElement().
+                getElementsByTagNameNS(WSSConstants.WSSE_NS,
+                                        SAMLConstants.TAG_SECURITY).item(0);
+
+        XMLSignature signature = null;
+        try {
+            Constants.setSignatureSpecNSprefix(SAMLConstants.PREFIX_DS);                        
+
+            if (!isValidAlgorithm(algorithm)) {
+                throw new XMLSignatureException(
+                           SAMLUtils.bundle.getString("invalidalgorithm"));
+            }
+
+            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.                    
+                XMLUtils.createDSctx(doc, "wsu", WSSConstants.WSU_NS);
+
+            NodeList wsuNodes = (NodeList)XPathAPI.selectNodeList(doc,
+                    "//*[@wsu:Id]", wsucontext);
+
+            if (wsuNodes != null && wsuNodes.getLength() != 0) {
+                for (int i = 0; i < wsuNodes.getLength(); i++) {
+                     Element elem = (Element) wsuNodes.item(i);
+                     String id = elem.getAttributeNS(WSSConstants.WSU_NS, "Id");                     
+                     if (id != null && id.length() != 0) {
+                         IdResolver.registerElementById(elem, id);
+                     }
+                }
+            }
+
+            signature = new XMLSignature(doc, "", algorithm,
+                  Canonicalizer.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+
+            Element sigEl = signature.getElement();
+            root.appendChild(sigEl);
+
+            Element transformParams = doc.createElementNS(WSSConstants.WSSE_NS,
+                    WSSConstants.WSSE_TAG + ":" + 
+                    WSSConstants.TRANSFORMATION_PARAMETERS);
+            transformParams.setAttributeNS(SAMLConstants.NS_XMLNS,
+                    WSSConstants.TAG_XML_WSSE, WSSConstants.WSSE_NS);
+            Element canonElem =  doc.createElementNS(
+                    SAMLConstants.XMLSIG_NAMESPACE_URI, 
+                    "ds:CanonicalizationMethod");
+            canonElem.setAttributeNS(null, "Algorithm",  
+                    Canonicalizer.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+            transformParams.appendChild(canonElem);
+
+            Element securityTokenRef = null;
+            String secRefId = null;
+            
+            securityTokenRef = doc.createElementNS(WSSConstants.WSSE_NS,
+                "wsse:" + SAMLConstants.TAG_SECURITYTOKENREFERENCE);
+            securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
+                WSSConstants.TAG_XML_WSSE, WSSConstants.WSSE_NS);
+            securityTokenRef.setAttributeNS(SAMLConstants.NS_XMLNS,
+                WSSConstants.TAG_XML_WSU, WSSConstants.WSU_NS);
+            secRefId = SAMLUtils.generateID();
+            securityTokenRef.setAttributeNS(WSSConstants.WSU_NS, 
+                WSSConstants.WSU_ID, secRefId);
+            KeyInfo keyInfo = signature.getKeyInfo();
+            keyInfo.addUnknownElement(securityTokenRef);
+            IdResolver.registerElementById(securityTokenRef, secRefId);
+            
+
+            int size = ids.size();
+            for (int i = 0; i < size; ++i) {
+                Transforms transforms = new Transforms(doc);
+                transforms.addTransform(
+                                Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
+                String id = (String) ids.get(i);
+                if (SAMLUtils.debug.messageEnabled()) {
+                    SAMLUtils.debug.message("id = " +id);
+                }
+                signature.addDocument("#"+id, transforms,
+                        Constants.ALGO_ID_DIGEST_SHA1);
+            }
+
+            Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
+                        SAMLConstants.TAG_REFERENCE);
+            securityTokenRef.appendChild(reference);                
+
+            Element bsf = (Element)root.getElementsByTagNameNS(
+                            WSSConstants.WSSE_NS,"BinarySecurityToken").item(0);
+            String certId = bsf.getAttributeNS(WSSConstants.WSU_NS,
+                    SAMLConstants.TAG_ID);                
+            reference.setAttributeNS(null, SAMLConstants.TAG_URI,"#"
+                                         +certId);                                                             
+            reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                    WSSConstants.KERBEROS_VALUE_TYPE);            
+            signature.sign(key);
+
+        } catch (Exception e) {
+            SAMLUtils.debug.error("WSSSignatureProvider: " + 
+                                  "signWithBinaryTokenProfile Exception: ", e);
+            throw new XMLSignatureException(e.getMessage());
+        }
+        return (signature.getElement());        
+    }
+    
+    /**
+     * Verify web services message signature using specified key
+     * @param document the document to be validated
+     * @param key the secret key to be used for validating signature
+     * @return true if verification is successful.
+     * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
+     */
+    public boolean verifyWSSSignature(Document doc, java.security.Key key)
+         throws XMLSignatureException {
+        if (doc == null || key == null) {
+            WSSUtils.debug.error("WSSSignatureProvider.verifyWSSSignature: " +
+                    "document or key is null.");
+            throw new XMLSignatureException(
+                      WSSUtils.bundle.getString("nullInput"));
+        }                
+
+        try {
+            Element wsucontext = com.sun.org.apache.xml.internal.security.utils.
+                    XMLUtils.createDSctx(doc, "wsu", WSSConstants.WSU_NS);
+
+            NodeList wsuNodes = (NodeList)XPathAPI.selectNodeList(doc,
+                    "//*[@wsu:Id]", wsucontext);
+
+            if(wsuNodes != null && wsuNodes.getLength() != 0) {
+               for(int i=0; i < wsuNodes.getLength(); i++) {
+                   Element elem = (Element) wsuNodes.item(i);
+                   String id = elem.getAttributeNS(WSSConstants.WSU_NS, "Id");
+                   if (id != null && id.length() != 0) {
+                       IdResolver.registerElementById(elem, id);
+                   }
+               }
+            }
+
+            Element nscontext = com.sun.org.apache.xml.internal.security.utils.
+                  XMLUtils.createDSctx (doc,"ds",Constants.SignatureSpecNS);
+            NodeList sigElements = XPathAPI.selectNodeList (doc,
+                "//ds:Signature", nscontext);
+            int sigElementsLength = sigElements.getLength();
+            if (WSSUtils.debug.messageEnabled()) {
+                WSSUtils.debug.message("WSSSignatureProvider.verifyWSSSignature"
+                      + ": sigElements " + "size = " + sigElements.getLength());
+            }
+            if(sigElementsLength == 0) {
+               return false;
+            }
+            
+            Element sigElement = null;
+            //loop
+            for(int i = 0; i < sigElements.getLength(); i++) {
+                sigElement = (Element)sigElements.item(i);
+                if (WSSUtils.debug.messageEnabled ()) {
+                    WSSUtils.debug.message("Sig(" + i + ") = " +
+                        XMLUtils.print(sigElement));
+                }
+                XMLSignature signature = new XMLSignature (sigElement, "");
+                signature.addResourceResolver (
+                    new com.sun.identity.saml.xmlsig.OfflineResolver ());
+                if (!signature.checkSignatureValue (key)) {
+                    return false;
+                }                
+            }
+            return true;
+        } catch (Exception ex) {
+            WSSUtils.debug.error("WSSSignatureProvider: " + 
+                                 "verifyWSSSignature Exception: ", ex);
+            throw new XMLSignatureException (ex.getMessage ());
+        }        
     }
 }
 

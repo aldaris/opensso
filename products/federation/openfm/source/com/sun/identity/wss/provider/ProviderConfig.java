@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.16 2008-05-28 19:54:39 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.17 2008-06-20 20:42:35 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map;
 
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.services.util.Crypt;
@@ -102,7 +103,13 @@ public abstract class ProviderConfig {
      protected Set samlAttributes = null;
      protected boolean includeMemberships = false;
      protected String nameIDMapper = null;
-     protected String attributeNS = null; 
+     protected String attributeNS = null;
+     protected String kdcDomain = null;
+     protected String kdcServer = null;
+     protected String ticketCacheDir = null;
+     protected String servicePrincipal = null;
+     protected String keytabFile = null;
+     protected boolean verifyKrbSignature = false;
 
      private static Class adapterClass;
 
@@ -472,6 +479,105 @@ public abstract class ProviderConfig {
     public void setSAMLAttributeNamespace(String attributeNS) {
         this.attributeNS = attributeNS;
     }
+    
+    /**
+     * Returns Kerberos Domain Controller Domain
+     * @return Kerberos Domain Controller Domain
+     */
+     
+    public String getKDCDomain() {
+        return kdcDomain;
+    }
+    
+    /**
+     * Sets Kerberos Domain Controller Domain
+     * @param domain Kerberos Domain Controller Domain
+     */
+    public void setKDCDomain(String domain) {
+        this.kdcDomain = domain;
+    }
+    
+    /**
+     * Returns Kerberos Domain Controller Server.
+     * @return Kerberos Domain Controller Server.
+     */
+    public String getKDCServer() {
+        return kdcServer;
+    }
+    
+    /**
+     * Sets Kerberos Domain Controller Server
+     * @param kdcServer Kerberos Domain Controller Server
+     */
+    public void setKDCServer(String kdcServer) {
+        this.kdcServer = kdcServer;
+    }
+    
+    /**
+     * This method is used by the web services client to get the kerberos
+     * ticket cache directory.
+     * @return
+     */
+    public String getKerberosTicketCacheDir() {
+        return ticketCacheDir;
+    }
+    
+    /**
+     * Sets kerberos ticket cache dir.
+     * @param cacheDir kerberos ticket cache dir
+     */
+    public void setKerberosTicketCacheDir(String cacheDir) {
+        this.ticketCacheDir = cacheDir;
+    }
+    
+    /**
+     * This method is used by the web services provider to get the key tab file.     
+     * @return the keytab file.
+     */
+    public String getKeyTabFile() {
+        return keytabFile;
+    }
+    
+    /**
+     * Sets the keytab file 
+     * @param file the fully qualified file path
+     */
+    public void setKeyTabFile(String file) {
+        this.keytabFile = file;
+    }
+    
+    /**
+     * Returns kerberos service principal
+     * @return the kerberos service principal
+     */
+    public String getKerberosServicePrincipal() {
+        return servicePrincipal;
+    }
+    
+    /**
+     * Sets kerberos service principal.
+     * @param principal the kerberos service principal.
+     */
+    public void setKerberosServicePrincipal(String principal) {
+        this.servicePrincipal = principal;
+    }
+    
+    /**
+     * Returns true if kerberos signature needs to be validated.
+     * The signature validation is supported only with JDK6 onwards.
+     * @return true if the signature validation needs to be validated.
+     */
+    public boolean isValidateKerberosSignature() {
+        return verifyKrbSignature;
+    }
+    
+    /**
+     * Sets a boolean flag to enable or disable validate kerberos signature.
+     * @param validate  boolean flag to enable or disable validate krb signature.
+     */
+    public void setValidateKerberosSignature(boolean validate) {
+        this.verifyKrbSignature = validate;
+    }
   
     /**
      * Returns the provider's trusted authorities list.
@@ -789,6 +895,9 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN);
         list.add(SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN);
         list.add(SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN);
+        list.add(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN);
+        list.add(SecurityMechanism.WSS_TLS_KERBEROS_TOKEN);
+        list.add(SecurityMechanism.WSS_CLIENT_TLS_KERBEROS_TOKEN);
         list.add(SecurityMechanism.STS_SECURITY);
         return list;
     }
@@ -808,6 +917,7 @@ public abstract class ProviderConfig {
         list.add(SecurityMechanism.WSS_NULL_SAML2_HK);
         list.add(SecurityMechanism.WSS_NULL_ANONYMOUS);
         list.add(SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN);
+        list.add(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN);
         list.add(SecurityMechanism.STS_SECURITY);
         return list;
     }

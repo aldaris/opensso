@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientConfiguration.java,v 1.5 2008-03-11 20:12:15 mrudul_uchil Exp $
+ * $Id: STSClientConfiguration.java,v 1.6 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,12 +75,17 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
           String stsNamespace){
         super(stsEndpoint, stsWSDLLocation, stsServiceName, stsPortName,
               stsNamespace);
+
+        this.keyType = STSConstants.PUBLIC_KEY;
         
-        keyType = STSConstants.PUBLIC_KEY;
     }
     
     public void setOBOToken(Token userToken) {
         this.userToken = userToken;
+    }
+    
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
     }
         
     public String getTokenType() {    

@@ -17,19 +17,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.6 2008-05-28 19:54:41 mrudul_uchil Exp $
+ * $Id: DefaultAuthenticator.java,v 1.7 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wss.security.handler;
 
+import org.w3c.dom.Element;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.net.URL;
 import javax.security.auth.Subject;
 import java.security.PrivilegedAction;
 import javax.security.auth.callback.Callback;
@@ -71,11 +73,35 @@ import com.sun.identity.liberty.ws.soapbinding.Message;
 import com.sun.identity.liberty.ws.security.SecurityAssertion;
 import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.security.SAML2TokenUtils;
+import com.sun.identity.wss.security.BinarySecurityToken;
 
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
+import com.sun.identity.wss.security.KerberosConfiguration;
+import com.sun.identity.wss.sts.TrustAuthorityClient;
+import com.sun.identity.wss.sts.FAMSTSException;
+import com.sun.identity.wss.security.FAMSecurityToken;
+import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.services.naming.URLNotFoundException;
+import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.shared.Constants;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.Oid;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import java.security.PrivilegedExceptionAction;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import sun.security.krb5.EncryptionKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
+import com.sun.identity.shared.encode.Base64;
 
 /**
  * This class provides a default implementation for authenticating the
@@ -87,6 +113,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
     //private Subject subject = null;
     private static ResourceBundle bundle = WSSUtils.bundle;
     private static Debug debug = WSSUtils.debug;
+    private String kerberosPrincipal = null;
 
     /**
      * Authenticates the web services client.
@@ -218,7 +245,15 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                " token authentication");
             }
             AssertionToken assertionToken = (AssertionToken)securityToken;
-            if(!validateAssertion(assertionToken.getAssertion(), subject)) {
+            if ((authChain != null) && (authChain.length() != 0) &&
+                (!authChain.equals("none"))) {
+                if(!authenticateAssertion(assertionToken.toDocumentElement(),
+                        config, subject)) {
+                   throw new SecurityException(
+                     bundle.getString("authenticationFailed"));
+                }
+            } else if(!validateAssertion(
+                    assertionToken.getAssertion(), subject)) {
                throw new SecurityException(
                      bundle.getString("authenticationFailed"));
             }
@@ -235,17 +270,39 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                " token authentication");
             }
             SAML2Token saml2Token = (SAML2Token)securityToken;
+            if ((authChain != null) && (authChain.length() != 0) &&
+                (!authChain.equals("none"))) {
+                if(!authenticateAssertion(saml2Token.toDocumentElement(),
+                        config, subject)) {
+                   throw new SecurityException(
+                     bundle.getString("authenticationFailed"));
+                }
+            } else 
             if(!SAML2TokenUtils.validateAssertion(saml2Token.getAssertion(),
                     subject)) {
                throw new SecurityException(
                      bundle.getString("authenticationFailed"));
             }
+        } else if(
+            (SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_TLS_KERBEROS_TOKEN_URI.equals(uri)) ||
+            (SecurityMechanism.WSS_CLIENT_TLS_KERBEROS_TOKEN_URI.equals(uri))) {
+            
+            if(debug.messageEnabled()) {
+               debug.message("DefaultAuthenticator.authenticate:: kerberos" +
+                       " token authentication");               
+            }
+            
+            BinarySecurityToken bst = (BinarySecurityToken)securityToken;
+            validateKerberosToken(Base64.decode(bst.getTokenValue()), subject);            
         } else {
             debug.error("DefaultAuthenticator.authenticate:: Invalid " +
             "security mechanism");
             throw new SecurityException(
                      bundle.getString("authenticationFailed"));
         }
+        //add security token to the subject for the application consumption.
+        subject.getPublicCredentials().add(securityToken.toDocumentElement());
         return subject;
     }
 
@@ -473,11 +530,22 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             if(Statement.AUTHENTICATION_STATEMENT == st.getStatementType()) {
                AuthenticationStatement authStatement = 
                                        (AuthenticationStatement)st;
-               sub = authStatement.getSubject(); 
+               sub = authStatement.getSubject();
+               
+               Element keyInfo = sub.getSubjectConfirmation().getKeyInfo();
+               if(keyInfo != null) {
+                  X509Certificate cert = WSSUtils.getCertificate(keyInfo);
+                  subject.getPublicCredentials().add(cert);
+               }
                break;
             } else if(Statement.ATTRIBUTE_STATEMENT == st.getStatementType()) {
                AttributeStatement attribStatement = (AttributeStatement)st;
                sub = attribStatement.getSubject();
+               Element keyInfo = sub.getSubjectConfirmation().getKeyInfo();
+               if(keyInfo != null) {
+                  X509Certificate cert = WSSUtils.getCertificate(keyInfo);
+                  subject.getPublicCredentials().add(cert);
+               }
                break;
             }
         }
@@ -595,5 +663,138 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             throw new UnsupportedCallbackException(callbacks[i], 
                                                    "Callback exception: " + e);
         }
+    }
+    
+     private boolean validateKerberosToken(final byte[] token, Subject subject) 
+                        throws SecurityException {         
+         Subject serverSubject = getServerSubject();         
+         try {
+             Subject.doAs(serverSubject, new PrivilegedExceptionAction(){                
+                public Object run() throws Exception {                    
+                    final GSSManager manager = GSSManager.getInstance();
+                    final Oid krb5Oid = new Oid("1.2.840.113554.1.2.2");
+                    // Use custom GSS XWSS Provider to get the secret key
+                    // This works only with JDK6 for now.
+                    AccessController.doPrivileged(
+                           new java.security.PrivilegedAction() {                    
+                        public Object run() {
+                           try {
+                               manager.addProviderAtFront(
+                               new com.sun.xml.ws.security.jgss.XWSSProvider(),
+                               krb5Oid);
+                           } catch(GSSException gsse){
+                               WSSUtils.debug.error("BinarySecurityToken." +
+                                       "validateKerberosToken", gsse);
+                           }
+                           return null;
+                       }
+                    });                                                           
+                    
+                    GSSContext context = manager.createContext(
+                            (GSSCredential)null);                                        
+                    byte[] outToken = context.acceptSecContext(token, 0,
+                            token.length);
+                    kerberosPrincipal = context.getSrcName().toString();
+                    return null;
+                 }
+             });
+         } catch (Exception ge) {
+            debug.error("BinarySecurityToken.getKerberosToken: GSS Error", ge);
+            throw new SecurityException(ge.getMessage());
+        }
+        
+        // Retrieve the session key
+        Set<Object> creds =  serverSubject.getPrivateCredentials();
+        Iterator<Object> iter2 = creds.iterator();
+        while(iter2.hasNext()){
+                Object privObject = iter2.next();
+                if(privObject instanceof EncryptionKey){
+                    EncryptionKey encKey = (EncryptionKey)privObject;                                         
+                    byte[] keyBytes = encKey.getBytes();
+                    Key secretKey = new SecretKeySpec(keyBytes, 
+                            SAMLConstants.ALGO_ID_MAC_HMAC_SHA1);
+                    subject.getPublicCredentials().add(secretKey);
+                    break;                    
+                }
+        }
+        addPrincipal(kerberosPrincipal, subject);
+        return true;
+    }
+    
+    private Subject getServerSubject() throws SecurityException {
+        String kdcRealm =config.getKDCDomain();
+        String kdcServer = config.getKDCServer();
+                
+        System.setProperty("java.security.krb5.realm", kdcRealm);
+        System.setProperty("java.security.krb5.kdc", kdcServer);
+        System.setProperty("java.security.auth.login.config", "/dev/null");
+        Configuration kbConfig = Configuration.getConfiguration();
+        KerberosConfiguration kc = null;
+        if (kbConfig instanceof KerberosConfiguration) {
+            kc = (KerberosConfiguration) kbConfig;
+            kc.setRefreshConfig("true");
+        } else {
+            kc = new KerberosConfiguration(kbConfig);
+            kc.setPrincipalName(config.getKerberosServicePrincipal());
+            kc.setKeyTab(config.getKeyTabFile());
+        }
+        Configuration.setConfiguration(kc);
+
+        // perform service authentication using JDK Kerberos module
+        try {
+            LoginContext lc = new LoginContext(
+                KerberosConfiguration.WSP_CONFIGURATION);
+            lc.login();
+            return lc.getSubject();
+        } catch (LoginException ex) {
+            throw new SecurityException(ex.getMessage());
+        }
+    }
+    
+    /**
+     * Authenticates assertion using WS-Trust
+     * @param assertionE Assertion to be validated.
+     * @param config provider config for the wsp
+     * @return
+     */
+    private boolean authenticateAssertion(Element assertionE, 
+            ProviderConfig config, Subject subject) throws SecurityException {
+        
+        try {
+            String protocol = SystemConfigurationUtil.getProperty(
+                    Constants.AM_SERVER_PROTOCOL);
+            String host = SystemConfigurationUtil.getProperty(
+                    Constants.AM_SERVER_HOST);
+            String port = SystemConfigurationUtil.getProperty(
+                    Constants.AM_SERVER_PORT);
+            String deployURI = SystemConfigurationUtil.getProperty(
+                    Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);           
+            
+            URL stsURL = WebtopNaming.getServiceURL("sts", protocol,
+                    host, port, deployURI);
+            URL stsMexURL = WebtopNaming.getServiceURL("sts-mex", protocol,
+                    host, port, deployURI);
+            TrustAuthorityClient taClient = new TrustAuthorityClient();
+            
+            SecurityToken token = taClient.getSecurityToken(
+                    config.getWSPEndpoint(),
+                    stsURL.toString(), stsMexURL.toString(), assertionE, 
+                    SecurityMechanism.STS_SECURITY_URI, null);
+            
+            if(token.getTokenType().equals(SecurityToken.WSS_FAM_SSO_TOKEN)) {
+               FAMSecurityToken famToken = (FAMSecurityToken)token;
+               SSOToken ssoToken = SSOTokenManager.getInstance().
+                       createSSOToken(famToken.getTokenID());
+               addSSOToken(ssoToken, subject);
+            }
+            return true;
+        } catch (FAMSTSException fae) {
+            throw new SecurityException(fae.getMessage());
+        } catch (SSOException se) {
+            throw new SecurityException(se.getMessage());
+        } catch (URLNotFoundException ure) {
+            throw new SecurityException(ure.getMessage());
+        }       
+        
     }
 }

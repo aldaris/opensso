@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.5 2007-08-28 00:20:05 mallas Exp $
+ * $Id: SecurityMechanism.java,v 1.6 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -273,6 +273,26 @@ public class SecurityMechanism {
      */
     public static final String WSS_CLIENT_TLS_ANONYMOUS_URI =
                "urn:sun:wss:security:ClientTLS:Anonymous";
+    
+    /**
+     * <code>URI</code> for the Kerberos token security profile. 
+     */
+    public static final String WSS_NULL_KERBEROS_TOKEN_URI = 
+               "urn:sun:wss:security:null:KerberosToken";
+
+    /**
+     * <code>URI</code> for the Kerberos security profile with
+     *   <code>TLS</code> or <code>SSL</code> enabled.
+     */
+    public static final String WSS_TLS_KERBEROS_TOKEN_URI = 
+               "urn:sun:wss:security:TLS:KerberosToken";
+
+    /**
+     * <code>URI</code> for the Kerberos token security profile with
+     *   <code>TLS</code> or <code>SSL</code>  and client auth enabled.
+     */
+    public static final String WSS_CLIENT_TLS_KERBEROS_TOKEN_URI = 
+               "urn:sun:wss:security:ClientTLS:KerberosToken";
 
 
     static {
@@ -312,6 +332,9 @@ public class SecurityMechanism {
         map.put("TLS-SAML2-SenderVouches", WSS_TLS_SAML2_SV_URI);
         map.put("ClientTLS-SAML2-SenderVouches", WSS_CLIENT_TLS_SAML2_SV_URI);
         map.put("STSSecurity", STS_SECURITY_URI);
+        map.put("KerberosToken", WSS_NULL_KERBEROS_TOKEN_URI);
+        map.put("TLS-KerberosToken", WSS_TLS_KERBEROS_TOKEN_URI);
+        map.put("ClientTLS-KerberosToken", WSS_CLIENT_TLS_KERBEROS_TOKEN_URI);
     }
 
     // The following defines Security mechanism objects.
@@ -546,6 +569,25 @@ public class SecurityMechanism {
      */
     public static final SecurityMechanism WSS_NULL_ANONYMOUS =
                       new SecurityMechanism("Anonymous");
+    /**
+     * Defines the security mechanism for the Kerberos token profile.
+     */
+    public static final SecurityMechanism WSS_NULL_KERBEROS_TOKEN = 
+                      new SecurityMechanism("KerberosToken");
+
+    /**
+     * Defines the security mechanism for the Kerberos token profile with 
+     * SSL enabled.
+     */
+    public static final SecurityMechanism WSS_TLS_KERBEROS_TOKEN = 
+                      new SecurityMechanism("TLS-KerberosToken");
+
+    /**
+     * Defines the security mechanism for the Kerberos token profile with 
+     * SSL and client auth enabled.
+     */
+    public static final SecurityMechanism WSS_CLIENT_TLS_KERBEROS_TOKEN = 
+                      new SecurityMechanism("ClientTLS-KerberosToken");
         
 
     private String sechMech = null;
@@ -681,6 +723,7 @@ public class SecurityMechanism {
         list.add(WSS_NULL_SAML_SV);
         list.add(WSS_NULL_SAML_HK);
         list.add(WSS_NULL_X509_TOKEN);
+        list.add(WSS_NULL_KERBEROS_TOKEN);
         list.add(WSS_NULL_USERNAME_TOKEN);
         list.add(WSS_NULL_USERNAME_TOKEN_PLAIN);
         list.add(WSS_NULL_SAML2_SV);
@@ -702,6 +745,7 @@ public class SecurityMechanism {
         list.add(WSS_NULL_SAML_SV);
         list.add(WSS_NULL_SAML_HK);
         list.add(WSS_NULL_X509_TOKEN);
+        list.add(WSS_NULL_KERBEROS_TOKEN);
         list.add(WSS_NULL_USERNAME_TOKEN);
         list.add(WSS_NULL_USERNAME_TOKEN_PLAIN);
         list.add(WSS_NULL_SAML2_SV);

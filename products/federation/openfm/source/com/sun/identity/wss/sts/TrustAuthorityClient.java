@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.10 2008-05-28 19:54:42 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.11 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,6 +36,7 @@ import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.provider.TrustAuthorityConfig;
 import com.sun.identity.wss.provider.STSConfig;
 import com.sun.identity.wss.security.AssertionToken;
+import com.sun.identity.wss.security.FAMSecurityToken;
 import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.classloader.FAMClassLoader;
 import java.lang.reflect.Method;
@@ -64,14 +65,15 @@ public class TrustAuthorityClient {
      * information is identified by the provider configuration.
      *
      * @param pc Provider configuration of the web services client.
-     * @param ssoToken Single sign-on token of the principal.
+     * @param credential User's credential. The user's credential could be
+     *        Single Sign-On Token or a SAML Assertion or any other object.
      * @return SecurityToken security token for the web services consumer.   
      * @exception FAMSTSException if it's unable to retrieve security token.
      */
     public SecurityToken getSecurityToken(
             ProviderConfig pc,            
-            Object ssoToken) throws FAMSTSException {
-        return getSecurityToken(pc,null,null,null,ssoToken,null,null);
+            Object credential) throws FAMSTSException {
+        return getSecurityToken(pc,null,null,null,credential,null,null);
     }
     
     /**
@@ -100,7 +102,7 @@ public class TrustAuthorityClient {
      * @param wspEndPoint Web Service Provider end point.
      * @param stsEndPoint Security Token Service end point.
      * @param stsMexEndPoint Security Token Service MEX end point.
-     * @param ssoToken single sign-on token of the principal.
+     * @param credential user's credential.
      * @param securityMech Required Security Mechanism by Web Service Client.
      * @param context web context under which this class is running.
      * @return SecurityToken security token for the web services consumer.   
@@ -110,11 +112,11 @@ public class TrustAuthorityClient {
             String wspEndPoint,
             String stsEndPoint,
             String stsMexEndPoint,
-            Object ssoToken,
+            Object credential,
             String securityMech,
             ServletContext context) throws FAMSTSException {
         return getSecurityToken(null,wspEndPoint,stsEndPoint,stsMexEndPoint,
-                ssoToken,securityMech,context);
+                credential,securityMech,context);
     }
 
     // Gets Security Token from Security Token Service.
@@ -123,7 +125,7 @@ public class TrustAuthorityClient {
             String wspEndPoint,
             String stsEndPoint,
             String stsMexEndPoint,
-            Object ssoToken,
+            Object credential,
             String securityMech,
             ServletContext context) throws FAMSTSException {
         if (pc != null) {
@@ -152,10 +154,10 @@ public class TrustAuthorityClient {
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
            return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
-                   ssoToken,context); 
+                   credential,context); 
         } else if (securityMech.equals(
                 SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
-           return getLibertyToken(pc, ssoToken);
+           return getLibertyToken(pc, credential);
         } else {
            debug.error("TrustAuthorityClient.getSecurityToken" +
                    "Invalid security mechanism to get token from TA");
@@ -179,7 +181,7 @@ public class TrustAuthorityClient {
             ProviderConfig pc,            
             Object ssoToken) throws FAMSTSException {
         //TODO To be implemented
-        return null;
+        throw new FAMSTSException("unsupported");
         
     }
     
@@ -197,7 +199,7 @@ public class TrustAuthorityClient {
     public boolean cancelIssuedToken(SecurityToken securityToken,
             ProviderConfig pc) throws FAMSTSException {
        // TODO - To be implemented
-        return false;
+        throw new FAMSTSException("unsupported");
     }
     
     /**
@@ -206,7 +208,7 @@ public class TrustAuthorityClient {
     private SecurityToken getSTSToken(String wspEndPoint,
                                       String stsEndpoint,
                                       String stsMexAddress,
-                                      Object ssoToken, 
+                                      Object credential, 
                                       ServletContext context) 
                                       throws FAMSTSException {
         
@@ -219,17 +221,17 @@ public class TrustAuthorityClient {
                 + wspEndPoint);
         }
 
-        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
-        try {
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();        
+        try {                       
             ClassLoader cls = 
-                FAMClassLoader.getFAMClassLoader(context,jars);
+                       FAMClassLoader.getFAMClassLoader(context,jars);
             Thread.currentThread().setContextClassLoader(cls);
 
-            Class _handlerTrustAuthorityClient = 
-            cls.loadClass("com.sun.identity.wss.sts.TrustAuthorityClientImpl");
+            Class _handlerTrustAuthorityClient = cls.loadClass(
+                       "com.sun.identity.wss.sts.TrustAuthorityClientImpl");
 
             Constructor taClientCon = 
-                _handlerTrustAuthorityClient.getConstructor();                
+                        _handlerTrustAuthorityClient.getConstructor();                
 
             Object stsClient = taClientCon.newInstance();
 
@@ -240,18 +242,15 @@ public class TrustAuthorityClient {
             clsa[3] = Class.forName("java.lang.Object");
 
             Method getSTSTokenElement = 
-                stsClient.getClass().getDeclaredMethod(
-                "getSTSTokenElement", clsa);
+                      stsClient.getClass().getDeclaredMethod(
+                      "getSTSTokenElement", clsa);
 
             Object args[] = new Object[4];
             args[0] = wspEndPoint;
             args[1] = stsEndpoint;
             args[2] = stsMexAddress;
-            args[3] = ssoToken;
-
-            Element element = 
-                (Element)getSTSTokenElement.invoke(stsClient, args);
-
+            args[3] = credential;
+            Element element = (Element)getSTSTokenElement.invoke(stsClient, args);
             String type = getTokenType(element);
             
             if(debug.messageEnabled()) {
@@ -267,6 +266,8 @@ public class TrustAuthorityClient {
                 } else if (
                     type.equals(STSConstants.SAML11_ASSERTION_TOKEN_TYPE)) {
                     return new AssertionToken(element);    
+                } else if (type.equals(SecurityToken.WSS_FAM_SSO_TOKEN)) {
+                    return new FAMSecurityToken(element);    
                 } else {
                     throw new FAMSTSException ("Token type not supported.");
                 }
@@ -295,7 +296,7 @@ public class TrustAuthorityClient {
             Object ssoToken) throws FAMSTSException {
         
         // TODO - to be implemented
-        return null;
+        throw new FAMSTSException("unsupported operation");
     }
     
     private String getTokenType (Element element) throws FAMSTSException {
@@ -316,6 +317,8 @@ public class TrustAuthorityClient {
                 && (attrValue.equals(STSConstants.SAML10_ASSERTION)) ) {
                 return STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
             }
+        } else if(elemName.equals("FAMToken")) {
+            return SecurityToken.WSS_FAM_SSO_TOKEN;
         } else {
             // TBD for other token types.
             return "getTokenType:NOT IMPLEMENTED TOKEN TYPE";

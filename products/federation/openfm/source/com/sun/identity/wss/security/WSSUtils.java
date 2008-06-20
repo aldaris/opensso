@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.8 2008-06-15 07:25:36 mrudul_uchil Exp $
+ * $Id: WSSUtils.java,v 1.9 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.math.BigInteger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -89,6 +91,9 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
 import com.sun.identity.wss.xmlsig.WSSSignatureProvider;
 import com.sun.identity.wss.xmlenc.WSSEncryptionProvider;
+import com.sun.identity.idm.IdSearchControl;
+import com.sun.identity.idm.IdSearchOpModifier;
+import com.sun.identity.idm.IdSearchResults;
 
 /**
  * This class provides util methods for the web services security. 
@@ -99,6 +104,8 @@ public class WSSUtils {
      public static Debug debug = Debug.getInstance("fmWebServicesSecurity");
      private static XMLSignatureManager xmlSigManager = null;
      private static XMLEncryptionManager xmlEncManager = null;
+     private static final String AGENT_TYPE_ATTR = "AgentType"; 
+     private static final String WSP_ENDPOINT = "WSPEndpoint";
      
      static {
             bundle = Locale.getInstallResourceBundle("fmWSSecurity");
@@ -564,6 +571,47 @@ public class WSSUtils {
         return roles;
     }    
     
+        public static Map getAgentAttributes(
+                 String endpoint, Set attrNames, String type) {
+        try {
+            SSOToken adminToken = WSSUtils.getAdminToken();
+            AMIdentityRepository idRepo = 
+                     new AMIdentityRepository(adminToken, "/");
+            IdSearchControl control = new IdSearchControl();
+            control.setAllReturnAttributes(true);
+            control.setTimeOut(0);
+
+            Map kvPairMap = new HashMap();
+            Set set = new HashSet();
+            set.add(type);
+            kvPairMap.put(AGENT_TYPE_ATTR, set);
+
+            set = new HashSet();
+            set.add(endpoint);
+            kvPairMap.put(WSP_ENDPOINT, set);
+
+            control.setSearchModifiers(IdSearchOpModifier.AND, kvPairMap);
+
+            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
+               "*", control);
+            Set agents = results.getSearchResults();
+            if (!agents.isEmpty()) {
+                Map attrs = (Map) results.getResultAttributes();
+                AMIdentity provider = (AMIdentity) agents.iterator().next();
+                Map agentConfig = null;
+                if(attrNames != null) {
+                   agentConfig = provider.getAttributes(attrNames);
+                } else {
+                   agentConfig = provider.getAttributes();
+                }
+                return agentConfig;
+            }
+            return new HashMap();
+        } catch (Exception ex) {
+            debug.error("STSUtils.getAgentAttributes: Exception", ex); 
+            return new HashMap();
+        }
+    }
     public static SSOToken getAdminToken() {
         SSOToken adminToken = null;
         try {

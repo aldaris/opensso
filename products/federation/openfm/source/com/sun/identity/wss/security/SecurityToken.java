@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityToken.java,v 1.3 2007-08-28 00:20:05 mallas Exp $
+ * $Id: SecurityToken.java,v 1.4 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,6 +61,17 @@ public interface SecurityToken {
      
      public static final String LIBERTY_ASSERTION_TOKEN = 
                                  "urn:sun:wss:libertyassertion";
+     
+     /**
+      * The <code>URI</code> to identify the WS-Security Kerberos Security Token
+      */
+     public static final String WSS_KERBEROS_TOKEN = "urn:sun:wss:kerberostoken";
+     
+     /**
+      * The <code>URI</code> is to identify the FAM security token. The
+      *  FAM security token contains SSOToken.
+      */
+     public static final String WSS_FAM_SSO_TOKEN = "urn:sun:wss:ssotoken";
 
      /** 
       * Returns the security token type. The possible values are

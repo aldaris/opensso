@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.3 2007-09-13 22:11:45 mallas Exp $
+ * $Id: SAML2Token.java,v 1.4 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,6 +75,7 @@ public class SAML2Token implements SecurityToken {
     private String authTime = "";
     private Assertion assertion;
     private String certAlias = "";
+    private Element assertionE = null;
     private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
     private static String keyInfoType = SystemConfigurationUtil.getProperty(
@@ -100,6 +101,7 @@ public class SAML2Token implements SecurityToken {
      
      public SAML2Token(Element element) 
                    throws SAML2Exception {
+         assertionE = element;
          assertion = factory.createAssertion(element);         
      }
      
@@ -428,6 +430,9 @@ public class SAML2Token implements SecurityToken {
        * @exception SecurityException if there is a failure.
        */
       public Element toDocumentElement() throws SecurityException {
+          if(assertionE != null) {
+             return assertionE;
+          }
           Document document = null;
           try {
               document = XMLUtils.toDOMDocument(

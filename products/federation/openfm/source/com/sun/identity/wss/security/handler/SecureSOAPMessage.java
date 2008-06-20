@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.13 2008-05-28 19:54:41 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.14 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,7 @@ import com.sun.identity.saml2.common.SAML2Exception;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
+import java.security.Key;
 import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -295,9 +296,16 @@ public class SecureSOAPMessage {
                      }
                      securityToken = 
                          new BinarySecurityToken((Element)currentNode);
-                     securityMechanism = SecurityMechanism.WSS_NULL_X509_TOKEN;
-                     messageCertificate = 
-                         WSSUtils.getCertificate(securityToken);
+                     if(securityToken.getTokenType().equals(
+                             securityToken.WSS_KERBEROS_TOKEN)) {
+                        securityMechanism = 
+                                SecurityMechanism.WSS_NULL_KERBEROS_TOKEN; 
+                     } else  {
+                        securityMechanism = 
+                                SecurityMechanism.WSS_NULL_X509_TOKEN;
+                        messageCertificate = 
+                                WSSUtils.getCertificate(securityToken);
+                     }
 
                  } else if( (WSSConstants.TAG_USERNAME_TOKEN.equals(localName)) &&
                         (WSSConstants.WSSE_NS.equals(nameSpace)) ) {
@@ -510,6 +518,8 @@ public class SecureSOAPMessage {
          } else if ((SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) ||
                  (null==securityToken)){
              signWithUNToken(doc, certAlias);
+         } else if ((SecurityToken.WSS_KERBEROS_TOKEN.equals(tokenType))) {
+             signWithKerberosToken(doc);
          } else {
             debug.error("SecureSOAPMessage.sign:: Invalid token type for" +
             " XML signing.");
@@ -640,6 +650,40 @@ public class SecureSOAPMessage {
          }
 
      }
+     
+     /**
+      * Signs the document with kerberos security token.
+      */
+     private void signWithKerberosToken(Document doc) 
+           throws SecurityException {
+         
+         Element sigElement = null;
+         XMLSignatureManager sigManager = WSSUtils.getXMLSignatureManager();         
+         try {
+             BinarySecurityToken bst = (BinarySecurityToken)securityToken;             
+             sigElement =  sigManager.signWithKerberosToken(
+                doc, bst.getSecretKey(), SAMLConstants.ALGO_ID_MAC_HMAC_SHA1, 
+                getSigningIds());
+         } catch (XMLSignatureException se) {
+            debug.error("SecureSOAPMessage.signWithBinaryToken:: Signature " +
+            "Exception.", se);
+            throw new SecurityException(
+                   bundle.getString("unabletoSign"));
+         } catch (Exception ex) {
+            debug.error("SecureSOAPMessage.signWithBinaryToken:: " +
+                "signing failed", ex);
+            throw new SecurityException(
+                   bundle.getString("unabletoSign"));
+         }
+         wsseHeader.appendChild(
+                 soapMessage.getSOAPPart().importNode(sigElement, true));
+         try {
+             this.soapMessage.saveChanges();
+         } catch (Exception ex) {
+             debug.error("SecureSOAPMessage.signWithBinaryToken:: " +
+                "SOAP message save failed : ", ex);
+         }
+     }
 
      /**
       * Signs the document with binary security token.
@@ -702,13 +746,33 @@ public class SecureSOAPMessage {
                certAlias = sigManager.getKeyProvider().
                            getCertificateAlias(messageCertificate);
             }
-            return sigManager.verifyWSSSignature(doc, certAlias); 
+            return sigManager.verifyWSSSignature(doc, certAlias);            
         } catch (SAMLException se) {
             debug.error("SecureSOAPMessage.verify:: Signature validation " +
                    "failed", se);
             throw new SecurityException(
                 bundle.getString("signatureValidationFailed"));
         }
+     }
+     
+     /**
+      * Verifies the signature of the SOAP message that has kerberos key.
+      * @param secretKey the secret key that is used for signature verification.
+      * @return true if the signature verification is successful.
+      * @exception SecurityException if there is any failure in validation. 
+      */
+     public boolean verifyKerberosTokenSignature(java.security.Key secretKey) 
+             throws SecurityException {
+        try {
+            Document doc = toDocument();
+            XMLSignatureManager sigManager = WSSUtils.getXMLSignatureManager();
+            return sigManager.verifyWSSSignature(doc, secretKey);            
+        } catch (SAMLException se) {
+            debug.error("SecureSOAPMessage.verify:: Signature validation " +
+                   "failed", se);
+            throw new SecurityException(
+                bundle.getString("signatureValidationFailed"));
+        }         
      }
 
      /**

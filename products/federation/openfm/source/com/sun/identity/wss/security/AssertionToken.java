@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.3 2007-09-13 07:24:21 mrudul_uchil Exp $
+ * $Id: AssertionToken.java,v 1.4 2008-06-20 20:42:35 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,6 +70,7 @@ public class AssertionToken implements SecurityToken {
       private String authTime = "";
       private String certAlias = null;
       private Assertion assertion = null;
+      private Element assertionE = null;
       private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
 
@@ -258,6 +259,9 @@ public class AssertionToken implements SecurityToken {
        */
       public Element toDocumentElement() throws SecurityException {
 
+          if(assertionE != null) {
+             return assertionE; 
+          }
           Document document = XMLUtils.toDOMDocument(
                    assertion.toString(true, true), WSSUtils.debug); 
           if(document == null) {
@@ -269,6 +273,7 @@ public class AssertionToken implements SecurityToken {
 
       public AssertionToken(Element element) 
                    throws SAMLException {
+          assertionE = element;
           assertion = new Assertion(element);
       }
 

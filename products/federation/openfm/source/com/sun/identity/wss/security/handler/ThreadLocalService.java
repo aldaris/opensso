@@ -17,12 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadLocalService.java,v 1.1 2007-11-20 00:47:05 mallas Exp $
+ * $Id: ThreadLocalService.java,v 1.2 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wss.security.handler;
+
+import com.iplanet.sso.SSOToken;
 
 /**
  *
@@ -31,18 +33,56 @@ package com.sun.identity.wss.security.handler;
  */
 class ThreadLocalService {
     
-    private static ThreadLocal threadLocal = new ThreadLocal();   
+    private static ThreadLocal ssoToken = null;    
+    private static ThreadLocal serviceName = null;
+    //private static ThreadLocal threadLocal = new ThreadLocal();   
     
     static  synchronized String getServiceName() {
-        return (String) threadLocal.get();        
+        
+        if(true) {
+           return null;
+        }
+        if(serviceName != null) {
+           return (String) serviceName.get();
+        }
+        return null;
     }
 
-    static synchronized void setServiceName(String serviceName) {
-        threadLocal.set(serviceName);
+    static synchronized void setServiceName(final String sName) {
+        serviceName = new ThreadLocal() {
+            protected synchronized Object initialValue() {
+                return null;
+            }
+        };
+        serviceName.set(sName);
     }
     
-    static synchronized void removeServiceName(String serviceName) {
-        threadLocal.remove();
+    static synchronized void removeServiceName(String sName) {
+        if(serviceName != null) {
+           serviceName.remove();
+           serviceName = null;
+        }
     }
-        
+    
+    static  synchronized Object getSSOToken() {
+        if(ssoToken != null) {
+           return ssoToken.get();
+        }
+        return null;
+    }
+
+    static synchronized void setSSOToken(final Object sToken) {
+        ssoToken = new ThreadLocal() {
+            protected synchronized Object initialValue() {
+                return sToken;
+            }
+        };       
+    }
+    
+    static synchronized void removeSSOToken(Object sToken) {
+        if(ssoToken != null) {
+           ssoToken.remove();
+           ssoToken = null;
+        }
+    }
 }

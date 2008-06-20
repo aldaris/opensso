@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.3 2008-05-28 19:54:43 mrudul_uchil Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.4 2008-06-20 20:42:37 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,8 @@ public class FAMSTSConfiguration implements
     private CallbackHandler callbackHandler;
     
     private Map<String, Object> otherOptions = new HashMap<String, Object>();
+    private static Set trustedIssuers = null;
+    private static Set trustedIPAddresses = null;
 
     static final String CONFIG_NAME = "STS_CONFIG";
     static final String SERVICE_NAME = "sunFAMSTSService";
@@ -84,6 +86,9 @@ public class FAMSTSConfiguration implements
     static final String LIFE_TIME = "stsLifetime";
     static final String TOKEN_IMPL_CLASS = "stsTokenImplClass";
     static final String CERT_ALIAS = "stsCertAlias";
+    
+    private static final String TRUSTED_ISSUERS = "trustedIssuers";
+    private static final String TRUSTED_IP_ADDRESSES = "trustedIPAddresses";
     static final String CLIENT_USER_TOKEN = 
         "com.sun.identity.wss.sts.clientusertoken";
     static final String SEC_MECH = "SecurityMech";
@@ -185,22 +190,24 @@ public class FAMSTSConfiguration implements
             certAlias = (String)values.iterator().next();
         }
         
+        trustedIssuers = (Set)attrMap.get(TRUSTED_ISSUERS);
+        trustedIPAddresses = (Set)attrMap.get(TRUSTED_IP_ADDRESSES);
+        
         values = (Set)attrMap.get(CLIENT_USER_TOKEN);
         if (values != null && !values.isEmpty()) {
             clientUserToken = (String)values.iterator().next();
         }
         
         values = (Set)attrMap.get(SEC_MECH);
-        if (values != null && !values.isEmpty()) {
-            String value = (String)values.iterator().next();
+        if (values != null && !values.isEmpty()) {            
             if (secMech == null) {
                secMech = new ArrayList();
+               secMech.addAll(values);
+            } else {
+               secMech.clear();
+               secMech.addAll(values);
             }
-
-            StringTokenizer st = new StringTokenizer(value, ","); 
-            while(st.hasMoreTokens()) {
-                secMech.add(st.nextToken());
-            }
+                       
         }
         
         values = (Set)attrMap.get(RESPONSE_SIGN);
@@ -266,6 +273,14 @@ public class FAMSTSConfiguration implements
         spMap.put(spEndpoint, data);
 
         return (TrustSPMetadata)spMap.get(spEndpoint);
+    }
+    
+    public Set getTrustedIssuers() {
+        return trustedIssuers;
+    }
+    
+    public Set getTrustedIPAddresses() {
+        return trustedIPAddresses;
     }
     
     public void setType(String type){

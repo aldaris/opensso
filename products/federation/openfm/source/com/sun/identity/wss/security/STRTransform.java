@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STRTransform.java,v 1.3 2007-05-17 18:49:18 mallas Exp $
+ * $Id: STRTransform.java,v 1.4 2008-06-20 20:42:36 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,12 +56,12 @@ public class STRTransform extends TransformSpi {
 
 
     private static String XMLNS = "xmlns=";
-    private static Debug debug = WSSUtils.debug;
+    //private static Debug debug = WSSUtils.debug;
     static {
        try {
            Transform.register(STR_TRANSFORM_URI, STRTransform.class.getName());
        } catch (Exception e) {
-           debug.message("STRTransform.static already registered");
+           //debug.message("STRTransform.static already registered");
        }
     }
 
@@ -79,19 +79,19 @@ public class STRTransform extends TransformSpi {
           throws IOException, CanonicalizationException, 
           InvalidCanonicalizerException, TransformationException {
   
-        debug.message("STRTransform.enginePerformTransform:: Start");
+        WSSUtils.debug.message("STRTransform.enginePerformTransform:: Start");
         Document doc = this._transformObject.getDocument();
         Element str = null;
         if(input.isElement()) {
         } else {
-           debug.error("STRTransform.enginePerformTransform:: Input is not " +
+           WSSUtils.debug.error("STRTransform.enginePerformTransform:: Input is not " +
            " an element");
            throw new  CanonicalizationException("inputNotAnElement");
         }
         Element element = (Element)input.getSubNode();
         if(!WSSConstants.TAG_SECURITYTOKEN_REFERENCE.equals(
                      element.getLocalName())) {
-           debug.error("STRTransform.enginePerformTransform:: input must be " +
+           WSSUtils.debug.error("STRTransform.enginePerformTransform:: input must be " +
            "security token reference");
            throw new IOException("invalidInputElement");
         }
@@ -101,7 +101,7 @@ public class STRTransform extends TransformSpi {
             ref = new SecurityTokenReference(element);
             dereferencedToken = dereferenceSTR(doc, ref);
         } catch (SecurityException se) {
-            debug.error("STRTransform.enginePerformTransform:: error", se);
+            WSSUtils.debug.error("STRTransform.enginePerformTransform:: error", se);
             throw new TransformationException("transformfailed");
         }
         String canonAlgo = getCanonicalizationAlgo();
@@ -127,16 +127,16 @@ public class STRTransform extends TransformSpi {
     private Element dereferenceSTR(Document doc, SecurityTokenReference secRef)
          throws SecurityException {
 
-        debug.message("STRTransform.deferenceSTR:: start");
+        WSSUtils.debug.message("STRTransform.deferenceSTR:: start");
         Element tokenElement = null;
         String refType = secRef.getReferenceType();
 
         if(SecurityTokenReference.DIRECT_REFERENCE.equals(refType)) {
-           debug.message("STRTRansform.deferenceSTR:: Direct reference");
+           WSSUtils.debug.message("STRTRansform.deferenceSTR:: Direct reference");
            tokenElement = secRef.getTokenElement(doc);
 
         } else if(SecurityTokenReference.X509DATA_REFERENCE.equals(refType)) {
-           debug.message("STRTRansform.deferenceSTR:: X509 data reference");
+           WSSUtils.debug.message("STRTRansform.deferenceSTR:: X509 data reference");
            X509Data x509Data = secRef.getX509IssuerSerial();
            X509Certificate cert = 
                      AMTokenProvider.getX509Certificate(x509Data);
@@ -144,7 +144,7 @@ public class STRTransform extends TransformSpi {
 
         } else if(SecurityTokenReference.KEYIDENTIFIER_REFERENCE.
                   equals(refType)) {
-           debug.message("STRTRansform.deferenceSTR:: keyidentifier reference");
+           WSSUtils.debug.message("STRTRansform.deferenceSTR:: keyidentifier reference");
            KeyIdentifier keyIdentifier = secRef.getKeyIdentifier();
            String valueType = keyIdentifier.getValueType();           
            if(WSSConstants.ASSERTION_VALUE_TYPE.equals(valueType) ||
