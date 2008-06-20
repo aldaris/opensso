@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeadTaskRunnable.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
+ * $Id: HeadTaskRunnable.java,v 1.3 2008-06-20 18:02:07 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -331,7 +331,7 @@ public class HeadTaskRunnable implements TaskRunnable {
      * @param task The task which is at the tail of the list.
      */
     
-    protected void setTail(TaskRunnable task) {        
+    public void setTail(TaskRunnable task) {        
         tailTask = task;
     }
     
@@ -341,7 +341,7 @@ public class HeadTaskRunnable implements TaskRunnable {
      * @return The task which is at the tail of the list.
      */
     
-    protected TaskRunnable tail() {
+    public TaskRunnable tail() {
         return tailTask;
     }
     

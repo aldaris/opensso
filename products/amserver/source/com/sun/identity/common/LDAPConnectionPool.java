@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.10 2008-04-24 14:43:56 ww203982 Exp $
+ * $Id: LDAPConnectionPool.java,v 1.11 2008-06-20 18:02:07 ww203982 Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -856,10 +856,14 @@ public class LDAPConnectionPool {
                         oldHeadTask = headTask;
                         if (oldHeadTask.acquireValidLock()) {
                             try {
-                                previousTask.setNext(nextTask);
-                                if (nextTask != null) {
-                                    nextTask.setPrevious(previousTask);
-                                    nextTask = null;
+                                if (!oldHeadTask.isTimedOut()) {
+                                    previousTask.setNext(nextTask);
+                                    if (nextTask != null) {
+                                        nextTask.setPrevious(previousTask);
+                                        nextTask = null;
+                                    } else {
+                                        oldHeadTask.setTail(previousTask);
+                                    }
                                 }
                             } finally {
                                 oldHeadTask.releaseLockAndNotify();

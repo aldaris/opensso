@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.11 2008-04-22 15:54:40 ww203982 Exp $
+ * $Id: InternalSession.java,v 1.12 2008-06-20 18:02:06 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -491,10 +491,14 @@ public class InternalSession implements TaskRunnable, Serializable {
                 if (oldHeadTask.acquireValidLock()) {
                     try {
                         if (oldHeadTask == headTask) {
-                            previousTask.setNext(nextTask);
-                            if (nextTask != null) {
-                                nextTask.setPrevious(previousTask);
-                                nextTask = null;
+                            if (!oldHeadTask.isTimedOut()) {
+                                previousTask.setNext(nextTask);
+                                if (nextTask != null) {
+                                    nextTask.setPrevious(previousTask);
+                                    nextTask = null;
+                                } else {
+                                    oldHeadTask.setTail(previousTask);
+                                }
                             }
                             break;
                         }

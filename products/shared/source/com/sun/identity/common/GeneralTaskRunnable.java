@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralTaskRunnable.java,v 1.2 2008-04-17 09:06:57 ww203982 Exp $
+ * $Id: GeneralTaskRunnable.java,v 1.3 2008-06-20 18:02:07 ww203982 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -140,10 +140,14 @@ public abstract class GeneralTaskRunnable implements TaskRunnable {
                 if (oldHeadTask.acquireValidLock()) {
                     try {
                         if (oldHeadTask == headTask) {
-                            previousTask.setNext(nextTask);
-                            if (nextTask != null) {
-                                nextTask.setPrevious(previousTask);
-                                nextTask = null;
+                            if (!oldHeadTask.isTimedOut()) {
+                                previousTask.setNext(nextTask);
+                                if (nextTask != null) {
+                                    nextTask.setPrevious(previousTask);
+                                    nextTask = null;
+                                } else {
+                                    oldHeadTask.setTail(previousTask);
+                                }
                             }
                             break;
                         }
