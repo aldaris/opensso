@@ -19,7 +19,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2008-03-20 05:33:27 mrudul_uchil Exp $
+   $Id: build.xml,v 1.5 2008-06-20 20:49:03 mallas Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -45,12 +45,12 @@
         <mkdir dir="build/classes"/>
         <mkdir dir="web/WEB-INF/classes"/>
         <exec executable="${glassfish.home}/bin/wsimport${wsimport-script-suffix}">
-            <arg line="-verbose -p com.samples -d build/classes web/WEB-INF/wsdl/client/StockService/StockService.wsdl"/>
+            <arg line="-verbose -p com.samples -d build/classes -keep web/WEB-INF/wsdl/client/StockService/StockService.wsdl"/>
         </exec>
         <copy file="src/java/handlers.xml" todir="web/WEB-INF/classes"/>
     </target>
     <target name="compile" depends="-pre-compile">
-       <javac fork="true" destdir="build/classes" srcdir="src/java">
+       <javac fork="true" destdir="build/classes" srcdir="src/java" debug="on">
            <classpath refid="build.class.path" />
        </javac>
     </target>

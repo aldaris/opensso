@@ -1,4 +1,4 @@
-<!--
+﻿<!--
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.7 2008-06-15 07:24:30 mrudul_uchil Exp $
+   $Id: README.glassfish,v 1.8 2008-06-20 20:49:03 mallas Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -61,6 +61,7 @@ permission java.lang.RuntimePermission "shutdownHooks";
 permission javax.security.auth.AuthPermission "getLoginConfiguration";
 permission javax.security.auth.AuthPermission "setLoginConfiguration";
 permission javax.security.auth.AuthPermission "modifyPrincipals";
+permission javax.security.auth.AuthPermission "modifyPrivateCredentials";
 permission javax.security.auth.AuthPermission "createLoginContext.*";
 permission java.io.FilePermission "<<ALL FILES>>", "read,write,execute,delete";
 permission java.util.PropertyPermission "java.util.logging.config.class", "write";
@@ -164,9 +165,29 @@ IV. Copy files
     For GF V2 : Application Server -> JVM Settings tab -> Path Settings tab
     For AS 9.1 : Configurations -> server-config -> JVM Settings -> Path Settings tab
 
-V. Restart the SUN Application Server (Glassfish).
+V. This step is required only if you are using end user authentication or Liberty security.
+   For end user authentication and liberty , JSR 196 HTTP provider is used and must need to
+   be configured in Glassfish.
 
-VI. Configure the web services client and the web services provider for Web services security.
+   1. Login into Application Server Administration Console
+   
+   2. Expand Configuration->Security->Click on MessageSecurity-> New
+ 
+   3. Choose Authentication layer as "HttpServlet", enter Provider Type as "Server"
+      ProviderID as "FAMHttpProvider", Class Name as
+      "com.sun.identity.wssagents.common.provider.FAMHttpAuthModule"
+   4. Save the configuration.
+
+   5. The stock quote client sample already has the required configuration
+     (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint and the HTTP
+     provider id.
+      
+
+
+
+VI. Restart the SUN Application Server (Glassfish).
+
+VII. Configure the web services client and the web services provider for Web services security.
 
 1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
 

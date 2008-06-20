@@ -25,11 +25,13 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
         Stock Symbol: <input type="text" name="symbol" value="JAVA" size="12" />
         <p><input type="submit" value="GetQuote" name="quote" />
     </form>
+<!--
     <p><hr>
-    <form name="AMConsole" action="/amserver/console" method="GET">
-        Click <a href="/amserver/console">here</a> to view Access Manager Console
-        <p><input type="submit" value="AMConsole"/>
+    <form name="FAMConsole" action="/opensso/console" method="GET">
+        Click <a href="/opensso/console">here</a> to view Federation Access Manager Console
+        <p><input type="submit" value="FAMConsole"/>
     </form>
+-->
     
     </body>
 </html>

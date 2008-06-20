@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHttpAuthModule.java,v 1.1 2008-05-29 06:46:01 mrudul_uchil Exp $
+ * $Id: FAMHttpAuthModule.java,v 1.2 2008-06-20 20:49:04 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,7 +48,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import com.sun.identity.classloader.FAMClassLoader;
+import com.sun.identity.wssagents.classloader.FAMClassLoader;
 
 /**
  * The <code>FAMHttpAuthModule</code> class implements an interface
@@ -83,7 +83,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
 	       MessagePolicy responsePolicy,
 	       CallbackHandler handler,
 	       Map options) throws AuthException {
-        /*
+        
         if(_logger != null) {
             _logger.log(Level.INFO, "FAMHttpAuthModule.Init");
         }
@@ -92,7 +92,8 @@ public class FAMHttpAuthModule implements ServerAuthModule {
         try {
             if (_handler == null) {
                 // Get the FAM Classloader
-                cls = FAMClassLoader.getFAMClassLoader(null,jars);
+                cls = com.sun.identity.wssagents.classloader.FAMClassLoader.
+                            getFAMClassLoader(jars);
                 Thread.currentThread().setContextClassLoader(cls);
                 
                 // Get a pointer to the class
@@ -125,7 +126,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
             ex.printStackTrace();
         } finally {
             Thread.currentThread().setContextClassLoader(oldcc);
-        }*/
+        }
     }
     
     /**
@@ -144,15 +145,14 @@ public class FAMHttpAuthModule implements ServerAuthModule {
 			       Subject clientSubject,
 			       Subject serviceSubject) throws AuthException {
         
-        /*ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
-        
-        HttpServletAuthParam httpAuthParam = (HttpServletAuthParam)param;
-        HttpServletRequest request = httpAuthParam.getRequest();
-        HttpServletResponse response = httpAuthParam.getResponse();
-        
+        ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
+                
+        HttpServletRequest request = 
+                (HttpServletRequest)messageInfo.getRequestMessage();
+        HttpServletResponse response = (HttpServletResponse)messageInfo.getResponseMessage();
         // Check if you needs to authenticate
         Object[] args = new Object[2];
-        args[0] = subject;
+        args[0] = clientSubject;
         args[1] = request;
         Boolean authN = Boolean.FALSE;
         try {
@@ -210,7 +210,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
                     throw (ae);
                 }
             }
-        }*/
+        }
         return AuthStatus.SUCCESS;
     }
     
@@ -259,15 +259,12 @@ public class FAMHttpAuthModule implements ServerAuthModule {
     /**
      * The list of jar files to be loaded by FAMClassLoader.
      */
+    /**
+     * The list of jar files to be loaded by FAMClassLoader.
+     */
     public static String[] jars = new String[]{
-        "webservices-api.jar",
         "webservices-rt.jar",
-        "webservices-tools.jar",
-        "webservices-extra-api.jar",
-        "webservices-extra.jar",
         "openssoclientsdk.jar",
-        "openssowssproviders.jar",
-        "xalan.jar",
-        "xercesImpl.jar"
+        "xalan.jar"
     };
 }

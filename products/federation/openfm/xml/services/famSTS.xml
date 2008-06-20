@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.6 2008-05-28 19:54:45 mrudul_uchil Exp $
+   $Id: famSTS.xml,v 1.7 2008-06-20 20:44:12 mallas Exp $
                                                                                 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -206,6 +206,20 @@
                    <DefaultValues>
                        <Value>test</Value>
                    </DefaultValues>
+               </AttributeSchema>
+               <AttributeSchema name="trustedIssuers"
+                   type="list"
+                   syntax="string"
+                   i18nKey="a118">
+                   <DefaultValues>
+                       <Value>SunSTS</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+
+               <AttributeSchema name="trustedIPAddresses"
+                   type="list"
+                   syntax="string"
+                   i18nKey="a119">
                </AttributeSchema>
             </Global>
         </Schema>
