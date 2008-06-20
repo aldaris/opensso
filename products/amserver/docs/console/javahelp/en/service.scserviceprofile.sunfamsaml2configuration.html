@@ -38,11 +38,14 @@
 
 <a name="ggokj"></a><h5>Attribute Name for Name ID Information</h5>
 <p>Specifies the attribute name used to store name identifier information on a user's
-entry. If nothing is specified, the default attribute (<tt>sun-fm-saml2-nameid-info</tt>) will be used.</p>
+entry. If nothing is specified, the default attribute (<tt>sun-fm-saml2-nameid-info</tt>) will be used. The corresponding
+datastore bind user must have read/write/search/compare permission to this attribute.</p>
 
 <a name="ggolv"></a><h5>Attribute Name for Name ID Information Key</h5>
 <p>Specifies the attribute name used to store name identifier key on a user's
-entry. If not specified, the default attribute (<tt>sun-fm-saml2-nameid-infokey</tt>) will be used.</p>
+entry. If not specified, the default attribute (<tt>sun-fm-saml2-nameid-infokey</tt>) will be used. The
+corresponding datastore bind user must have read/write/search/compare permission to this attribute. You must also
+must make sure that the <tt>equality</tt> type index is added.</p>
 
 <a name="ggojr"></a><h5>Cookie Domain for IDP Discovery Service</h5>
 <p>Specifies the cookie domain for the SAMLv2 IDP discovery cookie. </p>
@@ -56,7 +59,7 @@ Default is Session.</p>
 
 <a name="ggoje"></a><h5>XML Encryption SPI Implementation Class</h5>
 <p>Specifies implementation class name for the SAMLv2 Encryption Provider interface. The class is
-used to perform XML encryption and decription in SAMLv2 profiles.</p>
+used to perform XML encryption and decryption in SAMLv2 profiles.</p>
 
 <a name="ggomb"></a><h5>Include Encrypted Key Inside KeyInfo Element</h5>
 <p>This is used in the <tt>com.sun.identity.saml2.xmlenc.FMEncProvider</tt> class. If enabled, it will include

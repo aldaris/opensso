@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Core</h4>
-<p><a name="indexterm-177"></a>This module is the general configuration base for the Federated Access Manager authentication
+<p><a name="indexterm-170"></a>This module is the general configuration base for the Federated Access Manager authentication
 services. It must be registered and configured to use any of the specific
 authentication module instances. It enables the administrator to define default values that will be
 picked up for the values that are not specifically set in the Federated
@@ -109,18 +109,24 @@ are:</p><dl><dt><b>Required</b></dt>
 
 
 <a name="ggukq"></a><h5>Remote Auth Security</h5>
-<p>If enabled, Federated Access Manger requires the remote authentication client to send the
-Application SSO Token with each request.</p>
+<p>If enabled, all remote authentication requests require the application's SSOToken to validate the
+identity of the caller, so Federated Access Manager's configuration information can obtain the
+valid values of the username and password associated with the application.</p>
 
 <a name="ggull"></a><h5>Keep Post Process Objects for Logout Processing</h5>
-<p>If enabled, this attribute will determine if the user session should hold the
-instances of post processing classes after authentication is complete. This may be needed
-for special logout processing.</p>
+<p>If enabled, the instances of the post-process authentication plug-ins used during the log
+in process are preserved in the Federated Access Manager session. When log out
+is later invoked, the <tt>onLogout</tt> method of these instances are called. If
+this attribute is not enabled, the post-process instances from the log in process are
+not preserved. New instances of post process plug-ins are created when logout is
+invoked and the <tt>onLogout</tt> method is called. </p>
 
 <a name="gguji"></a><h5>Keep Authentication Module Objects for Logout Processing</h5>
-<p>If enabled, this attribute will determine if the user session should hold the
-instances of authentication modules after authentication is complete. This may be needed for
-special logout processing.</p>
+<p>If enabled, all of the instances of authentication modules used during the authentication
+process are preserved in the Federated Access Manager session. Later, when log out
+is invoked, the logout/destroyModulestate method is called on the same instances. If this
+attribute is not enabled, the authentication module instances from the log out process
+are not preserved. No method on the authentication modules is called upon log out.</p>
 
 <a name="gcnks"></a><h5>Administrator Authentication Configuration</h5>
 <p>Defines the authentication service for administrators only. This attribute can be used if
@@ -280,7 +286,12 @@ attribute is not enabled, module-based login is not allowed. All login attempts 
 <tt>module=&#60; </tt><i>module_instance_name</i><tt>></tt> will result in login failure.</p>
 
 <a name="ggurt"></a><h5>User Attribute Mapping to Session Attribute</h5>
-<p>Specifies the UserProfile Attributes that will be set in Session. The format is:</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p>
+<p>This enables the attributes to be set as session properties from the authenticating
+user profile (stored in a data store) to the user's SSOToken. The format
+is::</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p><p>If the <tt>Session_Attribute_name</tt> is not specified, the property name for the session is
+retrieved as the value of the User Profile attribute. All session attributes contain
+the am.<tt>protected</tt> prefix to ensure that they cannot be edited from the
+client SDK.</p>
 
 <a name="fwbfn"></a><h5>Default Authentication Level</h5>
 <p>The authentication level value indicates how much to trust authentications. Once a user

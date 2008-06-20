@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<!--
+
+-->
+
+<head>
+
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <!-- ident      "%Z%%M% %I%     %E% SMI" -->
+
+  <title>WS-FED Identity Provider Customization - <TRADEMARK>Sun</TRADEMARK> Federated Access Manager 8.0 Console Online Help
+  </title>
+  <script language="JavaScript1.2">
+    linktag = window.parent.frames[0].document.getElementsByTagName('link');
+    for (var i = 0; i < linktag.length; i++) {
+        if (linktag[i].rel == "stylesheet") {
+            var s = "<link rel=" + linktag[i].rel + " type='text/css' href=" + linktag[i].href + " />";
+            document.write(s);
+        }
+    }
+  </script>
+  <meta name="Copyright" content="Copyright &copy; 2008 by Sun Microsystems, Inc. All Rights Reserved." />
+
+</head>
+
+<body class="HlpBdy">
+
+
+
+<a name="federation.wsfedidp"></a><h4>WS-FED Identity Provider Customization</h4>
+<p>The following attributes apply to the WS-FED Identity Provider role:</p>
+
+<a name="ggwvh"></a><h5>Signing Cert Alias</h5>
+<p>This attribute specifies the provider certificate alias used to find the correct signing
+certificate in the keystore</p>
+
+<a name="ggwve"></a><h5>Claim Types</h5>
+<p>Claim Types</p>
+
+<a name="ggwwj"></a><h5>Account Mapper</h5>
+<p>This attribute specifies the implementation of the <tt>AccountMapper</tt> interface used to map
+a remote user account to a local user account for purposes of single
+sign-on. The default value is <tt>com.sun.identity.wsfed.plugins.</tt> </p><p> <tt>DefaultIDPAccountMapper</tt> is the default implementation.</p>
+
+<a name="ggwuq"></a><h5>Attribute Mapper</h5>
+<p>This defines the class used to map attributes in the assertion to user
+attributes defined locally by the identity provider. The default class is <tt>com.sun.identity.wsfederation.plugins.DefaultIDPAccountMapper</tt>.</p>
+
+<a name="ggwul"></a><h5>Attribute Map</h5>
+<p>Specifies values to define the mappings used by the default attribute mapper plug-in.
+Mappings should be configured in the format:</p><p><i>Claim_Type</i>=<i>local-attribute</i></p><p>For example, <tt>EmailAddress=mail</tt> or <tt>Address=postaladdress</tt>. Type the mapping as a New Value
+and click Add.</p>
+
+<a name="ggwrj"></a><h5>Assertion Effective Time</h5>
+<p>Assertions are valid for a period of time and not before or after.
+This attribute specifies a grace period (in seconds) for the <tt>Not Vefore Time Skew</tt> value.
+The default value is <tt>600</tt>. It has no relevance to the <tt>notAfter</tt> value.</p><p><tt>Effective Time</tt> specifies (in seconds) the amount of time that an assertion is valid
+counting from the assertion's issue time. The default value is <tt>600</tt> seconds.</p>
+<br/>
+
+</body>
+</html>

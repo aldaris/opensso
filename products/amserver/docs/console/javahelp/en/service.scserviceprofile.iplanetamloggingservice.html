@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>Logging</h4>
-<p><a name="indexterm-211"></a>The Logging service provides status and error messages related to Federated Access Manager
+<p><a name="indexterm-204"></a>The Logging service provides status and error messages related to Federated Access Manager
 administration. An administrator can configures values such as log file size and log
 file location. Federated Access Manager can record events in flat text files or
 in a relational database. The Logging service attributes are global attributes. The attributes are:</p>
@@ -74,8 +74,9 @@ file will be created.</p>
 
 <a name="fxbzh"></a><h5>Log File Location</h5>
 <p>The file-based logging function needs a location where log files can be stored.
-This field accepts a full directory path to that location. The default location
-is:</p><p><tt>/var/opt/SUNWam/logs</tt></p><p>If a non-default directory is specified, Federated Access Manager will create the directory
+. The default location is:</p><p><tt>CONFIG_DIR_SERVER_URI/logs</tt></p><p>The <tt>CONFIG_DIR_SERVER_URI</tt> strings represents the directory in which you deployed Federated Access Manager
+and the deployment directory URI. This string should not be replaced, unless you enter
+the absolute pathname to the directory to which the files will be logged.</p><p>If a non-default directory is specified, Federated Access Manager will create the directory
 if it does not exist. You should then set the appropriate permissions for
 that directory (for example, 0700).</p><p>When configuring the log location for DB (database) logging (such as, Oracle or
 MySQL), part of the log location is case sensitive. For example, if you

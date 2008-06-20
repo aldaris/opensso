@@ -5,6 +5,8 @@
 
  <tocitem target="aawelcome" text="SunTM Federated Access Manager 8.0 Online Help" expand="false">
     <tocitem target="intro" text="Introduction" expand="false"></tocitem></tocitem>
+ <tocitem target="commontasks" text="Common Tasks" expand="false">
+    <tocitem target="task.home" text="Common Task Components" expand="false"></tocitem></tocitem>
  <tocitem target="accesscontrol" text="Access Control" expand="false">
     <tocitem target="realm.rmrealm" text="Realms" expand="false">
         <tocitem target="realm.rmrealmadd" text="To Create a New Realm" expand="false"></tocitem></tocitem>
@@ -34,6 +36,7 @@
     <tocitem target="policy.pmdefaultauthschemeconditionadd" text="Authentication by Module Instance" expand="false"></tocitem>
     <tocitem target="policy.sessionpropertyconditionadd" text="Current Session Properties" expand="false"></tocitem>
     <tocitem target="policy.pmdefaultipcondition" text="IP Address/DNS Name" expand="false"></tocitem>
+    <tocitem target="policy.membershipconditionadd" text="Identity Membership" expand="false"></tocitem>
     <tocitem target="policy.conditionadd" text="LDAP Filter Condition" expand="false"></tocitem>
     <tocitem target="policy.authtorealmadd" text="Authentication to a Realm" expand="false"></tocitem>
     <tocitem target="policy.pmdefaulttimeconditionadd" text="Time (day, date, time, and timezone)" expand="false"></tocitem>
@@ -42,9 +45,17 @@
     <tocitem target="referrals" text="Referrals" expand="false"></tocitem></tocitem>
  <tocitem target="idm.entities" text="Subjects" expand="false">
     <tocitem target="subjectuser" text="User" expand="false"></tocitem>
-    <tocitem target="subject.filteredrole" text="Filtered Role" expand="false"></tocitem>
-    <tocitem target="subject.role" text="Role" expand="false"></tocitem>
-    <tocitem target="subject.group" text="Group" expand="false"></tocitem></tocitem>
+    <tocitem target="idm.entitiesgroup" text="Group" expand="false"></tocitem></tocitem>
+ <tocitem target="agentconfig.agents" text="Agents" expand="false">
+    <tocitem target="ggobs" text="Creating New Groups and Agents" expand="false"></tocitem>
+    <tocitem target="agentconfig.genericagentprofile" text="Web Policy Agent" expand="false"></tocitem>
+    <tocitem target="agentconfig.j2eeagentprofile" text="J2EE Policy Agent" expand="false"></tocitem>
+    <tocitem target="agentconfig.webserviceprovideredit" text="Web Service Provider" expand="false"></tocitem>
+    <tocitem target="agentconfig.webserviceclientedit" text="Web Service Client Attributes" expand="false"></tocitem>
+    <tocitem target="agentconfig.stsclientedit" text="STS Client" expand="false"></tocitem>
+    <tocitem target="agentconfig.discoveryagentprofile" text="Discovery Agent Attributes" expand="false"></tocitem>
+    <tocitem target="agentconfig.webservicestsedit" text="Security Token Service Attributes" expand="false"></tocitem>
+    <tocitem target="ggnbx" text="2.2 Policy Agent" expand="false"></tocitem></tocitem>
  <tocitem target="dirmang" text="Directory Management" expand="false">
     <tocitem target="dm.home" text="Directory Management" expand="false"></tocitem></tocitem>
  <tocitem target="federation.federation" text="Federation" expand="false">
@@ -53,22 +64,23 @@
         <tocitem target="federation.fsauthdomainsedit" text="To Modify a Circle of Trust Profile" expand="false"></tocitem>
         <tocitem target="federation.fsauthdomainsselectprovider" text="To Add Providers to a Circle of Trust" expand="false"></tocitem>
         <tocitem target="deleteauthdomain" text="To Delete a Circle of Trust Profile" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="federation.fsentitydescriptors" text="Entities: Provider and Affiliate" expand="false">
-    <tocitem target="federation.fsentitydescriptorsadd" text="To Create a Provider Entity or an Affiliate Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsentitydescriptorsprofile" text="To Modify the General Attributes of a Provider Entity or an Affiliate Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityprovider" text="To Add an Identity Provider to a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderhostedadd" text="To Add a New Hosted Identity Provider to a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderremoteadd" text="To Add a New Remote Identity Provider to a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceprovider" text="To Add a Service Provider to a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderhostedadd" text="To Add a New Hosted Service Provider to a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderremoteadd" text="To Add a New Remote Service Provider to a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderhostedprofile" text="To Modify Hosted Identity Provider Attributes in a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderremoteprofile" text="To Modify Remote Identity Provider Attributes in a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderhostedprofile" text="To Modify Hosted Service Provider Attributes in a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderremoteprofile" text="To Modify Remote Service Provider Attributes in a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fscreatecontactperson" text="To Add a Contact Person to a Provider in a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fseditcontactperson" text="To Modify a Contact Person Profile in a Provider Entity" expand="false"></tocitem>
-    <tocitem target="federation.fsentitydescriptorsaffiliate" text="To Add Members to an Affiliate Entity" expand="false"></tocitem></tocitem>
+ <tocitem target="entityproviders" text="Entity Providers" expand="false">
+    <tocitem target="ggwxp" text="SAMLv2 Provider Entity" expand="false"></tocitem>
+    <tocitem target="ggwwz" text="ID-FF Provider Entity " expand="false"></tocitem>
+    <tocitem target="ggwxk" text="WS-FED Provider Entity" expand="false"></tocitem>
+    <tocitem target="federation.samlv2spassertioncontent" text="SAMLv2 Service Provider Customization " expand="false"></tocitem>
+    <tocitem target="federation.samlv2idpassertioncontent" text="SAMLv2 Identity Provider Customization" expand="false"></tocitem>
+    <tocitem target="federation.samlv2pdp" text="SAMLv2 XACML PDP Customization " expand="false"></tocitem>
+    <tocitem target="federation.samlv2pep" text="SAMLv2 XACML PEP Customization" expand="false"></tocitem>
+    <tocitem target="federation.samlv2attrauthority" text="SAMLv2 Attribute Authority Customization" expand="false"></tocitem>
+    <tocitem target="federation.samlv2attrpuery" text="SAMLv2 Attribute Query Customization" expand="false"></tocitem>
+    <tocitem target="federation.samlv2authnauthority" text="SAMLv2 Authorization Authority Customization" expand="false"></tocitem>
+    <tocitem target="federation.samlv2hostedaffiliation" text="SAMLv2 Hosted Affiliation Customization" expand="false"></tocitem>
+    <tocitem target="federation.idffidp" text="ID-FF Identity Provider Customization" expand="false"></tocitem>
+    <tocitem target="federation.idffsp" text="ID-FF Service Provider Customization" expand="false"></tocitem>
+    <tocitem target="ggwxz" text="WS-FED General Attributes" expand="false"></tocitem>
+    <tocitem target="federation.wsfedidp" text="WS-FED Identity Provider Customization" expand="false"></tocitem>
+    <tocitem target="federation.wsfedsp" text="WS-FED Service Provider Customization" expand="false"></tocitem></tocitem>
  <tocitem target="federation.fssamlservice" text="SAML1.x" expand="false">
     <tocitem target="targetspecifier" text="Target Specifier" expand="false"></tocitem>
     <tocitem target="siteidentifiers" text="Site Identifiers" expand="false"></tocitem>
@@ -171,19 +183,11 @@
     <tocitem target="service.servereditsecurity" text="Security" expand="false"></tocitem>
     <tocitem target="service.servereditsession" text="Session" expand="false"></tocitem>
     <tocitem target="service.servereditsdk" text="SDK" expand="false"></tocitem>
-    <tocitem target="service.serverconfigxml" text="Directory Configuration" expand="false">
+    <tocitem target="service.serverconfigxml" text="Directory Configuration" expand="false"></tocitem>
+    <tocitem target="ggwyq" text="Advanced" expand="false">
         <tocitem target="service.siteadd" text="To Create a New Site Instance" expand="false"></tocitem>
-        <tocitem target="service.siteedit" text="To Edit a Site Instance" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.agents" text="Agents" expand="false">
-    <tocitem target="ggobs" text="Creating New Groups and Agents" expand="false"></tocitem>
-    <tocitem target="ggmok" text="Web Policy Agent" expand="false"></tocitem>
-    <tocitem target="ggmui" text="J2EE Policy Agent" expand="false"></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="Web Service Provider" expand="false"></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="Web Service Client Attributes" expand="false"></tocitem>
-    <tocitem target="ggtwl" text="STS Client" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="Discovery Agent Attributes" expand="false"></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="Security Token Service Attributes" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="2.2 Policy Agent" expand="false"></tocitem></tocitem>
+        <tocitem target="service.siteedit" text="To Edit a Site Instance" expand="false"></tocitem></tocitem>
+    <tocitem target="ggvwi" text="Servers and Sites Console Attribute Maps" expand="false"></tocitem></tocitem>
  <tocitem target="sessions" text="Sessions" expand="false">
     <tocitem target="sessionpage" text="Sessions Page" expand="false">
         <tocitem target="sessionsearch" text="Search" expand="false"></tocitem>

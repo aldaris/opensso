@@ -4,13 +4,12 @@
 <index version="2.0">
 
  <indexitem target="accesscontrol" text="Access Control, Introduction"></indexitem>
- <indexitem target="federation.fsentitydescriptors" text="affiliate entity">
-    <indexitem target="federation.fsentitydescriptorsaffiliate" text="and affiliates"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsadd" text="create"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsprofile" text="general attributes"></indexitem></indexitem>
+ <indexitem target="entityproviders" text="affiliate entity"></indexitem>
  <indexitem target="alternateendpoint" text="alternate endpoint"></indexitem>
  <indexitem target="alternatesecuritymechanisms" text="alternate security mechanisms"></indexitem>
  <indexitem target="attributemapper" text="attribute mapper"></indexitem>
+ <indexitem text="attributes">
+    <indexitem target="federation.samlv2spassertioncontent" text="context reference"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="context reference"></indexitem><indexitem target="federation.idffidp" text="context reference"></indexitem><indexitem target="federation.idffsp" text="context reference"></indexitem></indexitem>
  <indexitem target="authresponsemessage" text="authenticate response message"></indexitem>
  <indexitem text="Authentication attributes">
     <indexitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></indexitem>
@@ -33,6 +32,8 @@
     <indexitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows Desktop SSO"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT"></indexitem></indexitem>
+ <indexitem text="authentication context">
+    <indexitem target="federation.samlv2spassertioncontent" text="attribute"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="attribute"></indexitem><indexitem target="federation.idffidp" text="attribute"></indexitem><indexitem target="federation.idffsp" text="attribute"></indexitem></indexitem>
  <indexitem target="webservices.wsauthnservices" text="authentication web service"></indexitem>
  <indexitem target="authorizer" text="authorizer"></indexitem>
  <indexitem target="authorizerpluginclass" text="authorizer plug-in class"></indexitem>
@@ -61,6 +62,7 @@
  <indexitem text="Console Properties">
     <indexitem target="service.scserviceprofile.amadminconsoleservice" text="Administration"></indexitem>
     <indexitem target="service.smg11n" text="Globalization Settings"></indexitem></indexitem>
+ <indexitem target="federation.samlv2spassertioncontent" text="context reference attribute"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="context reference attribute"></indexitem><indexitem target="federation.idffidp" text="context reference attribute"></indexitem><indexitem target="federation.idffsp" text="context reference attribute"></indexitem>
  <indexitem target="realm.idrepo" text="Data Stores">
     <indexitem target="adattrs" text="Active Directory attributes"></indexitem>
     <indexitem target="gdoto" text="LDPAv3 repository plug-in attributes"></indexitem>
@@ -84,20 +86,8 @@
     <indexitem target="supporteddirectives" text="supported directives"></indexitem></indexitem>
  <indexitem target="encryptnameidentifier" text="encrypt name identifier in session context for bootstrapping"></indexitem>
  <indexitem text="entities">
-    <indexitem target="federation.fscreatecontactperson" text="add contact person"></indexitem>
-    <indexitem target="federation.fsidentityprovider" text="add identity provider to provider entity"></indexitem>
-    <indexitem target="federation.fsserviceprovider" text="add service provider to provider entity"></indexitem>
-    <indexitem target="federation.fsentitydescriptors" text="affiliate"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsadd" text="create affiliate"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsaffiliate" text="create affiliate in affiliate entity"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsadd" text="create provider"></indexitem>
-    <indexitem target="federation.fseditcontactperson" text="modify contact person"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsprofile" text="modify general attributes"></indexitem>
-    <indexitem target="federation.fsidentityproviderhostedprofile" text="modify hosted identity provider attributes in a provider entity"></indexitem>
-    <indexitem target="federation.fsserviceproviderhostedprofile" text="modify hosted service provider attributes in a provider entity"></indexitem>
-    <indexitem target="federation.fsidentityproviderremoteprofile" text="modify remote identity provider attributes in a provider entity"></indexitem>
-    <indexitem target="federation.fsserviceproviderremoteprofile" text="modify remote service provider attributes in a provider entity"></indexitem>
-    <indexitem target="federation.fsentitydescriptors" text="provider"></indexitem></indexitem>
+    <indexitem target="entityproviders" text="affiliate"></indexitem>
+    <indexitem target="entityproviders" text="provider"></indexitem></indexitem>
  <indexitem target="entryhandlerpluginclass" text="entry handler plug-in class"></indexitem>
  <indexitem target="extensionattributesnamespaceprefix" text="extension attributes namespace prefix"></indexitem>
  <indexitem target="extensioncontainerattributes" text="extension container attributes"></indexitem>
@@ -108,7 +98,7 @@
     <indexitem target="service.scserviceprofile.iplanetamuserservice" text="User"></indexitem></indexitem>
  <indexitem text="Identity Management">
     <indexitem text="Users">
-        <indexitem target="addusertogroup" text="Adding to Services, Roles and Groups"></indexitem></indexitem></indexitem>
+        <indexitem target="idm.entitymembership" text="Adding to Services, Roles and Groups"></indexitem></indexitem></indexitem>
  <indexitem target="useimpliedresource" text="implied resource"></indexitem>
  <indexitem target="invalidatesession" text="Invalidating a Session"></indexitem>
  <indexitem target="mechanismhandlerslist" text="mechanism handlers list">
@@ -150,11 +140,7 @@
  <indexitem target="policyevaldiscoupdate" text="policy evaluation for discovery update"></indexitem>
  <indexitem target="ppldapattributemaplist" text="PPLDAP attribute map list"></indexitem>
  <indexitem target="delegation.delegation" text="Privileges"></indexitem><indexitem target="delegation.delegationproperties" text="Privileges"></indexitem>
- <indexitem target="federation.fsentitydescriptors" text="provider entity">
-    <indexitem target="federation.fsidentityprovider" text="and identity providers"></indexitem>
-    <indexitem target="federation.fsserviceprovider" text="and service providers"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsadd" text="create"></indexitem>
-    <indexitem target="federation.fsentitydescriptorsprofile" text="general attributes"></indexitem></indexitem>
+ <indexitem target="entityproviders" text="provider entity"></indexitem>
  <indexitem target="ppproviderid" text="provider ID"></indexitem>
  <indexitem target="dsproviderid" text="provider ID (discovery service)"></indexitem>
  <indexitem target="realm.rmrealm" text="Realms">
@@ -170,6 +156,7 @@
     <indexitem target="authentication.newauthconfig" text="To create a new authentication chain"></indexitem>
     <indexitem target="authentication.newauthinstance" text="To create a new authentication module"></indexitem></indexitem>
  <indexitem target="fyfby" text="Referral Policies"></indexitem>
+ <indexitem target="federation.samlv2spassertioncontent" text="RelayState"></indexitem><indexitem target="federation.wsfedsp" text="RelayState"></indexitem>
  <indexitem target="requesthandlerlist" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbinding" text="request handler list">
     <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="configure"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="configure"></indexitem></indexitem>
  <indexitem target="requiremodify" text="require modify policyeval"></indexitem>
@@ -201,9 +188,7 @@
     <indexitem target="ggodb" text="supported authentication mechanisms"></indexitem>
     <indexitem target="ggodb" text="web service authenticator"></indexitem></indexitem>
  <indexitem target="normalsubject" text="Subjects"></indexitem><indexitem target="idm.entities" text="Subjects">
-    <indexitem target="subject.filteredrole" text="Filtered Roles"></indexitem>
-    <indexitem target="subject.group" text="Groups"></indexitem>
-    <indexitem target="subject.role" text="Roles"></indexitem>
+    <indexitem target="idm.entitiesgroup" text="Groups"></indexitem>
     <indexitem target="subjectuser" text="User"></indexitem></indexitem>
  <indexitem target="supportedauthmechanisms" text="supported authentication mechanisms (discovery service)"></indexitem>
  <indexitem target="ggodb" text="supported authentication mechanisms (SOAP binding)"></indexitem>
@@ -218,7 +203,7 @@
  <indexitem target="federation.fssamltargeturlsadd" text="target URLs"></indexitem>
  <indexitem target="federation.fssamlselecttrustedpartnertype" text="trusted partners"></indexitem>
  <indexitem target="dm.home" text="User Management"></indexitem>
- <indexitem target="addusertogroup" text="Users, Adding to Services, Roles, and Groups"></indexitem>
+ <indexitem target="idm.entitymembership" text="Users, Adding to Services, Roles, and Groups"></indexitem>
  <indexitem target="viewsession" text="View Session"></indexitem>
  <indexitem target="ggodb" text="web service authenticator"></indexitem>
 </index>

@@ -50,9 +50,9 @@ the Service Management System configuration. Value is set during installation. E
 and <tt>com.iplanet.services.util.JSSEncryption</tt>.</p>
 
 <a name="ggkby"></a><h5>Secure Random Factory Class</h5>
-<p>#  Default value is <tt>com.iplanet.am.util.JSSSecureRandomFactoryImp</tt>l. Specifies the factory class name for
-<tt>SecureRandomFactory</tt>. Available implementation classes are: <tt>com.iplanet.am.util.JSSSecureRandomFactoryImpl</tt> which uses JSS, and <tt>com.iplanet.am.util.SecureRandomFactoryImpl</tt> which
-uses pure Java.   </p>
+<p>Default value is <tt>com.iplanet.am.util.JSSSecureRandomFactoryImp</tt>l. Specifies the factory class name for <tt>SecureRandomFactory</tt>. Available
+implementation classes are: <tt>com.iplanet.am.util.JSSSecureRandomFactoryImpl</tt> which uses JSS, and <tt>com.iplanet.am.util.SecureRandomFactoryImpl</tt> which uses pure
+Java.   </p>
 
 <a name="ggkbr"></a><h5>Validation</h5>
 <p>The validation attributes are:</p>
@@ -138,7 +138,7 @@ the top-level realm of the Access Manager installation base.</p>
 
 <a name="ggkbp"></a><h5>Search Attributes</h5>
 <p>Any DN component of issuer's <tt>subjectDN</tt> can be used to retrieve a CRL
-from a local LDAP server. It is sa ingle value string, like, "cn".
+from a local LDAP server. It is a single value string, like, "cn".
 All Root CAs need to use the same search attribute.</p>
 
 <a name="ggkaa"></a><h5>Online Certificate Status Protocol Check</h5>
@@ -160,7 +160,7 @@ certificate being validated. The property is used when the Authority Information
 overriding. </p>
 
 <a name="ggkai"></a><h5>Certificate Nickname</h5>
-<p>The OCSP responder nickname is the CA certificate nic name for that responder,
+<p>The OCSP responder nickname is the CA certificate nick name for that responder,
 for example <tt>Certificate Manager - sun</tt>. If set, the CA certificate must be presented in the
 web server's certificate database. If the OCSP URL is set, the OCSP responder
 nickname must be set also. Otherwise, both will be ignored. If they are
