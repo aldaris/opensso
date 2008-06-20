@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.12 2008-04-25 22:27:21 ww203982 Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.13 2008-06-20 16:24:02 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -371,7 +371,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
             // Find the missing attributes that need to be obtained from DS
             // Only find the missing keys as the ones with empty sets are not
             // found in DS
-            Set missAttrNames = attributes.getMissingAndEmptyKeys(attrNames);
+            Set missAttrNames = attributes.getMissingKeys(attrNames);
             if (!missAttrNames.isEmpty()) {
                 if (getDebug().messageEnabled()) {
                     getDebug().message("IdCachedServicesImpl."

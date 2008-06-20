@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.12 2008-01-03 23:59:22 dlarson Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.13 2008-06-20 16:24:02 arviranga Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -364,7 +364,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
             // Find the missing attributes that need to be obtained from DS
             // Only find the missing keys as the ones with empty sets are not
             // found in DS
-            Set missAttrNames = attributes.getMissingAndEmptyKeys(attrNames); 
+            Set missAttrNames = attributes.getMissingKeys(attrNames); 
             if (!missAttrNames.isEmpty()) {
                 if (getDebug().messageEnabled()) {
                     getDebug().message("IdRemoteCachedServicesImpl."
