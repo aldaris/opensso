@@ -17,10 +17,12 @@
         var aValue = "&password=" + $('adminPassword').value;  
         var oValue = "&otherPassword=x";
         var type = "&type=admin";
+        ie7fix++;
+        var iefix = "&ie7fix=" + ie7fix;
         field = "adminPassword";
 
         AjaxUtils.call(
-            "$context$path"+link+cValue+aValue+oValue+type, 
+            "$context$path" + link + cValue + aValue + oValue + type + iefix, 
             adminPasswordResponse);          
     } 
 

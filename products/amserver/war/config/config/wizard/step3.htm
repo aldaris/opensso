@@ -34,11 +34,20 @@
 	validate();
     }
 
+    function validateEncryptionKey() {
+        $('nextTabButton').disabled = true;
+	field = "encryptionKey";
+        setTimeout("enableNextButton()", 500);
+	validate();
+    }
+
     function validateConfigStoreSSL() {
         var value = ($('configStoreSSL').checked) ? "SSL" : "SIMPLE";
         var callUrl =
             "$context$path?actionLink=validateInput&key=configStoreSSL&value=" +
             value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl, validateConfigSSL);
     }       
 
@@ -128,6 +137,8 @@
         var call = "$context$path?actionLink=validateHostName";
         var hostname = "&hostName=" + $('existingHost').value;
         $('nextTabButton').disabled = true;
+        ie7fix++;
+        call = call + "&ie7fix=" + ie7fix;
         AjaxUtils.call(call+hostname, validateServerURL);
     }
 
@@ -147,6 +158,8 @@
     function validateLocalConfigPort() {        
         var call = "$context$path?actionLink=validateLocalPort";
         var portVal = "&port=" + $('localConfigPort').value;
+        ie7fix++;
+        call = call + "&ie7fix=" + ie7fix;
         AjaxUtils.call(call+portVal, localPortResponse);
     }
     
@@ -179,7 +192,8 @@
         document.getElementById("replicationPorts").style.display = "none";
         document.getElementById("existingLDAP").style.display = "none";
 
-	AjaxUtils.call("$context$path?actionLink=setReplication&multi=enable");
+        ie7fix++;
+	AjaxUtils.call("$context$path?actionLink=setReplication&multi=enable&ie7fix=" + ie7fix);
     }
 
     function disableExisting() {
@@ -196,7 +210,8 @@
         document.getElementById("replicationPorts").style.display = "none";
         document.getElementById("existingLDAP").style.display = "none";
 
-	AjaxUtils.call("$context$path?actionLink=setReplication&multi=disable");
+        ie7fix++;
+	AjaxUtils.call("$context$path?actionLink=setReplication&multi=disable&ie7fix=" + ie7fix);
     }
 
     function setExternalFieldsDisplay(display) {
@@ -210,9 +225,7 @@
         } else {
             document.getElementById("configStoreSSL").disabled = false;
             document.getElementById("configStoreHost").disabled = false;
-            if (remoteDSHost == undefined) {
-                remoteDSHost = 'localhost';
-            }
+	    remoteDSHost = document.getElementById("configStoreHost").value;
             document.getElementById("configStoreHost").value = remoteDSHost;
         }
     }
@@ -220,7 +233,8 @@
     function enableRemote() {
         userStore = "external";
         enableNextButton();
-	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote");
+        ie7fix++;
+	AjaxUtils.call("$context$path?actionLink=setConfigType&type=remote&ie7fix=" + ie7fix);
 	setExternalFieldsDisplay("");
     }
 
@@ -228,7 +242,8 @@
 	setExternalFieldsDisplay("none");
         userStore = "embedded";
         enableNextButton();
-	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded");
+        ie7fix++;
+	AjaxUtils.call("$context$path?actionLink=setConfigType&type=embedded&ie7fix=" + ie7fix);
     }
 
     function initConfig() {
@@ -257,7 +272,8 @@
                 isFieldOK('configStorePassword') &&
                 (document.getElementById('configStorePassword').value != '');
             if (allFieldsValid) {
-                AjaxUtils.call("$context$path?actionLink=validateSMHost",
+                ie7fix++;
+                AjaxUtils.call("$context$path?actionLink=validateSMHost&ie7fix=" + ie7fix,
                     validateSMHost);
             } else {
                 $('nextTabButton').disabled = true;
@@ -279,7 +295,7 @@
 
     function isFieldOK(field) {
         var x = $(field + 'Status').innerHTML; 
-        return (x == "") || (x == okString);
+        return (x == '') || (x.indexOf('ok.jpg') != -1);
     }
 
     YAHOO.util.Event.onDOMReady(initConfig);

@@ -12,7 +12,8 @@
         $('nextTabButton').disabled = false;
         $('loadBalancerHostName').disabled = true;
         $('loadBalancerPort').disabled = true;
-        AjaxUtils.call("$context$path?actionLink=clear");
+        ie7fix++;
+        AjaxUtils.call("$context$path?actionLink=clear&ie7fix=" + ie7fix);
     }
 
     function enableLoadBalancer() {
@@ -39,8 +40,9 @@
     }
 
     function validatePrimaryURL() {
+        ie7fix++;
         AjaxUtils.call("$context$path?actionLink=validateURL&port=" + 
-            $('loadBalancerPort').value, urlValidated);
+            $('loadBalancerPort').value + "&ie7fix=" + ie7fix, urlValidated);
     }
 
 

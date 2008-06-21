@@ -30,9 +30,12 @@
             // will be set in each calling page.
             var field = "";
             function validate() {
-                var callUrl = "$context$path?actionLink=validateInput";
+                ie7fix++;
+                var callUrl = "$context$path?actionLink=validateInput&ie7fix=" + ie7fix;
                 var key = "&key=" + field;
                 var value = "&value=" + escape($(field).value);
+                ie7fix++;
+                callUrl = callUrl + "&ie7fix=" + ie7fix;
                 AjaxUtils.call(callUrl+key+value, fieldValidated);
             }       
             function fieldValidated(response) {
@@ -138,14 +141,18 @@
             function pushNewInstanceConfig() {
                 YAHOO.sun.identity.config.options.wizard.pushConfigDialog.hide();
                 YAHOO.sun.identity.config.options.wizard.pushingConfig.show();
-                AjaxUtils.call( "$context$path?actionLink=pushConfig", onPushNewInstanceConfigResponse );
+                ie7fix++;
+                AjaxUtils.call( "$context$path?actionLink=pushConfig&ie7fix=" + ie7fix,
+                    onPushNewInstanceConfigResponse );
             }
             function cancelPushNewInstanceConfig() {
                 document.location = "$context/commonTasks.htm";
             }
 
             function writeConfigurationAsync() {
-                AjaxUtils.call("$context$path?actionLink=createConfig", writeConfigResponse );
+                ie7fix++;
+                AjaxUtils.call("$context$path?actionLink=createConfig&ie7fix=" + ie7fix,
+                    writeConfigResponse );
             }
             
             function writeConfiguration() {
@@ -276,6 +283,8 @@
                 callUrl += "&port=" + port;
                 var callbackFunction = null;
                 eval( "callbackFunction = " + type + "StoreServerValidated;" );
+                ie7fix++;
+                callUrl = callUrl + "&ie7fix=" + ie7fix;
                 AjaxUtils.call( callUrl, callbackFunction );
             }
 
@@ -283,6 +292,8 @@
                 var callUrl = "$context" + toPath(type) + "?actionLink=checkBaseDN&baseDN=" + $(type + 'StoreBaseDN').value
                 var callbackFunction = null;
                 eval( "callbackFunction = " + type + "StoreBaseDNValidated;" );
+                ie7fix++;
+                callUrl = callUrl + "&ie7fix=" + ie7fix;
                 AjaxUtils.call( callUrl, callbackFunction );
             }
 
@@ -295,6 +306,8 @@
                 callUrl += "&password=" + password;
                 var callbackFunction = null;
                 eval( "callbackFunction = " + type + "StoreLoginIdValidated;" );
+                ie7fix++;
+                callUrl = callUrl + "&ie7fix=" + ie7fix;
                 AjaxUtils.call( callUrl, callbackFunction );
             }
 
@@ -314,6 +327,8 @@
                 eval( type + "StoreLoginIdValid = false;" );
 
                 var callUrl = "$context" + toPath(type) + "?actionLink=clearStore";
+                ie7fix++;
+                callUrl = callUrl + "&ie7fix=" + ie7fix;
                 AjaxUtils.call( callUrl );
             }
 

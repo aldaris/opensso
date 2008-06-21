@@ -10,7 +10,8 @@
             userStoreRootSuffixValid && userStoreLoginIdValid &&
             userStorePasswordValid);
         if (allFieldsValid) {
-            AjaxUtils.call("$context$path?actionLink=validateUMHost",
+            ie7fix++;
+            AjaxUtils.call("$context$path?actionLink=validateUMHost&ie7fix=" + ie7fix,
                 validateUMHost);
         } else {
             $('nextTabButton').disabled = true;
@@ -46,6 +47,8 @@
         var callUrl = "$context$path?actionLink=setSSL";
         var value = ($('userStoreSSL').checked) ? "SSL" : "SIMPLE";
         var param = "&ssl=" + value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl+param, validateSSLField);
     }
 
@@ -57,6 +60,8 @@
         field = "userStoreHost";
         var callUrl = "$context$path?actionLink=setHost";
         var param = "&host=" + $('userStoreHost').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl+param, validateUserFields);
     }         
     
@@ -64,6 +69,8 @@
         field = "userStorePort";
         var callUrl = "$context$path?actionLink=setPort";
         var param = "&port=" + $('userStorePort').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl+param, validateUserFields);
     }       
 
@@ -71,6 +78,8 @@
         field = "userStoreRootSuffix";
         var callUrl = "$context$path?actionLink=setRootSuffix";
         var param = "&rootsuffix=" + escape($('userStoreRootSuffix').value);
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl+param, validateUserFields);
     }
     
@@ -78,6 +87,8 @@
         field = "userStoreLoginId";
         var callUrl = "$context$path?actionLink=setLoginID";
         var param = "&dn=" + $('userStoreLoginId').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl+param, validateUserFields);
     }    
 
@@ -85,6 +96,8 @@
         field = "userStorePassword";
         var callUrl = "$context$path?actionLink=setPassword";
         var param = "&password=" + $('userStorePassword').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl+param, validateUserFields);
     }   
     
@@ -98,6 +111,8 @@
 
     function setType(type) {
         var callUrl = "$context$path?actionLink=setStoreType";
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.call(callUrl + "&type=" + type);
     }
     
@@ -107,7 +122,8 @@
         document.getElementById("embeddedConfigSettings").style.display = "";
         document.getElementById("externalConfigSettings").style.display = "none";        
         $('nextTabButton').disabled = false;
-        AjaxUtils.call("$context$path?actionLink=setUMEmbedded");
+        ie7fix++;
+        AjaxUtils.call("$context$path?actionLink=setUMEmbedded&ie7fix=" + ie7fix);
     }
     
     <!-- when external config is selected -->
@@ -116,7 +132,8 @@
         document.getElementById("embeddedConfigSettings").style.display = "none";
         document.getElementById("externalConfigSettings").style.display = "";
         allValid();
-        AjaxUtils.call("$context$path?actionLink=resetUMEmbedded");
+        ie7fix++;
+        AjaxUtils.call("$context$path?actionLink=resetUMEmbedded&ie7fix=" + ie7fix);
     }
     
     function initUserStorePage() {

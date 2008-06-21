@@ -17,10 +17,9 @@
         var cValue = "&confirm=" + $('agentConfirm').value;
         var oValue = "&otherPassword=" + $('adminConfirm').value;
         var type = "&type=agent";
-
+        ie7fix++;
         AjaxUtils.call(
-            "$context$path"+link+cValue+aValue+oValue+type, 
-            agentPasswordResponse);          
+            "$context$path" + link + cValue + aValue + oValue + type + "&ie7fix=" + ie7fix, agentPasswordResponse);          
     } 
 
     function initStep6() {
