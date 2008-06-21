@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.39 2008-06-19 16:40:39 kenwho Exp $
+ * $Id: IdServicesImpl.java,v 1.40 2008-06-21 00:13:29 ww203982 Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,6 +109,8 @@ public class IdServicesImpl implements IdServices {
 
     private static int svcRevisionNumber;
 
+    private static boolean shutdownCalled;
+
     static {
         READ_ACTION.add("READ");
         WRITE_ACTION.add("MODIFY");
@@ -122,6 +124,9 @@ public class IdServicesImpl implements IdServices {
             ShutdownManager.getInstance().addShutdownListener(
                 new ShutdownListener() {
                 public void shutdown() {
+                    synchronized (_instance) {
+                        shutdownCalled = true;
+                    }
                     _instance.clearIdRepoPlugins();
                 }
             });
@@ -130,6 +135,7 @@ public class IdServicesImpl implements IdServices {
     }
 
     protected IdServicesImpl() {
+        shutdownCalled = false;
         initializeListeners();
     }
 
@@ -2461,13 +2467,17 @@ public class IdServicesImpl implements IdServices {
             repo.removeListener();
             repo.shutdown();
         }
-        // restart the necessary datastore
-        if (type == ServiceListener.ADDED ||
-                type == ServiceListener.MODIFIED) {
-            SSOToken stoken = (SSOToken) AccessController
-                .doPrivileged(AdminTokenAction.getInstance());
-            Set pluginsNames = getIdRepoPlugins(orgName);
-            getInitializedPlugins(stoken, orgName, pluginsNames);
+        synchronized (_instance) {
+            if (!shutdownCalled) {
+                // restart the necessary datastore
+                if (type == ServiceListener.ADDED ||
+                    type == ServiceListener.MODIFIED) {
+                    SSOToken stoken = (SSOToken) AccessController
+                        .doPrivileged(AdminTokenAction.getInstance());
+                    Set pluginsNames = getIdRepoPlugins(orgName);
+                    getInitializedPlugins(stoken, orgName, pluginsNames);
+                }
+            }
         }
     }
     
