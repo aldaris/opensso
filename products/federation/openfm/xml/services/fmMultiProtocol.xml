@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fmMultiProtocol.xml,v 1.2 2007-08-28 00:38:18 qcheng Exp $                                                                                
+   $Id: fmMultiProtocol.xml,v 1.3 2008-06-22 06:45:32 veiming Exp $                                                                                
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -41,7 +41,6 @@
                <AttributeSchema name="SingleLogoutHandlerList"
                    type="list"
                    syntax="string"
-                   uitype="name_value_list"
                    i18nKey="a101">
                    <DefaultValues>
                        <Value>key=SAML2|class=com.sun.identity.multiprotocol.SAML2SingleLogoutHandler</Value>
