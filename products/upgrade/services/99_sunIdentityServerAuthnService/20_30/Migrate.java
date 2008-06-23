@@ -17,11 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.2 2008-03-20 17:24:14 bina Exp $
+ * $Id: Migrate.java,v 1.3 2008-06-23 21:15:25 hengming Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
+import java.util.HashSet;
+import java.util.Set;
 import com.sun.identity.upgrade.MigrateTasks;
 import com.sun.identity.upgrade.UpgradeException;
 import com.sun.identity.upgrade.UpgradeUtils;
@@ -36,6 +38,14 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_NAME = "sunIdentityServerAuthnService";
     final static String SERVICE_DIR = "99_sunIdentityServerAuthnService/20_30";
     final static String SCHEMA_FILE = "famAuthnSvc_addAttrs.xml";
+    final static String PLAIN_MODULE =
+        "com.sun.identity.liberty.authnsvc.plain.module";
+    final static String CRAMMD5_MODULE =
+        "com.sun.identity.liberty.authnsvc.crammd5.module";
+    final static String ATTR_PLAIN_MECHANISM_AUTH_MODULE =
+        "PlainMechanismAuthModule";
+    final static String ATTR_CRAMMD5_MECHANISM_AUTH_MODULE =
+        "CramMD5MechanismAuthModule";
     final static String schemaType = "Global";
 
     /**
@@ -54,6 +64,28 @@ public class Migrate implements MigrateTasks {
             // set i18n fileName
             UpgradeUtils.seti18NFileName(
                     SERVICE_NAME, "fmAuthnSvcConfiguration");
+
+            String oldValue = UpgradeUtils.getServerProperties().getProperty(
+                PLAIN_MODULE);
+
+            if ((oldValue != null) && (oldValue.trim().length() > 0)) {
+                Set defaultVals = new HashSet();
+                defaultVals.add(oldValue);
+                UpgradeUtils.setAttributeDefaultValues(SERVICE_NAME, null,
+                    schemaType, ATTR_PLAIN_MECHANISM_AUTH_MODULE, defaultVals);
+            }
+
+            oldValue = UpgradeUtils.getServerProperties().getProperty(
+                CRAMMD5_MODULE);
+
+            if ((oldValue != null) && (oldValue.trim().length() > 0)) {
+                Set defaultVals = new HashSet();
+                defaultVals.add(oldValue);
+                UpgradeUtils.setAttributeDefaultValues(SERVICE_NAME, null,
+                    schemaType, ATTR_CRAMMD5_MECHANISM_AUTH_MODULE,
+                    defaultVals);
+            }
+
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);

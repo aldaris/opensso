@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CramMD5MechanismHandler.java,v 1.4 2007-11-14 18:55:32 ww203982 Exp $
+ * $Id: CramMD5MechanismHandler.java,v 1.5 2008-06-23 21:13:47 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -47,6 +47,14 @@ import com.sun.identity.common.PeriodicCleanUpMap;
 import com.sun.identity.common.SystemTimerPool;
 import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.common.TimerPool;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
+import com.sun.identity.idm.IdSearchControl;
+import com.sun.identity.idm.IdSearchResults;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
@@ -55,13 +63,11 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcConstants;
+import com.sun.identity.liberty.ws.authnsvc.AuthnSvcService;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcUtils;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLRequest;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLResponse;
 import com.sun.identity.liberty.ws.soapbinding.Message;
-import com.sun.identity.plugin.datastore.DataStoreProvider;
-import com.sun.identity.plugin.datastore.DataStoreProviderException;
-import com.sun.identity.plugin.datastore.DataStoreProviderManager;
 import com.sun.identity.sm.SMSEntry;
 
 /**
@@ -106,8 +112,13 @@ public class CramMD5MechanismHandler implements MechanismHandler {
     
     private static Map challengeMap = new PeriodicCleanUpMap(
         (long) challenge_cleanup_interval, (long) stale_time_limit);
+    private static SSOToken adminToken = null;
 
     static {
+
+        adminToken = (SSOToken)AccessController.doPrivileged(
+		AdminTokenAction.getInstance());
+
         String tmpstr =
             SystemPropertiesManager.get(CHALLENGE_CLEANUP_INTERVAL_PROP);
         if (tmpstr != null) {
@@ -215,16 +226,7 @@ public class CramMD5MechanismHandler implements MechanismHandler {
         String userName = data.substring(0, index);
         String clientDigest = data.substring(index + 1);
 
-        DataStoreProvider dsp = null;
-        try {
-            dsp = DataStoreProviderManager.getInstance()
-                                       .getDataStoreProvider(COMP_AUTHN_SVC);
-        } catch (DataStoreProviderException dspex) {
-            debug.error("CramMD5MechanismHandler.authenticate:", dspex);
-            return new SASLResponse(SASLResponse.ABORT);
-        }
-
-        String password = getUserPassword(userName, dsp);
+        String password = getUserPassword(userName);
 
         if (password == null) {
             if (debug.messageEnabled()) {
@@ -290,10 +292,19 @@ public class CramMD5MechanismHandler implements MechanismHandler {
                 "CramMD5MechanismHandler.authenticate: digests equal");
         }
 
+        String authModule =
+            AuthnSvcService.getCramMD5MechanismAuthenticationModule();
+
+        if (debug.messageEnabled()) {
+            debug.message("PlainMechanismHandler.authenticate: " + 
+                "authModule = " + authModule);
+        }
+
         AuthContext authContext = null;
         try {
             authContext = new AuthContext(SMSEntry.getRootSuffix());
-            authContext.login(AuthContext.IndexType.MODULE_INSTANCE, "LDAP");
+            authContext.login(AuthContext.IndexType.MODULE_INSTANCE,
+                authModule);
         } catch (AuthLoginException le) {
             debug.error("CramMD5MechanismHandler.authenticate: ", le);
             return new SASLResponse(SASLResponse.ABORT);
@@ -390,12 +401,37 @@ public class CramMD5MechanismHandler implements MechanismHandler {
         }
     }
 
-    private static String getUserPassword(
-        String userName, DataStoreProvider dsp)
-    {
+    private static String getUserPassword(String userName) {
 
         try {
-            Set passwords = dsp.getAttribute(userName, ATTR_USER_PASSWORD);
+	    AMIdentityRepository idRepo = new AMIdentityRepository(adminToken,
+                SMSEntry.getRootSuffix());
+	    IdSearchControl searchControl = new IdSearchControl();
+	    searchControl.setTimeOut(0);
+	    searchControl.setMaxResults(0);
+	    searchControl.setAllReturnAttributes(false);
+	    IdSearchResults searchResults = idRepo.searchIdentities(
+		IdType.USER, userName, searchControl);
+	    Set users = searchResults.getSearchResults();
+
+            if (users == null || users.isEmpty()) {
+                if (debug.messageEnabled()) {
+                    debug.message("CramMD5MechanismHandler.getUserPassword: " +
+                        "no user found");
+                }
+                return null;
+            }
+
+            if (users.size() > 1) {
+                if (debug.messageEnabled()) {
+                    debug.message("CramMD5MechanismHandler.getUserPassword: " +
+                        "more than 1 user found");
+                }
+                return null;
+            }
+
+            AMIdentity user = (AMIdentity)users.iterator().next();
+            Set passwords = user.getAttribute("userPassword");
             if (passwords == null || passwords.isEmpty()) {
                 if (debug.messageEnabled()) {
                     debug.message("CramMD5MechanismHandler.getUserPassword: " +
@@ -412,10 +448,18 @@ public class CramMD5MechanismHandler implements MechanismHandler {
             }
 
             String password = (String)passwords.iterator().next();
-
+            if (password.startsWith("{CLEAR}")) {
+                password = password.substring(7);
+            }
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "CramMD5MechanismHandler.getUserPassword: " +
+                    "password = " + password);
+            }
             return password;
         } catch (Exception ex) {
-            debug.error("CramMD5MechanismHandler.getUserPassword: ", ex);
+            AuthnSvcUtils.debug.error(
+                "CramMD5MechanismHandler.getUserPassword: ", ex);
             return null;
         }
     }

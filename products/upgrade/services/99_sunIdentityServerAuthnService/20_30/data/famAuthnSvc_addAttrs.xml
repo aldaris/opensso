@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famAuthnSvc_addAttrs.xml,v 1.2 2008-03-20 17:24:15 bina Exp $
+   $Id: famAuthnSvc_addAttrs.xml,v 1.3 2008-06-23 21:15:25 hengming Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -36,5 +36,21 @@
         type="single"
         syntax="string"
         i18nKey="a103">
+    </AttributeSchema>
+    <AttributeSchema name="PlainMechanismAuthModule"
+        type="single"
+        syntax="string"
+        i18nKey="a104">
+        <DefaultValues>
+            <Value>DataStore</Value>
+        </DefaultValues>
+    </AttributeSchema>
+    <AttributeSchema name="CramMD5MechanismAuthModule"
+        type="single"
+        syntax="string"
+        i18nKey="a105">
+        <DefaultValues>
+            <Value>DataStore</Value>
+        </DefaultValues>
     </AttributeSchema>
 </Requests>

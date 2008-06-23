@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnSvcService.java,v 1.1 2006-10-30 23:14:41 qcheng Exp $
+ * $Id: AuthnSvcService.java,v 1.2 2008-06-23 21:12:01 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,8 +48,14 @@ public class AuthnSvcService implements ConfigurationListener
 {
     static final String SERVICE_NAME = "sunIdentityServerAuthnService";
     static final String MECHANISM_HANDLER_LIST_ATTR = "MechanismHandlerList";
+    static final String PLAIN_MECHANISM_AUTH_MODULE =
+        "PlainMechanismAuthModule";
+    static final String CRAMMD5_MECHANISM_AUTH_MODULE =
+        "CramMD5MechanismAuthModule";
 
     static HashMap handlers = new HashMap();
+    static String plainMechanismAuthModule = null;
+    static String cramMD5MechanismAuthModule = null;
 
     static ConfigurationInstance ci = null;
 
@@ -66,9 +72,7 @@ public class AuthnSvcService implements ConfigurationListener
     /**
      * Default constructor.
      */
-    private
-    AuthnSvcService()
-    {
+    private AuthnSvcService() {
     }
 
 
@@ -80,6 +84,24 @@ public class AuthnSvcService implements ConfigurationListener
      */
     public static MechanismHandler getMechanismHandler(String mechanism) {
         return (MechanismHandler)handlers.get(mechanism);
+    }
+
+    /**
+     * Returns authentication module for 'PLAIN' mechanism handler.
+     *
+     * @return authentication module for 'PLAIN' mechanism handler
+     */
+    public static String getPlainMechanismAuthenticationModule() {
+        return plainMechanismAuthModule;
+    }
+
+    /**
+     * Returns authentication module for 'CRAM-MD5' mechanism handler.
+     *
+     * @return authentication module for 'CRAM-MD5' mechanism handler
+     */
+    public static String getCramMD5MechanismAuthenticationModule() {
+        return cramMD5MechanismAuthModule;
     }
 
     /**
@@ -101,9 +123,8 @@ public class AuthnSvcService implements ConfigurationListener
     /**
      * Reads values from service schema.
      */
-    static private void
-    setValues()
-    {
+    static private void setValues() {
+
         Map attrMap = null;
         try {
             attrMap = ci.getConfiguration(null, null);
@@ -142,6 +163,20 @@ public class AuthnSvcService implements ConfigurationListener
                             "for Mechanism Handler List: " +  value);
                 }
             }
+        }
+
+        values = (Set)attrMap.get(PLAIN_MECHANISM_AUTH_MODULE);
+        if ((values == null) || (values.isEmpty())) {
+            plainMechanismAuthModule = null;
+        } else {
+            plainMechanismAuthModule = (String)values.iterator().next();
+        }
+
+        values = (Set)attrMap.get(CRAMMD5_MECHANISM_AUTH_MODULE);
+        if ((values == null) || (values.isEmpty())) {
+            cramMD5MechanismAuthModule = null;
+        } else {
+            cramMD5MechanismAuthModule = (String)values.iterator().next();
         }
     }
 }

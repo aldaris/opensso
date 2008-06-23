@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PlainMechanismHandler.java,v 1.3 2007-03-09 05:51:06 veiming Exp $
+ * $Id: PlainMechanismHandler.java,v 1.4 2008-06-23 21:13:47 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcConstants;
+import com.sun.identity.liberty.ws.authnsvc.AuthnSvcService;
 import com.sun.identity.liberty.ws.authnsvc.AuthnSvcUtils;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLRequest;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLResponse;
@@ -132,11 +133,19 @@ public class PlainMechanismHandler implements MechanismHandler {
                 "authzID = " + authzID + ", authnID = " + authnID);
         }
 
+        String authModule =
+            AuthnSvcService.getPlainMechanismAuthenticationModule();
+
+        if (debug.messageEnabled()) {
+            debug.message("PlainMechanismHandler.authenticate: " + 
+                "authModule = " + authModule);
+        }
+
         AuthContext authContext = null;
         try {
             authContext = new AuthContext(SMSEntry.getRootSuffix());
             authContext.login(AuthContext.IndexType.MODULE_INSTANCE,
-                "DataStore");
+                authModule);
         } catch (AuthLoginException le) {
             debug.error("PlainMechanismHandler.authenticate: ", le);
             return new SASLResponse(SASLResponse.ABORT);
