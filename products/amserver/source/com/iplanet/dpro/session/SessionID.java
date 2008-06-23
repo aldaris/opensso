@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.4 2007-11-17 00:12:06 dillidorai Exp $
+ * $Id: SessionID.java,v 1.5 2008-06-23 21:21:49 dillidorai Exp $
  *
  * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
@@ -28,6 +28,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.CookieUtils;
 import java.io.ByteArrayInputStream;
@@ -76,8 +77,6 @@ public class SessionID implements Serializable {
 
     private static String cookieName = null;
 
-    private static boolean hexEncodeCookie = false;
-
     private static Debug debug;
 
     private Boolean cookieMode = null;
@@ -87,15 +86,7 @@ public class SessionID implements Serializable {
         if (cookieName == null) {
             cookieName = SystemProperties.get("com.iplanet.am.cookie.name");
         }
-        hexEncodeCookie = Boolean.valueOf(
-                SystemProperties.get("com.iplanet.am.cookie.hexEncode", 
-                "false")).booleanValue();
         debug = Debug.getInstance("amSession");
-        if (debug.messageEnabled()) {
-            debug.message("SessionID.static block():" +
-                    "cookie.name=" + cookieName + "," +
-                    "hexEncodeCookie=" + hexEncodeCookie);
-        }
     }
 
     // prefix "S" is reserved to be used by session framework-specific
@@ -290,17 +281,18 @@ public class SessionID implements Serializable {
             throw new IllegalArgumentException("sid value is null or empty");
         }
         try {
-            String plainString = encryptedString;
-            if (hexEncodeCookie) {
-                plainString = hexToString(encryptedString);
+            String sidString = encryptedString;
+            // sidString would have * if it has been c66 encoded
+            if (sidString.indexOf("*") != -1) {
+                sidString = c66DecodeCookieString(encryptedString);
             }
-            int outerIndex = plainString.lastIndexOf("@");
+            int outerIndex = sidString.lastIndexOf("@");
             if (outerIndex == -1) {
                 isParsed = true;
                 return;
             }
 
-            String outer = plainString.substring(outerIndex + 1);
+            String outer = sidString.substring(outerIndex + 1);
             int tailIndex = outer.indexOf("#");
             tail = outer.substring(tailIndex + 1);
 
@@ -443,8 +435,8 @@ public class SessionID implements Serializable {
                 buf.append(tail);
             }
             String returnValue = buf.toString();
-            if (hexEncodeCookie) {
-                returnValue = stringToHex(returnValue);
+            if (c66EncodeCookie()) {
+                returnValue = c66EncodeSidString(returnValue);
             }
             return returnValue;
         } catch (Exception e) {
@@ -470,60 +462,118 @@ public class SessionID implements Serializable {
         return makeSessionID(encryptedID, prototype.extensions, prototype.tail);
     }
 
-    /** 
-     * Converts hex encoded string to plain text string. 
-     * This is not a general purpose utility. 
-     * This is meant only for internal use for converting hex encoded 
-     * session cookie to plain text string. 
+    /**
+     * Checks whether session id needs to be c66 encoded to convert to cookie
+     * value. 
+     * @return <code>true</code> if session id needs to be c66 encoded to
+     * convert to cookie value. Otherwise returns <code>false</code>.
+     * c66 encoding is opensso specific url safe char66 encoding.
      *
-     * @param hexString hex encoded string
-     * @return plain text string
+     * @see #c66EncodeSidString(String)
+     * @see #c66DecodeCookieString(String)
      */
-    private static String hexToString(String hexString) {
-        String plainString = hexString;
-        StringBuffer sb = new StringBuffer();
-        if ((hexString != null) && (hexString.length() != 0)) {
-            int l = hexString.length();
-            for (int i = 0; i < l; i = i + 2) {
-                int c1 = hexString.charAt(i);
-                int c2 = hexString.charAt(i + 1);
-                if (c1 >= 'a') {
-                    c1 =  c1 - 'a' + 10;
-                } else {
-                    c1 =  c1 - '0';
-                }
-                if (c2 >= 'a') {
-                    c2 =  c2 - 'a' + 10;
-                } else {
-                    c2 =  c2 - '0';
-                }
-                sb.append((char)(16*c1 + c2));
-            }
-            plainString = sb.toString();
-        }
-        return plainString;
+    private static boolean c66EncodeCookie() {
+        return Boolean.valueOf(
+                SystemProperties.get(Constants.C66_ENCODE_AM_COOKIE, 
+                "false")).booleanValue();
     }
 
     /** 
-     * Converts plain text string to hex encoded string.
+     * Converts native session id  string to opensso specific url safe char66
+     * encoded string.
      * This is not a general purpose utility. 
-     * This is meant only for internal use for converting base64 encoded
-     * session cookie to hex encoding
+     * This is meant only for internal use
      *
-     * @param plainString plain text string
-     * @return hex encoded string
+     * @param sidString plain text string
+     * @return url safe modifed char66 encoded string
+     *
+     * @see #c66DecodeCookieString(String)
+     * 
+     * Sample session id string:
+     * AQIC5wM2LY4SfcxPEcjVKCEI7QdmYvlOZvKZpdEErxVPvx8=@AAJTSQACMDE=# 
+     *
+     * We would replace
+     * + with -
+     * / with _
+     * = with .
+     * @ with star
+     * # with star
+     *
+     * while reconstucting the original cookie value first occurence of
+     * star would be replaced with @ and the subsequent occurunce star would 
+     * be replaced with #
      */
-    private static String stringToHex(String plainString) {
-        String hexString = plainString;
-        StringBuffer sb = new StringBuffer();
-        if ((plainString != null) && (plainString.length() != 0)) {
-            int l = plainString.length();
-            for (int i = 0; i < l; i++) {
-                sb.append(Integer.toHexString(plainString.charAt(i)));
-            }
-            hexString = sb.toString();
+    private static String c66EncodeSidString(String sidString) {
+        if (sidString == null || sidString.length() == 0) {
+            return sidString;
         }
-        return hexString;
+        int length = sidString.length();
+        char[] chars = new char[length];
+        for (int i = 0; i < length; i++) {
+            char c = sidString.charAt(i);
+            if (c == '+') {
+                chars[i] = '-';
+            } else if (c == '/') {
+                chars[i] = '_';
+            } else if (c == '=') {
+                chars[i] = '.';
+            } else if (c == '@') {
+                chars[i] = '*';
+            } else if (c == '#') {
+                chars[i] = '*';
+            } else {
+                chars[i] = c;
+            }
+        }
+        return new String(chars); 
+    }
+
+
+    /** 
+     * Converts opensso specific url safe char66
+     * encoded string to native session id  string.
+     * This is not a general purpose utility. 
+     * This is meant only for internal use
+     *
+     * @param urlEncodedString  opensso specific url safe char66 encoded string
+     * @return native session id string
+     *
+     * @see #c66EncodeSidString(String)
+     *
+     * We would replace
+     * - with +
+     * _ with /
+     * . with =
+     * first occurence of star with @
+     * subsequent occurence of star with #
+     */
+    private static String c66DecodeCookieString(String urlEncodedString) {
+        if (urlEncodedString == null || urlEncodedString.length() == 0) {
+            return urlEncodedString;
+        }
+        int length = urlEncodedString.length();
+        char[] chars = new char[length];
+        boolean firstStar = true;
+        for (int i = 0; i < length; i++) {
+            char c = urlEncodedString.charAt(i);
+            if (c == '-') {
+                chars[i] = '+';
+            } else if (c == '_') {
+                chars[i] = '/';
+            } else if (c == '.') {
+                chars[i] = '=';
+            } else if (c == '*') {
+                if (firstStar) {
+                    firstStar = false;
+                    chars[i] = '@';
+                } else {
+                    chars[i] = '#';
+                }
+            } else {
+                chars[i] = c;
+            }
+        }
+        return new String(chars); 
     }
 
 }

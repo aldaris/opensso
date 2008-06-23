@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.26 2008-06-16 20:58:28 veiming Exp $
+ * $Id: Constants.java,v 1.27 2008-06-23 21:21:48 dillidorai Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -134,6 +134,19 @@ public interface Constants {
      * Property string for cookie name.
      */
     String AM_COOKIE_NAME = "com.iplanet.am.cookie.name";
+
+    /**
+     * Property that determines whether to c66 encode session id 
+     * to convert to cookie string. Value would be read as boolean.
+     * Any value other than "true", case ignored, would be treated
+     * as <code>false</code>. c66 encoding is opensso specific
+     * url safe char66 encoding
+     *
+     * @see com.iplanet.dpro.session.SessionID#c66EncodeCookie()
+     * @see com.iplanet.dpro.session.SessionID#c66EncodeSidString()
+     * @see com.iplanet.dpro.session.SessionID#c66DecodeCookieString()
+     */
+    String C66_ENCODE_AM_COOKIE = "com.iplanet.am.cookie.c66Encode";
 
     /**
      * Property string for load balancer cookie name.
