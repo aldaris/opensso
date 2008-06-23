@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityAwareServlet.java,v 1.1 2007-08-22 20:40:50 sean_brydon Exp $
+ * $Id: SecurityAwareServlet.java,v 1.2 2008-06-23 17:35:51 huacui Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,24 +53,19 @@ public class SecurityAwareServlet extends SampleServletBase {
         
         StringBuffer buff = new StringBuffer();
         buff.append("The User \"").append(user).append("\" is ");
-        if (!isManager) {
-            if (!isEmployee) {
-                buff.append(" neither ");
-            } else {
-                buff.append(" not ");
-            }
-        }
-        buff.append("a manager");
-        if (isEmployee) {
-            if (!isManager) {
-                buff.append(", but is an employee.");
-            } else {
-                buff.append(" and also an employee.");
-            }
+        if (isManager) {
+             if (isEmployee) {
+                 buff.append("a manager and also an employee.");
+             } else {
+                 buff.append("a manager but not an employee.");
+             }
         } else {
-            buff.append(" nor an employee.");
+             if (isEmployee) {
+                 buff.append("not a manager but is an employee.");
+             } else {
+                 buff.append("neither a manager nor an employee.");
+             }
         }
-        
         return buff.toString();
     }
 }
