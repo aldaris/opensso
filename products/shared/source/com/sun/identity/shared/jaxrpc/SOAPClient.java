@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.11 2007-12-19 18:18:02 goodearth Exp $
+ * $Id: SOAPClient.java,v 1.12 2008-06-23 17:18:42 hengming Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -204,6 +204,7 @@ public class SOAPClient {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
                     "text/xml; charset=\"utf-8\"");
+            connection.setRequestProperty("SOAPAction", "\"\"");
             if (cookies != null) {
                 connection.setRequestProperty("Cookie", cookies);
             }
