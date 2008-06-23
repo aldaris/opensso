@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.15 2008-05-28 21:27:02 asyhuang Exp $
+ * $Id: EntityModelImpl.java,v 1.16 2008-06-23 18:38:20 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.ObjectFactory;
 
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
@@ -590,11 +591,10 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         return (list != null) ? list : Collections.EMPTY_LIST;
     }
     
-    protected Set convertListToSet(List list) {
-        Set s = new HashSet();
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            s.add(it.next());
+    protected OrderedSet convertListToSet(List list) {
+        OrderedSet s = new OrderedSet();
+        for (int i=0; i<list.size();i++){
+            s.add(list.get(i));
         }
         return s;
     }

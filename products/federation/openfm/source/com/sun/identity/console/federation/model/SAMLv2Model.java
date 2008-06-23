@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.16 2008-05-28 18:31:09 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.17 2008-06-23 18:38:20 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -142,6 +142,8 @@ public interface SAMLv2Model
     public static final String IDP_ATTR_MAP = "attributeMap";
     public static final String IDP_NAMEID_ENCRYPTED = 
         "wantNameIDEncrypted";
+    public static final String NAMEID_FORMAT_MAP =
+        "nameIDFormatMap";
     public static final String IDP_LOGOUT_REQ_SIGN =
         "wantLogoutRequestSigned";
     public static final String IDP_LOGOUT_RESP_SIGN =

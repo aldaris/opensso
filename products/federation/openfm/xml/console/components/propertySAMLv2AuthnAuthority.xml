@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2AuthnAuthority.xml,v 1.2 2008-02-25 21:09:39 babysunil Exp $
+   $Id: propertySAMLv2AuthnAuthority.xml,v 1.3 2008-06-23 18:40:43 asyhuang Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,14 +30,14 @@
         <property>
             <ccgroup> 
                 <property>
-                    <label name="lblEncrptionKeySize" 
+                    <label name="lblEncryptionKeySize" 
                            defaultValue="samlv2.authnauthority.attribute.label.keysize" 
                            labelFor="keySize" />
                     <cc name="keySize" 
                         tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
                 </property>                
                 <property>
-                    <label name="lblEncrptionAlgorithm" 
+                    <label name="lblEncryptionAlgorithm" 
                            defaultValue="samlv2.authnauthority.attribute.label.algorithm" 
                            labelFor="Algorithm" />
                     <cc name="Algorithm" 

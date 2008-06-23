@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.22 2008-06-09 18:30:53 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.23 2008-06-23 18:38:20 asyhuang Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMAdminUtils;
-import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMConsoleException;
 import javax.servlet.http.HttpServletRequest;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
@@ -39,7 +38,6 @@ import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeElement;
 import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.ArtifactResolutionServiceElement;
-import com.sun.identity.saml2.jaxb.metadata.EndpointType;
 import com.sun.identity.saml2.jaxb.metadata.SingleLogoutServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.ManageNameIDServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
@@ -56,7 +54,6 @@ import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzServiceElement;
-import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.saml2.jaxb.metadata.NameIDMappingServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AuthnAuthorityConfigElement;
@@ -72,15 +69,12 @@ import com.sun.identity.saml2.jaxb.entityconfig.AffiliationConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.KeyDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.EncryptionMethodElement;
 import com.sun.identity.saml2.jaxb.xmlenc.EncryptionMethodType;
-import com.sun.identity.saml2.jaxb.xmlenc.EncryptionMethodType.KeySize;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import javax.xml.bind.JAXBException;
-import com.iplanet.jato.RequestManager;
-import com.iplanet.jato.RequestContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +110,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(IDP_AUTO_FED_ATTR, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_ATTR_MAP, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_NAMEID_ENCRYPTED, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(NAMEID_FORMAT_MAP,Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_LOGOUT_REQ_SIGN, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_LOGOUT_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(IDP_MNI_REQ_SIGN, Collections.EMPTY_SET);
@@ -216,7 +211,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedACMetaIdpMap.put(IDP_MNI_RESP_SIGN, Collections.EMPTY_SET);
         extendedACMetaIdpMap.put(IDP_SIGN_CERT_ALIAS, Collections.EMPTY_SET);
         extendedACMetaIdpMap.put(IDP_ENCRYPT_CERT_ALIAS, Collections.EMPTY_SET);
-        extendedACMetaIdpMap.put(IDP_NAMEID_ENCRYPTED, Collections.EMPTY_SET);    
+        extendedACMetaIdpMap.put(IDP_NAMEID_ENCRYPTED, Collections.EMPTY_SET); 
+        extendedACMetaIdpMap.put(NAMEID_FORMAT_MAP,Collections.EMPTY_SET);
         extendedACMetaIdpMap.put(IDP_AUTHN_CONTEXT_MAPPER, 
                 Collections.EMPTY_SET);
         extendedACMetaIdpMap.put(IDP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
@@ -519,13 +515,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 
                 //retrieve nameid format
-                List NameIdFormatList = idpssoDescriptor.getNameIDFormat();
-                if (!NameIdFormatList.isEmpty()) {
-                    map.put(NAMEID_FORMAT, returnEmptySetIfValueIsNull(
-                            convertListToSet(NameIdFormatList)));
-                }
+                map.put(NAMEID_FORMAT,  
+                    (OrderedSet) convertListToSet(idpssoDescriptor.getNameIDFormat()));
                 
-                //retrieve SingleSignOnService
                 map.put(SINGLE_SIGNON_HTTP_LOCATION, Collections.EMPTY_SET);
                 map.put(SINGLE_SIGNON_SOAP_LOCATION, Collections.EMPTY_SET);
                 map.put(SSO_SOAPS_LOC, Collections.EMPTY_SET);
@@ -807,7 +799,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 List NameIdFormatList = spssoDescriptor.getNameIDFormat();
                 if (!NameIdFormatList.isEmpty()) {
                     map.put(NAMEID_FORMAT, returnEmptySetIfValueIsNull(
-                            convertListToSet(NameIdFormatList)));
+                            (NameIdFormatList)));
                 }
                 
                 //retrieve key descriptor encryption details if present
@@ -1708,12 +1700,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             Map values
             ) throws AMConsoleException {
         List listtoSave = convertSetToList(
-                (Set)values.get(NAMEID_FORMAT));
+                (Set)values.get(NAMEID_FORMAT));               
         ssodescriptor.getNameIDFormat().clear();
-        Iterator itt = listtoSave.listIterator();
-        while (itt.hasNext()) {
-            String name =(String) itt.next();
-            ssodescriptor.getNameIDFormat().add(name);
+        for (int i=0; i<listtoSave.size();i++) {           
+            ssodescriptor.getNameIDFormat().add(listtoSave.get(i));
         }
     }
     
@@ -2780,7 +2770,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 List NameIdFormatList = attrQueryDescriptor.getNameIDFormat();
                 if (!NameIdFormatList.isEmpty()) {
                     map.put(ATTR_NAMEID_FORMAT, returnEmptySetIfValueIsNull(
-                            convertListToSet(NameIdFormatList)));
+                            (NameIdFormatList)));
                 }
                 
             }

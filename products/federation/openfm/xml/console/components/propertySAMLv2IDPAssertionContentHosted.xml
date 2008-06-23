@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPAssertionContentHosted.xml,v 1.2 2008-05-28 18:27:13 babysunil Exp $
+   $Id: propertySAMLv2IDPAssertionContentHosted.xml,v 1.3 2008-06-23 18:40:47 asyhuang Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -81,7 +81,7 @@
             </ccgroup>
         </property>
         <property>
-            <label name="lblEncrpytDet" defaultValue="samlv2.attribute.label.EncryptDetails" />
+            <label name="lblEncryptDet" defaultValue="samlv2.attribute.label.EncryptDetails" />
             <ccgroup>
                 <property>
                     <label name="lblIDPwantNameIDEncrypted"
@@ -119,7 +119,7 @@
                     </cc>
                 </property>                                
                 <property>
-                    <label name="lblEncrptionKeySize" 
+                    <label name="lblEncryptionKeySize" 
                            defaultValue="samlv2.attribute.label.keysize" 
                            labelFor="keySize" />
                     <cc name="keySize" 
@@ -130,7 +130,7 @@
                     </cc>
                 </property>                
                 <property>
-                    <label name="lblEncrptionAlgorithm" 
+                    <label name="lblEncryptionAlgorithm" 
                            defaultValue="samlv2.attribute.label.algorithm" 
                            labelFor="Algorithm" />
                     <cc name="Algorithm" 
@@ -144,11 +144,36 @@
         </property>
     </section>
     
-      <section name="attributes" defaultValue="samlv2idp.provider.section.title.nameidformat" >
+    <section name="attributes" defaultValue="samlv2idp.provider.section.title.nameidformat" >
         <property>
-            <ccgroup>
+            <label name="lblNameidlist"
+                   defaultValue="samlv2idp.attribute.label.nameidlist"
+                   labelFor="nameidlist" />                 
+        </property>
+        <property>           
+            <ccgroup>                
                 <property>
                     <cc name="nameidlist" 
+                        tagclass=
+                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" 
+                                   value="label.current.value" />
+                        <attribute name="textboxLabel"
+                                   value="label.new.value" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+        <property>
+            <label name="lblNameIDFormatMap"
+                   defaultValue="samlv2idp.attribute.label.nameIDFormatMap"
+                   labelFor="nameIDFormatMap" />                 
+        </property>
+        <property>
+            <ccgroup>                
+                <property>
+                    <cc name="nameIDFormatMap" 
                         tagclass=
                         "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
                         <attribute name="name" value="list" />
@@ -220,7 +245,7 @@
             </cc>
         </property>
     </section>
-   
+    
     <section name="assertion" defaultValue="samlv2idp.provider.section.title.assertion" >  
         <property>
             <ccgroup>
@@ -297,7 +322,7 @@
             </cc>
         </property>
     </section>
-     <section name="bootstrap" defaultValue="samlv2idp.provider.section.title.bootstrap" >  
+    <section name="bootstrap" defaultValue="samlv2idp.provider.section.title.bootstrap" >  
         <property>
             <label name="lblIDPdiscoveryBootstrappingEnabled"
                    defaultValue="samlv2idp.attribute.label.idpdiscoveryBootstrappingEnabled"
@@ -308,5 +333,5 @@
             </cc>
         </property>
     </section> 
-   
+    
 </propertysheet>
