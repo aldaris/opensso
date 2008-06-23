@@ -20,7 +20,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.22 2008-05-29 06:48:45 mrudul_uchil Exp $
+$Id: README,v 1.23 2008-06-23 17:03:30 veiming Exp $
 
 Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
@@ -218,7 +218,7 @@ testng-5.1-jdk15.jar in the base directory.
 %% 2.6 Obtaining fmsae.dll and agent-cdsk
 
 Download opensso.zip from 
-http://download.java.net/general/opensso/nightly/opensso/latest/opensso.zip
+http://download.java.net/general/opensso/nightly/latest/opensso/opensso.zip
 Save the zip file locally, unzip it, then get fmsae.dll  from 
 libraries/native/dll and copy it into the opensso/products/extlib directory
 in your workspace. Copy the agent-csdk subdirectory, and contents from 
@@ -371,8 +371,8 @@ the demo related build output area is cleaned.
 
 The war target first invokes the build target and then delegates the
 further processing to the build.xml file present under the war directory.
-A deployable WAR file will be created under amserver/built/war/dist directory
-after this target is successful executed.
+A deployable WAR file will be created under federation/openfm/built/war/dist
+directory after this target is successful executed.
 
 %% 3.7 war-clean target
 
