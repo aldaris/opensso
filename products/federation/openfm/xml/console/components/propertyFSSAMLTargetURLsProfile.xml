@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLTargetURLsProfile.xml,v 1.1 2007-07-10 09:50:30 asyhuang Exp $
+   $Id: propertyFSSAMLTargetURLsProfile.xml,v 1.2 2008-06-24 18:04:50 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -32,6 +32,7 @@
                 <option label="saml.profile.targetURLs.protocol.option.http" value="http"/>
                 <option label="saml.profile.targetURLs.protocol.option.https" value="https" />
             </cc>
+            <fieldhelp name="helpProtocol" defaultValue="saml.profile.targetURLs.protocol.help" />
         </property>
         <property required="true">
             <label name="lblTarget" defaultValue="saml.profile.targetURLs.target.label" labelFor="targetURLs-target" />
@@ -40,6 +41,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
                 <attribute name="size" value="75" />
             </cc>
+            <fieldhelp name="helpTarget" defaultValue="saml.profile.targetURLs.target.help" />
         </property>
         <property>
             <label name="lblPort" defaultValue="saml.profile.targetURLs.port.label" labelFor="targetURLs-port" />
@@ -48,6 +50,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
                 <attribute name="size" value="5" />
             </cc>
+            <fieldhelp name="helpPort" defaultValue="saml.profile.targetURLs.port.help" />
         </property>
         <property>
             <label name="lblPath" defaultValue="saml.profile.targetURLs.path.label" labelFor="targetURLs-path" />
@@ -56,6 +59,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
                 <attribute name="size" value="75" />
             </cc>
+             <fieldhelp name="helpPath" defaultValue="saml.profile.targetURLs.path.help" />
         </property>
     </section>
 </propertysheet>

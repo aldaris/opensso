@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLProfile.xml,v 1.2 2007-10-19 05:03:09 asyhuang Exp $
+   $Id: propertyFSSAMLProfile.xml,v 1.3 2008-06-24 18:04:34 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,7 +34,11 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+              <fieldhelp name="helpiplanet-am-saml-target-specifier" defaultValue="saml.profile.properties.target.specifier.help" />
         </property>            
+        <property>
+        <fieldhelp name="helpiplanet-am-saml-siteid-issuername-list" defaultValue="saml.profile.properties.siteid.help" />
+        </property> 
         <property span="true">
             <cc name="iplanet-am-saml-siteid-issuername-list" tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
                 <attribute name="title" value="saml.profile.siteid.table.header" />
@@ -50,7 +54,10 @@
                 <attribute name="showSelectionSortIcon" value="false" />
                 <attribute name="showSortingRow" value="true" />
             </cc>
-        </property>            
+        </property>  
+        <property>
+        <fieldhelp name="helpiplanet-am-saml-post-to-target-urls" defaultValue="saml.profile.properties.targeturl.help" />
+        </property> 
         <property span="true">
             <cc name="iplanet-am-saml-post-to-target-urls" tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
                 <attribute name="title" value="saml.profile.targetURLs.table.header" />
@@ -76,7 +83,8 @@
                 tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
                 <option label="saml.profile.protocol.version.1.1" value="1.1" />
                 <option label="saml.profile.protocol.version.1.0" value="1.0" />                               
-            </cc>                      
+            </cc> 
+            <fieldhelp name="helpProtocolVersion" defaultValue="saml.profile.protocol.help.version" />
         </property>       
     </section>    
     
@@ -89,7 +97,8 @@
                 tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" >
                 <option label="saml.profile.assertion.version.1.1" value="1.1" />
                 <option label="saml.profile.assertion.version.1.0" value="1.0" />                               
-            </cc>                      
+            </cc>       
+            <fieldhelp name="helpiplanet-am-saml-assertion-version" defaultValue="saml.profile.assertion.help.version" />
         </property>        
         <property>
             <label name="lbliplanet-am-saml-assertion-remove" 
@@ -98,6 +107,7 @@
             <cc name="RemoveAssertion" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Yes" />
             </cc>  
+            <fieldhelp name="helpiplanet-am-saml-assertion-remove" defaultValue="saml.profile.assertion.help.remove" />
         </property>                                       
         <property>
             <label name="lbliplanet-am-saml-assertion-timeout" labelFor="iplanet-am-saml-assertion-timeout" />
@@ -106,7 +116,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-            <fieldhelp name="helpiplanet-am-saml-assertion-timeout" />
+            <fieldhelp name="helpiplanet-am-saml-assertion-timeout" defaultValue="saml.profile.assertion.help.iplanet-am-saml-assertion-timeout" />
         </property>
         <property>
             <label name="lbliplanet-am-saml-notbefore-timeskew" labelFor="iplanet-am-saml-notbefore-timeskew" />
@@ -115,7 +125,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-            <fieldhelp name="helpiplanet-am-saml-notbefore-timeskew" />
+            <fieldhelp name="helpiplanet-am-saml-notbefore-timeskew"  defaultValue="saml.profile.assertion.help.iplanet-am-saml-notbefore-timeskew"/>
         </property>
     </section>    
     <section name="artifact" defaultValue="saml.profile.artifact.header">
@@ -127,6 +137,7 @@
                 <attribute name="size" value="5" />
             </cc>
             <fieldhelp name="helpiplanet-am-saml-artifact-timeout" />
+            <fieldhelp name="helpiplanet-am-saml-artifact-timeout2" defaultValue="saml.profile.assertion.help.iplanet-am-saml-artifact-timeout"/>
         </property>
         <property>
             <label name="lbliplanet-am-saml-artifact-name" labelFor="iplanet-am-saml-artifact-name" />
@@ -134,7 +145,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-            <fieldhelp name="helpiplanet-am-saml-artifact-name" />
+            <fieldhelp name="helpiplanet-am-saml-artifact-name" defaultValue="saml.profile.assertion.help.iplanet-am-saml-artifact-name"/>
         </property>
     </section>    
     <section name="signing" defaultValue="saml.profile.signing.header">
@@ -143,26 +154,30 @@
             <cc name="iplanet-am-saml-signassertion" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Yes" />
             </cc>
+            <fieldhelp name="helpiplanet-am-saml-signassertion" defaultValue="saml.profile.assertion.help.signassertion" />
         </property>
         <property>
             <label name="lbliplanet-am-saml-signrequest" labelFor="iplanet-am-saml-signrequest" />
             <cc name="iplanet-am-saml-signrequest" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Yes" />
             </cc>
+            <fieldhelp name="helpiplanet-am-saml-signrequest" defaultValue="saml.profile.assertion.help.signrequest" />
         </property>
         <property>
             <label name="lbliplanet-am-saml-signresponse" labelFor="iplanet-am-saml-signresponse" />
             <cc name="iplanet-am-saml-signresponse" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Yes" />
             </cc>
+            <fieldhelp name="helpiplanet-am-saml-signresponse" defaultValue="saml.profile.assertion.help.signresponse" />
         </property>
     </section>   
     
-    <section name="AttributeQuery" defaultValue="saml.profile.attribute.query.header">
+    <section name="AttributeQuery" defaultValue="saml.profile.attribute.query.header">       
         <property>
             <label name="lblAttributeListForAttributeQuery" 
                    defaultValue="saml.profile.attribute.query.label"
-                   labelFor="lblAttributeListForAttributeQuery" />                        
+                   labelFor="lblAttributeListForAttributeQuery" />    
+            <fieldhelp name="helpAttributeListForAttributeQuery" defaultValue="saml.profile.attribute.query.help" />
             <ccgroup>
                 <property>                
                     <cc name="AttributeListForAttributeQuery" 

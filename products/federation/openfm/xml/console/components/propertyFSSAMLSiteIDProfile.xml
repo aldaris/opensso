@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLSiteIDProfile.xml,v 1.1 2007-07-10 09:50:07 asyhuang Exp $
+   $Id: propertyFSSAMLSiteIDProfile.xml,v 1.2 2008-06-24 18:04:46 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
                 <attribute name="size" value="75" />
             </cc>
+            <fieldhelp name="helpInstanceID" defaultValue="saml.profile.siteid.instanceid.help" />
         </property>
         <property required="true">
             <label name="lblSiteID" defaultValue="saml.profile.siteid.siteid.label" labelFor="siteID" />
@@ -42,6 +43,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
                 <attribute name="size" value="35" />
             </cc>
+             <fieldhelp name="helpSiteID" defaultValue="saml.profile.siteid.siteid.help" />
         </property>
         <property required="true">
             <label name="lblIssuerName" defaultValue="saml.profile.siteid.issuername.label" labelFor="issuerName" />
@@ -50,6 +52,7 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
                 <attribute name="size" value="50" />
             </cc>
+             <fieldhelp name="helpIssuerName" defaultValue="saml.profile.siteid.issuername.help" />
         </property>
     </section>
 </propertysheet>

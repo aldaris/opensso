@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLSelectTrustedPartnerType.xml,v 1.1 2007-07-10 09:50:26 asyhuang Exp $
+   $Id: propertyFSSAMLSelectTrustedPartnerType.xml,v 1.2 2008-06-24 18:04:38 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -28,35 +28,47 @@
 <propertysheet>
     <section name="dummy" defaultValue="blank.header">
         <property required="true">
-            <label name="lblTrustedPartnerProfile" defaultValue="saml.profile.trustedPartners.selectType.profile.label" />
+            <label name="lblTrustedPartnerProfile" defaultValue="saml.profile.trustedPartners.selectType.profile.label" />           
+            <fieldhelp name="helpTrustedPartnerProfile" defaultValue="saml.profile.trustedPartners.selectType.profile.help" />
         </property>        
-        <subsection name="secTrustedPartnerDestination" defaultValue="saml.profile.trustedPartners.selectType.profile.destination.label">
+        <subsection name="secTrustedPartnerDestination" defaultValue="saml.profile.trustedPartners.selectType.profile.destination.label">   
+            <property>
+            <fieldhelp name="helpSecTrustedPartnerSender" defaultValue="saml.profile.trustedPartners.selectType.profile.destination.help" />            
+            </property>
             <property>
                 <cc name="destination-artifact" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.artifact.label" />
+                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.artifact.label" />                   
                 </cc>
+                <fieldhelp name="helpdestination-artifact" defaultValue="saml.profile.trustedPartners.selectType.profile.artifact.help" />
             </property>            
             <property>
                 <cc name="destination-post" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.post.label" />
+                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.post.label" />                    
                 </cc>
+                <fieldhelp name="helpdestination-post" defaultValue="saml.profile.trustedPartners.selectType.profile.post.help" />
             </property>                        
             <property>
                 <cc name="destination-soap" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.soap.label" />
+                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.soap.label" />                   
                 </cc>
+                <fieldhelp name="helpdestination-soap" defaultValue="saml.profile.trustedPartners.selectType.profile.soap.help" />
             </property>            
         </subsection>        
-        <subsection name="secTrustedPartnerSource" defaultValue="saml.profile.trustedPartners.selectType.profile.source.label">
+        <subsection name="secTrustedPartnerSource" defaultValue="saml.profile.trustedPartners.selectType.profile.source.label">                       
+            <property>
+            <fieldhelp name="helpSecTrustedPartnerReceiver" defaultValue="saml.profile.trustedPartners.selectType.profile.source.help" />            
+            </property>
             <property>
                 <cc name="source-artifact" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.artifact.label" />
+                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.artifact.label" />                    
                 </cc>
+                <fieldhelp name="helpsource-artifact" defaultValue="saml.profile.trustedPartners.selectType.profile.artifact.help" />
             </property>
             <property>
                 <cc name="source-post" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.post.label" />
+                    <attribute name="label" value="saml.profile.trustedPartners.selectType.profile.post.label" />                    
                 </cc>
+                <fieldhelp name="helpsource-post" defaultValue="saml.profile.trustedPartners.selectType.profile.post.help" />
             </property>
         </subsection>
     </section>
