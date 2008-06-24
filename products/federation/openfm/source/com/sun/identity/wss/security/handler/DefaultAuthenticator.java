@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.7 2008-06-20 20:42:36 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.8 2008-06-24 01:52:10 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -733,6 +733,8 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         if (kbConfig instanceof KerberosConfiguration) {
             kc = (KerberosConfiguration) kbConfig;
             kc.setRefreshConfig("true");
+            kc.setPrincipalName(config.getKerberosServicePrincipal());
+            kc.setKeyTab(config.getKeyTabFile());
         } else {
             kc = new KerberosConfiguration(kbConfig);
             kc.setPrincipalName(config.getKerberosServicePrincipal());

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.4 2008-06-20 20:42:35 mallas Exp $
+ * $Id: BinarySecurityToken.java,v 1.5 2008-06-24 01:52:09 mallas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -187,14 +187,13 @@ public class BinarySecurityToken implements SecurityToken {
      */
     public BinarySecurityToken(KerberosTokenSpec kbSpec) 
                       throws SecurityException {
-         
+         this.kbSpec = kbSpec;
          getKerberosToken();
          this.value = kerberosToken;
          this.valueType = kbSpec.getValueType();
          this.encodingType = kbSpec.getEncodingType();
          this.tokenType = SecurityToken.WSS_KERBEROS_TOKEN;
-         this.id = SAMLUtils.generateID();
-         this.kbSpec = kbSpec;
+         this.id = SAMLUtils.generateID();         
                  
     }
     /**
@@ -264,6 +263,10 @@ public class BinarySecurityToken implements SecurityToken {
             debug.error("BinarySecurityToken: valueType missing");
             throw new SecurityException(
                 bundle.getString("missingAttribute") + " : " + VALUE_TYPE);
+        }
+        
+        if(valueType.equals(WSSConstants.KERBEROS_VALUE_TYPE)) {
+           tokenType = SecurityToken.WSS_KERBEROS_TOKEN;
         }
 
         try {            
@@ -353,7 +356,9 @@ public class BinarySecurityToken implements SecurityToken {
         KerberosConfiguration kc = null;
         if (config instanceof KerberosConfiguration) {
             kc = (KerberosConfiguration) config;
-            kc.setRefreshConfig("true");            
+            kc.setRefreshConfig("true");
+            kc.setPrincipalName(kbSpec.getServicePrincipal());
+            kc.setTicketCacheDir(kbSpec.getTicketCacheDir());
         } else {
             kc = new KerberosConfiguration(config);
             kc.setRefreshConfig("true");
