@@ -20,7 +20,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: SMAuthService.xml,v 1.1 2008-05-19 17:54:13 mallas Exp $
+    $Id: SMAuthService.xml,v 1.2 2008-06-24 17:28:05 mallas Exp $
 
     Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -158,7 +158,7 @@
                     i18nKey="a114">
                 </AttributeSchema>
 
-            SubSchema name="serverconfig" inheritance="multiple">            
+            <SubSchema name="serverconfig" inheritance="multiple">            
                 <AttributeSchema name="SMCookieName"
                     type="single"
                     syntax="string"
