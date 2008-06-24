@@ -135,12 +135,15 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
     if (*patbegin == '\0' && *matchbegin == '\0')
 	return AM_EXACT_MATCH;
 
-    while (*p1 != '\0' && *p1 !='*' && *p1 != '-')
+    while (*p1 != '\0' && *p1 !='*') { 
+	// check for one-level wild card pattern
+        if ((*p1 == '-') && (*(p1+1) == '*') && (*(p1+2) == '-')) {
+            onelevelwildcard = true;
+	    break;
+        }
 	p1++;
-
-    if ((*p1 == '-') && (*(p1+1) == '*') && (*(p1+2) == '-')) {
-        onelevelwildcard = true;
     }
+
     if (*p1 == '\0') {
 	if (caseignorecmp) {
 	    if (strcasecmp(patbegin, matchbegin) == 0)
@@ -228,13 +231,13 @@ Utils::match_patterns(const char *patbegin, const char *matchbegin,
                     char_match++;                    
                 }
                 
-                string patbegin(p2);
+                string patternbegin(p2);
                 s2 = (char *) malloc(strlen(s1)+1);
                 if (s2 != NULL) {
                     memset(s2, '\0', strlen(s1)+1);
                     // Try to find the substring in the matchbegin, get the
                     // match position (position where the substring begins)
-                    match_position = matchbegin.find(patbegin,0);
+                    match_position = matchbegin.find(patternbegin,0);
                     if (match_position > 0) {
                         // Substring exists, now starting from the index 0 
                         // upto the match_position, collect the characters
@@ -350,7 +353,7 @@ compare_sub_pat(const char *r1, const char *r2,
         string::size_type r2_loc = r2_str.find("?",0);
     
         // First thing to check is whether r1 or r2 have a "?" in it.
-        // This requires extra pattern matchin. If neither one of them have it
+        // This requires extra pattern matching. If neither one of them have it
         // we can ignore the below check and continue as before.
         if ((r1_loc != string::npos) || (r2_loc != string::npos)) {
             // We have a "?" in either the pattern or the match_string
@@ -363,8 +366,8 @@ compare_sub_pat(const char *r1, const char *r2,
             }
             // We have a "?" in both the pattern and the match string,
             // continue further. The algorithm is to strtok the pattern and
-            // the match string at "?" and this each of the pattern tokens and
-            // match tokens to the match_patterns algorithm. 
+            // the match string at "?" and send this each of the pattern 
+            // tokens and match tokens to the match_patterns algorithm. 
             char *tmp_r1 = NULL;
             char *tmp_r2 = NULL;
             char *pattern = NULL;            
@@ -381,7 +384,7 @@ compare_sub_pat(const char *r1, const char *r2,
                     match_str = strtok_r(tmp_r2, "?", &match_str_holder);
                     
                     while (pattern != NULL && match_str != NULL && 
-                            result == AM_EXACT_PATTERN_MATCH) {            
+                            result == AM_EXACT_PATTERN_MATCH) {
                         result = match_patterns(pattern, match_str,
                                          B_TRUE==traits->ignore_case,false,
                                          traits->separator);            
@@ -420,6 +423,7 @@ compare_sub_pat(const char *r1, const char *r2,
 
     string r_1(r1);
     int size = r_1.size() - 1;
+
     if(*(r1 + size) == '*')
 	return AM_NO_MATCH;
 

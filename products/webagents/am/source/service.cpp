@@ -1231,14 +1231,6 @@ Service::getPolicyResult(const char *userSSOToken,
 	}
     } while(justUpdated);
 
-    int counter = 0;
-    while ((results.size() == 0) && (++counter < 6)) {
-        // Server is in the process of updating the policy cache.
-        // Wait till the cache is populated
-        PR_Sleep(PR_TicksPerSecond());
-        uPolicyEntry->getAllPolicyDecisions(resName, results);
-    }
-
     // now set remote user and ldap attributes if any.
     setRemUserAndAttrs(policy_res, uPolicyEntry, uSessionInfo,
                        resName, results, properties,
