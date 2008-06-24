@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionContentHosted.xml,v 1.3 2008-06-23 18:40:54 asyhuang Exp $
+   $Id: propertySAMLv2SPAssertionContentHosted.xml,v 1.4 2008-06-24 22:39:05 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -179,6 +179,7 @@
                         <attribute name="textboxLabel"
                                    value="label.new.value" />
                     </cc>
+                    <fieldhelp name="helpnameidlist" defaultValue="samlv2.spac.help.nameidlist" />
                 </property>
             </ccgroup>
         </property>
@@ -239,6 +240,7 @@
                 <attribute name="showSelectionSortIcon" value="false" />
                 <attribute name="showSortingRow" value="false" />
             </cc>
+            <fieldhelp name="helptblAuthenticationContext" defaultValue="samlv2.spac.help.tblAuthenticationContext" />
         </property>
         <property>
             <label name="lblSPAuthncontextComparisonType"
@@ -269,6 +271,7 @@
     </section>
     <section name="auth" defaultValue="samlv2idp.provider.section.title.basicauth" >
         <property>
+            <fieldhelp name="helpbasicAuthentication" defaultValue="samlv2.spac.help.basicAuthentication" />
             <ccgroup>
                 <property>
                     <label name="lblSPbasicAuthOn"

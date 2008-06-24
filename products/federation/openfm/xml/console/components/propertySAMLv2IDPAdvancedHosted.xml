@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPAdvancedHosted.xml,v 1.1 2008-04-22 21:56:19 babysunil Exp $
+   $Id: propertySAMLv2IDPAdvancedHosted.xml,v 1.2 2008-06-24 22:39:04 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpSAEIDPUrl" defaultValue="samlv2sp.attribute.help.SAEIDPUrl" />
         </property>               
         <subsection name="elistSAEAppSecretList" defaultValue="" >
             <property>
@@ -47,7 +48,8 @@
                             <attribute name="name" value="list" />
                             <attribute name="listboxLabel" value="label.current.value" />
                             <attribute name="textboxLabel" value="label.new.value" />
-                        </cc>                      
+                        </cc>
+                        <fieldhelp name="helpsaeAppSecretList" defaultValue="samlv2idp.attribute.help.saeAppSecretList" />
                     </property>
                 </ccgroup>                
             </property>
@@ -62,6 +64,8 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpDdpECPSessionMapper" defaultValue="samlv2sp.attribute.help.IdpECPSessionMapper" />
         </property>                
     </section>    
 </propertysheet>
+

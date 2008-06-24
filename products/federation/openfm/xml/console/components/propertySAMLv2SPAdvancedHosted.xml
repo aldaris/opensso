@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAdvancedHosted.xml,v 1.1 2008-04-22 21:58:59 babysunil Exp $
+   $Id: propertySAMLv2SPAdvancedHosted.xml,v 1.2 2008-06-24 22:39:05 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -34,6 +34,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpSAESPUrl" defaultValue="samlv2sp.attribute.help.SAESPUrl" />
         </property>       
         <property>
             <label name="lblSAESPLogoutUrl" defaultValue="samlv2sp.attribute.label.sae.saeSPLogoutUrl" labelFor="saeSPLogoutUrl" />
@@ -42,6 +43,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpsaeSPLogoutUrl" defaultValue="samlv2sp.attribute.help.saeSPLogoutUrl" />
         </property>           
         <subsection name="elistSAEAppSecretList" defaultValue="" >
             <property>
@@ -55,7 +57,8 @@
                             <attribute name="name" value="list" />
                             <attribute name="listboxLabel" value="label.current.value" />
                             <attribute name="textboxLabel" value="label.new.value" />
-                        </cc>                      
+                        </cc>
+                        <fieldhelp name="helpsaeAppSecretList" defaultValue="samlv2sp.attribute.help.saeAppSecretList" />
                     </property>
                 </ccgroup>                
             </property>
@@ -74,6 +77,7 @@
                         <attribute name="autoSubmit" value="false" />
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
+                    <fieldhelp name="helpPaosLocation" defaultValue="samlv2sp.attribute.help.SPECPPaosLocation" />
                 </property>
                 <property>
                     <label name="lblPaosAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.paosassertconsumerserviceindex" 
@@ -83,6 +87,7 @@
                         <attribute name="autoSubmit" value="false" />
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
+                    <fieldhelp name="helpPaosIndex" defaultValue="samlv2sp.attribute.help.SPECPPaosIndex" />
                 </property>
             </ccgroup>
         </property>
@@ -94,6 +99,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpECPRequestIDPListFinderImpl" defaultValue="samlv2sp.attribute.help.SPECPRequestIDPListFinderImpl" />
         </property>                        
         <property>
             <label name="lblECPRequestIDPListGetComplete" defaultValue="samlv2sp.attribute.label.ecp.ECPRequestIDPListGetComplete" labelFor="ECPRequestIDPListGetComplete" />
@@ -102,6 +108,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpECPRequestIDPListGetComplete" defaultValue="samlv2sp.attribute.help.SPECPRequestIDPListGetComplete" />
         </property>               
         <subsection name="elistECPRequestIDPList" defaultValue="" >
             <property>
@@ -115,7 +122,8 @@
                             <attribute name="name" value="list" />
                             <attribute name="listboxLabel" value="label.current.value" />
                             <attribute name="textboxLabel" value="label.new.value" />
-                        </cc>                      
+                        </cc>
+                        <fieldhelp name="helpECPRequestIDPList" defaultValue="samlv2sp.attribute.help.SPECPRequestIDPList" />
                     </property>
                 </ccgroup>                
             </property>
@@ -132,6 +140,7 @@
                 tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" >
                 <attribute name="label" value="label.Enable" />
             </cc>
+            <fieldhelp name="helpenableIDPProxy" defaultValue="samlv2sp.attribute.help.SPenableIDPProxy" />
         </property>
         <property>
             <label name="lbluseIntroForIDPProxy"
@@ -154,6 +163,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpidpProxyCount" defaultValue="samlv2sp.attribute.help.SPidpProxyCount" />
         </property>
         <property>
             <label name="lblidpProxyList"
@@ -170,6 +180,7 @@
                         <attribute name="textboxLabel"
                                    value="label.new.value" />
                     </cc>
+                    <fieldhelp name="helpidpProxyList" defaultValue="samlv2sp.attribute.help.SPidpProxyList" />
                 </property>
             </ccgroup>                    
         </property>  

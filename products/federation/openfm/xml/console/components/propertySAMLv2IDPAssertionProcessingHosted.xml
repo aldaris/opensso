@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPAssertionProcessingHosted.xml,v 1.2 2008-06-09 18:34:39 babysunil Exp $
+   $Id: propertySAMLv2IDPAssertionProcessingHosted.xml,v 1.3 2008-06-24 22:39:05 babysunil Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -55,6 +55,7 @@
                                 <attribute name="textboxLabel"
                                            value="label.new.value" />
                             </cc>
+                            <fieldhelp name="helpIdpAttributeMap" defaultValue="samlv2idp.attribute.help.IdpAttributeMap" />
                         </property>
                     </ccgroup>
                 </property>
@@ -75,6 +76,7 @@
                         <attribute name="autoSubmit" value="false" />
                         <attribute name="localizeDisplayFieldValue" value="false" />
                     </cc>
+                    <fieldhelp name="helpIdpAccountMapper" defaultValue="samlv2idp.attribute.help.idpAccountMapper" />
                 </property>               
             </ccgroup>
         </property>
@@ -88,6 +90,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpIdpAuthUrl" defaultValue="samlv2idp.attribute.help.idpAuthUrl" />
         </property>                
     </section>
    
