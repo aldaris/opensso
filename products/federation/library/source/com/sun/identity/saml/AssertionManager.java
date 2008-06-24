@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.5 2007-11-29 20:59:42 ww203982 Exp $
+ * $Id: AssertionManager.java,v 1.6 2008-06-24 06:47:12 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,8 @@ import java.util.StringTokenizer;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The class <code>AssertionManager</code> is a <code>final</code> class
@@ -563,7 +565,31 @@ public final class AssertionManager {
      * @throws SAMLException If the Assertion cannot be created.
      */
     public Assertion createSSOAssertion(String id, AssertionArtifact artifact,
-                        String destID, String targetUrl, String version)
+        String destID, String targetUrl, String version)
+        throws SAMLException {
+        return createSSOAssertion(id, artifact, null, null, destID,
+            targetUrl, version);
+    }
+     
+    /**
+     * Returns Assertion that contains <code>AuthenticationStatement</code>.
+     * @param id The String that contains authentication information which
+     *          is needed to create the assertion. It could be a string
+     *          representation of an id, a cookie, etc.
+     * @param artifact the value to be set in the SubjectConfirmation of the
+     *        <code>AuthenticationStatement</code>. If it's null, 
+     *        <code>SubjectConfirmation</code> is set to bearer.
+     * @param request The HttpServletRerquest object of the request.
+     * @param response The HttpServletResponse object.
+     * @param destID A String that is the site the assertion is created for.
+     * @param targetUrl A URL String representing the target site 
+     * @param version The relying party preferred Assertion version number. 
+     * @return Assertion The created Assertion.
+     * @throws SAMLException If the Assertion cannot be created.
+     */
+    public Assertion createSSOAssertion(String id, AssertionArtifact artifact,
+        HttpServletRequest request, HttpServletResponse response,
+        String destID, String targetUrl, String version)
         throws SAMLException
     {
         List attributes = null;
@@ -574,21 +600,28 @@ public final class AssertionManager {
 
         if (partnerEntry != null) {
             try {
-                PartnerSiteAttributeMapper pMapper =
-                    partnerEntry.getPartnerSiteAttributeMapper();
                 if (sessionProvider == null) {
                     throw new SAMLException(SAMLUtils.bundle.getString(
                         "nullSessionProvider"));
                 }    
                 Object userSession = sessionProvider.getSession(id);   
-                if (pMapper != null) {
-                    attributes = pMapper.getAttributes(
-                        userSession, targetUrl);
+                ConsumerSiteAttributeMapper cMapper =
+                    partnerEntry.getConsumerSiteAttributeMapper();
+                if (cMapper != null) {
+                    attributes = cMapper.getAttributes(userSession,
+                        request, response, targetUrl);
                 } else {
-                    SiteAttributeMapper mapper =
-                        partnerEntry.getSiteAttributeMapper();
-                    if (mapper != null) {
-                        attributes = mapper.getAttributes(userSession);
+                    PartnerSiteAttributeMapper pMapper =
+                        partnerEntry.getPartnerSiteAttributeMapper();
+                    if (pMapper != null) {
+                        attributes = pMapper.getAttributes(
+                            userSession, targetUrl);
+                    } else {
+                        SiteAttributeMapper mapper =
+                            partnerEntry.getSiteAttributeMapper();
+                        if (mapper != null) {
+                            attributes = mapper.getAttributes(userSession);
+                        }
                     }
                 }
             } catch ( SessionException ssoe) {
@@ -2221,6 +2254,26 @@ public final class AssertionManager {
                                 String destID, String targetUrl,
                                 String version)
                                 throws SAMLException {
+        return createAssertionArtifact(id, destID, null, null, 
+            targetUrl, version);
+    }
+    /**
+     * Creates an AssertionArtifact.
+     * @param id The String that contains authentication information which
+     *          is needed to create the assertion. It could be a string
+     *          representation of an id, a cookie, etc.
+     * @param destID The destination site that the artifact is created for.
+     * @param request The HttpServletRerquest object of the request.
+     * @param response The HttpServletResponse object.
+     * @param targetUrl A URL String representing the target site 
+     * @param version The relying party preferred Assertion version number. 
+     * @return The AssertionArtifact.
+     * @throws SAMLException If the AssertionArtifact cannot be created.
+     */
+    public AssertionArtifact createAssertionArtifact(String id,
+        String destID, HttpServletRequest request,
+        HttpServletResponse response, String targetUrl,
+        String version) throws SAMLException {
         // check input
         if ((id == null) || (destID == null)) {
             if (SAMLUtils.debug.messageEnabled()) {
@@ -2254,8 +2307,8 @@ public final class AssertionManager {
         String sourceID = (String) SAMLServiceManager.getAttribute(
                                         SAMLConstants.SITE_ID);
         AssertionArtifact art = new AssertionArtifact(sourceID, handle);
-        Assertion assertion = createSSOAssertion(id, art, destID, targetUrl,
-                                                 version);
+        Assertion assertion = createSSOAssertion(id, art, 
+            request, response, destID, targetUrl, version);
         try {
             if (version != null) { 
                 StringTokenizer st = new StringTokenizer(version,".");

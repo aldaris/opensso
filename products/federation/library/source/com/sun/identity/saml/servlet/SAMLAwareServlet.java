@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLAwareServlet.java,v 1.2 2006-11-30 02:32:21 bina Exp $
+ * $Id: SAMLAwareServlet.java,v 1.3 2008-06-24 06:47:14 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -126,8 +126,9 @@ public class SAMLAwareServlet extends HttpServlet {
      * @return a List representing a list of AssertionArtifact's id
      * @throws SAMLException if there is an error.
      */
-    private List createArtifact(Object sso,String target,String targetUrl, 
-                                String version) throws SAMLException {
+    private List createArtifact(Object sso,String target,
+        HttpServletRequest request, HttpServletResponse response,
+        String targetUrl, String version) throws SAMLException {
         if (sso == null || target == null || target.length() == 0 ||
             version == null || version.length() == 0) {
             throw new SAMLException(
@@ -140,7 +141,7 @@ public class SAMLAwareServlet extends HttpServlet {
             AssertionArtifact artifact =
                 assertManager.createAssertionArtifact(
                 sessionProvider.getSessionID(sso), target,
-                targetUrl, version);
+                request, response, targetUrl, version);
             if (SAMLUtils.debug.messageEnabled()) {
                 SAMLUtils.debug.message("AssertionArtifact id = " +
                 artifact.toString());
@@ -246,7 +247,7 @@ public class SAMLAwareServlet extends HttpServlet {
             List artis = new ArrayList();
             try {
                 artis = createArtifact(ssoToken, thisSite.getSourceID(),
-                target, thisSite.getVersion());
+                request, response, target, thisSite.getVersion());
             } catch (SAMLException se) {
                 SAMLUtils.debug.error("IntersiteTransfer:Failed to create" +
                 " AssertionArtifact(s)");

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.6 2008-02-27 01:27:43 qcheng Exp $
+ * $Id: SAMLServiceManager.java,v 1.7 2008-06-24 06:47:13 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,6 +42,7 @@ import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProviderManager;
 import com.sun.identity.saml.plugins.ActionMapper;
 import com.sun.identity.saml.plugins.AttributeMapper;
+import com.sun.identity.saml.plugins.ConsumerSiteAttributeMapper;
 import com.sun.identity.saml.plugins.DefaultNameIdentifierMapper;
 import com.sun.identity.saml.plugins.DefaultAttributeMapper;
 import com.sun.identity.saml.plugins.NameIdentifierMapper;
@@ -174,6 +175,7 @@ public class SAMLServiceManager implements ConfigurationListener {
         private PartnerAccountMapper partnerAcctMapper = null;
         private SiteAttributeMapper _siteAttributeMapper = null;
         private PartnerSiteAttributeMapper _partnerSiteAttributeMapper = null;
+        private ConsumerSiteAttributeMapper consumerSiteAttrMapper = null;
         private NameIdentifierMapper nameIdentifierMapper = null;
         private AttributeMapper attributeMapper = null;
         private ActionMapper actionMapper = null;
@@ -198,6 +200,8 @@ public class SAMLServiceManager implements ConfigurationListener {
          *      instance
          * @param partnerSiteAttributeMapper
          *      <code>PartnerSiteAttributeMapper</code> plugin instance
+         * @param consumerSiteAttrMapper
+         *      <code>ConsumerSiteAttributeMapper</code> plugin instance
          * @param nameIdentifierMapper <code>NameIdentifierMapper</code> plugin 
          *        instance
          * @param attrMapper <code>AttributeMapper</code> plugin instance
@@ -213,6 +217,7 @@ public class SAMLServiceManager implements ConfigurationListener {
                          PartnerAccountMapper partnerAccountMapper,
                          SiteAttributeMapper siteAttributeMapper, 
                          PartnerSiteAttributeMapper partnerSiteAttributeMapper,
+                         ConsumerSiteAttributeMapper consumerSiteAttrMapper,
                          NameIdentifierMapper nameIdentifierMapper,
                          AttributeMapper attrMapper, ActionMapper actionMapper,
                         String issuer, Set origHostSet, String version) 
@@ -227,6 +232,7 @@ public class SAMLServiceManager implements ConfigurationListener {
             partnerAcctMapper = partnerAccountMapper; 
             _siteAttributeMapper = siteAttributeMapper;
             _partnerSiteAttributeMapper = partnerSiteAttributeMapper;
+            this.consumerSiteAttrMapper = consumerSiteAttrMapper;
             this.nameIdentifierMapper = nameIdentifierMapper;
             attributeMapper = attrMapper;
             this.actionMapper = actionMapper;
@@ -325,6 +331,17 @@ public class SAMLServiceManager implements ConfigurationListener {
                 SAMLUtilsCommon.debug.message("partnerSiteMapper is null");
             }
             return _partnerSiteAttributeMapper;
+        }
+
+        /**
+         * Returns <code>ConsumerSiteAttributeMapper</code> instance.
+         * @return ConsumerSiteAttributeMapper instance.
+         */
+        public ConsumerSiteAttributeMapper getConsumerSiteAttributeMapper() {
+            if (localFlag && consumerSiteAttrMapper == null) {
+                SAMLUtilsCommon.debug.message("consumerSiteMapper is null");
+            }
+            return consumerSiteAttrMapper;
         }
 
         /**
@@ -874,6 +891,8 @@ public class SAMLServiceManager implements ConfigurationListener {
                         SiteAttributeMapper _siteAttributeMapper = null;
                         PartnerSiteAttributeMapper _partnerSiteAttributeMapper
                             = null;
+                        ConsumerSiteAttributeMapper consumerSiteAttrMapper
+                            = null;
                         NameIdentifierMapper niMapper = null;
                         AttributeMapper attrMapper = null;
                         ActionMapper actionMapper = null;
@@ -1020,6 +1039,10 @@ public class SAMLServiceManager implements ConfigurationListener {
                                          PartnerSiteAttributeMapper) {
                                         _partnerSiteAttributeMapper =
                                            (PartnerSiteAttributeMapper) temp;
+                                    } else if (temp instanceof 
+                                         ConsumerSiteAttributeMapper) {
+                                        consumerSiteAttrMapper =
+                                           (ConsumerSiteAttributeMapper) temp;
                                     } else {
                                         SAMLUtilsCommon.debug.error(
                                         "SAMLServiceManager:Invalid site " +
@@ -1039,10 +1062,21 @@ public class SAMLServiceManager implements ConfigurationListener {
                             } else if (key.equalsIgnoreCase(
                                    SAMLConstants.PARTNERSITEATTRIBUTEMAPPER)) {
                                 try {
-                                    _partnerSiteAttributeMapper =
-                                     (PartnerSiteAttributeMapper) 
-                                     Class.forName(element.substring(nextpos)).
-                                            newInstance();
+                                    Object temp = Class.forName(
+                                      element.substring(nextpos)).newInstance();
+                                    if (temp instanceof 
+                                         PartnerSiteAttributeMapper) {
+                                        _partnerSiteAttributeMapper =
+                                           (PartnerSiteAttributeMapper) temp;
+                                    } else if (temp instanceof 
+                                         ConsumerSiteAttributeMapper) {
+                                        consumerSiteAttrMapper =
+                                           (ConsumerSiteAttributeMapper) temp;
+                                    } else {
+                                        SAMLUtilsCommon.debug.error(
+                                        "SAMLServiceManager:Invalid site " +
+                                        "partner attribute mapper");
+                                    }
                                 } catch (InstantiationException ie) {
                                     SAMLUtilsCommon.debug.error("SAMLSManager:"
                                                           , ie); 
@@ -1217,7 +1251,8 @@ public class SAMLServiceManager implements ConfigurationListener {
                                    _user, basic_auth_user, basic_auth_passwd,
                                     _certAlias,
                                    _partnerAccountMapper, _siteAttributeMapper,
-                                   _partnerSiteAttributeMapper, niMapper,
+                                   _partnerSiteAttributeMapper, 
+                                   consumerSiteAttrMapper, niMapper,
                                    attrMapper,actionMapper, _issuer, 
                                    origHostSet,preferVersion);
                             _Soaps.put(_destID, server); 

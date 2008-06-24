@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPOSTProfileServlet.java,v 1.1 2006-10-30 23:15:52 qcheng Exp $
+ * $Id: SAMLPOSTProfileServlet.java,v 1.2 2008-06-24 06:47:14 qcheng Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,7 +141,7 @@ public class SAMLPOSTProfileServlet extends HttpServlet {
             SessionProvider sessionProvider = SessionManager.getProvider();
             Assertion assertion = am.createSSOAssertion(
                 sessionProvider.getSessionID(token), null,
-                destSite.getSourceID(), target,
+                request, response, destSite.getSourceID(), target,
                 majorVersion + "." + minorVersion);
 
             // create SAMLResponse
