@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2PEPHosted.xml,v 1.1 2007-10-09 01:07:26 asyhuang Exp $
+   $Id: propertySAMLv2PEPHosted.xml,v 1.2 2008-06-25 00:06:28 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,6 +30,7 @@
         <property>
             <label name="lblProtocolSupportEnum" defaultValue="samlv2.entityDescriptor.provider.attribute.label.protocolSupportEnum" labelFor="txtProtocolSupportEnum" />
             <cc name="txtProtocolSupportEnum" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag"></cc>
+             <fieldhelp name="helpProtocolSupportEnum" defaultValue="samlv2.entityDescriptor.pep.provider.attribute.help.protocolSupportEnum" />           
         </property>                          
         <property>
             <label name="lblSigningKeyAlias" defaultValue="samlv2.entityDescriptor.provider.attribute.label.Signing.KeyAlias" labelFor="tfSigningKeyAlias" />
@@ -37,6 +38,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpSigningKeyAlias" defaultValue="samlv2.entityDescriptor.provider.attribute.help.Signing.KeyAlias" />
         </property>                
         <property>
             <label name="lblEncryptionKeyAlias" defaultValue="samlv2.entityDescriptor.provider.attribute.label.Encryption.KeyAlias" labelFor="tfEncryptionKeyAlias" />
@@ -44,10 +46,14 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
+            <fieldhelp name="helpEncryptionKeyAlias" defaultValue="samlv2.entityDescriptor.provider.attribute.help.Encryption.KeyAlias" />
         </property>                                                  
         <property>            
             <label name="lblBasicAuth" defaultValue="samlv2.entityDescriptor.provider.attribute.label.basicAuth" labelFor="basicAuth" />          
-        </property>                                                  
+        </property>
+        <property>
+            <fieldhelp name="helpBasicAuth" defaultValue="samlv2.entityDescriptor.provider.attribute.help.basicAuth" />
+        </property>
         <property>     
             <ccgroup> 
                 <property>
@@ -74,13 +80,15 @@
             <label name="lblwantXACMLAuthzDecisionResponseSigned" defaultValue="samlv2.entityDescriptor.provider.attribute.label.wantXACMLAuthzDecisionResponseSigned" labelFor="wantXACMLAuthzDecisionQuerySigned" />
             <cc name="wantXACMLAuthzDecisionResponseSigned" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Signed" />
-            </cc>        
+            </cc>       
+              <fieldhelp name="helpWantXACMLAuthzDecisionResponseSigned" defaultValue="samlv2.entityDescriptor.provider.attribute.help.wantXACMLAuthzDecisionResponseSigned" />
         </property>                   
         <property>
             <label name="lblWantAssertionEncrypted" defaultValue="samlv2.entityDescriptor.provider.attribute.label.wantAssertionEncrypted" labelFor="wantAssertionEncrypted" />
             <cc name="wantAssertionEncrypted" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Yes" />
-            </cc>        
+            </cc>
+            <fieldhelp name="helpWantAssertionEncrypted" defaultValue="samlv2.entityDescriptor.provider.attribute.help.wantAssertionEncrypted" />
         </property>                  
     </section>
 </propertysheet>

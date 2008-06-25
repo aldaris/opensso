@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2PDPRemote.xml,v 1.2 2008-01-17 19:26:06 asyhuang Exp $
+   $Id: propertySAMLv2PDPRemote.xml,v 1.3 2008-06-25 00:06:25 asyhuang Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -31,10 +31,14 @@
             <label name="lblProtocolSupportEnum" defaultValue="samlv2.entityDescriptor.provider.attribute.label.protocolSupportEnum" labelFor="txtProtocolSupportEnum" />
             <cc name="txtProtocolSupportEnum" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">            
             </cc>
+            <fieldhelp name="helpProtocolSupportEnum" defaultValue="samlv2.entityDescriptor.pdp.provider.attribute.help.protocolSupportEnum" />
         </property>                       
         <property>                                    
             <label name="lblBasicAuth" defaultValue="samlv2.entityDescriptor.provider.attribute.label.basicAuth" labelFor="basicAuth" />            
         </property>
+        <property>
+            <fieldhelp name="helpBasicAuth" defaultValue="samlv2.entityDescriptor.provider.attribute.help.basicAuth" />
+        </property>      
         <property>
             <ccgroup>   
                 <property>
@@ -62,18 +66,17 @@
             <cc name="wantXACMLAuthzDecisionQuerySigned" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="label.Signed" />
             </cc>        
+            <fieldhelp name="helpWantXACMLAuthzDecisionQuerySigned" defaultValue="samlv2.entityDescriptor.provider.attribute.help.wantXACMLAuthzDecisionQuerySigned" />
         </property>           
         <property>
             <label name="lblXACMLAuthzService" defaultValue="samlv2.entityDescriptor.provider.attribute.label.XACMLAuthzService" />
-            <ccgroup>
-                
+            <fieldhelp name="helpXACMLAuthzServiceLocation" defaultValue="samlv2.entityDescriptor.provider.attribute.help.XACMLAuthzServiceLocation" />
+            <ccgroup>                
                 <property>
                     <label name="lblXACMLAuthzServiceBinding" defaultValue="samlv2.entityDescriptor.provider.attribute.label.XACMLAuthzServiceBinding" labelFor="XACMLAuthzServiceBinding" />
-                    <cc name="XACMLAuthzServiceBinding" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                     
-                        
+                    <cc name="XACMLAuthzServiceBinding" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                                             
                     </cc>
-                </property>   
-                
+                </property>                   
                 <property>
                     <label name="lblXACMLAuthzServiceLocation" defaultValue="samlv2.entityDescriptor.provider.attribute.label.XACMLAuthzServiceLocation" labelFor="XACMLAuthzServiceLocation" />
                     <cc name="XACMLAuthzServiceLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
