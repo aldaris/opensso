@@ -1,4 +1,9 @@
-/* The contents of this file are subject to the terms
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListValueValidator.java,v 1.4 2008-06-16 20:13:32 sean_brydon Exp $
+ * $Id: ListValueValidator.java,v 1.5 2008-06-25 05:42:28 qcheng Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common.configuration;

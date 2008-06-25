@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2005 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: session_timeout.jsp,v 1.3 2007-08-23 19:35:56 jonnelson Exp $
+   $Id: session_timeout.jsp,v 1.4 2008-06-25 05:44:34 qcheng Exp $
                                                                                 
-   Copyright 2005 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 

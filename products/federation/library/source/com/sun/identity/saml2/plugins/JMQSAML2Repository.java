@@ -1,4 +1,9 @@
-/* The contents of this file are subject to the terms
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSAML2Repository.java,v 1.1 2008-05-02 21:46:27 weisun2 Exp $
+ * $Id: JMQSAML2Repository.java,v 1.2 2008-06-25 05:47:51 qcheng Exp $
  *
- * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.saml2.plugins;

@@ -1,5 +1,9 @@
 @echo off
 
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+: Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
 : The contents of this file are subject to the terms
 : of the Common Development and Distribution License
 : (the License). You may not use this file except in
@@ -19,9 +23,8 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fampre80upgrade.bat,v 1.1 2008-05-21 23:42:59 bina Exp $
+: $Id: fampre80upgrade.bat,v 1.2 2008-06-25 05:53:09 qcheng Exp $
 :
-: Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
 @echo off
 setlocal

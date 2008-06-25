@@ -1,6 +1,10 @@
 @echo off
 
 REM
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+REM Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
 REM The contents of this file are subject to the terms
 REM of the Common Development and Distribution License
 REM (the License). You may not use this file except in
@@ -20,9 +24,8 @@ REM with the fields enclosed by brackets [] replaced by
 REM your own identifying information:
 REM "Portions Copyrighted [year] [name of copyright owner]"
 REM
-REM $Id: admintool.bat,v 1.1 2006-09-28 07:37:16 rarcot Exp $
+REM $Id: admintool.bat,v 1.2 2008-06-25 05:51:16 qcheng Exp $
 REM
-REM Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 REM
 
 setlocal

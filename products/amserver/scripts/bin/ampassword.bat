@@ -1,5 +1,9 @@
 @echo off
 
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+: Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
 : The contents of this file are subject to the terms
 : of the Common Development and Distribution License
 : (the License). You may not use this file except in
@@ -19,9 +23,8 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: ampassword.bat,v 1.12 2008-04-25 23:23:50 ww203982 Exp $
+: $Id: ampassword.bat,v 1.13 2008-06-25 05:41:16 qcheng Exp $
 :
-: Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
 set TOOLS_HOME="@TOOLS_HOME@"
 

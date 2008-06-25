@@ -2,6 +2,10 @@
 <html>
 <head>
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -21,9 +25,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: urlpolicyservletresult.jsp,v 1.6 2008-05-14 00:08:33 leiming Exp $
+   $Id: urlpolicyservletresult.jsp,v 1.7 2008-06-25 05:52:18 qcheng Exp $
 
-   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"> 
 <title>Sample Application</title>

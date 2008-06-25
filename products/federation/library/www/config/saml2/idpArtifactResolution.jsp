@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpArtifactResolution.jsp,v 1.2 2008-03-20 16:51:24 exu Exp $
+   $Id: idpArtifactResolution.jsp,v 1.3 2008-06-25 05:48:36 qcheng Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%><%@page
 import="com.sun.identity.saml2.profile.IDPArtifactResolution,
 com.sun.identity.saml2.common.SAML2Utils"

@@ -1,5 +1,9 @@
 @echo off
 
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+: Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
 : The contents of this file are subject to the terms
 : of the Common Development and Distribution License
 : (the License). You may not use this file except in
@@ -19,9 +23,8 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amadm.bat,v 1.14 2008-05-29 23:29:48 veiming Exp $
+: $Id: amadm.bat,v 1.15 2008-06-25 05:41:15 qcheng Exp $
 :
-: Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
 set TOOLS_HOME="@TOOLS_HOME@"
 

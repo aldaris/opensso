@@ -1,4 +1,9 @@
-/* The contents of this file are subject to the terms
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2005 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.5 2007-07-31 18:57:18 pluo Exp $
+ * $Id: PLLRequestServlet.java,v 1.6 2008-06-25 05:41:35 qcheng Exp $
  *
- * Copyright 2005 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.comm.server;

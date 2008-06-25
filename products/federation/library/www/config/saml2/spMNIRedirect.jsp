@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRedirect.jsp,v 1.2 2006-12-05 21:55:52 weisun2 Exp $
+   $Id: spMNIRedirect.jsp,v 1.3 2008-06-25 05:48:37 qcheng Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 

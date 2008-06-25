@@ -3,6 +3,10 @@
 #------------------------------------------------------------------------------
 #README file for Federated Access Manager stand alone client sdk samples
 #------------------------------------------------------------------------------
+# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+#
+#Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+#
 #The contents of this file are subject to the terms
 #of the Common Development and Distribution License
 #(the License). You may not use this file except in
@@ -22,8 +26,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: compile-samples.sh,v 1.6 2007-12-14 00:09:05 dillidorai Exp $
-#Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+#$Id: compile-samples.sh,v 1.7 2008-06-25 05:48:46 qcheng Exp $
 #------------------------------------------------------------------------------
 #
 javac -classpath resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar  -d classes source/samples/xacml/*.java source/com/sun/identity/samples/clientsdk/idrepo/*.java source/com/sun/identity/samples/clientsdk/logging/*.java source/com/sun/identity/samples/sso/*.java source/com/sun/identity/samples/authentication/*.java source/samples/policy/*.java

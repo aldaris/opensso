@@ -1,4 +1,9 @@
-/* The contents of this file are subject to the terms
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownPriority.java,v 1.1 2008-01-24 20:34:30 ww203982 Exp $
+ * $Id: ShutdownPriority.java,v 1.2 2008-06-25 05:52:52 qcheng Exp $
  *
- * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.common;
@@ -90,5 +94,4 @@ public class ShutdownPriority {
     public static List getPriorities() {
         return priorities;
     }
-    
-}
+} 

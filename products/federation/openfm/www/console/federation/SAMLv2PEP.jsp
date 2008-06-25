@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAMLv2PEP.jsp,v 1.1 2007-10-09 01:08:15 asyhuang Exp $
+   $Id: SAMLv2PEP.jsp,v 1.2 2008-06-25 05:50:24 qcheng Exp $
    
-   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@ page info="SAMLv2PEP" language="java" %>

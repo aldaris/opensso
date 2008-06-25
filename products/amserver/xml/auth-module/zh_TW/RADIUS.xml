@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+    Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
     The contents of this file are subject to the terms
     of the Common Development and Distribution License
     (the License). You may not use this file except in
@@ -19,9 +23,8 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: RADIUS.xml,v 1.6 2008-06-18 08:58:06 mahesh_prasad_r Exp $
+    $Id: RADIUS.xml,v 1.7 2008-06-25 05:45:06 qcheng Exp $
 
-    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <!DOCTYPE ModuleProperties PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"

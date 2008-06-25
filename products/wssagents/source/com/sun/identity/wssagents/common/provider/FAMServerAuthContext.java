@@ -1,4 +1,8 @@
-/*
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -18,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthContext.java,v 1.2 2008-06-15 07:24:33 mrudul_uchil Exp $
+ * $Id: FAMServerAuthContext.java,v 1.3 2008-06-25 05:54:47 qcheng Exp $
  *
- * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.wssagents.common.provider;
@@ -120,6 +123,6 @@ public class FAMServerAuthContext implements ServerAuthContext {
             e.printStackTrace();
         }
     }
-    
-               
+
+
 }

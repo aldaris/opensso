@@ -1,6 +1,6 @@
 // -*- Mode: C++ -*-
 //
-// $Id: am_string_set.cpp,v 1.1 2006-05-03 22:42:20 madan_ranganath Exp $
+// $Id: am_string_set.cpp,v 1.2 2008-06-25 05:54:17 qcheng Exp $
 // Copyright © 2006 Sun Microsystems, Inc. All rights reserved.
 // 
 // U.S. Government Rights - Commercial software. Government users are
@@ -9,6 +9,10 @@
 // license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
 // trademarks or registered trademarks of Sun Microsystems, Inc. in the
 // U.S. and other countries.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ *
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -28,7 +32,6 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  *
  */ 
 #include <stdlib.h>

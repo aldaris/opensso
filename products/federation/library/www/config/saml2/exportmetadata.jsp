@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: exportmetadata.jsp,v 1.2 2008-04-03 23:35:43 qcheng Exp $
+   $Id: exportmetadata.jsp,v 1.3 2008-06-25 05:48:35 qcheng Exp $
 
-   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
    NOTE : remove this JSP from the OpenSSO WAR if you don't want to 
      publically expose your hosted metadata, but some of the SAML2 metadata

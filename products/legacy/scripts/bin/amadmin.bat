@@ -1,5 +1,9 @@
 @echo off
 
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+: Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
 : The contents of this file are subject to the terms
 : of the Common Development and Distribution License
 : (the License). You may not use this file except in
@@ -19,9 +23,8 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amadmin.bat,v 1.4 2007-11-30 00:13:33 veiming Exp $
+: $Id: amadmin.bat,v 1.5 2008-06-25 05:52:23 qcheng Exp $
 :
-: Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 
 set TOOLS_HOME="@TOOLS_HOME@"
 

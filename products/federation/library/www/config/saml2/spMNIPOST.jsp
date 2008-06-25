@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIPOST.jsp,v 1.1 2008-01-25 14:19:01 hengming Exp $
+   $Id: spMNIPOST.jsp,v 1.2 2008-06-25 05:48:37 qcheng Exp $
 
-   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 

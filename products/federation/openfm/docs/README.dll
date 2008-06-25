@@ -1,4 +1,8 @@
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -20,7 +24,6 @@
 
    $Id$
 
-   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 Federated Access Manager - Secure Attribute Exchange : Client API

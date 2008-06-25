@@ -1,6 +1,10 @@
 ------------------------------------------------------------------------------
 README file for Open Web Single Sign-On
 ------------------------------------------------------------------------------
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
 The contents of this file are subject to the terms
 of the Common Development and Distribution License
 (the License). You may not use this file except in
@@ -20,9 +24,8 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2008-01-15 07:54:00 qcheng Exp $
+$Id: README,v 1.2 2008-06-25 05:44:25 qcheng Exp $
 
-Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 ------------------------------------------------------------------------------
 
 This directory contains a sample JKS keystore file. The file will be used as 

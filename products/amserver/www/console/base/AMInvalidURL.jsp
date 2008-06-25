@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AMInvalidURL.jsp,v 1.1 2006-05-04 06:55:48 veiming Exp $
+   $Id: AMInvalidURL.jsp,v 1.2 2008-06-25 05:44:36 qcheng Exp $
 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 

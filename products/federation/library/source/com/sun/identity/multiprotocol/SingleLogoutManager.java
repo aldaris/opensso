@@ -1,4 +1,8 @@
 /**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -18,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SingleLogoutManager.java,v 1.6 2007-10-16 21:50:20 exu Exp $
+ * $Id: SingleLogoutManager.java,v 1.7 2008-06-25 05:47:25 qcheng Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.multiprotocol;

@@ -1,5 +1,9 @@
 @echo off
 
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+: Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
 : The contents of this file are subject to the terms
 : of the Common Development and Distribution License
 : (the License). You may not use this file except in
@@ -19,9 +23,8 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: famupgrade.bat,v 1.2 2008-05-21 23:42:59 bina Exp $
+: $Id: famupgrade.bat,v 1.3 2008-06-25 05:53:10 qcheng Exp $
 :
-: Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 
 set TOOLS_HOME="STAGING_DIR"
 set CONFIG_DIR="FAM_CONFIG_DIR"

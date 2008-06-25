@@ -1,4 +1,8 @@
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sunwCDSSORedirectURI.jsp,v 1.4 2008-05-05 17:26:59 huacui Exp $
+   $Id: sunwCDSSORedirectURI.jsp,v 1.5 2008-06-25 05:52:14 qcheng Exp $
 
-   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 <html>
 <head>

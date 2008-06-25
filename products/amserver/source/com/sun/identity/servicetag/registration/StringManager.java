@@ -1,4 +1,4 @@
-/*
+/**
  * StringManager.java
  * 
  * Created on Oct 29, 2007, 2:05:52 PM

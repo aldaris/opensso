@@ -1,4 +1,9 @@
-/* The contents of this file are subject to the terms
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Window.java,v 1.4 2008-03-20 20:50:21 jonnelson Exp $
+ * $Id: Window.java,v 1.5 2008-06-25 05:42:33 qcheng Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.config.authc;
 
@@ -83,5 +87,4 @@ public class Window extends AjaxPage {
     protected void save(WindowStore windowStore) {
         getConfigurator().addAuthenticationStore(windowStore);
     }
-
 }

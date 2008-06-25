@@ -2,6 +2,10 @@
 README file for Open Web Single Sign-On - Web Agents
 ------------------------------------------------------------------------------
 #
+# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+#
+# Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+#
 # The contents of this file are subject to the terms
 # of the Common Development and Distribution License
 # (the License). You may not use this file except in
@@ -21,9 +25,8 @@ README file for Open Web Single Sign-On - Web Agents
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.2 2007-04-09 23:49:55 subbae Exp $
+# $Id: README.txt,v 1.3 2008-06-25 05:54:29 qcheng Exp $
 #
-# Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 #
 #
 %% Contents:

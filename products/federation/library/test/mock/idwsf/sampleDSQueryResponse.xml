@@ -1,4 +1,8 @@
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,8 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: sampleDSQueryResponse.xml,v 1.1 2006-10-30 23:17:03 qcheng Exp $
+   $Id: sampleDSQueryResponse.xml,v 1.2 2008-06-25 05:48:20 qcheng Exp $
                                                                                 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 <QueryResponse xmlns="urn:liberty:disco:2003-08"><disco:Status xmlns:disco="urn:liberty:disco:2003-08" code="disco:OK"/><ResourceOffering entryID="se283129f0b1173c848de04a704b3efa7254dd086"><ResourceID>http://moonriver.red.iplanet.com:80/openfm/Liberty/idpp/aWQ9aWRwdXNlcixvdT11c2VyLGRjPW9wZW5zc28sZGM9amF2YSxkYz1uZXQ%3D</ResourceID><ServiceInstance><ServiceType>urn:liberty:id-sis-pp:2003-08</ServiceType><ProviderID>http://moonriver.red.iplanet.com:80/openfm/Liberty/idpp</ProviderID><Description><SecurityMechID>urn:liberty:security:2003-08:null:null</SecurityMechID><Endpoint>http://moonriver.red.iplanet.com:80/openfm/Liberty/idpp</Endpoint></Description></ServiceInstance><Abstract>This is xyz</Abstract></ResourceOffering></QueryResponse>

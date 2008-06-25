@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
+# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+#
+# Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+#
 # The contents of this file are subject to the terms
 # of the Common Development and Distribution License
 # (the License). You may not use this file except in
@@ -21,7 +25,6 @@
 #
 # $Id
 #
-# Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 
 # The bulk account federation for SAML v2 in Sun Java System Access Manager or
 # Sun Java System Federation Manager is achieved through the following perl

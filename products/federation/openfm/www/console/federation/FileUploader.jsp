@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,9 +22,8 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: FileUploader.jsp,v 1.6 2008-05-29 00:47:49 veiming Exp $
+   $Id: FileUploader.jsp,v 1.7 2008-06-25 05:50:22 qcheng Exp $
    
-   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 --%>
 
 <%@ page info="FileUploader" language="java" %>

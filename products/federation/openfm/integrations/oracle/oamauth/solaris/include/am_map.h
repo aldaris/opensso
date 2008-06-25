@@ -1,28 +1,29 @@
 /* -*- Mode: C -*- */
 /*
- * $Id: am_map.h,v 1.1 2008-06-23 20:32:40 mallas Exp $
- * Copyright © 2002 Sun Microsystems, Inc. All rights reserved.
- * 
- * U.S. Government Rights - Commercial software. Government users are
- * subject to the Sun Microsystems, Inc. standard license agreement and
- * applicable provisions of the FAR and its supplements. Use is subject to
- * license terms. Sun, Sun Microsystems, the Sun logo and Sun ONE are
- * trademarks or registered trademarks of Sun Microsystems, Inc. in the
- * U.S. and other countries.
- * 
- * Copyright © 2002 Sun Microsystems, Inc. Tous droits réservés.
- * 
- * Droits du gouvernement américain, utlisateurs gouvernmentaux - logiciel
- * commercial. Les utilisateurs gouvernmentaux sont soumis au contrat de
- * licence standard de Sun Microsystems, Inc., ainsi qu aux dispositions en
- * vigueur de la FAR [ (Federal Acquisition Regulations) et des suppléments
- * à celles-ci.
- * 
- * Distribué par des licences qui en restreignent l'utilisation. Sun, Sun
- * Microsystems, le logo Sun et Sun ONE sont des marques de fabrique ou des
- * marques déposées de Sun Microsystems, Inc. aux Etats-Unis et dans
- * d'autres pays.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
+ * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
+ *
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: am_map.h,v 1.2 2008-06-25 05:48:54 qcheng Exp $
  */
 
 /*

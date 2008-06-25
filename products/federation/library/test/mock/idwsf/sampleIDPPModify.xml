@@ -1,4 +1,8 @@
 <!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,8 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: sampleIDPPModify.xml,v 1.1 2006-10-30 23:17:04 qcheng Exp $
+   $Id: sampleIDPPModify.xml,v 1.2 2008-06-25 05:48:20 qcheng Exp $
                                                                                 
-   Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 -->
 <sis:Modify xmlns="urn:liberty:id-sis-pp:2003-08" xmlns:sis="urn:liberty:id-sis-pp:2003-08"><sis:ResourceID>http://moonriver.red.iplanet.com:80/openfm/Liberty/idpp/aWQ9aWRwdXNlcixvdT11c2VyLGRjPW9wZW5zc28sZGM9amF2YSxkYz1uZXQ%3D</sis:ResourceID><sis:Modification id="modify-item-#1" overrideAllowed="true"><sis:Select>/sis:PP/sis:CommonName/sis:AnalyzedName/sis:FN</sis:Select><sis:NewData><FN>first name</FN></sis:NewData></sis:Modification></sis:Modify>

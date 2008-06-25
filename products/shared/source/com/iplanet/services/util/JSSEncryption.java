@@ -1,4 +1,9 @@
-/* The contents of this file are subject to the terms
+/**
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSSEncryption.java,v 1.1 2007-12-14 21:41:55 beomsuk Exp $
+ * $Id: JSSEncryption.java,v 1.2 2008-06-25 05:52:47 qcheng Exp $
  *
- * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.iplanet.services.util;
@@ -96,7 +100,7 @@ import com.sun.identity.shared.debug.Debug;
  * 3. A watchdog may be needed to auto restart the server.
  *
  * @author mzhao
- * @version $Revision: 1.1 $, $Date: 2007-12-14 21:41:55 $
+ * @version $Revision: 1.2 $, $Date: 2008-06-25 05:52:47 $
  **/
 public class JSSEncryption implements AMEncryption, ConfigurableKey {
 

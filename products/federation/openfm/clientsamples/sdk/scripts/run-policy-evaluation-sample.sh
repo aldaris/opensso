@@ -4,6 +4,10 @@
 #README file for Federated Access Manager stand alone client sdk 
 #policy evaluation sample
 #------------------------------------------------------------------------------
+# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+#
+#Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+#
 #The contents of this file are subject to the terms
 #of the Common Development and Distribution License
 #(the License). You may not use this file except in
@@ -23,8 +27,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-policy-evaluation-sample.sh,v 1.3 2007-12-14 00:09:06 dillidorai Exp $
-#Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+#$Id: run-policy-evaluation-sample.sh,v 1.4 2008-06-25 05:48:46 qcheng Exp $
 #------------------------------------------------------------------------------
 #
 #Runs the client policy evaluation sample
