@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: tree.h,v 1.4 2008-06-25 08:14:40 qcheng Exp $
  *
  */ 
 #ifndef __TREE_H__

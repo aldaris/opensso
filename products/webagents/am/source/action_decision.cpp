@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- *
+ * $Id: action_decision.cpp,v 1.3 2008-06-25 08:14:21 qcheng Exp $
  */ 
 #include "internal_macros.h"
 #include "xml_element.h"

@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: base_service.cpp,v 1.6 2008-06-25 08:14:31 qcheng Exp $
  *
  */ 
 #include <stdio.h>

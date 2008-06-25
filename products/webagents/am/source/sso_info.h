@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: sso_info.h,v 1.3 2008-06-25 08:14:37 qcheng Exp $
  *
  */ 
 #ifndef __SSO_INFO_H__

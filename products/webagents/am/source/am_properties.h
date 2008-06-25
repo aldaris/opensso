@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: am_properties.h,v 1.6 2008-06-25 08:14:28 qcheng Exp $
  *
  * Abstract:
  *

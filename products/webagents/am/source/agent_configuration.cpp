@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: agent_configuration.cpp,v 1.12 2008-06-25 08:14:23 qcheng Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 

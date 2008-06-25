@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: hash_table.h,v 1.6 2008-06-25 08:14:32 qcheng Exp $
  *
  * Abstract:
  *

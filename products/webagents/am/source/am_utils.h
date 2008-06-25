@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: am_utils.h,v 1.3 2008-06-25 08:14:30 qcheng Exp $
  *
  */ 
 #ifndef __AM_UTILS_H__

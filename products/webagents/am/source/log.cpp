@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: log.cpp,v 1.4 2008-06-25 08:14:33 qcheng Exp $
  *
  */ 
 #if	defined(WINNT)

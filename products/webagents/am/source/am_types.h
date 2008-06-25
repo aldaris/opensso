@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: am_types.h,v 1.6 2008-06-25 08:14:29 qcheng Exp $
  *
  * Abstract:
  *

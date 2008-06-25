@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: am_string_set.h,v 1.4 2008-06-25 08:14:29 qcheng Exp $
  *
  * Abstract:
  *

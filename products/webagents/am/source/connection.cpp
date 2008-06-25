@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: connection.cpp,v 1.7 2008-06-25 08:14:31 qcheng Exp $
  *
  */
 #include <stdexcept>

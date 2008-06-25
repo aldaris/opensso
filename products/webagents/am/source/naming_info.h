@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: naming_info.h,v 1.5 2008-06-25 08:14:33 qcheng Exp $
  *
  *
  * Abstract:

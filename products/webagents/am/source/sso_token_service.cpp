@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: sso_token_service.cpp,v 1.7 2008-06-25 08:14:38 qcheng Exp $
  *
  */
 #include <climits>

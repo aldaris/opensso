@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: nspr_exception.h,v 1.3 2008-06-25 08:14:33 qcheng Exp $
  *
  */ 
 #ifndef NSPR_EXCEPTION_H

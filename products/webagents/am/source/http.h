@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: http.h,v 1.4 2008-06-25 08:14:32 qcheng Exp $
  *
  *
  * Abstract:

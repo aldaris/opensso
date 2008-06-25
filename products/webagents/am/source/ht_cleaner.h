@@ -22,6 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: ht_cleaner.h,v 1.3 2008-06-25 08:14:32 qcheng Exp $
+ *
  * Abstract:
  *
  * Abstract The Hashtable cleaner thread 

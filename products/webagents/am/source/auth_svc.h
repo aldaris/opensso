@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: auth_svc.h,v 1.4 2008-06-25 08:14:31 qcheng Exp $
  *
  */ 
 #ifndef __AUTH_SVC_H__

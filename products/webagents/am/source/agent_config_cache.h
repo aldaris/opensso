@@ -22,8 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- *
-*/
+ * $Id: agent_config_cache.h,v 1.3 2008-06-25 08:14:22 qcheng Exp $
+ */
 
 #ifndef __AGENT_CONFIG_CACHE_H__
 #define __AGENT_CONFIG_CACHE_H__

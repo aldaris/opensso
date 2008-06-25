@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: session_service.cpp,v 1.4 2008-06-25 08:14:37 qcheng Exp $
  *
  */
 #include "am.h"

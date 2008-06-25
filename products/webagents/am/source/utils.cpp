@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: utils.cpp,v 1.10 2008-06-25 08:14:40 qcheng Exp $
  *
  */ 
 #include <stdexcept>

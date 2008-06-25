@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: thread_function.h,v 1.3 2008-06-25 08:14:39 qcheng Exp $
  *
  * Abstract:
  *

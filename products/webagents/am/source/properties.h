@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: properties.h,v 1.7 2008-06-25 08:14:35 qcheng Exp $
  *
  */
 #ifndef PROPERTIES_H

@@ -22,6 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * $Id: auth_context.h,v 1.4 2008-06-25 08:14:31 qcheng Exp $
  *
  */ 
 #ifndef _AUTH_CONTEXT_H_
