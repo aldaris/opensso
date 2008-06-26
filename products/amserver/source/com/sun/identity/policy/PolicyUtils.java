@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.9 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: PolicyUtils.java,v 1.10 2008-06-26 20:29:05 dillidorai Exp $
  *
  */
 
@@ -95,14 +95,8 @@ public class PolicyUtils {
         logStatus = ((status != null) && status.equalsIgnoreCase("ACTIVE"));
 
         if (logStatus) {
-             try {
-                accessLogger = (Logger)Logger.getLogger("amPolicy.access");
-                errorLogger = (Logger)Logger.getLogger("amPolicy.error");
-                msgProvider = MessageProviderFactory.getProvider("Policy");
-             } catch (IOException e) {
-                 PolicyManager.debug.error("PolicyUtils.<init>", e);
-                 logStatus = false;
-             }
+            accessLogger = (Logger)Logger.getLogger("amPolicy.access");
+            errorLogger = (Logger)Logger.getLogger("amPolicy.error");
         }
     }
 
@@ -604,6 +598,16 @@ public class PolicyUtils {
         String data[],
         SSOToken token
     ) throws SSOException {
+        try {
+            if (msgProvider == null) {
+                msgProvider = MessageProviderFactory.getProvider("Policy");
+            }
+        } catch (IOException e) {
+            PolicyManager.debug.error("PolicyUtils.logAccessMessage()", e);
+            PolicyManager.debug.error("PolicyUtils.logAccessMessage():" 
+                    + "disabling logging");
+            logStatus = false;
+        }
         if ((accessLogger != null) && (msgProvider != null)) {
             LogRecord lr = msgProvider.createLogRecord(msgIdName, data, token);
             if (lr != null) {
@@ -626,6 +630,16 @@ public class PolicyUtils {
         String data[],
         SSOToken token
     ) throws SSOException {
+        try {
+            if (msgProvider == null) {
+                msgProvider = MessageProviderFactory.getProvider("Policy");
+            }
+        } catch (IOException e) {
+            PolicyManager.debug.error("PolicyUtils.logErrorMessage()", e);
+            PolicyManager.debug.error("PolicyUtils.logAccessMessage():" 
+                    + "disabling logging");
+            logStatus = false;
+        }
         if ((errorLogger != null) && (msgProvider != null)) {
             LogRecord lr = msgProvider.createLogRecord(msgIdName, data, token);
             if (lr != null) {
