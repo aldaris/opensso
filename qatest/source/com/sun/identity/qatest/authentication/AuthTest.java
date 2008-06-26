@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.14 2008-06-26 19:58:31 rmisra Exp $
+ * $Id: AuthTest.java,v 1.15 2008-06-26 21:34:38 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -219,7 +219,7 @@ public class AuthTest extends TestCommon {
                 }
 
                 if (ac.getSMSCommon().isPluginConfigured(
-                        SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {           
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {           
                     log(Level.FINE, "setup", "Creating role " + rolename + 
                             " ...");
                     if (FederationManager.getExitCode(am.createIdentity(
@@ -418,7 +418,7 @@ public class AuthTest extends TestCommon {
                 list.add(rolename);
 
                 if (ac.getSMSCommon().isPluginConfigured(
-                        SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm)) {
                     log(Level.FINE, "cleanup", "Deleting role " + rolename + 
                             " ...");
                     if (FederationManager.getExitCode(
