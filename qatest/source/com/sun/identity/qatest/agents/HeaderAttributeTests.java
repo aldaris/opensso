@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.9 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: HeaderAttributeTests.java,v 1.10 2008-06-26 21:26:00 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,6 @@ public class HeaderAttributeTests extends TestCommon {
     throws Exception{
         super("HeaderAttributeTests");
         strHeaderFetchMode = strFetchMode;
-        System.out.println("Setting in constructor strHeaderFetchMode: " + strHeaderFetchMode);
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
         rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
@@ -133,7 +132,6 @@ public class HeaderAttributeTests extends TestCommon {
             if (strHeaderFetchMode  == null){
                 strHeaderFetchMode = rbg.getString(strGblRB + ".headerFetchMode");
             }
-            System.out.println("strHeaderFetchMode: " + strHeaderFetchMode);
             if (strAgentType.contains("J2EE")) {
                 strScriptURL = rbg.getString(strGblRB + 
                         ".headerEvalScriptName");

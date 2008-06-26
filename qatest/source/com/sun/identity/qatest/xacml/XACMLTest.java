@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLTest.java,v 1.2 2008-06-26 20:28:34 rmisra Exp $
+ * $Id: XACMLTest.java,v 1.3 2008-06-26 21:25:14 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -438,7 +438,6 @@ public class XACMLTest extends TestCommon {
         String xamlprop ;
         xamlprop = "xacmlTest_" + strProp;
         String absFileName = baseDir + "xacml" + fileseparator + xamlprop;
-System.out.println("666-" + absFileName);
         try {
             Properties pro = new Properties();
             pro.setProperty("pdp.entityId" , pdpentityname);

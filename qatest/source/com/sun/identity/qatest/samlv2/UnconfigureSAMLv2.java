@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.11 2008-06-26 20:24:18 rmisra Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.12 2008-06-26 21:21:16 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -270,17 +270,5 @@ public class UnconfigureSAMLv2 extends TestCommon {
             consoleLogout(webClient, idpurl);
         }
         exiting("UnconfigureSAMLv2");
-    }
-    
-    /**
-     * Stop the notification (jetty) server for getting notifications from the
-     * server.
-     */
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void stopServer()
-    throws Exception {
-        entering("stopServer", null);
-        stopNotificationServer();
-        exiting("stopServer");
     }
 }

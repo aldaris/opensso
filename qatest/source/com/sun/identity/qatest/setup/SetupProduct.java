@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.16 2008-06-26 20:27:12 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.17 2008-06-26 21:24:15 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -565,10 +565,8 @@ public class SetupProduct extends TestCommon {
                 configMapServer1 = getMapFromResourceBundle(
                         "config" + fileseparator + "default" + fileseparator +
                         "ConfiguratorCommon");
-                System.out.println("111-" + configMapServer1.toString());
                 configMapServer1.putAll(getMapFromResourceBundle(
                         "Configurator-" + serverName0));
-                System.out.println("222-" + configMapServer1.toString());
                 createFileFromMap(configMapServer1, serverName + fileseparator +
                         "built" + fileseparator + "classes" + fileseparator +
                         "Configurator-" + serverName0 +
