@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.9 2008-04-10 21:27:06 mrudulahg Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.10 2008-06-26 20:24:18 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,12 +85,12 @@ public class SAMLv2SmokeTest extends TestCommon {
                     + SAMLv2Common.fileseparator + "classes"
                     + SAMLv2Common.fileseparator;
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2SmokeTest",
-                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2SmokeTest", configMap);
             log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users

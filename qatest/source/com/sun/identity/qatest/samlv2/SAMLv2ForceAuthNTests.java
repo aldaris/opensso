@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ForceAuthNTests.java,v 1.8 2008-04-10 21:27:06 mrudulahg Exp $
+ * $Id: SAMLv2ForceAuthNTests.java,v 1.9 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,8 +86,10 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             //Upload global properties file in configMap
             baseDir = getTestBase();
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users
@@ -110,7 +112,8 @@ public class SAMLv2ForceAuthNTests extends TestCommon {
             fmIDP = new FederationManager(idpurl);
             list = new ArrayList();
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("samlv2ForceAuthNTests");
+            usersMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2ForceAuthNTests");
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));
             for (int i = 1; i < totalUsers + 1; i++) {

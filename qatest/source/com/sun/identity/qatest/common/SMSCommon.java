@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.16 2008-05-19 18:11:27 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.17 2008-06-26 20:10:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,9 +29,6 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdConstants;
-import com.sun.identity.qatest.common.IDMCommon;
-import com.sun.identity.qatest.common.LDAPCommon;
-import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceConfig;
@@ -40,33 +37,44 @@ import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 
 /**
- * This class has helper functions related to service management
+ * This class has helper functions related to service management and
+ * datastore configuration for user store.
  */
 public class SMSCommon extends TestCommon {
     private SSOToken admintoken;
-    private String fileSeparator = System.getProperty("file.separator");
     private Map globalCfgMap;
     
     /**
-     * Class constructor. Sets class variables.
+     * Class constructor with SSOToken as input parameter.
      */
     public SMSCommon(SSOToken token)
     throws Exception{
         super("SMSCommon");
         admintoken = token;
     }
+
+    /**
+     * Class constructor with file name as input parameter.
+     */    
+    public SMSCommon(String globalCfgFile)
+    throws Exception {
+        super("SMSCommon");
+         globalCfgMap = getMapFromResourceBundle(globalCfgFile);
+    }
     
     /**
-     * Create new instant for SMSCommon. It will read in the global properties
-     * file.
+     * Class constructor with file name and SSOToken as input parameter.
      */
     public SMSCommon(SSOToken token, String globalCfgFile)
     throws Exception {
@@ -439,7 +447,7 @@ public class SMSCommon extends TestCommon {
     
     /**
      * This method create one or multiple datastores by datastore index number
-     * from configuration data specified in the properties file.
+     * from configuration data specified in the properties file
      * @param cdsIndex datastore index to be retrieved from the properties file
      * @param propertyFileName properties file name (without extenstion)
      */
@@ -449,16 +457,16 @@ public class SMSCommon extends TestCommon {
         createDataStore(getDataStoreConfigByIndex(cdsIndex, propertyFileName));
         exiting("createDataStore");
     }
-    
+
     /**
      * This method create one or multiple datastores from configuration data
-     * specified in a Map.
+     * specified in a Map
      * @param cdsMap a map contains datstore configuration data
      */
     public void createDataStore(Map cdsMap)
     throws Exception {
         entering("createDataStore", null);
-        String dsCount = (String)cdsMap.get(SMSConstants.SMS_DATASTORE_COUNT);
+        String dsCount = (String)cdsMap.get(SMSConstants.UM_DATASTORE_COUNT);
         for (int j = 0; j < Integer.parseInt(dsCount); j++)
             createDataStoreImpl(setDataStoreConfigData(j, cdsMap));
         exiting("createDataStore");
@@ -472,40 +480,45 @@ public class SMSCommon extends TestCommon {
         entering("createDataStoreImpl", null);
         try {
             String realmName = (String)cdsiMap.
-                    get(SMSConstants.SMS_DATASTORE_REALM);
+                    get(SMSConstants.UM_DATASTORE_REALM);
             String dsName = (String)cdsiMap.
-                    get(SMSConstants.SMS_DATASTORE_NAME);
+                    get(SMSConstants.UM_DATASTORE_NAME);
             if (!doesDataStoreExists(realmName, dsName)) {
                 String dsType = (String)cdsiMap.
-                        get(SMSConstants.SMS_DATASTORE_TYPE);
+                        get(SMSConstants.UM_DATASTORE_TYPE);
                 if (dsType.equalsIgnoreCase(
-                        SMSConstants.SMS_DATASTORE_TYPE_AMDS) ||
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS) ||
                         dsType.equalsIgnoreCase(
-                        SMSConstants.SMS_DATASTORE_TYPE_AD)) {
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AD)) {
                     // Retrieve the LDAP server information and call the
                     // method to load the AM user schema
                     String dsHost = (String)cdsiMap.
-                            get(SMSConstants.SMS_LDAPv3_LDAP_SERVER);
+                            get(SMSConstants.UM_LDAPv3_LDAP_SERVER);
                     String dsPort = (String)cdsiMap.
-                            get(SMSConstants.SMS_LDAPv3_LDAP_PORT);
+                            get(SMSConstants.UM_LDAPv3_LDAP_PORT);
                     String dsDirmgrdn = (String)cdsiMap.
-                            get(SMSConstants.SMS_DATASTORE_ADMINID);
+                            get(SMSConstants.UM_DATASTORE_ADMINID);
                     String dsDirmgrpwd = (String)cdsiMap.
-                            get(SMSConstants.SMS_DATASTORE_ADMINPW);
+                            get(SMSConstants.UM_DATASTORE_ADMINPW);
                     String dsRootSuffix = (String)cdsiMap.
-                            get(SMSConstants.SMS_LDAPv3_ORGANIZATION_NAME);
+                            get(SMSConstants.UM_LDAPv3_ORGANIZATION_NAME);
                     String sslmode = (String)cdsiMap.
-                            get(SMSConstants.SMS_LDAPv3_LDAP_SSL_ENABLED);
+                            get(SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED);
                     String keystore = null;
                     if (sslmode.equals("true"))
                         keystore = (String)cdsiMap.
-                                get(SMSConstants.SMS_DATASTORE_KEYSTORE);
+                                get(SMSConstants.UM_DATASTORE_KEYSTORE);
                     LDAPCommon ldc = new LDAPCommon(dsHost, dsPort,
                             dsDirmgrdn, dsDirmgrpwd, dsRootSuffix, keystore);
                     String schemaString = (String)globalCfgMap.
-                            get(SMSConstants.SMS_SCHEMNA_LIST + "." + dsType);
+                            get(SMSConstants.UM_SCHEMNA_LIST + "." + dsType);
+                    log(Level.FINEST, "createDataStoreImpl", "Schema files to" +
+                            " be loaded into the datastore: " + schemaString);
                     String schemaAttributes = (String)globalCfgMap.
-                            get(SMSConstants.SMS_SCHEMNA_ATTR + "." + dsType);
+                            get(SMSConstants.UM_SCHEMNA_ATTR + "." + dsType);
+                    log(Level.FINEST, "createDataStoreImpl", "Schema" +
+                            " attributes to check whether schema is  already" +
+                            "loaded: " + schemaAttributes);                    
                     ldc.loadAMUserSchema(schemaString, schemaAttributes);
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
@@ -513,7 +526,7 @@ public class SMSCommon extends TestCommon {
                 ServiceConfig cfg = getServiceConfig(admintoken, realmName,
                         true);
                 cfg.addSubConfig(dsName,
-                        getDataStoreType(dsType), 0,
+                        dsType, 0,
                         setDataStoreAttributes(cdsiMap));
                 if (doesDataStoreExists(realmName, dsName))
                     log(Level.FINE, "createDataStoreImpl", "Datastore " +
@@ -607,6 +620,12 @@ public class SMSCommon extends TestCommon {
         log(Level.FINEST, "doesDataStoreExists", "Realm = " + idseRealm + " " +
                 "Datastore name " + idseName);
         datastoreFound = listDataStore(idseRealm).contains(idseName);
+        if (datastoreFound)
+            log(Level.FINEST, "doesDataStoreExists", "Datastore" + idseName +
+                    "exists");
+        else
+            log(Level.FINEST, "doesDataStoreExists", "Datastore" + idseName +
+                    "does not exists");
         exiting("doesDataStoreExists");
         return datastoreFound;
     }
@@ -642,6 +661,96 @@ public class SMSCommon extends TestCommon {
         exiting("listDataStore");
         return datastoreNameSet;
     }
+
+    /**
+     * Get the names of datastores which need to be deleted. This is called
+     * one wants to delete all the datastores except for the one's supplied
+     * by the qatest list
+     * @param set list of all the datastores currently in the system
+     * @param idx index referring to server index as defined in resources/
+     * config/UMGlobalDatastoreConfig resource bundle. All operations will be
+     * for/on this server
+     * @return List list of datastore names to be deleted
+     * @throws java.lang.Exception
+     */
+    public List getDatastoreDeleteList(Set set, int idx)
+    throws Exception {
+        entering("getDatastoreDeleteList", null);
+        log(Level.FINEST, "getDatastoreDeleteList", "All existing" +
+                " datastores: " + set.toString());
+        List list = new ArrayList();
+        List dList = getCreatedDatastoreNames(idx);
+        log(Level.FINEST, "getDatastoreDeleteList", "Datastores not to be" +
+                "deleted: " + dList.toString());   
+        Iterator key = set.iterator();
+        String item;
+        while (key.hasNext()) {
+            item = (String)key.next();
+            if (!dList.contains(item))
+                list.add(item);
+        }
+        exiting("getDatastoreDeleteList");
+        return (list);
+    }
+
+    /**
+     * This method deletes all the datastores at a particular realm. If user
+     * specifies a server index, all qatest created datastores for that server
+     * are not deleted.
+     * @param realm realm in which to delete datastores
+     * @param idx index referring to server index as defined in resources/
+     * config/UMGlobalDatastoreConfig resource bundle. All operations will be
+     * for/on this server
+     * @throws java.lang.Exception
+     */
+    public void deleteAllDataStores(String realm, int idx)
+    throws Exception {
+        entering("deleteAllDataStore", null);
+        List dList = null;
+        if (idx != -1) {
+            dList = getCreatedDatastoreNames(idx);
+            log(Level.FINEST, "deleteAllDataStores", "Datastores not to be" +
+                    " deleted: " + dList.toString());            
+        }
+        Set set = listDataStore(realm);
+        log(Level.FINEST, "deleteAllDataStores", "Datastores to be  deleted: " +
+                set.toString());
+        Iterator key = set.iterator();
+        String item;
+        while (key.hasNext()) {
+            item = (String)key.next();
+            if (idx != -1) {
+                if (!dList.contains(item))
+                    deleteDataStore(realm, item);
+            } else
+                deleteDataStore(realm, item);
+        }
+        exiting("deleteAllDataStore");
+    }
+
+    /**
+     * Deletes all the datastores for a sepcified server at a specified realm
+     * created by qatest.
+     * @param realm realm in which to delete datastores
+     * @param idx index referring to server index as defined in resources/
+     * config/UMGlobalDatastoreConfig resource bundle. All operations will be
+     * for/on this server.
+     * @throws java.lang.Exception
+     */
+    public void deleteCreatedDataStores(String realm, int idx)
+    throws Exception {
+        entering("deleteCreatedDataStore", null);
+        List dList = getCreatedDatastoreNames(idx);
+        log(Level.FINEST, "deleteCreatedDataStores", "Datastores to be" +
+                " deleted: " + dList.toString());
+        Iterator key = dList.iterator();
+        String item;
+        while (key.hasNext()) {
+            item = (String)key.next();
+            deleteDataStore(realm, item);
+        }
+        exiting("deleteCreatedDataStore");
+    }
     
     /**
      * This method delete one or multiple datastore(s) that specified in a
@@ -667,11 +776,11 @@ public class SMSCommon extends TestCommon {
         Map oneCfgMap = null;
         String ddsRealm;
         String ddsName;
-        String dsCount = (String)ddsMap.get(SMSConstants.SMS_DATASTORE_COUNT);
+        String dsCount = (String)ddsMap.get(SMSConstants.UM_DATASTORE_COUNT);
         for (int j = 0; j < Integer.parseInt(dsCount); j++) {
             oneCfgMap = setDataStoreConfigData(j, ddsMap);
-            ddsRealm = (String)oneCfgMap.get(SMSConstants.SMS_DATASTORE_REALM);
-            ddsName = (String)oneCfgMap.get(SMSConstants.SMS_DATASTORE_NAME);
+            ddsRealm = (String)oneCfgMap.get(SMSConstants.UM_DATASTORE_REALM);
+            ddsName = (String)oneCfgMap.get(SMSConstants.UM_DATASTORE_NAME);
             deleteDataStore(ddsRealm, ddsName);
         }
         exiting("deleteDataStore");
@@ -713,7 +822,7 @@ public class SMSCommon extends TestCommon {
      * @param gdscbiIndex datastore index
      * @param cfgFileName properties file name
      * @return a map that contains the datastore configuration without the
-     * prefix, SMSConstants.SMS_DATASTORE_PARAMS_PREFIX
+     * prefix, SMSConstants.UM_DATASTORE_PARAMS_PREFIX
      */
     public Map getDataStoreConfigByIndex(int gdscbiIndex, String cfgFileName)
     throws Exception {
@@ -733,7 +842,7 @@ public class SMSCommon extends TestCommon {
             while (keyIter.hasNext()) {
                 key = keyIter.next().toString();
                 value = fileMap.get(key).toString();
-                prefixCfgParams = SMSConstants.SMS_DATASTORE_PARAMS_PREFIX +
+                prefixCfgParams = SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
                         gdscbiIndex;
                 if (key.toString().startsWith(prefixCfgParams)) {
                     ldapMap.put(key.toString().
@@ -754,7 +863,448 @@ public class SMSCommon extends TestCommon {
         exiting("getDataStoreConfigByIndex");
         return ldapMap;
     }
+
+    /**
+     * This method creates the generated UMGlobalDatastoreConfig file under the 
+     * dynamically generated built/classes/config directory. The file name is
+     * UMGlobalDatastoreConfig-Generated.properties. This file contains all the
+     * inherited properties for datastore configuration for all the server which
+     * can be configured using qatest
+     * @param fileName This file is UMGlobalDatastoreConfig.properties. This 
+     * could be from global config level (resources/config) or a module level
+     * (resources/module)
+     * @throws java.lang.Exception
+     */
+    public void createUMDatastoreGlobalMap(String fileName)
+    throws Exception {
+        createUMDatastoreGlobalMap(fileName, null, null);
+    }
+
+    /**
+     * This method creates the generated UMGlobalDatastoreConfig file under the 
+     * dynamically generated built/classes/config directory. The file name is
+     * UMGlobalDatastoreConfig-Generated.properties. This file contains all the
+     * inherited properties for datastore configuration for all the server which
+     * can be configured using qatest
+     * @param fileName This file is UMGlobalDatastoreConfig.properties. This 
+     * could be from global config level (resources/config) or a module level
+     * (resources/module)
+     * @param map Map contains the index and name of servers for which
+     * datastore will be configured. Server refrence the servers defined in
+     * resources/config/UMGlobalDatastoreConfig.properties file
+     * @param sIdx The mode in which qatest is being executed
+     * @throws java.lang.Exception
+     */
+    public void createUMDatastoreGlobalMap(String fileName, Map map,
+            String sIdx)
+    throws Exception {
+        createUMDatastoreGlobalMap(fileName, map, sIdx, null);
+    }
     
+    /**
+     * This method creates the generated UMGlobalDatastoreConfig file under the 
+     * dynamically generated built/classes/config directory. The file name is
+     * UMGlobalDatastoreConfig-Generated.properties. This file contains all the
+     * inherited properties for datastore configuration for all the server which
+     * can be configured using qatest
+     * @param fileName This file is UMGlobalDatastoreConfig.properties. This 
+     * could be from global config level (resources/config) or a module level
+     * (resources/module)
+     * @param map Map contains the index and name of servers for which
+     * datastore will be configured. Server refrence the servers defined in
+     * resources/config/UMGlobalDatastoreConfig.properties file
+     * @param sIdx The mode in which qatest is being executed
+     * @param module Module name for which datstore in being created
+     * @throws java.lang.Exception
+     */    
+    public void createUMDatastoreGlobalMap(String fileName, Map umDMap,
+            String sIdx, String module)
+    throws Exception {
+        Map moduleMap = null;
+        Map newModuleMap = null;
+        Map globalMap = null;
+        Map finalMap = null;
+
+        globalMap = getMapFromResourceBundle("config" + fileseparator +
+                fileName);
+        log(Level.FINEST, "createUMDatastoreGlobalMap", "Map containing end" +
+                "user specified values: " + globalMap.toString());
+        log(Level.FINEST, "createUMDatastoreGlobalMap", "Mode in which qatest" +
+                "is executing: " + sIdx);
+
+        if (module != null) {
+            moduleMap = getMapFromResourceBundle(module + fileseparator +
+                    fileName); 
+            checkForRealm(moduleMap, module);
+            log(Level.FINEST, "createUMDatastoreGlobalMap", "Map containing" +
+                    " end user specified values for module " + module + ": "
+                    + moduleMap.toString());
+            newModuleMap = new HashMap();
+            newModuleMap.putAll(globalMap);
+            newModuleMap.putAll(moduleMap);
+            finalMap = createSwappedMap(newModuleMap, fileName, umDMap, sIdx);
+        } else
+            finalMap = createSwappedMap(globalMap, fileName, umDMap, sIdx);
+        
+        if (module == null)
+            createFileFromMap(finalMap, getBaseDir() + fileseparator +
+                    serverName + fileseparator + "built" + fileseparator +
+                    "classes" + fileseparator + "config" + fileseparator +
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                    "-Generated.properties");
+        else
+            createFileFromMap(finalMap, getBaseDir() + fileseparator +
+                    serverName + fileseparator + "built" + fileseparator +
+                    "classes" + fileseparator + module + fileseparator +
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                    "-Generated.properties");
+    }
+
+    /**
+     * This method craeted the final map by inheriting all the user and default
+     * datastore properties. It further checks the following:
+     * - The minimum specified properties and their values are specified for
+     * the server(s) for which datastore is(are) being configured. This
+     * includes datastore count, datastore type, datastore root suffix,
+     * datastore admin password, datastore server name and datastore server
+     * port.
+     * - It also checks, if user config store is set to embedded, the created 
+     * datastore points to configuration datastore properties
+     * @param gblMap Map containing all the datastore attributes and their
+     * values specified by the end user
+     * @param fileName This file is UMGlobalDatastoreConfig.properties. This 
+     * could be from global config level (resources/config) or a module level
+     * (resources/module)
+     * @param umDMap  Map contains the index and name of servers for which
+     * datastore will be configured. Server refrence the servers defined in
+     * resources/config/UMGlobalDatastoreConfig.properties file
+     * @param sIdx The mode in which qatest is being executed
+     * @return Map map containing all the inherited values. This includes end
+     * user specified and the default
+     * @throws java.lang.Exception
+     */
+    public Map createSwappedMap(Map gblMap, String fileName, Map umDMap,
+            String sIdx)
+    throws Exception {
+        Set keys = null;
+        Iterator keyIter;
+        String key;
+        String newKey;
+        String value;
+        String dataType;
+        String rootSuffix;
+        String strPassword;
+        int minD = -1;
+        int maxD = -1;
+
+        Map newDefaultMap = new HashMap();
+        Map sCfgDetails = new HashMap();
+        
+        // The numbers refer to server index as defined in resources/config/
+        // UMGlobalDatastoreConfig.properties resource bundle
+        if (sIdx.equals(SMSConstants.QATEST_EXEC_MODE_SINGLE)) {
+            minD = 1;
+            maxD = 2;
+        } else if (sIdx.equals(SMSConstants.QATEST_EXEC_MODE_DUAL)) {
+            minD = 0;
+            maxD = 2;
+        } else if (sIdx.equals(SMSConstants.QATEST_EXEC_MODE_ALL)) {
+            minD = 0;
+            maxD = 4;
+        }
+
+        for (int mCount = minD; mCount < maxD; mCount++) {
+            log(Level.FINEST, "createSwappedMap", "Server index for which " +
+                    "datastore is being configured: " + mCount);
+            if (!gblMap.containsKey(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                    mCount + "." + SMSConstants.UM_DATASTORE_COUNT)) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_COUNT + " key is" +
+                            " mandatory.");
+                    assert false;
+            }
+            if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                    "." + SMSConstants.UM_DATASTORE_COUNT).toString()).
+                    equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_COUNT + " value" +
+                            " is mandatory.");
+                    assert false;
+            }
+
+            // Get number of datastores to be configured for this server
+            int dCount = new Integer(gblMap.get(
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount + "." +
+                    SMSConstants.UM_DATASTORE_COUNT).toString()).intValue();
+            for (int i = 0; i < dCount; i++) {
+                log(Level.FINEST, "createSwappedMap", "Datastore index being" +
+                        " configured: " + dCount);
+                if (!gblMap.containsKey(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_TYPE + "." + i)) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
+                            "." + i + " key is mandatory.");
+                    assert false;
+                }
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_TYPE + "." +
+                        i).toString()).equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_TYPE +
+                            "." + i + " value is mandatory.");
+                    assert false;
+                }
+                
+                // Check that datatype key and value are specified
+                dataType = (String)gblMap.get(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_TYPE + "." + i);
+                if (!gblMap.containsKey(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + i))
+                {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." +
+                            i + " key is mandatory.");
+                    assert false;
+                }
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX +
+                        "." + i).toString()).equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." +
+                            i + " value is mandatory.");
+                    assert false;
+                }
+                
+                // Check that root suffix key and value are specified
+                rootSuffix = (String)gblMap.get(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + i);
+                if (!gblMap.containsKey(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i)) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
+                            " key is mandatory.");
+                    assert false;
+                }
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
+                        "." + i).toString()).equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
+                            " value is mandatory.");
+                    assert false;
+                }
+                
+                // Check that datastore admin password key and value are
+                // specified
+                strPassword = (String)gblMap.get(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i);
+                if (!gblMap.containsKey(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i)) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
+                            " key is mandatory.");
+                    assert false;
+                }
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
+                        "." + i).toString()).equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_ADMINPW + "." + i +
+                            " value is mandatory.");
+                    assert false;
+                }
+                
+                // Check that datastore server name key and value are specified
+                if (!gblMap.containsKey(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." + i)) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." +
+                            i + " key is mandatory.");
+                    assert false;
+                }
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
+                        "." + i).toString()).equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_LDAPv3_LDAP_SERVER + "." +
+                            i + " value is mandatory.");
+                    assert false;
+                }
+
+                // Check that datastore server port key and value are specified
+                if (!gblMap.containsKey(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i)) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i +
+                            " key is mandatory.");
+                    assert false;
+                }
+                if ((gblMap.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mCount + "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." +
+                        i).toString()).equals("")) {
+                    log(Level.SEVERE, "createSwappedMap",
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_LDAPv3_LDAP_PORT + "." + i +
+                            " value is mandatory.");
+                    assert false;
+                }
+
+                log(Level.FINEST, "createSwappedMap", "Server name and index" +
+                    " map: " + umDMap.toString());
+                String serverName = (String)umDMap.get(Integer.toString(mCount)); 
+                ResourceBundle cfgData =
+                        ResourceBundle.getBundle("Configurator-" + serverName +
+                        "-Generated");
+                String umdatastore = cfgData.getString("umdatastore");
+
+                String strCfgServer;
+                String strCfgPort;
+                String strCfgRootSuffix;
+                String strCfgPassword;
+                String strCfgDirMgrDN;
+
+                Map defaultMap = getMapFromResourceBundle("config" +
+                        fileseparator + "default" + fileseparator + fileName,
+                        dataType); 
+                log(Level.FINEST, "createSwappedMap", "Default datastore" +
+                        " properties and values: " + defaultMap.toString());
+
+                // If user datastore type is set to embedded, set ldap details
+                // to point to configuration server details and remove filtered
+                // role and normal role from supported operations as they are
+                // supported by any other datastore except Sun Directory Server
+                if (umdatastore.equals("embedded")) {
+                    strCfgServer = cfgData.getString("directory_server"); 
+                    strCfgPort =  cfgData.getString("directory_port");
+                    strCfgRootSuffix =  cfgData.getString("config_root_suffix");
+                    strCfgPassword =  cfgData.getString("amadmin_password");
+                    strCfgDirMgrDN =  cfgData.getString("ds_dirmgrdn");
+
+                    Map chgGblData = new HashMap();
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." +
+                            SMSConstants.UM_DATASTORE_ROOT_SUFFIX + "." + i,
+                            strCfgRootSuffix);
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_ADMINPW +
+                            "." + i, strCfgPassword);
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_DATASTORE_ADMINID +
+                            "." + i, strCfgDirMgrDN);
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_LDAPv3_LDAP_SERVER +
+                            "." + i, strCfgServer);
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_LDAPv3_LDAP_PORT +
+                            "." + i, strCfgPort);
+                    chgGblData.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            mCount + "." + SMSConstants.UM_LDAPv3_AUTHID + "." +
+                            i, strCfgDirMgrDN);
+
+                    gblMap.putAll(chgGblData);
+
+                    // Remove role and filtered role plugin support of user
+                    // datastore is set to embedded
+                    Map opendsMap = getMapFromResourceBundle("config" +
+                            fileseparator + "default" + fileseparator +
+                            fileName, 
+                            SMSConstants.UM_DATASTORE_SCHEMA_TYPE_OPENDS); 
+                    defaultMap.remove(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            "." + dataType + "." +
+                            SMSConstants.UM_LDAPv3_SUPPORT_OPERATION);
+                    defaultMap.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            "." + dataType + "." +
+                            SMSConstants.UM_LDAPv3_SUPPORT_OPERATION,
+                            opendsMap.get(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                            "." + SMSConstants.UM_DATASTORE_SCHEMA_TYPE_OPENDS +
+                            "." + SMSConstants.UM_LDAPv3_SUPPORT_OPERATION));
+                }
+
+                keys = defaultMap.keySet();
+                keyIter = keys.iterator();
+
+                while (keyIter.hasNext()) {
+                    key = keyIter.next().toString();
+                    if (key.indexOf(dataType) != -1) {
+                        value = defaultMap.get(key).toString().trim();
+
+                        // One can specify ROOT_SUFFIX tag in any key in the
+                        // default datastore properties. That tag will be
+                        // replaced by user specified value for root suffix
+                        if (value.indexOf("ROOT_SUFFIX") != -1)
+                            value = value.replace("ROOT_SUFFIX", rootSuffix);
+
+                        if (key.indexOf(SMSConstants.UM_LDAPv3_AUTHPW) != -1 &&
+                                value.equals(""))
+                            value = strPassword;
+
+                        newKey = key.replace(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "." +
+                                dataType,
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                mCount) + "." + i;
+                        newDefaultMap.put(newKey, value);
+                    }
+                }
+            }
+        }
+
+        newDefaultMap.putAll(gblMap);
+        log(Level.FINEST, "createSwappedMap", "Final datastore properties" +
+                " and values: " + newDefaultMap.toString());
+
+        return (newDefaultMap);
+    }
+        
+    /**
+     * Gets the names of all datastores created by qatest for the sepcified 
+     * server index
+     * @param idx
+     * @return List list of datastore names
+     * @throws java.lang.Exception
+     */
+    public List getCreatedDatastoreNames(int idx)
+    throws Exception {
+        String dName;
+        Map map = getMapFromResourceBundle("config" + fileseparator +
+                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "-Generated");
+        List list = new ArrayList();
+        int dCount = new Integer(map.get(
+                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + idx + "." +
+                SMSConstants.UM_DATASTORE_COUNT).toString()).intValue();
+        for (int i = 0; i < dCount; i++) {
+            dName = (String)map.get(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                    idx + "." + SMSConstants.UM_DATASTORE_NAME + "." + i);
+            list.add(dName);
+        }
+        log(Level.FINEST, "getCreatedDatastoreNames", "Datastore names for" +
+                "server index " + idx + "is: " + list.toString());
+        return (list);
+    }
+
     /**
      * This method get a Service Configuration object from Service
      * Management methods
@@ -762,6 +1312,142 @@ public class SMSCommon extends TestCommon {
     private ServiceConfig getServiceConfig(SSOToken admToken, String gscRealm)
     throws Exception {
         return (getServiceConfig(admToken, gscRealm, false));
+    }    
+    
+    /**
+     * This method checks whether a given type of datastore plugin is 
+     * configured at the selected realm
+     * The supported type of pluings are :
+     *  - amSDK
+     *  - LDAVPv3forAMDS
+     *  - LDAPv3ForAD
+     *  - LDAPv3
+     *  - files
+     * @param ssotoken SSO token
+     * @param pluginName Plugin name
+     * @param subRealmName subRealm name
+     * 
+     * @return true if Plugin type to be checked is supported to the given realm
+     */
+    public boolean isPluginConfigured(SSOToken ssoToken, String pluginName, 
+            String subRealmName)
+    throws Exception {
+        entering("isPluginConfigured", null);
+        ServiceConfig subConfig;
+        OrganizationConfigManager orgMgr =
+                new OrganizationConfigManager(ssoToken, subRealmName);
+        OrganizationConfigManager subrealm =
+                orgMgr.getSubOrgConfigManager(subRealmName);
+        ServiceConfig sc =
+                subrealm.getServiceConfig(SMSConstants.REALM_SERVICE);
+        boolean isPluginConfigured = false;
+        if (sc != null) {
+            try {
+                Iterator items = sc.getSubConfigNames().iterator();
+                while (items.hasNext()) {
+                    subConfig = sc.getSubConfig((String) items.next());
+                    if (subConfig.getSchemaID().equalsIgnoreCase(pluginName)) {
+                        isPluginConfigured = true;
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+        exiting("isPluginConfigured");
+        return isPluginConfigured;
+    }
+    
+    /**
+     * Check if the FAM is deployed against AM DIT. 
+     * Return true if it is AM DIT.
+     */
+    public boolean isAMDIT()
+    throws Exception {
+        boolean result = false;
+            ServiceSchemaManager idRepoServiceSchemaManager;
+            idRepoServiceSchemaManager = new ServiceSchemaManager(admintoken,
+                    "sunIdentityRepositoryService", "1.0");
+            int svcRevisionNumber = idRepoServiceSchemaManager
+                    .getRevisionNumber(); 
+            if (svcRevisionNumber <= 20) {
+                log(Level.FINE, "isAMDIT", "This is AM 7.x DIT"); 
+                result = true;
+            } else {
+                log(Level.FINE, "isAMDIT", "This is FAM 8.x DIT"); 
+            }
+        return result;
+    }    
+  
+    /**
+     * This method checks whether a given type of datastore plugin is 
+     * configured at the selected realm using the existing admin 
+     * <code>SSOToken</code>.
+     * The supported type of pluings are :
+     *  - amSDK
+     *  - LDAVPv3forAMDS
+     *  - LDAPv3ForAD
+     *  - LDAPv3
+     *  - files
+     * @param pluginName Plugin name
+     * @param subRealmName subRealm name
+     * @return true if Plugin type to be checked is supported to the given realm
+     */    
+    public boolean isPluginConfigured(String pluginName, String subRealmName) 
+    throws Exception {
+        return isPluginConfigured(admintoken, pluginName, subRealmName);
+    }    
+    
+    /**
+     * This method applies only when configuring datatsores for a module.
+     * Current qatest framework allowes a module to create a datastore only at a
+     * sub realm. If a module tries to create a datastore at root realm, an
+     * error is thrown.
+     * @param map Map containing all the datastore attributes
+     * @param module Module which is creating the datastore
+     * @throws java.lang.Exception
+     */
+    private void checkForRealm(Map map, String module)
+    throws Exception {
+        String realm;
+        int maxDatastores = new Integer((String)globalCfgMap.get(
+                "UMGlobalConfig.maxDatastoreConfig")).intValue();
+        for (int mCount = 0; mCount < maxDatastores; mCount++) {
+            if (map.containsKey(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                    mCount + "." + SMSConstants.UM_DATASTORE_COUNT)) {
+                int dCount = new Integer(map.get(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                        "." + SMSConstants.UM_DATASTORE_COUNT).toString()).
+                        intValue();
+                for (int i = 0; i < dCount; i++) {
+                    boolean bkey =  map.containsKey(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_REALM + "." + i);
+                    if (!bkey) {
+                        log(Level.SEVERE, "checkForRealm", "Module " + module +
+                                "datastore " +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount
+                                + " with index " + dCount + "doesn't have" +
+                                " realm attribute. Realm attribute is" +
+                                " mandatory for creating datastore at module" +
+                                " level");
+                        assert false;
+                    }
+                    realm = (String)map.get(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + mCount +
+                            "." + SMSConstants.UM_DATASTORE_TYPE + "." + i);
+                    if (realm.equals(TestCommon.realm)) {
+                        log(Level.SEVERE, "checkForRealm", "Module " + module +
+                                "cannot change the datastore configuration at" +
+                                " the root realm. Modules can configure" +
+                                " datastores only in sub realms");
+                        assert false;
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -802,37 +1488,13 @@ public class SMSCommon extends TestCommon {
     }
     
     /**
-     * This method returns the datastore schema type name depend on datastore
-     * type.
-     */
-    private String getDataStoreType(String gdstType)
-    throws Exception {
-        if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_AMDS))
-            return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMDS;
-        else if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_AD))
-            return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AD;
-        else if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_LDAP))
-            return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_LDAP;
-        else if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_FF))
-            return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_FF;
-        else if (gdstType.equals(SMSConstants.SMS_DATASTORE_TYPE_AMSDK))
-            return SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK;
-        else {
-            log(Level.SEVERE, "getDataStoreType", "Invalid type " + gdstType +
-                    " .Failed to retrieve datastore schema type name");
-            assert false;
-            return null;
-        }
-    }
-    
-    /**
      * This method set the datastore attributes and store them in a map
      */
     private Map setDataStoreAttributes(Map sdscfmMap)
     throws Exception {
         String newTempKey;
         Map dsAttributeMap = new HashMap<String, Set<String>>();
-        String dsType = (String)sdscfmMap.get(SMSConstants.SMS_DATASTORE_TYPE);
+        String dsType = (String)sdscfmMap.get(SMSConstants.UM_DATASTORE_TYPE);
         try {
             Set keys = sdscfmMap.keySet();
             Iterator keyIter = keys.iterator();
@@ -842,16 +1504,15 @@ public class SMSCommon extends TestCommon {
             while (keyIter.hasNext()) {
                 key = keyIter.next().toString();
                 value = sdscfmMap.get(key).toString();
-                if (!key.startsWith(SMSConstants.SMS_DATASTORE_KEY_PREFIX)) {
-                    if ((dsType == null) || (dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_FF)) ||
+                if (!key.startsWith(SMSConstants.UM_DATASTORE_KEY_PREFIX)) {
+                    if ((dsType == null) ||
                             (dsType.equalsIgnoreCase(
-                            SMSConstants.SMS_DATASTORE_TYPE_AMSDK))) {
+                            SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK))) {
                         putSetIntoMap(key, dsAttributeMap, value, "|");
-                    } else if (!key.equals(SMSConstants.SMS_LDAPv3_LDAP_PORT)) {
-                        if (key.equals(SMSConstants.SMS_LDAPv3_LDAP_SERVER)) {
+                    } else if (!key.equals(SMSConstants.UM_LDAPv3_LDAP_PORT)) {
+                        if (key.equals(SMSConstants.UM_LDAPv3_LDAP_SERVER)) {
                             portNumber = (String)sdscfmMap.
-                                    get(SMSConstants.SMS_LDAPv3_LDAP_PORT);
+                                    get(SMSConstants.UM_LDAPv3_LDAP_PORT);
                             value = (portNumber == null) ? value + ":389" :
                                 value + ":" + portNumber;
                         }
@@ -878,10 +1539,10 @@ public class SMSCommon extends TestCommon {
     throws Exception {
         Map dsMap = new HashMap();
         String dsType = (String)sdscfmMap.
-                get(SMSConstants.SMS_DATASTORE_TYPE + "." + sdscdIndex);
+                get(SMSConstants.UM_DATASTORE_TYPE + "." + sdscdIndex);
         if (dsType == null)
             dsType = (String)sdscfmMap.
-                    get(SMSConstants.SMS_DATASTORE_TYPE);
+                    get(SMSConstants.UM_DATASTORE_TYPE);
         try {
             Set keys = sdscfmMap.keySet();
             Iterator keyIter = keys.iterator();
@@ -960,92 +1621,5 @@ public class SMSCommon extends TestCommon {
             values.put(as.getName(), as.getDefaultValues());
         }
         return values;
-    }
-    
-    /**
-     * This method checks whether a given type of datastore plugin is 
-     * configured at the selected realm
-     * The supported type of pluings are :
-     *  - amSDK
-     *  - LDAVPv3forAMDS
-     *  - LDAPv3ForAD
-     *  - LDAPv3
-     *  - files
-     * @param ssotoken SSO token
-     * @param pluginName Plugin name
-     * @param subRealmName subRealm name
-     * @return true if Plugin type to be checked is supported to the given realm
-     * 
-     */
-    public boolean isPluginConfigured(SSOToken ssoToken, String pluginName, 
-            String subRealmName)
-    throws Exception {
-        entering("isPluginConfigured", null);
-        ServiceConfig subConfig;
-        OrganizationConfigManager orgMgr =
-                new OrganizationConfigManager(ssoToken, subRealmName);
-        OrganizationConfigManager subrealm =
-                orgMgr.getSubOrgConfigManager(subRealmName);
-        ServiceConfig sc =
-                subrealm.getServiceConfig(SMSConstants.REALM_SERVICE);
-        boolean isPluginConfigured = false;
-        if (sc != null) {
-            try {
-                Iterator items = sc.getSubConfigNames().iterator();
-                while (items.hasNext()) {
-                    subConfig = sc.getSubConfig((String) items.next());
-                    if (subConfig.getSchemaID().equalsIgnoreCase(pluginName)) {
-                        isPluginConfigured = true;
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
-            }
-        }
-        exiting("isPluginConfigured");
-        return isPluginConfigured;
-    }
-    
-    /**
-     * Check if the FAM is deployed against AM DIT. 
-     * Return true if it is AM DIT.
-     */
-    public boolean isAMDIT()
-    throws Exception {
-        boolean result = false;
-            ServiceSchemaManager idRepoServiceSchemaManager;
-            idRepoServiceSchemaManager = new ServiceSchemaManager(admintoken,
-                    "sunIdentityRepositoryService", "1.0");
-            int svcRevisionNumber = idRepoServiceSchemaManager
-                    .getRevisionNumber(); 
-            if (svcRevisionNumber <= 20) {
-                log(Level.FINE, "isAMDIT", "This is AM 7.x DIT"); 
-                result = true;
-            } else {
-                log(Level.FINE, "isAMDIT", "This is FAM 8.x DIT"); 
-            }
-        return result;
-    }    
-  
-    /**
-     * This method checks whether a given type of datastore plugin is 
-     * configured at the selected realm using the existing admin 
-     * <code>SSOToken</code>.
-     * The supported type of pluings are :
-     *  - amSDK
-     *  - LDAVPv3forAMDS
-     *  - LDAPv3ForAD
-     *  - LDAPv3
-     *  - files
-     * @param pluginName Plugin name
-     * @param subRealmName subRealm name
-     * @return true if Plugin type to be checked is supported to the given realm
-     * 
-     */    
-    public boolean isPluginConfigured(String pluginName, String subRealmName) 
-    throws Exception {
-        return isPluginConfigured(admintoken, pluginName, subRealmName);
     }    
 }

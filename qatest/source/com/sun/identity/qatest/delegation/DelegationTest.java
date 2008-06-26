@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationTest.java,v 1.3 2008-04-25 14:57:46 kanduls Exp $
+ * $Id: DelegationTest.java,v 1.4 2008-06-26 20:11:13 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.DelegationCommon;
 import com.sun.identity.qatest.common.PolicyCommon;
 import com.sun.identity.qatest.common.SMSCommon;
+import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -153,7 +154,8 @@ public class DelegationTest extends DelegationCommon {
         entering("setup", params);
         try {
             prefixTestName = testName + testNum;
-            cfgMap = getDataFromCfgFile(prefixTestName, testName);
+            cfgMap = getDataFromCfgFile(prefixTestName, "delegation" +
+                    fileseparator + testName);
             testCount = Integer.parseInt(getParams(
                     DelegationConstants.IDM_KEY_COUNT));
             log(Level.FINEST, "setup", "Count = " + testCount);
@@ -385,7 +387,9 @@ public class DelegationTest extends DelegationCommon {
                         Reporter.log("Policy index :" + policyIdx);
                         log(Level.FINE, "testDelegation",
                                 "Creating policy file" + strLocRB + ".xml");
-                        mpc.createPolicyXML(strGblRB, strLocRB, policyIdx,
+                        mpc.createPolicyXML("delegation" + fileseparator +
+                                strGblRB, "delegation" + fileseparator +
+                                strLocRB, policyIdx,
                                 strLocRB + ".xml", realmName);
                         log(Level.FINE, "testDelegation", "Creating policy in "+
                                 "realm " + realmName + " using file " +
@@ -422,8 +426,11 @@ public class DelegationTest extends DelegationCommon {
                         log(Level.FINE, "testDelegation",
                                 "Creating ref policy "+
                                 "xml " + strRefRB + ".xml");
-                        mpc.createReferralPolicyXML(strGblRB, strRefRB,
-                                strLocRB, policyIdx, strRefRB + ".xml");
+                        mpc.createReferralPolicyXML("delegation" +
+                                fileseparator + strGblRB, "delegation" +
+                                fileseparator + strRefRB,
+                                "delegation" + fileseparator + strLocRB,
+                                policyIdx, strRefRB + ".xml");
                         log(Level.FINE, "testDelegation",
                                 "Creating ref policy "+
                                 "in " + parentRealm + " using file " +
@@ -457,7 +464,9 @@ public class DelegationTest extends DelegationCommon {
                                     getParams(
                                     DelegationConstants.REF_POLICY_CONFIG_NO,
                                     i));
-                            mpc.deleteReferralPolicies(strLocRB, strRefRB,
+                            mpc.deleteReferralPolicies("delegation" +
+                                    fileseparator + strLocRB, "delegation" +
+                                    fileseparator + strRefRB,
                                     policyIdx);
                         }
                         log(Level.FINE, "testDelegation",
@@ -470,7 +479,8 @@ public class DelegationTest extends DelegationCommon {
                                 Integer.parseInt(
                                 getParams(DelegationConstants.POLICY_CONFIG_NO,
                                 i));
-                        status = mpc.deletePolicies(strLocRB, policyIdx,
+                        status = mpc.deletePolicies("delegation" +
+                                fileseparator + strLocRB, policyIdx,
                                 realmName, subOrgLoginUrl, testIdName,
                                 testIdPassword);
                     } catch (Exception ex) {
@@ -599,47 +609,57 @@ public class DelegationTest extends DelegationCommon {
     }
     
     /**
-     * Creates a realm with Datastore
+     * Creates a realm with datastore. Since both sub realm and sub sub realm
+     * utilize the same datastore, while creating sub sub realm no datastore is
+     * created, but the one created at sub realm is utilized, as that is copied
+     * by default when creating sub sub realm. The implementation logic needs
+     * to change if sub sub realm wants to create its own datastore.
      * @param ssoToken ssotoken to be used for creating realm
      * @param realm Name of the realm ex:/red/red1/red2
      * @param dsConfIdx Index of the data store configuration information that
-     *        need to be used from the DelegationSMSGlobalDatastoreConfig file.
+     *        need to be used from the UMGlobalDatastoreConfig file.
      * @return Return true if realm creation is successfull
      */
     private boolean createRealm(SSOToken ssoToken, String realm, int dsConfIdx)
     throws Exception {
         try {
-            ResourceBundle amconfigInfo = ResourceBundle.getBundle(
-                    TestConstants.TEST_PROPERTY_AMCONFIG);
-            String defaultDataStore = amconfigInfo.getString(
-                    TestConstants.KEY_ATT_CONFIG_DEFDATASTORENAME);
             if ((realm != null) && !realm.equals("/")) {
                 String childRealm =
                         realm.substring(realm.lastIndexOf("/") + 1);
                 if (searchRealms(ssoToken, childRealm,
                         getParentRealm(realm)).isEmpty()) {
+                    SMSCommon smsc = new SMSCommon(ssoToken, "config" +
+                            fileseparator + "default" + fileseparator +
+                            "UMGlobalConfig");
+                    Map<String, String> umDatastoreTypes = new HashMap<String,
+                            String>();
+                    umDatastoreTypes.put("1", serverName);
                     log(Level.FINE, "createRealm", 
                             "Creating delegation realm " + realm + "...");
-                    createIdentity(ssoToken, getParentRealm(realm), 
-                            IdType.REALM, childRealm, new HashMap());
-                    smsObj = new SMSCommon(ssoToken, "SMSGlobalConfig");
-                    dsCfgMap = new HashMap();
-                    dsCfgMap = smsObj.getDataStoreConfigByIndex(
-                            dsConfIdx, "DelegationSMSGlobalDatastoreConfig");
-                    Set listDataStore=smsObj.listDataStore(realm);
-                    Iterator iterSet = listDataStore.iterator();
-                    String dataStoreName;
-                    while (iterSet.hasNext()) {
-                        dataStoreName = (String)iterSet.next();
-                        if (!dataStoreName.equals(defaultDataStore)) {
-                            log(Level.FINE, "createRealm",
-                                    "Deleting existing datastore " +
-                                    dataStoreName);
-                            smsObj.deleteDataStore(realm, dataStoreName);
-                        }
+                    int secIdx = realm.substring(1,
+                            realm.length()).indexOf("/");
+                    log(Level.FINEST, "createRealm", "secIdx: " + secIdx);
+                    
+                    // If there is sub sub realm, do not try to create a 
+                    // datastore in it. Just use the one inherited from the
+                    // sub realm
+                    if (secIdx != -1) {
+                        createIdentity(ssoToken, getParentRealm(realm), 
+                                IdType.REALM, childRealm, new HashMap());
+                    } else {
+                        createIdentity(ssoToken, getParentRealm(realm), 
+                                IdType.REALM, childRealm, new HashMap());
+
+                        smsc.deleteAllDataStores(realm, -1);
+                        smsc.createUMDatastoreGlobalMap(
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX,
+                                umDatastoreTypes,
+                                SMSConstants.QATEST_EXEC_MODE_SINGLE,
+                                "delegation");
+                        smsc.createDataStore(1, "delegation" + fileseparator +
+                                SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "-Generated");
                     }
-                    log(Level.FINE, "createRealm", "Creating datastore...");
-                    smsObj.createDataStore(dsCfgMap);
                 }
             }
         } catch (Exception ex) {

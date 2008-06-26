@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFF.java,v 1.8 2008-03-25 22:46:22 mrudulahg Exp $
+ * $Id: ConfigureIDFF.java,v 1.9 2008-06-26 20:13:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,8 @@ public class ConfigureIDFF extends TestCommon {
             
             log(Level.FINEST, "ConfigureIDFF", "GroupName received from " +
                     "testng is " + strGroupName);
-            configMap = getMapFromResourceBundle("idffTestConfigData");
+            configMap = getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestConfigData");
             log(Level.FINEST, "ConfigureIDFF", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)
@@ -190,8 +191,8 @@ public class ConfigureIDFF extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage spExportEntityPage = spfm.exportEntity(spWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false, true,
-                        true, "idff");
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                        false, true, true, "idff");
                 if (FederationManager.getExitCode(spExportEntityPage) != 0) {
                     log(Level.SEVERE, "ConfigureIDFF", "exportEntity famadm" +
                             " command failed");
@@ -244,7 +245,8 @@ public class ConfigureIDFF extends TestCommon {
             
             String[] idpMetadata = {"",""};
             HtmlPage idpEntityPage = idpfm.listEntities(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "idff");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                    "idff");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "ConfigureIDFF", "listEntities famadm" +
                        " command failed");
@@ -289,8 +291,8 @@ public class ConfigureIDFF extends TestCommon {
                 //If entity exists, export to get the metadata.
                 HtmlPage idpExportEntityPage = idpfm.exportEntity(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false, true,
-                        true, "idff");
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                        false, true, true, "idff");
                 if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
                    log(Level.SEVERE, "ConfigureIDFF", "exportEntities famadm" +
                            " command failed");
@@ -316,8 +318,8 @@ public class ConfigureIDFF extends TestCommon {
                 if (FederationManager.getExitCode(idpfm.deleteEntity(
                         idpWebClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
-                        "idff")) == 0) {
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                        false, "idff")) == 0) {
                     log(Level.FINEST, "ConfigureIDFF", "Delete sp entity on " +
                             "IDP side");
                 } else {
@@ -333,8 +335,8 @@ public class ConfigureIDFF extends TestCommon {
             spMetadata[1] = spMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(idpfm.importEntity(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), spMetadata[0],
-                    spMetadata[1],
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                    spMetadata[0], spMetadata[1],
                     (String)configMap.get(TestConstants.KEY_IDP_COT), "idff"))
                     != 0) {
                 log(Level.SEVERE, "ConfigureIDFF", "Couldn't import SP " +
@@ -351,8 +353,8 @@ public class ConfigureIDFF extends TestCommon {
                         "Delete & load the metadata ");
                 if (FederationManager.getExitCode(spfm.deleteEntity(spWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
-                        "idff")) == 0) {
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                        false, "idff")) == 0) {
                     log(Level.FINEST, "ConfigureIDFF", "Delete idp entity on " +
                             "SP side");
                 } else {
@@ -368,8 +370,8 @@ public class ConfigureIDFF extends TestCommon {
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     "hosted=\"1\"", "hosted=\"0\"");
             if (FederationManager.getExitCode(spfm.importEntity(spWebClient,
-                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), idpMetadata[0],
-                    idpMetadata[1],
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                    idpMetadata[0], idpMetadata[1],
                     (String)configMap.get(TestConstants.KEY_SP_COT), "idff"))
                     != 0) {
                 log(Level.SEVERE, "ConfigureIDFF", "Couldn't import IDP");

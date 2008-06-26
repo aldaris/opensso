@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWSFed.java,v 1.5 2008-03-07 23:19:56 mrudulahg Exp $
+ * $Id: ConfigureWSFed.java,v 1.6 2008-06-26 20:27:37 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,8 @@ public class ConfigureWSFed extends WSFedCommon {
             
             log(Level.FINEST, "ConfigureWSFed", "GroupName received from " +
                     "testng is " + strGroupName);
-            configMap = getMapFromResourceBundle("WSFedTestConfigData");
+            configMap = getMapFromResourceBundle("wsfed" + fileseparator +
+                    "WSFedTestConfigData");
             log(Level.FINEST, "ConfigureWSFed", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)

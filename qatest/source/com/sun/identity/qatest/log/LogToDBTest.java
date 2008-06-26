@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.2 2008-04-11 04:49:32 kanduls Exp $
+ * $Id: LogToDBTest.java,v 1.3 2008-06-26 20:14:56 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,8 +76,10 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                 assert false;
             }
             logConfig = getLogConfig(adminSSOToken);
-            dbConfRb = ResourceBundle.getBundle(LOGTEST_DB_CONF_FILE);
-            testCaseInfo = ResourceBundle.getBundle(testCaseInfoFileName);
+            dbConfRb = ResourceBundle.getBundle("log" + fileseparator +
+                    LOGTEST_DB_CONF_FILE);
+            testCaseInfo = ResourceBundle.getBundle("log" + fileseparator +
+                    testCaseInfoFileName);
             location = dbConfRb.getString(LOGTEST_KEY_LOG_LOCATION);
             int lastIdx = location.lastIndexOf("/");
             dataBaseName = location.substring(lastIdx + 1);

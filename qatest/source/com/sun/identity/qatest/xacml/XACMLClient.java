@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLClient.java,v 1.2 2008-04-02 03:28:02 sridharev Exp $
+ * $Id: XACMLClient.java,v 1.3 2008-06-26 20:28:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,8 +76,8 @@ public class XACMLClient extends TestCommon {
                 (String)testProperties.get("action.id"),
                 (String)testProperties.get("action.id.datatype")
                 );
-        log(Level.FINEST, "testXACML", "Response received from XACML Request is " +
-                response);
+        log(Level.FINEST, "testXACML", "Response received from XACML Request" +
+                " is " + response);
         
         return response;
     }
@@ -193,7 +193,8 @@ public class XACMLClient extends TestCommon {
         request.setAction(action);
         
         //Enviornment
-        Environment environment = ContextFactory.getInstance().createEnvironment();
+        Environment environment = 
+                ContextFactory.getInstance().createEnvironment();
         request.setEnvironment(environment);
         log(Level.FINEST, "createTestXacmlRequest", " XACML Request is " +
                 request.toXMLString());

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.4 2008-05-30 23:12:35 mrudulahg Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.5 2008-06-26 20:15:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,14 +98,21 @@ public class MultiProtocolSmokeTest extends TestCommon {
             idffConfigMap = new HashMap<String, String>();
             samlv2ConfigMap = new HashMap<String, String>();
             wsfedConfigMap = new HashMap<String, String>();
-            idffConfigMap = getMapFromResourceBundle("idffTestConfigData");
-            idffConfigMap.putAll(getMapFromResourceBundle("idffTestData"));
-            samlv2ConfigMap = getMapFromResourceBundle("samlv2TestConfigData");
-            samlv2ConfigMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            wsfedConfigMap = getMapFromResourceBundle("WSFedTestConfigData");
-            wsfedConfigMap.putAll(getMapFromResourceBundle("WSFedTestData"));
+            idffConfigMap = getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestConfigData");
+            idffConfigMap.putAll(getMapFromResourceBundle("idff" +
+                    fileseparator + "idffTestData"));
+            samlv2ConfigMap = getMapFromResourceBundle("samlv2" +
+                    fileseparator + "samlv2TestConfigData");
+            samlv2ConfigMap.putAll(getMapFromResourceBundle("samlv2" +
+                    fileseparator + "samlv2TestData"));
+            wsfedConfigMap = getMapFromResourceBundle("wsfed" + fileseparator +
+                    "WSFedTestConfigData");
+            wsfedConfigMap.putAll(getMapFromResourceBundle("wsfed" +
+                    fileseparator + "WSFedTestData"));
             multiprotocolConfigMap =
-                    getMapFromResourceBundle("MultiProtocolSmokeTest");
+                    getMapFromResourceBundle("multiprotocol" + fileseparator +
+                    "MultiProtocolSmokeTest");
             log(Level.FINEST, "setup", "IDFF ConfigMap is : " + idffConfigMap );
             log(Level.FINEST, "setup", "SAMLv2 ConfigMap is : " +
                     samlv2ConfigMap );

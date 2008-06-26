@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxyDefaultRelayStateSPTests.java,v 1.1 2008-05-16 00:33:59 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxyDefaultRelayStateSPTests.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,10 +100,12 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
             log(Level.FINEST, "setup", "Entering");
             //Upload global properties file in configMap
             baseDir = getTestBase();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            configMap.putAll(getMapFromResourceBundle(
-                    "SAMLv2IDPProxyDefaultRelayStateSPTests"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
+            configMap.putAll(getMapFromResourceBundle("samlv2idpproxy" +
+                    fileseparator + "SAMLv2IDPProxyDefaultRelayStateSPTests"));
             log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users

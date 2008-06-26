@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedSmokeTest.java,v 1.3 2008-03-07 23:19:56 mrudulahg Exp $
+ * $Id: WSFedSmokeTest.java,v 1.4 2008-06-26 20:27:37 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,9 +85,12 @@ public class WSFedSmokeTest extends WSFedCommon {
                     + fileseparator + "built" + fileseparator + "classes"
                     + fileseparator;
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("WSFedTestConfigData");
-            configMap.putAll(getMapFromResourceBundle("WSFedTestData"));
-            configMap.putAll(getMapFromResourceBundle("WSFedSmokeTest"));
+            configMap = getMapFromResourceBundle("wsfed" + fileseparator +
+                    "WSFedTestConfigData");
+            configMap.putAll(getMapFromResourceBundle("wsfed" + fileseparator +
+                    "WSFedTestData"));
+            configMap.putAll(getMapFromResourceBundle("wsfed" + fileseparator +
+                    "WSFedSmokeTest"));
             log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
             // Create sp users

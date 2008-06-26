@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.10 2008-05-29 16:15:35 mrudulahg Exp $
+ * $Id: UnconfigureIDFF.java,v 1.11 2008-06-26 20:13:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,8 @@ public class UnconfigureIDFF extends TestCommon {
             configMap = new HashMap<String, String>();
             getWebClient();
             
-            configMap = getMapFromResourceBundle("idffTestConfigData");
+            configMap = getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestConfigData");
             log(Level.FINEST, "UnconfigureIDFF", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 

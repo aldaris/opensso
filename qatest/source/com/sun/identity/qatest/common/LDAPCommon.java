@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.5 2008-05-16 22:21:34 rmisra Exp $
+ * $Id: LDAPCommon.java,v 1.6 2008-06-26 20:10:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,6 @@ public class LDAPCommon extends TestCommon {
     private String basedir;
     private String keystore;
     private static LDAPConnection ld = null;
-    private String fileSeparator = System.getProperty("file.separator");
     
     /**
      * Creates a new instance of LDAPCommon
@@ -148,7 +147,7 @@ public class LDAPCommon extends TestCommon {
                 List schemaFilesList = getAttributeList(schemaList, ";");
                 List schemaAttrsList = getAttributeList(schemaAttr, ";");
                 log(Level.FINEST, "loadAMUserSchema",
-                    	"User schema list is " + schemaList);
+                            "User schema list is " + schemaList);
                 log(Level.FINE,
                         "loadAMUserSchema", "Start loading AM user schema...");
                 String schemaFile;
@@ -175,8 +174,8 @@ public class LDAPCommon extends TestCommon {
                             "...");
                         index = schemaFile.lastIndexOf("/");
                         if (index >= 0) {
-                            fn = basedir + fileSeparator + "resources" + 
-                                    fileSeparator + 
+                            fn = basedir + fileseparator + serverName +
+                                    fileseparator + "ldif" + fileseparator + 
                                     schemaFile.substring(index + 1);
                             ldMap.put("ROOT_SUFFIX", dsrootsuffix);
                             ldMap.put("@ROOT_SUFFIX@", dsrootsuffix);
@@ -301,7 +300,7 @@ public class LDAPCommon extends TestCommon {
                     case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
                         log(Level.FINE, "createSchemaFromLDIF", 
                                 "Attribute already exists");
-			break;
+                        break;
                     case LDAPException.NO_SUCH_ATTRIBUTE:
                         // Ignore some attributes need to be deleted if present
                         break;
@@ -320,8 +319,6 @@ public class LDAPCommon extends TestCommon {
                             ld.modify(DN, modSet);
                         } catch (LDAPException ex) {
                             //Ignore the exception
-                            //log(Level.FINEST, "createSchemaFromLDIF",
-                                    //ex.getMessage());
                         }
                         break;
                     default:

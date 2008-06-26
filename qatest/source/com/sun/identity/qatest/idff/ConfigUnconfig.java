@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.1 2008-06-19 22:42:35 mrudulahg Exp $
+ * $Id: ConfigUnconfig.java,v 1.2 2008-06-26 20:13:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ public class ConfigUnconfig extends TestCommon {
     throws Exception {
         entering("startServer", null);
         notificationMap = startNotificationServer();
-        replaceRedirectURIs("federation");
+        replaceRedirectURIs("idff");
         exiting("startServer");
     }
     

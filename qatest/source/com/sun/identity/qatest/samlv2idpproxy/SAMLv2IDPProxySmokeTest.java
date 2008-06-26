@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxySmokeTest.java,v 1.3 2008-05-16 00:34:01 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxySmokeTest.java,v 1.4 2008-06-26 20:26:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,12 +94,12 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
                     + SAMLv2Common.fileseparator + "classes"
                     + SAMLv2Common.fileseparator;
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2IDPProxySmokeTest",
-                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2idpproxy" +
+                    fileseparator + "samlv2IDPProxySmokeTest", configMap);
     
             log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             

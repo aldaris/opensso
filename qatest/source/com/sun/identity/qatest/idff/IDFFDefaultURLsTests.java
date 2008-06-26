@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFDefaultURLsTests.java,v 1.4 2008-03-07 23:19:34 mrudulahg Exp $
+ * $Id: IDFFDefaultURLsTests.java,v 1.5 2008-06-26 20:13:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,9 +117,12 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
             baseDir = getTestBase();
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("idffTestConfigData");
-            configMap.putAll(getMapFromResourceBundle("idffTestData"));
-            configMap.putAll(getMapFromResourceBundle("IDFFDefaultURLsTests"));
+            configMap = getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestConfigData");
+            configMap.putAll(getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestData"));
+            configMap.putAll(getMapFromResourceBundle("idff" + fileseparator +
+                    "IDFFDefaultURLsTests"));
             log(Level.FINEST, "setup", "Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +

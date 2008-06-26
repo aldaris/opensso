@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxyRelayStateTests.java,v 1.1 2008-05-16 00:34:00 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxyRelayStateTests.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,8 +123,10 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
                     + System.getProperty("file.separator");
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             log(Level.FINEST, "setup", "Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -162,7 +164,8 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
             fmIDPProxy = new FederationManager(idpproxyurl);
 
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("SAMLv2IDPProxyRelayStateTests");
+            usersMap = getMapFromResourceBundle("samlv2idpproxy" +
+                    fileseparator + "SAMLv2IDPProxyRelayStateTests");
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalScenarios"));
             for (int i = 1; i < totalUsers + 1; i++) {
@@ -250,8 +253,10 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
                     "relay state from URL parameter is loaded after " +
                     "successful SSO. SSO with " + ssoProfile);
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 1));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -306,8 +311,10 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
                     "relay state from URL parameter is loaded after " +
                     "successful SLO. SLO with " + sloProfile);
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 2));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -363,8 +370,10 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
                     "after successful SSO & SLO. SSO with " + ssoProfile + 
                     "& SLO with " + sloProfile);
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 3));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SigningEncryptionTests.java,v 1.6 2008-04-10 21:27:06 mrudulahg Exp $
+ * $Id: SAMLv2SigningEncryptionTests.java,v 1.7 2008-06-26 20:24:18 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -195,8 +195,10 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             baseDir = getTestBase();
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
@@ -218,7 +220,8 @@ public class SAMLv2SigningEncryptionTests extends TestCommon {
             fmIDP = new FederationManager(idpurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("samlv2SigningEncryptionTests");
+            usersMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2SigningEncryptionTests");
             log(Level.FINEST, "setup", "Users map is " + usersMap);
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));

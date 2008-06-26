@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToFileTest.java,v 1.2 2008-04-11 04:49:32 kanduls Exp $
+ * $Id: LogToFileTest.java,v 1.3 2008-06-26 20:14:57 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -65,7 +65,8 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
             }
             idm = new IDMCommon("LogToFileTest");
             logConfig = getLogConfig(adminSSOToken);
-            testCaseInfo = ResourceBundle.getBundle(testCaseInfoFileName);
+            testCaseInfo = ResourceBundle.getBundle("log" + fileseparator +
+                    testCaseInfoFileName);
         } catch (Exception ex) {
             log(Level.SEVERE, "LogToFileTest", "LogTest setup failed");
             ex.printStackTrace();

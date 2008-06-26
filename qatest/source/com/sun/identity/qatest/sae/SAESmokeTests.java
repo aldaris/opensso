@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.4 2008-01-31 22:06:28 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.5 2008-06-26 20:17:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,7 +121,8 @@ public class SAESmokeTests extends TestCommon {
     /** Creates a new instance of SAESmokeTests */
     public SAESmokeTests() {
         super("SAESmokeTests");
-        saeConfig = ResourceBundle.getBundle("SAESmokeTests");
+        saeConfig = ResourceBundle.getBundle("sae" + fileseparator +
+                "SAESmokeTests");
     }
     
     /**

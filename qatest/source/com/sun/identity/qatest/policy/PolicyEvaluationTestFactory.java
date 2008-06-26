@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationTestFactory.java,v 1.1 2007-05-16 17:02:56 arunav Exp $
+ * $Id: PolicyEvaluationTestFactory.java,v 1.2 2008-06-26 20:16:33 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,8 @@ public class PolicyEvaluationTestFactory extends TestCommon {
         String REQUEST_TIME_ZONE = "requestTimeZone";
         try {
             ResourceBundle client =
-                    ResourceBundle.getBundle("policyevaluationtest");
+                    ResourceBundle.getBundle("policy" + fileseparator +
+                    "policyevaluationtest");
             policyTestMap = new HashMap<String, String>();
             for (Enumeration e = client.getKeys(); e.hasMoreElements(); ) {
                 String key = (String)e.nextElement();
@@ -106,7 +107,8 @@ public class PolicyEvaluationTestFactory extends TestCommon {
                 String rbName = (String)policyTestMap.get("scenario" + i +
                         ".name");
                 localMapScenario.put("scenariocount", sCount);
-                ResourceBundle scenario = ResourceBundle.getBundle(rbName);
+                ResourceBundle scenario = ResourceBundle.getBundle("policy" +
+                        fileseparator + rbName);
                 Integer testCount = new Integer((String)scenario.
                         getString("testcount"));
                 Integer policyCount = new Integer((String)scenario.

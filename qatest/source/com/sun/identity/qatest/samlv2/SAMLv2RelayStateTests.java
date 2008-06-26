@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2RelayStateTests.java,v 1.7 2008-04-10 21:27:06 mrudulahg Exp $
+ * $Id: SAMLv2RelayStateTests.java,v 1.8 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,8 +112,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
                     + System.getProperty("file.separator");
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             log(Level.FINEST, "setup", "Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -142,7 +144,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
             fmIDP = new FederationManager(idpurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("samlv2relaystatetests");
+            usersMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2relaystatetests");
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalScenarios"));
             for (int i = 1; i < totalUsers + 1; i++) {
@@ -200,8 +203,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2SPInitArtSSORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 1));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -251,8 +256,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2SPInitPostSSORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 2));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -302,8 +309,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2IDPInitSSORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 3));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -356,8 +365,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2IDPInitPostSSORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 4));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -410,8 +421,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2SPInitHTTPSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 5));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -461,8 +474,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2SPInitSOAPSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 6));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -513,8 +528,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2IDPInitHTTPSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 7));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -567,8 +584,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2IDPInitSOAPSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 8));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -621,8 +640,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2SPInitArtHTTPSSOSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 9));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -679,8 +700,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2SPInitPostSOAPSSOSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 10));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -736,8 +759,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2IDPInitArtSOAPSSOSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 11));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,
@@ -797,8 +822,10 @@ public class SAMLv2RelayStateTests extends TestCommon {
         entering("samlv2IDPInitPostSOAPSSOSLORS", null);
         try {
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             configMap.put(TestConstants.KEY_SP_USER,
                     usersMap.get(TestConstants.KEY_SP_USER + 12));
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD,

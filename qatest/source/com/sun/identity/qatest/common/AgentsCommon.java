@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsCommon.java,v 1.9 2008-04-28 18:22:52 nithyas Exp $
+ * $Id: AgentsCommon.java,v 1.10 2008-06-26 20:10:38 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,10 +99,12 @@ public class AgentsCommon extends TestCommon {
             int policyIdx, String policyFile)
     throws Exception {
         String strResource;
-        strGlobalRB = strGblRB;
-        strLocalRB = strLocRB;
-        ResourceBundle rbg = ResourceBundle.getBundle(strGlobalRB);
-        ResourceBundle rbp = ResourceBundle.getBundle(strLocalRB);
+        strGlobalRB = strGblRB.substring(strGblRB.indexOf(fileseparator) + 1,
+                strGblRB.length());;
+        strLocalRB = strLocRB.substring(strLocRB.indexOf(fileseparator) + 1,
+                strLocRB.length());;
+        ResourceBundle rbg = ResourceBundle.getBundle(strGblRB);
+        ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
         String glbPolIdx = strLocalRB + policyIdx + ".";
         String locPolIdx = glbPolIdx + "policy";
         
@@ -404,7 +406,9 @@ public class AgentsCommon extends TestCommon {
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String strPolIdx = strLocRB + glbPolIdx;
+            String strPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    glbPolIdx;
             int noOfIdentities = new Integer(rb.getString(strPolIdx +
                     ".noOfIdentities")).intValue();
             for (int i = 0; i < noOfIdentities; i++) {
@@ -419,8 +423,8 @@ public class AgentsCommon extends TestCommon {
                     list = getAttributeList(strAttList, ",");
                 webClient = new WebClient();
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
-		//fixed the properties files, now there is no identity with out an 
-		//attribute value
+                //fixed the properties files, now there is no identity with out
+                //an attribute value
                 if (list != null) {
                     int retval = FederationManager.getExitCode( 
                             fmadm.createIdentity( webClient, realm, name, 
@@ -440,7 +444,7 @@ public class AgentsCommon extends TestCommon {
                         "attribute defined");
                     assert false;
                 }
-		
+                
                 String isMemberOf = rb.getString(strPolIdx + ".identity" + i +
                         ".isMemberOf");
                 if (isMemberOf.equals("yes")) {
@@ -480,7 +484,9 @@ public class AgentsCommon extends TestCommon {
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String strPolIdx = strLocRB + glbPolIdx;
+            String strPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    glbPolIdx;
             int noOfIdentities = new Integer(rb.getString(strPolIdx +
                     ".noOfIdentities")).intValue();
             IdType idtype = null;
@@ -586,7 +592,9 @@ public class AgentsCommon extends TestCommon {
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String glbPolIdx = strLocRB + gPolIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    gPolIdx;
             List list = new ArrayList();
             webClient = new WebClient();
             consoleLogin(webClient, loginURL, adminUser, adminPassword);
@@ -623,7 +631,9 @@ public class AgentsCommon extends TestCommon {
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String glbPolIdx = strLocRB + gPolIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    gPolIdx;
             String locPolIdx = glbPolIdx + ".policy";
             List list = new ArrayList();
             webClient = new WebClient();
@@ -773,7 +783,9 @@ public class AgentsCommon extends TestCommon {
         Map map = null;
         try {
             ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
-            String glbPolIdx = strLocRB + polIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    polIdx;
             String locEvalIdx = glbPolIdx + ".evaluation";
             int noOfEnvParams = new Integer(rbp.getString(locEvalIdx +
                     evalIdx + ".noOfEnvParamSet")).intValue();
@@ -815,7 +827,9 @@ public class AgentsCommon extends TestCommon {
             int idIdx)
     throws Exception {
         ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
-        String glbPolIdx = strLocRB + polIdx;
+        String glbPolIdx = strLocRB.substring(
+                strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                polIdx;
         String locEvalIdx = glbPolIdx + ".identity" + idIdx;
         boolean hasSessionAttr = new Boolean(rbp.getString(locEvalIdx +
                 ".hasSessionAttributes")).booleanValue();

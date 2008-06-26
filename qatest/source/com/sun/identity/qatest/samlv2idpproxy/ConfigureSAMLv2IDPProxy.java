@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2IDPProxy.java,v 1.1 2008-04-10 21:28:28 mrudulahg Exp $
+ * $Id: ConfigureSAMLv2IDPProxy.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -105,7 +105,8 @@ public class ConfigureSAMLv2IDPProxy extends TestCommon {
             
             log(Level.FINEST, "ConfigureSAMLv2IDPProxy", "GroupName received " +
                     "from testng is " + strGroupName);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
             log(Level.FINEST, "ConfigureSAMLv2IDPProxy", "Map:" + configMap);
             

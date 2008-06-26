@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2NameIdMngtTests.java,v 1.3 2008-06-04 20:59:48 sridharev Exp $
+ * $Id: SAMLv2NameIdMngtTests.java,v 1.4 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,9 +118,11 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                     + SAMLv2Common.fileseparator + "classes"
                     + SAMLv2Common.fileseparator;
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
             // assign SP and IDP user to be unique for each test for federation
             spuser = "SP" + testName;

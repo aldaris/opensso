@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.6 2008-04-10 21:27:06 mrudulahg Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.7 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,9 +90,11 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             log(Level.FINEST, "setup", "Entering");
             //Upload global properties file in configMap
             baseDir = getTestBase();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            configMap.putAll(getMapFromResourceBundle(
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator + 
                     "SAMLv2DefaultRelayStateSPTests"));
             log(Level.FINEST, "setup", "ConfigMap is : " + configMap );
             
@@ -471,9 +473,11 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
             log(Level.FINE, "SPSSOInitPostdefaultRS", "Running: " +
                     "SPSSOInitPostdefaultRS");
             getWebClient();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
-            configMap.putAll(getMapFromResourceBundle(
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator + 
                     "SAMLv2DefaultRelayStateSPTests"));
             xmlfile = baseDir + "SPSSOInitPostdefaultRS.xml";
             log(Level.FINEST, "SPSSOInitPostdefaultRS", "ConfigMap " + 

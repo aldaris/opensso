@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMTestConfig.java,v 1.3 2007-12-20 22:42:42 rmisra Exp $
+ * $Id: IDMTestConfig.java,v 1.4 2008-06-26 20:13:45 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.BeforeSuite;
@@ -62,7 +61,8 @@ public class IDMTestConfig extends IDMCommon {
         super("IDMTestConfig");
         try {
             ssotoken = getToken(adminUser, adminPassword, basedn);
-            smsObj = new SMSCommon(ssotoken, "SMSGlobalConfig");
+            smsObj = new SMSCommon(ssotoken, "config" + fileseparator +
+                    "default" + fileseparator + "UMGlobalConfig");
             dsCfgMap = new HashMap();
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,10 +86,12 @@ public class IDMTestConfig extends IDMCommon {
         try {
  
             dsCfgMap = smsObj.getDataStoreConfigByIndex(
-                    Integer.parseInt(dsindex), "SMSGlobalDatastoreConfig");
+                    Integer.parseInt(dsindex), "idm" + fileseparator +
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX);
             subRealm = (String)dsCfgMap.get(
-                    SMSConstants.SMS_DATASTORE_REALM + "." + datastoreNum);
- 	    if ((subRealm != null) && !subRealm.equals("/")) {
+                    SMSConstants.UM_DATASTORE_REALM + "." + datastoreNum);
+
+             if ((subRealm != null) && !subRealm.equals("/")) {
                 String childRealm = 
                         subRealm.substring(subRealm.lastIndexOf("/") + 1);
                 if (searchRealms(ssotoken, childRealm).isEmpty()) {
@@ -98,7 +100,8 @@ public class IDMTestConfig extends IDMCommon {
                     createIdentity(ssotoken, getParentRealm(subRealm), 
                             IdType.REALM, childRealm, new HashMap());
                 }
-	    }
+            }
+
             Set listDataStore = smsObj.listDataStore(subRealm);
             Iterator iterSet = listDataStore.iterator();
             String eds;
@@ -108,9 +111,16 @@ public class IDMTestConfig extends IDMCommon {
                         eds);
                 smsObj.deleteDataStore(subRealm, eds);
             }
+
             // Create a datastore
             log(Level.FINE, "setupIdmTest", "Creating datastore..."); 
-            smsObj.createDataStore(dsCfgMap);
+            Map<String, String> umDatastoreTypes = new HashMap<String, String>();
+            umDatastoreTypes.put("1", serverName);
+            smsObj.createUMDatastoreGlobalMap(
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX, umDatastoreTypes,
+                    SMSConstants.QATEST_EXEC_MODE_SINGLE, "idm");
+            smsObj.createDataStore(1, "idm" + fileseparator +
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "-Generated");
         } catch (Exception e) {
             log(Level.SEVERE, "setupIdmTest", e.getMessage());
             e.printStackTrace();

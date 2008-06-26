@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLTest.java,v 1.1 2008-03-27 22:48:55 sridharev Exp $
+ * $Id: XACMLTest.java,v 1.2 2008-06-26 20:28:34 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,8 +74,8 @@ public class XACMLTest extends TestCommon {
             "</xacml-context:Decision>";
     private String expectedDeny = "<xacml-context:Decision>Deny" +
             "</xacml-context:Decision>";
-    private String expectedInderminate = "<xacml-context:Decision>Indeterminate" +
-            "</xacml-context:Decision>";
+    private String expectedInderminate = "<xacml-context:Decision>Indeterminate"
+            + "</xacml-context:Decision>";
     
     
     //XACML Configuration related
@@ -128,9 +128,12 @@ public class XACMLTest extends TestCommon {
         try {
             testAction = actionmethod;
             baseDir = getTestBase();
-            testResources = ResourceBundle.getBundle("XACMLTest");
-            pdpentityname = testResources.getString("fam-xacml-pdp-entity-name");
-            pepentityname = testResources.getString("fam-xacml-pep-entity-name");
+            testResources = ResourceBundle.getBundle("xacml" + fileseparator +
+                    "XACMLTest");
+            pdpentityname = testResources.getString(
+                    "fam-xacml-pdp-entity-name");
+            pepentityname = testResources.getString(
+                    "fam-xacml-pep-entity-name");
             certAlias = testResources.getString("fam-xacml-cert-alias");
             pdpCot = testResources.getString("fam-xacml-pdp-cot");
             pepCot = testResources.getString("fam-xacml-pep-cot");
@@ -164,13 +167,15 @@ public class XACMLTest extends TestCommon {
                     null, null, null );
             
             if (FederationManager.getExitCode(pdpmetaPage) != 0) {
-                log(Level.SEVERE, "setup", "create-metadata-templ command failed");
+                log(Level.SEVERE, "setup", "create-metadata-templ" +
+                        " command failed");
                 assert false;
             }
             arrpMetadata[0] = getMetadataFromPage(pdpmetaPage, "saml2");
             arrpMetadata[1] = getExtMetadataFromPage(pdpmetaPage, "saml2");
             
-            if ((arrpMetadata[0].equals(null)) || (arrpMetadata[1].equals(null))) {
+            if ((arrpMetadata[0].equals(null)) ||
+                    (arrpMetadata[1].equals(null))) {
                 assert(false);
             } else {
                 if (FederationManager.getExitCode(spfm.importEntity(webClient,
@@ -190,12 +195,14 @@ public class XACMLTest extends TestCommon {
                     null, null, null, null, null, null, null,
                     null, null, null );
             if (FederationManager.getExitCode(pepmetaPage) != 0) {
-                log(Level.SEVERE, "setup", "create-metadata-templ command failed");
+                log(Level.SEVERE, "setup", "create-metadata-templ" +
+                        " command failed");
                 assert false;
             }
             arrMetadata[0] = getMetadataFromPage(pepmetaPage, "saml2");
             arrMetadata[1] = getExtMetadataFromPage(pepmetaPage, "saml2");
-            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null))) {
+            if ((arrMetadata[0].equals(null)) || (arrMetadata[1].equals(null)))
+            {
                 assert(false);
             } else {
                 arrMetadata[0] = arrMetadata[0].replaceAll("&lt;", "<");
@@ -222,21 +229,25 @@ public class XACMLTest extends TestCommon {
             
             attributevalues.add("sunSAML2RequestHandlerList=key="
                     + pdpmetaAlias + "|" +
-                    "class=com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler");
+                    "class=com.sun.identity.xacml.plugins." +
+                    "XACMLAuthzDecisionQueryHandler");
             
             if (FederationManager.getExitCode(spfm.addAttrDefs(webClient,
                     servicename, schematype, attributevalues, null)) != 0 ) {
                 assert(false);
             }
-            // strLocRB and strGblRB contain properties that are needed to create
-            // XACML policies for the tests these are not changable
+            // strLocRB and strGblRB contain properties that are needed to
+            // create XACML policies for the tests these are not changable
             // by the user.
-            ResourceBundle userRes = ResourceBundle.getBundle(strLocRB);
-            ResourceBundle accessRes = ResourceBundle.getBundle(strGblRB);
+            ResourceBundle userRes = ResourceBundle.getBundle("xacml" +
+                    fileseparator + strLocRB);
+            ResourceBundle accessRes = ResourceBundle.getBundle("xacml" +
+                    fileseparator + strGblRB);
             acessResource = accessRes.getString("xacmlPolicyGlobal.resource0");
             allowedUser = userRes.getString("xacmlPolicyTest0.identity0.name");
             denyUser = userRes.getString("xacmlPolicyTest0.identity1.name");
-            allowPolicyName = userRes.getString("xacmlPolicyTest0.policy0.name");
+            allowPolicyName = userRes.getString(
+                    "xacmlPolicyTest0.policy0.name");
             denyPolicyName = userRes.getString("xacmlPolicyTest0.policy1.name");
             createTestPolicy();
         } catch (Exception e) {
@@ -259,12 +270,13 @@ public class XACMLTest extends TestCommon {
         try {
             String testProp = createTestProperties("Permit");
             XACMLClient xacmlTestVal = new XACMLClient();
-            String content = xacmlTestVal.testXACML(testProp);
+            String content = xacmlTestVal.testXACML("xacml" + fileseparator +
+                    testProp);
             if (content.indexOf(expectedPermit) == -1) {
                 log(Level.SEVERE, "testPermitXACML", "The expected result did "+
                         "NOT match with the output");
-                log(Level.SEVERE, "testPermitXACML", "The actual XACML Response" +
-                        " output is: \n" + content);
+                log(Level.SEVERE, "testPermitXACML", "The actual XACML" +
+                        " Response output is: \n" + content);
             }
             assert(content.indexOf(expectedPermit) != -1);
         } catch (Exception e) {
@@ -284,12 +296,13 @@ public class XACMLTest extends TestCommon {
         try {
             String testProp = createTestProperties("Deny");
             XACMLClient xacmlTestVal = new XACMLClient();
-            String content = xacmlTestVal.testXACML(testProp);
+            String content = xacmlTestVal.testXACML("xacml" + fileseparator +
+                    testProp);
             if (content.indexOf(expectedDeny) == -1) {
                 log(Level.SEVERE, "testDenyXACML", "The expected result did "+
                         "NOT match with the output");
-                log(Level.SEVERE, "testDenyXACML", "The actual XACML Response " +
-                        "output" + "is: \n" + content);
+                log(Level.SEVERE, "testDenyXACML", "The actual XACML" +
+                        " Response output" + "is: \n" + content);
             }
             assert(content.indexOf(expectedDeny) != -1);
         } catch (Exception e) {
@@ -309,12 +322,13 @@ public class XACMLTest extends TestCommon {
         try {
             String testProp = createTestProperties("Indeterminate");
             XACMLClient xacmlTestVal = new XACMLClient();
-            String content = xacmlTestVal.testXACML(testProp);
+            String content = xacmlTestVal.testXACML("xacml" + fileseparator +
+                    testProp);
             if (content.indexOf(expectedInderminate) == -1) {
                 log(Level.SEVERE, "testIndeterminateXACML", "The expected " +
                         "result did " + "NOT match with the output");
-                log(Level.SEVERE, "testIndeterminateXACML", "The actual XACML " +
-                        "Response output" + "is: \n" + content);
+                log(Level.SEVERE, "testIndeterminateXACML", "The actual" +
+                        " XACML Response output" + "is: \n" + content);
             }
             assert(content.indexOf(expectedInderminate) != -1);
         } catch (Exception e) {
@@ -423,7 +437,8 @@ public class XACMLTest extends TestCommon {
     private String  createTestProperties(String strProp) {
         String xamlprop ;
         xamlprop = "xacmlTest_" + strProp;
-        String absFileName = baseDir + xamlprop;
+        String absFileName = baseDir + "xacml" + fileseparator + xamlprop;
+System.out.println("666-" + absFileName);
         try {
             Properties pro = new Properties();
             pro.setProperty("pdp.entityId" , pdpentityname);
@@ -442,7 +457,8 @@ public class XACMLTest extends TestCommon {
             pro.setProperty("subject.id.datatype",
                     "urn:oasis:names:tc:xacml:1.0:data-type:x500Name");
             pro.setProperty("subject.category",
-                    "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject");
+                    "urn:oasis:names:tc:xacml:1.0:subject-category:" +
+                    "access-subject");
             pro.setProperty("resource.id" , acessResource);
             pro.setProperty("resource.id.datatype" ,
                     "http://www.w3.org/2001/XMLSchema#string");
@@ -473,17 +489,19 @@ public class XACMLTest extends TestCommon {
         int polIdx = 0;
         try {
             mpc = new PolicyCommon();
-            rbg = ResourceBundle.getBundle(strGblRB);
-            rbp = ResourceBundle.getBundle(strLocRB);
-            mpc.createIdentities(strLocRB, polIdx, realm );
-            mpc.createPolicyXML(strGblRB, strLocRB, polIdx , strLocRB +
-                    ".xml", realm);
-            mpc.createPolicy(strLocRB + ".xml", realm);
+            rbg = ResourceBundle.getBundle("xacml" + fileseparator + strGblRB);
+            rbp = ResourceBundle.getBundle("xacml" + fileseparator + strLocRB);
+            mpc.createIdentities("xacml" + fileseparator + strLocRB, polIdx,
+                    realm );
+            mpc.createPolicyXML("xacml" + fileseparator + strGblRB, "xacml" +
+                    fileseparator + strLocRB, polIdx , "xacml" + fileseparator +
+                    strLocRB + ".xml", realm);
+            mpc.createPolicy("xacml" + fileseparator + strLocRB + ".xml",
+                    realm);
         } catch (Exception e){
             log(Level.SEVERE, "createTestPolicy", "Create xacml policy failed");
             log(Level.SEVERE, "createTestPolicy",e.getMessage());
             e.printStackTrace();
         }
-    }
-    
+    }    
 }

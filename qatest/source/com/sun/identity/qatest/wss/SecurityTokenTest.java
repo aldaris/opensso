@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: SecurityTokenTest.java,v 1.3 2008-01-23 23:51:36 rmisra Exp $
+ * $Id: SecurityTokenTest.java,v 1.4 2008-06-26 20:28:08 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -91,7 +91,7 @@ public class SecurityTokenTest extends TestCommon {
     public SecurityTokenTest() 
     throws Exception{
         super("SecurityTokenTest");
-        rbp = ResourceBundle.getBundle(strLocRB);
+        rbp = ResourceBundle.getBundle("wss" + fileseparator + strLocRB);
         token = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
         smsc = new SMSCommon(token);

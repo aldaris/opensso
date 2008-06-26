@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.4 2008-04-30 21:29:06 rmisra Exp $
+ * $Id: IdSvcsREST.java,v 1.5 2008-06-26 20:14:20 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,8 @@ public class IdSvcsREST extends TestCommon {
     public IdSvcsREST()
     throws Exception {
         super("IdSvcsREST");
-        rb_amconfig = ResourceBundle.getBundle("AMConfig");
+        rb_amconfig = ResourceBundle.getBundle(
+                TestConstants.TEST_PROPERTY_AMCONFIG);
         admintoken = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
         pc = new PolicyCommon();

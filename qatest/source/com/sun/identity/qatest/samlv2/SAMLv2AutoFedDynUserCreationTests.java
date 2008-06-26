@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.7 2008-04-10 21:27:05 mrudulahg Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.8 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,8 +123,10 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             baseDir = getTestBase();
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             log(Level.FINEST, "setup", "Config map is " + configMap);
             idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
@@ -144,7 +146,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             fmIDP = new FederationManager(idpurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle(
+            usersMap = getMapFromResourceBundle("samlv2" + fileseparator + 
                     "samlv2AutoFedDynUserCreationTests");
             log(Level.FINEST, "setup", "Users map is " + usersMap);
             Integer totalUsers = new Integer(
@@ -193,8 +195,10 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             configMap = new HashMap<String, String>();
             getWebClient();
             
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             log(Level.FINEST, "autoFedDynamicUserCreationSetup", "Map:" + 
                     configMap);
             

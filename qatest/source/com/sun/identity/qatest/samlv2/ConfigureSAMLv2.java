@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.15 2008-05-30 01:39:34 sridharev Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.16 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,10 +96,10 @@ public class ConfigureSAMLv2 extends TestCommon {
             
             log(Level.FINEST, "configureSAMLv2", "GroupName received from " +
                     "testng is " + strGroupName);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
-                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" +
+                    fileseparator + "samlv2TestConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" +
+                    fileseparator + "samlv2TestData", configMap);
             log(Level.FINEST, "configureSAMLv2", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.1 2008-06-04 20:57:37 sridharev Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.2 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -154,11 +154,11 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     + SAMLv2Common.fileseparator + "classes"
                     + SAMLv2Common.fileseparator;
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator + "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator + "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("SAMLv2AttributeQueryTests",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator + "SAMLv2AttributeQueryTests",
                     configMap);
             configMap.put(TestConstants.KEY_SP_USER, "sp" + testName);
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD, "sp" + testName);
@@ -261,8 +261,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
         try {
             configMap = new HashMap<String, String>();
             getWebClient();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator + "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator + "samlv2TestData"));
             log(Level.FINEST, "attributeQueryMapSetup", "Map:" + configMap);        
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +

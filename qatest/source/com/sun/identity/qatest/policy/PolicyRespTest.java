@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRespTest.java,v 1.5 2008-03-10 05:34:05 kanduls Exp $
+ * $Id: PolicyRespTest.java,v 1.6 2008-06-26 20:16:33 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,9 +71,9 @@ public class PolicyRespTest extends TestCommon {
     throws Exception {
         super("PolicyRespTest");
         mpc = new PolicyCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
-        rbp = ResourceBundle.getBundle(strLocRB);
-        rbr = ResourceBundle.getBundle(strRefRB);
+        rbg = ResourceBundle.getBundle("policy" + fileseparator + strGblRB);
+        rbp = ResourceBundle.getBundle("policy" + fileseparator + strLocRB);
+        rbr = ResourceBundle.getBundle("policy" + fileseparator + strRefRB);
     }
     
     /**
@@ -97,18 +97,23 @@ public class PolicyRespTest extends TestCommon {
             strDynamic = dynamic;
             if (strSetup.equals("true")) {
                 if (strPeAtOrg.equals(realm)) {
-                    mpc.createIdentities(strLocRB, polIdx,  strPeAtOrg );
-                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
-                            ".xml", strPeAtOrg);
+                    mpc.createIdentities("policy" + fileseparator + strLocRB,
+                            polIdx,  strPeAtOrg );
+                    mpc.createPolicyXML("policy" + fileseparator + strGblRB,
+                            "policy" + fileseparator + strLocRB, polIdx,
+                            strLocRB + ".xml", strPeAtOrg);
                     assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
                     Thread.sleep(notificationSleepTime);
                 } else {
                     mpc.createRealm("/" + strPeAtOrg);
-                    mpc.createIdentities(strLocRB, polIdx, strPeAtOrg);
+                    mpc.createIdentities("policy" + fileseparator + strLocRB,
+                            polIdx, strPeAtOrg);
                     
                     if (strDynamic.equals("false")) {
-                        mpc.createReferralPolicyXML(strGblRB, strRefRB,
-                                strLocRB, polIdx, strRefRB +  ".xml");
+                        mpc.createReferralPolicyXML("policy" + fileseparator +
+                                strGblRB, "policy" + fileseparator + strRefRB,
+                                "policy" + fileseparator + strLocRB, polIdx,
+                                strRefRB +  ".xml");
                         strReferringOrg = rbr.getString(strLocRB + polIdx +
                                 ".referringOrg");
                         assert (mpc.createPolicy(strRefRB + ".xml", 
@@ -117,11 +122,14 @@ public class PolicyRespTest extends TestCommon {
                     } else {
                         strDynamicRefValue = "true";
                         mpc.setDynamicReferral(strDynamicRefValue);
-                        mpc.createDynamicReferral(strGblRB, strRefRB, strLocRB,
-                                polIdx, strPeAtOrg);
+                        mpc.createDynamicReferral("policy" + fileseparator +
+                                strGblRB, "policy" + fileseparator + strRefRB,
+                                "policy" + fileseparator + strLocRB, polIdx,
+                                strPeAtOrg);
                         Thread.sleep(notificationSleepTime);
                     }
-                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx,
+                    mpc.createPolicyXML("policy" + fileseparator + strGblRB,
+                            "policy" + fileseparator + strLocRB, polIdx,
                             strLocRB + ".xml", strPeAtOrg);
                     assert (mpc.createPolicy(strLocRB + ".xml", strPeAtOrg));
                     Thread.sleep(notificationSleepTime);
@@ -160,7 +168,8 @@ public class PolicyRespTest extends TestCommon {
         boolean evalResult ;
         
         int idIdx = mpc.getIdentityIndex(usernameIdx);
-        Map map = mpc.getPolicyEnvParamMap(strLocRB, polIdx, evalIdx);
+        Map map = mpc.getPolicyEnvParamMap("policy" + fileseparator + strLocRB,
+                polIdx, evalIdx);
         
         Reporter.log("Test description: " + description);
         Reporter.log("Resource: " + resource);
@@ -171,7 +180,8 @@ public class PolicyRespTest extends TestCommon {
         Reporter.log("Expected Result: " + expResult);
         
         SSOToken userToken = getToken(username, password, peAtOrg);
-        mpc.setProperty(strLocRB, userToken, polIdx, idIdx);
+        mpc.setProperty("policy" + fileseparator + strLocRB, userToken, polIdx,
+                idIdx);
         
         PolicyEvaluator pe =
                 new PolicyEvaluator("iPlanetAMWebAgentService");
@@ -205,14 +215,20 @@ public class PolicyRespTest extends TestCommon {
         try {
             if (strCleanup.equals("true")) {
                 if (peAtOrg.equals(realm)) {
-                    mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
-                    assert (mpc.deletePolicies(strLocRB, polIdx, peAtOrg));
-                    mpc.deleteDynamicAttr(strLocRB, polIdx, peAtOrg);                    
+                    mpc.deleteIdentities("policy" + fileseparator + strLocRB,
+                            polIdx, peAtOrg);
+                    assert (mpc.deletePolicies("policy" + fileseparator +
+                            strLocRB, polIdx, peAtOrg));
+                    mpc.deleteDynamicAttr("policy" + fileseparator + strLocRB,
+                            polIdx, peAtOrg);                    
                 } else {
-                    mpc.deleteIdentities(strLocRB, polIdx, peAtOrg);
+                    mpc.deleteIdentities("policy" + fileseparator + strLocRB,
+                            polIdx, peAtOrg);
                     mpc.deleteRealm(peAtOrg);
                     if (strDynamic.equals("false")) {
-                        mpc.deleteReferralPolicies(strLocRB, strRefRB, polIdx);
+                        mpc.deleteReferralPolicies("policy" + fileseparator +
+                                strLocRB, "policy" + fileseparator + strRefRB,
+                                polIdx);
                     } else {
                         strDynamicRefValue = "false";
                         mpc.setDynamicReferral(strDynamicRefValue);
@@ -237,7 +253,8 @@ public class PolicyRespTest extends TestCommon {
         Map polrespAttrMap = new HashMap();
         boolean verifyRespResult = false;
         try {
-            ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
+            ResourceBundle rb = ResourceBundle.getBundle("policy" +
+                    fileseparator + strLocRB);
             String glbPolIdx = strLocRB + polIdx;
             String locEvalIdx = glbPolIdx + ".evaluation";
             

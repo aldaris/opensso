@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFederationTests.java,v 1.7 2008-04-10 21:27:05 mrudulahg Exp $
+ * $Id: SAMLv2AutoFederationTests.java,v 1.8 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,8 +135,10 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                     + System.getProperty("file.separator");
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             log(Level.FINEST, "setup: Config Map is ", configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -165,7 +167,8 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             FederationManager fmIDP = new FederationManager(idpurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("samlv2autofederationtests");
+            usersMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2autofederationtests");
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));
             for (int i = 1; i < totalUsers + 1; i++) {
@@ -240,8 +243,10 @@ public class SAMLv2AutoFederationTests extends TestCommon {
                     null);
             getWebClient();
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             log(Level.FINEST, "autoFedSetup", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
@@ -537,8 +542,10 @@ public class SAMLv2AutoFederationTests extends TestCommon {
         
             configMap = new HashMap<String, String>();
             getWebClient();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +

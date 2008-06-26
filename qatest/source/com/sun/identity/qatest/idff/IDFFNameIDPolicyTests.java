@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFNameIDPolicyTests.java,v 1.5 2008-03-07 23:19:34 mrudulahg Exp $
+ * $Id: IDFFNameIDPolicyTests.java,v 1.6 2008-06-26 20:13:07 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,8 +113,10 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
             baseDir = getTestBase();
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("idffTestConfigData");
-            configMap.putAll(getMapFromResourceBundle("idffTestData"));
+            configMap = getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestConfigData");
+            configMap.putAll(getMapFromResourceBundle("idff" + fileseparator +
+                    "idffTestData"));
             log(Level.FINEST, "setup", "Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -143,7 +145,8 @@ public class IDFFNameIDPolicyTests extends IDFFCommon {
             fmIDP = new FederationManager(idpurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("IDFFNameIDPolicyTests");
+            usersMap = getMapFromResourceBundle("idff" + fileseparator +
+                    "IDFFNameIDPolicyTests");
             log(Level.FINEST, "setup", "Users Map is " + usersMap);
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));

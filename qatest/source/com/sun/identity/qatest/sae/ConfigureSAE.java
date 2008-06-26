@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.5 2008-06-19 22:43:39 mrudulahg Exp $
+ * $Id: ConfigureSAE.java,v 1.6 2008-06-26 20:20:57 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,8 +96,8 @@ public class ConfigureSAE extends TestCommon {
             
             log(Level.FINEST, "configureSAE", "GroupName received from " +
                     "testng is " + strGroupName);
-            SAMLv2Common.getEntriesFromResourceBundle("saeTestConfigData",
-                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("sae" + fileseparator + 
+                    "saeTestConfigData", configMap);
             log(Level.FINEST, "configureSAE", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL)

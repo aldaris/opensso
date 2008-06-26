@@ -17,26 +17,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.4 2008-05-29 00:03:54 arunav Exp $
+ * $Id: ConfigUnconfig.java,v 1.5 2008-06-26 20:16:33 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.qatest.policy;
 
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceListener;
-import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -47,30 +37,14 @@ import org.testng.annotations.BeforeSuite;
  * This class also starts and stops the notification server.
  */
 public class ConfigUnconfig extends TestCommon {
-    
-    private ResourceBundle amCfgData;
-    private ResourceBundle cfgData;
-    SSOToken token;
-    ServiceConfigManager scm;
-    ServiceConfig sc;
-    String strServiceName;
-    static private String uriseparator = "/";
+  
+    private Map notificationMap;
     
     /**
      * Creates a new instance of ConfigUnconfig
      */
     public ConfigUnconfig() {
         super("ConfigUnconfig");
-        
-        amCfgData = ResourceBundle.getBundle("AMConfig");
-        cfgData = ResourceBundle.getBundle("configGlobalData");
-        try {
-            token = getToken(adminUser, adminPassword, realm);
-            log(Level.FINEST, "ConfigUnconfig", "Getting token");
-        } catch (Exception e) {
-            log(Level.SEVERE, "ConfigUnconfig", e.getMessage());
-            e.printStackTrace();
-        }
     }
     
     /**
@@ -81,7 +55,7 @@ public class ConfigUnconfig extends TestCommon {
     public void startServer()
     throws Exception {
         entering("startServer", null);
-        startNotificationServer();
+        notificationMap = startNotificationServer();
         exiting("startServer");
     }
     
@@ -102,15 +76,15 @@ public class ConfigUnconfig extends TestCommon {
             String absFileName;
             Map replaceVals = new HashMap();
             replaceVals.put("SM_SUFFIX", basedn);
-            directoryName = getBaseDir() + uriseparator + "xml" +
-                    uriseparator + "policy";
+            directoryName = getBaseDir() + fileseparator + "xml" +
+                    fileseparator + "policy";
             directory = new File(directoryName);
             assert (directory.exists());
             files = directory.list();            
             for (int i = 0; i < files.length; i++) {
                 fileName = files[i];
                 if (fileName.endsWith(ext.trim())) {
-                    absFileName = directoryName + uriseparator + fileName;
+                    absFileName = directoryName + fileseparator + fileName;
                     log(Level.FINEST, "replaceDn", "Replacing the file :" +
                             absFileName);
                     replaceString(absFileName, replaceVals, absFileName);
@@ -132,7 +106,7 @@ public class ConfigUnconfig extends TestCommon {
     public void stopServer()
     throws Exception {
         entering("stopServer", null);
-        stopNotificationServer();
+        stopNotificationServer(notificationMap);
         exiting("stopServer");
     }
 }

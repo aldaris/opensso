@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedTransientUserTests.java,v 1.6 2008-04-10 21:27:05 mrudulahg Exp $
+ * $Id: SAMLv2AutoFedTransientUserTests.java,v 1.7 2008-06-26 20:24:17 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,8 +135,10 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
                     + System.getProperty("file.separator");
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_IDP_PORT) +
@@ -156,7 +158,8 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
             
             usersMap = new HashMap<String, String>();
             usersMap =
-                    getMapFromResourceBundle("samlv2autofedtransientusertests");
+                    getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2autofedtransientusertests");
             log(Level.FINEST, "setup", "Users map is " + usersMap);
             Integer totalUsers = new Integer(
                     (String)usersMap.get("totalUsers"));
@@ -207,8 +210,10 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
             configMap = new HashMap<String, String>();
             getWebClient();
             
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             log(Level.FINEST, "autoFedTransientUserSetup", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + 
@@ -508,8 +513,10 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
         try {
             configMap = new HashMap<String, String>();
             getWebClient();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator
+                    + "samlv2TestData"));
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + 
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" + 

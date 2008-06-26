@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxySigningEncryptionTests.java,v 1.1 2008-05-16 00:34:01 mrudulahg Exp $
+ * $Id: SAMLv2IDPProxySigningEncryptionTests.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -207,8 +207,10 @@ public class SAMLv2IDPProxySigningEncryptionTests extends TestCommon {
             baseDir = getTestBase();
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData"));
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
@@ -238,7 +240,8 @@ public class SAMLv2IDPProxySigningEncryptionTests extends TestCommon {
             fmIDPProxy = new FederationManager(idpproxyurl);
             
             usersMap = new HashMap<String, String>();
-            usersMap = getMapFromResourceBundle("SAMLv2IDPProxySigningEncryptionTests");
+            usersMap = getMapFromResourceBundle("samlv2idpproxy" +
+                    fileseparator + "SAMLv2IDPProxySigningEncryptionTests");
             log(Level.FINEST, "setup", "Users map is " + usersMap);
             //create sp user
             list.clear();

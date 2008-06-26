@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSConstants.java,v 1.5 2007-12-19 00:11:28 sridharev Exp $
+ * $Id: SMSConstants.java,v 1.6 2008-06-26 20:10:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,109 +34,99 @@ public interface SMSConstants {
      * Prefix for the parameter in datastore property file in 
      * this format: <datastore prefix>.<attribute>
      */
-    static final String SMS_DATASTORE_PARAMS_PREFIX = 
-            "SMSGlobalDatastoreConfig";
+    static final String UM_DATASTORE_PARAMS_PREFIX = 
+            "UMGlobalDatastoreConfig";
     
+    /**
+     * Tags for qatest execution mode:
+     * QATEST_EXEC_MODE_SINGLE - single server tests are being executed
+     * QATEST_EXEC_MODE_DUAL - multi (two) server tests are being executed
+     * QATEST_EXEC_MODE_ALL - multi (four) server tests are being executed
+     */
+    static final String QATEST_EXEC_MODE_SINGLE = "single";
+    static final String QATEST_EXEC_MODE_DUAL = "dual";
+    static final String QATEST_EXEC_MODE_ALL = "all";
+
     /**
      * Prefix for datastore key.  Any key is not datastore attributes should
      * have this prefix i.e. datastore-count, datastore-type, etc.
      */
-    static final String SMS_DATASTORE_KEY_PREFIX = "datastore";
+    static final String UM_DATASTORE_KEY_PREFIX = "datastore";
 
     /**
      * Datastore count
      */
-    static final String SMS_DATASTORE_COUNT = "datastore-count";
+    static final String UM_DATASTORE_COUNT = "datastore-count";
     
     /**
      * Datastore realm
      */
-    static final String SMS_DATASTORE_REALM = "datastore-realm";
+    static final String UM_DATASTORE_REALM = "datastore-realm";
     
     /**
      * Datastore name
      */
-    static final String SMS_DATASTORE_NAME = "datastore-name";
+    static final String UM_DATASTORE_NAME = "datastore-name";
     
     /**
      * Datastore admin id
      */
-    static final String SMS_DATASTORE_ADMINID = "datastore-adminid";
+    static final String UM_DATASTORE_ADMINID = "datastore-adminid";
     
     /**
      * Datastore admin pw
      */
-    static final String SMS_DATASTORE_ADMINPW = "datastore-adminpw";
+    static final String UM_DATASTORE_ADMINPW = "datastore-adminpw";
     
     /**
      * Datastore type
      */
-    static final String SMS_DATASTORE_TYPE = "datastore-type";
+    static final String UM_DATASTORE_TYPE = "datastore-type";
     
     /**
      * Datastore keystore
      */
-    static final String SMS_DATASTORE_KEYSTORE = "datastore-keystore";
-    
-    /**
-     * Datastore type key for Sun DS with AM schema
-     */
-    static final String SMS_DATASTORE_TYPE_AMDS = "ds";
+    static final String UM_DATASTORE_KEYSTORE = "datastore-keystore";
 
     /**
-     * Datastore type key for AD
+     * Datastore root suffix
      */
-    static final String SMS_DATASTORE_TYPE_AD = "ad";
+    static final String UM_DATASTORE_ROOT_SUFFIX = "datastore-root-suffix";
 
     /**
-     * Datastore type key for generic LDAP
+     * Datastore schema type name for embedded (OpenDS)
      */
-    static final String SMS_DATASTORE_TYPE_LDAP = "ldap";
-
-    /**
-     * Datastore type key for flat file
-     */
-    static final String SMS_DATASTORE_TYPE_FF = "ff";
-    
-    /**
-     * Datastore type key for amsdk
-     */
-    static final String SMS_DATASTORE_TYPE_AMSDK = "amsdk";
+    static final String UM_DATASTORE_SCHEMA_TYPE_OPENDS = "LDAPv3ForOpenDS";
     
     /**
      * Datastore schema type name for Sun DS
      */
-    static final String SMS_DATASTORE_SCHEMA_TYPE_AMDS = "LDAPv3ForAMDS";
+    static final String UM_DATASTORE_SCHEMA_TYPE_AMDS = "LDAPv3ForAMDS";
     
     /**
      * Datastore schema type name for AD
      */
-    static final String SMS_DATASTORE_SCHEMA_TYPE_AD = "LDAPv3ForAD";
+    static final String UM_DATASTORE_SCHEMA_TYPE_AD = "LDAPv3ForAD";
     
     /**
      * Datastore schema type name for generic LDAP
      */
-    static final String SMS_DATASTORE_SCHEMA_TYPE_LDAP = "LDAPv3";
-    
-    /**
-     * Datastore schema type name for flat file
-     */
-    static final String SMS_DATASTORE_SCHEMA_TYPE_FF = "files";
+    static final String UM_DATASTORE_SCHEMA_TYPE_LDAP = "LDAPv3";
     
     /**
      * Datastore schema type name for AM SDK
      */
-    static final String SMS_DATASTORE_SCHEMA_TYPE_AMSDK = "amSDK";
+    static final String UM_DATASTORE_SCHEMA_TYPE_AMSDK = "amSDK";
     
     /**
      * Access Manager user schema list key in property file
      */
-    static final String SMS_SCHEMNA_LIST = "SMSGlobalConfig.schemalist";
+    static final String UM_SCHEMNA_LIST = "UMGlobalConfig.schemalist";
     
     /**
      * Access Manager user schema attributes key in property file
      */
-    static final String SMS_SCHEMNA_ATTR = "SMSGlobalConfig.schema_attributes";
+    static final String UM_SCHEMNA_ATTR = "UMGlobalConfig.schema_attributes";
     
      /**
      * Access Manager realm services key in property file
@@ -146,162 +136,150 @@ public interface SMSConstants {
     /**
      * Attributes for LDAPv3 datastore
      */
-    static final String SMS_LDAP_SCOPE_BASE = "SCOPE_BASE";
-    static final String SMS_LDAP_SCOPE_ONE = "SCOPE_ONE";
-    static final String SMS_LDAP_SCOPE_SUB = "SCOPE_SUB";    
-    static final String SMS_PLUGIN_CLASS = "sunIdRepoClass";
-    static final String SMS_LDAPv3_PREFIX = "sun-idrepo-ldapv3-config-";
-    static final String SMS_LDAPv3_LDAP_SERVER =
+    static final String UM_LDAP_SCOPE_BASE = "SCOPE_BASE";
+    static final String UM_LDAP_SCOPE_ONE = "SCOPE_ONE";
+    static final String UM_LDAP_SCOPE_SUB = "SCOPE_SUB";    
+    static final String UM_PLUGIN_CLASS = "sunIdRepoClass";
+    static final String UM_LDAPv3_PREFIX = "sun-idrepo-ldapv3-config-";
+    static final String UM_LDAPv3_LDAP_SERVER =
         "sun-idrepo-ldapv3-config-ldap-server";
-    static final String SMS_LDAPv3_LDAP_PORT =
+    static final String UM_LDAPv3_LDAP_PORT =
         "sun-idrepo-ldapv3-config-ldap-port";
-    static final String SMS_LDAPv3_AUTHID =
+    static final String UM_LDAPv3_AUTHID =
         "sun-idrepo-ldapv3-config-authid";
-    static final String SMS_LDAPv3_AUTHPW =
+    static final String UM_LDAPv3_AUTHPW =
         "sun-idrepo-ldapv3-config-authpw";
-    static final String SMS_LDAPv3_LDAP_SSL_ENABLED =
+    static final String UM_LDAPv3_LDAP_SSL_ENABLED =
         "sun-idrepo-ldapv3-config-ssl-enabled";
-    static final String SMS_LDAPv3_ORGANIZATION_NAME =
+    static final String UM_LDAPv3_ORGANIZATION_NAME =
         "sun-idrepo-ldapv3-config-organization_name";  
-    static final String SMS_LDAPv3_LDAP_CONNECTION_POOL_MIN_SIZE =
+    static final String UM_LDAPv3_LDAP_CONNECTION_POOL_MIN_SIZE =
         "sun-idrepo-ldapv3-config-connection_pool_min_size";
-    static final String SMS_LDAPv3_LDAP_CONNECTION_POOL_MAX_SIZE =
+    static final String UM_LDAPv3_LDAP_CONNECTION_POOL_MAX_SIZE =
         "sun-idrepo-ldapv3-config-connection_pool_max_size";
-    static final String SMS_LDAPv3_ATTR_MAPPING =  "sunIdRepoAttributeMapping";
-    static final String SMS_LDAPv3_SUPPORT_OPERATION =  
+    static final String UM_LDAPv3_ATTR_MAPPING =  "sunIdRepoAttributeMapping";
+    static final String UM_LDAPv3_SUPPORT_OPERATION =  
             "sunIdRepoSupportedOperations";
-    static final String SMS_LDAPv3_LDAP_GROUP_SEARCH_FILTER =
+    static final String UM_LDAPv3_LDAP_GROUP_SEARCH_FILTER =
         "sun-idrepo-ldapv3-config-groups-search-filter";
-    static final String SMS_LDAPv3_LDAP_USERS_SEARCH_FILTER =
+    static final String UM_LDAPv3_LDAP_USERS_SEARCH_FILTER =
         "sun-idrepo-ldapv3-config-users-search-filter";
-    static final String SMS_LDAPv3_LDAP_ROLES_SEARCH_FILTER =
+    static final String UM_LDAPv3_LDAP_ROLES_SEARCH_FILTER =
         "sun-idrepo-ldapv3-config-roles-search-filter";
-    static final String SMS_LDAPv3_LDAP_FILTERROLES_SEARCH_FILTER =
+    static final String UM_LDAPv3_LDAP_FILTERROLES_SEARCH_FILTER =
         "sun-idrepo-ldapv3-config-filterroles-search-filter";
-    static final String SMS_LDAPv3_LDAP_AGENT_SEARCH_FILTER =
+    static final String UM_LDAPv3_LDAP_AGENT_SEARCH_FILTER =
         "sun-idrepo-ldapv3-config-agent-search-filter";
-    static final String SMS_LDAPv3_LDAP_ROLES_SEARCH_ATTRIBUTE =
+    static final String UM_LDAPv3_LDAP_ROLES_SEARCH_ATTRIBUTE =
         "sun-idrepo-ldapv3-config-roles-search-attribute";
-    static final String SMS_LDAPv3_LDAP_FILTERROLES_SEARCH_ATTRIBUTE =
+    static final String UM_LDAPv3_LDAP_FILTERROLES_SEARCH_ATTRIBUTE =
         "sun-idrepo-ldapv3-config-filterroles-search-attribute";
-    static final String SMS_LDAPv3_LDAP_GROUPS_SEARCH_ATTRIBUTE =
+    static final String UM_LDAPv3_LDAP_GROUPS_SEARCH_ATTRIBUTE =
         "sun-idrepo-ldapv3-config-groups-search-attribute";
-    static final String SMS_LDAPv3_LDAP_USERS_SEARCH_ATTRIBUTE =
+    static final String UM_LDAPv3_LDAP_USERS_SEARCH_ATTRIBUTE =
         "sun-idrepo-ldapv3-config-users-search-attribute";
-    static final String SMS_LDAPv3_LDAP_AGENT_SEARCH_ATTRIBUTE =
+    static final String UM_LDAPv3_LDAP_AGENT_SEARCH_ATTRIBUTE =
         "sun-idrepo-ldapv3-config-agent-search-attribute";
-    static final String SMS_LDAPv3_LDAP_ROLES_SEARCH_SCOPE =
+    static final String UM_LDAPv3_LDAP_ROLES_SEARCH_SCOPE =
         "sun-idrepo-ldapv3-config-role-search-scope";
-    static final String SMS_LDAPv3_LDAP_SEARCH_SCOPE =
+    static final String UM_LDAPv3_LDAP_SEARCH_SCOPE =
         "sun-idrepo-ldapv3-config-search-scope";
-    static final String SMS_LDAPv3_LDAP_GROUP_CONTAINER_NAME =
+    static final String UM_LDAPv3_LDAP_GROUP_CONTAINER_NAME =
         "sun-idrepo-ldapv3-config-group-container-name";
-    static final String SMS_LDAPv3_LDAP_AGENT_CONTAINER_NAME =
+    static final String UM_LDAPv3_LDAP_AGENT_CONTAINER_NAME =
         "sun-idrepo-ldapv3-config-agent-container-name";
-    static final String SMS_LDAPv3_LDAP_PEOPLE_CONTAINER_NAME =
+    static final String UM_LDAPv3_LDAP_PEOPLE_CONTAINER_NAME =
         "sun-idrepo-ldapv3-config-people-container-name";
-    static final String SMS_LDAPv3_LDAP_GROUP_CONTAINER_VALUE =
+    static final String UM_LDAPv3_LDAP_GROUP_CONTAINER_VALUE =
         "sun-idrepo-ldapv3-config-group-container-value";
-    static final String SMS_LDAPv3_LDAP_PEOPLE_CONTAINER_VALUE =
+    static final String UM_LDAPv3_LDAP_PEOPLE_CONTAINER_VALUE =
         "sun-idrepo-ldapv3-config-people-container-value";
-    static final String SMS_LDAPv3_LDAP_AGENT_CONTAINER_VALUE =
+    static final String UM_LDAPv3_LDAP_AGENT_CONTAINER_VALUE =
         "sun-idrepo-ldapv3-config-agent-container-value";
-    static final String SMS_LDAPv3_LDAP_TIME_LIMIT =
+    static final String UM_LDAPv3_LDAP_TIME_LIMIT =
         "sun-idrepo-ldapv3-config-time-limit";
-    static final String SMS_LDAPv3_LDAP_MAX_RESULT =
+    static final String UM_LDAPv3_LDAP_MAX_RESULT =
         "sun-idrepo-ldapv3-config-max-result";
-    static final String SMS_LDAPv3_REFERRALS =
+    static final String UM_LDAPv3_REFERRALS =
         "sun-idrepo-ldapv3-config-referrals";
-    static final String SMS_LDAPv3_ROLE_OBJECT_CLASS =
+    static final String UM_LDAPv3_ROLE_OBJECT_CLASS =
         "sun-idrepo-ldapv3-config-role-objectclass";
-    static final String SMS_LDAPv3_FILTERROLE_OBJECT_CLASS =
+    static final String UM_LDAPv3_FILTERROLE_OBJECT_CLASS =
         "sun-idrepo-ldapv3-config-filterrole-objectclass";
-    static final String SMS_LDAPv3_GROUP_OBJECT_CLASS =
+    static final String UM_LDAPv3_GROUP_OBJECT_CLASS =
         "sun-idrepo-ldapv3-config-group-objectclass";
-    static final String SMS_LDAPv3_USER_OBJECT_CLASS =
+    static final String UM_LDAPv3_USER_OBJECT_CLASS =
         "sun-idrepo-ldapv3-config-user-objectclass";
-    static final String SMS_LDAPv3_AGENT_OBJECT_CLASS =
+    static final String UM_LDAPv3_AGENT_OBJECT_CLASS =
         "sun-idrepo-ldapv3-config-agent-objectclass";
-    static final String SMS_LDAPv3_GROUP_ATTR =
+    static final String UM_LDAPv3_GROUP_ATTR =
         "sun-idrepo-ldapv3-config-group-attributes";
-    static final String SMS_LDAPv3_USER_ATTR =
+    static final String UM_LDAPv3_USER_ATTR =
         "sun-idrepo-ldapv3-config-user-attributes";
-    static final String SMS_LDAPv3_AGENT_ATTR =
+    static final String UM_LDAPv3_AGENT_ATTR =
         "sun-idrepo-ldapv3-config-agent-attributes";
-    static final String SMS_LDAPv3_ROLE_ATTR =
+    static final String UM_LDAPv3_ROLE_ATTR =
         "sun-idrepo-ldapv3-config-role-attributes";
-    static final String SMS_LDAPv3_FILTERROLE_ATTR =
+    static final String UM_LDAPv3_FILTERROLE_ATTR =
         "sun-idrepo-ldapv3-config-filterrole-attributes";
-    static final String SMS_LDAPv3_NSROLE =
+    static final String UM_LDAPv3_NSROLE =
         "sun-idrepo-ldapv3-config-nsrole";
-    static final String SMS_LDAPv3_NSROLEDN =
+    static final String UM_LDAPv3_NSROLEDN =
         "sun-idrepo-ldapv3-config-nsroledn";
-    static final String SMS_LDAPv3_NSROLEFILTER =
+    static final String UM_LDAPv3_NSROLEFILTER =
         "sun-idrepo-ldapv3-config-nsrolefilter";
-    static final String SMS_LDAPv3_MEMBEROF =
+    static final String UM_LDAPv3_MEMBEROF =
         "sun-idrepo-ldapv3-config-memberof";
-    static final String SMS_LDAPv3_UNIQUEMEMBER =
+    static final String UM_LDAPv3_UNIQUEMEMBER =
         "sun-idrepo-ldapv3-config-uniquemember";
-    static final String SMS_LDAPv3_MEMBERURL =
+    static final String UM_LDAPv3_MEMBERURL =
         "sun-idrepo-ldapv3-config-memberurl";
-    static final String SMS_LDAPv3_LDAP_IDLETIMEOUT =
+    static final String UM_LDAPv3_LDAP_IDLETIMEOUT =
         "sun-idrepo-ldapv3-config-idletimeout";
-    static final String SMS_LDAPv3_LDAP_PSEARCHBASE =
+    static final String UM_LDAPv3_LDAP_PSEARCHBASE =
             "sun-idrepo-ldapv3-config-psearchbase";
-    static final String SMS_LDAPv3_LDAP_PSEARCHFILTER =
+    static final String UM_LDAPv3_LDAP_PSEARCHFILTER =
             "sun-idrepo-ldapv3-config-psearch-filter";
-    static final String SMS_LDAPv3_LDAP_ISACTIVEATTRNAME =
+    static final String UM_LDAPv3_LDAP_ISACTIVEATTRNAME =
             "sun-idrepo-ldapv3-config-isactive";
-    static final String SMS_LDAPv3_LDAP_INETUSERACTIVE =
+    static final String UM_LDAPv3_LDAP_INETUSERACTIVE =
             "sun-idrepo-ldapv3-config-active";
-    static final String SMS_LDAPv3_LDAP_INETUSERINACTIVE =
+    static final String UM_LDAPv3_LDAP_INETUSERINACTIVE =
             "sun-idrepo-ldapv3-config-inactive";
-    static final String SMS_LDAPv3_LDAP_CREATEUSERMAPPING =
+    static final String UM_LDAPv3_LDAP_CREATEUSERMAPPING =
             "sun-idrepo-ldapv3-config-createuser-attr-mapping";
-    static final String SMS_LDAPv3_LDAP_AUTHENTICATABLE =
+    static final String UM_LDAPv3_LDAP_AUTHENTICATABLE =
             "sun-idrepo-ldapv3-config-authenticatable-type";
-    static final String SMS_LDAPv3_LDAP_AUTHENTICATION_NAME_ATTR = 
+    static final String UM_LDAPv3_LDAP_AUTHENTICATION_NAME_ATTR = 
             "sun-idrepo-ldapv3-config-auth-naming-attr";
-    static final String SMS_LDAPv3_LDAP_CACHEENABLED =
+    static final String UM_LDAPv3_LDAP_CACHEENABLED =
             "sun-idrepo-ldapv3-config-cache-enabled";
-    static final String SMS_LDAPv3_LDAP_CACHETTL =
+    static final String UM_LDAPv3_LDAP_CACHETTL =
             "sun-idrepo-ldapv3-config-cache-ttl";
-    static final String SMS_LDAPv3_LDAP_CACHESIZE =
+    static final String UM_LDAPv3_LDAP_CACHESIZE =
             "sun-idrepo-ldapv3-config-cache-size";
-    static final String SMS_LDAPv3_LDAP_RETRIES = 
+    static final String UM_LDAPv3_LDAP_RETRIES = 
             "sun-idrepo-ldapv3-config-numretires";
-    static final String SMS_LDAPv3_LDAP_DEPLAY = 
+    static final String UM_LDAPv3_LDAP_DEPLAY = 
             "com.iplanet.am.ldap.connection.delay.between.retries";
-    static final String SMS_LDAPv3_LDAP_ERRORCODE = 
+    static final String UM_LDAPv3_LDAP_ERRORCODE = 
             "sun-idrepo-ldapv3-config-errorcodes";
-    /** 
-     * Attributes for flat file idRepo
-     */
-    static final String SMS_FILES_CLASS = "sunIdRepoClass";
-    static final String SMS_FILES_DIRECTORY = "sunFilesIdRepoDirectory";
-    static final String SMS_FILES_CACHE = "sunFilesMonitorForChanges";
-    static final String SMS_FILES_CACHE_INTERVAL = "sunFilesMonitoringTime";
-    static final String SMS_FILES_OBJECT_CLASS = "sunFilesObjectClasses";
-    static final String SMS_FILES_PASSWORD_ATTR = "sunFilesPasswordAttr";
-    static final String SMS_FILES_STATUS_ATTR = "sunFilesStatusAttr";
-    static final String SMS_FILES_HASH_ATTR = "sunFilesHashAttrs";
-    static final String SMS_FILES_ENCRYPT_ATTR = "sunFilesEncryptAttrs";
     
     /** 
      * Attributes for am sdk idRepo
      */
-    static final String SMS_AMSDK_CLASS = "sunIdRepoClass";
-    static final String SMS_AMSDK_ORG_NAME  ="amSDKOrgName";
-    static final String SMS_AMSDK_PEOPLE_CONTAINER_NAME = 
+    static final String UM_AMSDK_CLASS = "sunIdRepoClass";
+    static final String UM_AMSDK_ORG_NAME  ="amSDKOrgName";
+    static final String UM_AMSDK_PEOPLE_CONTAINER_NAME = 
             "sun-idrepo-amSDK-config-people-container-name";
-    static final String SMS_AMSDK_PEOPLE_CONTAINER_VALUE = 
+    static final String UM_AMSDK_PEOPLE_CONTAINER_VALUE = 
             "sun-idrepo-amSDK-config-people-container-value";
-    static final String SMS_AMSDK_AGENT_CONTAINER_NAME = 
+    static final String UM_AMSDK_AGENT_CONTAINER_NAME = 
             "sun-idrepo-amSDK-config-agent-container-name";
-    static final String SMS_AMSDK_AGENT_CONTAINER_VALUE = 
+    static final String UM_AMSDK_AGENT_CONTAINER_VALUE = 
             "sun-idrepo-amSDK-config-agent-container-value";
-    static final String SMS_AMSDK_RECURSIVE_ENABLED = 
+    static final String UM_AMSDK_RECURSIVE_ENABLED = 
             "sun-idrepo-amSDK-config-recursive-enabled";
-    static final String SMS_AMSDK_COPYCONFIG_ENABLED = 
+    static final String UM_AMSDK_COPYCONFIG_ENABLED = 
             "sun-idrepo-amSDK-config-copyconfig-enabled";
 }

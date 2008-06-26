@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ScenarioTests.java,v 1.9 2008-04-10 21:27:06 mrudulahg Exp $
+ * $Id: SAMLv2ScenarioTests.java,v 1.10 2008-06-26 20:24:18 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,9 +108,11 @@ public class SAMLv2ScenarioTests extends TestCommon {
                     + SAMLv2Common.fileseparator;
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
             String spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -136,7 +138,8 @@ public class SAMLv2ScenarioTests extends TestCommon {
             "samlv2Scen4", "samlv2Scen5", "samlv2Scen6", "samlv2Scen7",
             "samlv2Scen8"};
             for (int i = 0; i < scenArray.length; i++) {
-                SAMLv2Common.getEntriesFromResourceBundle(scenArray[i],
+                SAMLv2Common.getEntriesFromResourceBundle("samlv2" +
+                        fileseparator + scenArray[i],
                         configMap);
                 //create sp user first
                 list.clear();
@@ -195,11 +198,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario1", "\nRunning: samlv2Scenario1\n");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen1", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen1", configMap);
             log(Level.FINEST, "samlv2Scenario1", "Map:" + configMap);
             
             //Create xml's for each actions.
@@ -241,11 +247,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario2", "\nRunning: samlv2Scenario2\n");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen2", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen2", configMap);
             log(Level.FINEST, "samlv2Scenario2", "Map:" + configMap);
             
             String[] arrActions = {"scen2idplogin", "scen2idpsamlv2ssoinit",
@@ -289,11 +298,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario3", "\nRunning: samlv2Scenario3\n");
             getWebClient();
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen3", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen3", configMap);
             log(Level.FINEST, "samlv2Scenario3", "Map:" + configMap);
             
             //Create xml's for each actions.
@@ -334,11 +346,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario4", "\nRunning: samlv2Scenario4\n");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen4", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen4", configMap);
             log(Level.FINEST, "samlv2Scenario4", "Map:" + configMap);
             
             String[] arrActions = {"scen4idplogin", "scen4idpsamlv2ssoinit",
@@ -380,11 +395,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario5", "\nRunning: samlv2Scenario5\n");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen5", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen5", configMap);
             configMap.put("urlparams", "NameIDFormat=transient");
             log(Level.FINEST, "samlv2Scenario5", "Map:" + configMap);
             
@@ -424,11 +442,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario6", "Running: samlv2Scenario6");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen6", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen6", configMap);
             configMap.put("urlparams", "NameIDFormat=transient");
             log(Level.FINEST, "samlv2Scenario6", "Map:" + configMap);
             
@@ -469,11 +490,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario7", "\nRunning: samlv2Scenario7\n");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen7", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen7", configMap);
             configMap.put("urlparams", "NameIDFormat=transient");
             log(Level.FINEST, "samlv2Scenario7", "Map:" + configMap);
             
@@ -516,11 +540,14 @@ public class SAMLv2ScenarioTests extends TestCommon {
             log(Level.FINE, "samlv2Scenario8", "\nRunning: samlv2Scenario8\n");
             
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestConfigData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2TestData",
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestData",
                     configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2Scen8", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2Scen8", configMap);
             configMap.put("urlparams", "NameIDFormat=transient");
             log(Level.FINEST, "samlv2Scenario8", "Map:" + configMap);
             

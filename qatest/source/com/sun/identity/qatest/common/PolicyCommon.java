@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.15 2008-03-10 05:53:09 kanduls Exp $
+ * $Id: PolicyCommon.java,v 1.16 2008-06-26 20:10:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,10 +97,12 @@ public class PolicyCommon extends TestCommon {
             int policyIdx, String policyFile, String subRealm)
     throws Exception {
         String strResource;
-        strGlobalRB = strGblRB;
-        strLocalRB = strLocRB;
-        ResourceBundle rbg = ResourceBundle.getBundle(strGlobalRB);
-        ResourceBundle rbp = ResourceBundle.getBundle(strLocalRB);
+        strGlobalRB = strGblRB.substring(strGblRB.indexOf(fileseparator) + 1,
+                strGblRB.length());
+        strLocalRB = strLocRB.substring(strLocRB.indexOf(fileseparator) + 1,
+                strLocRB.length());
+        ResourceBundle rbg = ResourceBundle.getBundle(strGblRB);
+        ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
         String glbPolIdx = strLocalRB + policyIdx + ".";
         String locPolIdx = glbPolIdx + "policy";
         String strSubRealm = subRealm;
@@ -446,7 +448,9 @@ public class PolicyCommon extends TestCommon {
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String strPolIdx = strLocRB + glbPolIdx;
+            String strPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    glbPolIdx;
             String realm = strLocRealm;
             int noOfIdentities = new Integer(rb.getString(strPolIdx +
                     ".noOfIdentities")).intValue();
@@ -585,7 +589,9 @@ public class PolicyCommon extends TestCommon {
             throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String glbPolIdx = strLocRB + gPolIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    gPolIdx;
             String realm = strLocRealm;
             List list = new ArrayList();
             webClient = new WebClient();
@@ -646,7 +652,9 @@ public class PolicyCommon extends TestCommon {
         boolean status = false;
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strLocRB);
-            String glbPolIdx = strLocRB + gPolIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    gPolIdx;
             String locPolIdx = glbPolIdx + ".policy";
             String realm = strLocRealm;
             List list = new ArrayList();
@@ -686,7 +694,9 @@ public class PolicyCommon extends TestCommon {
     throws Exception {
         try {
             ResourceBundle rb = ResourceBundle.getBundle(strRefRB);
-            String glbPolIdx = strLocRB + gPolIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    gPolIdx;
             String locPolIdx = glbPolIdx + ".refpolicy";
             List list = new ArrayList();
             webClient = new WebClient();
@@ -694,8 +704,9 @@ public class PolicyCommon extends TestCommon {
             String name;
             int noOfRefPolicies = new Integer(rb.getString(glbPolIdx +
                     ".noOfRefPolicies")).intValue();
-            String strReferringOrg = rb.getString(strLocRB + gPolIdx +
-                    ".referringOrg");
+            String strReferringOrg = rb.getString(strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    gPolIdx + ".referringOrg");
             for (int i = 0; i < noOfRefPolicies; i++) {
                 name = rb.getString(locPolIdx + i + ".name");
                 list.add(name);
@@ -782,7 +793,9 @@ public class PolicyCommon extends TestCommon {
         Map map = null;
         try {
             ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
-            String glbPolIdx = strLocRB + polIdx;
+            String glbPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    polIdx;
             String locEvalIdx = glbPolIdx + ".evaluation";
             int noOfEnvParams = new Integer(rbp.getString(locEvalIdx +
                     evalIdx + ".noOfEnvParamSet")).intValue();
@@ -824,7 +837,9 @@ public class PolicyCommon extends TestCommon {
             int idIdx)
     throws Exception {
         ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
-        String glbPolIdx = strLocRB + polIdx;
+        String glbPolIdx = strLocRB.substring(
+                strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                polIdx;
         String locEvalIdx = glbPolIdx + ".identity" + idIdx;
         boolean hasSessionAttr = new Boolean(rbp.getString(locEvalIdx +
                 ".hasSessionAttributes")).booleanValue();
@@ -865,21 +880,25 @@ public class PolicyCommon extends TestCommon {
             String strLocRB, int policyIdx, String policyFile)
     throws Exception {
         String strResource;
-        String strReferralRB = strRefRB;
-        strLocalRB = strLocRB;
         String subRealmPrefix = null;
         String subRealmSuffix = null;
         
         ResourceBundle rbr = ResourceBundle.getBundle(strRefRB);
         ResourceBundle rbg = ResourceBundle.getBundle(strGlbRB);
-        String locPolIdx = strLocRB + policyIdx + "." + "refpolicy";
-        String refPolIdx = strLocRB + policyIdx + ".";
+        String locPolIdx = strLocRB.substring(strLocRB.indexOf(fileseparator) +
+                1, strLocRB.length()) + policyIdx + "." + "refpolicy";
+        String refPolIdx = strLocRB.substring(strLocRB.indexOf(fileseparator) +
+                1, strLocRB.length()) + policyIdx + ".";
         
         int noOfRefPolicies = new Integer(rbr.getString(refPolIdx +
                 "noOfRefPolicies")).intValue();
-        subRealmPrefix = rbg.getString(strGlbRB + ".uuid.prefix."
+        subRealmPrefix = rbg.getString(strGlbRB.substring(
+                strGlbRB.indexOf(fileseparator) + 1, strGlbRB.length()) +
+                ".uuid.prefix."
                 + "subRealm");
-        subRealmSuffix = rbg.getString(strGlbRB + ".uuid.suffix."
+        subRealmSuffix = rbg.getString(strGlbRB.substring(
+                strGlbRB.indexOf(fileseparator) + 1, strGlbRB.length()) +
+                ".uuid.suffix."
                 + "subRealm");
         FileWriter fstream = new FileWriter(baseDir + policyFile);
         BufferedWriter out = new BufferedWriter(fstream);
@@ -1063,8 +1082,12 @@ public class PolicyCommon extends TestCommon {
             String strResource ;
             String dynamicRefResource ;
             List dnsAlias = new ArrayList();
-            String locPolIdx = strLocRB + polIdx + "." + "refpolicy";
-            String refPolIdx = strLocRB + polIdx + ".";
+            String locPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    polIdx + "." + "refpolicy";
+            String refPolIdx = strLocRB.substring(
+                    strLocRB.indexOf(fileseparator) + 1, strLocRB.length()) +
+                    polIdx + ".";
             ResourceBundle rbr = ResourceBundle.getBundle(strRefRB);
             ResourceBundle rbg = ResourceBundle.getBundle(strGlbRB);
             WebClient webClient = new WebClient();
@@ -1160,8 +1183,9 @@ public class PolicyCommon extends TestCommon {
     public void deleteDynamicAttr(String strLocRB, int policyIdx,
             String subRealm)
             throws Exception {
-        strLocalRB = strLocRB;
-        ResourceBundle rbp = ResourceBundle.getBundle(strLocalRB);
+        strLocalRB = strLocRB.substring(strLocRB.indexOf(fileseparator) + 1,
+                strLocRB.length());
+        ResourceBundle rbp = ResourceBundle.getBundle(strLocRB);
         String glbPolIdx = strLocalRB + policyIdx + ".";
         String locPolIdx = glbPolIdx + "policy";
         String strSubRealm = subRealm;
@@ -1712,4 +1736,3 @@ public class PolicyCommon extends TestCommon {
         }
     }
 }
-

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCommon.java,v 1.4 2008-04-25 14:59:54 kanduls Exp $
+ * $Id: DelegationCommon.java,v 1.5 2008-06-26 20:10:38 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,8 @@ public class DelegationCommon extends IDMCommon implements DelegationConstants {
                 "/UI/Logout";
         fmadmURL = protocol + ":" + "//" + host + ":" + port + uri;
         fmadm = new FederationManager(fmadmURL);
-        famMsgBdl = ResourceBundle.getBundle(DELEGATION_GLOBAL);
+        famMsgBdl = ResourceBundle.getBundle("delegation" + fileseparator +
+                DELEGATION_GLOBAL);
     }
     
     /**

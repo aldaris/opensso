@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationTimeTest.java,v 1.4 2007-11-05 21:18:12 rmisra Exp $:
+ * $Id: PolicyEvaluationTimeTest.java,v 1.5 2008-06-26 20:16:33 rmisra Exp $:
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
         pc = new PolicyCommon();
         mapIdentity = new HashMap();
         try {
-            mapIdentity = getMapFromResourceBundle("policyevaluationtimetest");
+            mapIdentity = getMapFromResourceBundle("policy" + fileseparator +
+                    "policyevaluationtimetest");
             Integer testCount = new Integer((String)
             mapIdentity.get("testcount"));
             mapIdentity.put("testcount", testCount);

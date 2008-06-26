@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentitiesTest.java,v 1.5 2008-02-08 08:33:15 kanduls Exp $
+ * $Id: IdentitiesTest.java,v 1.6 2008-06-26 20:13:45 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,8 @@ public class IdentitiesTest extends IDMCommon {
         Object[] params = {testNum, testName};
         entering("setup", params);
         prefixTestName = testName + testNum;
-        cfgMap = getDataFromCfgFile(prefixTestName, testName);
+        cfgMap = getDataFromCfgFile(prefixTestName, "idm" + fileseparator +
+                testName);
         testCount = getParams(IDMConstants.IDM_KEY_COUNT);
         log(Level.FINEST, "IdentitiesTest", "Count = " + testCount);
         testDescription = getParams(IDMConstants.IDM_KEY_DESCRIPTION);

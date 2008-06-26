@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.20 2008-06-19 22:45:01 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.21 2008-06-26 20:27:12 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,8 @@ public class ClientConfigCreator {
         } else {
             Map<String, String> configMap = new HashMap<String, String>();
             configMap = getMapFromResourceBundle(testDir + fileseparator + 
-                    "resources" + fileseparator + "default" + fileseparator + 
+                    "resources" + fileseparator + "config" + fileseparator +
+                    "default" + fileseparator +
                     "ConfiguratorCommon.properties");
             configMap.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                     "resources" + fileseparator + "Configurator-" + serverName1 
@@ -142,7 +143,8 @@ public class ClientConfigCreator {
         throws Exception {
         Map<String, String> configMap = new HashMap<String, String>();
         configMap = getMapFromResourceBundle(testDir + fileseparator + 
-                "resources" + fileseparator + "default" + fileseparator + 
+                "resources" + fileseparator + "config" + fileseparator +
+                "default" + fileseparator + 
                 "ConfiguratorCommon.properties");
         configMap.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName
@@ -239,7 +241,8 @@ public class ClientConfigCreator {
 
         Map<String, String> configMap1 = new HashMap<String, String>();
         configMap1 = getMapFromResourceBundle(testDir + fileseparator + 
-                "resources" + fileseparator + "default" + fileseparator + 
+                "resources" + fileseparator + "config" + fileseparator +
+                "default" + fileseparator + 
                 "ConfiguratorCommon.properties");
         configMap1.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName1 
@@ -305,7 +308,8 @@ public class ClientConfigCreator {
 
         Map<String, String> configMap2 = new HashMap<String, String>();
         configMap2 = getMapFromResourceBundle(testDir + fileseparator 
-                + "resources" + fileseparator + "default" + fileseparator + 
+                + "resources" + fileseparator + "config" + fileseparator +
+                "default" + fileseparator + 
                 "ConfiguratorCommon.properties");
         configMap2.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName2 
@@ -446,7 +450,8 @@ public class ClientConfigCreator {
                 properties_protocol);
         Map<String, String> configMap3 = new HashMap<String, String>();
         configMap3 = getMapFromResourceBundle(testDir + fileseparator + 
-                "resources" + fileseparator + "default" + fileseparator + 
+                "resources" + fileseparator + "config" + fileseparator +
+                "default" + fileseparator + 
                 "ConfiguratorCommon.properties");
         configMap3.putAll(getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "Configurator-" + serverName3 
@@ -697,7 +702,6 @@ public class ClientConfigCreator {
      
         return canUseAsPort;
     }
-
 
     public static void main(String args[]) {
         try {

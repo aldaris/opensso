@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2IDPProxy.java,v 1.1 2008-04-10 21:28:28 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2IDPProxy.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,8 @@ public class UnconfigureSAMLv2IDPProxy extends TestCommon {
             configMap = new HashMap<String, String>();
             getWebClient();
             
-            configMap = getMapFromResourceBundle("samlv2TestConfigData");
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator +
+                    "samlv2TestConfigData");
             log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 

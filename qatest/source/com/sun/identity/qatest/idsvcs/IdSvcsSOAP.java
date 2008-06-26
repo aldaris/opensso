@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsSOAP.java,v 1.2 2008-03-10 05:45:59 kanduls Exp $
+ * $Id: IdSvcsSOAP.java,v 1.3 2008-06-26 20:14:20 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,8 @@ public class IdSvcsSOAP extends TestCommon {
     public IdSvcsSOAP()
     throws Exception {
         super("IdSvcsSOAP");
-        rb_amconfig = ResourceBundle.getBundle("AMConfig");
+        rb_amconfig = ResourceBundle.getBundle(
+                TestConstants.TEST_PROPERTY_AMCONFIG);
         admintoken = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
         pc = new PolicyCommon();

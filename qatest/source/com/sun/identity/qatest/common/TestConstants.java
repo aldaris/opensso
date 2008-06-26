@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.23 2008-06-19 22:44:28 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.24 2008-06-26 20:10:39 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,8 @@ public interface TestConstants {
     /**
      * Property key for <code>com.iplanet.am.notification.url</code>.
      */
-    String KEY_AMC_NOTIFICATION_URL = "com.sun.identity.client.notification.url";
+    String KEY_AMC_NOTIFICATION_URL =
+            "com.sun.identity.client.notification.url";
     
     /**
      * Property key for <code>com.sun.identity.agents.app.username</code>.
@@ -153,11 +154,6 @@ public interface TestConstants {
     String KEY_ATT_COOKIE_DOMAIN = "cookiedomain";
     
     /**
-     * Property key for <code>namingservice</code>.
-     */
-    String KEY_ATT_NAMING_SVC = "namingservice";
-    
-    /**
      * Property key for <code>config_dir</code>.
      */
     String KEY_ATT_CONFIG_DIR = "config_dir";
@@ -166,11 +162,6 @@ public interface TestConstants {
      * Property key for <code>am.encryption.pwd</code>.
      */
     String KEY_ATT_AM_ENC_PWD = "am.encryption.pwd";
-    
-    /**
-     * Property key for <code>defaultdatastorename</code>.
-     */
-    String KEY_ATT_CONFIG_DEFDATASTORENAME = "defaultdatastorename";
     
     /**
      * Property key for <code>datastore</code>.
@@ -291,7 +282,8 @@ public interface TestConstants {
     /**
      * SAMLv2, IDFF Property key for <code>sp_deployment_uri</code>
      */
-    String KEY_SP_DEPLOYMENT_URI = "sp_com.iplanet.am.services.deploymentDescriptor";
+    String KEY_SP_DEPLOYMENT_URI =
+            "sp_com.iplanet.am.services.deploymentDescriptor";
     
     /**
      * SAMLv2, IDFF Property key for <code>sp_metaalias</code>
@@ -559,7 +551,8 @@ public interface TestConstants {
     /**
      * SAMLv2, IDFF Property key for <code>idp_deployment_uri</code>
      */
-    String KEY_IDP_DEPLOYMENT_URI = "idp_com.iplanet.am.services.deploymentDescriptor";
+    String KEY_IDP_DEPLOYMENT_URI =
+            "idp_com.iplanet.am.services.deploymentDescriptor";
     
     /**
      * SAMLv2, IDFF Property key for <code>idp_metaalias</code>
@@ -730,7 +723,8 @@ public interface TestConstants {
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_deployment_uri</code>
      */
-    String KEY_IDP_PROXY_DEPLOYMENT_URI = "idpProxy_com.iplanet.am.services.deploymentDescriptor";
+    String KEY_IDP_PROXY_DEPLOYMENT_URI =
+            "idpProxy_com.iplanet.am.services.deploymentDescriptor";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_metaalias</code>
@@ -765,7 +759,8 @@ public interface TestConstants {
     /**
      * Property key for <code>idpProxy_subrealm_recursive_delete</code>.
      */
-    String KEY_IDP_PROXY_SUBREALM_RECURSIVE_DELETE = "idpProxy_subrealm_recursive_delete";
+    String KEY_IDP_PROXY_SUBREALM_RECURSIVE_DELETE =
+            "idpProxy_subrealm_recursive_delete";
     
     /**
      * SAMLv2, IDFF Property key for <code>idpProxy_cot</code>
@@ -917,15 +912,17 @@ public interface TestConstants {
      * IDFF Property key for <code>Registration HTTP Profile</code>
      */
     String REG_HTTP_PROFILE_VALUE =
-            "<RegisterNameIdentifierProtocolProfile>http://projectliberty.org/" +
-            "profiles/rni-idp-http</RegisterNameIdentifierProtocolProfile>";
+            "<RegisterNameIdentifierProtocolProfile>http://" +
+            "projectliberty.org/profiles/rni-idp-http" +
+            "</RegisterNameIdentifierProtocolProfile>";
     
     /**
      * IDFF Property key for <code>Registration SOAP Profile</code>
      */
     String REG_SOAP_PROFILE_VALUE =
-            "<RegisterNameIdentifierProtocolProfile>http://projectliberty.org/" +
-            "profiles/rni-idp-soap</RegisterNameIdentifierProtocolProfile>";
+            "<RegisterNameIdentifierProtocolProfile>http://" +
+            "projectliberty.org/profiles/rni-idp-soap" +
+            "</RegisterNameIdentifierProtocolProfile>";
     
     /**
      * IDFF Property key for <code>Termination HTTP Profile</code>
@@ -983,7 +980,5 @@ public interface TestConstants {
      * <code>dist_auth_notification_service</code>
      */
     String KEY_DIST_AUTH_NOTIFICATION_SVC = "dist_auth_notification_service";
-    
-    
     
 }

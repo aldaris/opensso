@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.49 2008-06-19 22:44:28 mrudulahg Exp $
+ * $Id: TestCommon.java,v 1.50 2008-06-26 20:10:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.iplanet.am.sdk.remote.RemoteServicesImpl;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
@@ -49,7 +48,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -70,12 +68,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.deployer.ContextDeployer;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.testng.Reporter;
 
@@ -103,11 +96,9 @@ public class TestCommon implements TestConstants {
     static private Logger logger;
     static private String logEntryTemplate;
     static private Server server;
-    static private String uriseparator = "/";
     private String productSetupResult;
-    static private FileInputStream in;
-    static private BufferedWriter out;
-    
+    static private String uriseparator = "/";
+ 
     protected static String newline = System.getProperty("line.separator");
     protected static String fileseparator =
             System.getProperty("file.separator");
@@ -219,7 +210,7 @@ public class TestCommon implements TestConstants {
     /**
      * Writes a log entry.
      */
-    protected static void log(
+    protected void log(
             Level level,
             String methodName,
             String message,
@@ -247,6 +238,7 @@ public class TestCommon implements TestConstants {
      */
     protected SSOToken getToken(String name, String password, String basedn)
     throws Exception {
+        entering("SSOToken", null);
         log(Level.FINEST, "getToken", name);
         log(Level.FINEST, "getToken", password);
         log(Level.FINEST, "getToken", basedn);
@@ -274,6 +266,7 @@ public class TestCommon implements TestConstants {
         log(Level.FINEST, "getToken",
                 (new StringBuilder()).append("TOKENCREATED>>> ").
                 append(ssotoken).toString());
+        exiting("SSOToken");
         return ssotoken;
     }
     
@@ -282,13 +275,14 @@ public class TestCommon implements TestConstants {
      */
     protected boolean validateToken(SSOToken ssotoken)
     throws Exception {
-        log(Level.FINE, "validateToken", "Inside validate token");
+        entering("validateToken", null);
         SSOTokenManager stMgr = SSOTokenManager.getInstance();
         boolean bVal = stMgr.isValidToken(ssotoken);
         if (bVal)
             log(Level.FINE, "validateToken", "Token is Valid");
         else
             log(Level.FINE, "validateToken", "Token is Invalid");
+        exiting("validateToken");
         return bVal;
     }
     
@@ -305,7 +299,7 @@ public class TestCommon implements TestConstants {
      */
     protected void destroyToken(SSOToken requester, SSOToken ssotoken)
     throws Exception {
-        log(Level.FINE, "destroyToken", "Inside destroy token");
+        entering("destroyToken", null);
         if (validateToken(ssotoken)) {
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             if (requester != null)
@@ -313,6 +307,7 @@ public class TestCommon implements TestConstants {
             else
                 stMgr.destroyToken(ssotoken);
         }
+        exiting("destroyToken");
     }
     
     /**
@@ -334,6 +329,7 @@ public class TestCommon implements TestConstants {
      */
     protected List getListFromFile(String fileName)
     throws Exception {
+        entering("getListFromFile", null);
         ArrayList list = null;
         if (fileName != null) {
             list = new ArrayList();
@@ -347,6 +343,7 @@ public class TestCommon implements TestConstants {
             if (input != null)
                 input.close();
         }
+        exiting("getListFromFile");
         return (list);
     }
     
@@ -778,6 +775,7 @@ public class TestCommon implements TestConstants {
      */
     protected void createFileFromMap(Map properties, String fileName)
     throws Exception {
+        entering("createFileFromMap", null);
         log(Level.FINEST, "createFileFromMap", "Map: " + properties);
         log(Level.FINEST, "createFileFromMap", "fileName: " + fileName);
         StringBuffer buff = new StringBuffer();
@@ -791,32 +789,44 @@ public class TestCommon implements TestConstants {
             buff.append("\n");
         }
         
-        BufferedWriter out = new BufferedWriter(new FileWriter(
-                fileName));
+        BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
         out.write(buff.toString());
         out.close();
+        exiting("createFileFromMap");
     }
     
     /**
      * Reads data from a ResourceBundle object and creates a Map containing all
      * the attribute keys and values. It also takes in a Set of attribute key
      * names, which if specified, are not put into the Map. This is to ensure
-     * selective selection of attribute key and value pairs.
+     * selective selection of attribute key and value pairs. One can further
+     * specify to search for a key containig a specific string (str).
      */
-    protected Map getMapFromResourceBundle(String rbName, Set set)
+    protected Map getMapFromResourceBundle(String rbName, String str, Set set)
     throws Exception {
+        entering("getMapFromResourceBundle", null);
         Map map = new HashMap();
         ResourceBundle rb = ResourceBundle.getBundle(rbName);
         for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
             String key = (String)e.nextElement();
             String value = (String)rb.getString(key);
             if (set != null) {
-                if (!set.contains(key))
-                    map.put(key, value);
+                if (!set.contains(key)) {
+                    if (str != null) { 
+                       if (key.indexOf(str) != -1)
+                            map.put(key, value);
+                    } else
+                        map.put(key, value);
+                }
             } else {
-                map.put(key, value);
+                if (str != null) {
+                    if (key.indexOf(str) != -1)
+                        map.put(key, value);
+                } else
+                    map.put(key, value);
             }
         }
+        exiting("getMapFromResourceBundle");
         return (map);
     }
     
@@ -827,8 +837,19 @@ public class TestCommon implements TestConstants {
      */
     protected Map getMapFromResourceBundle(String rbName)
     throws Exception {
-        Map map = getMapFromResourceBundle(rbName, null);
-        return (map);
+        return (getMapFromResourceBundle(rbName, null, null));
+    }
+
+    /**
+     * Reads data from a ResourceBundle object and creates a Map containing all
+     * the attribute keys and values. One can further specify to search for a
+     * key containig a specific string (str)
+     * @param resourcebundle name
+     * @param str string to match contained in the key
+     */
+    protected Map getMapFromResourceBundle(String rbName, String str)
+    throws Exception {
+        return(getMapFromResourceBundle(rbName, str, null));
     }
     
     /**
@@ -840,7 +861,9 @@ public class TestCommon implements TestConstants {
      * &lt;keyn&gt;=&lt;valuen1&gt;,&lt;valuen2&gt;...,&lt;valuen3&gt;
      * </pre>
      */
-    protected static Map<String, Set<String>> parseStringToMap(String str) {
+    protected Map<String, Set<String>> parseStringToMap(String str)
+    throws Exception {
+        entering("parseStringToMap", null);
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         StringTokenizer st = new StringTokenizer(str, ";");
         while (st.hasMoreTokens()) {
@@ -856,6 +879,7 @@ public class TestCommon implements TestConstants {
                 }
             }
         }
+        exiting("parseStringToMap");
         return map;
     }
     
@@ -865,14 +889,17 @@ public class TestCommon implements TestConstants {
      * <code>Map&lt;String, Set&lt;String&gt;&gt; and many times, we just
      * want to add a string to the map.
      */
-    protected static Set<String> putSetIntoMap(
+    protected Set<String> putSetIntoMap(
             String key,
             Map<String, Set<String>> map,
             String value
-            ) {
+            )
+    throws Exception {
+        entering("putSetIntoMap", null);
         Set<String> set = new HashSet<String>();
         set.add(value);
         map.put(key, set);
+        exiting("putSetIntoMap");
         return set;
     }
     
@@ -881,7 +908,8 @@ public class TestCommon implements TestConstants {
      * @param realm
      * @return loginURL
      */
-    protected static String getLoginURL(String strOrg){
+    protected String getLoginURL(String strOrg) {
+        entering("getLoginURL", null);
         String loginURL;
         if ((strOrg.equals("")) || (strOrg.equalsIgnoreCase("/"))) {
             loginURL = protocol + ":" + "//" + host + ":" + port + uri
@@ -890,6 +918,7 @@ public class TestCommon implements TestConstants {
             loginURL = protocol + ":" + "//" + host + ":" + port + uri
                     + "/UI/Login" + "?org=" + strOrg ;
         }
+        exiting("getLoginURL");
         return loginURL;
     }
     
@@ -898,11 +927,14 @@ public class TestCommon implements TestConstants {
      * @param string tokens
      * @return list of the tokens
      */
-    protected List getListFromTokens(StringTokenizer strTokens){
+    protected List getListFromTokens(StringTokenizer strTokens)
+    throws Exception {
+        entering("getListFromTokens", null);
         List<String> list = new ArrayList<String>();
         while (strTokens.hasMoreTokens()) {
             list.add(strTokens.nextToken());
         }
+        exiting("getListFromTokens");
         return list;
     }
     
@@ -911,6 +943,7 @@ public class TestCommon implements TestConstants {
      */
     protected String getTestBase()
     throws Exception {
+        entering("getTestBase", null);
         String testbaseDir = null;
         ResourceBundle rbamconfig = ResourceBundle.getBundle(
                 TestConstants.TEST_PROPERTY_AMCONFIG);
@@ -919,7 +952,7 @@ public class TestCommon implements TestConstants {
                 + fileseparator + "built"
                 + fileseparator + "classes"
                 + fileseparator ;
-        
+        exiting("getTestBase");
         return (testbaseDir);
     }
     
@@ -927,13 +960,15 @@ public class TestCommon implements TestConstants {
      * Takes a token separated string and returns each individual
      * token as part of a list.
      */
-    public List getAttributeList(String strList, String token)
+    protected List getAttributeList(String strList, String token)
     throws Exception {
+        entering("getAttributeList", null);
         StringTokenizer stk = new StringTokenizer(strList, token);
         List<String> attList = new ArrayList<String>();
         while (stk.hasMoreTokens()) {
             attList.add(stk.nextToken());
         }
+        exiting("getAttributeList");
         return (attList);
     }
     
@@ -941,8 +976,9 @@ public class TestCommon implements TestConstants {
      * Takes a token separated string and returns each individual
      * token as part of a Map.
      */
-    public Map getAttributeMap(String strList, String token)
+    protected Map getAttributeMap(String strList, String token)
     throws Exception {
+        entering("getAttributeMap", null);
         StringTokenizer stk = new StringTokenizer(strList, token);
         Map map = new HashMap();
         int idx;
@@ -954,6 +990,7 @@ public class TestCommon implements TestConstants {
                     strToken.length()));
         }
         log(Level.FINEST, "getAttributeMap", map);
+        exiting("getAttributeMap");
         return (map);
     }
     
@@ -962,19 +999,21 @@ public class TestCommon implements TestConstants {
      * of string into a map. The value contains the multiple string sepearete by
      * token string.
      */
-    protected static Set<String> putSetIntoMap(
+    protected Set<String> putSetIntoMap(
             String key,
             Map<String, Set<String>> map,
             String value,
             String token
             )
             throws Exception {
+        entering("putSetIntoMap", null);
         StringTokenizer stk = new StringTokenizer(value, token);
         Set<String> setValue = new HashSet<String>();
         while (stk.hasMoreTokens()) {
             setValue.add(stk.nextToken());
         }
         map.put(key, setValue);
+        exiting("putSetIntoMap");
         return setValue;
     }
     
@@ -983,23 +1022,27 @@ public class TestCommon implements TestConstants {
      * @param set1 first set
      * @param set2 second set to be concatenated with the first set
      */
-    protected static void concatSet(Set set1, Set set2)
+    protected void concatSet(Set set1, Set set2)
     throws Exception {
+        entering("concatSet", null);
         Iterator keyIter = set2.iterator();
         String item;
         while (keyIter.hasNext()) {
             item = (String)keyIter.next();
             set1.add(item);
         }
+        exiting("concatSet");
     }
     
     /**
      * Returns true if the value set contained in the Set
      * contains the requested string.
      */
-    protected static boolean setValuesHasString(Set set, String str)
+    protected boolean setValuesHasString(Set set, String str)
     throws Exception {
-        log(Level.FINEST, "setValuesHasString", "The values in the set are:\n" + set);
+        entering("setValuesHasString", null);
+        log(Level.FINEST, "setValuesHasString", "The values in the set are:\n" +
+                set);
         boolean res = false;
         Iterator keyIter = set.iterator();
         String item;
@@ -1012,6 +1055,7 @@ public class TestCommon implements TestConstants {
                 break;
             }
         }
+        exiting("setValuesHasString");
         return res;
     }
     
@@ -1025,6 +1069,7 @@ public class TestCommon implements TestConstants {
      */
     protected Map getURLComponents(String strNamingURL)
     throws Exception {
+        entering("getURLComponents", null);
         Map map = new HashMap();
         int iFirstSep = strNamingURL.indexOf(":");
         String strProtocol = strNamingURL.substring(0, iFirstSep);
@@ -1042,6 +1087,7 @@ public class TestCommon implements TestConstants {
         String strURI = uriseparator + strNamingURL.substring(iThirdSep + 1,
                 iFourthSep);
         map.put("uri", strURI);
+        exiting("getURLComponents");
         
         return (map);
     }
@@ -1053,8 +1099,10 @@ public class TestCommon implements TestConstants {
      * @param valMap a map contains tag name and value i.e.
      * [ROOT_SUFFIX, dc=sun,dc=com]
      */
-    public void replaceStringInFile(String inFile, String outFile, Map valMap)
+    protected void replaceStringInFile(String inFile, String outFile,
+            Map valMap)
     throws Exception {
+        entering("replaceStringInFile", null);
         String key = null;
         String value = null;
         String outputStr = null;
@@ -1074,6 +1122,7 @@ public class TestCommon implements TestConstants {
         BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
         out.write(sb.toString());
         out.close();
+        exiting("replaceStringInFile");
     }
     
     /**
@@ -1081,6 +1130,7 @@ public class TestCommon implements TestConstants {
      */
     protected SSOToken getUserToken(SSOToken requester, String userId)
     throws Exception {
+        entering("getUserToken", null);
         SSOToken stok = null;
         if (validateToken(requester)) {
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
@@ -1095,6 +1145,7 @@ public class TestCommon implements TestConstants {
                     break;
             }
         }
+        exiting("getUserToken");
         return (stok);
     }
     
@@ -1113,10 +1164,10 @@ public class TestCommon implements TestConstants {
 
         String  strPort = (String)notificationURLMap.get("port");
         String  strURI = (String)notificationURLMap.get("uri");
-       
+
         log(Level.FINEST, "startNotificationServer", "Notification Port: " +
                 strPort + ", uri is " + strURI);
- 
+
         int deployPort  = new Integer(strPort).intValue();
         server = new Server(deployPort);
         log(Level.FINE, "startNotificationServer", "Starting the notification" +
@@ -1124,16 +1175,16 @@ public class TestCommon implements TestConstants {
 
         String deployURI = rb_amconfig.getString(TestConstants.
                 KEY_INTERNAL_WEBAPP_URI);
-        log(Level.FINE, "startNotificationServer", "Deploy URI: " + 
+        log(Level.FINE, "startNotificationServer", "Deploy URI: " +
                 deployURI);
 
         WebAppContext wac = new WebAppContext();
         wac.setContextPath(deployURI);
         String warFile = getBaseDir() + "/data/common/internalwebapp.war";
-        log(Level.FINE, "startNotificationServer", "WAR File: " + 
+        log(Level.FINE, "startNotificationServer", "WAR File: " +
                 warFile);
-        wac.setWar(warFile);           
-        log(Level.FINE, "startNotificationServer", "Deploy URI: " + 
+        wac.setWar(warFile);
+        log(Level.FINE, "startNotificationServer", "Deploy URI: " +
                 deployURI);
         server.setHandler(wac);
         server.start();
@@ -1143,7 +1194,7 @@ public class TestCommon implements TestConstants {
                "notification url");
         return map;
     }
-    
+
     /**
      * Stop the notification (jetty) server for getting notifications from the
      * server.
@@ -1172,9 +1223,9 @@ public class TestCommon implements TestConstants {
         }
         deregisterNotificationServerURL(notificationIDMap);
     }
-    
+
     /**
-     * Register the notification (jetty) server for getting notifications from 
+     * Register the notification (jetty) server for getting notifications from
      * the server.
      */
     protected Map registerNotificationServerURL()
@@ -1197,13 +1248,13 @@ public class TestCommon implements TestConstants {
         notificationIDMap.put("ID2", strNotificationID2);
         // Register for IdRepo Service
         String strNotificationID3 = (String)client.
-                send("registerNotificationURL_idrepo", strNotURL, null, null);       
+                send("registerNotificationURL_idrepo", strNotURL, null, null);
         notificationIDMap.put("ID3", strNotificationID3);
         return notificationIDMap;
     }
 
     /**
-     * Deregister the notification (jetty) server for getting notifications from 
+     * Deregister the notification (jetty) server for getting notifications from
      * the server.
      */
     protected void deregisterNotificationServerURL(Map notificationIDMap)
@@ -1220,14 +1271,14 @@ public class TestCommon implements TestConstants {
         client.send("deRegisterNotificationURL", strID2, null, null);
         // Register for IdRepo Service
         String strID3 = (String)notificationIDMap.get("ID3");
-        client.send("deRegisterNotificationURL_idrepo", strID3, null, null);       
+        client.send("deRegisterNotificationURL_idrepo", strID3, null, null);
         log(Level.FINE, "deregisterNotificationServerURL", "Completed " +
                 "deregistering the notification url's");
     }
 
     /**
-     * Replaces the Redirect uri & the search strings in the authentication 
-     * properites files under the directory 
+     * Replaces the Redirect uri & the search strings in the authentication
+     * properites files under the directory
      * <QATESTHOME>/<SERVER_NAME1>/built/classes
      */
     public void replaceRedirectURIs(String strModule)
@@ -1248,33 +1299,49 @@ public class TestCommon implements TestConstants {
             String strNotURL = rb_amconfig.getString(TestConstants.
                     KEY_AMC_NOTIFICATION_URL);
             Map notificationURLMap = getURLComponents(strNotURL + "/");
+            log(Level.FINEST, "replaceRedirectURIs", "notificationURLMap: " +
+                    notificationURLMap.toString());
 
             String  deployProto = (String)notificationURLMap.get("protocol");
             String  strPort = (String)notificationURLMap.get("port");
-            String strHostname = (String)notificationURLMap.get("hostname");
+            String strHostname = (String)notificationURLMap.get("host");
             int deployPort  = new Integer(strPort).intValue();
             String deployURI = rb_amconfig.getString(TestConstants.
                     KEY_INTERNAL_WEBAPP_URI);
 
-            String clientURL = deployProto + "://" + strHostname +  ":" + deployPort + 
-                    deployURI + strModule;
-             
+            String clientURL;
+            if (strModule.equals("samlv2") ||
+                    strModule.equals("samlv2idpproxy") ||
+                    strModule.equals("idff"))
+                clientURL = deployProto + "://" + strHostname +  ":" +
+                        deployPort + deployURI + uriseparator + "federation";
+            else
+                clientURL = deployProto + "://" + strHostname +  ":" +
+                        deployPort + deployURI + uriseparator + strModule;
+            log(Level.FINEST, "replaceRedirectURIs", "clientURL: " + clientURL);
+
             Map replaceVals = new HashMap();
             for (int j = 0; j < 6; j++) {
-                replaceVals.put("REDIRECT_URI" + j, clientURL + "/" + 
+                replaceVals.put("REDIRECT_URI" + j, clientURL + "/" +
                         redirecturi[j]);
               replaceVals.put("REDIRECT_URI_SEARCH_STRING" + j, redirecturi[j]);
             }
-            directoryName = getTestBase();
+            log(Level.FINEST, "replaceRedirectURIs", "replaceVals: " +
+                    replaceVals.toString());
+
+            directoryName = getTestBase() + strModule;
+            log(Level.FINEST, "replaceRedirectURIs", "directoryName: " +
+                    directoryName);
             directory = new File(directoryName);
             assert (directory.exists());
-            files = directory.list();            
+            files = directory.list();
+
             for (int i = 0; i < files.length; i++) {
                 fileName = files[i];
                 if (fileName.endsWith(ext.trim())) {
                     absFileName = directoryName + fileseparator + fileName;
-                    log(Level.FINEST, "replaceRedirectURIs", "Replacing the file :" +
-                            absFileName);
+                    log(Level.FINEST, "replaceRedirectURIs", "Replacing the" +
+                            " file :" + absFileName);
                     replaceString(absFileName, replaceVals, absFileName);
                 }
             }
@@ -1284,6 +1351,7 @@ public class TestCommon implements TestConstants {
         }
         exiting("replaceRedirectURIs");
     }
+
     
     /**
      * Converts attrValPair into Map containing attrName as key
@@ -1294,6 +1362,7 @@ public class TestCommon implements TestConstants {
      */
     protected Map attributesToMap(String attrValPair)
     throws Exception {
+        entering("attributesToMap", null);
         Map attrMap = new HashMap();
         if ((attrValPair != null) && (attrValPair.length() > 0)) {
             StringTokenizer tokens = new StringTokenizer(attrValPair, "|");
@@ -1316,6 +1385,7 @@ public class TestCommon implements TestConstants {
         } else {
             throw new RuntimeException("Attributes value pair cannot be null");
         }
+        exiting("attributesToMap");
         return attrMap;
     }
     
@@ -1325,8 +1395,9 @@ public class TestCommon implements TestConstants {
      * @param updateValMap Atrribute values
      * @return true if bothe the maps are equal.
      */
-    protected static boolean isAttrValuesEqual(Map newValMap, Map updateValMap)
+    protected boolean isAttrValuesEqual(Map newValMap, Map updateValMap)
     throws Exception {
+        entering("isAttrValuesEqual", null);
         boolean equal;
         if (newValMap != null && updateValMap != null){
             Set updatedKeys = newValMap.keySet();
@@ -1343,6 +1414,7 @@ public class TestCommon implements TestConstants {
         } else {
             return false;
         }
+        exiting("isAttrValuesEqual");
         return true;
     }
     
@@ -1353,6 +1425,7 @@ public class TestCommon implements TestConstants {
      */
     protected Properties getProperties(String file)
     throws MissingResourceException {
+        entering("getProperties", null);
         Properties properties = new Properties();
         ResourceBundle bundle = ResourceBundle.getBundle(file);
         Enumeration e = bundle.getKeys();
@@ -1361,6 +1434,7 @@ public class TestCommon implements TestConstants {
             String value = bundle.getString(key);
             properties.put(key, value);
         }
+        exiting("getProperties");
         return properties;
     }
     
@@ -1369,6 +1443,7 @@ public class TestCommon implements TestConstants {
      */
     protected Set getAllUserTokens(SSOToken requester, String userId)
     throws Exception {
+        entering("getAllUserTokens", null);
         SSOToken stok = null;
         Set setAllToken = new HashSet();
         if (validateToken(requester)) {
@@ -1379,12 +1454,14 @@ public class TestCommon implements TestConstants {
             while (it.hasNext()) {
                 stok = (SSOToken)it.next();
                 strLocUserID = stok.getProperty("UserId");
-                log(Level.FINEST, "getAllUserTokens", "UserID: " + strLocUserID);
+                log(Level.FINEST, "getAllUserTokens", "UserID: " +
+                        strLocUserID);
                 if (strLocUserID.equalsIgnoreCase(userId)) {
                     setAllToken.add(stok);
                 }
             }
         }
+        exiting("getAllUserTokens");
         return setAllToken;
     }
     
@@ -1396,9 +1473,12 @@ public class TestCommon implements TestConstants {
      * @param file output file (absolute file path)
      * @param encoding
      */
-    protected static void replaceString(String inputFN, Map nvp,
+    protected void replaceString(String inputFN, Map nvp,
             String outputFN, String enc) 
     throws Exception {        
+        entering("replaceString", null);
+        FileInputStream in = null;
+        BufferedWriter out = null;
         try {
             File file = new File(inputFN);
             byte[] data = new byte[(int)file.length()];
@@ -1434,6 +1514,7 @@ public class TestCommon implements TestConstants {
             in.close();
             out.close();
         }
+        exiting("replaceString");
         return;
     }
     
@@ -1444,7 +1525,7 @@ public class TestCommon implements TestConstants {
      * @param Map with name value pairs like ("SM_SUFFIX", basedn)
      * @param file output file (absolute file path)
      */
-    protected static void replaceString(String inputFN, Map nvp,
+    protected void replaceString(String inputFN, Map nvp,
             String outputFN) 
     throws Exception {
         String enc = System.getProperty("file.encoding");
@@ -1457,8 +1538,9 @@ public class TestCommon implements TestConstants {
      * @param key to be replaced
      * @param value to be replaced
      */
-    protected static void replaceToken(StringBuffer buf, String key,
+    protected void replaceToken(StringBuffer buf, String key,
             String value) {
+        entering("replaceToken", null);
         if (key == null || value == null || buf == null)
             return;
         int loc = 0, keyLen = key.length(), valLen = value.length();
@@ -1466,14 +1548,35 @@ public class TestCommon implements TestConstants {
             buf.replace(loc, loc + keyLen, value);
             loc = loc + valLen;
         }
+        exiting("replaceToken");
         return;
     }
     
+    protected Set getListFromHtmlPage(HtmlPage page)
+    throws Exception {
+        entering("getListFromHtmlPage", null);
+        Set set = new HashSet();
+        String strP = page.asXml();
+        int iExit = strP.indexOf("<!-- CLI Exit Code: 0 -->");
+        int iColon = strP.lastIndexOf(":", iExit);
+        String strSub = strP.substring(iColon +1, iExit).trim();
+        StringTokenizer st = new StringTokenizer(strSub, "\n");
+        while (st.hasMoreTokens()) {
+            set.add(st.nextToken());
+        }
+        log(Level.FINEST, "getListFromHtmlPage", "The list is as follows: " +
+                set.toString());
+        exiting("getListFromHtmlPage");
+        return (set);
+    }
+
     /**
      * Sorts the keys in the map
      * returns sorted object []
      */
-    private static Object[] sort(Object objArray[])  {
+    protected Object[] sort(Object objArray[])
+    throws Exception {
+        entering("sort", null);
         for (int i = objArray.length; --i >= 0; ) {
             for (int j = 0; j < i; j++) {
                 if (((String)objArray[j]).length() <
@@ -1484,6 +1587,7 @@ public class TestCommon implements TestConstants {
                 }
             }
         }
+        exiting("setValuesHasString");
         return objArray;
     }
 
@@ -1491,79 +1595,79 @@ public class TestCommon implements TestConstants {
      * Get the property value of a property in showServerConfig.jsp
      * @webClient - the WebClient object that will used to emulate the client
      * browser
-     * @propName - the name of the property whose value should be retrieved 
+     * @propName - the name of the property whose value should be retrieved
      * from the contents of showServerConfig.jsp
      */
-    public String getServerConfigValue(WebClient webClient, String propName) 
+    public String getServerConfigValue(WebClient webClient, String propName)
     throws Exception {
         String propValue = null;
         boolean accessConsole = false;
         try {
             if (tableContents == null) {
                 accessConsole = true;
-                HtmlPage consolePage = consoleLogin(webClient, getLoginURL(realm), 
-                        adminUser, adminPassword);
+                HtmlPage consolePage = consoleLogin(webClient,
+                        getLoginURL(realm), adminUser, adminPassword);
                 if (consolePage != null) {
-                    String configJSPUrl = protocol + ":" + "//" + host + ":" + 
+                    String configJSPUrl = protocol + ":" + "//" + host + ":" +
                             port + uri + "/showServerConfig.jsp";
-                    HtmlPage configJSPPage = 
+                    HtmlPage configJSPPage =
                             (HtmlPage) webClient.getPage(configJSPUrl);
                     if (configJSPPage != null) {
-                        String jspContents = 
+                        String jspContents =
                                 configJSPPage.getWebResponse().
                                 getContentAsString();
-                        int tableStartIndex = 
+                        int tableStartIndex =
                                 jspContents.indexOf("<table border=\"1\">");
                         if (tableStartIndex != -1) {
-                            int tableEndIndex = jspContents.indexOf("</table>", 
+                            int tableEndIndex = jspContents.indexOf("</table>",
                                     tableStartIndex);
                             if (tableEndIndex != -1) {
-                                tableContents = 
-                                        jspContents.substring(tableStartIndex, 
+                                tableContents =
+                                        jspContents.substring(tableStartIndex,
                                         tableEndIndex);
                             } else {
-                                log(Level.SEVERE, "getServerConfigValue", 
-                                        "Did not find the end of the table " + 
+                                log(Level.SEVERE, "getServerConfigValue",
+                                        "Did not find the end of the table " +
                                         "in " + configJSPPage + ".");
                             }
                         } else {
-                            log(Level.SEVERE, "getServerConfigValue", 
-                                    "Did not find the start of the table " + 
+                            log(Level.SEVERE, "getServerConfigValue",
+                                    "Did not find the start of the table " +
                                     "in " + configJSPPage + ".");
                         }
                     } else {
-                        log(Level.SEVERE, "getServerConfigValue", 
+                        log(Level.SEVERE, "getServerConfigValue",
                         "Unable to access " + configJSPPage + ".");
                     }
                 } else {
-                    log(Level.SEVERE, "getServerConfigValue", 
+                    log(Level.SEVERE, "getServerConfigValue",
                             "Unable to login to the console");
                 }
             }
-            
+
             int propIndex = tableContents.indexOf(propName);
             if (propIndex != -1) {
-                int valueStartIndex = 
-                        tableContents.indexOf("<td>", propIndex + 
+                int valueStartIndex =
+                        tableContents.indexOf("<td>", propIndex +
                         propName.length());
                 if (valueStartIndex != -1) {
-                    int valueEndIndex = 
+                    int valueEndIndex =
                             tableContents.indexOf("</td>",
                             valueStartIndex);
                     if (valueEndIndex != -1) {
-                        propValue = 
+                        propValue =
                                 tableContents.substring(
-                                valueStartIndex + 4, 
+                                valueStartIndex + 4,
                                 valueEndIndex).trim();
                         propValue = propValue.replace('\n', ' ').
                                 replace("\r", "");
-                       
-                        log(Level.FINEST, 
+
+                        log(Level.FINEST,
                                 "getServerConfigValue",
-                                "The value of " + propName + 
+                                "The value of " + propName +
                                 " is " + propValue  + ".");
                     } else {
-                        log(Level.SEVERE, 
+                        log(Level.SEVERE,
                                 "getServerConfigValue",
                                 "Did not find end tag for " +
                                 "property " + propName + ".");
@@ -1574,7 +1678,7 @@ public class TestCommon implements TestConstants {
                             "property " + propName + ".");
                 }
             } else {
-                log(Level.SEVERE, "getServerConfigValue", 
+                log(Level.SEVERE, "getServerConfigValue",
                         "Did not find the configuration " +
                         "property " + propName + ".");
             }
