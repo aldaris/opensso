@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-properties.xml,v 1.5 2007-10-05 23:57:46 bt199000 Exp $
+ $Id: opensso-properties.xml,v 1.6 2008-06-26 19:08:03 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -38,6 +38,7 @@
         <property name="base.report.dir" value="./${SERVER_DIR}/docs/reports/${EXECUTION_MODE}/${date}"/>
         <property name="built.classes.dir" value="./${SERVER_DIR}/built/classes"/>
         <property name="debug.dir" value="./${SERVER_DIR}/debug"/>
+        <property name="ldif.dir" value="./${SERVER_DIR}/ldif"/>
         <path id="client.classpath">
             <pathelement location="${built.classes.dir}"/>
 	    <fileset dir="./lib">

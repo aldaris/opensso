@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.10 2008-02-26 01:39:19 rmisra Exp $
+ $Id: opensso-common.xml,v 1.11 2008-06-26 19:08:03 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -27,6 +27,7 @@
     <target name="moveDebugFiles" depends="init-common">
         <move file="${SERVER_DIR}/test_env.txt" todir="${base.report.dir}"/>
         <move file="${SERVER_DIR}/debug" todir="${base.report.dir}"/>
+        <move file="${SERVER_DIR}/ldif" todir="${base.report.dir}"/>
         <copy file="${SERVER_DIR}/logs" todir="${base.report.dir}"/>
         <copy todir="${base.report.dir}">
           <fileset dir="./${SERVER_DIR}">
@@ -238,6 +239,7 @@
     <target name="compile-all" depends="clean-all">
         <mkdir dir="${built.classes.dir}"/>
         <mkdir dir="${debug.dir}"/>
+        <mkdir dir="${ldif.dir}"/>
         <echo message="Compiling test source files"/>
         <echo message="classpath: ${client.cp}"/>
         <javac destdir="${built.classes.dir}"
@@ -263,7 +265,7 @@
             <arg value="${EXECUTION_MODE}" />
         </java>
 
-        <copy todir="${built.classes.dir}" flatten="true">
+        <copy todir="${built.classes.dir}" flatten="false">
             <fileset dir="./resources">
                 <include name="**/*.properties"/>
                 <exclude name="AMClient.properties"/>
@@ -290,6 +292,18 @@
         </concat>
       
   	<delete file="${SERVER_DIR}/logs.1" />
+
+        <java classname="com.sun.identity.qatest.setup.CleanupProduct">
+            <classpath refid="client.classpath" />
+            <arg value="${SERVER_NAME1}" />
+            <arg value="${SERVER_NAME2}" />
+        </java>
+
+        <concat destfile="${SERVER_DIR}/logs" append="true">
+            <fileset file="${SERVER_DIR}/logs.1" />
+        </concat>
+      
+  	<delete file="${SERVER_DIR}/logs.1" />
  
     </target>
 
@@ -307,7 +321,7 @@
             <arg value="${TEST_MODULE}" />
         </java>
 
-        <copy todir="${built.classes.dir}" flatten="true">
+        <copy todir="${built.classes.dir}" flatten="false">
             <fileset dir="./resources">
                 <include name="**/*.properties"/>
                 <exclude name="AMClient.properties"/>
@@ -327,6 +341,18 @@
         <testng classpathref="client.classpath" outputdir="${base.report.dir}">
             <xmlfileset dir="./xml/testng" includes="${EXECUTION_MODE}-${TEST_MODULE}-testng.xml"/>
         </testng>
+
+        <concat destfile="${SERVER_DIR}/logs" append="true">
+            <fileset file="${SERVER_DIR}/logs.1"/>
+        </concat>
+
+  	<delete file="${SERVER_DIR}/logs.1" />
+
+        <java classname="com.sun.identity.qatest.setup.CleanupProduct">
+            <classpath refid="client.classpath" />
+            <arg value="${SERVER_NAME1}" />
+            <arg value="${SERVER_NAME2}" />
+        </java>
 
         <concat destfile="${SERVER_DIR}/logs" append="true">
             <fileset file="${SERVER_DIR}/logs.1"/>
