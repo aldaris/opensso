@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationAuthTest.java,v 1.4 2008-05-05 22:57:35 cmwesley Exp $
+ * $Id: ApplicationAuthTest.java,v 1.5 2008-06-26 19:58:31 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,8 @@ public class ApplicationAuthTest extends TestCommon {
      */
     public ApplicationAuthTest() {
         super("ApplicationAuthTest");
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("authentication" + fileseparator +
+                strGblRB);
         agentId = rbg.getString("am-auth-applicationauth-test-agentId");
         agentPassword = rbg.getString("am-auth-applicationauth-test-" +
                 "agentPassword");

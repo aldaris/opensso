@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.7 2008-04-30 16:28:20 cmwesley Exp $
+ * $Id: ProfileAttributesTest.java,v 1.8 2008-06-26 19:58:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,7 +107,8 @@ public class ProfileAttributesTest extends TestCommon {
         try {
             locTestProfile = testProfile;
             testAttribute = "am-auth-" + locTestProfile ;
-            testResources = ResourceBundle.getBundle("ProfileAttributesTest");
+            testResources = ResourceBundle.getBundle("authentication" +
+                    fileseparator + "ProfileAttributesTest");
             testModule = testResources.getString(testAttribute + 
                     "-test-module");
             createUserProp = testResources.getString(testAttribute

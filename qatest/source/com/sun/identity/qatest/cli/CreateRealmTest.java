@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.8 2007-12-20 22:54:52 cmwesley Exp $
+ * $Id: CreateRealmTest.java,v 1.9 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,7 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("CreateRealmTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "CreateRealmTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -178,7 +178,7 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
             if (realmToCreate.length() > 0) {
                 FederationManagerCLI listCLI = 
                         new FederationManagerCLI(useDebugOption, 
-			useVerboseOption, useLongOptions);
+                        useVerboseOption, useLongOptions);
                 realmFound = listCLI.findRealms(realmToCreate);
                 log(Level.FINEST, "testRealmCreation", "Realm " + 
                         realmToCreate + " Found: " + realmFound);
@@ -191,12 +191,12 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
                         "Output Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && 
-			stringsFound && realmFound;
+                        stringsFound && realmFound;
             } else {
                 if (!expectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
-			cli.findStringsInError(expectedMessage, ";");
+                        cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
                             cli.getCliPath(), "famadm ");

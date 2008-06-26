@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmAttributeTest.java,v 1.1 2007-09-12 16:24:10 cmwesley Exp $
+ * $Id: DeleteRealmAttributeTest.java,v 1.2 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,7 @@ implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("DeleteRealmAttributeTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteRealmAttributeTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 

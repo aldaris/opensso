@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.8 2008-06-04 21:11:30 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.9 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,7 +106,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("CreateIdentityTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "CreateIdentityTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -263,7 +263,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                 if (!expectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
-			cli.findStringsInError(expectedMessage, ";");
+                        cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
                             cli.getCliPath(), "famadm ");
@@ -297,7 +297,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                         idFound;
             } else {
                 log(logLevel, "testIdentityCreation", 
-			"Error Messages Found: " + stringsFound);
+                        "Error Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             }     
@@ -353,7 +353,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                             String idType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-				idRealm);
+                                idRealm);
                             log(Level.FINEST, "cleanup", "idName: " + idName);
                             log(Level.FINEST, "cleanup", "idType: " + idType);
                             

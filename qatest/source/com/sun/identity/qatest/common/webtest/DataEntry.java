@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataEntry.java,v 1.3 2007-12-20 22:42:04 rmisra Exp $
+ * $Id: DataEntry.java,v 1.4 2008-06-26 20:05:14 rmisra Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -127,9 +127,12 @@ public class DataEntry extends TestCommon {
         if (expectedResult != null) {
             String content = page.getWebResponse().getContentAsString();
             if (content.indexOf(expectedResult) == -1) {
-                log(Level.SEVERE, "validate", "The expected result did NOT match with the output");
-                log(Level.SEVERE, "validate", "The expected result to match is: " + expectedResult);
-                log(Level.SEVERE, "validate", "The actual html output is: \n" + content);
+                log(Level.SEVERE, "validate", "The expected result did NOT" +
+                        " match with the output");
+                log(Level.SEVERE, "validate", "The expected result to match" +
+                        " is: " + expectedResult);
+                log(Level.SEVERE, "validate", "The actual html output is: \n" +
+                        content);
             }
             assert(content.indexOf(expectedResult) != -1);
         }

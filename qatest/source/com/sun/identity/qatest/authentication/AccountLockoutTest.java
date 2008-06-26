@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- *$Id: AccountLockoutTest.java,v 1.5 2008-02-28 04:13:17 inthanga Exp $*
+ *$Id: AccountLockoutTest.java,v 1.6 2008-06-26 19:58:31 rmisra Exp $*
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.qatest.authentication;
@@ -118,7 +118,8 @@ public class AccountLockoutTest extends TestCommon {
         entering("setup", null);
         webClient = new WebClient();
         try {
-            testResources = ResourceBundle.getBundle("AccountLockoutTest");
+            testResources = ResourceBundle.getBundle("authentication" +
+                    fileseparator + "AccountLockoutTest");
             testModule = testResources.getString("am-auth-lockout-test-module");
             createUserProp = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-createTestUser");

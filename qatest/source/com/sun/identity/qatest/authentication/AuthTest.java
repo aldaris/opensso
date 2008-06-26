@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.13 2008-06-10 15:54:53 cmwesley Exp $
+ * $Id: AuthTest.java,v 1.14 2008-06-26 19:58:31 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -109,7 +109,8 @@ public class AuthTest extends TestCommon {
             if (isValidTest) {
                 locTestModule = testModule;
                 locTestMode = testMode;
-                rb = ResourceBundle.getBundle("AuthTest");
+                rb = ResourceBundle.getBundle("authentication" + fileseparator +
+                        "AuthTest");
                 list = moduleConfigData.getModuleDataAsList(locTestModule);
                 module_servicename = (String)rb.getString(locTestModule +
                         ".module_servicename");

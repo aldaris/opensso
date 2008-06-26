@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthInstanceTest.java,v 1.2 2008-01-18 15:03:02 cmwesley Exp $
+ * $Id: UpdateAuthInstanceTest.java,v 1.3 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -123,7 +123,7 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("UpdateAuthInstanceTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "UpdateAuthInstanceTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -327,7 +327,7 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                         attributesFound && authSuccessful;
             } else {
                 log(Level.FINEST, "testUpdateAuthInstance", 
-			"Error Messages Found: " + stringsFound);
+                        "Error Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             }     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.6 2008-06-01 18:53:38 cmwesley Exp $
+ * $Id: SessionUpgrade.java,v 1.7 2008-06-26 19:58:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -104,7 +104,8 @@ public class SessionUpgrade extends TestCommon {
                 + "/UI/Logout";
         String famadmURL = protocol + ":" + "//" + host + ":" + port + uri;
         fm = new FederationManager(famadmURL);
-        testResources = ResourceBundle.getBundle("SessionUpgrade");
+        testResources = ResourceBundle.getBundle("authentication" +
+                fileseparator + "SessionUpgrade");
         moduleConfig = new AuthTestConfigUtil(configrbName);
         idmc = new IDMCommon("SessionUpgrade");
     }

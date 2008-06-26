@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultTaskHandler.java,v 1.2 2007-06-25 18:28:57 mrudulahg Exp $
+ * $Id: DefaultTaskHandler.java,v 1.3 2008-06-26 20:05:14 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,20 +27,23 @@ package com.sun.identity.qatest.common.webtest;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.webtest.DataEntry;
 import com.sun.identity.qatest.common.webtest.DataSet;
 import com.sun.identity.qatest.common.webtest.WebUtils;
 import com.sun.identity.qatest.common.webtest.ITask;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * This class is responsible for configuring the product.
  */
-public class DefaultTaskHandler implements ITask {
+public class DefaultTaskHandler extends TestCommon implements ITask {
     private String base;
     
     public DefaultTaskHandler(String base) {
+        super("DefaultTaskHandler");
         this.base = base;
     }
     
@@ -55,7 +58,7 @@ public class DefaultTaskHandler implements ITask {
         throws Exception {
         DataSet data = new DataSet(base);
         URL url = new URL(data.getKickOffURL());
-        System.out.println(url);
+        log(Level.FINEST, "execute", "Web client URL: " + url);
         HtmlPage page = (HtmlPage)webClient.getPage(url);
         List<DataEntry> entries = data.getEntries();
         for (DataEntry e : entries) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddRealmAttributesTest.java,v 1.1 2007-08-16 17:45:42 cmwesley Exp $
+ * $Id: AddRealmAttributesTest.java,v 1.2 2008-06-26 20:01:40 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class AddRealmAttributesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("AddRealmAttributesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "AddRealmAttributesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 

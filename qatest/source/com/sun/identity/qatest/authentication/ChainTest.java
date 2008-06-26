@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.7 2008-06-10 15:54:53 cmwesley Exp $
+ * $Id: ChainTest.java,v 1.8 2008-06-26 19:58:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,8 @@ public class ChainTest extends TestCommon {
     public void setup(String testChainName)
     throws Exception {
         Object[] params = {testChainName};
-        testResources = ResourceBundle.getBundle("ChainTest");
+        testResources = ResourceBundle.getBundle("authentication" +
+                fileseparator + "ChainTest");
         entering("setup", params);
         chainModules = testResources.getString("am-auth-test-" + 
                 testChainName + "-modules");

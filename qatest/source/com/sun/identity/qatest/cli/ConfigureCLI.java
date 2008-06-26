@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureCLI.java,v 1.3 2008-06-04 21:11:30 cmwesley Exp $
+ * $Id: ConfigureCLI.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class ConfigureCLI extends CLIUtility {
                 log(Level.FINEST, "configureCLI", "Hostname from getHostName: " + 
                         fqdnHostname);
                 
-                ResourceBundle rb_cli = ResourceBundle.getBundle("cliTest");
+                ResourceBundle rb_cli = ResourceBundle.getBundle("cli" + fileseparator + "cliTest");
                 File cliDir = new File(rb_cli.getString("cli-path"));
                 String cliAbsPath = cliDir.getAbsolutePath();
                 File binDir = new File(new StringBuffer(cliAbsPath).

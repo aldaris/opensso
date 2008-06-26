@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAuthAttributeTest.java,v 1.2 2008-02-28 04:07:09 inthanga Exp $
+ * $Id: UserAuthAttributeTest.java,v 1.3 2008-06-26 19:58:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,8 @@ public class UserAuthAttributeTest extends TestCommon {
      */
     public UserAuthAttributeTest() {
         super("UserAuthAttributeTest");
-        testResources = ResourceBundle.getBundle("UserAuthAttributeTest");
+        testResources = ResourceBundle.getBundle("authentication" +
+                fileseparator + "UserAuthAttributeTest");
         idmc = new IDMCommon();
         url = getLoginURL("/");
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri 

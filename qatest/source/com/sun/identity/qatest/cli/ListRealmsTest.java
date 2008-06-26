@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.7 2008-01-18 15:03:02 cmwesley Exp $
+ * $Id: ListRealmsTest.java,v 1.8 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,7 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("ListRealmsTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "ListRealmsTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -276,7 +276,7 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
                 if (!expectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
-			cli.findStringsInError(expectedMessage, ";");
+                        cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
                             cli.getCliPath(), "famadm ");

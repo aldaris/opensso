@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAuthInstancesTest.java,v 1.3 2008-01-18 15:03:02 cmwesley Exp $
+ * $Id: ListAuthInstancesTest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("ListAuthInstancesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "ListAuthInstancesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -269,7 +269,7 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                         instancesFound;
             } else {
                 log(Level.FINEST, "testListAuthInstances", 
-			"Error Messages Found: " + stringsFound);
+                        "Error Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             }     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveMemberTest.java,v 1.4 2007-08-16 19:39:19 cmwesley Exp $
+ * $Id: RemoveMemberTest.java,v 1.5 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,7 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("RemoveMemberTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "RemoveMemberTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -572,7 +572,7 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
                             String idType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-				idRealm);
+                                idRealm);
                             log(Level.FINEST, "cleanup", "idName: " + idName);
                             log(Level.FINEST, "cleanup", "idType: " + idType);
                             

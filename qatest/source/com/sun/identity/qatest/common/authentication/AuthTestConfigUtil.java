@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTestConfigUtil.java,v 1.10 2008-06-10 15:57:00 cmwesley Exp $
+ * $Id: AuthTestConfigUtil.java,v 1.11 2008-06-26 20:03:45 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,8 @@ public class AuthTestConfigUtil extends TestCommon {
     public AuthTestConfigUtil(String config){
         super("AuthTestConfigUtil");
         this.configInfo = config;
-        this.configdata =  ResourceBundle.getBundle(configInfo);
+        this.configdata =  ResourceBundle.getBundle("authentication" +
+                fileseparator + configInfo);
         url = getLoginURL("/");
         logoutURL = protocol + ":" + "//" + host + ":" + port +
                         uri + "/UI/Logout";

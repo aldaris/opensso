@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.7 2008-06-10 15:57:00 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.8 2008-06-26 20:03:45 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ public class AuthenticationCommon extends TestCommon {
             // configured plugin is of type amsdk. 
             if (!mode.equalsIgnoreCase("role") || 
                     smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(passMsg);
             } else {
                 log(Level.FINEST, "testZeroPageLoginPositive", 
@@ -112,7 +112,7 @@ public class AuthenticationCommon extends TestCommon {
             // configured plugin is of type amsdk. 
             if (!mode.equalsIgnoreCase("role") || 
                     smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(failMsg);
             } else {
                 log(Level.FINEST, "testZeroPageLoginNegative", 
@@ -149,7 +149,7 @@ public class AuthenticationCommon extends TestCommon {
             // configured plugin is of type amsdk. 
             if (!mode.equalsIgnoreCase("role") || 
                     smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(passMsg);
             } else {
                 log(Level.FINEST, "testZeroPageLoginFailure", 
@@ -188,7 +188,7 @@ public class AuthenticationCommon extends TestCommon {
             // configured plugin is of type amsdk. 
             if (!mode.equalsIgnoreCase("role") || 
                     smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(passMsg);
             } else {
                 log(Level.FINEST, "testZeroPageLoginAnonymousPositive", 
@@ -228,7 +228,7 @@ public class AuthenticationCommon extends TestCommon {
             // configured plugin is of type amsdk. 
             if (!mode.equalsIgnoreCase("role") || 
                     smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.SMS_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
                 assert page.getTitleText().equals(failMsg);
             } else {
                 log(Level.FINEST, "testZeroPageLoginAnonymousPositive", 

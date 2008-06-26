@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.8 2008-06-04 21:09:28 cmwesley Exp $
+ * $Id: CLIUtility.java,v 1.9 2008-06-26 20:04:19 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,7 @@ public class CLIUtility extends TestCommon {
 
     static {
         try {
-            rbCLI = ResourceBundle.getBundle("cliTest");
+            rbCLI = ResourceBundle.getBundle("cli" + fileseparator + "cliTest");
             timeout = rbCLI.getString("command-timeout"); 
             localeValue = rbCLI.getString("locale");
             cliPath = rbCLI.getString("cli-path");

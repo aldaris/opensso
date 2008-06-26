@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.3 2008-06-01 18:52:22 cmwesley Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.4 2008-06-26 19:58:32 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,8 @@ public class PostAuthProcessingTest extends TestCommon {
      */ 
     public PostAuthProcessingTest() {
         super("PostAuthProcessingTest");
-        testResources = ResourceBundle.getBundle("PostAuthProcessingTest");
+        testResources = ResourceBundle.getBundle("authentication" +
+                fileseparator + "PostAuthProcessingTest");
         idmc = new IDMCommon();
         moduleConfig = new AuthTestConfigUtil(configrbName);
         userProfileValSet = new HashSet();

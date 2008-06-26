@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAuthInstancesTest.java,v 1.1 2007-09-21 14:01:13 cmwesley Exp $
+ * $Id: DeleteAuthInstancesTest.java,v 1.2 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,7 +108,7 @@ implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("DeleteAuthInstancesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteAuthInstancesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -280,7 +280,7 @@ implements CLIExitCodes {
                         instancesFound;
             } else {
                 log(Level.FINEST, "testDeleteAuthInstances", 
-			"Error Messages Found: " + stringsFound);
+                        "Error Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             }     

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembershipsTest.java,v 1.4 2008-04-01 20:23:57 cmwesley Exp $
+ * $Id: ShowMembershipsTest.java,v 1.5 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("ShowMembershipsTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "ShowMembershipsTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -517,7 +517,7 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                             String cleanupType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-				cleanupRealm);
+                                cleanupRealm);
                             log(Level.FINEST, "cleanup", "idName: " + 
                                     cleanupName);
                             log(Level.FINEST, "cleanup", "idType: " + 

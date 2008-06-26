@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentitiesTest.java,v 1.5 2007-08-16 19:39:18 cmwesley Exp $
+ * $Id: DeleteIdentitiesTest.java,v 1.6 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,7 +107,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("DeleteIdentitiesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteIdentitiesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -182,7 +182,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
                                     setupIdentities + 
-				    " must have a realm, an " +
+                                    " must have a realm, an " +
                                     "identity name, and an identity type");
                         }
                     }
@@ -311,7 +311,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
                             idNotDeletedType, idNotDeletedName)) {
                         remainingIdsRemoved = true;
                         log(Level.INFO, "testIdentityDeletion", 
-				idNotDeletedType + 
+                                idNotDeletedType + 
                                 " identity " + idNotDeletedName + 
                                 " was removed.");
                     } else {
@@ -369,7 +369,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
             log(Level.FINEST, "cleanup", "useVerboseOption: " + 
-			useVerboseOption);
+                        useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);

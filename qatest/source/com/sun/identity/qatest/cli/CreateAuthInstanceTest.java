@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAuthInstanceTest.java,v 1.3 2008-01-18 15:03:01 cmwesley Exp $
+ * $Id: CreateAuthInstanceTest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,7 +97,7 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("CreateAuthInstanceTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + "CreateAuthInstanceTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -251,7 +251,7 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                         instanceFound;
             } else {
                 log(Level.FINEST, "testAuthInstanceCreation", 
-			"Error Messages Found: " + stringsFound);
+                        "Error Messages Found: " + stringsFound);
                 assert (commandStatus == 
                     new Integer(expectedExitCode).intValue()) && stringsFound;
             }     

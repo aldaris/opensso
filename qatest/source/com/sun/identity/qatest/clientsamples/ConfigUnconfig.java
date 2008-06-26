@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.2 2007-12-20 22:39:11 rmisra Exp $
+ * $Id: ConfigUnconfig.java,v 1.3 2008-06-26 20:02:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -61,7 +61,8 @@ public class ConfigUnconfig extends TestCommon {
     public ConfigUnconfig()
     throws Exception {
         super("ConfigUnconfig");
-        rb_client = ResourceBundle.getBundle("clientsamplesGlobal");
+        rb_client = ResourceBundle.getBundle("clientsamples" + fileseparator +
+                "clientsamplesGlobal");
         rb_amconfig =
                 ResourceBundle.getBundle(TestConstants.TEST_PROPERTY_AMCONFIG);
         baseDir = getBaseDir() + System.getProperty("file.separator")

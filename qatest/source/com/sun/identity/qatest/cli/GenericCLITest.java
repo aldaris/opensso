@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericCLITest.java,v 1.3 2007-08-16 19:41:00 cmwesley Exp $
+ * $Id: GenericCLITest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class GenericCLITest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle(propFile);
+            rb = ResourceBundle.getBundle("cli" + fileseparator + propFile);
 
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");

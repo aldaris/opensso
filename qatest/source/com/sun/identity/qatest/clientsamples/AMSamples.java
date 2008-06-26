@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.7 2008-06-03 19:16:32 arunav Exp $
+ * $Id: AMSamples.java,v 1.8 2008-06-26 20:02:40 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,9 +93,12 @@ public class AMSamples extends TestCommon {
     public AMSamples()
     throws Exception {
         super("AMSamples");
-        rb_amconfig = ResourceBundle.getBundle("AMConfig");
-        rb_client = ResourceBundle.getBundle("clientsamplesGlobal");
-        rb_ams = ResourceBundle.getBundle("AMSamples");
+        rb_amconfig = ResourceBundle.getBundle(
+                TestConstants.TEST_PROPERTY_AMCONFIG);
+        rb_client = ResourceBundle.getBundle("clientsamples" + fileseparator +
+                "clientsamplesGlobal");
+        rb_ams = ResourceBundle.getBundle("clientsamples" + fileseparator +
+                "AMSamples");
         admintoken = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
         pc = new PolicyCommon();
