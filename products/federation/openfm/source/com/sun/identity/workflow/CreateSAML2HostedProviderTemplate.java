@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.19 2008-06-25 05:50:01 qcheng Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.20 2008-06-26 17:58:49 hengming Exp $
  *
  */
 
@@ -783,7 +783,10 @@ public class CreateSAML2HostedProviderTemplate {
             MetaTemplateParameters.P_AFFILIATION);
         if (affiAlias != null) {
             String realm = SAML2MetaUtils.getRealmByMetaAlias(affiAlias);
-            addAffiliationTemplate(buff, entityID, affiAlias, url, mapParams);
+            String affiOwnerID = (String)mapParams.get(
+                MetaTemplateParameters.P_AFFI_OWNERID);
+            addAffiliationTemplate(buff, affiOwnerID, affiAlias,
+                url, mapParams);
         }
 
         String pdpAlias = (String)mapParams.get(MetaTemplateParameters.P_PDP);
@@ -1253,7 +1256,7 @@ public class CreateSAML2HostedProviderTemplate {
 
     private static void addAffiliationTemplate(
         StringBuffer buff,
-        String entityID,
+        String affiOwnerID,
         String affiAlias,
         String url,
         Map mapParams
@@ -1262,7 +1265,7 @@ public class CreateSAML2HostedProviderTemplate {
         
         buff.append(
             "    <AffiliationDescriptor\n" +
-            "        affiliationOwnerID=\"" + entityID + "\">\n");
+            "        affiliationOwnerID=\"" + affiOwnerID + "\">\n");
 
         List affiMembers = (List)mapParams.get(
             MetaTemplateParameters.P_AFFI_MEMBERS);
