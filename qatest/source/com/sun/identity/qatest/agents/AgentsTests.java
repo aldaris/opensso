@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsTests.java,v 1.4 2007-11-21 19:00:24 rmisra Exp $
+ * $Id: AgentsTests.java,v 1.5 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,8 +63,8 @@ public class AgentsTests extends TestCommon {
     throws Exception{
         super("AgentsTests");
         mpc = new AgentsCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
-        rbp = ResourceBundle.getBundle(strLocRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
+        rbp = ResourceBundle.getBundle("agents" + fileseparator + strLocRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
     }
@@ -86,9 +86,11 @@ public class AgentsTests extends TestCommon {
                 strSetup = setup;
                 strCleanup = cleanup;
                 if (strSetup.equals("true")) {
-                    mpc.createIdentities(strLocRB, polIdx);
-                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
-                        ".xml");
+                    mpc.createIdentities("agents" + fileseparator + strLocRB, 
+                            polIdx);
+                    mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                            "agents" + fileseparator + strLocRB, polIdx, 
+                            strLocRB + ".xml");
                     mpc.createPolicy(strLocRB + ".xml");
                 }
             } catch (Exception e) {
@@ -140,8 +142,10 @@ public class AgentsTests extends TestCommon {
         if (executeAgainstOpenSSO) {
             try {
                 if (strCleanup.equals("true")) {
-                    mpc.deleteIdentities(strLocRB, polIdx);
-                    mpc.deletePolicies(strLocRB, polIdx);
+                    mpc.deleteIdentities("agents" + fileseparator + strLocRB, 
+                            polIdx);
+                    mpc.deletePolicies("agents" + fileseparator + strLocRB, 
+                            polIdx);
                 }
             } catch (Exception e) {
                 log(Level.SEVERE, "cleanup", e.getMessage(), null);

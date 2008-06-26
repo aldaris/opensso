@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.9 2008-05-29 03:15:23 nithyas Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.10 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,7 @@ public class ConfigureUnconfigure extends TestCommon {
     private String strGblRB = "agentsGlobal";
     private String agentType;
     private String agentConfigurationType;
+    private Map notificationMap;
 
     /**
      * Class constructor. Instantiates the ResourceBundles and
@@ -61,7 +62,7 @@ public class ConfigureUnconfigure extends TestCommon {
     public ConfigureUnconfigure()
     throws Exception {
         super("ConfigureUnconfigure");
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         agentId = rbg.getString(strGblRB + ".agentId");
         agentPassword = rbg.getString(strGblRB + ".agentPassword");
         agentType = rbg.getString(strGblRB + ".agentType");
@@ -78,7 +79,7 @@ public class ConfigureUnconfigure extends TestCommon {
     throws Exception {
         entering("createAgentProfile", null);
         try {
-            startNotificationServer();
+            notificationMap = startNotificationServer();
             CreateAgentProfile create = new CreateAgentProfile();
             Map map = new HashMap();
             Set set = new HashSet();
@@ -121,7 +122,7 @@ public class ConfigureUnconfigure extends TestCommon {
                 }
             }
         } catch (Exception e) {
-            stopNotificationServer();
+            stopNotificationServer(notificationMap);
             log(Level.SEVERE, "createAgentProfile", e.getMessage());
             e.printStackTrace();
             throw e;
@@ -153,9 +154,9 @@ public class ConfigureUnconfigure extends TestCommon {
                     idmc.deleteIdentity(admintoken, realm, IdType.AGENTONLY,
                             agentId);
             }
-            stopNotificationServer();
+            stopNotificationServer(notificationMap);
         } catch (Exception e) {
-            stopNotificationServer();
+            stopNotificationServer(notificationMap);
             log(Level.SEVERE, "deleteAgentProfile", e.getMessage());
             throw e;
         } finally {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HotSwapProperties.java,v 1.2 2008-05-22 21:42:59 nithyas Exp $
+ * $Id: HotSwapProperties.java,v 1.3 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,8 +75,8 @@ public class HotSwapProperties extends TestCommon {
     public HotSwapProperties() 
     throws Exception {
         super("HotSwapProperties");
-        rbg = ResourceBundle.getBundle(strGblRB);
-        rbp = ResourceBundle.getBundle(strLocRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
+        rbp = ResourceBundle.getBundle("agents" + fileseparator + strLocRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         strAgentType = rbg.getString(strGblRB + ".agentType");

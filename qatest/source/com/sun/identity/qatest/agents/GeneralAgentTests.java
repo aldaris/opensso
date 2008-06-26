@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.5 2008-04-28 18:30:25 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.6 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,7 @@ public class GeneralAgentTests extends TestCommon {
         super("GeneralAgentTests");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         pollingTime = new Integer(rbg.getString(strGblRB +

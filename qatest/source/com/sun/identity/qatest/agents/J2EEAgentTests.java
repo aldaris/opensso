@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentTests.java,v 1.4 2008-05-22 21:41:30 nithyas Exp $
+ * $Id: J2EEAgentTests.java,v 1.5 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,8 +76,8 @@ public class J2EEAgentTests extends TestCommon {
     throws Exception {
         super("J2EEAgentTests");
         mpc = new PolicyCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
-        rbp = ResourceBundle.getBundle(strLocRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
+        rbp = ResourceBundle.getBundle("agents" + fileseparator + strLocRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         strAgentType = rbg.getString(strGblRB + ".agentType");
@@ -123,9 +123,11 @@ public class J2EEAgentTests extends TestCommon {
                         log(Level.FINE, "setup ", "IDType " 
                                 + testIdType + " is supported in " + 
                                 "this deployment.");
-                        mpc.createIdentities(strLocRB, polIdx, "/");
-                        mpc.createPolicyXML(strGblRB, strLocRB, polIdx, 
-                            strLocRB + ".xml", "/");
+                        mpc.createIdentities("agents" + fileseparator + 
+                                strLocRB, polIdx, "/");
+                        mpc.createPolicyXML("agents" + fileseparator + 
+                                strGblRB, "agents" + fileseparator + strLocRB, 
+                                polIdx, strLocRB + ".xml", "/");
                         if (!(mpc.createPolicy(strLocRB + ".xml", "/"))) {
                             log(Level.SEVERE, "setup", "Failure in creating " +
                                     "Policy : \n " + strLocRB + ".xml");
@@ -215,8 +217,10 @@ public class J2EEAgentTests extends TestCommon {
             try {
                 if (strCleanup.equals("true")) {
                     log(Level.SEVERE, "cleanup", "strCleanup=" + strCleanup);                    
-                    mpc.deleteIdentities(strLocRB, polIdx, "/");
-                    mpc.deletePolicies(strLocRB, polIdx, "/");
+                    mpc.deleteIdentities("agents" + fileseparator + 
+                            strLocRB, polIdx, "/");
+                    mpc.deletePolicies("agents" + fileseparator + 
+                            strLocRB, polIdx, "/");
                 }
             } catch (Exception e) {
                 log(Level.SEVERE, "cleanup", e.getMessage());

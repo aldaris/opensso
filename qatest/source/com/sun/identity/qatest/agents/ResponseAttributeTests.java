@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseAttributeTests.java,v 1.3 2008-06-04 16:58:31 nithyas Exp $
+ * $Id: ResponseAttributeTests.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,7 @@ public class ResponseAttributeTests extends TestCommon {
         super("ResponseAttributeTests");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         pollingTime = new Integer(rbg.getString(strGblRB +

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentTests2_2.java,v 1.1 2008-04-18 19:23:33 nithyas Exp $
+ * $Id: AgentTests2_2.java,v 1.2 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,7 @@ public class AgentTests2_2 extends TestCommon {
         super("AgentTests2_2");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         pollingTime = new Integer(rbg.getString(strGblRB +
@@ -134,8 +134,11 @@ public class AgentTests2_2 extends TestCommon {
                         resource);
                 polIdx = new Integer(policyIdx).intValue();
                 if (executeAgainstOpenSSO) {
-                    mpc.createIdentities(strLocRB, polIdx);
-                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
+                    mpc.createIdentities("agents" + fileseparator + strLocRB, 
+                            polIdx);
+                    mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                            "agents" + fileseparator + strLocRB, polIdx, 
+                            strLocRB +
                             ".xml");
                     log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB +
                             ".xml");
@@ -321,7 +324,7 @@ public class AgentTests2_2 extends TestCommon {
             resp.cleanup();
             session.cleanup();            
             if (executeAgainstOpenSSO) {
-                mpc.deletePolicies(strLocRB, polIdx);            
+                mpc.deletePolicies("agents" + fileseparator + strLocRB, polIdx);            
             } else {
                 log(Level.FINE, "cleanup", "Executing against non OpenSSO" +
                         " install");

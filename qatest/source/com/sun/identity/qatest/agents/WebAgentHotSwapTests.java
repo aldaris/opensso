@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebAgentHotSwapTests.java,v 1.3 2008-06-04 17:15:39 nithyas Exp $
+ * $Id: WebAgentHotSwapTests.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,8 +95,8 @@ public class WebAgentHotSwapTests extends TestCommon {
         super("WebAgentHotSwapTests");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
-        rbp = ResourceBundle.getBundle(strHotSwapRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
+        rbp = ResourceBundle.getBundle("agents" + fileseparator + strHotSwapRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         pollingTime = new Integer(rbg.getString(strGblRB +
@@ -157,15 +157,18 @@ public class WebAgentHotSwapTests extends TestCommon {
                 }
                 polIdx = new Integer(policyIdx).intValue();
                 testIdx = new Integer(tstIdx).intValue();
-                mpc.createIdentities(strLocRB, polIdx);
-                mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
+                mpc.createIdentities("agents" + fileseparator + strLocRB, 
+                        polIdx);
+                mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                        "agents" + fileseparator + strLocRB, polIdx, strLocRB +
                         ".xml");
                 log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB +
                         ".xml");
                 mpc.createPolicy(strLocRB + ".xml");
                 //HotSwapIdentities and Policies
-                mpc.createIdentities(strHotSwapRB, polIdx);
-                mpc.createPolicyXML(strGblRB, strHotSwapRB, polIdx, 
+                mpc.createIdentities("agents" + fileseparator + strHotSwapRB, polIdx);
+                mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                        "agents" + fileseparator + strHotSwapRB, polIdx, 
                         strHotSwapRB + ".xml");
                 log(Level.FINEST, "setup", "Policy XML:\n" + strHotSwapRB +
                         ".xml");
@@ -536,13 +539,15 @@ public class WebAgentHotSwapTests extends TestCommon {
                            "sauser");
             }
             if (executeAgainstOpenSSO) {
-                mpc.deletePolicies(strLocRB, polIdx);            
-                mpc.deletePolicies(strHotSwapRB, polIdx);
+                mpc.deletePolicies("agents" + fileseparator + strLocRB, polIdx);            
+                mpc.deletePolicies("agents" + fileseparator + strHotSwapRB, 
+                        polIdx);
             } else {
                 log(Level.FINE, "cleanup", "Executing against non OpenSSO" +
                         " install");
             }
-            mpc.deleteIdentities(strHotSwapRB, polIdx);
+            mpc.deleteIdentities("agents" + fileseparator + strHotSwapRB, 
+                    polIdx);
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();

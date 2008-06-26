@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.3 2008-05-30 04:57:44 nithyas Exp $
+ * $Id: CreateAgentProfile.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class CreateAgentProfile extends TestCommon {
     throws Exception{
         super("CreateAgentProfile");
         idmc = new IDMCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         admintoken = getToken(adminUser, adminPassword, basedn);

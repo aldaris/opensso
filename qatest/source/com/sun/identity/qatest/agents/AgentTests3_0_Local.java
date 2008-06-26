@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentTests3_0_Local.java,v 1.1 2008-04-18 19:25:55 nithyas Exp $
+ * $Id: AgentTests3_0_Local.java,v 1.2 2008-06-26 19:41:29 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,7 @@ public class AgentTests3_0_Local extends TestCommon {
         super("AgentTests2_2");
         mpc = new AgentsCommon();
         idmc = new IDMCommon();
-        rbg = ResourceBundle.getBundle(strGblRB);
+        rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
         pollingTime = new Integer(rbg.getString(strGblRB +
@@ -160,12 +160,15 @@ public class AgentTests3_0_Local extends TestCommon {
                         "/UI/Logout";
                 polIdx = new Integer(policyIdx).intValue();
                 if (executeAgainstOpenSSO) {
-                    mpc.createIdentities(strLocRB, polIdx);
-                    mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB +
-                            ".xml");
+                    mpc.createIdentities("agents" + fileseparator + strLocRB, 
+                            polIdx);
+                    mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                            "agents" + fileseparator + strLocRB, polIdx, 
+                            strLocRB + ".xml");
                     log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB +
                             ".xml");
-                    mpc.createPolicy(strLocRB + ".xml");
+                    mpc.createPolicy("agents" + fileseparator + strLocRB + 
+                            ".xml");
                     } else {
                         log(Level.FINE, "setup", "Executing against non " +
                         "OpenSSO Install");
@@ -349,7 +352,7 @@ public class AgentTests3_0_Local extends TestCommon {
             resp.cleanup();
             session.cleanup();            
             if (executeAgainstOpenSSO) {
-                mpc.deletePolicies(strLocRB, polIdx);            
+                mpc.deletePolicies("agents" + fileseparator + strLocRB, polIdx);            
             } else {
                 log(Level.FINE, "cleanup", "Executing against non OpenSSO" +
                         " install");
