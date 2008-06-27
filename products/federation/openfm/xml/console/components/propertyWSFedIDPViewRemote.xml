@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedIDPViewRemote.xml,v 1.5 2008-06-25 05:51:09 qcheng Exp $
+   $Id: propertyWSFedIDPViewRemote.xml,v 1.6 2008-06-27 21:17:26 babysunil Exp $
 
 -->
 
@@ -71,6 +71,7 @@
                         <attribute name="textboxLabel"
                                    value="label.new.value" />
                     </cc>
+                    <fieldhelp name="helpIDPAttributeMap" defaultValue="wsfed.provider.section.title.help.idpattributeMap" />
                 </property>
             </ccgroup>
         </property> 
@@ -87,6 +88,7 @@
                     <attribute name="autoSubmit" value="false" />
                     <attribute name="localizeDisplayFieldValue" value="false" />
                 </cc>
+                <fieldhelp name="helpIDPAssertionEffectiveTime" defaultValue="wsfed.provider.section.title.help.idpassertionEffectiveTime" />
             </property> 
     </section>
 </propertysheet>

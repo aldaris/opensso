@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWSFedSPViewRemote.xml,v 1.5 2008-06-25 05:51:09 qcheng Exp $
+   $Id: propertyWSFedSPViewRemote.xml,v 1.6 2008-06-27 21:17:02 babysunil Exp $
 
 -->
 
@@ -65,7 +65,8 @@
                                        value="label.current.value" />
                             <attribute name="textboxLabel"
                                        value="label.new.value" />
-                        </cc>                    
+                        </cc>
+                        <fieldhelp name="helpSPattributeMap" defaultValue="wsfedsp.provider.section.title.help.spattributeMap" />
                     </property>
                 </ccgroup>
             </property>
@@ -84,6 +85,7 @@
                     <attribute name="autoSubmit" value="false" />
                     <attribute name="localizeDisplayFieldValue" value="false" />
                 </cc>
+                <fieldhelp name="helpSPAssertionEffectiveTime" defaultValue="wsfedsp.provider.section.title.help.asserefftime" />
             </property>
         </section>
         <section name="assertimesk" defaultValue="wsfedsp.provider.section.title.spassertimeskew"> 
@@ -97,6 +99,7 @@
                     <attribute name="autoSubmit" value="false" />
                     <attribute name="localizeDisplayFieldValue" value="false" />
                 </cc>
+                <fieldhelp name="helpSPassertionTimeSkew" defaultValue="wsfedsp.provider.section.title.help.spassertionTimeSkew" />
             </property>
         </section>
         <section name="defaultrelay" defaultValue="wsfedsp.provider.section.title.defaultrelaystate">  
@@ -110,6 +113,7 @@
                     <attribute name="autoSubmit" value="false" />
                     <attribute name="localizeDisplayFieldValue" value="false" />
                 </cc>
+                <fieldhelp name="helpSPDefaultRelayState" defaultValue="wsfedsp.provider.section.title.help.defaultrelaystate" />
             </property>
         </section>
         <section name="homerealmdisc" defaultValue="wsfedsp.provider.section.title.sphomeRealmDisc">
@@ -124,10 +128,12 @@
                     <attribute name="autoSubmit" value="false" />
                     <attribute name="localizeDisplayFieldValue" value="false" />
                 </cc>
+                <fieldhelp name="helpHomeRealmDiscovery" defaultValue="wsfedsp.provider.section.title.help.sphomeRealmDisc" />
             </property>
         </section>
         <section name="acctRealmSelection" defaultValue="wsfedsp.provider.section.title.spacctrealmselection">
         <property>
+            <fieldhelp name="helpacctRealmSelection" defaultValue="wsfedsp.provider.section.title.help.acctRealmSelection" />
                 &lt;table border="0" cellspacing="0" cellpadding="0">&lt;tr>
                 &lt;td nowrap="nowrap">
             <cc name="AccountRealmSelection" 
