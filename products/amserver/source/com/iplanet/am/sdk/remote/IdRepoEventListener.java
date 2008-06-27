@@ -22,49 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoEventListener.java,v 1.3 2008-06-25 05:41:26 qcheng Exp $
+ * $Id: IdRepoEventListener.java,v 1.4 2008-06-27 22:30:56 arviranga Exp $
  *
  */
 
 package com.iplanet.am.sdk.remote;
 
-import java.util.Map;
-import java.util.Set;
+/**
+ *  Class moved to com.sun.identity.idm.server
+ */
 
-import com.iplanet.am.sdk.AMObjectListener;
+public class IdRepoEventListener {
 
-public class IdRepoEventListener implements AMObjectListener {
-
-    public void allObjectsChanged() {
-        DirectoryManagerImpl.processEntryChanged(
-                EventListener.ALL_OBJECTS_CHANGED, "", 0, null, false);
-
-    }
-
-    public Map getConfigMap() {
-        return null;
-    }
-
-    public void objectChanged(String name, int type, Map configMap) {
-        DirectoryManagerImpl.processEntryChanged(EventListener.OBJECT_CHANGED,
-                name, type, null, false);
-
-    }
-
-    public void objectsChanged(String parentNames, int type, Set attrNames,
-            Map configMap) {
-        DirectoryManagerImpl.processEntryChanged(EventListener.OBJECTS_CHANGED,
-                parentNames, type, attrNames, false);
-
-    }
-
-    public void permissionsChanged(String orgName, Map configMap) {
-        DirectoryManagerImpl.processEntryChanged(
-                EventListener.PERMISSIONS_CHANGED, orgName, 0, null, false);
-
-    }
-
-    public void setConfigMap(Map cmap) {
-
-    }
+    
 }
