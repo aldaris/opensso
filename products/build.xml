@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.31 2008-06-25 05:40:23 qcheng Exp $
+   $Id: build.xml,v 1.32 2008-06-27 18:49:39 veiming Exp $
 
 -->
 
@@ -176,11 +176,6 @@
             algorithm="SHA" fileext=".sha" />
     </target>
 
-    <target name="srczip">
-        <mkdir dir="${prd.nightly.dist.dir}" />
-        <ant antfile="build-srczip.xml" inheritRefs="true"/>
-    </target>
-    
     <target name="clean">
         <delete dir="${prd.nightly.dir}" />
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
@@ -263,7 +258,6 @@
         <echo message=" server-tools : builds server tools zip file"/>
         <echo message=" server-nightly: performs nightly builds for server products"/>
         <echo message=" agents-nightly: performs nightly builds for agents products"/>
-        <echo message=" srczip       : creates zip file containing the OpenSSO source code"/>
         <echo message=" usage        : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
