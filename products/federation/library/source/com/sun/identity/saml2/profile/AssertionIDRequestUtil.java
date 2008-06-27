@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestUtil.java,v 1.2 2008-06-25 05:47:52 qcheng Exp $
+ * $Id: AssertionIDRequestUtil.java,v 1.3 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -650,7 +650,7 @@ public class AssertionIDRequestUtil {
 
         SOAPMessage resMsg = null;
         try {
-            resMsg = SAML2Utils.sendSOAPMessage(aIDReqStr, location);
+            resMsg = SAML2Utils.sendSOAPMessage(aIDReqStr, location, true);
         } catch (SOAPException se) {
             SAML2Utils.debug.error(
                 "AssertionIDRequestUtil.sendAssertionIDRequestBySOAP:", se);

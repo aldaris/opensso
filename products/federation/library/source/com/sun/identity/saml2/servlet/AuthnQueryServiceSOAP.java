@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryServiceSOAP.java,v 1.2 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: AuthnQueryServiceSOAP.java,v 1.3 2008-06-27 00:46:51 hengming Exp $
  *
  */
 
@@ -120,7 +120,7 @@ public class AuthnQueryServiceSOAP extends HttpServlet {
             Response samlResp = AuthnQueryUtil.processAuthnQuery(
                 authnQuery, req, resp, authnAuthorityEntityID, realm);
             replymsg = SAML2Utils.createSOAPMessage(
-                samlResp.toXMLString(true, true));
+                samlResp.toXMLString(true, true), false);
         } catch (Throwable t) {
             SAML2Utils.debug.error("AuthnQueryServiceSOAP.doGetPost: " +
                 "Unable to create SOAP message:", t);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMappingServiceSOAP.java,v 1.2 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: NameIDMappingServiceSOAP.java,v 1.3 2008-06-27 00:46:51 hengming Exp $
  *
  */
 
@@ -100,7 +100,7 @@ public class NameIDMappingServiceSOAP extends HttpServlet {
                idpEntityID);
 
             SOAPMessage reply = SAML2Utils.createSOAPMessage(
-                nimResponse.toXMLString(true, true));
+                nimResponse.toXMLString(true, true), false);
 
             if (reply != null) {    
                 //  Need to call saveChanges because we're

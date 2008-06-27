@@ -22,9 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.30 2008-06-25 05:47:45 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.31 2008-06-27 00:44:20 hengming Exp $
  *
  */
+
 
 package com.sun.identity.saml2.common;
 
@@ -1579,13 +1580,16 @@ public class SAML2Utils extends SAML2SDKUtils {
      * Creates <code>SOAPMessage</code> with the input XML String
      * as message body.
      * @param xmlString XML string to be put into <code>SOAPMessage</code> body.
+     * @param isClientMessage true if the message is sent from SOAP client to
+     *     server.
      * @return newly created <code>SOAPMessage</code>.
      * @exception SOAPException if it cannot create the
      *            <code>SOAPMessage</code>.
      */
-    public static SOAPMessage createSOAPMessage(String xmlString)
+    public static SOAPMessage createSOAPMessage(String xmlString,
+        boolean isClientMessage)
     throws SOAPException, SAML2Exception {
-        return createSOAPMessage(null, xmlString);
+        return createSOAPMessage(null, xmlString, isClientMessage);
     }
     
     /**
@@ -1593,18 +1597,23 @@ public class SAML2Utils extends SAML2SDKUtils {
      * as message header and body.
      * @param header XML string to be put into <code>SOAPMessage</code> header.
      * @param body XML string to be put into <code>SOAPMessage</code> body.
+     * @param isClientMessage true if the message is sent from SOAP client to
+     *     server.
      * @return newly created <code>SOAPMessage</code>.
      * @exception SOAPException if it cannot create the
      *     <code>SOAPMessage</code>.
      */
-    public static SOAPMessage createSOAPMessage(String header, String body)
+    public static SOAPMessage createSOAPMessage(String header, String body,
+        boolean isClientMessage)
         throws SOAPException, SAML2Exception {
 
         SOAPMessage msg = null;
         try {
             MimeHeaders mimeHeaders = new MimeHeaders();
             mimeHeaders.addHeader("Content-Type", "text/xml");
-            
+            if (isClientMessage) {
+                mimeHeaders.addHeader("SOAPAction", "\"\"");
+            }
             if (debug.messageEnabled()) {
                 debug.message("SAML2Utils.createSOAPMessage: header = " +
                     header + ", body = " + body);
@@ -2004,14 +2013,17 @@ public class SAML2Utils extends SAML2SDKUtils {
      * Send SOAP Message to specified url and returns message from peer.
      * @param xmlMessage <code>String</code> will be sent.
      * @param soapUrl URL the mesaage send to.
+     * @param isClientMessage true if the message is sent from SOAP client to
+     *     server.
      * @return SOAPMessage if the peer send back any reply.
      * @throws SOAPException if error in creating soap message.
      * @throws SAML2Exception if error in creating soap message.
      */
-    public static SOAPMessage sendSOAPMessage(String xmlMessage, String soapUrl)
+    public static SOAPMessage sendSOAPMessage(String xmlMessage,
+        String soapUrl, boolean isClientMessage)
     throws SOAPException, SAML2Exception {
         SOAPConnection con = scf.createConnection();
-        SOAPMessage msg = createSOAPMessage(xmlMessage);
+        SOAPMessage msg = createSOAPMessage(xmlMessage, isClientMessage);
         return con.call(msg, soapUrl);
     }
     

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.22 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: SPACSUtils.java,v 1.23 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -332,7 +332,7 @@ public class SPACSUtils {
             }
 
             SOAPConnection con = SAML2Utils.scf.createConnection();
-            SOAPMessage msg = SAML2Utils.createSOAPMessage(resolveString);
+            SOAPMessage msg = SAML2Utils.createSOAPMessage(resolveString, true);
 
             IDPSSOConfigElement config = null;
             config = sm.getIDPSSOConfig(orgName, idpEntityID);

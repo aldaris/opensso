@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.30 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.31 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -1889,7 +1889,8 @@ public class IDPSSOUtil {
         String body = res.toXMLString(true, true);
 
         try {
-            SOAPMessage reply = SAML2Utils.createSOAPMessage(header, body);
+            SOAPMessage reply = SAML2Utils.createSOAPMessage(header, body,
+                false);
 
             String[] logdata = { idpEntityID, realm, acsURL, "" };
             if (LogUtil.isAccessLoggable(Level.FINE)) {

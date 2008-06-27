@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.6 2008-06-25 05:47:52 qcheng Exp $
+ * $Id: AttributeQueryUtil.java,v 1.7 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -965,7 +965,7 @@ public class AttributeQueryUtil {
         SOAPMessage resMsg = null;
         try {
             resMsg = SAML2Utils.sendSOAPMessage(attrQueryXMLString,
-                attributeServiceURL);
+                attributeServiceURL, true);
         } catch (SOAPException se) {
             SAML2Utils.debug.error(
                 "AttributeQueryUtil.sendAttributeQuerySOAP: ", se);

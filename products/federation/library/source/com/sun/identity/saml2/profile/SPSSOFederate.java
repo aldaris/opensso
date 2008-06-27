@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.18 2008-06-25 05:47:55 qcheng Exp $
+ * $Id: SPSSOFederate.java,v 1.19 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -541,7 +541,8 @@ public class SPSSOFederate {
 
             String body = authnRequest.toXMLString(true, true);
             try {
-                SOAPMessage reply = SAML2Utils.createSOAPMessage(header, body);
+                SOAPMessage reply = SAML2Utils.createSOAPMessage(header, body,
+                    false);
 
                 String[] data2 = { spEntityID, realm, "" };
                 if (LogUtil.isAccessLoggable(Level.FINE)) {

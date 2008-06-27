@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMapping.java,v 1.3 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: NameIDMapping.java,v 1.4 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -338,7 +338,8 @@ public class NameIDMapping {
         
         SOAPMessage resMsg = null;
         try {
-            resMsg = SAML2Utils.sendSOAPMessage(nimRequestXMLString, nimURL);
+            resMsg = SAML2Utils.sendSOAPMessage(nimRequestXMLString, nimURL,
+                true);
         } catch (SOAPException se) {
             SAML2Utils.debug.error("NameIDMapping.doNIMBySOAP: ", se);
             throw new SAML2Exception(SAML2Utils.bundle.getString(

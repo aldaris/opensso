@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.14 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: DoManageNameID.java,v 1.15 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -804,7 +804,7 @@ public class DoManageNameID {
             hostEntityRole, remoteEntityID);
 
         SOAPMessage reply = SAML2Utils.createSOAPMessage(
-            mniResponse.toXMLString(true, true));
+            mniResponse.toXMLString(true, true), false);
         if (reply != null) {
             /*  Need to call saveChanges because we're
              * going to use the MimeHeaders to set HTTP
@@ -1383,7 +1383,8 @@ public class DoManageNameID {
         
         SOAPMessage resMsg = null;
         try {
-            resMsg = SAML2Utils.sendSOAPMessage(mniRequestXMLString, mniURL);
+            resMsg = SAML2Utils.sendSOAPMessage(mniRequestXMLString, mniURL,
+                true);
         } catch (SOAPException se) {
             debug.error(SAML2Utils.bundle.getString("invalidSOAPMessge"), se);
             return false;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestServiceSOAP.java,v 1.2 2008-06-25 05:48:01 qcheng Exp $
+ * $Id: AssertionIDRequestServiceSOAP.java,v 1.3 2008-06-27 00:46:51 hengming Exp $
  *
  */
 
@@ -140,7 +140,7 @@ public class AssertionIDRequestServiceSOAP extends HttpServlet {
                 assertionIDRequest, req, resp, samlAuthorityEntityID, role,
                 realm);
             replymsg = SAML2Utils.createSOAPMessage(
-                samlResp.toXMLString(true, true));
+                samlResp.toXMLString(true, true), false);
         } catch (Throwable t) {
             SAML2Utils.debug.error("AssertionIDRequestServiceSOAP.doGetPost: "+
                 "Unable to create SOAP message:", t);

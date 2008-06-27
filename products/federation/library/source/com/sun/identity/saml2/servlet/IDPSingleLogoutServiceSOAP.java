@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.5 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.6 2008-06-27 00:46:51 hengming Exp $
  *
  */
 
@@ -210,7 +210,8 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
 
         SOAPMessage msg = null; 
         try {
-            msg = SAML2Utils.createSOAPMessage(loRes.toXMLString(true, true));
+            msg = SAML2Utils.createSOAPMessage(loRes.toXMLString(true, true),
+                false);
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error("IDPSingleLogoutServiceSOAP.onMessage: " +
                 "Unable to create SOAP message:", se);

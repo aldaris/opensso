@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogoutServiceSOAP.java,v 1.4 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: SPSingleLogoutServiceSOAP.java,v 1.5 2008-06-27 00:46:51 hengming Exp $
  *
  */
 
@@ -174,7 +174,8 @@ public class SPSingleLogoutServiceSOAP extends HttpServlet {
         try {
             LogoutUtil.signSLOResponse(loRes, realm, spEntityID, 
                 SAML2Constants.SP_ROLE, logoutReq.getIssuer().getValue());
-            msg = SAML2Utils.createSOAPMessage(loRes.toXMLString(true, true));
+            msg = SAML2Utils.createSOAPMessage(loRes.toXMLString(true, true),
+                false);
         } catch (SAML2Exception se) {
             SAML2Utils.debug.error("SPSingleLogoutServiceSOAP.onMessage: " +
                 "Unable to create SOAP message:", se);

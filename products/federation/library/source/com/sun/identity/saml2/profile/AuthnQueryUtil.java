@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryUtil.java,v 1.4 2008-06-25 05:47:52 qcheng Exp $
+ * $Id: AuthnQueryUtil.java,v 1.5 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -430,7 +430,7 @@ public class AuthnQueryUtil {
         SOAPMessage resMsg = null;
         try {
             resMsg = SAML2Utils.sendSOAPMessage(authnQueryXMLString,
-                authnServiceURL);
+                authnServiceURL, true);
         } catch (SOAPException se) {
             SAML2Utils.debug.error(
                 "AuthnQueryUtil.sendAuthnQuerySOAP: ", se);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.13 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: LogoutUtil.java,v 1.14 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -399,7 +399,8 @@ public class LogoutUtil {
 
         SOAPMessage resMsg = null;
         try {
-            resMsg = SAML2Utils.sendSOAPMessage(sloRequestXMLString, sloURL);
+            resMsg = SAML2Utils.sendSOAPMessage(sloRequestXMLString, sloURL,
+                true);
         } catch (SOAPException se) {
             debug.error("Unable to send SOAPMessage to IDP ", se);
             throw new SAML2Exception(se.getMessage());
@@ -497,7 +498,7 @@ public class LogoutUtil {
 
         try {
             SOAPMessage resMsg = SAML2Utils.sendSOAPMessage(
-                         logoutReq.toXMLString(true,true), remoteLogoutURL);
+                logoutReq.toXMLString(true,true), remoteLogoutURL, true);
 
             // get the LogoutResponse element from SOAP message
             Element respElem = SAML2Utils.getSamlpElement(resMsg,

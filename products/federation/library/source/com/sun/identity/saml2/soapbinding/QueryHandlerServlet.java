@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryHandlerServlet.java,v 1.4 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: QueryHandlerServlet.java,v 1.5 2008-06-27 00:47:26 hengming Exp $
  *
  */
 
@@ -209,7 +209,7 @@ public class QueryHandlerServlet extends HttpServlet {
             Response samlResponse = 
                 processSAMLRequest(realm,pdpEntityID,reqAbs,request,soapMsg);
             soapMessage = SAML2Utils.createSOAPMessage(
-                                        samlResponse.toXMLString(true,true));
+                samlResponse.toXMLString(true,true), false);
         } catch (SAML2Exception se) {
             debug.error(classMethod + "XACML Response Error SOAP Fault", se);
             soapMessage = SAML2Utils.createSOAPFault(

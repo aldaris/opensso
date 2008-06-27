@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.7 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: IDPArtifactResolution.java,v 1.8 2008-06-27 00:45:55 hengming Exp $
  *
  */
 
@@ -437,7 +437,7 @@ public class IDPArtifactResolution {
 
         SOAPMessage msg = null;
         try {
-            msg = SAML2Utils.createSOAPMessage(str);
+            msg = SAML2Utils.createSOAPMessage(str, false);
         } catch (SOAPException se) {
             SAML2Utils.debug.error(classMethod +
                 "Unable to create a SOAPMessage and add a document ", se);
