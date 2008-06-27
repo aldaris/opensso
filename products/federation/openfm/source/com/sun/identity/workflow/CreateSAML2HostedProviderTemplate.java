@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.20 2008-06-26 17:58:49 hengming Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.21 2008-06-27 23:44:09 qcheng Exp $
  *
  */
 
@@ -237,7 +237,6 @@ public class CreateSAML2HostedProviderTemplate {
             "        </Attribute>\n" +
             "        <Attribute name=\"" + SAML2Constants.ATTRIBUTE_MAP +
             "\">\n" +
-            "            <Value />\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" +
             SAML2Constants.WANT_NAMEID_ENCRYPTED + "\">\n" +
@@ -381,7 +380,6 @@ public class CreateSAML2HostedProviderTemplate {
             "        </Attribute>\n" +
             "        <Attribute name=\"" + SAML2Constants.ATTRIBUTE_MAP +
             "\">\n" +
-            "           <Value></Value>\n" +
             "        </Attribute>\n" +
             "        <Attribute name=\"" + SAML2Constants.AUTH_MODULE_NAME +
             "\">\n" +
