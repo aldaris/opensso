@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.45 2008-06-25 05:43:31 qcheng Exp $
+ * $Id: LDAPv3Repo.java,v 1.46 2008-06-27 19:06:56 kenwho Exp $
  *
  */
 
@@ -2903,6 +2903,21 @@ public class LDAPv3Repo extends IdRepo {
                         }
                 }
                 try {
+                    if (cacheEnabled) {
+                        ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
+                        ldapCache.flushEntries(groupDN, LDAPv2.SCOPE_BASE);
+                    }
+                    if ( !isExists(IdType.GROUP, groupDN) ) {
+                        String ldapError = Integer.toString(
+                            LDAPException.NO_SUCH_OBJECT);
+                        Object[] args = { CLASS_NAME, groupDN, ""};
+                        IdRepoException ide = new IdRepoException(
+                            IdRepoBundle.BUNDLE_NAME, "220", args);
+                        ide.setLDAPErrorCode(ldapError);
+                        throw ide;
+                    }
+                    ld.modify(groupDN,  mod);
+                    
                     if ( !isExists(IdType.USER, userDN) ) {
                         String ldapError = Integer.toString(
                             LDAPException.NO_SUCH_OBJECT);
@@ -2912,22 +2927,8 @@ public class LDAPv3Repo extends IdRepo {
                         ide.setLDAPErrorCode(ldapError);
                         throw ide; 
                     }
-                    if ( !isExists(IdType.GROUP, groupDN) ) {
-                        String ldapError = Integer.toString(
-                            LDAPException.NO_SUCH_OBJECT);
-                        Object[] args = { CLASS_NAME, groupDN, ""};
-                        IdRepoException ide = new IdRepoException(
-                            IdRepoBundle.BUNDLE_NAME, "220", args);
-                        ide.setLDAPErrorCode(ldapError);
-                        throw ide; 
-                    }
                     if (mbrOf != null) {
                         ld.modify(userDN, modMemberOf);
-                    }
-                    ld.modify(groupDN,  mod);
-                    if (cacheEnabled) {
-                        ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
-                        ldapCache.flushEntries(groupDN, LDAPv2.SCOPE_BASE);
                     }
                 } catch (LDAPException lde) {
                     int resultCode = lde.getLDAPResultCode();
