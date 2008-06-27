@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.24 2008-06-25 05:49:40 qcheng Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.25 2008-06-27 22:30:29 asyhuang Exp $
  *
  */
 
@@ -553,7 +553,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 if (idpssoDescriptor.getKeyDescriptor() != null ) {
                     getKeyandAlgorithm(idpssoDescriptor, map);
                 }
-            }
+            }          
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
             debug.warning
@@ -799,12 +799,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     }
                 }
                 
-                //retrieve nameid format
-                List NameIdFormatList = spssoDescriptor.getNameIDFormat();
-                if (!NameIdFormatList.isEmpty()) {
-                    map.put(NAMEID_FORMAT, returnEmptySetIfValueIsNull(
-                            (NameIdFormatList)));
-                }
+                //retrieve nameid format               
+                 map.put(NAMEID_FORMAT,  
+                    (OrderedSet) convertListToSet(spssoDescriptor.getNameIDFormat()));
                 
                 //retrieve key descriptor encryption details if present
                 map.put(TF_KEY_NAME, Collections.EMPTY_SET);
@@ -1037,10 +1034,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 
                 //save nameid format                
                 if (idpStdValues.keySet().contains(NAMEID_FORMAT)) {
-                    List NameIdFormatList = idpssoDescriptor.getNameIDFormat();
-                    if (!NameIdFormatList.isEmpty()) {
-                        saveNameIdFormat(idpssoDescriptor, idpStdValues);
-                    }
+                    saveNameIdFormat(idpssoDescriptor, idpStdValues);                    
                 }
                 
                 //save for SingleSignOnService
@@ -1496,10 +1490,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 
                 //save nameid format
                 if (spStdValues.keySet().contains(NAMEID_FORMAT)) {
-                    List NameIdFormatList = spssoDescriptor.getNameIDFormat();
-                    if (!NameIdFormatList.isEmpty()) {
-                        saveNameIdFormat(spssoDescriptor, spStdValues);
-                    }
+                    saveNameIdFormat(spssoDescriptor, spStdValues);                    
                 }
                 
                 //save AuthenRequestsSigned
@@ -1702,11 +1693,11 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private void saveNameIdFormat(
             SSODescriptorType ssodescriptor,
             Map values
-            ) throws AMConsoleException {
+            ) throws AMConsoleException {        
         List listtoSave = convertSetToList(
-                (Set)values.get(NAMEID_FORMAT));               
+                (Set)values.get(NAMEID_FORMAT));
         ssodescriptor.getNameIDFormat().clear();
-        for (int i=0; i<listtoSave.size();i++) {           
+        for (int i=0; i<listtoSave.size();i++) {
             ssodescriptor.getNameIDFormat().add(listtoSave.get(i));
         }
     }

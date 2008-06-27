@@ -22,20 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.18 2008-06-25 05:49:40 qcheng Exp $
+ * $Id: SAMLv2Model.java,v 1.19 2008-06-27 22:30:26 asyhuang Exp $
  *
  */
 
 package com.sun.identity.console.federation.model;
 
-import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import java.util.Map;
-import java.util.List;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBException;
 
 public interface SAMLv2Model
     extends EntityModel {

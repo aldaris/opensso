@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.4 2008-06-25 05:42:47 qcheng Exp $
+ * $Id: AMPropertySheet.java,v 1.5 2008-06-27 22:31:17 asyhuang Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCAddRemoveModel;
 import com.sun.web.ui.model.CCDateTimeModel;
 import com.sun.web.ui.model.CCEditableListModel;
@@ -212,7 +213,7 @@ public class AMPropertySheet
             if (Set.class.isInstance(values)) {
                 m.setOptionList(
                     AMViewBeanBase.createOptionList(
-                        (Set)values, amModel.getUserLocale()));
+                        (Set)values, amModel.getUserLocale(), false));
             }
             set = true;
         }
@@ -531,11 +532,11 @@ public class AMPropertySheet
 
 
     private static Set getValues(OptionList optList) {
-        Set values = null;
+        OrderedSet values = null;
 
         if ((optList != null) && (optList.size() > 0)) {
             int sz = optList.size();
-            values = new HashSet(sz *2);
+            values = new OrderedSet();
 
             for (int i = 0; i < sz; i++) {
                 Option opt = optList.get(i);

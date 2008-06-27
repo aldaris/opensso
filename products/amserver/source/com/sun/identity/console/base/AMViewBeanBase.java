@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.4 2008-06-25 05:42:48 qcheng Exp $
+ * $Id: AMViewBeanBase.java,v 1.5 2008-06-27 22:31:21 asyhuang Exp $
  *
  */
 
@@ -419,20 +419,7 @@ public abstract class AMViewBeanBase
         Collection collection,
         Locale locale
     ) {
-        OptionList optionList = new OptionList();
-
-        if ((collection != null) && !collection.isEmpty()) {
-            // first sort the entries in the collection
-            collection = AMFormatUtils.sortItems(collection, locale);
-
-            for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
-                String value = (String)iter.next();
-                optionList.add(value, value);
-            }
-        }
-
-        return optionList;
-
+        return createOptionList(collection, locale, true); 
     }
 
     /**
@@ -445,7 +432,7 @@ public abstract class AMViewBeanBase
      */
     public OptionList createOptionList(Collection collection) {
         OptionList optionList = new OptionList();
-
+        
         if ((collection != null) && !collection.isEmpty()) {
             // first sort the entries in the collection
             collection = AMFormatUtils.sortItems(
@@ -456,10 +443,39 @@ public abstract class AMViewBeanBase
                 optionList.add(value, value);
             }
         }
-
+        
         return optionList;
     }
 
+     /**
+      * Returns an option list object that contains options for a given
+      * collection of string.
+      *
+      * @param collection Collection of strings to be included in option list.
+      * @param locale Locale defining how the entries should be sorted.
+      * @param bSort <code>true</code> to sort the options.
+      * @return a option list object that contains options for a given
+      *        collection of string.
+      */
+    public static OptionList createOptionList(
+        Collection collection,
+        Locale locale,
+        boolean bSort
+    ) {        
+        OptionList optionList = new OptionList();
+
+        if ((collection != null) && !collection.isEmpty()) {
+            if (bSort) {
+                collection = AMFormatUtils.sortItems(collection, locale);
+            }
+            for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
+                  String value = (String)iter.next();
+                  optionList.add(value, value); 
+            }
+        }
+        return optionList; 
+    }
+    
     /**
      * Returns a set of string from a option list items.
      *
