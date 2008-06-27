@@ -20,13 +20,13 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-idm-testng.xml,v 1.4 2007-10-18 21:11:10 bt199000 Exp $
+ $Id: ff_ds-idm-testng.xml,v 1.5 2008-06-27 00:25:30 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds-idm" verbose="1">
-    <parameter name="dsindex" value="0"/>
+    <parameter name="dsindex" value="1"/>
     <parameter name="setupidm" value="true"/>
     <parameter name="cleanupidm" value="true"/>
     <test name="IDMTestSetupCleanup">
