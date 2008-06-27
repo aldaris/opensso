@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.16 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceManager.java,v 1.17 2008-06-27 20:56:22 arviranga Exp $
  *
  */
 
@@ -112,8 +112,6 @@ public class ServiceManager {
     private static final String ALL_SERVICES = "null";
 
     private static Map serviceNameAndOCs = new CaseInsensitiveHashMap();
-
-    private static Map schemaAndServiceNames = new CaseInsensitiveHashMap();
 
     // List of sub-services
     protected static SMSEntry smsEntry;
@@ -287,15 +285,6 @@ public class ServiceManager {
     }
 
     /**
-     * Returns a map of service names and the related object classes
-     * 
-     * @return Map of service names and objectclasses
-     */
-    public Map getServiceNamesAndOCs() {
-        return (getServiceNamesAndOCs(null));
-    }
-
-    /**
      * Returns a map of service names and the related object classes for the
      * given <code>schemaType</code>.
      * 
@@ -313,9 +302,9 @@ public class ServiceManager {
         if (answer == null) {
             try {
                 answer = new HashMap();
-                Set serviceNames = getServiceNames();
-                if (serviceNames != null && !serviceNames.isEmpty()) {
-                    Iterator it = serviceNames.iterator();
+                Set sNames = getServiceNames();
+                if (sNames != null && !sNames.isEmpty()) {
+                    Iterator it = sNames.iterator();
                     while (it.hasNext()) {
                         try {
                             String service = (String) it.next();
@@ -326,8 +315,8 @@ public class ServiceManager {
                                                     service));
                             if (ssm != null) {
                                 // Check if service has schemaType
-                                if (schemaType != ALL_SERVICES
-                                        && ssm.getSchema(new SchemaType(
+                                if (schemaType != null &&
+                                        ssm.getSchema(new SchemaType(
                                                 schemaType)) == null) {
                                     // If the schema type is "User"
                                     // check for "Dynamic" also
@@ -732,7 +721,6 @@ public class ServiceManager {
     public synchronized void clearCache() {
         // Clear the local caches
         serviceNameAndOCs = new CaseInsensitiveHashMap();
-        schemaAndServiceNames = new CaseInsensitiveHashMap();
         serviceVersions = new CaseInsensitiveHashMap();
         serviceNameDefaultVersion = new CaseInsensitiveHashMap();
         serviceSchemaMgrs = new HashMap();
@@ -817,7 +805,7 @@ public class ServiceManager {
         }
         return (false);
     }
-
+    
     /**
      * Returns <code>true</code> if configuration data has been migrated to
      * Access Manager 7.0. Else <code>false</code> otherwise.
@@ -1022,7 +1010,6 @@ public class ServiceManager {
         // Reset the service names and OCs used by IdRepo
         serviceNameAndOCs = new CaseInsensitiveHashMap();
         // Reset the schema types and service names
-        schemaAndServiceNames = new CaseInsensitiveHashMap();
         // Reset the service names
         serviceNames = null;
     }

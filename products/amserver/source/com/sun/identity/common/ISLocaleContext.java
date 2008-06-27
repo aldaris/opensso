@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.11 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: ISLocaleContext.java,v 1.12 2008-06-27 20:56:24 arviranga Exp $
  *
  */
 
@@ -37,7 +37,6 @@ import com.iplanet.services.cdm.ClientsManager;
 import com.iplanet.services.cdm.G11NSettings;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.locale.Locale;
@@ -129,7 +128,6 @@ public class ISLocaleContext {
                 defaultClient = ClientsManager.getDefaultInstance();
             }
         }
-        g11nSettings = G11NSettings.getInstance();
         try {
             String initLocaleStr;
             SSOToken token = (SSOToken) AccessController
@@ -385,6 +383,9 @@ public class ISLocaleContext {
 
     public String getJavaCharset() {
         String jCharset = G11NSettings.JAVA_CHARSET_NAME;
+        if (g11nSettings == null) {
+            g11nSettings = G11NSettings.getInstance();
+        }
         if (g11nSettings != null) {
             jCharset = g11nSettings.getJavaCharset(charset);
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.5 2008-06-25 05:43:35 qcheng Exp $
+ * $Id: Logger.java,v 1.6 2008-06-27 20:56:22 arviranga Exp $
  *
  */
 
@@ -73,6 +73,7 @@ public class Logger extends java.util.logging.Logger {
         try {
             lm.readConfiguration();
         } catch (Exception ex) {
+            ex.printStackTrace();
             /* our Debug system will no be up now, so can't Debug */
         }
         String location = lm.getProperty(LogConstants.LOG_LOCATION);

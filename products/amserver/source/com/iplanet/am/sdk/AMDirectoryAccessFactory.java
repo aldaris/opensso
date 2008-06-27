@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDirectoryAccessFactory.java,v 1.4 2008-06-25 05:41:19 qcheng Exp $
+ * $Id: AMDirectoryAccessFactory.java,v 1.5 2008-06-27 20:56:23 arviranga Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.iplanet.am.sdk.common.IDirectoryServices;
 import com.iplanet.am.sdk.common.IDirectoryServicesProvider;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import java.security.AccessController;
@@ -75,6 +76,13 @@ public class AMDirectoryAccessFactory {
     private final static String PACKAGE_SEPARATOR = ".";
 
     private static void initialize() {
+        // Check if AMSDK is enabled & configured
+        if (!IdUtils.isAMSDKEnabled()) {
+           debug.error("AMDirectoryAccessFactory.initialize() " +
+                "AM.SDK not configured");
+            throw (new RuntimeException("AMSDK NOT configured"));
+        }
+        
         String configuredSDK = SystemProperties
                 .get(CONFIGURED_SDK_PACKAGE_PROPERTY);
 

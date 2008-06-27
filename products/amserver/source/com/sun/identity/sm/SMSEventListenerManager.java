@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.8 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: SMSEventListenerManager.java,v 1.9 2008-06-27 20:56:22 arviranga Exp $
  *
  */
 
@@ -325,9 +325,7 @@ class SMSEventListenerManager implements SMSObjectListener {
         public boolean equals(Object o) {
             if (o instanceof NotificationObject) {
                 NotificationObject no = (NotificationObject) o;
-                if (id == no.id) {
-                    return (true);
-                }
+                return (id.equals(no.id));
             }
             return (false);
         }

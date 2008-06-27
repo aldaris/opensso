@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.17 2008-06-25 05:43:31 qcheng Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.18 2008-06-27 20:56:24 arviranga Exp $
  *
  */
 
@@ -69,13 +69,11 @@ public class IdRemoteServicesImpl implements IdServices {
     // TODO: Use a different JAX-RPC interface
     protected static final String SDK_SERVICE = "DirectoryManagerIF";
 
-    protected static final String AMSR_COUNT = "__count";
+    public static final String AMSR_RESULTS = "__results";
 
-    protected static final String AMSR_RESULTS = "__results";
+    public static final String AMSR_CODE = "__errorCode";
 
-    protected static final String AMSR_CODE = "__errorCode";
-
-    protected static final String AMSR_ATTRS = "__attrs";
+    public static final String AMSR_ATTRS = "__attrs";
 
     private SOAPClient client;
 
@@ -85,15 +83,14 @@ public class IdRemoteServicesImpl implements IdServices {
 
     private static IdServices instance;
     
-    static {
+    protected IdRemoteServicesImpl() {
         /*
          * Here we set sendRestrictionContext by checking a property
          * in agent configuration file and also if the server is
          * sending back the right version string indicating that it
          * supports cookie hijacking.
          */
-        String euc = SystemProperties.get(
-            Constants.IS_ENABLE_UNIQUE_COOKIE);
+        String euc = SystemProperties.get(Constants.IS_ENABLE_UNIQUE_COOKIE);
         if ((euc != null) && (euc.length() > 0)) {
             sendRestrictionContext = Boolean.valueOf(euc).booleanValue();
             if (debug.messageEnabled()) {
@@ -129,6 +126,9 @@ public class IdRemoteServicesImpl implements IdServices {
                 "IdRemoteServicesImpl.<init>: sendRestrictionContext = " +
                     sendRestrictionContext);
        }
+       
+       // Initialize JAX-RPC SOAP client
+       client = new SOAPClient(SDK_SERVICE);
    }
 
     protected static Debug getDebug() {
@@ -142,10 +142,6 @@ public class IdRemoteServicesImpl implements IdServices {
             instance = new IdRemoteServicesImpl();
         }
         return instance;
-    }
-
-    protected IdRemoteServicesImpl() {
-        client = new SOAPClient(SDK_SERVICE);
     }
 
     protected void processException(Exception exception) 

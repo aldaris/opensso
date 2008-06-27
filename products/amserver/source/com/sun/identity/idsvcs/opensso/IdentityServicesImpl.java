@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.11 2008-06-25 05:43:34 qcheng Exp $
+ * $Id: IdentityServicesImpl.java,v 1.12 2008-06-27 20:56:24 arviranga Exp $
  *
  */
 
@@ -1689,6 +1689,9 @@ public class IdentityServicesImpl
     public boolean isTokenValid(Token token)
         throws InvalidToken, GeneralFailure, TokenExpired, RemoteException {
         // Validate the token
+        if (token == null) {
+            return (false);
+        }
         try {
             SSOTokenManager mgr = SSOTokenManager.getInstance();
             SSOToken t = mgr.createSSOToken(token.getId());

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.13 2008-06-25 05:43:37 qcheng Exp $
+ * $Id: LogConfigReader.java,v 1.14 2008-06-27 20:56:22 arviranga Exp $
  *
  */
 
@@ -433,8 +433,8 @@ public class LogConfigReader implements ServiceListener{
                     value = value.replace(LogConstants.DEF_FF_LOG_LOC_BASE,
                         basedir);
                 }
-                if (fileBackend && !value.endsWith(File.separator)) {
-                    value += File.separator;
+                if (fileBackend && !value.endsWith("/")) {
+                    value += "/";
                 }
                 if ((locSubdir != null) && (locSubdir.trim().length() > 0))
                 {

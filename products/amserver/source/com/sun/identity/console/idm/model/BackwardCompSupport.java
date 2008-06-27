@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BackwardCompSupport.java,v 1.2 2008-06-25 05:43:00 qcheng Exp $
+ * $Id: BackwardCompSupport.java,v 1.3 2008-06-27 20:56:24 arviranga Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.sdk.AMObject;
 import com.sun.identity.common.admin.AdminInterfaceUtils;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.AttributeSchema;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ import java.util.Set;
 /* - NEED NOT LOG - */
 
 public class BackwardCompSupport {
-    private static BackwardCompSupport instance = new BackwardCompSupport();
+    private static BackwardCompSupport instance;
 
     private Map mapIdTypeToServiceName = new HashMap();
     private Map mapIdTypeToSchemaType = new HashMap();
@@ -72,11 +73,20 @@ public class BackwardCompSupport {
         mapIdTypeToSubSchemaName.put(IdType.FILTEREDROLE.getName(),
             "FilteredRole");
 
-        namingAttribute = AdminInterfaceUtils.getNamingAttribute(
-            AMObject.USER, AMModelBase.debug);
+        if (IdUtils.isAMSDKEnabled()) {
+            namingAttribute = AdminInterfaceUtils.getNamingAttribute(
+                AMObject.USER, AMModelBase.debug);
+        } else {
+            // Since naming attribute cannot be obtained for IdRepo
+            // hardcode to "uid"
+            namingAttribute = "uid";
+        }
     }
 
     public static BackwardCompSupport getInstance() {
+        if (instance == null) {
+             instance = new BackwardCompSupport();
+        }
         return instance;
     }
 

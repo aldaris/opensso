@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesFactory.java,v 1.3 2008-06-25 05:43:29 qcheng Exp $
+ * $Id: IdServicesFactory.java,v 1.4 2008-06-27 20:56:23 arviranga Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.idm;
 
 import java.security.ProviderException;
 
-import com.iplanet.am.sdk.AMDirectoryAccessFactory;
 import com.iplanet.am.sdk.AMSDKBundle;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
@@ -109,15 +108,6 @@ public class IdServicesFactory {
             instantiateImpls(SERVER_IDM_PACKAGE, ID_SERVICES_PROVIDER_CLASS,
                     isCriticalErrorIfClassNotFound);
         }
-
-        // FIXME:
-        // This is a workaround. Now that the DS Services and ID Services
-        // interfaces are different, when we get an IdServices instance, we
-        // would not have added a remote listener, which is currently
-        // AMObjectListenerImpl. We need to fix it in a manner that both of
-        // these notification listeners are different. But for now, getting
-        // an instance of IDirectoryServices should do the job!
-        AMDirectoryAccessFactory.getDirectoryServices();
 
         isInitialized = true;
     }

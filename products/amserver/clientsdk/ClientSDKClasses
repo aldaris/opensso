@@ -324,6 +324,9 @@ com/sun/identity/idm/common/IdCacheBlock.class
 com/sun/identity/idm/remote/IdRemoteCachedServicesImpl.class
 com/sun/identity/idm/remote/IdRemoteServicesImpl.class
 com/sun/identity/idm/remote/IdRemoteServicesProviderImpl.class
+com/sun/identity/idm/remote/IdRemoteEventListener.class
+com/sun/identity/idm/remote/IdRemoteEventListener$IdRepoEventNotificationHandler.class
+com/sun/identity/idm/remote/IdRemoteEventListener$NotificationRunnable.class
 com/sun/identity/sm/*.class
 com/sun/identity/sm/sms.dtd
 com/sun/identity/sm/jaxrpc/SMSObjectIF.class

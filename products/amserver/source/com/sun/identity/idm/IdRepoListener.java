@@ -22,14 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.6 2008-06-25 05:43:29 qcheng Exp $
+ * $Id: IdRepoListener.java,v 1.7 2008-06-27 20:56:23 arviranga Exp $
  *
  */
 
 package com.sun.identity.idm;
 
-import com.iplanet.am.sdk.AMEvent;
-import com.iplanet.am.sdk.AMObjectListener;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
@@ -42,29 +40,41 @@ import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import netscape.ldap.LDAPDN;
+import netscape.ldap.controls.LDAPPersistSearchControl;
 import netscape.ldap.util.DN;
 
 /**
- * This class provides the implementation for listening to change events in
- * Identity Repository.
+ * Provides methods that can be called by IdRepo plugins to notify change
+ * events. Used to update cache and also to send notifications to registered
+ * listeners. Each IdRepo plugin will be given a unique instance of this object.
  * 
+ * Additionally, this class maintains the configuration data for the IdRepo
+ * plugin and also to store the SMS Service attributes for the organization.
  */
 public final class IdRepoListener {
 
+    // Configuration data for the IdRepo plugin
+    // Must have "realm" key to correctly send the notifications to clients
     private Map configMap = null;
 
-    private static AMObjectListener remoteListener = null;
+    // Listener registed by JAXRPC Impl to send notifications
+    private static IdEventListener remoteListener = null;
 
     private static Debug debug = Debug.getInstance("idrepoListener");
 
+    // To serialize and deserialize configMap
     protected static SOAPClient sclient;
-    static {
-        sclient = new SOAPClient("dummy");
-    }
+    
+    // Configured Identity Types
+    private static IdType[] defaultIdTypes;
+    
+    // Flags to check if caching is enabled and to clear them
+    private static boolean cacheChecked;
+    private static boolean cacheEnabled;
+    private static IdServices idServices;
 
     /*
      * (non-Javadoc)
@@ -76,8 +86,16 @@ public final class IdRepoListener {
             debug.message("IdRepoListener: allObjectsChanged Called!");
         }
 
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
-        if (idServices instanceof IdCachedServices) {
+        // Check if caching is enabled
+        if (!cacheChecked) {
+            idServices = IdServicesFactory.getDataStoreServices();
+            if (idServices instanceof IdCachedServices) {
+                // If Caching was enabled - then clear the cache!!
+                cacheEnabled = true;
+            }
+            cacheChecked = true;
+        }
+        if (cacheEnabled) {
             // If Caching was enabled - then clear the cache!!
             ((IdCachedServices) idServices).clearCache();
         }
@@ -94,33 +112,51 @@ public final class IdRepoListener {
             }
         }
         if (remoteListener != null) {
-            remoteListener.allObjectsChanged();
+            remoteListener.allIdentitiesChanged();
         }
     }
 
     public void objectChanged(String name, int type, Map cMap) {
+        objectChanged(name, null, type, cMap);
+    }
+    
+    /**
+     * Notification mechanism for IdRepo plugins to specify the identiy name
+     * and identity type that has been changed.
+     * 
+     * @param name name of the identity that changed
+     * @param idType IdType i.e., user, group, etc.
+     * @param changeType change type i.e., add, delete, modify, etc.
+     * @param cMap configuration map that contains realm and plugin-name
+     */
+    public void objectChanged(String name, IdType idType, int changeType,
+        Map cMap) {
         if (debug.messageEnabled()) {
-            debug.message("objectChanged called = name:: " + name + "  type:: "
-                    + type + "\n  configmap = " + configMap);
+            debug.message("objectChanged called with IdType= name: " + name +
+                " IdType: " + idType + " ChangeType: " + changeType +
+                "\nConfigmap = " + cMap);
         }
         // Get the list of listeners setup with idRepo
         String org = (String) configMap.get("realm");
         ArrayList list = (ArrayList) AMIdentityRepository.listeners.get(org);
 
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
-        boolean dirtyCache = false;
-        if (idServices instanceof IdCachedServices) {
-            // If Caching was enabled - then clear the cache!!
-            dirtyCache = true;
+        // Check if caching is enabled
+        if (!cacheChecked) {
+            idServices = IdServicesFactory.getDataStoreServices();
+            if (idServices instanceof IdCachedServices) {
+                // If Caching was enabled - then clear the cache!!
+                cacheEnabled = true;
+            }
+            cacheChecked = true;
         }
+        
         if (name.length() > 0) {
-            String[] changed = getChangedIds(name, cMap);
+            String[] changed = getChangedIds(name, idType, cMap);
             for (int i = 0; i < changed.length; i++) {
 
-                if (dirtyCache) {
+                if (cacheEnabled) {
                     ((IdCachedServices) idServices).dirtyCache(changed[i],
-                        type, false, false,
-                        Collections.EMPTY_SET);
+                        changeType, false, false, Collections.EMPTY_SET);
                 }
 
                 // Update any listeners registered with IdRepo
@@ -128,49 +164,60 @@ public final class IdRepoListener {
                     int size = list.size();
                     for (int j = 0; j < size; j++) {
                         IdEventListener l = (IdEventListener) list.get(j);
-                        switch (type) {
-                        case AMEvent.OBJECT_CHANGED:
-                        case AMEvent.OBJECT_ADDED:
+                        switch (changeType) {
+                        case OBJECT_CHANGED:
+                        case OBJECT_ADDED:
                             l.identityChanged(changed[i]);
+                            if (remoteListener != null) {
+                                remoteListener.identityChanged(changed[i]);
+                            }
                             break;
-                        case AMEvent.OBJECT_REMOVED:
+                        case OBJECT_REMOVED:
                             l.identityDeleted(changed[i]);
+                            if (remoteListener != null) {
+                                remoteListener.identityDeleted(changed[i]);
+                            }
                             break;
-                        case AMEvent.OBJECT_RENAMED:
+                        case OBJECT_RENAMED:
                             l.identityRenamed(changed[i]);
+                            if (remoteListener != null) {
+                                remoteListener.identityRenamed(changed[i]);
+                            }
                         }
                     }
-                }
-                if (remoteListener != null) {
-                    remoteListener.objectChanged(changed[i], type, configMap);
-                }
+                }   
             }
         }
     }
 
+    public static void addRemoteListener(IdEventListener l) {
+        remoteListener = l;
+    }
+    
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMObjectListener#getConfigMap()
+     * Returns the configurations for the IdRepo plugins
      */
     public Map getConfigMap() {
-
         return configMap;
     }
 
-    public static void addRemoteListener(AMObjectListener l) {
-        remoteListener = l;
-    }
-
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.iplanet.am.sdk.AMObjectListener#setConfigMap()
+     * Maintains the configurations for the IdRepo plugins
      */
     public void setConfigMap(Map cMap) {
         configMap = cMap;
     }
 
+    /**
+     * Stores service's dynamic attributes within the IdRepo plugin
+     * configuration. In the current implementation changes to dynamic
+     * attributes to LDAPv3Repo restart the plugin, since it triggers
+     * a configuration change notification.
+     * 
+     * @param sName service name for which attributes are being set
+     * @param attrs service synamic attributes
+     * @throws com.sun.identity.idm.IdRepoException
+     */
     public void setServiceAttributes(String sName, Map attrs)
             throws IdRepoException {
         String realm = (String) configMap.get("realm");
@@ -191,14 +238,7 @@ public final class IdRepoListener {
             if (sc == null) {
                 return;
             }
-            /*
-             * Set sNames = sc.getSubConfigNames("*",pluginName); if (sNames ==
-             * null || sNames.isEmpty()) { AMIdentityRepository.debug.error(
-             * "IdRepoListener.setServiveAttribute: plugin not configured");
-             * Object [] args = {sName, IdType.ROLE.getName()}; throw new
-             * IdRepoException(IdRepoBundle.BUNDLE_NAME, "105", args); } String
-             * currentPluginName = (String) sNames.iterator().next();
-             */
+            
             ServiceConfig subConfig = sc.getSubConfig(pluginName);
             if (subConfig == null) {
                 return;
@@ -207,6 +247,9 @@ public final class IdRepoListener {
             Set vals = (Set) attributes.get(IdConstants.SERVICE_ATTRS);
             if (vals == null || vals == Collections.EMPTY_SET) {
                 vals = new HashSet();
+            }
+            if (sclient == null) {
+                sclient = new SOAPClient("dummy");    
             }
             String mapStr = sclient.encodeMap("result", attrs);
             vals = new HashSet();
@@ -226,27 +269,35 @@ public final class IdRepoListener {
         }
     }
 
-    private String[] getChangedIds(String name, Map configMap) {
+    private String[] getChangedIds(String name, IdType type, Map cMap) {
         int size = IdUtils.supportedTypes.size();
         // If configMap is null, then this is a "remote" cache update
-        if (configMap == null) {
+        if ((cMap == null) || cMap.isEmpty()) {
             String ct[] = new String[1];
             ct[0] = name;
             return ct;
         }
-        String changedTypes[] = new String[size];
-        int i = 0;
-        if (configMap == null || configMap.isEmpty()) {
-            changedTypes[i] = name;
-            return changedTypes;
+        String changedTypes[] = null;
+        IdType types[] = null;
+        if (type == null) {
+            changedTypes = new String[size];
+            if (defaultIdTypes  == null) {
+                Set idtypes = IdUtils.supportedTypes;
+                defaultIdTypes = new IdType[idtypes.size()];
+                defaultIdTypes = (IdType[]) idtypes.toArray(defaultIdTypes);
+            }
+            types = defaultIdTypes;
+        } else {
+            changedTypes = new String[1];
+            types = new IdType[1];
+            types[0] = type;
         }
-        String realm = (String) configMap.get("realm");
-        String Amsdk = (String) configMap.get("amsdk");
+        String realm = (String) cMap.get("realm");
+        String Amsdk = (String) cMap.get("amsdk");
         boolean isAmsdk = (Amsdk == null) ? false : true;
 
-        Iterator it = IdUtils.supportedTypes.iterator();
-        while (it.hasNext()) {
-            IdType itype = (IdType) it.next();
+        for (int i = 0; i < types.length; i++) {
+            IdType itype = types[i];
             String n = DN.isDN(name) ? LDAPDN.explodeDN(name, true)[0] : name;
             String id = "id=" + n + ",ou=" + itype.getName() + "," + realm;
             if (isAmsdk) {
@@ -257,4 +308,26 @@ public final class IdRepoListener {
         }
         return changedTypes;
     }
+    
+    // Constants for change type recevied from the IdRepo plugins
+    
+    /**
+     * Represents an object addition event type.
+     */
+    public static final int OBJECT_ADDED = LDAPPersistSearchControl.ADD;
+
+    /**
+     * Represents an object change event type.
+     */
+    public static final int OBJECT_CHANGED = LDAPPersistSearchControl.MODIFY;
+
+    /**
+     * Represents an object removal event type.
+     */
+    public static final int OBJECT_REMOVED = LDAPPersistSearchControl.DELETE;
+
+    /**
+     * Represents an object renaming event type.
+     */
+    public static final int OBJECT_RENAMED = LDAPPersistSearchControl.MODDN;
 }

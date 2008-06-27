@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: G11NSettings.java,v 1.4 2008-06-25 05:41:33 qcheng Exp $
+ * $Id: G11NSettings.java,v 1.5 2008-06-27 20:56:23 arviranga Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.iplanet.services.cdm.clientschema.AMClientCapException;
 import com.iplanet.services.cdm.clientschema.AMClientDataListener;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
@@ -305,15 +306,18 @@ public class G11NSettings implements ServiceListener, ICDMConstants,
         }
 
         //TOFIX: Need to check if clientdata service is enabled or not.
-        try {
-            intCapInstance = AMClientCapData.getInternalInstance();
-            intCapInstance.addListener(this); // register to internal
-            extCapInstance = AMClientCapData.getExternalInstance();
-            extCapInstance.addListener(this); // register to external
+        // Check if AMSDK is configured
+        if (IdUtils.isAMSDKEnabled()) {
+            try {
+                intCapInstance = AMClientCapData.getInternalInstance();
+                intCapInstance.addListener(this); // register to internal
+                extCapInstance = AMClientCapData.getExternalInstance();
+                extCapInstance.addListener(this); // register to external
 
-        } catch (AMClientCapException ce) {
-            debug.error("Unable to get an instance Of ClientData in "
-                    + "G11Nsettings", ce);
+            } catch (AMClientCapException ce) {
+                debug.error("Unable to get an instance Of ClientData in " +
+                    "G11Nsettings", ce);
+            }
         }
     }
 

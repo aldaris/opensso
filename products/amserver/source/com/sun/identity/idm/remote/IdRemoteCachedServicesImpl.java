@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.14 2008-06-25 05:43:31 qcheng Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.15 2008-06-27 20:56:24 arviranga Exp $
  *
  */
 
@@ -47,10 +47,10 @@ import com.sun.identity.idm.common.IdCacheBlock;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.sm.ServiceManager;
 
-import com.iplanet.am.sdk.AMEvent;
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.idm.IdRepoListener;
 
 /*
  * Class which provides caching on top of available IdRepoLDAPServices.
@@ -68,17 +68,26 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
 
     private static IdServices instance;
 
-
     // Class Private
     private Cache idRepoCache;
 
     // TODO: Add Statistics!
     // private CacheStats cacheStats;
 
-    static {
-        initializeParams();
-    }
 
+    private IdRemoteCachedServicesImpl() {
+        super();
+        initializeParams();
+        initializeCache();
+        
+        // Register for notification or polling as configured
+        IdRemoteEventListener.getInstance();
+        
+        // TODO: ADD Cache usage statistics
+        // cacheStats = CacheStats.createInstance(getClass().getName(),
+        // getDebug());
+    }
+    
     /**
      * Method to check if caching is enabled or disabled and configure the size
      * of the cache accordingly.
@@ -106,18 +115,10 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         }
     }
 
-    private IdRemoteCachedServicesImpl() {
-        super();
-        initializeCache();
-        // TODO: ADD Cache usage statistics
-        // cacheStats = CacheStats.createInstance(getClass().getName(),
-        // getDebug());
-    }
-
     private void initializeCache() {
         idRepoCache = new Cache(maxSize);
     }
-
+    
     /**
      * Method to get the current cache size
      * 
@@ -136,19 +137,10 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         return instance;
     }
 
-    /**
-     * Method to get the maximum size of the Cache. To be called by all other
-     * LRU Caches that are created in AM SDK
-     * 
-     * @return the maximum cache size for a LRU cache
-     */
-    protected static int getMaxSize() {
-        return maxSize;
-    }
-
+    // @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("\n<<<<<<< BEGIN SDK CACHE CONTENTS >>>>>>>>");
+        sb.append("\n<<<<<<< BEGIN IDREPO SDK CACHE CONTENTS >>>>>>>>");
         if (!idRepoCache.isEmpty()) { // Should never be null
             Enumeration cacheKeys = idRepoCache.keys();
             while (cacheKeys.hasMoreElements()) {
@@ -160,7 +152,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         } else {
             sb.append("<empty>");
         }
-        sb.append("\n<<<<<<< END SDK CACHE CONTENTS >>>>>>>>");
+        sb.append("\n<<<<<<< END IDREPO SDK CACHE CONTENTS >>>>>>>>");
         return sb.toString();
     }
 
@@ -233,7 +225,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         dn = DNUtils.normalizeDN(dn);
         String cachedID = getCacheId(dn);
         switch (eventType) {
-        case AMEvent.OBJECT_ADDED:
+        case IdRepoListener.OBJECT_ADDED:
             cb = getFromCache(dn);
             if (cb != null) { // Mark an invalid entry as valid now
                 cb.setExists(true);
@@ -242,7 +234,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 removeCachedAttributes(cachedID, attrNames);
             }
             break;
-        case AMEvent.OBJECT_REMOVED:
+        case IdRepoListener.OBJECT_REMOVED:
             cb = (IdCacheBlock) idRepoCache.remove(cachedID);
             if (cb != null) {
                 cb.clear(); // Clear anyway & help the GC process
@@ -251,7 +243,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 removeCachedAttributes(cachedID, attrNames);
             }
             break;
-        case AMEvent.OBJECT_RENAMED:
+        case IdRepoListener.OBJECT_RENAMED:
             // Better to remove the renamed entry, or else it will be just
             // hanging in the cache, until LRU kicks in.
             cb = (IdCacheBlock) idRepoCache.remove(cachedID);
@@ -262,7 +254,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 removeCachedAttributes(cachedID, attrNames);
             }
             break;
-        case AMEvent.OBJECT_CHANGED:
+        case IdRepoListener.OBJECT_CHANGED:
             cb = getFromCache(dn);
             if (cb != null) {
                 cb.clear(); // Just clear the entry. Don't remove.
@@ -307,6 +299,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         }
     }
 
+    // @Override
     public Map getAttributes(SSOToken token, IdType type, String name,
         Set attrNames, String amOrgName, String amsdkDN,
         boolean isStringValues) throws IdRepoException, SSOException {
@@ -398,6 +391,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         return attributes;
     }
 
+    // @Override
     public Map getAttributes(SSOToken token, IdType type, String name,
         String amOrgName, String amsdkDN)
         throws IdRepoException, SSOException {
@@ -444,6 +438,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         return attributes;
     }
 
+    // @Override
     public void setActiveStatus(SSOToken token, IdType type, String name,
         String amOrgName, String amsdkDN, boolean active) throws SSOException,
         IdRepoException {
@@ -453,6 +448,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         dirtyCache(dn);
     }
 
+    // @Override
     public void setAttributes(SSOToken token, IdType type, String name,
         Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
         boolean isString) throws IdRepoException, SSOException {
@@ -477,6 +473,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         }
     }
 
+    // @Override
     public void delete (SSOToken token, IdType type, String name,
         String orgName, String amsdkDN) throws IdRepoException,
         SSOException {
@@ -489,6 +486,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         idRepoCache.remove (dn);
     }
     
+    // @Override
     public void removeAttributes (SSOToken token, IdType type, String name,
         Set attrNames, String orgName, String amsdkDN)
         throws IdRepoException, SSOException {
@@ -505,6 +503,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         }
     }
     
+    // @Override
     public IdSearchResults search (SSOToken token, IdType type, String pattern,
         IdSearchControl ctrl, String orgName)
         throws IdRepoException, SSOException {
@@ -561,6 +560,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
     }
 
     // Returns fully qualified names for the identity
+    // @Override
     public Set getFullyQualifiedNames(SSOToken token,
         IdType type, String name, String orgName)
         throws IdRepoException, SSOException {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cache.java,v 1.3 2008-06-25 05:41:27 qcheng Exp $
+ * $Id: Cache.java,v 1.4 2008-06-27 20:56:21 arviranga Exp $
  *
  */
 
@@ -553,7 +553,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
         for (int index = tab.length; --index >= 0;)
             tab[index] = null;
         // Clear the LRU Tracker
-        lruTracker = null;
+        lruTracker.clear();
         count = 0;
     }
 
@@ -863,6 +863,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
     private class LRUList {
 
         Entry header = new Entry(0, null, null, null);
+        int size;
 
         protected LRUList() {
 
@@ -884,6 +885,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
                 e.lruPrev = header.lruPrev;
                 header.lruPrev = e;
             }
+            size++;
 
         }
 
@@ -896,6 +898,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
             e.lruNext.lruPrev = e.lruPrev;
 
             e.lruNext = e.lruPrev = null;
+            size--;
         }
 
         // Method to get the first entry in the list
@@ -922,11 +925,11 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
         }
 
         protected int length() {
-            int i;
-            Entry e;
-            for (i = 0, e = header.lruNext; e != header; i++, e = e.lruNext)
-                ;
-            return i;
+            return (size);
+        }
+        
+        protected void clear() {
+            header = new Entry(0, null, null, null);
         }
     }
 

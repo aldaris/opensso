@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.41 2008-06-25 05:43:33 qcheng Exp $
+ * $Id: IdServicesImpl.java,v 1.42 2008-06-27 20:56:21 arviranga Exp $
  *
  */
 
 package com.sun.identity.idm.server;
 
-import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMHashMap;
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.spi.AuthLoginException;
@@ -63,8 +61,6 @@ import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdRepoFatalException;
-import com.sun.identity.idm.IdRepoListener;
-import com.sun.identity.idm.IdRepoServiceListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
@@ -73,17 +69,13 @@ import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
+import com.sun.identity.idm.plugins.internal.SpecialRepo;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
-import com.sun.identity.sm.ServiceConfig;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceListener;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -94,26 +86,20 @@ public class IdServicesImpl implements IdServices {
 
     protected static Debug debug = Debug.getInstance("amIdm");
 
-    protected Map idRepoMap = 
-        Collections.synchronizedMap(new HashMap());
-
-    protected Set idRepoPlugins;
-
-    protected String notificationID;
-
-    protected ServiceSchemaManager idRepoServiceSchemaManager;
-
-    protected ServiceSchema idRepoSubSchema;
+    // Cache to hold special identities stored in SpecialRepo
+    protected IdSearchResults specialIdentities;
+    protected IdSearchResults emptyUserIdentities =
+        new IdSearchResults(IdType.USER, "");
+    
+    private IdRepoPluginsCache idrepoCache;
+    
+    private static boolean shutdownCalled;
 
     private static HashSet READ_ACTION = new HashSet(2);
 
     private static HashSet WRITE_ACTION = new HashSet(2);
 
     private static IdServices _instance;
-
-    private static int svcRevisionNumber;
-
-    private static boolean shutdownCalled;
 
     static {
         READ_ACTION.add("READ");
@@ -139,8 +125,7 @@ public class IdServicesImpl implements IdServices {
     }
 
     protected IdServicesImpl() {
-        shutdownCalled = false;
-        initializeListeners();
+        idrepoCache = new IdRepoPluginsCache();
     }
 
     protected static Debug getDebug() {
@@ -148,56 +133,11 @@ public class IdServicesImpl implements IdServices {
     }
 
     public void reinitialize() {
-        initializeListeners();
+        idrepoCache.initializeListeners();
     }
 
-    private void initializeListeners() {
-        if (notificationID == null) {
-            // On the server side, configure and set up a service
-            // listener for listening to changes made to plugin
-            // configurations.
-            if (getDebug().messageEnabled()) {
-                getDebug().message(
-                    "IdServicesImpl.initializeListeners: "
-                    + "setting up ServiceListener");
-            }
-            SSOToken stoken = (SSOToken) AccessController
-                    .doPrivileged(AdminTokenAction.getInstance());
- 
-            try {
-                ServiceConfigManager ssm = new ServiceConfigManager(stoken,
-                        IdConstants.REPO_SERVICE, "1.0");
-                ssm.addListener(new IdRepoServiceListener());
-
-                // Initialize schema objects
-                idRepoServiceSchemaManager = new ServiceSchemaManager(stoken,
-                        IdConstants.REPO_SERVICE, "1.0");
-                idRepoSubSchema = idRepoServiceSchemaManager
-                        .getOrganizationSchema();
-                idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
-                IdRepoServiceListener sListener = new IdRepoServiceListener();
-                notificationID = idRepoServiceSchemaManager
-                        .addListener(sListener);
-
-                svcRevisionNumber = idRepoServiceSchemaManager
-                        .getRevisionNumber();
-
-                // Should we just ignore these exceptions or throw them?
-                // Are'nt they Fatal that we should not start the system ??
-            } catch (SMSException smse) {
-                if (getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "IdServicesImpl.initializeListeners: "
-                        + "Unable to set up a service listener for IdRepo",
-                        smse);
-                }
-            } catch (SSOException ssoe) {
-                getDebug().error(
-                    "IdServicesImpl.initializeListeners: "
-                    + "Unable to set up a service listener for IdRepo. ",
-                    ssoe);
-            }
-        }
+    public static boolean isShutdownCalled() {
+        return shutdownCalled;
     }
 
     /**
@@ -224,46 +164,25 @@ public class IdServicesImpl implements IdServices {
 
         CaseInsensitiveHashSet answer = new CaseInsensitiveHashSet();
         IdRepoException firstException = null;
+        
         // Get the list of plugins and check if they support authN
         // Use AdminToken, since user token may not have permission
-        token = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        Set plugins = getIdRepoPlugins(orgName);
-        Set cPlugins = getAllConfiguredPlugins(orgName, plugins);
-        // Check for special users
-        if (orgName.equalsIgnoreCase(ServiceManager.getBaseDN())) {
-            for (Iterator items = cPlugins.iterator(); items.hasNext();) {
+        Set repos = idrepoCache.getIdRepoPlugins(
+            orgName, IdOperation.READ, type);
+        if ((repos != null) && !repos.isEmpty()) {
+            for (Iterator items = repos.iterator(); items.hasNext();) {
                 IdRepo idRepo = (IdRepo) items.next();
-                if (idRepo.getClass().getName().equals(
-                    IdConstants.SPECIAL_PLUGIN) && isSpecialRepoUser(
-                    token, type, name, orgName, idRepo)) {
+                // Skip users in Special Repo
+                try {
                     String fqn = idRepo.getFullyQualifiedName(token,
                         type, name);
-                    answer.add(fqn);
-                    return (answer);
-                }
-            }
-        }
-        // User does not an internal user, check other data stores
-        for (Iterator items = cPlugins.iterator(); items.hasNext();) {
-            IdRepo idRepo = (IdRepo) items.next();
-            // Skip users in Special Repo
-            if (!isSpecialRepoUser(token, type, name, orgName, idRepo)) {
-                continue;
-            }
-            if (!idRepo.getSupportedTypes().contains(type)) {
-               // IdRepo plugin does not support the idType
-               continue;
-            }
-            try {
-                String fqn = idRepo.getFullyQualifiedName(token,
-                    type, name);
-                if (fqn != null) {
-                    answer.add(fqn);
-                }
-            } catch (IdRepoException ide) {
-                if (firstException == null) {
-                    firstException = ide;
+                    if (fqn != null) {
+                        answer.add(fqn);
+                    }
+                } catch (IdRepoException ide) {
+                    if (firstException == null) {
+                        firstException = ide;
+                    }
                 }
             }
         }
@@ -297,21 +216,22 @@ public class IdServicesImpl implements IdServices {
 
         IdRepoException firstException = null;
         AuthLoginException authException = null;
+        
         // Get the list of plugins and check if they support authN
-        SSOToken token = (SSOToken) AccessController
-                .doPrivileged(AdminTokenAction.getInstance());
-        Set plugins = getIdRepoPlugins(orgName);
         Set cPlugins = null;
-        try {        
-            cPlugins = getAllConfiguredPlugins(orgName, plugins);
-        } catch (SSOException ssoe) {
-            // Here an admin token is being used and it should cause this 
-            // exception. If caused it would be fatal one - report it.
-            throw new IdRepoFatalException(ssoe.getL10NMessage());
-        }
-
         Vector orderedPlugins = new Vector();
         IdRepo savedAgentRepo = null;
+        try {
+            cPlugins = idrepoCache.getIdRepoPlugins(orgName);
+        } catch (SSOException ex) {
+            // Debug the message and return false
+            if (getDebug().messageEnabled()) {
+                getDebug().message(
+                    "IdServicesImpl.authenticate: " + "Error obtaining " +
+                    "IdRepo plugins for the org: " + orgName);
+            }
+            return (false);
+        }
         for (Iterator items = cPlugins.iterator(); items.hasNext();) {
               IdRepo idRepo = (IdRepo) items.next();
               if (idRepo instanceof com.sun.identity.idm.plugins.internal.AgentsRepo) {
@@ -324,23 +244,23 @@ public class IdServicesImpl implements IdServices {
              orderedPlugins.add(savedAgentRepo);
         }
 
-        for (ListIterator items = orderedPlugins.listIterator(); items.hasNext();) {
+        for (ListIterator items = orderedPlugins.listIterator();
+            items.hasNext();) {
             IdRepo idRepo = (IdRepo) items.next();
             if (idRepo.supportsAuthentication()) {
                 if (getDebug().messageEnabled()) {
                     getDebug().message(
-                        "IdServicesImpl.authenticate: "
-                        + "AuthN to " + idRepo.getClass().getName()
-                        + " in org: " + orgName);
+                        "IdServicesImpl.authenticate: " + "AuthN to " +
+                        idRepo.getClass().getName() + " in org: " + orgName);
                 }
                 try {
                     if (idRepo.authenticate(credentials)) {
                         // Successfully authenticated
                         if (getDebug().messageEnabled()) {
                             getDebug().message(
-                                "IdServicesImpl.authenticate: "
-                                + "AuthN success for "
-                                + idRepo.getClass().getName());
+                                "IdServicesImpl.authenticate: " +
+                                "AuthN success for " +
+                                idRepo.getClass().getName());
                         }
                         return (true);
                     }
@@ -357,8 +277,8 @@ public class IdServicesImpl implements IdServices {
                 }
             } else if (getDebug().messageEnabled()) {
                 getDebug().message(
-                    "IdServicesImpl.authenticate: "
-                    + "AuthN not supported by " + idRepo.getClass().getName());
+                    "IdServicesImpl.authenticate: AuthN " +
+                    "not supported by " + idRepo.getClass().getName());
             }
         }
         if (firstException != null) {
@@ -429,10 +349,9 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, attrMap.keySet(),
                 IdOperation.CREATE, type);
-        Set plugIns = getIdRepoPlugins(amOrgName);
         String amsdkdn = null;
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.CREATE, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.CREATE, type);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
@@ -533,8 +452,7 @@ public class IdServicesImpl implements IdServices {
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, orgName, name, null, IdOperation.DELETE, type);
-        Set plugIns = getIdRepoPlugins(orgName);
-        Set configuredPluginClasses = getConfiguredPlugins(orgName, plugIns,
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(orgName,
             IdOperation.DELETE, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
@@ -609,9 +527,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, attrNames, IdOperation.READ,
                 type);
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
         ) {
@@ -705,9 +622,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
         ) {
@@ -799,9 +715,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         if ((configuredPluginClasses == null) ||
             configuredPluginClasses.isEmpty()
         ) {
@@ -894,9 +809,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
@@ -1020,9 +934,8 @@ public class IdServicesImpl implements IdServices {
             String amOrgName) throws SSOException, IdRepoException {
 
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         if ((configuredPluginClasses == null) ||
             configuredPluginClasses.isEmpty()
         ) {
@@ -1054,9 +967,8 @@ public class IdServicesImpl implements IdServices {
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
         // First get the list of plugins that support the create operation.
 
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         if ((configuredPluginClasses == null) ||
             configuredPluginClasses.isEmpty()
         ) {
@@ -1124,9 +1036,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.EDIT, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.EDIT, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.EDIT, type);
         if ((configuredPluginClasses == null) ||
             configuredPluginClasses.isEmpty()
         ) {
@@ -1196,9 +1107,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.EDIT, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.EDIT, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.EDIT, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
         ) {
@@ -1270,9 +1180,8 @@ public class IdServicesImpl implements IdServices {
         checkPermission(token, amOrgName, name, attrNames, IdOperation.EDIT,
                 type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.EDIT, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.EDIT, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
         ) {
@@ -1349,9 +1258,8 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, null, null, IdOperation.READ, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-            plugIns, IdOperation.READ, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+            IdOperation.READ, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
         ) {
@@ -1438,156 +1346,27 @@ public class IdServicesImpl implements IdServices {
         }
     }
     
-    protected IdRepo getSpecialRepoPlugin(SSOToken token, String orgName) 
-        throws SSOException, IdRepoException 
-    {
-        
-        IdRepo pluginClass = null;
-        boolean pluginInitialized = false;
-        synchronized (idRepoMap) {
-            // Checking for the presence of the plugin & adding it to the
-            // plugin cache should be in the critical section 
-            // hence synchronized.
-            Object o = idRepoMap.get(IdConstants.SPECIAL_PLUGIN);
-            if (o instanceof IdRepo) {
-                pluginClass = (IdRepo) o;
-            }
-        
-            if (pluginClass == null) {                    
-                try {                    
-                    Class thisClass = Thread.currentThread().
-                        getContextClassLoader().
-                            loadClass(IdConstants.SPECIAL_PLUGIN);
-                    pluginClass = (IdRepo) thisClass.newInstance();
-                    pluginClass.initialize(new HashMap());
-                    idRepoMap.put(IdConstants.SPECIAL_PLUGIN, pluginClass);
-                    pluginInitialized = true;
-                } catch (Exception e) {
-                    getDebug().error("IdServicesImpl.getSpecialIdentities: "
-                        + "Unable to instantiate plugin: " 
-                        + IdConstants.SPECIAL_PLUGIN, e);
-                }
-            }
-        }
-        
-        if (pluginInitialized) {
-            // Ideally, this add listener part should also be in the
-            // synchronized block. Here it is not to avoid a deadlock that
-            // can happen when the addListener is called on Special Repo
-            // and it acquires a lock to ServiceSchemaManagerImpl. 
-            Map listenerConfig = new HashMap();
-            listenerConfig.put("realm", orgName);
-            IdRepoListener lter = new IdRepoListener();
-            lter.setConfigMap(listenerConfig);
-            pluginClass.addListener(token, lter);                       
-        }
-        
-        return pluginClass;
-    }
-
-    protected IdRepo getAgentRepoPlugin(SSOToken token, String orgName) 
-        throws SSOException, IdRepoException 
-    {
-        
-        IdRepo pluginClass = null;
-        boolean pluginInitialized = false;
-        String cacheKey = orgName + ":" + IdConstants.AGENTREPO_PLUGIN;
-        synchronized (idRepoMap) {
-            // Checking for the presence of the plugin & adding it to the
-            // plugin cache should be in the critical section 
-            // hence synchronized.
-            Object o = idRepoMap.get(cacheKey);
-            if (o instanceof IdRepo) {
-                pluginClass = (IdRepo) o;
-            }
-        
-            if (pluginClass == null) {                    
-                try {                    
-                    Class thisClass = Thread.currentThread().
-                        getContextClassLoader().
-                            loadClass(IdConstants.AGENTREPO_PLUGIN);
-                    pluginClass = (IdRepo) thisClass.newInstance();
-                    HashMap config = new HashMap(2);
-                    HashSet realmName = new HashSet();
-                    realmName.add(orgName);
-                    config.put("agentsRepoRealmName", realmName);
-                    pluginClass.initialize(config);
-                    idRepoMap.put(cacheKey, pluginClass);
-                    pluginInitialized = true;
-                } catch (Exception e) {
-                    getDebug().error("IdServicesImpl.getAgentRepoPlugin: "
-                        + "Unable to instantiate plugin: " 
-                        + IdConstants.AGENTREPO_PLUGIN, e);
-                }
-            }
-        }
-        
-        if (pluginInitialized) {
-            // Ideally, this add listener part should also be in the
-            // synchronized block. Here it is not to avoid a deadlock that
-            // can happen when the addListener is called on Agent Repo
-            // and it acquires a lock to ServiceSchemaManagerImpl. 
-            Map listenerConfig = new HashMap();
-            listenerConfig.put("realm", orgName);
-            IdRepoListener lter = new IdRepoListener();
-            lter.setConfigMap(listenerConfig);
-            pluginClass.addListener(token, lter);                       
-        }
-        
-        return pluginClass;
-    }
-    
-    protected IdRepo getAMRepoPlugin(SSOToken token, String orgName) 
-        throws SSOException, IdRepoException {  
-        String p = IdConstants.AMSDK_PLUGIN;
-        String cacheKey = orgName + ":" + IdConstants.AMSDK_PLUGIN_NAME;
-        IdRepo pluginClass = null;
-        synchronized (idRepoMap) {
-            Object o = idRepoMap.get(cacheKey);
-            if (o instanceof IdRepo) {
-                pluginClass = (IdRepo) o;
-            }
-        
-            if (pluginClass == null) {
-                Map amsdkConfig = new HashMap();
-                Set vals = new HashSet();
-                vals.add(DNMapper.realmNameToAMSDKName(orgName));
-                amsdkConfig.put("amSDKOrgName", vals);
-                try {
-                    Class thisClass = Thread.currentThread().
-                        getContextClassLoader().loadClass(p);
-                    pluginClass = (IdRepo) thisClass.newInstance();
-                    pluginClass.initialize(amsdkConfig);
-                    idRepoMap.put(cacheKey, pluginClass);
-                } catch (Exception e) {
-                    getDebug().error("IdServicesImpl.getAMRepoPlugin: "
-                            + "Unable to instantiate plugin: " + p, e);
-                }
-                
-                if (pluginClass != null) { // Was initialized successfully
-                    // Add listener to this plugin class!
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    listenerConfig.put("amsdk", "true");
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    pluginClass.addListener(token, lter);  
-                }
-            }
-        }
-        
-        return pluginClass;
-    }
-
-    public IdSearchResults getSpecialIdentities(SSOToken token, IdType type,
+    private IdSearchResults getSpecialIdentities(SSOToken token, IdType type,
             String orgName) throws IdRepoException, SSOException {
         
         Set pluginClasses = new OrderedSet();
 
         if (ServiceManager.isConfigMigratedTo70()
-                && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
+            && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
+            // Check the cache
+            if (specialIdentities != null) {
+                return (specialIdentities);
+            }
+
             // add the "SpecialUser plugin
-            IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);
+            IdRepo specialRepo = null;
+            Set repos = idrepoCache.getIdRepoPlugins(orgName);
+            for (Iterator items = repos.iterator(); items.hasNext();) {
+                IdRepo repo = (IdRepo) items.next();
+                if (repo instanceof SpecialRepo) {
+                    specialRepo = repo;
+                }
+            }
             
             Set opSet = specialRepo.getSupportedOperations(type);
             if (opSet != null && opSet.contains(IdOperation.READ)) {
@@ -1596,7 +1375,7 @@ public class IdServicesImpl implements IdServices {
         }
         
         if (pluginClasses.isEmpty()) {
-            return new IdSearchResults(type, orgName);
+            return (emptyUserIdentities);
         } else {
             IdRepo specialRepo = (IdRepo) pluginClasses.iterator().next();
             RepoSearchResults res = specialRepo.search(token, type, "*", 0, 0,
@@ -1605,12 +1384,12 @@ public class IdServicesImpl implements IdServices {
             Object obj[][] = new Object[1][2];
             obj[0][0] = res;
             obj[0][1] = Collections.EMPTY_MAP;
-            return combineSearchResults(token, obj, 1, type, orgName, false,
-                    null);
-
+            specialIdentities = combineSearchResults(token, obj, 1, type,
+                orgName, false, null);
         }
+        return (specialIdentities);
     }
-
+    
     public void setAttributes(SSOToken token, IdType type, String name,
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
             boolean isString) throws IdRepoException, SSOException {
@@ -1621,10 +1400,9 @@ public class IdServicesImpl implements IdServices {
         checkPermission(token, amOrgName, name, attributes.keySet(),
                 IdOperation.EDIT, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
         Set configuredPluginClasses = (attributes.containsKey("objectclass")) ?
-            getConfiguredPlugins(amOrgName, plugIns, IdOperation.SERVICE, type):
-            getConfiguredPlugins(amOrgName, plugIns, IdOperation.EDIT, type);
+            idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.SERVICE, type):
+            idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.EDIT, type);
 
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
@@ -1715,8 +1493,7 @@ public class IdServicesImpl implements IdServices {
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName, plugIns, 
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName, 
             IdOperation.SERVICE, type);
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()
@@ -1804,9 +1581,8 @@ public class IdServicesImpl implements IdServices {
         checkPermission(token, amOrgName, name, null,
             IdOperation.SERVICE, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName,
-                plugIns, IdOperation.SERVICE, type);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
+                IdOperation.SERVICE, type);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
@@ -1877,8 +1653,7 @@ public class IdServicesImpl implements IdServices {
         checkPermission(token, amOrgName, name, null, IdOperation.SERVICE,
                 type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName, plugIns, 
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName, 
             IdOperation.SERVICE, type);
         if ((configuredPluginClasses == null) ||
             configuredPluginClasses.isEmpty()
@@ -2137,8 +1912,7 @@ public class IdServicesImpl implements IdServices {
                 type);
 
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName, plugIns, 
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.SERVICE, type);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
@@ -2226,12 +2000,10 @@ public class IdServicesImpl implements IdServices {
         checkPermission(token, amOrgName, name, attrMap.keySet(),
                 IdOperation.SERVICE, type);
         // First get the list of plugins that support the create operation.
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = getConfiguredPlugins(amOrgName, plugIns, 
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.SERVICE, type);
         if ((configuredPluginClasses == null) ||
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -2292,23 +2064,8 @@ public class IdServicesImpl implements IdServices {
 
     public Set getSupportedTypes(SSOToken token, String amOrgName)
             throws IdRepoException, SSOException {
-
-        // First get the list of plugins that support the create operation.
         Set unionSupportedTypes = new HashSet();
-        if (!orgExist(token, amOrgName)) {
-            String installTime = SystemProperties.get(
-                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-            if (!installTime.equals("true")) {
-                debug.error("IdServicesImpl.getSupportedTypes: "
-                    + "Realm " + amOrgName + " does not exist.");
-            }
-            Object[] args = { amOrgName };
-            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "312", args);
-        }
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = 
-            getAllConfiguredPlugins(amOrgName, plugIns);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
@@ -2333,9 +2090,7 @@ public class IdServicesImpl implements IdServices {
 
         // First get the list of plugins that support the create operation.
         Set unionSupportedOps = new HashSet();
-        Set plugIns = getIdRepoPlugins(amOrgName);
-        Set configuredPluginClasses = 
-            getAllConfiguredPlugins(amOrgName, plugIns);
+        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName);
         if (configuredPluginClasses == null
                 || configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
@@ -2350,527 +2105,6 @@ public class IdServicesImpl implements IdServices {
             }
         }
         return unionSupportedOps;
-    }
-
-    void clearIdRepoOrgPlugin(String orgName, String serviceComponent) {
-        if (serviceComponent.equalsIgnoreCase("/")) {
-             // remove the whole realm. all dirty
-            synchronized (idRepoMap) {
-                Set keys = idRepoMap.keySet();
-                Set keysToRemove = new HashSet();
-                for (Iterator it = keys.iterator(); it.hasNext(); ) {
-                    String cachekey = (String) it.next();
-                    String [] cachedOrgName = cachekey.split(":");
-                    if (cachedOrgName[0].equalsIgnoreCase(orgName)) {
-                        keysToRemove.add(cachekey);
-                    }
-                }
-                // we will need to remove all its content/instance as well.
-                // including special repo.
-                Set removeInstance = new HashSet();
-                for (Iterator it = keysToRemove.iterator();it.hasNext();) {
-                    //get all the instance to shutdown 
-                    //then remove key from idrepomap
-                    String cachekey = (String) it.next();
-                    Object o = idRepoMap.get(cachekey);
-                    if (o instanceof IdRepo) {
-                        // special repo.
-                        removeInstance.add(o);
-                    } else {
-                        Map rMap = (Map) o;
-                        removeInstance.addAll(rMap.values());
-                    }
-                    idRepoMap.remove(cachekey);
-                }
-
-                for (Iterator it =  removeInstance.iterator(); it.hasNext();) {
-                    IdRepo repo = (IdRepo) it.next();
-                    repo.removeListener();
-                    repo.shutdown();
-                }
-            }  // sync
-        }
-    }
-
-    public void clearIdRepoPlugins(String orgName, 
-        String serviceComponent, int type) {
-
-        if (getDebug().messageEnabled()) {
-            getDebug().message("IdServicesImpl.clearIdRepoPlugins(): " +
-                "orgName: " + orgName + "; serviceComponent: " + 
-                serviceComponent + "Cleanup IdRepo Plugins is called...\n."+
-                " Cleaning up the map.." + idRepoMap);
-        }
-
-        if (serviceComponent.equalsIgnoreCase("/")) {
-            clearIdRepoOrgPlugin(orgName, serviceComponent);
-            return;
-        }
-
-        Set dsNameSet = new HashSet();
-        Set removeInstance = new HashSet();
-        synchronized (idRepoMap) {
-            Set keys = idRepoMap.keySet();
-            Set keysToRemove = new HashSet();
-            for (Iterator it = keys.iterator(); it.hasNext(); ) {
-                String cachekey = (String) it.next();
-                Object o = idRepoMap.get(cachekey);
-                if (o instanceof IdRepo) {
-                    // do nothing this is a special repo.
-                    // special repos do not change.
-                } else {
-                    // see if cachekey matches orgname. 
-                    // cachekey is in following format: 
-                    // dc=opensso,dc=java,dc=net:LDAPv3ForAMDS
-                    // o=trealm2,ou=services,dc=opensso,dc=java,dc=net
-                    // :LDAPv3
-                    // have to stripped off ":*"
-                    // do it inside the else clause below.
-                    String [] cachedOrgName = cachekey.split(":");
-                    if (cachedOrgName[0].equalsIgnoreCase(orgName)) {
-                        Map rMap = (Map) o;
-                        Set rKeys = rMap.keySet();
-                        // rMap key is name of the datastore
-                        // rMap value is the datastore instance.
-                        for (Iterator it2 = rKeys.iterator(); 
-                            it2.hasNext(); ) {
-                            String dsName = (String) it2.next();
-                            String slashDsName = "/" + dsName;
-                            if (dsName.equalsIgnoreCase(serviceComponent) 
-                                || slashDsName.equalsIgnoreCase(
-                                serviceComponent) ) {
-                                dsNameSet.add(dsName);  // save the instance name
-                                // get all the instance for this datastore
-                                removeInstance.add(rMap.get(dsName)); 
-                                keysToRemove.add(cachekey);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            for (Iterator it = keysToRemove.iterator(); it.hasNext(); ) {
-                String cachekey = (String) it.next();
-                Object o = idRepoMap.get(cachekey);
-                if (o instanceof IdRepo) {
-                    // do nothing this is a special repo.
-                    // special repos do not change.
-                } else {
-                    Map rMap = (Map) o;
-                    for (Iterator it2 = dsNameSet.iterator(); it2.hasNext(); ) {
-                        String localName = (String) it2.next();
-                        rMap.remove(localName);
-                    }
-                }
-            }
-        }
-
-        // shutdown the datastore that changed.
-        for (Iterator it = removeInstance.iterator(); it.hasNext(); ) {
-            IdRepo repo = (IdRepo) it.next();
-            repo.removeListener();
-            repo.shutdown();
-        }
-        synchronized (_instance) {
-            if (!shutdownCalled) {
-                // restart the necessary datastore
-                if (type == ServiceListener.ADDED ||
-                    type == ServiceListener.MODIFIED) {
-                    SSOToken stoken = (SSOToken) AccessController
-                        .doPrivileged(AdminTokenAction.getInstance());
-                    Set pluginsNames = getIdRepoPlugins(orgName);
-                    getInitializedPlugins(stoken, orgName, pluginsNames);
-                }
-            }
-        }
-    }
-    
-    
-    public void clearIdRepoPlugins() {
-        if (getDebug().messageEnabled()) {
-            getDebug().message("IdServicesImpl.cleanupIdRepoPlugins(): " +
-                "Cleanup IdRepo Plugins is called...\n. Cleaning up the map.." +
-                idRepoMap);
-        }
-        
-        Set localSet = new HashSet();
-        synchronized (idRepoMap) {
-            Set keys = idRepoMap.keySet();
-            for (Iterator it = keys.iterator(); it.hasNext(); ) {
-                String cachekey = (String) it.next();
-                Object o = idRepoMap.get(cachekey);
-                if (o instanceof IdRepo) {
-                    localSet.add(idRepoMap.get(cachekey));
-                } else {
-                    Map rMap = (Map) o;
-                    localSet.addAll(rMap.values());
-                }
-            }
-            idRepoMap.clear();
-        }
-
-        // FIXME: Shutdown should not happen here !!!
-        // TODO:
-        for (Iterator it = localSet.iterator(); it.hasNext(); ) {
-            IdRepo repo = (IdRepo) it.next();
-            repo.removeListener();
-            repo.shutdown();
-        }
-    }
-
-    private Set getIdRepoPlugins(String orgName) {
-        if (idRepoPlugins == null) {
-            return (Collections.EMPTY_SET);
-        }
-        if (ServiceManager.isCoexistenceMode()
-                && !idRepoPlugins.contains("amSDK")) {
-            idRepoPlugins.add("amSDK");
-        }
-        return idRepoPlugins;
-    }
-
-    public void reloadIdRepoServiceSchema() {
-        // Re-Load !
-        idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
-    }
-       
-    
-    private Set getInitializedPlugins(SSOToken token, String orgName, 
-            Set pluginNames) {
-        
-        Set pluginClasses = new OrderedSet();
-        // Check in cache if plugins are already instantiated.
-        Iterator it = pluginNames.iterator();
-        while (it.hasNext()) {
-            String p = (String) it.next();
-                        
-            // Check if it is Legacy mode & if the plugin is AM SDK. If so skip
-            // it because, AM SDK plugin is always added by default in Legacy
-            // mode
-            if (ServiceManager.isCoexistenceMode()
-                    && p.equals(IdConstants.AMSDK_PLUGIN_NAME)) {
-                continue;
-            }
-                        
-            String cacheKey = orgName + ":" + p;
-            Set pNames = getConfiguredPluginNames(orgName, p);
-            IdRepo pClass = null;
-            Map classMap = null;
-            synchronized (idRepoMap) {
-                Object obj = idRepoMap.get(cacheKey);
-                if (obj instanceof Map) {
-                    // set it to class map only if this is an instance of
-                    // Map. It could possibly be an IdRepo impl class in some
-                    // cases.
-                    classMap = (Map) obj;
-                }
-
-                if ((classMap != null) && (!classMap.isEmpty())) {
-                    // This plugin is in cache. Check for
-                    // support of operation and type and add
-                    // to list of plugins to be invoked.
-                    Iterator it2 = classMap.keySet().iterator();
-                    while (it2.hasNext()) {
-                        String pName = (String) it2.next();
-                        pClass = (IdRepo) classMap.get(pName);
-                        pluginClasses.add(pClass);
-                        if (pNames != null) {
-                            pNames.remove(pName);
-                        }
-                    }
-                    
-                } else {
-                    // Not in cache. Invoke and initialize this class.
-                    if (pNames == null) {
-                        // Update the cache with empty HashMap
-                        idRepoMap.put(cacheKey, Collections.EMPTY_MAP);
-                        continue; // go to start of while
-                    }
-                }
-                if (pNames != null) {
-                    Iterator it2 = pNames.iterator();
-                    while (it2.hasNext()) {
-                        String pn = (String) it2.next();
-                        Map configMap = getConfigMap(orgName, p, pn);
-                        if (configMap != null && !configMap.isEmpty()) {
-                            Set vals = (Set) configMap.get(IdConstants.ID_REPO);
-                            if (vals != null) {
-                                String className = (String) vals.iterator()
-                                        .next();
-                                try {
-                                    Class thisClass = Thread.currentThread().
-                                        getContextClassLoader().
-                                            loadClass(className);
-                                    IdRepo thisPlugin = (IdRepo) thisClass
-                                            .newInstance();
-                                    thisPlugin.initialize(configMap);
-                                    // Add listener to this plugin class!
-                                    Map listenerConfig = new HashMap();
-                                    listenerConfig.put("realm", orgName);
-                                    if (className.equals(
-                                            IdConstants.AMSDK_PLUGIN)) {
-                                        listenerConfig.put("amsdk", "true");
-                                    }
-                                    listenerConfig.put("plugin-name", pn);
-                                    IdRepoListener lter = new IdRepoListener();
-                                    lter.setConfigMap(listenerConfig);
-                                    thisPlugin.addListener(token, lter);
-                                    Map tmpMap = (Map) idRepoMap.get(cacheKey);
-                                    if ((tmpMap == null) ||
-                                        (tmpMap.isEmpty())) {
-                                        tmpMap = new HashMap();
-                                    }
-                                    tmpMap.put(pn, thisPlugin);
-                                    idRepoMap.put(cacheKey, tmpMap);
-
-                                    pluginClasses.add(thisPlugin);
-
-                                } catch (Exception e) {
-                                    getDebug().error("IdServicesImpl."
-                                            + "getConfiguredPlugins: Unable to" 
-                                            + " instantiate plugin: " 
-                                            + className, e);
-                                }
-                            }
-                        }
-                    } // end inner while it.hasNext()
-                } // if
-            } // end sync
-        } // end while
-        
-        return pluginClasses;
-    }
-
-    private Set getConfiguredPlugins(
-        String orgName,
-        Set pluginNames, 
-        IdOperation op, 
-        IdType type
-    ) throws SSOException, IdRepoException {
-        // Check and load what is in the cache.
-        Set pluginClasses = new OrderedSet();
-        
-        SSOToken token = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-            
-        if (ServiceManager.isConfigMigratedTo70()
-                && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
-            // add the "SpecialUser plugin
-            IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);
-            
-            Set opSet = specialRepo.getSupportedOperations(type);
-            if (opSet != null && opSet.contains(op)) {
-                pluginClasses.add(specialRepo);
-            }
-        }
-
-        // add the "AgentRepoUser" plugin only if revision number of
-        // sunIdentityRepository service is greater than or equal to 30.
-        // This is for backward compatibility.
-
-        if (svcRevisionNumber >= 30) {
-            IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
-            
-            Set agOpSet = agentRepo.getSupportedOperations(type);
-            if (agOpSet != null && agOpSet.contains(op)) {
-                pluginClasses.add(agentRepo);
-            }
-        }
-        
-
-        if (ServiceManager.isCoexistenceMode()) { 
-            // Legacy Mode. Add AM Repo plugin by default.
-
-            IdRepo amRepo = getAMRepoPlugin(token, orgName);
-            
-            Set opSet = amRepo.getSupportedOperations(type);
-            if (opSet != null && opSet.contains(op)) {
-                    pluginClasses.add(amRepo);
-            }
-            
-        }
-
-        // Get rest of the plugins configured at the realm
-        Set otherPlugins = (OrderedSet) getInitializedPlugins(token, orgName, 
-                pluginNames);
-        
-        // Add only the plugins which support the given operation
-        Iterator iter = otherPlugins.iterator();
-        Object[] args = { "", op.getName(), type.getName() };
-        while (iter.hasNext()) {
-            IdRepo idRepoPlugin = (IdRepo) iter.next();
-            args[0] = idRepoPlugin.getClass().getName();
-            Set opSet = idRepoPlugin.getSupportedOperations(type);
-            if (opSet != null && opSet.contains(op)) {
-                pluginClasses.add(idRepoPlugin);
-            }
-        }
-        if (pluginClasses == null || pluginClasses.isEmpty()) {
-            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "305", args); 
-        }
-        
-        return pluginClasses;
-    }// end getConfiguredPlugins
-
-    private Set getAllConfiguredPlugins(String orgName, Set pluginNames)
-        throws SSOException, IdRepoException {
-        // Check and load what is in the cache.
-        Set pluginClasses = new OrderedSet();
-        SSOToken token = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        
-        if (!orgExist(token, orgName)) {
-            String rName = DNMapper.orgNameToRealmName(orgName);
-            debug.error("IdServicesImpl.getAllConfiguredPlugins: "
-                + "Realm " + rName + " does not exist.");
-            Object[] args = { rName };
-            throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
-                    "312", args);
-        }
-        
-        if (ServiceManager.isConfigMigratedTo70()
-                && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
-            // add the "SpecialUser plugin
-            IdRepo specialRepo = getSpecialRepoPlugin(token, orgName);
-            pluginClasses.add(specialRepo);            
-        }
-
-        // add the "AgentRepoUser" plugin only if revision number of
-        // sunIdentityRepository service is greater than or equal to 30.
-        // This is for backward compatibility.
-
-        if (svcRevisionNumber >= 30) {
-            IdRepo agentRepo = getAgentRepoPlugin(token, orgName);
-            pluginClasses.add(agentRepo);            
-        }
-
-        if (ServiceManager.isCoexistenceMode()) {
-            
-            IdRepo amRepo = getAMRepoPlugin(token, orgName);            
-            pluginClasses.add(amRepo);                
-        }
-        
-        // Get rest of the plugins configured at the realm
-        pluginClasses.addAll(getInitializedPlugins(token, orgName, 
-                pluginNames));
-
-        return pluginClasses;
-    }// end getAllConfiguredPlugins
-
-    private Set getConfiguredPluginNames(String orgName, String schemaName) {
-        Set cPlugins = null;
-        SSOToken token = (SSOToken) AccessController
-                .doPrivileged(AdminTokenAction.getInstance());
-        try {
-            ServiceConfigManager scm = new ServiceConfigManager(token,
-                    IdConstants.REPO_SERVICE, "1.0");
-            if (scm == null) {
-                // Service not configured, could be pre AM 70
-                // return null
-                return cPlugins;
-            }
-            ServiceConfig sc = scm.getOrganizationConfig(orgName, null);
-            if (sc == null) {
-                // Plugin not configured for this organization
-                // return null
-                return cPlugins;
-            }
-
-            ServiceConfig subConfig = null;
-            Set plugins = sc.getSubConfigNames();
-            if (plugins != null && !plugins.isEmpty()) {
-                Iterator items = plugins.iterator();
-                while (items.hasNext()) {
-                    String pName = (String) items.next();
-                    subConfig = sc.getSubConfig(pName);
-                    if (subConfig != null
-                            && subConfig.getSchemaID().equalsIgnoreCase(
-                                    schemaName)) {
-                        if (cPlugins == null) {
-                            cPlugins = new HashSet();
-                        }
-                        cPlugins.add(pName);
-                    }
-                }
-            }
-            return cPlugins;
-        } catch (SMSException smse) {
-            // the if condition below is added to avoid writing this message
-            // in debug logs at install time. Durng installation, due
-            // a call from amAuth.xml, idrepo is invoked before idrepo service
-            // is loaded. The condition below returns false and hence
-            // we avoid writing to debug logs at install time
-            if (ServiceManager.isConfigMigratedTo70()) {
-                if (getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "SM Exception: unable to get plugin information", smse);
-                }
-            }
-            return cPlugins;
-        } catch (SSOException ssoe) {
-            if (debug.warningEnabled()) {
-                getDebug().warning("SSO Exception: ", ssoe);
-            }
-            return cPlugins;
-        }
-
-    }
-
-    private Map getConfigMap(String orgName, String pluginName,
-            String configName) {
-        SSOToken token = (SSOToken) AccessController
-                .doPrivileged(AdminTokenAction.getInstance());
-        if (ServiceManager.isCoexistenceMode() && pluginName.equals("amSDK")) {
-            Map amsdkConfig = new HashMap();
-            Set vals = new HashSet();
-            vals.add(DNMapper.realmNameToAMSDKName(orgName));
-            amsdkConfig.put("amSDKOrgName", vals);
-            return amsdkConfig;
-        }
-        Map configMap = Collections.EMPTY_MAP;
-        try {
-            ServiceConfigManager scm = new ServiceConfigManager(token,
-                    IdConstants.REPO_SERVICE, "1.0");
-            if (scm == null) {
-                // Plugin not configured for this organization
-                // return an empty map.
-                return configMap;
-            }
-            ServiceConfig sc = scm.getOrganizationConfig(orgName, null);
-            if (sc == null) {
-                // plugin not configured. Return empty Map
-                return configMap;
-            }
-
-            ServiceConfig subConfig = sc.getSubConfig(configName);
-            if (subConfig != null
-                    && subConfig.getSchemaID().equalsIgnoreCase(pluginName)) {
-                configMap = subConfig.getAttributes();
-            }
-            /*
-             * Set plugins = sc.getSubConfigNames(); if (plugins != null &&
-             * !plugins.isEmpty()) { Iterator items = plugins.iterator(); while
-             * (items.hasNext()) { String pName = (String) items.next();
-             * subConfig = sc.getSubConfig(pName); if
-             * (subConfig.getSchemaID().equalsIgnoreCase(pluginName)) {
-             * configMap = subConfig.getAttributes(); break; } } }
-             */
-
-            return configMap;
-        } catch (SMSException smse) {
-            getDebug().error(
-                "IdServicesImpl.getConfigMap: "
-                + "SM Exception: unable to get plugin information",
-                smse);
-            return configMap;
-        } catch (SSOException ssoe) {
-            getDebug().error(
-                "IdServicesImpl.getConfigMap: "
-                + "SSO Exception: ", ssoe);
-            return configMap;
-        }
-
     }
 
     private Map combineAttrMaps(Set setOfMaps, boolean isString) {
@@ -3046,6 +2280,7 @@ public class IdServicesImpl implements IdServices {
         if (amsdkIncluded) {
             RepoSearchResults amsdkRepoRes = (RepoSearchResults) 
                 amsdkResults[0][0];
+
             Set results = amsdkRepoRes.getSearchResults();
             Map attrResults = amsdkRepoRes.getResultAttributes();
             Iterator it = results.iterator();
@@ -3160,46 +2395,23 @@ public class IdServicesImpl implements IdServices {
             return true;
 
         } catch (DelegationException dex) {
-            getDebug().error(
-                    "IdServicesImpl.checkPermission "
-                    + "Got Delegation Exception: ", dex);
+            getDebug().error("IdServicesImpl.checkPermission " +
+                "Got Delegation Exception: ", dex);
             Object[] args = { op.getName(), token.getPrincipal().getName() };
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "402", args);
         }
     }
 
-    private boolean orgExist(SSOToken token, String orgName) {
-        // see if the realm actually exists
-        boolean isExist = false;
-        try {
-            ServiceConfigManager scm = new ServiceConfigManager(token,
-                    IdConstants.REPO_SERVICE, "1.0");
-            if (scm != null) {
-                if (scm.getOrganizationConfig(orgName, null) != null) {
-                    isExist = true;
-                } else {
-                    if (debug.messageEnabled()) {
-                        debug.message("IdServicesImpl.orgExist organization"
-                            + " does not exist. orgName=" + orgName);
-                    }
-                }
-            } else {
-                if (debug.messageEnabled()) {
-                    debug.message("IdServicesImpl.orgExist service not"
-                        + " configured for this org. orgName=" +orgName);
-                }
-           }
-        } catch (SMSException smse) {
-            String installTime = SystemProperties.get(
-                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-            if (!installTime.equals("true")) {
-                getDebug().error("IdServicesImpl.orgExist: "
-                    + " sms Exception: realm not found", smse);
-            }
-        } catch (SSOException ssoe) {
-            getDebug().error("IdServicesImpl.orgExist: "
-                + " SSO  Exception: realm not found", ssoe);
-        }
-        return isExist;
+    public void clearIdRepoPlugins() {
+        idrepoCache.clearIdRepoPluginsCache();
+    }
+
+    public void clearIdRepoPlugins(String orgName, String serviceComponent,
+        int type) {
+        idrepoCache.clearIdRepoPluginsCache();
+    }
+
+    public void reloadIdRepoServiceSchema() {
+        idrepoCache.clearIdRepoPluginsCache();
     }
 }

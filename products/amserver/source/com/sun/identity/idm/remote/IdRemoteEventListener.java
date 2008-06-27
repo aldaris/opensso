@@ -1,79 +1,68 @@
 /**
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 2005 Sun Microsystems Inc. All Rights Reserved
- *
- * The contents of this file are subject to the terms
- * of the Common Development and Distribution License
- * (the License). You may not use this file except in
- * compliance with the License.
- *
- * You can obtain a copy of the License at
- * https://opensso.dev.java.net/public/CDDLv1.0.html or
- * opensso/legal/CDDLv1.0.txt
- * See the License for the specific language governing
- * permission and limitations under the License.
- *
- * When distributing Covered Code, include this CDDL
- * Header Notice in each file and include the License file
- * at opensso/legal/CDDLv1.0.txt.
- * If applicable, add the following below the CDDL Header,
- * with the fields enclosed by brackets [] replaced by
- * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
- *
- * $Id: EventListener.java,v 1.12 2008-06-27 20:56:23 arviranga Exp $
- *
- */
+* DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+*
+* Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
+*
+* The contents of this file are subject to the terms
+* of the Common Development and Distribution License
+* (the License). You may not use this file except in
+* compliance with the License.
+*
+* You can obtain a copy of the License at
+* https://opensso.dev.java.net/public/CDDLv1.0.html or
+* opensso/legal/CDDLv1.0.txt
+* See the License for the specific language governing
+* permission and limitations under the License.
+*
+* When distributing Covered Code, include this CDDL
+* Header Notice in each file and include the License file
+* at opensso/legal/CDDLv1.0.txt.
+* If applicable, add the following below the CDDL Header,
+* with the fields enclosed by brackets [] replaced by
+* your own identifying information:
+* "Portions Copyrighted [year] [name of copyright owner]"
+*
+* $Id: IdRemoteEventListener.java,v 1.1 2008-06-27 20:56:24 arviranga Exp $
+*/
 
-package com.iplanet.am.sdk.remote;
+package com.sun.identity.idm.remote;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import netscape.ldap.util.DN;
 
-import com.iplanet.am.sdk.AMEvent;
-import com.iplanet.am.sdk.AMEventManagerException;
-import com.iplanet.am.sdk.AMObjectListener;
-import com.iplanet.am.sdk.common.ICachedDirectoryServices;
-import com.iplanet.am.sdk.common.IDirectoryServices;
-import com.iplanet.am.sdk.common.MiscUtils;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.NotificationHandler;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.comm.share.Notification;
 import com.iplanet.services.naming.WebtopNaming;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
+import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.CreateServiceConfig;
 import com.sun.identity.sm.SMSSchema;
 
 /**
- * The <code>EventListener</code> handles the events generated from the
+ * The <code>IdRemoteEventListener</code> handles the events generated from the
  * server. If notification URL is provided, the class registers the URL with the
  * Server and waits for notifications. Else it polls the server at configurable
  * time periods to get updates from the server.
  */
-class EventListener {
+public class IdRemoteEventListener {
 
-    private static Debug debug = RemoteServicesImpl.getDebug();
+    private static Debug debug;
     
     private static SOAPClient client;
-
-    private static Set listeners = new HashSet();
     
-    private static EventListener instance = null;
+    private static IdRemoteEventListener instance;
     
     private static final String NOTIFICATION_PROPERTY = 
         "com.sun.identity.idm.remote.notification.enabled";
@@ -83,10 +72,13 @@ class EventListener {
     
     private static final int DEFAULT_CACHE_POLLING_TIME = 1;
     
+    private static final String IDREPO_SERVICE = "IdRepoServiceIF";
     
-    public synchronized static EventListener getInstance() {
+    private static IdRepoListener repoListener;
+    
+    public synchronized static IdRemoteEventListener getInstance() {
         if (instance == null) {
-            instance = new EventListener();
+            instance = new IdRemoteEventListener();
         }
         return instance;
     }
@@ -98,10 +90,21 @@ class EventListener {
      * @param set
      *            of listeners interested in obtaining change events
      */
-    private EventListener() {
+    private IdRemoteEventListener() {
+        
+        // Set debug
+        if (debug == null) {
+            debug = IdRemoteServicesImpl.getDebug();
+        }
 
         // Construct the SOAP Client
-        client = new SOAPClient(RemoteServicesImpl.SDK_SERVICE);
+        if (client == null) {
+            client = new SOAPClient(IDREPO_SERVICE);
+        }
+        
+        if (repoListener == null) {
+            repoListener = new IdRepoListener();
+        }
                 
         // Check if notification is enabled 
         // Default the notification enabled to true if the property
@@ -114,16 +117,16 @@ class EventListener {
             // Check if notification URL is provided
             URL url = null;
             try {
+                // Throws exception if NotificationURL is null
                 url = WebtopNaming.getNotificationURL();
-
-                // Register for notification with AM Server
-                client.send("registerNotificationURL", url.toString(), null, 
-                        null);
+                
+                // Register for IdRepo Service
+                client.send("registerNotificationURL_idrepo", url.toString(),
+                    null, null);
 
                 // Register with PLLClient for notificaiton
-                PLLClient.addNotificationHandler(
-                        RemoteServicesImpl.SDK_SERVICE,
-                        new EventNotificationHandler());
+                PLLClient.addNotificationHandler(IDREPO_SERVICE,
+                        new IdRepoEventNotificationHandler());
 
                 if (debug.messageEnabled()) {
                     debug.message("EventService: Using notification "
@@ -135,7 +138,7 @@ class EventListener {
                 if (debug.warningEnabled()) {
                     debug.warning("EventService: Registering for "
                             + "notification via URL failed for " + url 
-                            + e.getMessage()
+                            + " Exception: " + e.getMessage()
                             + "\nUsing polling mechanism for updates");
                 }
                 // Start Polling thread only if enabled.
@@ -186,21 +189,6 @@ class EventListener {
         }
     }
 
-    public void addListener(SSOToken token, AMObjectListener listener)
-            throws AMEventManagerException {
-        // Validate the token
-        try {
-            SSOTokenManager.getInstance().validateToken(token);
-        } catch (SSOException ssoe) {
-            throw (new AMEventManagerException(ssoe.getMessage(), "902"));
-        }
-
-        // Add to listeners
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
     /**
      * Sends notifications to listeners added via <code>addListener</code>.
      * The parameter <code>nItem</code> is an XML document having a single
@@ -235,9 +223,9 @@ class EventListener {
      *            notification event as a xml document
      * 
      */
-    static void sendNotification(String nItem) {
+    static void sendIdRepoNotification(String nItem) {
         if (debug.messageEnabled()) {
-            debug.message("EventListener::sendNotification: "
+            debug.message("EventListener::sendIdRepoNotification: "
                     + "Received notification.");
         }
 
@@ -247,101 +235,58 @@ class EventListener {
         try {
             Map attrs = CreateServiceConfig.getAttributeValuePairs(SMSSchema
                     .getXMLDocument(sb.toString(), false).getDocumentElement());
-            if (debug.messageEnabled()) {
-                debug.message("EventListener::sendNotification "
+            if (attrs == null || attrs.isEmpty()) {
+                if (debug.warningEnabled()) {
+                    debug.warning("EventListener::sendIdRepoNotification: "
+                            + "Invalid event: " + attrs);
+                }
+                return;
+            } else if (debug.messageEnabled()) {
+                debug.message("EventListener::sendIdRepoNotification "
                         + "Decoded Event: " + attrs);
             }
-            // Get method name
-            String method = getAttributeValue(attrs, METHOD);
-            if (method == null) {
-                handleError("invalid method name: " + attrs.get(METHOD));
-            }
-            // Get entity name
+
+            // Parse the entity name to get the realm name, and method
             String entityName = getAttributeValue(attrs, ENTITY_NAME);
-            if (entityName == null) {
-                handleError("invalid entity Name: " + attrs.get(ENTITY_NAME));
+            String method = getAttributeValue(attrs, METHOD);
+            if (entityName == null || entityName.length() == 0
+                    || method == null || method.length() == 0) {
+                if (debug.warningEnabled()) {
+                    debug.warning("EventListener::sendIdRepoNotification: "
+                            + "Invalid universalID or method: " + entityName
+                            + " method");
+                }
+                return;
             }
-            String entryDN = MiscUtils.formatToRFC(entityName);
-            IDirectoryServices dsServices = RemoteServicesFactory.getInstance();
-            // Switch based on method
+            String pureId = entityName;
+            String amsdkDN = null;
+            int dnIndex = entityName.indexOf(",amsdkdn=");
+            if (dnIndex > 0) {
+                pureId = entityName.substring(0, dnIndex);
+                amsdkDN = entityName.substring(dnIndex + 9);
+            }
+
+            DN dnObject = new DN(pureId);
+            DN realmDN = dnObject.getParent().getParent();
+
+            // Construct IdRepoListener
+            Map configMap = new HashMap();
+            configMap.put("realm", realmDN.toRFCString());
+            repoListener.setConfigMap(configMap);
+
             if (method.equalsIgnoreCase(OBJECT_CHANGED)) {
                 int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
-                // Call objectChanged method on the listeners
-                // Update the Remote Cache
-
-                if (RemoteServicesFactory.isCachingEnabled()) {
-                    ((ICachedDirectoryServices) dsServices).dirtyCache(entryDN,
-                            eventType, false, false, Collections.EMPTY_SET);
-                }
-                synchronized (listeners) {
-                    for (Iterator items = listeners.iterator(); 
-                        items.hasNext();) 
-                    {
-                        AMObjectListener listener = (AMObjectListener) items
-                                .next();
-                        listener.objectChanged(entityName, eventType, null);
-                    }
-                }
-            } else if (method.equalsIgnoreCase(OBJECTS_CHANGED)) {
-                int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
-                Set attributes = (Set) attrs.get(attrs.get(ATTR_NAMES));
-                if (RemoteServicesFactory.isCachingEnabled()) {
-                    ((ICachedDirectoryServices) dsServices).dirtyCache(entryDN,
-                            eventType, true, false, attributes);
-                }
-                // Call objectsChanged method on the listeners
-                synchronized (listeners) {
-                    for (Iterator items = listeners.iterator(); 
-                        items.hasNext();) 
-                    {
-                        AMObjectListener listener = (AMObjectListener) items
-                                .next();
-                        listener.objectsChanged(entityName, eventType,
-                                attributes, null);
-                    }
-                }
-            } else if (method.equalsIgnoreCase(PERMISSIONS_CHANGED)) {
-                if (RemoteServicesFactory.isCachingEnabled()) {
-                    ((ICachedDirectoryServices) dsServices).dirtyCache(entryDN,
-                            AMEvent.OBJECT_CHANGED, false, true,
-                            Collections.EMPTY_SET);
-                }
-                // Call permissionChanged method on the listeners
-                synchronized (listeners) {
-                    for (Iterator items = listeners.iterator(); 
-                        items.hasNext();) 
-                    {
-                        AMObjectListener listener = (AMObjectListener) items
-                                .next();
-                        listener.permissionsChanged(entityName, null);
-                    }
-                }
+                repoListener.objectChanged(entityName, eventType, null);
             } else if (method.equalsIgnoreCase(ALL_OBJECTS_CHANGED)) {
-                if (RemoteServicesFactory.isCachingEnabled()) {
-                    ((ICachedDirectoryServices) dsServices).clearCache();
-                }
-                // Call allObjectsChanged method on listeners
-                synchronized (listeners) {
-                    for (Iterator items = listeners.iterator(); 
-                        items.hasNext();) 
-                    {
-                        AMObjectListener listener = (AMObjectListener) items
-                                .next();
-                        listener.allObjectsChanged();
-                    }
-                }
+                repoListener.allObjectsChanged();
             } else {
                 // Invalid method name
                 handleError("invalid method name: " + method);
             }
-            if (debug.messageEnabled()) {
-                debug.message("EventListener::sendNotification: Sent "
-                        + "notification.");
-            }
         } catch (Exception e) {
             if (debug.warningEnabled()) {
-                debug.warning("EventListener::sendNotification: Unable to send"
-                        + " notification: " + nItem, e);
+                debug.warning("EventListener::sendIdRepoNotification: "
+                        + "Unable to send notification: " + nItem, e);
             }
         }
     }
@@ -400,30 +345,28 @@ class EventListener {
         public void run() {
             try {
                 Object obj[] = { new Integer(pollingTime) };
-                Set mods = (Set) client.send("objectsChanged", obj, null, null);
+                Set mods = (Set) client.send("objectsChanged_idrepo", obj,
+                    null, null);
                 if (debug.messageEnabled()) {
-                    debug.message("EventListener:NotificationRunnable "
-                        + "retrived changes: " + mods);
+                    debug.message("IdRemoteEventListener:NotificationRunnable "
+                        + "retrived idrepo changes: " + mods);
                 }
                 Iterator items = mods.iterator();
                 while (items.hasNext()) {
-                    sendNotification((String) items.next());
+                    sendIdRepoNotification((String) items.next());
                 }
-            } catch (NumberFormatException nfe) {
-                // Should not happend
-                debug.warning("EventListener::NotificationRunnable:run "
-                    + "Number Format Exception for polling Time: "
-                    + pollingTime, nfe);
             } catch (Exception ex) {
-                debug.warning("EventListener::NotificationRunnable:run "
-                    + "Exception", ex);
+                if (debug.warningEnabled()) {
+                    debug.warning("IdRemoteEventListener::" +
+                        "NotificationRunnable:run Exception", ex);
+                }
             }
         }
     }
 
-    static class EventNotificationHandler implements NotificationHandler {
+    static class IdRepoEventNotificationHandler implements NotificationHandler {
 
-        EventNotificationHandler() {
+        IdRepoEventNotificationHandler() {
             // Empty constructor
         }
 
@@ -433,31 +376,26 @@ class EventListener {
                         .elementAt(i);
                 String content = notification.getContent();
                 if (debug.messageEnabled()) {
-                    debug.message("EventListener:" 
-                            + "IdRepoEventNotificationHandler: received " 
-                            + "notification: " + content);
-
+                    debug.message("IdRemoteEventListener:" 
+                            + "IdRepoEventNotificationHandler: "
+                            + " received notification: " + content);
                 }
                 // Send notification
-                sendNotification(content);
+                sendIdRepoNotification(content);
             }
         }
     }
 
     // Static varaibles
-    static final String METHOD = "method";
+    public static final String METHOD = "method";
 
-    static final String ENTITY_NAME = "entityName";
+    public static final String ENTITY_NAME = "entityName";
 
-    static final String EVENT_TYPE = "eventType";
+    public static final String EVENT_TYPE = "eventType";
 
-    static final String ATTR_NAMES = "attrNames";
+    public static final String ATTR_NAMES = "attrNames";
 
-    static final String OBJECT_CHANGED = "objectChanged";
+    public static final String OBJECT_CHANGED = "objectChanged";
 
-    static final String OBJECTS_CHANGED = "objectsChanged";
-
-    static final String PERMISSIONS_CHANGED = "permissionsChanged";
-
-    static final String ALL_OBJECTS_CHANGED = "allObjectsChanged";
+    public static final String ALL_OBJECTS_CHANGED = "allObjectsChanged";
 }
