@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-06-27 18:49:39 veiming Exp $
+   $Id: build.xml,v 1.2 2008-06-29 15:32:50 kevinserwin Exp $
 
 -->
 
@@ -40,6 +40,10 @@
             <exclude name="**/built/**" />
             <exclude name="**/extlib/**" />
         </zip>
+
+       <checksum file="products/built/dist/opensso-src.zip"
+            algorithm="SHA" fileext=".sha" />
+
     </target>
 
     <target name="usage">
