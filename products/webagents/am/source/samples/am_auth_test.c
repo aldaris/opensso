@@ -42,7 +42,7 @@ usage(char **argv)
 	"usage: %s\n"
 	"       [-u user]\n"
 	"       [-p password]\n"
-	"       [-f properties_file]\n"
+	"       [-f bootstrap_properties_file]\n"
 	"       [-r url]             (overrides property)\n"
 	"       [-n cert_nick_name]  (overrides property)\n"
 	"       [-o org_name]        (overrides property)\n"

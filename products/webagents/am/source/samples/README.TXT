@@ -140,13 +140,14 @@ am_policy_test
    resource name, action.
 
    Usage: 
-      am_policy_test <property file> <agent_config_file> <ssoToken> <resource name> <action>
+      am_policy_test <bootstrap_property file> <config_properties_file> <ssoToken> <resource name> <action>
 
-   <property file> 
-       is the path to the FAMAgentBootstrap.properties bootstrap file. For example:
+   <bootstrap_property_file> 
+       is the path to the FAMAgentBootstrap.properties bootstrap file. 
+       For example:
        ../config/FAMAgentBootstrap.properties
 
-   <agent config file> 
+   <config_property_file> 
        is the path to the FAMAgentConfiguration.properties file. Even if the
        repository type is "centralized", the user still needs to provide
        a value for this property (just a file name is enough). If the 
@@ -183,8 +184,9 @@ am_auth_test
    Description: am_auth_test authenticates to the specified org (if any) using 
    the specified authentication module.
 
-   Usage: am_auth_test [-u user] [-p password] [-f properties_file] [-r url]
-                       [-n cert_nick_name] [-o org_name] [-m auth_module]
+   Usage: am_auth_test [-u user] [-p password] [-f bootstrap_properties_file] 
+                       [-r url] [-n cert_nick_name] [-o org_name] 
+		       [-m auth_module]
 
    With no options supplied on the command line, login defaults to use the
    org_name specified in the properties file and auth_module LDAP. The
@@ -197,10 +199,10 @@ am_auth_test
    line to override the value specified in the properties files. Other values
    affecting certificate based login are taken from the properties file.
 
-   The default properties file is ../../config/FAMAgentBootstrap.properties. Check to
-   make sure the appropriate properties and values are set in the properties
-   file before calling this program. The following properties are specific
-   to authentication:
+   The default properties file is ../../config/FAMAgentBootstrap.properties. 
+   Check to make sure the appropriate properties and values are set in the 
+   properties file before calling this program. The following properties are 
+   specific to authentication:
       com.sun.am.auth.orgName
       com.sun.am.auth.certificateAlias
 
@@ -216,7 +218,7 @@ am_sso_test
    
 
    Usage: 
-      am_sso_test -u user -p password [-o org_name] [-f properties_file] [-s sso_token_id] [-m auth_module]
+      am_sso_test -u user -p password [-o org_name] [-f bootstrap_properties_file] [-c config_propeties_file] [-s sso_token_id] [-m auth_module]
 
    Where:
 
@@ -225,12 +227,19 @@ am_sso_test
        user and password to login to Access Manager using the LDAP 
        authentication module.
 
-   <properties_file> 
-       the path to the properties file. If not set, the default properties 
-       file ../../config/FAMAgentBootstrap.properties is used. Check to make sure 
-       appropriate values are set in the properties file before calling 
-       this program. See the Agents documentation for more information on the 
-       properties file.
+   <bootstrap_properties_file> 
+       the path to the bootstrap_properties file. If not set, the default 
+       properties file ../../config/FAMAgentBootstrap.properties is used. 
+       Check to make sure appropriate values are set in the properties file 
+       before calling this program. See the Agents documentation for more 
+       information on the properties file.
+
+   <config_properties_file> 
+       the path to the config_properties file. If not set, the default 
+       properties file ../../config/FAMAgentConfiguration.properties is used. 
+       Check to make sure appropriate values are set in the properties file 
+       before calling this program. See the Agents documentation for more 
+       information on the properties file.
 
    <org_name> 
        Organization Name
@@ -250,7 +259,7 @@ am_log_test
 
    Usage: 
       am_log_test -n log_name -u logged_by_token_id -u user_token_id -m message 
-		    [-d log_module] [-f properties_file]
+		    [-d log_module] [-f bootstrap_properties_file]
 
    <log_name> 
       Name of Log file on Access Manager.
@@ -268,10 +277,10 @@ am_log_test
    <log_module> 
       The module name, if not specified, the default "TestModule" is used.
 
-   <properties_file>
-      path to the properties file. If not set, the default properties 
-      file ../../config/FAMAgentBootstrap.properties is used. Check to make sure 
-      appropriate values are set in the properties file before calling 
+   <bootstrap_properties_file>
+      path to the bootstrap properties file. If not set, the default properties 
+      file ../../config/FAMAgentBootstrap.properties is used. Check to make 
+      sure appropriate values are set in the properties file before calling 
       this program. See the Agents documentation for more information on the 
       properties file.
      

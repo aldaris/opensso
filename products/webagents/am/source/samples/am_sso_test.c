@@ -170,7 +170,8 @@ void Usage(char **argv) {
            " [-s sso token id]"
            " [-o org_name]"
            " [-m auth_module]"
-           " [-f properties_file]"
+           " [-f bootstrap_properties_file]"
+           " [-c config_properties_file]"
 	   " [-d]"
            "\n",
            argv[0]);
@@ -403,6 +404,7 @@ int
 main(int argc, char *argv[])
 {
     const char* prop_file = "../../config/FAMAgentBootstrap.properties";
+    const char* config_file = "../../config/FAMAgentConfiguration.properties";
     am_status_t status = AM_FAILURE;
     am_properties_t prop = AM_PROPERTIES_NULL;
     am_auth_context_t auth_ctx = NULL;
@@ -415,7 +417,9 @@ main(int argc, char *argv[])
     int j;
     char c;
     int usage = 0;
-    boolean_t dispatch_listener = B_FALSE; /* dispatch listener in a seperate thread */
+    boolean_t agentInitialized = B_FALSE; 
+    boolean_t dispatch_listener = B_FALSE; /* dispatch listener in a */
+					   /* seperate thread */
 
     for (j=1; j < argc; j++) {
         if (*argv[j]=='-') {
@@ -432,6 +436,9 @@ main(int argc, char *argv[])
 		break;
 	    case 'f':
                 prop_file = (j <= argc-1) ? argv[++j] : NULL;
+		break;
+	    case 'c':
+                config_file = (j <= argc-1) ? argv[++j] : NULL;
 		break;
 	    case 's':
                 ssoTokenID = (j <= argc-1) ? argv[++j] : NULL;
@@ -459,6 +466,10 @@ main(int argc, char *argv[])
         Usage(argv);
         return EXIT_FAILURE;
     }
+
+    am_web_init(prop_file, config_file);
+
+    am_agent_init(&agentInitialized);
 
     // initialize sso
     status = am_properties_create(&prop);

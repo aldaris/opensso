@@ -53,7 +53,7 @@ void Usage(char **argv) {
     " -l <logged_by_token_id>"
     " -m <log_message>"
     " [-d <log_module>]"
-    " [-f <properties_file>]\n",
+    " [-f <bootstrap_properties_file>]\n",
     argv[0]);
 }
 
@@ -141,7 +141,13 @@ int main(int argc, char *argv[])
     serverUrl = (char *) malloc(250);
 
     if (serverUrl != NULL) {
-	status = am_properties_get(prop, "com.sun.am.naming.url", &serverUrl);
+	status = am_properties_get(prop, 
+		   "com.sun.identity.agents.config.naming.url", &serverUrl);
+        if (strlen(serverUrl) == 0) {
+	    // The c-sdk is 2.2, the naming url property is different
+	    status = am_properties_get(prop, "com.sun.am.naming.url", 
+                                       &serverUrl);
+        }
 	if ((status == AM_SUCCESS) && (serverUrl != NULL)) {
 	   tmpUrl = strstr(serverUrl, "namingservice");
 	   if (tmpUrl != NULL) {

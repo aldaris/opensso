@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
     if(argc < 6) {
 	printf("Usage: %s "
-               "<properties_file> <agent_config_file> <sso_token> <resource_name> <action>\n",
+               "<bootstrap_properties_file> <config_properties_file> <sso_token> <resource_name> <action>\n",
                argv[0]);
 	return 0;
     }
@@ -77,8 +77,8 @@ int main(int argc, char **argv)
      * load the properties file.  This file is the properties file that is
      * used during agent initialization.  If you have installed Identity
      * server or one of its agents, you can pass the path to
-     * FAMAgentBootstrap.properties of that installation.  Make sure that the your
-     * test program has permissions to write to the log directory specified
+     * FAMAgentBootstrap.properties of that installation. Make sure that 
+     * your test program has permissions to write to the log directory specified
      * in the properties file.
      */
     status = am_properties_load(properties, argv[1]);
