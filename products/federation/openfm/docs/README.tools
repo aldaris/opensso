@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.tools,v 1.3 2008-06-25 05:48:52 qcheng Exp $
+   $Id: README.tools,v 1.4 2008-06-30 17:15:04 bigfatrat Exp $
 
 -->
 
@@ -40,12 +40,12 @@ fam.zip file.  Unzip fam.zip in a directory owned by root.
 Using The Unix Authentication "helper" Process
 ----------------------------------------------
 
-Unix authentication is only supported on Solaris/SPARC and Solaris/x86
-platforms.  In order to use Unix authentication in FAM, the amunixd
-"helper" process must be started as root.
+Unix authentication is only supported on Solaris/SPARC, Solaris/x86
+and Linux platforms.  In order to use Unix authentication in FAM, the
+amunixd "helper" process must be started as root.
 
 Find the amunixd executable in the unzipped fam.zip at
-fam/tools/helpers/{sparc,x86}.  A script to start the helper version
+fam/tools/helpers/{sparc,x86,linux}.  A script to start the helper version
 for the system can be found as fam/tools/helpers/bin/amunixd.
 
 Note that if the Unix Configuration Port attribute setting is changed
