@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.7 2008-06-25 05:54:43 qcheng Exp $
+   $Id: README,v 1.8 2008-06-30 18:09:19 mrudul_uchil Exp $
 
 -->
 
@@ -91,19 +91,19 @@ II. Configure the web services client for "StockService".
 
     Create agent profiles for "StockService" WSC :
 
-      Go to Access Control → Default realm → Agents →
+      Go to Access Control -> Default realm -> Agents ->
 
         a) Create "WSC" profile for "StockService"
-        Select Web Service Client → under Agent, click "new" → enter name as "StockService" and other required fields → Save.
-        Click on above saved profile to edit → Select required Security Mechanism, "Preserve Security Headers in Message" as
+        Select Web Service Client -> under Agent, click "new" -> enter name as "StockService" and other required fields -> Save.
+        Click on above saved profile to edit -> Select required Security Mechanism, "Preserve Security Headers in Message" as
         true (checked) and "Is Request Signed" as true (checked).
         Save changes.
         Note : If the required or selected Security Mechanism is “STSSecurity”, then 
         select STS Configuration as “SecurityTokenService" and Web Service End Point as “default”. 
 
         b) Create "WSP" profile (if not already created)
-        Select Web Service Provider → under Agent, click "new" → enter name as "wsp" and other required fields → Save.
-        Click on above saved profile to edit → Select all Security Mechanisms.
+        Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
+        Click on above saved profile to edit -> Select all Security Mechanisms.
         Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
         Save changes.
 
@@ -116,13 +116,43 @@ III. Run the samples
 
        http://<host>:<port>/StockQuoteClient/index.jsp
 
-    2. Enter "JAVA" as stock ticker symbol and click "Get Quote".
+    2. You will be redirected to Federated Access Manager's Authentication service
+       for end user login. Enter any existing Federated Access Manager user with
+       its password. Upon successful end user authentication, you will be redirected
+       back to http://<host>:<port>/StockQuoteClient/ page.
 
-    3. If successful, this will display the stock values.
+    3. Enter "JAVA" as stock ticker symbol and click "Get Quote".
+
+    4. If successful, this will display the stock values.
 
   b) Standalone Client sample :
-    1. cd StandAloneStockClient directory
 
-    2. run "ant -f build.xml". 
+    1. Login into the Federated Access Manager Console with user amadmin and <amadmin password>
+
+    famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
+
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
+
+      Go to Access Control -> Default realm -> Agents ->
+
+        a) Create "WSP" profile 
+        Select Web Service Provider -> under Agent, click "new" -> enter name as "StockServiceWSP" and other required fields -> Save.
+        Click on above saved profile to edit -> Select all Security Mechanisms.
+        Select Web Service End Point as the actual StockService end point url 
+        (default is "http://localhost:8080/StockService/StockService") and 
+        "Is Request Signature Verified" as true (checked).
+        Save changes.
+    
+        a) Modify "WSC" profile
+        Select Web Service Client -> under Agent, click on "wsc" profile to edit.
+        Enter Web Service End Point as the actual StockService end point url 
+        (default is "http://localhost:8080/StockService/StockService").
+        Save changes.
+        Note : If the required or selected Security Mechanism is “STSSecurity”, then 
+        select STS Configuration as “SecurityTokenService".
+
+    2. cd StandAloneStockClient directory
+
+    3. run "ant -f build.xml". 
     This will build and run the Standalone client sample.
 

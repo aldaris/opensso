@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.9 2008-06-25 05:54:42 qcheng Exp $
+   $Id: README.glassfish,v 1.10 2008-06-30 18:09:19 mrudul_uchil Exp $
 
 -->
 
@@ -37,12 +37,16 @@ This document assumes that users have already done the following:
 
 1. Installed the SUN Application Server 9.1 that host the web services client (WSC) 
    and web services provider (WSP). 
-2. Implemented the web services client and the web services provider.
+2. Required Web services client and Web services provider applications are 
+   implemented.
 3. Installed and configured the Federated Access Manager server. 
 
 Follow the steps below to secure the web services using FAM WSS providers.
 
-I. Federated Access Manager server (OpenSSO server)
+I. Add Java security permissions 
+
+On the Application Server that hosts Federated Access Manager server (OpenSSO server),
+Web Service Client application and Web Service Provider application :
 
 If the Security Manager is "on", add the following as Java security permissions 
 to the server.policy file of the Application Server.
@@ -172,9 +176,10 @@ V. This step is required only if you are using end user authentication or Libert
    For end user authentication and liberty , JSR 196 HTTP provider is used and must need to
    be configured in Glassfish.
 
-   1. Login into Application Server Administration Console
+   1. Login into Application Server's Administration Console
    
-   2. Expand Configuration->Security->Click on MessageSecurity-> New
+   2. For GF V2 : Expand Configuration -> Security -> Click on Message Security -> New
+      For AS 9.1 : Expand Configurations -> server-config -> Security -> Click on Message Security -> New
  
    3. Choose Authentication layer as "HttpServlet", enter Provider Type as "Server"
       ProviderID as "FAMHttpProvider", Class Name as
@@ -182,10 +187,8 @@ V. This step is required only if you are using end user authentication or Libert
    4. Save the configuration.
 
    5. The stock quote client sample already has the required configuration
-     (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint and the HTTP
-     provider id.
-      
-
+     (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint 
+     and the FAMHttpProvider id.      
 
 
 VI. Restart the SUN Application Server (Glassfish).
@@ -200,18 +203,18 @@ VII. Configure the web services client and the web services provider for Web ser
 
     Create agent profiles for WSC and WSP (if not created out of box) :
 
-      Go to Access Control → Default realm → Agents →
+      Go to Access Control -> Default realm -> Agents ->
 
         a) Create "WSC" profile
-        Select Web Service Client → under Agent, click "new" → enter name as "wsc" and other required fields → Save.
-        Click on above saved profile to edit → Select required Security Mechanism and "Is Request Signed" as true (checked).
+        Select Web Service Client -> under Agent, click "new" -> enter name as "wsc" and other required fields -> Save.
+        Click on above saved profile to edit -> Select required Security Mechanism and "Is Request Signed" as true (checked).
         Save changes.
         Note : If the required or selected Security Mechanism is “STSSecurity”, then 
         select STS Configuration as “SecurityTokenService" and Web Service End Point as “default”.
 
         b) Create "WSP" profile
-        Select Web Service Provider → under Agent, click "new" → enter name as "wsp" and other required fields → Save.
-        Click on above saved profile to edit → Select all Security Mechanisms.
+        Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
+        Click on above saved profile to edit -> Select all Security Mechanisms.
         Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
         Save changes.
 

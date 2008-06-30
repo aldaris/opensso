@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthConfig.java,v 1.2 2008-06-25 05:54:47 qcheng Exp $
+ * $Id: FAMServerAuthConfig.java,v 1.3 2008-06-30 18:09:20 mrudul_uchil Exp $
  *
  */
 
@@ -36,6 +36,9 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthConfig;
 import javax.security.auth.message.config.ServerAuthContext; 
 import com.sun.xml.ws.policy.PolicyMap;
+import com.sun.xml.ws.api.model.wsdl.WSDLPort;
+import com.sun.xml.ws.api.server.WSEndpoint;
+import javax.xml.namespace.QName;
 
 public class FAMServerAuthConfig implements ServerAuthConfig {
     
@@ -59,11 +62,18 @@ public class FAMServerAuthConfig implements ServerAuthConfig {
 
     public ServerAuthContext getAuthContext(String operation, Subject subject, 
         Map map) throws AuthException {
-        PolicyMap  pMap = (PolicyMap)map.get("POLICY");
-        if (pMap == null || pMap.isEmpty()) {
+        
+        WSEndpoint endPoint = (WSEndpoint)map.get("ENDPOINT");
+        WSDLPort port = endPoint.getPort();
+        QName serviceName = endPoint.getServiceName();
+        QName portName = endPoint.getPortName();
+        
+        if ((port == null) &&
+            (serviceName == null || serviceName.toString().length() == 0) && 
+            (portName == null || portName.toString().length() == 0)) {
             return null;
         }
-         
+        
         map.put("providername", this.appContext);
          
         this.secDisabled = FALSE;

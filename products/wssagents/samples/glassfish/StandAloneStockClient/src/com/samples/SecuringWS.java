@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecuringWS.java,v 1.2 2008-06-25 05:54:43 qcheng Exp $
+ * $Id: SecuringWS.java,v 1.3 2008-06-30 18:09:19 mrudul_uchil Exp $
  *
  */
 
@@ -94,6 +94,7 @@ public class SecuringWS {
             // Send the SOAP message to Stock Quote Service
             String response = getStockQuote(pc.getWSPEndpoint(),request);
             System.out.println("\n\nStock Service Response:\n" + response);
+            System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
