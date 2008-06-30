@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AuthSampleLoginModule.html,v 1.2 2008-06-25 05:41:12 qcheng Exp $
+   $Id: AuthSampleLoginModule.html,v 1.3 2008-06-30 17:38:28 pawand Exp $
 
 -->
 
@@ -120,7 +120,7 @@
     thrown, the user will be redirected to their default page.
     </p>
 <p>
-    Click <a href="xml/LoginModuleSample.xml">here</a> to view XML.
+    Click <a href="../../xml/LoginModuleSample.xml">here</a> to view XML.
     </p>
 </p>
 <p>
@@ -128,7 +128,7 @@
 <h3>2. Principal Object</h3>
 <p>
     This object is created by the Authentication framework if authentication 
-    succeeded. <a href="source/com/sun/identity/samples/authentication/spi/providers/SamplePrincipal.java">Source code</a>
+    succeeded. <a href="../../source/com/sun/identity/samples/authentication/spi/providers/SamplePrincipal.java">Source code</a>
     
 </p>
 </p>
@@ -218,7 +218,7 @@
     </p>
 <p>
     
-<a href="source/com/sun/identity/samples/authentication/spi/providers/LoginModuleSample.java">Source code</a>
+<a href="../../source/com/sun/identity/samples/authentication/spi/providers/LoginModuleSample.java">Source code</a>
     
 </p>
 </p>
@@ -230,7 +230,7 @@
     </p>
 <p>
 <ol>
-<li>Login to Access Manager Console as amadmin. [<a target="console" href="UI/Login">here</a>]</li>
+<li>Login to Access Manager Console as amadmin. [<a target="console" href="../../UI/Login">here</a>]</li>
 <li>Click on "Configuration" tab.</li>
 <li>Select "Core" under the Authentication table.</li>
 <li>Add <code>com.sun.identity.samples.authentication.spi.providers.LoginModuleSample</code> to "Pluggable Auth Modules Classes" attribute.</li>
@@ -244,7 +244,7 @@
 <ol>
 <li>Compile LoginModuleSample.java and SamplePrincipal.java</li>
 <li>Copy the compiled classes to web application's WEB-INF/classes directory</li>
-<li>Copy this <a target="console" href="xml/LoginModuleSample.xml">XML</a> to web application's config/auth/default directory.</li>
+<li>Copy this <a target="console" href="../../xml/LoginModuleSample.xml">XML</a> to web application's config/auth/default directory.</li>
 </ol>
 </p>
 </p>
@@ -252,7 +252,7 @@
 <hr noshade="yes" size="1">
 <h3>5. Run the sample</h3>
 <p>
-    Click <a target="console" href="UI/Login?module=LoginModuleSample">here</a>.
+    Click <a target="console" href="../../UI/Login?module=LoginModuleSample">here</a>.
     (If you choose to use a realm other than the root realm, add &amp;org= and 
     the realm name to this URL).
     </p>
