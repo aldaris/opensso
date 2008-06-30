@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPAssertionContentHosted.xml,v 1.5 2008-06-25 05:51:06 qcheng Exp $
+   $Id: propertySAMLv2IDPAssertionContentHosted.xml,v 1.6 2008-06-30 18:36:46 babysunil Exp $
 
 -->
 
@@ -186,6 +186,7 @@
                         <attribute name="textboxLabel"
                                    value="label.new.value" />
                     </cc>
+                    <fieldhelp name="helpidpnameidmap" defaultValue="samlv2idp.attribute.help.nameidmap" />
                 </property>
             </ccgroup>
         </property>

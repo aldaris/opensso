@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionContentHosted.xml,v 1.5 2008-06-25 05:51:06 qcheng Exp $
+   $Id: propertySAMLv2SPAssertionContentHosted.xml,v 1.6 2008-06-30 18:36:56 babysunil Exp $
 
 -->
 
@@ -269,7 +269,7 @@
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
-            <fieldhelp name="helpAssertionInterval" defaultValue="help.inSeconds" />
+            <fieldhelp name="helpAssertionInterval" defaultValue="samlv2idp.IDPAassertionNotBeforeTimeSkew.help.inSeconds" />
         </property>
     </section>
     <section name="auth" defaultValue="samlv2idp.provider.section.title.basicauth" >
