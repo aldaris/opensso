@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.7 2008-06-25 05:50:14 qcheng Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.8 2008-06-30 18:11:09 mrudul_uchil Exp $
  *
  */
 
@@ -68,7 +68,7 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
     private static Set attrNames = new HashSet();
     private String endpoint;
     private String spName;
-    private String tokenType;
+    private String tokenType = null;
     private String keyType;
     private String certAlias;
     private Map<String, Object> otherOptions = new HashMap<String, Object>();
@@ -206,30 +206,36 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
         if(attr.equals(NAME)) {
            this.spName = value;
         } else if(attr.equals(SEC_MECH)) {
-            if (secMech == null) {
-                secMech = new ArrayList();
-            }
+            if ( (value != null) && (value.length() != 0) ) {
+                if (secMech == null) {
+                    secMech = new ArrayList();
+                }
 
-            StringTokenizer st = new StringTokenizer(value, ","); 
-            while(st.hasMoreTokens()) {
-                secMech.add(st.nextToken());
-            }
-           
-            if (secMech != null) {
-                if( (secMech.contains(
-                    SecurityMechanism.WSS_NULL_SAML2_HK_URI)) ||
-                    (secMech.contains(SecurityMechanism.WSS_TLS_SAML2_HK_URI))
-                     || (secMech.contains(
-                        SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI))) {
+                StringTokenizer st = new StringTokenizer(value, ","); 
+                while(st.hasMoreTokens()) {
+                    secMech.add(st.nextToken());
+                }
 
-                    this.tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
-                } else if( (secMech.contains(SecurityMechanism.WSS_NULL_SAML_HK_URI))
-                     || (secMech.contains(
-                         SecurityMechanism.WSS_TLS_SAML_HK_URI)) || 
-                    (secMech.contains(
-                        SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI))) {
+                if (secMech != null) {
+                    if( (secMech.contains(SecurityMechanism.WSS_NULL_SAML2_HK_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_TLS_SAML2_HK_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_CLIENT_TLS_SAML2_HK_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_NULL_SAML2_SV_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_TLS_SAML2_SV_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_CLIENT_TLS_SAML2_SV_URI))) {
 
-                    this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
+                        this.tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
+                    } else if( (secMech.contains(SecurityMechanism.WSS_NULL_SAML_HK_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_TLS_SAML_HK_URI)) || 
+                        (secMech.contains(SecurityMechanism.WSS_CLIENT_TLS_SAML_HK_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_NULL_SAML_SV_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_TLS_SAML_SV_URI)) ||
+                        (secMech.contains(SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI))) {
+
+                        this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
+                    } else {
+                        this.tokenType = value;
+                    }
                 }
             }
 
