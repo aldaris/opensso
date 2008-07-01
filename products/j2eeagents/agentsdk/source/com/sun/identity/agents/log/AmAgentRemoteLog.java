@@ -22,18 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentRemoteLog.java,v 1.2 2008-06-25 05:51:53 qcheng Exp $
+ * $Id: AmAgentRemoteLog.java,v 1.3 2008-07-01 22:30:56 huacui Exp $
  *
  */
 
 package com.sun.identity.agents.log;
 
 
-
 import java.util.logging.Level;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentBase;
+import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.LocalizedMessage;
 import com.sun.identity.agents.arch.Manager;
@@ -56,7 +56,6 @@ implements ILogConfigurationConstants, IAmAgentRemoteLog
     
     public void initialize() throws AgentException {
         try {
-            setAppSSOToken();
             setRemoteLoggingHandler();
         } catch(Exception ex) {
             throw new AgentException(
@@ -126,27 +125,13 @@ implements ILogConfigurationConstants, IAmAgentRemoteLog
     }
 
     /**
-     * Initializes the app sso token required to write logs
-     *
-     *
-     * @throws AgentException
-     */
-    private void setAppSSOToken() throws AgentException {
-        CommonFactory cf = new CommonFactory(getModule());
-        IApplicationSSOTokenProvider provider =  
-            cf.newApplicationSSOTokenProvider();
-        
-        _appSSOToken = provider.getApplicationSSOToken();
-    }
-
-    /**
      * Get the app sso token
      *
      * @return SSOToken get the App SSO Token
      *
      */
-    private SSOToken getAppSSOToken() {
-        return _appSSOToken;
+    private SSOToken getAppSSOToken() throws AgentException {
+        return AgentConfiguration.getAppSSOToken();
     }
 
     /**
@@ -192,8 +177,5 @@ implements ILogConfigurationConstants, IAmAgentRemoteLog
 
     private Level _remoteLoggingLevel;
     private Logger _remoteLogHandler;
-    private SSOToken        _appSSOToken;
 }
 
-
-/*--- Formatted in Sun ONE Identity Server Coding Convention Style on Mon, Jun 16, '03 ---*/
