@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProperty.java,v 1.1 2007-09-24 20:27:07 rmisra Exp $
+ * $Id: SessionProperty.java,v 1.2 2008-07-01 00:38:26 rmisra Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,7 @@ public class SessionProperty extends TestCommon {
     */
     public SessionProperty() {
         super("SessionProtectedProperty");
-        rb = ResourceBundle.getBundle(strRB);
+        rb = ResourceBundle.getBundle("session" + fileseparator + strRB);
     }
 
     /**
