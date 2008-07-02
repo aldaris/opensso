@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.7 2008-06-25 05:41:17 qcheng Exp $
+   $Id: README.setup,v 1.8 2008-07-02 18:32:49 kanduls Exp $
 
 -->
                                                                                
@@ -78,10 +78,6 @@ Step 3: After step 2 is performed, the CLIs can be run under the following
 |      |
 |      |----*.properties (properties file for binaries)
 |
-|----mo/locale
-|         |
-|         |----*.mo (.mo files for localizing amtune scripts)
-|
 |----setup (setup script for linux and unix)
 |
 |----setup.bat (setup script for windows)
@@ -90,6 +86,38 @@ Step 3: After step 2 is performed, the CLIs can be run under the following
 |      |
 |      |----unix/bin/*.template (template of scripts for unix and linux)
 |      |
-|      |----unix/bin/amtune/*.template (template of amtune scripts for unix and linux)
+|      |----unix/bin/amtune/*.template (template of amtune script for unix and linux)
 |      |
 |      |----windows/bin/* (required windows specific libraries)
+|      |
+|      |----windows/bin/amtune/*.template (template of amtune.bat for Windows)
+
+4. Using amtune after setup is run
+----------------------------------
+After setup is run, amtune directory will be created under
+<TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin, which would contain amtune or amtune.bat
+script for tuning operating systems (Solaris 9, 10 or later or RedHat Enterprise
+AS 4 or 5), web containers (Sun Application Server 9.1/Glassfish v2 or Sun Web Server
+7.0 U3), Sun Directory Server 5.1/5.2 or 6.3 as SM (Service Management) and UM (User
+Manangement) data stores, as well as Federated Access Manager configuration
+values stored in SM and UM data stores.
+
+To run amtune, amtune-env.properties must be customized to specify installation/
+instance locations, passwords, review or change mode and other required parameters for
+the components mentioned above.
+
+5. Executing amtune on a remote Sun Directory Server machine.
+----------------------------------------------------------------------
+Step 1. FTP or copy over famAdminTools.zip to the remote Sun DS machine.
+Step 2. Unzip famAdminTools.zip.
+Step 3. Create <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune on Unix/Linux
+        and TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune on Windows   
+Step 4. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune.template on Unix/Linux to
+        <TOOLS_DIR>/<FAM_URI_DIR>/unix\bin/amtune/amtune and
+        <TOOLS_DIR>\template\windows\bin\amtune\amtune.bat.template on Windows to
+        <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat
+Step 5. Set values for TOOLS_HOME and JAVA_HOME in
+        <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune/amtune on Unix/Linux and
+        <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat on Windows.   
+Step 6.  Edit amtune-env.properties file with DS information.
+Step 7.  Execute amtune on Unix/Linux and amtune.bat on Windows.
