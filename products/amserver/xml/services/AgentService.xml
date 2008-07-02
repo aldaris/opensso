@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.47 2008-07-02 16:59:51 mallas Exp $
+   $Id: AgentService.xml,v 1.48 2008-07-02 17:21:48 veiming Exp $
 
 -->
 
@@ -274,6 +274,7 @@
                         name="com.sun.identity.agents.config.profile.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a413">
                         <DefaultValues>
@@ -298,6 +299,7 @@
                         name="com.sun.identity.agents.config.session.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a415">
                         <DefaultValues>
@@ -322,6 +324,7 @@
                         name="com.sun.identity.agents.config.response.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a417">
                         <DefaultValues>
@@ -384,6 +387,7 @@
                         name="com.sun.identity.agents.config.login.url"
                         type="list"
                         syntax="string"
+                        uitype="orderedlist"
                         validator="ListValueValidator"
                         i18nKey="a423">
                         <DefaultValues>
@@ -484,6 +488,7 @@
                         name="com.sun.identity.agents.config.fqdn.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a432">
                         <DefaultValues>
@@ -507,6 +512,7 @@
                         name="com.sun.identity.agents.config.cookie.reset"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a434">
                         <DefaultValues>
@@ -517,6 +523,7 @@
                         name="com.sun.identity.agents.config.cdsso.cookie.domain"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a435">
                         <DefaultValues>
@@ -549,6 +556,7 @@
                         name="com.sun.identity.agents.config.notenforced.url"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a438">
                         <DefaultValues>
@@ -572,6 +580,7 @@
                         name="com.sun.identity.agents.config.notenforced.ip"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a440">
                         <DefaultValues>
@@ -617,6 +626,7 @@
                         name="com.sun.identity.agents.config.cdsso.cdcservlet.url"
                         type="list"
                         syntax="string"
+                        uitype="orderedlist"
                         validator="ListValueValidator"
                         i18nKey="a444">
                         <DefaultValues>
@@ -658,6 +668,7 @@
                         name="com.sun.identity.agents.config.logout.url"
                         type="list"
                         syntax="string"
+                        uitype="orderedlist"
                         validator="ListValueValidator"
                         i18nKey="a448">
                         <DefaultValues>
@@ -668,6 +679,7 @@
                         name="com.sun.identity.agents.config.logout.cookie.reset"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a449">
                         <DefaultValues>
@@ -1214,6 +1226,7 @@
                         name="com.sun.identity.agents.config.webservice.endpoint"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a132">
                         <DefaultValues>
@@ -1273,6 +1286,7 @@
                         name="com.sun.identity.agents.config.login.form"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a138">
                         <DefaultValues>
@@ -1283,6 +1297,7 @@
                         name="com.sun.identity.agents.config.login.error.uri"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a139">
                         <DefaultValues>
@@ -1315,6 +1330,7 @@
                         name="com.sun.identity.agents.config.auth.handler"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a143">
                         <DefaultValues>
@@ -1325,6 +1341,7 @@
                         name="com.sun.identity.agents.config.logout.handler"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a144">
                         <DefaultValues>
@@ -1335,6 +1352,7 @@
                         name="com.sun.identity.agents.config.verification.handler"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a145">
                         <DefaultValues>
@@ -1366,6 +1384,7 @@
                     <AttributeSchema
                         name="com.sun.identity.agents.config.login.url"
                         type="list"
+                        uitype="orderedlist"
                         syntax="string"
                         validator="ListValueValidator"
                         i18nKey="a148">
@@ -1412,6 +1431,7 @@
                         name="com.sun.identity.agents.config.logout.url"
                         type="list"
                         syntax="string"
+                        uitype="orderedlist"
                         validator="ListValueValidator"
                         i18nKey="a254">
                         <DefaultValues>
@@ -1532,6 +1552,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.name"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a161">
                         <DefaultValues>
@@ -1542,6 +1563,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.domain"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a162">
                         <DefaultValues>
@@ -1552,6 +1574,7 @@
                         name="com.sun.identity.agents.config.cookie.reset.path"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a163">
                         <DefaultValues>
@@ -1584,6 +1607,7 @@
                         name="com.sun.identity.agents.config.cdsso.cdcservlet.url"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a166">
                         <DefaultValues>
@@ -1603,6 +1627,7 @@
                         name="com.sun.identity.agents.config.cdsso.trusted.id.provider"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a168">
                         <DefaultValues>
@@ -1626,6 +1651,7 @@
                         name="com.sun.identity.agents.config.cdsso.domain"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a170">
                         <DefaultValues>
@@ -1636,6 +1662,7 @@
                         name="com.sun.identity.agents.config.logout.application.handler"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a171">
                         <DefaultValues>
@@ -1646,6 +1673,7 @@
                         name="com.sun.identity.agents.config.logout.uri"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a172">
                         <DefaultValues>
@@ -1656,6 +1684,7 @@
                         name="com.sun.identity.agents.config.logout.request.param"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a173">
                         <DefaultValues>
@@ -1679,6 +1708,7 @@
                         name="com.sun.identity.agents.config.logout.entry.uri"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a175">
                         <DefaultValues>
@@ -1711,6 +1741,7 @@
                         name="com.sun.identity.agents.config.fqdn.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a178">
                         <DefaultValues>
@@ -1734,6 +1765,7 @@
                         name="com.sun.identity.agents.config.legacy.user.agent"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a181">
                         <DefaultValues>
@@ -1753,6 +1785,7 @@
                         name="com.sun.identity.agents.config.response.header"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a183">
                         <DefaultValues>
@@ -1794,6 +1827,7 @@
                         name="com.sun.identity.agents.config.port.check.setting"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a187">
                         <DefaultValues>
@@ -1804,6 +1838,7 @@
                         name="com.sun.identity.agents.config.notenforced.uri"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a188">
                         <DefaultValues>
@@ -1849,6 +1884,7 @@
                         name="com.sun.identity.agents.config.notenforced.ip"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a193">
                         <DefaultValues>
@@ -1940,6 +1976,7 @@
                         name="com.sun.identity.agents.config.profile.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a202">
                         <DefaultValues>
@@ -1965,6 +2002,7 @@
                         name="com.sun.identity.agents.config.session.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a204">
                         <DefaultValues>
@@ -1990,6 +2028,7 @@
                         name="com.sun.identity.agents.config.response.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a206">
                         <DefaultValues>
@@ -2000,6 +2039,7 @@
                         name="com.sun.identity.agents.config.bypass.principal"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a207">
                         <DefaultValues>
@@ -2010,6 +2050,7 @@
                         name="com.sun.identity.agents.config.default.privileged.attribute"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a208">
                         <DefaultValues>
@@ -2020,6 +2061,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.type"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a209">
                         <DefaultValues>
@@ -2030,6 +2072,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.tolowercase"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a211">
                         <DefaultValues>
@@ -2040,6 +2083,7 @@
                         name="com.sun.identity.agents.config.privileged.session.attribute"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a212">
                         <DefaultValues>
@@ -2063,6 +2107,7 @@
                         name="com.sun.identity.agents.config.privileged.attribute.mapping"
                         type="list"
                         syntax="string"
+                        uitype="maplist"
                         validator="MapValueValidator"
                         i18nKey="a214">
                         <DefaultValues>
@@ -2266,6 +2311,7 @@
                         name="com.sun.identity.agents.config.policy.env.get.param"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a243">
                         <DefaultValues>
@@ -2276,6 +2322,7 @@
                         name="com.sun.identity.agents.config.policy.env.post.param"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a244">
                         <DefaultValues>
@@ -2286,6 +2333,7 @@
                         name="com.sun.identity.agents.config.policy.env.jsession.param"
                         type="list"
                         syntax="string"
+                        uitype="unorderedlist"
                         validator="ListValueValidator"
                         i18nKey="a245">
                         <DefaultValues>

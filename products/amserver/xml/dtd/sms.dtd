@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: sms.dtd,v 1.3 2008-06-25 05:45:35 qcheng Exp $
+   $Id: sms.dtd,v 1.4 2008-07-02 17:21:48 veiming Exp $
   
 -->
 
@@ -144,7 +144,8 @@ Unique Declaration name for DOCTYPE tag:
         name NMTOKEN #REQUIRED
         type ( single | list | single_choice | multiple_choice |
                 signature | validator ) "list"
-        uitype ( radio | link | button | name_value_list ) #IMPLIED
+        uitype ( radio | link | button | name_value_list | unorderedlist |
+                orderedlist | maplist ) #IMPLIED
         syntax ( boolean | string | paragraph | password | encrypted_password | 
                 dn | email | url | numeric | percent | number |
                 decimal_number | number_range | decimal_range | xml | date) "string"

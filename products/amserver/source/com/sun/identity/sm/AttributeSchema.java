@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.7 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: AttributeSchema.java,v 1.8 2008-07-02 17:21:48 veiming Exp $
  *
  */
 
@@ -1053,7 +1053,25 @@ public class AttributeSchema {
          * attribute should be display as a name value list widget.
          */
         public static final UIType NAME_VALUE_LIST = new UIType(
-                "name_value_list");
+            "name_value_list");
+
+        /**
+         * The <code>UNORDERED_LIST</code> attribute type specifies that the
+         * attribute should be display as an unordered list widget.
+         */
+        public static final UIType UNORDEREDLIST = new UIType("unorderedlist");
+
+        /**
+         * The <code>ORDERED_LIST</code> attribute type specifies that the
+         * attribute should be display as an ordered list widget.
+         */
+        public static final UIType ORDEREDLIST = new UIType("orderedlist");
+
+        /**
+         * The <code>MAP_LIST</code> attribute type specifies that the
+         * attribute should be display as an map list widget.
+         */
+        public static final UIType MAPLIST = new UIType("maplist");
 
         private String attrType;
 

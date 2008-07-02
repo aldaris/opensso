@@ -22,17 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.2 2008-06-25 05:42:50 qcheng Exp $
+ * $Id: AMPropertySheetModel.java,v 1.3 2008-07-02 17:21:47 veiming Exp $
  *
  */
 
 package com.sun.identity.console.base.model;
 
+import com.iplanet.jato.view.ContainerView;
 import com.iplanet.jato.view.ContainerViewBase;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.DisplayFieldImpl;
 import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.ui.model.CCMapListModel;
+import com.sun.identity.console.ui.model.CCOrderedListModel;
+import com.sun.identity.console.ui.model.CCUnOrderedListModel;
+import com.sun.identity.console.ui.view.CCMapList;
+import com.sun.identity.console.ui.view.CCOrderedList;
+import com.sun.identity.console.ui.view.CCUnOrderedList;
 import com.sun.web.ui.common.CCDescriptor;
 import com.sun.web.ui.common.CCTagClass;
 import com.sun.web.ui.model.CCActionTableModel;
@@ -82,8 +89,15 @@ public class AMPropertySheetModel
     private Set children = new HashSet();
     private Set passwordComponents;
     private Map radioDefaultValue;
+    private Map childMap;
     private Set dateComponents;
     private boolean hasSubConfigTable;
+    public static final String ORDERED_LIST =
+        "com.sun.identity.console.ui.taglib.CCOrderedListTag";
+    public static final String UNORDERED_LIST =
+        "com.sun.identity.console.ui.taglib.CCUnOrderedListTag";
+    public static final String MAP_LIST =
+        "com.sun.identity.console.ui.taglib.CCMapListTag";
 
     public AMPropertySheetModel() {
         super();
@@ -121,11 +135,26 @@ public class AMPropertySheetModel
         passwordComponents = new HashSet();
         dateComponents = new HashSet();
         radioDefaultValue = new HashMap();
+        childMap = new HashMap();
         hackToGetChildViews();
     }
 
     public void registerChildren(ContainerViewBase view) {
         super.registerChildren(view);
+        
+        for (Iterator i = childMap.keySet().iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
+            String tagName = (String)childMap.get(name);
+            if (tagName != null) {
+                if (tagName.equals(ORDERED_LIST)) {
+                    view.registerChild(name, CCOrderedList.class);
+                } else if (tagName.equals(UNORDERED_LIST)) {
+                    view.registerChild(name, CCUnOrderedList.class);
+                } else if (tagName.equals(MAP_LIST)) {
+                    view.registerChild(name, CCMapList.class);
+                }
+            }
+        }
         if (hasSubConfigTable) {
             CCActionTableModel model = createSubConfigActionTableModel();
             model.registerChildren(view);
@@ -172,6 +201,7 @@ public class AMPropertySheetModel
                                     radioDefaultValue.put(name, def);
                                 }
                             }
+                            childMap.put(name, v);
                         }
 
                         if (name.equals(TBL_SUB_CONFIG)) {
@@ -273,17 +303,53 @@ public class AMPropertySheetModel
     }
  
     public View createChild(View parent, String name, AMModel model) {
-        View view = super.createChild(parent, name);
+        String tagName = (String)childMap.get(name);
+        View view = null;
+        if (tagName != null) {
+            if (tagName.equals(ORDERED_LIST)) {
+                CCOrderedListModel m = new CCOrderedListModel();
+                view = new CCOrderedList((ContainerView) parent,
+                    m, name);
+                m.setAddButtonLabel(model.getLocalizedString(
+                    "addremove.orderable.list.add.button"));
+                m.setDeleteButtonLabel(model.getLocalizedString(
+                    "addremove.orderable.list.delete.button"));
+                setModel(name, m);
+            } else if (tagName.equals(UNORDERED_LIST)) {
+                CCUnOrderedListModel m = new CCUnOrderedListModel();
+                view = new CCUnOrderedList((ContainerView) parent,
+                    m, name);
+                setModel(name, m);
+            } else if (tagName.equals(MAP_LIST)) {
+                CCMapListModel m = new CCMapListModel();
+                view = new CCMapList((ContainerView) parent, m, name);
+                m.setKeyLabel(model.getLocalizedString("maplist.key.label"));
+                m.setValueLabel(model.getLocalizedString(
+                    "maplist.value.label"));
+                m.setMsgInvalidEntry(model.getLocalizedString(
+                    "maplist.msg.invalid.entry"));
+                m.setMsgInvalidKey(model.getLocalizedString(
+                    "maplist.msg.invalid.key"));
+                m.setMsgInvalidValue(model.getLocalizedString(
+                    "maplist.msg.invalid.value"));
+                setModel(name, m);
+            }
 
-        if (CCEditableList.class.isInstance(view)) {
-            CCEditableList editable = (CCEditableList)view;
-            CCEditableListModel m = (CCEditableListModel)editable.getModel();
-            m.setAddBtnLabel(
-                model.getLocalizedString("editableList.addButtonLabel"));
-            m.setRemoveBtnLabel(
-                model.getLocalizedString("editableList.deleteButtonLabel"));
         }
+        
+        if (view == null) {
+            view = super.createChild(parent, name);
 
+            if (CCEditableList.class.isInstance(view)) {
+                CCEditableList editable = (CCEditableList)view;
+                CCEditableListModel m =(CCEditableListModel)editable.getModel();
+                m.setAddBtnLabel(
+                    model.getLocalizedString("editableList.addButtonLabel"));
+                m.setRemoveBtnLabel(
+                    model.getLocalizedString("editableList.deleteButtonLabel"));
+            }
+        }
+        
         children.add(view);
         return view;
     }
@@ -322,6 +388,20 @@ public class AMPropertySheetModel
                     view.getName());
                 m.setOptionList(new OptionList());
                 ((CCEditableList)view).resetStateData();
+            } else if (CCOrderedList.class.isInstance(view)) {
+                CCOrderedListModel m = (CCOrderedListModel)getModel(
+                    view.getName());
+                m.setSelectedOptionList(new OptionList());
+                ((CCOrderedList)view).resetStateData();
+            } else if (CCUnOrderedList.class.isInstance(view)) {
+                CCUnOrderedListModel m = (CCUnOrderedListModel)getModel(
+                    view.getName());
+                m.setOptionList(new OptionList());
+                ((CCUnOrderedList)view).resetStateData();
+            } else if (CCMapList.class.isInstance(view)) {
+                CCMapListModel m = (CCMapListModel)getModel(view.getName());
+                m.setOptionList(new OptionList());
+                ((CCMapList)view).resetStateData();
             } else {
                 if (DisplayFieldImpl.class.isInstance(view)) {
                     ((DisplayFieldImpl)view).setValues(null);
@@ -329,4 +409,4 @@ public class AMPropertySheetModel
             }
         }
     }
-}
+} 

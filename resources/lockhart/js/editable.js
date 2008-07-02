@@ -1,17 +1,19 @@
 function CCEditableList(jsQualifier, listbox, formName, separator,
-    defaultOptionValue, defaultOptionLabel) {
+    defaultOptionValue, defaultOptionLabel, bempty) {
 
     var frm = document.forms[formName];
     this.listbox = listbox;
     this.addButton = jsQualifier + ".addButton";
     this.deleteButton = jsQualifier + ".deleteButton";
     this.textbox = frm.elements[jsQualifier + ".textField"];
+    this.textbox2 = frm.elements[jsQualifier + ".valueTextField"];
     this.selectedOptions = this.listbox.options;
     this.formName = formName;
     this.selectedHiddenText = frm.elements[jsQualifier + ".selectedTextField"];
     this.separator = separator;
     this.defaultOptionValue = defaultOptionValue;
     this.defaultOptionLabel = defaultOptionLabel;
+    this.allowempty = (bempty) && (bempty == '1');
 
     // attach editableList object methods
     this.disableButton = editableListDisableButton;
@@ -66,7 +68,31 @@ function editableListAdd() {
     str = str.replace(/\s+$/, '').replace(/^\s+/, '');
     var len = str.length;	
 
-    if (len > 0) {
+    if (this.allowempty || (len > 0)) {
+
+        if (this.textbox2) {
+            var str2 = this.textbox2.value;
+            str2 = str2.replace(/\s+$/, '').replace(/^\s+/, '');
+            var len2 = str2.length;
+            if (((len2 == 0) && (len > 0)) || ((len == 0) && (len2 == 0))){
+                alert(msgMapListInvalidEntry);
+                return;
+            }
+            if ((str.indexOf('[') != -1) || (str.indexOf(']') != -1)) {
+                alert(msgMapListInvalidKey);
+                return;
+            }
+            if ((str2.indexOf('[') != -1) || (str2.indexOf(']') != -1)) {
+                alert(msgMapListInvalidValue);
+                return;
+            }
+            if ((len == 0) && (len2 > 0)) {
+                str = str + '=' + str2;
+            } else {
+                str = '[' + str + ']=' + str2;
+            }
+        }
+
 	var size = this.selectedOptions.length;
 	var txt = this.selectedOptions[size-1].text;
 	var val = this.selectedOptions[size-1].value;
@@ -96,6 +122,9 @@ function editableListAdd() {
 	this.disableButton(this.deleteButton, false);
 
         this.textbox.value = "";
+        if (this.textbox2) {
+            this.textbox2.value = "";
+        }
     }
 }
 
@@ -105,7 +134,7 @@ function editableListRemove() {
     for (var i = size-1; i >= 0; --i) {
 	var opt = this.selectedOptions[i];
 
-	if ((opt.selected) && (opt.value != "")) {
+	if ((opt.selected) && (this.allowempty || (opt.value != ""))) {
 	    this.selectedOptions[i] = null;
 	}
     }
@@ -120,11 +149,19 @@ function updateHiddenField() {
     for (var i = 0; i < size-1; i++) {
 	var opt = this.selectedOptions[i];
 
-	if (opt.value != "") {
+	if (this.allowempty || (opt.value != "")) {
 	    if (values != '') {
 		values += this.separator;
 	    }
-	    values += opt.text + this.separator + opt.value;
+            var optVal = opt.value;
+            if (optVal == '') {
+                optVal = ' ';
+            }
+            var optText = opt.text;
+            if (optText == '') {
+                optText = ' ';
+            }
+	    values += optText + this.separator + optVal;
 	}
     }
     

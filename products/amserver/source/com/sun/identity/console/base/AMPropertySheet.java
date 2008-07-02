@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.5 2008-06-27 22:31:17 asyhuang Exp $
+ * $Id: AMPropertySheet.java,v 1.6 2008-07-02 17:21:45 veiming Exp $
  *
  */
 
@@ -40,6 +40,12 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.ui.model.CCMapListModel;
+import com.sun.identity.console.ui.model.CCOrderedListModel;
+import com.sun.identity.console.ui.model.CCUnOrderedListModel;
+import com.sun.identity.console.ui.view.CCMapList;
+import com.sun.identity.console.ui.view.CCOrderedList;
+import com.sun.identity.console.ui.view.CCUnOrderedList;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.web.ui.model.CCAddRemoveModel;
 import com.sun.web.ui.model.CCDateTimeModel;
@@ -54,14 +60,17 @@ import com.sun.web.ui.view.html.CCSelect;
 import com.sun.web.ui.view.propertysheet.CCPropertySheet;
 import com.sun.web.ui.view.table.CCActionTable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This class provides convenient methods to get and set attribute values to
@@ -118,6 +127,9 @@ public class AMPropertySheet
                     parent, name, values, amModel, model) ||
                     setValuesToAddRemove(view, name, values, amModel, model) ||
                     setValuesToEditableList(view, name, values, amModel,model)||
+                    setValuesToOrderedList(view, name, values, amModel,model) ||
+                    setValuesToUnOrderedList(view, name, values, amModel,model)||
+                    setValuesToMapList(view, name, values, amModel,model) ||
                     setValuesToDateTime(view, name, values, amModel,model)||
                     setValuesToSelect(view, name, values, amModel, model)
                 ) {
@@ -197,7 +209,99 @@ public class AMPropertySheet
         }
         return set;
     }
+    private boolean setValuesToUnOrderedList(
+        View view,
+        String name,
+        Object values,
+        AMModel amModel,
+        AMPropertySheetModel model
+    ) {
+        boolean set = false;
+        if (CCUnOrderedList.class.isInstance(view)) {
+            ((CCUnOrderedList)view).resetStateData();
+            CCUnOrderedListModel m = (CCUnOrderedListModel)model.getModel(name);
+            if (Set.class.isInstance(values)) {
+                Set sorted = new TreeSet(new OrderedListComparator());
+                sorted.addAll((Set)values);
+                if (sorted.size() == 1) {
+                    sorted.remove("[0]=");
+                }
+                List list = new ArrayList();
+                
+                for (Iterator i = sorted.iterator(); i.hasNext(); ) { 
+                    String val = (String)i.next();
+                    int idx = val.indexOf(']');
+                    idx = val.indexOf('=', idx);
+                    list.add(val.substring(idx+1).trim());
+                }
+                m.setOptionList(AMViewBeanBase.createOptionList(
+                    list, amModel.getUserLocale(), false));
+            }
+            set = true;
+        }
+        return set;
+    }
+    
+    private boolean setValuesToMapList(
+        View view,
+        String name,
+        Object values,
+        AMModel amModel,
+        AMPropertySheetModel model
+    ) {
+        boolean set = false;
+        if (CCMapList.class.isInstance(view)) {
+            ((CCMapList)view).resetStateData();
+            CCMapListModel m = (CCMapListModel)model.getModel(name);
+            if (Set.class.isInstance(values)) {
+                Set v = new HashSet();
+                v.addAll((Set)values);
+                v.remove("[]=");
+                m.setOptionList(AMViewBeanBase.createOptionList(
+                    v, amModel.getUserLocale(), false));
+            }
+            set = true;
+        }
+        return set;
+    }
+    
+    private boolean setValuesToOrderedList(
+        View view,
+        String name,
+        Object values,
+        AMModel amModel,
+        AMPropertySheetModel model
+    ) {
+        boolean set = false;
+        if (CCOrderedList.class.isInstance(view)) {
+            ((CCOrderedList)view).resetStateData();
+            CCOrderedListModel m = (CCOrderedListModel)
+                model.getModel(name);
+            if (Set.class.isInstance(values)) {
+                Set sorted = new TreeSet(new OrderedListComparator());
+                sorted.addAll((Set)values);
 
+                if (sorted.size() == 1) {
+                    sorted.remove("[0]=");
+                }
+                List list = new ArrayList();
+                
+                for (Iterator i = sorted.iterator(); i.hasNext(); ) { 
+                    String val = (String)i.next();
+                    int idx = val.indexOf(']');
+                    idx = val.indexOf('=', idx);
+                    list.add(val.substring(idx+1).trim());
+                }
+                m.setSelectedOptionList(
+                    AMViewBeanBase.createOptionList(
+                        list, amModel.getUserLocale(), false));
+            }
+            set = true;
+        }
+        return set;
+    }
+
+    
     private boolean setValuesToEditableList(
         View view,
         String name,
@@ -206,7 +310,10 @@ public class AMPropertySheet
         AMPropertySheetModel model
     ) {
         boolean set = false;
-        if (CCEditableList.class.isInstance(view)) {
+        if (CCEditableList.class.isInstance(view) &&
+            !CCUnOrderedList.class.isInstance(view) &&
+            !CCMapList.class.isInstance(view)
+        ) {
             ((CCEditableList)view).resetStateData();
             CCEditableListModel m = (CCEditableListModel)
                 model.getModel(name);
@@ -458,9 +565,30 @@ public class AMPropertySheet
             if (CCAddRemoveModel.class.isInstance(childModel)) {
                 values = getValues(
                     ((CCAddRemoveModel)childModel).getSelectedOptionList());
+            } else if (CCUnOrderedListModel.class.isInstance(childModel)) {
+                values = getListValues(
+                    ((CCUnOrderedListModel)childModel).getOptionList());
+                if ((values == null) || values.isEmpty()) {
+                    values = new HashSet(2);
+                    values.add("[0]=");
+                }
+            } else if (CCMapListModel.class.isInstance(childModel)) {
+                values = getValues(
+                    ((CCMapListModel)childModel).getOptionList());
+                if ((values == null) || values.isEmpty()) {
+                    values = new HashSet(2);
+                    values.add("[]=");
+                }
             } else if (CCEditableListModel.class.isInstance(childModel)) {
                 values = getValues(
                     ((CCEditableListModel)childModel).getOptionList());
+            } else if (CCOrderedListModel.class.isInstance(childModel)) {
+                values = getListValues(
+                    ((CCOrderedListModel)childModel).getSelectedOptionList());
+                if ((values == null) || values.isEmpty()) {
+                    values = new HashSet(2);
+                    values.add("[0]=");
+                }
             } else if (model.isChildSupported(
                 name + PropertyTemplate.PWD_CONFIRM_SUFFIX)
             ) {
@@ -546,6 +674,22 @@ public class AMPropertySheet
 
         return (values == null) ? Collections.EMPTY_SET : values;
     }
+    
+    private static Set getListValues(OptionList optList) {
+        Set values = null;
+
+        if ((optList != null) && (optList.size() > 0)) {
+            int sz = optList.size();
+            values = new HashSet(sz *2);
+
+            for (int i = 0; i < sz; i++) {
+                Option opt = optList.get(i);
+                values.add("[" + i + "]=" + opt.getValue());
+            }
+        }
+
+        return (values == null) ? Collections.EMPTY_SET : values;
+    }
 
     /**
      * Automates the restoring of store data in some children. This is required
@@ -568,8 +712,14 @@ public class AMPropertySheet
 
                     if (CCAddRemove.class.isInstance(child)) {
                         ((CCAddRemove)child).restoreStateData();
+                    } else if (CCUnOrderedList.class.isInstance(child)) {
+                        ((CCUnOrderedList)child).restoreStateData();
+                    } else if (CCMapList.class.isInstance(child)) {
+                        ((CCMapList)child).restoreStateData();
                     } else if (CCEditableList.class.isInstance(child)) {
                         ((CCEditableList)child).restoreStateData();
+                    } else if (CCOrderedList.class.isInstance(child)) {
+                        ((CCOrderedList)child).restoreStateData();
                     } else if (CCActionTable.class.isInstance(child)) {
                         ((CCActionTable)child).restoreStateData();
                     }

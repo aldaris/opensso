@@ -402,14 +402,20 @@ function ccOrderableListUpdateMove() {
     var concatStr = null;
     var maxSelectedSelection = -1;
     
-    concatStr = null;
     for (i = 0; i < this.selectedLength() - 1; i++) {
+        var optText = this.selectedOptions[i].text;
+        var optVal = this.selectedOptions[i].value;
+        if (optText == '') {
+            optText = ' ';
+        }
+        if (optVal == '') {
+            optVal = ' ';
+        }
+
         if (concatStr == null) {
-            concatStr = this.selectedOptions[i].text + this.separator + 
-                this.selectedOptions[i].value;
+            concatStr = optText + this.separator + optVal;
         } else {
-            concatStr += this.separator + this.selectedOptions[i].text +
-                this.separator + this.selectedOptions[i].value;
+            concatStr += this.separator + optText + this.separator + optVal;
         }
         if (this.selectedOptions[i].selected) {
             maxSelectedSelection = i;
