@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.12 2008-06-25 05:48:44 qcheng Exp $
+   $Id: build-tools.xml,v 1.13 2008-07-02 17:13:17 veiming Exp $
 
 -->
 
@@ -51,8 +51,6 @@
         <delete file="${tools.temp.dir}/README.amadm" />
         <delete file="${tools.temp.dir}/template/unix/bin/amadm.template" />
         <delete file="${tools.temp.dir}/template/windows/bin/amadm.bat.template" />
-        <replace file="${tools.temp.dir}/README.setup" token="amAdminTools"
-            value="famAdminTools" />
 
         <copy todir="${tools.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/fam.jar" />
