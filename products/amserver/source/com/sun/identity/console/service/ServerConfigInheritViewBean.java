@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigInheritViewBean.java,v 1.2 2008-06-25 05:43:16 qcheng Exp $
+ * $Id: ServerConfigInheritViewBean.java,v 1.3 2008-07-02 17:47:31 asyhuang Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.console.service.model.ServerSiteModel;
 import com.sun.identity.console.service.model.ServerSiteModelImpl;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import com.sun.web.ui.view.table.CCActionTable;
+import com.sun.web.ui.view.html.CCStaticTextField;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
@@ -76,6 +77,7 @@ public class ServerConfigInheritViewBean
     private CCPageTitleModel ptModel;
     private boolean submitCycle;
     
+    public static final String CHILD_STATICTEXT       = "StaticText";
     /**
      * Creates a servers and sites view bean.
      */
@@ -103,6 +105,7 @@ public class ServerConfigInheritViewBean
         ptModel.registerChildren(this);
         registerChild(TBL_PROPERTY_NAMES, CCActionTable.class);
         tblPropertyNamesModel.registerChildren(this);
+        registerChild(CHILD_STATICTEXT, CCStaticTextField.class);
     }
 
     protected View createChild(String name) {
@@ -118,6 +121,8 @@ public class ServerConfigInheritViewBean
             view = tblPropertyNamesModel.createChild(this, name);
         } else if (ptModel.isChildSupported(name)) {
             view = ptModel.createChild(this, name);
+        } else if (name.equals(CHILD_STATICTEXT)) {
+            view = new CCStaticTextField(this, name, null);           
         } else {
             view = super.createChild(name);
         }
