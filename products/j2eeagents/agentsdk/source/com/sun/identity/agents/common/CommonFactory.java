@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonFactory.java,v 1.3 2008-06-25 05:51:39 qcheng Exp $
+ * $Id: CommonFactory.java,v 1.4 2008-07-02 18:27:10 leiming Exp $
  *
  */
 
@@ -81,14 +81,13 @@ public class CommonFactory {
         return result;
     }
     
-    public ISSOTokenValidator newSSOTokenValidator(
-            boolean urlDecodeSSOTokenFlag)
+    public ISSOTokenValidator newSSOTokenValidator()
             throws AgentException {
         ISSOTokenValidator result = null;
         String className = getResolver().getSSOTokenValidatorImpl();
         try {
             result = (ISSOTokenValidator) getObject(className);
-            result.initialize(urlDecodeSSOTokenFlag);
+            result.initialize();
         } catch (Exception ex) {
             throw new AgentException(
                     "Unable to initialize ISSOTokenValidator: "

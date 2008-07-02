@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentBootstrap.template,v 1.2 2008-06-25 05:51:32 qcheng Exp $
+# $Id: FAMAgentBootstrap.template,v 1.3 2008-07-02 18:27:09 leiming Exp $
 #
 #
 
@@ -55,11 +55,6 @@
 #     com.sun.identity.agents.j2ee.filter.mode[myApp]=SSO_ONLY
 #
 com.sun.identity.agents.j2ee.filter.mode=@FILTER_MODE@
-
-# 
-# Specifies if the Agent must URL decode the SSO Token before use.
-#
-com.sun.identity.agents.j2ee.sso.decode=false
 
 #
 # Specifies the URI to be used as the access denied page. 

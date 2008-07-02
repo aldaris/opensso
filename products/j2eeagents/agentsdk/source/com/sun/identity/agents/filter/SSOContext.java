@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOContext.java,v 1.4 2008-06-25 05:51:48 qcheng Exp $
+ * $Id: SSOContext.java,v 1.5 2008-07-02 18:27:12 leiming Exp $
  *
  */
 
@@ -36,7 +36,6 @@ import javax.servlet.http.Cookie;
 import com.sun.identity.agents.arch.AgentBase;
 import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
-import com.sun.identity.agents.arch.ISharedConfigurationKeyConstants;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.ICookieResetHelper;
@@ -65,13 +64,8 @@ public class SSOContext extends AgentBase
                 CONFIG_LOGIN_COUNTER_COOKIE_NAME,
                 DEFAULT_LOGIN_COUNTER_COOKIE_NAME));
         CommonFactory cf = new CommonFactory(getModule());
-        setSSOTokenValidator(cf.newSSOTokenValidator(
-                getConfigurationBoolean(
-                ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG)));
+        setSSOTokenValidator(cf.newSSOTokenValidator());
         initCookieResetHelper(cf);
-        setURLDecodeSSOTokenFlag(
-                getConfigurationBoolean(
-                ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG));
 
         initSSOCacheEnabledFlag(filterMode);
         if (isLogMessageEnabled()) {
@@ -147,11 +141,6 @@ public class SSOContext extends AgentBase
      * @return a SSO Tokem Cookie
      */
     public Cookie[] createSSOTokenCookie(String tokenValue) {
-        if (getURLDecodeSSOTokenFlag()) {
-            // We are getting a decoded value here, So encode it if needs to be
-            // decoded by the SSOToken validator.
-            tokenValue = URLEncoder.encode(tokenValue);
-        }
         Cookie[] cookies;
         String[] domains = getConfigurationStrings(CONFIG_CDSSO_DOMAIN);
         boolean isSecure = getConfigurationBoolean(CONFIG_CDSSO_SECURE_ENABLED);
@@ -212,18 +201,6 @@ public class SSOContext extends AgentBase
             logMessage(
                     "SSOContext: active cache of sso is: " + _ssoCacheEnabled);
         }
-    }
-
-    private void setURLDecodeSSOTokenFlag(boolean flag) {
-        _urlDecodeSSOTokenFlag = flag;
-        if (isLogMessageEnabled()) {
-            logMessage("SSOContext: url decode sso token flag: "
-                    + _urlDecodeSSOTokenFlag);
-        }
-    }
-
-    public boolean getURLDecodeSSOTokenFlag() {
-        return _urlDecodeSSOTokenFlag;
     }
 
     private void initCookieResetHelper(CommonFactory cf) throws AgentException {
@@ -292,7 +269,6 @@ public class SSOContext extends AgentBase
 
     private int _loginAttemptLimit;
     private String _loginCounterCookieName;
-    private boolean _urlDecodeSSOTokenFlag;
     private ISSOTokenValidator _ssoTokenValidator;
     private ICookieResetHelper _cookieResetHelper;
     private boolean _ssoCacheEnabled;

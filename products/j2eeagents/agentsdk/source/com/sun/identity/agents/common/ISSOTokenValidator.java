@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISSOTokenValidator.java,v 1.2 2008-06-25 05:51:40 qcheng Exp $
+ * $Id: ISSOTokenValidator.java,v 1.3 2008-07-02 18:27:10 leiming Exp $
  *
  */
 
@@ -36,7 +36,7 @@ import com.sun.identity.agents.arch.AgentException;
  * The interface for SSOTokenValidator
  */
 public interface ISSOTokenValidator {
-    public abstract void initialize(boolean urlDecodeSSOTokenFlag)
+    public abstract void initialize()
             throws AgentException;
 
     /**

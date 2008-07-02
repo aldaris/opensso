@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISSOContext.java,v 1.3 2008-06-25 05:51:47 qcheng Exp $
+ * $Id: ISSOContext.java,v 1.4 2008-07-02 18:27:12 leiming Exp $
  *
  */
 
@@ -58,8 +58,6 @@ public interface ISSOContext {
     public abstract boolean isSSOCacheEnabled();
 
     public abstract int getLoginAttemptLimit();
-
-    public abstract boolean getURLDecodeSSOTokenFlag();
 
     public abstract ICookieResetHelper getCookieResetHelper();
 

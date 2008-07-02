@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmBaseSSOCache.java,v 1.2 2008-06-25 05:51:42 qcheng Exp $
+ * $Id: AmBaseSSOCache.java,v 1.3 2008-07-02 18:27:11 leiming Exp $
  *
  */
 
@@ -36,7 +36,6 @@ import com.iplanet.sso.SSOTokenEvent;
 import com.iplanet.sso.SSOTokenListener;
 import com.sun.identity.agents.arch.AgentBase;
 import com.sun.identity.agents.arch.AgentException;
-import com.sun.identity.agents.arch.ISharedConfigurationKeyConstants;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.ISSOTokenValidator;
@@ -54,11 +53,7 @@ public abstract class AmBaseSSOCache extends AgentBase
     
     public void initialize() throws AgentException {
         CommonFactory cf = new CommonFactory(getModule());
-        setSSOTokenValidator(cf.newSSOTokenValidator(
-                getConfigurationBoolean(
-                ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG)));
-        
-        setURLDecodeSSOTokenFlag();
+        setSSOTokenValidator(cf.newSSOTokenValidator());
     }
     
     private String getSSOTokenForUser(Principal principal) {
@@ -190,18 +185,7 @@ public abstract class AmBaseSSOCache extends AgentBase
         _ssoTokenValidator = validator;
     }
     
-    private void setURLDecodeSSOTokenFlag() {
-        _urlDecodeSSOTokenFlag =
-                getConfigurationBoolean(
-                ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG);
-    }
-    
-    private boolean getURLDecodeSSOTokenFlag() {
-        return _urlDecodeSSOTokenFlag;
-    }
-    
     private ISSOTokenValidator _ssoTokenValidator;
-    private boolean           _urlDecodeSSOTokenFlag;
     
     /////////////////////////////////////////////////////////
     // Static Service Methods for the Cache

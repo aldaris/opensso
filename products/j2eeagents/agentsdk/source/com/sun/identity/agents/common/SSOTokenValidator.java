@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenValidator.java,v 1.2 2008-06-25 05:51:41 qcheng Exp $
+ * $Id: SSOTokenValidator.java,v 1.3 2008-07-02 18:27:10 leiming Exp $
  *
  */
 
@@ -54,11 +54,10 @@ public class SSOTokenValidator extends SurrogateBase
         super(module);
     }
     
-    public void initialize(boolean urlDecodeSSOTokenFlag)
+    public void initialize()
     throws AgentException {
         try {
             setSSOTokenManager(SSOTokenManager.getInstance());
-            setURLDecodeSSOTokenFlag(urlDecodeSSOTokenFlag);
             setClientIPAddressHeader(
                     AgentConfiguration.getClientIPAddressHeader());
             setClientHostNameHeader(
@@ -172,7 +171,7 @@ public class SSOTokenValidator extends SurrogateBase
         
         String result = rawValue;
         if (rawValue != null) {
-            if (urlDecodeSSOToken()) {
+            if (needURLDecode(rawValue)) {
                 result = URLDecoder.decode(rawValue);
             }
         }
@@ -388,12 +387,10 @@ public class SSOTokenValidator extends SurrogateBase
         return AgentConfiguration.getSSOTokenName();
     }
     
-    private boolean urlDecodeSSOToken() {
-        return _urlDecodeSSOTokenFlag;
-    }
-    
-    private void setURLDecodeSSOTokenFlag(boolean urlDecodeSSOTokenFlag) {
-        _urlDecodeSSOTokenFlag = urlDecodeSSOTokenFlag;
+    private boolean needURLDecode(String rawValue) {
+        boolean needDecode = rawValue.indexOf("+") >= 0 ||
+                rawValue.indexOf("%") >= 0;
+        return needDecode;
     }
     
     private void setClientIPAddressHeader(String header) {
@@ -438,7 +435,6 @@ public class SSOTokenValidator extends SurrogateBase
     
     private SSOTokenManager _ssoTokenMgr = null;
     private IProfileAttributeHelper _profileAttributeHelper = null;
-    private boolean _urlDecodeSSOTokenFlag;
     private String _clientIPAddressHeader;
     private String _clientHostNameHeader;
 }

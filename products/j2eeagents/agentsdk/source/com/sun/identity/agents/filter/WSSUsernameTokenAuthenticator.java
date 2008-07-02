@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUsernameTokenAuthenticator.java,v 1.3 2008-06-25 05:51:49 qcheng Exp $
+ * $Id: WSSUsernameTokenAuthenticator.java,v 1.4 2008-07-02 18:27:13 leiming Exp $
  *
  */
 
@@ -47,7 +47,6 @@ import com.iplanet.sso.SSOTokenEvent;
 import com.iplanet.sso.SSOTokenListener;
 import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
-import com.sun.identity.agents.arch.ISharedConfigurationKeyConstants;
 import com.sun.identity.agents.arch.ISystemAccess;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.ISSOTokenValidator;
@@ -67,9 +66,7 @@ public class WSSUsernameTokenAuthenticator implements IWebServiceAuthenticator {
         setSystemAccess(systemAccess);
         
         CommonFactory cf = new CommonFactory(systemAccess.getModule());
-        setSSOTokenValidator(
-                cf.newSSOTokenValidator(systemAccess.getConfigurationBoolean(
-                     ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG)));
+        setSSOTokenValidator(cf.newSSOTokenValidator());
     }
 
     public SSOToken getUserToken(HttpServletRequest request, 

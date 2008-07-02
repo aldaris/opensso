@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.7 2008-06-25 05:51:57 qcheng Exp $
+ * $Id: AmRealm.java,v 1.8 2008-07-02 18:27:13 leiming Exp $
  *
  */
 
@@ -41,7 +41,6 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
-import com.sun.identity.agents.arch.ISharedConfigurationKeyConstants;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.ISSOTokenValidator;
@@ -388,11 +387,8 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
     
     
     private void initSSOTokenValidator() throws AgentException {
-        boolean urlDecodeSSOToken = getConfigurationBoolean(
-                ISharedConfigurationKeyConstants.CONFIG_SSO_DECODE_FLAG);
         CommonFactory cf = new CommonFactory(getModule());
-        ISSOTokenValidator validator = cf.newSSOTokenValidator(
-                urlDecodeSSOToken);
+        ISSOTokenValidator validator = cf.newSSOTokenValidator();
         
         setSSOTokenValidator(validator);
     }
