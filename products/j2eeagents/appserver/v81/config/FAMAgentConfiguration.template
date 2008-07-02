@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.12 2008-06-25 05:52:03 qcheng Exp $
+# $Id: FAMAgentConfiguration.template,v 1.13 2008-07-02 00:22:47 sean_brydon Exp $
 #
 #
 
@@ -359,6 +359,7 @@ com.sun.identity.agents.config.httpsession.binding = false
 
 #
 # GOTO PARAMETER NAME
+#   This property has been deprecated.
 #   Specifies the goto Parameter name to be used by the Agent when 
 #   redirecting the user to the appropriate authentication service. The 
 #   value of this parameter is used by the authentication service to 
@@ -551,6 +552,7 @@ com.sun.identity.agents.config.fqdn.mapping[] =
 
 #
 # LEGACY USER AGENT PROCESSING PROPERTIES
+#   These three properties have been deprecated:
 #   - legacy.support.enable: A flag that specifies if legacy user agent
 #     support is enabled or disabled.
 #   - legacy.user.agent: A LIST of user agent header values that identify

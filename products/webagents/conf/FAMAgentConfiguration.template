@@ -506,8 +506,8 @@ com.sun.identity.agents.config.cookie.reset[0] =
 # ANONYMOUS USER PROPERTIES
 #   - anonymous.user.enable: Enable/Disable REMOTE_USER processing for 
 #       anonymous users 
-#   - anonymous.user.id: user id returned if accessing global allow page 
-#       and not authenticated
+#   - anonymous.user.id: This property is deprecated. User id returned if 
+#                        accessing global allow page and not authenticated
 #
 # Hot-Swap Enabled: Yes
 #
