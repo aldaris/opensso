@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.12 2008-04-03 19:40:21 cmwesley Exp $
+ * $Id: FederationManager.java,v 1.13 2008-07-02 21:50:45 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -35,30 +35,12 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 public class FederationManager extends TestCommon {
     private String amadmUrl;
     private String amUrl;
-    private static String serverProtocol;
-    private static String serverHost;
-    private static String serverPort;
-    private static String serverUri;
     
-    static {
-        try {
-            ResourceBundle rb_amconfig = ResourceBundle.getBundle(
-                    TestConstants.TEST_PROPERTY_AMCONFIG); 
-            serverProtocol = rb_amconfig.getString(
-                    TestConstants.KEY_AMC_PROTOCOL);
-            serverHost = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
-            serverPort = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
-            serverUri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public FederationManager(String url) {
         super("FederationManager");

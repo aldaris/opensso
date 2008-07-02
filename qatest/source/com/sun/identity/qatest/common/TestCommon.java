@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.50 2008-06-26 20:10:39 rmisra Exp $
+ * $Id: TestCommon.java,v 1.51 2008-07-02 21:50:45 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,6 +103,10 @@ public class TestCommon implements TestConstants {
     protected static String fileseparator =
             System.getProperty("file.separator");
     private static String tableContents;
+    protected static String serverProtocol;
+    protected static String serverHost;
+    protected static String serverPort;
+    protected static String serverUri;
     
     static {
         try {
@@ -129,14 +133,18 @@ public class TestCommon implements TestConstants {
             adminPassword = rb_amconfig.getString(
                     TestConstants.KEY_ATT_AMADMIN_PASSWORD);
             basedn = rb_amconfig.getString(TestConstants.KEY_AMC_BASEDN);
+            serverProtocol = rb_amconfig.getString(
+                    TestConstants.KEY_AMC_PROTOCOL);
+            serverHost = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
+            serverPort = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
+            serverUri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);             
             distAuthEnabled = ((String)rb_amconfig.getString(
                     TestConstants.KEY_DIST_AUTH_ENABLED)).equals("true");
             if (!distAuthEnabled) {
-                protocol = rb_amconfig.getString(
-                        TestConstants.KEY_AMC_PROTOCOL);
-                host = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
-                port = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
-                uri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);
+                protocol = serverProtocol;
+                host = serverHost;
+                port = serverPort;
+                uri = serverUri;
             } else {
                 String strDistAuthURL = rb_amconfig.getString(
                         TestConstants.KEY_DIST_AUTH_NOTIFICATION_SVC);
@@ -1601,6 +1609,7 @@ public class TestCommon implements TestConstants {
     public String getServerConfigValue(WebClient webClient, String propName)
     throws Exception {
         String propValue = null;
+        String configJSPUrl = null;
         boolean accessConsole = false;
         try {
             if (tableContents == null) {
@@ -1608,8 +1617,15 @@ public class TestCommon implements TestConstants {
                 HtmlPage consolePage = consoleLogin(webClient,
                         getLoginURL(realm), adminUser, adminPassword);
                 if (consolePage != null) {
-                    String configJSPUrl = protocol + ":" + "//" + host + ":" +
-                            port + uri + "/showServerConfig.jsp";
+                    if (!distAuthEnabled) {
+                        configJSPUrl = protocol + ":" + "//" + host + ":" + 
+                                port + uri + "/showServerConfig.jsp";
+                    } else {
+                        configJSPUrl = getLoginURL(realm) + "?goto=" + 
+                                serverProtocol + "://" + serverHost + ":" +
+                                serverPort + serverUri + 
+                                "/showServerConfig.jsp";
+                    }
                     HtmlPage configJSPPage =
                             (HtmlPage) webClient.getPage(configJSPUrl);
                     if (configJSPPage != null) {
