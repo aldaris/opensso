@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ServerConfigInherit.jsp,v 1.3 2008-06-25 05:44:53 qcheng Exp $
+   $Id: ServerConfigInherit.jsp,v 1.4 2008-07-02 17:54:36 asyhuang Exp $
 
 --%>
 
@@ -57,6 +57,20 @@
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
 <cc:pagetitle name="pgtitleThreeBtns" bundleID="amConsole" pageTitleText="page.title.server.inheritance" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+
+<cc:spacer name="spacer" height="10" newline="true" />
+
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+    <tr>
+        <td>
+            <cc:helpinline type="page">
+                <cc:text name="StaticText" 
+                bundleID="amConsole"  
+                defaultValue="table.server.inherit.inline.help" />
+            </cc:helpinline>
+        </td>      
+    </tr>
+</table>
 
 <cc:spacer name="spacer" height="10" newline="true" />
 
