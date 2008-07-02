@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.33 2008-06-25 05:43:30 qcheng Exp $
+ * $Id: AgentsRepo.java,v 1.34 2008-07-02 17:21:22 kenwho Exp $
  *
  */
 
@@ -1178,7 +1178,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         sendNotificationSet(type, idType, name);
 
         if (repoListener != null) { 
-            repoListener.objectChanged(name, type, 
+            repoListener.objectChanged(name, idType, type, 
                 repoListener.getConfigMap());
         }
     }
@@ -1214,7 +1214,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             sendNotificationSet(type, idType, name);
 
             if (repoListener != null) { 
-                repoListener.objectChanged(name, type, 
+                repoListener.objectChanged(name, idType, type, 
                     repoListener.getConfigMap());
             }
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilesRepo.java,v 1.21 2008-06-25 05:43:30 qcheng Exp $
+ * $Id: FilesRepo.java,v 1.22 2008-07-02 17:21:21 kenwho Exp $
  *
  */
 
@@ -347,7 +347,7 @@ public class FilesRepo extends IdRepo {
                 writeFile(file, attrMap);
                 // %%% Send notification (must be via a different thread)
                 if (repoListener != null) {
-                    repoListener.objectChanged(name, AMEvent.OBJECT_ADDED,
+                    repoListener.objectChanged(name, type, AMEvent.OBJECT_ADDED,
                             repoListener.getConfigMap());
                 }
             } else {
@@ -1016,7 +1016,7 @@ public class FilesRepo extends IdRepo {
                 encryptAttributes));
         // %%% Send notification (must be via a different thread)
         if (repoListener != null) {
-            repoListener.objectChanged(name, AMEvent.OBJECT_CHANGED,
+            repoListener.objectChanged(name, type, AMEvent.OBJECT_CHANGED,
                     repoListener.getConfigMap());
         }
     }
@@ -1205,7 +1205,7 @@ public class FilesRepo extends IdRepo {
                 encryptAttributes));
         // %%% Send notification (must be via a different thread)
         if (repoListener != null) {
-            repoListener.objectChanged(name, AMEvent.OBJECT_CHANGED,
+            repoListener.objectChanged(name, type, AMEvent.OBJECT_CHANGED,
                     repoListener.getConfigMap());
         }
     }
@@ -1729,15 +1729,22 @@ public class FilesRepo extends IdRepo {
                     }
                     identityCache.remove(fileName);
                     repo.identityTimeCache.remove(fileName);
-                    // Send notification
-                    if (file.exists()) {
-                        repo.repoListener.objectChanged(file.getName(),
-                            AMEvent.OBJECT_CHANGED,
-                            repo.repoListener.getConfigMap());
-                    } else {
-                        repo.repoListener.objectChanged(file.getName(),
-                            AMEvent.OBJECT_REMOVED,
-                            repo.repoListener.getConfigMap());
+
+                    // send notficiation to supported type.
+                    Set supportedTypes = repo.getSupportedTypes();
+                    Iterator supTypeIter = supportedTypes.iterator();
+                    while (supTypeIter.hasNext()) {
+                        IdType idType = (IdType) supTypeIter.next();
+                        // Send notification
+                        if (file.exists()) {
+                            repo.repoListener.objectChanged(file.getName(),
+                                idType, AMEvent.OBJECT_CHANGED,
+                                repo.repoListener.getConfigMap());
+                        } else {
+                            repo.repoListener.objectChanged(file.getName(),
+                                idType, AMEvent.OBJECT_REMOVED,
+                                repo.repoListener.getConfigMap());
+                        }
                     }
                     if (debug.messageEnabled()) {
                         debug.message("CacheUpdateRunnable: " +

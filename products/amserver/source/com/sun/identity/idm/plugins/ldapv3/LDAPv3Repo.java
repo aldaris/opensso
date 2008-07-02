@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.46 2008-06-27 19:06:56 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.47 2008-07-02 17:21:22 kenwho Exp $
  *
  */
 
@@ -4646,8 +4646,13 @@ public class LDAPv3Repo extends IdRepo {
                         v3Repo.myListener.allObjectsChanged();
                     } else {
                         v3Repo.objectChanged(dn, changeType);
-                        v3Repo.myListener.objectChanged(dn, changeType,
-                            v3Repo.myListener.getConfigMap());
+                        Set supportedTypes = v3Repo.getSupportedTypes();
+                        Iterator supTypeIter = supportedTypes.iterator();
+                        while (supTypeIter.hasNext()) {
+                            IdType idType = (IdType) supTypeIter.next();
+                            v3Repo.myListener.objectChanged(dn, idType, 
+                                changeType, v3Repo.myListener.getConfigMap());
+                        }
                     }
                     if (clearCache) {
                         v3Repo.clearCache();

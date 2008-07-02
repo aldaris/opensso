@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.19 2008-06-25 05:41:22 qcheng Exp $
+ * $Id: AMSDKRepo.java,v 1.20 2008-07-02 17:20:29 kenwho Exp $
  *
  */
 
@@ -1596,12 +1596,71 @@ public class AMSDKRepo extends IdRepo {
                     + "event to listeners.");
         }
         
+        if (adminToken == null) {
+            adminToken = (SSOToken) AccessController
+                .doPrivileged(AdminTokenAction.getInstance());
+            try {
+                sc = new AMStoreConnection(adminToken);
+            } catch (SSOException ssoe) {
+                // do nothing ... but log the error
+                debug.error("AMSDKRepo:notifyObjectChangedEvent. Failed "
+                    + "to initialize AMStoreConnection...", ssoe);
+            }
+        }
+        int type = 0;
+        try {
+            type = sc.getAMObjectType(normalizedDN);
+        } catch (AMException amse) {
+            debug.error("AMSDKRepo:notifyObjectChangedEvent Unable "
+                + "to convert name to getAMObjectType.");
+        } catch (SSOException amsso) {
+            debug.error("AMSDKRepo:notifyObjectChangedEvent Unable "
+                + "to detemine permission.");
+        }
+
+        IdType idType = null;
+        switch (type) {
+        case AMObject.GROUP: 
+        case AMObject.STATIC_GROUP: 
+        case AMObject.ASSIGNABLE_DYNAMIC_GROUP:
+        case AMObject.DYNAMIC_GROUP:
+            idType = IdType.GROUP;
+            break;
+        case AMObject.USER:
+            idType = IdType.USER;
+            break;
+        case AMObject.ORGANIZATION: 
+        case AMObject.ORGANIZATIONAL_UNIT:
+            idType = IdType.REALM;
+            break;
+        case AMObject.ROLE: 
+        case AMObject.MANAGED_ROLE:
+            idType = IdType.ROLE;
+            break;
+        case AMObject.FILTERED_ROLE:
+            idType = IdType.FILTEREDROLE;
+            break;                
+        default:
+            if (debug.messageEnabled()) {
+                debug.message("AMSDKRepo:notifyObjectChangedEvent."
+                    + " objectChanged not send. no matching type: type=" + type);
+            }
+            break;
+        }
+
         synchronized (listeners) {
             Iterator it = listeners.iterator();
             while (it.hasNext()) {
                 IdRepoListener l = (IdRepoListener) it.next();
                 Map configMap = l.getConfigMap();
-                l.objectChanged(normalizedDN, eventType, configMap);
+                if (idType != null) {
+                    l.objectChanged(normalizedDN, idType, eventType, configMap);
+                }
+                if  (idType == IdType.USER) {
+                     // agents were treated as users so we have to send agent change as well.
+                    l.objectChanged(normalizedDN, IdType.AGENT, eventType, configMap);  
+                }
+                
             }
         }
     }
