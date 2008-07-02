@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigInheritViewBean.java,v 1.6 2008-06-25 05:42:44 qcheng Exp $
+ * $Id: AgentConfigInheritViewBean.java,v 1.7 2008-07-02 23:40:46 asyhuang Exp $
  *
  */
 
@@ -44,10 +44,11 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
-import com.sun.web.ui.view.pagetitle.CCPageTitle;
-import com.sun.web.ui.view.table.CCActionTable;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
+import com.sun.web.ui.view.html.CCStaticTextField;
+import com.sun.web.ui.view.pagetitle.CCPageTitle;
+import com.sun.web.ui.view.table.CCActionTable;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,7 +71,8 @@ public class AgentConfigInheritViewBean
         "/console/agentconfig/AgentConfigInherit.jsp";
     private static final String TBL_PROPERTY_NAMES = "tblPropertyNames";
     private static final String PGTITLE_THREE_BTNS = "pgtitleThreeBtns";
-    
+    private static final String CHILD_STATICTEXT = "StaticText";
+        
     static final String PG_ATTR_PROPERTY_NAMES = "pgAttrPropertyNames";
     static final String PG_ATTR_CONFIG_PAGE = "pgAttrConfigPage";
     
@@ -111,6 +113,7 @@ public class AgentConfigInheritViewBean
         ptModel.registerChildren(this);
         registerChild(TBL_PROPERTY_NAMES, CCActionTable.class);
         tblPropertyNamesModel.registerChildren(this);
+        registerChild(CHILD_STATICTEXT, CCStaticTextField.class);
     }
 
     protected View createChild(String name) {
@@ -126,6 +129,8 @@ public class AgentConfigInheritViewBean
             view = tblPropertyNamesModel.createChild(this, name);
         } else if (ptModel.isChildSupported(name)) {
             view = ptModel.createChild(this, name);
+        } else if (name.equals(CHILD_STATICTEXT)) {
+            view = new CCStaticTextField(this, name, null);       
         } else {
             view = super.createChild(name);
         }

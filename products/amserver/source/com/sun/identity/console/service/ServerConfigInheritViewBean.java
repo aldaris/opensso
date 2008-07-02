@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigInheritViewBean.java,v 1.3 2008-07-02 17:47:31 asyhuang Exp $
+ * $Id: ServerConfigInheritViewBean.java,v 1.4 2008-07-02 23:41:21 asyhuang Exp $
  *
  */
 
@@ -39,9 +39,9 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.identity.console.service.model.ServerSiteModel;
 import com.sun.identity.console.service.model.ServerSiteModelImpl;
+import com.sun.web.ui.view.html.CCStaticTextField;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import com.sun.web.ui.view.table.CCActionTable;
-import com.sun.web.ui.view.html.CCStaticTextField;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
@@ -77,7 +77,7 @@ public class ServerConfigInheritViewBean
     private CCPageTitleModel ptModel;
     private boolean submitCycle;
     
-    public static final String CHILD_STATICTEXT       = "StaticText";
+    private static final String CHILD_STATICTEXT = "StaticText";
     /**
      * Creates a servers and sites view bean.
      */
