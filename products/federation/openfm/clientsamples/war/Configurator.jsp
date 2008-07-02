@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.3 2008-06-25 05:48:48 qcheng Exp $
+   $Id: Configurator.jsp,v 1.4 2008-07-02 17:44:31 veiming Exp $
 
 --%>
 
@@ -155,7 +155,7 @@ java.util.Properties"
 
 <h3>Configuring Federated Access Manager Client SDK</h3>
 
-<form action="Configurator.jsp" method="GET" 
+<form action="Configurator.jsp" method="POST" 
     name="clientsampleconfigurator">
     Please provide the Federated Access Manager Server Information. This is the server this Client SDK (including samples) will interact with. 
     <p>&nbsp;</p>    

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.4 2008-06-25 05:50:20 qcheng Exp $
+   $Id: Configurator.jsp,v 1.5 2008-07-02 17:44:31 veiming Exp $
 
 --%>
 
@@ -209,7 +209,7 @@ java.util.Properties"
 
 <h3>Configuring Federated Access Manager Administration Console WAR</h3>
 
-<form action="Configurator.jsp" method="GET" 
+<form action="Configurator.jsp" method="POST" 
     name="consoleconfigurator">
     Please provide the Federated Access Manager Server Information. This is the server instance this remote administration console will be managing. 
     <p>&nbsp;</p>    
