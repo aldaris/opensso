@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMCallbackHandler.java,v 1.4 2008-06-25 05:50:13 qcheng Exp $
+ * $Id: FAMCallbackHandler.java,v 1.5 2008-07-02 16:57:24 mallas Exp $
  *
  */
 
@@ -66,6 +66,7 @@ public class FAMCallbackHandler implements CallbackHandler {
         } catch (Exception e) {
             STSUtils.debug.error("FAMCallbackHandler: " +
                 "get keystore error", e);
+            throw new RuntimeException(e.getMessage());
         }
         
         try {
@@ -96,6 +97,7 @@ public class FAMCallbackHandler implements CallbackHandler {
         } catch(Exception ex) {
             STSUtils.debug.error("FAMCallbackHandler: " +
                 "handle callbacks error", ex);
+            throw new RuntimeException(ex.getMessage());
         }
         
     }

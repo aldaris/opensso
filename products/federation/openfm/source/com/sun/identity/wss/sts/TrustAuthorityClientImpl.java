@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClientImpl.java,v 1.3 2008-06-25 05:50:13 qcheng Exp $
+ * $Id: TrustAuthorityClientImpl.java,v 1.4 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -58,11 +58,13 @@ public class TrustAuthorityClientImpl {
     public Element getSTSTokenElement(String wspEndPoint,
                                       String stsEndpoint,
                                       String stsMexAddress,
-                                      Object credential) 
+                                      Object credential,
+                                      String keyType) 
                                       throws FAMSTSException {
 
         STSClientConfiguration config =
-            new STSClientConfiguration(stsEndpoint, stsMexAddress);
+            new STSClientConfiguration(stsEndpoint, stsMexAddress);        
+        config.setKeyType(keyType);
         if(credential != null) {
            if(credential instanceof Element) {
               Element credE = (Element)credential;
@@ -83,14 +85,10 @@ public class TrustAuthorityClientImpl {
             return element;
         } catch (Exception ex) {
             debug.error("TrustAuthorityClientImpl.getSTSToken:: Failed in" +
-                "obtainining STS Token Element: ", ex);
-            // TODO I18n
-            throw new FAMSTSException("TrustAuthorityClientImpl:ws trust exception");
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        
+                "obtainining STS Token Element: ", ex);            
+            throw new FAMSTSException(
+                    STSUtils.bundle.getString("wstrustexception"));
+        }        
     }
     
     /**
@@ -126,7 +124,8 @@ public class TrustAuthorityClientImpl {
         } catch (Exception ex) {
             debug.error("TrustAuthorityClientImpl.getClientUserToken: " +
                  "Failed in initialization", ex);
-             throw new FAMSTSException("initializationFailed");
+             throw new FAMSTSException(
+                     STSUtils.bundle.getString("usertokeninitfailed"));
         }
     }
                  

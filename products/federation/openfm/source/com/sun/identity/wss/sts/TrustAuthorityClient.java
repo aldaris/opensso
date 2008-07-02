@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.12 2008-06-25 05:50:13 qcheng Exp $
+ * $Id: TrustAuthorityClient.java,v 1.13 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -54,7 +54,7 @@ import java.lang.reflect.Constructor;
  */
 public class TrustAuthorityClient {
     
-    private static Debug debug = STSUtils.debug;
+    private static Debug debug = STSUtils.debug;    
     
     /** 
      * Creates a new instance of TrustAuthorityClient.
@@ -87,16 +87,17 @@ public class TrustAuthorityClient {
      * information is identified by the provider configuration.
      *
      * @param pc Provider configuration of the web services client.
-     * @param ssoToken Single sign-on token of the principal.
+     * @param credential User's credential. The user's credential could be
+     *        Single Sign-On Token or a SAML Assertion or any other object.
      * @param context Web context under which this class is running.
      * @return SecurityToken security token for the web services consumer.   
      * @exception FAMSTSException if it's unable to retrieve security token.
      */
     public SecurityToken getSecurityToken(
             ProviderConfig pc,            
-            Object ssoToken,
+            Object credential,
             ServletContext context) throws FAMSTSException {
-        return getSecurityToken(pc,null,null,null,ssoToken,null,context);
+        return getSecurityToken(pc,null,null,null,credential,null,context);
     }
     
     /**
@@ -132,6 +133,7 @@ public class TrustAuthorityClient {
             Object credential,
             String securityMech,
             ServletContext context) throws FAMSTSException {
+        String keyType = STSConstants.PUBLIC_KEY;
         if (pc != null) {
             List securityMechanisms = pc.getSecurityMechanisms();
             if(securityMechanisms == null || securityMechanisms.isEmpty()) {
@@ -148,17 +150,26 @@ public class TrustAuthorityClient {
             if(taconfig instanceof STSConfig) {
                stsConfig = (STSConfig)taconfig;
             } else {
-               throw new FAMSTSException("invalid trust authority config");
+               throw new FAMSTSException(
+                       STSUtils.bundle.getString("invalidtaconfig"));
             }
 
             stsEndPoint = stsConfig.getEndpoint();        
             stsMexEndPoint = stsConfig.getMexEndpoint();
+            String stsSecMech = (String)stsConfig.getSecurityMech().get(0);
+            if(stsSecMech.equals(
+                    SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) ||
+               stsSecMech.equals(
+                    SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI) ||
+               stsSecMech.equals(SecurityMechanism.STS_SECURITY_URI)) {               
+               keyType = STSConstants.BEARER_KEY;
+            }
             wspEndPoint = pc.getWSPEndpoint();
         }
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
            return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
-                   credential,context); 
+                   credential,keyType, context); 
         } else if (securityMech.equals(
                 SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
            return getLibertyToken(pc, credential);
@@ -212,7 +223,8 @@ public class TrustAuthorityClient {
     private SecurityToken getSTSToken(String wspEndPoint,
                                       String stsEndpoint,
                                       String stsMexAddress,
-                                      Object credential, 
+                                      Object credential,
+                                      String keyType,
                                       ServletContext context) 
                                       throws FAMSTSException {
         
@@ -239,21 +251,23 @@ public class TrustAuthorityClient {
 
             Object stsClient = taClientCon.newInstance();
 
-            Class clsa[] = new Class[4];
+            Class clsa[] = new Class[5];
             clsa[0] = Class.forName("java.lang.String");
             clsa[1] = Class.forName("java.lang.String");
             clsa[2] = Class.forName("java.lang.String");
             clsa[3] = Class.forName("java.lang.Object");
+            clsa[4] = Class.forName("java.lang.String");
 
             Method getSTSTokenElement = 
                       stsClient.getClass().getDeclaredMethod(
                       "getSTSTokenElement", clsa);
 
-            Object args[] = new Object[4];
+            Object args[] = new Object[5];
             args[0] = wspEndPoint;
             args[1] = stsEndpoint;
             args[2] = stsMexAddress;
             args[3] = credential;
+            args[4] = keyType;
             Element element = (Element)getSTSTokenElement.invoke(stsClient, args);
             String type = getTokenType(element);
             
@@ -273,20 +287,19 @@ public class TrustAuthorityClient {
                 } else if (type.equals(SecurityToken.WSS_FAM_SSO_TOKEN)) {
                     return new FAMSecurityToken(element);    
                 } else {
-                    throw new FAMSTSException ("Token type not supported.");
+                    throw new FAMSTSException (
+                            STSUtils.bundle.getString("unsupportedtokentype"));
                 }
             } else {
-               throw new FAMSTSException ("Token type is NULL.");
+               throw new FAMSTSException (
+                       STSUtils.bundle.getString("nulltokentype"));
             }
 
         } catch (Exception ex) {
             debug.error("TrustAuthorityClient.getSTSToken:: Failed in" +
-                "obtainining STS Token : ", ex);
-            // TODO I18n
-            throw new FAMSTSException("TrustAuthorityClient:ws trust exception");
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-            return null;
+                "obtainining STS Token : ", ex);            
+            throw new FAMSTSException(
+                    STSUtils.bundle.getString("wstrustexception"));
         } finally {
             Thread.currentThread().setContextClassLoader(oldcc);
         }
@@ -300,13 +313,15 @@ public class TrustAuthorityClient {
             Object ssoToken) throws FAMSTSException {
         
         // TODO - to be implemented
-        throw new FAMSTSException("unsupported operation");
+        throw new FAMSTSException(
+                STSUtils.bundle.getString("unsupportedoperation"));
     }
     
     private String getTokenType (Element element) throws FAMSTSException {
         String elemName = element.getLocalName(); 
         if (elemName == null) {
-            throw new FAMSTSException("getTokenType:missing_local_name");
+            throw new FAMSTSException(
+                    STSUtils.bundle.getString("invalidelementname"));
         }
 
         if (elemName.equals(STSConstants.ASSERTION_ELEMENT)) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.6 2008-06-25 05:50:12 qcheng Exp $
+ * $Id: STSClientUserToken.java,v 1.7 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -65,7 +65,7 @@ public class STSClientUserToken implements ClientUserToken {
                Element element = (Element)credential;
                if(!"Assertion".equals(element.getLocalName())) {
                   throw new FAMSTSException(
-                          STSUtils.bundle.getString("unsupported credential")); 
+                          STSUtils.bundle.getString("unsupportedcredential")); 
                }
                String ns = element.getNamespaceURI();               
                if(STSConstants.SAML10_ASSERTION.equals(ns)){
@@ -74,11 +74,11 @@ public class STSClientUserToken implements ClientUserToken {
                   tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE; 
                } else {
                   throw new FAMSTSException(
-                          STSUtils.bundle.getString("unsupported credential")); 
+                          STSUtils.bundle.getString("unsupportedcredential")); 
                }
                this.tokenValue = XMLUtils.print((Element)credential);              
             } else {
-               throw new FAMSTSException("unsupported credential");
+               throw new FAMSTSException("unsupportedcredential");
             }
         } catch (SecurityException sse) {
             throw new FAMSTSException(sse.getMessage());
@@ -87,12 +87,13 @@ public class STSClientUserToken implements ClientUserToken {
     
     public STSClientUserToken(Element element) throws FAMSTSException {
         if(element == null) {
-           throw new FAMSTSException();
+           throw new FAMSTSException(STSUtils.bundle.getString("nullinput"));
         }
                 
         String localName = element.getLocalName();
         if(!"FAMToken".equals(localName)) {
-           throw new FAMSTSException();
+           throw new FAMSTSException(
+                   STSUtils.bundle.getString("invalidelementname"));
         }
         
         NodeList nl = element.getChildNodes();

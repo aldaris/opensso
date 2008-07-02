@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.8 2008-06-25 05:50:05 qcheng Exp $
+ * $Id: STSAgent.java,v 1.9 2008-07-02 16:57:22 mallas Exp $
  *
  */
 
@@ -75,6 +75,12 @@ public class STSAgent extends STSConfig {
     private static final String STS_CONFIG = "STS";
     private static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
     private static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
+    private static final String KDC_SERVER = "KerberosDomainServer";
+    private static final String KDC_DOMAIN = "KerberosDomain";
+    private static final String KRB_SERVICE_PRINCIPAL = 
+             "KerberosServicePrincipal";
+    private static final String KRB_TICKET_CACHE_DIR = 
+             "KerberosTicketCacheDir";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -95,6 +101,10 @@ public class STSAgent extends STSConfig {
         attrNames.add(STS_CONFIG);
         attrNames.add(PRIVATE_KEY_ALIAS);
         attrNames.add(PUBLIC_KEY_ALIAS);
+        attrNames.add(KDC_SERVER);
+        attrNames.add(KDC_DOMAIN);
+        attrNames.add(KRB_SERVICE_PRINCIPAL);
+        attrNames.add(KRB_TICKET_CACHE_DIR);
     }
 
     /** Creates a new instance of STSAgent */
@@ -244,7 +254,15 @@ public class STSAgent extends STSConfig {
                     }
                 }
             }
-        }
+        } else if(attr.equals(KDC_DOMAIN)) {
+            this.kdcDomain = value;
+        } else if(attr.equals(KRB_SERVICE_PRINCIPAL)) {
+            this.servicePrincipal = value;        
+        } else if(attr.equals(KRB_TICKET_CACHE_DIR)) {
+            this.ticketCacheDir = value;
+        } else if(attr.equals(KDC_SERVER)) {
+            this.kdcServer = value;
+        }                
     }
         
     public void delete() throws ProviderException {
@@ -295,6 +313,22 @@ public class STSAgent extends STSConfig {
 
         if(stsConfigName != null) {
            config.put(STS_CONFIG, stsConfigName);
+        }
+        
+        if(kdcServer != null) {
+           config.put(KDC_SERVER, kdcServer); 
+        }
+        
+        if(kdcDomain != null) {
+           config.put(KDC_DOMAIN, kdcDomain); 
+        }
+        
+        if(servicePrincipal != null) {
+           config.put(KRB_SERVICE_PRINCIPAL, servicePrincipal);
+        }
+        
+        if(ticketCacheDir != null) {
+           config.put(KRB_TICKET_CACHE_DIR, ticketCacheDir); 
         }
         
         Set secMechSet = new HashSet();

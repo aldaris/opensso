@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.9 2008-06-25 05:50:12 qcheng Exp $
+ * $Id: STSConstants.java,v 1.10 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -43,6 +43,8 @@ public class STSConstants {
      */
     public static final String PUBLIC_KEY = WST_NAMESPACE+ "PublicKey";
     public static final String SYMMETRIC_KEY = WST_NAMESPACE + "SymmetricKey";
+    public static final String BEARER_KEY = 
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/NoProofKey";
 
     /**
      * URI for TokenType
@@ -79,7 +81,7 @@ public class STSConstants {
     public static final String SAML_BEARER_2_0 = 
         "urn:oasis:names:tc:SAML:2.0:cm:bearer";
     public static final String SAML_SENDER_VOUCHES_1_0 = 
-        "urn:oasis:names:tc:SAML:1.0:cm::sender-vouches";
+        "urn:oasis:names:tc:SAML:1.0:cm:sender-vouches";
     public static final String SAML_SENDER_VOUCHES_2_0 = 
         "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches";
     

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientConfiguration.java,v 1.7 2008-06-25 05:50:12 qcheng Exp $
+ * $Id: STSClientConfiguration.java,v 1.8 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -98,6 +98,10 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
     
     public String getKeyType() {
         return keyType;
+    }
+    
+    public void setKeyType(String keyType) {
+        this.keyType = keyType;
     }
     
     public long getKeySize() {

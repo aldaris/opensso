@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.4 2008-06-25 05:50:13 qcheng Exp $
+ * $Id: STSUtils.java,v 1.5 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 
 /**
  * This class provides utility classes for STS Service and clients
@@ -109,5 +110,32 @@ public class STSUtils {
             return new HashMap();
         }
     }
-
+    
+    public static Map getSTSSAMLAttributes(FAMSTSConfiguration stsConfig) {
+        Map map = new HashMap();        
+        Set set = null;
+        
+        Set attributes = stsConfig.getSAMLAttributeMapping();
+        if(attributes != null) {           
+           map.put("SAMLAttributeMapping", attributes);
+        }
+        
+        String ns = stsConfig.getSAMLAttributeNamespace();
+        if(ns != null) {
+           set = new HashSet();
+           set.add(ns);
+           map.put("AttributeNamespace", set);
+        }
+        
+        String nameIDMapper = stsConfig.getNameIDMapper();
+        if(nameIDMapper != null) {
+           set = new HashSet();
+           set.add(nameIDMapper);
+           map.put("NameIDMapper", set);
+        }        
+        set = new HashSet();
+        set.add(Boolean.toString(stsConfig.shouldIncludeMemberships()));
+        map.put("includeMemberships", set);
+        return map;
+    }
 }

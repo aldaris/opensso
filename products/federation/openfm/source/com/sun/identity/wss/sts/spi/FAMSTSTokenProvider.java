@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.3 2008-06-25 05:50:14 qcheng Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.4 2008-07-02 16:57:24 mallas Exp $
  *
  */
 
@@ -128,6 +128,11 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         String confirMethod = 
             (String)ctx.getOtherProperties().get(
             IssuedTokenContext.CONFIRMATION_METHOD);
+        // Bug in WSIT
+        if(confirMethod.equals(
+                "urn:oasis:names:tc:SAML:1.0:cm::sender-vouches")) {
+           confirMethod = STSConstants.SAML_SENDER_VOUCHES_1_0;
+        }
         Map<QName, List<String>> claimedAttrs = 
             (Map<QName, List<String>>) ctx.getOtherProperties().get(
             IssuedTokenContext.CLAIMED_ATTRUBUTES);
@@ -310,15 +315,14 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             }
             
             final List<Object> statements = new ArrayList<Object>();
-            if (attrs.isEmpty()){
-                final AuthenticationStatement statement = 
-                    samlFac.createAuthenticationStatement(null, issuerInst, 
-                    subj, null, null);
-                statements.add(statement); 
-            }else{
-                final AttributeStatement statement = 
+            final AuthenticationStatement statement = 
+                  samlFac.createAuthenticationStatement(null, issuerInst, 
+                  subj, null, null);
+            statements.add(statement); 
+            if (!attrs.isEmpty()){                
+                final AttributeStatement attrStatement = 
                     samlFac.createAttributeStatement(subj, attrs);
-                statements.add(statement);
+                statements.add(attrStatement);
             }
             assertion =
                 samlFac.createAssertion(assertionId, issuer, issuerInst, 
@@ -417,18 +421,14 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             }
             //}   
             final List<Object> statements = new ArrayList<Object>();
-            if (attrs.isEmpty()){
-                // To Do: create AuthnContext with proper content. 
-                // Currently what we have is a place holder.
-                // AuthnContext ctx = samlFac.createAuthnContext();
-                AuthnContext ctx = samlFac.createAuthnContext(authnCtx, null);
-                final AuthnStatement statement = 
+            AuthnContext ctx = samlFac.createAuthnContext(authnCtx, null);
+            final AuthnStatement statement = 
                     samlFac.createAuthnStatement(issueInst, null, ctx);
-                statements.add(statement); 
-            } else {
-                final AttributeStatement statement = 
+            statements.add(statement); 
+            if (!attrs.isEmpty()){                
+                final AttributeStatement attrStatement = 
                     samlFac.createAttributeStatement(attrs);
-                statements.add(statement);
+                statements.add(attrStatement);
             }
             
             final NameID issuerID = samlFac.createNameID(issuer, null, null);

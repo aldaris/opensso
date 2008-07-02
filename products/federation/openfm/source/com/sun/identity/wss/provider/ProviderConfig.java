@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.18 2008-06-25 05:50:04 qcheng Exp $
+ * $Id: ProviderConfig.java,v 1.19 2008-07-02 16:57:22 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -520,7 +520,7 @@ public abstract class ProviderConfig {
     /**
      * This method is used by the web services client to get the kerberos
      * ticket cache directory.
-     * @return
+     * @return the kerberos ticket cache dir
      */
     public String getKerberosTicketCacheDir() {
         return ticketCacheDir;

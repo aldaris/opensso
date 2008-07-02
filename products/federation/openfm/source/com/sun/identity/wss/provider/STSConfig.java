@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConfig.java,v 1.3 2008-06-25 05:50:05 qcheng Exp $
+ * $Id: STSConfig.java,v 1.4 2008-07-02 16:57:22 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider;
@@ -42,6 +42,10 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     
     protected String mexEndpoint = null;
     protected String stsConfigName = null;
+    protected String kdcDomain = null;
+    protected String kdcServer = null;
+    protected String ticketCacheDir = null;
+    protected String servicePrincipal = null;
     
     /** Creates a new instance of STSConfig */
     public STSConfig() {
@@ -79,5 +83,71 @@ public abstract class STSConfig extends TrustAuthorityConfig {
      */
     public void setSTSConfigName(String stsConfigName) {
         this.stsConfigName = stsConfigName;
-    }        
+    }
+    
+    /**
+     * Returns Kerberos Domain Controller Domain
+     * @return Kerberos Domain Controller Domain
+     */
+     
+    public String getKDCDomain() {
+        return kdcDomain;
+    }
+    
+    /**
+     * Sets Kerberos Domain Controller Domain
+     * @param domain Kerberos Domain Controller Domain
+     */
+    public void setKDCDomain(String domain) {
+        this.kdcDomain = domain;
+    }
+    
+    /**
+     * Returns Kerberos Domain Controller Server.
+     * @return Kerberos Domain Controller Server.
+     */
+    public String getKDCServer() {
+        return kdcServer;
+    }
+    
+    /**
+     * Sets Kerberos Domain Controller Server
+     * @param kdcServer Kerberos Domain Controller Server
+     */
+    public void setKDCServer(String kdcServer) {
+        this.kdcServer = kdcServer;
+    }
+    
+    /**
+     * This method is used by the web services client to get the kerberos
+     * ticket cache directory.
+     * @return kerberos ticket cache dir
+     */
+    public String getKerberosTicketCacheDir() {
+        return ticketCacheDir;
+    }
+    
+    /**
+     * Sets kerberos ticket cache dir.
+     * @param cacheDir kerberos ticket cache dir
+     */
+    public void setKerberosTicketCacheDir(String cacheDir) {
+        this.ticketCacheDir = cacheDir;
+    }
+    
+    /**
+     * Returns kerberos service principal
+     * @return the kerberos service principal
+     */
+    public String getKerberosServicePrincipal() {
+        return servicePrincipal;
+    }
+    
+    /**
+     * Sets kerberos service principal.
+     * @param principal the kerberos service principal.
+     */
+    public void setKerberosServicePrincipal(String principal) {
+        this.servicePrincipal = principal;
+    }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.16 2008-06-25 05:50:11 qcheng Exp $
+ * $Id: SOAPRequestHandler.java,v 1.17 2008-07-02 16:57:23 mallas Exp $
  *
  */
 
@@ -292,13 +292,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             return subject;
         }
 
+        if(isSTS) {
+           config = getSTSProviderConfig(stsConfig);
+        }
+        
         subject = (Subject) getAuthenticator().authenticate(subject,
                 secureMsg.getSecurityMechanism(),
                 secureMsg.getSecurityToken(),
                 config, secureMsg, false);
 
         if(uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) &&
-                config.isValidateKerberosSignature()) {
+                (config.isValidateKerberosSignature() ||
+                 stsConfig.isValidateKerberosSignature())) {
            java.security.Key secretKey = null;
            Iterator iter = subject.getPublicCredentials().iterator();
            while(iter.hasNext()) {
@@ -1212,6 +1217,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 pc.setRequestEncryptEnabled(stsConfig.isRequestEncryptEnabled());
                 pc.setDefaultKeyStore(true);
                 pc.setUsers(stsConfig.getUsers());
+                pc.setWSPEndpoint(stsConfig.getEndpoint());
+                pc.setKDCDomain(stsConfig.getKDCDomain());
+                pc.setKDCServer(stsConfig.getKDCServer());
+                pc.setKerberosServicePrincipal(pc.getKerberosServicePrincipal());
+                pc.setKerberosTicketCacheDir(
+                        stsConfig.getKerberosTicketCacheDir());
 
                 return pc;
             }
@@ -1290,6 +1301,29 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 }
             }
         }
+    }
+    
+    private ProviderConfig getSTSProviderConfig(FAMSTSConfiguration stsConfig) 
+            throws SecurityException {
+        
+        if(stsConfig == null) {
+           return null;
+        }
+        try {
+             ProviderConfig pc = ProviderConfig.getProvider(stsConfig.getIssuer(),
+                ProviderConfig.WSP);
+             pc.setKDCDomain(stsConfig.getKDCDomain());
+             pc.setKDCServer(stsConfig.getKDCServer());
+             pc.setKerberosServicePrincipal(
+                     stsConfig.getKerberosServicePrincipal());
+             pc.setKeyTabFile(stsConfig.getKeyTabFile());
+             pc.setValidateKerberosSignature(
+                     stsConfig.isValidateKerberosSignature());
+             return pc;
+             
+        } catch (ProviderException pe) {
+            throw new SecurityException(pe.getMessage());
+        }        
     }
     
 }

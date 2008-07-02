@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.5 2008-06-25 05:50:14 qcheng Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.6 2008-07-02 16:57:24 mallas Exp $
  *
  */
 
@@ -73,6 +73,15 @@ public class FAMSTSConfiguration implements
     private static String privateKeyType;
     private static String privateKeyAlias;
     private static String publicKeyAlias;
+    private static String kerberosDomainServer;
+    private static String kerberosDomain;
+    private static String kerberosServicePrincipal;
+    private static String kerberosKeyTabFile;
+    private static boolean isVerifyKrbSignature = false;
+    private static Set samlAttributes = null;
+    private static boolean includeMemberships = false;
+    private static String nameIDMapper = null;
+    private static String attributeNS = null;    
     
     private CallbackHandler callbackHandler;
     
@@ -104,6 +113,16 @@ public class FAMSTSConfiguration implements
     static final String PRIVATE_KEY_TYPE = "privateKeyType";
     static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
     static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
+    static final String KERBEROS_DOMAIN_SERVER = "KerberosDomainServer";
+    static final String KERBEROS_DOMAIN = "KerberosDomain";
+    static final String KERBEROS_SERVICE_PRINCIPAL = "KerberosServicePrincipal";
+    static final String KERBEROS_KEYTAB_FILE = "KerberosKeyTabFile";
+    static final String KERBEROS_VERIFY_SIGNATURE = "isVerifyKrbSignature";
+    static final String SAML_ATTRIBUTE_MAPPING = 
+                                 "SAMLAttributeMapping";
+    static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
+    static final String SAML_ATTRIBUTE_NS = "AttributeNamespace";
+    static final String NAMEID_MAPPER = "NameIDMapper";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -152,7 +171,7 @@ public class FAMSTSConfiguration implements
             debug.error(classMethod, ce);
             return;
         }
-
+        
         Set values = (Set)attrMap.get(ISSUER);
         if (values != null && !values.isEmpty()) {
             issuer = (String)values.iterator().next();
@@ -263,7 +282,52 @@ public class FAMSTSConfiguration implements
         if (values != null && !values.isEmpty()) {
             publicKeyAlias = (String)values.iterator().next();
         }
+        
+        values = (Set)attrMap.get(KERBEROS_DOMAIN_SERVER);
+        if (values != null && !values.isEmpty()) {
+            kerberosDomainServer = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(KERBEROS_DOMAIN);
+        if (values != null && !values.isEmpty()) {
+            kerberosDomain = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(KERBEROS_SERVICE_PRINCIPAL);
+        if (values != null && !values.isEmpty()) {
+            kerberosServicePrincipal = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(KERBEROS_KEYTAB_FILE);
+        if (values != null && !values.isEmpty()) {
+            kerberosKeyTabFile = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(KERBEROS_VERIFY_SIGNATURE);
+        if (values != null && !values.isEmpty()) {
+            isVerifyKrbSignature = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
+        
+        samlAttributes = (Set)attrMap.get(SAML_ATTRIBUTE_MAPPING);
+        
+        values = (Set)attrMap.get(SAML_ATTRIBUTE_NS);
+        if (values != null && !values.isEmpty()) {
+            attributeNS = (String)values.iterator().next();
+        }
 
+        values = (Set)attrMap.get(NAMEID_MAPPER);
+        if (values != null && !values.isEmpty()) {
+            nameIDMapper = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(INCLUDE_MEMBERSHIPS);
+        if (values != null && !values.isEmpty()) {
+            includeMemberships = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
+        }
     }
     
     public void addTrustSPMetadata(final TrustSPMetadata data, 
@@ -508,4 +572,162 @@ public class FAMSTSConfiguration implements
     public Map<String, Object> getOtherOptions(){
         return this.otherOptions;
     }
+    /**
+     * Returns STS Endpoint
+     * @return the STS endpoint
+     */
+    public String getSTSEndpoint() {
+        return stsEndpoint;
+    }
+    
+    /**
+     * Returns Kerberos Domain Controller Domain
+     * @return Kerberos Domain Controller Domain
+     */
+     
+    public String getKDCDomain() {
+        return kerberosDomain;
+    }
+    
+    /**
+     * Sets Kerberos Domain Controller Domain
+     * @param domain Kerberos Domain Controller Domain
+     */
+    public void setKDCDomain(String domain) {
+        this.kerberosDomain = domain;
+    }
+    
+    /**
+     * Returns Kerberos Domain Controller Server.
+     * @return Kerberos Domain Controller Server.
+     */
+    public String getKDCServer() {
+        return kerberosDomainServer;
+    }
+    
+    /**
+     * Sets Kerberos Domain Controller Server
+     * @param kdcServer Kerberos Domain Controller Server
+     */
+    public void setKDCServer(String kdcServer) {
+        this.kerberosDomainServer = kdcServer;
+    }
+    
+      
+    /**
+     * This method is used by the web services provider to get the key tab file.     
+     * @return the keytab file.
+     */
+    public String getKeyTabFile() {
+        return kerberosKeyTabFile;
+    }
+    
+    /**
+     * Sets the keytab file 
+     * @param file the fully qualified file path
+     */
+    public void setKeyTabFile(String file) {
+        this.kerberosKeyTabFile = file;
+    }
+    
+    /**
+     * Returns kerberos service principal
+     * @return the kerberos service principal
+     */
+    public String getKerberosServicePrincipal() {
+        return kerberosServicePrincipal;
+    }
+    
+    /**
+     * Sets kerberos service principal.
+     * @param principal the kerberos service principal.
+     */
+    public void setKerberosServicePrincipal(String principal) {
+        this.kerberosServicePrincipal = principal;
+    }
+    
+    /**
+     * Returns true if kerberos signature needs to be validated.
+     * The signature validation is supported only with JDK6 onwards.
+     * @return true if the signature validation needs to be validated.
+     */
+    public boolean isValidateKerberosSignature() {
+        return isVerifyKrbSignature;
+    }
+    
+    /**
+     * Sets a boolean flag to enable or disable validate kerberos signature.
+     * @param validate  boolean flag to enable or disable validate krb signature.
+     */
+    public void setValidateKerberosSignature(boolean validate) {
+        this.isVerifyKrbSignature = validate;
+    }
+    
+    /**
+     * Returns the SAML Attribute Mapping list. This method is used by the
+     * WSP configuration when enabled for SAML.
+     */
+    public Set getSAMLAttributeMapping() {
+        return samlAttributes;
+    }
+
+    /**
+     * Sets the list of SAML attribute mappings. This method is used by the
+     * WSP configuration when enabled for SAML.
+     * @param attributeMap the list of SAML attribute mapping
+     */
+    public void setSAMLAttributeMapping(Set attributeMap) {
+        this.samlAttributes = attributeMap;
+    }
+
+    /**
+     * Checks if the memberships should be included in the SAML attribute
+     * mapping.
+     * @return true if the  memberships are included.
+     */
+    public boolean shouldIncludeMemberships() {
+        return includeMemberships;
+    }
+
+    /**
+     * Sets a flag to include memberships for SAML attribute mapping.
+     * @param include boolean flag to indicate if the memberships needs to 
+     *                be included.
+     */
+    public void setIncludeMemberships(boolean include) {
+        this.includeMemberships = include;
+    }
+
+    /**
+     * Returns the NameID mapper class
+     * @return returns the nameid mapper class.
+     */
+    public String getNameIDMapper() {
+        return nameIDMapper;
+    }
+
+    /**
+     * Sets the NameID Mapper class.
+     * @param nameIDMapper NameID Mapper class.
+     */
+    public void setNameIDMapper(String nameIDMapper){
+        this.nameIDMapper = nameIDMapper;
+    }
+
+    /**
+     * Returns SAML attribute namespace.
+     * @return returns SAML attribute namespace.
+     */
+    public String getSAMLAttributeNamespace() {
+        return attributeNS;
+    }
+
+    /**
+     * Sets SAML attribute namespace.
+     * @param attributeNS SAML attribute namespace.
+     */
+    public void setSAMLAttributeNamespace(String attributeNS) {
+        this.attributeNS = attributeNS;
+    }
+       
 }

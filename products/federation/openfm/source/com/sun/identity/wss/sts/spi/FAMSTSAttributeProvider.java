@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.10 2008-06-25 05:50:14 qcheng Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.11 2008-07-02 16:57:24 mallas Exp $
  *
  */
 
@@ -165,26 +165,25 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
            return null;
         }
         
-	Map<QName, List<String>> attrs = new HashMap<QName, List<String>>();
-        Map agentConfig = STSUtils.getAgentAttributes(
+	Map<QName, List<String>> attrs = new HashMap<QName, List<String>>();         
+        String namespace = defaultNS;
+        Set tmp = null;
+        Map agentConfig = null;
+        FAMSTSConfiguration stsConfig = new FAMSTSConfiguration();
+        if(appliesTo != null) {
+           if(stsConfig.getSTSEndpoint().equals(appliesTo)){
+              agentConfig = STSUtils.getSTSSAMLAttributes(stsConfig);
+           } else {
+              agentConfig = STSUtils.getAgentAttributes(
                  appliesTo, null, ProviderConfig.WSP);
-        if(agentConfig == null || agentConfig.isEmpty()) {
-           STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" + 
-                " Agent configuration not defined for " + appliesTo);           
-           return attrs;
-        }
-
-        Set tmp = (Set)agentConfig.get(ATTR_NAMESPACE);
-        String namespace = null;
-        if (tmp != null && !tmp.isEmpty()) {
-            namespace = (String)tmp.iterator().next();
-        }
-        if(namespace == null) {
-           if(STSUtils.debug.messageEnabled()) {
-              STSUtils.debug.message("FAMSTSAttributeProvider.getClaimed" +
-              "Attributes: Namespace is not defined.");
            }
-           namespace = defaultNS;
+        }
+        
+        if(agentConfig != null && !agentConfig.isEmpty()) {
+           tmp = (Set)agentConfig.get(ATTR_NAMESPACE);
+           if (tmp != null && !tmp.isEmpty()) {
+               namespace = (String)tmp.iterator().next();
+           }
         }
 
 	QName nameIdQName = new QName(namespace, 
@@ -192,6 +191,13 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
 	List<String> nameIdAttrs = new ArrayList<String>();
 	nameIdAttrs.add(getUserPseduoName(subjectName, agentConfig));
 	attrs.put(nameIdQName, nameIdAttrs);
+        
+        if(agentConfig == null || agentConfig.isEmpty()) {
+           STSUtils.debug.error("FAMSTSAttributeProvider.getClaimed" + 
+                " Agent configuration not defined for " + appliesTo);           
+           return attrs;
+        }
+
         
         tmp = (Set)agentConfig.get(SAML_ATTRIBUTE_MAP);
         Map samlAttributeMap = null;
@@ -231,6 +237,10 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
     
     private String getUserPseduoName(String userName, Map agentConfig){
       
+        if(agentConfig == null) {
+           return userName;
+        }
+        
         String nameIDImpl = CollectionHelper.getMapAttr(
                             agentConfig, NAMEID_MAPPER_CLASS); 
         if(nameIDImpl == null) {
