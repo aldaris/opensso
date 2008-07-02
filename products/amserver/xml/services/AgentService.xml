@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.46 2008-06-25 05:45:40 qcheng Exp $
+   $Id: AgentService.xml,v 1.47 2008-07-02 16:59:51 mallas Exp $
 
 -->
 
@@ -3125,6 +3125,30 @@
                         <DefaultValues>
                             <Value>UserName:test|UserPassword:test</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosDomainServer"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a350">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosDomain"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a351">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosServicePrincipal"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a352">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="KerberosTicketCacheDir"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a353">
                     </AttributeSchema>
                 </SubSchema>
                 

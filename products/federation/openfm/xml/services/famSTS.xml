@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.8 2008-06-25 05:51:13 qcheng Exp $
+   $Id: famSTS.xml,v 1.9 2008-07-02 16:58:29 mallas Exp $
                                                                                 
 -->
 
@@ -224,6 +224,86 @@
                    syntax="string"
                    i18nKey="a119">
                </AttributeSchema>
+
+               <AttributeSchema name="KerberosDomainServer"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a120">
+               </AttributeSchema>
+
+               <AttributeSchema
+                    name="KerberosDomain"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a121">
+               </AttributeSchema>
+
+               <AttributeSchema
+                    name="KerberosServicePrincipal"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a122">
+               </AttributeSchema>
+
+               <AttributeSchema
+                    name="KerberosKeyTabFile"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a123">
+               </AttributeSchema>
+
+               <AttributeSchema
+                    name="isVerifyKrbSignature"
+                    type="single"
+                    syntax="boolean"
+                    i18nKey="a124">
+                    <BooleanValues>
+                         <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                    </BooleanValues>
+                    <DefaultValues>
+                         <Value>false</Value>
+                    </DefaultValues>
+               </AttributeSchema>
+
+               <AttributeSchema
+                     name="SAMLAttributeMapping"
+                     type="list"
+                     syntax="string"
+                     i18nKey="a125">                        
+               </AttributeSchema>
+
+               <AttributeSchema
+                     name="NameIDMapper"
+                     type="single"
+                     syntax="string"
+                     i18nKey="a126">
+               </AttributeSchema>
+
+               <AttributeSchema
+                     name="AttributeNamespace"
+                     type="single"
+                     syntax="string"
+                     i18nKey="a127">
+                     <DefaultValues>
+                         <Value>http://www.sun.com</Value>
+                     </DefaultValues>
+               </AttributeSchema>
+
+               <AttributeSchema
+                     name="includeMemberships"
+                     type="single"
+                     syntax="boolean"
+                     i18nKey="a128">
+                     <BooleanValues>
+                         <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                         <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                     </BooleanValues>
+                     <DefaultValues>
+                         <Value>false</Value>
+                     </DefaultValues>
+               </AttributeSchema>
+
             </Global>
         </Schema>
     </Service>
