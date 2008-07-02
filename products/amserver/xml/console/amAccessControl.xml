@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.14 2008-06-25 05:45:07 qcheng Exp $
+   $Id: amAccessControl.xml,v 1.15 2008-07-02 21:05:07 babysunil Exp $
 
 -->
 
@@ -475,21 +475,45 @@
     <neednodealwith classname="com.sun.identity.console.agentconfig.AgentGroupMembersViewBean" />
     <neednodealwith classname="com.sun.identity.console.agentconfig.AgentTabManager" />
     <neednodealwith classname="com.sun.identity.console.agentconfig.AgentGroupAddViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceSTSEditViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceEditViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceProviderEditViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUserCredEditViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceClientEditViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUserCredAddViewBean" />
-<neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUIElement" />
-<neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingViewBean" />
-<neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListAddViewBean" />
-<neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListDupViewBean" />
-<neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceSTSEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceProviderEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUserCredEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceClientEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUserCredAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.agentconfig.WebServiceUIElement" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListDupViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSAML2SOAPBindingRequestHandlerListEditViewBean" />
     <neednodealwith classname="com.sun.identity.console.user.UMUserResourceOfferingViewBean" />
     <neednodealwith classname="com.sun.identity.console.user.UMUserResourceOfferingAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.user.UMUserResourceOfferingEditViewBean" />
     <neednodealwith classname="com.sun.identity.console.user.UMUserDiscoveryDescriptionAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.user.UMUserDiscoveryDescriptionEditViewBean" />
     <neednodealwith classname="com.sun.identity.console.policy.PMAuthenticatedUsersSubjectEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSAuthNServicesHandlersEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSPPServiceDSAttributeMapListEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSAuthNServicesHandlersAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSAuthNServicesViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSPersonalProfileServiceViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSPPServiceSupportedContainerAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.webservices.WSPPServiceSupportedContainerEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SMDiscoveryServiceViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SMDiscoveryBootstrapRefOffEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SMDiscoveryProviderResourceIdMapperEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SMDiscoveryDescriptionEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SMDiscoveryProviderResourceIdMapperAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingRequestHandlerListEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.service.SCSOAPBindingRequestHandlerListDupViewBean" />
+    <neednodealwith classname="com.sun.identity.console.idm.WebServiceClientEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.idm.WebServiceProviderEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.idm.WebServiceUserCredEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.task.HomeViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.FileUploaderViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.CreateSAML2MetaDataViewBean" />
+    <neednodealwith classname="com.sun.identity.console.task.CompleteCreateHostedIDPViewBean" />
+    <neednodealwith classname="com.sun.identity.console.task.ValidateSAML2SetupViewBean" />
 </accesscontrols>
