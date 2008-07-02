@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.16 2008-06-26 20:24:17 rmisra Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.17 2008-07-02 16:51:16 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -368,17 +368,5 @@ public class ConfigureSAMLv2 extends TestCommon {
             consoleLogout(idpWebClient, idpurl);
         }
         exiting("configureSAMLv2");
-    }
-    
-    /**
-     * Start the notification (jetty) server for getting notifications from the
-     * server.
-     */
-    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void startServer()
-    throws Exception {
-        entering("startServer", null);
-        startNotificationServer();
-        exiting("startServer");
     }
 }
