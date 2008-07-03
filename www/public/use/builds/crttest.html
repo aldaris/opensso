@@ -11,7 +11,7 @@
         <table cellpadding="2" width="100%"> 
             <tbody>
               <tr> 
-                <td align="center" valign="top" width="99%"> <h2>OpenSSO Change/Patch Request Template (v1.0)</h2> </td> 
+                <td align="center" valign="top" width="99%"> <h2>OpenSSO Change/Patch Request Template (v1.1)</h2> </td> 
               </tr> 
             </tbody>
         </table> 
@@ -56,13 +56,14 @@
                 <td style="vertical-align: top;"><br></td>
                 <td style="vertical-align: top;" colspan="1"><input name="changeadminconsole" type="checkbox" CRTchangeadminconsole> Admin Console<br></td>
                 <td style="vertical-align: top;"><input name="changecli" type="checkbox" CRTchangecli> CLI<br></td>
-                <td style="vertical-align: top;"><input name="changepolicy" type="checkbox" CRTchangepolicy> Policy<br></td><td style="vertical-align: top;"><input name="changeidrepo" type="checkbox" CRTchangeidrepo> ID Repo<br></td>
+                <td style="vertical-align: top;"><input name="changepolicy" type="checkbox" CRTchangepolicy> Policy<br></td>
+                <td style="vertical-align: top;"><input name="changeidrepo" type="checkbox" CRTchangeidrepo> ID Repo<br></td>
               </tr>
               <tr>
                 <td style="vertical-align: top;"><br></td>
                 <td style="vertical-align: top;"><input name="changeauthn" type="checkbox" CRTchangeauthn> Authentication<br></td>
                 <td style="vertical-align: top;"><input name="changefed" type="checkbox" CRTchangefed> Federation<br></td>
-                <td style="vertical-align: top;"><input name="changeinstall" type="checkbox" CRTchangeinstall> Installation<br></td>
+                <td style="vertical-align: top;"><input name="changewebservices" type="checkbox" CRTchangewebservices> Web Services<br></td>
                 <td style="vertical-align: top;"><input name="changesession" type="checkbox" CRTchangesession> Session<br></td>
               </tr>
               <tr>
@@ -70,11 +71,18 @@
                 <td style="vertical-align: top;"><input name="changemigration" type="checkbox" CRTchangemigration> Migration<br></td>
                 <td style="vertical-align: top;"><input name="changeupgrade" type="checkbox" CRTchangeupgrade> Upgrade<br></td>
                 <td style="vertical-align: top;"><input name="changelogging" type="checkbox" CRTchangelogging> Logging<br></td>
-                <td style="vertical-align: top;"><input name="changej2eeagent" type="checkbox" CRTchangej2eeagent> J2EE Agent<br> </td>
+                <td style="vertical-align: top;"><input name="changeinstall" type="checkbox" CRTchangeinstall> Installation<br></td>
               </tr>
               <tr> 
-                <td style="vertical-align: top;"><br> </td> 
+                <td style="vertical-align: top;"><br> </td>
+                <td style="vertical-align: top;"><input name="changej2eeagent" type="checkbox" CRTchangej2eeagent> J2EE Agent<br> </td>
                 <td style="vertical-align: top;"><input name="changewebagent" type="checkbox" CRTchangewebagent> Web Agent<br> </td>
+                <td style="vertical-align: top;"><input name="changewebservicessecurityagents" type="checkbox" CRTwebservicessecurityagents> Web Services Security Agents<br> </td>
+                <td style="vertical-align: top;"><input name="changeqa" type="checkbox" CRTchangeqa> QA Automation<br> </td>
+              </tr> 
+              <tr> 
+                <td style="vertical-align: top;"><br> </td>
+                <td style="vertical-align: top;"><input name="changesamples" type="checkbox" CRTchangesamples> Samples<br> </td>
               </tr> 
             </tbody>
         </table>  
@@ -143,6 +151,10 @@
               <tr>
                 <td>&nbsp;</td>
                 <td colspan="2"><textarea name="testing" cols="80" rows="5" CRTtesting></textarea></td>
+              </tr>
+              <tr>
+                <td><font color="red">*</font></td>
+                <td>SQE Approver(s):&nbsp;<input size="30" name="qareviewer" type="text" valuel="CRTqareviewer" value=""> <a href="https://opensso.dev.java.net/nonav/servlets/AssignableUsers" onclick="return launch(this.href, 3, false, document.getElementById('CRT').qareviewer)">Lookup users</a> </td>
               </tr>
             </tbody>
         </table>
@@ -220,6 +232,23 @@
              </fieldset>
              <p><a>*Form View</a>&nbsp;|&nbsp;
              <a onClick="showStuff('crttext');hideStuff('crtform');" href="#">Text View</a>
+      </div>
+      <div id="ff3stuff" style="display:none"> 
+          <p>You are using Firefox 3.+. Please follow the following steps:
+          <li>Copy the text below (eg SelectAll in text area ) and paste it
+          to a file - preferably the one below.
+          <li>Enter the filename (full path) in the field and click on "Submit"
+          <br><br>
+          <textarea id="ff3stufftxt" cols=80 rows=50>FF3Stuff</textarea>
+          <br><br>
+          <form method="post" action="https://opensso.dev.java.net/issues/createattachment.cgi" enctype="multipart/form-data" id="ff3form">
+            <input type="hidden" name="id" value="46" />
+            File : <input type="file" name="data" id="ff3formfile"  size="60" />
+            <input type="hidden" name="description" size="60" id="ff3formdesc"/>
+            <input type="hidden" name="type" size="60" id="ff3formtype" value="text/html" />
+            <input type="hidden" name="othertype" size="30" />
+            <input type="submit" value="Submit" />
+          </form>
       </div>
       <script> getUser(true); if (userid == null || userid.length == 0 || userid == 'Login') alert("You must Login first."); else { setupUser('CRT', 'submitter'); setupUser('approve', 'userid');} </script> 
     </body>
