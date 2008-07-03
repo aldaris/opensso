@@ -449,7 +449,7 @@ function ajax_upload() {
             obj.value = mydescription;
             obj = document.getElementById("ff3formid");
             obj.value = myid;
-            obj = document.getElementById("ff3formfile"");
+            obj = document.getElementById("ff3formfile");
             obj.value = mydescription;
             showStuff("ff3stuff");
             return;
