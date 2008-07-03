@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilterModeValueValidator.java,v 1.2 2008-06-25 05:42:27 qcheng Exp $
+ * $Id: FilterModeValueValidator.java,v 1.3 2008-07-03 09:39:14 veiming Exp $
  *
  */
 

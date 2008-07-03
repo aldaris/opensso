@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MapDuplicateKeyChecker.java,v 1.2 2008-06-25 05:42:28 qcheng Exp $
+ * $Id: MapDuplicateKeyChecker.java,v 1.3 2008-07-03 09:39:14 veiming Exp $
  *
  */
 
