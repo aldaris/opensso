@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.42 2008-06-25 05:48:44 qcheng Exp $
+   $Id: build-war.xml,v 1.43 2008-07-03 00:55:15 veiming Exp $
 
 -->
 
@@ -337,15 +337,6 @@
             <arg value="${openfm.dir}/xml/wss/web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- servlet mapping --&gt;" />
-        </java>
-
-	<!-- update console access permission for federation classes -->
-        <java classname="com.sun.identity.setup.InsertContent" fork="true">
-            <classpath refid="build.class.path"/>
-            <arg value="&lt;neednodealwith.+?/&gt;" />
-            <arg value="${openfm.dir}/xml/console/fmAccessControl.xml" />
-            <arg value="${war.webinf.classes.dir}/amAccessControl.xml" />
-            <arg value="&lt;/accesscontrols&gt;" />
         </java>
 
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
