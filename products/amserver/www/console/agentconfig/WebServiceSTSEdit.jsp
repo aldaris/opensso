@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceSTSEdit.jsp,v 1.3 2008-06-25 05:44:35 qcheng Exp $
+   $Id: WebServiceSTSEdit.jsp,v 1.4 2008-07-04 16:45:24 veiming Exp $
 
 --%>
 
@@ -61,15 +61,22 @@
 
         if (securityMech) {
             var disableSTS = true;
+            var disableKerberos = true;
 
             for (var i = 0; (i < securityMech.length); i++) {
                 if (securityMech[i].checked) {
-                    disableSTS =
-                        (securityMech[i].value != "urn:sun:wss:sts:security");
+                    var val = securityMech[i].value;
+                    disableSTS = (val != "urn:sun:wss:sts:security");
+                    disableKerberos =
+                        (val != "urn:sun:wss:security:null:KerberosToken");
                     break;
                 }
             }
             frm.elements['WebServiceSTSEdit.sts'].disabled = disableSTS;
+            frm.elements['WebServiceSTSEdit.kerberosdomain'].disabled = disableKerberos;
+            frm.elements['WebServiceSTSEdit.kerberosserviceprincipal'].disabled = disableKerberos;
+            frm.elements['WebServiceSTSEdit.kerberosticketcachedir'].disabled = disableKerberos;
+            frm.elements['WebServiceSTSEdit.kerberosdomainserver'].disabled = disableKerberos;
         }
     }
 </script>

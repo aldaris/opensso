@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.5 2008-06-25 05:44:35 qcheng Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.6 2008-07-04 16:45:24 veiming Exp $
 
 --%>
 
@@ -61,6 +61,8 @@
         var disableSTS = true;
         var disableDiscovery = true;
         var disableLibertyServiceURN = true;
+        var disableKerberos = true;
+
         for (var i = 0; (i < securityMech.length); i++) {
             if (securityMech[i].checked) {
                 var value = securityMech[i].value;
@@ -68,12 +70,19 @@
                 disableDiscovery =
                     (value != "urn:sun:liberty:discovery:security");
                 disableLibertyServiceURN = disableSTS && disableDiscovery;
+                disableKerberos =
+                    (value != "urn:sun:wss:security:null:KerberosToken");
                 break;
             }
         }
         frm.elements['WebServiceClientEdit.libertyservicetype'].disabled = disableLibertyServiceURN;
         frm.elements['WebServiceClientEdit.sts'].disabled = disableSTS;
         frm.elements['WebServiceClientEdit.discovery'].disabled = disableDiscovery;
+        frm.elements['WebServiceSTSEdit.sts'].disabled = disableSTS;
+        frm.elements['WebServiceSTSEdit.kerberosdomain'].disabled = disableKerberos;
+        frm.elements['WebServiceSTSEdit.kerberosserviceprincipal'].disabled = disableKerberos;
+        frm.elements['WebServiceSTSEdit.kerberosticketcachedir'].disabled = disableKerberos;
+        frm.elements['WebServiceSTSEdit.kerberosdomainserver'].disabled = disableKerberos;
     }
 </script>
 
