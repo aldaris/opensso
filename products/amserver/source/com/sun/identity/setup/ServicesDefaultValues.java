@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.31 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: ServicesDefaultValues.java,v 1.32 2008-07-04 06:25:22 veiming Exp $
  *
  */
 
@@ -180,6 +180,9 @@ public class ServicesDefaultValues {
                 UserIdRepo.getHost(userRepo));
             map.put(SetupConstants.UM_DIRECTORY_PORT,
                 UserIdRepo.getPort(userRepo));
+            String s = (String) userRepo.get(SetupConstants.USER_STORE_SSL);
+            String ssl = ((s != null) && s.equals("SSL")) ? "true" : "false";
+            map.put(SetupConstants.UM_SSL, ssl);
             umRootSuffix =(String)userRepo.get(
                 SetupConstants.USER_STORE_ROOT_SUFFIX);
         } else {
@@ -187,6 +190,7 @@ public class ServicesDefaultValues {
                 map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
             map.put(SetupConstants.UM_DIRECTORY_PORT,
                 map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
+            map.put(SetupConstants.UM_SSL, "false");
             umRootSuffix = (String)map.get(
                 SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
         }
