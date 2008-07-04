@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.6 2008-07-02 17:21:45 veiming Exp $
+ * $Id: AMPropertySheet.java,v 1.7 2008-07-04 02:34:21 veiming Exp $
  *
  */
 
@@ -224,7 +224,10 @@ public class AMPropertySheet
                 Set sorted = new TreeSet(new OrderedListComparator());
                 sorted.addAll((Set)values);
                 if (sorted.size() == 1) {
-                    sorted.remove("[0]=");
+                    String tmp = (String)sorted.iterator().next();
+                    if (tmp.equals("[0]=")) {
+                        sorted.clear();
+                    }
                 }
                 List list = new ArrayList();
                 
@@ -282,7 +285,10 @@ public class AMPropertySheet
                 sorted.addAll((Set)values);
 
                 if (sorted.size() == 1) {
-                    sorted.remove("[0]=");
+                    String tmp = (String)sorted.iterator().next();
+                    if (tmp.equals("[0]=")) {
+                        sorted.clear();
+                    }
                 }
                 List list = new ArrayList();
                 
