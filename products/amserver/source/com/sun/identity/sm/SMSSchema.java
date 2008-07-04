@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.7 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: SMSSchema.java,v 1.8 2008-07-04 02:35:44 veiming Exp $
  *
  */
 
@@ -450,7 +450,7 @@ public class SMSSchema {
 
         InputStream in;
         try {
-            in = new ByteArrayInputStream(xmlSchema.getBytes("UTF-8"));
+            in = new ByteArrayInputStream(xmlSchema.getBytes("ISO-8859-1"));
         } catch (Exception ex) {
             SMSEntry.debug.error("SMSSchema: Unsupported encoding ", ex);
             in = new ByteArrayInputStream(xmlSchema.getBytes());
