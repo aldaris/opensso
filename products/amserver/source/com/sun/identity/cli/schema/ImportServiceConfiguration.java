@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.4 2008-06-25 05:42:17 qcheng Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.5 2008-07-06 05:48:32 arviranga Exp $
  *
  */
 
@@ -91,7 +91,7 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
 
         // disable notification
         SystemProperties.initializeProperties(
-            SMSEntry.SMS_ENABLE_DB_NOTIFICATION, "true");
+            Constants.SMS_ENABLE_DB_NOTIFICATION, "true");
         SystemProperties.initializeProperties(
             "com.sun.am.event.connection.disable.list", "sm,aci,um");
 

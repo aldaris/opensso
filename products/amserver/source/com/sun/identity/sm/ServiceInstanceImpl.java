@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstanceImpl.java,v 1.4 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceInstanceImpl.java,v 1.5 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -201,7 +201,7 @@ class ServiceInstanceImpl {
         // Construct the DN
         String dn = "ou=" + iName + "," + CreateServiceConfig.INSTANCES_NODE
                 + ServiceManager.getServiceNameDN(serviceName, version);
-        CachedSMSEntry entry = CachedSMSEntry.getInstance(t, dn, null);
+        CachedSMSEntry entry = CachedSMSEntry.getInstance(t, dn);
         if (entry.isNewEntry()) {
             String[] args = { iName };
             throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,

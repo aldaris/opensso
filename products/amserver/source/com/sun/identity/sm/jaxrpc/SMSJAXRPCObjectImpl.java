@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.15 2008-06-25 05:44:09 qcheng Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.16 2008-07-06 05:48:31 arviranga Exp $
  *
  */
 
@@ -65,13 +65,14 @@ import com.sun.identity.sm.CachedSMSEntry;
 import com.sun.identity.sm.CachedSubEntries;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSNotificationManager;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.sm.ServiceAttributeValidator;
 
 public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
 
-    static Debug debug = SMSEntry.debug;
+    static Debug debug = Debug.getInstance("amSMSServerImpl");
 
     static Map notificationURLs = new HashMap();
 
@@ -96,7 +97,8 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
 
     // Default constructor
     public SMSJAXRPCObjectImpl() {
-        initialize();
+        // Empty constructor to avoid bootstraping when JAX-RPC
+        // initialized this object on the Serve
     }
 
     // Initialization to register the callback handler
@@ -109,16 +111,33 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                         + "Unable to get SSO Token Manager");
                 initializationError = ssoe;
             }
-            synchronized (notificationURLs) {
-                if (!initialized) {
-                    try {
-                        SMSEntry.registerCallbackHandler(null, this);
-                    } catch (Exception e) {
-                        debug.warning("SMSJAXRPCObjectImpl(): unable to "
-                                + "register for callback handler", e);
+            
+            // Register for notifications & polling cache
+            if (SMSNotificationManager.isCacheEnabled()) {
+                SMSNotificationManager.getInstance()
+                    .registerCallbackHandler(this);
+                if (debug.messageEnabled()) {
+                    debug.message("SMSJAXRPCObjectImpl.init " +
+                        "Registered for notifications");
+                }
+                
+                // Obtain the cache size, if configured
+                String cacheSizeStr = SystemProperties.get(
+                    Constants.EVENT_LISTENER_REMOTE_CLIENT_BACKLOG_CACHE);
+                try {
+                    cacheSize = Integer.parseInt(cacheSizeStr);
+                    if (cacheSize < 0) {
+                        cacheSize = 30;
                     }
+                } catch (NumberFormatException e) {
+                    //do nothing
+                }
+                if (debug.messageEnabled()) {
+                    debug.message("SMSJAXRPCObjectImpl.init  " +
+                        "EventNotification cache size is set to " + cacheSize);
                 }
             }
+            
             // Construct server URL
             String namingURL = SystemProperties.get(Constants.AM_NAMING_URL);
             if (namingURL != null) {
@@ -133,6 +152,12 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                 if (serverURL == null) {
                     serverURL = "";
                 }
+            }
+            if ((serverURL == null) || (serverURL.length() == 0)) {
+                debug.error("SMSJAXRPCObjectImpl.init Server URL IS NULL");
+            } else if (debug.messageEnabled()) {
+                debug.message("SMSJAXRPCObjectImpl.init ServerURL: " +
+                    serverURL);
             }
             initialized = true;
         }
@@ -150,6 +175,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public Map read(String tokenID, String objName)
         throws SMSException, SSOException, RemoteException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::read dn: " + objName);
         }
@@ -162,7 +188,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                    SMSJAXRPCObject.AMJAXRPCVERSION);
         } else {
             CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
-                objName, null);                    
+                objName);                    
             Map attrs = ce.getSMSEntry().getAttributes();
             if ((attrs != null) && (attrs instanceof CaseInsensitiveHashMap)) {
                 returnAttributes = new HashMap();
@@ -186,6 +212,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public void create(String tokenID, String objName, Map attributes)
             throws SMSException, SSOException, RemoteException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::create dn: " + objName);
         }
@@ -199,6 +226,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public void modify(String tokenID, String objName, String mods)
             throws SMSException, SSOException, RemoteException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::modify dn: " + objName);
         }
@@ -212,6 +240,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public void delete(String tokenID, String objName) throws SMSException,
             SSOException, RemoteException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::delete dn: " + objName);
         }
@@ -228,6 +257,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     public Set searchSubOrgNames(String tokenID, String dn, String filter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder,
             boolean recursive) throws SMSException, SSOException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::searchSubOrgNames dn: " + dn);
         }
@@ -246,6 +276,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             int numOfEntries, boolean sortResults, boolean ascendingOrder,
             String serviceName, String attrName, Set values)
             throws SMSException, SSOException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::searchOrganizationNames dn: "
                     + dn);
@@ -265,6 +296,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     public Set subEntries(String tokenID, String dn, String filter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder)
             throws SMSException, SSOException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::subentries dn: " + dn);
         }
@@ -283,6 +315,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     public Set schemaSubEntries(String tokenID, String dn, String filter,
             String sidFilter, int numOfEntries, boolean sortResults, boolean ao)
             throws SMSException, SSOException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::subentries dn: " + dn);
         }
@@ -297,6 +330,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public Set search(String tokenID, String startDN, String filter)
             throws SMSException, SSOException, RemoteException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::search dn: " + startDN
                     + " filter: " + filter);
@@ -309,13 +343,14 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
      */
     public boolean entryExists(String tokenID, String objName)
             throws SSOException, RemoteException {
+        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::exists dn: " + objName);
         }
         boolean entryExists = false;
         try {
             CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
-                objName, null);
+                objName);
             entryExists = !(ce.getSMSEntry().isNewEntry());
         } catch (SMSException smse) {
             // Ignore the exception
@@ -361,6 +396,11 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         String validatorClass,
         Set values
     ) throws SMSException, SSOException, RemoteException {
+        initialize();
+        if (debug.messageEnabled()) {
+            debug.message("SMSJAXRPCObjectImpl::validateServiceAttributes: " +
+                validatorClass + " Values: " + values);
+        }
         try {
             Class clazz = Class.forName(validatorClass);
             ServiceAttributeValidator v = (ServiceAttributeValidator)
@@ -376,10 +416,13 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
 
     }
 
-
     // Implementation to receive requests from clients
     // Returns changes in the past <i>time</i> minutes
     public synchronized Set objectsChanged(int time) throws RemoteException {
+        initialize();
+        if (debug.messageEnabled()) {
+            debug.message("SMSJAXRPCObjectImpl::objectsChanged: " + time);
+        }
         Set answer = new HashSet();
         // Get the cache index for times upto time+2
         Calendar calendar = Calendar.getInstance();
@@ -429,43 +472,41 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         synchronized (notificationURLs) {
             for (Iterator entries = notificationURLs.entrySet().iterator(); 
                 entries.hasNext();) {
-                synchronized (entries) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String id = (String) entry.getKey();
-                    URL url = (URL) entry.getValue();
+                Map.Entry entry = (Map.Entry) entries.next();
+                URL url = (URL) entry.getValue();
 
-                    // Construct NotificationSet
-                    Notification notification = new Notification(modItem);
-                    NotificationSet ns = 
-                        new NotificationSet(JAXRPCUtil.SMS_SERVICE);
-                    ns.addNotification(notification);
-                    try {
-                        PLLServer.send(url, ns);
-                        if (debug.messageEnabled()) {
-                            debug.message("SMSJAXRPCObjectImpl:sentNotification "
-                            + "URL: " + url + " Data: " + ns);
-                        }
-                    } catch (SendNotificationException ne) {
-                        if (debug.warningEnabled()) {
-                            debug.warning("SMSJAXRPCObject: failed sending "
-                                + "notification to: " + url + "\nRemoving "
-                                + "URL from notification list.", ne);
-                        }
-                        // Remove the URL from Notification List
-                        notificationURLs.remove(id);
+                // Construct NotificationSet
+                Notification notification = new Notification(modItem);
+                NotificationSet ns =
+                    new NotificationSet(JAXRPCUtil.SMS_SERVICE);
+                ns.addNotification(notification);
+                try {
+                    PLLServer.send(url, ns);
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSJAXRPCObjectImpl:sentNotification " +
+                            "URL: " + url + " Data: " + ns);
                     }
+                } catch (SendNotificationException ne) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("SMSJAXRPCObject: failed sending " +
+                            "notification to: " + url + "\nRemoving " +
+                            "URL from notification list.", ne);
+                    }
+                    // Remove the URL from Notification List
+                    entries.remove();
                 }
             }
         }
     }
 
     public void allObjectsChanged() {
-        // do nothing
+        // do nothing. Not sending to remote clients
     }
 
     // Methods to register notification URLs
     public String registerNotificationURL(String url)
             throws RemoteException {
+        initialize();
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
@@ -501,9 +542,16 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         }
     }
 
+    /**
+     * Processes object changed events from other severs
+     * 
+     * @param name DN of the object changed
+     * @param type change type
+     * @throws java.rmi.RemoteException
+     */
     public void notifyObjectChanged(String name, int type)
             throws RemoteException {
-        SMSEntry.objectChanged(name, type);
+        SMSNotificationManager.getInstance().objectChanged(name, type);
     }
 
     private static String calendarToString(Calendar calendar) {
@@ -513,10 +561,11 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         int date = calendar.get(Calendar.DATE);
         int hour = calendar.get(Calendar.HOUR);
         int minute = calendar.get(Calendar.MINUTE);
-        // Clear the calendar, set the params and get the string
-        calendar.clear();
-        calendar.set(year, month, date, hour, minute);
-        return (serverURL + calendar.toString());
+        StringBuffer sb = new StringBuffer(200);
+        sb.append(serverURL);
+        sb.append(":").append(year).append(month).append(date);
+        sb.append(hour).append(minute);
+        return (sb.toString());
     }
 
     /**

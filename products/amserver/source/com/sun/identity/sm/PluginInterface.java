@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginInterface.java,v 1.3 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: PluginInterface.java,v 1.4 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -44,14 +44,11 @@ public class PluginInterface extends Object {
 
     private String key;
 
-    private ServiceSchemaManagerImpl ssmi;
-
     private PluginInterface() {
         // cannot be instantiated
     }
 
-    protected PluginInterface(ServiceSchemaManagerImpl si, Node n) {
-        ssmi = si;
+    protected PluginInterface(Node n) {
         name = XMLUtils.getNodeAttributeValue(n, SMSUtils.NAME);
         interfaceClass = XMLUtils.getNodeAttributeValue(n,
                 SMSUtils.PLUGIN_INTERFACE_CLASS);

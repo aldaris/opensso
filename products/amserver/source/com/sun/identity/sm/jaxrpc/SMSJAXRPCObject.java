@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.16 2008-06-25 05:44:09 qcheng Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.17 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -30,8 +30,6 @@ package com.sun.identity.sm.jaxrpc;
 
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -62,8 +60,10 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSObject;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SMSSchema;
-import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.sm.SMSNotificationManager;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 
 public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
 
@@ -85,98 +85,24 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         "com.sun.identity.sm.notification.enabled";
     
     public SMSJAXRPCObject() {
-        if (!initialized) {
-            synchronized (SERVICE_NAME) {
-                if (!initialized) {
-                    // Construct the SOAP client
-                    client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
-                                        
-                    // Check if notification is enabled 
-                    // Default the notification enabled to true if the property
-                    // is not found for backward compatibility.
-                    String notificationFlag = SystemProperties.get(
-                            NOTIFICATION_PROPERTY, "true");
-
-                    if (notificationFlag.equalsIgnoreCase("true")) {
-                        // Check if notification URL is provided
-                        try {
-                            URL url = WebtopNaming.getNotificationURL();
-                            // Register with PLLClient for notificaiton
-                            PLLClient.addNotificationHandler(
-                                    JAXRPCUtil.SMS_SERVICE,
-                                    new SMSNotificationHandler());
-                            // Register for notification with SMS Server
-                            client.send("registerNotificationURL",
-                                url.toString(), null, null);
-                            if (debug.messageEnabled()) {
-                                debug.message("SMSJAXRPCObject: Using " 
-                                        + "notification mechanism for cache " 
-                                        + "updates: " + url);
-                            }
-                        } catch (Exception e) {
-                            // Use polling mechanism to update caches
-                            if (debug.warningEnabled()) {
-                                debug.warning("SMSJAXRPCObject: Registering for"
-                                    + " notification via URL failed: "
-                                    + e.getMessage()
-                                    + "\nUsing polling mechanism for updates");
-                            }
-                            
-                            // Start Polling thread only if enabled.
-                            startPollingThreadIfEnabled(
-                                    getCachePollingInterval());
-                        }
-                    } else {
-                        // Start Polling thread only if enabled.
-                        startPollingThreadIfEnabled(getCachePollingInterval());
-                    }
-                    // Add this object to receive notifications
-                    registerCallbackHandler(this);
-                    initialized = true;
-                }
+        // Construct the SOAP client
+        client = new SOAPClient(JAXRPCUtil.SMS_SERVICE);
+    }
+    
+    private void initializeNotification() {
+         if (!initializedNotification) {
+            // If cache is enabled, register for notification to maintian
+            // internal cache of entriesPresent
+            // Add this object to receive notifications to maintain
+            // internal cache of entries present and not present
+            if (SMSNotificationManager.isCacheEnabled()) {
+                SMSNotificationManager.getInstance().registerCallbackHandler(
+                    this);
             }
+            initializedNotification = true;
         }
     }
     
-    private int getCachePollingInterval() {
-        // If the property is not configured, default it to 1 minute. 
-        String cachePollingTimeStr = SystemProperties.get(
-            Constants.CACHE_POLLING_TIME_PROPERTY);
-        int cachePollingInterval = Constants.DEFAULT_CACHE_POLLING_TIME;
-        if (cachePollingTimeStr != null) { 
-            try {
-                cachePollingInterval = Integer.parseInt(cachePollingTimeStr);
-            } catch (NumberFormatException nfe) {
-                debug.error("EventListener::NotificationRunnable:: "
-                        + "Invalid Polling Time: " + cachePollingTimeStr + 
-                        " Defaulting to " +
-                        Constants.DEFAULT_CACHE_POLLING_TIME  + " minute");
-            }
-        }        
-        return cachePollingInterval;
-    }    
-    
-    private static void startPollingThreadIfEnabled(int cachePollingInterval) {
-        if (cachePollingInterval > 0) {
-            if (debug.messageEnabled()) {
-                debug.message("EventListener: Polling mode enabled. " +
-                        "Starting the polling thread..");
-            }
-            // Run in polling mode
-            NotificationRunnable nr = new NotificationRunnable(
-                    cachePollingInterval);
-            SystemTimerPool.getTimerPool().schedule(nr, new Date(
-                    ((System.currentTimeMillis() + nr.getRunPeriod()) / 1000)
-                    * 1000));
-        } else {
-            if (debug.warningEnabled()) {
-                debug.warning("EventListener: Polling mode DISABLED. " +
-                    Constants.CACHE_POLLING_TIME_PROPERTY + "=" +
-                    cachePollingInterval);
-            }
-        }
-    }
-
     /**
      * Reads in the object from persistent store. It assumes the object name and
      * the ssoToken are valid. If the entry does not exist the method should
@@ -390,13 +316,16 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
      * Checks if the provided DN exists. Used by PolicyManager.
      */
     public boolean entryExists(SSOToken token, String dn) {
+        dn = (new DN(dn)).toRFCString().toLowerCase();
         // Check the caches
-        if (entriesPresent.contains(dn)) {
+        if (SMSNotificationManager.isCacheEnabled() &&
+            entriesPresent.contains(dn)) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject: entry present in cache: " + dn);
             }
             return (true);
-        } else if (entriesNotPresent.contains(dn)) {
+        } else if (SMSNotificationManager.isCacheEnabled() &&
+            entriesNotPresent.contains(dn)) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject: entry present in "
                         + "not-present-cache: " + dn);
@@ -418,14 +347,30 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
         }
 
         // Update the cache
-        if (entryExists) {
-            Set ee = new HashSet(entriesPresent);
-            ee.add(dn);
-            entriesPresent = ee;
-        } else {
-            Set enp = new HashSet(entriesNotPresent);
-            enp.add(dn);
-            entriesNotPresent = enp;
+        if (entryExists && SMSNotificationManager.isCacheEnabled()) {
+            initializeNotification();
+            entriesPresent.add(dn);
+            if (entriesPresent.size() > entriesPresentCacheSize) {
+                // Remove the first entry
+                synchronized (entriesPresent) {
+                    Iterator items = entriesPresent.iterator();
+                    if (items.hasNext()) {
+                        items.remove();
+                    }
+                }
+            }
+        } else if (SMSNotificationManager.isCacheEnabled()) {
+            initializeNotification();
+            entriesNotPresent.add(dn);
+            if (entriesNotPresent.size() > entriesPresentCacheSize) {
+                // Remove the first entry
+                synchronized (entriesNotPresent) {
+                    Iterator items = entriesNotPresent.iterator();
+                    if (items.hasNext()) {
+                        items.remove();
+                    }
+                }
+            }
         }
         return (entryExists);
     }
@@ -497,54 +442,105 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
 
 
     /**
-     * Registration of Notification Callbacks
+     * Registration for event change notifications.
+     * Only SMSNotificationManager would be calling this method to
+     * register itself
      */
-    public synchronized String registerCallbackHandler(SSOToken token,
-            SMSObjectListener changeListener) throws SMSException, SSOException
-            {
-        return registerCallbackHandler(changeListener);
-    }
+    public void registerCallbackHandler(SMSObjectListener changeListener)
+        throws SMSException {
+        objectListener = changeListener;
+        if (!notificationInitialized) {
+            // Check if notification is enabled 
+            // Default the notification enabled to true if the property
+            // is not found for backward compatibility.
+            String notificationFlag = SystemProperties.get(
+                NOTIFICATION_PROPERTY, "true");
 
-    // Protected method to register callback objects
-    protected String registerCallbackHandler(SMSObjectListener changeListener) {
-        String id = SMSUtils.getUniqueID();
-        objectListeners.put(id, changeListener);
-        return (id);
-    }
+            if (notificationFlag.equalsIgnoreCase("true")) {
+                // Check if notification URL is provided
+                try {
+                    URL url = WebtopNaming.getNotificationURL();
+                    // Register with PLLClient for notificaiton
+                    PLLClient.addNotificationHandler(
+                        JAXRPCUtil.SMS_SERVICE,
+                        new SMSNotificationHandler());
+                    // Register for notification with SMS Server
+                    client.send("registerNotificationURL",
+                        url.toString(), null, null);
+                    if (debug.messageEnabled()) {
+                        debug.message("SMSJAXRPCObject: Using " +
+                            "notification mechanism for cache updates: " + url);
+                    }
+                } catch (Exception e) {
+                    // Use polling mechanism to update caches
+                    if (debug.warningEnabled()) {
+                        debug.warning("SMSJAXRPCObject: Registering for " +
+                            "notification via URL failed: " + e.getMessage() +
+                            "\nUsing polling mechanism for updates");
+                    }
 
+                    // Start Polling thread only if enabled.
+                    startPollingThreadIfEnabled(
+                        getCachePollingInterval());
+                }
+            } else {
+                // Start Polling thread only if enabled.
+                startPollingThreadIfEnabled(getCachePollingInterval());
+            }
+            notificationInitialized = true;
+        }
+    }
+    
     /**
-     * De-Registration of Notification Callbacks
+     * Returns the polling interval in minutes
+     * @return polling interval in minutes
      */
-    public synchronized void deregisterCallbackHandler(String id) {
-        objectListeners.remove(id);
+    private int getCachePollingInterval() {
+        // If the property is not configured, default it to 1 minute. 
+        String cachePollingTimeStr = SystemProperties.get(
+            Constants.CACHE_POLLING_TIME_PROPERTY);
+        int cachePollingInterval = Constants.DEFAULT_CACHE_POLLING_TIME;
+        if (cachePollingTimeStr != null) { 
+            try {
+                cachePollingInterval = Integer.parseInt(cachePollingTimeStr);
+            } catch (NumberFormatException nfe) {
+                debug.error("EventListener::NotificationRunnable:: "
+                        + "Invalid Polling Time: " + cachePollingTimeStr + 
+                        " Defaulting to " +
+                        Constants.DEFAULT_CACHE_POLLING_TIME  + " minute", nfe);
+            }
+        }        
+        return cachePollingInterval;
+    }    
+    
+    private static void startPollingThreadIfEnabled(int cachePollingInterval) {
+        if (cachePollingInterval > 0) {
+            if (debug.messageEnabled()) {
+                debug.message("EventListener: Polling mode enabled. " +
+                        "Starting the polling thread..");
+            }
+            // Run in polling mode
+            NotificationRunnable nr = new NotificationRunnable(
+                    cachePollingInterval);
+            SystemTimerPool.getTimerPool().schedule(nr, new Date(
+                    ((System.currentTimeMillis() + nr.getRunPeriod()) / 1000)
+                    * 1000));
+        } else {
+            if (debug.warningEnabled()) {
+                debug.warning("EventListener: Polling mode DISABLED. " +
+                    Constants.CACHE_POLLING_TIME_PROPERTY + "=" +
+                    cachePollingInterval);
+            }
+        }
     }
 
     public void objectChanged(String dn, int type) {
         dn = (new DN(dn)).toRFCString().toLowerCase();
-        synchronized (entriesPresent) {
-            if (type == DELETE) {
-                // Remove from entriesPresent Set
-                Set enp = new HashSet();
-                for (Iterator items = entriesPresent.iterator(); items
-                        .hasNext();) {
-                    String odn = (String) items.next();
-                    if (!dn.equals((new DN(odn)).toRFCString().toLowerCase())) {
-                        enp.add(odn);
-                    }
-                }
-                entriesPresent = enp;
-            } else if (type == ADD) {
-                // Remove from entriesNotPresent set
-                Set enp = new HashSet();
-                for (Iterator items = entriesNotPresent.iterator(); items
-                        .hasNext();) {
-                    String odn = (String) items.next();
-                    if (!dn.equals((new DN(odn)).toRFCString().toLowerCase())) {
-                        enp.add(odn);
-                    }
-                }
-                entriesNotPresent = enp;
-            }
+        if (type == DELETE) {
+            // Remove from entriesPresent Set
+            entriesPresent.remove(dn);
+        } else if (type == ADD) {
+            entriesNotPresent.remove(dn);
         }
     }
 
@@ -606,32 +602,34 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
             type = SMSObjectListener.ADD;
         if (modItem.startsWith("DEL:"))
             type = SMSObjectListener.DELETE;
-        // Send notifications
-        for (Iterator objs = objectListeners.values().iterator(); objs
-                .hasNext();) {
-            SMSObjectListener listener = (SMSObjectListener) objs.next();
-            listener.objectChanged(dn, type);
-        }
+        // Send notification
+        objectListener.objectChanged(dn, type);
     }
 
     // Static variables
     private static String baseDN;
 
     private static String amsdkbaseDN;
+    
+    private static int entriesPresentCacheSize = 1000;
 
-    private static Set entriesPresent = new HashSet();
+    private static Set entriesPresent = Collections.synchronizedSet(
+        new LinkedHashSet(entriesPresentCacheSize));
 
-    private static Set entriesNotPresent = new HashSet();
-
-    private static boolean initialized;
+    private static Set entriesNotPresent = Collections.synchronizedSet(
+        new LinkedHashSet(entriesPresentCacheSize));
+    
+    // Used to update entriesPresent & entriesNotPresent
+    private static boolean initializedNotification;
+    
+    // Used to register for notifications from Server
+    private static boolean notificationInitialized;
 
     protected static boolean isLocal;
 
-    private static Debug debug = Debug.getInstance("amSMS");
+    private static Debug debug = Debug.getInstance("amSMSClient");
 
-    private static Map objectListeners = new HashMap();
-
-    private static final String SERVICE_NAME = "SMSJAXRPCObject";
+    private static SMSObjectListener objectListener;
 
     // Inner class to check for notifications
     static class NotificationRunnable extends GeneralTaskRunnable {

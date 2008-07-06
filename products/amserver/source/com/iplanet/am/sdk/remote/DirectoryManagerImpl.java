@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.16 2008-06-27 20:56:23 arviranga Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.17 2008-07-06 05:48:33 arviranga Exp $
  *
  */
 
@@ -945,7 +945,9 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
     
     public String registerNotificationURL(String url) 
         throws RemoteException {
-        initialize();
+        // Since clients tend to register for AMSDK and IdRepo
+        // donot initialize which might thrown an excpetion
+        // initialize();
         String id = SMSUtils.getUniqueID();
         try {
             // Check URL is not the local server
@@ -978,7 +980,9 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
     
     public void deRegisterNotificationURL(String notificationID)
     throws RemoteException {
-        initialize();
+        // Since clients tend to register & deregister for AMSDK and IdRepo
+        // donot initialize which might thrown an excpetion
+        // initialize();
         synchronized (notificationURLs) {
             notificationURLs.remove(notificationID);
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManagerImpl.java,v 1.5 2008-06-25 05:44:06 qcheng Exp $
+ * $Id: ServiceSchemaManagerImpl.java,v 1.6 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -31,10 +31,12 @@ package com.sun.identity.sm;
 import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -93,13 +95,10 @@ class ServiceSchemaManagerImpl {
     private Map subSchemas;
 
     private Map pluginInterfaces;
-
+    
     // Private constructor, an instance can obtained only via getInstance
     private ServiceSchemaManagerImpl(SSOToken t, String serviceName,
             String version) throws SMSException, SSOException {
-        // Check sevice name and version
-        ServiceManager.checkServiceNameAndVersion(t, serviceName, version);
-
         // Copy instance variables
         this.serviceName = serviceName;
         this.version = version;
@@ -110,11 +109,25 @@ class ServiceSchemaManagerImpl {
 
         // Construct the Schema's SMS entry
         smsEntry = CachedSMSEntry.getInstance(t, this, serviceName, version);
-
+        // Check if entry exists i.e service name with version exists
+        if (smsEntry.isNewEntry()) {
+            String[] msgs = { serviceName };
+            throw (new ServiceNotFoundException(IUMSConstants.UMS_BUNDLE_NAME,
+                    IUMSConstants.SMS_service_does_not_exist, msgs));
+        }
+        
         // Read the schema
         update();
     }
-
+    
+    /**
+     * Returns if the object is still valid
+     * @return validity of this object
+     */
+    public boolean isValid() {
+        return (smsEntry.isValid());
+    }
+    
     /**
      * Returns the Service name
      */
@@ -242,11 +255,20 @@ class ServiceSchemaManagerImpl {
         return (smsEntry);
     }
 
+    // @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (serviceName != null ? serviceName.hashCode() : 0);
+        hash = 89 * hash + (version != null ? version.hashCode() : 0);
+        hash = 89 * hash + instanceID;
+        return hash;
+    }
+
     public boolean equals(Object o) {
         if (o instanceof ServiceSchemaManagerImpl) {
             ServiceSchemaManagerImpl ssm = (ServiceSchemaManagerImpl) o;
-            if (serviceName.equals(ssm.serviceName)
-                    && version.equals(ssm.version)
+            if (serviceName.equalsIgnoreCase(ssm.serviceName)
+                    && version.equalsIgnoreCase(ssm.version)
                     && (instanceID == ssm.instanceID)) {
                 return (true);
             }
@@ -298,6 +320,9 @@ class ServiceSchemaManagerImpl {
      */
     synchronized void removeListener(String listenerID) {
         listenerObjects.remove(listenerID);
+        if (listenerObjects.isEmpty()) {
+            smsEntry.removeServiceListener(this);
+        }
     }
 
     // -----------------------------------------------------------
@@ -340,11 +365,22 @@ class ServiceSchemaManagerImpl {
         Iterator lObjects = lo.values().iterator();
         while (lObjects.hasNext()) {
             ServiceListener listener = (ServiceListener) lObjects.next();
-            listener.schemaChanged(serviceName, version);
+            try {
+                listener.schemaChanged(serviceName, version);
+            } catch (Throwable t) {
+                debug.error("ServiceSchemaManagerImpl:UpdateAndNotify" +
+                    "Listeners Exception sending notification to class: " +
+                    listener.getClass().getName(), t);
+            }
         }
     }
 
     synchronized void update() {
+        if (!smsEntry.isValid()) {
+            // Clear the references and return
+            clear();
+            return;
+        }
         xmlSchema = smsEntry.getXMLSchema();
         if (xmlSchema == null) {
             // This could mean the service schema has been deleted
@@ -414,7 +450,7 @@ class ServiceSchemaManagerImpl {
         Iterator pins = XMLUtils.getChildNodes(schemaRoot,
                 SMSUtils.PLUGIN_INTERFACE).iterator();
         while (pins.hasNext()) {
-            PluginInterface pi = new PluginInterface(this, (Node) pins.next());
+            PluginInterface pi = new PluginInterface((Node) pins.next());
             pluginInterfaces.put(pi.getName(), pi);
         }
     }
@@ -451,14 +487,32 @@ class ServiceSchemaManagerImpl {
             }
         }
     }
-
+    
+    private void clear() {
+        // CachedSMSEntry is invalid, clear the local variable
+        // and mark the entry to be invalid and to be GCed.
+        // Remove from global cache
+        schemaManagers.remove(
+            ServiceManager.getCacheIndex(serviceName, version));
+        // Mark as invalid and deregister for notifications
+        if ((listenerObjects == null) || listenerObjects.isEmpty()) {
+            smsEntry.removeServiceListener(this);
+        }
+        // Clear local cache
+        xmlSchema = null;
+        document = null;
+        schemaRoot = null;
+        subSchemas.clear();
+        pluginInterfaces.clear();
+    }
+    
     // Static method to get an instance of this class
     static ServiceSchemaManagerImpl getInstance(SSOToken t, String serviceName,
             String version) throws SMSException, SSOException {
         String cacheName = ServiceManager.getCacheIndex(serviceName, version);
         ServiceSchemaManagerImpl ssmi = 
             (ServiceSchemaManagerImpl) schemaManagers.get(cacheName);
-        if (ssmi != null && !ssmi.smsEntry.isValid()) {
+        if (ssmi != null && !ssmi.isValid()) {
             // CachedSMSEntry is not valid. Re-create this object
             ssmi = null;
         }
@@ -471,15 +525,13 @@ class ServiceSchemaManagerImpl {
             return (ssmi);
         }
 
-        synchronized (schemaMgrMutex) {
+        synchronized (schemaManagers) {
             // Check again, since it is now in synchronized block
             ssmi = (ServiceSchemaManagerImpl) schemaManagers.get(cacheName);
-            if (ssmi == null || !ssmi.smsEntry.isValid()) {
+            if (ssmi == null || !ssmi.isValid()) {
                 // Instantiate and add to cache
                 ssmi = new ServiceSchemaManagerImpl(t, serviceName, version);
-                Map sudoSchemaManagers = new HashMap(schemaManagers);
-                sudoSchemaManagers.put(cacheName, ssmi);
-                schemaManagers = sudoSchemaManagers;
+                schemaManagers.put(cacheName, ssmi);
             }
         }
         return (ssmi);
@@ -487,16 +539,26 @@ class ServiceSchemaManagerImpl {
 
     // Clears the cache
     static void clearCache() {
-        schemaManagers = new HashMap();
+        synchronized (schemaManagers) {
+            // Mark the entries as invalid and return
+            for (Iterator items = schemaManagers.values().iterator();
+                items.hasNext();) {
+                ServiceSchemaManagerImpl ssmi = (ServiceSchemaManagerImpl)
+                    items.next();
+                if (!ssmi.isValid()) {
+                    ssmi.smsEntry.clear();
+                }
+            }
+            schemaManagers.clear();
+        }
     }
 
     // Debug & I18n
     private static Debug debug = SMSEntry.debug;
 
     // Pointers to ServiceSchemaManager instances
-    private static Map schemaManagers = new HashMap();
-
-    private static final String schemaMgrMutex = "SchemaManagerMutext";
+    private static Map schemaManagers = Collections.synchronizedMap(
+        new HashMap());
 
     private static final int DEFAULT_REVISION = 10;
 

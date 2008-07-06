@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMServiceListener.java,v 1.3 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: SMServiceListener.java,v 1.4 2008-07-06 05:48:31 arviranga Exp $
  *
  */
 
@@ -127,14 +127,24 @@ public class SMServiceListener implements ServiceListener {
             }
             if (type == ServiceListener.REMOVED) {
                 // Schedule the task to delete delegation policies
-                DeleteDelegationPolicyTask task = new DeleteDelegationPolicyTask(
-                    orgName);
-                SystemTimer.getTimer().schedule(task, 1000);
+                DeleteDelegationPolicyTask task =
+                    new DeleteDelegationPolicyTask(orgName);
+                if (debug.messageEnabled()) {
+                    debug.message("SMServiceListener.occ scheduling " +
+                        "policies to be removed for org: " + orgName +
+                        " GN: " + groupName + " SC: " + serviceComponent);
+                }
+                SystemTimer.getTimer().schedule(task, 0);
             } else if (type == ServiceListener.ADDED) {
                 // Create the delegation policies
                 SSOToken token = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
                 try {
+                    if (debug.messageEnabled()) {
+                        debug.message("SMServiceListener.occ creating " +
+                            "policies for the org: " + orgName +
+                            " GN: " + groupName + " SC: " + serviceComponent);
+                    }
                     if (ServiceManager.isCoexistenceMode()) {
                         DelegationUtils.createRealmPrivileges(token, orgName);
                     } else {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdType.java,v 1.6 2008-06-25 05:43:29 qcheng Exp $
+ * $Id: IdType.java,v 1.7 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import java.util.Set;
  *
  * @supported.all.api
  */
-public class IdType {
+public class IdType implements java.io.Serializable {
     private String idType;
 
     protected IdType(String type) {

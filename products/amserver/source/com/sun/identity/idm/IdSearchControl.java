@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSearchControl.java,v 1.6 2008-06-25 05:43:29 qcheng Exp $
+ * $Id: IdSearchControl.java,v 1.7 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -53,7 +53,7 @@ public final class IdSearchControl {
     private Set returnAttributes = null;
 
     // Disabled by default
-    private static boolean getAllAttributesEnabled = false;
+    private boolean getAllAttributesEnabled;
 
     private int timeOut = 0;
 
@@ -122,7 +122,7 @@ public final class IdSearchControl {
      * 
      */
     public void setAllReturnAttributes(boolean getAllAttributes) {
-        getAllAttributesEnabled = true;
+        this.getAllAttributesEnabled = getAllAttributes;
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginSchema.java,v 1.4 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: PluginSchema.java,v 1.5 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -294,7 +294,7 @@ public class PluginSchema {
 
         // Construct DN for plugin schema node
         String dn = "ou=" + name + "," + sb.toString();
-        CachedSMSEntry ce = CachedSMSEntry.getInstance(token, dn, null);
+        CachedSMSEntry ce = CachedSMSEntry.getInstance(token, dn);
         SMSEntry e = ce.getClonedSMSEntry();
         if (!e.isNewEntry()) {
             throw (new SMSException("plugin-schema-already-exists",

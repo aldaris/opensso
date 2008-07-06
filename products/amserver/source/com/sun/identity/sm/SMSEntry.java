@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.37 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: SMSEntry.java,v 1.38 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -30,8 +30,6 @@ package com.sun.identity.sm;
 
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.dpro.session.Session;
-import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -46,9 +44,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.AMResourceBundleCache;
-import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
-import java.net.URL;
 import java.security.AccessController;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -102,13 +98,6 @@ public class SMSEntry implements Cloneable {
     // Variable for caching parse organization names
     private static Cache cache = new Cache(500);
 
-    // Variable to check if the SMS entries can be cached
-    static String GLOBAL_CACHE_PROPERTY = "com.iplanet.am.sdk.caching.enabled";
-
-    static String SM_CACHE_PROPERTY = "com.sun.identity.sm.cache.enabled";
-
-    static final String AGENTGROUP_RDN = "ou=agentgroup,ou=Instances";
-
     /**
      * Flat File Configuration Data Store
      */
@@ -129,6 +118,8 @@ public class SMSEntry implements Cloneable {
     public static ResourceBundle bundle;
 
     static String baseDN;
+    
+    static String servicesDN;
 
     static String dataStore;
 
@@ -150,9 +141,6 @@ public class SMSEntry implements Cloneable {
 
     static final String FLATFILE_SMS_CLASS_NAME = 
         "com.sun.identity.sm.flatfile.SMSEnhancedFlatFileObject";
-
-    public static final String SMS_ENABLE_DB_NOTIFICATION = 
-        "com.sun.identity.sm.enableDataStoreNotification";
 
     // Flag to enable LDAP's proxy support
     public static final String DB_PROXY_ENABLE = 
@@ -226,12 +214,13 @@ public class SMSEntry implements Cloneable {
         backendProxyEnabled = (proxy != null) && proxy.equalsIgnoreCase("true");
 
         // Check if SMSEntries can be cached
-        String cacheEnabled = System.getProperty(GLOBAL_CACHE_PROPERTY,
-            SystemProperties.get(GLOBAL_CACHE_PROPERTY, "true"));
+        String cacheEnabled = System.getProperty(
+            Constants.SDK_GLOBAL_CACHE_PROPERTY, SystemProperties.get(
+            Constants.SDK_GLOBAL_CACHE_PROPERTY, "true"));
         if (cacheEnabled.equalsIgnoreCase("true")) {
             cacheSMSEntries = true;
         } else { // Global Property - set to false. Check component property
-            cacheEnabled = SystemProperties.get(SM_CACHE_PROPERTY);
+            cacheEnabled = SystemProperties.get(Constants.SMS_CACHE_PROPERTY);
             cacheSMSEntries = (cacheEnabled != null) &&
                 cacheEnabled.equalsIgnoreCase("true");
         }
@@ -240,7 +229,8 @@ public class SMSEntry implements Cloneable {
         }
 
         // Check if backend datastore notification needs to be enabled
-        String enable = SystemProperties.get(SMS_ENABLE_DB_NOTIFICATION);
+        String enable = SystemProperties.get(
+            Constants.SMS_ENABLE_DB_NOTIFICATION);
         enableDataStoreNotification = (enable != null) && 
             enable.equalsIgnoreCase("true");
         if (debug.messageEnabled()) {
@@ -358,6 +348,7 @@ public class SMSEntry implements Cloneable {
         } else {
             baseDN = "o=unknown-suffix";
         }
+        servicesDN = SERVICES_RDN + COMMA + baseDN;
         if (baseDN == null) {
             // Problem in getting base DN
             initializationException = new SMSException(bundle
@@ -732,12 +723,14 @@ public class SMSEntry implements Cloneable {
         if (newEntry && attrSet != null) {
             smsObject.create(token, dn, attrSet);
             // send object change notification
-            notifyObjectChanged(dn, SMSObjectListener.ADD);
+            SMSNotificationManager.getInstance().localObjectChanged(dn,
+                SMSObjectListener.ADD);
         } else if (modSet != null) {
             smsObject.modify(token, dn, (ModificationItem[]) (modSet
                     .toArray(new ModificationItem[modSet.size()])));
             // send object change notification
-            notifyObjectChanged(dn, SMSObjectListener.MODIFY);
+            SMSNotificationManager.getInstance().localObjectChanged(dn,
+                SMSObjectListener.MODIFY);
         } else {
             // %%% throw an exception, since nothing has changed
         }
@@ -786,7 +779,8 @@ public class SMSEntry implements Cloneable {
             attrSet = null; // new HashMap();
             modSet = null;
             // send object change notification
-            notifyObjectChanged(dn, SMSObjectListener.DELETE);
+            SMSNotificationManager.getInstance().localObjectChanged(dn,
+                SMSObjectListener.DELETE);
         } else {
             if (debug.warningEnabled()) {
                 debug.warning("SMSEntry: Attempted to delete an entry that "
@@ -1049,96 +1043,6 @@ public class SMSEntry implements Cloneable {
                     + dn, e);
         }
         return (false);
-    }
-
-    /**
-     * Register the callback handler
-     */
-    public static void registerCallbackHandler(SSOToken token,
-            SMSObjectListener ocl) throws SMSException, SSOException {
-        // Manage callback objects
-        changeListeners.add(ocl);
-        // Check if native datastore notifications need to
-        // be enabled
-        if (!ServiceManager.isRealmEnabled() || enableDataStoreNotification) {
-            // For backward compatibility
-            smsObject.registerCallbackHandler(token, ocl);
-            if (eventDebug.messageEnabled()) {
-                eventDebug.message("SMSEntry:registerCallbackHander calling "
-                        + "SMSObject for co-existence mode");
-            }
-        }
-        eventDebug.message("SMSEntry:registerCallbackHander called");
-    }
-
-    /**
-     * Notifications received for objects changed
-     */
-    public static void objectChanged(String name, int type) {
-        // Since this method will be called only by remote
-        // notifications, set the flag to be false
-        objectChanged(name, type, false);
-    }
-
-    public static void objectChanged(String name, int type, boolean isLocal) {
-        if (eventDebug.messageEnabled()) {
-            eventDebug.message("SMSEntry:objectChanged: " + name + " type: "
-                    + type + " IsLocal: " + isLocal
-                    + "\nNumber of callback objects: "
-                    + changeListeners.size());
-        }
-        // Since agentgroup placeholder node is added after install time,
-        // fix it here to avoid sending notifications.
-        if (type == SMSObjectListener.ADD
-            && (name.indexOf(AGENTGROUP_RDN) >= 0)) {
-            return;
-        }
-        if (!isLocal) {
-            // Check if notification has been sent locally
-            if (localChanges.contains(name + type)) {
-                localChanges.remove(name + type);
-                if (eventDebug.messageEnabled()) {
-                    eventDebug.message("SMSEntry:objectChanged: " + name
-                            + " type: " + type + " IsLocal: " + isLocal
-                            + "\nHas been delivered locally");
-                }
-                return;
-            } else if (eventDebug.messageEnabled()) {
-                eventDebug.message("SMSEntry:objectChanged: " + name
-                        + " type: " + type + " IsLocal: " + isLocal
-                        + "\nHas NOT been delivered locally, will be notified");
-            }
-        } else {
-            // Since it is local notification, add it to localChanges list
-            // Also check the size to remove old notification DNs
-            if (localChanges.size() > LOCAL_CHANGES_MAX_SIZE) {
-                // Remove the first element
-                localChanges.remove(0);
-            }
-            localChanges.add(name + type);
-        }
-        for (Iterator items = changeListeners.iterator(); items.hasNext();) {
-            SMSObjectListener listener = (SMSObjectListener) items.next();
-            listener.objectChanged(name, type);
-        }
-    }
-
-    /**
-     * Sends notifications to all servers
-     */
-    public static void notifyObjectChanged(String name, int type) {
-        if (eventDebug.messageEnabled()) {
-            eventDebug.message("SMSEntry:notifyObjectChanged: " + name
-                    + " type: " + type + "\nCalling NotificationThread");
-        }
-        NotificationThread nt = new NotificationThread(name, type);
-        if (SystemProperties.isServerMode()) {
-            // Start the thread if in server mode
-            nt.start();
-        } else {
-            // Send notifications
-            nt.run();
-        }
     }
 
     /**
@@ -1588,8 +1492,8 @@ public class SMSEntry implements Cloneable {
          * bypass dnNames : ou=services,dc=iplanet,dc=com dc=iplanet,dc=com
          * ou=GlobalConfig ou=OrganizationConfig ou=PluginConfig
          */
-        if (SMSJAXRPCObjectFlg || backendProxyEnabled || dnName.equals(baseDN)
-                || dnName.equals(DNMapper.serviceDN)) {
+        if (SMSJAXRPCObjectFlg || backendProxyEnabled ||
+            dnName.equals(baseDN) || dnName.equals(servicesDN)) {
             if (debug.messageEnabled()) {
                 debug.message("SMSEntry:getDelegationPermission :"
                         + "No delegation check needed for client sdk, "
@@ -1623,7 +1527,7 @@ public class SMSEntry implements Cloneable {
             throw (new SMSException(bundle.getString("sms-INVALID_SSO_TOKEN"),
                     "sms-INVALID_SSO_TOKEN"));
         }
-
+        
         // If running in co-existence mode, return true if backend
         // has proxy enabled
         if (!ServiceManager.isConfigMigratedTo70()) {
@@ -1866,118 +1770,4 @@ public class SMSEntry implements Cloneable {
 
     public static final String FILTER_SERVICE_COMPONENTS = "(|(objectclass="
             + OC_SERVICE + ")(objectclass=" + OC_SERVICE_COMP + "))";
-
-    // Notification thread
-    static class NotificationThread extends Thread {
-        String name;
-
-        int type;
-
-        NotificationThread(String name, int type) {
-            this.name = name;
-            this.type = type;
-            // Setting this as a daemon thread causes
-            // amadmin CLI to not send notifications.
-            // Would be true in case of all application using AMSDK.
-            // setDaemon(true);
-        }
-
-        public void run() {
-            // At install time and creation of placeholder nodes
-            // should not send notifications
-            // This would be determined if type == ADD and the DNs are
-            // 1) ou=<serviceName>,<rootSuffix>
-            // 2) ou=globalconfig
-            // 3) ou=organizationconfig
-            // 4) ou=instances
-            // 5) ou=services
-            // 6) ...
-            
-            // Since agentgroup placeholder node is added after install time,
-            // fix it here to avoid sending notifications.
-            if (type == SMSObjectListener.ADD
-                && ((new StringTokenizer(name, ",")).countTokens() 
-                    <= (baseDNCount + 1) || 
-                        (name.indexOf(AGENTGROUP_RDN) >= 0))) {
-                return;
-            }
-
-            String configTime = SystemProperties.get(
-                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-            boolean bConfigTime = configTime.equalsIgnoreCase("true");
-
-            // Send local notification only if datastore notification is
-            // not enabled.  Local notifications should always be sent on the
-            // client side.
-            if ((SMSJAXRPCObjectFlg) || (ServiceManager.isRealmEnabled() &&
-                    !enableDataStoreNotification) || bConfigTime
-            ) {
-                
-                if (eventDebug.messageEnabled()) {
-                    eventDebug.message("SMSEntry::NotificationThread:run "
-                            + "sending local notifications");
-                }
-                SMSEntry.objectChanged(name, type, true);
-            }
-
-            // If in server mode, send notifications to other servers
-            if (!SMSJAXRPCObjectFlg && !enableDataStoreNotification
-                    && ServiceManager.isRealmEnabled()) {
-                // Get servers from ServiceManager and send notifications
-                try {
-                    Iterator sl = ServiceManager.getAMServerInstances()
-                            .iterator();
-                    while (sl != null && sl.hasNext()) {
-                        URL url = new URL((String) sl.next());
-                        URL weburl = WebtopNaming.getServiceURL("jaxrpc", 
-                            url, false);
-                        String surl = weburl.toString();
-                        if (!surl.endsWith("/")) {
-                            surl += "/SMSObjectIF";
-                        } else {
-                            surl += "SMSObjectIF";
-                        }
-                        try {
-                            // Send notification
-                            SOAPClient client = new SOAPClient();
-                            client.setURL(surl);
-                            Object[] params = new Object[2];
-                            params[0] = name;
-                            params[1] = new Integer(type);
-                            if (eventDebug.messageEnabled()) {
-                                eventDebug.message(
-                                    "SMSEntry.NotificationThread.run " + 
-                                    "Sending to URL: " + surl);
-                            }
-                            
-                            if (adminSSOToken == null) {
-                                adminSSOToken = (SSOToken) 
-                                    AccessController.doPrivileged(
-                                    com.sun.identity.security.AdminTokenAction
-                                    .getInstance());
-                            }
-                           
-                            client.send("notifyObjectChanged", params,
-                        	    Session.getLBCookie(
-                        	        adminSSOToken.getTokenID().toString()), 
-                        	        null);
-
-                        } catch (Throwable t) {
-                            if (eventDebug.warningEnabled()) {
-                                eventDebug.warning(
-                                    "SMSEntry.NotificationThread.run " + 
-                                    "Unable to send notification to: " + surl,  
-                                    t);
-                            }
-                        }
-                    }
-                } catch (Throwable t) {
-                    if (eventDebug.warningEnabled()) {
-                        eventDebug.warning("SMSEntry.NotificationThread.run " +
-                            "Unable to send notifications", t);
-                    }
-                }
-            }
-        }
-    }
 }

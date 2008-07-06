@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.8 2008-07-02 17:20:29 kenwho Exp $
+ * $Id: IdRepoListener.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -314,7 +314,6 @@ public final class IdRepoListener {
                 id = id + ",amsdkdn=" + name;
             }
             changedTypes[i] = id;
-            i++;
         }
         return changedTypes;
     }

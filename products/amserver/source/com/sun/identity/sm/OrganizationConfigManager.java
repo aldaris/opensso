@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.19 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: OrganizationConfigManager.java,v 1.20 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -136,9 +136,8 @@ public class OrganizationConfigManager {
         this.token = token;
         this.orgName = orgName;
 
-        // Instantiate the OrgConfigImpl and cache it
-        orgConfigImpl = OrganizationConfigManagerImpl.getInstance(token,
-                orgName);
+        // Instantiate and validate
+        validateConfigImpl();
         orgDN = orgConfigImpl.getOrgDN();
         try {
             if (migratedTo70 && !registeredForConfigNotifications) {
@@ -213,24 +212,18 @@ public class OrganizationConfigManager {
     public Set getServiceSchemas() throws SMSException {
         // Loop through the services and determine the
         // organization creation schemas
-        if (serviceSchemaSet != null && !serviceSchemaSet.isEmpty()) {
-            return (serviceSchemaSet);
-        }
+        Set serviceSchemaSet = null;
         try {
             Set serviceNames = getServiceNames(token);
             serviceSchemaSet = new HashSet(serviceNames.size() * 2);
             for (Iterator names = serviceNames.iterator(); names.hasNext();) {
                 ServiceSchemaManager ssm = new ServiceSchemaManager(
-                        (String) names.next(), token);
-                if (!registeredForNotifications) {
-                    ssm.addListener(new OrganizationConfigManagerListener());
-                }
+                    (String) names.next(), token);
                 ServiceSchema ss = ssm.getOrganizationCreationSchema();
                 if (ss != null) {
                     serviceSchemaSet.add(ss);
                 }
             }
-            registeredForNotifications = true;
         } catch (SSOException ssoe) {
             SMSEntry.debug.error("OrganizationConfigManager:getServiceSchemas"
                     + " unable to get service schema", ssoe);
@@ -274,6 +267,7 @@ public class OrganizationConfigManager {
      */
     public OrganizationConfigManager createSubOrganization(String subOrgName,
             Map attributes) throws SMSException {
+        validateConfigImpl();
         /*
          * Since the "Map attributes" can contain more than one service name,
          * creation of the sub organization is be achieved in 2 steps. i) create
@@ -462,6 +456,7 @@ public class OrganizationConfigManager {
      */
     public Set getSubOrganizationNames(String pattern, boolean recursive)
             throws SMSException {
+        validateConfigImpl();
         try {
             if (realmEnabled) {
                 return (orgConfigImpl.getSubOrganizationNames(token, pattern,
@@ -502,6 +497,7 @@ public class OrganizationConfigManager {
      */
     public void deleteSubOrganization(String subOrgName, boolean recursive)
             throws SMSException {
+        validateConfigImpl();
         // Should not delete the root realm, should throw exception if
         // attempted.
         String subOrgDN = normalizeDN(subOrgName, orgDN);
@@ -527,7 +523,7 @@ public class OrganizationConfigManager {
         if (realmEnabled) {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
-                        subOrgDN, null);
+                        subOrgDN);
                 SMSEntry entry = cEntry.getClonedSMSEntry();
                 if (!recursive) {
                     // Check if there are sub organization entries
@@ -585,6 +581,7 @@ public class OrganizationConfigManager {
      */
     public OrganizationConfigManager getSubOrgConfigManager(String subOrgName)
             throws SMSException {
+        validateConfigImpl();
         // Normalize sub organization name
         return (new OrganizationConfigManager(token, normalizeDN(subOrgName,
                 orgDN)));
@@ -602,6 +599,7 @@ public class OrganizationConfigManager {
      *             attributes of the service.
      */
     public Map getAttributes(String serviceName) throws SMSException {
+        validateConfigImpl();
         if (serviceName == null) {
             return (Collections.EMPTY_MAP);
         }
@@ -612,7 +610,7 @@ public class OrganizationConfigManager {
             serviceName = serviceName.toLowerCase();
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
-                        orgDN, null);
+                        orgDN);
                 if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
                     // Since AMSDK org notifications will not be
                     // obtained, the entry must be read again
@@ -710,6 +708,7 @@ public class OrganizationConfigManager {
      */
     public void addAttributeValues(String serviceName, String attrName,
             Set values) throws SMSException {
+        validateConfigImpl();
         if (serviceName == null || attrName == null) {
             return;
         }
@@ -719,7 +718,7 @@ public class OrganizationConfigManager {
             serviceName = serviceName.toLowerCase();
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
-                        orgDN, null);
+                        orgDN);
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 ServiceSchemaManager ssm = new ServiceSchemaManager(
                         serviceName, token);
@@ -775,6 +774,7 @@ public class OrganizationConfigManager {
      */
     public void setAttributes(String serviceName, Map attributes)
             throws SMSException {
+        validateConfigImpl();
         if (serviceName == null) {
             return;
         }
@@ -784,7 +784,7 @@ public class OrganizationConfigManager {
             serviceName = serviceName.toLowerCase();
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
-                        orgDN, null);
+                        orgDN);
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 if ((attributes != null) && (!attributes.isEmpty())) {
                     // Validate the attributes
@@ -911,6 +911,7 @@ public class OrganizationConfigManager {
      */
     public void removeAttribute(String serviceName, String attrName)
             throws SMSException {
+        validateConfigImpl();
         if (serviceName == null || attrName == null) {
             return;
         }
@@ -918,7 +919,7 @@ public class OrganizationConfigManager {
         if (migratedTo70) {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
-                        orgDN, null);
+                        orgDN);
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 SMSUtils.removeAttribute(e, serviceName.toLowerCase() + "-"
                         + attrName);
@@ -959,13 +960,14 @@ public class OrganizationConfigManager {
      */
     public void removeAttributeValues(String serviceName, String attrName,
             Set values) throws SMSException {
+        validateConfigImpl();
         if (serviceName == null || attrName == null) {
             return;
         }
         if (migratedTo70) {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
-                        orgDN, null);
+                        orgDN);
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 ServiceSchemaManager ssm = new ServiceSchemaManager(
                         serviceName, token);
@@ -1040,11 +1042,9 @@ public class OrganizationConfigManager {
      */
     public ServiceConfig addServiceConfig(String serviceName, Map attributes)
             throws SMSException {
-
         try {
             ServiceConfigManagerImpl scmi = ServiceConfigManagerImpl
-                    .getInstance(token, serviceName, ServiceManager
-                            .serviceDefaultVersion(token, serviceName));
+                    .getInstance(token, serviceName, "1.0");
             ServiceConfigImpl sci = scmi.getOrganizationConfig(token, orgName,
                     null);
             if (sci == null || sci.isNewEntry()) {
@@ -1054,7 +1054,7 @@ public class OrganizationConfigManager {
             } else {
                 SMSEntry.debug.error("OrganizationConfigManager: "
                         + "ServiceConfig already exists: " + sci.getDN());
-                throw (new ServiceAlreadyExistsException(SMSEntry.bundle
+                throw (new SMSException(SMSEntry.bundle
                         .getString("sms-service_already_exists1")));
             }
         } catch (SSOException ssoe) {
@@ -1207,10 +1207,8 @@ public class OrganizationConfigManager {
             for (Iterator names = getServiceNames(token).iterator(); names
                     .hasNext();) {
                 String serviceName = (String) names.next();
-                String version = ServiceManager.serviceDefaultVersion(token,
-                        serviceName);
                 ServiceSchemaManagerImpl ssmi = ServiceSchemaManagerImpl
-                        .getInstance(token, serviceName, version);
+                        .getInstance(token, serviceName, "1.0");
                 if (ssmi.getSchema(SchemaType.ORGANIZATION) != null) {
                     // Need to check if the user has permission
                     // to add/assign the service
@@ -1221,7 +1219,7 @@ public class OrganizationConfigManager {
                             .append(SMSUtils.DEFAULT).append(SMSEntry.COMMA)
                             .append(CreateServiceConfig.ORG_CONFIG_NODE)
                             .append(SMSEntry.PLACEHOLDER_RDN).append(
-                                    SMSEntry.EQUALS).append(version).append(
+                                    SMSEntry.EQUALS).append("1.0").append(
                                     SMSEntry.COMMA).append(
                                     SMSEntry.PLACEHOLDER_RDN).append(
                                     SMSEntry.EQUALS);
@@ -1287,7 +1285,7 @@ public class OrganizationConfigManager {
      */
     public Set getAssignedServices(boolean includeMandatory)
             throws SMSException {
-
+        validateConfigImpl();
         Set assignedServices = Collections.EMPTY_SET;
         if (coexistMode) {
             // Get assigned services from OrgConfigViaAMSDK
@@ -1596,8 +1594,14 @@ public class OrganizationConfigManager {
             if (s != null) {
                 Iterator items = s.getSubConfigNames().iterator();
                 while (items.hasNext()) {
-                    ServiceConfig subConfig =
-                        s.getSubConfig((String) items.next());
+                    String name = items.next().toString();
+                    ServiceConfig subConfig = s.getSubConfig(name);
+                    if (subConfig == null) {
+                        SMSEntry.debug.error("OrganizationConfigManager.is" +
+                            "CopyOrgEnabled. SubConfig is NULL: " +
+                            "SC Name: " + name + " For org: " + orgDN);
+                        return (false);
+                    }
                     if (subConfig.getSchemaID().equalsIgnoreCase(
                         IdConstants.AMSDK_PLUGIN_NAME)) {
                         Map configMap = subConfig.getAttributes();
@@ -1653,10 +1657,21 @@ public class OrganizationConfigManager {
         coexistMode = ServiceManager.isCoexistenceMode();
         migratedTo70 = ServiceManager.isConfigMigratedTo70();
     }
+    
+    void validateConfigImpl() throws SMSException {
+        // Instantiate the OrgConfigImpl and cache it
+        if ((orgConfigImpl == null) || !orgConfigImpl.isValid()) {
+            try {
+                orgConfigImpl = OrganizationConfigManagerImpl.getInstance(
+                    token, orgName);
+            } catch (SSOException ssoe) {
+                throw (new SMSException(ssoe, "sms-INVALID_SSO_TOKEN"));
+            }
+        }
+    }
 
     class OrganizationConfigManagerListener implements ServiceListener {
         public void schemaChanged(String serviceName, String version) {
-            serviceSchemaSet = null;
             // Call ServiceManager to notify
             ServiceManager.schemaChanged();
             // If naming service has changed, reload the AM Servers
@@ -1696,13 +1711,6 @@ public class OrganizationConfigManager {
     }
 
     // ******* Static Variables ************
-    // Set containing service names that has OrganizationAttributeSchema
-    private static Set serviceSchemaSet;
-
-    // To determine if notification object has been registered for schema
-    // changes.
-    private static boolean registeredForNotifications;
-
     // To determine if notification object has been registered for config
     // changes
     private static boolean registeredForConfigNotifications;

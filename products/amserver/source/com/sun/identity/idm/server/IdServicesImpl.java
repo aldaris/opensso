@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.42 2008-06-27 20:56:21 arviranga Exp $
+ * $Id: IdServicesImpl.java,v 1.43 2008-07-06 05:48:33 arviranga Exp $
  *
  */
 
@@ -800,7 +800,7 @@ public class IdServicesImpl implements IdServices {
         IdType type, 
         String name,
         IdType membershipType,
-        String amOrgName, 
+        String amOrgName, 
         String amsdkDN
     ) throws IdRepoException, SSOException {
         IdRepoException origEx = null;
@@ -1346,7 +1346,7 @@ public class IdServicesImpl implements IdServices {
         }
     }
     
-    private IdSearchResults getSpecialIdentities(SSOToken token, IdType type,
+    public IdSearchResults getSpecialIdentities(SSOToken token, IdType type,
             String orgName) throws IdRepoException, SSOException {
         
         Set pluginClasses = new OrderedSet();

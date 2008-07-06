@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.1 2008-06-27 20:56:22 arviranga Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.2 2008-07-06 05:48:33 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -691,7 +691,7 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
     }
     
     // Implementation to process entry changed events
-    protected static synchronized void processEntryChanged_idrepo(
+    protected static void processEntryChanged_idrepo(
         String method, String name, int type, Set attrNames) {
         if (idRepoDebug.messageEnabled()) {
             idRepoDebug.message("IdRepoJAXRPCObjectImpl.processEntryChaged "
@@ -768,7 +768,6 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
         }
         NotificationSet ns = null;
         synchronized (idRepoNotificationURLs) {
-            Set removeNotificationURLs = new HashSet();
             for (Iterator entries = idRepoNotificationURLs.entrySet().iterator(); 
                 entries.hasNext();) {
                 Map.Entry entry = (Map.Entry) entries.next();
@@ -795,12 +794,8 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
                             + "URL from notification list.", ne);
                     }
                     // Remove the URL from Notification List
-                    removeNotificationURLs.add(id);
+                    entries.remove();
                 }
-            }
-            for (Iterator items = removeNotificationURLs.iterator();
-                items.hasNext();) {
-                idRepoNotificationURLs.remove(items);
             }
         }
     }

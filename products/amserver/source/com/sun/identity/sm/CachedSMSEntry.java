@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.8 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: CachedSMSEntry.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -40,31 +40,36 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.CaseInsensitiveHashMap;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * The class <code>CachedSchemaManagerImpl</code> provides interfaces to
- * manage the SMSEntry. It caches SMSEntries which can used by ServiceSchema and
+ * manage the SMSEntry. It caches SMSEntries which is used by ServiceSchema and
  * ServiceConfig classes.
  */
 public class CachedSMSEntry {
 
-    // Mutex for shared table
-    private static final String cachedSMSEntriesMutex = "CachedSMSEntriesMutex";
-
-    // Notification method that will be called ...
+    // Notification method that will be called for ServiceSchemaManagerImpls
     protected static final String UPDATE_NOTIFY_METHOD = 
         "updateAndNotifyListeners";
 
     protected static final String UPDATE_METHOD = "update";
 
-    // Cache of SMSEntries (static)
-    protected static Map smsEntries = new CaseInsensitiveHashMap(1000);
+    // Cache of CachedSMSEntries (static)
+    protected static Map smsEntries = Collections.synchronizedMap(
+        new HashMap(1000));
 
-    // Pointer to Service objects and principals
-    protected HashSet serviceObjects; // callback service objects
+    // Instance variables
+    
+    // Set of ServiceSchemaManagerImpls and ServiceConfigImpls
+    // that must be updated where entry changes
+    protected Set serviceObjects = Collections.synchronizedSet(
+        new HashSet());
+    protected String notificationID;
 
-    protected Set principals; // Principals who have read access
+    protected Set principals = Collections.synchronizedSet(
+        new HashSet(10)); // Principals who have read access
 
     protected SSOToken token; // Valid SSOToken used for read
 
@@ -74,40 +79,28 @@ public class CachedSMSEntry {
 
     protected SMSEntry smsEntry;
 
-    protected String notificationID = null;
-
-    private boolean valid = false;
-
+    private boolean valid;
+    
     // Private constructor, can be instantiated only via getInstance
     private CachedSMSEntry(SMSEntry e) {
         smsEntry = e;
         DN dn = new DN(e.getDN());
         dn2Str = dn.toString();
-        dnRFCStr = dn.toRFCString();
-        serviceObjects = new HashSet();
+        dnRFCStr = dn.toRFCString().toLowerCase();
         token = e.getSSOToken();
-        principals = new HashSet();
-        // principals.add(token.getTokenID().toString());
-        this.addPrincipal(token);
+        addPrincipal(token);
         valid = true;
 
         // Set the SMSEntry as read only
         smsEntry.setReadOnly();
+        
+        // Register for notifications
+        notificationID = SMSEventListenerManager.notifyChangesToNode(
+            token, smsEntry.getDN(), UPDATE_FUNC, this, null);
 
-        // Add listener for this CachedSMSEntry object
-        try {
-            Class c = this.getClass();
-            notificationID = SMSEventListenerManager.notifyChangesToNode(token,
-                smsEntry.getDN(), c.getDeclaredMethod("update", (Class[])null),
-                    this, null);
-        } catch (Exception ce) {
-            SMSEntry.debug.error("CachedSMSEntry: unable to add listener for "
-                    + e.getDN(), ce);
-        }
         // Write debug messages
         if (SMSEntry.debug.messageEnabled()) {
-            SMSEntry.debug.message("CachedSMSEntry: create " + "new instance: "
-                    + dn);
+            SMSEntry.debug.message("CachedSMSEntry: New instance: " + dn);
         }
     }
 
@@ -119,75 +112,89 @@ public class CachedSMSEntry {
         return valid;
     }
 
+    /**
+     * Invoked by SMSEventListenerManager to update attributes.
+     * Methods reads the attributes and notifies listeners, if any
+     */
     void update() {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry: update "
                     + "method called: " + dn2Str );
         }
         // Read the LDAP attributes and update listeners
+        boolean updateFailed = true;
         try {
             SSOToken t = getValidSSOToken();
             if (t != null) {
                 smsEntry.read(t);
-                updateServiceListeners(UPDATE_NOTIFY_METHOD);
-            } else {
-                // this entry is no long valid, remove from cache
-                synchronized (cachedSMSEntriesMutex) {
-                    smsEntries.remove(dnRFCStr);
-                }
-                SMSEventListenerManager.removeNotification(notificationID);
-                notificationID = null;
-                valid = false;
+                updateFailed = false;
+            } else if (SMSEntry.debug.warningEnabled()) {
+                SMSEntry.debug.warning("CachedSMSEntry:update No VALID " +
+                    "SSOToken found for dn: " + dn2Str);
             }
         } catch (SMSException e) {
             // Error in reading the attribtues, entry could be deleted
             // or does not have permissions to read the object
-            SMSEntry.debug.error("Error in reading entry attributes: " + dn2Str, e);
-            // Remove this entry from the cache
-            synchronized (cachedSMSEntriesMutex) {
-                smsEntries.remove(dnRFCStr);
-            }
-            SMSEventListenerManager.removeNotification(notificationID);
-            notificationID = null;
-            valid = false;
+            SMSEntry.debug.error("Error in reading entry attributes: " +
+                dn2Str, e);
         } catch (SSOException ssoe) {
             // Error in reading the attribtues, SSOToken problem
             // Might have timed-out
             SMSEntry.debug.error("SSOToken problem in reading entry "
                     + "attributes: " + dn2Str, ssoe);
-            // Remove this entry from the cache
-            synchronized (cachedSMSEntriesMutex) {
-                smsEntries.remove(dnRFCStr);
-            }
-            SMSEventListenerManager.removeNotification(notificationID);
-            notificationID = null;
-            valid = false;
+        }
+        if (updateFailed) {
+            // this entry is no long valid, remove from cache
+            smsEntries.remove(dnRFCStr);
+            clear();
+        }
+        // Update service listeners either success or failure
+        // updateServiceListeners(UPDATE_METHOD);
+        updateServiceListeners(UPDATE_NOTIFY_METHOD);
+    }
+    
+    /**
+     * Clears the local variables and marks the entry as invalid
+     * Called by the SMS objects that have an instance of CachedSMSEntry
+     */
+    protected void clear() {
+        clear(true);
+    }
+    
+    /**
+     * Marks the object to be invalid and deregisters for notifications.
+     * Called by the static method clearCache()
+     * @param removeFromCache remove itself from cache if set to true
+     */
+    private void clear(boolean removeFromCache) {
+        // this entry is no long valid, remove from cache
+        SMSEventListenerManager.removeNotification(notificationID);
+        notificationID = null;
+        valid = false;
+        // Remove from cache
+        if (removeFromCache) {
+            smsEntries.remove(dnRFCStr);
         }
     }
-
+    
     // Returns a valid SSOToken that can be used for reading
-    SSOToken getValidSSOToken() {
+    private SSOToken getValidSSOToken() {
         // Check if the cached SSOToken is valid
         if (!SMSEntry.tm.isValidToken(token)) {
             // Get a valid ssoToken from cached TokenIDs
-            Set removeSSOTokens = new HashSet();
-            for (Iterator items = principals.iterator(); items.hasNext();) {
-                String tokenID = (String) items.next();
-                try {
-                    token = SMSEntry.tm.createSSOToken(tokenID);
-                    if (SMSEntry.tm.isValidToken(token))
-                        break;
-                } catch (SSOException ssoe) {
-                    // SSOToken has expired, remove from list
-                    removeSSOTokens.add(tokenID);
+            synchronized (principals) {
+                for (Iterator items = principals.iterator(); items.hasNext();) {
+                    String tokenID = (String) items.next();
+                    try {
+                        token = SMSEntry.tm.createSSOToken(tokenID);
+                        if (SMSEntry.tm.isValidToken(token)) {
+                            break;
+                        }
+                    } catch (SSOException ssoe) {
+                        // SSOToken has expired, remove from list
+                        items.remove();
+                    }
                 }
-            }
-            if (!removeSSOTokens.isEmpty()) {
-                Set sudoPrincipals = new HashSet(principals);
-                for (Iterator items = removeSSOTokens.iterator(); items
-                        .hasNext();)
-                    sudoPrincipals.remove(items.next());
-                principals = sudoPrincipals;
             }
         }
         // If there are no valid SSO Tokens return null
@@ -197,52 +204,45 @@ public class CachedSMSEntry {
         return (token);
     }
 
-    void updateServiceListeners(String method) {
+    /**
+     * Sends notifications to ServiceSchemaManagerImpl and ServiceConfigImpl
+     * The method determines the object's method that would be invoked.
+     * It could be either update() -- in which only the local instances are
+     * updated, or updateAndNotify() -- in which case the listeners are also
+     * notified.
+     * @param method either "update" or "updateAndNotify"
+     */
+    private void updateServiceListeners(String method) {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry::updateServiceListeners "
                     + "method called: " + dn2Str);
         }
         // Inform the ServiceSchemaManager's of changes to attributes
-        HashSet origServiceObjects = (HashSet) serviceObjects.clone();
-        Iterator objs = origServiceObjects.iterator(); 
-        while (objs.hasNext()) {
-            synchronized (objs) {
-                Object obj = objs.next();
+        synchronized (serviceObjects) {
+            for (Iterator objs = serviceObjects.iterator(); objs.hasNext();) {
                 try {
+                    Object obj = objs.next();
                     Method m = obj.getClass().getDeclaredMethod(
-                        method, (Class[])null);
-                    m.invoke(obj, (Object[])null);
-                } catch (Exception e) {
-                    SMSEntry.debug.error("CachedSMSEntry::unable to "
-                        + "deliver notification(" + dn2Str+ ")", e);
+                        method, (Class[]) null);
+                    m.invoke(obj, (Object[]) null);
+                } catch (Throwable e) {
+                    SMSEntry.debug.error("CachedSMSEntry::unable to " +
+                        "deliver notification(" + dn2Str + ")", e);
                 }
             }
         }
     }
 
-    void addServiceListener(Object o) {
-        if (notificationID == null) {
-            // Register for changes to SMSEntry attributes
-            try {
-                Class c = Class.forName("com.sun.identity.sm.CachedSMSEntry");
-                SSOToken token = getValidSSOToken();
-                if (token == null) {
-                    // Since there are no valid SSO Token
-                    // do not add for event notification
-                    return;
-                }
-                notificationID = SMSEventListenerManager.notifyChangesToNode(
-                    token, smsEntry.getDN(), c.getDeclaredMethod("update",
-                    (Class[])null), this, null);
-            } catch (Exception ce) {
-                // this should not happen
-                SMSEntry.debug.error("CachedSMSEntry::unable to register "
-                        + "service objects for notifications: ", ce);
-            }
-        }
+    /**
+     * Method to add objects that needs notifications
+     */
+    protected void addServiceListener(Object o) {
         serviceObjects.add(o);
     }
-
+    
+    /**
+     * Method to remove objects that needs notifications
+     */
     protected void removeServiceListener(Object o) {
         serviceObjects.remove(o);
         if (serviceObjects.isEmpty()) {
@@ -253,9 +253,7 @@ public class CachedSMSEntry {
 
     synchronized void addPrincipal(SSOToken t) {
         // Making a local copy to avoid synchronization problems
-        Set sudoPrincipals = new HashSet(principals);
-        sudoPrincipals.add(t.getTokenID().toString());
-        principals = sudoPrincipals;
+        principals.add(t.getTokenID().toString());
     }
 
     boolean checkPrincipal(SSOToken t) {
@@ -294,36 +292,32 @@ public class CachedSMSEntry {
     // Used by ServiceSchemaManager
     static CachedSMSEntry getInstance(SSOToken t, ServiceSchemaManagerImpl ssm,
             String serviceName, String version) throws SMSException {
+        CachedSMSEntry entry = null;
         String dn = ServiceManager.getServiceNameDN(serviceName, version);
         try {
-            return (getInstance(t, dn, ssm));
+            entry = getInstance(t, dn);
+            entry.addServiceListener(ssm);
         } catch (SSOException ssoe) {
             SMSEntry.debug.error("SMS: Invalid SSOToken: ", ssoe);
-            return (null);
         }
+        return (entry);
     }
 
-    public static CachedSMSEntry getInstance(SSOToken t, String dn, Object obj)
+    public static CachedSMSEntry getInstance(SSOToken t, String dn)
             throws SMSException, SSOException {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry::getInstance: " + dn);
         }
         String cacheEntry = (new DN(dn)).toRFCString().toLowerCase();
-        CachedSMSEntry answer = null;
-        synchronized (cachedSMSEntriesMutex) {
-            answer = (CachedSMSEntry) smsEntries.get(cacheEntry);
-        }
+        CachedSMSEntry answer = (CachedSMSEntry) smsEntries.get(cacheEntry);
         if (answer == null) {
-            // Construct the SMS entry
-            answer = new CachedSMSEntry(new SMSEntry(t, dn));
-            // Check and add it to cache
-            CachedSMSEntry tmp;
-            synchronized (cachedSMSEntriesMutex) {
-                if ((tmp = (CachedSMSEntry) smsEntries.get(
-                    cacheEntry)) == null) {
+            synchronized (smsEntries) {
+                if ((answer = (CachedSMSEntry) smsEntries.get(cacheEntry))
+                    == null) {
+                    // Construct the SMS entry
+                    answer = new CachedSMSEntry(new SMSEntry(t, dn));
+                    // Add it to cache
                     smsEntries.put(cacheEntry, answer);
-                } else {
-                    answer = tmp;
                 }
             }
         }
@@ -334,13 +328,9 @@ public class CachedSMSEntry {
             new SMSEntry(t, dn);
             answer.addPrincipal(t);
         }
-        // Check for event notification object
-        if (obj != null) {
-            answer.addServiceListener(obj);
-        }
+        
         if (SMSEntry.debug.messageEnabled()) {
-            SMSEntry.debug
-                    .message("CachedSMSEntry::getInstance success: " + dn);
+            SMSEntry.debug.message("CachedSMSEntry: obtained instance: " + dn);
         }
         if (answer.isNewEntry()) {
             SMSEntry sEntry = answer.getSMSEntry();
@@ -351,17 +341,14 @@ public class CachedSMSEntry {
 
     // Clears the cache
     static void clearCache() {
-        Map sudoSMSEntries = smsEntries;
-        synchronized (cachedSMSEntriesMutex) {
-            // Reset smsEntries
-            smsEntries = new CaseInsensitiveHashMap();
-        }
-        // Clear the cache
-        Iterator it = sudoSMSEntries.keySet().iterator();
-        while (it.hasNext()) {
-            CachedSMSEntry curr = (CachedSMSEntry) sudoSMSEntries
-                    .get(it.next());
-            curr.valid = false;
+        synchronized (smsEntries) {
+            for (Iterator items = smsEntries.values().iterator();
+                items.hasNext();) {
+                CachedSMSEntry cEntry = (CachedSMSEntry) items.next();
+                // this entry is no long valid, remove from cache
+                cEntry.clear(false);
+            }
+            smsEntries.clear();
         }
     }
 
@@ -399,6 +386,20 @@ public class CachedSMSEntry {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry::writeXMLSchema: "
                     + "successfully wrote the XML schema for dn: " + e.getDN());
+        }
+    }
+    
+    // Protected static variables
+    private static Class CACHED_SMSENTRY = null;
+    private static Method UPDATE_FUNC = null;
+    static {
+        try {
+            CACHED_SMSENTRY = Class.forName(
+                "com.sun.identity.sm.CachedSMSEntry");
+            UPDATE_FUNC = CACHED_SMSENTRY.getDeclaredMethod(
+                UPDATE_METHOD, (Class[]) null);
+        } catch (Exception e) {
+            // Should not happen, ignore
         }
     }
 }

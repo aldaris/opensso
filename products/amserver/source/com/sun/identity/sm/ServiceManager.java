@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.17 2008-06-27 20:56:22 arviranga Exp $
+ * $Id: ServiceManager.java,v 1.18 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -120,24 +120,12 @@ public class ServiceManager {
 
     protected static HashMap serviceVersions = new CaseInsensitiveHashMap();
 
-    protected static HashMap serviceNameDefaultVersion = 
-        new CaseInsensitiveHashMap();
-
     protected static Set accessManagerServers;
 
     // SSOToken of the caller
     private SSOToken token;
 
     private CachedSubEntries subEntries = null;
-
-    // List of service schema managers
-    protected HashMap serviceSchemaMgrs = new HashMap();
-
-    // List of service config managers
-    protected HashMap serviceConfigMgrs = new CaseInsensitiveHashMap();
-
-    // List of organization config managers
-    protected HashMap organizationConfigMgrs = new CaseInsensitiveHashMap();
 
     // Debug & I18n
     private static Debug debug = SMSEntry.debug;
@@ -184,17 +172,7 @@ public class ServiceManager {
      */
     public ServiceSchemaManager getSchemaManager(String serviceName,
             String version) throws SMSException, SSOException {
-        SMSEntry.validateToken(token);
-        String cacheName = getCacheIndex(serviceName, version);
-        ServiceSchemaManager ssm = (ServiceSchemaManager) serviceSchemaMgrs
-                .get(cacheName);
-        if (ssm == null) {
-            ssm = new ServiceSchemaManager(token, serviceName, version);
-            if (SMSEntry.cacheSMSEntries) {
-                serviceSchemaMgrs.put(cacheName, ssm);
-            }
-        }
-        return (ssm);
+        return (new ServiceSchemaManager(token, serviceName, version));
     }
 
     /**
@@ -216,17 +194,7 @@ public class ServiceManager {
      */
     public ServiceConfigManager getConfigManager(String serviceName,
             String version) throws SMSException, SSOException {
-        SMSEntry.validateToken(token);
-        String cacheName = getCacheIndex(serviceName, version);
-        ServiceConfigManager scm = (ServiceConfigManager) serviceConfigMgrs
-                .get(cacheName);
-        if (scm == null) {
-            scm = new ServiceConfigManager(token, serviceName, version);
-            if (SMSEntry.cacheSMSEntries) {
-                serviceConfigMgrs.put(cacheName, scm);
-            }
-        }
-        return (scm);
+        return (new ServiceConfigManager(token, serviceName, version));
     }
 
     /**
@@ -247,19 +215,8 @@ public class ServiceManager {
      *             if an error occurred while performing the operation
      */
     public OrganizationConfigManager getOrganizationConfigManager(
-            String orgName)
-            throws SMSException, SSOException {
-
-        SMSEntry.validateToken(token);
-        OrganizationConfigManager ocm = 
-            (OrganizationConfigManager) organizationConfigMgrs.get(orgName);
-        if (ocm == null) {
-            ocm = new OrganizationConfigManager(token, orgName);
-            if (SMSEntry.cacheSMSEntries) {
-                organizationConfigMgrs.put(orgName, ocm);
-            }
-        }
-        return (ocm);
+        String orgName) throws SMSException, SSOException {
+        return (new OrganizationConfigManager(token, orgName));
     }
 
     /**
@@ -310,9 +267,7 @@ public class ServiceManager {
                             String service = (String) it.next();
                             ServiceSchemaManagerImpl ssm = 
                                 ServiceSchemaManagerImpl.getInstance(
-                                        token, service,
-                                            serviceDefaultVersion(token,
-                                                    service));
+                                        token, service, "1.0");
                             if (ssm != null) {
                                 // Check if service has schemaType
                                 if (schemaType != null &&
@@ -494,13 +449,14 @@ public class ServiceManager {
             }
 
             if (XMLUtils.getChildNode(serviceNode, SMSUtils.CONFIGURATION) 
-                != null
-            ) {
+                != null) {
                 serviceNodes.add(serviceNode);
             }
         }
 
-        clearCache();
+        if (serviceNodes.size() > 0) {
+            clearCache();
+        }
         /*
          * Need to do this after all the schema has been loaded
          */
@@ -577,7 +533,7 @@ public class ServiceManager {
             String configdn = SMSEntry.PLACEHOLDER_RDN + SMSEntry.EQUALS
                     + version + SMSEntry.COMMA + dn;
             CachedSMSEntry configsmse = CachedSMSEntry.getInstance(token,
-                    configdn, null);
+                    configdn);
             SMSEntry confige = configsmse.getClonedSMSEntry();
             if (!confige.isNewEntry()) {
                 confige.delete(token);
@@ -585,7 +541,7 @@ public class ServiceManager {
             }
             // If there are no other service version nodes for that service,
             // delete that node(schema).
-            CachedSMSEntry smse = CachedSMSEntry.getInstance(token, dn, null);
+            CachedSMSEntry smse = CachedSMSEntry.getInstance(token, dn);
             SMSEntry e = smse.getSMSEntry();
             Iterator versions = 
                 e.subEntries(token, "*", 0, false, false).iterator();
@@ -622,7 +578,7 @@ public class ServiceManager {
         while (versions.hasNext()) {
             String version = (String) versions.next();
             CachedSMSEntry ce = CachedSMSEntry.getInstance(token,
-                    getServiceNameDN(serviceName, version), null);
+                    getServiceNameDN(serviceName, version));
             SMSEntry e = ce.getClonedSMSEntry();
             String[] values = { SMSSchema.getDummyXML(serviceName, version) };
             e.setAttribute(SMSEntry.ATTR_SCHEMA, values);
@@ -722,9 +678,7 @@ public class ServiceManager {
         // Clear the local caches
         serviceNameAndOCs = new CaseInsensitiveHashMap();
         serviceVersions = new CaseInsensitiveHashMap();
-        serviceNameDefaultVersion = new CaseInsensitiveHashMap();
-        serviceSchemaMgrs = new HashMap();
-        serviceConfigMgrs = new HashMap();
+        accessManagerServers = null;
 
         // Call respective Impl classes
         CachedSMSEntry.clearCache();
@@ -734,6 +688,7 @@ public class ServiceManager {
         ServiceInstanceImpl.clearCache();
         ServiceConfigImpl.clearCache();
         ServiceConfigManagerImpl.clearCache();
+        OrganizationConfigManagerImpl.clearCache();
         OrgConfigViaAMSDK.clearCache();
 
         // Re-initialize the flags
@@ -866,37 +821,6 @@ public class ServiceManager {
             serviceVersions.put(serviceName, sVersions);
         }
         return (sVersions.getSubEntries(token));
-    }
-
-    protected static String serviceDefaultVersion(SSOToken token,
-            String serviceName) throws SMSException, SSOException {
-        String version = (String) serviceNameDefaultVersion.get(serviceName);
-        if (version == null) {
-            Iterator iter = getVersions(token, serviceName).iterator();
-            if (iter.hasNext()) {
-                version = (String) iter.next();
-            } else {
-                String msgs[] = { serviceName };
-                throw (new ServiceNotFoundException(
-                        IUMSConstants.UMS_BUNDLE_NAME,
-                        IUMSConstants.SMS_service_does_not_exist, msgs));
-            }
-            serviceNameDefaultVersion.put(serviceName, version);
-        }
-        return (version);
-    }
-
-    protected static void checkServiceNameAndVersion(
-        SSOToken t,
-        String serviceName,
-        String version
-    ) throws SMSException, SSOException {
-        Set versions = getVersions(t, serviceName);
-        if ((versions == null) || !versions.contains(version)) {
-            String[] msgs = { serviceName };
-            throw (new ServiceNotFoundException(IUMSConstants.UMS_BUNDLE_NAME,
-                    IUMSConstants.SMS_service_does_not_exist, msgs));
-        }
     }
 
     protected static void checkAndEncryptPasswordSyntax(Document doc,
@@ -1068,7 +992,7 @@ public class ServiceManager {
     static void checkFlags(SSOToken token) throws SMSException, SSOException {
         try {
             CachedSMSEntry entry = CachedSMSEntry.getInstance(token,
-                    REALM_ENTRY, null);
+                REALM_ENTRY);
             
             if (!entry.isNewEntry()) {
                 ditUpgradedCache = true;

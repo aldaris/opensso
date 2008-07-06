@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationUtils.java,v 1.6 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: DelegationUtils.java,v 1.7 2008-07-06 05:48:31 arviranga Exp $
  *
  */
 
@@ -84,12 +84,11 @@ public class DelegationUtils {
         if (debug.messageEnabled()) {
             debug.message("DelegationUtils:Getting global privileges");
         }
-        int revisionNum = getRevisionNumber();
         Iterator it = privs.iterator();
         while (it.hasNext()) {
             ServiceConfig perm = null;
             String privName = (String) it.next();
-            if (revisionNum == AM70_DELEGATION_REVISION) {
+            if (getRevisionNumber() == AM70_DELEGATION_REVISION) {
                 perm = DelegationUtils.getPermissionConfig(
                     null, privName, true);
             } else {

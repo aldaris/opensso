@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObject.java,v 1.4 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: SMSObject.java,v 1.5 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -138,13 +138,17 @@ public abstract class SMSObject {
     /**
      * Registration of Notification Callbacks
      */
-    public abstract String registerCallbackHandler(SSOToken token,
-            SMSObjectListener changeListener) throws SMSException, SSOException;
+    public void registerCallbackHandler(
+            SMSObjectListener changeListener) throws SMSException {
+        // default implementation
+    }
 
     /**
      * De-Registration of Notification Callbacks
      */
-    public abstract void deregisterCallbackHandler(String listenerID);
+    public void deregisterCallbackHandler(String listenerID) {
+        // default implementation
+    }
 
     /**
      * Returns the root suffix (i.e., base DN) for the SMS objects. All

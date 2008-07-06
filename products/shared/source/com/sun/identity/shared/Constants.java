@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.28 2008-06-25 05:53:00 qcheng Exp $
+ * $Id: Constants.java,v 1.29 2008-07-06 05:48:31 arviranga Exp $
  *
  */
 
@@ -840,5 +840,35 @@ public interface Constants {
      * Configuration Variable for distauth bootstrap file base directory.
      */
     String CONFIG_VAR_DISTAUTH_BOOTSTRAP_BASE_DIR = "FAMDistAuth";
+    
+    /**
+     * property string for enabling SMS datastore notification
+     */
+    public static final String SMS_ENABLE_DB_NOTIFICATION =
+        "com.sun.identity.sm.enableDataStoreNotification";
+
+    /**
+     * property string for controlling SMS, AMSDK & IdRepo cache
+     */
+    static String SDK_GLOBAL_CACHE_PROPERTY =
+        "com.iplanet.am.sdk.caching.enabled";
+
+    /**
+     * property string for controlling SMS cache.
+     * Active only if "com.iplanet.am.sdk.caching.enabled" is "false"
+     */
+    static String SMS_CACHE_PROPERTY = "com.sun.identity.sm.cache.enabled";
+    
+    /**
+     * property string to manage the persistent connection to directory
+     */
+    static final String EVENT_LISTENER_DISABLE_LIST =
+        "com.sun.am.event.connection.disable.list";
+    
+    /**
+     *  property string to cache past event changes in minutes
+     */
+    static final String EVENT_LISTENER_REMOTE_CLIENT_BACKLOG_CACHE =
+        "com.sun.am.event.notification.expire.time";
         
 }

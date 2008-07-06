@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginConfigImpl.java,v 1.3 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: PluginConfigImpl.java,v 1.4 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -243,7 +243,7 @@ class PluginConfigImpl {
     static synchronized CachedSMSEntry checkAndUpdatePermission(
             String cacheName, String dn, SSOToken token) throws SMSException,
             SSOException {
-        CachedSMSEntry answer = CachedSMSEntry.getInstance(token, dn, null);
+        CachedSMSEntry answer = CachedSMSEntry.getInstance(token, dn);
         Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
         if (sudoPrincipals == null) {
             sudoPrincipals = new HashSet();

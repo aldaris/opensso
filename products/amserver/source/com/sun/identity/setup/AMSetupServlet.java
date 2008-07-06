@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.70 2008-06-25 05:44:01 qcheng Exp $
+ * $Id: AMSetupServlet.java,v 1.71 2008-07-06 05:48:31 arviranga Exp $
  *
  */
 
@@ -624,7 +624,7 @@ public class AMSetupServlet extends HttpServlet {
                     CachedSMSEntry cEntry = CachedSMSEntry.getInstance(
                         adminSSOToken,
                         ("ou=" + userRepo.get("userStoreHostName") + "," +
-                        sc.getDN()), null);
+                        sc.getDN()));
                     SMSEntry entry = cEntry.getClonedSMSEntry();
                     if (entry.isNewEntry()) {
                         UserIdRepo.getInstance().configure(

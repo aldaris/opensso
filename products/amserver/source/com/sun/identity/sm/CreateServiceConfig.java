@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.9 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: CreateServiceConfig.java,v 1.10 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -105,7 +105,7 @@ public class CreateServiceConfig {
             sb.append("ou=").append(insName).append(",").append(INSTANCES_NODE)
                     .append(baseDN);
             CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sb
-                    .toString(), null);
+                    .toString());
             SMSEntry insEntry = cEntry.getSMSEntry();
             if (insEntry.isNewEntry()) {
                 // create the entry
@@ -265,7 +265,7 @@ public class CreateServiceConfig {
             ServiceSchemaImpl ss, String id, String priority, Map attrs,
             String orgDN) throws SMSException, SSOException {
         // Construct the SMSEntry for the node
-        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, dn, null);
+        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, dn);
         SMSEntry entry = cEntry.getClonedSMSEntry();
         if ((ss == null) || !entry.isNewEntry()) {
             SMSEntry.debug.error(
@@ -342,8 +342,14 @@ public class CreateServiceConfig {
         dn = "ou=" + version + "," + dn;
         checkAndCreateServiceVersionNode(token, dn, sName);
 
-        // Check other config nodes
-        checkBaseNodes(token, dn);
+        // Check orgUnit node
+        if (orgDN.equalsIgnoreCase(SMSEntry.getRootSuffix())) {
+            // Create all based nodes for root realm
+            checkBaseNodes(token, dn);
+        } else {
+            // create only organization config
+            checkAndCreateOrgUnitNode(token, ORG_CONFIG_NODE + dn);
+        }
     }
 
     static void checkBaseNodes(SSOToken t, String baseDN) throws SMSException,
@@ -427,9 +433,11 @@ public class CreateServiceConfig {
         String name = (dn.explodeDN(true))[0];
         // Get the parent DN
         DN parent = dn.getParent();
-        CachedSubEntries subEntries = CachedSubEntries.getInstance(token,
-                parent.toRFCString());
-        subEntries.add(name);
+        CachedSubEntries subEntries = CachedSubEntries.getInstanceIfCached(
+            token, parent.toRFCString(), true);
+        if (subEntries != null) {
+            subEntries.add(name);
+        }
     }
 
     // Returns a map that contains attribute value pairs
@@ -478,8 +486,7 @@ public class CreateServiceConfig {
                     "sms-invalid-org-name", args1));
             }
 
-            CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN,
-                null);
+            CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN);
             SMSEntry e = cEntry.getClonedSMSEntry();
             if (!e.isNewEntry()) {
                 SMSEntry.debug.error("Organization already exists: " + orgDN);
@@ -500,7 +507,7 @@ public class CreateServiceConfig {
             // Check the intermediate nodes
             while (index >= 1) {
                 partdn = dns[--index] + "," + partdn;
-                cEntry = CachedSMSEntry.getInstance(token, partdn, null);
+                cEntry = CachedSMSEntry.getInstance(token, partdn);
                 e = cEntry.getClonedSMSEntry();
                 if (e.isNewEntry()) {
                     // Create the realm

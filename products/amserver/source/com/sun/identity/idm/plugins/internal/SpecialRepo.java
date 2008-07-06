@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.13 2008-06-25 05:43:30 qcheng Exp $
+ * $Id: SpecialRepo.java,v 1.14 2008-07-06 05:48:32 arviranga Exp $
  *
  */
 
@@ -91,40 +91,21 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     private static final String msisdnAttribute = "sunIdentityMSISDNNumber";
     private static final String phoneAttribute = "telephoneNumber";
 
-    IdRepoListener repoListener = null;
+    IdRepoListener repoListener;
 
     Debug debug = Debug.getInstance("amSpecialRepo");
 
     private Map supportedOps = new HashMap();
 
-    ServiceSchemaManager ssm = null;
+    ServiceSchemaManager ssm;
 
-    ServiceConfigManager scm = null;
+    ServiceConfigManager scm;
 
-    ServiceConfig globalConfig, userConfig, roleConfig;
+    ServiceConfig userConfigCache, roleConfigCache;
 
     String ssmListenerId, scmListenerId;
 
     public SpecialRepo() {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-        try {
-            ssm = new ServiceSchemaManager(adminToken,
-                    IdConstants.REPO_SERVICE, "1.0");
-            scm = new ServiceConfigManager(adminToken,
-                    IdConstants.REPO_SERVICE, "1.0");
-        } catch (SMSException smse) {
-            if (debug.warningEnabled()) {
-                debug.warning("SpecialRepo.SpecialRepo: "
-                        + "Unable to init ssm and scm due to " + smse);
-            }
-        } catch (SSOException ssoe) {
-            if (debug.warningEnabled()) {
-                debug.warning("SpecialRepo.SpecialRepo: "
-                        + "Unable to init ssm and scm due to " + ssoe);
-            }
-        }
-        
         loadSupportedOps();
         if (debug.messageEnabled()) {
             debug.message(": SpecialRepo invoked");
@@ -144,13 +125,15 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         }
         repoListener = listener;
         try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
             if (ssm == null) {
-                ssm = new ServiceSchemaManager(token, IdConstants.REPO_SERVICE,
-                        "1.0");
+                ssm = new ServiceSchemaManager(adminToken,
+                    IdConstants.REPO_SERVICE, "1.0");
             }
             if (scm == null) {
-                scm = new ServiceConfigManager(token, IdConstants.REPO_SERVICE,
-                        "1.0");
+                scm = new ServiceConfigManager(adminToken,
+                    IdConstants.REPO_SERVICE, "1.0");
             }
             ssmListenerId = ssm.addListener(this);
             scmListenerId = scm.addListener(this);
@@ -270,17 +253,8 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
             throws IdRepoException, SSOException {
         if (type.equals(IdType.USER) || type.equals(IdType.ROLE)) {
             try {
-                if (globalConfig == null) {
-                    if (scm == null) {
-                        scm = new ServiceConfigManager(token,
-                                IdConstants.REPO_SERVICE, "1.0");
-                    }
-                    globalConfig = scm.getGlobalConfig(null);
-                }
                 if (type.equals(IdType.USER)) {
-                    if (userConfig == null) {
-                        userConfig = globalConfig.getSubConfig("users");
-                    }
+                    ServiceConfig userConfig = getUserConfig();
                     // Check if the user is present
                     for (Iterator items = userConfig.getSubConfigNames()
                             .iterator(); items.hasNext();) {
@@ -309,9 +283,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "202",
                             args);
                 } else if (type.equals(IdType.ROLE)) {
-                    if (roleConfig == null) {
-                        roleConfig = globalConfig.getSubConfig("roles");
-                    }
+                    ServiceConfig roleConfig = getRoleConfig();
                     // Check if the role is present
                     for (Iterator items = roleConfig.getSubConfigNames()
                             .iterator(); items.hasNext();) {
@@ -398,16 +370,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         if (type.equals(IdType.ROLE) && membersType.equals(IdType.USER)) {
             try {
                 Set members = Collections.EMPTY_SET;
-                if (roleConfig == null) {
-                    if (globalConfig == null) {
-                        if (scm == null) {
-                            scm = new ServiceConfigManager(token,
-                                    IdConstants.REPO_SERVICE, "1.0");
-                        }
-                        globalConfig = scm.getGlobalConfig(null);
-                    }
-                    roleConfig = globalConfig.getSubConfig("roles");
-                }
+                ServiceConfig roleConfig = getRoleConfig();
                 // For performance reasons we get the set of
                 // subConfigNames and check if "name" is present before
                 // getting the subconfig which makes a datastore call
@@ -462,16 +425,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
 
         if (type.equals(IdType.USER) && membershipType.equals(IdType.ROLE)) {
             try {
-                if (userConfig == null) {
-                    if (globalConfig == null) {
-                        if (scm == null) {
-                            scm = new ServiceConfigManager(token,
-                                    IdConstants.REPO_SERVICE, "1.0");
-                        }
-                        globalConfig = scm.getGlobalConfig(null);
-                    }
-                    userConfig = globalConfig.getSubConfig("users");
-                }
+                ServiceConfig userConfig = getUserConfig();
                 // For performance reasons we get the set of
                 // subConfigNames and check if "name" is present before
                 // getting the subconfig which makes a datastore call
@@ -525,16 +479,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         // Check if the name is present
         if (type.equals(IdType.USER)) {
             try {
-                if (userConfig == null) {
-                    if (globalConfig == null) {
-                        if (scm == null) {
-                            scm = new ServiceConfigManager(token,
-                                    IdConstants.REPO_SERVICE, "1.0");
-                        }
-                        globalConfig = scm.getGlobalConfig(null);
-                    }
-                    userConfig = globalConfig.getSubConfig("users");
-                }
+                ServiceConfig userConfig = getUserConfig();
                 Set userSet = new CaseInsensitiveHashSet();
                 userSet.addAll(userConfig.getSubConfigNames());
                 if (userSet != null && userSet.contains(name)) {
@@ -686,19 +631,8 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         Map userAttrs = new HashMap();
         int errorCode = RepoSearchResults.SUCCESS;
         try {
-            // Get the global config
-            if (globalConfig == null) {
-                // Check ServiceConfigManager
-                if (scm == null) {
-                    scm = new ServiceConfigManager(token,
-                            IdConstants.REPO_SERVICE, "1.0");
-                }
-                globalConfig = scm.getGlobalConfig(null);
-            }
             if (type.equals(IdType.USER)) {
-                if (userConfig == null) {
-                    userConfig = globalConfig.getSubConfig("users");
-                }
+                ServiceConfig userConfig = getUserConfig();
                 // Support aliasing for "uid" at least..
                 if (pattern.equals("*") && avPairs != null
                         && !avPairs.isEmpty()) {
@@ -751,9 +685,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
                         type);
 
             } else if (type.equals(IdType.ROLE)) {
-                if (roleConfig == null) {
-                    roleConfig = globalConfig.getSubConfig("roles");
-                }
+                ServiceConfig roleConfig = getRoleConfig();
                 // If wild card is used for pattern, do a search else a lookup
                 if (pattern.indexOf('*') != -1) {
                     userRes = roleConfig.getSubConfigNames(pattern);
@@ -813,20 +745,10 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      *      boolean)
      */
     public void setAttributes(SSOToken token, IdType type, String name,
-            Map attributes, boolean isAdd) throws IdRepoException, SSOException 
-    {
+        Map attributes, boolean isAdd) throws IdRepoException, SSOException {
         if (type.equals(IdType.USER)) {
             try {
-                if (userConfig == null) {
-                    if (globalConfig == null) {
-                        if (scm == null) {
-                            scm = new ServiceConfigManager(token,
-                                    IdConstants.REPO_SERVICE, "1.0");
-                        }
-                        globalConfig = scm.getGlobalConfig(null);
-                    }
-                    userConfig = globalConfig.getSubConfig("users");
-                }
+                ServiceConfig userConfig = getUserConfig();
                 // For performance reason check if the user entry
                 // is present before getting the subConfig
                 CaseInsensitiveHashSet userSet = new CaseInsensitiveHashSet();
@@ -1047,8 +969,12 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      * @see com.sun.identity.idm.IdRepo#shutdown()
      */
     public void shutdown() {
-        scm.removeListener(scmListenerId);
-        ssm.removeListener(ssmListenerId);
+        if (scm != null) {
+            scm.removeListener(scmListenerId);
+        }
+        if (ssm != null) {
+            ssm.removeListener(ssmListenerId);
+        }
     }
 
 
@@ -1057,16 +983,7 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
         boolean isSpecUser = false;
         if (type.equals(IdType.USER)) {
             try {
-                if (userConfig == null) {
-                    if (globalConfig == null) {
-                        if (scm == null) {
-                            scm = new ServiceConfigManager(token,
-                                    IdConstants.REPO_SERVICE, "1.0");
-                        }
-                        globalConfig = scm.getGlobalConfig(null);
-                    }
-                    userConfig = globalConfig.getSubConfig("users");
-                }
+                ServiceConfig userConfig = getUserConfig();
                 Set userSet = new CaseInsensitiveHashSet();
                 userSet.addAll(userConfig.getSubConfigNames());
                 if (userSet != null && userSet.contains(name)) {
@@ -1095,6 +1012,34 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
             debug.message("SpecialRepo: loadSupportedOps called "
                     + "supportedOps Map = " + supportedOps);
         }
+    }
+    
+    private ServiceConfig getUserConfig() throws SMSException, SSOException {
+        if ((userConfigCache == null) || !userConfigCache.isValid()) {
+            if (scm == null) {
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                scm = new ServiceConfigManager(adminToken,
+                    IdConstants.REPO_SERVICE, "1.0");
+            }
+            ServiceConfig globalConfig = scm.getGlobalConfig(null);
+            userConfigCache = globalConfig.getSubConfig("users");
+        }
+        return (userConfigCache);
+    }
+    
+    private ServiceConfig getRoleConfig() throws SMSException, SSOException {
+        if ((roleConfigCache == null) || !roleConfigCache.isValid()) {
+            if (scm == null) {
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                scm = new ServiceConfigManager(adminToken,
+                    IdConstants.REPO_SERVICE, "1.0");
+            }
+            ServiceConfig globalConfig = scm.getGlobalConfig(null);
+            roleConfigCache = globalConfig.getSubConfig("roles");
+        }
+        return (roleConfigCache);
     }
 
     /*

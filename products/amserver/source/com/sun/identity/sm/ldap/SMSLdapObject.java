@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.15 2008-06-25 05:44:11 qcheng Exp $
+ * $Id: SMSLdapObject.java,v 1.16 2008-07-06 05:48:32 arviranga Exp $
  *
  */
 
@@ -65,11 +65,17 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.DataLayer;
 import com.iplanet.ums.IUMSConstants;
+import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.security.AdminDNAction;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSNotificationManager;
 import com.sun.identity.sm.SMSObjectDB;
 import com.sun.identity.sm.SMSObjectListener;
+import java.security.AccessController;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 
 /**
  * This object represents an LDAP entry in the directory server. The UMS have an
@@ -101,17 +107,21 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     static int connRetryInterval = 1000;
 
     static HashSet retryErrorCodes = new HashSet();
+    
+    static int entriesPresentCacheSize = 1000;
+    
+    static boolean initializedNotification;
 
-    static Set entriesPresent = new HashSet();
+    static Set entriesPresent = Collections.synchronizedSet(
+        new LinkedHashSet());
 
-    static Set entriesNotPresent = new HashSet();
+    static Set entriesNotPresent = Collections.synchronizedSet(
+        new LinkedHashSet());
 
     // Other parameters
     static ResourceBundle bundle;
 
     boolean initialized;
-
-    static boolean initializedForNotification;
 
     static Debug debug;
 
@@ -120,23 +130,25 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     static String[] O_ATTR = new String[1];
 
     static boolean enableProxy;
+    
+    // Admin SSOToken
+    static Principal adminPrincipal;
 
     /**
      * Public constructor for SMSLdapObject
      */
     public SMSLdapObject() throws SMSException {
-        // Check if initialized (should be called only once by SMSEntry)
-        if (!initialized)
-            initialize();
+        // Initialized (should be called only once by SMSEntry)
+        initialize();
     }
 
     /**
      * Synchronized initialized method
      */
     private synchronized void initialize() throws SMSException {
-        if (initialized)
+        if (initialized) {
             return;
-
+        }
         SMDataLayer.reset();
         // Obtain the I18N resource bundle & Debug
         debug = Debug.getInstance("amSMSLdap");
@@ -154,6 +166,11 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
         try {
             if (enableProxy) {
+                // Initialize the principal, used only with AMSDK
+                // for proxy connections
+                adminPrincipal = new AuthPrincipal((String)
+                    AccessController.doPrivileged(new AdminDNAction()));
+                
                 // Get UMS datalayer
                 dlayer = DataLayer.getInstance();
                 
@@ -191,7 +208,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 attrValues.add(SMSEntry.OC_TOP);
                 attrValues.add(SMSEntry.OC_ORG_UNIT);
                 attrs.put(SMSEntry.ATTR_OBJECTCLASS, attrValues);
-                create(LDAPEventManager.adminPrincipal, serviceDN, attrs);
+                create(adminPrincipal, serviceDN, attrs);
             }
         } catch (Exception e) {
             // Unable to initialize (trouble!!)
@@ -200,6 +217,18 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                     IUMSConstants.CONFIG_MGR_ERROR, null));
         }
         initialized = true;
+    }
+    
+    private void initializeNotification() {
+         if (!initializedNotification) {
+            // If cache is enabled, register for notification to maintian
+            // internal cache of entriesPresent
+            if (SMSNotificationManager.isCacheEnabled()) {
+                SMSNotificationManager.getInstance()
+                    .registerCallbackHandler(this);
+            }
+            initializedNotification = true;
+        }
     }
 
     /**
@@ -225,12 +254,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         }
 
         // Check if entry does not exist
-        if (entriesNotPresent.contains(dn)) {
-            // Check if registered for changes to objects
-            if (!initializedForNotification) {
-                SMSEntry.registerCallbackHandler(null, this);
-                initializedForNotification = true;
-            }
+        if (SMSNotificationManager.isCacheEnabled() &&
+            entriesNotPresent.contains(dn)) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject:read Entry not present: " + dn
                         + " (checked in cached)");
@@ -677,7 +702,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             debug.message("SMSLdapObject: search filter: " + filter);
         }
 
-        LDAPConnection conn = getConnection(LDAPEventManager.adminPrincipal);
+        LDAPConnection conn = getConnection(adminPrincipal);
         LDAPSearchResults results = null;
         Set answer = new OrderedSet();
         try {
@@ -752,14 +777,16 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: checking if entry exists: " + dn);
         }
-        
+        dn = (new DN(dn)).toRFCString().toLowerCase();
         // Check the caches
-        if (entriesPresent.contains(dn)) {
+        if (SMSNotificationManager.isCacheEnabled() &&
+            entriesPresent.contains(dn)) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject: entry present in cache: " + dn);
             }
             return (true);
-        } else if (entriesNotPresent.contains(dn)) {
+        } else if (SMSNotificationManager.isCacheEnabled() &&
+            entriesNotPresent.contains(dn)) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject: entry present in "
                         + "not-present-cache: " + dn);
@@ -771,14 +798,28 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         boolean entryExists = entryExists(getNormalizedName(token, dn));
 
         // Update the cache
-        if (entryExists) {
-            Set ee = new HashSet(entriesPresent);
-            ee.add(dn);
-            entriesPresent = ee;
-        } else {
-            Set enp = new HashSet(entriesNotPresent);
-            enp.add(dn);
-            entriesNotPresent = enp;
+        if (entryExists && SMSNotificationManager.isCacheEnabled()) {
+            initializeNotification();
+            entriesPresent.add(dn);
+            if (entriesPresent.size() > entriesPresentCacheSize) {
+                synchronized (entriesPresent) {
+                    Iterator items = entriesPresent.iterator();
+                    if (items.hasNext()) {
+                        items.remove();
+                    }
+                }
+            }
+        } else if (SMSNotificationManager.isCacheEnabled()) {
+            initializeNotification();
+            entriesNotPresent.add(dn);
+            if (entriesNotPresent.size() > entriesPresentCacheSize) {
+                synchronized (entriesNotPresent) {
+                    Iterator items = entriesNotPresent.iterator();
+                    if (items.hasNext()) {
+                        items.remove();
+                    }
+                }
+            }
         }
         return (entryExists);
     }
@@ -791,7 +832,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         LDAPConnection conn = null;
         try {
             // Use the Admin Principal to check if entry exists
-            conn = getConnection(LDAPEventManager.adminPrincipal);
+            conn = getConnection(adminPrincipal);
             conn.read(dn, OU_ATTR);
             entryExists = true;
         } catch (LDAPException e) {
@@ -813,20 +854,12 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     /**
      * Registration of Notification Callbacks
      */
-    public String registerCallbackHandler(SSOToken token,
-            SMSObjectListener changeListener) throws SMSException, SSOException 
-    {
-        return (LDAPEventManager.addObjectChangeListener(changeListener));
+    public void registerCallbackHandler(SMSObjectListener changeListener)
+        throws SMSException {
+        LDAPEventManager.addObjectChangeListener(changeListener);
     }
 
-    /**
-     * De-Registration of Notification Callbacks
-     */
-    public void deregisterCallbackHandler(String id) {
-        LDAPEventManager.removeObjectChangeListener(id);
-    }
-
-    // Method to convert Map to LDAPAttributeSet
+   // Method to convert Map to LDAPAttributeSet
     private static LDAPAttributeSet copyMapToAttrSet(Map attrs) {
         LDAPAttribute[] ldapAttrs = new LDAPAttribute[attrs.size()];
         Iterator items = attrs.keySet().iterator();
@@ -871,42 +904,25 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
     public void objectChanged(String dn, int type) {
         dn = (new DN(dn)).toRFCString().toLowerCase();
-        synchronized (entriesPresent) {
-            if (type == DELETE) {
-                // Remove from entriesPresent Set
-                Set enp = new HashSet();
-                for (Iterator items = entriesPresent.iterator(); items
-                        .hasNext();) {
-                    String odn = (String) items.next();
-                    if (!dn.equals((new DN(odn)).toRFCString().toLowerCase())) {
-                        enp.add(odn);
-                    }
-                }
-                entriesPresent = enp;
-            } else if (type == ADD) {
-                // Remove from entriesNotPresent set
-                Set enp = new HashSet();
-                for (Iterator items = entriesNotPresent.iterator(); items
-                        .hasNext();) {
-                    String odn = (String) items.next();
-                    if (!dn.equals((new DN(odn)).toRFCString().toLowerCase())) {
-                        enp.add(odn);
-                    }
-                }
-                entriesNotPresent = enp;
-            }
+        if (type == DELETE) {
+            // Remove from entriesPresent Set
+            entriesPresent.remove(dn);
+        } else if (type == ADD) {
+            // Remove from entriesNotPresent set
+            entriesNotPresent.remove(dn);
+
         }
     }
 
     public void allObjectsChanged() {
         // Not clear why this class is implemeting the SMSObjectListener
         // interface.
-        SMSEntry.debug.error(
-            "SMSLDAPObject: got notifications, all objects changed");
-        synchronized (entriesPresent) {
-            entriesPresent.clear();
-            entriesNotPresent.clear();
+        if (SMSEntry.debug.warningEnabled()) {
+            SMSEntry.debug.warning(
+                "SMSLDAPObject: got notifications, all objects changed");
         }
+        entriesPresent.clear();
+        entriesNotPresent.clear();
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.15 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: RegisterServices.java,v 1.16 2008-07-06 05:48:31 arviranga Exp $
  *
  */
 
@@ -78,7 +78,6 @@ public class RegisterServices {
     public void registers(SSOToken adminToken, boolean bUseExtUMDS)
         throws IOException, SMSException, SSOException {
         System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
-        ServiceManager serviceManager = new ServiceManager(adminToken);
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
         String dirXML = basedir + "/config/xml";
@@ -147,7 +146,6 @@ public class RegisterServices {
             if (serviceStream != null) {
                 serviceStream.close();
             }
-            serviceManager.clearCache();
         }
     }
     

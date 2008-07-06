@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.8 2008-06-25 05:44:06 qcheng Exp $
+ * $Id: ServiceSchemaManager.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -63,7 +63,9 @@ public class ServiceSchemaManager {
     private static Debug debug = Debug.getInstance("amSMS");
     
     /**
-     * Constructor for backward compatibility. Chooses on of the versions.
+     * Constructor for service's schema manager to manage the attributes and
+     * sub configurations. Assumes service version number to be <class>1.0
+     * </class>.
      *
      * @throws SMSException
      *             if an error occurred while trying to perform the operation
@@ -72,8 +74,7 @@ public class ServiceSchemaManager {
      */
     public ServiceSchemaManager(String serviceName, SSOToken token)
     throws SMSException, SSOException {
-        this(token, serviceName, ServiceManager.serviceDefaultVersion(token,
-            serviceName));
+        this(token, serviceName, "1.0");
     }
     
     /**
@@ -141,6 +142,7 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public String getI18NFileName() {
+        validate();
         return (ssm.getI18NFileName());
     }
     
@@ -158,6 +160,7 @@ public class ServiceSchemaManager {
      */
     public void setI18NFileName(String url) throws SMSException, SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         String tmpS = ssm.getI18NFileName();
         ssm.setI18NFileName(url);
         try {
@@ -179,6 +182,7 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public String getI18NJarURL() {
+        validate();
         return (ssm.getI18NJarURL());
     }
     
@@ -198,6 +202,7 @@ public class ServiceSchemaManager {
     
     public void setI18NJarURL(String url) throws SMSException, SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         String tmpS = ssm.getI18NJarURL();
         ssm.setI18NJarURL(url);
         try {
@@ -216,6 +221,7 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public String getServiceHierarchy() {
+        validate();
         return (ssm.getServiceHierarchy());
     }
     
@@ -234,6 +240,7 @@ public class ServiceSchemaManager {
     public void setServiceHierarchy(String newhierarchy) throws SMSException,
         SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         String tmpS = getServiceHierarchy();
         ssm.setServiceHierarchy(newhierarchy);
         try {
@@ -252,6 +259,7 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public String getI18NKey() {
+        validate();
         return (ssm.getI18NKey());
     }
     
@@ -269,6 +277,7 @@ public class ServiceSchemaManager {
      */
     public void setI18NKey(String i18nKey) throws SMSException, SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         String tmp = ssm.getI18NKey();
         ssm.setI18NKey(i18nKey);
         
@@ -288,6 +297,7 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public String getPropertiesViewBeanURL() {
+        validate();
         return (ssm.getPropertiesViewBeanURL());
     }
     
@@ -306,6 +316,7 @@ public class ServiceSchemaManager {
     public void setPropertiesViewBeanURL(String url) throws SMSException,
         SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         String tmpS = ssm.getPropertiesViewBeanURL();
         ssm.setPropertiesViewBeanURL(url);
         try {
@@ -322,6 +333,7 @@ public class ServiceSchemaManager {
      * @return the revision number of the service schema
      */
     public int getRevisionNumber() {
+        validate();
         return (ssm.getRevisionNumber());
     }
     
@@ -338,6 +350,7 @@ public class ServiceSchemaManager {
     public void setRevisionNumber(int revisionNumber) throws SMSException,
         SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         int tmpS = ssm.getRevisionNumber();
         ssm.setRevisionNumber(revisionNumber);
         try {
@@ -360,6 +373,7 @@ public class ServiceSchemaManager {
      */
     public Set getSchemaTypes() throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         return (ssm.getSchemaTypes());
     }
     
@@ -376,6 +390,7 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public ServiceSchema getSchema(String type) throws SMSException {
+        validate();
         SchemaType t = null;
         if (type.equalsIgnoreCase("role")
         || type.equalsIgnoreCase("filteredrole")
@@ -403,6 +418,7 @@ public class ServiceSchemaManager {
      */
     public ServiceSchema getSchema(SchemaType type) throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         ServiceSchemaImpl ss = ssm.getSchema(type);
         if ((ss == null) && type.equals(SchemaType.USER)) {
             type = SchemaType.DYNAMIC;
@@ -424,6 +440,7 @@ public class ServiceSchemaManager {
      */
     public ServiceSchema getOrganizationCreationSchema() throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         ServiceSchemaImpl ss = ssm.getSchema(SchemaType.ORGANIZATION);
         if (ss != null) {
             ServiceSchemaImpl ssi = ss.getOrgAttrSchema();
@@ -449,6 +466,7 @@ public class ServiceSchemaManager {
      */
     public Set getServiceAttributeNames(SchemaType type) throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         ServiceSchema ss = getSchema(type);
         return (ss.getServiceAttributeNames());
     }
@@ -463,7 +481,6 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public ServiceSchema getGlobalSchema() throws SMSException {
-        SMSEntry.validateToken(token);
         return (getSchema(SchemaType.GLOBAL));
     }
     
@@ -478,7 +495,6 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public ServiceSchema getOrganizationSchema() throws SMSException {
-        SMSEntry.validateToken(token);
         return (getSchema(SchemaType.ORGANIZATION));
     }
     
@@ -492,7 +508,6 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public ServiceSchema getDynamicSchema() throws SMSException {
-        SMSEntry.validateToken(token);
         return (getSchema(SchemaType.DYNAMIC));
     }
     
@@ -506,7 +521,6 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public ServiceSchema getUserSchema() throws SMSException {
-        SMSEntry.validateToken(token);
         return (getSchema(SchemaType.USER));
     }
     
@@ -520,7 +534,6 @@ public class ServiceSchemaManager {
      * @supported.api
      */
     public ServiceSchema getPolicySchema() throws SMSException {
-        SMSEntry.validateToken(token);
         return (getSchema(SchemaType.POLICY));
     }
     
@@ -535,6 +548,7 @@ public class ServiceSchemaManager {
      */
     public InputStream getSchema() throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         return (ssm.getSchema());
     }
     
@@ -556,8 +570,17 @@ public class ServiceSchemaManager {
     public void replaceSchema(InputStream xmlServiceSchema)
     throws SSOException, SMSException, IOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         CachedSMSEntry smsEntry = ssm.getCachedSMSEntry();
         smsEntry.writeXMLSchema(token, xmlServiceSchema);
+    }
+
+    // @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (serviceName != null ? serviceName.hashCode() : 0);
+        hash = 67 * hash + (version != null ? version.hashCode() : 0);
+        return hash;
     }
     
     /**
@@ -572,9 +595,9 @@ public class ServiceSchemaManager {
      */
     public boolean equals(Object o) {
         if (o instanceof ServiceSchemaManager) {
-            ServiceSchemaManager ssm = (ServiceSchemaManager) o;
-            if (serviceName.equals(ssm.serviceName)
-            && version.equals(ssm.version)) {
+            ServiceSchemaManager ossm = (ServiceSchemaManager) o;
+            if (serviceName.equals(ossm.serviceName)
+            && version.equals(ossm.version)) {
                 return (true);
             }
         }
@@ -633,6 +656,7 @@ public class ServiceSchemaManager {
      * @throws SSOException if the single sign-on token of the user is invalid.
      */
     public String getLastModifiedTime() throws SMSException, SSOException {
+        validateServiceSchemaManagerImpl();
         CachedSMSEntry ce = ssm.getCachedSMSEntry();
         SMSEntry e = ce.getSMSEntry();
         String vals[] = e.getAttributeValues(SMSEntry.ATTR_MODIFY_TIMESTAMP,
@@ -652,6 +676,7 @@ public class ServiceSchemaManager {
      * @return service's plugin interface names
      */
     public Set getPluginInterfaceNames() {
+        validate();
         return (ssm.getPluginInterfaceNames());
     }
     
@@ -665,6 +690,7 @@ public class ServiceSchemaManager {
      *         <code>null</code>
      */
     public PluginInterface getPluginInterface(String pluginInterfaceName) {
+        validate();
         return (ssm.getPluginInterface(pluginInterfaceName));
     }
     
@@ -682,6 +708,7 @@ public class ServiceSchemaManager {
     public void addPluginInterface(String interfaceName, String interfaceClass,
         String i18nKey) throws SMSException, SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         if ((interfaceName == null) || (interfaceClass == null)) {
             throw (new IllegalArgumentException());
         }
@@ -715,6 +742,7 @@ public class ServiceSchemaManager {
     public void removePluginInterface(String interfacename)
     throws SMSException, SSOException {
         SMSEntry.validateToken(token);
+        validateServiceSchemaManagerImpl();
         Document schemaDoc = ssm.getDocumentCopy();
         Node schemaNode = XMLUtils.getRootNode(schemaDoc, SMSUtils.SCHEMA);
         // Get the plugin interface node
@@ -737,6 +765,7 @@ public class ServiceSchemaManager {
     public Set getPluginSchemaNames(String interfaceName, String orgName)
     throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         // Construct the DN to get CachedSubEntries
         StringBuffer sb = new StringBuffer(100);
         sb.append("ou=").append(interfaceName).append(",").append(
@@ -763,6 +792,7 @@ public class ServiceSchemaManager {
     public PluginSchema getPluginSchema(String pluginSchemaName,
         String interfaceName, String orgName) throws SMSException {
         SMSEntry.validateToken(token);
+        validate();
         return (new PluginSchema(token, serviceName, version, pluginSchemaName,
             interfaceName, orgName));
     }
@@ -785,6 +815,29 @@ public class ServiceSchemaManager {
         smsEntry.writeXMLSchema(token, smsSchema.getSchema());
     }
     
+    private void validate() {
+        try {
+            validateServiceSchemaManagerImpl();
+        } catch (Exception e) {
+            // Since method signatures cannot be changed, a runtime
+            // exception is thrown. This conditions would happen only
+            // when SSOToken has become invalid or service has been
+            // removed.
+            debug.error("ServiceSchemaManager:validate failed for SN: " +
+                serviceName, e);
+            throw (new RuntimeException(e.getMessage()));
+        }
+    }
+    
+    private void validateServiceSchemaManagerImpl()
+        throws SMSException, SSOException {
+        if (!ssm.isValid()) {
+            // Recreate the SSM
+            ssm = ServiceSchemaManagerImpl.getInstance(token,
+                serviceName, version);
+        }
+    }
+    
     // -----------------------------------------------------------
     // Static method to create a new service schema
     // -----------------------------------------------------------
@@ -804,7 +857,7 @@ public class ServiceSchemaManager {
         // Version node
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
             ServiceManager.getServiceNameDN(smsSchema.getServiceName(),
-            smsSchema.getServiceVersion()), null);
+            smsSchema.getServiceVersion()));
         smsEntry = cEntry.getSMSEntry();
         String[] schema = new String[1];
         if ((smsEntry.getAttributeValues(SMSEntry.ATTR_SCHEMA) == null)

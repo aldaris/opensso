@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.13 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceConfig.java,v 1.14 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -100,6 +100,7 @@ public class ServiceConfig {
      * @return service component name
      */
     public String getComponentName() {
+        validate();
         return (sc.getComponentName());
     }
 
@@ -110,6 +111,7 @@ public class ServiceConfig {
      * @return service component's schema ID
      */
     public String getSchemaID() {
+        validate();
         return (sc.getSchemaID());
     }
 
@@ -119,6 +121,7 @@ public class ServiceConfig {
      * @return the priority assigned to the service configuration
      */
     public int getPriority() {
+        validate();
         return (sc.getPriority());
     }
 
@@ -133,6 +136,7 @@ public class ServiceConfig {
      *             if the user's single sign-on is invalid or expired
      */
     public void setPriority(int priority) throws SSOException, SMSException {
+        validateServiceConfigImpl();
         StringBuffer sb = new StringBuffer(8);
         String[] priorities = { sb.append(priority).toString() };
         SMSEntry e = sc.getSMSEntry();
@@ -146,6 +150,7 @@ public class ServiceConfig {
      * @return the labeled uri assigned to the service configuration
      */
     public String getLabeledUri() {
+        validate();
         return (sc.getLabeledUri());
     }
 
@@ -160,6 +165,7 @@ public class ServiceConfig {
      *             if the user's single sign-on is invalid or expired
      */
     public void setLabeledUri(String luri) throws SSOException, SMSException {
+        validateServiceConfigImpl();
         StringBuffer sb = new StringBuffer(8);
         String[] lUris = { sb.append(luri).toString() };
         SMSEntry e = sc.getSMSEntry();
@@ -175,6 +181,7 @@ public class ServiceConfig {
      *             if there is an error accessing the data store
      */
     public Set getSubConfigNames() throws SMSException {
+        validateServiceConfigImpl();
         try {
             return (sc.getSubConfigNames(token));
         } catch (SSOException s) {
@@ -195,6 +202,7 @@ public class ServiceConfig {
      *             if an error occurred while performing the operation.
      */
     public Set getSubConfigNames(String pattern) throws SMSException {
+        validateServiceConfigImpl();
         try {
             return (sc.getSubConfigNames(token, pattern));
         } catch (SSOException s) {
@@ -219,8 +227,9 @@ public class ServiceConfig {
      */
     public Set getSubConfigNames(String pattern, String schemaName)
             throws SMSException {
+        validateServiceConfigImpl();
         try {
-            return (sc.getSubConfigNames(pattern, schemaName));
+            return (sc.getSubConfigNames(token, pattern, schemaName));
         } catch (SSOException s) {
             SMSEntry.debug.error("ServiceConfigManager: Unable to "
                     + "get subConfig Names for filters: " + pattern + "AND"
@@ -259,6 +268,7 @@ public class ServiceConfig {
      */
     public ServiceConfig getSubConfig(String subConfigName)
             throws SSOException, SMSException {
+        validateServiceConfigImpl();
         ServiceConfigImpl sci = sc.getSubConfig(token, subConfigName);
         return ((sci == null) ? null : new ServiceConfig(scm, sci));
     }
@@ -281,6 +291,7 @@ public class ServiceConfig {
      */
     public void addSubConfig(String subConfigName, String subConfigId,
             int priority, Map attrs) throws SMSException, SSOException {
+        validateServiceConfigImpl();
         // Check if this entry exists
         if (sc.isNewEntry()) {
             // Ideally these nodes should have been created, since they
@@ -332,6 +343,7 @@ public class ServiceConfig {
      */
     public void removeSubConfig(String subConfigName) throws SMSException,
             SSOException {
+        validateServiceConfigImpl();
         // Obtain the SMSEntry for the subconfig and delete it
         // unescape in case users provide such a subConfigName for deletion.
         // "http:&amp;#47;&amp;#47;abc.east.sun.com:58080"
@@ -359,7 +371,7 @@ public class ServiceConfig {
                 ss);
         }
         // Remove this entry from smsentry.
-        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sdn, null);
+        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sdn);
         SMSEntry entry = cEntry.getClonedSMSEntry();
         entry.delete(token);
         cEntry.refresh(entry);
@@ -406,6 +418,7 @@ public class ServiceConfig {
      *         is the <code>Set</code> of attribute values
      */
     public Map getAttributes() {
+        validate();
         return (sc.getAttributes());
     }
 
@@ -424,6 +437,7 @@ public class ServiceConfig {
      * the attribute.
      */
     public Map getAttributesWithoutDefaults() {
+        validate();
         return (sc.getAttributesWithoutDefaults());
     }
     
@@ -449,6 +463,7 @@ public class ServiceConfig {
      *	 and value is the <code>Set</code> of attribute values
      */
     public Map getAttributesForRead() {
+        validate();
 	return (sc.getAttributesForRead());
     }
 
@@ -460,6 +475,7 @@ public class ServiceConfig {
      * <code>Set</code> that contains the values for the attribute.
      */
     public Map getAttributesWithoutDefaultsForRead() {
+        validate();
         return (sc.getAttributesWithoutDefaultsForRead());
     }
 
@@ -480,6 +496,7 @@ public class ServiceConfig {
      *             if the user's single sign-on is invalid or expired
      */
     public void setAttributes(Map attrs) throws SMSException, SSOException {
+        validateServiceConfigImpl();
         Map oldAttrs = sc.getAttributesWithoutDefaults();
         Iterator it = oldAttrs.keySet().iterator();
         Map newAttrs = SMSUtils.copyAttributes(attrs);
@@ -515,6 +532,7 @@ public class ServiceConfig {
      */
     public void addAttribute(String attrName, Set values) throws SMSException,
             SSOException {
+        validateServiceConfigImpl();
         // Get current attributes
         Map attributes = getAttributes();
         // Validate attribute values
@@ -547,6 +565,7 @@ public class ServiceConfig {
      */
     public void removeAttribute(String attrName) throws SMSException,
             SSOException {
+        validateServiceConfigImpl();
         SMSEntry e = sc.getSMSEntry();
         SMSUtils.removeAttribute(e, attrName);
         saveSMSEntry(e);
@@ -564,6 +583,7 @@ public class ServiceConfig {
      */
     public void removeAttributes(Set attrNames) throws SMSException,
             SSOException {
+        validateServiceConfigImpl();
         SMSEntry e = sc.getSMSEntry();
         if (attrNames != null && !attrNames.isEmpty()) {
             for (Iterator items = attrNames.iterator(); items.hasNext();) {
@@ -601,6 +621,7 @@ public class ServiceConfig {
      */
     public void removeAttributeValues(String attrName, Set values)
             throws SMSException, SSOException {
+        validateServiceConfigImpl();
         SMSEntry e = sc.getSMSEntry();
         SMSUtils.removeAttributeValues(e, attrName, values, ss
                 .getSearchableAttributeNames());
@@ -623,6 +644,7 @@ public class ServiceConfig {
      */
     public void replaceAttributeValue(String attrName, String oldValue,
             String newValue) throws SMSException, SSOException {
+        validateServiceConfigImpl();
         // Get current attributes
         Map attributes = getAttributes();
         // Validate values
@@ -660,6 +682,7 @@ public class ServiceConfig {
      */
     public void replaceAttributeValues(String attrName, Set oldValues,
             Set newValues) throws SMSException, SSOException {
+        validateServiceConfigImpl();
         // Get current attributes
         Map attributes = getAttributes();
         // Validate values
@@ -670,9 +693,8 @@ public class ServiceConfig {
             newVals.removeAll(oldValues);
         }
         newVals.addAll(newValues);
-        ss
-                .validateAttrValues(token, attrName, newVals, true, sc
-                        .getOrganizationName());
+        ss.validateAttrValues(token, attrName, newVals, true,
+            sc.getOrganizationName());
         // Store the entry
         SMSEntry e = sc.getSMSEntry();
         SMSUtils.replaceAttributeValues(e, attrName, oldValues, newValues, ss
@@ -688,6 +710,7 @@ public class ServiceConfig {
      *         object.
      */
     public String getDN() {
+        validate();
         return (sc.getDN());
     }
 
@@ -705,6 +728,7 @@ public class ServiceConfig {
      */
 
     public String getLastModifiedTime() throws SMSException, SSOException {
+        validateServiceConfigImpl();
         SMSEntry e = sc.getSMSEntry();
         String vals[] = e.getAttributeValues(SMSEntry.ATTR_MODIFY_TIMESTAMP,
                 true);
@@ -833,12 +857,11 @@ public class ServiceConfig {
     public void checkAndCreateGroup(String dn, String groupName) 
         throws SMSException, SSOException {
 
-        CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn, null);
+        CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn);
         if (entry.isNewEntry()) {
             // Check if parent exisits
             String pDN = (new DN(dn)).getParent().toString();
-            CachedSMSEntry pEntry = CachedSMSEntry
-                    .getInstance(token, pDN, null);
+            CachedSMSEntry pEntry = CachedSMSEntry.getInstance(token, pDN);
             if (pEntry.isNewEntry()) {
                 checkAndCreateComponents(pDN);
             }
@@ -853,12 +876,11 @@ public class ServiceConfig {
     }
 
     void checkAndCreateComponents(String dn) throws SMSException, SSOException {
-        CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn, null);
+        CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn);
         if (entry.isNewEntry()) {
             // Check if parent exisits
             String pDN = (new DN(dn)).getParent().toString();
-            CachedSMSEntry pEntry = CachedSMSEntry
-                    .getInstance(token, pDN, null);
+            CachedSMSEntry pEntry = CachedSMSEntry.getInstance(token, pDN);
             if (pEntry.isNewEntry()) {
                 checkAndCreateComponents(pDN);
             }
@@ -871,13 +893,41 @@ public class ServiceConfig {
         }
     }
     
+    private void validate() {
+        try {
+            validateServiceConfigImpl();
+        } catch (SMSException e) {
+            throw (new RuntimeException(e.getMessage()));
+        }
+    }
+    
+    private void validateServiceConfigImpl() throws SMSException {
+        if (!sc.isValid()) {
+            throw (new SMSException("service-config: " + sc.getDN() +
+                " No loger valid. Cache has been cleared. Recreate from" +
+                "ServiceConfigManager"));
+        }
+    }
+    
+    /**
+     * Returns the status of this Service Configuration Object.
+     * Must be used by classes that cache ServiceConfig.
+     * 
+     * @return
+     */
+    public boolean isValid() {
+        return (sc.isValid());
+    }
+    
     public String toXML(String NodeTag)
         throws SMSException, SSOException {
-        return sc.toXML(NodeTag);
+        validateServiceConfigImpl();
+        return sc.toXML(token, NodeTag);
     }
 
     public String toXML(String NodeTag, String orgName)
         throws SMSException, SSOException {
-        return sc.toXML(NodeTag, orgName);
+        validateServiceConfigImpl();
+        return sc.toXML(token, NodeTag, orgName);
     }
 }

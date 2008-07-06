@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.34 2008-07-02 17:21:22 kenwho Exp $
+ * $Id: AgentsRepo.java,v 1.35 2008-07-06 05:48:32 arviranga Exp $
  *
  */
 
@@ -30,21 +30,18 @@ package com.sun.identity.idm.plugins.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
-import com.iplanet.am.util.AdminUtils;
 import com.iplanet.services.comm.server.PLLServer;
 import com.iplanet.services.comm.server.SendNotificationException;
 import com.iplanet.services.comm.share.Notification;
@@ -64,7 +61,6 @@ import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.RepoSearchResults;
-import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Hash;
@@ -93,7 +89,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     private static final String agentserviceName = IdConstants.AGENT_SERVICE;
     private static final String agentGroupNode = "agentgroup";
     private static final String instancesNode = "ou=Instances,";
-    private static final String labeledURI = "labeledURI";
     private static final String hashAlgStr = "{SHA-1}";
 
     IdRepoListener repoListener = null;
@@ -108,7 +103,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
 
     private static ServiceConfigManager scm = null;
 
-    ServiceConfig orgConfig, agentGroupConfig;
+    ServiceConfig orgConfigCache, agentGroupConfigCache;
 
     String ssmListenerId, scmListenerId;
 
@@ -253,18 +248,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             }
 
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 if (!orgConfig.getSubConfigNames().contains(agentName)) {
                     orgConfig.addSubConfig(agentName, agentType, 0, attrMap);
                     aTypeConfig = orgConfig.getSubConfig(agentName);
                 } else {
                     // Agent already found, throw an exception
-                    Object args[] = { agentName, type };
+                    Object args[] = { agentName, type.getName() };
                     throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                             "224", args));
                 }
             } else if (type.equals(IdType.AGENTGROUP)) {
-                agentGroupConfig = getAgentGroupConfig(token);
+                ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
                 if (!agentGroupConfig.getSubConfigNames().
                     contains(agentName)) {
                     agentGroupConfig.addSubConfig(agentName, agentType, 0, 
@@ -272,7 +267,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     aTypeConfig = agentGroupConfig.getSubConfig(agentName);
                 } else {
                     // Agent already found, throw an exception
-                    Object args[] = { agentName, type };
+                    Object args[] = { agentName, type.getName() };
                     throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                             "224", args));
                 }
@@ -306,18 +301,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         ServiceConfig aCfg = null;
         try {
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 aCfg = orgConfig.getSubConfig(name);
                 if (aCfg != null) {
                     orgConfig.removeSubConfig(name);
                 } else {
                     // Agent not found, throw an exception
-                    Object args[] = { name, type };
+                    Object args[] = { name, type.getName() };
                     throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                             "223", args));
                 }
             } else if (type.equals(IdType.AGENTGROUP)) {
-                agentGroupConfig = getAgentGroupConfig(token);
+                ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
                 aCfg = agentGroupConfig.getSubConfig(name);
                 if (aCfg != null) {
                     // AgentGroup deletion should clear the group memberships
@@ -330,7 +325,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     ServiceConfig memberCfg = null;
                     while (it.hasNext()) {
                         String agent = (String) it.next();
-                        memberCfg = orgConfig.getSubConfig(agent);
+                        memberCfg = getOrgConfig(token).getSubConfig(agent);
                         if (memberCfg !=null) {
                              memberCfg.setLabeledUri("");
                         }
@@ -338,7 +333,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     agentGroupConfig.removeSubConfig(name);
                 } else {
                     // Agent not found, throw an exception
-                    Object args[] = { name, type };
+                    Object args[] = { name, type.getName() };
                     throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                             "223", args));
                 }
@@ -406,22 +401,22 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 if (type.equals(IdType.AGENTONLY)) {
                     // Return the attributes for the given agent under 
                     // default group.
-                    orgConfig = getOrgConfig(token);
+                    ServiceConfig orgConfig = getOrgConfig(token);
                     agentsAttrMap = getAgentAttrs(orgConfig, name);
                 } else if (type.equals(IdType.AGENTGROUP)) {
-                    agentGroupConfig = getAgentGroupConfig(token);
+                    ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
                     // Return the attributes of agent under specified group.
                     agentsAttrMap = getAgentAttrs(agentGroupConfig, name);
                 } else if (type.equals(IdType.AGENT)) {
                     // By default return the union of agents under
                     // default group and the agent group.
-                    orgConfig = getOrgConfig(token);
+                    ServiceConfig orgConfig = getOrgConfig(token);
                     agentsAttrMap = getAgentAttrs(orgConfig, name);
 
                     String groupName = getGroupName(orgConfig, name);
                     if ((groupName != null) &&
                         (groupName.trim().length() > 0)) {
-                        agentGroupConfig = getAgentGroupConfig(token);
+                        ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
                         Map agentGroupMap = getAgentAttrs(agentGroupConfig, 
                             groupName);
 
@@ -552,7 +547,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 // the value of the attribute 'labeledURI' and if the agent
                 // belongs to the agentgroup, add the agent/member to the 
                 // result set. 
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 for (Iterator items = orgConfig.getSubConfigNames()
                     .iterator(); items.hasNext();) {
                     String agent = (String) items.next();
@@ -623,7 +618,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 // the value of the attribute 'labeledURI' and if the agent
                 // belongs to the agentgroup, add the agentgroup to the 
                 // result set. 
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 results = getGroupNames(orgConfig, name);
             } catch (SMSException sme) {
                 debug.error("AgentsRepo.getMemberships: Caught "
@@ -774,7 +769,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                  // eg., 'AgentGroup1'.
                  // One agent instance should belong to at most one group.
 
-                 orgConfig = getOrgConfig(token);
+                 ServiceConfig orgConfig = getOrgConfig(token);
                  Iterator it = members.iterator();
                  ServiceConfig aCfg = null;
                  while (it.hasNext()) {
@@ -854,7 +849,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         ServiceConfig aCfg = null;
         try {
             if (type.equals(IdType.AGENTONLY)) {
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 aCfg = orgConfig.getSubConfig(name);
                 Iterator it = attrNames.iterator();
                 while (it.hasNext()) {
@@ -863,7 +858,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         aCfg.removeAttribute(attrName);
                     } else {
                         // Agent not found, throw an exception
-                        Object args[] = { name, type };
+                        Object args[] = { name, type.getName() };
                         throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                             "223", args));
                     }
@@ -914,12 +909,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         try {
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
                 // Get the config from 'default' group.
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 agentRes = getAgentPattern(token, type, orgConfig, pattern, 
                     avPairs);
             } else if (type.equals(IdType.AGENTGROUP)) {
                 // Get the config from specified group.
-                agentGroupConfig = getAgentGroupConfig(token);
+                ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
                 agentRes = getAgentPattern(token, type, agentGroupConfig, 
                     pattern, avPairs);
             }
@@ -992,10 +987,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         ServiceConfig aCfg = null;
         try {
             if (type.equals(IdType.AGENTONLY) || type.equals(IdType.AGENT)) {
-                orgConfig = getOrgConfig(token);
+                ServiceConfig orgConfig = getOrgConfig(token);
                 aCfg = orgConfig.getSubConfig(name);
             } else if (type.equals(IdType.AGENTGROUP)) {
-                agentGroupConfig = getAgentGroupConfig(token);
+                ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
                 aCfg = agentGroupConfig.getSubConfig(name);
             } else {
                 Object args[] = { NAME, IdOperation.READ.getName() };
@@ -1021,7 +1016,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 aCfg.setAttributes(attributes);
             } else {
                 // Agent not found, throw an exception
-                Object args[] = { name, type };
+                Object args[] = { name, type.getName() };
                 throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                     "223", args));
             }
@@ -1199,8 +1194,10 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.organizationConfigChanged..");
         }
 
-        // Process notification only if realm name matches
-        if (orgName.equalsIgnoreCase(realmName)) {
+        // Process notification only if realm name matches and seviceComp
+        // is not "" (for org creation) and "/" for "ou=default" creation
+        if (orgName.equalsIgnoreCase(realmName) &&
+            !serviceComponent.equals("/") && !serviceComponent.equals("")) {
             IdType idType;
             if (groupName.equalsIgnoreCase("default")) {
                 idType = IdType.AGENTONLY;
@@ -1208,15 +1205,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 idType = IdType.AGENTGROUP;
             }
 
-            String name =
-            serviceComponent.substring(serviceComponent.indexOf('/') + 1);
-            // If notification URLs are present, send notifications
-            sendNotificationSet(type, idType, name);
-
+            // Get the Agent name
+            String name = serviceComponent.substring(
+                serviceComponent.indexOf('/') + 1);
+            
+            // Send local notification first
             if (repoListener != null) { 
                 repoListener.objectChanged(name, idType, type, 
                     repoListener.getConfigMap());
             }
+            
+            // If notification URLs are present, send notifications
+            sendNotificationSet(type, idType, name);
         }
     }
 
@@ -1398,12 +1398,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.getOrgConfig() called. ");
         }
         try {
-            if (orgConfig == null) {
+            if ((orgConfigCache == null) || !orgConfigCache.isValid()) {
                 if (scm == null) {
                     scm = new ServiceConfigManager(token, agentserviceName, 
                         version);
                 }
-                orgConfig = scm.getOrganizationConfig(realmName, null);
+                orgConfigCache = scm.getOrganizationConfig(realmName, null);
             }
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
@@ -1416,7 +1416,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         + "Unable to init ssm and scm due to " + ssoe);
             }
         }
-        return (orgConfig);
+        return (orgConfigCache);
     }
 
     private ServiceConfig getAgentGroupConfig(SSOToken token) {
@@ -1425,7 +1425,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.getAgentGroupConfig() called. ");
         }
         try {
-            if (agentGroupConfig == null) {
+            if ((agentGroupConfigCache == null) ||
+                !agentGroupConfigCache.isValid()) {
                 if (scm == null) {
                     scm = new ServiceConfigManager(token, agentserviceName, 
                         version);
@@ -1436,7 +1437,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 if (orgConfig != null) {
                     orgConfig.checkAndCreateGroup(agentGroupDN, 
                         agentGroupNode);
-                    agentGroupConfig = 
+                    agentGroupConfigCache = 
                         scm.getOrganizationConfig(realmName, agentGroupNode);
                 }
             }
@@ -1451,7 +1452,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                         + "Unable to init ssm and scm due to " + ssoe);
             }
         }
-        return (agentGroupConfig);
+        return (agentGroupConfigCache);
     }
 
     private boolean isAgentTypeSearch(ServiceConfig aConfig, String pattern) 

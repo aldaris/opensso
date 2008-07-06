@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManagerImpl.java,v 1.7 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: OrganizationConfigManagerImpl.java,v 1.8 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -49,7 +49,7 @@ import netscape.ldap.util.DN;
  * "configuration" in the service. It manages configuration data only for GLOBAL
  * and ORGANIZATION types.
  */
-class OrganizationConfigManagerImpl {
+class OrganizationConfigManagerImpl implements SMSObjectListener {
 
     // Instance variables
     private String orgDN;
@@ -59,7 +59,9 @@ class OrganizationConfigManagerImpl {
     private CachedSMSEntry smsEntry;
 
     // Pointer to schema changes listeners
-    private HashMap listenerObjects;
+    private Map listenerObjects = Collections.synchronizedMap(
+        new HashMap());
+    private String listenerId;
 
     // Notification search string
     private String orgNotificationSearchString;
@@ -74,12 +76,10 @@ class OrganizationConfigManagerImpl {
         String orgDN, SSOToken token) throws SMSException {
         this.smsEntry = entry;
         this.orgDN = orgDN;
-
-        // Initialize instance variables
-        listenerObjects = new HashMap(2);
-
+        
         // Register for notifications
-        SMSEventListenerManager.notifyAllNodeChanges(token, this);
+        listenerId = SMSNotificationManager.getInstance()
+            .registerCallbackHandler(this);
 
         if (!orgDN.startsWith(SMSEntry.SERVICES_RDN)) {
             DN notifyDN = new DN(SMSEntry.SERVICES_RDN + "," + orgDN);
@@ -107,15 +107,13 @@ class OrganizationConfigManagerImpl {
             if (orgDN.equals(DNMapper.serviceDN)) {
                 se = CachedSubEntries.getInstance(token, orgDN);
             } else {
-                se = CachedSubEntries
-                        .getInstance(token, "ou=services," + orgDN);
+                se = CachedSubEntries.getInstance(token, "ou=services,"+orgDN);
             }
             for (Iterator names = se.getSubEntries(token).iterator(); names
                     .hasNext();) {
                 String serviceName = (String) names.next();
                 ServiceConfigManagerImpl scmi = ServiceConfigManagerImpl
-                        .getInstance(token, serviceName, ServiceManager
-                                .serviceDefaultVersion(token, serviceName));
+                        .getInstance(token, serviceName, "1.0");
                 try {
                     ServiceConfigImpl sci = scmi.getOrganizationConfig(token,
                             orgDN, null);
@@ -179,9 +177,7 @@ class OrganizationConfigManagerImpl {
 
     synchronized String addListener(ServiceListener listener) {
         String id = SMSUtils.getUniqueID();
-        synchronized (listenerObjects) {
-            listenerObjects.put(id, listener);
-        }
+        listenerObjects.put(id, listener);
         return (id);
     }
 
@@ -193,12 +189,19 @@ class OrganizationConfigManagerImpl {
      *            the listener ID issued when the listener was registered
      */
     public void removeListener(String listenerID) {
-        synchronized (listenerObjects) {
-            listenerObjects.remove(listenerID);
+        listenerObjects.remove(listenerID);
+        if (!isValid() && (listenerID != null) && listenerObjects.isEmpty()) {
+            SMSNotificationManager.getInstance().removeCallbackHandler(
+                listenerID);
         }
     }
 
-    void entryChanged(String dn, int type) {
+    // Implementations for SMSObjectListener
+    public void allObjectsChanged() {
+        // Ignore, do nothing
+    }
+    
+    public void objectChanged(String dn, int type) {
         // Check for listeners
         if (listenerObjects.size() == 0) {
             if (SMSEntry.eventDebug.messageEnabled()) {
@@ -313,25 +316,42 @@ class OrganizationConfigManagerImpl {
     }
 
     void notifyOrgConfigChange(String serviceName, String version,
-            String orgName, String groupName, String comp, int type) {
-
-        Map lo = Collections.EMPTY_MAP;
+        String orgName, String groupName, String comp, int type) {
         synchronized (listenerObjects) {
-            lo = (HashMap) listenerObjects.clone();
+            Iterator items = listenerObjects.values().iterator();
+            while (items.hasNext()) {
+                ServiceListener sl = (ServiceListener) items.next();
+                try {
+                    sl.organizationConfigChanged(serviceName, version, orgName,
+                        groupName, comp, type);
+                } catch (Throwable t) {
+                    SMSEntry.eventDebug.error("OrganizationConfigManager" +
+                        "Impl:notifyOrgConfigChange Error sending notify to" +
+                        sl.getClass().getName(), t);
+                }
+            }
         }
-        Iterator items = lo.values().iterator();
-        while (items.hasNext()) {
-            ServiceListener sl = (ServiceListener) items.next();
-            sl.organizationConfigChanged(serviceName, version, orgName,
-                    groupName, comp, type);
+    }
+    
+    void clear() {
+        // Clears the listeners
+        if ((listenerId != null) && ((listenerObjects == null) ||
+            listenerObjects.isEmpty())) {
+            SMSNotificationManager.getInstance().removeCallbackHandler(
+                listenerId);
         }
+        smsEntry.clear();
+    }
+    
+    boolean isValid() {
+        return (smsEntry.isValid());
     }
 
     // ---------------------------------------------------------
     // Static Protected Methods
     // ---------------------------------------------------------
     protected static OrganizationConfigManagerImpl getInstance(SSOToken token,
-        String orgName) throws SMSException {
+        String orgName) throws SMSException, SSOException {
 
         // Convert orgName to DN
         String orgDN = DNMapper.orgNameToDN(orgName);
@@ -345,10 +365,7 @@ class OrganizationConfigManagerImpl {
         }
 
         // check in cache for organization name
-        OrganizationConfigManagerImpl answer = null;
-        synchronized (configMgrMutex) {
-            answer = getFromCache(orgDN, token);
-        }
+        OrganizationConfigManagerImpl answer = getFromCache(orgDN, token);
         if ((answer != null) && ServiceManager.isRealmEnabled()) {
             // If in co-exist mode, SMS will not get updates for org
             // hence have to update the cEntry
@@ -368,35 +385,29 @@ class OrganizationConfigManagerImpl {
         }
 
         // Not in cache or in legacy mode, check if the realm exists
-        CachedSMSEntry cEntry = null;
-        try {
-            // If in co-exist mode, SMS will not get updates for org
-            // hence have to update the cEntry
-            cEntry = checkAndUpdatePermission(orgDN, token);
-            if (ServiceManager.isCoexistenceMode()) {
-                cEntry.update();
-            }
-            if (cEntry.isNewEntry()) {
-                if (debug.messageEnabled()) {
-                    debug.message("OrganizationConfigManagerImpl::getInstance" +
-                        " called with non-existent realm: " + orgName);
-                }
-                String args[] = { orgName };
-                throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                    "sms-REALM_NAME_NOT_FOUND", args));
-            }
-        } catch (SSOException s) {
-            SMSEntry.debug.error("OrganizationConfigManagerImpl.getInstance", s);
-            throw (new SMSException(SMSEntry.bundle.getString(
-                "sms-INVALID_SSO_TOKEN"), "sms-INVALID_SSO_TOKEN"));
+        // If in co-exist mode, SMS will not get updates for org
+        // hence have to update the cEntry
+        CachedSMSEntry cEntry = checkAndUpdatePermission(orgDN, token);
+        if (ServiceManager.isCoexistenceMode()) {
+            cEntry.update();
         }
-
-        // Not in cache, construct the entry and add to cache
-        answer = new OrganizationConfigManagerImpl(cEntry, orgDN, token);
-        synchronized(configMgrMutex) {
+        if (cEntry.isNewEntry()) {
+            if (debug.messageEnabled()) {
+                debug.message("OrganizationConfigManagerImpl::getInstance" +
+                    " called with non-existent realm: " + orgName);
+            }
+            String args[] = {orgName};
+            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                "sms-REALM_NAME_NOT_FOUND", args));
+        }
+        
+        // Not in cache and org exists, construct the entry and add to cache
+        synchronized(configMgrImpls) {
             // Check the cache again
-            OrganizationConfigManagerImpl tmp;
-            if ((tmp = getFromCache(orgDN, null)) == null) {
+            OrganizationConfigManagerImpl tmp = getFromCache(orgDN, null);
+            if (tmp == null) {
+                answer = new OrganizationConfigManagerImpl(
+                    cEntry, orgDN, token);
                 configMgrImpls.put(orgDN, answer);
             } else {
                 answer = tmp;
@@ -410,15 +421,16 @@ class OrganizationConfigManagerImpl {
     }
 
     static OrganizationConfigManagerImpl getFromCache(String cacheName, 
-        SSOToken t) throws SMSException {
+        SSOToken t) throws SMSException, SSOException {
          OrganizationConfigManagerImpl answer = (OrganizationConfigManagerImpl)
             configMgrImpls.get(cacheName);
         if ((answer != null) && (t != null)) {
             // Check if the user has permissions
             Set principals = (Set) userPrincipals.get(cacheName);
-            if (!principals.contains(t.getTokenID().toString())) {
+            if ((principals == null) ||
+                !principals.contains(t.getTokenID().toString())) {
                 // Principal name not in cache, need to check perm
-                answer = null;
+                checkAndUpdatePermission(cacheName, t);
             }
         }
         return (answer);
@@ -426,24 +438,33 @@ class OrganizationConfigManagerImpl {
 
     static CachedSMSEntry checkAndUpdatePermission(String cacheName,
         SSOToken t) throws SSOException, SMSException {
-        CachedSMSEntry answer = null;
-        answer = CachedSMSEntry.getInstance(t, cacheName, null);
-        synchronized (configMgrMutex) {
-            Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
-            if (sudoPrincipals == null) {
-                sudoPrincipals = new HashSet(2);
-                userPrincipals.put(cacheName, sudoPrincipals);
-            }
-            sudoPrincipals.add(t.getTokenID().toString());
+        CachedSMSEntry answer = CachedSMSEntry.getInstance(t, cacheName);
+        Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
+        if (sudoPrincipals == null) {
+            sudoPrincipals = Collections.synchronizedSet(new HashSet(2));
+            userPrincipals.put(cacheName, sudoPrincipals);
         }
+        sudoPrincipals.add(t.getTokenID().toString());
         return (answer);
     }
+    
+    static void clearCache() {
+        synchronized (configMgrImpls) {
+            for (Iterator items = configMgrImpls.values().iterator();
+                items.hasNext();) {
+                OrganizationConfigManagerImpl ocm =
+                    (OrganizationConfigManagerImpl) items.next();
+                ocm.clear();
+            }
+            configMgrImpls.clear();
+        }
+    }
 
-    private static Map configMgrImpls = new HashMap();
+    private static Map configMgrImpls = Collections.synchronizedMap(
+        new HashMap());
 
-    private static final String configMgrMutex = "ConfigMgrMutex";
-
-    private static Map userPrincipals = new HashMap();
+    private static Map userPrincipals = Collections.synchronizedMap(
+        new HashMap());
 
     private static Debug debug = SMSEntry.debug;
 }

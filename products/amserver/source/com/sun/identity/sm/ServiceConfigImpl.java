@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.8 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceConfigImpl.java,v 1.9 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -46,14 +46,13 @@ import java.util.Set;
 class ServiceConfigImpl implements ServiceListener {
 
     private ServiceConfigManagerImpl scm;
+    
+    // Schema manager to register for schema changes
+    ServiceSchemaManagerImpl ssmi;
 
     private ServiceSchemaImpl ss;
 
-    private SSOToken token;
-
     private boolean globalConfig;
-
-    private boolean newEntry;
 
     private String serviceComponentName;
 
@@ -73,9 +72,11 @@ class ServiceConfigImpl implements ServiceListener {
 
     private CachedSMSEntry smsEntry;
 
-    private CachedSubEntries subEntries = null;
+    private CachedSubEntries subEntries;
 
-    private String labeledUri = null;
+    private String labeledUri;
+    
+    private String serviceSchemaManagerListernerID;
 
     /**
      * Private constructor
@@ -87,10 +88,12 @@ class ServiceConfigImpl implements ServiceListener {
         this.scm = scm;
         this.ss = ss;
         smsEntry = entry;
+        // Add listener for changes to the entry
         smsEntry.addServiceListener(this);
         // Add this object as a listener to schema changes in this service.
-        ServiceSchemaManagerImpl ssmi = scm.getServiceSchemaManagerImpl();
-        ssmi.addListener(this);
+        ssmi = scm.getServiceSchemaManagerImpl(token);
+        serviceSchemaManagerListernerID = ssmi.addListener(this);
+        // Update instance variables
         this.orgName = (orgName == null) ? SMSEntry.baseDN : orgName;
         this.groupName = groupName;
         if (compName == null || compName.equals("")) {
@@ -104,9 +107,6 @@ class ServiceConfigImpl implements ServiceListener {
 
         // Read the attributes
         update();
-
-        // Cache the SSOToken to constrct cached-sub-entries
-        this.token = token;
     }
 
     /**
@@ -155,8 +155,9 @@ class ServiceConfigImpl implements ServiceListener {
      * Returns the names of all service's sub-configurations.
      */
     Set getSubConfigNames(SSOToken t) throws SMSException, SSOException {
-        if (subEntries == null)
-            subEntries = CachedSubEntries.getInstance(token, smsEntry.getDN());
+        if (subEntries == null) {
+            subEntries = CachedSubEntries.getInstance(t, smsEntry.getDN());
+        }
         return (subEntries.getSubEntries(t));
     }
 
@@ -164,22 +165,24 @@ class ServiceConfigImpl implements ServiceListener {
      * Returns the names of service's sub-configurations that match the given
      * pattern.
      */
-    Set getSubConfigNames(SSOToken token, String pattern) throws SMSException,
+    Set getSubConfigNames(SSOToken t, String pattern) throws SMSException,
             SSOException {
-        if (subEntries == null)
-            subEntries = CachedSubEntries.getInstance(token, smsEntry.getDN());
-        return (subEntries.getSubEntries(token, pattern));
+        if (subEntries == null) {
+            subEntries = CachedSubEntries.getInstance(t, smsEntry.getDN());
+        }
+        return (subEntries.getSubEntries(t, pattern));
     }
 
     /**
      * Returns the names of service's sub-configurations that match the given
      * pattern.
      */
-    Set getSubConfigNames(String pattern, String serviceidPattern)
+    Set getSubConfigNames(SSOToken t, String pattern, String serviceidPattern)
             throws SMSException, SSOException {
-        if (subEntries == null)
-            subEntries = CachedSubEntries.getInstance(token, smsEntry.getDN());
-        return (subEntries.getSchemaSubEntries(pattern, serviceidPattern));
+        if (subEntries == null) {
+            subEntries = CachedSubEntries.getInstance(t, smsEntry.getDN());
+        }
+        return (subEntries.getSchemaSubEntries(t, pattern, serviceidPattern));
     }
 
     /**
@@ -194,9 +197,8 @@ class ServiceConfigImpl implements ServiceListener {
 
         // Construct ServiceConfigImpl
         return (ServiceConfigImpl.getInstance(token, scm, null, sdn, orgName,
-                groupName, (serviceComponentName + "/" + SMSSchema
-                        .escapeSpecialCharacters(subConfigName)), globalConfig,
-                ss));
+            groupName, (serviceComponentName + "/" + SMSSchema
+            .escapeSpecialCharacters(subConfigName)), globalConfig, ss));
     }
 
     /**
@@ -291,17 +293,75 @@ class ServiceConfigImpl implements ServiceListener {
      * Checks if the entry exists in the directory
      */
     boolean isNewEntry() {
-        return (newEntry);
+        return (smsEntry.isNewEntry());
+    }
+    
+    /**
+     * Checks if the entry is still valid
+     */
+    boolean isValid() {
+        return (smsEntry.isValid());
+    }
+    
+    /**
+     * Clears the instance variables and deregisters notifications
+     */
+    void clear() {
+        // Deregister from CachedSMSEntry
+        smsEntry.removeServiceListener(this);
+        // Invalidate CachedSMSEntry
+        smsEntry.clear();
+        // Deregister from ServiceSchemaManagerImpl
+        try {
+            if ((ssmi != null) && (serviceSchemaManagerListernerID != null)) {
+                ssmi.removeListener(serviceSchemaManagerListernerID);
+            }
+        } catch (Exception ex) {
+            debug.error("ServiceConfigImpl.clear Unable to remove " +
+                "notification handler for dn: " + getDN(), ex);
+        }
     }
 
     void updateAndNotifyListeners() {
         update();
     }
 
+    // @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + (scm != null ? scm.hashCode() : 0);
+        hash = 41 * hash + (globalConfig ? 1 : 0);
+        hash = 41 * hash + (orgName != null ? orgName.hashCode() : 0);
+        hash = 41 * hash + (groupName != null ? groupName.hashCode() : 0);
+        hash = 41 * hash + (compName != null ? compName.hashCode() : 0);
+        hash = 41 * hash + (configID != null ? configID.hashCode() : 0);
+        return hash;
+    }
+    
+    public boolean equals(Object scio) {
+        if (scio instanceof ServiceConfigImpl) {
+            ServiceConfigImpl s = (ServiceConfigImpl) scio;
+            if ((s.globalConfig == globalConfig) &&
+                s.orgName.equalsIgnoreCase(orgName) &&
+                s.groupName.equalsIgnoreCase(groupName) &&
+                s.compName.equalsIgnoreCase(compName) &&
+                s.configID.equalsIgnoreCase(configID) &&
+                s.scm.getName().equalsIgnoreCase(scm.getName())) {
+                return true;
+            }
+        }
+        return (false);
+    }
+
     void update() {
+        // Check if entry is still valid
+        if (!smsEntry.isValid()) {
+            // Entry has to be removed from cache and cleared
+            clear();
+            return;
+        }
         // Get the SMSEntry
         SMSEntry entry = smsEntry.getSMSEntry();
-        newEntry = entry.isNewEntry();
 
         // Read the attributes
         Map origAttributes = SMSUtils.getAttrsFromEntry(entry);
@@ -384,7 +444,7 @@ class ServiceConfigImpl implements ServiceListener {
                 globalConfig, null);
     }
 
-    // Method called by ServiceConfigImpl to get sub-service configuration
+    // Method called by ServiceConfig to get sub-service configuration
     static ServiceConfigImpl getInstance(SSOToken token,
         ServiceConfigManagerImpl scm, ServiceSchemaImpl ss, String dn,
         String oName, String groupName, String compName,
@@ -400,10 +460,7 @@ class ServiceConfigImpl implements ServiceListener {
             orgName, groupName, compName, globalConfig);
 
         // Check cache for the object, if present return
-        ServiceConfigImpl answer = null;
-        synchronized(configMutex) {
-            answer = getFromCache(cacheName, token);
-        }
+        ServiceConfigImpl answer = getFromCache(cacheName, token);
         if (answer != null ) {
             // Check if the entry has to be updated
             if (!SMSEntry.cacheSMSEntries) {
@@ -414,19 +471,28 @@ class ServiceConfigImpl implements ServiceListener {
         }
 
         // Since entry not in cache, first check if the orgName exists
-        if (!SMSEntry.checkIfEntryExists(DNMapper.orgNameToDN(orgName), token)) {
+        if (!SMSEntry.checkIfEntryExists(orgName, token)) {
             if (debug.warningEnabled()) {
                 debug.warning("ServiceConfigImpl::getInstance called with " +
                     "non existant organization name: " + orgName);
             }
+            // To maintain backward compatibilty return null if orgName
+            // is not found. Throwing exception is commented out.
             // Object [] args = { orgName };
             // throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                // "sms-invalid-org-name", args));
+            // "sms-invalid-org-name", args));
             return (null);
         }
 
-        // Not in cache, construct SMSEntry object
+        // Not in cache and org exists, construct SMSEntry object
         CachedSMSEntry entry = checkAndUpdatePermission(cacheName, dn, token);
+        if (!entry.isValid()) {
+            entry.clear();
+            entry = checkAndUpdatePermission(cacheName, dn, token);
+        }
+        if (entry.isNewEntry()) {
+            entry.update();
+        }
 
         // Since entry not in cache, check if service schema exists
         if (ss == null) {
@@ -452,15 +518,14 @@ class ServiceConfigImpl implements ServiceListener {
             }
         }
 
-        // Not in cache, construct service config impl
-        answer = new ServiceConfigImpl(scm, ss, entry, orgName,
-            groupName, compName, globalConfig, token);
-
         // Add to cache
-        synchronized (configMutex) {
+        synchronized (configImpls) {
             // Check if already added by another thread
             ServiceConfigImpl tmp = getFromCache(cacheName, null);
             if (tmp == null) {
+                // Not in cache, construct service config impl
+                answer = new ServiceConfigImpl(scm, ss, entry, orgName,
+                    groupName, compName, globalConfig, token);
                 configImpls.put(cacheName, answer);
             } else {
                 answer = tmp;
@@ -496,33 +561,33 @@ class ServiceConfigImpl implements ServiceListener {
             debug.message("ServiceConfigImpl::deleteInstance: cacheName: " + 
                     cacheName);
         }
-        synchronized(configMutex) {
-            // Check if the cachename/key to be removed is in the configImpls 
-            // cache and delete from cache if it exists.
-            if (configImpls.containsKey(cacheName)) {
-                configImpls.remove(cacheName);
-            }
-        }
+        // Delete from cache if it exists.
+        configImpls.remove(cacheName);
+        
         if (debug.messageEnabled()) {
             debug.message("ServiceConfigImpl::deleteInstance: deleted: " + dn);
         }
     }
 
     // This function is executed after obtaining "configMutex" lock
-    static ServiceConfigImpl getFromCache(String cacheName, SSOToken t)
+    static ServiceConfigImpl getFromCache(String cn, SSOToken t)
         throws SMSException, SSOException {
-        ServiceConfigImpl answer =
-            (ServiceConfigImpl) configImpls.get(cacheName);
-        if ((answer != null) && ((!answer.smsEntry.isValid()) ||
-           (answer.smsEntry.isNewEntry()))) {
-            answer = null;
+        ServiceConfigImpl answer = (ServiceConfigImpl) configImpls.get(cn);
+        if (answer != null) {
+            if (!answer.isValid()) {
+                answer.clear();
+                answer = null;
+            } else if (answer.smsEntry.isNewEntry()) {
+                answer = null;
+            }
         }
         if ((answer != null) && (t != null)) {
             // Check if the user has permissions
-            Set principals = (Set) userPrincipals.get(cacheName);
-            if (!principals.contains(t.getPrincipal().getName())) {
+            Set principals = (Set) userPrincipals.get(cn);
+            if ((principals == null) ||
+                !principals.contains(t.getPrincipal().getName())) {
                 // Principal name not in cache, need to check perm
-                answer = null;
+                checkAndUpdatePermission(cn, answer.getDN(), t);
             }
         }
         return (answer);        
@@ -531,22 +596,27 @@ class ServiceConfigImpl implements ServiceListener {
     static CachedSMSEntry checkAndUpdatePermission(
         String cacheName, String dn, SSOToken t)
         throws SMSException, SSOException {
-        CachedSMSEntry answer = CachedSMSEntry.getInstance(t, dn, null);
-        synchronized (configMutex) {
-            Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
-            if (sudoPrincipals == null) {
-                sudoPrincipals = new HashSet(2);
-                userPrincipals.put(cacheName, sudoPrincipals);
-            }
-            sudoPrincipals.add(t.getPrincipal().getName());
+        CachedSMSEntry answer = CachedSMSEntry.getInstance(t, dn);
+        Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
+        if (sudoPrincipals == null) {
+            sudoPrincipals = Collections.synchronizedSet(new HashSet(2));
+            userPrincipals.put(cacheName, sudoPrincipals);
         }
+        sudoPrincipals.add(t.getPrincipal().getName());
         return (answer);
     }
 
     // Clears the cache
     static void clearCache() {
-        configImpls = new HashMap();
-        userPrincipals = new HashMap();
+        synchronized (configImpls) {
+            for (Iterator items = configImpls.values().iterator();
+                items.hasNext();) {
+                ServiceConfigImpl sc = (ServiceConfigImpl) items.next();
+                sc.clear();
+            }
+            configImpls.clear();
+        }
+        userPrincipals.clear();
     }
 
     static String getCacheName(String sName, String version, String oName,
@@ -568,7 +638,6 @@ class ServiceConfigImpl implements ServiceListener {
             String groupName, String serviceComponent, int type) {
         // do nothing, the update method for this is called by the internal
         // notification mechanism in CachedSMSEntry
-
     }
 
     /*
@@ -580,8 +649,7 @@ class ServiceConfigImpl implements ServiceListener {
      *      java.lang.String, int)
      */
     public void organizationConfigChanged(String serviceName, String version,
-            String orgName, String groupName, String serviceComponent, int type)
-    {
+        String orgName, String groupName, String serviceComponent, int type) {
         // do nothing. Same as "globalConfigChanged"
     }
 
@@ -597,12 +665,13 @@ class ServiceConfigImpl implements ServiceListener {
         }
     }
     
-    public String toXML(String nodeName)
+    public String toXML(SSOToken token, String nodeName)
         throws SMSException, SSOException {
-        return toXML(nodeName, null);
+        return toXML(token, nodeName, null);
     }
     
-    public String toXML(String nodeName, String organizationName)
+    public String toXML(SSOToken token, String nodeName,
+        String organizationName)
         throws SMSException, SSOException {
         Set serviceConfigNames = getSubConfigNames(token);
         Map orgAttributes = null;
@@ -673,7 +742,7 @@ class ServiceConfigImpl implements ServiceListener {
         for (Iterator i = serviceConfigNames.iterator(); i.hasNext(); ) {
             String scName = (String)i.next();
             ServiceConfigImpl sci = this.getSubConfig(token, scName);
-            buff.append(sci.toXML(SMSUtils.SUB_CONFIG));
+            buff.append(sci.toXML(token, SMSUtils.SUB_CONFIG));
         }
         
         if ((orgAttributes != null) && !orgAttributes.isEmpty()) {
@@ -689,11 +758,10 @@ class ServiceConfigImpl implements ServiceListener {
     }
 
     // Static variables
-    private static Map configImpls = new HashMap();
+    private static Map configImpls = Collections.synchronizedMap(new HashMap());
 
-    private static Map userPrincipals = new HashMap();
+    private static Map userPrincipals = Collections.synchronizedMap(
+        new HashMap());
 
     private static Debug debug = SMSEntry.debug;
-
-    private static final String configMutex = "ConfigMutex";
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.16 2008-06-25 05:43:28 qcheng Exp $
+ * $Id: AMIdentityRepository.java,v 1.17 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -46,6 +46,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.idm.server.IdServicesImpl;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
@@ -227,8 +228,6 @@ public final class AMIdentityRepository {
             Map avPairs, boolean recursive, int maxResults, int maxTime,
             Set returnAttributes, boolean returnAllAttributes)
             throws IdRepoException, SSOException {
-        // DelegationEvaluator de = new DelegationEvaluator();
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
         IdSearchControl crtl = new IdSearchControl();
         crtl.setSearchModifiers(IdSearchOpModifier.OR, avPairs);
         crtl.setRecursive(recursive);
@@ -574,52 +573,13 @@ public final class AMIdentityRepository {
 
     public IdSearchResults getSpecialIdentities(SSOToken token, IdType type,
             String orgName) throws IdRepoException, SSOException {
-        Set pluginClasses = new OrderedSet();
-        IdRepo thisPlugin = null;
-        if (ServiceManager.isConfigMigratedTo70()
-                && ServiceManager.getBaseDN().equalsIgnoreCase(orgName)) {
-            // add the "SpecialUser plugin
-            String p = IdConstants.SPECIAL_PLUGIN;
-            if (pluginClass == null) {
-                try {
-
-                    Class thisClass = Class.forName(p);
-                    thisPlugin = (IdRepo) thisClass.newInstance();
-                    thisPlugin.initialize(new HashMap());
-                    Map listenerConfig = new HashMap();
-                    listenerConfig.put("realm", orgName);
-                    IdRepoListener lter = new IdRepoListener();
-                    lter.setConfigMap(listenerConfig);
-                    thisPlugin.addListener(token, lter);
-                    pluginClass = thisPlugin;
-                    Set opSet = thisPlugin.getSupportedOperations(type);
-                    if (opSet != null && opSet.contains(IdOperation.READ)) {
-                        pluginClasses.add(thisPlugin);
-                    }
-                } catch (Exception e) {
-                    // Throw an Exception !!
-                    debug.error("Unable to instantiate plugin: " + p, e);
-                }
-            } else {
-                Set opSet = pluginClass.getSupportedOperations(type);
-                if (opSet != null && opSet.contains(IdOperation.READ)) {
-                    pluginClasses.add(pluginClass);
-                }
-            }
+        IdServices idServices = IdServicesFactory.getDataStoreServices();
+        if (idServices instanceof IdServicesImpl) {
+            // Implementation for server side only
+            return ((IdServicesImpl) idServices).getSpecialIdentities(
+                token, type, orgName);
         }
-        if (pluginClasses.isEmpty()) {
-            return new IdSearchResults(type, orgName);
-        } else {
-            IdRepo specialRepo = (IdRepo) pluginClasses.iterator().next();
-            RepoSearchResults res = specialRepo.search(token, type, "*", 0, 0,
-                    Collections.EMPTY_SET, false, 0, Collections.EMPTY_MAP,
-                    false);
-            Object obj[][] = new Object[1][2];
-            obj[0][0] = res;
-            obj[0][1] = Collections.EMPTY_MAP;
-            return combineSearchResults(token, obj, 1, type, orgName, false,
-                    null);
-        }
+        return (new IdSearchResults(IdType.USER, ""));
     }
     
     /**

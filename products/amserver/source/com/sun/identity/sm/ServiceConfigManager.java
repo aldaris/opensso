@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.6 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceConfigManager.java,v 1.7 2008-07-06 05:48:30 arviranga Exp $
  *
  */
 
@@ -72,6 +72,7 @@ public class ServiceConfigManager {
      * Constrctor to obtain an instance <code>ServiceConfigManager
      * </code> for
      * a service by providing an authenticated identity of the user.
+     * This constructor assumes the server version to be <code>1.0</code>.
      * 
      * @param serviceName
      *            name of the service
@@ -85,8 +86,7 @@ public class ServiceConfigManager {
     public ServiceConfigManager(String serviceName, SSOToken token)
             throws SMSException, SSOException {
         // Use of the service versions
-        this(token, serviceName, ServiceManager.serviceDefaultVersion(token,
-                serviceName));
+        this(token, serviceName, "1.0");
     }
 
     /**
@@ -117,14 +117,15 @@ public class ServiceConfigManager {
                     .getString(IUMSConstants.SMS_INVALID_PARAMETERS));
         }
         SSOTokenManager.getInstance().validateToken(token);
-        // Get the ServiceSchemaManagerImpl
-        scm = ServiceConfigManagerImpl.getInstance(token, serviceName, version);
-        ssm = scm.getServiceSchemaManagerImpl();
-
+        
         // Copy instance variables
         this.token = token;
         this.serviceName = serviceName;
         this.version = version;
+        
+        // Get the ServiceSchemaManagerImpl
+        validateSCM();
+
     }
 
     /**
@@ -160,6 +161,7 @@ public class ServiceConfigManager {
      */
     public Set getInstanceNames() throws SMSException {
         try {
+            validateSCM();
             return (scm.getInstanceNames(token));
         } catch (SSOException s) {
             SMSEntry.debug.error("ServiceConfigManager: Unable to "
@@ -179,6 +181,7 @@ public class ServiceConfigManager {
      */
     public Set getGroupNames() throws SMSException {
         try {
+            validateSCM();
             return (scm.getGroupNames(token));
         } catch (SSOException s) {
             SMSEntry.debug.error("ServiceConfigManager: Unable to "
@@ -203,6 +206,7 @@ public class ServiceConfigManager {
      */
     public ServiceInstance getInstance(String instanceName)
             throws SMSException, SSOException {
+        validateSCM();
         return (new ServiceInstance(this, 
                 scm.getInstance(token, instanceName)));
     }
@@ -240,6 +244,7 @@ public class ServiceConfigManager {
      */
     public ServiceConfig getGlobalConfig(String instanceName)
             throws SMSException, SSOException {
+        validateSCM();
         ServiceConfigImpl sci = scm.getGlobalConfig(token, instanceName);
         return ((sci == null) ? null : new ServiceConfig(this, sci));
     }
@@ -263,6 +268,7 @@ public class ServiceConfigManager {
     public ServiceConfig getOrganizationConfig(String orgName,
             String instanceName) throws SMSException, SSOException {
         // Get ServiceConfigImpl
+        validateSCM();
         ServiceConfigImpl sci = scm.getOrganizationConfig(token, orgName,
                 instanceName);
         return ((sci == null) ? null : new ServiceConfig(this, sci));
@@ -283,6 +289,7 @@ public class ServiceConfigManager {
      */
     public ServiceConfig createGlobalConfig(Map attrs) throws SMSException,
             SSOException {
+        validateSSM();
         ServiceSchemaImpl ss = ssm.getSchema(SchemaType.GLOBAL);
         if (ss == null) {
             String[] args = { serviceName };
@@ -320,6 +327,7 @@ public class ServiceConfigManager {
      */
     public ServiceConfig createOrganizationConfig(String orgName, Map attrs)
             throws SMSException, SSOException {
+        validateSSM();
         ServiceSchemaImpl ss = ssm.getSchema(SchemaType.ORGANIZATION);
         if (ss == null) {
             String[] args = { serviceName };
@@ -335,8 +343,7 @@ public class ServiceConfigManager {
 
         // Create the sub config entry
         try {
-            CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN,
-                    null);
+            CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN);
             if (cEntry.isNewEntry()) {
                 CreateServiceConfig.createSubConfigEntry(token, orgDN, ss,
                         null, null, attrs, orgName);
@@ -423,10 +430,11 @@ public class ServiceConfigManager {
             groupName = SMSUtils.DEFAULT;
         }
         // Construct the sub-config dn
+        validateSCM();
         String gdn = scm.constructServiceConfigDN(groupName,
                 CreateServiceConfig.GLOBAL_CONFIG_NODE, null);
         // Delete the entry
-        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, gdn, null);
+        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, gdn);
         SMSEntry entry = cEntry.getClonedSMSEntry();
         entry.delete(token);
         cEntry.refresh(entry);
@@ -492,10 +500,11 @@ public class ServiceConfigManager {
         }
         // Construct the sub-config dn
         String orgdn = DNMapper.orgNameToDN(orgName);
+        validateSCM();
         String odn = scm.constructServiceConfigDN(groupName,
                 CreateServiceConfig.ORG_CONFIG_NODE, orgdn);
         // Delete the entry from the REALM DIT
-        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, odn, null);
+        CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, odn);
         if (cEntry.isNewEntry()) {
             return;
         }
@@ -530,7 +539,7 @@ public class ServiceConfigManager {
                 ",").append(SMSEntry.SERVICES_RDN).append(",").append(
                 DNMapper.orgNameToDN(orgName));
         // Need to check if the user permission to read plugin names
-        CachedSMSEntry.getInstance(token, sb.toString(), null);
+        CachedSMSEntry.getInstance(token, sb.toString());
         // Get the CachedSubEntries and return sub-entries
         CachedSubEntries cse = CachedSubEntries.getInstance(token, sb
                 .toString());
@@ -543,6 +552,7 @@ public class ServiceConfigManager {
     public PluginConfig getPluginConfig(String name, String pluginSchemaName,
             String interfaceName, String orgName) throws SMSException,
             SSOException {
+        validateSCM();
         PluginConfigImpl pci = scm.getPluginConfig(token, name,
                 pluginSchemaName, interfaceName, orgName);
         return (new PluginConfig(name, this, pci));
@@ -573,7 +583,14 @@ public class ServiceConfigManager {
      * @supported.api
      */
     public String addListener(ServiceListener listener) {
-        return (scm.addListener(listener));
+        try {
+            validateSCM();
+            return (scm.addListener(token, listener));
+        } catch (Exception e) {
+            SMSEntry.debug.error("ServiceConfigManager:addListener exception"
+                    + " Service Name: " + serviceName, e);
+        }
+        return (null);
     }
 
     /**
@@ -586,7 +603,33 @@ public class ServiceConfigManager {
      * @supported.api
      */
     public void removeListener(String listenerID) {
-        scm.removeListener(listenerID);
+        if (scm != null) {
+            scm.removeListener(listenerID);
+        }
+    }
+    
+    private void validateSCM() throws SSOException, SMSException {
+        if ((scm == null) || !scm.isValid()) {
+            scm = ServiceConfigManagerImpl.getInstance(
+                token, serviceName, version);
+        }
+    }
+    
+    private void validateSSM() throws SSOException, SMSException {
+        if ((ssm == null) || !ssm.isValid()) {
+            validateSCM();
+            ssm = scm.getServiceSchemaManagerImpl(token);
+        }
+    }
+
+    // @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.serviceName != null ?
+            this.serviceName.hashCode() : 0);
+        hash = 29 * hash + (this.version != null ?
+            this.version.hashCode() : 0);
+        return hash;
     }
 
     /**
@@ -600,9 +643,9 @@ public class ServiceConfigManager {
      */
     public boolean equals(Object o) {
         if (o instanceof ServiceConfigManager) {
-            ServiceConfigManager scm = (ServiceConfigManager) o;
-            if (serviceName.equals(scm.serviceName)
-                    && version.equals(scm.version)) {
+            ServiceConfigManager oscm = (ServiceConfigManager) o;
+            if (serviceName.equals(oscm.serviceName)
+                    && version.equals(oscm.version)) {
                 return (true);
             }
         }

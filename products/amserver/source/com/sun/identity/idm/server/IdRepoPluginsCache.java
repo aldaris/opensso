@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.1 2008-06-27 20:56:22 arviranga Exp $
+* $Id: IdRepoPluginsCache.java,v 1.2 2008-07-06 05:48:33 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -31,14 +31,14 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdRepoListener;
-import com.sun.identity.idm.IdServices;
-import com.sun.identity.idm.IdServicesFactory;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
@@ -96,7 +96,7 @@ public class IdRepoPluginsCache implements ServiceListener {
         Map orgRepos = null;
         orgName = DNUtils.normalizeDN(orgName);
         Set readOrgRepos = (Set) readonlyPlugins.get(orgName);
-        if (readOrgRepos != null) {
+        if ((readOrgRepos != null) && !readOrgRepos.isEmpty()) {
             return (readOrgRepos);
         }
         synchronized (idrepoPlugins) {
@@ -129,6 +129,12 @@ public class IdRepoPluginsCache implements ServiceListener {
                             items.hasNext();) {
                             String idRepoName = (String) items.next();
                             ServiceConfig reposc = sc.getSubConfig(idRepoName);
+                            if (reposc == null) {
+                                debug.error("IdRepoPluginsCache." +
+                                    "getIdRepoPlugins SubConfig is null for" +
+                                    " orgName: " + orgName +
+                                    " subConfig Name: " + idRepoName);
+                            }
                             IdRepo repo = constructIdRepoPlugin(orgName,
                                 reposc.getAttributesForRead(), idRepoName);
                             // Add to cache
@@ -170,7 +176,7 @@ public class IdRepoPluginsCache implements ServiceListener {
         String cacheName = DNUtils.normalizeDN(orgName) + op.toString() +
             type.toString();
         Set answer = (Set) readonlyPlugins.get(cacheName);
-        if (answer != null) {
+        if ((answer != null) && !answer.isEmpty()) {
             return (answer);
         }
         answer = new OrderedSet();
@@ -207,10 +213,13 @@ public class IdRepoPluginsCache implements ServiceListener {
     /**
      * Delete an IdRepo plugin
      */
-    private void removeIdRepo(String orgName, String name)
-        throws IdRepoException, SSOException {
+    private void removeIdRepo(String orgName, String name,
+        boolean reinitialize) throws IdRepoException, SSOException {
         orgName = DNUtils.normalizeDN(orgName);
         synchronized (idrepoPlugins) {
+            // Clear IdRepo plugins first since other threads should
+            // not access it during shutdown
+            clearReadOnlyPlugins(orgName);
             Map idrepos = (Map) idrepoPlugins.get(orgName);
             if (idrepos != null && !idrepos.isEmpty()) {
                 // Iterate through the plugins
@@ -227,14 +236,23 @@ public class IdRepoPluginsCache implements ServiceListener {
                         }
                         // Remove from cache first
                         idrepos.remove(iname);
-                        // Shutdown the repo
-                        repo.removeListener();
-                        repo.shutdown();
+                        ShutdownIdRepoPlugin shutdownrepo =
+                            new ShutdownIdRepoPlugin(repo);
+                        // Provide a delay of 500ms for existing operations
+                        // to complete
+                        SystemTimer.getTimer().schedule(shutdownrepo, 500);
+                        
+                        if (reinitialize) {
+                            // Adding plugin back provides the atomic operation
+                            // for the caller. Else, client will get No-plugins
+                            // configured exception.
+                            // Add the plugin back to the cache
+                            addIdRepo(orgName, name);
+                        }
                         break;
                     }
                 }
             }
-            clearReadOnlyPlugins(orgName);
         }
     }
     
@@ -256,25 +274,18 @@ public class IdRepoPluginsCache implements ServiceListener {
         orgName = DNUtils.normalizeDN(orgName);
         Map idrepos = null;
         synchronized (idrepoPlugins) {
-            idrepos = (Map) idrepoPlugins.remove(orgName);
+            // Clear IdRepo plugins first
             clearReadOnlyPlugins(orgName);
+            idrepos = (Map) idrepoPlugins.remove(orgName);
         }
-        if (idrepos != null && !idrepos.isEmpty()) {
-            // Iterate through the plugins
-            for (Iterator items = idrepos.keySet().iterator();
-                items.hasNext();) {
-                String name = items.next().toString();
-                IdRepo repo = (IdRepo) idrepos.get(name);
-                // Shutting down idrepo
-                if (debug.messageEnabled()) {
-                    debug.message("IdRepoPluginsCache.removeIdRepo for " +
-                        "OrgName: " + orgName + " Repo Name: " + name);
-                }
-                // Shutdown the repo
-                repo.removeListener();
-                repo.shutdown();
-            }
+        if (debug.messageEnabled()) {
+            debug.message("IdRepoPluginsCache.removeIdRepo for " +
+                "OrgName: " + orgName + " Repo Names: " + idrepos.keySet());
         }
+        ShutdownIdRepoPlugin shutdownrepos = new ShutdownIdRepoPlugin(idrepos);
+        // Provide a delay of 500ms for existing operations
+        // to complete
+        SystemTimer.getTimer().schedule(shutdownrepos, 500);
     }
     
     /**
@@ -283,6 +294,10 @@ public class IdRepoPluginsCache implements ServiceListener {
     public void clearIdRepoPluginsCache() {
         Map cache = null;
         synchronized (idrepoPlugins) {
+            // Clear readonly cache first.
+            // Don't want other theads to get plugins that are
+            // shutdown.
+            readonlyPlugins.clear();
             cache = new HashMap(idrepoPlugins);
             idrepoPlugins.clear();
             readonlyPlugins.clear();
@@ -341,6 +356,10 @@ public class IdRepoPluginsCache implements ServiceListener {
         // Add to cache
         orgName = DNUtils.normalizeDN(orgName);
         synchronized (idrepoPlugins) {
+            // Clear the readonly plugins first.
+            // Other threads have to wait for the initialization to complete
+            // Will get updated when getPlugins gets called
+            clearReadOnlyPlugins(orgName);
             Map repos = (Map) idrepoPlugins.get(orgName);
             boolean addInternalRepos = false;
             if (repos == null) {
@@ -352,9 +371,6 @@ public class IdRepoPluginsCache implements ServiceListener {
             if (addInternalRepos) {
                 addInternalRepo(repos, orgName);
             }
-            // Clear the readonly plugins.
-            // Will get updated when getPlugins gets called
-            clearReadOnlyPlugins(orgName);
         }
     }
     
@@ -588,7 +604,6 @@ public class IdRepoPluginsCache implements ServiceListener {
     public void organizationConfigChanged(String serviceName, String version,
             String orgName, String groupName, String serviceComponent, int type)
     {
-        IdServices idServices = IdServicesFactory.getDataStoreServices();
         if (debug.messageEnabled()) {
             debug.message("IdRepoPluginsCache: Org Config changed called " +
                 "ServiceName: " + serviceName + " orgName: " + orgName +
@@ -613,12 +628,14 @@ public class IdRepoPluginsCache implements ServiceListener {
                 if (type == ServiceListener.ADDED) {
                     addIdRepo(orgName, idRepoName);
                 } else if (type == ServiceListener.MODIFIED) {
-                    removeIdRepo(orgName, idRepoName);
                     if (!IdServicesImpl.isShutdownCalled()) {
-                        addIdRepo(orgName, idRepoName);
+                        // Reinitialize the plugin after shutdown
+                        removeIdRepo(orgName, idRepoName, true);
+                    } else {
+                        removeIdRepo(orgName, idRepoName, false);
                     }
                 } else if (type == ServiceListener.REMOVED) {
-                    removeIdRepo(orgName, idRepoName);
+                    removeIdRepo(orgName, idRepoName, false);
                 }
             } catch (Exception e) {
                 debug.error("IdRepoPluginsCached.organizationConfigChanged " +
@@ -626,7 +643,6 @@ public class IdRepoPluginsCache implements ServiceListener {
                     " groupName: " + groupName + " serviceComp: " +
                     serviceComponent + " Type: " + type, e);
             }
-            idServices.clearIdRepoPlugins(orgName, serviceComponent, type);
         }
     }
 
@@ -640,4 +656,54 @@ public class IdRepoPluginsCache implements ServiceListener {
         }
         clearIdRepoPluginsCache();
     }
+    
+    // Timer task to shutdown IdRepo plugins
+     private class ShutdownIdRepoPlugin extends GeneralTaskRunnable {
+         
+        IdRepo plugin;
+        Map idrepos;
+
+        public ShutdownIdRepoPlugin(IdRepo plugin) {
+            this.plugin = plugin;
+        }
+        
+        public ShutdownIdRepoPlugin(Map idrepos) {
+            this.idrepos = idrepos;
+        }
+
+        public boolean addElement(Object key) {
+            return false;
+        }
+
+        public boolean removeElement(Object key) {
+            return false;
+        }
+
+        public boolean isEmpty() {
+            return true;
+        }
+
+        public long getRunPeriod() {
+            return -1;
+        }
+
+        public void run() {
+            // Shutdown the repo
+            if (plugin != null) {
+                plugin.removeListener();
+                plugin.shutdown();
+            }
+            if (idrepos != null && !idrepos.isEmpty()) {
+                // Iterate through the plugins
+                for (Iterator items = idrepos.keySet().iterator();
+                    items.hasNext();) {
+                    String name = items.next().toString();
+                    IdRepo repo = (IdRepo) idrepos.get(name);
+                    // Shutting down idrepo
+                    repo.removeListener();
+                    repo.shutdown();
+                }
+            }
+        }
+     }
 }

@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRemoteEventListener.java,v 1.1 2008-06-27 20:56:24 arviranga Exp $
+* $Id: IdRemoteEventListener.java,v 1.2 2008-07-06 05:48:33 arviranga Exp $
 */
 
 package com.sun.identity.idm.remote;
@@ -99,7 +99,7 @@ public class IdRemoteEventListener {
 
         // Construct the SOAP Client
         if (client == null) {
-            client = new SOAPClient(IDREPO_SERVICE);
+            client = new SOAPClient("DirectoryManagerIF");
         }
         
         if (repoListener == null) {

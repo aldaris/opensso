@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginSchemaImpl.java,v 1.3 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: PluginSchemaImpl.java,v 1.4 2008-07-06 05:48:29 arviranga Exp $
  *
  */
 
@@ -86,7 +86,8 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
                 ",").append(SMSEntry.SERVICES_RDN).append(",");
         try {
             smsEntry = CachedSMSEntry.getInstance(token, sb.toString()
-                    + orgName, this);
+                    + orgName);
+            smsEntry.addServiceListener(this);
         } catch (SSOException ssoe) {
             throw (new SMSException(ssoe, "sms-INVALID_SSO_TOKEN"));
         }
@@ -96,7 +97,8 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
             // Try to get the SMSEntry for base DN
             try {
                 smsEntry = CachedSMSEntry.getInstance(token, sb.toString()
-                        + SMSEntry.baseDN, this);
+                        + SMSEntry.baseDN);
+                smsEntry.addServiceListener(this);
             } catch (SSOException ssoe) {
                 throw (new SMSException(ssoe, "sms-INVALID_SSO_TOKEN"));
             }
