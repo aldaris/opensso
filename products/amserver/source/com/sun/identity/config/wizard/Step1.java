@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step1.java,v 1.7 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: Step1.java,v 1.8 2008-07-07 20:33:01 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -58,8 +58,6 @@ public class Step1 extends AjaxPage {
     public ActionLink validateAgent = 
         new ActionLink("checkAgentPassword", this, "checkAgentPassword" );
     
-    private java.util.Locale configLocale = null;
- 
     public boolean checkAdminPassword() {
         String adminPassword = toString("admin");
         String adminConfirm = toString("adminConfirm");

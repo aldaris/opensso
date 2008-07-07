@@ -12,6 +12,25 @@ var enableCache = true;
 var jsCache = new Array();
 
 var dynamicContent_ajaxObjects = new Array();
+
+    function getLocale() {
+        var queryString = window.top.location.search.substring(1);
+        var locale = 'locale=';
+        var localeValue = '';
+        if (queryString.length > 0) {
+            var idx = queryString.indexOf(locale);
+            if (idx != -1) {
+                idx += locale.length;
+                var idx1 = queryString.indexOf('&', idx);
+                if (idx1 == -1) {
+                    idx1 = queryString.length;
+                }
+                localeValue = queryString.substring (idx, idx1);
+            }
+        }
+        return locale + localeValue;
+    }
+
 	
 
 var AjaxUtils = {
@@ -34,6 +53,7 @@ var AjaxUtils = {
     * YUI's Response object, e.g. parse the response.responseText and manipulate the DOM accordingly.
     */
     call: function(url, successCallback, callbackArgs ) {
+        url += '&' + getLocale();
         AjaxUtils.doGet( null, url, successCallback, null, callbackArgs );
     },
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.23 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: Wizard.java,v 1.24 2008-07-07 20:33:02 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -71,6 +71,7 @@ public class Wizard extends AjaxPage {
             new HttpServletRequestWrapper(getContext().getRequest());          
         HttpServletResponseWrapper response =                
             new HttpServletResponseWrapper(getContext().getResponse());        
+        initializeResourceBundle();
         
         /* 
          * Get the admin password. use the same value for password and confirm
@@ -159,8 +160,6 @@ public class Wizard extends AjaxPage {
         tmp = getAttribute("configStorePassword", "");
         request.addParameter(
             SetupConstants.CONFIG_VAR_DS_MGR_PWD, tmp);
-        
-
                 
         // user store repository
         tmp = (String)getContext().getSessionAttribute("EXT_DATA_STORE");
@@ -250,6 +249,7 @@ public class Wizard extends AjaxPage {
             base = getBaseDir(getContext().getRequest());
         }
         request.addParameter(SetupConstants.CONFIG_VAR_BASE_DIR, base);
+        request.addParameter("locale", configLocale.toString());
                    
         try {
             if (AMSetupServlet.processRequest(request, response)) {

@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetSetupProgress.java,v 1.3 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: SetSetupProgress.java,v 1.4 2008-07-07 20:33:02 veiming Exp $
  *
  */
 
 package com.sun.identity.setup;
 
 import com.sun.identity.config.SetupWriter;
+import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.*;
@@ -40,8 +41,10 @@ public class SetSetupProgress extends HttpServlet
 {
     public void doGet(HttpServletRequest req, HttpServletResponse response) 
         throws ServletException, IOException
-    {
-        response.setContentType("text/html");
+    { 
+        req.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+
         PrintWriter out = response.getWriter();
         out.println(
             "<html>\n"+

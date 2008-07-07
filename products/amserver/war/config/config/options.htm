@@ -117,7 +117,26 @@
             window.frames['progressIframe'].location = "$context/setup/setSetupProgress";
         }
         YAHOO.sun.identity.config.options.inProgress.show();
-        AjaxUtils.doPost("defaultSummary", "$context/config/defaultSummary.htm", AjaxUtils.serializeForm("defaultForm"), onDefaultSummarySuccess, onDefaultSummaryFailure);
+
+        AjaxUtils.doPost("defaultSummary", "$context/config/defaultSummary.htm?" + getLocale(), AjaxUtils.serializeForm("defaultForm"), onDefaultSummarySuccess, onDefaultSummaryFailure);
+    }
+
+    function getLocale() {
+        var queryString = window.top.location.search.substring(1);
+        var locale = 'locale=';
+        var localeValue = '';
+        if (queryString.length > 0) {
+            var idx = queryString.indexOf(locale);
+            if (idx != -1) {
+                idx += locale.length;
+                var idx1 = queryString.indexOf('&', idx);
+                if (idx1 == -1) {
+                    idx1 = queryString.length;
+                }
+                localeValue = queryString.substring (idx, idx1);
+            }
+        }
+        return locale + localeValue;
     }
 
     function renderDefaultSummary() {
@@ -132,7 +151,7 @@
             YAHOO.sun.identity.config.options.passwordDialog.hide();
             passwordUpdateRequired = false;
             if ( configOption == 1 ) {
-                document.location = '$context/config/defaultSummary.htm';
+                document.location = '$context/config/defaultSummary.htm?' + getLocale();
             } else if ( configOption == 2 ) {
                 YAHOO.sun.identity.config.options.wizard.show();
             } else if ( configOption == 3 ) {
@@ -225,8 +244,8 @@
 
         /* #else 
         */
-        AjaxUtils.load('defaultSummaryContainer', "$context/config/defaultSummary.htm", renderDefaultSummary);
-        AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm", renderWizard);
+        AjaxUtils.load('defaultSummaryContainer', "$context/config/defaultSummary.htm?" + getLocale(), renderDefaultSummary);
+        AjaxUtils.load('wizardContainer', "$context/config/wizard/wizard.htm?" + getLocale(), renderWizard);
         /* #end
         */
     }        

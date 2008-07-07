@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.71 2008-07-06 05:48:31 arviranga Exp $
+ * $Id: AMSetupServlet.java,v 1.72 2008-07-07 20:33:02 veiming Exp $
  *
  */
 
@@ -56,6 +56,7 @@ import com.sun.identity.servicetag.registration.StartRegister;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceConfig;
@@ -91,7 +92,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -131,6 +131,7 @@ public class AMSetupServlet extends HttpServlet {
     final static String OPENDS_DIR = "/opends";
 
     private static String errorMessage = null;
+    private static java.util.Locale configLocale;
 
     private static Set passwordParams = new HashSet();
 
@@ -268,6 +269,7 @@ public class AMSetupServlet extends HttpServlet {
         IHttpServletRequest request,
         IHttpServletResponse response
     ) {
+        setLocale(request);
         InstallLog.getInstance().open();
         /*
          * This logic needs refactoring later. setServiceConfigValues()
@@ -367,7 +369,7 @@ public class AMSetupServlet extends HttpServlet {
                 "AMSetupServlet.processRequest: error", e);
             Object[] params = {e.getMessage(), basedir};
             throw new ConfiguratorException("configuration.failed",
-                params, Locale.getDefault());
+                params, configLocale);
         } finally {
             InstallLog.getInstance().close();
         }
@@ -2148,5 +2150,16 @@ public class AMSetupServlet extends HttpServlet {
         } else {
             return SetupConstants.SOLARIS;
         }
+    }
+
+    private static void setLocale(IHttpServletRequest request) {
+        Map map = request.getParameterMap();
+        String superLocale = (String)map.get("locale");
+        if ((superLocale != null) && (superLocale.length() > 0)) {
+            configLocale = new java.util.Locale(superLocale);
+        } else {
+            configLocale = java.util.Locale.getDefault();
+        }
+        SetupProgress.setLocale(configLocale);
     }
 }

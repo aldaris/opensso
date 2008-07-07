@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.11 2008-06-25 05:42:31 qcheng Exp $
+ * $Id: DefaultSummary.java,v 1.12 2008-07-07 20:33:01 veiming Exp $
  *
  */
 package com.sun.identity.config;
@@ -40,13 +40,17 @@ public class DefaultSummary extends AjaxPage {
     public ActionLink createConfig = 
         new ActionLink("createDefaultConfig", this, "createDefaultConfig");
     
+    public void onInit() {
+        super.onInit();
+    }
+    
     public boolean createDefaultConfig() {
         HttpServletRequest req = getContext().getRequest();
         HttpServletRequestWrapper request = 
             new HttpServletRequestWrapper(getContext().getRequest());          
         HttpServletResponseWrapper response =                
             new HttpServletResponseWrapper(getContext().getResponse());        
-                
+        
         String adminPassword = (String)getContext().getSessionAttribute(
             SetupConstants.CONFIG_VAR_ADMIN_PWD);        
         request.addParameter(
@@ -100,9 +104,10 @@ public class DefaultSummary extends AjaxPage {
         request.addParameter(
             SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, 
             SetupConstants.DEFAULT_PLATFORM_LOCALE);
+        request.addParameter("locale", configLocale.toString());
                 
         try {
-            if (!AMSetupServlet.processRequest(request, response)) {                
+            if (!AMSetupServlet.processRequest(request, response)) {
                 responseString = AMSetupServlet.getErrorMessage();
             }
         } catch (Exception e) {

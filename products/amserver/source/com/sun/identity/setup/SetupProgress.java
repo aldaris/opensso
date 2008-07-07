@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProgress.java,v 1.8 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: SetupProgress.java,v 1.9 2008-07-07 20:33:02 veiming Exp $
  *
  */
 
@@ -53,6 +53,15 @@ public class SetupProgress {
      */
     public static Writer getWriter() {
         return writer;
+    }
+
+    /**
+     * Sets locale
+     *
+     * @param locale Locale.
+     */
+    static void setLocale(Locale locale) {
+        bundle = ResourceBundle.getBundle(bundleName, locale);
     }
 
     /**
