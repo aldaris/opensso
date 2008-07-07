@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionPropertyConditionHelper.java,v 1.2 2008-06-25 05:43:05 qcheng Exp $
+ * $Id: SessionPropertyConditionHelper.java,v 1.3 2008-07-07 20:39:22 veiming Exp $
  *
  */
 
 package com.sun.identity.console.policy;
 
 import com.iplanet.jato.util.HtmlUtil;
+import com.sun.identity.console.base.AMViewBeanBase;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.policy.plugins.SessionPropertyCondition;
@@ -98,7 +99,8 @@ public class SessionPropertyConditionHelper {
                         tblModel.appendRow();
                     }
                     tblModel.setValue(TBL_DATA_NAME, propName);
-                    tblModel.setValue(TBL_DATA_ACTION, propName);
+                    tblModel.setValue(TBL_DATA_ACTION, 
+                        AMViewBeanBase.stringToHex(propName));
                     tblModel.setValue(TBL_DATA_VALUES, formatValues(val));
                 }
             }

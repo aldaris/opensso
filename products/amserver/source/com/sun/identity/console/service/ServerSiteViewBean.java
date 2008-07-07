@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerSiteViewBean.java,v 1.2 2008-06-25 05:43:17 qcheng Exp $
+ * $Id: ServerSiteViewBean.java,v 1.3 2008-07-07 20:39:20 veiming Exp $
  *
  */
 
@@ -278,7 +278,8 @@ public class ServerSiteViewBean
                 String[] params = (String[])siteToURL.get(name);
                 String url = params[0];
                 String assigned = params[1];
-                tblSiteModel.setValue(TBL_DATA_SITE_ACTION_HREF, name);
+                tblSiteModel.setValue(TBL_DATA_SITE_ACTION_HREF,
+                    stringToHex(name));
                 tblSiteModel.setValue(TBL_DATA_SITE_NAME, name); 
                 tblSiteModel.setValue(TBL_DATA_SITE_URL, url);
                 tblSiteModel.setValue(TBL_DATA_SITE_SERVERS, assigned);
@@ -464,8 +465,8 @@ public class ServerSiteViewBean
      */
     public void handleTblDataSiteActionHrefRequest(RequestInvocationEvent event)
         throws ModelControlException {
-        String siteName = (String)getDisplayFieldValue(
-            TBL_DATA_SITE_ACTION_HREF);
+        String siteName = hexToString((String)getDisplayFieldValue(
+            TBL_DATA_SITE_ACTION_HREF));
         setPageSessionAttribute(SiteEditViewBean.PG_ATTR_SITE_NAME, siteName);
         SiteEditViewBean vb = (SiteEditViewBean)getViewBean(
             SiteEditViewBean.class);

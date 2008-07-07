@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionPropertyConditionAddViewBean.java,v 1.2 2008-06-25 05:43:05 qcheng Exp $
+ * $Id: SessionPropertyConditionAddViewBean.java,v 1.3 2008-07-07 20:39:21 veiming Exp $
  *
  */
 
@@ -183,8 +183,8 @@ public class SessionPropertyConditionAddViewBean
     public void handleTblPolicySessionHrefActionRequest(
         RequestInvocationEvent event
     ) {
-        String propertyName = (String)getDisplayFieldValue(
-            SessionPropertyConditionHelper.TBL_DATA_ACTION);
+        String propertyName = hexToString((String)getDisplayFieldValue(
+            SessionPropertyConditionHelper.TBL_DATA_ACTION));
         SessionPropertyEditViewBean vb = (SessionPropertyEditViewBean)
             getViewBean(SessionPropertyEditViewBean.class);
         setPageSessionAttribute(SessionPropertyAddViewBean.CALL_VIEW_BEAN,
@@ -208,8 +208,9 @@ public class SessionPropertyConditionAddViewBean
         for (int i = 0; i < selected.length; i++) {
             int idx = selected[i].intValue();
             tblValuesModel.setLocation(idx);
-            String propertyName = (String)tblValuesModel.getValue(
-                SessionPropertyConditionHelper.TBL_DATA_ACTION);
+            String propertyName = hexToString((
+                String)tblValuesModel.getValue(
+                SessionPropertyConditionHelper.TBL_DATA_ACTION));
             map.remove(propertyName);
             tblValuesModel.removeRow(idx);
         }

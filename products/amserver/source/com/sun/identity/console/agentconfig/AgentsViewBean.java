@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.10 2008-06-25 05:42:44 qcheng Exp $
+ * $Id: AgentsViewBean.java,v 1.11 2008-07-07 20:39:18 veiming Exp $
  *
  */
 
@@ -620,7 +620,8 @@ public class AgentsViewBean
                     String universalId = IdUtils.getUniversalId(entity);
                     tblModel.setValue(TBL_DATA_NAME, name);
                     tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
-                    tblModel.setValue(TBL_DATA_ACTION_HREF, universalId);
+                    tblModel.setValue(TBL_DATA_ACTION_HREF, 
+                        stringToHex(universalId));
                     
                     if (combinedType) {
                         try {
@@ -658,7 +659,7 @@ public class AgentsViewBean
                     tblGroupModel.setValue(TBL_DATA_UNIVERSALNAME_GROUP, 
                         universalId);
                     tblGroupModel.setValue(TBL_DATA_ACTION_HREF_GROUP,
-                        universalId);
+                        stringToHex(universalId));
                     if (combinedType) {
                         try {
                             tblGroupModel.setValue(TBL_DATA_TYPE_GROUP, 
@@ -740,8 +741,8 @@ public class AgentsViewBean
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
         AgentsModel model = (AgentsModel)getModel();
         String agentType = getDisplayIDType();
-        String universalId = (String)getDisplayFieldValue(
-            TBL_DATA_ACTION_HREF);
+        String universalId = hexToString((String)getDisplayFieldValue(
+            TBL_DATA_ACTION_HREF));
         setPageSessionAttribute(AgentProfileViewBean.UNIVERSAL_ID, 
             universalId);
         SSOToken ssoToken = model.getUserSSOToken();
@@ -799,8 +800,8 @@ public class AgentsViewBean
     ) {
         AgentsModel model = (AgentsModel)getModel();
         String idType = getDisplayIDType();
-        String universalId = (String)getDisplayFieldValue(
-            TBL_DATA_ACTION_HREF_GROUP);
+        String universalId = hexToString((String)getDisplayFieldValue(
+            TBL_DATA_ACTION_HREF_GROUP));
         setPageSessionAttribute(AgentProfileViewBean.UNIVERSAL_ID, 
             universalId);
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.5 2008-06-25 05:42:58 qcheng Exp $
+ * $Id: EntitiesViewBean.java,v 1.6 2008-07-07 20:39:19 veiming Exp $
  *
  */
 
@@ -338,7 +338,8 @@ public class EntitiesViewBean
                 String universalId = IdUtils.getUniversalId(entity);
                 tblModel.setValue(TBL_DATA_NAME, name);
                 tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
-                tblModel.setValue(TBL_DATA_ACTION_HREF, universalId);
+                tblModel.setValue(TBL_DATA_ACTION_HREF,
+                    stringToHex(universalId));
                 cache.add(universalId);
             }
             szCache.setValue((Serializable)cache);
@@ -378,8 +379,8 @@ public class EntitiesViewBean
      */
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
         EntitiesModel model = (EntitiesModel)getModel();
-        String universalId = (String)getDisplayFieldValue(
-            TBL_DATA_ACTION_HREF);
+        String universalId = hexToString((String)getDisplayFieldValue(
+            TBL_DATA_ACTION_HREF));
         setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID, universalId);
 
         try {

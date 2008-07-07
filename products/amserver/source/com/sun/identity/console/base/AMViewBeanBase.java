@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.5 2008-06-27 22:31:21 asyhuang Exp $
+ * $Id: AMViewBeanBase.java,v 1.6 2008-07-07 20:39:19 veiming Exp $
  *
  */
 
@@ -938,5 +938,56 @@ public abstract class AMViewBeanBase
         return req.getScheme() + "://" + req.getServerName() +
             ":" + req.getServerPort() + uri;
     }
+    
+    public static String stringToHex(String str) {
+        StringBuffer buff = new StringBuffer();
+        str = str.replaceAll("\\\\u", "\\\\\\\\u");
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            buff.append(charToHex(str.charAt(i)));
+        }
+        return buff.toString();
+    }
+    
+    public static String charToHex(char c) {
+        StringBuffer buffer = new StringBuffer();
+        if (c <= 0x7E) {
+            buffer.append(c);
+        } else {
+            buffer.append("\\u");
+            String hex = Integer.toHexString(c);
+            for (int j = hex.length(); j < 4; j++ ) {
+                buffer.append('0');
+            }
+            buffer.append(hex);
+        }
+        return buffer.toString();
+    }
+    
+    public static String hexToString(String str) {
+        StringBuffer buff = new StringBuffer();
+        int idx = str.indexOf("\\u");
+        while (idx != -1) {
+            boolean done = false;
+            if (idx > 0) {
+                if (str.charAt(idx -1) == '\\') {
+                    buff.append(str.substring(0, idx-1))
+                        .append(str.substring(idx, idx+2));
+                    str = str.substring(idx+2);
+                    done = true;
+                }
+            }
 
+            if (!done) {
+                buff.append(str.substring(0, idx))
+                    .append(
+                    (char)Integer.parseInt(str.substring(idx+2, idx+6), 16));
+                str = str.substring(idx+6);
+            }
+            idx = str.indexOf("\\u");
+        }
+
+        buff.append(str);
+        return buff.toString();
+    }
 }

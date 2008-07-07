@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthPropertiesViewBean.java,v 1.4 2008-06-25 05:42:45 qcheng Exp $
+ * $Id: AuthPropertiesViewBean.java,v 1.5 2008-07-07 20:39:19 veiming Exp $
  *
  */
 
@@ -250,7 +250,8 @@ public  class AuthPropertiesViewBean
                 firstEntry = false;
             }
             tableModel.setValue(CONFIG_NAME_COLUMN_DATA, name);
-            tableModel.setValue(CONFIG_ACTION_COLUMN_HREF, name);
+            tableModel.setValue(CONFIG_ACTION_COLUMN_HREF, 
+                stringToHex(name));
             tableModel.setValue(CONFIG_ACTION_COLUMN_HREF_LABEL,
                 "authentication.module.instances.action.label");
         }
@@ -347,11 +348,13 @@ public  class AuthPropertiesViewBean
 
                 if (model.hasAuthAttributes(type)) {
                     tableModel.setValue(NAME_COLUMN_DATA, name);
-                    tableModel.setValue(ACTION_COLUMN_HREF, name);
+                    tableModel.setValue(ACTION_COLUMN_HREF, 
+                        stringToHex(name));
                     tableModel.setValue(NAME_COLUMN_DATA_NO_HREF, "");
                 } else {
                     tableModel.setValue(NAME_COLUMN_DATA, "");
-                    tableModel.setValue(ACTION_COLUMN_HREF, name);
+                    tableModel.setValue(ACTION_COLUMN_HREF, 
+                        stringToHex(name));
                     tableModel.setValue(NAME_COLUMN_DATA_NO_HREF, name);
                 }
 
@@ -642,7 +645,8 @@ public  class AuthPropertiesViewBean
         RequestInvocationEvent event
     ) throws ModelControlException 
     {
-        String type = (String)getDisplayFieldValue(ACTION_COLUMN_HREF);
+        String type = hexToString(
+            (String)getDisplayFieldValue(ACTION_COLUMN_HREF));
 
         AuthPropertiesModel model = (AuthPropertiesModel)getModel();
         if (model.getServiceName(type) == null) {
@@ -680,7 +684,8 @@ public  class AuthPropertiesViewBean
         RequestInvocationEvent event
     ) throws ModelControlException
     { 
-        String name = (String)getDisplayFieldValue(CONFIG_ACTION_COLUMN_HREF);
+        String name = hexToString(
+            (String)getDisplayFieldValue(CONFIG_ACTION_COLUMN_HREF));
 
         AuthConfigViewBean vb = (AuthConfigViewBean)
             getViewBean(AuthConfigViewBean.class);

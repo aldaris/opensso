@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RMRealmViewBean.java,v 1.2 2008-06-25 05:43:11 qcheng Exp $
+ * $Id: RMRealmViewBean.java,v 1.3 2008-07-07 20:39:20 veiming Exp $
  *
  */
 
@@ -49,6 +49,7 @@ import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import com.sun.web.ui.view.table.CCActionTable;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -214,7 +215,7 @@ public class RMRealmViewBean
                  * Set name column info. Need to unescape the value as it
                  * may contain a '/' character.
                  */
-                tblModel.setValue(TBL_DATA_ACTION_HREF, fqName);
+                tblModel.setValue(TBL_DATA_ACTION_HREF, stringToHex(fqName));
                 tblModel.setValue(TBL_DATA_NAME, 
                     SMSSchema.unescapeName(displayName));
 
@@ -317,7 +318,8 @@ public class RMRealmViewBean
             AMAdminConstants.CURRENT_REALM);
         setPageSessionAttribute(AMAdminConstants.PREVIOUS_REALM, prevRealm);
         
-        String newRealm = (String)getDisplayFieldValue(TBL_DATA_ACTION_HREF);
+        String newRealm = hexToString(
+            (String)getDisplayFieldValue(TBL_DATA_ACTION_HREF));
         setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, newRealm);
         setCurrentLocation(newRealm);
 

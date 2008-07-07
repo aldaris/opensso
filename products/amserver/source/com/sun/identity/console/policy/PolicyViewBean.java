@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyViewBean.java,v 1.2 2008-06-25 05:43:04 qcheng Exp $
+ * $Id: PolicyViewBean.java,v 1.3 2008-07-07 20:39:21 veiming Exp $
  *
  */
 
@@ -230,7 +230,7 @@ public class PolicyViewBean
 
                 String name = (String)iter.next();
                 tblModel.setValue(TBL_DATA_NAME, name);
-                tblModel.setValue(TBL_DATA_ACTION_HREF, name);
+                tblModel.setValue(TBL_DATA_ACTION_HREF, stringToHex(name));
                 list.add(name);
                 
                 String realm = (String)getPageSessionAttribute(
@@ -330,8 +330,8 @@ public class PolicyViewBean
      */
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
         PolicyModel model = (PolicyModel)getModel();
-        String policyName = (String)getDisplayFieldValue(
-            TBL_DATA_ACTION_HREF);
+        String policyName = hexToString((String)getDisplayFieldValue(
+            TBL_DATA_ACTION_HREF));
         String curRealm = (String)getPageSessionAttribute(
             AMAdminConstants.CURRENT_REALM);
         try {

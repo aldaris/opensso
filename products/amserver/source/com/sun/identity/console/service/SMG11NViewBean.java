@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMG11NViewBean.java,v 1.4 2008-06-25 05:43:16 qcheng Exp $
+ * $Id: SMG11NViewBean.java,v 1.5 2008-07-07 20:39:20 veiming Exp $
  *
  */
 
@@ -129,7 +129,7 @@ public class SMG11NViewBean
             }
 
             vb.setPageSessionAttribute(AMAdminConstants.CURRENT_REALM,
-                (String)req.getParameter("Location"));
+                hexToString((String)req.getParameter("Location")));
             vb.setPageSessionAttribute(
                 AMServiceProfileViewBeanBase.SERVICE_NAME,
                 (String)req.getParameter("ServiceName"));

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoViewBean.java,v 1.2 2008-06-25 05:43:11 qcheng Exp $
+ * $Id: IDRepoViewBean.java,v 1.3 2008-07-07 20:39:20 veiming Exp $
  *
  */
 
@@ -206,7 +206,8 @@ public class IDRepoViewBean
                     tblModel.setValue(TBL_DATA_TYPE, "");
                 }
 
-                tblModel.setValue(TBL_DATA_ACTION_HREF, name);
+                tblModel.setValue(TBL_DATA_ACTION_HREF, 
+                    stringToHex(name));
                 cache.add(name);
             }
             szCache.setValue((ArrayList)cache);
@@ -270,8 +271,8 @@ public class IDRepoViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
-        String idRepoName = (String)getDisplayFieldValue(
-            TBL_DATA_ACTION_HREF);
+        String idRepoName = hexToString((String)getDisplayFieldValue(
+            TBL_DATA_ACTION_HREF));
         String curRealm = (String)getPageSessionAttribute(
             AMAdminConstants.CURRENT_REALM);
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceViewBean.java,v 1.5 2008-06-25 05:49:45 qcheng Exp $
+ * $Id: SMDiscoveryServiceViewBean.java,v 1.6 2008-07-07 20:39:21 veiming Exp $
  *
  */
 
@@ -126,7 +126,7 @@ public class SMDiscoveryServiceViewBean
         String location = req.getParameter("Location");
 
         if ((location != null) && (location.trim().length() > 0)) {
-            handleRealmOperationRequest(location, rc);
+            handleRealmOperationRequest(hexToString(location), rc);
         } else {
             String user = req.getParameter("User");
 

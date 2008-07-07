@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesSelectViewBean.java,v 1.2 2008-06-25 05:43:12 qcheng Exp $
+ * $Id: ServicesSelectViewBean.java,v 1.3 2008-07-07 20:39:20 veiming Exp $
  *
  */
 
@@ -196,7 +196,7 @@ public class ServicesSelectViewBean
                         PG_SESSION_PAGE_TRAIL_ID);
                     propertiesViewBeanURL += "?ServiceName=" + serviceName +
                         "&Location=" +
-                        Locale.URLEncodeField(curRealm, getCharset(model)) +
+                        stringToHex(curRealm) +
                         "&Template=true&Op=" + AMAdminConstants.OPERATION_ADD +
                         "&" + PG_SESSION_PAGE_TRAIL_ID + "=" + pageTrailID;
                     HttpServletResponse response =

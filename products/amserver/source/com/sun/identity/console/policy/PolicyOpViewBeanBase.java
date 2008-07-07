@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyOpViewBeanBase.java,v 1.2 2008-06-25 05:43:04 qcheng Exp $
+ * $Id: PolicyOpViewBeanBase.java,v 1.3 2008-07-07 20:39:21 veiming Exp $
  *
  */
 
@@ -358,8 +358,9 @@ public abstract class PolicyOpViewBeanBase
                     }
        
                     tblReferralsModel.setValue(TBL_REFERRALS_DATA_TYPE,
-                      displayName);
-                    tblReferralsModel.setValue(TBL_REFERRALS_ACTION_HREF, name);
+                        displayName);
+                    tblReferralsModel.setValue(TBL_REFERRALS_ACTION_HREF, 
+                        stringToHex(name));
                 } catch (NameNotFoundException e) {
                     debug.warning(
                         "PolicyOpViewBeanBase.populateReferralsTable", e);
@@ -408,7 +409,8 @@ public abstract class PolicyOpViewBeanBase
 
                     tblSubjectsModel.setValue(TBL_SUBJECTS_DATA_TYPE,
                         displayName);
-                    tblSubjectsModel.setValue(TBL_SUBJECTS_ACTION_HREF, name);
+                    tblSubjectsModel.setValue(TBL_SUBJECTS_ACTION_HREF, 
+                        stringToHex(name));
                 } catch (NameNotFoundException e) {
                     debug.warning(
                         "PolicyOpViewBeanBase.populateSubjectsTable", e);
@@ -461,7 +463,8 @@ public abstract class PolicyOpViewBeanBase
                     tblResponseProvidersModel.setValue(
                         TBL_RESPONSE_ATTRIBUTES_DATA_TYPE, displayName);
                     tblResponseProvidersModel.setValue(
-                        TBL_RESPONSE_ATTRIBUTES_ACTION_HREF, name);
+                        TBL_RESPONSE_ATTRIBUTES_ACTION_HREF, 
+                        stringToHex(name));
                 } catch (NameNotFoundException e) {
                     debug.warning(
                         "PolicyOpViewBeanBase.populateResponseProvidersTable",
@@ -511,7 +514,7 @@ public abstract class PolicyOpViewBeanBase
                     tblConditionsModel.setValue(TBL_CONDITIONS_DATA_TYPE,
                         displayName);
                     tblConditionsModel.setValue(
-                        TBL_CONDITIONS_ACTION_HREF, name);
+                        TBL_CONDITIONS_ACTION_HREF, stringToHex(name));
                 } catch (NameNotFoundException e) {
                     debug.warning(
                         "PolicyOpViewBeanBase.populateConditionsTable", e);
@@ -547,7 +550,8 @@ public abstract class PolicyOpViewBeanBase
                     tblRulesModel.setValue(TBL_RULES_DATA_NAME, name);
                     tblRulesModel.setValue(TBL_RULES_DATA_TYPE,
                         localizedSvcTypeNames.get(rule.getServiceTypeName()));
-                    tblRulesModel.setValue(TBL_RULES_ACTION_HREF, name);
+                    tblRulesModel.setValue(TBL_RULES_ACTION_HREF, 
+                        stringToHex(name));
                 } catch (NameNotFoundException e) {
                     debug.warning(
                         "PolicyOpViewBeanBase.populateRulesTable", e);
@@ -642,7 +646,8 @@ public abstract class PolicyOpViewBeanBase
         throws ModelControlException {
         PolicyModel model = (PolicyModel)getModel();
 
-        String name = (String)getDisplayFieldValue(TBL_RULES_ACTION_HREF);
+        String name = hexToString(
+            (String)getDisplayFieldValue(TBL_RULES_ACTION_HREF));
         setPageSessionAttribute(RuleEditViewBean.CALLING_VIEW_BEAN,
             getClass().getName());
         setPageSessionAttribute(RuleEditViewBean.EDIT_RULE_NAME, name);
@@ -853,7 +858,8 @@ public abstract class PolicyOpViewBeanBase
         throws ModelControlException {
         PolicyModel model = (PolicyModel)getModel();
 
-        String name = (String)getDisplayFieldValue(TBL_REFERRALS_ACTION_HREF);
+        String name = hexToString(
+            (String)getDisplayFieldValue(TBL_REFERRALS_ACTION_HREF));
         setPageSessionAttribute(ReferralEditViewBean.CALLING_VIEW_BEAN,
             getClass().getName());
         setPageSessionAttribute(ReferralEditViewBean.EDIT_REFERRAL_NAME, name);
@@ -1007,8 +1013,8 @@ public abstract class PolicyOpViewBeanBase
         throws ModelControlException {
         PolicyModel model = (PolicyModel)getModel();
 
-        String name = (String)getDisplayFieldValue(
-            TBL_SUBJECTS_ACTION_HREF);
+        String name = hexToString((String)getDisplayFieldValue(
+            TBL_SUBJECTS_ACTION_HREF));
         setPageSessionAttribute(SubjectEditViewBean.CALLING_VIEW_BEAN,
             getClass().getName());
         setPageSessionAttribute(SubjectEditViewBean.EDIT_SUBJECT_NAME, name);
@@ -1216,8 +1222,8 @@ public abstract class PolicyOpViewBeanBase
         throws ModelControlException {
         PolicyModel model = (PolicyModel)getModel();
                                                                                 
-        String name = (String)getDisplayFieldValue(
-            TBL_RESPONSE_ATTRIBUTES_ACTION_HREF);
+        String name = hexToString((String)getDisplayFieldValue(
+            TBL_RESPONSE_ATTRIBUTES_ACTION_HREF));
         setPageSessionAttribute(ResponseProviderEditViewBean.CALLING_VIEW_BEAN,
             getClass().getName());
         setPageSessionAttribute(
@@ -1428,7 +1434,8 @@ public abstract class PolicyOpViewBeanBase
         throws ModelControlException {
         PolicyModel model = (PolicyModel)getModel();
 
-        String name = (String)getDisplayFieldValue(TBL_CONDITIONS_ACTION_HREF);
+        String name = hexToString(
+            (String)getDisplayFieldValue(TBL_CONDITIONS_ACTION_HREF));
         setPageSessionAttribute(ConditionEditViewBean.CALLING_VIEW_BEAN,
             getClass().getName());
         setPageSessionAttribute(

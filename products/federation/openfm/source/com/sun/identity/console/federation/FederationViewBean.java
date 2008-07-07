@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.21 2008-06-25 05:49:36 qcheng Exp $
+ * $Id: FederationViewBean.java,v 1.22 2008-07-07 20:39:20 veiming Exp $
  *
  */
 
@@ -353,7 +353,7 @@ public  class FederationViewBean
             String realm = (String)data.get(EntityModel.REALM);
             String location = (String)data.get(eModel.LOCATION);
             String completeValue = name+"|"+protocol+"|"+realm+"|"+location;           
-            tableModel.setValue(ENTITY_NAME_HREF, completeValue);
+            tableModel.setValue(ENTITY_NAME_HREF, stringToHex(completeValue));
             tableModel.setValue(ENTITY_NAME_VALUE, name);
             tableModel.setValue(ENTITY_REALM_VALUE, realm);
             tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);         
@@ -406,7 +406,7 @@ public  class FederationViewBean
                     (CircleOfTrustDescriptor)iter.next();
                 String name = desc.getCircleOfTrustName();
                 tableModel.setValue(COT_NAME_VALUE, name);
-                tableModel.setValue(COT_NAME_HREF, name);
+                tableModel.setValue(COT_NAME_HREF, stringToHex(name));
                
                 // get entity/provider name
                 Set entitySet = desc.getTrustedProviders();               
@@ -675,7 +675,7 @@ public  class FederationViewBean
     
     public void handleCotNameHrefRequest (RequestInvocationEvent event)
     throws ModelControlException {
-        String name = (String)getDisplayFieldValue (COT_NAME_HREF);
+        String name = hexToString((String)getDisplayFieldValue(COT_NAME_HREF));
         FSAuthDomainsEditViewBean vb = (FSAuthDomainsEditViewBean)
         getViewBean (FSAuthDomainsEditViewBean.class);
         unlockPageTrail ();
@@ -776,7 +776,8 @@ public  class FederationViewBean
         String id = (String)getPageSessionAttribute(getTrackingTabIDName());
         setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, id);        
                
-        String tmp = (String)getDisplayFieldValue(ENTITY_NAME_HREF);
+        String tmp = hexToString(
+            (String)getDisplayFieldValue(ENTITY_NAME_HREF));
         int index = tmp.lastIndexOf("|");
         
         String location = tmp.substring(index+1);  
