@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoS1DS.xml,v 1.4 2008-06-25 05:46:13 qcheng Exp $
+   $Id: idRepoS1DS.xml,v 1.5 2008-07-07 19:48:30 kenwho Exp $
   
 -->
 
@@ -71,109 +71,6 @@
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-users-search-attribute"/>
             <Value>uid</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-user-objectclass"/>
-            <Value>inetadmin</Value>
-            <Value>inetorgperson</Value>
-            <Value>inetuser</Value>
-            <Value>iplanet-am-managed-person</Value>
-            <Value>iplanet-am-user-service</Value>
-            <Value>iPlanetPreferences</Value>
-            <Value>organizationalperson</Value>
-            <Value>person</Value>
-            <Value>sunAMAuthAccountLockout</Value>
-            <Value>top</Value>
-            <Value>sunFederationManagerDataStore</Value>
-            <Value>sunIdentityServerLibertyPPService</Value>
-            <Value>sunFMSAML2NameIdentifier</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-user-attributes"/>
-            <Value>adminRole</Value>
-            <Value>authorityRevocationList</Value>
-            <Value>cACertificate</Value>
-            <Value>cn</Value>
-            <Value>distinguishedName</Value>
-            <Value>dn</Value>
-            <Value>employeenumber</Value>
-            <Value>givenname</Value>
-            <Value>inetDomainStatus</Value>
-            <Value>inetUserHttpURL</Value>
-            <Value>inetuserstatus</Value>
-            <Value>iplanet-am-auth-configuration</Value>
-            <Value>iplanet-am-user-auth-modules</Value>
-            <Value>iplanet-am-session-add-session-listener-on-all-sessions</Value>
-            <Value>iplanet-am-session-destroy-sessions</Value>
-            <Value>iplanet-am-session-get-valid-sessions</Value>
-            <Value>iplanet-am-session-max-caching-time</Value>
-            <Value>iplanet-am-session-max-idle-time</Value>
-            <Value>iplanet-am-session-max-session-time</Value>
-            <Value>iplanet-am-session-quota-limit</Value>
-            <Value>iplanet-am-session-service-status</Value>
-            <Value>iplanet-am-user-admin-start-dn</Value>
-            <Value>iplanet-am-user-account-life</Value>
-            <Value>iplanet-am-user-alias-list</Value>
-            <Value>iplanet-am-user-auth-config</Value>
-            <Value>iplanet-am-user-failure-url</Value>
-            <Value>iplanet-am-user-login-status</Value>
-            <Value>iplanet-am-user-password-reset-force-reset</Value>
-            <Value>iplanet-am-user-password-reset-options</Value>
-            <Value>iplanet-am-user-password-reset-question-answer</Value>
-            <Value>iplanet-am-user-success-url</Value>
-            <Value>iplanet-am-static-group-dn</Value>
-            <Value>mail</Value>
-            <Value>manager</Value>
-            <Value>memberOf</Value>
-            <Value>objectClass</Value>
-            <Value>postaladdress</Value>
-            <Value>preferredlanguage</Value>
-            <Value>preferredlocale</Value>
-            <Value>preferredtimezone</Value>
-            <Value>sn</Value>
-            <Value>sunIdentityMSISDNNumber</Value>
-            <Value>telephonenumber</Value>
-            <Value>uid</Value>
-            <Value>userpassword</Value>
-            <Value>userCertificate</Value>
-            <Value>iplanet-am-user-federation-info-key</Value>
-            <Value>iplanet-am-user-federation-info</Value>
-            <Value>sunIdentityServerDiscoEntries</Value>
-            <Value>sunIdentityServerPPCommonNameCN</Value>
-            <Value>sunIdentityServerPPCommonNameFN</Value>
-            <Value>sunIdentityServerPPCommonNameSN</Value>
-            <Value>sunIdentityServerPPCommonNameMN</Value>
-            <Value>sunIdentityServerPPCommonNameAltCN</Value>
-            <Value>sunIdentityServerPPCommonNamePT</Value>
-            <Value>sunIdentityServerPPInformalName</Value>
-            <Value>sunIdentityServerPPLegalIdentityLegalName</Value>
-            <Value>sunIdentityServerPPLegalIdentityDOB</Value>
-            <Value>sunIdentityServerPPLegalIdentityMaritalStatus</Value>
-            <Value>sunIdentityServerPPLegalIdentityGender</Value>
-            <Value>sunIdentityServerPPLegalIdentityAltIdType</Value>
-            <Value>sunIdentityServerPPLegalIdentityAltIdValue</Value>
-            <Value>sunIdentityServerPPLegalIdentityVATIdType</Value>
-            <Value>sunIdentityServerPPLegalIdentityVATIdValue</Value>
-            <Value>sunIdentityServerPPEmploymentIdentityJobTitle</Value>
-            <Value>sunIdentityServerPPEmploymentIdentityOrg</Value>
-            <Value>sunIdentityServerPPEmploymentIdentityAltO</Value>
-            <Value>sunIdentityServerPPAddressCard</Value>
-            <Value>sunIdentityServerPPMsgContact</Value>
-            <Value>sunIdentityServerPPFacadeMugShot</Value>
-            <Value>sunIdentityServerPPFacadeWebSite</Value>
-            <Value>sunIdentityServerPPFacadeNamePronounced</Value>
-            <Value>sunIdentityServerPPFacadeGreetSound</Value>
-            <Value>sunIdentityServerPPFacadegreetmesound</Value>
-            <Value>sunIdentityServerPPDemographicsDisplayLanguage</Value>
-            <Value>sunIdentityServerPPDemographicsLanguage</Value>
-            <Value>sunIdentityServerPPDemographicsAge</Value>
-            <Value>sunIdentityServerPPDemographicsBirthDay</Value>
-            <Value>sunIdentityServerPPDemographicsTimeZone</Value>
-            <Value>sunIdentityServerPPSignKey</Value>
-            <Value>sunIdentityServerPPEncryPTKey</Value>
-            <Value>sunIdentityServerPPEmergencyContact</Value>
-            <Value>sun-fm-saml2-nameid-infokey</Value>
-            <Value>sun-fm-saml2-nameid-info</Value>
           </AttributeValuePair>
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-group-objectclass"/>
