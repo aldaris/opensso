@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.23 2008-06-27 00:45:55 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.24 2008-07-07 22:48:58 qcheng Exp $
  *
  */
 
@@ -1265,9 +1265,10 @@ public class SPACSUtils {
                            session,
                            props);
         }
+        String requestID = respInfo.getResponse().getInResponseTo();
         // save info in memory for logout
-        saveInfoInMemory(
-            sessionProvider, session, sessionIndex, info);
+        saveInfoInMemory(sessionProvider, session, sessionIndex, info,
+            IDPProxyUtil.isIDPProxyEnabled(requestID));
 
         // invoke SP Adapter
         SAML2ServiceProviderAdapter spAdapter =
@@ -1397,7 +1398,8 @@ public class SPACSUtils {
 
     private static void saveInfoInMemory(
         SessionProvider sessionProvider, Object session,
-        String sessionIndex, NameIDInfo info) throws SAML2Exception {
+        String sessionIndex, NameIDInfo info, boolean isIDPProxy) 
+        throws SAML2Exception {
         
         String infoKeyString = (new NameIDInfoKey(
             info.getNameIDValue(),
@@ -1443,22 +1445,24 @@ public class SPACSUtils {
                 SPCache.fedSessionListsByNameIDInfoKey.put(
                     infoKeyString, fedSessions);
             }
-            //IDP Proxy 
-            IDPSession idpSess = (IDPSession)
-                IDPCache.idpSessionsBySessionID.get(
-                tokenID);
-            if (idpSess == null) {
-                idpSess = new IDPSession(session);
-                IDPCache.idpSessionsBySessionID.put(
-                    tokenID, idpSess);
+            if (isIDPProxy) {
+                //IDP Proxy 
+                IDPSession idpSess = (IDPSession)
+                    IDPCache.idpSessionsBySessionID.get(
+                    tokenID);
+                if (idpSess == null) {
+                    idpSess = new IDPSession(session);
+                    IDPCache.idpSessionsBySessionID.put(
+                        tokenID, idpSess);
+                }
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("Add Session Partner: " +
+                        info.getRemoteEntityID());
+                } 
+                idpSess.addSessionPartner(new SAML2SessionPartner(
+                    info.getRemoteEntityID(), true));
+                 // end of IDP Proxy        
             }
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("Add Session Partner: " +
-                    info.getRemoteEntityID());
-            } 
-            idpSess.addSessionPartner(new SAML2SessionPartner(
-                info.getRemoteEntityID(), true));
-             // end of IDP Proxy        
         } else {
             synchronized (fedSessions) {
                 Iterator iter = fedSessions.iterator();
