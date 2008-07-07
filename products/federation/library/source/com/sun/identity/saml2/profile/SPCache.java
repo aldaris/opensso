@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.12 2008-06-25 05:47:55 qcheng Exp $
+ * $Id: SPCache.java,v 1.13 2008-07-07 05:14:47 qcheng Exp $
  *
  */
 
@@ -35,7 +35,6 @@ import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Set;
@@ -114,7 +113,8 @@ public class SPCache {
      * key : request ID (String)
      * value : original logout request object  (LogotRequest)
      */
-    public static Hashtable logoutRequestIDHash = new Hashtable();
+    public static PeriodicCleanUpMap logoutRequestIDHash = 
+        new PeriodicCleanUpMap(interval * 1000, interval * 1000);
 
     /**
      * Map saves response info for local auth.
@@ -145,7 +145,8 @@ public class SPCache {
      * Key: requestID a String
      * Value : Request Parameters Map , a Map
      */
-    public static Hashtable reqParamHash = new Hashtable();
+    public static PeriodicCleanUpMap reqParamHash = new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000);
 
 
     /**

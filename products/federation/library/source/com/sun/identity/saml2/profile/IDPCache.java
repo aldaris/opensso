@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.13 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: IDPCache.java,v 1.14 2008-07-07 05:14:47 qcheng Exp $
  *
  */
 
@@ -32,7 +32,6 @@ package com.sun.identity.saml2.profile;
 import com.sun.identity.common.PeriodicCleanUpMap;
 import com.sun.identity.saml2.common.SAML2Utils;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,6 +54,8 @@ public class IDPCache {
      * Cache saves the authn request objects.
      * Key : request ID String
      * Value : AuthnRequest object
+     * TODO : handle the case when assertion effective time is different
+     *        from cleanup interval
      */
     public static PeriodicCleanUpMap authnRequestCache = new PeriodicCleanUpMap(
         SPCache.interval * 1000, SPCache.interval * 1000); 
@@ -81,7 +82,8 @@ public class IDPCache {
      * Key : request ID String
      * Value : relay state string
      */
-    public static Hashtable relayStateCache = new Hashtable(); 
+    public static PeriodicCleanUpMap relayStateCache = new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000); 
 
     /**
      * Cache saves the idp sessions.
@@ -97,15 +99,19 @@ public class IDPCache {
      * key --- artifact string (after encoding and all that)
      * value --- Response
      * IDP: used in SingleSignOnService and ArtifactResolutionService
+     * TODO : handle the case when artifact expiration time is different
+     *        from cleanup interval
      */
-    public static Hashtable responsesByArtifacts = new Hashtable();
+    public static PeriodicCleanUpMap responsesByArtifacts = 
+       new PeriodicCleanUpMap(SPCache.interval * 1000, SPCache.interval * 1000);
 
     /**
      * Hashtable saves the MNI request info.
      * Key   :   requestID String
      * Value : ManageNameIDRequestInfo object
      */
-    public static Hashtable mniRequestHash = new Hashtable();
+    public static PeriodicCleanUpMap mniRequestHash = new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000);
 
     /**
      * Cache saves the idp attribute mapper.
@@ -141,7 +147,8 @@ public class IDPCache {
      * value --- Response Information List (ArrayList of size 9)
      * IDP: used in SingleSignOnService and ArtifactResolutionService
      */
-    public static Hashtable responseCache = new Hashtable();
+    public static PeriodicCleanUpMap responseCache = new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000);
  
     /**
      * Cache saves informate needed to determine the Authentication
@@ -173,7 +180,7 @@ public class IDPCache {
       * value : SP descriptor 
       */
     public static Hashtable proxySPDescCache = new Hashtable(); 
-     
+
     /**
       * Cache saves the original AuthnRequest coming from SP to IDP proxy
       * key   : requestID (String) 
@@ -181,13 +188,13 @@ public class IDPCache {
       */ 
     public static Hashtable proxySPAuthnReqCache = new Hashtable();      
   
-    /** 
-      * Cache saves the preferred IDP id 
-      * key   : requestID (String) 
-      * value : preferred IDP id 
+    /**
+      * Cache saves the preferred IDP id
+      * key   : requestID (String)
+      * value : preferred IDP id
       */
-    public static Hashtable idDestnCache = new Hashtable();     
-    
+    public static Hashtable idDestnCache = new Hashtable();
+
     /** 
       * Cache saves the SAML2SessionPartner  
       * key   : sessionId (String) 
