@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportSAML2MetaData.java,v 1.4 2008-06-25 05:50:02 qcheng Exp $
+ * $Id: ImportSAML2MetaData.java,v 1.5 2008-07-08 01:12:01 exu Exp $
  *
  */
 
@@ -89,13 +89,14 @@ public class ImportSAML2MetaData {
                 }
             }
 
+            EntityDescriptorElement descriptor = null;
             if (metadata != null) {
-                entityID = importMetaData(metaManager, realm, metadata);
-            }
-    
-            if (configElt != null) {
-                metaManager.createEntityConfig(realm, configElt);
-            }
+                descriptor = getEntityDescriptorElement(metadata); 
+                if (descriptor != null) {
+                    entityID = descriptor.getEntityID();
+                }
+            } 
+            metaManager.createEntity(realm, descriptor, configElt);
         } catch (SAML2MetaException e) {
             throw new WorkflowException(e.getMessage());
         } catch (JAXBException e) {
@@ -134,21 +135,6 @@ public class ImportSAML2MetaData {
             (EntityDescriptorElement)obj : null;
     }
     
-    private static String importMetaData(
-        SAML2MetaManager metaManager,
-        String realm,
-        String metadata
-    ) throws SAML2MetaException, JAXBException, WorkflowException {
-        String entityID = null;       
-        EntityDescriptorElement descriptor = getEntityDescriptorElement(
-            metadata); 
-        if (descriptor != null) {
-            entityID = descriptor.getEntityID();
-            metaManager.createEntityDescriptor(realm, descriptor);
-        }
-        return entityID;
-    }
-
     private static void workaroundAbstractRoleDescriptor(Document doc) {
         Debug debug = Debug.getInstance("workflow");
         NodeList nl = doc.getDocumentElement().getElementsByTagNameNS(

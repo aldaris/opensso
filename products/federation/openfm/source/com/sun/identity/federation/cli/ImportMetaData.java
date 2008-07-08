@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.10 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: ImportMetaData.java,v 1.11 2008-07-08 01:11:35 exu Exp $
  *
  */
 
@@ -146,13 +146,28 @@ public class ImportMetaData extends AuthenticatedCommand {
                 }
             }
             
+            EntityDescriptorElement descriptor = null;
             if (metadata != null) {
-                entityID = importMetaData(metaManager);
+                descriptor = getSAML2EntityDescriptorElement(metaManager);
+                if (descriptor != null) {
+                    entityID = descriptor.getEntityID();
+                }
             }
             
+            metaManager.createEntity(realm, descriptor, configElt);
+            if (descriptor != null) {
+                debug.message(
+                    "ImportMetaData.handleSAML2Request:descriptor is not null");
+                String out = (webAccess) ? "web" : metadata;
+                Object[] objs = { out };
+                getOutputWriter().printlnMessage(MessageFormat.format(
+                    getResourceString("import-entity-succeeded"), objs));
+            }
             if (configElt != null) {
-                metaManager.createEntityConfig(realm, configElt);
-                
+                if (debug.messageEnabled()) {
+                    debug.message("ImportMetaData.handleSAML2Request: "
+                        + "entity config is not null");
+                }
                 String out = (webAccess) ? "web" : extendedData;
                 Object[] objs = { out };
                 getOutputWriter().printlnMessage(MessageFormat.format(
@@ -286,7 +301,8 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
     
-    private String importMetaData(SAML2MetaManager metaManager)
+    private EntityDescriptorElement getSAML2EntityDescriptorElement(
+        SAML2MetaManager metaManager)
         throws SAML2MetaException, CLIException
     {
         InputStream is = null;
@@ -323,21 +339,15 @@ public class ImportMetaData extends AuthenticatedCommand {
             SAML2MetaSecurityUtils.verifySignature(doc);
             workaroundAbstractRoleDescriptor(doc);
             if (debug.messageEnabled()) {
-                debug.message("ImportMetaData.importMetaData: modified " +
-                    "metadata = " + XMLUtils.print(doc));
+                debug.message("ImportMetaData.getSAML2EntityDescriptorElement: "
+                    + "modified metadata = " + XMLUtils.print(doc));
             }
             obj = SAML2MetaUtils.convertNodeToJAXB(doc);
 
             if (obj instanceof EntityDescriptorElement) {
-                EntityDescriptorElement descriptor =
-                    (EntityDescriptorElement)obj;
-                entityID = descriptor.getEntityID();
-
-                metaManager.createEntityDescriptor(realm, descriptor);
-                getOutputWriter().printlnMessage(MessageFormat.format(
-                    getResourceString("import-entity-succeeded"), objs));
+                return (EntityDescriptorElement)obj;
             }
-            return entityID;
+            return null;
         } catch (FileNotFoundException e) {
             throw new CLIException(MessageFormat.format(
                 getResourceString("file-not-found"), objs),
