@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showServerConfig.jsp,v 1.4 2008-06-25 05:44:56 qcheng Exp $
+   $Id: showServerConfig.jsp,v 1.5 2008-07-08 01:08:24 mrudulahg Exp $
 
 -->
 
@@ -139,7 +139,7 @@
                   <tr>
                   <td>
               <%
-                  ServletContext sctx = getServletContext();
+                  ServletContext sctx = getServletConfig().getServletContext();
                   out.println("<B>Container</B>");
               %>
                   </td>
