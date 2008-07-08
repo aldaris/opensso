@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.24 2008-07-07 22:48:58 qcheng Exp $
+ * $Id: SPACSUtils.java,v 1.25 2008-07-08 23:00:36 hengming Exp $
  *
  */
 
@@ -1119,23 +1119,19 @@ public class SPACSUtils {
                 SAML2Utils.bundle.getString("noUserMapping"));
         }
         
-        boolean isFedInfoExists = SAML2Utils.isFedInfoExists(
-            userName,hostEntityId,remoteHostId, nameId);
-        // TODO: check if this few lines are needed
-        /*
-            DN dnObject = new DN(userName);
-            String [] array = dnObject.explodeDN(true);
-            userName = array[0];
-        */
-
-        boolean writeFedInfo = (!isFedInfoExists) &&
-           (!SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(nameId.getFormat()));
+        boolean writeFedInfo = ((!SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(
+            nameId.getFormat())) && (SAML2Utils.isFedInfoExists(userName,
+            hostEntityId, remoteHostId, nameId)));
+            // TODO: check if this few lines are needed
+            /*
+                DN dnObject = new DN(userName);
+                String [] array = dnObject.explodeDN(true);
+                userName = array[0];
+            */
 
         if (SAML2Utils.debug.messageEnabled()) {
             SAML2Utils.debug.message(
                 classMethod + "userName : " + userName);
-            SAML2Utils.debug.message(
-                classMethod + "isFedInfoExists : " + isFedInfoExists);
             SAML2Utils.debug.message(
                 classMethod + "writeFedInfo : " + writeFedInfo);
         }

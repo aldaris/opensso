@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,40 +22,37 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAccountMapper.java,v 1.3 2008-07-08 23:03:34 hengming Exp $
- *
+ * $Id: DefaultIDPAttributeMapper.java,v 1.1 2008-07-08 23:03:34 hengming Exp $
  */
-
 
 package com.sun.identity.saml2.plugins;
 
 /**
- * This class <code>DefaultSPAccountMapper</code> is the default 
- * implementation of the <code>DefaultLibrarySPAccountMapper</code> that is used
- * to map the <code>SAML</code> protocol objects to the user accounts.
- * at the <code>ServiceProvider</code> side of SAML v2 plugin.
- * Custom implementations may extend from this class to override some
- * of these implementations if they choose to do so.
+ * This class <code>DefaultIDPAttributeMapper</code> implements the
+ * <code>IDPAttributeMapper</code> to return the SAML <code>Attribute</code>
+ * objects that may be inserted in the SAML Assertion.
+ * This IDP attribute mapper reads the attribute map configuration defined
+ * in the hosted IDP configuration and construct the SAML
+ * <code>Attribute</code> objects. If the mapped values are not present in
+ * the data store, this will try to read from the Single sign-on token.
  */
-public class DefaultSPAccountMapper extends DefaultLibrarySPAccountMapper {
-
-     /**
-      * Default constructor
-      */
-     public DefaultSPAccountMapper() {
-         super();
-         debug.message("DefaultSPAccountMapper.constructor: ");
-     }
+public class DefaultIDPAttributeMapper extends DefaultLibraryIDPAttributeMapper
+{
+    /**
+     * Constructor
+     */
+    public DefaultIDPAttributeMapper() {
+    }
 
     /**
      * Checks if dynamical profile creation or ignore profile is enabled.
+     *
      * @param realm realm to check the dynamical profile creation attributes.
      * @return true if dynamical profile creation or ignore profile is enabled,
-     * false otherwise.
+     *     false otherwise.
      */
     protected boolean isDynamicalOrIgnoredProfile(String realm) {
 
         return SAML2PluginsUtils.isDynamicalOrIgnoredProfile(realm);
     }
-
 }
