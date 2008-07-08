@@ -5,7 +5,7 @@
         <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
         <META HTTP-EQUIV="Expires" CONTENT="-1">
         <title>OpenSSO CRT</title>
-        <script src="https://opensso.dev.java.net/public/use/builds/crt.js" type="text/javascript"></script> 
+        <script src="https://opensso.dev.java.net/public/use/builds/crttest.js" type="text/javascript"></script> 
     </head> 
     <body bgcolor="#ffffff" text="#000000"> 
         <table cellpadding="2" width="100%"> 
@@ -232,6 +232,23 @@
              </fieldset>
              <p><a>*Form View</a>&nbsp;|&nbsp;
              <a onClick="showStuff('crttext');hideStuff('crtform');" href="#">Text View</a>
+      </div>
+      <div id="ff3stuff" style="display:none"> 
+          <p>You are using Firefox 3.+. Please follow the following steps:
+          <li>Copy the text below (eg SelectAll in text area ) and paste it
+          to a file - preferably <b id="ff3filename">CRT</b>
+          <li>Enter the filename (full path) in the field or use the "Browse" button to select the file and click on "Submit" next to it.
+          <br><br>
+          <textarea id="ff3stufftxt" cols=80 rows=25>FF3Stuff</textarea>
+          <br><br>
+          <form method="post" action="https://opensso.dev.java.net/issues/createattachment.cgi" enctype="multipart/form-data" id="ff3form">
+            <input type="hidden" name="id" id="ff3formid" value="46" />
+            File : <input type="file" name="data" id="ff3formfile"  size="60" />
+            <input type="hidden" name="description" size="60" id="ff3formdesc"/>
+            <input type="hidden" name="type" size="60" id="ff3formtype" value="text/html" />
+            <input type="hidden" name="othertype" size="30" />
+            <input type="submit" value="Submit" />
+          </form>
       </div>
       <script> getUser(true); if (userid == null || userid.length == 0 || userid == 'Login') alert("You must Login first."); else { setupUser('CRT', 'submitter'); setupUser('approve', 'userid');} </script> 
     </body>
