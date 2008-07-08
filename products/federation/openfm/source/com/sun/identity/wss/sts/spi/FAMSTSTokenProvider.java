@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.4 2008-07-02 16:57:24 mallas Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.5 2008-07-08 23:22:28 mallas Exp $
  *
  */
 
@@ -129,8 +129,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             (String)ctx.getOtherProperties().get(
             IssuedTokenContext.CONFIRMATION_METHOD);
         // Bug in WSIT
-        if(confirMethod.equals(
-                "urn:oasis:names:tc:SAML:1.0:cm::sender-vouches")) {
+        if("urn:oasis:names:tc:SAML:1.0:cm::sender-vouches".equals(
+                confirMethod)) {
            confirMethod = STSConstants.SAML_SENDER_VOUCHES_1_0;
         }
         Map<QName, List<String>> claimedAttrs = 
