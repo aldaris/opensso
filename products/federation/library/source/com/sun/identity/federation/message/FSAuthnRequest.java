@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthnRequest.java,v 1.3 2008-06-25 05:46:43 qcheng Exp $
+ * $Id: FSAuthnRequest.java,v 1.4 2008-07-08 06:03:37 exu Exp $
  *
  */
 
@@ -1416,8 +1416,8 @@ public class FSAuthnRequest extends AbstractRequest {
         
         String forceAuthn = request.getParameter(IFSConstants.FORCE_AUTHN_ELEM);
         if ( forceAuthn != null && forceAuthn.length() != 0 
-             && forceAuthn.equals(IFSConstants.TRUE) 
-             || forceAuthn.equals(IFSConstants.ONE)) {
+             && (forceAuthn.equals(IFSConstants.TRUE) 
+             || forceAuthn.equals(IFSConstants.ONE))) {
             retAuthnRequest.forceAuthn = true;
         } else {
             retAuthnRequest.forceAuthn = false;
