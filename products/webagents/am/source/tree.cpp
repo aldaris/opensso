@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: tree.cpp,v 1.4 2008-06-25 08:14:39 qcheng Exp $
+ * $Id: tree.cpp,v 1.5 2008-07-08 01:45:44 madan_ranganath Exp $
  *
  */ 
 #include "tree.h"
@@ -259,7 +259,8 @@ Tree::search_recursive(const ResourceName &resName,
 	results.push_back(node->getPolicyDecision());
 	// fall through to the following
     case AM_SUB_RESOURCE_MATCH:
-	for(iter  = node->begin(); iter != node->end(); iter++) {
+    case AM_NO_MATCH:
+	for(iter = node->begin(); iter != node->end(); iter++) {
 	    search_recursive(resName, *iter, results, usePatterns);
 	}
 	break;
