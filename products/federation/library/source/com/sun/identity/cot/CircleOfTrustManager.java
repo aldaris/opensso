@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.10 2008-06-25 05:46:38 qcheng Exp $
+ * $Id: CircleOfTrustManager.java,v 1.11 2008-07-08 01:07:31 exu Exp $
  *
  */
 package com.sun.identity.cot;
@@ -590,6 +590,24 @@ public class CircleOfTrustManager {
     public void addCircleOfTrustMember(String realm, String cotName,
             String protocolType, String entityId)
             throws COTException {
+        addCircleOfTrustMember(realm, cotName, protocolType, entityId, true);
+    }
+
+    /**
+     * Adds entity identifier to a circle of trust under the realm.
+     *
+     * @param realm The realm under which the circle of trust will be
+     *              modified.
+     * @param cotName the name of the circle of trust.
+     * @param protocolType the federation protcol type the entity supports.
+     * @param entityId the entity identifier.
+     * @param addToEntityConfig if true, add the cotname to the entity config.
+     * @throws COTException if unable to add member to the
+     *         circle of trust.
+     */
+    public void addCircleOfTrustMember(String realm, String cotName,
+            String protocolType, String entityId, boolean addToEntityConfig)
+            throws COTException {
         String classMethod = "COTManager.addCircleOfTrustMember: ";
         if (realm == null) {
             realm = "/";
@@ -611,8 +629,9 @@ public class CircleOfTrustManager {
             //validate protocol type
             isValidProtocolType(protocolType);
             // add the cot to the entity config descriptor
-            updateEntityConfig(realm, cotName, protocolType, entityId);
-            
+            if (addToEntityConfig) {
+                updateEntityConfig(realm, cotName, protocolType, entityId);
+            } 
             // add the entityid to the cot
             CircleOfTrustDescriptor cotDesc;
             if (attrs == null) {
@@ -660,6 +679,24 @@ public class CircleOfTrustManager {
     public void removeCircleOfTrustMember(String realm,String cotName,
             String protocolType, String entityId)
             throws COTException {
+        removeCircleOfTrustMember(realm, cotName, protocolType, entityId, true);
+    }
+
+    /**
+     * Removes entity from circle of trust under the realm.
+     *
+     * @param realm the realm to which the circle of trust belongs.
+     * @param cotName  the circle of trust name.
+     * @param protocolType the federation protocol type.
+     * @param entityId the entity identifier.
+     * @param rmEntityConfig flag indicate needs to remove cot from 
+     *         entity config or not.
+     * @throws COTException if there is an error removing entity from the
+     *         circle of trust.
+     */
+    public void removeCircleOfTrustMember(String realm,String cotName,
+            String protocolType, String entityId, boolean rmEntityConfig)
+            throws COTException {
         String classMethod = "COTManager.removeCircleOfTrustMember: ";
         if ((cotName == null) || (cotName.trim().length() == 0)) {
             String[] data = { cotName, realm };
@@ -681,7 +718,9 @@ public class CircleOfTrustManager {
         try {
             // Remove the cot from the cotlist attribute in
             // the entity config.
-            removeFromEntityConfig(realm, cotName, protocolType, entityId);
+            if (rmEntityConfig) {
+                removeFromEntityConfig(realm, cotName, protocolType, entityId);
+            }
             
             // Remove entity id from the cot
             CircleOfTrustDescriptor cotDesc;
