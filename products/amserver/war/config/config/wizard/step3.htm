@@ -302,7 +302,8 @@
 </script>
 
 <div style="margin-left:10px;">
-    <h1>$page.getLocalizedString("step3.title")<img class="pointer" src="$context/assets/images/message.gif"/></h1>
+    <h1>$page.getLocalizedString("step3.title")<img class="pointer" 
+        src="$context/assets/images/message.gif"/></h1>
     <p>$page.getLocalizedString("step3.description")</p> 
     <input type="radio" id="existingNo" name="existingInstance" 
         value="false" $selectFirstSetup onclick="disableExisting();"/>
@@ -312,8 +313,9 @@
         $page.getLocalizedString("add.existing.instance")
        
     <!-- EMBEDDED STORE PROPERTIES -->
-    <div id="configStoreProperties" style="width:570px;" >
-        <p id="allfields"><em>*</em>&nbsp;$page.getLocalizedString("required.field.label")</p>
+    <div id="configStoreProperties" style="width:620px;" >
+        <p id="allfields"><em>*</em>&nbsp;
+            $page.getLocalizedString("required.field.label")</p>
         <b class="xtop">
             <b class="xt1"></b>
             <b class="xt2"></b>
@@ -323,13 +325,15 @@
         <div class="headerBox">
             $page.getLocalizedString("step3.sub.title")
         </div>
-        <div class="bodyBox" style="height:260px;">	
+        <div class="bodyBox" style="height:240px;">	
              <span>  
              <!-- New Instances -->
              <div id="newInstanceOptions">            
                 <table class="temp">
                     <tr>
-                        <td><label for="configStoreCustom">$page.getLocalizedString("existing.instance.label")</label></td>
+                        <td><label for="configStoreCustom">
+                                $page.getLocalizedString("existing.instance.label")
+                             </label></td>
                         <td>
                         <input type="radio" id="configStoreDefault" name="configStoreCustom" 
                            style="margin-left:1em" value="false" $selectEmbedded 
@@ -346,15 +350,16 @@
                 <!-- Embedded Store -->
                 <table class="temp">                    
                     <tr id="ssl">
-                        <td><label for="configStoreSSL"><em>*&nbsp;</em>$page.getLocalizedString("ssl.label")</label></td>
+                        <td><label for="configStoreSSL"><em>*&nbsp;</em>
+                            $page.getLocalizedString("ssl.label")</label></td>
                         <td>
                             <input id="configStoreSSL" name="configStoreSSL" 
                                type="checkbox" value="SSL" $selectConfigStoreSSL
-                               onClick="APP.callDelayed(this, validateConfigStoreSSL)"/>
-                        </td>
+                               onClick="APP.callDelayed(this, validateConfigStoreSSL)"/></td>
                     </tr>
                     <tr id="host">
-                        <td><label for="configStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("host.name.label")</label></td>
+                        <td><label for="configStoreHost"><em>*&nbsp;</em>
+                            $page.getLocalizedString("host.name.label")</label></td>
                         <td>
                             <input id="configStoreHost" name="configStoreHost" 
                                type="text" class="text" style="width:150px" 
@@ -365,24 +370,28 @@
                         </td>
                     </tr>  
                     <tr>
-			<td><label for="configStorePort"><em>*&nbsp;</em>$page.getLocalizedString("port.label")</label></td>
+			<td><label for="configStorePort"><em>*&nbsp;</em>
+                            $page.getLocalizedString("port.label")</label></td>
                         <td>
                             <input id="configStorePort" name="configStorePort" 
                                    type="text" size="5" maxLength="5" 
                                    value="$configStorePort" 
                                    onkeyup="APP.callDelayed(this, validatePort)"/>
-                            <span id="configStorePortStatus"></span>
-                        </td>
+                            <span id="configStorePortStatus"></span></td>
                     </tr>
                     <tr>                    
-                        <td><label for="encryptionKey"><em>*&nbsp;</em>$page.getLocalizedString("step2.encr.key")</label></td>
+                        <td><label for="encryptionKey"><em>*&nbsp;</em>
+                            $page.getLocalizedString("step2.encr.key")</label></td>
                         <td>
-                            <input id="encryptionKey" name="encryptionKey" type="text" class="text" style="width:200px" value="$encryptionKey" onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
-                            <span id="encryptionKeyStatus"></span>
-                        </td>
+                            <input id="encryptionKey" name="encryptionKey" 
+                                type="text" class="text" style="width:200px" 
+                                value="$encryptionKey" 
+                                onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
+                            <span id="encryptionKeyStatus"></span></td>
                     </tr>   
                     <tr>
-                        <td><label for="rootSuffix"><em>*&nbsp;</em>$page.getLocalizedString("root.suffix.label")</label></td>
+                        <td><label for="rootSuffix"><em>*&nbsp;</em>
+                            $page.getLocalizedString("root.suffix.label")</label></td>
                         <td>
                             <input id="rootSuffix" name="rootSuffix" 
                                    type="text" class="text" style="width:200px" 
@@ -393,7 +402,8 @@
                     </tr>
 
                     <tr id="login">
-                        <td><label for="configStoreLoginId"><em>*&nbsp;</em>$page.getLocalizedString("login.id.label")</label></td>
+                        <td><label for="configStoreLoginId"><em>*&nbsp;</em>
+                            $page.getLocalizedString("login.id.label")</label></td>
                         <td>
                             <input id="configStoreLoginId" name="configStoreLoginId" 
                                type="text" class="text" style="width:150px" 
@@ -403,15 +413,15 @@
                         </td>
                     </tr>
                     <tr id="password">
-                        <td><label for="configStorePassword"><em>*&nbsp;</em>$page.getLocalizedString("password.label")</label></td>
+                        <td><label for="configStorePassword"><em>*&nbsp;</em>
+                            $page.getLocalizedString("password.label")</label></td>
                         <td>
                             <input id="configStorePassword" 
                                name="configStorePassword" 
                                type="password" class="text" style="width:100px" 
                                value="#if($store.password)$store.password#{end}" 
                                onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
-                            <span id="configStorePasswordStatus"></span>                        
-                        </td>
+                            <span id="configStorePasswordStatus"></span></td>
                     </tr>  
                 </table>
             </div> 
@@ -420,7 +430,8 @@
             <div id="existingInstanceURL" style="display:none">
                 <table class="temp">
                     <tr>
-                        <td><label for="existingHost"><em>*&nbsp;</em>$page.getLocalizedString("host.url.label")</label></td>
+                        <td><label for="existingHost"><em>*&nbsp;</em>
+                            $page.getLocalizedString("host.url.label")</label></td>
                         <td>
                             <input id="existingHost" name="existingHost" type="text" 
                                    class="text" size="60"
@@ -442,7 +453,8 @@
                 <small>$page.getLocalizedString("local.port.values")</small>
                 <table class="temp">       
                     <tr>
-                        <td><label for="localConfigPort"><em>*&nbsp;</em>$page.getLocalizedString("local.port.label")</label></td>
+                        <td><label for="localConfigPort"><em>*&nbsp;</em>
+                            $page.getLocalizedString("local.port.label")</label></td>
                         <td>
                             <input id="localConfigPort" name="localConfigPort" 
                                    type="text" class="text" size="5" maxLength="5" 
@@ -452,7 +464,8 @@
                         </td>
                     </tr> 
                     <tr>
-                        <td><label for="localRepPort"><em>*&nbsp;</em>$page.getLocalizedString("replication.port.label")</label></td>
+                        <td><label for="localRepPort"><em>*&nbsp;</em>
+                            $page.getLocalizedString("replication.port.label")</label></td>
                         <td>
                             <input id="localRepPort" name="localRepPort" 
                                    type="text" class="text" size="5" maxLength="5" 
@@ -463,11 +476,11 @@
                     </tr>  
                     <tr>
                         <td colspan="2">
-                            <span id="replicationMessage"></span>
-                        </td>
+                            <span id="replicationMessage"></span></td>
                     </tr>
                     <tr>
-                        <td><label for="existingPort"><em>*&nbsp;</em>$page.getLocalizedString("existing.port.label")</label></td>
+                        <td><label for="existingPort"><em>*&nbsp;</em>
+                            $page.getLocalizedString("existing.port.label")</label></td>
                         <td>
                             <input id="existingPort" name="existingPort" type="text" 
                                    class="text" size="5" maxLength="5" 
@@ -477,7 +490,8 @@
                         </td>
                     </tr>      
                     <tr>
-                        <td><label for="existingRepPort"><em>*&nbsp;</em>$page.getLocalizedString("existing.replication.port")</label></td>
+                        <td><label for="existingRepPort"><em>*&nbsp;</em>
+                            $page.getLocalizedString("existing.replication.port")</label></td>
                         <td>
                             <input id="existingRepPort" name="existingRepPort" 
                                    type="text" class="text" size="5" maxLength="5"
@@ -493,8 +507,9 @@
                 <small>$page.getLocalizedString("existing.port.values.external")</small>
                 <table class="temp">
                     <tr>
-                        <td><label for="existingStoreHost"><em>*&nbsp;</em>$page.getLocalizedString("existing.ldap.label")</label></td>
-                        <td>                            <input id="existingStoreHost" name="existingStoreHost" type="text"
+                        <td><label for="existingStoreHost"><em>*&nbsp;</em>
+                            $page.getLocalizedString("existing.ldap.label")</label></td>
+                        <td><input id="existingStoreHost" name="existingStoreHost" type="text"
                                    class="text" size="60" style="width:150px"
                                    value="$existingStoreHost" 
                                    onkeyup="APP.callDelayed(this, validateHostName)"/>
@@ -502,7 +517,8 @@
                         </td>
                     </tr>      
                     <tr>   
-                        <td><label for="existingStorePort"><em>*&nbsp;</em>$page.getLocalizedString("port.label")</label></td>  
+                        <td><label for="existingStorePort"><em>*&nbsp;</em>
+                            $page.getLocalizedString("port.label")</label></td>  
                         <td>
                             <input id="existingStorePort" name="existingStorePort"
                                    type="text" size="5" maxLength="5"
@@ -510,7 +526,8 @@
                                    onkeyup="APP.callDelayed(this, validatePort)"/>
                             <span id="existingStorePortStatus"></span>
                         </td>
-                    </tr>                </table>     
+                    </tr>                
+                </table>     
             </div>                
             </span>
         </div>
