@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaCache.java,v 1.3 2008-06-25 05:47:49 qcheng Exp $
+ * $Id: SAML2MetaCache.java,v 1.4 2008-07-08 01:08:43 exu Exp $
  *
  */
 
@@ -145,6 +145,9 @@ class SAML2MetaCache
      * Clears cache completely.
      */
     static void clear() {
+        if (debug.messageEnabled()) {
+            debug.message("SAML2MetaCache.clear() called");
+        }
 	descriptorCache.clear();
 	configCache.clear();
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2COTUtils.java,v 1.4 2008-06-25 05:47:49 qcheng Exp $
+ * $Id: SAML2COTUtils.java,v 1.5 2008-07-08 01:08:42 exu Exp $
  *
  */
 
@@ -43,6 +43,12 @@ import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 
 /**
@@ -102,31 +108,47 @@ public class SAML2COTUtils {
             List ll =
                     ele.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
             // Decide which role EntityDescriptorElement includes
-            // It could have one sp and one idp.
-            if (SAML2MetaUtils.getSPSSODescriptor(edes) != null) {
-                bctype = objFactory.createSPSSOConfigElement();
-                bctype.getAttribute().add(atype);
-                ll.add(bctype);
-            }
-            if (SAML2MetaUtils.getIDPSSODescriptor(edes) != null) {
-                bctype = objFactory.createIDPSSOConfigElement();
-                bctype.getAttribute().add(atype);
-                ll.add(bctype);
-            }
-            if (SAML2MetaUtils.getPolicyEnforcementPointDescriptor(edes)
-                    != null) {
-                bctype =
-                    objFactory.createXACMLAuthzDecisionQueryConfigElement();
-                bctype.getAttribute().add(atype);
-                ll.add(bctype);
-            }
-            if (SAML2MetaUtils.getPolicyDecisionPointDescriptor(edes) != null) {
-                bctype = objFactory.createXACMLPDPConfigElement();
-                bctype.getAttribute().add(atype);
-                ll.add(bctype);
+            List list =
+                edes.getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+
+            for(Iterator iter = list.iterator(); iter.hasNext();) {
+                Object obj = iter.next();
+                if (obj instanceof SPSSODescriptorElement) {
+                    bctype = objFactory.createSPSSOConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                } else if (obj instanceof IDPSSODescriptorElement) {
+                    bctype = objFactory.createIDPSSOConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                } else if (obj instanceof XACMLPDPDescriptorElement) {
+                    bctype = objFactory.createXACMLPDPConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                } else if (obj instanceof 
+                    XACMLAuthzDecisionQueryDescriptorElement) 
+                {
+                    bctype =
+                        objFactory.createXACMLAuthzDecisionQueryConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                } else if (obj instanceof AttributeAuthorityDescriptorElement) {
+                    bctype = objFactory.createAttributeAuthorityConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                } else if (obj instanceof  AttributeQueryDescriptorElement) {
+                    bctype = objFactory.createAttributeQueryConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                } else if (obj instanceof AuthnAuthorityDescriptorElement) {
+                    bctype = objFactory.createAuthnAuthorityConfigElement();
+                    bctype.getAttribute().add(atype);
+                    ll.add(bctype);
+                }
             }
             metaManager.setEntityConfig(realm,ele);
         } else {
+            boolean needToSave = true;
             List elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
             for (Iterator iter = elist.iterator(); iter.hasNext();) {
@@ -141,7 +163,7 @@ public class SAML2COTUtils {
                         List avpl = avp.getValue();
                         if (avpl.isEmpty() ||!containsValue(avpl,name)) {
                             avpl.add(name);
-                            metaManager.setEntityConfig(realm,eConfig);
+                            needToSave = true;
                             break;
                         }
                     }
@@ -152,8 +174,11 @@ public class SAML2COTUtils {
                     atype.setName(SAML2Constants.COT_LIST);
                     atype.getValue().add(name);
                     list.add(atype);
-                    metaManager.setEntityConfig(realm, eConfig);
+                    needToSave = true;
                 }
+            }
+            if (needToSave) {
+                metaManager.setEntityConfig(realm,eConfig);
             }
         }
     }
@@ -196,6 +221,7 @@ public class SAML2COTUtils {
         if (eConfig != null) {
             List elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+            boolean needToSave = false;
             for (Iterator iter = elist.iterator(); iter.hasNext();) {
                 BaseConfigType bConfig = (BaseConfigType)iter.next();
                 List list = bConfig.getAttribute();
@@ -207,11 +233,14 @@ public class SAML2COTUtils {
                         if (avpl != null && !avpl.isEmpty() &&
                                 containsValue(avpl,name)) {
                             avpl.remove(name);
-                            metaManager.setEntityConfig(realm,eConfig);
+                            needToSave = true;
                             break;
                         }
                     }
                 }
+            }
+            if (needToSave) {
+                metaManager.setEntityConfig(realm, eConfig);
             }
         }
     }

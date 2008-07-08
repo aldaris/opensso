@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.14 2008-06-25 05:47:49 qcheng Exp $
+ * $Id: SAML2MetaManager.java,v 1.15 2008-07-08 01:08:43 exu Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.saml2.meta;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -147,6 +148,10 @@ public class SAML2MetaManager {
         EntityDescriptorElement descriptor =
             SAML2MetaCache.getEntityDescriptor(realm, entityId);
         if (descriptor != null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaManager.getEntityDescriptor: got "
+                    + "descriptor from SAML2MetaCache " + entityId);
+            }
             LogUtil.access(Level.FINE, LogUtil.GOT_ENTITY_DESCRIPTOR,
                 objs, null);
             return descriptor;
@@ -167,6 +172,10 @@ public class SAML2MetaManager {
             if (obj instanceof EntityDescriptorElement) {
                 descriptor = (EntityDescriptorElement)obj;
                 SAML2MetaCache.putEntityDescriptor(realm, entityId, descriptor);
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2MetaManager.getEntityDescriptor: got "
+                        + "descriptor from SMS " + entityId);
+                }
                 LogUtil.access(Level.FINE, LogUtil.GOT_ENTITY_DESCRIPTOR,
                     objs, null);
                 return descriptor;
@@ -369,6 +378,11 @@ public class SAML2MetaManager {
             Map oldAttrs = configInst.getConfiguration(realm, entityId);
             oldAttrs.put(ATTR_METADATA, attrs.get(ATTR_METADATA));
             configInst.setConfiguration(realm, entityId, oldAttrs);
+            SAML2MetaCache.putEntityDescriptor(realm, entityId, descriptor);
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaManager.setEntityDescriptor: saved "
+                    + "entity descriptor for " + entityId);
+            }
             LogUtil.access(Level.INFO, LogUtil.SET_ENTITY_DESCRIPTOR,
                 objs, null);
         } catch (ConfigurationException e) {
@@ -396,60 +410,225 @@ public class SAML2MetaManager {
         String realm,
         EntityDescriptorElement descriptor
     ) throws SAML2MetaException {
-        String entityId = descriptor.getEntityID();
+        debug.message("SAML2MetaManager.createEntityDescriptor: called.");
+        createEntity(realm, descriptor, null);
+    }
+
+    /**
+     * Creates the standard and extended metadata under the realm.
+     * @param realm The realm under which the entity descriptor will be
+     *        created.
+     * @param descriptor The standard entity descriptor object to be created. 
+     * @param config The extended entity config object to be created.
+     * @throws SAML2MetaException if unable to create the entity.
+     */
+    public void createEntity(
+        String realm,
+        EntityDescriptorElement descriptor,
+        EntityConfigElement config
+    ) throws SAML2MetaException {
+        debug.message("SAML2MetaManager.createEntity: called.");
+        if ((descriptor == null) && (config == null)) {
+            debug.error(
+                "SAML2metaManager.createEntity: no meta to import.");
+            return;
+        }
+        String entityId = null;
+        if (descriptor != null) {
+           entityId = descriptor.getEntityID();
+        } else {
+           entityId = config.getEntityID();
+        }
+
+        if (realm == null) {
+            realm = "/";
+        }
+
         if (entityId == null) {
             debug.error(
-                "SAML2MetaManager.createEntityDescriptor: entity ID is null");
+                "SAML2MetaManager.createEntity: entity ID is null");
             String[] data = { realm };
             LogUtil.error(Level.INFO,
                 LogUtil.NO_ENTITY_ID_CREATE_ENTITY_DESCRIPTOR,
                 data, null);
             throw new SAML2MetaException("empty_entityid", null);
         }
-        if (realm == null) {
-            realm = "/";
-        }
 
+        if (debug.messageEnabled()) {
+            debug.message("SAML2MetaManager.createEntity: realm=" 
+                + realm + ", entityId=" + entityId);
+        }
         String[] objs = { entityId, realm };
-        EntityDescriptorElement entityDescriptor = getEntityDescriptor(
-            realm, entityId);
-        if (entityDescriptor != null) {
-            List currentRoles = entityDescriptor.
-                getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
-            Set currentRolesTypes = getEntityRolesTypes(currentRoles);
-            List newRoles = descriptor.
-                getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
-            for (Iterator i = newRoles.iterator(); i.hasNext(); ) {
-                Object role = i.next();
-                if (currentRolesTypes.contains(role.getClass().getName())) {
-                    String[] data = {entityId, realm };
-                    LogUtil.error(Level.INFO, LogUtil.SET_ENTITY_DESCRIPTOR,
-                        data, null);
-                    String[] param = {entityId};
-                    throw new SAML2MetaException("role_already_exists", param);
+
+        try {
+            EntityDescriptorElement oldDescriptor = null;
+            EntityConfigElement oldConfig = null;
+            boolean isCreate = true;
+            Map newAttrs = null;
+            Map oldAttrs = configInst.getConfiguration(realm, entityId);
+            if (oldAttrs != null) {
+                // get the entity descriptor if any
+                Set values = (Set)oldAttrs.get(ATTR_METADATA);
+                if ((values != null) && !values.isEmpty()) {
+                    String value = (String)values.iterator().next();
+                    Object obj = SAML2MetaUtils.convertStringToJAXB(value);
+                    if (obj instanceof EntityDescriptorElement) {
+                        oldDescriptor = (EntityDescriptorElement)obj;
+                        if (debug.messageEnabled()) {
+                            debug.message("SAML2MetaManager.createEntity: "
+                                + "got descriptor from SMS " + entityId);
+                        }
+                    }
                 }
-                currentRoles.add(role);
+                // get the entity config if any
+                values = (Set)oldAttrs.get(ATTR_ENTITY_CONFIG);
+                if ((values != null) && !values.isEmpty()) {
+                    String value = (String)values.iterator().next();
+                    Object obj = SAML2MetaUtils.convertStringToJAXB(value);
+                    if (obj instanceof EntityConfigElement) {
+                        oldConfig = (EntityConfigElement)obj;
+                        if (debug.messageEnabled()) {
+                            debug.message("SAML2MetaManager.createEntity: "
+                                + "got entity config from SMS " + entityId);
+                        }
+                    }
+                }
             }
-            setEntityDescriptor(realm, entityDescriptor);
-        } else {
-            try {
-                Map attrs = SAML2MetaUtils.convertJAXBToAttrMap(ATTR_METADATA,
-                    descriptor);
-                configInst.createConfiguration(realm, entityId, attrs);
-                LogUtil.access(Level.INFO,
-                    LogUtil.ENTITY_DESCRIPTOR_CREATED, objs, null);
-            } catch (ConfigurationException e) {
-                debug.error("SAML2MetaManager.createEntityDescriptor:", e);
-                String[] data = { e.getMessage(), entityId, realm };
-                LogUtil.error(Level.INFO,
-                    LogUtil.CONFIG_ERROR_CREATE_ENTITY_DESCRIPTOR, data, null);
-                throw new SAML2MetaException(e);
-            } catch (JAXBException jaxbe) {
-                debug.error("SAML2MetaManager.createEntityDescriptor:", jaxbe);
-                LogUtil.error(Level.INFO,
-                    LogUtil.CREATE_INVALID_ENTITY_DESCRIPTOR, objs, null);
-                throw new SAML2MetaException("invalid_descriptor", objs);
+            if (oldDescriptor != null) {
+                if (descriptor != null) {
+                    List currentRoles = oldDescriptor.
+                        getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+                    Set currentRolesTypes = getEntityRolesTypes(currentRoles);
+                    List newRoles = descriptor.
+                        getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+                    for (Iterator i = newRoles.iterator(); i.hasNext(); ) {
+                        Object role = i.next();
+                        if (currentRolesTypes.contains(
+                            role.getClass().getName())) 
+                        {
+                            debug.error("SAML2MetaManager.createEntity: current"
+                                + " descriptor contains role " 
+                                + role.getClass().getName() 
+                                + " already");
+                            String[] data = {entityId, realm };
+                            LogUtil.error(Level.INFO, 
+                                LogUtil.SET_ENTITY_DESCRIPTOR, data, null);
+                            String[] param = {entityId};
+                            throw new SAML2MetaException("role_already_exists", 
+                                param);
+                        }
+                        currentRoles.add(role);
+                    }
+                    Map attrs = SAML2MetaUtils.convertJAXBToAttrMap(
+                        ATTR_METADATA, oldDescriptor);
+                    oldAttrs.put(ATTR_METADATA, attrs.get(ATTR_METADATA));
+                    isCreate = false;
+                }
+            } else {
+                if (descriptor != null) {
+                    newAttrs = SAML2MetaUtils.convertJAXBToAttrMap(
+                        ATTR_METADATA, descriptor);
+                }
             }
+
+            if (config != null) {
+                if ((oldDescriptor == null) && (descriptor == null)) {
+                    debug.error("SAML2MetaManager.createEntity: entity "
+                        + "descriptor is null: " + entityId);
+                    LogUtil.error(Level.INFO,
+                        LogUtil.NO_ENTITY_DESCRIPTOR_CREATE_ENTITY_CONFIG, objs,
+                        null);
+                    throw new SAML2MetaException("entity_descriptor_not_exist",
+                        objs);
+                }
+                if (oldConfig != null) {
+                    List currentRoles = oldConfig.
+                        getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                    Set currentRolesTypes = getEntityRolesTypes(currentRoles);
+                    List newRoles = config.
+                        getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                    for (Iterator i = newRoles.iterator(); i.hasNext(); ) {
+                        Object role = i.next();
+                        if (currentRolesTypes.contains(
+                            role.getClass().getName())) 
+                        {
+                            debug.error("SAML2MetaManager.createEntity: current"
+                                + " entity config contains role " 
+                                + role.getClass().getName() 
+                                + " already");
+                            String[] data = {entityId, realm };
+                            LogUtil.error(Level.INFO, 
+                                LogUtil.SET_ENTITY_CONFIG, data, null);
+                            String[] param = {entityId};
+                            throw new SAML2MetaException("role_already_exists", 
+                                param);
+                        }
+                        currentRoles.add(role);
+                    }
+                    Map attrs = SAML2MetaUtils.convertJAXBToAttrMap(
+                        ATTR_ENTITY_CONFIG, oldConfig);
+                    oldAttrs.put(ATTR_ENTITY_CONFIG, 
+                        attrs.get(ATTR_ENTITY_CONFIG));
+                    isCreate = false;
+                } else {
+                    Map attrs = SAML2MetaUtils.convertJAXBToAttrMap(
+                        ATTR_ENTITY_CONFIG, config);
+                    if (oldAttrs != null) {
+                        oldAttrs.put(ATTR_ENTITY_CONFIG,
+                            attrs.get(ATTR_ENTITY_CONFIG));
+                        isCreate = false;
+                    } else if (newAttrs != null) {
+                        newAttrs.put(ATTR_ENTITY_CONFIG, 
+                            attrs.get(ATTR_ENTITY_CONFIG));
+                    }
+                }
+            }
+
+            if (isCreate) {
+                configInst.createConfiguration(realm, entityId, newAttrs);
+                if (descriptor != null) {
+                    SAML2MetaCache.putEntityDescriptor(
+                        realm, entityId, descriptor);
+                    LogUtil.access(Level.INFO,
+                        LogUtil.ENTITY_DESCRIPTOR_CREATED, objs, null);
+                } else if (config != null) {
+                    LogUtil.access(Level.INFO,
+                        LogUtil.ENTITY_CONFIG_CREATED, objs, null);
+                }
+                // Add the entity to cot
+                if (config != null) {
+                    SAML2MetaCache.putEntityConfig(realm, entityId, config);
+                    addToCircleOfTrust(realm, entityId, config);
+                }
+            } else {
+                configInst.setConfiguration(realm, entityId, oldAttrs);
+                if (descriptor != null) {
+                    LogUtil.access(Level.INFO,
+                        LogUtil.SET_ENTITY_DESCRIPTOR, objs, null);
+                    SAML2MetaCache.putEntityDescriptor(
+                        realm, entityId, oldDescriptor);
+                } else if (config != null) {
+                    LogUtil.access(Level.INFO,
+                        LogUtil.SET_ENTITY_CONFIG, objs, null);
+                }
+                if (oldConfig != null) {
+                    SAML2MetaCache.putEntityConfig(realm, entityId, oldConfig);
+                } else if (config != null) {
+                    SAML2MetaCache.putEntityConfig(realm, entityId, config);
+                    addToCircleOfTrust(realm, entityId, config);
+                }
+            }
+        } catch (ConfigurationException e) {
+            debug.error("SAML2MetaManager.createEntity:", e);
+            String[] data = { e.getMessage(), entityId, realm };
+            LogUtil.error(Level.INFO,
+                LogUtil.CONFIG_ERROR_CREATE_ENTITY_DESCRIPTOR, data, null);
+            throw new SAML2MetaException(e);
+        } catch (JAXBException jaxbe) {
+            debug.error("SAML2MetaManager.createEntity:", jaxbe);
+            LogUtil.error(Level.INFO,
+                LogUtil.CREATE_INVALID_ENTITY_DESCRIPTOR, objs, null);
+            throw new SAML2MetaException("invalid_descriptor", objs);
         }
     } 
 
@@ -461,6 +640,7 @@ public class SAML2MetaManager {
         }
         return types;
     }
+
 
     /**
      * Deletes the standard metadata entity descriptor under the realm.
@@ -482,25 +662,8 @@ public class SAML2MetaManager {
         String[] objs = { entityId, realm };
         try {
             // Remove the entity from cot
-            IDPSSOConfigElement idpconfig = getIDPSSOConfig(realm, entityId);
-            if (idpconfig !=null) {
-                removeFromCircleOfTrust(idpconfig, realm, entityId); 
-            }   
+            removeFromCircleOfTrust(realm, entityId); 
             
-            SPSSOConfigElement spconfig = getSPSSOConfig(realm, entityId);
-            if (spconfig != null) {
-                removeFromCircleOfTrust(spconfig, realm, entityId); 
-            }   
-            XACMLAuthzDecisionQueryConfigElement pepConfig =
-                getPolicyEnforcementPointConfig(realm,entityId);
-            if (pepConfig != null) {
-                removeFromCircleOfTrust(pepConfig,realm,entityId);
-            }
-            XACMLPDPConfigElement pdpConfig = 
-                getPolicyDecisionPointConfig(realm,entityId);
-            if (pdpConfig != null) {
-                removeFromCircleOfTrust(pdpConfig,realm,entityId);
-            }
             // end of remove entity from cot
             configInst.deleteConfiguration(realm, entityId, null);
             LogUtil.access(Level.INFO,
@@ -542,6 +705,10 @@ public class SAML2MetaManager {
         EntityConfigElement config =
                    SAML2MetaCache.getEntityConfig(realm, entityId);
         if (config != null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaManager.getEntityConfig: got entity "
+                    + "config from SAML2MetaCache: " + entityId);
+            }
             LogUtil.access(Level.FINE,
                            LogUtil.GOT_ENTITY_CONFIG,
                            objs,
@@ -565,6 +732,10 @@ public class SAML2MetaManager {
 
             if (obj instanceof EntityConfigElement) {
                 config = (EntityConfigElement)obj;
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2MetaManager.getEntityConfig: got "
+                        + "entity config from SMS: " + entityId);
+                } 
                 SAML2MetaCache.putEntityConfig(
                     realm, entityId, config);
                 LogUtil.access(Level.FINE,
@@ -574,8 +745,7 @@ public class SAML2MetaManager {
                 return config;
             }
 
-            debug.error("SAML2MetaManager.getEntityConfig: " +
-                        "invalid config");
+            debug.error("SAML2MetaManager.getEntityConfig: invalid config");
             LogUtil.error(Level.INFO,
                           LogUtil.GOT_INVALID_ENTITY_CONFIG,
                           objs,
@@ -853,6 +1023,11 @@ public class SAML2MetaManager {
             Map oldAttrs = configInst.getConfiguration(realm, entityId);
             oldAttrs.put(ATTR_ENTITY_CONFIG, attrs.get(ATTR_ENTITY_CONFIG));
             configInst.setConfiguration(realm, entityId, oldAttrs);
+            SAML2MetaCache.putEntityConfig(realm, entityId, config);
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaManager.setEntityConfig: saved "
+                    + "entity config for " + entityId);
+            }
             LogUtil.access(Level.INFO,
                            LogUtil.SET_ENTITY_CONFIG,
                            objs,
@@ -884,75 +1059,21 @@ public class SAML2MetaManager {
      */
     public void createEntityConfig(String realm, EntityConfigElement config)
         throws SAML2MetaException {
-
-        String entityId = config.getEntityID();
-
-        if (entityId == null) {
-            debug.error(
-                "SAML2MetaManager.createEntityConfig: entity ID is null");
-            String[] data = { realm };
-            LogUtil.error(Level.INFO,
-                LogUtil.NO_ENTITY_ID_CREATE_ENTITY_CONFIG, data, null);
-            throw new SAML2MetaException("empty_entityid", null);
+        if (debug.messageEnabled()) {
+            debug.message("SAML2MetaManager.creatEntityConfig: called.");
         }
-
-        if (realm == null) {
-            realm = "/";
-        }
-
-        String[] objs = { entityId, realm };
-        try {
-            Map attrs = SAML2MetaUtils.convertJAXBToAttrMap(ATTR_ENTITY_CONFIG,
-                config);
-            Map oldAttrs = configInst.getConfiguration(realm, entityId);
-
-            if (oldAttrs == null) {
-                LogUtil.error(Level.INFO,
-                    LogUtil.NO_ENTITY_DESCRIPTOR_CREATE_ENTITY_CONFIG, objs,
-                    null);
-                throw new SAML2MetaException("entity_descriptor_not_exist",
-                    objs);
-            }
-
-            Set oldValues = (Set)oldAttrs.get(ATTR_ENTITY_CONFIG);
-            if ((oldValues != null) && !oldValues.isEmpty() ) {
-                LogUtil.error(Level.INFO, LogUtil.ENTITY_CONFIG_EXISTS,
-                    objs, null);
-                throw new SAML2MetaException("entity_config_exists", objs);
-            }
-
-            configInst.setConfiguration(realm, entityId, attrs);
-            LogUtil.access(Level.INFO, LogUtil.ENTITY_CONFIG_CREATED,
-                objs, null);
-            // Add the entity to cot              
-            SPSSOConfigElement spconfig = getSPSSOConfig(realm, entityId);
-
-            if (spconfig != null) {                                        
-                addToCircleOfTrust(spconfig, realm, entityId); 
-            }
-
-            IDPSSOConfigElement idpconfig = getIDPSSOConfig(realm, entityId);
-            if (idpconfig !=null) {
-                addToCircleOfTrust(idpconfig, realm, entityId); 
-            }                                         
-        } catch (ConfigurationException e) {
-            debug.error("SAML2MetaManager.createEntityConfig:", e);
-            String[] data = { e.getMessage(), entityId, realm };
-            LogUtil.error(Level.INFO,
-                LogUtil.CONFIG_ERROR_CREATE_ENTITY_CONFIG, data, null);
-            throw new SAML2MetaException(e);
-        } catch (JAXBException jaxbe) {
-            debug.error("SAML2MetaManager.createEntityConfig:", jaxbe);
-            LogUtil.error(Level.INFO,
-                LogUtil.CREATE_INVALID_ENTITY_CONFIG, objs, null);
-            throw new SAML2MetaException("invalid_config", objs);
-        }
+        createEntity(realm, null, config);
     }
     
-    private void addToCircleOfTrust(BaseConfigType config, String realm,
-                 String entityId) {
+    private void addToCircleOfTrust(
+        String realm, String entityId, EntityConfigElement eConfig) 
+    {
         try {
-            if (config != null) {
+            if (eConfig != null) {
+                List elist = eConfig.
+                    getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                // use first one to add the entity to COT
+                BaseConfigType config = (BaseConfigType)elist.iterator().next();
                 Map attr = SAML2MetaUtils.getAttributes(config);
                 List cotAttr = (List) attr.get(SAML2Constants.COT_LIST);
                 List cotList = new ArrayList(cotAttr); 
@@ -962,7 +1083,7 @@ public class SAML2MetaManager {
                         String cotName = ((String) iter.next()).trim();
                         if ((cotName != null) && (!cotName.equals(""))) { 
                             cotm.addCircleOfTrustMember(realm,
-                            cotName, COTConstants.SAML2, entityId);
+                            cotName, COTConstants.SAML2, entityId, false);
                         }
                      }               
                  }
@@ -1003,17 +1124,7 @@ public class SAML2MetaManager {
             }
 
             // Remove the entity from cot              
-            IDPSSOConfigElement idpconfig = getIDPSSOConfig(realm,
-                                                entityId);
-            if (idpconfig !=null) {
-                removeFromCircleOfTrust(idpconfig, realm, entityId); 
-            }   
-            
-            SPSSOConfigElement spconfig = getSPSSOConfig(realm,
-                                                        entityId);
-            if (spconfig != null) { 
-                removeFromCircleOfTrust(spconfig, realm, entityId); 
-            }
+            removeFromCircleOfTrust(realm, entityId); 
             
             Set attr = new HashSet();
             attr.add(ATTR_ENTITY_CONFIG);
@@ -1034,28 +1145,31 @@ public class SAML2MetaManager {
         }
     } 
 
-    private void removeFromCircleOfTrust(BaseConfigType config, String realm,
-                 String entityId) {
+    private void removeFromCircleOfTrust(String realm, String entityId) {
         try {
-            if (config != null) {
+            EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+            if (eConfig != null) {
+                List elist = eConfig.
+                    getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                // use first one to delete the entity from COT
+                BaseConfigType config = (BaseConfigType)elist.iterator().next();
                 Map attr = SAML2MetaUtils.getAttributes(config);
                 List cotAttr = (List) attr.get(SAML2Constants.COT_LIST);
                 List cotList = new ArrayList(cotAttr);
                 if ((cotList != null) && !cotList.isEmpty()) {
-                    for (Iterator iter = cotList.iterator(); 
-                        iter.hasNext();) {
+                    for (Iterator iter = cotList.iterator(); iter.hasNext();) {
                         String cotName = ((String) iter.next()).trim();
                         if ((cotName != null) && (!cotName.equals(""))) { 
                             cotm.removeCircleOfTrustMember(realm, 
-                            cotName, COTConstants.SAML2, entityId);
+                            cotName, COTConstants.SAML2, entityId, false);
                         } 
-                     }               
-                 }
-             }
-         } catch (Exception e) {
-             debug.error("SAML2MetaManager.removeFromCircleOfTrust:" +
-                   "Error while removing entity" + entityId + "from COT.",e);
-         }
+                    }               
+                }
+            }
+        } catch (Exception e) {
+            debug.error("SAML2MetaManager.removeFromCircleOfTrust:" +
+                "Error while removing entity" + entityId + "from COT.",e);
+        }
     }
 
     /**
