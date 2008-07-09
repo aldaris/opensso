@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.25 2008-06-27 22:30:29 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.26 2008-07-09 18:52:02 babysunil Exp $
  *
  */
 
@@ -451,6 +451,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     SingleLogoutServiceElement spslsElem = 
                             (SingleLogoutServiceElement) logoutList.get(i);
                     String tmp = spslsElem.getBinding();
+                    if (i == 0) {
+                      map.put(SINGLE_LOGOUT_DEFAULT, 
+                              returnEmptySetIfValueIsNull(tmp));
+                    }
                     if (tmp.contains(httpRedirect)) {
                         map.put(SINGLE_LOGOUT_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
@@ -486,6 +490,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     ManageNameIDServiceElement mniElem = 
                         (ManageNameIDServiceElement) manageNameIdList.get(i);
                     String tmp = mniElem.getBinding();
+                    if (i == 0) {
+                      map.put(SINGLE_MANAGE_NAMEID_DEFAULT, 
+                              returnEmptySetIfValueIsNull(tmp));
+                    }
                     if (tmp.contains(httpRedirect)) {
                         map.put(MANAGE_NAMEID_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
@@ -696,6 +704,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     SingleLogoutServiceElement spslsElem = 
                             (SingleLogoutServiceElement) splogoutList.get(i);
                     String tmp = spslsElem.getBinding();
+                    if (i == 0) {
+                      map.put(SP_LOGOUT_DEFAULT, 
+                              returnEmptySetIfValueIsNull(tmp));
+                    }
                     if (tmp.contains(httpRedirect)) {
                         map.put(SP_SINGLE_LOGOUT_HTTP_LOCATION,
                             returnEmptySetIfValueIsNull(
@@ -732,6 +744,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     ManageNameIDServiceElement mniElem = 
                         (ManageNameIDServiceElement) manageNameIdList.get(i);
                     String tmp = mniElem.getBinding();
+                    if (i == 0) {
+                      map.put(SP_MNI_DEFAULT, 
+                              returnEmptySetIfValueIsNull(tmp));
+                    }
                     if (tmp.contains(httpRedirect)) {
                         map.put(SP_MANAGE_NAMEID_HTTP_LOCATION,
                         returnEmptySetIfValueIsNull(mniElem.getLocation()));
@@ -934,6 +950,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             idpStdValues, SLO_POST_RESPLOC);
                     String losoapLocation = getResult(
                             idpStdValues, SINGLE_LOGOUT_SOAP_LOCATION);
+                    String priority = getResult(
+                            idpStdValues, SINGLE_LOGOUT_DEFAULT);
                     
                     List logList = idpssoDescriptor.getSingleLogoutService();
                     
@@ -941,31 +959,25 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         logList.clear();                        
                     }
                     
-                    if (lohttpLocation != null && lohttpLocation.length() > 0) {
-                        SingleLogoutServiceElement slsElemRed = 
-                                objFact.createSingleLogoutServiceElement();   
-                        slsElemRed.setBinding(httpRedirectBinding);
-                        slsElemRed.setLocation(lohttpLocation);
-                        slsElemRed.setResponseLocation(lohttpRespLocation);
-                        logList.add(slsElemRed);
-                    }
-                    
-                    if (postLocation != null && postLocation.length() > 0) {
-                        SingleLogoutServiceElement slsElemPost = 
-                                objFact.createSingleLogoutServiceElement();
-                        slsElemPost.setBinding(httpPostBinding);
-                        slsElemPost.setLocation(postLocation);
-                        slsElemPost.setResponseLocation(postRespLocation);
-                        logList.add(slsElemPost);
-                    }
-                    
-                    if (losoapLocation != null && losoapLocation.length() > 0) {
-                        SingleLogoutServiceElement slsElemSoap = 
-                                objFact.createSingleLogoutServiceElement();
-                        slsElemSoap.setBinding(soapBinding);
-                        slsElemSoap.setLocation(losoapLocation);
-                        logList.add(slsElemSoap);
-                    }
+                    if (priority.contains("HTTP-Redirect")) {
+                        savehttpRedLogout(lohttpLocation, 
+                                lohttpRespLocation, logList, objFact);
+                        savepostLogout(postLocation, 
+                                postRespLocation, logList, objFact);
+                        savesoapLogout(losoapLocation, logList, objFact);
+                    } else if (priority.contains("HTTP-POST")) {
+                        savepostLogout(postLocation, 
+                                postRespLocation, logList, objFact);
+                        savehttpRedLogout(lohttpLocation, 
+                                lohttpRespLocation, logList, objFact);                       
+                        savesoapLogout(losoapLocation, logList, objFact);
+                    } else if (priority.contains("SOAP")) {
+                        savesoapLogout(losoapLocation, logList, objFact);                    
+                        savehttpRedLogout(lohttpLocation, 
+                                lohttpRespLocation, logList, objFact);
+                        savepostLogout(postLocation, 
+                                postRespLocation, logList, objFact);                     
+                    }                    
                 }
                 
                 // save for Manage Name ID Service
@@ -981,6 +993,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             idpStdValues, MNI_POST_RESPLOC);                
                     String mnisoapLocation = getResult(
                             idpStdValues, MANAGE_NAMEID_SOAP_LOCATION);
+                    String priority = getResult(
+                            idpStdValues, SINGLE_MANAGE_NAMEID_DEFAULT);  
+                    
                     List manageNameIdList =
                             idpssoDescriptor.getManageNameIDService();
                     
@@ -988,31 +1003,24 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         manageNameIdList.clear();                        
                     }
                     
-                    if (mnihttpLocation != null &&
-                            mnihttpLocation.length() > 0) {
-                        ManageNameIDServiceElement mniElemRed = 
-                                objFact.createManageNameIDServiceElement(); 
-                        mniElemRed.setBinding(httpRedirectBinding);
-                        mniElemRed.setLocation(mnihttpLocation);
-                        mniElemRed.setResponseLocation(mnihttpRespLocation);
-                        manageNameIdList.add(mniElemRed);
-                    }
-                    if (mnipostLocation != null && 
-                            mnipostLocation.length() > 0) {
-                        ManageNameIDServiceElement mniElemPost = 
-                                objFact.createManageNameIDServiceElement();
-                        mniElemPost.setBinding(httpPostBinding);
-                        mniElemPost.setLocation(mnipostLocation);                        
-                        mniElemPost.setResponseLocation(mnipostRespLocation);
-                        manageNameIdList.add(mniElemPost);
-                    }
-                    if (mnisoapLocation != null && 
-                            mnisoapLocation.length() > 0) {
-                        ManageNameIDServiceElement mniElemSoap = 
-                                objFact.createManageNameIDServiceElement();
-                        mniElemSoap.setBinding(soapBinding);
-                        mniElemSoap.setLocation(mnisoapLocation);
-                        manageNameIdList.add(mniElemSoap);
+                    if (priority.contains("HTTP-Redirect")) {
+                        savehttpRedMni(mnihttpLocation, 
+                                mnihttpRespLocation, manageNameIdList, objFact);
+                        savepostMni(mnipostLocation, 
+                                mnipostRespLocation, manageNameIdList, objFact);
+                        savesoapMni(mnisoapLocation, manageNameIdList, objFact);
+                    } else if (priority.contains("HTTP-POST")) {
+                        savepostMni(mnipostLocation, 
+                                mnipostRespLocation, manageNameIdList, objFact);
+                        savehttpRedMni(mnihttpLocation, 
+                                mnihttpRespLocation, manageNameIdList, objFact);                       
+                        savesoapMni(mnisoapLocation, manageNameIdList, objFact);
+                    } else if (priority.contains("SOAP")) {
+                        savesoapMni(mnisoapLocation, manageNameIdList, objFact);                    
+                        savehttpRedMni(mnihttpLocation, 
+                                mnihttpRespLocation, manageNameIdList, objFact);
+                        savepostMni(mnipostLocation, 
+                                mnipostRespLocation, manageNameIdList, objFact);                     
                     }
                 }
                 
@@ -1234,42 +1242,33 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             spStdValues, SP_SLO_POST_RESPLOC);                
                     String losoapLocation = getResult(
                             spStdValues, SP_SINGLE_LOGOUT_SOAP_LOCATION);
+                    String priority = getResult(
+                            spStdValues, SP_LOGOUT_DEFAULT);
+                    
                     List logList = spssoDescriptor.getSingleLogoutService();
                     
                     if (!logList.isEmpty()) {
                         logList.clear();                        
                     }
                     
-                    if (lohttpLocation != null && 
-                            lohttpLocation.length() > 0) 
-                    {                    
-                        SingleLogoutServiceElement slsElemRed = 
-                                objFact.createSingleLogoutServiceElement();   
-                        slsElemRed.setBinding(httpRedirectBinding);
-                        slsElemRed.setLocation(lohttpLocation);
-                        slsElemRed.setResponseLocation(lohttpRespLocation);
-                        logList.add(slsElemRed);
-                    }
-                    
-                    if (lopostLocation != null && 
-                            lopostLocation.length() > 0) 
-                    {
-                        SingleLogoutServiceElement slsElemPost = 
-                                objFact.createSingleLogoutServiceElement();
-                        slsElemPost.setBinding(httpPostBinding);
-                        slsElemPost.setLocation(lopostLocation);
-                        slsElemPost.setResponseLocation(lopostRespLocation);
-                        logList.add(slsElemPost);
-                    }
-                    
-                    if (losoapLocation != null && 
-                            losoapLocation.length() > 0) 
-                    {
-                        SingleLogoutServiceElement slsElemSoap = 
-                                objFact.createSingleLogoutServiceElement();
-                        slsElemSoap.setBinding(soapBinding);
-                        slsElemSoap.setLocation(losoapLocation);
-                        logList.add(slsElemSoap);
+                    if (priority.contains("HTTP-Redirect")) {
+                        savehttpRedLogout(lohttpLocation, 
+                                lohttpRespLocation, logList, objFact);
+                        savepostLogout(lopostLocation, 
+                                lopostRespLocation, logList, objFact);
+                        savesoapLogout(losoapLocation, logList, objFact);
+                    } else if (priority.contains("HTTP-POST")) {
+                        savepostLogout(lopostLocation, 
+                                lopostRespLocation, logList, objFact);
+                        savehttpRedLogout(lohttpLocation, 
+                                lohttpRespLocation, logList, objFact);                       
+                        savesoapLogout(losoapLocation, logList, objFact);
+                    } else if (priority.contains("SOAP")) {
+                        savesoapLogout(losoapLocation, logList, objFact);                    
+                        savehttpRedLogout(lohttpLocation, 
+                                lohttpRespLocation, logList, objFact);
+                        savepostLogout(lopostLocation, 
+                                lopostRespLocation, logList, objFact);                     
                     }
                 }
                 
@@ -1289,6 +1288,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             spStdValues, SP_MANAGE_NAMEID_SOAP_LOCATION);
                     String mnisoapResLocation = getResult(
                             spStdValues, SP_MANAGE_NAMEID_SOAP_RESP_LOCATION);
+                    String priority = getResult(
+                            spStdValues, SP_MNI_DEFAULT);
+                    
                     List manageNameIdList =
                             spssoDescriptor.getManageNameIDService();
                       
@@ -1296,38 +1298,25 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         manageNameIdList.clear();                        
                     }
                     
-                    if (mnihttpLocation != null && 
-                            mnihttpLocation.length() > 0) 
-                    {
-                        ManageNameIDServiceElement mniElemRed = 
-                                objFact.createManageNameIDServiceElement();
-                        mniElemRed.setBinding(httpRedirectBinding);
-                        mniElemRed.setLocation(mnihttpLocation);
-                        mniElemRed.setResponseLocation(mnihttpRespLocation);
-                        manageNameIdList.add(mniElemRed);
-                    }
-                    
-                    if (mnipostLocation != null && 
-                            mnipostLocation.length() > 0) 
-                    {
-                        ManageNameIDServiceElement mniElemPost = 
-                                objFact.createManageNameIDServiceElement();
-                        mniElemPost.setBinding(httpPostBinding);
-                        mniElemPost.setLocation(mnipostLocation);
-                        mniElemPost.setResponseLocation(mnipostRespLocation);
-                        manageNameIdList.add(mniElemPost);
-                    }
-                    
-                    if (mnisoapLocation != null && 
-                            mnisoapLocation.length() > 0) 
-                    {
-                        ManageNameIDServiceElement mniElemSoap = 
-                                objFact.createManageNameIDServiceElement();
-                        mniElemSoap.setBinding(soapBinding);
-                        mniElemSoap.setLocation(mnisoapLocation);
-                        mniElemSoap.setResponseLocation(mnisoapResLocation);
-                        manageNameIdList.add(mniElemSoap);
-                    }
+                    if (priority.contains("HTTP-Redirect")) {
+                        savehttpRedMni(mnihttpLocation, 
+                                mnihttpRespLocation, manageNameIdList, objFact);
+                        savepostMni(mnipostLocation, 
+                                mnipostRespLocation, manageNameIdList, objFact);
+                        savesoapMni(mnisoapLocation, manageNameIdList, objFact);
+                    } else if (priority.contains("HTTP-POST")) {
+                        savepostMni(mnipostLocation, 
+                                mnipostRespLocation, manageNameIdList, objFact);
+                        savehttpRedMni(mnihttpLocation, 
+                                mnihttpRespLocation, manageNameIdList, objFact);                       
+                        savesoapMni(mnisoapLocation, manageNameIdList, objFact);
+                    } else if (priority.contains("SOAP")) {
+                        savesoapMni(mnisoapLocation, manageNameIdList, objFact);                    
+                        savehttpRedMni(mnihttpLocation, 
+                                mnihttpRespLocation, manageNameIdList, objFact);
+                        savepostMni(mnipostLocation, 
+                                mnipostRespLocation, manageNameIdList, objFact);                     
+                    }       
                 }
                 
                 //save for artifact and post Assertion Consumer Service                
@@ -3393,6 +3382,150 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR",
                     paramsEx);
             throw new AMConsoleException(strError);
+        }
+    }
+    
+    /**
+     * Saves the Http-Redirect Single Logout Service.
+     *
+     * @param lohttpLocation is the location url.
+     * @param lohttpRespLocation is the response location url.
+     * @param logList the live list to be updated.
+     * @param objFact the Object Factory class.
+     * @throws JAXBException if save fails.
+     */
+    private void savehttpRedLogout (
+            String lohttpLocation,
+            String lohttpRespLocation,
+            List logList,
+            com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact
+    ) throws JAXBException {
+        if (lohttpLocation != null && lohttpLocation.length() > 0) {
+            SingleLogoutServiceElement slsElemRed = 
+                    objFact.createSingleLogoutServiceElement();   
+            slsElemRed.setBinding(httpRedirectBinding);
+            slsElemRed.setLocation(lohttpLocation);
+            slsElemRed.setResponseLocation(lohttpRespLocation);
+            logList.add(slsElemRed);
+        }
+    }
+    
+    /**
+     * Saves the Post Single Logout Service.
+     *
+     * @param postLocation is the location url.
+     * @param postRespLocation is the response location url.
+     * @param logList the live list to be updated.
+     * @param objFact the Object Factory class.
+     * @throws JAXBException if save fails.
+     */
+    private void savepostLogout( 
+            String postLocation, 
+            String postRespLocation, 
+            List logList,
+            com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact
+    ) throws JAXBException {
+        if (postLocation != null && postLocation.length() > 0) {
+            SingleLogoutServiceElement slsElemPost =
+                    objFact.createSingleLogoutServiceElement();
+            slsElemPost.setBinding(httpPostBinding);
+            slsElemPost.setLocation(postLocation);
+            slsElemPost.setResponseLocation(postRespLocation);
+            logList.add(slsElemPost);
+        }
+    }
+    
+    /**
+     * Saves the Soap Single Logout Service.
+     *
+     * @param losoapLocation is the location url.
+     * @param logList the live list to be updated.
+     * @param objFact the Object Factory class.
+     * @throws JAXBException if save fails.
+     */
+    private void savesoapLogout(
+            String losoapLocation, 
+            List logList, 
+            com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact
+    ) throws JAXBException {
+        if (losoapLocation != null && losoapLocation.length() > 0) {
+            SingleLogoutServiceElement slsElemSoap =
+                    objFact.createSingleLogoutServiceElement();
+            slsElemSoap.setBinding(soapBinding);
+            slsElemSoap.setLocation(losoapLocation);
+            logList.add(slsElemSoap);
+        }
+    }
+   
+    /**
+     * Saves the Http-Redirect ManageNameID Service.
+     *
+     * @param mnihttpLocation is the location url.
+     * @param mnihttpRespLocation is the response location url.
+     * @param manageNameIdList the live list to be updated.
+     * @param objFact the Object Factory class.
+     * @throws JAXBException if save fails.
+     */
+   private void savehttpRedMni (
+            String mnihttpLocation,
+            String mnihttpRespLocation,
+            List manageNameIdList,
+            com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact
+   ) throws JAXBException {
+        if (mnihttpLocation != null && mnihttpLocation.length() > 0) {
+            ManageNameIDServiceElement slsElemRed = 
+                    objFact.createManageNameIDServiceElement();
+            slsElemRed.setBinding(httpRedirectBinding);
+            slsElemRed.setLocation(mnihttpLocation);
+            slsElemRed.setResponseLocation(mnihttpRespLocation);
+            manageNameIdList.add(slsElemRed);
+        }
+    }
+   
+   /**
+     * Saves the Post ManageNameID Service.
+     *
+     * @param mnipostLocation is the location url.
+     * @param mnipostRespLocation is the response location url.
+     * @param manageNameIdList the live list to be updated.
+     * @param objFact the Object Factory class.
+     * @throws JAXBException if save fails.
+     */
+   private void savepostMni( 
+            String mnipostLocation, 
+            String mnipostRespLocation, 
+            List manageNameIdList,
+            com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact
+   ) throws JAXBException {
+        if (mnipostLocation != null && mnipostLocation.length() > 0) {
+            ManageNameIDServiceElement slsElemPost =
+                    objFact.createManageNameIDServiceElement();
+            slsElemPost.setBinding(httpPostBinding);
+            slsElemPost.setLocation(mnipostLocation);
+            slsElemPost.setResponseLocation(mnipostRespLocation);
+            manageNameIdList.add(slsElemPost);
+        }
+    }
+    
+    /**
+     * Saves the Soap ManageNameID Service.
+     *
+     * @param mnisoapLocation is the location url.
+     * @param manageNameIdList the live list to be updated.
+     * @param objFact the Object Factory class.
+     * @throws JAXBException if save fails.
+     */
+    private void savesoapMni(
+            String mnisoapLocation, 
+            List manageNameIdList, 
+            com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact
+    ) throws JAXBException {
+        if (mnisoapLocation != null && mnisoapLocation.length() > 0) {
+            ManageNameIDServiceElement slsElemSoap =
+                    objFact.createManageNameIDServiceElement();
+            slsElemSoap.setBinding(soapBinding);
+            slsElemSoap.setLocation(mnisoapLocation);
+            manageNameIdList.add(slsElemSoap);
         }
     }
     

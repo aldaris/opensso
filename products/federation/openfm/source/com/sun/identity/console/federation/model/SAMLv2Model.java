@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.19 2008-06-27 22:30:26 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.20 2008-07-09 18:51:52 babysunil Exp $
  *
  */
 
@@ -88,6 +88,10 @@ public interface SAMLv2Model
     public static final String MNI_POST_LOC = "mnipostLocation";
     public static final String MNI_POST_RESPLOC = "mnipostResponseLocation";
     public static final String SSO_SOAPS_LOC = "ssosoapsLocation";
+    public static final String SINGLE_LOGOUT_DEFAULT =
+        "singleChoiceSingleLogOutProfile";
+    public static final String SINGLE_MANAGE_NAMEID_DEFAULT =
+        "singleChoiceMangeNameIDProfile";
     
     //SAMLv2 SP Standard attributes
     public static final String IS_AUTHN_REQ_SIGNED = "AuthnRequestsSigned";
@@ -127,6 +131,10 @@ public interface SAMLv2Model
         "PaosIndex";
     public static final String PAOS_ASSRT_CONS_SERVICE_LOCATION =
         "PaosLocation";
+    public static final String SP_LOGOUT_DEFAULT =
+        "isDefaultSLO";
+    public static final String SP_MNI_DEFAULT =
+        "isDefaultMNI";
     
     //SAML2 IDP Extended Attributes
     public static final String IDP_SIGN_CERT_ALIAS = 

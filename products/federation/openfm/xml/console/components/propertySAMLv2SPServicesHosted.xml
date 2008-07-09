@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPServicesHosted.xml,v 1.2 2008-06-25 05:51:07 qcheng Exp $
+   $Id: propertySAMLv2SPServicesHosted.xml,v 1.3 2008-07-09 18:51:11 babysunil Exp $
 
 -->
 
@@ -41,15 +41,25 @@
     <section name="services" defaultValue="samlv2idp.provider.section.title.spcommonServices" >
         <property>
             <label name="lblSingleLogout" defaultValue="samlv2idp.attribute.label.singlelogout" />
-            <ccgroup>    
+            <ccgroup>
+                <property>
+                    <label name="lblSingleChoiceLogout" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicedefault" 
+                           labelFor="isDefaultSLO" />
+                    <cc name="isDefaultSLO" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+                        <option label="samlv2idp.attribute.label.httpredirectsinglelogout" value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" />
+                        <option label="samlv2idp.attribute.label.postsinglelogout" value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" />
+                        <option label="samlv2idp.attribute.label.soapsinglelogout" value="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" />
+                    </cc>
+                </property>
+               </ccgroup>
+               <ccgroup>
                 <property>
                     <label name="lblHttpRedirSingleLogout" defaultValue="samlv2sp.attribute.label.httpredirectsinglelogout" />
                     <ccgroup>
                         <property>
-                            <label name="lblHttpRedirectLocation" defaultValue="samlv2sp.attribute.label.httpredirectlocation" 
+                            <label name="lblHttpRedirectLocation" defaultValue="samlv2sp.attribute.label.httpredirectlocation"
                                    labelFor="slohttpLocation" />
-                            
-                            <cc name="slohttpLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                                   <cc name="slohttpLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                                 <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
                                 <attribute name="localizeDisplayFieldValue" value="false" />
@@ -66,13 +76,14 @@
                         </property>
                     </ccgroup>
                 </property>
-                
+                </ccgroup>
+                <ccgroup>
                 <property>
                     <label name="lblPostSingleLogout" defaultValue="samlv2sp.attribute.label.postsinglelogout" />
                     <ccgroup>
                         <property>
                             <label name="lblHttpRedirectLocation" defaultValue="samlv2sp.attribute.label.httpredirectlocation" 
-                                   labelFor="slopostLocation" />                            
+                                   labelFor="slopostLocation" />
                             <cc name="slopostLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                                 <attribute name="size" value="105" />
                                 <attribute name="autoSubmit" value="false" />
@@ -90,8 +101,8 @@
                         </property>
                     </ccgroup>
                 </property>
-                
-                
+                </ccgroup>
+                <ccgroup>
                 <property>
                     <label name="lblSoapSingleLogout" defaultValue="samlv2sp.attribute.label.soapsinglelogout" />
                     <ccgroup>
@@ -104,13 +115,24 @@
                                 <attribute name="localizeDisplayFieldValue" value="false" />
                             </cc>
                         </property>
-                    </ccgroup>            
+                    </ccgroup>
                 </property>
-            </ccgroup> 
+            </ccgroup>
         </property>
         <property>
-            <label name="lblManageNameId" defaultValue="samlv2idp.attribute.label.managenameid" />
-            <ccgroup> 
+            <label name="lblManageNameId" defaultValue="samlv2idp.attribute.label.managenameid" />            
+            <ccgroup>
+                <property>
+                    <label name="lblSingleChoiceMNI" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicedefault"
+                           labelFor="isDefaultMNI" />
+                    <cc name="isDefaultMNI" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+                        <option label="samlv2idp.attribute.label.httpredirectsinglelogout" value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" />
+                        <option label="samlv2idp.attribute.label.postsinglelogout" value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" />
+                        <option label="samlv2idp.attribute.label.soapsinglelogout" value="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" />
+                    </cc>
+                </property>
+               </ccgroup>
+            <ccgroup>
                 <property>
                     <label name="lblHttpRedirManageNameIDService" defaultValue="samlv2sp.attribute.label.httpredirectmanagenameidservice" />
                     <ccgroup>
@@ -135,8 +157,7 @@
                     </ccgroup>
                 </property>
             </ccgroup>
-            
-             <ccgroup> 
+            <ccgroup>
                 <property>
                     <label name="lblPostManageNameIDService" defaultValue="samlv2sp.attribute.label.postmanagenameidservice" />
                     <ccgroup>
@@ -161,7 +182,6 @@
                     </ccgroup>
                 </property>
             </ccgroup>
-            
             <ccgroup>
                 <property>
                     <label name="lblSoapManageNameIDService" defaultValue="samlv2sp.attribute.label.soapmanagenameidservice" />
@@ -186,7 +206,7 @@
                         </property>
                     </ccgroup>
                 </property>
-            </ccgroup>   
+            </ccgroup>
         </property>
         <property>
             <label name="lblArtifactAssertConsumerService" defaultValue="samlv2idp.attribute.label.artifactassertconsumerservice" />
@@ -194,11 +214,11 @@
                 <property>
                     <label name="lblHttpArtifactAssertConsumerDefault" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicedefault" 
                            labelFor="isDefault" />
-                    <cc name="isDefault" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
+                    <cc name="isDefault" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
                         <attribute name="defaultValue" value="true"/>
                         <option label="label.artifact" value="true"/>
                         <option label="label.post" value="false"/>
-                    </cc>                  
+                    </cc>
                 </property>
             </ccgroup>
             <ccgroup>
@@ -206,7 +226,7 @@
                     <label name="lblHttpArtifactAssertConsumerService" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservice" />
                     <ccgroup>
                         <property>
-                            <label name="lblHttpArtifactAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicelocation" 
+                            <label name="lblHttpArtifactAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicelocation"
                                    labelFor="httpArtifactLocation" />
                             <cc name="httpArtifactLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                                 <attribute name="size" value="85" />
@@ -217,7 +237,6 @@
                         <property>
                             <label name="lblHttpArtifactAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerserviceindex"
                                    labelFor="httpArtifactIndex" />
-                            
                             <cc name="httpArtifactIndex" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                                 <attribute name="size" value="2" />
                                 <attribute name="autoSubmit" value="false" />
@@ -240,8 +259,7 @@
                         </property>
                         <property>
                             <label name="lblHttpPostAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.httppostassertconsumerserviceindex" 
-                                   labelFor="httpPostIndex" />
-                            
+                                   labelFor="httpPostIndex" />                          
                             <cc name="httpPostIndex" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
                                 <attribute name="size" value="2" />
                                 <attribute name="autoSubmit" value="false" />
@@ -250,9 +268,7 @@
                         </property>
                     </ccgroup>
                 </property>
-                
-            </ccgroup>   
+                </ccgroup>   
         </property>
     </section>
-   
 </propertysheet>
