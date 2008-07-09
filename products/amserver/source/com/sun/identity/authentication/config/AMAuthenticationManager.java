@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthenticationManager.java,v 1.5 2008-06-25 05:41:51 qcheng Exp $
+ * $Id: AMAuthenticationManager.java,v 1.6 2008-07-09 17:31:17 pawand Exp $
  *
  */
 
@@ -241,17 +241,14 @@ public class AMAuthenticationManager {
      */
     private static void buildModuleInstanceTable(SSOToken token, String realm) {
         try {
-            OrganizationConfigManager ocm = 
-                    new OrganizationConfigManager(token, realm);
-            Set servicesAssigned = ocm.getAssignedServices();
-            if (servicesAssigned == null) {
-                return;
+            if (debug.messageEnabled()) {
+                debug.message("AMAuthenticationManager." +
+                    "buildModuleInstanceTable: realm = " + realm);
             }
-            for (Iterator it = servicesAssigned.iterator(); it.hasNext(); ) {
+            Collection authServiceNames = moduleServiceNames.values();
+            for (Iterator it = authServiceNames.iterator(); it.hasNext(); ) {
                 String service = (String) it.next();
-                if (moduleServiceNames.containsValue(service)) {
-                    buildModuleInstanceForService(realm, service);
-                }
+                buildModuleInstanceForService(realm, service);
             }
         } catch (Exception e) {
             if (debug.messageEnabled()) {
@@ -283,6 +280,13 @@ public class AMAuthenticationManager {
                 ServiceConfigManager scm = new ServiceConfigManager(
                     serviceName, adminToken);
                 ServiceConfig config = scm.getOrganizationConfig(realm, null);
+                if (config == null) {
+                    if (debug.messageEnabled()) {
+                        debug.message("AMAuthenticationManager." +
+                            "buildModuleInstanceForService: Service="
+                            + serviceName + " not configured in realm="+realm);
+                    }
+                }
                 realm = com.sun.identity.sm.DNMapper.orgNameToDN(realm);
                 
                 Map moduleMap = (Map)moduleInstanceTable.remove(realm);
@@ -296,11 +300,17 @@ public class AMAuthenticationManager {
                     moduleMap = newMap;
                 }
                 Set instanceSet = new HashSet();
-                Map defaultAttrs = config.getAttributesWithoutDefaults();
+                Map defaultAttrs = null;
+                if (config != null) {
+                    defaultAttrs = config.getAttributesWithoutDefaults();
+                }
                 if (defaultAttrs != null && !defaultAttrs.isEmpty()) {
                     instanceSet.add(moduleName);
                 }
-                Set instances = config.getSubConfigNames();
+                Set instances = null;
+                if (config != null) {
+                    instances = config.getSubConfigNames();
+                }
                 if (instances != null) {
                     instanceSet.addAll(instances);
                 }
