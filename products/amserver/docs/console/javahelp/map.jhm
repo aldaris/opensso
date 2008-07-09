@@ -12,6 +12,7 @@
 	<mapID target="realm.rmrealm" url="realm.rmrealm.html"/>
 	<mapID target="realm.rmrealmadd" url="realm.rmrealmadd.html"/>
 	<mapID target="realm.realmproperties" url="realm.realmproperties.html"/>
+        <mapID target="realm.IDRepoEdit" url="realm.IDRepoEdit.html"/>   
 	<mapID target="authentication.authproperties" url="authentication.authproperties.html"/>
 	<mapID target="authentication.newauthinstance" url="authentication.newauthinstance.html"/>
 	<mapID target="authentication.newauthconfig" url="authentication.newauthconfig.html"/>
@@ -30,6 +31,7 @@
 	<mapID target="policy.policynormaladd" url="policy.policynormaladd.html"/>
 	<mapID target="normalrule" url="normalrule.html"/>
 	<mapID target="policy.ruleadd" url="policy.ruleadd.html"/>
+        <mapID target="policy.selectservicetype" url="policy.ruleAdd.hmtl"/>
 	<mapID target="normalsubject" url="normalsubject.html"/>
 	<mapID target="policy.subjectadd" url="policy.subjectadd.html"/>
 	<mapID target="policyconditions" url="policyconditions.html"/>
@@ -52,6 +54,8 @@
 	<mapID target="referrals" url="referrals.html"/>
 	<mapID target="policy.selectreferraltype" url="policy.selectreferraltype.html"/>
 	<mapID target="idm.entities" url="idm.entities.html"/>
+        <mapID target="idm.entity.edit" url="idm.entityadd.html"/>
+        <mapID target="idm.entityadd" url="idm.entityadd.html"/>
 	<mapID target="subjectuser" url="subjectuser.html"/>
 	<mapID target="subjectcreateuser" url="subjectcreateuser.html"/>
 	<mapID target="idm.entitymembership" url="idm.entitymembership.html"/>
@@ -62,12 +66,11 @@
 	<mapID target="ggobs" url="ggobs.html"/>
 	<mapID target="agentconfig.agentadd" url="agentconfig.agentadd.html"/>
 	<mapID target="agentconfig.agentgroupadd" url="agentconfig.agentgroupadd.html"/>
-	<mapID target="ggouy" url="ggouy.html"/>
+	<mapID target="ggouy" url="ggouy.html"/>                                                      
 	<mapID target="agentconfig.genericagentprofile" url="agentconfig.genericagentprofile.html"/>
-	<mapID target="agentconfig.j2eeagentprofile" url="agentconfig.j2eeagentprofile.html"/>
 	<mapID target="agentconfig.webserviceprovideredit" url="agentconfig.webserviceprovideredit.html"/>
 	<mapID target="agentconfig.webserviceclientedit" url="agentconfig.webserviceclientedit.html"/>
-	<mapID target="agentconfig.stsclientedit" url="agentconfig.stsclientedit.html"/>
+	<mapID target="agentconfig.stsclientedit" url="agentconfig.stsclientedit.html"/>   
 	<mapID target="ggtty" url="ggtty.html"/>
 	<mapID target="ggtvl" url="ggtvl.html"/>
 	<mapID target="ggttl" url="ggttl.html"/>
@@ -90,15 +93,22 @@
 	<mapID target="ggwxk" url="ggwxk.html"/>
 	<mapID target="ggwwr" url="ggwwr.html"/>
 	<mapID target="federation.samlv2spassertioncontent" url="federation.samlv2spassertioncontent.html"/>
+	<mapID target="federation.samlv2SPAssertionProccessing" url="federation.samlv2spAssertionContent.html"/>
+	<mapID target="federation.samlv2SPServices" url="federation.samlv2spAssertionContent.html"/>
+	<mapID target="federation.samlv2spAdvanced" url="federation.samlv2spAssertionContent.html"/>
 	<mapID target="federation.samlv2idpassertioncontent" url="federation.samlv2idpassertioncontent.html"/>
+	<mapID target="federation.samlv2IDPAssertionProccessing" url="federation.samlv2IDPAssertionContent.html"/>
+        <mapID target="federation.samlv2IDPServices" url="federation.samlv2IDPAssertionContent.html"/>
+        <mapID target="federation.samlv2IDPAdvanced" url="federation.samlv2IDPAssertionContent.html"/>
 	<mapID target="federation.samlv2pdp" url="federation.samlv2pdp.html"/>
 	<mapID target="federation.samlv2pep" url="federation.samlv2pep.html"/>
 	<mapID target="federation.samlv2attrauthority" url="federation.samlv2attrauthority.html"/>
 	<mapID target="federation.samlv2attrpuery" url="federation.samlv2attrpuery.html"/>
 	<mapID target="federation.samlv2authnauthority" url="federation.samlv2authnauthority.html"/>
-	<mapID target="federation.samlv2hostedaffiliation" url="federation.samlv2hostedaffiliation.html"/>
+	<mapID target="federation.samlv2affiliate" url="federation.samlv2affiliate.html"/>
 	<mapID target="federation.idffidp" url="federation.idffidp.html"/>
 	<mapID target="federation.idffsp" url="federation.idffsp.html"/>
+        <mapID target="federation.IDFFAffiliate" url="federation.IDFFAffiliate.html"/>
 	<mapID target="ggwxz" url="ggwxz.html"/>
 	<mapID target="federation.wsfedidp" url="federation.wsfedidp.html"/>
 	<mapID target="federation.wsfedsp" url="federation.wsfedsp.html"/>
@@ -109,6 +119,7 @@
 	<mapID target="trustedpartners" url="trustedpartners.html"/>
 	<mapID target="federation.fssamlselecttrustedpartnertype" url="federation.fssamlselecttrustedpartnertype.html"/>
 	<mapID target="federation.fssamltrustedpartnersadd" url="federation.fssamltrustedpartnersadd.html"/>
+        <mapID target="federation.FSSAMLTrustedPartnersEdit" url="federation.FSSAMLTrustedPartnersAdd.html"/>
 	<mapID target="targeturl" url="targeturl.html"/>
 	<mapID target="federation.fssamltargeturlsadd" url="federation.fssamltargeturlsadd.html"/>
 	<mapID target="assertiontimeout" url="assertiontimeout.html"/>
