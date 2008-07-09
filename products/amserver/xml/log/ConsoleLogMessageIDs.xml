@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.8 2008-06-25 05:45:39 qcheng Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.9 2008-07-09 02:04:50 veiming Exp $
 
 -->
 
@@ -2568,7 +2568,9 @@
      <logmessage name="ATTEMPT_GET_AUTH_TYPE" id="801"
         loglevel="LL_INFO"
         description="Attempt to get authentication type">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View authentication profile page.</item>
        </triggers>
@@ -2577,7 +2579,9 @@
     <logmessage name="SUCCEED_GET_AUTH_TYPE" id="802"
         loglevel="LL_INFO"
         description="Getting of authentication type succeeded.">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View authentication profile page.</item>
         </triggers>
@@ -3638,7 +3642,9 @@
     <logmessage name="ATTEMPT_GET_ALL_PROVIDER_NAMES" id="1151"
         loglevel="LL_INFO"
         description="Attempt to get all provider names">
-        <datainfo />
+        <datainfo>
+            <item>realm name</item>
+        </datainfo>
         <triggers>
             <item>View authentication domain profile page.</item>
        </triggers>
@@ -3647,7 +3653,9 @@
     <logmessage name="SUCCEED_GET_ALL_PROVIDER_NAMES" id="1152"
         loglevel="LL_INFO"
         description="Getting all provider names succeeded.">
-        <datainfo />
+        <datainfo>
+            <item>realm name</item>
+        </datainfo>
         <triggers>
             <item>View authentication domain profile page.</item>
         </triggers>
@@ -8359,7 +8367,9 @@
     <logmessage name="ATTEMPT_GET_SITE_NAMES" id="12001"
         loglevel="LL_INFO"
         description="Attempt to get site names">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -8368,7 +8378,9 @@
     <logmessage name="SUCCEED_GET_SITE_NAMES" id="12002"
         loglevel="LL_INFO"
         description="Site names are returned.">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -8803,7 +8815,9 @@
     <logmessage name="ATTEMPT_GET_SERVER_NAMES" id="12081"
         loglevel="LL_INFO"
         description="Attempt to get server names.">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -8812,7 +8826,9 @@
     <logmessage name="SUCCEED_GET_SERVER_NAMES" id="12082"
         loglevel="LL_INFO"
         description="Server names are returned.">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View site and server management page.</item>
        </triggers>
@@ -9085,7 +9101,9 @@
     <logmessage name="ATTEMPT_GET_SERVER_DEFAULT_CONFIG" id="12221"
         loglevel="LL_INFO"
         description="Attempt to get server default configuration.">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View server profile page.</item>
        </triggers>
@@ -9094,7 +9112,9 @@
     <logmessage name="SUCCEED_GET_SERVER_DEFAULT_CONFIG" id="12222"
         loglevel="LL_INFO"
         description="Server default configuration is returned.">
-        <datainfo />
+        <datainfo>
+            <item>server instance name</item>
+        </datainfo>
         <triggers>
             <item>View server profile page.</item>
        </triggers>

@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.12 2008-06-25 05:42:49 qcheng Exp $
+ * $Id: AMModelBase.java,v 1.13 2008-07-09 02:04:50 veiming Exp $
  *
  */
 
 package com.sun.identity.console.base.model;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.util.ISAuthConstants;
@@ -1132,5 +1133,11 @@ public class AMModelBase
             debug.error("AMModelBase.isAMSDKEnabled", e);
             return false;
         }
+    }
+    
+    protected String[] getServerInstanceForLogMsg() {
+        String[] array = new String[1];
+        array[0] = SystemProperties.getServerInstanceName();
+        return array;
     }
 }

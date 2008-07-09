@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerSiteModelImpl.java,v 1.4 2008-06-25 05:43:19 qcheng Exp $
+ * $Id: ServerSiteModelImpl.java,v 1.5 2008-07-09 02:04:50 veiming Exp $
  *
  */
 
@@ -75,7 +75,7 @@ public class ServerSiteModelImpl
      */
     public Set getSiteNames()
         throws AMConsoleException {
-        String[] param = {};
+        String[] param = getServerInstanceForLogMsg();
         logEvent("ATTEMPT_GET_SITE_NAMES", param);
         
         try {
@@ -323,7 +323,7 @@ public class ServerSiteModelImpl
      */
     public Set getServerNames()
         throws AMConsoleException {
-        String[] param = {};
+        String[] param = getServerInstanceForLogMsg();
         logEvent("ATTEMPT_GET_SERVER_NAMES", param);
 
         try {
@@ -509,7 +509,7 @@ public class ServerSiteModelImpl
      * @return server configuration.
      */
     public Map getServerDefaults() {
-        String[] param = {};
+        String[] param = getServerInstanceForLogMsg();
         logEvent("ATTEMPT_GET_SERVER_DEFAULT_CONFIG", param);
         Map map = ServerConfiguration.getDefaults(getUserSSOToken());
         logEvent("SUCCEED_GET_SERVER_DEFAULT_CONFIG", param);

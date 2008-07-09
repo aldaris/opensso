@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.8 2008-06-25 05:49:39 qcheng Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.9 2008-07-09 02:04:51 veiming Exp $
  *
  */
 
@@ -375,7 +375,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
             throw new AMConsoleException(e.getMessage());
         }
         
-        logEvent("SUCCEED_GET_ALL_PROVIDER_NAMES", null);
+        logEvent("SUCCEED_GET_ALL_PROVIDER_NAMES", params);
         return (availableEntities != null) ?
             availableEntities : Collections.EMPTY_SET;
     }

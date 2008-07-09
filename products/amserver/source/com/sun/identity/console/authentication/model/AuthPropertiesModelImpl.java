@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthPropertiesModelImpl.java,v 1.2 2008-06-25 05:42:46 qcheng Exp $
+ * $Id: AuthPropertiesModelImpl.java,v 1.3 2008-07-09 02:04:49 veiming Exp $
  *
  */
 
@@ -160,7 +160,7 @@ public  class AuthPropertiesModelImpl extends AMModelBase
     public Map getAuthTypes() {
         Map authAndLocalizedTypes = Collections.EMPTY_MAP;
         try {
-            logEvent("ATTEMPT_GET_AUTH_TYPE", null);
+            logEvent("ATTEMPT_GET_AUTH_TYPE", getServerInstanceForLogMsg());
             AMAuthenticationManager mgr = 
                 new AMAuthenticationManager(getUserSSOToken(), "/");
             Set types = mgr.getAuthenticationTypes();
@@ -174,7 +174,7 @@ public  class AuthPropertiesModelImpl extends AMModelBase
                     getLocalizedServiceName(svcName) : authType;
                 authAndLocalizedTypes.put(authType, localizedName);
             }
-            logEvent("SUCCEED_GET_AUTH_TYPE", null);
+            logEvent("SUCCEED_GET_AUTH_TYPE", getServerInstanceForLogMsg());
         } catch (AMConfigurationException e) {
             String strError = getErrorString(e);
             String[] paramEx = {strError};
