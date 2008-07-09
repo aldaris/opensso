@@ -31,21 +31,18 @@
 
 
 <a name="agentconfig.agentgroupadd"></a><h5>To Create a New Group</h5>
-<p>If desired, perform this task in the Federated Access Manager Administration Console. This
-task applies to web agent groups and J2EE agent groups.</p><p>Create a group if you want agents to inherit specific properties from the
-group. J2EE agents can inherit properties from a J2EE agent group while Web
+<p>Create a group if you want agents to inherit specific properties from the
+group. Agents can inherit properties only from their group type. For example, Web
 agents can inherit properties from a web agent group.</p><ol>
 <li><b>Click the Access Control tab.</b></li>
 <li><b>Click the name of the realm to which the group will belong.</b></li>
 <li><b>Click the Agents tab.</b></li>
-<li><b>If necessary, select the tab for the appropriate agent type.</b><ul>
-<li><b>Web Agents:</b><p>The Web tab is for web agents and is the default selection. No
-further selection is necessary.</p></li>
-<li><b>J2EE Agents:</b><p>The J2EE tab is for J2EE agents. If applicable, click this tab.</p></li></ul></li>
+<li><b>If necessary, select the tab for the appropriate agent type.</b></li>
 <li><b>In the Group section, click New.</b><p>In the Name field, enter the name for the new group name.</p></li>
-<li><b>In the Server URL field, enter the Federated Access Manager server URL.</b><p>For example, <tt>http://famHost.example.com:8080/fam</tt>.</p></li>
-<li><b>Click Create.</b><p>The Console creates the agent group and displays the agent (WebAgent or J2EEAgent)
-page again, with a link to the group.</p><p>To do additional configuration of the group, click this link to display the
+<li><b>For Web agents and J2EE agents only, enter the Federated Access Manager
+Server URL.</b><p>For example, <tt>http://famHost.example.com:8080/fam</tt>.</p></li>
+<li><b>Click Create.</b><p>The Console creates the agent group and displays the agent page again, with
+a link to the group.</p><p>To do additional configuration of the group, click this link to display the
 Edit agent group page.</p><p>The properties you can set to configure a group are the same as
 they are for an individual agent except that the Group, Password, and Password
 Confirm properties are not available at the group level.</p>

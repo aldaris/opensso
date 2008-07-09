@@ -31,14 +31,14 @@
 
 
 <a name="service.scserviceprofile.amsessionservice"></a><h4>Session</h4>
-<p><a name="indexterm-197"></a>The Session service defines values for an authenticated user session such as maximum
+<p><a name="indexterm-196"></a>The Session service defines values for an authenticated user session such as maximum
 session time and maximum idle time. The Session attributes are global, dynamic, or
 user attributes. The attributes are:</p>
 <ul><li><p><a href="#fwfeu">Secondary Configuration Instance</a></p></li>
 <li><p><a href="#fwfew">Maximum Number of Search Results</a></p></li>
 <li><p><a href="#fwfex">Timeout for Search</a></p></li>
-<li><p><a href="#fwfez">Property Change Notifications</a></p></li>
-<li><p><a href="#fwfey">Quota Constraints</a></p></li>
+<li><p><a href="#fwfez">Enable Property Change Notifications</a></p></li>
+<li><p><a href="#fwfey">Enable Quota Constraints</a></p></li>
 <li><p><a href="#fwffa">Read Timeout for Quota Constraint</a></p></li>
 <li><p><a href="#fwffb">Exempt Top-Level Admins From Constraint Checking</a></p></li>
 <li><p><a href="#fwffc">Resulting Behavior If Session Quota Exhausted</a></p></li>
@@ -64,7 +64,7 @@ The default value is 120.</p>
 <p>This attributed defines the maximum amount of time before a session search terminates.
 The default value is 5 seconds.</p>
 
-<a name="fwfez"></a><h5>Property Change Notifications</h5>
+<a name="fwfez"></a><h5>Enable Property Change Notifications</h5>
 <p>Enables or disables the feature session property change notification. In a single sign-on
 environment, one Federated Access Manager session can be shared by multiple applications. If
 this feature is set to ON, if one application changes any of the
@@ -72,7 +72,7 @@ session properties specified in the Notification Properties list (defined as a s
 attribute), the notification will be sent to other applications participating in the same
 single sign-on environment.</p>
 
-<a name="fwfey"></a><h5>Quota Constraints</h5>
+<a name="fwfey"></a><h5>Enable Quota Constraints</h5>
 <p>Enables or disables session quota constraints. The enforcement of session quota constraints enables
 administrators to limit a user to have a specific number of active/concurrent sessions
 based on the constraint settings at the global level, or the configurations associated with
@@ -107,6 +107,11 @@ two selectable options for this attribute:</p><dl><dt>DESTROY_OLD_SESSION</dt>
 </dl>
 <p>This attribute will take effect only when the session quota constraint is enabled
 and the default setting is DESTROY_OLD_SESSION .</p>
+
+<a name="ggyer"></a><h5>Deny User Login When Session Repository is Down</h5>
+<p>If set to YES, this attribute will enforce user lockout to the server
+when the session repository is down. This attribute takes effect only when the
+session Enable Quota Constrain is selected.</p>
 
 <a name="fwffd"></a><h5>Notification Properties</h5>
 <p>When a change occurs on a session property defined in the list, the

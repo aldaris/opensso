@@ -97,9 +97,8 @@ administrator. The authentication service needs to bind as this DN in order to
 search for a matching user DN based on the user login ID. The
 default is <tt>amldapuser.</tt> Any valid DN will be recognized.</p><p>Make sure that password is correct before you logout. If it is incorrect,
 you will be locked out. If this should occur, you can login with
-the super user DN in the <i>com.iplanet.authentication.super.user</i>  property in the <tt>AMConfig.Properties</tt>
-file. By default, this the <tt>amAdmin</tt> account with which you would normally log in,
-although you will use the full DN. For example:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base</i><tt></tt></p>
+the super user DN. By default, this the <tt>amAdmin</tt> account with which you
+would normally log in, although you will use the full DN. For example:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base</i><tt></tt></p>
 
 <a name="fwbix"></a><h5>Password for Root User Bind</h5>
 <p>Carries the password for the administrator profile specified in the DN for Root

@@ -4,7 +4,7 @@
 <index version="2.0">
 
  <indexitem target="accesscontrol" text="Access Control, Introduction"></indexitem>
- <indexitem target="entityproviders" text="affiliate entity"></indexitem>
+ <indexitem target="federation.createsaml2metadata" text="affiliate entity"></indexitem>
  <indexitem target="alternateendpoint" text="alternate endpoint"></indexitem>
  <indexitem target="alternatesecuritymechanisms" text="alternate security mechanisms"></indexitem>
  <indexitem target="attributemapper" text="attribute mapper"></indexitem>
@@ -27,7 +27,6 @@
     <indexitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthsaeservice" text="SAE"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord"></indexitem>
-    <indexitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows Desktop SSO"></indexitem>
@@ -44,7 +43,7 @@
     <indexitem target="federation.fsauthdomainsedit" text="modify"></indexitem></indexitem>
  <indexitem target="service.mapcreatedevice" text="Client Detection, To add a new client"></indexitem>
  <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Client Manager"></indexitem>
- <indexitem target="policyconditions" text="Conditions">
+ <indexitem target="policy.selectcondition" text="Conditions">
     <indexitem target="policy.authtoserviceadd" text="Authentication by Module Chain"></indexitem>
     <indexitem target="policy.pmdefaultauthschemeconditionadd" text="Authentication by Module Instance"></indexitem>
     <indexitem target="policy.pmdefaultauthlevelconditionadd" text="Authentication Level"></indexitem>
@@ -64,9 +63,9 @@
     <indexitem target="service.smg11n" text="Globalization Settings"></indexitem></indexitem>
  <indexitem target="federation.samlv2spassertioncontent" text="context reference attribute"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="context reference attribute"></indexitem><indexitem target="federation.idffidp" text="context reference attribute"></indexitem><indexitem target="federation.idffsp" text="context reference attribute"></indexitem>
  <indexitem target="realm.idrepo" text="Data Stores">
-    <indexitem target="adattrs" text="Active Directory attributes"></indexitem>
-    <indexitem target="gdoto" text="LDPAv3 repository plug-in attributes"></indexitem>
-    <indexitem target="sundirattrs" text="Sun Directory Server with AM schema attributes"></indexitem>
+    <indexitem target="realm.idrepoeditad" text="Active Directory attributes"></indexitem>
+    <indexitem target="realm.idrepoeditldapv3" text="LDPAv3 repository plug-in attributes"></indexitem>
+    <indexitem target="realm.idrepoeditfamschema" text="Sun Directory Server with AM schema attributes"></indexitem>
     <indexitem target="realm.idreposelecttype" text="To create a new data store"></indexitem></indexitem>
  <indexitem target="dirmang" text="Directory Management"></indexitem>
  <indexitem target="service.smdiscoveryservice" text="discovery service">
@@ -86,8 +85,8 @@
     <indexitem target="supporteddirectives" text="supported directives"></indexitem></indexitem>
  <indexitem target="encryptnameidentifier" text="encrypt name identifier in session context for bootstrapping"></indexitem>
  <indexitem text="entities">
-    <indexitem target="entityproviders" text="affiliate"></indexitem>
-    <indexitem target="entityproviders" text="provider"></indexitem></indexitem>
+    <indexitem target="federation.createsaml2metadata" text="affiliate"></indexitem>
+    <indexitem target="federation.createsaml2metadata" text="provider"></indexitem></indexitem>
  <indexitem target="entryhandlerpluginclass" text="entry handler plug-in class"></indexitem>
  <indexitem target="extensionattributesnamespaceprefix" text="extension attributes namespace prefix"></indexitem>
  <indexitem target="extensioncontainerattributes" text="extension container attributes"></indexitem>
@@ -124,12 +123,12 @@
     <indexitem target="supportedcontainers" text="supported containers"></indexitem></indexitem>
  <indexitem target="service.scplatformclientcharsetsadd" text="Platform, To create a new character set"></indexitem>
  <indexitem target="policy.policy" text="Policies">
-    <indexitem target="policyconditions" text="Conditions"></indexitem>
+    <indexitem target="policy.selectcondition" text="Conditions"></indexitem>
     <indexitem target="normalpolicy" text="Normal policies"></indexitem>
     <indexitem target="fyfby" text="Referral Policies"></indexitem>
     <indexitem target="responseprovider" text="Response Providers"></indexitem>
-    <indexitem target="normalrule" text="Rules"></indexitem>
-    <indexitem target="normalsubject" text="Subjects"></indexitem>
+    <indexitem target="policy.selectservicetype" text="Rules"></indexitem>
+    <indexitem target="policy.selectsubjecttype" text="Subjects"></indexitem>
     <indexitem target="policy.selectconditiontype" text="To add a condition to"></indexitem>
     <indexitem target="policy.responseprovideradd" text="To add a response provider to"></indexitem>
     <indexitem target="policy.ruleadd" text="To add a rule to"></indexitem>
@@ -140,7 +139,7 @@
  <indexitem target="policyevaldiscoupdate" text="policy evaluation for discovery update"></indexitem>
  <indexitem target="ppldapattributemaplist" text="PPLDAP attribute map list"></indexitem>
  <indexitem target="delegation.delegation" text="Privileges"></indexitem><indexitem target="delegation.delegationproperties" text="Privileges"></indexitem>
- <indexitem target="entityproviders" text="provider entity"></indexitem>
+ <indexitem target="federation.createsaml2metadata" text="provider entity"></indexitem>
  <indexitem target="ppproviderid" text="provider ID"></indexitem>
  <indexitem target="dsproviderid" text="provider ID (discovery service)"></indexitem>
  <indexitem target="realm.rmrealm" text="Realms">
@@ -165,7 +164,7 @@
     <indexitem target="service.smdiscoverybootstraprefoffadd" text="configure"></indexitem></indexitem>
  <indexitem target="resourceidmapper" text="resourceID mapper"></indexitem>
  <indexitem target="resourceidmapperpluginclass" text="resourceID mapper plug-in class"></indexitem>
- <indexitem target="normalrule" text="Rules"></indexitem>
+ <indexitem target="policy.selectservicetype" text="Rules"></indexitem>
  <indexitem target="federation.fssamlservice" text="SAML">
     <indexitem text="site identifiers">
         <indexitem target="federation.fssamlsiteidadd" text="configure"></indexitem></indexitem>
@@ -187,7 +186,7 @@
     <indexitem target="requesthandlerlist" text="request handler list"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbinding" text="request handler list"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="request handler list"></indexitem>
     <indexitem target="ggodb" text="supported authentication mechanisms"></indexitem>
     <indexitem target="ggodb" text="web service authenticator"></indexitem></indexitem>
- <indexitem target="normalsubject" text="Subjects"></indexitem><indexitem target="idm.entities" text="Subjects">
+ <indexitem target="policy.selectsubjecttype" text="Subjects"></indexitem><indexitem target="idm.entities" text="Subjects">
     <indexitem target="idm.entitiesgroup" text="Groups"></indexitem>
     <indexitem target="subjectuser" text="User"></indexitem></indexitem>
  <indexitem target="supportedauthmechanisms" text="supported authentication mechanisms (discovery service)"></indexitem>

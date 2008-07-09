@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthunixservice"></a><h4>UNIX</h4>
-<p><a name="indexterm-183"></a>This Solaris only module allows for authentication using a user's UNIX identification and
+<p><a name="indexterm-182"></a>This Solaris only module allows for authentication using a user's UNIX identification and
 password. If any of the UNIX authentication attributes are modified, both Federated Access
 Manager and the amunixd  helper must be restarted. The UNIX authentication attributes are
 global and realm attributes. The attributes are:</p>
@@ -46,8 +46,7 @@ global and realm attributes. The attributes are:</p>
 <a name="fwbsy"></a><h5>Configuration Port</h5>
 <p>This attribute specifies the port to which the UNIX Helper `listens' upon startup
 for the configuration information contained in the UNIX Helper Authentication Port, UNIX Helper
-Timeout, and UNIX Helper Threads attributes. The default is 58946.</p><p>If this attribute is changed, you must also change the <i>unixHelper.port</i> 
-entry in the <tt>AMConfig.properties</tt> file, and restart Federated Access Manager.</p>
+Timeout, and UNIX Helper Threads attributes. The default is 58946.</p>
 
 <a name="fwbqv"></a><h5>Authentication Port</h5>
 <p>This attribute specifies the port to which the UNIX Helper `listens' for authentication

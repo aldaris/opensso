@@ -36,8 +36,8 @@
 <li><p><a href="#ggwkt">Signing Key Alias</a></p></li>
 <li><p><a href="#ggwhc">Encryption Key Alias</a></p></li>
 <li><p><a href="#ggwhq">Basic Authorization</a></p></li>
-<li><p><a href="#ggwgq">Authorization Decision Query Signed</a></p></li>
-<li><p><a href="#ggwjn">Authorization Service</a></p></li></ul>
+<li><p><a href="#ggwgq">Authorization Decision Response Signed</a></p></li>
+<li><p><a href="#ggwjn">Assertion Encrypted</a></p></li></ul>
 
 
 <a name="ggwgy"></a><h5>Protocol Support Enumeration</h5>
@@ -54,13 +54,12 @@
 endpoints must have the user and password defined in the following two properties:
 <tt>User Name</tt> and <tt>Password</tt>.</p>
 
-<a name="ggwgq"></a><h5>Authorization Decision Query Signed</h5>
-<p>When enabled, this attribute enforces that all queries be signed for the XACML
+<a name="ggwgq"></a><h5>Authorization Decision Response Signed</h5>
+<p>When enabled, this attribute enforces that all responses be signed for the XACML
 authorization decision.</p>
 
-<a name="ggwjn"></a><h5>Authorization Service</h5>
-<p>This attribute defines the type (binding) of the authorization request, and the URL
-endpoint for receiving the request. By default, the binding type is SOAP.</p>
+<a name="ggwjn"></a><h5>Assertion Encrypted</h5>
+<p>When enabled, this attribute enforces that all assertions are to be encrypted.</p>
 <br/>
 
 </body>

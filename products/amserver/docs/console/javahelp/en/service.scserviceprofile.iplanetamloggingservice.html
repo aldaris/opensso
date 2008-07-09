@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>Logging</h4>
-<p><a name="indexterm-204"></a>The Logging service provides status and error messages related to Federated Access Manager
+<p><a name="indexterm-203"></a>The Logging service provides status and error messages related to Federated Access Manager
 administration. An administrator can configures values such as log file size and log
 file location. Federated Access Manager can record events in flat text files or
 in a relational database. The Logging service attributes are global attributes. The attributes are:</p>
@@ -88,13 +88,21 @@ JDBC driver.</p><p>Changes to logging attributes usually take effect after you s
 not require you to restart the server. If you are changing to secure
 logging, however, you should restart the server.</p>
 
+<a name="ggyhl"></a><h5>Log Status</h5>
+<p>Specifies whether logging is turned on (ACTIVE) or off (INACTIVE). Value is set
+to ACTIVE during installation. </p>
+
+<a name="ggydj"></a><h5>Log Record Resolve Host Name</h5>
+<p>If set to false, host lookups will not be performed to populate the
+LogRecord's HostName field.</p>
+
 <a name="fxbwg"></a><h5>Logging Type</h5>
 <p>Enables you to specify either File, for flat file logging, or DB for
 database logging.</p><p>If the Database User Name or Database User Password is invalid, it will
 seriously affect Federated Access Manager processing. If Federated Access Manager or the console
-becomes unstable, you set the following property in  <tt>AMConfig.properties</tt>:</p><p><i>com.iplanet.am.logstatus=INACTIVE</i></p><p>After you have set the property, restart the server. You can then log
-in to the console and reset the logging attribute. Then, change the <i>logstatus</i>
-property to <i>ACTIVE</i>  and restart the server.</p>
+becomes unstable, you set the Log Status attribute to Inactive. </p><p>After you have set the property, restart the server. You can then log
+in to the console and reset the logging attribute. Then, change the Log
+Status property to <i>ACTIVE</i>  and restart the server.</p>
 
 <a name="fxbrd"></a><h5>Database User Name</h5>
 <p>This attribute accepts the name of the user that will connect to the

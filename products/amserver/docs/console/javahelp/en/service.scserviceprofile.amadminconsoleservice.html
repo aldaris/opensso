@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administration</h4>
-<p><a name="indexterm-188"></a>The Administration service enables you to configure the Federated Access Manager console at
+<p><a name="indexterm-187"></a>The Administration service enables you to configure the Federated Access Manager console at
 both the global level as well as at a configured realm level (Preferences
 or Options specific to a configured realm). The Administration service attributes are global and
 realm attributes. </p>
@@ -148,11 +148,10 @@ SDK in the realm tree will update the corresponding DC tree entry status.
 (Updates to status that are not made through the Federated Access Manager SDK
 will not be synchronized.) For example, if a new realm, sun, is created
 with the DNS name attribute <tt>sun.com</tt> , the following entry will be
-created in the DC tree:</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>The DC tree may optionally have its own root suffix configured by setting
-<tt>com.iplanet.am.domaincomponent</tt> in  <tt>AMConfig.properties</tt>. By default, this is set to the Federated Access Manager
-root. If a different suffix is desired, this suffix must be created using
-LDAP commands. The ACIs for administrators that create realms required modification so that
-they have unrestricted access to the new DC tree root.</p>
+created in the DC tree:</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>By default, this is set to the Federated Access Manager root. If a
+different suffix is desired, this suffix must be created using LDAP commands. The
+ACIs for administrators that create realms required modification so that they have unrestricted
+access to the new DC tree root.</p>
 
 <a name="fsvgs"></a><h5>Administrative Groups</h5>
 <p>Specifies whether to create the DomainAdministrators and DomainHelpDeskAdministrators groups. If enabled, these groups

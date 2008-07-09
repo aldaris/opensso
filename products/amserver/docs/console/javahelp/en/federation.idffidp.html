@@ -69,12 +69,12 @@ hosted or remote</p>
 
 
 <a name="ggwra"></a><h5>Signing Key</h5>
-<p>Defines the key alias that is used to sign requests and responses.</p>
+<p>Defines the security certificate alias that is used to sign requests and responses.</p>
 
 <a name="ggwob"></a><h5>Encryption Key</h5>
-<p>Defines the security certificate alias. Certificates are stored in a Java keystore file.
-Each specific certificate is mapped to an alias that is used to fetch
-the certificate.</p>
+<p>Defines the security certificate alias that is used for encryption. for Signing Key
+and Encryption Key. Certificates are stored in a Java keystore file. Each specific
+certificate is mapped to an alias that is used to fetch the certificate.</p>
 
 <a name="ggwmo"></a><h5>Name Identifier Encryption</h5>
 <p>Select the check box to enable encryption of the name identifier.</p>
@@ -104,15 +104,15 @@ requests.</p>
 synchronizes the logout functionality across all sessions authenticated by the identity provider.</p>
 
 <a name="ggwln"></a><h5>Single Logout Return</h5>
-<p>Defines a URL to which the identity provider will redirect the principal after
-completing a logout.</p>
+<p>Defines a URL to which the service providers can send single logout responses.
+</p>
 
 <a name="ggwpl"></a><h5>Federation Termination Service</h5>
 <p>Defines a URL to which a service provider will send federation termination requests.</p>
 
 <a name="ggwna"></a><h5>Federation Termination Return</h5>
-<p>Defines a URL to which the identity provider will redirect the principal after
-completing federation termination.</p>
+<p>Defines a URL to which the service providers can send federation termination responses.
+</p>
 
 <a name="ggwqn"></a><h5>Name Registration Service</h5>
 <p>Defines a URL to which a service provider will send requests to specify
@@ -121,8 +121,7 @@ about a principal. This service can only be used after a federation session
 is established.</p>
 
 <a name="ggwmy"></a><h5>Name Registration Return</h5>
-<p>Defines a URL to which the identity provider will redirect the principal after
-HTTP name registration has been completed.</p>
+<p>Defines a URL to which the service providers can send name registration responses.</p>
 
 <a name="ggwms"></a><h5>Communication Profiles</h5>
 
@@ -185,13 +184,12 @@ hosted locally:</p>
 be the load balancer's host name if Federated Access Manager is behind one.</p>
 
 <a name="ggwys"></a><h5>Responds With</h5>
-<p>Specifies the type of the response the identity provider expects from a service
-provider. For example  <tt>saml:AttributeStatement</tt>, <tt>saml:AuthenticationStatement</tt>.</p>
+<p>Specifies the type of statements the identity provider can generate. For example 
+<tt>lib:AuthenticationStatement</tt>.</p>
 
 <a name="ggwmv"></a><h5>Provider Status</h5>
-<p>Defines whether the identity provider is active or passive. Active, the default, means
-the identity provider must interact with the principal and must interact with the
-user.</p>
+<p>Defines whether the identity provider is active or inactive. Active, the default, means
+the identity provider can process requests and generate responses. </p>
 
 <a name="ggwmr"></a><h5>Service URL</h5>
 
@@ -232,7 +230,8 @@ which the provider belongs.</p>
 completed.</p>
 
 <a name="ggwme"></a><h5>Error Page URL</h5>
-<p>Defines the URL to which a principal is directed upon a Federation error.</p>
+<p>Defines the URL to which a principal is directed upon an error.
+</p>
 
 <a name="ggwon"></a><h5>Logout Done URL</h5>
 <p>Defines the URL to which a principal is directed after logout.</p>
@@ -251,12 +250,12 @@ principal&#8217;s name identifier that an identity provider will use when commun
 service provider. The value is <tt>com.sun.identity.federation.services.util.FSNameIdentifierImpl</tt>.</p>
 
 <a name="ggwlq"></a><h5>Attribute Statement Plug-in</h5>
-<p>Specifies a pluggable class used for adding attribute statements to an assertion that
+<p>Specifies a plug-able class used for adding attribute statements to an assertion that
 is generated during the Liberty-based single sign-on process.</p>
 
 <a name="ggwpm"></a><h5>User Provider Class</h5>
-<p>Specifies a pluggable class used for adding a user provider generated during the
-Liberty-based single sign-on process.</p>
+<p>Specifies a plug-able class used to provide user operations such as finding a
+user, getting user attributes, and so forth . The default value is: </p><p><tt>com.sun.identity.federation.accountmgmt.DefaultFSUserProvider</tt> </p>
 
 <a name="ggwow"></a><h5>Identity Provider Attribute Mapper</h5>
 
@@ -265,12 +264,12 @@ Liberty-based single sign-on process.</p>
 
 
 <a name="ggwpa"></a><h5>Attribute Mapper Class</h5>
-<p>The class used to map attributes in the SAML assertion to user attributes
-defined locally by the identity provider. The default class is <tt>com.sun.identity.federation.services.FSDefaultAttributeMapper</tt>.</p>
+<p>The class used to map user attributes defined locally to attributes in the
+SAML assertion. There is no default class.</p>
 
 <a name="ggwmn"></a><h5>Identity Provider Attribute Mapping</h5>
 <p>Specify values to define the mappings used by the default attribute mapper plug-in.
-Mappings should be configured in the format:</p><p><i>SAML-attribute</i>=<i>local-attribute</i></p><p>For example, <tt>EmailAddress=mail</tt> or <tt>Address=postaladdress</tt>. Type the mapping as a New Value
+Mappings should be configured in the format:</p><p><i>SAML-attribute</i>=<i>local-attribute</i></p><p>For example, <tt>Email=emailaddress</tt> or <tt>Address=postaladdress</tt>. Type the mapping as a New Value
 and click Add.</p>
 
 <a name="ggwmp"></a><h5>Bootstrapping</h5>
@@ -291,8 +290,8 @@ be generated during the Liberty-based single sign-on process for bootstrapping p
 
 <a name="ggwqf"></a><h5>Auto Federation Common Attribute Name</h5>
 <p>When creating an Auto Federation Attribute Statement, the value of this attribute will
-be used. The statement will contain the <tt>AutoFedAttribute</tt> element and this common
-attribute as its value.</p>
+be used. The statement will contain the attribute element and this common attribute
+as its value. </p>
 
 <a name="ggwnn"></a><h5>Authentication Context</h5>
 <p>This attribute defines the identity provider's default authentication context class (method of authentication).
@@ -332,12 +331,11 @@ an unknown user tries to access a protected resource.</p><dl><dt>Supported</dt>
 
 <a name="ggwnd"></a><h5>Assertion Interval</h5>
 <p>Type the interval of time (in seconds) that an assertion issued by the
-identity provider will remain valid. A principal will remain authenticated until the assertion
-interval expires.</p>
+identity provider will remain valid. </p>
 
 <a name="ggwqq"></a><h5>Cleanup Interval</h5>
-<p>Type the interval of time (in seconds) before assertions stored in the identity
-provider will be cleared.</p>
+<p>Type the interval of time (in seconds) before a cleanup is performed to
+expired assertions.</p>
 
 <a name="ggwlp"></a><h5>Artifact Timeout</h5>
 <p>Type the interval of time (in seconds) to specify the timeout for assertion

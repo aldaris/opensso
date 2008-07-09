@@ -31,14 +31,14 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID</h4>
-<p><a name="indexterm-182"></a>This module allows for authentication using RSA ACE/Server software and RSA SecurID authenticators.
+<p><a name="indexterm-181"></a>This module allows for authentication using RSA ACE/Server software and RSA SecurID authenticators.
 the SecurID authentication module is not available for the Linux or Solaris x86 platforms
 and this should not be registered, configured, or enabled on these two platforms.
 It is only available for Solaris. The SecurID authentication attributes are realm attributes.
 The attributes are:</p>
 <ul><li><p><a href="#fwbpt">ACE/Server Configuration Path</a></p></li>
-<li><p><a href="#fwbkv">Helper Configuration Port</a></p></li>
-<li><p><a href="#fwbpq">Helper Authentication Port</a></p></li>
+<li><p><b>Broken Link (Target ID: FWBKV)</b></p></li>
+<li><p><b>Broken Link (Target ID: FWBPQ)</b></p></li>
 <li><p><a href="#fwbma">Authentication Level</a></p></li></ul>
 
 
@@ -46,20 +46,6 @@ The attributes are:</p>
 <p>Specifies the directory in which the SecurID ACE/Server <tt>sdconf.rec</tt>  file is
 located, by default in <tt>/opt/ace/data</tt> If you specify a different directory in this
 field, the directory must exist before attempting SecurID authentication.</p>
-
-<a name="fwbkv"></a><h5>Helper Configuration Port</h5>
-<p>Specifies the port on which the SecurID helper 'listens' upon startup for the
-configuration information contained in the SecurID Helper Authentication Port attribute. The default is
-58943.</p><p>If this attribute is changed, you must also change the <i>securidHelper.ports</i> 
-entry in the <tt>AMConfig.properties</tt> file, and restart Federated Access Manager. The entry in
-the <tt>AMConfig.properties</tt>  file is a space-separated list of the ports for
-the instances of SecurID helpers. For each realm that communicates with a different ACE/Server
-(which has a different <tt>sdconf.rec</tt> file), there must be a separate SecurID helper.</p>
-
-<a name="fwbpq"></a><h5>Helper Authentication Port</h5>
-<p>Specifies the port that the realm's SecurID authentication module will configure its SecurID
-helper instance to 'listen' for authentication requests. This port number must be unique
-across all realms using SecurID or UNIX authentication. The default port is 57943.</p>
 
 <a name="fwbma"></a><h5>Authentication Level</h5>
 <p>The authentication level is set separately for each method of authentication. The value

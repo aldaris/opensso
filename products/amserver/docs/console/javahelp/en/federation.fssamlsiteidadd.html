@@ -31,12 +31,13 @@
 
 
 <a name="federation.fssamlsiteidadd"></a><h5>To Configure a Site Identifier</h5>
-<a name="indexterm-79"></a><a name="indexterm-80"></a><p>This attribute defines any site hosted by the server on which Access
-Manager is installed. A default value and an automatically generated Site ID are defined
-for the host during installation (with values retrieved from <tt>AMConfig.properties</tt>). Multiple entries are possible.
-For example, load balancing or multiple instances of Access Manager sharing the same
-Directory Server would all need to be defined. The starting point is the
-Site Identifiers attribute on the SAML screen under the Federation interface.</p><ol>
+<a name="indexterm-79"></a><a name="indexterm-80"></a><p>This attribute defines any site hosted by the server on which Federated Access
+Manager is installed. A default value and an automatically generated Site ID are
+defined for the host during installation. Multiple entries are possible. For example, load
+balancing or multiple instances of Federated Access Manager sharing the same Directory Server
+would all need to be defined. The starting point is the Site Identifiers attribute
+on the SAML screen under the Federation interface. Site IDs are defined in
+the Servers and Sites configuration screen. For more information, see <a href="service.serversite.html">Servers and Sites</a>.</p><ol>
 <li><b>Click New to add a new site identifier or click on the name
 of a configured site identifier to modify its profile.</b><p>The Site Identifier attributes are displayed.</p></li>
 <li><b>Provide values for the Site Identifier attributes based on the following information:</b><dl><dt>Instance ID</dt>
@@ -48,7 +49,7 @@ of a configured site identifier to modify its profile.</b><p>The Site Identifier
 </dl>
 </li>
 <li><b>Click OK to complete the Site Identifier configuration.</b></li>
-<li><b>Click Save on the SAML Profile page to complete the SAML configuration.</b></li></ol>
+<li><b>Click Save on the Local Site Properties page to complete the SAML configuration.</b></li></ol>
 <br/>
 
 </body>

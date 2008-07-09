@@ -69,12 +69,14 @@ hosted or remote</p>
 
 
 <a name="ggwwn"></a><h5>Signing Key</h5>
-<p>Defines the key alias that is used to sign requests and responses.</p>
+<p>Defines the security certificate alias that is used to sign requests and responses.
+Certificates are stored in a Java keystore file. Each specific certificate is mapped
+to an alias that is used to fetch the certificate</p>
 
 <a name="ggwuj"></a><h5>Encryption Key</h5>
-<p>Defines the security certificate alias. Certificates are stored in a Java keystore file.
-Each specific certificate is mapped to an alias that is used to fetch
-the certificate.</p>
+<p>Defines the security certificate alias that is used for encryption. Certificates are stored
+in a Java keystore file. Each specific certificate is mapped to an alias
+that is used to fetch the certificate.</p>
 
 <a name="ggwsc"></a><h5>Name Identifier Encryption</h5>
 <p>Select the check box to enable encryption of the name identifier.</p>
@@ -105,15 +107,13 @@ the location of the SOAP receiver in non browser communications.</p>
 synchronizes the logout functionality across all sessions authenticated by the identity provider.</p>
 
 <a name="ggwrn"></a><h5>Single Logout Return</h5>
-<p>Defines a URL to which the service provider will redirect the principal after
-completing a logout.</p>
+<p>Defines a URL to which the identity providers can send single logout responses.</p>
 
 <a name="ggwvg"></a><h5>Federation Termination Service</h5>
 <p>Defines a URL to which an identity provider will send federation termination requests.</p>
 
 <a name="ggwup"></a><h5>Federation Termination Return</h5>
-<p>Defines a URL to which the identity provider will redirect the principal after
-completing federation termination.</p>
+<p>Defines a URL to which the identity providers can send federation termination responses.</p>
 
 <a name="ggwry"></a><h5>Name Registration Service</h5>
 <p>Defines a URL that will be used when communicating with the identity provider
@@ -121,17 +121,14 @@ to specify a new name identifier for the principal. (Registration can occur only
 after a federation session is established.)</p>
 
 <a name="ggwvd"></a><h5>Name Registration Return</h5>
-<p>Defines a URL that will be used when communicating with the identity provider
-to specify a new name identifier for the principal. (Registration can occur only
-after a federation session is established.)</p>
+<p>Defines a URL to which the identity providers can send name registration responses.
+ (Registration can occur only after a federation session is established.)</p>
 
 <a name="ggwtq"></a><h5>Assertion Consumer URL</h5>
-<p>Defines the URL to the end point that defines where a provider will
-send SAML assertions.</p>
+<p>Defines the URL to which an Identity Provider can send SAML assertions. </p>
 
 <a name="ggwrh"></a><h5>Assertion Consumer Service URL ID</h5>
-<p>This field defines the provider end-point to which a provider will send SAML
-assertions.</p><p>If the value of the Protocol Support Enumeration common attribute is <tt>urn:liberty:iff:2003-08</tt>, type
+<p>If the value of the Protocol Support Enumeration common attribute is <tt>urn:liberty:iff:2003-08</tt>, type
 the required ID.</p>
 
 <a name="ggwvi"></a><h5>Set Assertion consumer Service URL as Default</h5>
@@ -169,7 +166,7 @@ default value when no identifier is provided in the request.</p>
 <p>Select a profile for sending authentication requests:</p>
 <ul><li><p>Browser Post (specifies a browser-based HTTP POST protocol)</p></li>
 <li><p>Browser Artifact (specifies a non-browser SOAP-based protocol)</p></li>
-<li><p>WML (specifies the Wireless Markup Language protocl)</p></li>
+<li><p>WML (specifies the Wireless Markup Language protocol)</p></li>
 <li><p>LECP (specifies a Liberty-enabled Client Proxy)</p>
 <hr><p><b>Note &#8211; </b>Federated Access Manager can handle requests that come from a Liberty-enabled client proxy profile, but it requires additional configuration that is beyond the scope of this manual.</p>
 <hr>
@@ -200,7 +197,7 @@ hosted locally:</p>
 
 
 <a name="ggwvl"></a><h5>Identity Provider Forced Authentication</h5>
-<p>Select the check box to indicate that the identity provider must reauthenticate (even
+<p>Select the check box to indicate that the identity provider must re-authenticate (even
 during a live session) when an authentication request is received. This attribute is
 enabled by default.</p>
 
@@ -220,13 +217,12 @@ registration after it has been federated.</p>
 <p>Select the check box to enable affiliation federation.</p>
 
 <a name="ggwwp"></a><h5>Provider Status</h5>
-<p>Defines whether the service provider is active or passive. Active, the default, means
-the service provider must interact with the principal and must interact with the
-user.</p>
+<p>Defines whether the service provider is active or inactive. Active, the default, means
+the service provider can process requests and generate responses. </p>
 
 <a name="ggwti"></a><h5>Responds With</h5>
-<p>Specifies the type of the response the service provider expects from an identity
-provider. For example  <tt>saml:AttributeStatement</tt>, <tt>saml:AuthenticationStatement</tt>.</p>
+<p>Specifies the type of statements the service provider can generate. For example 
+, <tt>lib:AuthenticationStatement</tt>.</p>
 
 <a name="ggwyd"></a><h5>Service URL</h5>
 
@@ -258,7 +254,8 @@ has failed.</p>
 completed.</p>
 
 <a name="ggwrd"></a><h5>Error Page URL</h5>
-<p>Defines the URL to which a principal is directed upon a Federation error.</p>
+<p>Defines the URL to which a principal is directed upon an error.
+</p>
 
 <a name="ggwth"></a><h5>Logout Done URL</h5>
 <p>Defines the URL to which a principal is directed after logout.</p>
@@ -272,16 +269,15 @@ completed.</p>
 
 
 <a name="ggwuh"></a><h5>Service Provider Adapter</h5>
-<p>Defines the implementation class for the <tt>com.sun.identity.federation.plugins.FederationSPAdapter</tt> interface, used to add application-specific
-processing during the federation process.</p>
+<p>Defines the implementation class for the <tt>com.sun.identity.federation.plugins.FSSPAdapter </tt>interface. The default value is: </p><p><tt>com.sun.identity.federation.plugins.FSDefaultSPAdapter</tt> </p>
 
 <a name="ggwtd"></a><h5>Federation SP Adapter Env</h5>
-<p>Defines a list of environment porperties to be used by the service provider
+<p>Defines a list of environment properties to be used by the service provider
 adapter SPI implementation class.</p>
 
 <a name="ggwuv"></a><h5>User Provider Class</h5>
-<p>Specifies a pluggable class used for adding a user provider generated during the
-Liberty-based single sign-on process.</p>
+<p>Specifies a plug-able class used to provide user operations such as finding a
+user, getting user attributes, and so forth. . The default value is: </p><p><tt>com.sun.identity.federation.accountmgmt.DefaultFSUserProvider</tt> </p>
 
 <a name="ggwsu"></a><h5>Name Identifier Implementation</h5>
 <p>This field defines the class used by a service provider to participate in
@@ -296,12 +292,12 @@ service provider. The value is <tt>com.sun.identity.federation.services.util.FSN
 
 
 <a name="ggwvz"></a><h5>Attribute Mapper Class</h5>
-<p>The class used to map attributes in the SAML assertion to user attributes
-defined locally by the identity provider. The default class is <tt>com.sun.identity.federation.services.FSDefaultAttributeMapper</tt>.</p>
+<p>The class used to map user attributes defined locally to attributes in the
+SAML assertion. There is no default class. </p>
 
 <a name="ggwsh"></a><h5>Service Provider Attribute Mapping</h5>
 <p>Specify values to define the mappings used by the default attribute mapper plug-in
-specified above. Mappings should be configured in the format:</p><p><i>SAML-attribute</i>=<i>local-attribute</i></p><p>For example, <tt>EmailAddress=mail</tt> or <tt>Address=postaladdress</tt>. Type the mapping as a New Value
+specified above. Mappings should be configured in the format:</p><p><i>SAML-attribute</i>=<i>local-attribute</i></p><p>For example, <tt>Email=emailaddress</tt> or <tt>Address=postaladdress</tt>. Type the mapping as a New Value
 and click Add.</p>
 
 <a name="ggwtp"></a><h5>Auto Federation </h5>
@@ -316,8 +312,8 @@ and click Add.</p>
 <a name="ggwsd"></a><h5>Auto Federation Common Attribute Name</h5>
 <p>Defines the user's common LDAP attribute name such as <tt>telephonenumber</tt>. For creating
 an Auto Federation Attribute Statement. When creating an Auto Federation Attribute Statement, the
-value of this attribute will be used. The statement will contain the <tt>AutoFedAttribute</tt>
-element and this common attribute as its value.</p>
+value of this attribute will be used. The statement will contain the attribute element
+and this common attribute as its value. </p>
 
 <a name="ggwrv"></a><h5>Authentication Context</h5>
 <p>This attribute defines the service provider's default authentication context class (method of authentication).
@@ -349,7 +345,7 @@ an unknown user tries to access a protected resource. The options are:</p><dl><d
 <li><p><a href="#ggwrs">Proxy Identity Providers List</a></p></li>
 <li><p><a href="#ggwsr">Maximum Number of Proxies</a></p></li>
 <li><p><a href="#ggwtu">Use Introduction Cookie for Proxying</a></p></li></ul>
-<p>Proxy Authentication Configuration attributes define values for dynamic identity provider proxying.</p>
+<p>Proxy Authentication Configuration attributes define values for dynamic provider proxying.</p>
 
 <a name="ggwur"></a><h5>Proxy Authentication</h5>
 <p>Select the check box to enable proxy authentication for a service provider.</p>
@@ -364,8 +360,8 @@ as the provider's identifier.</p>
 authentication.</p>
 
 <a name="ggwtu"></a><h5>Use Introduction Cookie for Proxying</h5>
-<p>Select the check box if you want introductions to be used to find
-the proxying identity provider.</p>
+<p>Select the check box if you want introduction cookies to be used to
+find the proxying identity provider.</p>
 <br/>
 
 </body>
