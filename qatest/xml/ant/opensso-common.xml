@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.11 2008-06-26 19:08:03 rmisra Exp $
+ $Id: opensso-common.xml,v 1.12 2008-07-10 16:34:52 inthanga Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,7 +37,7 @@
      </target>
 
     <target name="report" if="REPORT_DIR" depends="init-common">
-        <property name="runtime.report.dir" value="${REPORT_DIR}/${SERVER_DIR}/${EXECUTION_MODE}/${current.timestamp}"/>
+        <property name="runtime.report.dir" value="${REPORT_DIR}/${SERVER_DIR}/${EXECUTION_MODE}/${current.timestamp}_${TEST_MODULE}"/>
         <mkdir dir="${runtime.report.dir}"/>
         <copy todir="${runtime.report.dir}">
             <fileset dir="${base.report.dir}"/>
