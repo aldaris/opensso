@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentConfiguration.template,v 1.12 2008-07-02 18:27:14 leiming Exp $
+# $Id: FAMAgentConfiguration.template,v 1.13 2008-07-10 21:37:10 huacui Exp $
 #
 #
 
@@ -748,7 +748,9 @@ com.sun.identity.agents.config.bypass.principal[0] =
 
 com.sun.identity.agents.config.default.privileged.attribute[0] = AUTHENTICATED_USERS
 com.sun.identity.agents.config.privileged.attribute.type[0] = Group
+com.sun.identity.agents.config.privileged.attribute.type[1] = Role
 com.sun.identity.agents.config.privileged.attribute.tolowercase[Group] = false
+com.sun.identity.agents.config.privileged.attribute.tolowercase[Role] = false
 com.sun.identity.agents.config.privileged.session.attribute[0] = 
 com.sun.identity.agents.config.privileged.attribute.mapping.enable = true
 com.sun.identity.agents.config.privileged.attribute.mapping[] =
