@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigInfo.java,v 1.1 2008-07-02 18:48:44 kanduls Exp $
+ * $Id: DSConfigInfo.java,v 1.2 2008-07-10 12:37:35 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -48,38 +48,54 @@ public class DSConfigInfo implements DSConstants {
     private String perlBinDir;
     private AMTuneLogger pLogger;
     private MessageWriter mWriter;
+    private boolean isRemoteDS;
     public DSConfigInfo(ResourceBundle confBundle, boolean isSM) 
     throws AMTuneException {
         pLogger = AMTuneLogger.getLoggerInst();
         mWriter = MessageWriter.getInstance();
         if (!isSM) {
             setDsHost(confBundle.getString(DS_HOST));
+            checkIsDSHostRemote();
             setDsPort(confBundle.getString(DS_PORT));
             setRootSuffix(confBundle.getString(ROOT_SUFFIX));
             setDirMgrUid(confBundle.getString(DIRMGR_UID));
             setDsDirMgrPassword(confBundle.getString(DIRMGR_PASSWORD));
             setDsVersion(confBundle.getString(DS_VERSION));
-            setDsInstanceDir(confBundle.getString(DS_INSTANCE_DIR));
-            if (getDsVersion().indexOf(DS5_VERSION) != -1) {
-                setPerlBinDir(confBundle.getString(PERL_BIN_DIR));
-            }
-            if (getDsVersion().indexOf(DS63_VERSION) != -1) {
-                setDSToolsBinDir(confBundle.getString(DS_TOOLS_DIR));
+            if (!isRemoteDS) {
+                setDsInstanceDir(confBundle.getString(DS_INSTANCE_DIR));
+                if (getDsVersion().indexOf(DS5_VERSION) != -1) {
+                    setPerlBinDir(confBundle.getString(PERL_BIN_DIR));
+                }
+                if (getDsVersion().indexOf(DS63_VERSION) != -1) {
+                    setDSToolsBinDir(confBundle.getString(DS_TOOLS_DIR));
+                }
             }
         } else {
-            setSMDSVersion(confBundle.getString(SM_DS_VERSION));
             setSMDSHost(confBundle.getString(SM_DS_HOST));
+            checkIsDSHostRemote();
+            setSMDSVersion(confBundle.getString(SM_DS_VERSION));
             setSMDSPort(confBundle.getString(SM_DS_PORT));
             setSMRootSuffix(confBundle.getString(SM_ROOT_SUFFIX));
             setSMDirMgrUid(confBundle.getString(SM_DS_DIRMGR_UID));
             setSMDSDirMgrPassword(confBundle.getString(SM_DIRMGR_PASSWORD));
-            if (getDsVersion().indexOf(DS63_VERSION) != -1) {
+            if (!isRemoteDS && getDsVersion().indexOf(DS63_VERSION) != -1) {
                 setSMDSInstanceDir(confBundle.getString(SM_DS_INSTANCE_DIR));
                 setSMDSToolsBinDir(confBundle.getString(SM_DS_TOOLS_DIR));
             }
         }
     }
 
+    private void checkIsDSHostRemote() {
+        pLogger.log(Level.FINEST, "checkIsDSHostRemote", "DS host is " +
+                getDsHost());
+        pLogger.log(Level.FINEST, "checkIsDSHostRemote", "Local host is " +
+                AMTuneUtil.getHostName());
+        if (AMTuneUtil.getHostName().equalsIgnoreCase(getDsHost())) {
+            isRemoteDS = false;
+        } else {
+            isRemoteDS = true;
+        }
+    }
     /**
      * Set Directory Server administrator password.
      * @param dsDirMgrPassword
@@ -470,4 +486,7 @@ public class DSConfigInfo implements DSConstants {
         return perlBinDir;
     }
 
+    public boolean isRemoteDS() {
+        return isRemoteDS;
+    }
 }
