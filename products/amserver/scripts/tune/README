@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.3 2008-07-02 18:23:34 kanduls Exp $
+$Id: README,v 1.4 2008-07-10 12:47:15 kanduls Exp $
 
 ------------------------------------------------------------------------------
 
@@ -119,5 +119,9 @@ Step 4. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune.template on Unix/Linux 
 Step 5. Set values for TOOLS_HOME and JAVA_HOME in
         <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune/amtune on Unix/Linux and
         <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat on Windows.   
-Step 6.  Edit amtune-env.properties file with DS information.
-Step 7.  Execute amtune on Unix/Linux and amtune.bat on Windows.
+Step 6. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune-env.properties.template
+        on Unix/Linux to <TOOLS_DIR>/template/unix/bin/amtune/amtune-env.properties
+        and <TOOLS_DIR>\template\windows\bin\amtune\amtune-env.properties.template 
+        on Windows to <TOOLS_DIR>\template\windows\bin\amtune\amtune-env.properties 
+Step 7. Edit amtune-env.properties file with DS information.
+Step 8. Execute amtune on Unix/Linux and amtune.bat on Windows.

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.8 2008-07-02 18:32:49 kanduls Exp $
+   $Id: README.setup,v 1.9 2008-07-10 12:46:23 kanduls Exp $
 
 -->
                                                                                
@@ -113,11 +113,15 @@ Step 2. Unzip famAdminTools.zip.
 Step 3. Create <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune on Unix/Linux
         and TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune on Windows   
 Step 4. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune.template on Unix/Linux to
-        <TOOLS_DIR>/<FAM_URI_DIR>/unix\bin/amtune/amtune and
+        <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune/amtune and
         <TOOLS_DIR>\template\windows\bin\amtune\amtune.bat.template on Windows to
         <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat
 Step 5. Set values for TOOLS_HOME and JAVA_HOME in
         <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune/amtune on Unix/Linux and
         <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat on Windows.   
-Step 6.  Edit amtune-env.properties file with DS information.
-Step 7.  Execute amtune on Unix/Linux and amtune.bat on Windows.
+Step 6. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune-env.properties.template
+        on Unix/Linux to <TOOLS_DIR>/template/unix/bin/amtune/amtune-env.properties
+        and <TOOLS_DIR>\template\windows\bin\amtune\amtune-env.properties.template 
+        on Windows to <TOOLS_DIR>\template\windows\bin\amtune\amtune-env.properties 
+Step 7. Edit amtune-env.properties file with DS information.
+Step 8. Execute amtune on Unix/Linux and amtune.bat on Windows.
