@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneLinuxOS.java,v 1.1 2008-07-02 18:53:20 kanduls Exp $
+ * $Id: TuneLinuxOS.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -66,7 +66,10 @@ public class TuneLinuxOS extends TuneOS {
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", 
                     "Error tuning linux system.");
-            throw new AMTuneException(ex.getMessage());
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writeLocaleMsg("pt-os-tuning-error-msg");
+            mWriter.writelnLocaleMsg("pt-manual-msg");
+            pLogger.logException("startTuning", ex);
         }
     }
     

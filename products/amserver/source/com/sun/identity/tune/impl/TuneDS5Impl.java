@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneDS5Impl.java,v 1.1 2008-07-02 18:53:19 kanduls Exp $
+ * $Id: TuneDS5Impl.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -118,7 +118,8 @@ public class TuneDS5Impl extends AMTuneDSBase {
 
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", "Error tuning DS5.2");
-            throw new AMTuneException(ex.getMessage());
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            pLogger.logException("startTuning", ex);
         } finally {
             try {
                 releaseCon();

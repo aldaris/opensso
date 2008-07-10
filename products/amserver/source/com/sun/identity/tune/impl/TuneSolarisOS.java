@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneSolarisOS.java,v 1.1 2008-07-02 18:53:21 kanduls Exp $
+ * $Id: TuneSolarisOS.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -73,6 +73,7 @@ public class TuneSolarisOS extends TuneOS {
      */
     public void startTuning() 
     throws AMTuneException {
+        try {
         if (osVersion.equals("5.10")) {
             String cmd = "/usr/sbin/zoneadm list";
             StringBuffer rBuf = new StringBuffer();
@@ -80,7 +81,8 @@ public class TuneSolarisOS extends TuneOS {
             if (extVal == -1) {
                 mWriter.writelnLocaleMsg("pt-sol-error-tuning");
                 pLogger.log(Level.SEVERE, "startTuning", rBuf.toString());
-                throw new AMTuneException("Error executing command zoneadm.");
+                    throw new AMTuneException("Error executing command " +
+                            "zoneadm.");
             } else {
                 if (rBuf.toString().toLowerCase().indexOf("global") != -1) {
                     mWriter.writelnLocaleMsg("pt-sol-tuning-msg");
@@ -96,6 +98,14 @@ public class TuneSolarisOS extends TuneOS {
                     return;
                 }
             }
+            }
+        } catch (Exception ex) {
+            pLogger.log(Level.SEVERE, "startTuning",
+                    "Error tuning Solaris operating system.");
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writeLocaleMsg("pt-os-tuning-error-msg");
+            mWriter.writelnLocaleMsg("pt-manual-msg");
+            pLogger.logException("startTuning", ex);
         }
     }
     
