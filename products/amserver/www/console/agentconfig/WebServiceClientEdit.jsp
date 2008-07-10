@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.6 2008-07-04 16:45:24 veiming Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.7 2008-07-10 00:23:05 veiming Exp $
 
 --%>
 
@@ -78,11 +78,11 @@
         frm.elements['WebServiceClientEdit.libertyservicetype'].disabled = disableLibertyServiceURN;
         frm.elements['WebServiceClientEdit.sts'].disabled = disableSTS;
         frm.elements['WebServiceClientEdit.discovery'].disabled = disableDiscovery;
-        frm.elements['WebServiceSTSEdit.sts'].disabled = disableSTS;
-        frm.elements['WebServiceSTSEdit.kerberosdomain'].disabled = disableKerberos;
-        frm.elements['WebServiceSTSEdit.kerberosserviceprincipal'].disabled = disableKerberos;
-        frm.elements['WebServiceSTSEdit.kerberosticketcachedir'].disabled = disableKerberos;
-        frm.elements['WebServiceSTSEdit.kerberosdomainserver'].disabled = disableKerberos;
+        frm.elements['WebServiceClientEdit.sts'].disabled = disableSTS;
+        frm.elements['WebServiceClientEdit.kerberosdomain'].disabled = disableKerberos;
+        frm.elements['WebServiceClientEdit.kerberosserviceprincipal'].disabled = disableKerberos;
+        frm.elements['WebServiceClientEdit.kerberosticketcachedir'].disabled = disableKerberos;
+        frm.elements['WebServiceClientEdit.kerberosdomainserver'].disabled = disableKerberos;
     }
 </script>
 
