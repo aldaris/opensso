@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMConstants.java,v 1.1 2008-07-02 18:50:36 kanduls Exp $
+ * $Id: FAMConstants.java,v 1.2 2008-07-10 12:48:39 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -68,6 +68,7 @@ public interface FAMConstants extends AMTuneConstants {
     static String ATTR_VALUES_OPT = "--attributevalues";
     static String MIN_CONN_POOL = "minConnPool";
     static String SMS_ELEMENT = "name=\"sms\"";
+    static String DEFAULT_SERVER_ELEMENT = " name=\"default\"";
     static String MAX_CONN_POOL = "maxConnPool";
     static String AUTH_SVC = "iPlanetAMAuthService";
     static String GLOBAL_SCHEMA = "global";
