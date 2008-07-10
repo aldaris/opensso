@@ -87,7 +87,7 @@ function editableListAdd() {
                 return;
             }
             if ((len == 0) && (len2 > 0)) {
-                str = str + '=' + str2;
+                str = str2;
             } else {
                 str = '[' + str + ']=' + str2;
             }

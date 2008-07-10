@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalMapValueValidator.java,v 1.3 2008-07-03 09:39:14 veiming Exp $
+ * $Id: GlobalMapValueValidator.java,v 1.4 2008-07-10 22:03:17 veiming Exp $
  *
  */
 
@@ -58,10 +58,10 @@ import java.util.regex.Pattern;
  */
 public class GlobalMapValueValidator implements ServiceAttributeValidator {
 
-    //global format is = and then at least one non-white space character
-    //and no whitespace in between characters, and no brackets allowed
+    //global format is no whitespace in between characters
+    // and no brackets allowed
     private static final String globalRegularExpression = 
-            "(\\s*=\\s*[\\S&&[^\\[]&&[^\\]]]+\\s*)";
+            "(\\s*[\\S&&[^\\[]&&[^\\]]]+\\s*)";
      
     private static final String appSpecificRegularExpression = 
             MapValueValidator.KEY_WITH_NO_BRACKETS    
