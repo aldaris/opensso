@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.35 2008-07-06 05:48:32 arviranga Exp $
+ * $Id: AgentsRepo.java,v 1.36 2008-07-10 00:24:23 veiming Exp $
  *
  */
 
@@ -1198,25 +1198,30 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         // is not "" (for org creation) and "/" for "ou=default" creation
         if (orgName.equalsIgnoreCase(realmName) &&
             !serviceComponent.equals("/") && !serviceComponent.equals("")) {
-            IdType idType;
-            if (groupName.equalsIgnoreCase("default")) {
-                idType = IdType.AGENTONLY;
-            } else {
-                idType = IdType.AGENTGROUP;
-            }
-
             // Get the Agent name
             String name = serviceComponent.substring(
                 serviceComponent.indexOf('/') + 1);
             
             // Send local notification first
             if (repoListener != null) { 
-                repoListener.objectChanged(name, idType, type, 
-                    repoListener.getConfigMap());
+                if (groupName.equalsIgnoreCase("default")) {
+                    repoListener.objectChanged(name, IdType.AGENT, type,
+                        repoListener.getConfigMap());
+                    repoListener.objectChanged(name, IdType.AGENTONLY, type,
+                        repoListener.getConfigMap());
+                } else {
+                    repoListener.objectChanged(name, IdType.AGENTGROUP, type,
+                        repoListener.getConfigMap());
+                } 
             }
             
-            // If notification URLs are present, send notifications
-            sendNotificationSet(type, idType, name);
+            // If notification URLs are present, send notification
+            if (groupName.equalsIgnoreCase("default")) {
+                sendNotificationSet(type, IdType.AGENT, name);
+                sendNotificationSet(type, IdType.AGENTONLY, name);
+            } else {
+                sendNotificationSet(type, IdType.AGENTGROUP, name);
+            } 
         }
     }
 
