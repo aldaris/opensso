@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.1 2008-07-02 18:53:20 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.2 2008-07-10 12:50:07 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -102,7 +102,8 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             mWriter.writelnLocaleMsg("pt-done");
         } catch (Exception ex) {
             pLogger.logException("startTuning", ex);
-            throw new AMTuneException(ex.getMessage());
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writelnLocaleMsg("pt-manual-msg");
         } finally {
             deletePasswordFile();
         }
@@ -286,7 +287,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                         GET_SVRCFG_XML_SUB_CMD);
             }
             FileHandler fh = new FileHandler(tuneFile);
-            String reqLine = fh.getLine(MIN_CONN_POOL + "=");
+            String reqLine = fh.getLine(SMS_ELEMENT);
             StringTokenizer strT = new StringTokenizer(reqLine, " ");
             String curMinConnPool = "";
             String curMaxConnPool = "";
@@ -326,18 +327,35 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                 return;
             }
             AMTuneUtil.backupConfigFile(tuneFile, "conf-fam-backup");
-            int lineNo = fh.getLineNum(MIN_CONN_POOL + "=");
-            reqLine = reqLine.replace(MIN_CONN_POOL + "=\"" + curMinConnPool + 
-                    "\"", MIN_CONN_POOL + "=\"" + newMinPool + "\"");
-            reqLine = reqLine.replace(MAX_CONN_POOL + "=\"" + curMaxConnPool + 
-                    "\"", MAX_CONN_POOL + "=\"" + newMaxPool +"\"");
-            fh.replaceLine(lineNo, reqLine);
-            //Replace the second entry as well.
-            lineNo = fh.getLineNum(SMS_ELEMENT);
+            int lineNo = fh.getLineNum(SMS_ELEMENT);
             reqLine = fh.getLine(SMS_ELEMENT);
             reqLine = reqLine.replace(MIN_CONN_POOL + "=\"" + curMinConnPool + 
                     "\"", MIN_CONN_POOL + "=\"" + newMinPool + "\"");
             reqLine = reqLine.replace(MAX_CONN_POOL + "=\"" + curMaxConnPool + 
+                    "\"", MAX_CONN_POOL + "=\"" + newMaxPool + "\"");
+            fh.replaceLine(lineNo, reqLine);
+            //Replace the default server value as well.
+            lineNo = fh.getLineNum(DEFAULT_SERVER_ELEMENT);
+            reqLine = fh.getLine(DEFAULT_SERVER_ELEMENT);
+            String curDefaultMinConPoolVal = "";
+            String curDefaultMaxConPoolVal = "";
+            strT = new StringTokenizer(reqLine, " ");
+            while (strT.hasMoreTokens()) {
+                String token = strT.nextToken();
+                if (token.indexOf(MIN_CONN_POOL) != -1) {
+                    curDefaultMinConPoolVal = token.replace(MIN_CONN_POOL + "=", 
+                            "").replace("\"", "").replace(">", "").trim();
+                }
+                if (token.indexOf(MAX_CONN_POOL) != -1) {
+                    curDefaultMaxConPoolVal = token.replace(MAX_CONN_POOL + "=",
+                            "").replace("\"", "").replace(">", "").trim();
+                }
+            }
+            reqLine = reqLine.replace(MIN_CONN_POOL + "=\"" + 
+                    curDefaultMinConPoolVal + 
+                    "\"", MIN_CONN_POOL + "=\"" + newMinPool + "\"");
+            reqLine = reqLine.replace(MAX_CONN_POOL + "=\"" + 
+                    curDefaultMaxConPoolVal + 
                     "\"", MAX_CONN_POOL + "=\"" + newMaxPool + "\"");
             fh.replaceLine(lineNo, reqLine);
             fh.close();
@@ -593,7 +611,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                         "Error finding realm ldap config info :" +
                         rBuf.toString());
             }
-            String dsFile = AMTuneUtil.TMP_DIR + realm.replace("/", "-") +
+            String dsFile = AMTuneUtil.TMP_DIR + realm.replace("/", "rdelim") +
                     "datastore.txt";
             AMTuneUtil.writeResultBufferToTempFile(rBuf, dsFile);
             FileHandler fh = new FileHandler(dsFile);
