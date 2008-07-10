@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.17 2008-06-25 05:41:39 qcheng Exp $
+ * $Id: WebtopNaming.java,v 1.18 2008-07-10 00:12:39 dillidorai Exp $
  *
  */
 
@@ -577,11 +577,30 @@ public class WebtopNaming {
     public static String getLBCookieValue(String serverid) {
         String lbCookieValue = null;
 
-        if (lbCookieValuesTable == null || serverid == null) {
+        if (serverid == null) {
+            if (debug.messageEnabled()) {
+                debug.message("WebtopNaming.getLBCookieValue():" +
+                    " server id is null, returning null ");
+            }
             return null;
+        } else if (lbCookieValuesTable == null) {
+            if (debug.messageEnabled()) {
+                debug.message("WebtopNaming.getLBCookieValue():" +
+                    " lbCookieValues table is null, returning server id: " +
+                    serverid);
+            }
+            return serverid;
         }
 
         lbCookieValue = (String) lbCookieValuesTable.get(serverid);
+        if (lbCookieValue == null) {
+            if (debug.messageEnabled()) {
+                debug.message("WebtopNaming.getLBCookieValue():" +
+                    " lbCookieValue from table is null, returning server id: " +
+                    serverid);
+            }
+            return serverid;
+        }
 
         if (debug.messageEnabled()) {
             debug.message("WebtopNaming.getLBCookieValue(): lbCookieValue"
