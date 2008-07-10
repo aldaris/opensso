@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPropertyXMLBuilderBase.java,v 1.3 2008-06-25 05:43:09 qcheng Exp $
+ * $Id: PolicyPropertyXMLBuilderBase.java,v 1.4 2008-07-10 23:27:24 veiming Exp $
  *
  */
 
@@ -140,10 +140,7 @@ public abstract class PolicyPropertyXMLBuilderBase
                 size = properties.getString("policy.textfield");
             } 
         } catch (MissingResourceException e) {
-            if (debug.messageEnabled()) {
-                debug.message("PolicyXMLBuilderBase: " + 
-                    "no size defined for " + syntax);
-            }
+            //ignore: use default size
         }
         return size;
     }

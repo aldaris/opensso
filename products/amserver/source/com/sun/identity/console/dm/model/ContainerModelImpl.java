@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ContainerModelImpl.java,v 1.2 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: ContainerModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -146,12 +146,6 @@ public class ContainerModelImpl extends DMModelBase
     public void createContainer(String location, Map data) 
         throws AMConsoleException
     {
-        if (debug.messageEnabled()) {
-            debug.message("ContainerModel.createContainer");
-            debug.message("data = "+ data);
-            debug.message("parent = "+ location);
-        }
-
         if (data == null || data.isEmpty()) {
             throw new AMConsoleException(
                 getLocalizedString("createFailure.message"));
@@ -159,7 +153,6 @@ public class ContainerModelImpl extends DMModelBase
 
         Set tmp = (Set)data.remove(NAME);
         if (tmp == null || tmp.isEmpty()) { 
-            debug.error("Model detected missing name");
             throw new AMConsoleException(
                 getLocalizedString("message.missing.name"));
         } 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMOrganizationModelImpl.java,v 1.2 2008-06-25 05:42:57 qcheng Exp $
+ * $Id: UMOrganizationModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -359,10 +359,6 @@ public class UMOrganizationModelImpl
             location = getStartDSDN();
         }
 
-        if (debug.messageEnabled()) {
-            debug.message("trying to create suborganization with " + raw);
-        }
-
 	Map data = removeEmptyValueInMap(raw);
 	validateRequiredAttributes(data);
 
@@ -541,10 +537,6 @@ public class UMOrganizationModelImpl
     public void registerService(String organization, String service) 
         throws AMConsoleException 
     {
-        if (debug.messageEnabled()) {
-            debug.message("OrganizationImpl:registerService");
-            debug.message("registering "+ service+" to "+organization);
-        }
 	String[] params = {organization, service};
 	logEvent("ATTEMPT_DIR_MGR_ADD_SERVICE_TO_ORG", params);
 

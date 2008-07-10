@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PeopleContainerModelImpl.java,v 1.2 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: PeopleContainerModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -285,19 +285,12 @@ public class PeopleContainerModelImpl extends DMModelBase
     public void createPeopleContainer(String location, Map data) 
         throws AMConsoleException
     {
-        if (debug.messageEnabled()) {
-            debug.message("PeopleContainerModel.createPeopleContainer");
-            debug.message("data = "+ data);
-            debug.message("parent = "+ location);
-        }
-
         if (data == null || data.isEmpty()) {
             throw new AMConsoleException(
                 getLocalizedString("createFailure.message"));
         }
         Set tmp = (Set)data.remove(NAME);
         if (tmp == null || tmp.isEmpty()) { 
-            debug.error("Model detected missing name");
             throw new AMConsoleException(
                 getLocalizedString("message.missing.name"));
         } 
@@ -381,8 +374,6 @@ public class PeopleContainerModelImpl extends DMModelBase
         SchemaType type,
         StringBuffer buff
     ) {
-        debug.message("PeopleContainerModel.getPropertyXML");
-
         try {                                                      
             ServiceSchema sub = getSubSchema(serviceName, type, subSchemaName);
 	    if (sub != null) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationConfigNode.java,v 1.2 2008-06-25 05:42:53 qcheng Exp $
+ * $Id: DelegationConfigNode.java,v 1.3 2008-07-10 23:27:22 veiming Exp $
  *
  */
 
@@ -158,11 +158,9 @@ public class DelegationConfigNode {
                 try {
                     viewbean.addBlankTextField((String)i.next());
                 } catch (IllegalArgumentException e) {
-                    if (AMModelBase.debug.messageEnabled()) {
-                        AMModelBase.debug.message(
-                            "DelegationConfigNode.blanksStaticTexts" +
-                            e.getMessage());
-                    }
+                    AMModelBase.debug.warning(
+                        "DelegationConfigNode.blanksStaticTexts" +
+                         e.getMessage());
                 }
             }
         }
@@ -174,11 +172,9 @@ public class DelegationConfigNode {
                 try {
                     viewbean.hideTableSelectionIcons((String)i.next());
                 } catch (IllegalArgumentException e) {
-                    if (AMModelBase.debug.messageEnabled()) {
-                        AMModelBase.debug.message(
-                            "DelegationConfigNode.disableTables" +
-                            e.getMessage());
-                    }
+                    AMModelBase.debug.warning(
+                        "DelegationConfigNode.disableTables" +
+                        e.getMessage());
                 }
             }
         }
@@ -190,11 +186,9 @@ public class DelegationConfigNode {
                 try {
                     viewBean.disableButton((String)i.next(), true);
                 } catch (IllegalArgumentException e) {
-                    if (AMModelBase.debug.messageEnabled()) {
-                        AMModelBase.debug.message(
-                            "DelegationConfigNode.configureButtons" +
-                                e.getMessage());
-                    }
+                    AMModelBase.debug.warning(
+                        "DelegationConfigNode.configureButtons" +
+                        e.getMessage());
                 }
             }
         }

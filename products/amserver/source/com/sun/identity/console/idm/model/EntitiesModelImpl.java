@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.9 2008-06-25 05:43:00 qcheng Exp $
+ * $Id: EntitiesModelImpl.java,v 1.10 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -140,12 +140,6 @@ public class EntitiesModelImpl
         String strType,
         String pattern
     ) throws AMConsoleException {
-        if (debug.messageEnabled()) {
-            debug.message("EntitiesModelImpl.getEntityNames\n" +
-                "\tsearching for: " + strType + " in " + realmName  +
-                " matching " + pattern);
-        }
-        
         if (realmName == null) {
             realmName = "/";
         }
@@ -224,10 +218,6 @@ public class EntitiesModelImpl
      */
     public Map getAttributeValues(String universalId, boolean bCreate)
         throws AMConsoleException {
-        if (debug.messageEnabled()) {
-            debug.message("EntitiesModel.getAttributeValues for " +universalId);
-        }
-        
         String[] param = {universalId, "*"};
         logEvent("ATTEMPT_READ_IDENTITY_ATTRIBUTE_VALUE", param);
         
@@ -261,9 +251,6 @@ public class EntitiesModelImpl
             }
 
             logEvent("SUCCEED_READ_IDENTITY_ATTRIBUTE_VALUE", param);
-            if (debug.messageEnabled()) {
-                debug.message("returning " + values);
-            }
             return values;
         } catch (IdRepoException e) {
             String[] paramsEx = {universalId, "*", getErrorString(e)};

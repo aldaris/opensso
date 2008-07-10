@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserModelImpl.java,v 1.2 2008-06-25 05:42:57 qcheng Exp $
+ * $Id: UserModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -467,7 +467,6 @@ public class UserModelImpl
      * @return a set of organizations
      */
     public Set getUsers(String location, String pattern) {
-        debug.message("UserModel.getUsers()");
         if (location == null) {
             location = getStartDSDN();
         }
@@ -521,13 +520,7 @@ public class UserModelImpl
     }
 
     public void updateUser(String name, Map data) 
-	throws AMConsoleException 
-    {
-	if (debug.messageEnabled()) {
-	    debug.message("UserModel.updateUser " + name);
-	    debug.message("data = " + data);
-	}
-
+	throws AMConsoleException {
 	for (Iterator i=data.keySet().iterator(); i.hasNext();) {
 	    String key = (String)i.next();
 	    Set value = (Set)data.get(key);
@@ -571,8 +564,6 @@ public class UserModelImpl
     public void createUser(String location, Map data) 
 	throws AMConsoleException 
     {
-        debug.message("UserModel.createUser ");
-
 	if (location == null) {
 	    location = "ou=People," + getStartDSDN();
 	}
@@ -613,10 +604,6 @@ public class UserModelImpl
                 pcDN = getDefaultPeopleContainer(
                     location, getObjectType(location));
 	    } 
-            if (debug.messageEnabled()) {
-                debug.message("UserModel.createUser \n" +
-                    "creating user under people container: " + pcDN);
-            }
 
             Set serviceNames = (Set)data.remove(SELECTED_SERVICE_NAMES);
             if (serviceNames == null) {
@@ -662,8 +649,6 @@ public class UserModelImpl
 	    logEvent("SSO_EXCEPTION_DIR_MGR_CREATE_USER", paramsEx);
 	    debug.error("error in sso ", e);
 	}
-
-        debug.message("UserModel.createUser - ending...");
     }
     
     /**
@@ -674,10 +659,6 @@ public class UserModelImpl
      * @return Error message if user cannot be assigned to a group.
      */  
     private String assignUserToGroup(String userName, Set userDN, String loc) {
-        if (debug.messageEnabled()) {
-            debug.message("UserModel.assignUserToGroup - begin... ");
-            debug.message("user name = " + userName);
-        }
         String errMsg = null;
 
         int type = getObjectType(loc);
@@ -719,12 +700,10 @@ public class UserModelImpl
             //logEvent("SUCCEED_ASSIGN_GROUP_TO_USER", params);
         }
  
-        debug.message("UserModel.assignUserToGroup - ending... ");
         return errMsg;
     }
 
     private Set getDefaultRoles(AMUser user) {
-        debug.message("UserModel.getDefaultRoles()");
         Set roleDNs = Collections.EMPTY_SET;
         String orgDN = null;
 
@@ -800,10 +779,6 @@ public class UserModelImpl
             throw new AMConsoleException(strError);
         }
         
-        if (debug.messageEnabled()) {
-            debug.message("returning user data  for " + name + " = " + map);
-        }
-
 	return (map == null) ? Collections.EMPTY_MAP : map;
     }
 
@@ -988,8 +963,6 @@ public class UserModelImpl
 	StringBuffer buff,
 	boolean readonly
     ) {
-	debug.message("UserModel.getPropertyXML");
-
 	try {
 	    PropertyXMLBuilder xmlBuilder =  new PropertyXMLBuilder(
 		AMAdminConstants.USER_SERVICE, this, attributes);
@@ -1010,10 +983,6 @@ public class UserModelImpl
     public void registerService(String organization, String service) 
 	throws AMConsoleException 
     {
-	if (debug.messageEnabled()) {
-	    debug.message("UserModel:registerService");
-	    debug.message("registering "+ service+" to "+organization);
-	}
 	try {
 	    AMOrganization org = getAMStoreConnection().getOrganization(
                 organization);
@@ -1172,7 +1141,6 @@ public class UserModelImpl
 	}
 	if (userGroups == null) {
 	    userGroups = Collections.EMPTY_SET;
-	    debug.message("no groups assignded to "+ user.getDN());
 	}
 
 	return (userGroups == null) ? Collections.EMPTY_SET : userGroups;

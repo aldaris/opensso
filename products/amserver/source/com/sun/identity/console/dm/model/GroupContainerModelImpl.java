@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupContainerModelImpl.java,v 1.2 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: GroupContainerModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -178,14 +178,7 @@ public class GroupContainerModelImpl extends DMModelBase
     }
 
     public void createGroupContainer(String location, Map data) 
-        throws AMConsoleException
-    {
-        if (debug.messageEnabled()) {
-            debug.message("GroupContainerModel.createGroupContainer");
-            debug.message("data = "+ data);
-            debug.message("parent = "+ location);
-        }
-
+        throws AMConsoleException {
         if (data == null || data.isEmpty()) {
             throw new AMConsoleException(
                 getLocalizedString("createFailure.message"));

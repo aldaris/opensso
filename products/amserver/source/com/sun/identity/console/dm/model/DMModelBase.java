@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DMModelBase.java,v 1.2 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: DMModelBase.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -1052,9 +1052,6 @@ public class DMModelBase
 	throws AMConsoleException
     {
 	if (dnSet == null || dnSet.isEmpty()) {
-	    if (debug.messageEnabled()) {
-		debug.message("DModelBase.deleteUMObject: DN Set null");
-	    }
 	    throw new AMConsoleException(
                 getLocalizedString("no.entries.selected"));
 	}
@@ -1217,11 +1214,6 @@ public class DMModelBase
     public void writeProfile(AMObject amObj, Map data, boolean overwrite)
         throws AMConsoleException, SSOException
     {
-        if (debug.messageEnabled()) {
-            debug.message("DMModelBase.writeProfile : " + amObj.getDN());
-            debug.message("data passed in " + data.keySet());
-        }
-    
         List errors = new ArrayList(data.size());
     
         /*
@@ -1281,9 +1273,6 @@ public class DMModelBase
                 continue;
             }
             if (overwrite || !newValue.equals(oldValue)) {
-                if (debug.messageEnabled()) {
-                    debug.message("setting new value for " + key);
-                }
                 String error = writeAttrValues(
                     amObj, key, newValue, oldValue, encrypted, plainpassword);
     
@@ -2146,10 +2135,6 @@ public class DMModelBase
     protected Set getServiceList(String dn)
         throws AMException, SSOException
     {
-        if (debug.messageEnabled()) {
-            debug.message("DMModelBase.getServiceList() using dn = " + dn);
-        }
-
         Set list = Collections.EMPTY_SET;
         int type = getObjectType(dn);
         AMStoreConnection sc = getAMStoreConnection();
@@ -2770,12 +2755,6 @@ public class DMModelBase
         searchFilter.append("(")
             .append(searchAttribute).append("=").append(pattern)
             .append(")");
-
-        if (debug.messageEnabled()) {
-            debug.message(
-                "DMModelBase.createUserSearchFilter = " 
-                + searchFilter.toString());
-        }
         return searchFilter.toString();
     }
 }

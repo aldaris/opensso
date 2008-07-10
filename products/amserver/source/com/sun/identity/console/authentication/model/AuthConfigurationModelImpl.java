@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthConfigurationModelImpl.java,v 1.2 2008-06-25 05:42:45 qcheng Exp $
+ * $Id: AuthConfigurationModelImpl.java,v 1.3 2008-07-10 23:27:22 veiming Exp $
  *
  */
 
@@ -109,9 +109,6 @@ public  class AuthConfigurationModelImpl extends AMModelBase
      *    from the entry.
      */ 
     public Map getValues() throws AMConsoleException {
-        if (debug.messageEnabled()) {
-            debug.message("AuthPropertiesModel.getValues: " + configData);
-        }
         return configData;
     }
 
@@ -203,10 +200,6 @@ public  class AuthConfigurationModelImpl extends AMModelBase
      public void deleteAuthConfiguration(String realm, Set names)
          throws AMConsoleException
     {
-        if (debug.messageEnabled()) {
-            debug.message("AuthConfigurationModel.deleteAuthConfig");
-            debug.message("trying to remove " + names + " from " + realm);
-        }
         StringBuffer errorList = new StringBuffer();
             String message = null;
 
@@ -261,10 +254,6 @@ public  class AuthConfigurationModelImpl extends AMModelBase
 
         try {
             ocm.getServiceConfig(AMAdminConstants.AUTH_CONFIG_SERVICE);
-            if (debug.messageEnabled()) {
-                debug.message(
-                    "Auth Config service verified for "+ currentRealm);
-            }
         } catch (SMSException sms) {
             try {
                 ocm.addServiceConfig(
@@ -445,11 +434,6 @@ public  class AuthConfigurationModelImpl extends AMModelBase
      * @param entries list of <code>AuthConfigurationEntry</code> objects.
      */
     public void setEntries(List entries) {
-        if (debug.messageEnabled()) {
-            debug.message("AuthConfigurationModel.setEntries");
-            debug.message("new entry list = " + entries);
-        }
-
         if ((entries != null) && (!entries.isEmpty())) {
             entryList = entries;
             xmlValue =         
@@ -482,12 +466,6 @@ public  class AuthConfigurationModelImpl extends AMModelBase
     public void store(String realm, String config) 
         throws AMConsoleException
     {
-        if (debug.messageEnabled()) {
-            debug.message("AuthConfigurationModel.store");
-            debug.message("storing authentication config " + config);
-            debug.message("data map = " + configData);
-        }
-
         String errorMsg = null;
         String[] params = {realm, config};
         logEvent("ATTEMPT_MODIFY_AUTH_CONFIG_PROFILE", params);
@@ -537,10 +515,6 @@ public  class AuthConfigurationModelImpl extends AMModelBase
      * @param config name of entry.
      */
     public void initialize(String realm, String config) {
-        if (debug.messageEnabled()) {
-            debug.message("initializing AuthConfigurationModel");
-            debug.message("realm = " + realm + " configuration = " + config);
-        }
         verifyConfigurationService(realm);
 
         try {

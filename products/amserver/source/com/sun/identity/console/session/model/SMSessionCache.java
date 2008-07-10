@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSessionCache.java,v 1.2 2008-06-25 05:43:21 qcheng Exp $
+ * $Id: SMSessionCache.java,v 1.3 2008-07-10 23:27:24 veiming Exp $
  *
  */
 
@@ -125,7 +125,7 @@ public class SMSessionCache
                     results.put(userId +id, sData);
                 }
             } catch (SessionException se) {
-                debug.message("SMSessionCache.retainSessionsWithUserID", se);
+                debug.warning("SMSessionCache.retainSessionsWithUserID", se);
             }
         }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCUtils.java,v 1.2 2008-06-25 05:43:18 qcheng Exp $
+ * $Id: SCUtils.java,v 1.3 2008-07-10 23:27:24 veiming Exp $
  *
  */
 
@@ -90,9 +90,6 @@ public class SCUtils {
      */
     public String getServiceDisplayURL() {
         String displayURL = null;
-        if (AMModelBase.debug.messageEnabled()) {
-            AMModelBase.debug.message("getServiceDisplayURL for " + serviceName);
-        }
 
         try {
             Set schemaTypes = manager.getSchemaTypes();
@@ -104,9 +101,6 @@ public class SCUtils {
                 ServiceSchema schema = manager.getSchema(type);
                 if (schema != null) {
                     displayURL = schema.getPropertiesViewBeanURL();
-                    if (AMModelBase.debug.messageEnabled()) {
-                        AMModelBase.debug.message("url = " + displayURL);
-                    }
                 }
             }
         } catch (SMSException smse) {

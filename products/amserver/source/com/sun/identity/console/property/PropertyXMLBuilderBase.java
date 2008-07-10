@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.8 2008-07-02 17:21:47 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.9 2008-07-10 23:27:24 veiming Exp $
  *
  */
 
@@ -364,11 +364,9 @@ public abstract class PropertyXMLBuilderBase
             serviceBundle = ResourceBundle.getBundle(rbName,
                 model.getUserLocale());
         } catch (MissingResourceException e) {
-            if (debug.messageEnabled()) {
-                debug.message(
-                    "PropertyXMLBuilderBase.getServiceResourceBundle " +
-                    e.getMessage());
-            }
+            debug.warning(
+                "PropertyXMLBuilderBase.getServiceResourceBundle " +
+                e.getMessage());
         }
     }
 
@@ -392,7 +390,7 @@ public abstract class PropertyXMLBuilderBase
             serviceBundle = ResourceBundle.getBundle(rbName,
                 model.getUserLocale());
         } catch (MissingResourceException e) {
-            debug.message(
+            debug.warning(
                 "PropertyXMLBuilderBase.getServiceResourceBundle", e);
         }
     }
@@ -552,10 +550,6 @@ public abstract class PropertyXMLBuilderBase
                 }
             } catch (MissingResourceException e) {
                 size = properties.getString("textfield.default");
-                if (debug.messageEnabled()) {
-                    debug.message("PropertyXMLBuilderBase: " + 
-                        "no size defined for " + valSyntax);
-                }
             }
         }
         return size;

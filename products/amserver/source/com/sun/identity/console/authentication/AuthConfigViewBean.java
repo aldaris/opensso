@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthConfigViewBean.java,v 1.3 2008-06-25 05:42:45 qcheng Exp $
+ * $Id: AuthConfigViewBean.java,v 1.4 2008-07-10 23:27:22 veiming Exp $
  *
  */
 
@@ -314,7 +314,6 @@ public class AuthConfigViewBean
     }
 
     private List getTableData() throws ModelControlException{
-        debug.message("AuthConfigViewBean.getTableData");
         List entryList = new ArrayList();
 
         CCActionTable table = (CCActionTable)getChild(AUTH_ENTRY_TABLE);
@@ -335,10 +334,6 @@ public class AuthConfigViewBean
                     "Couldn't create the auth configuration entry",e); }
         }
 
-        if (debug.messageEnabled()) {
-            debug.message("AuthConfigViewBean.getTableData() " +
-                "Data created for the config table - " + entryList);
-        }                
         return entryList;
     }    
 
@@ -551,10 +546,6 @@ public class AuthConfigViewBean
             entryValue = acModel.getXMLValue(getRealmName(), getConfigName());
         }
 
-        if (debug.messageEnabled()) { 
-            debug.message("AuthConfigViewBean.populateEntryTable() " +
-                "creating table from: " + entryValue);
-        }
         int size = acModel.getNumberEntries();
         for (int x=0; x < size; x++ ) {
             String module = acModel.getModuleName(x);

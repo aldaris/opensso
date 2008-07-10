@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupModelImpl.java,v 1.3 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: GroupModelImpl.java,v 1.4 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -551,10 +551,6 @@ public class GroupModelImpl extends DMModelBase
     public void updateGroup(String name, Map values) 
 	throws AMConsoleException 
     {
-	if (debug.messageEnabled()) {
-	    debug.message(
-		"GroupModel.updateGroup saving properties for " + name);
-	}
 	AMGroup group = getAMGroup(name);
         try {
             modify(group, values);
@@ -726,9 +722,6 @@ public class GroupModelImpl extends DMModelBase
                     .append(",") 
                     .append(loc);  
                 loc = tmp.toString();
-                if (debug.messageEnabled()) { 
-                    debug.message("new location dn = " + loc); 
-                } 
             }
         }
 	return loc;
@@ -799,12 +792,6 @@ public class GroupModelImpl extends DMModelBase
     public boolean createGroup(String location, Map dataIn) 
 	throws AMConsoleException
     {
-	if (debug.messageEnabled()) {
-            debug.message("GroupModel.createGroup " + location + 
-	        " values = " + dataIn);
-            debug.message("data input is " + dataIn);
-        }
-
         boolean created = false;
         Exception e = null;
 	Set tmp = (Set)dataIn.get(ENTRY_NAME_ATTRIBUTE_NAME);
@@ -930,10 +917,6 @@ public class GroupModelImpl extends DMModelBase
     private void modify(AMGroup group, Map dataIn)
         throws AMException, SSOException, AMConsoleException
     {
-        if (debug.messageEnabled()) {
-            debug.message("modifying group with " + dataIn);
-        }
-
 	validateRequiredAttributes(dataIn);
 
 	String[] param = {group.getDN()};
@@ -1099,9 +1082,8 @@ public class GroupModelImpl extends DMModelBase
             }
             break;
         default:
-            if (debug.messageEnabled()) {
-                debug.message("invalid group " + groupType);
-            }
+            debug.warning("GroupModelImpl.createSubGroup: invalid group " +
+                groupType);
         }
         if (ns == null || ns.isEmpty()) {
 	    String[] paramsEx = {parent.getDN(), groupName, ""};
@@ -1135,20 +1117,11 @@ public class GroupModelImpl extends DMModelBase
     private boolean createGroup(AMOrganization parent, Map dataIn)
         throws AMException, SSOException, AMConsoleException
     {
-	if (debug.messageEnabled()) {
-	    debug.message("GroupModel.createGroup");
-            debug.message("creating group in organization : " + 
-		parent.getDN());
-        }
-
         Set ns = null;
         int groupType = getGroupType(dataIn);
         Set tmp = (Set)dataIn.remove(ENTRY_NAME_ATTRIBUTE_NAME);
         String groupName = (String)tmp.iterator().next(); 
         
-        if (debug.messageEnabled()) {
-            debug.message("creating group named " + groupName);
-        }
         Set sGroupNames = new HashSet(1);
         sGroupNames.add(groupName);
 
@@ -1191,7 +1164,8 @@ public class GroupModelImpl extends DMModelBase
             }
             break;
         default:
-            debug.message("unknown group type specified");
+            debug.warning(
+                "GroupModelImpl.createGroup: unknown group type specified");
         }
 
         if (ns == null || ns.isEmpty()) {
@@ -1209,8 +1183,6 @@ public class GroupModelImpl extends DMModelBase
     private boolean createGroup(AMOrganizationalUnit parent, Map dataIn)
         throws AMException, SSOException, AMConsoleException
     {
-        debug.message("creating group in orgunit : "+ parent.getDN());
-
         Set ns = null;
 	Set tmp = (Set)dataIn.remove(ENTRY_NAME_ATTRIBUTE_NAME);
         String groupName = (String)tmp.iterator().next();
@@ -1224,7 +1196,6 @@ public class GroupModelImpl extends DMModelBase
         switch (groupType) {
         case AMObject.GROUP:
         case AMObject.STATIC_GROUP:
-            debug.message("static group");
             ns = parent.createStaticGroups(sGroupNames);
             // Modify the group after creation since the SDK
             // doesn't allow a static group to be initialized
@@ -1236,7 +1207,6 @@ public class GroupModelImpl extends DMModelBase
             }
             break;
         case AMObject.DYNAMIC_GROUP:
-            debug.message("dynamic group");
 
             //add the filter(memberurl)
             dataIn.putAll(createMemberURL(parent.getDN(),dataIn));
@@ -1247,7 +1217,6 @@ public class GroupModelImpl extends DMModelBase
             ns = parent.createDynamicGroups(dynamicGroup);
             break;
         case AMObject.ASSIGNABLE_DYNAMIC_GROUP:
-            debug.message("assignable group");
             ns = parent.createAssignableDynamicGroups(sGroupNames);
             Iterator adIter = ns.iterator();
 
@@ -1297,9 +1266,6 @@ public class GroupModelImpl extends DMModelBase
         */
         if (dataIn.containsKey(ATTR_NAME_LOGICAL_OPERATOR)) {
             filterInfo = createFilter(dataIn);
-            if (debug.messageEnabled()) {
-                debug.message("returned filter " + filterInfo);
-            }
         } else {
             Set tmp = (Set)dataIn.remove("filterinfo");
             if (tmp == null || tmp.isEmpty()) {
@@ -1491,7 +1457,6 @@ public class GroupModelImpl extends DMModelBase
         SchemaType type,
 	boolean readonly
     ) {
-        debug.message("DMModeBase.getPropertyXML");
         String xml = "";
         try {
             ServiceSchema sub = getSubSchema(serviceName, type, subSchemaName);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCModelBase.java,v 1.2 2008-06-25 05:43:18 qcheng Exp $
+ * $Id: SCModelBase.java,v 1.3 2008-07-10 23:27:24 veiming Exp $
  *
  */
 
@@ -185,9 +185,6 @@ public  abstract class SCModelBase
                 }
             }
         }                                             
-        if (debug.messageEnabled()) {
-            debug.message("returning from getAttributeValues " + values);
-        }
         return (values == null) ? Collections.EMPTY_MAP : values;
     }
 
@@ -232,12 +229,6 @@ public  abstract class SCModelBase
     protected Set getAttributeNames(SchemaType type)
         throws AMConsoleException 
     {
-        if (debug.messageEnabled()) {
-            debug.message("SCModelBase.getAttributeNames(type)");
-            debug.message("trying to find " + type + " attributes for " +
-                getServiceName());
-        }
-
         try {
             ServiceSchema schema =  getServiceSchemaManager().getSchema(type);
             Set attributes = schema.getAttributeSchemaNames(); 
@@ -265,7 +256,6 @@ public  abstract class SCModelBase
     * @return Map property values.
     */
     public Map getValues() throws AMConsoleException {
-        debug.message("SCModelBase.getValues()");
         Map tmp = new HashMap();
         tmp.putAll(getAttributeValues(SchemaType.GLOBAL));
         tmp.putAll(getAttributeValues(SchemaType.ORGANIZATION));
@@ -283,12 +273,6 @@ public  abstract class SCModelBase
     * config.
     */
     public void setValues(Map modifiedValues) throws AMConsoleException {
-        if (debug.messageEnabled()) {
-            debug.message("SCModelBase.setValues(modifiedValues)");
-            debug.message("trying to set the following values for " + 
-                getServiceName() + "\n" + modifiedValues);
-        }
-
         if (modifiedValues == null || modifiedValues.isEmpty()) {
             debug.message("the modifiedValues map is empty; no changes to set");
             return;
@@ -323,7 +307,6 @@ public  abstract class SCModelBase
     * passed as a parameter.
     */
     private Map removeAttributes(SchemaType type, Map original) { 
-        debug.message("SCModelBase.removeAttributes()");
         Set names = null;
         try {
             names = getAttributeNames(type);

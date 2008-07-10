@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMI18NUtils.java,v 1.3 2008-06-25 05:42:49 qcheng Exp $
+ * $Id: AMI18NUtils.java,v 1.4 2008-07-10 23:27:22 veiming Exp $
  *
  */
 
@@ -61,10 +61,6 @@ public class AMI18NUtils
         String clientType = "";
         try {
             clientType = ssoToken.getProperty(KEY_CLIENT_TYPE);
-
-            if (debug.messageEnabled()) {
-                debug.message("AMI18NUtils.getClientType, " + clientType);
-            }
         } catch (SSOException ssoe) {
             debug.error("AMI18NUtils.getClientType", ssoe);
         }
@@ -85,9 +81,6 @@ public class AMI18NUtils
                 Client client = ClientsManager.getInstance(clientType);
                 charset = (client != null) ? client.getCharset(loc) : 
                     Client.CDM_DEFAULT_CHARSET;
-                if (debug.messageEnabled()) {
-                    debug.message("AMI18NUtils.getCharset, " + charset);
-                }
             } catch (ClientException ce) {
                 debug.warning("AMI18NUtils.getCharset - " +
                  "couldn't retrieve the client charset, reverting to default.");

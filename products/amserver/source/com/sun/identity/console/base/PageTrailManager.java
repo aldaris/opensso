@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PageTrailManager.java,v 1.2 2008-06-25 05:42:48 qcheng Exp $
+ * $Id: PageTrailManager.java,v 1.3 2008-07-10 23:27:22 veiming Exp $
  *
  */
 
@@ -142,9 +142,6 @@ public class PageTrailManager
         String key = tokenID.toString();
         synchronized(mapTokenIDs) {
             removed = (mapTokenIDs.remove(key) != null);
-        }
-        if (removed && debug.messageEnabled()) {
-            debug.message("PageTrailManager.clearAllTrails() " + key);
         }
     }
 

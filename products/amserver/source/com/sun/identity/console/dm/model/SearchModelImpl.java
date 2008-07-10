@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchModelImpl.java,v 1.2 2008-06-25 05:42:57 qcheng Exp $
+ * $Id: SearchModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -310,10 +310,8 @@ public class SearchModelImpl extends DMModelBase
 		    agroup, groupName, avPairs, searchControl);
                 break;
             default:
-                if (debug.messageEnabled()) {
-                    debug.message("SearchModel.searchGroups() invalid location "
-                        + locationDN);
-                }
+                debug.warning("SearchModel.searchGroups() invalid location "
+                    + locationDN);
             }
         } catch (AMException ame) {
             debug.warning("SearchModel.searchGroups()", ame);
@@ -417,7 +415,6 @@ public class SearchModelImpl extends DMModelBase
         SchemaType type,
         boolean readonly
     ) {
-        debug.message("SearchModel.getPropertyXML");
         String xml = "";
         try {
             ServiceSchema sub = getSubSchema(serviceName, type, subSchemaName);
@@ -542,13 +539,10 @@ public class SearchModelImpl extends DMModelBase
             case AMObject.MANAGED_ROLE:
                 AMRole role = sc.getRole(containerDN);
                 role.addUsers(userDNs);
-               break;
+                break;
             default:
-                if (debug.messageEnabled()) {
-                    debug.message(
-                        "SearchModel:addUsers invalid container "
-                        + containerDN);
-                }
+                debug.warning("SearchModel:addUsers invalid container "
+                    + containerDN);
             }
         } catch (AMException ame) {
             debug.warning("SearchModel.addUsers", ame);
@@ -774,7 +768,6 @@ public class SearchModelImpl extends DMModelBase
         Map avPairs,
         AMSearchControl searchControl
     ) throws AMException, SSOException {
-        debug.message("SearchControl.searchUsers(operator, avpairs, sc)");
         AMSearchResults searchResults = null;        
         AMPeopleContainer pc = null;
         int scope = searchControl.getSearchScope();
@@ -846,11 +839,8 @@ public class SearchModelImpl extends DMModelBase
             searchResults = dgroup.searchUsers(searchControl, filter);
             break;
         default:
-            if (debug.messageEnabled()) {
-                debug.message(
-                    "SearchModel.searchUsers invalid location " +
-                    searchLocationDN);
-            }
+            debug.warning("SearchModel.searchUsers invalid location " +
+                searchLocationDN);
         }
         return searchResults;
     }
@@ -866,7 +856,6 @@ public class SearchModelImpl extends DMModelBase
         Map avPairs,
         AMSearchControl searchControl
     ) throws AMException, SSOException {
-        debug.message("SearchControl.searchUsersForMembership");
         String avFilter = createFilter(logicalOp, avPairs);
         AMStoreConnection sc = getAMStoreConnection();
 
@@ -899,11 +888,9 @@ public class SearchModelImpl extends DMModelBase
             parent = getParentOrganization(agroup);
             break;
         default:
-            if (debug.messageEnabled()) {
-                debug.message(
-		    "SearchModel.searchUsersForMembership invalid " + 
-		    "location " + searchLocationDN);
-            }
+            debug.warning(
+                "SearchModel.searchUsersForMembership invalid location " +
+                searchLocationDN);
         }
 
         AMSearchResults searchResults = null;        
@@ -920,11 +907,6 @@ public class SearchModelImpl extends DMModelBase
     }
 
     private String createFilter(String logicalOp, Map avPairs) {
-	if (debug.messageEnabled()) {
-	    debug.message("SearchModel.createFilter() \n" + 
-	        "\tlogical operator = " + logicalOp +"\n" +
-	        "\tav pairs = " + avPairs);
-	}
         Iterator iter = avPairs.entrySet().iterator();
 
         StringBuffer avBuf = new StringBuffer(100);
@@ -999,10 +981,6 @@ public class SearchModelImpl extends DMModelBase
             }
         }
 
-	if (debug.messageEnabled()) {
-	    debug.message(
-		"SearchModel.createFilter filter = " + avFilter.toString());
-	}
         return avFilter.toString();
     }
 

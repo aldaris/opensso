@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleServletBase.java,v 1.3 2008-06-25 05:42:48 qcheng Exp $
+ * $Id: ConsoleServletBase.java,v 1.4 2008-07-10 23:27:22 veiming Exp $
  *
  */
 
@@ -183,10 +183,6 @@ public abstract class ConsoleServletBase
 
             try {
                 String jCharset = BrowserEncoding.mapHttp2JavaCharset(enc);
-                if (debug.messageEnabled()) {
-                    debug.message("ConsoleServletBase.validateSSOToken " +
-                        "Request charset = " + enc);
-                }
                 req.setCharacterEncoding(jCharset);
             } catch (UnsupportedEncodingException ex) {
                 debug.error("ConsoleServletBase.validateSSOToken " +
@@ -207,7 +203,6 @@ public abstract class ConsoleServletBase
             debug.message("ConsoleServletBase.browserRedirect " +
                 "redirecting unauthenticated user to " + url);
         }
-
         vb.setLoginURL(url);
         vb.forwardTo(requestContext);
     }

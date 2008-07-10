@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleModelImpl.java,v 1.2 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: RoleModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
  *
  */
 
@@ -321,10 +321,6 @@ public class RoleModelImpl extends DMModelBase
     }
 
     public String getServiceXML(String service) {
-        if (debug.messageEnabled()) {
-            debug.message("RoleModel.getServiceXML - beginning...");
-            debug.message("getting display string for " + service);
-        }
         StringBuffer buff = new StringBuffer(2000);
         buff.append(PropertyTemplate.DEFINITION)
             .append(PropertyTemplate.START_TAG);
