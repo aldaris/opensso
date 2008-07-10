@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyOpViewBeanBase.java,v 1.3 2008-07-07 20:39:21 veiming Exp $
+ * $Id: PolicyOpViewBeanBase.java,v 1.4 2008-07-10 00:27:57 veiming Exp $
  *
  */
 
@@ -307,6 +307,15 @@ public abstract class PolicyOpViewBeanBase
 
             btn = (CCButton)getChild("tblRulesButtonDelete");
             btn.setDisabled(true);
+            
+            Map serviceTypes = model.getServiceTypeNames();
+            if ((serviceTypes == null) || serviceTypes.isEmpty()) {
+                ((CCButton)getChild("tblRulesButtonDelete")).setDisabled(true);
+                setDisplayFieldValue("tblRulesNote", 
+                    model.getLocalizedString("policy.no.service.types"));
+            } else {
+                setDisplayFieldValue("tblRulesNote", "");
+            }
 
             if (!isInlineAlertMessageSet() &&
                 cachedPolicy.isPolicyModified() && isProfilePage()

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyNormalViewBeanBase.java,v 1.2 2008-06-25 05:43:04 qcheng Exp $
+ * $Id: PolicyNormalViewBeanBase.java,v 1.3 2008-07-10 00:27:57 veiming Exp $
  *
  */
 
@@ -31,11 +31,14 @@ package com.sun.identity.console.policy;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.base.model.QueryResults;
 import com.sun.identity.console.policy.model.PolicyModel;
 import com.sun.web.ui.view.html.CCButton;
 import com.sun.web.ui.view.html.CCTextField;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
+import java.util.Map;
 
 public abstract class PolicyNormalViewBeanBase
     extends PolicyOpViewBeanBase
@@ -83,6 +86,38 @@ public abstract class PolicyNormalViewBeanBase
         btn.setDisabled(true);
         btn = (CCButton)getChild("tblConditionsButtonDelete");
         btn.setDisabled(true);
+        
+        PolicyModel model = (PolicyModel)getModel();
+        String realm = (String)getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
+        QueryResults subjectsQuery = model.getActiveSubjectTypes(realm);
+        Map subjects = (Map)subjectsQuery.getResults();
+        if ((subjects == null) || subjects.isEmpty()) {
+            ((CCButton)getChild("tblSubjectsButtonAdd")).setDisabled(true);
+            setDisplayFieldValue("tblSubjectsNote", 
+                model.getLocalizedString("policy.no.subject.types"));
+        } else {
+            setDisplayFieldValue("tblSubjectsNote", "");
+        }
+        
+        Map conditions = model.getActiveConditionTypes(realm);
+        if ((conditions == null) || conditions.isEmpty()) {
+            ((CCButton)getChild("tblConditionsButtonAdd")).setDisabled(true);
+            setDisplayFieldValue("tblConditionsNote", 
+                model.getLocalizedString("policy.no.condition.types"));
+        } else {
+            setDisplayFieldValue("tblConditionsNote", "");
+        }
+        
+        Map responseProviders = model.getActiveResponseProviderTypes(realm);
+        if ((responseProviders == null) || responseProviders.isEmpty()) {
+            ((CCButton)getChild("tblResponseProvidersButtonAdd")).
+                setDisabled(true);
+            setDisplayFieldValue("tblResponseProvidersNote", 
+                model.getLocalizedString("policy.no.response.providers.types"));
+        } else {
+            setDisplayFieldValue("tblResponseProvidersNote", "");
+        }
     }
 
     protected abstract void createPageTitleModel();
