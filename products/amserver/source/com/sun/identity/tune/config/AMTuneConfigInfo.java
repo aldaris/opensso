@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.1 2008-07-02 18:48:44 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.2 2008-07-10 12:43:47 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -156,13 +156,13 @@ FAMConstants, WebContainerConstants {
             }
             setTuneDS(confBundle.getString(AMTUNE_TUNE_DS));
             setTuneFAM(confBundle.getString(AMTUNE_TUNE_IDENTITY));
-            //This is mandatory filed used for replacing the passwords at end.
-            setFAMAdmLocation(confBundle.getString(FAMADM_LOCATION));
             if (isTuneFAM()) {
                 setFamAdminPassword(confBundle.getString(FAMADM_PASSWORD));
                 setFAMServerUrl(confBundle.getString(FAMSERVER_URL));
                 setFAMAdmUser(confBundle.getString(FAMADM_USER));
                 setRealms(confBundle.getString(REALM_NAME));
+                setFAMAdmLocation(confBundle.getString(FAMADM_LOCATION));
+                setFAMConfigDir(confBundle.getString(FAM_CONFIG_DIR));
             }
             setFAMTuneMinMemoryToUseInMB(
                     confBundle.getString(AMTUNE_MIN_MEMORY_TO_USE_IN_MB));
@@ -199,7 +199,6 @@ FAMConstants, WebContainerConstants {
                 if (!isUMSMDSSame()) {
                     smConfigInfo = new DSConfigInfo(confBundle, true);
                 }
-                setFAMConfigDir(confBundle.getString(FAM_CONFIG_DIR));
             } 
             calculateTuneParams();
         } catch (Exception ex) {
@@ -224,7 +223,7 @@ FAMConstants, WebContainerConstants {
                 realms.add(realmNames);
             }
         } else {
-            mWriter.write("pt-inval-config");
+            mWriter.writelnLocaleMsg("pt-inval-config");
             AMTuneUtil.printErrorMsg(REALM_NAME);
             pLogger.log(Level.SEVERE, "setRealms",
                     "Error setting Realms. " +
@@ -403,7 +402,7 @@ FAMConstants, WebContainerConstants {
                 throw new AMTuneException("Invalid FAM admin tools location");
             }
         } else {
-            mWriter.write("pt-inval-config");
+            mWriter.writelnLocaleMsg("pt-inval-config");
             AMTuneUtil.printErrorMsg(FAMADM_LOCATION);
             pLogger.log(Level.SEVERE, "setFAMAdmLocation",
                     "Error setting FAM Admin Location. " +
@@ -440,7 +439,7 @@ FAMConstants, WebContainerConstants {
                 throw new AMTuneException("Invalid FAM install location");
             }
         } else {
-            mWriter.write("pt-inval-config");
+            mWriter.writelnLocaleMsg("pt-inval-config");
             AMTuneUtil.printErrorMsg(FAM_CONFIG_DIR);
             pLogger.log(Level.SEVERE, "setFAMAdmLocation",
                     "Error setting FAM config Location. " +
