@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoEmbeddedOpenDS.xml,v 1.8 2008-06-25 05:46:13 qcheng Exp $
+   $Id: idRepoEmbeddedOpenDS.xml,v 1.9 2008-07-10 16:26:01 kenwho Exp $
   
 -->
 
@@ -194,6 +194,10 @@
           <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-psearchbase"/>
              <Value>@UM_CONFIG_ROOT_SUFFIX@</Value>
+          </AttributeValuePair>
+          <AttributeValuePair>
+             <Attribute name="sun-idrepo-ldapv3-config-psearch-filter"/>
+             <Value>(&amp;(objectclass=*)(!(ou:dn:=services)))</Value>
           </AttributeValuePair>
           <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-people-container-name"/>
