@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.12 2008-06-25 05:52:17 qcheng Exp $
+   $Id: readme.txt,v 1.13 2008-07-10 21:38:03 huacui Exp $
 
 -->
 
@@ -31,7 +31,8 @@ J2EE Policy Agent Sample Application
 ------------------------------------
 
 This document describes how to use the agent sample application in conjunction 
-with the Weblogic 10 Application Server and the J2EE Agent.
+with the Weblogic 10 Application Server and the J2EE Agent. Please note that 
+the agent needs to be installed first before deploying this sample application.
 
     * Overview
     * Configure the Federated Access Manager server
