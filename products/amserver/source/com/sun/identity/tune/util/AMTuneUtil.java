@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.1 2008-07-02 18:57:37 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.2 2008-07-10 12:36:39 kanduls Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -152,8 +152,14 @@ import java.util.regex.Pattern;
             try {
                 FileHandler fh = new FileHandler(rVersionFile);
                 String reqLine = fh.getLine("Red Hat");
-                if (reqLine == null ) {
+                if (reqLine == null || 
+                        (reqLine != null && reqLine.trim().length() == 0)) {
                     mWriter.writelnLocaleMsg("pt-unsupported-lnx");
+                    String curVersion = fh.getLine(0);
+                    if (curVersion != null) {
+                        pLogger.log(Level.SEVERE, "checkSystemEnv", 
+                             "Unsupported Linux : " + curVersion );
+                    }
                     throw new AMTuneException("Unsupported Linux ");
                 }
                 int relidx = reqLine.indexOf("release");
@@ -440,7 +446,13 @@ import java.util.regex.Pattern;
      * @return Returns FQDN
      */
     public static String getHostName() {
-        return (String)sysInfoMap.get(HOST_NAME_LINE) + "." + getDomainName();
+        if (sysInfoMap.get(HOST_NAME_LINE).toString().indexOf(
+                getDomainName()) == -1) {
+            return (String)sysInfoMap.get(HOST_NAME_LINE) + "." + 
+                    getDomainName();
+        } else {
+            return (String)sysInfoMap.get(HOST_NAME_LINE);
+        }
     }
 
     /**
