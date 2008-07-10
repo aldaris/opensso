@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTune.java,v 1.1 2008-07-02 18:42:31 kanduls Exp $
+ * $Id: AMTune.java,v 1.2 2008-07-10 12:33:14 kanduls Exp $
  */
 
 package com.sun.identity.tune;
@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 
 /**
  *
@@ -55,10 +56,9 @@ import java.util.StringTokenizer;
  * tuners based on the options set in the amtune-env.properties.
  */
 public class AMTune {
-    
+        static AMTuneLogger pLogger = null;
+        static MessageWriter mWriter = null;
     public static void main(String args[]) {
-        AMTuneLogger pLogger = null;
-        MessageWriter mWriter = null;
         AMTuneConfigInfo confInfo = null;
         try {
             String confFilePath = AMTuneConstants.ENV_FILE_NAME;
@@ -127,38 +127,57 @@ public class AMTune {
     private static List getTuners(AMTuneConfigInfo confInfo)
     throws AMTuneException {
         List tunerList = new ArrayList();
-        if (confInfo.isTuneDS()) {
-            String dsVersion = confInfo.getDSConfigInfo().getDsVersion();
-            if (AMTuneUtil.isSupportedUMDSVersion(dsVersion)) {
-                if (dsVersion.indexOf(DSConstants.DS5_VERSION) != -1) {
-                    tunerList.add(new TuneDS5Impl(false));
-                } else if (dsVersion.indexOf(DSConstants.DS63_VERSION) != -1) {
-                    tunerList.add(new TuneDS6Impl(false));
-                }
-            } else {
-                throw new AMTuneException("Invalid UM DS Version: " +
-                        dsVersion);
-            }
-            if (!confInfo.isUMSMDSSame() && !confInfo.isUMOnlyTune()) {
-                String smDSVersion = confInfo.getSMConfigInfo().getDsVersion();
-                if (AMTuneUtil.isSupportedSMDSVersion(smDSVersion)) {
-                    if (smDSVersion.indexOf(DSConstants.DS5_VERSION) != -1) {
-                        tunerList.add(new TuneDS5Impl(true));
-                    } else if (smDSVersion.indexOf(
-                            DSConstants.DS63_VERSION) != -1) {
-                        tunerList.add(new TuneDS6Impl(true));
-                    } else {
-                        throw new AMTuneException("Tuner not available for " +
-                                smDSVersion);
-                    }
-                } else {
-                    throw new AMTuneException("Invalid SM DS Version: " +
-                            smDSVersion);
-                }
+        if (confInfo.isTuneOS()) {
+            if (AMTuneUtil.isSunOs()) {
+                tunerList.add(new TuneSolarisOS());
+            } else if (AMTuneUtil.isLinux()) {
+                tunerList.add(new TuneLinuxOS());
+            }  else {
+                throw new AMTuneException("Unsupported OS for tuning.");
             }
         }
-        if (confInfo.isTuneFAM()) {
-            tunerList.add(new TuneFAM8Impl());
+        if (confInfo.isTuneDS()) {
+            if (confInfo.getDSConfigInfo().isRemoteDS()) {
+                pLogger.log(Level.INFO, "getTuners", "UM DS is remote.");
+                mWriter.writelnLocaleMsg("pt-remote-ds-msg");
+            } else {
+                String dsVersion = confInfo.getDSConfigInfo().getDsVersion();
+                if (AMTuneUtil.isSupportedUMDSVersion(dsVersion)) {
+                    if (dsVersion.indexOf(DSConstants.DS5_VERSION) != -1) {
+                        tunerList.add(new TuneDS5Impl(false));
+                    } else if (dsVersion.indexOf(
+                            DSConstants.DS63_VERSION) != -1) {
+                        tunerList.add(new TuneDS6Impl(false));
+                    }
+                } else {
+                    throw new AMTuneException("Invalid UM DS Version: " +
+                            dsVersion);
+                }
+            }
+            if (!confInfo.isUMSMDSSame() && !confInfo.isUMOnlyTune()) {
+                if (confInfo.getSMConfigInfo().isRemoteDS()) {
+                    pLogger.log(Level.INFO, "getTuners", "SM DS is remote.");
+                    mWriter.writelnLocaleMsg("pt-remote-ds-msg");
+                } else {
+                    String smDSVersion =
+                            confInfo.getSMConfigInfo().getDsVersion();
+                    if (AMTuneUtil.isSupportedSMDSVersion(smDSVersion)) {
+                        if (smDSVersion.indexOf(
+                                DSConstants.DS5_VERSION) != -1) {
+                            tunerList.add(new TuneDS5Impl(true));
+                        } else if (smDSVersion.indexOf(
+                                DSConstants.DS63_VERSION) != -1) {
+                            tunerList.add(new TuneDS6Impl(true));
+                        } else {
+                            throw new AMTuneException(
+                                    "Tuner not available for " + smDSVersion);
+                        }
+                    } else {
+                        throw new AMTuneException("Invalid SM DS Version: " +
+                                smDSVersion);
+                    }
+                }
+            }
         }
         if (confInfo.isTuneWebContainer()) {
             if (confInfo.getWebContainer().equals(
@@ -171,22 +190,15 @@ public class AMTune {
                 throw new AMTuneException("Invalid WebContainer.");
             }
         }
-        if (confInfo.isTuneOS()) {
-            if (AMTuneUtil.isSunOs()) {
-                tunerList.add(new TuneSolarisOS());
-            } else if (AMTuneUtil.isLinux()) {
-                tunerList.add(new TuneLinuxOS());
-            }  else {
-                throw new AMTuneException("Unsupported OS for tuning.");
-            }
+        if (confInfo.isTuneFAM()) {
+            tunerList.add(new TuneFAM8Impl());
         }
         return tunerList;
     }
     
     private static void replacePasswords(AMTuneConfigInfo confInfo) {
         try {
-            String propFile = confInfo.getFAMAdmLocation() +
-                    AMTuneConstants.FILE_SEP + "amtune" +
+            String propFile = AMTuneUtil.getCurDir() + 
                     AMTuneConstants.FILE_SEP +
                     AMTuneConstants.ENV_FILE_NAME + ".properties";
             FileHandler fh = new FileHandler(propFile);
