@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneDSBase.java,v 1.1 2008-07-02 18:44:01 kanduls Exp $
+ * $Id: AMTuneDSBase.java,v 1.2 2008-07-10 12:42:03 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -946,10 +946,18 @@ public abstract class AMTuneDSBase extends TuneDS {
      * @return merged list
      */
     private List mergeLists(List list1, List list2) {
-        Iterator itr = list2.iterator();
-        while (itr.hasNext()) {
-            String attr = (String)itr.next();
-            if (list1.toString().indexOf(attr) == -1) {
+        Iterator itr2 = list2.iterator();
+        while (itr2.hasNext()) {
+            String attr = (String)itr2.next();
+            boolean found = false;
+            Iterator itr1 = list1.iterator();
+            while (itr1.hasNext()) {
+                String curAttr = itr1.next().toString();
+                if (curAttr.equalsIgnoreCase(attr)) {
+                    found =true;
+                }
+            }
+            if (!found) {
                list1.add(attr);
             }
         }

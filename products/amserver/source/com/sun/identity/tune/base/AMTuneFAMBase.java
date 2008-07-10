@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.1 2008-07-02 18:44:02 kanduls Exp $
+ * $Id: AMTuneFAMBase.java,v 1.2 2008-07-10 12:42:03 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -221,7 +221,10 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                         "");
                 StringTokenizer str = new StringTokenizer(reqStr, "\n");
                 while (str.hasMoreTokens()) {
-                    dataStoreList.add(str.nextToken());
+                    String dsName = str.nextToken();
+                    if (dsName != null && dsName.trim().length() > 0) {
+                        dataStoreList.add(dsName);
+                    }
                 }
             }
         } catch (Exception ex) {
