@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: distAuthConfigurator.jsp,v 1.5 2008-06-25 05:40:26 qcheng Exp $
+   $Id: distAuthConfigurator.jsp,v 1.6 2008-07-11 19:16:26 manish_rustagi Exp $
 
 --%>
 
@@ -201,7 +201,7 @@ java.util.Properties"
 
 <h3>Configuring DistAuth Application</h3>
 
-<form action="distAuthConfigurator.jsp" method="GET">
+<form action="distAuthConfigurator.jsp" method="POST">
     Please provide the Federated Access Manager Server Information.
     <p>&nbsp;</p>    
 
