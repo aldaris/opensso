@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.25 2008-07-08 23:00:36 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.26 2008-07-11 22:36:54 hengming Exp $
  *
  */
 
@@ -1120,7 +1120,7 @@ public class SPACSUtils {
         }
         
         boolean writeFedInfo = ((!SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(
-            nameId.getFormat())) && (SAML2Utils.isFedInfoExists(userName,
+            nameId.getFormat())) && (!SAML2Utils.isFedInfoExists(userName,
             hostEntityId, remoteHostId, nameId)));
             // TODO: check if this few lines are needed
             /*
