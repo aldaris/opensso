@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginConfigImpl.java,v 1.4 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: PluginConfigImpl.java,v 1.5 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.sm;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,11 +61,15 @@ class PluginConfigImpl {
     private PluginConfigImpl(PluginSchemaImpl ps, CachedSMSEntry entry,
             String orgName) throws SMSException {
         this.ps = ps;
+        this.orgName = (orgName == null) ? SMSEntry.baseDN : orgName;
         smsEntry = entry;
         smsEntry.addServiceListener(this);
-        this.orgName = (orgName == null) ? SMSEntry.baseDN : orgName;
         // Read the attributes
-        update();
+        if (smsEntry.isDirty()) {
+            smsEntry.refresh();
+        } else {
+            update();
+        }
     }
 
     /**
@@ -88,9 +93,9 @@ class PluginConfigImpl {
      * the values for the attribute.
      */
     Map getAttributes() {
-        if (!SMSEntry.cacheSMSEntries) {
+        if (!SMSEntry.cacheSMSEntries || smsEntry.isDirty()) {
             // Read the entry, since it should not be cached
-            update();
+            smsEntry.refresh();
         }
         return (SMSUtils.copyAttributes(attributes));
     }
@@ -130,11 +135,9 @@ class PluginConfigImpl {
         return (newEntry);
     }
 
-    void updateAndNotifyListeners() {
-        update();
-    }
-
-    void update() {
+    // Gets calls by local changes and also by notifications threads
+    // Hence synchronized to avoid data corruption
+    synchronized void update() {
         // Get the SMSEntry
         SMSEntry entry = smsEntry.getSMSEntry();
         newEntry = entry.isNewEntry();
@@ -162,6 +165,21 @@ class PluginConfigImpl {
             }
         }
     }
+    
+    boolean isValid() {
+        if (smsEntry.isValid() && smsEntry.isDirty()) {
+            smsEntry.refresh();
+        }
+        return (smsEntry.isValid());
+    }
+    
+    void clear() {
+        // Deregister from CachedSMSEntry
+        smsEntry.removeServiceListener(this);
+        if (smsEntry.isValid()) {
+            smsEntry.clear();
+        }
+    }
 
     // ------------------------------------------------------------------
     // Static Protected method to get an instance of ServiceConfigImpl
@@ -176,16 +194,16 @@ class PluginConfigImpl {
         // Check in cache
         PluginConfigImpl answer = getFromCache(cacheName, dn, token);
         if (answer != null) {
-            if (!SMSEntry.cacheSMSEntries) {
+            if (!SMSEntry.cacheSMSEntries || answer.smsEntry.isDirty()) {
                 // Read the entry, since it should not be cached
-                answer.update();
+                answer.smsEntry.refresh();
             }
             return (answer);
         }
 
         // Check if the orgName exists
-        if (!SMSEntry.checkIfEntryExists(DNMapper.orgNameToDN(orgName), token)) 
-        {
+        if (!SMSEntry.checkIfEntryExists(
+            DNMapper.orgNameToDN(orgName), token)) {
             // Object [] args = { orgName };
             // throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
             // "sms-invalid-org-name", args));
@@ -193,14 +211,13 @@ class PluginConfigImpl {
         }
 
         // Construct the PluginConfigImpl object
-        synchronized (configImplsMutex) {
+        synchronized (configImpls) {
+            // Check the cache again, in case it was added by another thread
             if ((answer = getFromCache(cacheName, dn, token)) == null) {
                 CachedSMSEntry entry = checkAndUpdatePermission(cacheName, dn,
                         token);
                 answer = new PluginConfigImpl(ps, entry, orgName);
-                Map sudoConfigImpls = new HashMap(configImpls);
-                sudoConfigImpls.put(cacheName, answer);
-                configImpls = sudoConfigImpls;
+                configImpls.put(cacheName, answer);
             }
         }
 
@@ -212,7 +229,14 @@ class PluginConfigImpl {
 
     // Clears the cache
     static void clearCache() {
-        configImpls = new HashMap();
+        synchronized (configImpls) {
+            for (Iterator items = configImpls.values().iterator();
+                items.hasNext();) {
+                PluginConfigImpl pci = (PluginConfigImpl) items.next();
+                pci.clear();
+            }
+            configImpls.clear();
+        }
     }
 
     static String getCacheName(PluginSchemaImpl ps, String orgName) {
@@ -226,7 +250,8 @@ class PluginConfigImpl {
         PluginConfigImpl answer = (PluginConfigImpl) configImpls.get(cacheName);
         if (answer != null && !answer.smsEntry.isValid()) {
             // CachedSMSEntry is invalid, so create a new PluginConfigImpl
-            // by setting this one to null
+            // by clearing cache and setting this one to null
+            configImpls.remove(cacheName);
             answer = null;
         }
         if (answer != null) {
@@ -246,22 +271,18 @@ class PluginConfigImpl {
         CachedSMSEntry answer = CachedSMSEntry.getInstance(token, dn);
         Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
         if (sudoPrincipals == null) {
-            sudoPrincipals = new HashSet();
-        } else {
-            sudoPrincipals = new HashSet(sudoPrincipals);
+            sudoPrincipals = Collections.synchronizedSet(new HashSet());
+            userPrincipals.put(cacheName, sudoPrincipals);
         }
         sudoPrincipals.add(token.getTokenID().toString());
-        Map sudoUserPrincipals = new HashMap(userPrincipals);
-        sudoUserPrincipals.put(cacheName, sudoPrincipals);
-        userPrincipals = sudoUserPrincipals;
         return (answer);
     }
 
-    private static Map configImpls = new HashMap();
+    private static Map configImpls = Collections.synchronizedMap(
+        new HashMap());
 
-    private static Map userPrincipals = new HashMap();
-
-    private static final String configImplsMutex = "ConfigImplsMutex";
+    private static Map userPrincipals = Collections.synchronizedMap(
+        new HashMap());
 
     private static Debug debug = SMSEntry.debug;
 }

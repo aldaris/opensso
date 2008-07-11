@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.9 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: ServiceConfigImpl.java,v 1.10 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -106,7 +106,11 @@ class ServiceConfigImpl implements ServiceListener {
         this.globalConfig = globalConfig;
 
         // Read the attributes
-        update();
+        if (smsEntry.isDirty()) {
+            smsEntry.refresh();
+        } else {
+            update();
+        }
     }
 
     /**
@@ -210,7 +214,7 @@ class ServiceConfigImpl implements ServiceListener {
     Map getAttributes() {
         if (!SMSEntry.cacheSMSEntries) {
             // Read the entry, since it should not be cached
-            update();
+            smsEntry.refresh();
         }
         return (SMSUtils.copyAttributes(attributes));
     }
@@ -224,7 +228,7 @@ class ServiceConfigImpl implements ServiceListener {
     Map getAttributesForRead() {
         if (!SMSEntry.cacheSMSEntries) {
             // Read the entry, since it should not be cached
-            update();
+            smsEntry.refresh();
         }
         return (attributes);
     }
@@ -239,7 +243,7 @@ class ServiceConfigImpl implements ServiceListener {
     Map getAttributesWithoutDefaults() {
         if (!SMSEntry.cacheSMSEntries) {
             // Read the entry, since it should not be cached
-            update();
+            smsEntry.refresh();
         }
         return (SMSUtils.copyAttributes(attributesWithoutDefaults));
     }
@@ -256,7 +260,7 @@ class ServiceConfigImpl implements ServiceListener {
     Map getAttributesWithoutDefaultsForRead() {
         if (!SMSEntry.cacheSMSEntries) {
             // Read the entry, since it should not be cached
-            update();
+            smsEntry.refresh();
         }
         return (attributesWithoutDefaults);
     }
@@ -300,6 +304,9 @@ class ServiceConfigImpl implements ServiceListener {
      * Checks if the entry is still valid
      */
     boolean isValid() {
+        if (smsEntry.isValid() && smsEntry.isDirty()) {
+            smsEntry.refresh();
+        }
         return (smsEntry.isValid());
     }
     
@@ -310,7 +317,9 @@ class ServiceConfigImpl implements ServiceListener {
         // Deregister from CachedSMSEntry
         smsEntry.removeServiceListener(this);
         // Invalidate CachedSMSEntry
-        smsEntry.clear();
+        if (smsEntry.isValid()) {
+            smsEntry.clear();
+        }
         // Deregister from ServiceSchemaManagerImpl
         try {
             if ((ssmi != null) && (serviceSchemaManagerListernerID != null)) {
@@ -320,10 +329,6 @@ class ServiceConfigImpl implements ServiceListener {
             debug.error("ServiceConfigImpl.clear Unable to remove " +
                 "notification handler for dn: " + getDN(), ex);
         }
-    }
-
-    void updateAndNotifyListeners() {
-        update();
     }
 
     // @Override
@@ -353,7 +358,10 @@ class ServiceConfigImpl implements ServiceListener {
         return (false);
     }
 
-    void update() {
+    // Method gets called by local changes and also by changes from
+    // notification thread. Hence it synchornized to avoid data being
+    // corrupted
+    synchronized void update() {
         // Check if entry is still valid
         if (!smsEntry.isValid()) {
             // Entry has to be removed from cache and cleared
@@ -401,8 +409,7 @@ class ServiceConfigImpl implements ServiceListener {
 
         // Read the priority
         priority = 0;
-        String priorities[] = smsEntry.getSMSEntry().getAttributeValues(
-                SMSEntry.ATTR_PRIORITY);
+        String priorities[] = entry.getAttributeValues(SMSEntry.ATTR_PRIORITY);
         if (priorities != null) {
             try {
                 priority = Integer.parseInt(priorities[0]);
@@ -460,12 +467,14 @@ class ServiceConfigImpl implements ServiceListener {
             orgName, groupName, compName, globalConfig);
 
         // Check cache for the object, if present return
+        // If present, Cache checks if the object is valid and if dirty
+        // refreshes the object
         ServiceConfigImpl answer = getFromCache(cacheName, token);
         if (answer != null ) {
             // Check if the entry has to be updated
             if (!SMSEntry.cacheSMSEntries) {
                 // Read the entry, since it should not be cached
-                answer.update();
+                answer.smsEntry.refresh();
             }
             return (answer);
         }
@@ -490,10 +499,7 @@ class ServiceConfigImpl implements ServiceListener {
             entry.clear();
             entry = checkAndUpdatePermission(cacheName, dn, token);
         }
-        if (entry.isNewEntry()) {
-            entry.update();
-        }
-
+        
         // Since entry not in cache, check if service schema exists
         if (ss == null) {
             // Need to get the sub-schema name
@@ -575,6 +581,7 @@ class ServiceConfigImpl implements ServiceListener {
         ServiceConfigImpl answer = (ServiceConfigImpl) configImpls.get(cn);
         if (answer != null) {
             if (!answer.isValid()) {
+                configImpls.remove(cn);
                 answer.clear();
                 answer = null;
             } else if (answer.smsEntry.isNewEntry()) {

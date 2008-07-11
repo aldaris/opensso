@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.10 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: SMSEventListenerManager.java,v 1.11 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -130,7 +130,14 @@ class SMSEventListenerManager implements SMSObjectListener {
                     "delete event of: " + dn + " to child nodes: " + childDNs);
             }
             for (Iterator items = childDNs.iterator(); items.hasNext();) {
-                objectChanged((String) items.next(), event, true);
+                String item = (String) items.next();
+                objectChanged(item, event, true);
+                // Send notifications to external listeners also if
+                // data store notification is not enabled
+                if (!SMSNotificationManager.isDataStoreNotificationEnabled()) {
+                    SMSNotificationManager.getInstance().sendNotifications(
+                        item, event, true);
+                }
             }
         }
 

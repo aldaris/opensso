@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.38 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.39 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -1357,7 +1357,7 @@ public class SMSEntry implements Cloneable {
 
         // Get the index to the first occurance of ",ou=services,"
         int oldStrIndex = rfcDN.indexOf(DELEGATION_SERVICES_RDN_WITH_COMMA);
-        if (oldStrIndex == -1 || rfcDN.equals(DNMapper.serviceDN)) {
+        if (oldStrIndex == -1 || rfcDN.equals(servicesDN)) {
             // The DN must be for root suffix for realm mode
             // and orgname in the case of legacy mode.
             answer[0] = rfcDN;
@@ -1367,7 +1367,7 @@ public class SMSEntry implements Cloneable {
             // for the root org and in Legacy mode, there will be
             // only one "ou=services" for the root org.
             // Hence remove baseDN and check if rfcDN contains realm name
-            int baseDNIndex = rfcDN.indexOf(DNMapper.serviceDN);
+            int baseDNIndex = rfcDN.indexOf(servicesDN);
             if (baseDNIndex == -1 || baseDNIndex == 0) {
                 // Invalid DN or base DN, return base DN as org
                 answer[0] = baseDN;
@@ -1494,11 +1494,13 @@ public class SMSEntry implements Cloneable {
          */
         if (SMSJAXRPCObjectFlg || backendProxyEnabled ||
             dnName.equals(baseDN) || dnName.equals(servicesDN)) {
-            if (debug.messageEnabled()) {
+            /*
+             if (debug.messageEnabled()) {
                 debug.message("SMSEntry:getDelegationPermission :"
                         + "No delegation check needed for client sdk, "
                         + "db proxy enabled and for baseDNs: " + baseDN);
             }
+             */
             return delPermFlag;
         }
 
@@ -1514,11 +1516,13 @@ public class SMSEntry implements Cloneable {
                 String normTok = (new DN(tokenName)).toRFCString()
                         .toLowerCase();
                 if (specialUserSet.contains(normTok)) {
+                    /* 
                     if (debug.messageEnabled()) {
                         debug.message("SMSEntry.getDelegationPermission: No "
                                 + "delegation check needed for special users."
                                 + normTok);
                     }
+                     */
                     return delPermFlag;
                 }
             }
@@ -1567,7 +1571,7 @@ public class SMSEntry implements Cloneable {
         }
 
         // Return true for base DN and base services node
-        if (dnName.equals(baseDN) || dnName.equals(DNMapper.serviceDN)) {
+        if (dnName.equals(baseDN) || dnName.equals(servicesDN)) {
             return (true);
         }
 
@@ -1583,10 +1587,12 @@ public class SMSEntry implements Cloneable {
                 String normTok = (new DN(tokenName)).toRFCString()
                         .toLowerCase();
                 if (specialUserSet.contains(normTok)) {
+                    /*
                     if (debug.messageEnabled()) {
                         debug.message("SMSEntry.isAllowed : No delegation "
                                 + "check needed for special users." + normTok);
                     }
+                     */
                     return (true);
                 }
             }

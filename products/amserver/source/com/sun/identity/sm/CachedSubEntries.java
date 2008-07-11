@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSubEntries.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: CachedSubEntries.java,v 1.10 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -49,8 +49,9 @@ public class CachedSubEntries {
     // Cache of SubEntries for the given SSOToken
     // Limited cache so that it does not grow in size
     protected Map ssoTokenToSubEntries = new Cache(100);
+    private long lastUpdated;
 
-    protected SMSEntry entry;
+    protected CachedSMSEntry cachedEntry;
 
     protected String notificationID;
 
@@ -60,8 +61,7 @@ public class CachedSubEntries {
     // Private constructor, can be instantiated only via getInstance
     private CachedSubEntries(SSOToken t, String dn) throws SMSException {
         try {
-            CachedSMSEntry cEntry = CachedSMSEntry.getInstance(t, dn);
-            entry = cEntry.smsEntry;
+            cachedEntry = CachedSMSEntry.getInstance(t, dn);
             // Register for notifications to clear instance cache
             notificationID = SMSEventListenerManager
                 .notifyChangesToSubNodes(t, dn, this);
@@ -94,7 +94,14 @@ public class CachedSubEntries {
                 debug.message("CachedSubEntries:getSubEntries Entries from " +
                     "cache: " + subEntries);
             }
-            return (subEntries);
+            // Check if cached entries can be used
+            if (CachedSMSEntry.ttlEnabled && ((System.currentTimeMillis() -
+                lastUpdated) > CachedSMSEntry.ttl)) {
+                // Clear the cache
+                ssoTokenToSubEntries.clear();
+            } else {
+                return (subEntries);
+            }
         }
         // Obtain sub-entries and add to cache
         subEntries = getSubEntries(t, "*");
@@ -103,6 +110,7 @@ public class CachedSubEntries {
             Set answer = new LinkedHashSet(subEntries);
             ssoTokenToSubEntries.put(tokenID, answer);
             subEntries = answer;
+            lastUpdated = System.currentTimeMillis();
         }
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries:getSubEntries Entries from " +
@@ -125,9 +133,10 @@ public class CachedSubEntries {
             throws SMSException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading sub-entries DN: " + 
-               entry.getDN() + " pattern: " + pattern);
+               cachedEntry.getDN() + " pattern: " + pattern);
         }
-        return (entry.subEntries(token, pattern, 0, true, true));
+        return (cachedEntry.getSMSEntry().subEntries(
+            token, pattern, 0, true, true));
     }
 
     /**
@@ -145,10 +154,10 @@ public class CachedSubEntries {
             String serviceidPattern) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading sub-entries DN: " + 
-                entry.getDN() + " pattern: " + serviceidPattern);
+                cachedEntry.getDN() + " pattern: " + serviceidPattern);
         }
-        return (entry.schemaSubEntries(token, pattern, serviceidPattern, 0,
-                true, true));
+        return (cachedEntry.getSMSEntry().schemaSubEntries(
+            token, pattern, serviceidPattern, 0, true, true));
     }
 
     protected void add(String entry) {
@@ -171,13 +180,16 @@ public class CachedSubEntries {
     }
 
     protected SMSEntry getSMSEntry() {
-        return (entry);
+        if (cachedEntry.isDirty()) {
+            cachedEntry.refresh();
+        }
+        return (cachedEntry.getSMSEntry());
     }
 
     protected void update() {
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries::update called for dn: " 
-                + entry.getDN());
+                + cachedEntry.getDN());
         }
         // Clear the cache, will be updated in the next lookup
         ssoTokenToSubEntries.clear();
@@ -204,10 +216,10 @@ public class CachedSubEntries {
         SMSEntry.validateToken(token);
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading subOrgNames DN: " + 
-                entry.getDN() + " pattern: " + pattern);
+                cachedEntry.getDN() + " pattern: " + pattern);
         }
-        return (entry.searchSubOrgNames(token, pattern, 0, !recursive,
-                !recursive, recursive));
+        return (cachedEntry.getSMSEntry().searchSubOrgNames(
+            token, pattern, 0, !recursive, !recursive, recursive));
     }
 
     /**
@@ -229,10 +241,10 @@ public class CachedSubEntries {
         SMSEntry.validateToken(token);
         if (debug.messageEnabled()) {
             debug.message("CachedSubEntries: reading orgNames DN: " + 
-                entry.getDN() + " attrName: " + attrName);
+                cachedEntry.getDN() + " attrName: " + attrName);
         }
-        return (entry.searchOrganizationNames(token, 0, true, true,
-                serviceName, attrName, values));
+        return (cachedEntry.getSMSEntry().searchOrganizationNames(
+            token, 0, true, true, serviceName, attrName, values));
     }
     
     // Static methods to get object instance and to clear cache

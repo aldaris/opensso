@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.17 2008-07-06 05:48:33 arviranga Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.18 2008-07-11 01:46:23 arviranga Exp $
  *
  */
 
@@ -922,7 +922,9 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
     
     // Notification methods
     public Set objectsChanged(int time) throws RemoteException {
-        initialize();
+        // Since clients tend to request for objects changed
+        // donot initialize which might thrown an excpetion
+        // initialize();
         Set answer = new HashSet();
         // Get the cache index for times upto time+2
         Calendar calendar = Calendar.getInstance();

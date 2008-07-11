@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.29 2008-07-06 05:48:31 arviranga Exp $
+ * $Id: Constants.java,v 1.30 2008-07-11 01:46:23 arviranga Exp $
  *
  */
 
@@ -858,6 +858,18 @@ public interface Constants {
      * Active only if "com.iplanet.am.sdk.caching.enabled" is "false"
      */
     static String SMS_CACHE_PROPERTY = "com.sun.identity.sm.cache.enabled";
+    
+    /**
+     * property string to enable SMS cache expiry time.
+     */
+    static String SMS_CACHE_TTL_ENABLE = "com.sun.identity.sm.cache.ttl.enable";
+    
+    /**
+     * property string for controlling SMS cache expiry time, in minutes.
+     * The default values is 30 minutes. After the expiry time the next access
+     * to the object will fetched from the backend datastore.
+     */
+    static String SMS_CACHE_TTL = "com.sun.identity.sm.cache.ttl";
     
     /**
      * property string to manage the persistent connection to directory

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.16 2008-07-06 05:48:31 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.17 2008-07-11 01:46:22 arviranga Exp $
  *
  */
 
@@ -188,7 +188,10 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                    SMSJAXRPCObject.AMJAXRPCVERSION);
         } else {
             CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
-                objName);                    
+                objName);
+            if (ce.isDirty()) {
+                ce.refresh();
+            }
             Map attrs = ce.getSMSEntry().getAttributes();
             if ((attrs != null) && (attrs instanceof CaseInsensitiveHashMap)) {
                 returnAttributes = new HashMap();
@@ -351,6 +354,9 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         try {
             CachedSMSEntry ce = CachedSMSEntry.getInstance(getToken(tokenID),
                 objName);
+            if (ce.isDirty()) {
+                ce.refresh();
+            }
             entryExists = !(ce.getSMSEntry().isNewEntry());
         } catch (SMSException smse) {
             // Ignore the exception

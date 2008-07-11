@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSMigration70.java,v 1.4 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: SMSMigration70.java,v 1.5 2008-07-11 01:46:20 arviranga Exp $
  *
  */
 
@@ -468,6 +468,9 @@ public class SMSMigration70 {
                     newsubConfigSMSEntry.save(token);
                     CachedSMSEntry cachedE = CachedSMSEntry.getInstance(token,
                             newsubConfigSMSEntry.getDN());
+                    if (cachedE.isDirty()) {
+                        cachedE.refresh();
+                    }
                     cachedE.refresh(newsubConfigSMSEntry);
                     // oldSubConfig = subEntryConfig;
                     migrateSubEntries(token, newServiceConfig, subEntryConfig,

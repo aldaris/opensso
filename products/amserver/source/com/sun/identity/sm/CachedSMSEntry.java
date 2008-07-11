@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: CachedSMSEntry.java,v 1.10 2008-07-11 01:46:20 arviranga Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.SystemProperties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -40,6 +41,8 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.corba.se.impl.orbutil.closure.Constant;
+import com.sun.identity.shared.Constants;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -51,9 +54,6 @@ import java.util.HashMap;
 public class CachedSMSEntry {
 
     // Notification method that will be called for ServiceSchemaManagerImpls
-    protected static final String UPDATE_NOTIFY_METHOD = 
-        "updateAndNotifyListeners";
-
     protected static final String UPDATE_METHOD = "update";
 
     // Cache of CachedSMSEntries (static)
@@ -79,7 +79,16 @@ public class CachedSMSEntry {
 
     protected SMSEntry smsEntry;
 
+    // Flag that determines if this object can be used
     private boolean valid;
+    
+    // Flag to determine if the cached entry is dirty and 
+    // must be refreshed along with the last update time & TTL
+    private boolean dirty;
+    static boolean ttlEnabled;
+    static long lastUpdate;
+    static long ttl = 1800000;  // 30 minutes
+    
     
     // Private constructor, can be instantiated only via getInstance
     private CachedSMSEntry(SMSEntry e) {
@@ -107,27 +116,51 @@ public class CachedSMSEntry {
     // ----------------------------------------------
     // Protected instance methods
     // ----------------------------------------------
-
+    
     boolean isValid() {
         return valid;
     }
+    
+    // Used by JAXRPCObjectImpl
+    public boolean isDirty() {
+        if (ttlEnabled && !dirty &&
+            ((System.currentTimeMillis() - lastUpdate) > ttl)) {
+            dirty = true;
+        }
+        return dirty;
+    }
 
     /**
-     * Invoked by SMSEventListenerManager to update attributes.
-     * Methods reads the attributes and notifies listeners, if any
+     * Invoked by SMSEventListenerManager when entry has been changed.
+     * Mark the entry as dirty and return. The method refresh() must be
+     * called to read the attributes.
      */
     void update() {
         if (SMSEntry.debug.messageEnabled()) {
             SMSEntry.debug.message("CachedSMSEntry: update "
                     + "method called: " + dn2Str );
         }
+        dirty = true;
+    }
+    
+    /**
+     * Reads the attributes from the datastore and send notifications to
+     * objects caching this entry. Used by JAXRPCObjectImpl
+     */
+    public void refresh() {
+        if (SMSEntry.debug.messageEnabled()) {
+            SMSEntry.debug.message("CachedSMSEntry: refresh "
+                    + "method called: " + dn2Str );
+        }
         // Read the LDAP attributes and update listeners
-        boolean updateFailed = true;
+        boolean updated = false;
+        dirty = true;
         try {
             SSOToken t = getValidSSOToken();
             if (t != null) {
                 smsEntry.read(t);
-                updateFailed = false;
+                lastUpdate = System.currentTimeMillis();
+                updated = true;
             } else if (SMSEntry.debug.warningEnabled()) {
                 SMSEntry.debug.warning("CachedSMSEntry:update No VALID " +
                     "SSOToken found for dn: " + dn2Str);
@@ -143,21 +176,34 @@ public class CachedSMSEntry {
             SMSEntry.debug.error("SSOToken problem in reading entry "
                     + "attributes: " + dn2Str, ssoe);
         }
-        if (updateFailed) {
+        if (!updated) {
+            // No valid SSOToken were foung
             // this entry is no long valid, remove from cache
-            smsEntries.remove(dnRFCStr);
             clear();
         }
         // Update service listeners either success or failure
         // updateServiceListeners(UPDATE_METHOD);
-        updateServiceListeners(UPDATE_NOTIFY_METHOD);
+        updateServiceListeners(UPDATE_METHOD);
+        dirty = false;
+    }
+    
+    /**
+     * Updates the attributes from the provided <class>SMSEntry</class>
+     * and marks the entry as non-dirty.
+     * @param e object that contains the updated values for the attributes
+     * @throws com.sun.identity.sm.SMSException
+     */
+    void refresh(SMSEntry e) throws SMSException {
+        smsEntry.refresh(e);
+        updateServiceListeners(UPDATE_METHOD);
+        dirty = false;
     }
     
     /**
      * Clears the local variables and marks the entry as invalid
      * Called by the SMS objects that have an instance of CachedSMSEntry
      */
-    protected void clear() {
+    void clear() {
         clear(true);
     }
     
@@ -171,6 +217,7 @@ public class CachedSMSEntry {
         SMSEventListenerManager.removeNotification(notificationID);
         notificationID = null;
         valid = false;
+        dirty = true;
         // Remove from cache
         if (removeFromCache) {
             smsEntries.remove(dnRFCStr);
@@ -265,6 +312,9 @@ public class CachedSMSEntry {
     }
 
     public SMSEntry getClonedSMSEntry() {
+        if (isDirty()) {
+            refresh();
+        }
         try {
             return ((SMSEntry) smsEntry.clone());
         } catch (CloneNotSupportedException c) {
@@ -274,16 +324,14 @@ public class CachedSMSEntry {
     }
 
     boolean isNewEntry() {
+        if (isDirty()) {
+            refresh();
+        }
         return (smsEntry.isNewEntry());
     }
 
     String getDN() {
         return (dn2Str);
-    }
-
-    void refresh(SMSEntry e) throws SMSException {
-        smsEntry.refresh(e);
-        updateServiceListeners(UPDATE_METHOD);
     }
 
     // ----------------------------------------------
@@ -310,10 +358,10 @@ public class CachedSMSEntry {
         }
         String cacheEntry = (new DN(dn)).toRFCString().toLowerCase();
         CachedSMSEntry answer = (CachedSMSEntry) smsEntries.get(cacheEntry);
-        if (answer == null) {
+        if ((answer == null) || !answer.isValid()) {
             synchronized (smsEntries) {
-                if ((answer = (CachedSMSEntry) smsEntries.get(cacheEntry))
-                    == null) {
+                if (((answer = (CachedSMSEntry) smsEntries.get(cacheEntry))
+                    == null) || !answer.isValid()) {
                     // Construct the SMS entry
                     answer = new CachedSMSEntry(new SMSEntry(t, dn));
                     // Add it to cache
@@ -345,9 +393,10 @@ public class CachedSMSEntry {
             for (Iterator items = smsEntries.values().iterator();
                 items.hasNext();) {
                 CachedSMSEntry cEntry = (CachedSMSEntry) items.next();
-                // this entry is no long valid, remove from cache
+                // this entry is no long valid
                 cEntry.clear(false);
             }
+            // Remove all entries from cache
             smsEntries.clear();
         }
     }
@@ -390,8 +439,8 @@ public class CachedSMSEntry {
     }
     
     // Protected static variables
-    private static Class CACHED_SMSENTRY = null;
-    private static Method UPDATE_FUNC = null;
+    private static Class CACHED_SMSENTRY;
+    private static Method UPDATE_FUNC;
     static {
         try {
             CACHED_SMSENTRY = Class.forName(
@@ -400,6 +449,21 @@ public class CachedSMSEntry {
                 UPDATE_METHOD, (Class[]) null);
         } catch (Exception e) {
             // Should not happen, ignore
+        }
+        // Initialize the TTL
+        String ttlEnabledString = SystemProperties.get(
+            Constants.SMS_CACHE_TTL_ENABLE, "false");
+        ttlEnabled = Boolean.parseBoolean(ttlEnabledString);
+        if (ttlEnabled) {
+            String cacheTime = SystemProperties.get(Constants.SMS_CACHE_TTL);
+            if (cacheTime != null) {
+                try {
+                    ttl = Long.parseLong(cacheTime);
+                } catch (NumberFormatException nfe) {
+                    SMSEntry.debug.error("CachedSMSEntry:init Invalid time " +
+                        "for SMS Cache TTL: " + cacheTime);
+                }
+            }
         }
     }
 }

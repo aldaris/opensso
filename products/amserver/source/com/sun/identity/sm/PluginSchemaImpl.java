@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginSchemaImpl.java,v 1.4 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: PluginSchemaImpl.java,v 1.5 2008-07-11 01:46:20 arviranga Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.sm;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.xml.XMLUtils;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,8 +58,6 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
     protected String i18nFileName;
 
     protected String viewBeanURL;
-
-    protected String serviceName;
 
     protected String version;
 
@@ -87,7 +86,9 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
         try {
             smsEntry = CachedSMSEntry.getInstance(token, sb.toString()
                     + orgName);
-            smsEntry.addServiceListener(this);
+            if (smsEntry.isDirty()) {
+                smsEntry.refresh();
+            }
         } catch (SSOException ssoe) {
             throw (new SMSException(ssoe, "sms-INVALID_SSO_TOKEN"));
         }
@@ -98,11 +99,14 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
             try {
                 smsEntry = CachedSMSEntry.getInstance(token, sb.toString()
                         + SMSEntry.baseDN);
-                smsEntry.addServiceListener(this);
+                if (smsEntry.isDirty()) {
+                    smsEntry.refresh();
+                }
             } catch (SSOException ssoe) {
                 throw (new SMSException(ssoe, "sms-INVALID_SSO_TOKEN"));
             }
         }
+        smsEntry.addServiceListener(this);
         attrSchemas = new HashMap();
         update();
     }
@@ -155,10 +159,8 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
         return (smsEntry);
     }
 
-    synchronized void updateAndNotifyListeners() {
-        update();
-    }
-
+    // Gets calls by local changes and also by notifications threads
+    // Hence synchronized to avoid data corruption
     synchronized void update() {
         Node pluginNode = null;
         String[] schemaAttrs = smsEntry.getSMSEntry().getAttributeValues(
@@ -267,6 +269,47 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
         }
         return (sb.toString());
     }
+    
+    public boolean equals(Object o) {
+        if (o instanceof PluginSchemaImpl) {
+            PluginSchemaImpl psi = (PluginSchemaImpl) o;
+            if (psi.serviceName.equalsIgnoreCase(serviceName) &&
+                psi.version.equalsIgnoreCase(version) &&
+                psi.interfaceName.equalsIgnoreCase(interfaceName) &&
+                psi.name.equalsIgnoreCase(name) &&
+                psi.iclass.equalsIgnoreCase(iclass)) {
+                return (true);
+            }
+        }
+        return (false);
+    }
+
+    // @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (serviceName != null ? serviceName.hashCode() : 0);
+        hash = 89 * hash + (name != null ? name.hashCode() : 0);
+        hash = 89 * hash + (interfaceName != null ?
+            interfaceName.hashCode() : 0);
+        hash = 89 * hash + (iclass != null ? iclass.hashCode() : 0);
+        hash = 89 * hash + (version != null ? version.hashCode() : 0);
+        return hash;
+    }
+    
+    void clear() {
+        // Deregister itself from CachedSMSEntry
+        smsEntry.removeServiceListener(this);
+        if (smsEntry.isValid()) {
+            smsEntry.clear();
+        }
+    }
+    
+    boolean isValid() {
+        if (smsEntry.isValid() && smsEntry.isDirty()) {
+            smsEntry.refresh();
+        }
+        return (smsEntry.isValid());
+    }
 
     static PluginSchemaImpl getInstance(SSOToken token, String serviceName,
             String version, String pluginName, String iName, String orgName)
@@ -279,20 +322,25 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
         // Check the cache
         PluginSchemaImpl answer = (PluginSchemaImpl) pluginSchemas.get(cName);
         if (answer != null) {
-            if (!SMSEntry.cacheSMSEntries) {
-                answer.update();
+            if (!answer.smsEntry.isValid()) {
+                // Remove from cache
+                pluginSchemas.remove(cName);
+                answer = null;
+            } else if (!SMSEntry.cacheSMSEntries ||
+                answer.smsEntry.isDirty()) {
+                // Read the attributes
+                answer.smsEntry.refresh();
             }
             return (answer);
         }
 
-        synchronized (pluginSchemasMutex) {
-            if ((answer = (PluginSchemaImpl) pluginSchemas.get(cName)) == null) 
-            {
+        synchronized (pluginSchemas) {
+            // Try the cache again, in case another thread added it
+            if ((answer = (PluginSchemaImpl)
+                pluginSchemas.get(cName)) == null) {
                 answer = new PluginSchemaImpl(token, serviceName, version,
                         pluginName, iName, oName);
-                Map sudoPluginSchemas = new HashMap(pluginSchemas);
-                sudoPluginSchemas.put(cName, answer);
-                pluginSchemas = sudoPluginSchemas;
+                pluginSchemas.put(cName, answer);
             }
         }
         return (answer);
@@ -300,10 +348,16 @@ class PluginSchemaImpl extends ServiceSchemaImpl {
 
     // Clears the cache
     static void clearCache() {
-        pluginSchemas = new HashMap();
+        synchronized (pluginSchemas) {
+            Iterator items = pluginSchemas.values().iterator();
+            while (items.hasNext()) {
+                PluginSchemaImpl psi = (PluginSchemaImpl) items.next();
+                psi.clear();
+            }
+            pluginSchemas.clear();
+        }
     }
 
-    private static Map pluginSchemas = new HashMap();
-
-    private static final String pluginSchemasMutex = "PluginSchemaMutext";
+    private static Map pluginSchemas = Collections.synchronizedMap(
+        new HashMap());
 }

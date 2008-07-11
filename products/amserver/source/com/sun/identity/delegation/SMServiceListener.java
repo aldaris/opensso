@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMServiceListener.java,v 1.4 2008-07-06 05:48:31 arviranga Exp $
+ * $Id: SMServiceListener.java,v 1.5 2008-07-11 01:46:23 arviranga Exp $
  *
  */
 
@@ -79,17 +79,16 @@ public class SMServiceListener implements ServiceListener {
             // check for its presense in root realm. If not present,
             // it is an upgrade from AM 7.1 and use AuthService
             ServiceConfigManager scm = null;
-            OrganizationConfigManager ocm = new OrganizationConfigManager(
-                token, "/");
-            Set assignedServices = ocm.getAssignedServices();
-            for (Iterator items = assignedServices.iterator();
-                items.hasNext();) {
-                if (items.next().toString().equalsIgnoreCase(
-                    DelegationManager.DELEGATION_SERVICE)) {
-                    scm = new ServiceConfigManager(
-                        DelegationManager.DELEGATION_SERVICE, token);
-                    break;
+            try {
+                scm = new ServiceConfigManager(
+                    DelegationManager.DELEGATION_SERVICE, token);
+                if (scm.getOrganizationConfig("/", null) == null) {
+                    // Delegation servier does not exisit for realm
+                    // Default to auth service
+                    scm = null;
                 }
+            } catch (SMSException smse) {
+                // Ignore exception and continue with Auth Service
             }
             if (scm == null) {
                 // Delegation Service not found, use Auth service

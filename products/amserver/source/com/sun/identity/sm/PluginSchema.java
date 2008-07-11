@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginSchema.java,v 1.5 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: PluginSchema.java,v 1.6 2008-07-11 01:46:20 arviranga Exp $
  *
  */
 
@@ -89,6 +89,7 @@ public class PluginSchema {
      * @return plugin interface name
      */
     public String getInterfaceName() {
+        validate();
         return (psi.getInterfaceName());
     }
 
@@ -98,6 +99,7 @@ public class PluginSchema {
      * @return class name that implements the interface
      */
     public String getClassName() {
+        validate();
         return (psi.getClassName());
     }
 
@@ -108,6 +110,7 @@ public class PluginSchema {
      * @return class name that implements the interface
      */
     public String getJarURL() {
+        validate();
         return (psi.getJarURL());
     }
 
@@ -117,6 +120,7 @@ public class PluginSchema {
      * @return URL of the plugin's resource bundle
      */
     public String getI18NJarURL() {
+        validate();
         return (psi.getI18NJarURL());
     }
 
@@ -126,6 +130,7 @@ public class PluginSchema {
      * @return i18n properties file name
      */
     public String getI18NFileName() {
+        validate();
         return (psi.getI18NFileName());
     }
 
@@ -135,6 +140,7 @@ public class PluginSchema {
      * @return URL for view bean
      */
     public String getPropertiesViewBeanURL() {
+        validate();
         return (psi.getPropertiesViewBeanURL());
     }
 
@@ -153,6 +159,7 @@ public class PluginSchema {
         SMSEntry.validateToken(token);
 
         // FIXME the call to psi.getPropertiesViewBeanURL() needs to be removed
+        validatePluginSchema();
         psi.getPropertiesViewBeanURL();
 
         Document pluginDoc = getDocumentCopy();
@@ -173,6 +180,7 @@ public class PluginSchema {
      * @return i18n index key to the resource bundle
      */
     public String getI18NKey() {
+        validate();
         return (psi.getI18NKey());
     }
 
@@ -182,6 +190,7 @@ public class PluginSchema {
      * @return names of schema attributes defined for the plugin
      */
     public Set getAttributeSchemaNames() {
+        validate();
         return (psi.getAttributeSchemaNames());
     }
 
@@ -194,6 +203,7 @@ public class PluginSchema {
      *            name of the schema attribute
      */
     public AttributeSchema getAttributeSchema(String attributeSchemaName) {
+        validate();
         AttributeSchemaImpl asi = psi.getAttributeSchema(attributeSchemaName);
         if (asi != null) {
             return (new AttributeSchema(asi, this));
@@ -222,7 +232,24 @@ public class PluginSchema {
     // --------------------------------------------------------------
     // Protected methods
     // --------------------------------------------------------------
+    protected void validate() {
+        try {
+            validatePluginSchema();
+        } catch (SMSException ex) {
+            SMSEntry.debug.error("PluginSchema:validate exception", ex);
+        }
+    }
+    
+    protected void validatePluginSchema() throws SMSException {
+        if (!psi.isValid()) {
+            throw (new SMSException("plugin-schema: " + pluginName +
+                " No loger valid. Cache has been cleared. Recreate from" +
+                "ServiceSchemaManager"));
+        }
+    }
+    
     protected Document getDocumentCopy() throws SMSException {
+        validate();
         return (psi.getDocumentCopy());
     }
 
@@ -252,6 +279,7 @@ public class PluginSchema {
         String[] attrs = { pSchema };
 
         // Get the cached SMSEntry, save and refresh
+        validatePluginSchema();
         CachedSMSEntry smsEntry = psi.getCachedSMSEntry();
         SMSEntry e = smsEntry.getClonedSMSEntry();
         e.setAttribute(SMSEntry.ATTR_PLUGIN_SCHEMA, attrs);
@@ -295,6 +323,9 @@ public class PluginSchema {
         // Construct DN for plugin schema node
         String dn = "ou=" + name + "," + sb.toString();
         CachedSMSEntry ce = CachedSMSEntry.getInstance(token, dn);
+        if (ce.isDirty()) {
+            ce.refresh();
+        }
         SMSEntry e = ce.getClonedSMSEntry();
         if (!e.isNewEntry()) {
             throw (new SMSException("plugin-schema-already-exists",

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.5 2008-06-25 05:42:28 qcheng Exp $
+ * $Id: SiteConfiguration.java,v 1.6 2008-07-11 01:46:22 arviranga Exp $
  *
  */
 
@@ -75,7 +75,7 @@ public class SiteConfiguration extends ConfigurationBase {
             siteInfo = new HashSet();
             ServiceConfig sc = getRootSiteConfig(ssoToken);
             if (sc != null) {
-                Set names = sc.getSubConfigNames("*");
+                Set names = sc.getSubConfigNames();
                 
                 for (Iterator i = names.iterator(); i.hasNext(); ) {
                     String name = (String)i.next();

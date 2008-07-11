@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.7 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: ServiceConfigManager.java,v 1.8 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -125,7 +125,6 @@ public class ServiceConfigManager {
         
         // Get the ServiceSchemaManagerImpl
         validateSCM();
-
     }
 
     /**
@@ -344,6 +343,9 @@ public class ServiceConfigManager {
         // Create the sub config entry
         try {
             CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN);
+            if (cEntry.isDirty()) {
+                cEntry.refresh();
+            }
             if (cEntry.isNewEntry()) {
                 CreateServiceConfig.createSubConfigEntry(token, orgDN, ss,
                         null, null, attrs, orgName);
@@ -435,6 +437,9 @@ public class ServiceConfigManager {
                 CreateServiceConfig.GLOBAL_CONFIG_NODE, null);
         // Delete the entry
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, gdn);
+        if (cEntry.isDirty()) {
+            cEntry.refresh();
+        }
         SMSEntry entry = cEntry.getClonedSMSEntry();
         entry.delete(token);
         cEntry.refresh(entry);

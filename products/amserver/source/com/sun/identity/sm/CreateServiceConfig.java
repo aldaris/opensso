@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.10 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: CreateServiceConfig.java,v 1.11 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -106,6 +106,9 @@ public class CreateServiceConfig {
                     .append(baseDN);
             CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sb
                     .toString());
+            if (cEntry.isDirty()) {
+                cEntry.refresh();
+            }
             SMSEntry insEntry = cEntry.getSMSEntry();
             if (insEntry.isNewEntry()) {
                 // create the entry
@@ -266,6 +269,9 @@ public class CreateServiceConfig {
             String orgDN) throws SMSException, SSOException {
         // Construct the SMSEntry for the node
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, dn);
+        if (cEntry.isDirty()) {
+            cEntry.refresh();
+        }
         SMSEntry entry = cEntry.getClonedSMSEntry();
         if ((ss == null) || !entry.isNewEntry()) {
             SMSEntry.debug.error(
@@ -487,6 +493,9 @@ public class CreateServiceConfig {
             }
 
             CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, orgDN);
+            if (cEntry.isDirty()) {
+                cEntry.refresh();
+            }
             SMSEntry e = cEntry.getClonedSMSEntry();
             if (!e.isNewEntry()) {
                 SMSEntry.debug.error("Organization already exists: " + orgDN);
@@ -508,6 +517,9 @@ public class CreateServiceConfig {
             while (index >= 1) {
                 partdn = dns[--index] + "," + partdn;
                 cEntry = CachedSMSEntry.getInstance(token, partdn);
+                if (cEntry.isDirty()) {
+                    cEntry.refresh();
+                }
                 e = cEntry.getClonedSMSEntry();
                 if (e.isNewEntry()) {
                     // Create the realm

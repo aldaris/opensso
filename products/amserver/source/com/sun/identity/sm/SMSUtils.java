@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSUtils.java,v 1.4 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: SMSUtils.java,v 1.5 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -218,8 +218,8 @@ public class SMSUtils {
         return (sb.append(id).toString());
     }
 
+    // Performs a deep copy of the Map
     public static Map copyAttributes(Map attributes) {
-
         if (attributes == null) {
             return new HashMap();
         }
@@ -244,7 +244,12 @@ public class SMSUtils {
                         answer.put(attrName, new HashSet());
                     }
                 } else {
-                    answer.put(attrName, new HashSet(set));
+                    // Copy the HashSet
+                    HashSet newSet = new HashSet();
+                    for (Iterator nitems = set.iterator(); nitems.hasNext();) {
+                        newSet.add(nitems.next());
+                    }
+                    answer.put(attrName, new HashSet(newSet));
                 }
             } else {
                 answer.put(attrName, o);

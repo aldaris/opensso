@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstance.java,v 1.4 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceInstance.java,v 1.5 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -106,6 +106,7 @@ public class ServiceInstance {
      *             if an error occurred while performing the operation
      */
     public void setGroup(String groupName) throws SSOException, SMSException {
+        validateServiceInstance();
         if (!scm.containsGroup(groupName)) {
             String[] args = { groupName };
             throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
@@ -126,6 +127,7 @@ public class ServiceInstance {
      *         service does not have an URI.
      */
     public String getURI() {
+        validate();
         return (instance.getURI());
     }
 
@@ -140,6 +142,7 @@ public class ServiceInstance {
      *             if an error occurred while performing the operation
      */
     public void setURI(String uri) throws SSOException, SMSException {
+        validateServiceInstance();
         String[] uris = { uri };
         SMSEntry entry = instance.getSMSEntry();
         entry.setAttribute(SMSEntry.ATTR_LABELED_URI, uris);
@@ -168,6 +171,7 @@ public class ServiceInstance {
      * @return the attributes that are associated with the service's instances.
      */
     public Map getAttributes() {
+        validate();
         return (instance.getAttributes());
     }
 
@@ -183,6 +187,7 @@ public class ServiceInstance {
      *             if an error occurred while performing the operation
      */
     public void setAttributes(Map attrs) throws SSOException, SMSException {
+        validateServiceInstance();
         SMSEntry e = instance.getSMSEntry();
         SMSUtils.setAttributeValuePairs(e, attrs, Collections.EMPTY_SET);
         e.save(token);
@@ -203,6 +208,7 @@ public class ServiceInstance {
      */
     public void addAttribute(String attrName, Set values) throws SSOException,
             SMSException {
+        validateServiceInstance();
         SMSEntry e = instance.getSMSEntry();
         SMSUtils.addAttribute(e, attrName, values, Collections.EMPTY_SET);
         e.save(token);
@@ -222,6 +228,7 @@ public class ServiceInstance {
      */
     public void removeAttribute(String attrName) throws SSOException,
             SMSException {
+        validateServiceInstance();
         SMSEntry e = instance.getSMSEntry();
         SMSUtils.removeAttribute(e, attrName);
         e.save(token);
@@ -242,6 +249,7 @@ public class ServiceInstance {
      */
     public void removeAttributeValues(String attrName, Set values)
             throws SSOException, SMSException {
+        validateServiceInstance();
         SMSEntry e = instance.getSMSEntry();
         SMSUtils.removeAttributeValues(e, attrName, values,
                 Collections.EMPTY_SET);
@@ -265,6 +273,7 @@ public class ServiceInstance {
      */
     public void replaceAttributeValue(String attrName, String oldValue,
             String newValue) throws SSOException, SMSException {
+        validateServiceInstance();
         SMSEntry e = instance.getSMSEntry();
         SMSUtils.replaceAttributeValue(e, attrName, oldValue, newValue,
                 Collections.EMPTY_SET);
@@ -288,23 +297,42 @@ public class ServiceInstance {
      */
     public void replaceAttributeValues(String attrName, Set oldValues,
             Set newValues) throws SSOException, SMSException {
+        validateServiceInstance();
         SMSEntry e = instance.getSMSEntry();
         SMSUtils.replaceAttributeValues(e, attrName, oldValues, newValues,
                 Collections.EMPTY_SET);
         e.save(token);
         instance.refresh(e);
     }
-
+    
+    public String toXML() {
+        return instance.toXML();
+    }
+    
     // ----------------------------------------------------------
     // Protected methods
     // ----------------------------------------------------------
     void delete() throws SMSException, SSOException {
+        validateServiceInstance();
         SMSEntry entry = instance.getSMSEntry();
         entry.delete();
         instance.refresh(entry);
     }
     
-    public String toXML() {
-        return instance.toXML();
+    // Validate PluginConfigImpl
+    protected void validate() {
+        try {
+            validateServiceInstance();
+        } catch (SMSException ex) {
+            SMSEntry.debug.error("ServiceInstance:validate exception", ex);
+        }
+    }
+    
+    protected void validateServiceInstance() throws SMSException {
+        if (!instance.isValid()) {
+            throw (new SMSException("Serviceinstance:validate " + getName() +
+                " No loger valid. Cache has been cleared. Recreate from" +
+                "ServiceConfigManager"));
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.18 2008-07-10 00:12:39 dillidorai Exp $
+ * $Id: WebtopNaming.java,v 1.19 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -492,7 +492,8 @@ public class WebtopNaming {
             }
 
             if (serverID == null) {
-                debug.error("WebtopNaming.getServerId():serverId null");
+                debug.error("WebtopNaming.getServerId():serverId null " +
+                    "for server: " + server);
                 throw new ServerEntryNotFoundException(
                     NamingBundle.getString("noServerID"));
             }
@@ -882,6 +883,8 @@ public class WebtopNaming {
 		
         if (debug.messageEnabled()) {
             debug.message("Naming table -> " + namingTable.toString());
+            debug.message("Server Id Table -> " + serverIdTable.toString());
+            debug.message("Site Id Table -> " + siteIdTable.toString());
             debug.message("Platform Servers -> " + platformServers.toString());
             debug.message("Platform Server IDs -> "
                           + platformServerIDs.toString());

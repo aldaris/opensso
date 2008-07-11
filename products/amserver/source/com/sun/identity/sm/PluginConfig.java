@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginConfig.java,v 1.3 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: PluginConfig.java,v 1.4 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -108,6 +108,7 @@ public class PluginConfig {
      * @return the priority assigned to the service plugin
      */
     public int getPriority() {
+        validate();
         return (pc.getPriority());
     }
 
@@ -118,6 +119,7 @@ public class PluginConfig {
      *            the priority to be assigned to the plugin
      */
     public void setPriority(int priority) throws SSOException, SMSException {
+        validatePluginConfig();
         StringBuffer sb = new StringBuffer(8);
         String[] priorities = { sb.append(priority).toString() };
         SMSEntry e = pc.getSMSEntry();
@@ -135,6 +137,7 @@ public class PluginConfig {
      *         is the <code>Set</code> of attribute values
      */
     public Map getAttributes() {
+        validate();
         return (pc.getAttributes());
     }
 
@@ -150,6 +153,7 @@ public class PluginConfig {
      * @throws SMSException
      */
     public void setAttributes(Map attrs) throws SMSException, SSOException {
+        validatePluginConfig();
         Map newAttrs = new HashMap(attrs);
         Map oldAttrs = getAttributes();
         Iterator it = oldAttrs.keySet().iterator();
@@ -176,6 +180,7 @@ public class PluginConfig {
      */
     public void addAttribute(String attrName, Set values) throws SMSException,
             SSOException {
+        validatePluginConfig();
         // Get current attributes
         Map attributes = getAttributes();
         // Validate attribute values
@@ -205,6 +210,7 @@ public class PluginConfig {
      */
     public void removeAttribute(String attrName) throws SMSException,
             SSOException {
+        validatePluginConfig();
         SMSEntry e = pc.getSMSEntry();
         SMSUtils.removeAttribute(e, attrName);
         saveSMSEntry(e);
@@ -221,6 +227,7 @@ public class PluginConfig {
      */
     public void removeAttributeValues(String attrName, Set values)
             throws SMSException, SSOException {
+        validatePluginConfig();
         SMSEntry e = pc.getSMSEntry();
         SMSUtils.removeAttributeValues(e, attrName, values, ps
                 .getSearchableAttributeNames());
@@ -240,6 +247,7 @@ public class PluginConfig {
      */
     public void replaceAttributeValue(String attrName, String oldValue,
             String newValue) throws SMSException, SSOException {
+        validatePluginConfig();
         // Get current attributes
         Map attributes = getAttributes();
         // Validate values
@@ -274,6 +282,7 @@ public class PluginConfig {
      */
     public void replaceAttributeValues(String attrName, Set oldValues,
             Set newValues) throws SMSException, SSOException {
+        validatePluginConfig();
         // Get current attributes
         Map attributes = getAttributes();
         // Validate values
@@ -339,5 +348,22 @@ public class PluginConfig {
         // Remove this entry
         e.delete(token);
         pc.refresh(e);
+    }
+    
+    // Validate PluginConfigImpl
+    protected void validate() {
+        try {
+            validatePluginConfig();
+        } catch (SMSException ex) {
+            SMSEntry.debug.error("PluginSchema:validate exception", ex);
+        }
+    }
+    
+    protected void validatePluginConfig() throws SMSException {
+        if (!pc.isValid()) {
+            throw (new SMSException("plugin-config: " + name +
+                " No loger valid. Cache has been cleared. Recreate from" +
+                "ServiceSchemaManager"));
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.14 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: ServiceConfig.java,v 1.15 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -327,8 +327,8 @@ public class ServiceConfig {
 
         // Create the entry
         CreateServiceConfig.createSubConfigEntry(token, ("ou=" + subConfigName
-                + "," + sc.getDN()), nss, subConfigId, sb.toString(), attrs, sc
-                .getOrganizationName());
+                + "," + sc.getDN()), nss, subConfigId, sb.toString(),
+                SMSUtils.copyAttributes(attrs), sc.getOrganizationName());
     }
 
     /**
@@ -365,13 +365,16 @@ public class ServiceConfig {
         
         // Call ServiceConfigImpl's deleteInstance() to remove from cache.
         if (sConfigImpl != null) {
-            sConfigImpl.deleteInstance(token, scmImpl, null, sdn, "/", 
+            ServiceConfigImpl.deleteInstance(token, scmImpl, null, sdn, "/", 
                 sConfigImpl.getGroupName(), (getComponentName() + "/" 
                 + SMSSchema.escapeSpecialCharacters(subConfigName)), false, 
                 ss);
         }
         // Remove this entry from smsentry.
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token, sdn);
+        if (cEntry.isDirty()) {
+            cEntry.refresh();
+        }
         SMSEntry entry = cEntry.getClonedSMSEntry();
         entry.delete(token);
         cEntry.refresh(entry);
@@ -587,21 +590,7 @@ public class ServiceConfig {
         SMSEntry e = sc.getSMSEntry();
         if (attrNames != null && !attrNames.isEmpty()) {
             for (Iterator items = attrNames.iterator(); items.hasNext();) {
-                String attrName = (String) items.next();
-                String[] sAttrs = e.getAttributeValues(attrName);
-                // Throw an error msg. if value of that attribute to be
-                // removed is null in DS from the existing SMSEntry e.
-                if (sAttrs == null) {
-                    if (SMSEntry.debug.warningEnabled()) {
-                        SMSEntry.debug.warning("ServiceConfig." +
-                        "removeAttributes: "+
-                        "Cannot delete. Attribute value already removed.");
-                    }
-                    Object [] args = { attrName };
-                    throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                        "sms-CANNOT_DELETE_NO_VALUE", args));
-                }
-                SMSUtils.removeAttribute(e, attrName);
+                SMSUtils.removeAttribute(e, (String) items.next());
             }
             saveSMSEntry(e);
         }
@@ -827,8 +816,8 @@ public class ServiceConfig {
         try {
             Iterator subConfigNames = getSubConfigNames().iterator();
             while (subConfigNames.hasNext()) {
-                ServiceConfig sc = getSubConfig((String) subConfigNames.next());
-                sb.append(sc);
+                ServiceConfig ssc = getSubConfig((String)subConfigNames.next());
+                sb.append(ssc);
             }
         } catch (Exception e) {
             sb.append(e.getMessage());
@@ -858,10 +847,16 @@ public class ServiceConfig {
         throws SMSException, SSOException {
 
         CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn);
+        if (entry.isDirty()) {
+            entry.refresh();
+        }
         if (entry.isNewEntry()) {
             // Check if parent exisits
             String pDN = (new DN(dn)).getParent().toString();
             CachedSMSEntry pEntry = CachedSMSEntry.getInstance(token, pDN);
+            if (pEntry.isDirty()) {
+                pEntry.refresh();
+            }
             if (pEntry.isNewEntry()) {
                 checkAndCreateComponents(pDN);
             }
@@ -877,10 +872,16 @@ public class ServiceConfig {
 
     void checkAndCreateComponents(String dn) throws SMSException, SSOException {
         CachedSMSEntry entry = CachedSMSEntry.getInstance(token, dn);
+        if (entry.isDirty()) {
+            entry.refresh();
+        }
         if (entry.isNewEntry()) {
             // Check if parent exisits
             String pDN = (new DN(dn)).getParent().toString();
             CachedSMSEntry pEntry = CachedSMSEntry.getInstance(token, pDN);
+            if (pEntry.isDirty()) {
+                pEntry.refresh();
+            }
             if (pEntry.isNewEntry()) {
                 checkAndCreateComponents(pDN);
             }
@@ -897,7 +898,7 @@ public class ServiceConfig {
         try {
             validateServiceConfigImpl();
         } catch (SMSException e) {
-            throw (new RuntimeException(e.getMessage()));
+            // Ignore the exception
         }
     }
     

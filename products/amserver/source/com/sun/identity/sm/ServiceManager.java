@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.18 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: ServiceManager.java,v 1.19 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -534,6 +534,9 @@ public class ServiceManager {
                     + version + SMSEntry.COMMA + dn;
             CachedSMSEntry configsmse = CachedSMSEntry.getInstance(token,
                     configdn);
+            if (configsmse.isDirty()) {
+                configsmse.refresh();
+            }
             SMSEntry confige = configsmse.getClonedSMSEntry();
             if (!confige.isNewEntry()) {
                 confige.delete(token);
@@ -542,6 +545,9 @@ public class ServiceManager {
             // If there are no other service version nodes for that service,
             // delete that node(schema).
             CachedSMSEntry smse = CachedSMSEntry.getInstance(token, dn);
+            if (smse.isDirty()) {
+                smse.refresh();
+            }
             SMSEntry e = smse.getSMSEntry();
             Iterator versions = 
                 e.subEntries(token, "*", 0, false, false).iterator();
@@ -579,6 +585,9 @@ public class ServiceManager {
             String version = (String) versions.next();
             CachedSMSEntry ce = CachedSMSEntry.getInstance(token,
                     getServiceNameDN(serviceName, version));
+            if (ce.isDirty()) {
+                ce.refresh();
+            }
             SMSEntry e = ce.getClonedSMSEntry();
             String[] values = { SMSSchema.getDummyXML(serviceName, version) };
             e.setAttribute(SMSEntry.ATTR_SCHEMA, values);
@@ -993,7 +1002,9 @@ public class ServiceManager {
         try {
             CachedSMSEntry entry = CachedSMSEntry.getInstance(token,
                 REALM_ENTRY);
-            
+            if (entry.isDirty()) {
+                entry.refresh();
+            }
             if (!entry.isNewEntry()) {
                 ditUpgradedCache = true;
                 ServiceConfigManagerImpl ssm = ServiceConfigManagerImpl

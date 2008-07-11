@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.1 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.2 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -126,6 +126,11 @@ public class SMSNotificationManager implements SMSObjectListener {
         return (cachedEnabled);
     }
     
+    public static boolean isDataStoreNotificationEnabled() {
+        getInstance();
+        return (enableDataStoreNotification);
+    }
+    
     public String registerCallbackHandler(
         SMSObjectListener listener) {
         String id = SMSUtils.getUniqueID();
@@ -188,8 +193,16 @@ public class SMSNotificationManager implements SMSObjectListener {
         SystemTimer.getTimer().schedule(changes, 0);
     }
     
+    
+    
     // Method Executed asynchronously by the ThreadPool
-    private void sendNotifications(String name, int type) {
+    void sendNotifications(String name, int type) {
+        sendNotifications(name, type, false);
+    }
+    
+    // Method called directly by SMSEventListenerManager to send sub-tree
+    // delete notifications when datastore notification is not enabled
+    void sendNotifications(String name, int type, boolean localOnly) {
         // Since agentgroup placeholder node is added after install time,
         // fix it here to avoid sending notifications.
         if ((type == SMSObjectListener.ADD) &&
@@ -203,7 +216,7 @@ public class SMSNotificationManager implements SMSObjectListener {
         // there are more than 1 server instances and while running as server
         String installTime = SystemProperties.get(
             Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-        if (!enableDataStoreNotification && !isClient &&
+        if (!localOnly && !enableDataStoreNotification && !isClient &&
             !installTime.equals("true") && (!SystemProperties.isServerMode() ||
             ServiceManager.getAMServerInstances().size() > 1)) {
             // To be executed by a new TimerTask, since it could be a while

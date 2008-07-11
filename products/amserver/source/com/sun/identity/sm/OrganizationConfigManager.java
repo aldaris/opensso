@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.20 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: OrganizationConfigManager.java,v 1.21 2008-07-11 01:46:20 arviranga Exp $
  *
  */
 
@@ -524,6 +524,9 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         subOrgDN);
+                if (cEntry.isDirty()) {
+                    cEntry.refresh();
+                }
                 SMSEntry entry = cEntry.getClonedSMSEntry();
                 if (!recursive) {
                     // Check if there are sub organization entries
@@ -611,10 +614,11 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         orgDN);
-                if ((coexistMode) || (realmEnabled && isCopyOrgEnabled())) {
+                if (cEntry.isDirty() || (coexistMode) ||
+                    (realmEnabled && isCopyOrgEnabled())) {
                     // Since AMSDK org notifications will not be
                     // obtained, the entry must be read again
-                    cEntry.update();
+                    cEntry.refresh();
                 }
                 SMSEntry entry = cEntry.getSMSEntry();
                 Map map = SMSUtils.getAttrsFromEntry(entry);
@@ -719,6 +723,9 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         orgDN);
+                if (cEntry.isDirty()) {
+                    cEntry.refresh();
+                }
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 ServiceSchemaManager ssm = new ServiceSchemaManager(
                         serviceName, token);
@@ -785,6 +792,9 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         orgDN);
+                if (cEntry.isDirty()) {
+                    cEntry.refresh();
+                }
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 if ((attributes != null) && (!attributes.isEmpty())) {
                     // Validate the attributes
@@ -920,6 +930,9 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         orgDN);
+                if (cEntry.isDirty()) {
+                    cEntry.refresh();
+                }
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 SMSUtils.removeAttribute(e, serviceName.toLowerCase() + "-"
                         + attrName);
@@ -968,6 +981,9 @@ public class OrganizationConfigManager {
             try {
                 CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
                         orgDN);
+                if (cEntry.isDirty()) {
+                    cEntry.refresh();
+                }
                 SMSEntry e = cEntry.getClonedSMSEntry();
                 ServiceSchemaManager ssm = new ServiceSchemaManager(
                         serviceName, token);

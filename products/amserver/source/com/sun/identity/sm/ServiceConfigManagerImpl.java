@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.8 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.9 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -212,9 +212,13 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             StringBuffer sb = new StringBuffer(50);
             cacheName = sb.append(token.getTokenID().toString()).append(
                     groupName).append(orgdn).toString().toLowerCase();
-            if ((answer = (ServiceConfigImpl) orgConfigs.get(cacheName))
-                != null) {
+            if (((answer = (ServiceConfigImpl) orgConfigs.get(cacheName))
+                != null) && answer.isValid() && !answer.isNewEntry()) {
                 return (answer);
+            } else {
+                // remove entry from cache
+                orgConfigs.remove(cacheName);
+                answer = null;
             }
         }
         
@@ -336,17 +340,22 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
     // Implementations for SMSObjectListener
     public void allObjectsChanged() {
         // Ignore, do nothing
+        if (SMSEntry.eventDebug.messageEnabled()) {
+            SMSEntry.eventDebug.message("ServiceConfigManagerImpl:" +
+                "allObjectsChanged called. Ignoring the notification");
+        }
     }
 
     public void objectChanged(String dn, int type) {
         // Check for listeners
-        if (listenerObjects.size() == 0) {
-            if (SMSEntry.eventDebug.messageEnabled()) {
-                SMSEntry.eventDebug.message("ServiceConfigManagerImpl:"
-                        + "entryChanged No listeners registered DN: " + dn
-                        + "\nService name: " + serviceName);
-            }
+        if ((listenerObjects == null) || listenerObjects.isEmpty()) {
+            // No listeners registered
             return;
+        }
+        if (SMSEntry.eventDebug.messageEnabled()) {
+            SMSEntry.eventDebug.message("ServiceConfigManagerImpl:" +
+                "objectChanged Received notification for DN: " + dn +
+                "\nService name: " + serviceName);
         }
 
         // check for service name, version and type
@@ -370,12 +379,7 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             // attributes, we need to send notification
             orgConfig = true;
         } else {
-            if (SMSEntry.eventDebug.messageEnabled()) {
-                SMSEntry.eventDebug.message(
-                        "ServiceConfigManagerImpl:entryChanged Changed DN " +
-                        "does not match the service. DN: " + dn + 
-                        "\nService name: " + serviceName);
-            }
+            // Notification DN does not match the servic ename
             return;
         }
 
@@ -389,7 +393,10 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
                 compName = compName + "/" + rdns[i];
             }
             if (compName.length() == 0) {
-                compName = "/";
+                // Since index > 0 and component name is empty
+                // this represents creation of group entries i.e. default
+                // Do not send this notification
+                return;
             }
         }
 
@@ -417,25 +424,22 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
         if (globalConfig) {
             notifyGlobalConfigChange(groupName, compName, type);
             if (SMSEntry.eventDebug.messageEnabled()) {
-                SMSEntry.eventDebug.message("" +
-                        "ServiceConfigManagerImpl:entryChanged Sending " +
-                        "global config change notifications for DN "+ dn);
+                SMSEntry.eventDebug.message(
+                    "ServiceConfigManagerImpl:entryChanged Sending " +
+                    "global config change notifications for DN "+ dn);
             }
         }
         if (orgConfig) {
             notifyOrgConfigChange(orgName, groupName, compName, type);
             if (SMSEntry.eventDebug.messageEnabled()) {
                 SMSEntry.eventDebug.message(
-                        "ServiceConfigManagerImpl:entryChanged Sending org " +
-                        "config change notifications for DN " + dn);
+                    "ServiceConfigManagerImpl:entryChanged Sending org " +
+                    "config change notifications for DN " + dn);
             }
         }
     }
 
     void notifyGlobalConfigChange(String groupName, String comp, int type) {
-        if ((listenerObjects == null) || listenerObjects.isEmpty()) {
-            return;
-        }
         synchronized (listenerObjects) {        
             Iterator items = listenerObjects.values().iterator();
             while (items.hasNext()) {
@@ -445,18 +449,15 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
                         comp, type);
                 } catch (Throwable t) {
                     SMSEntry.eventDebug.error("ServiceConfigManagerImpl:" +
-                        "notifyGlobalConfigChange Error sending notification " +
-                        "to ServiceListener: " + sl.getClass().getName(), t);
+                        "notifyGlobalConfigChange Error sending notification" +
+                        " to ServiceListener: " + sl.getClass().getName(), t);
                 }
             }
         }
     }
 
     void notifyOrgConfigChange(String orgName, String groupName, String comp,
-            int type) {
-        if ((listenerObjects == null) || listenerObjects.isEmpty()) {
-            return;
-        }
+        int type) {
         synchronized (listenerObjects) {        
             Iterator items = listenerObjects.values().iterator();
             while (items.hasNext()) {
@@ -601,35 +602,49 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
         return (answer);
     }
 
-    static ServiceConfigManagerImpl getFromCache(String cacheName, String sName,
-        String version, SSOToken t) throws SMSException, SSOException {
+    private static ServiceConfigManagerImpl getFromCache(String cacheName,
+        String sName, String version, SSOToken t)
+        throws SMSException, SSOException {
         ServiceConfigManagerImpl answer = (ServiceConfigManagerImpl)
             configMgrImpls.get(cacheName);
         if ((answer != null) && (t != null)) {
-            // Check if the user has permissions
-            Set principals = (Set) userPrincipals.get(cacheName);
-            if ((principals == null) ||
-                !principals.contains(t.getTokenID().toString())) {
-                // Principal check not done
-                // Call to check and update permission will throw an
-                // exception if the user does not have permissions
-                if (debug.messageEnabled()) {
-                    debug.message("ServiceConfigMgrImpl:getFromCache " +
-                        "SN: " + sName + " found in cache. Check permission");
+            // Validate SCM
+            if (!answer.isValid()) {
+                configMgrImpls.remove(cacheName);
+                answer = null;
+            } else {
+                // Check if the user has permissions
+                Set principals = (Set) userPrincipals.get(cacheName);
+                if ((principals == null) ||
+                    !principals.contains(t.getTokenID().toString())) {
+                    // Principal check not done
+                    // Call to check and update permission will throw an
+                    // exception if the user does not have permissions
+                    if (debug.messageEnabled()) {
+                        debug.message("ServiceConfigMgrImpl:getFromCache " +
+                            "SN: " + sName + " found in cache. " +
+                            "Check permission");
+                    }
+                    checkAndUpdatePermission(cacheName, sName, version, t);
                 }
-                checkAndUpdatePermission(cacheName, sName, version, t);
             }
         }
         return (answer);
     }
 
-    static boolean checkAndUpdatePermission(String cacheName,
+    private static boolean checkAndUpdatePermission(String cacheName,
         String sName, String version, SSOToken t)
         throws SMSException, SSOException {
         String dn = ServiceManager.getServiceNameDN(sName, version);
         // Check permissions for the SSOToken, throws exception if user
-        // does not have permissions
-        CachedSMSEntry.getInstance(t, dn);
+        // does not have permissions. If backend proxy is enabled, a read
+        // operation must be performed
+        if (SMSEntry.backendProxyEnabled) {
+            CachedSMSEntry.getInstance(t, dn);
+        } else {
+            SMSEntry.getDelegationPermission(t, dn, SMSEntry.readActionSet);
+        }
+        
         // User has permissions, add principal to cache
         synchronized (userPrincipals) {
             Set sudoPrincipals = (Set) userPrincipals.get(cacheName);

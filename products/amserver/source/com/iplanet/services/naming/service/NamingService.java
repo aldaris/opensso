@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.10 2008-06-25 05:41:39 qcheng Exp $
+ * $Id: NamingService.java,v 1.11 2008-07-11 01:46:22 arviranga Exp $
  *
  */
 
@@ -211,7 +211,7 @@ public class NamingService implements RequestHandler, ServiceListener {
                 storeServerList(sites, namingAttrs);
             }
 
-			// To reduce risk convert from a Map to a Hastable since the rest
+            // To reduce risk convert from a Map to a Hastable since the rest
             // of the naming code expects it in this format. Note there is
             // tradeoff based on whether or not short circuiting is being used.
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManager.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: ServiceSchemaManager.java,v 1.10 2008-07-11 01:46:21 arviranga Exp $
  *
  */
 
@@ -658,6 +658,9 @@ public class ServiceSchemaManager {
     public String getLastModifiedTime() throws SMSException, SSOException {
         validateServiceSchemaManagerImpl();
         CachedSMSEntry ce = ssm.getCachedSMSEntry();
+        if (ce.isDirty()) {
+            ce.refresh();
+        }
         SMSEntry e = ce.getSMSEntry();
         String vals[] = e.getAttributeValues(SMSEntry.ATTR_MODIFY_TIMESTAMP,
             true);
@@ -818,7 +821,7 @@ public class ServiceSchemaManager {
     private void validate() {
         try {
             validateServiceSchemaManagerImpl();
-        } catch (Exception e) {
+        } catch (SSOException e) {
             // Since method signatures cannot be changed, a runtime
             // exception is thrown. This conditions would happen only
             // when SSOToken has become invalid or service has been
@@ -826,6 +829,8 @@ public class ServiceSchemaManager {
             debug.error("ServiceSchemaManager:validate failed for SN: " +
                 serviceName, e);
             throw (new RuntimeException(e.getMessage()));
+        } catch (SMSException e) {
+            // Ignore the exception
         }
     }
     
@@ -858,6 +863,9 @@ public class ServiceSchemaManager {
         CachedSMSEntry cEntry = CachedSMSEntry.getInstance(token,
             ServiceManager.getServiceNameDN(smsSchema.getServiceName(),
             smsSchema.getServiceVersion()));
+        if (cEntry.isDirty()) {
+            cEntry.refresh();
+        }
         smsEntry = cEntry.getSMSEntry();
         String[] schema = new String[1];
         if ((smsEntry.getAttributeValues(SMSEntry.ATTR_SCHEMA) == null)

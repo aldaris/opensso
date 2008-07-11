@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceInstanceImpl.java,v 1.5 2008-07-06 05:48:29 arviranga Exp $
+ * $Id: ServiceInstanceImpl.java,v 1.6 2008-07-11 01:46:20 arviranga Exp $
  *
  */
 
@@ -32,8 +32,10 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.shared.debug.Debug;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +60,11 @@ class ServiceInstanceImpl {
         this.name = name;
         smsEntry = entry;
         smsEntry.addServiceListener(this);
-        update();
+        if (smsEntry.isDirty()) {
+            smsEntry.refresh();
+        } else {
+            update();
+        }
     }
 
     String getName() {
@@ -93,28 +99,39 @@ class ServiceInstanceImpl {
         smsEntry.refresh(newEntry);
     }
 
-    void updateupdateAndNotifyListeners() {
-        update();
-    }
-
-    void update() {
+    // Gets calls by local changes and also by notifications threads
+    // Hence synchronized to avoid data corruption
+    synchronized void update() {
         // Read the attributes
-        attributes = SMSUtils.getAttrsFromEntry(smsEntry.getSMSEntry());
+        SMSEntry entry = smsEntry.getSMSEntry();
+        attributes = SMSUtils.getAttrsFromEntry(entry);
 
         // Get the group attribute
         group = SMSUtils.DEFAULT;
-        String[] groups = smsEntry.getSMSEntry().getAttributeValues(
-                SMSEntry.ATTR_SERVICE_ID);
+        String[] groups = entry.getAttributeValues(SMSEntry.ATTR_SERVICE_ID);
         if (groups != null) {
             group = groups[0];
         }
 
         // Get the URI
         uri = null;
-        String[] uris = smsEntry.getSMSEntry().getAttributeValues(
-                SMSEntry.ATTR_LABELED_URI);
+        String[] uris = entry.getAttributeValues(SMSEntry.ATTR_LABELED_URI);
         if (uris != null) {
             uri = uris[0];
+        }
+    }
+    
+    boolean isValid() {
+        if (smsEntry.isValid() && smsEntry.isDirty()) {
+            smsEntry.refresh();
+        }
+        return (smsEntry.isValid());
+    }
+    
+    void clear() {
+        smsEntry.removeServiceListener(this);
+        if (smsEntry.isValid()) {
+            smsEntry.clear();
         }
     }
 
@@ -124,10 +141,8 @@ class ServiceInstanceImpl {
     static ServiceInstanceImpl getInstance(SSOToken token, String serviceName,
             String version, String iName) throws SMSException, SSOException {
         if (debug.messageEnabled()) {
-            debug
-                    .message("ServiceInstanceImpl::getInstance: called: "
-                            + serviceName + "(" + version + ")" + " Instance: "
-                            + iName);
+            debug.message("ServiceInstanceImpl::getInstance: called: " +
+                 serviceName + "(" + version + ")" + " Instance: " + iName);
         }
         String cName = getCacheName(serviceName, version, iName);
         // Check the cache
@@ -135,38 +150,42 @@ class ServiceInstanceImpl {
                 iName, token);
         if (answer != null) {
             // Check if the entry has to be updated
-            if (!SMSEntry.cacheSMSEntries) {
+            if (!SMSEntry.cacheSMSEntries || answer.smsEntry.isDirty()) {
                 // Since the SMSEntries are not to be cached, read the entry
-                answer.update();
+                answer.smsEntry.refresh();
             }
             return (answer);
         }
 
         // Construct the service instance
-        synchronized (serviceInsMutex) {
+        synchronized (serviceInstances) {
+            // Check cache again, in case it was added by another thread
             if ((answer = getFromCache(cName, serviceName, version, iName,
-                    token)) == null) {
+                token)) == null) {
                 // Still not present in cache, create and add to cache
                 CachedSMSEntry entry = checkAndUpdatePermission(cName,
                         serviceName, version, iName, token);
                 answer = new ServiceInstanceImpl(iName, entry);
-                Map sudoServiceInstances = new HashMap(serviceInstances);
-                sudoServiceInstances.put(cName, answer);
-                serviceInstances = sudoServiceInstances;
+                serviceInstances.put(cName, answer);
             }
         }
         if (debug.messageEnabled()) {
-            debug
-                    .message("ServiceInstanceImpl::getInstance: success: "
-                            + serviceName + "(" + version + ")" + " Instance: "
-                            + iName);
+            debug.message("ServiceInstanceImpl::getInstance: success: " +
+                serviceName + "(" + version + ")" + " Instance: " + iName);
         }
         return (answer);
     }
 
     // Clears the cache
     static void clearCache() {
-        serviceInstances = new HashMap();
+        synchronized (serviceInstances) {
+            for (Iterator items = serviceInstances.values().iterator();
+                items.hasNext();) {
+                ServiceInstanceImpl impl = (ServiceInstanceImpl) items.next();
+                impl.clear();
+            }
+            serviceInstances.clear();
+        }
     }
 
     static String getCacheName(String sName, String version, String ins) {
@@ -182,6 +201,7 @@ class ServiceInstanceImpl {
                 .get(cacheName);
         if (answer != null && !answer.smsEntry.isValid()) {
             // CachedSMSEntry is invalid. Recreate this instance
+            serviceInstances.remove(cacheName);
             answer = null;
         }
         if (answer != null) {
@@ -202,6 +222,9 @@ class ServiceInstanceImpl {
         String dn = "ou=" + iName + "," + CreateServiceConfig.INSTANCES_NODE
                 + ServiceManager.getServiceNameDN(serviceName, version);
         CachedSMSEntry entry = CachedSMSEntry.getInstance(t, dn);
+        if (entry.isDirty()) {
+            entry.refresh();
+        }
         if (entry.isNewEntry()) {
             String[] args = { iName };
             throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
@@ -209,22 +232,18 @@ class ServiceInstanceImpl {
         }
         Set sudoPrincipals = (Set) userPrincipals.get(cacheName);
         if (sudoPrincipals == null) {
-            sudoPrincipals = new HashSet();
-        } else {
-            sudoPrincipals = new HashSet(sudoPrincipals);
+            sudoPrincipals = Collections.synchronizedSet(new HashSet());
         }
         sudoPrincipals.add(t.getTokenID().toString());
-        Map sudoUserPrincipals = new HashMap(userPrincipals);
-        sudoUserPrincipals.put(cacheName, sudoPrincipals);
-        userPrincipals = sudoUserPrincipals;
+        userPrincipals.put(cacheName, sudoPrincipals);
         return (entry);
     }
 
-    private static Map serviceInstances = new HashMap();
+    private static Map serviceInstances = Collections.synchronizedMap(
+        new HashMap());
 
-    private static Map userPrincipals = new HashMap();
-
-    private static final String serviceInsMutex = "ServiceInstanceMutex";
+    private static Map userPrincipals = Collections.synchronizedMap(
+        new HashMap());
 
     private static Debug debug = SMSEntry.debug;
     
