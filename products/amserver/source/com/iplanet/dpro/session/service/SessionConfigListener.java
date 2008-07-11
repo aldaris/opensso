@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConfigListener.java,v 1.3 2008-06-25 05:41:31 qcheng Exp $
+ * $Id: SessionConfigListener.java,v 1.4 2008-07-11 22:33:01 manish_rustagi Exp $
  *
  */
 
@@ -54,6 +54,25 @@ public class SessionConfigListener implements ServiceListener {
 
     private static final String MAX_SESSION_LIST_SIZE = 
         "iplanet-am-session-max-session-list-size";
+    
+    private static final String SESSION_CONSTRAINT = 
+        "iplanet-am-session-enable-session-constraint";
+    
+    private static final String DENY_LOGIN_IF_DB_IS_DOWN =
+        "iplanet-am-session-deny-login-if-db-is-down";
+    
+    private static final String BYPASS_CONSTRAINT_ON_TOPLEVEL_ADMINS = 
+        "iplanet-am-session-enable-session-constraint-bypass-topleveladmin";
+    
+    private static final String CONSTARINT_RESULTING_BEHAVIOR = 
+        "iplanet-am-session-constraint-resulting-behavior";
+
+    private static final String DESTROY_OLD_SESSION = "DESTROY_OLD_SESSION";
+
+    private static final String DENY_ACCESS = "DENY_ACCESS";
+    
+    private static final String MAX_WAIT_TIME_FOR_CONSTRAINT = 
+        "iplanet-am-session-constraint-max-wait-time";    
 
     private static long defSessionRetrievalTimeout;
 
@@ -73,8 +92,11 @@ public class SessionConfigListener implements ServiceListener {
     public static String defMaxSessionListSizeStr = Integer
             .toString(defMaxSessionListSizeInt);
 
-    private static String enablePropertyNotificationStr = "OFF";
+    private static String enablePropertyNotificationStr = "OFF";     
+    
+    public static String defmaxWaitTimeForConstraintStr = "6000"; // in milli-second
 
+    
    /**
     * Creates a new SessionConfigListener
     * @param ssm ServiceSchemaManager
@@ -115,10 +137,47 @@ public class SessionConfigListener implements ServiceListener {
             } else {
                 SessionService.setPropertyNotificationEnabled(false);
             }
+            
+            String enableQuotaconstraintsStr = CollectionHelper.getMapAttr(
+                    attrs, SESSION_CONSTRAINT, "OFF");
+            if (enableQuotaconstraintsStr.equalsIgnoreCase("ON")) {
+            	SessionService.setSessionConstraintEnabled(true);
+            } else {
+            	SessionService.setSessionConstraintEnabled(false);
+            }
+            
+            String denyLoginStr = CollectionHelper.getMapAttr(attrs,
+                    DENY_LOGIN_IF_DB_IS_DOWN, "NO");
+            if (denyLoginStr.equalsIgnoreCase("YES")) {
+                SessionService.setDenyLoginIfDBIsDown(true);
+            } else {
+            	SessionService.setDenyLoginIfDBIsDown(false);
+            }
+            
+            String bypassConstratintStr = CollectionHelper.getMapAttr(
+                attrs, BYPASS_CONSTRAINT_ON_TOPLEVEL_ADMINS, "NO");
+            if (bypassConstratintStr.equalsIgnoreCase("YES")) {
+                SessionService.setBypassConstraintForToplevelAdmin(true);
+            } else {
+            	SessionService.setBypassConstraintForToplevelAdmin(false);
+            }
+
+            String resultingBehaviorStr = CollectionHelper.getMapAttr(
+                attrs, CONSTARINT_RESULTING_BEHAVIOR, DESTROY_OLD_SESSION);
+            if (resultingBehaviorStr.equalsIgnoreCase(DESTROY_OLD_SESSION)) {
+                SessionService.setConstraintResultingBehavior(
+                    SessionConstraint.DESTROY_OLD_SESSION);                    
+            } else if (resultingBehaviorStr.equalsIgnoreCase(DENY_ACCESS)) {
+                SessionService.setConstraintResultingBehavior(
+                    SessionConstraint.DENY_ACCESS);                    
+            }
+
+            defmaxWaitTimeForConstraintStr = CollectionHelper.getMapAttr(attrs,
+                MAX_WAIT_TIME_FOR_CONSTRAINT, defmaxWaitTimeForConstraintStr);            
 
         } catch (Exception e) {
             debug.error("SessionConfigListener : "
-                    + "Unable to get Timeout & ListSize values", e);
+                    + "Unable to get Session Service attributes", e);
         }
 
         try {
@@ -139,7 +198,20 @@ public class SessionConfigListener implements ServiceListener {
                     "SessionConfigListener : Unable to parse ListSize values",
                     e);
         }
-
+        
+        int maxWaitTimeForConstraint = 6000;
+        try {
+            maxWaitTimeForConstraint = Integer.parseInt(
+                                           defmaxWaitTimeForConstraintStr);
+            SessionService.setMaxWaitTimeForConstraint(
+                                           maxWaitTimeForConstraint);
+        } catch (Exception e) {
+            SessionService.setMaxWaitTimeForConstraint(
+                                           maxWaitTimeForConstraint);
+            debug.message(
+                "SessionConfigListener : Unable to parse Wait Time values." +
+                " Defaulting to 6000 milli seconds",e);
+        }        
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConstraint.java,v 1.4 2008-06-25 05:41:31 qcheng Exp $
+ * $Id: SessionConstraint.java,v 1.5 2008-07-11 22:34:15 manish_rustagi Exp $
  *
  */
 
@@ -80,9 +80,10 @@ public class SessionConstraint {
 
     private static Debug debug = SessionService.sessionDebug;
 
-    private static QuotaExhaustionAction quotaExhaustionAction = null;
+    private static QuotaExhaustionAction quotaExhaustionActionDeny = null;
 
-    
+    private static QuotaExhaustionAction quotaExhaustionActionDestroy = null;
+
     /*
      * Get the session service
      */
@@ -99,15 +100,20 @@ public class SessionConstraint {
         // For now, use the simple program logic to determine which
         // action class should be instantiated for the two existing
         // supported scenarios.
-        if (SessionService.getConstraintResultingBehavior() == DENY_ACCESS) {
-            quotaExhaustionAction = new DenyAccessAction();
-        } else {
-            quotaExhaustionAction = new DestroyNextExpiringSessionAction();
-        }
+        quotaExhaustionActionDeny = new DenyAccessAction();
+        quotaExhaustionActionDestroy = new DestroyNextExpiringSessionAction();
     }
 
     static SessionService getSS() {
         return SessionCount.getSS();
+    }
+
+    private static QuotaExhaustionAction getQuotaExhaustionAction(){
+        if (SessionService.getConstraintResultingBehavior() == DENY_ACCESS) {
+            return quotaExhaustionActionDeny;
+        } else {
+            return quotaExhaustionActionDestroy;
+        }
     }
 
     /**
@@ -175,7 +181,7 @@ public class SessionConstraint {
 	if (sessionCount >= quota) {
 	    // If the session quota is exhausted, invoke the
 	    // pluggin to determine the desired behavior.
-	    reject = quotaExhaustionAction.action(is, sessions);
+	    reject = getQuotaExhaustionAction().action(is, sessions);
 	    if (debug.messageEnabled()) {
 			debug.message("SessionConstraint." +
                         "checkQuotaAndPerformAction: " +
