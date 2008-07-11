@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.20 2008-06-25 05:41:31 qcheng Exp $
+ * $Id: SessionService.java,v 1.21 2008-07-11 22:35:53 manish_rustagi Exp $
  *
  */
 
@@ -1836,17 +1836,33 @@ public class SessionService {
         }
         return false;
     }
+    
+    static public void setSessionConstraintEnabled(boolean value) {
+        isSessionConstraintEnabled = value;
+    }
 
     static public boolean isSessionConstraintEnabled() {
         return isSessionConstraintEnabled;
+    }
+
+    static public void setDenyLoginIfDBIsDown(boolean value) {
+        denyLoginIfDBIsDown = value;
     }
     
     static public boolean denyLoginIfDBIsDown() {
         return denyLoginIfDBIsDown;
     }
 
+    static public void setBypassConstraintForToplevelAdmin(boolean value) {
+        bypassConstratintForToplevelAdmin = value;
+    }
+
     static public boolean bypassConstratintForToplevelAdmin() {
         return bypassConstratintForToplevelAdmin;
+    }
+
+    static public void setConstraintResultingBehavior(int value) {
+        constraintResultingBehavior = value;
     }
 
     static public int getConstraintResultingBehavior() {
@@ -2285,6 +2301,46 @@ public class SessionService {
         }
         return topLevelAdmin;
     }
+    
+    /**
+     * Returns true if the user is super user
+     * 
+     * @param uuid the uuid of the login user
+     */    
+    boolean isSuperUser(String uuid) {
+        boolean isSuperUser = false;
+        try {
+            // Get the AMIdentity Object for super user 
+            AMIdentity adminUserId = null;
+            String adminUser = SystemProperties.get(
+                Constants.AUTHENTICATION_SUPER_USER);
+            if (adminUser != null) {
+                adminUserId = new AMIdentity(getAdminToken(), 
+                    adminUser, IdType.USER, "/", null);
+            }
+		    
+            //Get the AMIdentity Object for login user
+            AMIdentity user =
+                IdUtils.getIdentity(getAdminToken(), uuid);
+            
+            //Check for the equality
+            isSuperUser = user.equals(adminUserId);
+            
+        } catch (SSOException ssoe) {
+            sessionDebug.error("SessionService.isSuperUser:"+
+                "Cannot get the admin token for this operation.");
+        } catch (IdRepoException idme) {
+            sessionDebug.error("SessionService.isSuperUser:"+
+                "Cannot get the user identity.");
+        }
+        
+        if (sessionDebug.messageEnabled()) {
+            sessionDebug.message("SessionService.isSuperUser: "
+                    + isSuperUser);
+        }
+
+        return isSuperUser;
+    }    
 
     /**
      * Creates InternalSession which is always coupled with Http session This is
@@ -3191,6 +3247,10 @@ public class SessionService {
     public static int getConnectionMaxWaitTime() {
         return connectionMaxWaitTime;
     }
+    
+    public static void setMaxWaitTimeForConstraint(int value) {
+        maxWaitTimeForConstraint = value;
+    }    
 
     /**
      * @return Returns the maxWaitTimeForConstraint.
