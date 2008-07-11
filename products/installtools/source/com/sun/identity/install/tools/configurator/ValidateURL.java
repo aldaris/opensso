@@ -129,9 +129,19 @@ public class ValidateURL extends ValidatorBase {
                 state.put("isServerURLValid", "false");
 	        validRes = ValidationResultStatus.STATUS_WARNING;               
         } catch (Exception e) {
-                Debug.log("ValidateURL.isServerUrlValid threw exception :",
-                                e);
-	 }
+             if (url.toLowerCase().startsWith("https")) {
+                 Debug.log("ValidateURL.isServerUrlValid threw exception :",
+                         e);
+                 returnMessage = LocalizedMessage.get(
+                         LOC_VA_WRN_UN_REACHABLE_SSL_SERVER_URL,
+                         new Object[] { url });
+                 state.put("isServerURLValid", "false");
+                 validRes = ValidationResultStatus.STATUS_WARNING;
+             } else {
+                 Debug.log("ValidateURL.isServerUrlValid threw exception :",
+                         e);
+             } 	 
+        }
 	 if (validRes.getIntValue() == ValidationResultStatus.INT_STATUS_FAILED)
          {
              if (!invalidDeploymentURI) {
@@ -306,6 +316,8 @@ public class ValidateURL extends ValidatorBase {
                                             "VA_WRN_IN_VAL_SERVER_URL";
     public static String LOC_VA_WRN_UN_REACHABLE_SERVER_URL = 
                                             "VA_WRN_UN_REACHABLE_SERVER_URL";
+    public static String LOC_VA_WRN_UN_REACHABLE_SSL_SERVER_URL =
+            "VA_WRN_UN_REACHABLE_SSL_SERVER_URL";
     public static String LOC_VA_MSG_VAL_AGENT_URL = "VA_MSG_VAL_AGENT_URL";
     public static String LOC_VA_WRN_IN_VAL_AGENT_URL= 
                                             "VA_WRN_IN_VAL_AGENT_URL";
