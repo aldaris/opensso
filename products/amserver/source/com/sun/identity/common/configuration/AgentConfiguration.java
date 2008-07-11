@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.32 2008-06-25 05:42:27 qcheng Exp $
+ * $Id: AgentConfiguration.java,v 1.33 2008-07-11 00:23:02 veiming Exp $
  *
  */
 
@@ -862,35 +862,7 @@ public class AgentConfiguration {
     private static Set parseAttributeMap(AttributeSchema as, Map attrValues) {
         Set results = null;
         String attrName = as.getName();
-
-        if (as.getType().equals(AttributeSchema.Type.LIST)) {
-            results = new HashSet();
-            int lenAttrName = attrName.length();
-            
-            for (Iterator i = attrValues.keySet().iterator(); i.hasNext(); ) {
-                String key = (String)i.next();
-                if (key.startsWith(attrName)) {
-                    String sKey = key.substring(lenAttrName);
-                    Set set = (Set)attrValues.get(key);
-
-                    if (set != Collections.EMPTY_SET) {
-                        if (sKey.startsWith("[") && sKey.endsWith("]")) {
-                            results.add(sKey + "=" + set.iterator().next());
-                        } else if (attrName.equals(key)) {
-                            // this is for special case, where attribute can be
-                            // list and non list type
-                            results.add(set.iterator().next());
-                        }
-                    }
-                    i.remove();
-                }
-            }
-            if (results.isEmpty()) {
-                results = null;
-            }
-        } else {
-            results = (Set)attrValues.remove(attrName);
-        }
+        results = (Set)attrValues.remove(attrName);
         return results;
     }
     
