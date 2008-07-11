@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.13 2008-06-25 05:41:30 qcheng Exp $
+ * $Id: InternalSession.java,v 1.14 2008-07-11 22:37:31 manish_rustagi Exp $
  *
  */
 
@@ -964,11 +964,13 @@ public class InternalSession implements TaskRunnable, Serializable {
     private boolean shouldIgnoreSessionQuotaChecking(String userDN) {
 
         boolean ignore = false;
-        if ((userDN.equalsIgnoreCase(superUserDN)) || (!willExpire())) {
+        // FIXME Is this initialization necessary?
+        SessionService.getSessionService();
+        
+        if (SessionService.getSessionService().
+                isSuperUser(getUUID()) || (!willExpire())) {
             ignore = true;
         } else {
-            // FIXME Is this initialization necessary?
-            SessionService.getSessionService();
             // Need to check if the user has the top-level admin role
             // (expensive operation) only when the session constraint
             // needs to be bypassed for the top-level admins.
