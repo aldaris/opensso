@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthContext.java,v 1.3 2008-06-25 05:54:47 qcheng Exp $
+ * $Id: FAMServerAuthContext.java,v 1.4 2008-07-12 18:36:19 mallas Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthContext;
 import com.sun.xml.ws.api.model.wsdl.WSDLPort;
 import com.sun.xml.ws.api.server.WSEndpoint;
+import com.sun.xml.ws.api.EndpointAddress;
 
 public class FAMServerAuthContext implements ServerAuthContext {
     
@@ -63,14 +64,19 @@ public class FAMServerAuthContext implements ServerAuthContext {
         System.out.println("FAMServerAuthContext appContext : " + appContext);
         
         WSEndpoint endPoint = (WSEndpoint)map.get("ENDPOINT");
-        WSDLPort port = endPoint.getPort();
-        String endpoint = port.getAddress().getURL().toString();
-        System.out.println("FAMServerAuthContext WSP endpoint : " + endpoint);
-        
-        String providerName = endpoint;
-        
-        System.out.println("FAMServerAuthContext providerName : " + 
-            providerName);
+
+        String providerName = null;
+        if(endPoint != null) {
+           WSDLPort port = endPoint.getPort();
+           EndpointAddress ep = port.getAddress();
+           if(ep != null) {
+              java.net.URL url = ep.getURL();
+              if(url != null) {
+                 providerName = url.toString();
+              }
+           }
+        }
+                        
         
         authModule = new FAMServerAuthModule();
         map.put("providername", providerName);
