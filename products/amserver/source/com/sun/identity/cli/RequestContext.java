@@ -22,17 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.7 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: RequestContext.java,v 1.8 2008-07-12 03:22:25 veiming Exp $
  *
  */
 
 package com.sun.identity.cli;
 
-import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.locale.Locale;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -191,7 +190,12 @@ public class RequestContext {
                     }
                 }
             } else if (values != null) {
-                values.add(arg);
+                if (commandMgr.webEnabled()) {
+                    values.add(Locale.URLDecodeField(arg, 
+                        commandMgr.getDebugger()));
+                } else {
+                    values.add(arg);
+                }
             }
         }
     }
@@ -235,7 +239,12 @@ public class RequestContext {
             } else if (values == null) {
                 throw createIncorrectOptionException(commandName, argv);
             } else if (arg.trim().length() > 0) {
-                values.add(arg);
+                if (commandMgr.webEnabled()) {
+                    values.add(Locale.URLDecodeField(arg, 
+                        commandMgr.getDebugger()));
+                } else {
+                    values.add(arg);
+                }
             }
         }
     }

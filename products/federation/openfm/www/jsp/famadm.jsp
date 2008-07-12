@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: famadm.jsp,v 1.2 2008-06-25 05:51:00 qcheng Exp $
+   $Id: famadm.jsp,v 1.3 2008-07-12 03:22:25 veiming Exp $
   
 --%>
 
@@ -30,6 +30,7 @@
 <%@ page import="com.iplanet.sso.*" %>
 <%@ page import="java.text.MessageFormat" %>
 
+<%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
