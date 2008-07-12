@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FQDNUtils.java,v 1.3 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: FQDNUtils.java,v 1.4 2008-07-12 03:20:44 veiming Exp $
  *
  */
 
@@ -43,10 +43,9 @@ import com.iplanet.am.util.SystemProperties;
  * get fully qualified host name from a partial (virtual) host name.
  */
 public class FQDNUtils {
+    private static FQDNUtils instance = new FQDNUtils();
     private Map fqdnMap;
-
     private String defaultHostName;
-
     private Set validHostNames;
 
     /**
@@ -54,7 +53,15 @@ public class FQDNUtils {
      * and <code>FQDN</code> map information from
      * <code>AMConfig.properties</code> file.
      */
-    public FQDNUtils() {
+    private FQDNUtils() {
+        init();
+    }
+
+    public static FQDNUtils getInstance() {
+        return instance;
+    }
+
+    public void init() {
         fqdnMap = getFQDNMapFromAMConfig();
         defaultHostName = SystemProperties.get(Constants.AM_SERVER_HOST);
         validHostNames = getLowerCaseValuesFromMap(fqdnMap);

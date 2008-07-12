@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.72 2008-07-07 20:33:02 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.73 2008-07-12 03:20:45 veiming Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import com.sun.identity.authentication.UI.LoginLogoutMapping;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
 import com.sun.identity.common.DebugPropertiesObserver;
+import com.sun.identity.common.FQDNUtils;
 import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.ServerConfiguration;
@@ -296,6 +297,7 @@ public class AMSetupServlet extends HttpServlet {
         try {
             isConfiguredFlag = configure(request, map, userRepo);
             if (isConfiguredFlag) {
+                FQDNUtils.getInstance().init();
                 //postInitialize was called at the end of configure????
                 postInitialize(getAdminSSOToken());
             }

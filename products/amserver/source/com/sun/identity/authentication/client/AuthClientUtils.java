@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.15 2008-06-25 05:41:51 qcheng Exp $
+ * $Id: AuthClientUtils.java,v 1.16 2008-07-12 03:20:43 veiming Exp $
  *
  */
 
@@ -121,7 +121,6 @@ public class AuthClientUtils {
 
     private static AMClientDetector clientDetector;
     private static Client defaultClient;
-    private static FQDNUtils fqdnUtils;
     private static ResourceBundle bundle;
     private static final boolean urlRewriteInPath =
         Boolean.valueOf(SystemProperties.get(
@@ -175,7 +174,6 @@ public class AuthClientUtils {
                 defaultClient = ClientsManager.getDefaultInstance();
             }
         }
-        fqdnUtils = new FQDNUtils();
         bundle = Locale.getInstallResourceBundle(BUNDLE_NAME);
         if (webContainer != null && webContainer.length() > 0) {
             if (webContainer.indexOf("BEA") >= 0 ||
@@ -1266,7 +1264,7 @@ public class AuthClientUtils {
             utilDebug.message("hostName is : " + hostName);
         }
 
-        boolean retVal = fqdnUtils.isHostnameValid(hostName);
+        boolean retVal = FQDNUtils.getInstance().isHostnameValid(hostName);
 
         if (retVal) {
             utilDebug.message("hostname  and fqdnDefault match returning true");
@@ -1297,7 +1295,7 @@ public class AuthClientUtils {
 
         // get mapping from table
         String validHostName =
-            fqdnUtils.getFullyQualifiedHostName(partialHostName);
+            FQDNUtils.getInstance().getFullyQualifiedHostName(partialHostName);
 
         if (validHostName == null) {
             validHostName = partialHostName;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleServletBase.java,v 1.4 2008-07-10 23:27:22 veiming Exp $
+ * $Id: ConsoleServletBase.java,v 1.5 2008-07-12 03:20:44 veiming Exp $
  *
  */
 
@@ -62,7 +62,6 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class ConsoleServletBase
     extends ApplicationServletBase
 {
-    private static FQDNUtils fqdnUtils = new FQDNUtils();
     static final String PARAM_REDIRECT = "amconsoleRedirect";
     static final String URL_ADMIN_FRAME = "/base/AMAdminFrame";
     static final String LOGIN_PARAM = "?service=adminconsoleservice&goto=";
@@ -383,7 +382,8 @@ public abstract class ConsoleServletBase
         }
 
         if (!hostname.equalsIgnoreCase(consoleHost)) {
-            hostname = fqdnUtils.getFullyQualifiedHostName(hostname);
+            hostname = FQDNUtils.getInstance().getFullyQualifiedHostName(
+                hostname);
 
             if (hostname != null) {
                 /*
