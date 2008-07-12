@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.50 2008-07-10 21:34:48 huacui Exp $
+   $Id: AgentService.xml,v 1.51 2008-07-12 18:49:47 mallas Exp $
 
 -->
 
@@ -2627,6 +2627,19 @@
                         type="single"
                         syntax="string"
                         i18nKey="a353">
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="isPassThroughSecurityToken"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a354">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
                     </AttributeSchema>
 
                 </SubSchema>
