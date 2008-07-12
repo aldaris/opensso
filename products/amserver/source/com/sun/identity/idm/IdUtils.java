@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.23 2008-07-11 01:46:23 arviranga Exp $
+ * $Id: IdUtils.java,v 1.24 2008-07-12 00:08:27 arviranga Exp $
  *
  */
 
@@ -515,6 +515,7 @@ public final class IdUtils {
                     if (subOrgNames.size() == 1) {
                         id = DNMapper.orgNameToDN((String) subOrgNames
                                 .iterator().next());
+                        foundOrg = true;
                     } else {
                         for (Iterator items = subOrgNames.iterator();
                             items.hasNext();) {
@@ -553,22 +554,30 @@ public final class IdUtils {
                 Set orgAliases = sm.searchOrganizationNames(
                     IdConstants.REPO_SERVICE,
                     IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
-                if (orgAliases == null || orgAliases.isEmpty()) {
-                    if (debug.messageEnabled()) {
-                        debug.message("IdUtils.getOrganization Unable" +
+                if (!foundOrg &&
+                    ((orgAliases == null) || orgAliases.isEmpty())) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("IdUtils.getOrganization Unable" +
                             " to find Org name for: " + orgIdentifier);
                     }
                     Object[] args = {orgIdentifier};
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                         "401", args);
-                } else if (foundOrg || (orgAliases.size() > 1)) {
+                } else if ((orgAliases != null)  && (orgAliases.size() > 0) &&
+                    (foundOrg || orgAliases.size() > 1)) {
                     // Multiple realms should not have the same alias
+                    if (debug.warningEnabled()) {
+                        debug.warning("IdUtils.getOrganization Multiple " +
+                            " matching Orgs found for: " + orgIdentifier);
+                    }
                     Object[] args = {orgIdentifier};
                     throw new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                         "404", args);
                 }
-                String tmpS = (String) orgAliases.iterator().next();
-                id = DNMapper.orgNameToDN(tmpS);
+                if (!foundOrg) {
+                    String tmpS = (String) orgAliases.iterator().next();
+                    id = DNMapper.orgNameToDN(tmpS);
+                }
             } catch (SMSException smse) {
                 // debug message here.
                 if (debug.messageEnabled()) {
