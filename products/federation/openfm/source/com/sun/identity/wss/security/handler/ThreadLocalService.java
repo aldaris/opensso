@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadLocalService.java,v 1.4 2008-07-02 16:57:23 mallas Exp $
+ * $Id: ThreadLocalService.java,v 1.5 2008-07-12 18:38:24 mallas Exp $
  *
  */
 
@@ -39,6 +39,7 @@ class ThreadLocalService {
     
     private static ThreadLocal ssoToken = null;    
     private static ThreadLocal serviceName = null;
+    private static ThreadLocal subj = null;
     //private static ThreadLocal threadLocal = new ThreadLocal();   
     
     static  synchronized String getServiceName() {
@@ -84,6 +85,28 @@ class ThreadLocalService {
         if(ssoToken != null) {
            ssoToken.remove();
            ssoToken = null;
+        }
+    }
+    
+    static  synchronized Object getSubject() {
+        if(subj != null) {
+           return subj.get();
+        }
+        return null;
+    }
+
+    static synchronized void setSubject(final Object subject) {
+        subj = new ThreadLocal() {
+            protected synchronized Object initialValue() {
+                return subject;
+            }
+        };       
+    }
+    
+    static synchronized void removeSubject() {
+        if(subj != null) {
+           subj.remove();
+           subj = null;
         }
     }
 }

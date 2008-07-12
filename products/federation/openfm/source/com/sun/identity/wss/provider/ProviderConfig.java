@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.19 2008-07-02 16:57:22 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.20 2008-07-12 18:38:24 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -114,6 +114,7 @@ public abstract class ProviderConfig {
      protected String servicePrincipal = null;
      protected String keytabFile = null;
      protected boolean verifyKrbSignature = false;
+     protected boolean usePassThroughToken = false;
 
      private static Class adapterClass;
 
@@ -741,7 +742,26 @@ public abstract class ProviderConfig {
      */
     public void setAuthenticationChain(String authenticationChain) {
         this.authenticationChain = authenticationChain;
-    }                                
+    }
+    
+    /**
+     * Returns true if passthrough security token needs to be used.
+     * This is valid for a proxy web services client.
+     * @return true if passthrough security token needs to be used.
+     */
+    public boolean usePassThroughSecurityToken() {
+        return usePassThroughToken;
+    }
+    
+    /**
+     * Sets if passthrough security token needs to be used
+     * This is valid for a proxy web services client.
+     * @param usepassthrough flag to if the wsc needs to use passthrough
+     *        security token.     
+     */
+    public void setPassThroughSecurityToken(boolean usepassthrough) {
+        this.usePassThroughToken = usepassthrough;
+    }
     
     /**
      * Stores the provider configuration

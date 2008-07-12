@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.24 2008-06-25 05:50:05 qcheng Exp $
+ * $Id: AgentProvider.java,v 1.25 2008-07-12 18:38:24 mallas Exp $
  *
  */
 
@@ -113,6 +113,8 @@ public class AgentProvider extends ProviderConfig {
              "KerberosTicketCacheDir";
      private static final String KRB_KEYTAB_FILE = "KerberosKeyTabFile";     
      private static final String VERIFY_KRB_SIGNATURE = "isVerifyKrbSignature";
+     private static final String USE_PASSTHROUGH_TOKEN = 
+                                  "isPassThroughSecurityToken";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -155,6 +157,7 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(KRB_TICKET_CACHE_DIR);         
          attrNames.add(KRB_KEYTAB_FILE);
          attrNames.add(VERIFY_KRB_SIGNATURE);
+         attrNames.add(USE_PASSTHROUGH_TOKEN);
      }
 
      public void init (String providerName, 
@@ -422,7 +425,12 @@ public class AgentProvider extends ProviderConfig {
             if ((value != null) && (value.length() != 0)) {
                 this.verifyKrbSignature = Boolean.valueOf(value).booleanValue();
             }            
-        } else {
+        } else if(attr.equals(USE_PASSTHROUGH_TOKEN)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.usePassThroughToken = 
+                        Boolean.valueOf(value).booleanValue();
+            }
+        }  else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
               "Attribute configured." + attr);
@@ -531,11 +539,11 @@ public class AgentProvider extends ProviderConfig {
         String stsTA = null;
         String discoTA = null;
         if(taconfig != null) {
-           if(taconfig.getType().equals(STS_TRUST_AUTHORITY)) {
+           if(taconfig.getType().startsWith(STS_TRUST_AUTHORITY)) {
               stsTA = taconfig.getName();                  
            }
            
-           if(taconfig.getType().equals(DISCOVERY_TRUST_AUTHORITY)) {
+           if(taconfig.getType().startsWith(DISCOVERY_TRUST_AUTHORITY)) {
               discoTA = taconfig.getName();                  
            } 
         }
@@ -584,6 +592,9 @@ public class AgentProvider extends ProviderConfig {
         if(keytabFile != null) {
            config.put(KRB_KEYTAB_FILE, keytabFile);  
         }
+        
+        config.put(USE_PASSTHROUGH_TOKEN, 
+                Boolean.toString(usePassThroughToken));
                 
         // Save the entry in Agent's profile
         try {

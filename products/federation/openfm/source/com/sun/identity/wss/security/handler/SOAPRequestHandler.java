@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.17 2008-07-02 16:57:23 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.18 2008-07-12 18:38:24 mallas Exp $
  *
  */
 
@@ -51,6 +51,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -93,6 +94,9 @@ import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.wss.sts.TrustAuthorityClient;
 import com.sun.identity.wss.sts.FAMSTSException;
 import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
+import com.sun.identity.wss.security.AssertionToken;
+import com.sun.identity.wss.security.SAML2Token;
+import com.sun.identity.wss.sts.STSConstants;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -117,7 +121,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     private static String BACK_SLASH = "\\";
     private static String FORWARD_SLASH = "/";
     private static MessageAuthenticator authenticator = null;
-    
+        
     /**
      * Property for web services authenticator.
      */
@@ -146,7 +150,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         providerName = (String)config.get(PROVIDER_NAME);
         if( (providerName == null) || (providerName.length() == 0) ) {
             providerName = SystemConfigurationUtil.getProperty(
-                    "com.sun.identity.wss.clientagent.profile", "wsc");
+                    "com.sun.identity.wss.provider.defaultWSP", "wsp");
             if(debug.messageEnabled()) {
                debug.message("SOAPRequestHandler.Init map: " +
                        "default provider name:" + providerName);
@@ -181,12 +185,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             HttpServletRequest request,
             HttpServletResponse response)
             throws SecurityException {
-
-        if(debug.messageEnabled()) {
-            debug.message("SOAPRequestHandler.validateRequest: " + 
-                "sharedState map : " + sharedState);
-        }
-        
+       
         ProviderConfig config = null;
         FAMSTSConfiguration stsConfig = null;
         
@@ -323,7 +322,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         
         removeValidatedHeaders(config, soapRequest);
-
+        if(!isSTS) {
+           ThreadLocalService.setSubject(subject);
+        }
         return subject;
     }
 
@@ -360,6 +361,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             debug.message("SecureResponse: This is WS-Trust Response");
             stsConfig = new FAMSTSConfiguration();
         } else {
+            ThreadLocalService.removeSubject();
             config = getWSPConfig();
         }
 
@@ -423,7 +425,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
 
         soapMessage = secureMessage.getSOAPMessage();
-
+        
         return soapMessage;
 
     }
@@ -445,12 +447,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             SOAPMessage soapMessage,
             Subject subject,
             Map sharedState) throws SecurityException {
-
-        if(WSSUtils.debug.messageEnabled()) {
-            debug.message("SOAPRequestHandler.secureRequest: " + 
-                "sharedState map : " + sharedState);
-        }
-
+       
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
@@ -479,6 +476,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     new SecureSOAPMessage(soapMessage, true);
         } else {
             if (securityMechanism.isTALookupRequired()) {
+                if(config.usePassThroughSecurityToken()) {
+                   Subject authnSubj = getAuthenticatedSubject();
+                   if(authnSubj != null) {
+                      subject = authnSubj;
+                   }
+                }
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken ssoToken = subjectSecurity.ssoToken;
                 if(ssoToken == null) {
@@ -801,8 +804,18 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
                         "SAML token");
             }
+            if(config.usePassThroughSecurityToken()) {
+               securityToken = getSecurityTokenFromSubject(subject);
+            }
+            if(securityToken != null) {
+                if(debug.messageEnabled()) {                  
+                  debug.message("SOAPRequestHandler.getSecurityToken::" +
+                       "security token from subject is not null"); 
+               }
+               return securityToken;
+            }
             NameIdentifier ni = null;
-            try {
+               try {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken userToken = subjectSecurity.ssoToken;
                if(userToken != null) {
@@ -881,6 +894,16 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            if(debug.messageEnabled()) {
                 debug.message("SOAPRequestHandler.getSecurityToken:: creating " +
                         "SAML2 token");
+            }
+            if(config.usePassThroughSecurityToken()) {
+               securityToken = getSecurityTokenFromSubject(subject);
+            }
+            if(securityToken != null) {
+               if(debug.messageEnabled()) {                  
+                  debug.message("SOAPRequestHandler.getSecurityToken::" +
+                       "security token from subject is not null"); 
+               }
+               return securityToken;
             }
             NameID ni = null;
             try {
@@ -1326,4 +1349,55 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }        
     }
     
+    private SecurityToken getSecurityTokenFromSubject(Subject subj)
+          throws SecurityException {
+        
+        SecurityToken securityToken = null;
+        Subject subject = subj;
+        if(subject.getPublicCredentials().isEmpty()) {
+           Object obj = ThreadLocalService.getSubject();
+           if(obj != null) {
+              subject = (Subject)obj;              
+           }           
+        }
+        Iterator iter = subject.getPublicCredentials().iterator();
+        while(iter.hasNext()) {
+            Object obj = iter.next();
+            if(!(obj instanceof Element)) {
+               continue; 
+            }
+            Element tokenE = (Element)obj;
+            if(!tokenE.getLocalName().equals("Assertion")) {
+               continue;
+            }
+            String ns = tokenE.getNamespaceURI();
+            if(ns == null) {
+               continue;
+            }
+            try {
+                if(ns.equals(STSConstants.SAML10_ASSERTION)) {               
+                   securityToken = new AssertionToken(tokenE);                
+                } else if (ns.equals(STSConstants.SAML20_ASSERTION)) {
+                   securityToken = new SAML2Token(tokenE); 
+                }
+            } catch (Exception ex) {
+                WSSUtils.debug.error("SOAPRequestHandler.getSecurityToken" +
+                        "FromSubject:: exception", ex); 
+                throw new SecurityException(ex.getMessage());
+            }
+        }
+        return securityToken;
+    }
+    
+    private Subject getAuthenticatedSubject() {
+        Subject subject = (Subject)ThreadLocalService.getSubject();
+        if(subject == null) {
+           return null;
+        }
+        
+        if(!subject.getPrivateCredentials().isEmpty()) {
+           return subject;
+        }
+        return null;
+    }
 }
