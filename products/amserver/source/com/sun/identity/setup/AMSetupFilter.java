@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupFilter.java,v 1.11 2008-06-25 05:44:01 qcheng Exp $
+ * $Id: AMSetupFilter.java,v 1.12 2008-07-13 06:06:49 kevinserwin Exp $
  *
  */
 package com.sun.identity.setup;
@@ -93,18 +93,23 @@ public final class AMSetupFilter implements Filter {
             } else {
                 if (isPassthrough() && validateStream(httpRequest)) {
                     filterChain.doFilter(httpRequest, httpResponse);
-                } else {
-                    String url = httpRequest.getScheme() + "://" +
-                        httpRequest.getServerName() + ":" +
-                        httpRequest.getServerPort() +
-                        httpRequest.getContextPath();
-                    if ((new File(System.getProperty("user.home"))).canWrite()){
-                        url += SETUPURI;
+                } else {        
+                    String incomingURL = httpRequest.getRequestURI();
+                    if (incomingURL.endsWith("configurator")) {
+                        filterChain.doFilter(httpRequest, httpResponse);  
                     } else {
-                        url += NOWRITE_PERMISSION;
-                    }
-                    httpResponse.sendRedirect(url);
-                    markPassthrough();
+                        String url = httpRequest.getScheme() + "://" +
+                            httpRequest.getServerName() + ":" +
+                            httpRequest.getServerPort() +
+                            httpRequest.getContextPath();
+                        if ((new File(System.getProperty("user.home"))).canWrite()){
+                            url += SETUPURI;
+                        } else {
+                            url += NOWRITE_PERMISSION;
+                        }
+                        httpResponse.sendRedirect(url);
+                        markPassthrough();
+                    }    
                 }
             }
         } catch(Exception ex) {

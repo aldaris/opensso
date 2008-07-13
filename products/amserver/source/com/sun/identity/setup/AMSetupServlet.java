@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.73 2008-07-12 03:20:45 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.74 2008-07-13 06:06:50 kevinserwin Exp $
  *
  */
 
@@ -69,6 +69,7 @@ import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.CachedSMSEntry;
+import com.sun.identity.setup.HttpServletRequestWrapper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -248,6 +249,60 @@ public class AMSetupServlet extends HttpServlet {
         return isConfiguredFlag;
     }
 
+    
+    public void doPost(HttpServletRequest request,
+                HttpServletResponse response)
+                throws IOException, ServletException, ConfiguratorException {       
+        
+        
+        HttpServletRequestWrapper req = new HttpServletRequestWrapper(request);
+        HttpServletResponseWrapper res = new HttpServletResponseWrapper(
+            response);
+        String loadBalancerHost = request.getParameter("LB_SITE_NAME");
+        String primaryURL = request.getParameter("LB_PRIMARY_URL");
+        
+        if (loadBalancerHost != null) {     
+            // site configuration is passed as a map of the site information 
+            Map siteConfig = new HashMap(5);
+            siteConfig.put(SetupConstants.LB_SITE_NAME, loadBalancerHost);
+            siteConfig.put(SetupConstants.LB_PRIMARY_URL, primaryURL);
+            req.addParameter(
+                SetupConstants.CONFIG_VAR_SITE_CONFIGURATION, siteConfig);
+        }
+                
+        String userStoreType = request.getParameter("USERSTORE_TYPE");        
+
+       if (userStoreType != null) {     
+            // site configuration is passed as a map of the site information 
+            Map store = new HashMap(12);  
+            String tmp = (String)request.getParameter("USERSTORE_HOST");        
+            store.put(SetupConstants.USER_STORE_HOST, tmp);
+            
+            tmp = (String)request.getParameter("USERSTORE_SSL");         
+            store.put(SetupConstants.USER_STORE_SSL, tmp);            
+
+            tmp = (String)request.getParameter("USERSTORE_PORT"); ;
+            store.put(SetupConstants.USER_STORE_PORT, tmp);
+            tmp = (String)request.getParameter("USERSTORE_SUFFIX"); ;
+            store.put(SetupConstants.USER_STORE_ROOT_SUFFIX, tmp);
+            tmp = (String)request.getParameter("USERSTORE_MGRDN"); 
+            store.put(SetupConstants.USER_STORE_LOGIN_ID, tmp);      
+            tmp = (String)request.getParameter("USERSTORE_PASSWD"); 
+            store.put(SetupConstants.USER_STORE_LOGIN_PWD, tmp);      
+            store.put(SetupConstants.USER_STORE_TYPE, userStoreType);
+
+            req.addParameter("UserStore", store);
+        }
+        
+        boolean result = processRequest(req, res);            
+       
+        if (result == false) {
+            response.getWriter().write( 
+                    "Configuration failed - check installation logs!" );
+        } else
+            response.getWriter().write( "Configuration complete!" );
+    }
+        
     /**
      * The main entry point for configuring Access Manager. The parameters
      * are passed from configurator page.

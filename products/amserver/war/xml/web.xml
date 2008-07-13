@@ -107,6 +107,10 @@
         <url-pattern>/UI/*</url-pattern>
     </servlet-mapping>    
     <servlet-mapping>
+        <servlet-name>AMSetupServlet</servlet-name>
+        <url-pattern>/config/configurator</url-pattern>
+    </servlet-mapping>      
+    <servlet-mapping>
         <servlet-name>setSetupProgress</servlet-name>
         <url-pattern>/setup/setSetupProgress</url-pattern>
     </servlet-mapping>    
