@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAgentGroups.java,v 1.3 2008-06-25 05:42:10 qcheng Exp $
+ * $Id: DeleteAgentGroups.java,v 1.4 2008-07-14 21:33:15 veiming Exp $
  *
  */
 
@@ -37,13 +37,11 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
-import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -75,8 +73,6 @@ public class DeleteAgentGroups extends AuthenticatedCommand {
             "ATTEMPT_DELETE_AGENT_GROUPS", params);
 
         try {
-            AMIdentityRepository amir = new AMIdentityRepository(
-                adminSSOToken, realm);
             Set setDelete = new HashSet();
 
             for (Iterator i = names.iterator(); i.hasNext(); ) {
@@ -86,7 +82,8 @@ public class DeleteAgentGroups extends AuthenticatedCommand {
                 setDelete.add(amid);
             }
 
-            amir.deleteIdentities(setDelete);
+            AgentConfiguration.deleteAgentGroups(adminSSOToken, realm,
+                setDelete);
             IOutput outputWriter = getOutputWriter();
             outputWriter.printlnMessage(getResourceString(
                 "delete-agent-group-succeeded"));
@@ -104,6 +101,12 @@ public class DeleteAgentGroups extends AuthenticatedCommand {
                 "FAILED_DELETE_AGENT_GROUPS", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
+            String[] args = {realm, displayableNames, e.getMessage()};
+            debugError("DeleteAgentGroups.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_DELETE_AGENT_GROUPS", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
             String[] args = {realm, displayableNames, e.getMessage()};
             debugError("DeleteAgentGroups.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

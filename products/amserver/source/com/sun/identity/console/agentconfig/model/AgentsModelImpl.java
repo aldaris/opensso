@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.13 2008-06-25 05:42:45 qcheng Exp $
+ * $Id: AgentsModelImpl.java,v 1.14 2008-07-14 21:33:16 veiming Exp $
  *
  */
 
@@ -488,15 +488,18 @@ public class AgentsModelImpl
             logEvent("ATTEMPT_DELETE_AGENT_GROUP", params);
 
             try {
-                AMIdentityRepository repo = new AMIdentityRepository(
-                    getUserSSOToken(), realmName);
-                repo.deleteIdentities(getAMIdentity(agentGroups));
+                AgentConfiguration.deleteAgentGroups(getUserSSOToken(), 
+                    realmName, getAMIdentity(agentGroups));
                 logEvent("SUCCEED_DELETE_AGENT_GROUP", params);
             } catch (IdRepoException e) {
                 String[] paramsEx = {realmName, idNames, getErrorString(e)};
                 logEvent("EXCEPTION_DELETE_AGENT_GROUP", paramsEx);
                 throw new AMConsoleException(getErrorString(e));
             } catch (SSOException e) {
+                String[] paramsEx = {realmName, idNames, getErrorString(e)};
+                logEvent("EXCEPTION_DELETE_AGENT_GROUP", paramsEx);
+                throw new AMConsoleException(getErrorString(e));
+            } catch (SMSException e) {
                 String[] paramsEx = {realmName, idNames, getErrorString(e)};
                 logEvent("EXCEPTION_DELETE_AGENT_GROUP", paramsEx);
                 throw new AMConsoleException(getErrorString(e));
@@ -733,30 +736,15 @@ public class AgentsModelImpl
         logEvent("ATTEMPT_SET_AGENT_ATTRIBUTE_VALUE", param);
 
         try {
-            boolean bSet = false;
-            AMIdentity amid = IdUtils.getIdentity(
-                getUserSSOToken(), universalId);
-            Set groups = amid.getMemberships(IdType.AGENTGROUP);
-            
-            if ((groupName != null) && (groupName.length() > 0)) {
-                AMIdentity group =  new AMIdentity(
-                    getUserSSOToken(), groupName, IdType.AGENTGROUP, realmName,
-                    null);
-                if (!groups.contains(group.getDN())) {
-                    group.addMember(amid);
-                    bSet = true;
-                }
-            } else {
-                if ((groups != null) && !groups.isEmpty()) {
-                    AMIdentity group = (AMIdentity)groups.iterator().next();
-                    group.removeMember(amid);
-                    bSet = true;
-                }
-            }
-            
+            boolean bSet = AgentConfiguration.setAgentGroup(
+                getUserSSOToken(), realmName, universalId, groupName);
             logEvent("SUCCEED_SET_AGENT_ATTRIBUTE_VALUE", param);
             return bSet;
         } catch (SSOException e) {
+            String[] paramsEx = {realmName, universalId, getErrorString(e)};
+            logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SMSException e) {
             String[] paramsEx = {realmName, universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
             throw new AMConsoleException(getErrorString(e));

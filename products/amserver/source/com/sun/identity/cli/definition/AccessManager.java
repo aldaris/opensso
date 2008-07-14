@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.76 2008-06-25 05:42:14 qcheng Exp $
+ * $Id: AccessManager.java,v 1.77 2008-07-14 21:33:15 veiming Exp $
  *
  */
 
@@ -1838,7 +1838,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
-            "agent-remove-properties-succeeded=Proeperties were removed."
+            "agent-remove-properties-succeeded=Properties were removed."
         }
     )
     private String agent_remove_props;

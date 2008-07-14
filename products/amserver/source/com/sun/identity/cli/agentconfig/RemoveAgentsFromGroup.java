@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveAgentsFromGroup.java,v 1.4 2008-06-25 05:42:10 qcheng Exp $
+ * $Id: RemoveAgentsFromGroup.java,v 1.5 2008-07-14 21:33:15 veiming Exp $
  *
  */
 
@@ -38,9 +38,11 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -90,7 +92,7 @@ public class RemoveAgentsFromGroup extends AuthenticatedCommand {
                     "ATTEMPT_REMOVE_AGENT_FROM_GROUP", params);
                 AMIdentity amid = new AMIdentity(
                     adminSSOToken, agentName, IdType.AGENTONLY, realm, null); 
-                agentGroup.removeMember(amid);                
+                AgentConfiguration.removeAgentGroup(amid, agentGroup);
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
                     "SUCCEED_REMOVE_AGENT_FROM_GROUP", params);
             }
@@ -109,6 +111,12 @@ public class RemoveAgentsFromGroup extends AuthenticatedCommand {
                 "FAILED_REMOVE_AGENT_FROM_GROUP", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
+            String[] args = {realm, agentGroupName, agentName, e.getMessage()};
+            debugError("RemoveAgentsFromGroup.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_REMOVE_AGENT_FROM_GROUP", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SMSException e) {
             String[] args = {realm, agentGroupName, agentName, e.getMessage()};
             debugError("RemoveAgentsFromGroup.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,

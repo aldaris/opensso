@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.33 2008-07-11 00:23:02 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.34 2008-07-14 21:33:16 veiming Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.FQDNUrl;
 import com.sun.identity.sm.AttributeSchema;
@@ -43,7 +44,6 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.security.AccessController;
@@ -997,6 +997,20 @@ public class AgentConfiguration {
         return results;
     }
     
+    private static Set getAttributesSchemaNames(AMIdentity amid)
+        throws SMSException, SSOException, IdRepoException {
+        Set results = new HashSet();
+        Set attributeSchemas = getAgentAttributeSchemas(getAgentType(amid));
+        
+        if ((attributeSchemas != null) && !attributeSchemas.isEmpty()) {
+            for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
+                AttributeSchema as = (AttributeSchema)i.next();
+                results.add(as.getName());
+            }
+        }
+        return results;
+    }
+    
     /**
      * Returns a set of attribute schema names whose schema match a given 
      * type.
@@ -1290,5 +1304,201 @@ public class AgentConfiguration {
      */
     public static Set getLocalPropertyNames(String agentType) {
         return (Set)localAgentProperties.get(agentType);
+    }
+    
+    /**
+     * Deletes agent groups.
+     * 
+     * @param ssoToken Single Sign On token that is to be used for deletion.
+     * @param realm Realm where agent groups reside.
+     * @param agentGroups Set of Agent Group object.
+     * @throws IdRepoException if unable to delete groups.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers. 
+     */
+    public static void deleteAgentGroups(
+        SSOToken ssoToken,
+        String realm, 
+        Set agentGroups
+    ) throws IdRepoException, SSOException, SMSException {
+        if ((agentGroups != null) && !agentGroups.isEmpty()) {
+            for (Iterator i = agentGroups.iterator(); i.hasNext(); ) {
+                AMIdentity group = (AMIdentity)i.next();
+                unheritPropertyValues(group);
+            }
+            AMIdentityRepository repo = new AMIdentityRepository(
+                ssoToken, realm);
+            repo.deleteIdentities(agentGroups);
+        }
+    }
+    
+    private static void unheritPropertyValues(AMIdentity group)
+        throws IdRepoException, SSOException, SMSException {
+        Set agents = group.getMembers(IdType.AGENTONLY);
+
+        if ((agents != null) && !agents.isEmpty()) {
+            for (Iterator i = agents.iterator(); i.hasNext(); ) {
+                AMIdentity agent = (AMIdentity)i.next();
+                unheritPropertyValues(group, agent);
+            }
+        }
+    }
+    
+    private static void unheritPropertyValues(
+        AMIdentity group, 
+        AMIdentity agent
+    ) throws SMSException, SSOException, IdRepoException {
+        Set attributeSchemas = getAttributesSchemaNames(group);
+        Map groupProperties = group.getAttributes();
+        Map map = new HashMap();
+        map.putAll(groupProperties);
+        map.putAll(agent.getAttributes());
+        agent.setAttributes(correctAttributeNames(map, attributeSchemas));
+        agent.store();
+    }
+    
+    // This is required because the attribute names that are returned
+    // but idRepo are all lowered cased.
+    private static Map correctAttributeNames(
+        Map attrValues, 
+        Set attributeSchemaNames
+    ) {
+        Map results = new HashMap();
+        Map mapCase = new HashMap();
+        for (Iterator i = attributeSchemaNames.iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
+            mapCase.put(name.toLowerCase(), name);
+        }
+        for (Iterator i = attrValues.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry entry = (Map.Entry)i.next();
+            String correctedKey = (String)mapCase.get(entry.getKey());
+            if (correctedKey != null) { // can be null like "agenttype"
+                results.put(correctedKey, entry.getValue());
+            }
+        }
+        return results;
+    }
+    
+     /**
+     * Set agent group. Returns <code>true</code> if group is set.
+     * 
+     * @param ssoToken Single Sign On token that is to be used for this 
+     *        operation.
+     * @param realm Realm name where agent and group reside.
+     * @param universalId Universal ID of Agent.
+     * @param group Name of Group object to be set.
+     * @return <code>true</code> if group is set.
+     * @throws IdRepoException if group cannot be set.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers
+     */
+    public static boolean setAgentGroup(
+        SSOToken ssoToken,
+        String realm, 
+        String universalId, 
+        String groupName
+    ) throws IdRepoException, SSOException, SMSException {
+        AMIdentity amid = IdUtils.getIdentity(ssoToken, universalId);
+        return setAgentGroup(ssoToken, realm, amid, groupName);
+    }
+
+    /**
+     * Set agent group. Returns <code>true</code> if group is set.
+     * 
+     * @param ssoToken Single Sign On token that is to be used for this 
+     *        operation.
+     * @param realm Realm name where agent and group reside.
+     * @param amid Agent object.
+     * @param group Name of Group object to be set.
+     * @return <code>true</code> if group is set.
+     * @throws IdRepoException if group cannot be set.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers
+     */
+    public static boolean setAgentGroup(
+        SSOToken ssoToken,
+        String realm, 
+        AMIdentity amid, 
+        String groupName
+    ) throws IdRepoException, SSOException, SMSException {
+        AMIdentity newGroup = null;
+        if ((groupName != null) && (groupName.length() > 0)) {
+            newGroup = new AMIdentity(
+                ssoToken, groupName, IdType.AGENTGROUP, realm, null);
+        }
+        return setAgentGroup(amid, newGroup);
+    }
+    
+    /**
+     * Set agent group. Returns <code>true</code> if group is set.
+     * 
+     * @param amid Agent object.
+     * @param newGroup Group object to be set.
+     * @return <code>true</code> if group is set.
+     * @throws IdRepoException if group cannot be set.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers
+     */
+    public static boolean setAgentGroup(
+        AMIdentity amid, 
+        AMIdentity newGroup
+    ) throws IdRepoException, SSOException, SMSException {
+        boolean bSet = false;
+        Set groups = amid.getMemberships(IdType.AGENTGROUP);
+
+        if ((groups != null) && !groups.isEmpty()) {
+            if (newGroup != null) {
+                if (!groups.contains(newGroup)) {
+                    newGroup.addMember(amid);
+                    bSet = true;
+                }
+            } else {
+                AMIdentity group = (AMIdentity)groups.iterator().next();
+                unheritPropertyValues(group, amid);
+                group.removeMember(amid);
+                bSet = true;
+            }
+        } else {
+            if (newGroup != null) {
+                newGroup.addMember(amid);
+                bSet = true;
+            }
+        }
+        return bSet;
+    }
+
+    /**
+     * Removes agent from it group. Returns <code>true</code> if group is 
+     * removed.
+     * 
+     * @param amid Agent object.
+     * @param groupToRemove Group object to be removed.
+     * @return <code>true</code> if group is removed.
+     * @throws IdRepoException if group cannot be removed.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers
+     */
+    public static boolean removeAgentGroup(
+        AMIdentity amid, 
+        AMIdentity groupToRemove
+    ) throws IdRepoException, SSOException, SMSException {
+        boolean bRemoved = false;
+        Set groups = amid.getMemberships(IdType.AGENTGROUP);
+
+        if ((groups != null) && !groups.isEmpty()) {
+            if (groupToRemove != null) {
+                if (groups.contains(groupToRemove)) {
+                    unheritPropertyValues(groupToRemove, amid);
+                    groupToRemove.removeMember(amid);
+                    bRemoved = true;
+                }
+            }
+        }
+        return bRemoved;
     }
 }
