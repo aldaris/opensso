@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: setup,v 1.5 2008-06-25 05:41:17 qcheng Exp $
+# $Id: setup,v 1.6 2008-07-14 20:27:41 veiming Exp $
 #
 
 if [ -z "${JAVA_HOME}" ]; then
@@ -53,4 +53,4 @@ if [ "$1" = "-p" -o "$1" = "--path" ] ; then
   path_AMConfig="$2"
 fi
 
-${JAVA_HOME}/bin/java -D"load.config=yes" -D"help.print=${help_print}" -D"path.AMConfig=${path_AMConfig}" -cp "lib/opensso.jar:lib/amadm_setup.jar:lib/opensso-sharedlib.jar:lib/ldapjdk.jar:lib/OpenDS.jar:locale" com.sun.identity.tools.bundles.Main
+${JAVA_HOME}/bin/java -D"load.config=yes" -D"help.print=${help_print}" -D"path.AMConfig=${path_AMConfig}" -cp "lib/opensso.jar:lib/amadm_setup.jar:lib/opensso-sharedlib.jar:lib/ldapjdk.jar:lib/OpenDS.jar:resources" com.sun.identity.tools.bundles.Main

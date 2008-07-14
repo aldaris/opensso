@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.13 2008-07-02 17:13:17 veiming Exp $
+   $Id: build-tools.xml,v 1.14 2008-07-14 20:27:43 veiming Exp $
 
 -->
 
@@ -48,16 +48,13 @@
 
         <copy file="${openfm.dir}/license.txt"
             tofile="${tools.temp.dir}/license.txt" />
-        <delete file="${tools.temp.dir}/README.amadm" />
-        <delete file="${tools.temp.dir}/template/unix/bin/amadm.template" />
-        <delete file="${tools.temp.dir}/template/windows/bin/amadm.bat.template" />
 
         <copy todir="${tools.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/fam.jar" />
             <fileset file="${fedlibrary.dist.dir}/openfedlib.jar" />
             <fileset dir="${extlib.dir}" includes="FastInfoset.jar, webservices-tools.jar, jsr173_api.jar, relaxngDatatype.jar, xalan.jar, xmlsec.jar, xsdlib.jar" />
         </copy>
-        <copy todir="${tools.temp.dir}/locale" flatten="true">
+        <copy todir="${tools.temp.dir}/resources" flatten="true">
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties"/>
             <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>
         </copy>

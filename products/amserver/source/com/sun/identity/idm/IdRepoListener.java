@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.9 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: IdRepoListener.java,v 1.10 2008-07-14 20:27:42 veiming Exp $
  *
  */
 
@@ -121,7 +121,7 @@ public final class IdRepoListener {
      * This method has been deprecated as of FAM 8.0.
      * 
      * @param name name of the identity that changed
-     * @param changeType change type i.e., add, delete, modify, etc.
+     * @param type change type i.e., add, delete, modify, etc.
      * @param cMap configuration map that contains realm and plugin-name
      *
      * @deprecated  As of Sun Java System Access Manager 7.1.

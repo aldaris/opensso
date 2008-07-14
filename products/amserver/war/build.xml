@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.47 2008-06-25 05:44:24 qcheng Exp $
+   $Id: build.xml,v 1.48 2008-07-14 20:27:42 veiming Exp $
 
 -->
 
@@ -160,7 +160,6 @@
             <zipfileset dir="${amserver.www.dir}/jsp">
                 <include name="isAlive.jsp" />
                 <include name="Debug.jsp" />
-                <include name="amadm.jsp" />
                 <include name="encode.jsp" />
                 <include name="showServerConfig.jsp" />
             </zipfileset>
