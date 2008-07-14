@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValues.java,v 1.8 2008-06-25 05:42:07 qcheng Exp $
+ * $Id: AttributeValues.java,v 1.9 2008-07-14 21:08:57 veiming Exp $
  *
  */
 
@@ -33,7 +33,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -140,8 +139,7 @@ public class AttributeValues {
     public static Map parse(CommandManager mgr, String fileName)
         throws CLIException {
         BufferedReader in = null;
-        Map attrValues = 
-            new HashMap();
+        Map attrValues = new HashMap();
 
         try {
             in = new BufferedReader(new FileReader(fileName));
@@ -169,7 +167,7 @@ public class AttributeValues {
                         values = new HashSet();
                         attrValues.put(key, values);
                     }
-                    values.add(value);
+                    values.add(hexToString(value));
                 }
                 line = in.readLine();
             }
@@ -278,4 +276,32 @@ public class AttributeValues {
             "exception-incorrect-data-format"), (Object[])param);
         return new CLIException(msg,ExitCodes.INCORRECT_DATA_FORMAT);
     }
+    
+    private static String hexToString(String str) {
+        StringBuffer buff = new StringBuffer();
+        int idx = str.indexOf("\\u");
+        while (idx != -1) {
+            boolean done = false;
+            if (idx > 0) {
+                if (str.charAt(idx -1) == '\\') {
+                    buff.append(str.substring(0, idx-1))
+                        .append(str.substring(idx, idx+2));
+                    str = str.substring(idx+2);
+                    done = true;
+                }
+            }
+
+            if (!done) {
+                buff.append(str.substring(0, idx))
+                    .append(
+                    (char)Integer.parseInt(str.substring(idx+2, idx+6), 16));
+                str = str.substring(idx+6);
+            }
+            idx = str.indexOf("\\u");
+        }
+
+        buff.append(str);
+        return buff.toString();
+    }
+
 }
