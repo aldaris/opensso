@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.3 2008-06-25 05:54:08 qcheng Exp $
+ * $Id: Migrate.java,v 1.4 2008-07-14 21:30:28 bina Exp $
  *
  */
 
@@ -48,6 +48,7 @@ public class Migrate implements MigrateTasks {
     final static String SCHEMA_FILE = "idRepoService_addAttrs.xml";
     final static String SCHEMA_FILE1 = "idRepoService_addUserAttrs.xml";
     final static String SCHEMA_FILE2 = "idRepoService_addLDAPv3Attrs.xml";
+    final static String SCHEMA_FILE3 = "idRepoService_addLDAPv3ForADAttrs.xml";
     final static String ATTR_CONFIG_USER_OC =
             "sun-idrepo-ldapv3-config-user-objectclass";
     final static String ATTR_CONFIG_USER_PC =
@@ -542,6 +543,19 @@ public class Migrate implements MigrateTasks {
             fileName =
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE2);
             UpgradeUtils.addAttributeToSubSchema(SERVICE_NAME, LDAPv3,
+                    ORG_SCHEMA_TYPE, fileName);
+
+            fileName = UpgradeUtils.getAbsolutePath(SERVICE_DIR,SCHEMA_FILE);
+            UpgradeUtils.addAttributeToSubSchema(SERVICE_NAME, LDAPv3,
+                    ORG_SCHEMA_TYPE, fileName);
+            UpgradeUtils.addAttributeToSubSchema(SERVICE_NAME, LDAPv3ForAMDS,
+                    ORG_SCHEMA_TYPE, fileName);
+            UpgradeUtils.addAttributeToSubSchema(SERVICE_NAME, LDAPv3ForAD,
+                    ORG_SCHEMA_TYPE, fileName);
+
+            // add attribute for LDAPv3ForAD subschema
+            fileName = UpgradeUtils.getAbsolutePath(SERVICE_DIR,SCHEMA_FILE3);
+            UpgradeUtils.addAttributeToSubSchema(SERVICE_NAME, LDAPv3ForAD,
                     ORG_SCHEMA_TYPE, fileName);
 
             // remove default value of attribute : 

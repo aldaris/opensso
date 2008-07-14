@@ -23,22 +23,17 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idRepoService_addAttrs.xml,v 1.3 2008-07-14 21:30:28 bina Exp $
+   $Id: idRepoService_addLDAPv3ForADAttrs.xml,v 1.1 2008-07-14 21:30:28 bina Exp $
 
 -->
 
 <Requests>
-    <AttributeSchema name="sun-idrepo-ldapv3-config-psearch-scope"
-        type="single_choice"
+    <AttributeSchema name="sun-idrepo-ldapv3-config-auth-naming-attr"
+        type="single"
         syntax="string"
-        i18nKey="a20432">
-        <ChoiceValues>
-            <ChoiceValue i18nKey="a2040">SCOPE_BASE</ChoiceValue>
-            <ChoiceValue i18nKey="a2041">SCOPE_ONE</ChoiceValue>
-            <ChoiceValue i18nKey="a2042">SCOPE_SUB</ChoiceValue>
-        </ChoiceValues>
+        i18nKey="a20386">
         <DefaultValues>
-            <Value>SCOPE_SUB</Value>
+	    <Value>@USER_NAMING_ATTR@</Value>
         </DefaultValues>
     </AttributeSchema>
 </Requests>
