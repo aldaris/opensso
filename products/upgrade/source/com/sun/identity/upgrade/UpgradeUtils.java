@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.6 2008-06-25 05:54:11 qcheng Exp $
+ * $Id: UpgradeUtils.java,v 1.7 2008-07-14 23:37:42 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -2493,6 +2493,29 @@ public class UpgradeUtils {
     }
 
     /**
+     * Returns the policy <code>Rule</code> object.
+     * 
+     * @param serviceName name of the service.
+     * @param resourceName name of the resource
+     * @param actionsMap map of allowed actions on the resource.
+     *        the key is the actions (MODIFY,DELEGATE,READ) 
+     *        and the values is a set indicating whether 
+     *        action is allowed or denied.
+     * @return <code>Rule</code> object.
+     */
+    private static Rule getRule(String ruleName,String serviceName,
+        String resourceName, Map actionsMap) {
+        String classMethod = "UpgradeUtils:getRule : ";
+        Rule rule = null;
+        try {
+            rule = new Rule(ruleName,serviceName, resourceName, actionsMap);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating rule ", e);
+        }
+        return rule;
+    }
+
+    /**
      * Returns the policy <code>Subject</code>
      * 
      */
@@ -3813,6 +3836,42 @@ public class UpgradeUtils {
             }
         } catch (Exception me) {
             // do nothing
+        }
+    }
+
+    /**
+     * Creates Delegation Policies.
+     */
+    public static void addDelegationRule(String policyName,
+            Map ruleMap) {
+        String classMethod = "UpgradeUtils:addDelegationRule: ";
+        try {
+            // get a list of realms - recursively.
+            PolicyManager pm = new PolicyManager(ssoToken, HIDDEN_REALM);
+            Policy policy = pm.getPolicy(policyName);
+            Map actionsMap = new HashMap();
+            Set values = new HashSet();
+            values.add("allow");
+            actionsMap.put("READ", values);
+
+            Set rSet = ruleMap.keySet();
+            Iterator i = rSet.iterator();
+            while (i.hasNext()) {
+                String ruleName = (String) i.next();
+                String resourceNameSuffix = (String) ruleMap.get(ruleName);
+                String resourceName =
+                        new StringBuffer()
+                        .append("sms://").append(rootSuffix)
+                        .append(resourceNameSuffix).toString();
+                Rule rule =
+                        getRule(ruleName, DELEGATION_SERVICE,
+                        resourceName, actionsMap);
+                policy.addRule(rule);
+            }
+            pm.replacePolicy(policy);
+        } catch (Exception e) {
+            debug.error(classMethod +
+                    "Error loading sub realm delegation polices", e);
         }
     }
 }

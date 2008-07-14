@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.3 2008-06-25 05:54:03 qcheng Exp $
+ * $Id: Migrate.java,v 1.4 2008-07-14 23:38:10 bina Exp $
  *
  */
 
@@ -30,6 +30,8 @@ import com.sun.identity.upgrade.MigrateTasks;
 import com.sun.identity.upgrade.UpgradeException;
 import com.sun.identity.upgrade.UpgradeUtils;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +46,13 @@ public class Migrate implements MigrateTasks {
     final static String ATTR_NAME = "SubjectIdTypes";
     final static String schemaType = "Global";
     final static String FILTERED_ROLE = "FILTERED_ROLE";
-
+    final static String POLICY_NAME = "AllUserReadableServices";
+    final static String RESOURCE_SUFFIX1 = 
+        "/sunFMSAML2MetadataService/1.0/OrganizationConfig/*";
+    final static String RESOURCE_SUFFIX2 = 
+        "/sunFMCOTConfigService/1.0/OrganizationConfig/*";
+    final static String RULE_NAME_4 = "delegation-rule4";
+    final static String RULE_NAME_5 = "delegation-rule5";
     /**
      * Updates the <code>sunAMDelegationService<code> service schema.
      *
@@ -58,6 +66,12 @@ public class Migrate implements MigrateTasks {
             UpgradeUtils.addAttributeDefaultValues(
                     SERVICE_NAME, null, schemaType,
                     ATTR_NAME, defaultValues);
+
+            // add delegation rules
+            Map ruleMap = new HashMap();
+            ruleMap.put(RULE_NAME_4,RESOURCE_SUFFIX1);
+            ruleMap.put(RULE_NAME_5,RESOURCE_SUFFIX2);
+            UpgradeUtils.addDelegationRule(POLICY_NAME,ruleMap); 
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);
