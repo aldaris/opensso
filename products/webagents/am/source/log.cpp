@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log.cpp,v 1.4 2008-06-25 08:14:33 qcheng Exp $
+ * $Id: log.cpp,v 1.5 2008-07-15 20:12:39 subbae Exp $
  *
  */ 
 #if	defined(WINNT)
@@ -72,7 +72,9 @@ bool Log::remoteInitialized = false;
 bool Log::logRotation = true;
 long Log::maxLogFileSize = 0;
 int Log::currentLogFileSize = 0;
+int Log::currentAuditLogFileSize = 0;
 std::string logFileName;
+std::string auditLogFileName;
 
 Log::ModuleId Log::allModule, Log::remoteModule;
 am_log_logger_func_t Log::loggerFunc = NULL;
@@ -83,6 +85,7 @@ am_log_logger_func_t Log::loggerFunc = NULL;
 
 namespace {
     std::FILE *logFile = stderr;
+    std::FILE *auditLogFile = stderr;
     const char *levelLabels[] = {
       "None", "Error", "Warning", "Info", "Debug", "MaxDebug", "Always",
 	"Auth-Remote", "Auth-Local"
@@ -147,23 +150,40 @@ am_status_t Log::initialize(const Properties& properties)
 	try {
 	    ScopeLock myLock(*lockPtr);
 	    logFileName = 
-		properties.get(AM_COMMON_LOG_FILE_PROPERTY, "", false);
+		properties.get(AM_AGENT_DEBUG_FILE_PROPERTY, "", false);
 	    logRotation = 
-	      properties.getBool(AM_COMMON_LOG_ROTATION, true);
+	        properties.getBool(AM_AGENT_DEBUG_FILE_ROTATE_PROPERTY, true);
 	    maxLogFileSize = 
-	      properties.getPositiveNumber(AM_COMMON_LOG_FILE_SIZE, 10000000);
-            if (maxLogFileSize < 3000) {
-               maxLogFileSize = 3000;
+	        properties.getPositiveNumber(AM_AGENT_DEBUG_FILE_SIZE_PROPERTY, 
+                    DEBUG_FILE_DEFAULT_SIZE);
+            if (maxLogFileSize < DEBUG_FILE_MIN_SIZE) {
+               maxLogFileSize = DEBUG_FILE_MIN_SIZE;
             }
+
+            auditLogFileName =
+                properties.get(AM_AUDIT_LOCAL_LOG_FILE_PROPERTY, "", false);
 
 	    if (! pSetLogFile(logFileName)) {
 		log(ALL_MODULES, LOG_ERROR,
-		    "Unable to open log file: '%s', errno = %d",
+		    "Unable to open agent debug file: '%s', errno = %d",
 		    logFileName.c_str(), errno);
-	    }
-	    // if no log level specified, set default to "all:LOG_INFO".
+            }
+
+            if (!setAuditLogFile(
+                   auditLogFileName,
+                   properties.getBool(
+                       AM_AUDIT_LOCAL_LOG_ROTATE_PROPERTY, true),
+                   properties.getPositiveNumber(
+                       AM_AUDIT_LOCAL_LOG_FILE_SIZE_PROPERTY, LOCAL_AUDIT_FILE_DEFAULT_SIZE))) 
+            {
+                log(ALL_MODULES, LOG_ERROR,
+                    "Unable to open local audit file: '%s', errno = %d",
+                    auditLogFileName.c_str(), errno);
+            }
+
+            // if no log level specified, set default to "all:LOG_INFO".
 	    std::string logLevels = 
-		properties.get(AM_COMMON_LOG_LEVELS_PROPERTY, "all:3", false);
+		properties.get(AM_AGENT_DEBUG_LEVEL_PROPERTY, "all:3", false);
 	    status = pSetLevelsFromString(logLevels); 
 	}
 	catch (NSPRException& exn) {
@@ -358,6 +378,76 @@ bool Log::pSetLogFile(const std::string& name)
        }
     } else {
       okay = false;
+    }
+
+    return okay;
+}
+
+bool Log::setAuditLogFile(const std::string& name,
+     bool localAuditLogRotate,
+     long localAuditFileSize)
+throw () {
+    bool okay = true;
+    std::string newName;
+    FILE *newAuditLogFile = NULL;
+    int retValue = 0;
+
+    if (name.size() > 0) {
+        if (localAuditLogRotate) {
+            char hdr[100];
+            PRUint32 len;
+            int counter = 1;
+            bool fileExists = true;
+
+            if (auditLogFile == stderr) {
+                // Open the log file for the first time
+                newAuditLogFile = std::fopen(name.c_str(), "a");
+                if (newAuditLogFile != NULL) {
+                    auditLogFile = newAuditLogFile;
+                } else {
+                    okay = false;
+                }
+            } else {
+                // Start the process of log rotation
+                while (fileExists) {
+                    len = PR_snprintf(hdr, sizeof (hdr), "%d", counter);
+                    if (len > 0) {
+                        std::string appendString(hdr);
+                        newName = name + "-" + appendString;
+                    }
+                    if ((PR_Access(newName.c_str(), PR_ACCESS_EXISTS)) == 
+                            PR_SUCCESS) {
+                        counter++;
+                    } else {
+                        fileExists = false;
+                    }
+                }
+                std::fflush(auditLogFile);
+                std::fclose(auditLogFile);
+                retValue = rename(name.c_str(), newName.c_str());
+                if (retValue != -1) {
+                    newAuditLogFile = std::fopen(name.c_str(), "a");
+                    if (newAuditLogFile != NULL) {
+                        auditLogFile = newAuditLogFile;
+                        currentAuditLogFileSize = 0;
+                    } else {
+                        auditLogFile = stderr;
+                    }
+                } else {
+                    auditLogFile = stderr;
+                }
+            }
+        } else {
+            // localAuditLogRotate is false, just create one log file and write to it
+            newAuditLogFile = std::fopen(name.c_str(), "a");
+            if (newAuditLogFile != NULL) {
+                auditLogFile = newAuditLogFile;
+            } else {
+                okay = false;
+            }
+        }
+    } else {
+        okay = false;
     }
 
     return okay;
@@ -672,6 +762,70 @@ void Log::vlog(ModuleId module, Level level, const char *format,
     return;
 }
 
+/*
+ * Log url access audit message to local audit log file.
+ *
+ */
+void Log::doLocalAuditLog(ModuleId module,
+        Level level,
+        const char* auditLogMsg,
+        bool localAuditLogRotate,
+        long localAuditFileSize)
+throw () {
+    if (initialized) {
+
+        // get time.
+        PRExplodedTime now;
+        PR_ExplodeTime(PR_Now(), PR_LocalTimeParameters, &now);
+
+        // format header and msg.
+        PRUint32 len;
+        char hdr[100];
+        len = PR_snprintf(hdr, sizeof (hdr),
+                "%d-%02d-%02d %02d:%02d:%02d.%03d"
+                "%8s %u:%p %s: %%s\n",
+                now.tm_year, now.tm_month + 1, now.tm_mday,
+                now.tm_hour, now.tm_min, now.tm_sec,
+                now.tm_usec / 1000,
+                "Info",
+                getpid(), PR_GetCurrentThread(),
+                "LocalAuditLog");
+        if (len > 0) {
+
+            if (localAuditLogRotate) {
+                if ((currentAuditLogFileSize + 1000) < 
+                        localAuditFileSize) {
+                    std::fprintf(auditLogFile, hdr, auditLogMsg);
+                    std::fflush(auditLogFile);
+                } else {
+                    ScopeLock scopeLock(*lockPtr);
+                    currentAuditLogFileSize = ftell(auditLogFile);
+                    if ((currentAuditLogFileSize + 1000) > 
+                            localAuditFileSize) {
+                        // Open a new log file
+                        if (!setAuditLogFile(auditLogFileName,
+                                              localAuditLogRotate,
+                                              localAuditFileSize)) {
+                            log(ALL_MODULES, LOG_ERROR,
+                                    "Unable to open audit log file: "
+                                    "'%s', errno = %d",
+                                    auditLogFileName.c_str(), errno);
+                        }
+                    }
+                    std::fprintf(auditLogFile, hdr, auditLogMsg);
+                    std::fflush(auditLogFile);
+                }
+                currentAuditLogFileSize = ftell(auditLogFile);
+            } else {
+                std::fprintf(auditLogFile, hdr, auditLogMsg);
+                std::fflush(auditLogFile);
+            }
+        }
+    }
+
+    return;
+}
+
 // log a message to remote server with a user token id given 
 // for the remote server to fill in with user token details.
 am_status_t 
@@ -755,6 +909,105 @@ am_status_t Log::rlog(const std::string& logName,
     return status;
 }
 
+/*
+ * Log url access audit message to remote audit log file.
+ *
+ */
+am_status_t 
+Log::doRemoteAuditLog(ModuleId module, 
+        int remote_log_level, 
+        const char *user_sso_token, 
+        const char *logMsg)
+{
+    am_status_t status = AM_SUCCESS;
+    std::string logMessage;
+    bool cookieEncoded = false;
+
+    if (rmtLogSvc == NULL || !remoteInitialized) { 
+	status = AM_SERVICE_NOT_INITIALIZED;
+    }
+    else {
+	if (logMsg != NULL) {
+            logMessage = logMsg;
+	    try {
+		LogRecord logRecord(
+			    static_cast<LogRecord::Level>(remote_log_level), 
+			    logMessage);
+	        std::string userSSOToken = user_sso_token;
+		cookieEncoded = userSSOToken.find('%') != std::string::npos;
+	        if (cookieEncoded) {
+		    userSSOToken = Http::decode(std::string(user_sso_token));
+	        }
+		logRecord.populateTokenDetails(userSSOToken);
+		status = rmtLogSvc->sendLog("", logRecord, "");	
+	    }
+	    catch (std::exception& exs) {
+		status = AM_FAILURE;
+	    }
+	    catch (...) {
+		status = AM_FAILURE;
+	    }
+	    
+	}
+    }
+    return status;
+}
+
+/*
+ * Log url access audit message. This calls doLocalAuditLog()
+ * or doRemoteAuditLog() or both methods based on 
+ * log.disposition property value.
+ */
+am_status_t 
+Log::auditLog(const char* auditDisposition,
+        bool localAuditLogRotate,
+        long localAuditFileSize,
+        ModuleId module, 
+        int remoteLogLevel, 
+        const char *userSSOToken, 
+        const char *format, 
+        ...)
+{
+    am_status_t status = AM_SUCCESS;
+    char *logMsg = NULL;
+
+    std::va_list args;
+    va_start(args, format);
+    logMsg = PR_vsmprintf(format, args);
+    if(logMsg != NULL) {
+        
+        if ((strcasecmp(auditDisposition, AUDIT_DISPOSITION_REMOTE) == 0) ||
+            (strcasecmp(auditDisposition, AUDIT_DISPOSITION_ALL) == 0)) {
+            status = rlog(module,
+                remoteLogLevel,
+                userSSOToken,
+                logMsg
+                );
+        }
+
+        if (status != AM_SUCCESS ||
+            (strcasecmp(auditDisposition, AUDIT_DISPOSITION_LOCAL) == 0) ||
+            (strcasecmp(auditDisposition, AUDIT_DISPOSITION_ALL) == 0)) {
+            try {
+                doLocalAuditLog(module,
+                    Log::LOG_INFO,
+                    logMsg,
+                    localAuditLogRotate,
+                    localAuditFileSize);
+            } catch(...) {
+                status = AM_FAILURE;    
+            }
+        }
+        PR_smprintf_free(logMsg);
+    }
+    if (status != AM_SUCCESS) {
+        Log::log(Log::ALL_MODULES, Log::LOG_ERROR,
+                "Log::auditLog(): Both local and remote audit logging failed.");
+    }
+        
+    return status;
+}
+
 am_status_t Log::rmtflush() 
     throw()
 {
@@ -788,3 +1041,21 @@ Log::setLogger(am_log_logger_func_t logger_func)
     return oldLogger;
 }
 
+am_status_t Log::setDebugFileSize(const long debugFileSize)
+{
+    am_status_t status = AM_SUCCESS;
+    ScopeLock mylock(*lockPtr);
+    maxLogFileSize = debugFileSize;
+    if (maxLogFileSize < DEBUG_FILE_MIN_SIZE) {
+        maxLogFileSize = DEBUG_FILE_MIN_SIZE;
+    }
+    return status;
+}
+
+am_status_t Log::setDebugFileRotate(bool debugFileRotate)
+{
+    am_status_t status = AM_SUCCESS;
+    ScopeLock mylock(*lockPtr);
+    logRotation = debugFileRotate;
+    return status;
+}

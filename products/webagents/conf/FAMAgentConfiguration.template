@@ -79,7 +79,7 @@ com.sun.identity.agents.config.cookie.secure = false
 
 #
 # AGENT DEBUG LOG LEVEL
-#   Set the logging level for the specified logging categories.
+#   Set the level for the specified debug categories.
 #   The format of the values is
 #
 #      <ModuleName>[:<Level>][,<ModuleName>[:<Level>]]*
@@ -88,8 +88,8 @@ com.sun.identity.agents.config.cookie.secure = false
 #   PolicyService, SessionService, PolicyEngine, ServiceEngine,
 #   Notification, PolicyAgent, RemoteLog and all.
 #
-#   The all module can be used to set the logging level for all currently
-#   none logging modules.  This will also establish the default level for
+#   The all module can be used to set the debug level for all currently
+#   none debug modules.  This will also establish the default level for
 #   all subsequently created modules.
 #
 #   The meaning of the 'Level' value is described below:
@@ -100,68 +100,54 @@ com.sun.identity.agents.config.cookie.secure = false
 #      3       Log info, warning, and error messages
 #      4       Log debug, info, warning, and error messages
 #      5       Like level 4, but with even more debugging messages
-#      128     log url access to log file on AM server.
-#      256     log url access to log file on local machine.
 #
 #   If level is omitted, then the logging module will be created with
-#   the default logging level, which is the logging level associated with
+#   the default debug level, which is the debug level associated with
 #   the 'all' module.
-#
-#   For level of 128 and 256, you must also specify audit.access.type property.
 #
 #   Even if the level is set to zero, some messages may be produced for
 #   a module if they are logged with the special level value of 'always'.
 #
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.log.level = 
+com.sun.identity.agents.config.debug.level = 
 
 #
-# AGENT LOCAL LOG FILE PROPERTIES
-#   - local.log.rotate: The value of the property specifies whether the agent's
-#       local log file gets rotated or not based on local.log.size value. 
-#   - local.log.size: the number of bytes after which the local debug log file 
+# AGENT DEBUG LOG FILE PROPERTIES
+#   - .debug.file.rotate: The value of the property specifies whether the agent's
+#       debug file gets rotated or not based on debug.file.size value. 
+#   - debug.file.size: the number of bytes after which the local debug log file 
 #       will be rotated. Minimum value is 3000 bytes. Any value below that will be 
 #       reset to 3000 bytes. Default value is 10MB.
 #
-# Hot-Swap Enabled: No
-#
-com.sun.identity.agents.config.local.log.rotate = @LOG_ROTATION@
-com.sun.identity.agents.config.local.log.size = 10000000 
-
-#
-# AGENT URL ACCESS AUDIT TYPE
-#   Set the url access logging level. the choices are 
-#     LOG_NONE   - do not log user access to url
-#     LOG_DENY   - log url access that was denied.
-#     LOG_ALLOW  - log url access that was allowed.
-#     LOG_BOTH   - log url access that was allowed or denied.
-#
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.audit.accesstype = LOG_DENY
+com.sun.identity.agents.config.debug.file.rotate = @LOG_ROTATION@
+com.sun.identity.agents.config.debug.file.size = 10000000 
 
 #
-# AGENT URL ACCESS AUDIT FILE
-#   Name of the Access Manager log file to use for logging messages to 
-#   Access Manager.
-#   Just the name of the file is needed. The directory of the file
-#   is determined by settings configured on the Access Manager.
-#
-# Hot-Swap Enabled: No
-#
-com.sun.identity.agents.config.remote.logfile = amAuthLog.@AGENT_HOST@.@AGENT_PREF_PORT@
-
-#
-# DENY RESOURCE ACCESS ON REMOTE LOG FAILURE
-#   The below property indicates whether agent needs to send an access denied 
-#   status if remote logging fails. A value of true indicates that agent will 
-#   send an access denied status and a value of false indicates a status
-#   of success will be sent even if remote logging fails.
-#
+# AUDIT LOG PROPERTIES
+#   - audit.accesstype: Specifies the access type which will be logged by the
+#     Agent. Valid value is one of: LOG_NONE, LOG_ALLOW, LOG_DENY, LOG_BOTH.
+#   - log.disposition: Specifies the audit log mode that the Agent will use
+#     when writing audit log messages. Valid value is one of: LOCAL, REMOTE,
+#     ALL.
+#   - remote.logfile: Specifies the file name to be used on the remote server
+#     if the log.disposition is set to REMOTE or ALL.
+#   - remote.log.interval: Specifies the periodic interval time in minutes, 
+#     thereby agent sends audit messages to server.
+#   - local.log.rotate: A flag that indicates if the rotation of audit log
+#     local file is enabled or disabled.
+#   - local.log.size: The size in bytes of the local audit log file, beyond
+#     which the Agent should rotate the log file.
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.deny.access.log.failure = true
+com.sun.identity.agents.config.audit.accesstype = LOG_NONE
+com.sun.identity.agents.config.log.disposition = REMOTE
+com.sun.identity.agents.config.remote.logfile = @AUDIT_LOG_FILENAME@
+com.sun.identity.agents.config.remote.log.interval = 5
+com.sun.identity.agents.config.local.log.rotate = false
+com.sun.identity.agents.config.local.log.size = 52428800
 
 #
 # NOTIFICATION PROPERTIES
@@ -346,6 +332,12 @@ com.sun.identity.agents.config.response.attribute.fetch.mode = NONE
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.response.attribute.mapping[] =
+
+#
+# ATTRIBUTES MULTI VALUE SEPARATOR
+#   The separator used for mulitple values of attributes. 
+#   Applies to profile, session and response attributes. 
+com.sun.identity.agents.config.attribute.multi.value.separator = |
 
 #
 # LOAD BALENCER ENABLE

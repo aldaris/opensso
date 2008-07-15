@@ -77,12 +77,20 @@ com.sun.identity.agents.config.password = @AGENT_ENCRYPTED_PASSWORD@
 com.sun.identity.agents.config.key = @AGENT_ENCRYPT_KEY@
 
 #
-# AGENT LOCAL LOG FILE
-#   Name of the file to use for logging messages and debug information.
+# AGENT DEBUG FILE
+#   Name of the file to use for debug information.
 #
 # Hot-Swap Enabled: No
 #
-com.sun.identity.agents.config.local.logfile = @DEBUG_LOGS_DIR@/amAgent
+com.sun.identity.agents.config.debug.file = @DEBUG_LOGS_DIR@/amAgent
+
+#
+# AUDIT LOG PROPERTY
+#   - local.logfile: Specifies the complete path to the local audit log file
+#     to be used by the Agent.
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.local.logfile = @AUDIT_LOGS_DIR@/@AUDIT_LOG_FILENAME@
 
 #
 # AGENT DEBUG LOG LEVEL
@@ -121,7 +129,7 @@ com.sun.identity.agents.config.local.logfile = @DEBUG_LOGS_DIR@/amAgent
 #
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.log.level = 
+com.sun.identity.agents.config.debug.level = 
 
 #
 # SSL comunication related properties

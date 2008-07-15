@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_log.h,v 1.5 2008-06-25 08:14:27 qcheng Exp $
+ * $Id: am_log.h,v 1.6 2008-07-15 20:12:38 subbae Exp $
  *
  */
 
@@ -288,6 +288,21 @@ AM_EXPORT am_status_t am_log_log_record(am_log_record_t record,
 
 /* Flush all the log records in the log buffer */
 AM_EXPORT am_status_t am_log_flush_remote_log();
+
+/*
+ * Set agent's debug file size.
+ * debugFileSize must be > DEBUG_FILE_SIZE else
+ * default value gets used.
+ */
+AM_EXPORT am_status_t
+am_log_set_debug_file_size(const long debugFileSize);
+
+/*
+ * Set agent's debug file rotate or not.
+ */
+AM_EXPORT am_status_t
+am_log_set_debug_file_rotate(boolean_t debugFileRotate);
+
 
 AM_END_EXTERN_C
 

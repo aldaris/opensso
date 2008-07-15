@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.14 2008-06-25 08:14:24 qcheng Exp $
+ * $Id: agent_profile_service.cpp,v 1.15 2008-07-15 20:12:38 subbae Exp $
  *
  */
 
@@ -142,7 +142,9 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
     const char *proxy_user = NULL;
     const char *proxy_password = NULL;
     const char *org_name = NULL;
-
+    const char *debugFile = NULL;
+    const char *localAuditLogFile = NULL;
+    
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_PASSWORD_PROPERTY;
         status = am_properties_get(boot_ptr->properties, parameter,
@@ -256,6 +258,20 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
         status = am_properties_get(boot_ptr->properties, parameter,
                                    &org_name);
         am_properties_set(properties, parameter, org_name);
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_AGENT_DEBUG_FILE_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                &debugFile);
+        am_properties_set(properties, parameter, debugFile);
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_AUDIT_LOCAL_LOG_FILE_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                &localAuditLogFile);
+        am_properties_set(properties, parameter, localAuditLogFile);
     }
 
     return status;
@@ -556,29 +572,29 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
                                                  propName.c_str(), lmPropValue.c_str()); 
                                          }
 
-                                         // Process log.level property
+                                         // Process debug.level property
                                          if(strcasecmp(propName.c_str(), 
-                                             AM_COMMON_LOG_LEVELS_PROPERTY) == 0) {
-                                             std::string tmpLogLevel;
+                                             AM_AGENT_DEBUG_LEVEL_PROPERTY) == 0) {
+                                             std::string tmpDebugLevel;
                                              if(strcasecmp(tmpValue.c_str(),"Error") == 0)
-                                                 tmpLogLevel = "all:1";
+                                                 tmpDebugLevel = "all:1";
                                              if(strcasecmp(tmpValue.c_str(),"Warning") == 0)
-                                                 tmpLogLevel = "all:2";
+                                                 tmpDebugLevel = "all:2";
                                              if(strcasecmp(tmpValue.c_str(),"Info") == 0)
-                                                 tmpLogLevel = "all:3";
+                                                 tmpDebugLevel = "all:3";
                                              if(strcasecmp(tmpValue.c_str(),"Message") == 0)
-                                                 tmpLogLevel = "all:4";
+                                                 tmpDebugLevel = "all:4";
                                              if(strcasecmp(tmpValue.c_str(),"All") == 0)
-                                                 tmpLogLevel = "all:5";
+                                                 tmpDebugLevel = "all:5";
                                                   
-                                             if(!tmpLogLevel.empty()) {
+                                             if(!tmpDebugLevel.empty()) {
                                                   am_properties_set(properties, 
                                                       propName.c_str(), 
-                                                      tmpLogLevel.c_str());
+                                                      tmpDebugLevel.c_str());
                                                   propSet = true;
                                                  Log::log(logModule, Log::LOG_DEBUG, 
                                                      "agentAttributes() %s : %s  ",
-                                                     propName.c_str(), tmpLogLevel.c_str()); 
+                                                     propName.c_str(), tmpDebugLevel.c_str()); 
                                              }
                                          }
                                          if(i > 0)

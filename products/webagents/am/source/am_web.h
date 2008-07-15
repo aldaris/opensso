@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.17 2008-06-25 08:14:30 qcheng Exp $
+ * $Id: am_web.h,v 1.18 2008-07-15 20:12:39 subbae Exp $
  *
  */
 
@@ -136,7 +136,6 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_POST_CACHE_ENTRY_LIFETIME AM_COMMON_PROPERTY_PREFIX "postcache.entry.lifetime"
 #define AM_WEB_POST_CACHE_DATA_PRESERVE AM_COMMON_PROPERTY_PREFIX "postdata.preserve.enable"
 #define AM_WEB_URI_PREFIX AM_COMMON_PROPERTY_PREFIX "agenturi.prefix"
-#define AM_LOG_ACCESS_TYPE_PROPERTY  AM_COMMON_PROPERTY_PREFIX "audit.accesstype"
 
 #define AM_WEB_FQDN_MAP AM_COMMON_PROPERTY_PREFIX "fqdn.mapping"
 #define AM_WEB_FQDN_DEFAULT AM_COMMON_PROPERTY_PREFIX "fqdn.default"
@@ -149,7 +148,6 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY AM_COMMON_PROPERTY_PREFIX "logout.cookie.reset"
 #define AM_WEB_GET_CLIENT_HOSTNAME AM_COMMON_PROPERTY_PREFIX "get.client.host.name"
 
-#define AM_WEB_DENY_ON_LOG_FAILURE AM_COMMON_PROPERTY_PREFIX "deny.access.log.failure"
 #define AM_WEB_CONVERT_MBYTE_ENABLE AM_COMMON_PROPERTY_PREFIX  "convert.mbyte.enable"
 #define AM_WEB_ENCODE_URL_SPECIAL_CHARS AM_COMMON_PROPERTY_PREFIX  "encode.url.special.chars.enable"
 #define AM_WEB_OVERRIDE_PROTOCOL AM_COMMON_PROPERTY_PREFIX  "override.protocol"
@@ -158,12 +156,6 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_OVERRIDE_NOTIFICATION_URL AM_COMMON_PROPERTY_PREFIX  "override.notification.url"
 
 #define AM_COMMON_IGNORE_PATH_INFO    AM_COMMON_PROPERTY_PREFIX "ignore.path.info"
-
-/* Following are log related properties */
-#define AM_COMMON_LOG_FILE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "local.logfile"
-#define AM_COMMON_LOG_ROTATION		AM_COMMON_PROPERTY_PREFIX "local.log.rotate"
-#define AM_COMMON_LOG_FILE_SIZE		AM_COMMON_PROPERTY_PREFIX "local.log.size"
-#define AM_COMMON_SERVER_LOG_FILE_PROPERTY   AM_COMMON_PROPERTY_PREFIX "remote.logfile"
 
 /* Followings are for the attribute related properties */
 #define AM_POLICY_PROFILE_ATTRS_MODE AM_COMMON_PROPERTY_PREFIX "profile.attribute.fetch.mode"
@@ -176,6 +168,7 @@ AM_BEGIN_EXTERN_C
 #define AM_POLICY_RESPONSE_ATTRS_MODE AM_COMMON_PROPERTY_PREFIX "response.attribute.fetch.mode"
 #define AM_POLICY_RESPONSE_ATTRS_MAP   AM_COMMON_PROPERTY_PREFIX "response.attribute.mapping"
 #define AM_POLICY_CLOCK_SKEW AM_COMMON_PROPERTY_PREFIX "policy.clock.skew"
+#define AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR   AM_COMMON_PROPERTY_PREFIX "attribute.multi.value.separator"
 
 /* Followings are for the Header attribute modes */
 #define AM_POLICY_SET_ATTRS_AS_COOKIE "HTTP_COOKIE"
@@ -260,7 +253,7 @@ AM_BEGIN_EXTERN_C
 #define COOKIE_ATTRIBUTE_PREFIX  "HTTP_"
 #define COOKIE_ATTRIBUTE_MAX_AGE  "300"
 #define POLICY_ATTRIBUTES_MODE_NONE "NONE"
-#define ATTRIBUTES_SEPARATOR "|"
+#define ATTR_MULTI_VALUE_SEPARATOR "|"
 #define POLICY_SESSION_ATTRIBUTES "SESSION_ATTRIBUTES"
 #define POLICY_RESPONSE_ATTRIBUTES "RESPONSE_ATTRIBUTES"
 
@@ -290,7 +283,6 @@ typedef enum {
     AM_ACCESS_DENY = 0,
     AM_ACCESS_ALLOW
 } am_web_access_t;
-
 
 /*
  * For agents request processing

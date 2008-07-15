@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.h,v 1.8 2008-06-25 08:14:24 qcheng Exp $
+ * $Id: agent_configuration.h,v 1.9 2008-07-15 20:12:38 subbae Exp $
  *
  */
 
@@ -115,7 +115,6 @@ public:
     Utils::cookie_info_list_t logout_cookie_reset_list;
     PRBool getClientHostname;
     unsigned log_access_type;
-    PRBool denyOnLogFailure;
     PRBool convert_mbyte;
     PRBool encode_url_special_chars;
     PRBool override_protocol;	// whether to override protocol in request url
@@ -148,7 +147,12 @@ public:
     const char * attrMultiValueSeparator;
     unsigned long policy_clock_skew; // Policy Clock Skew
     PRBool configChangeNotificationEnable;
-
+    const char * auditLogDisposition;
+    unsigned long localAuditLogFileSize;
+    PRBool localAuditLogFileRotate;
+    unsigned long debugFileSize;
+    PRBool debugFileRotate;
+    PRBool doRemoteLog; //utility member to determine whether to remote log or not
     
     AgentConfiguration();
     AgentConfiguration(am_properties_t properties);
@@ -198,7 +202,6 @@ public:
         this->cookie_reset_default_domain  = NULL;
         this->getClientHostname = AM_FALSE;
         this->log_access_type = (unsigned int)-1;
-        this->denyOnLogFailure = AM_FALSE;
         this->convert_mbyte = AM_FALSE;
         this->encode_url_special_chars = AM_FALSE;
         this->override_notification_url =  AM_FALSE;
@@ -222,9 +225,15 @@ public:
         this->setUserProfileAttrsMode = SET_ATTRS_NONE;
         this->setUserSessionAttrsMode = SET_ATTRS_NONE;
         this->setUserResponseAttrsMode = SET_ATTRS_NONE;
-        this->attrMultiValueSeparator = ATTRIBUTES_SEPARATOR;
+        this->attrMultiValueSeparator = ATTR_MULTI_VALUE_SEPARATOR;
         this->policy_clock_skew = 0;
         this->configChangeNotificationEnable = AM_FALSE;
+        this->auditLogDisposition = NULL;
+        this->localAuditLogFileSize = 0;
+        this->localAuditLogFileRotate = AM_FALSE;
+        this->debugFileSize = 0;
+        this->debugFileRotate = AM_TRUE;
+        this->doRemoteLog = AM_FALSE;
 
     }
     

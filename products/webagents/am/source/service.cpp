@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.22 2008-06-25 08:14:36 qcheng Exp $
+ * $Id: service.cpp,v 1.23 2008-07-15 20:12:39 subbae Exp $
  *
  */
 
@@ -62,6 +62,7 @@ namespace {
     const unsigned long DEFAULT_TIMEOUT = 3;
     const unsigned long DEFAULT_AGENT_CONFIG_POLLING_INTERVAL = 60;
     const unsigned long DEFAULT_AGENT_CONFIG_CLEANUP_INTERVAL = 30;
+    const unsigned long DEFAULT_AUDIT_LOG_POLLING_INTERVAL = 5;
     const PRUint32 DEFAULT_MAX_THREADS = 10;
     const char *DEFAULT_SESSION_USER_ID_PARAM = "UserToken";
     const char *DEFAULT_LDAP_USER_ID_PARAM = "entrydn";
@@ -121,6 +122,7 @@ Service::Service(const char *svcName,
       threadPoolCreated(false),
       threadPoolAgentFetchCreated(false),
       threadPoolAgentConfigCleanupCreated(false),
+      threadPoolAuditLogCreated(false),
       serviceName(), instanceName(),
       notificationEnabled(svcParams.getBool(
                               AM_COMMON_NOTIFICATION_ENABLE_PROPERTY, false)),
@@ -133,8 +135,10 @@ Service::Service(const char *svcName,
       htCleaner(NULL),
       tPoolAgentFetch(NULL),
       tPoolAgentConfigCleanup(NULL),
+      tPoolAuditLog(NULL),
       agentConfigFetch(NULL),
       agentConfigCleanup(NULL),
+      auditLog(NULL),
       lock(),
       namingSvcInfo(svcParams.get(AM_COMMON_NAMING_URL_PROPERTY)),
 		    alwaysTrustServerCert(
@@ -319,6 +323,8 @@ Service::initialize(Properties& properties) {
         threadPoolAgentConfigCleanupCreated = true;
     }
 
+
+
     Log::log(logID, Log::LOG_MAX_DEBUG,
 	     "Service communication with server started.");
     am_status_t status;
@@ -397,9 +403,8 @@ Service::initialize(Properties& properties) {
     }
    }
 
-    string remoteLogName = svcParams.get(AM_COMMON_SERVER_LOG_FILE_PROPERTY,
+    string remoteLogName = svcParams.get(AM_AUDIT_SERVER_LOG_FILE_PROPERTY,
 					 "");
-
     LogService *newLogSvc =
 	   new LogService(mPolicyEntry->namingInfo.getLoggingSvcInfo(),
 			  mPolicyEntry->getSSOToken(),
@@ -411,6 +416,44 @@ Service::initialize(Properties& properties) {
 
 
     Log::setRemoteInfo(newLogSvc);
+      // Start a thread pool to audit log 
+      if (auditLog == NULL) {
+        try {
+            auditLog = new AuditLog(newLogSvc,
+                                    agentProfileService,
+                                    svcParams.getPositiveNumber(
+                                        AM_AUDIT_SERVER_LOG_INTERVAL_PROPERTY,
+                                        DEFAULT_AUDIT_LOG_POLLING_INTERVAL),
+                                       "Audit Log");
+        } catch(std::bad_alloc &bae) {
+            throw InternalException(func,
+                                    "Memory allocation failure while "
+                                    "creating Audit Log.",
+                                    AM_NO_MEMORY);
+        } catch(InternalException &ie) {
+            throw ie;
+        }
+    }
+
+    if (threadPoolAuditLogCreated == false) {
+        if (tPoolAuditLog == NULL) {
+            try {
+                tPoolAuditLog = new ThreadPool(1, DEFAULT_MAX_THREADS);
+            } catch(std::bad_alloc &bae) {
+                throw InternalException(func,
+                                        "Memory allocation failure while"
+                                        " creating thread pool.",
+                                        AM_NO_MEMORY);
+            }
+        }
+
+        if (tPoolAuditLog->dispatch(auditLog) == false) {
+            string msg("Audit Log thread dispatch failed.");
+            Log::log(logID, Log::LOG_ERROR, msg.c_str());
+            throw InternalException(func, msg, AM_INIT_FAILURE);
+        }
+        threadPoolAuditLogCreated = true;
+    }
 
     initialized = true;
     isLocalRepo = false;
@@ -709,6 +752,26 @@ Service::~Service() {
 	     "Service::Service(): Thread pool Agent Config Cleanup "
              "was not yet initialized.");
     }    
+
+    // Thread pool will free AuditLog pointer when it has stopped
+    // executing.
+    if (auditLog != NULL) {
+	auditLog->stopFlushing();
+	Log::log(logID, Log::LOG_MAX_DEBUG,
+	     "Service::Service(): AuditLog stopped.");
+    } else {
+	Log::log(logID, Log::LOG_DEBUG,
+	     "Service::Service(): AuditLog not yet initialized.");
+    }
+    if (tPoolAuditLog != NULL) {
+	delete(tPoolAuditLog);
+    	Log::log(logID, Log::LOG_MAX_DEBUG,
+	     "Service::Service():Thread pool AuditLog cleaned up.");
+    } else {
+    	Log::log(logID, Log::LOG_DEBUG,
+	     "Service::Service(): Thread pool AuditLog "
+             "was not yet initialized.");
+    }    
 }
 
 void 
@@ -795,7 +858,9 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
     policy_res->attr_session_map = AM_MAP_NULL;
     policy_res->attr_response_map = AM_MAP_NULL;
 
-    std::string attrMultiValueSeparator = ATTRIBUTES_SEPARATOR;
+    std::string attrMultiValueSeparator = 
+        properties.get(AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR,
+            ATTR_MULTI_VALUE_SEPARATOR);
     
     // if remote user id param type was ldap or if fetch ldap attributes
     // is true, get the ldap attributes and set remote user and

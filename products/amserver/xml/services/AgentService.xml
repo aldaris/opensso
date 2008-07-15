@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.51 2008-07-12 18:49:47 mallas Exp $
+   $Id: AgentService.xml,v 1.52 2008-07-15 20:12:37 subbae Exp $
 
 -->
 
@@ -114,53 +114,6 @@
                         </BooleanValues>
                         <DefaultValues>
                             <Value>false</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.log.level"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a466">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a468">Error</ChoiceValue>
-                            <ChoiceValue i18nKey="a469">Warning</ChoiceValue>
-                            <ChoiceValue i18nKey="a470">Info</ChoiceValue>
-                            <ChoiceValue i18nKey="a471">Message</ChoiceValue>
-                            <ChoiceValue i18nKey="a472">All</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>Error</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.local.log.rotate"
-                        type="single"
-                        syntax="boolean"
-                        i18nKey="a402">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
-                        </BooleanValues>
-                        <DefaultValues>
-                            <Value>true</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.local.log.size"
-                        type="single"
-                        syntax="number_range" rangeStart="0" rangeEnd="2147483647"
-                        i18nKey="a403">
-                        <DefaultValues>
-                            <Value>10</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.remote.logfile"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a404">
-                        <DefaultValues>
-                            <Value>amAuthLog.@AGENT_HOST@.@AGENT_PORT@.log</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -395,34 +348,6 @@
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.identity.agents.config.audit.accesstype"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a424">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a14">LOG_NONE</ChoiceValue>
-                            <ChoiceValue i18nKey="a15">LOG_ALLOW</ChoiceValue>
-                            <ChoiceValue i18nKey="a16">LOG_DENY</ChoiceValue>
-                            <ChoiceValue i18nKey="a17">LOG_BOTH</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>LOG_NONE</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.deny.access.log.failure"
-                        type="single"
-                        syntax="boolean"
-                        i18nKey="a425">
-                        <BooleanValues>
-                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
-                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
-                        </BooleanValues>
-                        <DefaultValues>
-                            <Value>true</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
                         name="com.sun.identity.agents.config.agenturi.prefix"
                         type="single"
                         syntax="string"
@@ -525,7 +450,7 @@
                         syntax="string"
                         uitype="unorderedlist"
                         validator="ListValueValidator"
-                        i18nKey="a435">
+                        i18nKey="a444">
                         <DefaultValues>
                             <Value>[0]=</Value>
                         </DefaultValues>
@@ -613,7 +538,7 @@
                         name="com.sun.identity.agents.config.cdsso.enable"
                         type="single"
                         syntax="boolean"
-                        i18nKey="a443">
+                        i18nKey="a435">
                         <BooleanValues>
                             <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
                             <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
@@ -628,7 +553,7 @@
                         syntax="string"
                         uitype="orderedlist"
                         validator="ListValueValidator"
-                        i18nKey="a444">
+                        i18nKey="a443">
                         <DefaultValues>
                             <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/cdcservlet</Value>
                         </DefaultValues>
@@ -973,6 +898,122 @@
                         i18nKey="a487">
                         <DefaultValues>
                             <Value></Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.audit.accesstype"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a489">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a14">LOG_NONE</ChoiceValue>
+                            <ChoiceValue i18nKey="a15">LOG_ALLOW</ChoiceValue>
+                            <ChoiceValue i18nKey="a16">LOG_DENY</ChoiceValue>
+                            <ChoiceValue i18nKey="a17">LOG_BOTH</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>LOG_NONE</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.log.disposition"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a490">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a18">REMOTE</ChoiceValue>
+                            <ChoiceValue i18nKey="a24">LOCAL</ChoiceValue>
+                            <ChoiceValue i18nKey="a19">ALL</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>REMOTE</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.remote.logfile"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a491">
+                        <DefaultValues>
+                            <Value>@AUDIT_LOG_FILENAME@</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.remote.log.interval"
+                        type="single"
+                        syntax="number_range" rangeStart="0" rangeEnd="2147483647"
+                        i18nKey="a492">
+                        <DefaultValues>
+                            <Value>5</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.local.log.rotate"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a493">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.local.log.size"
+                        type="single"
+                        syntax="number_range" rangeStart="0" rangeEnd="2147483647"
+                        i18nKey="a494">
+                        <DefaultValues>
+                            <Value>52428800</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.debug.level"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a495">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a468">Error</ChoiceValue>
+                            <ChoiceValue i18nKey="a469">Warning</ChoiceValue>
+                            <ChoiceValue i18nKey="a470">Info</ChoiceValue>
+                            <ChoiceValue i18nKey="a471">Message</ChoiceValue>
+                            <ChoiceValue i18nKey="a472">All</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Error</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.debug.file.rotate"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a496">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.debug.file.size"
+                        type="single"
+                        syntax="number_range" rangeStart="0" rangeEnd="2147483647"
+                        i18nKey="a497">
+                        <DefaultValues>
+                            <Value>10000000</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.attribute.multi.value.separator"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a498">
+                        <DefaultValues>
+                            <Value>|</Value>
                         </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>

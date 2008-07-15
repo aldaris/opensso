@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.h,v 1.17 2008-06-25 08:14:26 qcheng Exp $
+ * $Id: am.h,v 1.18 2008-07-15 20:12:38 subbae Exp $
  *
  */
 
@@ -68,9 +68,6 @@ AM_BEGIN_EXTERN_C
 #define AM_COMMON_IGNORE_SERVER_CHECK    AM_COMMON_PROPERTY_PREFIX "ignore.server.check"
 #define AM_COMMON_POLL_PRIMARY_SERVER AM_COMMON_PROPERTY_PREFIX "poll.primary.server"
 
-/* Log Properties */
-#define AM_COMMON_LOG_LEVELS_PROPERTY	AM_COMMON_PROPERTY_PREFIX "log.level"
-
 /* Authentication Properties */
 #define AM_AUTH_CERT_ALIAS_PROPERTY AM_COMMON_PROPERTY_PREFIX "certificate.alias"
 
@@ -100,6 +97,34 @@ AM_BEGIN_EXTERN_C
 
 #define AM_COMMON_CONFIG_CHANGE_NOTIFICATION_ENABLE_PROPERTY AM_COMMON_PROPERTY_PREFIX "change.notification.enable"
 
+/* Following are audit log related properties */
+#define AM_AUDIT_LOCAL_LOG_FILE_PROPERTY         AM_COMMON_PROPERTY_PREFIX "local.logfile"
+#define AM_AUDIT_LOCAL_LOG_ROTATE_PROPERTY     AM_COMMON_PROPERTY_PREFIX "local.log.rotate"
+#define AM_AUDIT_LOCAL_LOG_FILE_SIZE_PROPERTY    AM_COMMON_PROPERTY_PREFIX "local.log.size"
+#define AM_AUDIT_SERVER_LOG_FILE_PROPERTY   AM_COMMON_PROPERTY_PREFIX "remote.logfile"
+#define AM_AUDIT_SERVER_LOG_INTERVAL_PROPERTY   AM_COMMON_PROPERTY_PREFIX "remote.log.interval"
+#define AM_AUDIT_ACCESS_TYPE_PROPERTY  AM_COMMON_PROPERTY_PREFIX "audit.accesstype"
+#define AM_AUDIT_DISPOSITION_PROPERTY   AM_COMMON_PROPERTY_PREFIX "log.disposition"
+
+/* Debug Properties */
+#define AM_AGENT_DEBUG_LEVEL_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.level"
+#define AM_AGENT_DEBUG_FILE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.file"
+#define AM_AGENT_DEBUG_FILE_ROTATE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.file.rotate"
+#define AM_AGENT_DEBUG_FILE_SIZE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.file.size"
+
+/*
+* Agent debug File minimum size
+*/
+#define DEBUG_FILE_MIN_SIZE 3000
+#define DEBUG_FILE_DEFAULT_SIZE 10000000
+
+/*
+* Audit Disposition
+*/
+#define AUDIT_DISPOSITION_ALL "ALL"
+#define AUDIT_DISPOSITION_LOCAL "LOCAL"
+#define AUDIT_DISPOSITION_REMOTE "REMOTE"
+#define LOCAL_AUDIT_FILE_DEFAULT_SIZE 52428800
 
 /*
  * This function must be called at the end of the program to

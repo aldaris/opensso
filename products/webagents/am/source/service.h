@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.h,v 1.13 2008-06-25 08:14:36 qcheng Exp $
+ * $Id: service.h,v 1.14 2008-07-15 20:12:40 subbae Exp $
  *
  * Abstract:
  *
@@ -58,6 +58,7 @@
 #include "agent_config_fetch.h"
 #include "agent_config_cache_cleanup.h"
 #include "sso_token_service.h"
+#include "audit_log.h"
 
 BEGIN_PRIVATE_NAMESPACE
 
@@ -93,6 +94,10 @@ class Service {
     bool threadPoolAgentConfigCleanupCreated;
     ThreadPool *tPoolAgentConfigCleanup;
     AgentConfigCacheCleanup *agentConfigCleanup;
+
+    bool threadPoolAuditLogCreated;
+    ThreadPool *tPoolAuditLog;
+    AuditLog *auditLog;
 
     Mutex lock;
     ServiceInfo namingSvcInfo;

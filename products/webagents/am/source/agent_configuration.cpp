@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.12 2008-06-25 08:14:23 qcheng Exp $
+ * $Id: agent_configuration.cpp,v 1.13 2008-07-15 20:12:38 subbae Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -68,7 +68,7 @@ USING_PRIVATE_NAMESPACE
 #define DUMMY_REDIRECT		"/dummypost/"
         
 #define CONNECT_TIMEOUT	2
-              
+        
 AgentConfiguration::AgentConfiguration(am_properties_t props) 
     : RefCntObj()
 {
@@ -115,16 +115,34 @@ am_status_t AgentConfiguration::populateAgentProperties()
 
     function_name = "am_properties_get";
 
-    /* Get the log level */
+    /* Get the debug level */
 
-    parameter = AM_COMMON_LOG_LEVELS_PROPERTY;
-    const char* logLevels;
+    parameter = AM_AGENT_DEBUG_LEVEL_PROPERTY;
+    const char* debugLevels;
     status = am_properties_get_with_default(this->properties,
                 parameter,
                 "all:3",
-                &logLevels);
+                &debugLevels);
     if (AM_SUCCESS == status) {
-       status = am_log_set_levels_from_string(logLevels);
+       status = am_log_set_levels_from_string(debugLevels);
+    }
+
+    // get debug file size
+    if (AM_SUCCESS == status) {
+        parameter = AM_AGENT_DEBUG_FILE_SIZE_PROPERTY;
+        status = am_properties_get_positive_number(this->properties, parameter,
+                DEBUG_FILE_DEFAULT_SIZE, &this->debugFileSize);
+        am_log_set_debug_file_size(this->debugFileSize);
+    }
+
+    // get debug file rotate flag
+    if (AM_SUCCESS == status) {
+        parameter = AM_AGENT_DEBUG_FILE_ROTATE_PROPERTY;
+        status = am_properties_get_boolean_with_default(
+                this->properties, parameter, AM_TRUE,
+                &(this->debugFileRotate));
+        am_log_set_debug_file_rotate(
+            this->debugFileRotate ? B_TRUE : B_FALSE);
     }
 
     /* Get dpro cookie name.*/
@@ -283,7 +301,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
     
     /* Get the auth log type param  */
     if (AM_SUCCESS == status) {
-        parameter = AM_LOG_ACCESS_TYPE_PROPERTY;
+        parameter = AM_AUDIT_ACCESS_TYPE_PROPERTY;
         status = am_properties_get_with_default(this->properties,
                 parameter, authLogType_default,
                 &this->authLogType_param);
@@ -297,14 +315,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
         else if (!strcasecmp(this->authLogType_param, LOG_TYPE_BOTH)) {
             this->log_access_type |= LOG_ACCESS_ALLOW|LOG_ACCESS_DENY;
         }
-    }
-    
-    /* Get the deny on log failure param */
-    if (AM_SUCCESS == status) {
-        parameter = AM_WEB_DENY_ON_LOG_FAILURE;
-        am_properties_get_boolean_with_default(this->properties,
-                parameter, AM_TRUE,
-                &this->denyOnLogFailure);
     }
     
     /* Get the CDSSO URL */
@@ -843,7 +853,36 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 this->properties, parameter, 0,
                 &(this->override_host_port));
     }
-    
+
+    // get local audit log file rotate flag
+    if (AM_SUCCESS == status) {
+        parameter = AM_AUDIT_LOCAL_LOG_ROTATE_PROPERTY;
+        status = am_properties_get_boolean_with_default(
+                this->properties, parameter, AM_FALSE,
+                &(this->localAuditLogFileRotate));
+    }
+    // get local audit log file size
+    if (AM_SUCCESS == status) {
+        parameter = AM_AUDIT_LOCAL_LOG_FILE_SIZE_PROPERTY;
+        status = am_properties_get_positive_number(this->properties, parameter,
+                LOCAL_AUDIT_FILE_DEFAULT_SIZE, &this->localAuditLogFileSize);
+    }
+    // get audit log disposition
+    if (AM_SUCCESS == status) {
+        parameter = AM_AUDIT_DISPOSITION_PROPERTY;
+        status = am_properties_get_with_default(this->properties, parameter,
+                AUDIT_DISPOSITION_REMOTE, &this->auditLogDisposition);
+    }
+
+    // set whether doing remote logging ok or not
+    if (((strcasecmp(this->authLogType_param, LOG_TYPE_ALLOW) == 0) || 
+         (strcasecmp(this->authLogType_param, LOG_TYPE_DENY) == 0) || 
+         (strcasecmp(this->authLogType_param, LOG_TYPE_BOTH) == 0)) &&
+        ((strcasecmp(this->auditLogDisposition, AUDIT_DISPOSITION_REMOTE) == 0) ||
+         (strcasecmp(this->auditLogDisposition, AUDIT_DISPOSITION_ALL) == 0))) {
+        this->doRemoteLog = AM_TRUE;
+    }
+
     std::string notURL_str;
     const char* normURL = NULL;
     
@@ -864,6 +903,14 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
 
+    /* Get attribute multi value separator property */
+    if (AM_SUCCESS == status) {
+        parameter = AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR;
+        status = am_properties_get_with_default(this->properties,
+                parameter, 
+                ATTR_MULTI_VALUE_SEPARATOR,
+                &this->attrMultiValueSeparator);
+    }
 
     if (AM_SUCCESS == status) {
 

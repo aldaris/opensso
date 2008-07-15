@@ -26,6 +26,8 @@ SUNW_1.0 {
                 am_log_record_set_log_message;
                 am_log_log_record;
                 am_log_flush_remote_log;
+                am_log_set_debug_file_rotate;
+                am_log_set_debug_file_size;
 
 		am_map_clear;
 		am_map_size;

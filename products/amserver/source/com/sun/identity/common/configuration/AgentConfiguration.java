@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.34 2008-07-14 21:33:16 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.35 2008-07-15 20:12:37 subbae Exp $
  *
  */
 
@@ -458,6 +458,11 @@ public class AgentConfiguration {
                         null);
                 }
                 map.put("AGENT_APP_URI", uri);                
+
+                String logFileName = agentURL.getHost();
+                logFileName = "amAgent_" + logFileName.replaceAll("\\.", "_") +
+                    "_" + port + ".log";
+                map.put("AUDIT_LOG_FILENAME", logFileName);
             }
         }
 

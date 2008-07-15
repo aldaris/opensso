@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.30 2008-06-25 08:14:30 qcheng Exp $
+ * $Id: am_web.cpp,v 1.31 2008-07-15 20:12:38 subbae Exp $
  *
  */
 
@@ -1404,11 +1404,15 @@ log_access(am_status_t access_status,
 	if (key != NULL) {
 	    memset(fmtStr, 0, sizeof(fmtStr));
 	    get_string(key, fmtStr, sizeof(fmtStr));
-	    Log::log((*agentConfigPtr)->remote_LogID, Log::LOG_INFO,
-		     fmtStr, remote_user, url);
-	    status = Log::rlog((*agentConfigPtr)->remote_LogID,
-			       AM_LOG_LEVEL_INFORMATION, user_sso_token,
-			       fmtStr, remote_user, url);
+            status = Log::auditLog((*agentConfigPtr)->auditLogDisposition,
+                    (*agentConfigPtr)->localAuditLogFileRotate,
+                    (*agentConfigPtr)->localAuditLogFileSize,
+                    (*agentConfigPtr)->remote_LogID,
+                    AM_LOG_LEVEL_INFORMATION, 
+                    user_sso_token,
+                    fmtStr, 
+                    remote_user, 
+                    url);
 	}
     }
     return status;
@@ -1837,23 +1841,6 @@ am_web_is_access_allowed(const char *sso_token,
      */
     if (AM_FALSE == isNotEnforced) {
 	log_status = log_access(status, result->remote_user, sso_token, url, agent_config);
-	if (log_status == AM_SUCCESS) {
-	    am_web_log_debug("%s: Successfully logged to remote server "
-			     "for %s action by user %s to resource %s.",
-			     thisfunc, action_name, rmtUsr, url);
-	}
-	else {
-	    am_web_log_error("%s: Error '%s' encountered while "
-			     "logging to remote server for "
-			     "%s action by user %s to resource %s.",
-			     thisfunc, am_status_to_string(log_status),
-			     action_name, rmtUsr, url);
-	    if (log_status == AM_NSPR_ERROR) {
-		status = AM_INVALID_SESSION;
-	    } else if ((*agentConfigPtr)->denyOnLogFailure) {
-		status = AM_ACCESS_DENIED;
-	    }
-	}
     }
 
     if(encodedUrl)

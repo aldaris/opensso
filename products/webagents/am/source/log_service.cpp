@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log_service.cpp,v 1.5 2008-06-25 08:14:33 qcheng Exp $
+ * $Id: log_service.cpp,v 1.6 2008-07-15 20:12:39 subbae Exp $
  *
  */ 
 
@@ -36,6 +36,8 @@
 USING_PRIVATE_NAMESPACE
 
 namespace {
+
+    const unsigned long DEFAULT_BUFFER_SIZE = 5;
 
     const char requestPrefix[] = {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -206,7 +208,7 @@ LogService::LogService(const ServiceInfo &svcInfo, const SSOToken &ssoToken,
     loggedByToken(ssoToken), 
     cookieList(ckieList), 
     remoteLogName(logFileName),
-    bufferSize(1),
+    bufferSize(DEFAULT_BUFFER_SIZE),
     bufferCount(0),
     remoteBodyChunkListInitialized(false)
 { 
