@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.26 2008-07-09 18:52:02 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.27 2008-07-15 17:17:44 babysunil Exp $
  *
  */
 
@@ -959,19 +959,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         logList.clear();                        
                     }
                     
-                    if (priority.contains("HTTP-Redirect")) {
+                    if (priority != null && priority.contains("HTTP-Redirect")) {
                         savehttpRedLogout(lohttpLocation, 
                                 lohttpRespLocation, logList, objFact);
                         savepostLogout(postLocation, 
                                 postRespLocation, logList, objFact);
                         savesoapLogout(losoapLocation, logList, objFact);
-                    } else if (priority.contains("HTTP-POST")) {
+                    } else if (priority != null && priority.contains("HTTP-POST")) {
                         savepostLogout(postLocation, 
                                 postRespLocation, logList, objFact);
                         savehttpRedLogout(lohttpLocation, 
                                 lohttpRespLocation, logList, objFact);                       
                         savesoapLogout(losoapLocation, logList, objFact);
-                    } else if (priority.contains("SOAP")) {
+                    } else if (priority != null && priority.contains("SOAP")) {
                         savesoapLogout(losoapLocation, logList, objFact);                    
                         savehttpRedLogout(lohttpLocation, 
                                 lohttpRespLocation, logList, objFact);
@@ -1003,19 +1003,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         manageNameIdList.clear();                        
                     }
                     
-                    if (priority.contains("HTTP-Redirect")) {
+                    if (priority != null && priority.contains("HTTP-Redirect")) {
                         savehttpRedMni(mnihttpLocation, 
                                 mnihttpRespLocation, manageNameIdList, objFact);
                         savepostMni(mnipostLocation, 
                                 mnipostRespLocation, manageNameIdList, objFact);
                         savesoapMni(mnisoapLocation, manageNameIdList, objFact);
-                    } else if (priority.contains("HTTP-POST")) {
+                    } else if (priority != null && priority.contains("HTTP-POST")) {
                         savepostMni(mnipostLocation, 
                                 mnipostRespLocation, manageNameIdList, objFact);
                         savehttpRedMni(mnihttpLocation, 
                                 mnihttpRespLocation, manageNameIdList, objFact);                       
                         savesoapMni(mnisoapLocation, manageNameIdList, objFact);
-                    } else if (priority.contains("SOAP")) {
+                    } else if (priority != null && priority.contains("SOAP")) {
                         savesoapMni(mnisoapLocation, manageNameIdList, objFact);                    
                         savehttpRedMni(mnihttpLocation, 
                                 mnihttpRespLocation, manageNameIdList, objFact);
@@ -1251,19 +1251,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         logList.clear();                        
                     }
                     
-                    if (priority.contains("HTTP-Redirect")) {
+                    if (priority != null && priority.contains("HTTP-Redirect")) {
                         savehttpRedLogout(lohttpLocation, 
                                 lohttpRespLocation, logList, objFact);
                         savepostLogout(lopostLocation, 
                                 lopostRespLocation, logList, objFact);
                         savesoapLogout(losoapLocation, logList, objFact);
-                    } else if (priority.contains("HTTP-POST")) {
+                    } else if (priority != null && priority.contains("HTTP-POST")) {
                         savepostLogout(lopostLocation, 
                                 lopostRespLocation, logList, objFact);
                         savehttpRedLogout(lohttpLocation, 
                                 lohttpRespLocation, logList, objFact);                       
                         savesoapLogout(losoapLocation, logList, objFact);
-                    } else if (priority.contains("SOAP")) {
+                    } else if (priority != null && priority.contains("SOAP")) {
                         savesoapLogout(losoapLocation, logList, objFact);                    
                         savehttpRedLogout(lohttpLocation, 
                                 lohttpRespLocation, logList, objFact);
@@ -1298,19 +1298,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         manageNameIdList.clear();                        
                     }
                     
-                    if (priority.contains("HTTP-Redirect")) {
+                    if (priority != null && priority.contains("HTTP-Redirect")) {
                         savehttpRedMni(mnihttpLocation, 
                                 mnihttpRespLocation, manageNameIdList, objFact);
                         savepostMni(mnipostLocation, 
                                 mnipostRespLocation, manageNameIdList, objFact);
                         savesoapMni(mnisoapLocation, manageNameIdList, objFact);
-                    } else if (priority.contains("HTTP-POST")) {
+                    } else if (priority != null && priority.contains("HTTP-POST")) {
                         savepostMni(mnipostLocation, 
                                 mnipostRespLocation, manageNameIdList, objFact);
                         savehttpRedMni(mnihttpLocation, 
                                 mnihttpRespLocation, manageNameIdList, objFact);                       
                         savesoapMni(mnisoapLocation, manageNameIdList, objFact);
-                    } else if (priority.contains("SOAP")) {
+                    } else if (priority != null && priority.contains("SOAP")) {
                         savesoapMni(mnisoapLocation, manageNameIdList, objFact);                    
                         savehttpRedMni(mnihttpLocation, 
                                 mnihttpRespLocation, manageNameIdList, objFact);
