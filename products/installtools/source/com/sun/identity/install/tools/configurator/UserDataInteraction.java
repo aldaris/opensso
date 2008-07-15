@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserDataInteraction.java,v 1.3 2008-06-25 05:51:25 qcheng Exp $
+ * $Id: UserDataInteraction.java,v 1.4 2008-07-15 21:19:50 leiming Exp $
  *
  */
 
@@ -95,6 +95,14 @@ abstract public class UserDataInteraction extends BaseInteraction implements
             CumulativeValResult cumRes = processValidators(procInput, state,
                     false);
             if (cumRes.getCumValResult()) {
+                if (cumRes.getWarningMessage() != null) {
+                    Console.println();
+                    Console.println(LocalizedMessage.get(
+                            LOC_VA_WRN_VAL_MESSAGE) + 
+                            getSummaryDescription().toString());
+                    Console.println(LocalizedMessage.get(
+                            LOC_VA_WRN_VAL_INSTALL_LOG));
+                }
                 result = InteractionResultStatus.STATUS_CONTINUE;
                 state.put(getKey(), getNormalizedValue(procInput));
                 if (cumRes.getCalcKeyValPairs() != null) {
@@ -370,10 +378,8 @@ abstract public class UserDataInteraction extends BaseInteraction implements
                             break;
                         case ValidationResultStatus.INT_STATUS_WARNING:
                              if (validRes.getMessage() != null) {
-                                 if (isInter) {          
                                      cumulRes.setWarningMessage(validRes
                                                                .getMessage());
-                                 }
                                  Debug.log(validRes.getMessage().toString());
                                  if ((validRes.getData() != null)
                                     && (validRes.getData().size() > 0)) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionConstants.java,v 1.3 2008-06-25 05:51:21 qcheng Exp $
+ * $Id: InteractionConstants.java,v 1.4 2008-07-15 21:19:50 leiming Exp $
  *
  */
 
@@ -66,7 +66,13 @@ public interface InteractionConstants {
 
     public static final String LOC_IN_MSG_OPTION_CLR_DEF = 
         "IN_MSG_OPTION_CLR_DEF";
+    
+    public static final String LOC_VA_WRN_VAL_MESSAGE = 
+        "VA_WRN_VAL_MESSAGE";
 
+    public static final String LOC_VA_WRN_VAL_INSTALL_LOG = 
+        "VA_WRN_VAL_INSTALL_LOG";
+    
     /**
      * Interaction element,field constants
      */
