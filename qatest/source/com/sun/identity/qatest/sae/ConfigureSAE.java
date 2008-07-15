@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.6 2008-06-26 20:20:57 rmisra Exp $
+ * $Id: ConfigureSAE.java,v 1.7 2008-07-15 19:57:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,8 +50,6 @@ public class ConfigureSAE extends TestCommon {
     private WebClient spWebClient;
     private WebClient idpWebClient;
     private Map<String, String> configMap;
-    private Map<String, String> spConfigMap;
-    private Map<String, String> idpConfigMap;
     public String groupName="";
     
     /** Creates a new instance of ConfigureSAE */
@@ -90,8 +88,6 @@ public class ConfigureSAE extends TestCommon {
             HtmlPage page;
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            spConfigMap = new HashMap<String, String>();
-            idpConfigMap = new HashMap<String, String>();
             getWebClient();
             
             log(Level.FINEST, "configureSAE", "GroupName received from " +
@@ -108,35 +104,6 @@ public class ConfigureSAE extends TestCommon {
             + "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":"
                     + configMap.get(TestConstants.KEY_IDP_PORT)
                     + configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-            
-            url = new URL(spurl);
-            page = (HtmlPage)spWebClient.getPage(url);
-            spConfigMap = MultiProtocolCommon.getSPConfigurationMap(configMap);
-            boolean spConfigResult = configureProduct(spConfigMap);
-            if (spConfigResult) {
-                log(Level.FINEST, "configureSAE", spurl + "is configured" +
-                        "Proceed with SAE SP configuration");
-            } else {
-                log(Level.FINEST, "configureSAE", spurl + "is not " +
-                        "configured successfully. " +
-                        "Exiting the SAE configuration");
-                assert false;
-            }
-            
-            url = new URL(idpurl);
-            page = (HtmlPage)idpWebClient.getPage(url);
-            idpConfigMap = 
-                    MultiProtocolCommon.getIDPConfigurationMap(configMap);
-            boolean idpConfigResult = configureProduct(idpConfigMap);
-            if (idpConfigResult) {
-                log(Level.FINEST, "configureSAE", idpurl + "is configured" +
-                        "Proceed with SAE IDP configuration");
-            } else {
-                log(Level.FINEST, "configureSAE", idpurl + "is not " +
-                        "configured successfully. " +
-                        "Exiting the SAE configuration");
-                assert false;
-            }
             
             FederationManager spfm = new FederationManager(spurl);
             FederationManager idpfm = new FederationManager(idpurl);

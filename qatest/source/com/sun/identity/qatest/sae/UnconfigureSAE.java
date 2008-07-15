@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAE.java,v 1.3 2008-01-31 22:06:28 rmisra Exp $
+ * $Id: UnconfigureSAE.java,v 1.4 2008-07-15 19:57:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,7 @@ public class UnconfigureSAE extends TestCommon {
             configMap = new HashMap<String, String>();
             getWebClient();
             
-            configMap = getMapFromResourceBundle("saeTestConfigData");
+            configMap = getMapFromResourceBundle("sae" + fileseparator + "saeTestConfigData");
             log (Level.FINEST, "UnconfigureSAE", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 

@@ -17,26 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.5 2008-06-26 20:17:24 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.6 2008-07-15 19:57:52 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.sae;
 
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLink;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.MultiProtocolCommon;
-import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,8 +117,7 @@ public class SAESmokeTests extends TestCommon {
     /** Creates a new instance of SAESmokeTests */
     public SAESmokeTests() {
         super("SAESmokeTests");
-        saeConfig = ResourceBundle.getBundle("sae" + fileseparator +
-                "SAESmokeTests");
+        saeConfig = ResourceBundle.getBundle("sae" + fileseparator + "SAESmokeTests");
     }
     
     /**
@@ -146,7 +141,7 @@ public class SAESmokeTests extends TestCommon {
                     + System.getProperty("file.separator");
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("saeTestConfigData");
+            configMap = getMapFromResourceBundle("sae" + fileseparator + "saeTestConfigData");
             log(Level.FINEST, "setup", "Config Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -222,6 +217,21 @@ public class SAESmokeTests extends TestCommon {
             + "</Value>\n"  +  "        </Attribute>";
 
             spmetadataextMod = spmetadataextMod.replaceAll(SP_COT, IDP_COT);
+            
+            String SP_SAE_URL_DEFAULT = "<Attribute name=\"saeSPUrl\">\n"
+            +  "            <Value>null/"
+            + saeConfig.getString("spAppHandler") + "/metaAlias/"
+            +  configMap.get(TestConstants.KEY_SP_HOST)
+            + "</Value>\n" +  "        </Attribute>";
+
+            String SP_SAE_URL = "<Attribute name=\"saeSPUrl\">\n"
+            +  "            <Value>" + spurl + "/"
+            + saeConfig.getString("spAppHandler") + "/metaAlias/"
+            +  configMap.get(TestConstants.KEY_SP_HOST)
+            + "</Value>\n" +  "        </Attribute>";
+
+            spmetadataextMod = spmetadataextMod.replaceAll(SP_SAE_URL_DEFAULT,
+                    SP_SAE_URL);
 
             // load sp extended metadata on idp
             if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
@@ -340,6 +350,22 @@ public class SAESmokeTests extends TestCommon {
             log(Level.FINEST, "setup", "Modified metadata:" +
                     idpmetadataextMod);
 
+            String IDP_SAE_URL_DEFAULT = "<Attribute name=\"saeIDPUrl\">\n"
+            +  "            <Value>null/"
+            + saeConfig.getString("idpAppHandler") + "/metaAlias/"
+            +  configMap.get(TestConstants.KEY_IDP_HOST)
+            + "</Value>\n" +  "        </Attribute>";
+
+            String IDP_SAE_URL = "<Attribute name=\"saeIDPUrl\">\n"
+            +  "            <Value>" + idpurl + "/"
+            + saeConfig.getString("idpAppHandler") + "/metaAlias/"
+            +  configMap.get(TestConstants.KEY_IDP_HOST)
+            + "</Value>\n" +  "        </Attribute>";
+
+            idpmetadataextMod =
+                    idpmetadataextMod.replaceAll(IDP_SAE_URL_DEFAULT,
+                    IDP_SAE_URL);
+
             // load idp extended metadata on idp
             if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
@@ -353,35 +379,6 @@ public class SAESmokeTests extends TestCommon {
             }
 
             if (FederationManager.getExitCode(idpfm.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_REALM), "",
-                    idpmetadataextMod, "", "saml2")) != 0) {
-                log(Level.SEVERE, "setup", "Failed to import extended " +
-                        "metadata");
-                log(Level.SEVERE, "setup", "importEntity famadm command" +
-                        " failed");
-                assert(false);
-            }
-
-            idpmetadataextMod = idpmetadataextMod.replaceAll(
-                    "hosted=\"true\"", "hosted=\"false\"");
-            idpmetadataextMod = idpmetadataextMod.replaceAll(
-                    "hosted=\"1\"", "hosted=\"0\"");
-
-            idpmetadataextMod = idpmetadataextMod.replaceAll(IDP_COT, SP_COT);
-
-            // load idp extended metadata on sp
-            if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
-                    configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                    configMap.get(TestConstants.KEY_IDP_REALM),
-                    true, "saml2")) != 0) {
-                log(Level.SEVERE, "setup", "Deletion of Extended " +
-                        "entity failed");
-                log(Level.SEVERE, "setup", "deleteEntity famadm command" +
-                        " failed");
-                assert(false);
-            }
-
-            if (FederationManager.getExitCode(spfm.importEntity(webClient,
                     configMap.get(TestConstants.KEY_IDP_REALM), "",
                     idpmetadataextMod, "", "saml2")) != 0) {
                 log(Level.SEVERE, "setup", "Failed to import extended " +
@@ -639,7 +636,7 @@ public class SAESmokeTests extends TestCommon {
                     "iPlanetAMAuthService", listDyn);
             }
             if (serviceAtt.getWebResponse().getContentAsString().
-                contains("is modified")) {
+                contains("was modified")) {
                 log(Level.FINE, "enableUserProfile",
                     "Successfully enabled " + profile + " user creation");
             } else {
