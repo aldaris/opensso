@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.20 2008-07-07 20:33:01 veiming Exp $
+ * $Id: AjaxPage.java,v 1.21 2008-07-15 21:40:21 veiming Exp $
  *
  */
 package com.sun.identity.config.util;
@@ -166,17 +166,16 @@ public abstract class AjaxPage extends Page {
         if (request != null) {
             String superLocale = request.getParameter("locale");
             if (superLocale != null && superLocale.length() > 0) {
-                configLocale = new java.util.Locale(superLocale);
+                configLocale = Locale.getLocaleObjFromAcceptLangHeader(
+                    superLocale); 
             } else {
                 String acceptLangHeader =
                     (String)request.getHeader("Accept-Language");
                 if ((acceptLangHeader !=  null) &&
                     (acceptLangHeader.length() > 0)) 
                 {
-                    String acclocale =
-                        Locale.getLocaleStringFromAcceptLangHeader(
-                            acceptLangHeader);
-                    configLocale = new java.util.Locale(acclocale);
+                    configLocale = Locale.getLocaleObjFromAcceptLangHeader(
+                        acceptLangHeader); 
                 } else {
                     configLocale = java.util.Locale.getDefault();
                 }
