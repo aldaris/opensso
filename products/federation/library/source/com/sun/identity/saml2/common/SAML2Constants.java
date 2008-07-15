@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.32 2008-06-25 05:47:45 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.33 2008-07-15 00:24:39 qcheng Exp $
  *
  */
 
@@ -982,9 +982,8 @@ public interface SAML2Constants {
         "ECPRequestIDPList";
 
     /**
-     * SP Entity Config attribute name. Used to specify an implementation that
-     * finds IDPList child element of ECP request
-     * of ECP request.
+     * SP Entity Config attribute name. Used to specify an implementation class
+     * that finds IDPList child element of ECP request.
      */
     public static final String ECP_REQUEST_IDP_LIST_FINDER_IMPL =
         "ECPRequestIDPListFinderImpl";
@@ -998,7 +997,7 @@ public interface SAML2Constants {
 
     /**
      * Attribute Authority Config attribute name. Used to specify data store
-     * attribute name than containse X509 subjecT DN.
+     * attribute name that contains X509 subject DN.
      */
     public String X509_SUBJECT_DATA_STORE_ATTR_NAME =
         "x509SubjectDataStoreAttrName";

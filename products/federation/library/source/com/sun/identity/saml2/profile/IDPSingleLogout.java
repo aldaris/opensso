@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.17 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.18 2008-07-15 00:24:40 qcheng Exp $
  *
  */
 
@@ -171,36 +171,7 @@ public class IDPSingleLogout {
                     SAML2Utils.bundle.getString("nullIDPEntityID"));
             }
             // clean up session index
-            String tokenID = sessionProvider.getSessionID(session);
-            Enumeration keys = IDPCache.idpSessionsByIndices.keys();
-            String idpSessionIndex = null;
-            IDPSession idpSession = null;
-            Object idpToken = null;
-            while (keys.hasMoreElements()) {
-                idpSessionIndex = (String)keys.nextElement();   
-                idpSession = (IDPSession)IDPCache.
-                    idpSessionsByIndices.get(idpSessionIndex);
-                if (idpSession != null) {
-                    idpToken = idpSession.getSession();
-                    if ((idpToken != null) && 
-                        (tokenID.equals(sessionProvider.getSessionID(idpToken)))) {
-                        break;
-                    }
-                } else {
-                    IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
-                    try {
-                        if (SAML2Utils.failOver) {
-                            SAML2Utils.jmq.delete(idpSessionIndex);
-                        }
-                    } catch (Exception e) {
-                        debug.error("Error while deleting idpSessionIndex"
-                        + " from Persistent DB." ,e);
-                    }
-                    IDPCache.authnContextCache.remove(idpSessionIndex);
-                }       
-                idpSessionIndex = null;
-            }
-
+            String idpSessionIndex = IDPSSOUtil.getSessionIndex(session);
             if (idpSessionIndex == null) {
                 if (debug.messageEnabled()) {
                     debug.message("No SP session participant(s)");
@@ -209,7 +180,28 @@ public class IDPSingleLogout {
                     response, SingleLogoutManager.SAML2);
                 return;
             }
+            IDPSession idpSession = (IDPSession)IDPCache.
+                idpSessionsByIndices.get(idpSessionIndex);
             
+            if (idpSession == null) {
+                if (debug.messageEnabled()) {
+                    debug.message("IDPSLO.initiateLogoutRequest: "
+                        + "IDP Session with session index " 
+                        + idpSessionIndex + " already removed.");
+                }
+                try {
+                    if (SAML2Utils.failOver) {
+                         SAML2Utils.jmq.delete(idpSessionIndex);
+                     }
+                } catch (Exception e) {
+                     debug.error("Error while deleting idpSessionIndex"
+                        + " from Persistent DB." , e);
+                }
+                IDPCache.authnContextCache.remove(idpSessionIndex);
+                MultiProtocolUtils.invalidateSession(session, request,
+                    response, SingleLogoutManager.SAML2);
+                return;
+            }
             if (debug.messageEnabled()) {
                 debug.message("idpSessionIndex=" + idpSessionIndex);
             }
@@ -782,39 +774,35 @@ public class IDPSingleLogout {
         Object session = sessionProvider.getSession(request);
         String tokenID = sessionProvider.getSessionID(session);
 
-        Enumeration keys = IDPCache.idpSessionsByIndices.keys();
-        String idpSessionIndex = null;
-        IDPSession idpSession = null;
-        Object idpToken = null;
-        while (keys.hasMoreElements()) {
-            idpSessionIndex = (String)keys.nextElement();   
-            idpSession = (IDPSession)IDPCache.
-                idpSessionsByIndices.get(idpSessionIndex);
-            if (idpSession != null) {
-                idpToken = idpSession.getSession();
-                if ((idpToken != null) && 
-                    (tokenID.equals(sessionProvider.getSessionID(idpToken)))) {
-                    break;
-                }
-            } else {
-                IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
-                try {
-                    if (SAML2Utils.failOver) {
-                        SAML2Utils.jmq.delete(idpSessionIndex);
-                    }
-                } catch (Exception e) {
-                    debug.error("Error while deleting idpSessionIndex"
-                        + " from Persistent DB." , e);
-                }
-                IDPCache.authnContextCache.remove(idpSessionIndex);
-            }       
-            idpSessionIndex = null;
-        }
+        String idpSessionIndex = IDPSSOUtil.getSessionIndex(session);
 
         if (idpSessionIndex == null) {
             if (debug.messageEnabled()) {
                 debug.message("No SP session participant(s)");
             }
+            MultiProtocolUtils.invalidateSession(session, request,
+                response, SingleLogoutManager.SAML2);
+            return false;
+        }
+        
+        IDPSession idpSession = (IDPSession) 
+            IDPCache.idpSessionsByIndices.get(idpSessionIndex);
+        
+        if (idpSession == null) {
+            if (debug.messageEnabled()) {
+                debug.message("IDPSLO.processLogoutResponse : "
+                    + "IDP Session with session index " 
+                    + idpSessionIndex + " already removed.");
+            }
+            try {
+                if (SAML2Utils.failOver) {
+                     SAML2Utils.jmq.delete(idpSessionIndex);
+                 }
+            } catch (Exception e) {
+                 debug.error("Error while deleting idpSessionIndex"
+                     + " from Persistent DB." , e);
+            }
+            IDPCache.authnContextCache.remove(idpSessionIndex);
             MultiProtocolUtils.invalidateSession(session, request,
                 response, SingleLogoutManager.SAML2);
             return false;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.15 2008-06-27 00:45:55 hengming Exp $
+ * $Id: DoManageNameID.java,v 1.16 2008-07-15 00:24:40 qcheng Exp $
  *
  */
 
@@ -958,9 +958,11 @@ public class DoManageNameID {
 
         List spFedSessions = null;
 
+        IDPSession idpSession = null;
         // Terminate
         if (hostRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
-            removeIDPFedSession(remoteEntityID);
+            idpSession = 
+                removeIDPFedSession(remoteEntityID, oldNameID.getValue());
         } else {
             spFedSessions = (List)SPCache.fedSessionListsByNameIDInfoKey.remove(
                 oldNameIDInfo.getNameIDInfoKey().toValueString());
@@ -1000,12 +1002,14 @@ public class DoManageNameID {
                 SAML2Constants.IDP_ROLE, isAffiliation);
 
             AccountUtils.setAccountFederation(newNameIDinfo, userID);
-            NameIDandSPpair pair = new NameIDandSPpair(newNameID,
-                remoteEntityID);
-            IDPSession idpSession = getIDPFedSession(remoteEntityID);
-            synchronized(IDPCache.idpSessionsByIndices) {
-                List list = (List)idpSession.getNameIDandSPpairs();
-                list.add(pair);
+            if (idpSession != null) {
+                // there are active session using this Name id
+                NameIDandSPpair pair = new NameIDandSPpair(newNameID,
+                    remoteEntityID);
+                synchronized(IDPCache.idpSessionsByIndices) {
+                    List list = (List) idpSession.getNameIDandSPpairs();
+                    list.add(pair);
+                }
             }
             // log new name id success
             logAccess("requestSuccess", LogUtil.SUCCESS_NEW_NAMEID, userID);
@@ -1481,6 +1485,7 @@ public class DoManageNameID {
                     "not found.");
                 return false;
             }
+
             // Terminate
             if (hostRole.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
                 String infoKeyStr =
@@ -1489,7 +1494,7 @@ public class DoManageNameID {
                     remove(infoKeyStr);
                 removeInfoKeyFromSession(session, infoKeyStr);
             } else {
-                removeIDPFedSession(remoteEntityID);
+                removeIDPFedSession(remoteEntityID, oldNameID.getValue());
             }
 
             if (!AccountUtils.removeAccountFederation(oldNameIDInfo, userID)) {
@@ -1938,13 +1943,16 @@ public class DoManageNameID {
         return mni;
     }
 
-    static private IDPSession getIDPFedSession(String spEntityID)
-        throws SessionException {
-        String method = "DoManageNameID.getIDPFedSession";
+    static IDPSession removeIDPFedSession(String spEntity, String nameID) {
+        String method = "DoManageNameID.removeIDPFedSession ";
         Enumeration keys = null;
         String idpSessionIndex = null;
         IDPSession idpSession = null;
         
+        if (debug.messageEnabled()) {
+            debug.message(method + " trying to remove entity=" + spEntity
+               + ", nameID=" + nameID + " from IDP session cache");
+        }
         if (IDPCache.idpSessionsByIndices != null) {
             keys = IDPCache.idpSessionsByIndices.keys();
         } else {
@@ -1975,59 +1983,20 @@ public class DoManageNameID {
                     while (iter.hasNext()) {
                         nameIDPair = (NameIDandSPpair)iter.next();
                         String spID = nameIDPair.getSPEntityID();
-                        if (spID.equalsIgnoreCase(spEntityID)) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return idpSession;
-    }
-    static void removeIDPFedSession(String spEntity) {
-        String method = "removeIDPFedSession ";
-        Enumeration keys = null;
-        String idpSessionIndex = null;
-        IDPSession idpSession = null;
-        
-        if (IDPCache.idpSessionsByIndices != null) {
-            keys = IDPCache.idpSessionsByIndices.keys();
-        } else {
-            if (debug.messageEnabled()) {
-                debug.message(method+"IDPCache.idpSessionsByIndices is null.");
-            }
-
-            return;
-        }
-        
-        if (keys == null) {
-            if (debug.messageEnabled()) {
-                debug.message(method + 
-                   "IDPCache.idpSessionsByIndices return null.");
-            }
-            return;
-        }
-        
-        while (keys.hasMoreElements()) {
-            NameIDandSPpair nameIDPair = null;
-            idpSessionIndex = (String)keys.nextElement();   
-            idpSession = (IDPSession)IDPCache.
-                    idpSessionsByIndices.get(idpSessionIndex);
-            if (idpSession != null) {
-                List nameIDSPlist = idpSession.getNameIDandSPpairs();
-                if (nameIDSPlist != null) {
-                    Iterator iter = nameIDSPlist.listIterator();
-                    while (iter.hasNext()) {
-                        nameIDPair = (NameIDandSPpair)iter.next();
-                        String spID = nameIDPair.getSPEntityID();
-                        if (spID.equalsIgnoreCase(spEntity)) {
+                        if (spID.equalsIgnoreCase(spEntity) &&
+                            nameIDPair.getNameID().getValue().equals(nameID)) {
                             nameIDSPlist.remove(nameIDPair);
-                            break;
+                            if (debug.messageEnabled()) {
+                                debug.message(method + " removed entity=" + spID
+                                    + ", nameID=" + nameID);
+                            }
+                            return idpSession; 
                         }
                     }
                 }
             }
         }
+        return null;
     }
 
     static private void removeInfoKeyFromSession(

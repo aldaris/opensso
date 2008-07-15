@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.31 2008-06-27 00:45:55 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.32 2008-07-15 00:24:40 qcheng Exp $
  *
  */
 
@@ -1315,7 +1315,8 @@ public class IDPSSOUtil {
                     isNewFederation.setValue(false);
                 } else {
                     AccountUtils.removeAccountFederation(nameIDInfo, userID);
-                    DoManageNameID.removeIDPFedSession(remoteEntityID);
+                    DoManageNameID.removeIDPFedSession(remoteEntityID,
+                        nameID.getValue());
                     nameID = null;
                 }
             }

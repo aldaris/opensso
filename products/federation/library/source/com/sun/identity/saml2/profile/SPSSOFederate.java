@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.19 2008-06-27 00:45:55 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.20 2008-07-15 00:24:40 qcheng Exp $
  *
  */
 
@@ -75,7 +75,6 @@ import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
