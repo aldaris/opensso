@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.10 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: ServiceConfigImpl.java,v 1.11 2008-07-15 21:04:17 arviranga Exp $
  *
  */
 
@@ -496,7 +496,6 @@ class ServiceConfigImpl implements ServiceListener {
         // Not in cache and org exists, construct SMSEntry object
         CachedSMSEntry entry = checkAndUpdatePermission(cacheName, dn, token);
         if (!entry.isValid()) {
-            entry.clear();
             entry = checkAndUpdatePermission(cacheName, dn, token);
         }
         

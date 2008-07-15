@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.9 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.10 2008-07-15 21:04:18 arviranga Exp $
  *
  */
 
@@ -280,6 +280,11 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
         synchronized (listenerObjects) {
             listenerObjects.put(id, listener);
         }
+        if (debug.messageEnabled()) {
+            debug.message("ServiceConfigManagerImpl(" + serviceName +
+                "):addListener Class: " +  listener.getClass().getName() +
+                " Listener ID: " + id);
+        }
         return (id);
     }
     
@@ -315,6 +320,10 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             if (listenerObjects.isEmpty()) {
                 deregisterListener();
             }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("ServiceConfigManagerImpl(" + serviceName +
+                "):removeListener ListenerId: " +  listenerID);
         }
     }
     
@@ -353,9 +362,9 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             return;
         }
         if (SMSEntry.eventDebug.messageEnabled()) {
-            SMSEntry.eventDebug.message("ServiceConfigManagerImpl:" +
-                "objectChanged Received notification for DN: " + dn +
-                "\nService name: " + serviceName);
+            SMSEntry.eventDebug.message("ServiceConfigManagerImpl(" +
+                serviceName + "):objectChanged Received notification for " +
+                "DN: " + dn);
         }
 
         // check for service name, version and type
@@ -365,6 +374,11 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
         dn = DNUtils.normalizeDN(dn);
         if ((index = dn.indexOf(orgNotificationSearchString)) != -1) {
             orgConfig = true;
+            if (index == 0) {
+                // Organization config node is created
+                // No data is stored in this node
+                return;
+            }
             orgIndex = orgNotificationSearchString.length();
         } else if ((index = dn.indexOf(glbNotificationSearchString)) != -1) {
             globalConfig = true;
@@ -391,12 +405,6 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             groupName = rdns[rdns.length - 1];
             for (int i = rdns.length - 2; i > -1; i--) {
                 compName = compName + "/" + rdns[i];
-            }
-            if (compName.length() == 0) {
-                // Since index > 0 and component name is empty
-                // this represents creation of group entries i.e. default
-                // Do not send this notification
-                return;
             }
         }
 
@@ -425,16 +433,18 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             notifyGlobalConfigChange(groupName, compName, type);
             if (SMSEntry.eventDebug.messageEnabled()) {
                 SMSEntry.eventDebug.message(
-                    "ServiceConfigManagerImpl:entryChanged Sending " +
-                    "global config change notifications for DN "+ dn);
+                    "ServiceConfigManagerImpl(" + serviceName +
+                    "):entryChanged Sending global config change " +
+                    "notifications for DN "+ dn);
             }
         }
         if (orgConfig) {
             notifyOrgConfigChange(orgName, groupName, compName, type);
             if (SMSEntry.eventDebug.messageEnabled()) {
                 SMSEntry.eventDebug.message(
-                    "ServiceConfigManagerImpl:entryChanged Sending org " +
-                    "config change notifications for DN " + dn);
+                    "ServiceConfigManagerImpl(" + serviceName +
+                    "):entryChanged Sending org config change " +
+                    "notifications for DN " + dn);
             }
         }
     }
@@ -448,9 +458,10 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
                     sl.globalConfigChanged(serviceName, version, groupName,
                         comp, type);
                 } catch (Throwable t) {
-                    SMSEntry.eventDebug.error("ServiceConfigManagerImpl:" +
-                        "notifyGlobalConfigChange Error sending notification" +
-                        " to ServiceListener: " + sl.getClass().getName(), t);
+                    SMSEntry.eventDebug.error("ServiceConfigManagerImpl(:" +
+                        serviceName + ") notifyGlobalConfigChange Error " +
+                        "sending notification to ServiceListener: " +
+                        sl.getClass().getName(), t);
                 }
             }
         }
@@ -466,9 +477,10 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
                     sl.organizationConfigChanged(serviceName, version, orgName,
                         groupName, comp, type);
                 } catch (Throwable t) {
-                    SMSEntry.eventDebug.error("ServiceConfigManagerImpl:" +
-                        "notifyOrgConfigChange Error sending notification " +
-                        "to ServiceListener: " + sl.getClass().getName(), t);
+                    SMSEntry.eventDebug.error("ServiceConfigManagerImpl(:" +
+                        serviceName + ") notifyOrgConfigChange Error " +
+                        "sending notification to ServiceListener: " +
+                        sl.getClass().getName(), t);
                 }
             }
         }
