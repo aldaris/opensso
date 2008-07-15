@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.32 2008-07-15 00:24:40 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.33 2008-07-15 21:58:03 exu Exp $
  *
  */
 
@@ -619,29 +619,6 @@ public class IDPSSOUtil {
         String classMethod = "IDPSSOUtil.getResponse: ";
         
         Response res = ProtocolFactory.getInstance().createResponse();
-        List assertionList = new ArrayList();
-        
-        Assertion assertion = getAssertion(session, authnReq, 
-           recipientEntityID, idpEntityID, realm, nameIDFormat, acsURL,
-           affiliationID);
-    
-        if (assertion == null) {
-            SAML2Utils.debug.error(
-                classMethod + "Unable to get Assertion.");
-            return null;
-        }
-
-        assertionList.add(assertion);        
-        res.setAssertion(assertionList);
-        res.setID(SAML2Utils.generateID());
-        
-        if (authnReq != null) {
-            // sp initiated case, need to set InResponseTo attribute
-            res.setInResponseTo(authnReq.getID());
-        }
-        res.setVersion(SAML2Constants.VERSION_2_0);
-        res.setIssueInstant(new Date());
-    
         Status status = ProtocolFactory.getInstance().createStatus();
         if (status == null) {
             return null;
@@ -651,9 +628,44 @@ public class IDPSSOUtil {
         if (statusCode == null) {
             return null;
         }
-        statusCode.setValue(SAML2Constants.SUCCESS);
+        try {
+            List assertionList = new ArrayList();
+        
+            Assertion assertion = getAssertion(session, authnReq, 
+                recipientEntityID, idpEntityID, realm, nameIDFormat, acsURL,
+                affiliationID);
+    
+            if (assertion == null) {
+                SAML2Utils.debug.error(
+                    classMethod + "Unable to get Assertion.");
+                return null;
+            }
+
+            assertionList.add(assertion);        
+            res.setAssertion(assertionList);
+        
+            statusCode.setValue(SAML2Constants.SUCCESS);
+        } catch (SAML2Exception se) {
+            statusCode.setValue(SAML2Constants.REQUESTER);
+            if (se.getMessage().equals(
+                SAML2Utils.bundle.getString("cannotCreateNameID")))
+            {
+                StatusCode subStatusCode = ProtocolFactory.getInstance().
+                                createStatusCode();
+                subStatusCode.setValue(SAML2Constants.INVALID_NAME_ID_POLICY);
+                statusCode.setStatusCode(subStatusCode);
+            }
+        }
         status.setStatusCode(statusCode);
         res.setStatus(status);
+
+        if (authnReq != null) {
+            // sp initiated case, need to set InResponseTo attribute
+            res.setInResponseTo(authnReq.getID());
+        }
+        res.setVersion(SAML2Constants.VERSION_2_0);
+        res.setIssueInstant(new Date());
+        res.setID(SAML2Utils.generateID());
 
         // set the idp entity id as the response issuer
         Issuer issuer = AssertionFactory.getInstance().createIssuer();
@@ -1328,7 +1340,12 @@ public class IDPSSOUtil {
                 SAML2Utils.getIDPAccountMapper(realm, idpEntityID);
             nameID = idpAccountMapper.getNameID(session, idpEntityID,
                 spNameQualifier, realm, nameIDFormat); 
-    
+            if (!allowCreate && 
+                nameIDFormat.equals(SAML2Constants.PERSISTENT))
+            {
+                throw new SAML2Exception(
+                    SAML2Utils.bundle.getString("cannotCreateNameID"));
+            }
             if (!isTransient && allowCreate) {
                 // write federation info the into persistent datastore
                 if (SAML2Utils.isDualRole(idpEntityID,realm)){
@@ -1809,15 +1826,15 @@ public class IDPSSOUtil {
         String artStr = art.getArtifactValue();        
         try {
             IDPCache.responsesByArtifacts.put(artStr, res);
-            long expireTime = getValidTimeofResponse(realm, idpEntityID,
-                res);
             if (SAML2Utils.failOver) {
+                long expireTime = getValidTimeofResponse(
+                    realm, idpEntityID,res);
                 SAML2Utils.jmq.save(artStr, res.toXMLString(true,true),
                     expireTime);
-            }
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message(classMethod +
-                    "Save Response to DB!");
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod +
+                        "Save Response to DB!");
+                }
             }
 
             String messageEncoding = SAML2Utils.getAttributeValueFromSSOConfig(
@@ -1861,7 +1878,7 @@ public class IDPSSOUtil {
             SAML2Utils.debug.error(classMethod + 
                 "Unable to send redirect: ", ioe);
         } catch (Exception e) { 
-            SAML2Utils.debug.error("DB Error!"); 
+            SAML2Utils.debug.error(classMethod + "DB Error!", e); 
         }
     }    
 
@@ -2556,7 +2573,10 @@ public class IDPSSOUtil {
 
          List assertions = response.getAssertion();
          if ((assertions == null) || (assertions.size() == 0)) {
-             throw new SAML2Exception("nullAssertion");
+             // failed case
+             return (System.currentTimeMillis() 
+                 + getEffectiveTime(realm, idpEntityID)
+                 + timeskew * 1000);
          }
 
          Assertion assertion = (Assertion)assertions.get(0);
