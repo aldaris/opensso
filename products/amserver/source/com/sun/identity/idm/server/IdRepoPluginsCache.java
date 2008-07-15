@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.2 2008-07-06 05:48:33 arviranga Exp $
+* $Id: IdRepoPluginsCache.java,v 1.3 2008-07-15 22:43:50 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -196,7 +196,7 @@ public class IdRepoPluginsCache implements ServiceListener {
             Set ps = new HashSet();
             for (Iterator items = answer.iterator(); items.hasNext();) {
                 IdRepo repo = (IdRepo) items.next();
-                ps.add(repo.getConfiguration());
+                ps.add(repo.getClass().getName());
             }
             debug.message("IdRepoPluginsCache.getIdRepoPlugins retuned for" +
                 " OrgName: " + orgName + " Op: " + op + " Type: " + type +
@@ -447,7 +447,7 @@ public class IdRepoPluginsCache implements ServiceListener {
         IdRepo answer = null;
         if (debug.messageEnabled()) {
             debug.message("IdRepoPluginsCache.constructIdRepoPlugin: config=" +
-                configMap);
+                configMap.get("sunIdRepoClass"));
         }
         if (configMap == null || configMap.isEmpty()) {
             if (debug.warningEnabled()) {
