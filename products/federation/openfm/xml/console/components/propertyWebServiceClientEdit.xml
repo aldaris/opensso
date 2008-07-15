@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceClientEdit.xml,v 1.10 2008-06-25 05:51:09 qcheng Exp $
+   $Id: propertyWebServiceClientEdit.xml,v 1.11 2008-07-15 21:38:33 veiming Exp $
 
 -->
 
@@ -119,6 +119,15 @@
             defaultValue="a310"
             labelFor="preservesecurityheader" />
         <cc name="preservesecurityheader"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+            <attribute name="label" value="label.Yes" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblispassthroughsecuritytoken"
+            defaultValue="a354"
+            labelFor="ispassthroughsecuritytoken" />
+        <cc name="ispassthroughsecuritytoken"
             tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
             <attribute name="label" value="label.Yes" />
         </cc>

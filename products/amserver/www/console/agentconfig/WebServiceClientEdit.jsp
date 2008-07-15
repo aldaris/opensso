@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.7 2008-07-10 00:23:05 veiming Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.8 2008-07-15 21:38:32 veiming Exp $
 
 --%>
 
@@ -62,6 +62,7 @@
         var disableDiscovery = true;
         var disableLibertyServiceURN = true;
         var disableKerberos = true;
+        var disablePassThru = true;
 
         for (var i = 0; (i < securityMech.length); i++) {
             if (securityMech[i].checked) {
@@ -72,6 +73,12 @@
                 disableLibertyServiceURN = disableSTS && disableDiscovery;
                 disableKerberos =
                     (value != "urn:sun:wss:security:null:KerberosToken");
+                disablePassThru = 
+                    (value != "urn:sun:wss:security:null:SAMLToken-HK") &&
+                    (value != "urn:sun:wss:security:null:SAMLToken-SV") &&
+                    (value != "urn:sun:wss:security:null:SAML2Token-HK") &&
+                    (value != "urn:sun:wss:security:null:SAML2Token-SV") &&
+                    (value != "urn:sun:wss:sts:security");
                 break;
             }
         }
@@ -83,6 +90,7 @@
         frm.elements['WebServiceClientEdit.kerberosserviceprincipal'].disabled = disableKerberos;
         frm.elements['WebServiceClientEdit.kerberosticketcachedir'].disabled = disableKerberos;
         frm.elements['WebServiceClientEdit.kerberosdomainserver'].disabled = disableKerberos;
+        frm.elements['WebServiceClientEdit.ispassthroughsecuritytoken'].disabled = disablePassThru;
     }
 </script>
 
