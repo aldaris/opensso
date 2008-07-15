@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log.cpp,v 1.5 2008-07-15 20:12:39 subbae Exp $
+ * $Id: log.cpp,v 1.6 2008-07-15 22:21:45 subbae Exp $
  *
  */ 
 #if	defined(WINNT)
@@ -978,7 +978,7 @@ Log::auditLog(const char* auditDisposition,
         
         if ((strcasecmp(auditDisposition, AUDIT_DISPOSITION_REMOTE) == 0) ||
             (strcasecmp(auditDisposition, AUDIT_DISPOSITION_ALL) == 0)) {
-            status = rlog(module,
+            status = doRemoteAuditLog(module,
                 remoteLogLevel,
                 userSSOToken,
                 logMsg
