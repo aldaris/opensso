@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenValidator.java,v 1.3 2008-07-02 18:27:10 leiming Exp $
+ * $Id: SSOTokenValidator.java,v 1.4 2008-07-15 21:21:20 leiming Exp $
  *
  */
 
@@ -388,9 +388,7 @@ public class SSOTokenValidator extends SurrogateBase
     }
     
     private boolean needURLDecode(String rawValue) {
-        boolean needDecode = rawValue.indexOf("+") >= 0 ||
-                rawValue.indexOf("%") >= 0;
-        return needDecode;
+        return rawValue.indexOf("%") >= 0;
     }
     
     private void setClientIPAddressHeader(String header) {
