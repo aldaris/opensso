@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.26 2008-07-11 22:36:54 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.27 2008-07-16 21:07:27 weisun2 Exp $
  *
  */
 
@@ -1289,7 +1289,15 @@ public class SPACSUtils {
                 SAML2Utils.debug.warning("SPSingleLogout.processResp", ex);
             }
         }
-
+     
+        String assertionID=authnAssertion.getID();
+        if (respInfo.getProfileBinding().equals(SAML2Constants.HTTP_POST)) {
+            SPCache.assertionByIDCache.put(assertionID, SAML2Constants.ONETIME); 
+            if (SAML2Utils.failOver) {
+                SAML2Utils.jmq.save(assertionID, SAML2Constants.ONETIME, 
+                    ((Long) smap.get(SAML2Constants.NOTONORAFTER)).longValue()); 
+            }
+        }
         return session;
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.32 2008-07-16 16:47:14 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.33 2008-07-16 21:07:27 weisun2 Exp $
  *
  */
 
@@ -451,6 +451,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
         
         Map smap = null;
+        Map bearerMap = null; 
         IDPSSODescriptorElement idp = null;
         X509Certificate cert = null;
         Iterator assertionIter = assertions.iterator();
@@ -515,16 +516,45 @@ public class SAML2Utils extends SAML2SDKUtils {
                 if (subjectConfirms == null || subjectConfirms.isEmpty()) {
                     continue;
                 }
-                if (!isBearerSubjectConfirmation(subjectConfirms,
+                
+                bearerMap = isBearerSubjectConfirmation(subjectConfirms,
                         inRespToResp,
                         spDesc,
                         spConfig,
-                        assertionID)) {
+                        assertionID); 
+                        
+                if (!(((Boolean) bearerMap.get(SAML2Constants.IS_BEARER)).booleanValue())) {
                     continue;
                 }
+                
+                boolean foundAssertion = false; 
+                if ((SPCache.assertionByIDCache != null) && 
+                    (SPCache.assertionByIDCache.isEmpty()) &&
+                    (SPCache.assertionByIDCache.containsKey(assertionID))) {
+                    foundAssertion = true; 
+                } 
+               
+                if ((!foundAssertion) && SAML2Utils.failOver) {
+                    try {
+                        if ((SAML2Utils.jmq.retrieve(assertionID)) != null) {
+                            foundAssertion = true; 
+                        }    
+                    } catch(Exception ae) {
+                        if (debug.messageEnabled()) {
+                            debug.message("Session not found in " +
+                            "JMQSAML2Repository."); 
+                        }        
+                    }
+                }    
+                if (foundAssertion) {
+                    SAML2Utils.debug.error("Bearer Assertion is one time " +
+                        "use only!"); 
+                    throw new SAML2Exception(bundle.getString(
+                        "usedBearAssertion"));
+                }            
                 checkAudience(assertion.getConditions(),
-                        hostEntityId,
-                        assertionID);
+                    hostEntityId,
+                    assertionID);
                 if (smap == null) {
                     smap = fillMap(authnStmts,
                             subject,
@@ -535,7 +565,8 @@ public class SAML2Utils extends SAML2SDKUtils {
                             orgName,
                             hostEntityId,
                             idpEntityId,
-                            spConfig);
+                            spConfig,
+                            (Date) bearerMap.get(SAML2Constants.NOTONORAFTER));
                 }
             } // end of having authnStmt
         }
@@ -548,13 +579,14 @@ public class SAML2Utils extends SAML2SDKUtils {
         return smap;
     }
     
-    private static boolean isBearerSubjectConfirmation(List subjectConfirms,
+    private static Map isBearerSubjectConfirmation(List subjectConfirms,
             String inRespToResponse,
             SPSSODescriptorElement spDesc,
             SPSSOConfigElement spConfig,
             String assertionID)
             throws SAML2Exception {
         String method = "SAML2Utils.isBearerSubjectConfirmation:";
+        Map retMap = new HashMap(); 
         boolean hasBearer = false;
         for (Iterator it = subjectConfirms.iterator();it.hasNext();) {
             SubjectConfirmation subjectConfirm =
@@ -647,6 +679,7 @@ public class SAML2Utils extends SAML2SDKUtils {
                 throw new SAML2Exception(bundle.getString(
                         "invalidTimeOnSubjectConfirmationData"));
             }
+            retMap.put(SAML2Constants.NOTONORAFTER, notOnOrAfter); 
             if (subjectConfData.getNotBefore() != null) {
                 if (debug.messageEnabled()) {
                     debug.message(method + "SubjectConfirmationData included "
@@ -695,8 +728,8 @@ public class SAML2Utils extends SAML2SDKUtils {
             hasBearer = true;
             break;
         }
-        
-        return hasBearer;
+        retMap.put(SAML2Constants.IS_BEARER, new Boolean(hasBearer)); 
+        return retMap;
     }
     
     private static void checkAudience(Conditions conds,
@@ -761,7 +794,8 @@ public class SAML2Utils extends SAML2SDKUtils {
             String orgName,
             String hostEntityId,
             String idpEntityId,
-            SPSSOConfigElement spConfig)
+            SPSSOConfigElement spConfig,
+            Date notOnOrAfterTime)
             throws SAML2Exception {
         // use the first AuthnStmt
         AuthnStatement authnStmt = (AuthnStatement) authnStmts.get(0);
@@ -820,6 +854,10 @@ public class SAML2Utils extends SAML2SDKUtils {
         if (debug.messageEnabled()) {
             debug.message("SAML2Utils.fillMap: Found valid authentication "
                     + "assertion.");
+        }
+        if (notOnOrAfterTime != null) {
+           smap.put(SAML2Constants.NOTONORAFTER,
+              new Long(notOnOrAfterTime.getTime()));
         }
         LogUtil.access(Level.INFO,
                 LogUtil.FOUND_AUTHN_ASSERTION,
@@ -3668,6 +3706,8 @@ public class SAML2Utils extends SAML2SDKUtils {
         String relayStateValue, String targetURL) throws IOException {
 
         PrintWriter out = response.getWriter();
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache,no-store"); 
         out.println("<HTML>");
         out.println("<HEAD>\n");
         out.println("<TITLE>Access rights validated</TITLE>\n");
@@ -3795,7 +3835,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         if (levelInt == null) {
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("SAML2Utils.isAuthnContextMatching: " +                   "AuthnContextClassRef " + acClassRef +" is not supported.");
-            }
+            }      
             return false;
         }
         int level = levelInt.intValue();

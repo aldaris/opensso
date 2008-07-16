@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.33 2008-07-15 00:24:39 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.34 2008-07-16 21:07:27 weisun2 Exp $
  *
  */
 
@@ -1412,5 +1412,13 @@ public interface SAML2Constants {
      * Key name for Assertion object
      */
     public String ASSERTION = "Assertion"; 
-
+    
+    /**
+     * One Time Use.
+     */
+    public String ONETIME="ONE"; 
+    /**
+     * Is Bearer assertion
+     */
+    public String IS_BEARER="isBearer";  
 } 

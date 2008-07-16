@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.13 2008-07-07 05:14:47 qcheng Exp $
+ * $Id: SPCache.java,v 1.14 2008-07-16 21:07:27 weisun2 Exp $
  *
  */
 
@@ -171,6 +171,15 @@ public class SPCache {
      */
     public static Hashtable ecpRequestIDPListFinderCache = new Hashtable();
 
+    /**
+     * Cache saves the assertion id.
+     * Key : assertion ID String
+     * Value : Constant  
+     */
+    public static PeriodicCleanUpMap assertionByIDCache =
+        new PeriodicCleanUpMap(interval * 1000,
+        interval * 1000);
+    
     /**
      * Clears the auth context object hash table.
      *
