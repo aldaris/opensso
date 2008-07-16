@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdConstants.java,v 1.6 2008-06-25 05:43:28 qcheng Exp $
+ * $Id: IdConstants.java,v 1.7 2008-07-16 19:30:02 kenwho Exp $
  *
  */
 
@@ -96,5 +96,7 @@ public interface IdConstants {
     public static final String AGENT_SERVICE = "AgentService";
 
     public static final String AGENT_TYPE = "AgentType";
+
+    public static final String IDREPO_CACHESTAT = "idRepoCacheStat";
 
 }
