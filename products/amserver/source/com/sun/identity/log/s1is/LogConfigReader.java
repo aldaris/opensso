@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.14 2008-06-27 20:56:22 arviranga Exp $
+ * $Id: LogConfigReader.java,v 1.15 2008-07-16 00:31:19 bigfatrat Exp $
  *
  */
 
@@ -157,8 +157,24 @@ public class LogConfigReader implements ServiceListener{
         Iterator it;
         String tempBuffer;
         boolean fileBackend = false;
+        String basedir = null;
         // processing logging attributes.
         try {
+            // generate <configdir>/<uri>/ for CONFIG_DIR_SERVER_URI attrs
+            String famuri = SystemProperties.get(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            String configdir = SystemProperties.get(
+                SystemProperties.CONFIG_PATH);
+            famuri = famuri.replace('\\','/');
+            configdir = configdir.replace('\\','/');
+            if (!configdir.endsWith("/") && !famuri.startsWith("/")) {
+                configdir += "/";
+            }
+            basedir = configdir + famuri;
+            if (!basedir.endsWith("/")) {
+                basedir += "/";
+            }
+
             logAttributes = smsLogSchema.getAttributeDefaults();
             // File/jdbc
             key = LogConstants.BACKEND;
@@ -406,9 +422,9 @@ public class LogConfigReader implements ServiceListener{
             locSubdir = SystemProperties.get(LogConstants.LOG_LOCATION_SUBDIR);
             if ((locSubdir != null) &&
                 (locSubdir.trim().length() > 0) &&
-                (!locSubdir.endsWith(File.separator)))
+                (!locSubdir.endsWith("/")))
             {
-                locSubdir += File.separator;
+                locSubdir += "/";
             }
         }
         // log location
@@ -429,9 +445,9 @@ public class LogConfigReader implements ServiceListener{
                     if (!configdir.endsWith("/") && !famuri.startsWith("/")) {
                         configdir += "/";
                     }
-                    String basedir = configdir + famuri;
+                    String xbasedir = configdir + famuri;
                     value = value.replace(LogConstants.DEF_FF_LOG_LOC_BASE,
-                        basedir);
+                        xbasedir);
                 }
                 if (fileBackend && !value.endsWith("/")) {
                     value += "/";
@@ -497,6 +513,11 @@ public class LogConfigReader implements ServiceListener{
                 debug.warning("LogConfigReader: secure logger " +
                     "certificate store is null");
             } else {
+                value = value.replace('\\','/');
+                if (value.startsWith(LogConstants.DEF_FF_LOG_LOC_BASE)) {
+                    value = value.replace(LogConstants.DEF_FF_LOG_LOC_BASE,
+                        basedir);
+                }
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
@@ -762,11 +783,20 @@ public class LogConfigReader implements ServiceListener{
             key = LogConstants.LOG_STATUS_ATTR;
             value = CollectionHelper.getMapAttr(logAttributes, key);
             if ((value == null) || (value.length() == 0)) {
-                debug.warning("LogConfigReader: Log Status attribute is null");
-            } else {
-                sbuffer.append(key).append("=").append(value).
-                    append(LogConstants.CRLF);
+                debug.warning("LogConfigReader:reading from SystemProperties");
+                // try to read from AMConfig.properties
+                value = SystemProperties.get(LogConstants.LOG_STATUS);
+                if (debug.messageEnabled()) {
+                    debug.message("####### SystemProperties logStatus is: " +
+                        value);
+                }
+                if ((value == null) || (value.length() == 0)) {
+                    value = "ACTIVE";
+                }
             }
+            // "value" will have a value
+            sbuffer.append(key).append("=").append(value).
+                append(LogConstants.CRLF);
         } catch(Exception e) {
             debug.error("LogConfigReader:Could not read Log Status attribute");
         }
@@ -818,10 +848,21 @@ public class LogConfigReader implements ServiceListener{
             if ((value == null) || (value.length() == 0)) {
                 debug.warning("LogConfigReader: " +
                     "Log Resolve Hostname attribute is null");
-            } else {
-                sbuffer.append(key).append("=")
-                       .append(value).append(LogConstants.CRLF);
+                // try to read from AMConfig.properties
+                value =
+                    SystemProperties.get(LogConstants.LOG_RESOLVE_HOSTNAME);
+                if (debug.messageEnabled()) {
+                    debug.message(
+                        "####### SystemProperties resolveHostName is: " +
+                        value);
+                }
+                if ((value == null) || (value.length() == 0)) {
+                    value = "false";
+                }
             }
+            // "value" will have a value
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
         } catch (Exception e) {
             debug.error("LogConfigReader: could not get from DS", e);
         }
