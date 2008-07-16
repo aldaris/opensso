@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.31 2008-06-27 00:44:20 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.32 2008-07-16 16:47:14 qcheng Exp $
  *
  */
 
@@ -1094,6 +1094,7 @@ public class SAML2Utils extends SAML2SDKUtils {
         deflater.setInput(input);
         deflater.finish();
         int len = deflater.deflate(output);
+        deflater.end();
         
         byte[] exact = new byte[len];
         
