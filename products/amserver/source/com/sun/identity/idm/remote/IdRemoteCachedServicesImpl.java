@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.15 2008-06-27 20:56:24 arviranga Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.16 2008-07-16 19:17:03 kenwho Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.iplanet.sso.SSOToken;
 
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdCachedServices;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
@@ -44,7 +45,9 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.common.IdCacheBlock;
+import com.sun.identity.idm.common.IdCacheStats;
 import com.sun.identity.common.DNUtils;
+import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.sm.ServiceManager;
 
 import com.iplanet.am.sdk.AMHashMap;
@@ -71,9 +74,9 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
     // Class Private
     private Cache idRepoCache;
 
-    // TODO: Add Statistics!
-    // private CacheStats cacheStats;
+    private IdCacheStats cacheStats;
 
+    private static Stats stats;
 
     private IdRemoteCachedServicesImpl() {
         super();
@@ -82,10 +85,10 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         
         // Register for notification or polling as configured
         IdRemoteEventListener.getInstance();
-        
-        // TODO: ADD Cache usage statistics
-        // cacheStats = CacheStats.createInstance(getClass().getName(),
-        // getDebug());
+        stats = Stats.getInstance(getClass().getName());
+        cacheStats = new IdCacheStats(IdConstants.IDREPO_CACHESTAT);
+        stats.addStatsListener(cacheStats);
+
     }
     
     /**
@@ -312,6 +315,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
             return (getAttributes(token, type, name, amOrgName, amsdkDN));
         }
         
+        cacheStats.incrementGetRequestCount(getSize());
         // Get the identity dn
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
         String dn = id.getUniversalId().toLowerCase();
@@ -381,6 +385,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 cb.putAttributes(principalDN, dsAttributes, newMissAttrNames,
                         false, !isStringValues);
             } else { // All attributes found in cache
+                cacheStats.updateGetHitCount(getSize());
                 if (getDebug().messageEnabled()) {
                     getDebug().message("IdRemoteCachedServicesImpl." + 
                             "getAttributes(): found all attributes in Cache.");
@@ -396,6 +401,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         String amOrgName, String amsdkDN)
         throws IdRepoException, SSOException {
         
+        cacheStats.incrementGetRequestCount(getSize());
         // Get identity DN
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
         String dn = id.getUniversalId().toLowerCase();
@@ -407,6 +413,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
         AMHashMap attributes;
         if ((cb != null) && cb.hasCompleteSet(principalDN)) {
+            cacheStats.updateGetHitCount(getSize());
             if (getDebug().messageEnabled()) {
                 getDebug().message("IdRemoteCachedServicesImpl."
                     + "getAttributes(): found all attributes in "
@@ -512,6 +519,8 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         // in legacy mode we must do search in order
         // to get the AMSDKDN component added to AMIdentity's uvid.
         // otherwise unix and anonymous login will fail.
+        
+        cacheStats.incrementSearchRequestCount(getSize());
         if ((pattern.indexOf('*') == -1) &&
             ServiceManager.isRealmEnabled()) {
             // First check if the specific identity is in cache.
@@ -528,6 +537,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 // Search is for a specific user, look in the cache
                 Map attributes;
                 try {
+                    cacheStats.updateSearchHitCount(getSize());
                     if (ctrl.isGetAllReturnAttributesEnabled()) {
                         attributes = getAttributes(token, type, pattern,
                             orgName, null);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.14 2008-06-25 05:43:33 qcheng Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.15 2008-07-16 19:17:03 kenwho Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.common.ShutdownManager;
 
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdCachedServices;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdServices;
 import com.sun.identity.idm.IdType;
@@ -48,6 +49,8 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.common.IdCacheBlock;
+import com.sun.identity.idm.common.IdCacheStats;
+import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.sm.ServiceManager;
 
 import com.iplanet.am.sdk.AMEvent;
@@ -73,8 +76,9 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
     // Class Private
     private Cache idRepoCache;
 
-    // TODO: Add Statistics!
-    // private CacheStats cacheStats;
+    private IdCacheStats cacheStats;
+
+    private static Stats stats;
 
     static {
         initializeParams();
@@ -109,9 +113,9 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
     private IdCachedServicesImpl() {
         super();
         initializeCache();
-        // TODO: ADD Cache usage statistics
-        // cacheStats = CacheStats.createInstance(getClass().getName(),
-        // getDebug());
+        stats = Stats.getInstance(getClass().getName());
+        cacheStats = new IdCacheStats(IdConstants.IDREPO_CACHESTAT);
+        stats.addStatsListener(cacheStats);
     }
 
     private void initializeCache() {
@@ -325,6 +329,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         if ((attrNames == null) || attrNames.isEmpty()) {
             return getAttributes(token, type, name, amOrgName, amsdkDN);
         }
+        cacheStats.incrementGetRequestCount(getSize());
         
         // Get the entry DN
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
@@ -395,6 +400,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                 cb.putAttributes(principalDN, dsAttributes, newMissAttrNames,
                         false, !isStringValues);
             } else { // All attributes found in cache
+                cacheStats.updateGetHitCount(getSize());
                 if (getDebug().messageEnabled()) {
                     getDebug().message("IdCachedServicesImpl" 
                             + ".getAttributes(): " + amsdkDN
@@ -409,6 +415,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         String amOrgName, String amsdkDN)
         throws IdRepoException, SSOException {
         
+        cacheStats.incrementGetRequestCount(getSize());
         // Get the identity dn
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkDN);
         String dn = id.getUniversalId().toLowerCase();
@@ -421,6 +428,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         IdCacheBlock cb = (IdCacheBlock) idRepoCache.get(dn);
         AMHashMap attributes;
         if ((cb != null) && cb.hasCompleteSet(principalDN)) {
+            cacheStats.updateGetHitCount(getSize());
             if (getDebug().messageEnabled()) {
                 getDebug().message("IdCachedServicesImpl." 
                     + "getAttributes(): DN: " + dn 
@@ -516,6 +524,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
         IdSearchControl ctrl, String orgName)
         throws IdRepoException, SSOException {
         IdSearchResults answer = new IdSearchResults(type, orgName);
+        cacheStats.incrementSearchRequestCount(getSize());
         // in legacy mode we must do search in order
         // to get the AMSDKDN component added to AMIdentity's uvid.
         // otherwise unix and anonymous login will fail.
@@ -536,6 +545,7 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                 // Search is for a specific user, look in the cache
                 Map attributes;
                 try {
+                    cacheStats.updateSearchHitCount(getSize());
                     if (ctrl.isGetAllReturnAttributesEnabled()) {
                         attributes = getAttributes(token, type, pattern,
                             orgName, null);
