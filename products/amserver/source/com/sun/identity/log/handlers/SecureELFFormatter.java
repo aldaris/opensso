@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureELFFormatter.java,v 1.4 2008-06-25 05:43:37 qcheng Exp $
+ * $Id: SecureELFFormatter.java,v 1.5 2008-07-16 00:26:39 bigfatrat Exp $
  *
  */
 
@@ -59,6 +59,7 @@ public class SecureELFFormatter extends Formatter {
     private String [] allFields;
     private IGenerator fieldGenerator = new MACGenerator();
     private ITimestampGenerator secureTimestampGenerator;
+    private final String NOTAVAIL = "Not Available";
     
     /**
      * returns a ELF Formatter
@@ -116,6 +117,9 @@ public class SecureELFFormatter extends Formatter {
             sbuffer.append("\"").append(strTime).append("\"\t");
             stringForMAC.append("\"").append(strTime).append("\"");
             String message = processString(formatMessage(logRecord));
+            if ((message == null) || (message.length() <= 0)) {
+                message = NOTAVAIL;
+            }
             if ((message.indexOf(' ') != -1) || (message.indexOf('\t') != -1)) {
                 sbuffer.append("\"").append(message).append("\"\t");
                 stringForMAC.append("\"").append(message).append("\"");
@@ -136,7 +140,7 @@ public class SecureELFFormatter extends Formatter {
                     if ((value != null) && (value.length() != 0)) {
                         value = processString(value);
                     } else {
-                        value = "Not Available";
+                        value = NOTAVAIL;
                     }
                     // the following check is to check if the string has
                     // a white space ... if it does then it should be

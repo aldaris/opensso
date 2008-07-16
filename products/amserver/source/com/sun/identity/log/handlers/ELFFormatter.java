@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELFFormatter.java,v 1.4 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: ELFFormatter.java,v 1.5 2008-07-16 00:26:39 bigfatrat Exp $
  *
  */
 
@@ -56,6 +56,8 @@ public class ELFFormatter extends Formatter {
         LogManagerUtil.getLogManager();
     private String [] allFields;
     private ITimestampGenerator secureTimestampGenerator;
+
+    private final String NOTAVAIL = "Not Available";
     
     //    private IGenerator fieldGenerator = new MACGenerator();
     
@@ -115,6 +117,9 @@ public class ELFFormatter extends Formatter {
             }
             sbuffer.append("\"").append(strTime).append("\"\t");
             String message = processString(formatMessage(logRecord));
+            if ((message == null) || (message.length() <= 0)) {
+                message = NOTAVAIL;
+            }
             if ((message.indexOf(' ') != -1) || (message.indexOf('\t') != -1)) {
                 sbuffer.append("\"").append(message).append("\"\t");
             } else {
@@ -134,7 +139,7 @@ public class ELFFormatter extends Formatter {
                     if ((value != null) && (value.length() != 0)) {
                         value = processString(value);
                     } else {
-                        value = "Not Available";
+                        value = NOTAVAIL;
                     }
                     if ((value.indexOf(' ') != -1) || 
                         (value.indexOf('\t') != -1)) {

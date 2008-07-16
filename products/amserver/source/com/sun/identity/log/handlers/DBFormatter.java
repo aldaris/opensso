@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.5 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: DBFormatter.java,v 1.6 2008-07-16 00:26:39 bigfatrat Exp $
  *
  */
 
@@ -185,6 +185,9 @@ public class DBFormatter extends Formatter {
          * to the db
          */
         String tstr = formatMessage(logRecord);
+	if ((tstr == null) || (tstr.length() <= 0)) {
+            tstr = NOTAVAIL;
+	}
         if ((tstr.length() > 0 ) && (tstr.indexOf("'") != -1)) {
             StringTokenizer tmps = new StringTokenizer(tstr, "'");
             StringBuffer thisfield = new StringBuffer();
