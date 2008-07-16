@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.47 2008-07-02 17:21:22 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.48 2008-07-16 19:22:00 kenwho Exp $
  *
  */
 
@@ -73,6 +73,7 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.services.util.Base64;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
@@ -141,6 +142,8 @@ public class LDAPv3Repo extends IdRepo {
     private static Debug debug;
 
     private LDAPConnectionPool connPool;
+
+    private boolean sslMode = false;
 
     private String ldapConnError = "91";
 
@@ -477,6 +480,10 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String statusInactive = "Inactive";
 
+    private static final String unicodePwd = "unicodePwd";
+
+    private static final String userPassword = "userPassword";
+
     private static final String sunIdentityServerDeviceStatus =
         "sunIdentityServerDeviceStatus";
 
@@ -654,8 +661,10 @@ public class LDAPv3Repo extends IdRepo {
         try {
             if (ssl != null && ssl.equalsIgnoreCase("true")) {
                 ldc = new LDAPConnection(new JSSESocketFactory(null));
+                sslMode = true;
             } else {
                 ldc = new LDAPConnection();
+                sslMode = false;
             }
         } catch (Exception e) {
             if (debug.messageEnabled()) {
@@ -1742,6 +1751,51 @@ public class LDAPv3Repo extends IdRepo {
            
     }
 
+    private String encodeADPwd(String passwd) {
+        // encode the AD password. 
+        // the password must be enclosed in double quotes 
+        // if password is secret it needs to be put into
+        // double quote:  ie "secret", the encode result
+        // for secret should be IgBzAGUAYwByAGUAdAAiAA==
+        char quote[] = {'"'};
+        String doublequote;
+        String  encodedBytesStr = null;
+        try {
+            doublequote = new String(quote);
+            String test = doublequote + passwd  + doublequote;
+            byte[] testBytes = test.getBytes("UTF-16LE");
+            encodedBytesStr = Base64.encode(testBytes);
+            debug.error("PASSWORD secret= " + encodedBytesStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encodedBytesStr;
+    }
+
+    private Map doPasswordEncode(IdType type,
+        String name, Map attrMap, String attrName) {
+        // replace the default user status attribute name and value
+        // with what's configured on datastore config page.
+        // add the attribute if it does not exist.
+        if (type.equals(IdType.USER) && 
+            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
+            if (attrMap.containsKey(attrName)) {
+                Set newAttrValue = new HashSet();
+                Set previousVal = (Set) attrMap.get(attrName);
+                String previousPass = (previousVal.iterator().hasNext()) ?
+                    (String) previousVal.iterator().next() : null;
+                attrMap.remove(attrName);
+                if (previousPass != null) {
+                    String encodedPass = encodeADPwd(previousPass);
+                    newAttrValue.add(encodedPass);
+                }
+                attrMap.put(attrName, newAttrValue);
+            }
+        }
+        return attrMap;
+    }
+
+
     /*
      * (non-Javadoc)
      * 
@@ -1754,7 +1808,7 @@ public class LDAPv3Repo extends IdRepo {
             debug.message("LDAPv3Repo: Create called on " + type + ": " + name);
             prtAttrMap(attrMap);
         }
-
+ 
         checkConnPool();
         String eDN = getDN(type, name);
         LDAPConnection ld = null;
@@ -1782,6 +1836,8 @@ public class LDAPv3Repo extends IdRepo {
 
             origAttrMap = attrMap;
             attrMap = new CaseInsensitiveHashMap(attrMap);
+            attrMap = doPasswordEncode(type, name, attrMap, unicodePwd);
+            attrMap = doPasswordEncode(type, name, attrMap, userPassword);
             attrMap = doUserStatusMapping(type, name, attrMap);
             attrMap = addAttrMapping(type, name, attrMap);
             attrMap = getAllowedAttrs(type, attrMap);
@@ -3486,8 +3542,10 @@ public class LDAPv3Repo extends IdRepo {
             predefinedAttr = filteredroleAtttributesAllowed;
         }
 
-        CaseInsensitiveHashMap attributesCase =
+        Map attributesCase =
             new CaseInsensitiveHashMap(attributes);
+        attributesCase = doPasswordEncode(type, name, attributesCase, unicodePwd);
+        attributesCase = doPasswordEncode(type, name, attributesCase, userPassword);
         appendInetUser(token, type, name, attributesCase, isString);
 
         LDAPModificationSet ldapModSet = new LDAPModificationSet();
