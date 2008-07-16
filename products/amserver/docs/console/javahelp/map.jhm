@@ -116,7 +116,7 @@
 	<mapID target="trustedpartners" url="trustedpartners.html"/>
 	<mapID target="federation.fssamlselecttrustedpartnertype" url="federation.fssamlselecttrustedpartnertype.html"/>
 	<mapID target="federation.fssamltrustedpartnersadd" url="federation.fssamltrustedpartnersadd.html"/>
-    <mapID target="federation.fasamltrustedpartnersedit" url="federation.fssamltrustedpartnersadd.html">
+    <mapID target="federation.fasamltrustedpartnersedit" url="federation.fssamltrustedpartnersadd.html"/>
 	<mapID target="federation.fsssamltargeturlsadd" url="federation.fsssamltargeturlsadd.html"/>
 	<mapID target="federation.fssamltargeturlsadd" url="federation.fssamltargeturlsadd.html"/>
 	<mapID target="assertiontimeout" url="assertiontimeout.html"/>
