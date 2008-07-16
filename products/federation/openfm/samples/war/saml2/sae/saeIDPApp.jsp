@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.4 2008-06-25 05:49:27 qcheng Exp $
+   $Id: saeIDPApp.jsp,v 1.5 2008-07-16 22:46:50 rajeevangal Exp $
 
 --%>
 
@@ -56,19 +56,19 @@ public void jspInit()
     // Crypto type to be used with local FAM-IDP
     String cryptotype     = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
     // Shared secret with local FAM-IDP
-    String secret     = "secret";
+    String secret     = "secret12";
     // Keystore path (for asym signing)
-    String keystore = "/export/home/rajeev/mykeystore";
+    String keystore = "";
     // Keystore Password (for asym signing)
-    String keypass = "22222222";
+    String keypass = "";
     // Private key Password (for asym signing)
-    String privkeypass = "11111111";
+    String privkeypass = "";
     // identity of this application : this string should match a already 
     // registered application in one of the hosted IDP extended metadata.
     String idpAppName = request.getRequestURL().toString();
 
     // FAM-IDP hosted SAE url that will act like the gateway.
-    String  saeServiceURL="http://www.idp.com:8080/idp/idpsaehandler/metaAlias/idp";
+    String  saeServiceURL="http://sa.idp.com:8080/sa/idpsaehandler/metaAlias/idp";
 
     // String representing authenticated user.
     String userid = "testuser";
@@ -78,7 +78,11 @@ public void jspInit()
     String branch = "mainbranch" ;
 
     // SP-App to be invoked with profile attributes above.
-    String spapp  = "http://www.sp.com:8080/spp/samples/saml2/sae/saeSPApp.jsp";
+    String spapp  = "http://www.spp.com:8080/sp/samples/saml2/sae/saeSPApp.jsp";
+    // Whether cached SecureAttrs class instance should be used
+    String usecached = "on";
+
+    // Private key Password (for asym signing)
     if (request.getMethod().equals("GET"))
     {
 %>
@@ -102,6 +106,7 @@ iii) "auto-federation" and corresponding attributes setup (branch and mail) on b
 iv) SP-App is already deployed and ready to accept requests.
 <br>
 <br>
+<hr>
 <b>Please Fill up the following form :</b> (Note that it is assumed userid you are about to enter is already authenticated.)
 <br><br>
     <form method="POST">
@@ -135,13 +140,23 @@ iv) SP-App is already deployed and ready to accept requests.
           <td><input  type="text" name="idpappname" size=80 value="<%=idpAppName%>"></td>
         </tr>
         <tr>
-          <td>Crypto Type (symmetric | asymmetric : </td>
-          <td><input  type="text" name="cryptotype" value="<%=cryptotype%>"></td>
+          <td>Crypto Type : </td>
+          <td>
+           <select  name="cryptotype" >
+              <option <%= cryptotype.equals("symmetric") ? "SELECTED" : ""%> value="symmetric">symmetric</option>
+              <option <%= cryptotype.equals("asymmetric") ? "SELECTED" : ""%> value="asymmetric">asymmetric</option>
+           </select>
+          </td>
         </tr>
         <tr>
           <td>Shared Secret / Private Key alias : </td>
           <td><input  type="text" name="secret" value="<%=secret%>"></td>
         </tr>
+        <tr>
+          <td>Use Cached SecureAttrs instance: </td>
+          <td><input  type="checkbox" name="usecached" checked="true"></td>
+        </tr>
+        <tr> <td colspan=2><hr></td> </tr>
         <tr>
           <td>Key store path (asymmetric only) : </td>
           <td><input  type="text" name="keystore" value="<%=keystore%>"></td>
@@ -154,6 +169,7 @@ iv) SP-App is already deployed and ready to accept requests.
           <td>Private Key password (asymmetric only) : </td>
           <td><input  type="text" name="privkeypass" value="<%=privkeypass%>"></td>
         </tr>
+        <tr> <td colspan=2><hr></td> </tr>
         <tr>
           <td><input  type="submit" value="Generate URL"></td>
           <td></td>
@@ -174,19 +190,28 @@ iv) SP-App is already deployed and ready to accept requests.
         secret = request.getParameter("secret");    
         keystore = request.getParameter("keystore");    
         keypass = request.getParameter("keypass");    
+        usecached = request.getParameter("usecached");    
         privkeypass = request.getParameter("privkeypass");    
 
-        if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
+        // Check if we already have a cached SecureAttrs instance.
+        String mySecAttrInstanceName = "sample"+cryptotype;
+        SecureAttrs sa = SecureAttrs.getInstance(mySecAttrInstanceName);
+     
+        if (sa == null || usecached == null) {
+          out.println("Obtaining new SecureAttrs instance");
           Properties saeparams = new Properties();
-          saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
-          saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, secret);
-          saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, keystore);
-          saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, keypass);
-          saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, privkeypass);
-          SecureAttrs.init(saeparams);
-        }
+          if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
+            saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
+            saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, secret);
+            saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, keystore);
+            saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, keypass);
+            saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, privkeypass);
+          }
+          SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
+          sa = SecureAttrs.getInstance(mySecAttrInstanceName);
+        } else
+          out.println("Using cached SecureAttrs instance");
 
-        SecureAttrs sa = SecureAttrs.getInstance(cryptotype);
         map.put("branch",branch); 
         map.put("mail",mail); 
         // Following code secures attributes

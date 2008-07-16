@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_SP.jsp,v 1.6 2008-06-25 05:48:35 qcheng Exp $
+   $Id: SA_SP.jsp,v 1.7 2008-07-16 22:46:50 rajeevangal Exp $
 
 --%>
 
@@ -218,11 +218,14 @@ com.sun.identity.sae.api.Utils"
         return;
     }
 
-    // Make sure we are in FM mode.
-    SecureAttrs.setServerFlag(true);
-    SecureAttrs.init(new Properties());
-    
     SecureAttrs sa = SecureAttrs.getInstance(cryptoType);
+    if (sa == null) {
+        Properties prop = new Properties();
+        prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS, 
+            "com.sun.identity.sae.api.FMCerts");
+        SecureAttrs.init(cryptoType, cryptoType, prop);
+        sa = SecureAttrs.getInstance(cryptoType);
+    }
     String encodedString = sa.getEncodedString(map, secret);
     if (encodedString == null) {
        String errStr = errorUrl
@@ -256,11 +259,10 @@ com.sun.identity.sae.api.Utils"
         response.sendRedirect(errStr);
         return;
     }
-/*
+String ssoUrl = spApp+"?"+SecureAttrs.SAE_PARAM_DATA+"="+ encodedString;
 %>
-    <br> DEBUG : We are in SAE handler deployed on FM in IDP role.
+    <br> DEBUG : We are in SAE handler deployed on FM in SP role.
     <br> Click <a href=<%=ssoUrl%>>here </a> to continue SSO with SP.
-    <br> Edit saml2/jsp/SA_IDP.jsp and uncomment the "send.Redirect(..)" line to execute a redirect automatically so that the user doesnt see this debug page.
+    <br> Edit saml2/jsp/SA_SP.jsp and uncomment the "send.Redirect(..)" line to execute a redirect automatically so that the user doesnt see this debug page.
 <%
-*/
 %>

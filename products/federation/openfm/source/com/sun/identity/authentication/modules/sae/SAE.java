@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAE.java,v 1.3 2008-06-25 05:49:31 qcheng Exp $
+ * $Id: SAE.java,v 1.4 2008-07-16 22:46:50 rajeevangal Exp $
  *
  */
 
 package com.sun.identity.authentication.modules.sae;
 
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Map;
@@ -132,8 +133,20 @@ public class SAE extends AMLoginModule {
 
         Map attrs = null;
         try {
-            attrs = SecureAttrs.getInstance(cryptoType).
-                   verifyEncodedString(encodedString, saekey);
+            SecureAttrs sa = SecureAttrs.getInstance(cryptoType);
+            if (sa == null) {
+                // Initialize SecureAttrs here.
+                Properties prop = new Properties();
+                prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS,
+                    "com.sun.identity.sae.api.FMCerts");
+                SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_SYM,
+                         SecureAttrs.SAE_CRYPTO_TYPE_SYM, prop);
+                SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_ASYM,
+                         SecureAttrs.SAE_CRYPTO_TYPE_ASYM, prop);
+                sa = SecureAttrs.getInstance(cryptoType);
+            }
+
+            attrs = sa.verifyEncodedString(encodedString, saekey);
 
             if (debug.messageEnabled()) 
                 debug.message("SAE AuthModule.: SAE attrs:"+attrs); 

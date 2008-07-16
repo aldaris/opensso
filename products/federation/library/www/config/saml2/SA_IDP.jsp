@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.5 2008-06-25 05:48:35 qcheng Exp $
+   $Id: SA_IDP.jsp,v 1.6 2008-07-16 22:46:49 rajeevangal Exp $
 
 --%>
 
@@ -122,13 +122,20 @@ com.sun.identity.shared.debug.Debug"
         return;
     }
 
-    // Make sure we are in FM mode.
-    SecureAttrs.setServerFlag(true);
-    SecureAttrs.init(new Properties());
-
     // Initially we need an instance for decoding, not verifying. So
     // Crypto type doesnt matter.
     SecureAttrs sa = SecureAttrs.getInstance(SecureAttrs.SAE_CRYPTO_TYPE_SYM);
+    if (sa == null) {
+        // Initialize SecureAttrs here.
+        Properties prop = new Properties();
+        prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS, 
+            "com.sun.identity.sae.api.FMCerts");
+        SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_SYM, 
+                         SecureAttrs.SAE_CRYPTO_TYPE_SYM, prop);
+        SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_ASYM, 
+                         SecureAttrs.SAE_CRYPTO_TYPE_ASYM, prop);
+        sa = SecureAttrs.getInstance(SecureAttrs.SAE_CRYPTO_TYPE_SYM);
+    }
 
     // Check if a user is already authenticated
     boolean loggedIn = false;

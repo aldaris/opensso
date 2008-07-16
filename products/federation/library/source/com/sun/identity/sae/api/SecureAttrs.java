@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.6 2008-06-25 05:47:29 qcheng Exp $
+ * $Id: SecureAttrs.java,v 1.7 2008-07-16 22:46:49 rajeevangal Exp $
  *
  */
 
@@ -191,6 +191,12 @@ public class SecureAttrs
     public static final String SAE_CRYPTO_TYPE_SYM = "symmetric";
 
     /**
+     * SAE Config : classame implementing <code>Cert</code>.
+     * If not specified, a JKS keystore default impl is used.
+     */
+    public static final String SAE_CONFIG_CERT_CLASS = "certclassimpl";
+
+    /**
      * SAE Config : Location of the keystore to access keys from for
      *   asymmetric crypto.
      * @supported.api
@@ -259,63 +265,54 @@ public class SecureAttrs
      */
     public static boolean dbg = false;
 
-    private static Certs certs = null;
+    private Certs certs = null;
 
-    private static boolean isServer = false;
     private static HashMap instances = new HashMap();
-    private static boolean initdone = false;
-    private static int tsDuration = 120000; // 2 minutes
+    private int tsDuration = 120000; // 2 minutes
     private boolean asymsigning = false;
 
     /**
-     * Returns the appropriate instance to perform crypto operations.
-     *  @param type one of <code>SAE_CRYPTO_TYPE</code> values.
+     * Returns an instance to perform crypto operations.
+     *  @param name 
      *  @return <code>SecureAttrs</code> instance.
      * @supported.api
      */
-    public static synchronized SecureAttrs getInstance(String type)
+    public static synchronized SecureAttrs getInstance(String name)
     {
-        if(instances.get(type) == null)
-            instances.put(type, new SecureAttrs(type));
-        return (SecureAttrs)instances.get(type);
+        return (SecureAttrs)instances.get(name);
     }
     /**
-     * Initializes SecureAttrs.
+     * Initializes a SecureAttrs instance specified by <code>name</code>.
+     * If the instance already exists, it replaces it with the new instance.
+     * Use <code>SecureAttrs.getIstance(name)</code> to obtain the instance.
      * @param properties : please see SAE_CONFIG_* constants for configurable 
      *                     values.
      * @throws Exception rethrows underlying exception.
      * @supported.api
      */
-    synchronized public static void init(Properties properties) throws Exception
+    synchronized public static void init(String name,  String type, Properties properties) throws Exception
     {
-        if (initdone) {
-            return;
-        }
-        String dur = properties.getProperty(SAE_CONFIG_SIG_VALIDITY_DURATION);
-        if (dur != null) 
-            tsDuration = Integer.parseInt(dur);
-
-        if (isServer)
-            certs = (Certs) Class.forName(
-                            "com.sun.identity.sae.api.FMCerts").newInstance();
-        else
-            certs = new DefaultCerts();
-
-        certs.init(properties);
-
-        initdone = true;
+        SecureAttrs sa = new SecureAttrs(type, properties);
+        instances.put(name, sa);
     }
 
     /**
-     * Returns true if SecureAttrs has already been initialzed via a call
-     * to <code>init</code>.
-     * @return true or false
+     * Creates two instances of <code>SecureAttrs</code> named
+     * "symmetric" and "asymmetric" representing the two suppported
+     * crytp types.
+     * @param properties : please see SAE_CONFIG_* constants for configurable 
+     *                     values.
+     * @throws Exception rethrows underlying exception.
      * @supported.api
+     * @deprecate. For backward compatability with older releases of this api.
+     *     Replaced by {@link #init(String,String,Properties)}
      */
-    public static boolean isInitialized()
+    synchronized public static void init(Properties properties) throws Exception
     {
-        return initdone;
+        init(SAE_CRYPTO_TYPE_ASYM, SAE_CRYPTO_TYPE_ASYM, properties);
+        init(SAE_CRYPTO_TYPE_SYM, SAE_CRYPTO_TYPE_SYM, properties);
     }
+
     /**
      * Returns a Base64 encoded string comprising a signed set of attributes.
      *
@@ -361,6 +358,8 @@ public class SecureAttrs
         }
 
         Map map = getRawAttributesFromEncodedData(str);
+        if (dbg) 
+            System.out.println("SAE:verifyEncodedString() : "+map);
         String signatureValue = (String) map.remove("Signature");
         if(!verifyAttrs(map, signatureValue, secret)) {
             return null; 
@@ -414,7 +413,7 @@ public class SecureAttrs
      * @param privatekey
      * @supported.api
      */
-    public static void setPrivateKey(PrivateKey privatekey)
+    public void setPrivateKey(PrivateKey privatekey)
     {
         certs.setPrivatekey(privatekey);
     }
@@ -427,24 +426,13 @@ public class SecureAttrs
      * @param x509certificate instance.
      * @supported.api
      */
-    public static void addPublicKey(
+    public void addPublicKey(
                        String pubkeyalias, X509Certificate x509certificate)
     {
         certs.addPublicKey(pubkeyalias, x509certificate);
     }
 
-    /**
-     * Sets server flag.
-     * @param flag  Server flag. True if this is running on server, false
-     *  otherwise.
-     * @supported.api
-     */
-    public static void setServerFlag(boolean flag)
-    {
-        isServer = flag;
-    }
-
-    private static X509Certificate getPublicKey(String alias)
+    private X509Certificate getPublicKey(String alias)
     {
         return certs.getPublicKey(alias);
     }
@@ -532,10 +520,23 @@ public class SecureAttrs
     }
 
 
-    private SecureAttrs(String type)
+    private SecureAttrs(String type, Properties properties) throws Exception
     {
         if (SAE_CRYPTO_TYPE_ASYM.equals(type))
             asymsigning = true;
+        String dur = properties.getProperty(SAE_CONFIG_SIG_VALIDITY_DURATION);
+        if (dur != null) 
+            tsDuration = Integer.parseInt(dur);
+
+        String clzName = properties.getProperty(SAE_CONFIG_CERT_CLASS);
+        if (clzName != null)
+            certs = (Certs) Class.forName(clzName).newInstance();
+            //"com.sun.identity.sae.api.FMCerts").newInstance();
+        else
+            certs = new DefaultCerts();
+
+        certs.init(properties);
+
     }
 
     private StringBuffer normalize(Map attrs)
@@ -655,7 +656,7 @@ public class SecureAttrs
         }
     }
 
-    private static boolean verifyAsym(String s, String s1, X509Certificate x509certificate)
+    private boolean verifyAsym(String s, String s1, X509Certificate x509certificate)
     {
         if(s == null || s.length() == 0 || x509certificate == null || s1 == null)
         {
@@ -664,7 +665,8 @@ public class SecureAttrs
             return false;
         }
         byte abyte0[] = Base64.decode(s1);
-        System.out.println("SAE:verifyAsym:signature="+abyte0+" origstr="+s1);
+        if (dbg)
+          System.out.println("SAE:verifyAsym:signature="+abyte0+" origstr="+s1);
         Object obj = null;
         Object obj1 = null;
         String s2 = x509certificate.getPublicKey().getAlgorithm();
@@ -736,16 +738,20 @@ public class SecureAttrs
     {
         try
         {
+            SecureAttrs.dbg = true;
             Properties properties = new Properties();
             properties.setProperty("keystorefile", "mykeystore");
             properties.setProperty("keystoretype", "JKS");
             properties.setProperty("keystorepass", "22222222");
-            properties.setProperty("privatekeyalias", "testcert");
-            properties.setProperty("publickeyalias", "testcert");
+            properties.setProperty("privatekeyalias", "test");
+            properties.setProperty("publickeyalias", "test");
             properties.setProperty("privatekeypass", "11111111");
-            init(properties);
+            SecureAttrs.init("testsym", SecureAttrs.SAE_CRYPTO_TYPE_SYM, 
+                             properties);
+            SecureAttrs.init("testasym", SecureAttrs.SAE_CRYPTO_TYPE_ASYM, 
+                             properties);
             System.out.println("TEST 1 START test encoded str ===========");
-            SecureAttrs secureattrs = getInstance("symmetric");
+            SecureAttrs secureattrs = SecureAttrs.getInstance("testsym");
             String s = "YnJhbmNoPTAwNXxtYWlsPXVzZXI1QG1haWwuY29tfHN1bi51c2VyaWQ9dXNlcjV8U2lnbmF0dXJlPVRTMTE3NDI3ODY1OTM2NlRTbzI2MkhoL3R1dDRJc0U1V3ZqWjVSLzZkM0FzPQ==";
             Map map = secureattrs.verifyEncodedString(s, "secret");
             if(map == null)
@@ -760,7 +766,7 @@ public class SecureAttrs
             hashmap.put("sun.userid", "uu");
             hashmap.put("sun.spappurl", "apapp");
             System.out.println("  TEST 2a START : SYM KEY ===");
-            secureattrs = getInstance("symmetric");
+            secureattrs = SecureAttrs.getInstance("testsym");
             String s1 = "secret";
             String s2 = secureattrs.getEncodedString(hashmap, s1);
             System.out.println("Encoded string: "+s2);
@@ -770,8 +776,8 @@ public class SecureAttrs
             else
                 System.out.println("  2a FAILED "+map1);
             System.out.println("  TEST 2b START : ASYM KEY ===");
-            secureattrs = getInstance("asymmetric");
-            s1 = "testcert";
+            secureattrs = getInstance("testasym");
+            s1 = "test";
             String s3 = secureattrs.getEncodedString(hashmap, s1);
             System.out.println("Encoded string: "+s3);
             map1 = secureattrs.verifyEncodedString(s3, s1);
@@ -782,14 +788,14 @@ public class SecureAttrs
             System.out.println("TEST 2 END  ====================");
             System.out.println("TEST 3 START : decode with incorrect secret");
             System.out.println("  TEST 3a START : SYM KEY ===");
-            secureattrs = getInstance("symmetric");
+            secureattrs = getInstance("testsym");
             map1 = secureattrs.verifyEncodedString(s2, "junk");
             if(map1 != null)
                 System.out.println("  3a FAILED "+map1);
             else
                 System.out.println("  3a PASSED "+map1);
             System.out.println("  TEST 3b START : ASYM KEY ===");
-            secureattrs = getInstance("asymmetric");
+            secureattrs = getInstance("testasym");
             map1 = secureattrs.verifyEncodedString(s3, "junk");
             if(map1 != null)
                 System.out.println("  3b FAILED "+map1);
@@ -798,7 +804,7 @@ public class SecureAttrs
             System.out.println("TEST 3 END  ====================");
             System.out.println("TEST 4 START : decode with correct secret");
             System.out.println("  TEST 4a START : SYM KEY ===");
-            secureattrs = getInstance("symmetric");
+            secureattrs = getInstance("testsym");
             s1 = "secret";
             map1 = secureattrs.verifyEncodedString(s2, s1);
             if(map1 != null)
@@ -806,8 +812,8 @@ public class SecureAttrs
             else
                 System.out.println("  4a FAILED "+map1);
             System.out.println("  TEST 4b START : ASYM KEY ===");
-            secureattrs = getInstance("asymmetric");
-            s1 = "testcert";
+            secureattrs = getInstance("testasym");
+            s1 = "test";
             map1 = secureattrs.verifyEncodedString(s3, s1);
             if(map1 != null)
                 System.out.println("  4a PASSED "+map1);

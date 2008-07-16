@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.2 2008-06-25 05:49:27 qcheng Exp $
+   $Id: saeSPApp.jsp,v 1.3 2008-07-16 22:46:50 rajeevangal Exp $
 
 --%>
 
@@ -55,22 +55,28 @@ public void jspInit()
 <br>
 <% 
     try {
-        // Shared secret between this SP-App and local FM-SP
-        String secret = "secret";
         String cryptotype = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
-        if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
-          Properties saeparams = new Properties();
-          saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
-          saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, "testcert");
-          saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, "/export/home/rajeev/mykeystore");;
-          saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "22222222");
-          saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "11111111");
-          SecureAttrs.init(saeparams);
-          secret = "testcert";
+        // Symmetric : Shared secret between this SP-App and local FM-SP
+        // Asymmetric : pub key alias of FM-SP 
+        String secret = "secret12";
+
+        // Use a cached instance if available
+        String mySecAttrInstanceName = "sample_"+cryptotype;
+        SecureAttrs sa = SecureAttrs.getInstance(mySecAttrInstanceName);
+        if (sa == null) {
+            Properties saeparams = new Properties();
+            if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
+              saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
+              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, "testcert");
+              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, "/export/home/test/mykeystore");;
+              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "22222222");
+              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "11111111");
+            }
+            SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
+            sa = SecureAttrs.getInstance(mySecAttrInstanceName);
         }
 
         String sunData = request.getParameter(SecureAttrs.SAE_PARAM_DATA);
-        SecureAttrs sa = SecureAttrs.getInstance(cryptotype);
         Map secureAttrs = sa.verifyEncodedString(sunData, secret);
         if (secureAttrs == null) {
 %>
