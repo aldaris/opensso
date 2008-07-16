@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.52 2008-07-15 20:12:37 subbae Exp $
+   $Id: AgentService.xml,v 1.53 2008-07-16 21:23:49 huacui Exp $
 
 -->
 
@@ -1373,7 +1373,7 @@
                         type="list"
                         syntax="string"
                         uitype="maplist"
-                        validator="GlobalMapValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a143">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1384,7 +1384,7 @@
                         type="list"
                         syntax="string"
                         uitype="maplist"
-                        validator="GlobalMapValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a144">
                         <DefaultValues>
                             <Value>[]=</Value>
@@ -1395,7 +1395,7 @@
                         type="list"
                         syntax="string"
                         uitype="maplist"
-                        validator="GlobalMapValueValidator"
+                        validator="MapValueValidator"
                         i18nKey="a145">
                         <DefaultValues>
                             <Value>[]=</Value>
