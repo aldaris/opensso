@@ -22,15 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManagerUtil.java,v 1.4 2008-06-25 05:43:35 qcheng Exp $
+ * $Id: LogManagerUtil.java,v 1.5 2008-07-16 00:30:44 bigfatrat Exp $
  *
  */
 
 package com.sun.identity.log;
 
+import java.io.IOException;
+import java.security.AccessController;
+import java.util.Enumeration;
 import java.util.logging.LogManager;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.common.ShutdownPriority;
+import com.sun.identity.log.messageid.LogMessageProviderBase;
+import com.sun.identity.log.messageid.MessageProviderFactory;
+import com.sun.identity.security.AdminTokenAction;
 
 /**
  * This class is a work around for situations where our
@@ -49,6 +60,17 @@ public class LogManagerUtil {
            SystemProperties.isServerMode()) {
            lmgr = new com.sun.identity.log.LogManager();
        }
+       /*
+        * get admin token for log service's use to write
+        * the start and stop records
+        */
+       ShutdownManager.getInstance().addShutdownListener(new
+           ShutdownListener() {
+            
+           public void shutdown() {
+               logEndRecords();
+           }
+       }, ShutdownPriority.HIGHEST);
     }
 
     /**
@@ -110,6 +132,49 @@ public class LogManagerUtil {
             if (oldcfile != null) {
                 System.setProperty("java.util.logging.config.file",oldcfile);
             }
+        }
+    }
+
+    /**
+     *  get a privileged SSOToken from the TokenManager
+     */
+    protected static SSOToken getLoggingSSOToken() {
+        SSOToken st = null;
+        try {
+            st = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        } catch (Exception ex) {
+            // can't do much about this
+        }
+        return st;
+    }
+
+    /**
+     *  Log a LogRecord indicating the end of logging to all opened files
+     */
+    public static void logEndRecords() {
+        if (lmgr != null) {
+            try {
+                SSOToken ssot = getLoggingSSOToken();
+                LogMessageProviderBase provider =
+                    (LogMessageProviderBase)MessageProviderFactory.getProvider(
+                        "Logging");
+                String[] s = new String[1];
+                Enumeration e = lmgr.getLoggerNames();
+                com.sun.identity.log.LogRecord lr = null;
+                while (e.hasMoreElements()) {
+                    String logger = (String)e.nextElement();
+                    if (logger.length() != 0 && !logger.equals("global")) {
+                        Logger result = (Logger)Logger.getLogger(logger);
+                        s[0] = logger;
+                        lr = provider.createLogRecord(
+                            LogConstants.END_LOG_NAME, s, ssot);
+                        result.log(lr, ssot);
+                    }
+                }
+            } catch (IOException ioex) {
+                // can't do much here
+            } 
         }
     }
 }

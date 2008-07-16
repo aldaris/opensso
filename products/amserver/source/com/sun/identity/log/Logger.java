@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.6 2008-06-27 20:56:22 arviranga Exp $
+ * $Id: Logger.java,v 1.7 2008-07-16 00:30:44 bigfatrat Exp $
  *
  */
 
 package com.sun.identity.log;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.MissingResourceException;
@@ -43,6 +44,8 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.ReaderWriterLock;
+import com.sun.identity.log.messageid.LogMessageProviderBase;
+import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.spi.Authorizer;
 import com.sun.identity.log.spi.Debug;
 
@@ -399,6 +402,7 @@ public class Logger extends java.util.logging.Logger {
 
         result.logName = name;
         processNewLoggerObject(result);
+        logStartRecord(result);
         return result;
     }
     
@@ -450,9 +454,36 @@ public class Logger extends java.util.logging.Logger {
          */
         
         processNewLoggerObject(result);
+        logStartRecord(result);
         return result;
     }
     
+    /**
+     *  Log a LogRecord indicating the start of logging to this file
+     */
+    private static void logStartRecord (Logger logger) {
+        /*
+         *  SSOToken not required to instantiate a log file, so
+         *  need one to say who's doing the logging of the record,
+         *  and whose it "about".
+         */
+        try {
+            LogMessageProviderBase provider =
+                (LogMessageProviderBase)MessageProviderFactory.getProvider(
+                    "Logging");
+            SSOToken ssot = LogManagerUtil.getLoggingSSOToken();
+            String location = lm.getProperty(LogConstants.LOG_LOCATION);
+            String[] s = {location};
+            com.sun.identity.log.LogRecord lr =
+            provider.createLogRecord(LogConstants.START_LOG_NEW_LOGGER_NAME,
+                s, ssot);
+            logger.log(lr, ssot);
+        } catch (IOException ioex) {
+            Debug.error("Logger.logStartRecord:could not log to " + 
+                logger.getName() + ":" + ioex.getMessage());
+        }
+    }
+
     /**
      * Returns the current file to which the logger's handler is writing.
      * This is useful only in case of file..

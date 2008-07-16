@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.11 2008-06-25 05:43:35 qcheng Exp $
+ * $Id: LogConstants.java,v 1.12 2008-07-16 00:30:44 bigfatrat Exp $
  *
  */
 
@@ -535,4 +535,22 @@ public class LogConstants {
      */
     public static final String DEFAULT_LOGGING_LEVEL_STR = "INFO"; 
     public static final Level DEFAULT_LOGGING_LEVEL = Level.INFO;
+
+    /**
+     * logging start due to container starting
+     */
+    public static final String START_LOG_NEW_LOGGER_NAME =
+        "LOG_START_NEW_LOGGER";
+    /**
+     * logging ending due to container terminating
+     */
+    public static final String END_LOG_NAME = "LOG_END";
+    /**
+     * logging start due to logging configuration change
+     */
+    public static final String START_LOG_CONFIG_NAME = "LOG_START_CONFIG";
+    /**
+     * logging termination due to logging configuration change
+     */
+    public static final String END_LOG_CONFIG_NAME = "LOG_END_CONFIG";
 }

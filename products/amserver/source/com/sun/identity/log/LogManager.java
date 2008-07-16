@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.7 2008-06-25 05:43:35 qcheng Exp $
+ * $Id: LogManager.java,v 1.8 2008-07-16 00:30:44 bigfatrat Exp $
  *
  */
 
@@ -42,6 +42,10 @@ import java.util.HashSet;
 import java.util.logging.Formatter;
 
 import com.iplanet.am.util.SystemProperties;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.log.messageid.LogMessageProviderBase;
+import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.s1is.LogConfigReader;
 
@@ -75,6 +79,31 @@ public class LogManager extends java.util.logging.LogManager {
     public static boolean setMonitoringStatus;
 
     /**
+     * Indicator for whether the first readConfiguration has happened
+     */
+    private static boolean didFirstReadConfig;
+    private static String oldLocation = "DEFAULT";
+    private static String oldLevel = "DEFAULT";
+    private static String oldSecurityStatus = "DEFAULT";
+    private static String oldBackend = "DEFAULT";
+    private static String oldStatus = "DEFAULT";
+    private static String newLocation; 
+    private static String newLevel;
+    private static String newSecurityStatus;
+    private static String newBackend;
+    private static String newStatus;
+    private final int OLDLOCATION = 0;
+    private final int NEWLOCATION = 1;
+    private final int OLDBACKEND = 2;
+    private final int NEWBACKEND = 3;
+    private final int OLDSECURITYSTATUS = 4;
+    private final int NEWSECURITYSTATUS = 5;
+    private final int OLDSTATUS = 6;
+    private final int NEWSTATUS = 7;
+    private final int OLDLEVEL = 8;
+    private final int NEWLEVEL = 9;
+
+    /**
      * Adds a logger to the Log Manager.
      *
      * @param logger Logger object to be added to the Log Manager.
@@ -91,7 +120,7 @@ public class LogManager extends java.util.logging.LogManager {
         return super.addLogger(logger);
     }
 
-    /* security status updated by readConfigruation */
+    /* security status updated by readConfiguration */
     private boolean securityStatus = false;
 
     /* all fields read during read configuration */
@@ -172,6 +201,7 @@ public class LogManager extends java.util.logging.LogManager {
     public final void readConfiguration()
         throws IOException, SecurityException
     {
+        String[] xlogData = null;
         try {
             /*
              * This writeLock ensures that no logging threads will execute
@@ -188,8 +218,17 @@ public class LogManager extends java.util.logging.LogManager {
              */
             synchronized (Logger.class) {
                 Enumeration loggerNames = getLoggerNames();
-                String oldLocation = getProperty(LogConstants.LOG_LOCATION);
                 LogManagerUtil.setupEnv();
+
+                if (didFirstReadConfig && SystemProperties.isServerMode()) {
+                    oldLocation = getProperty(LogConstants.LOG_LOCATION);
+                    oldLevel = getProperty(LogConstants.LOGGING_LEVEL);
+                    oldSecurityStatus =
+                        getProperty(LogConstants.SECURITY_STATUS);
+                    oldBackend = getProperty(LogConstants.BACKEND);
+                    oldStatus = getProperty(LogConstants.LOG_STATUS_ATTR);
+                }
+
                 try {
                     /*
                      * This change is done for deploying AM as a single
@@ -206,6 +245,7 @@ public class LogManager extends java.util.logging.LogManager {
                     } else {
                         super.readConfiguration();
                     }
+                    didFirstReadConfig = true;
                 } catch(Exception ex) {
                     /* no debug since our debugging system is not up. */
                 } finally {
@@ -216,6 +256,31 @@ public class LogManager extends java.util.logging.LogManager {
                     securityStatus = false;
                     readAllFields();
                     readSelectedFieldSet();
+
+                    if (SystemProperties.isServerMode()) {
+                        newLocation = getProperty(LogConstants.LOG_LOCATION);
+                        newLevel = getProperty(LogConstants.LOGGING_LEVEL);
+                        newSecurityStatus =
+                            getProperty(LogConstants.SECURITY_STATUS);
+                        newBackend = getProperty(LogConstants.BACKEND);
+                        newStatus = getProperty(LogConstants.LOG_STATUS_ATTR);
+                    }
+
+                    /*
+                     * give all the pertinent values to decide why
+                     * logging to the file was terminated.  still
+                     * have to check that one of the attributes
+                     * that changed would cause a "real" termination
+                     * of logging to the files/tables in the current
+                     * location (as opposed to just a buffer timer change,
+                     * for instance).
+                     */
+
+                    String[] logData = {oldLocation, newLocation,
+                               oldBackend, newBackend,
+                               oldSecurityStatus, newSecurityStatus,
+                               oldStatus, newStatus,
+                               oldLevel, newLevel};
 
                     if (getProperty(LogConstants.BACKEND).equals("DB")) {
                         HANDLER = getProperty(LogConstants.DB_HANDLER);
@@ -232,15 +297,15 @@ public class LogManager extends java.util.logging.LogManager {
                         HANDLER = getProperty(LogConstants.FILE_HANDLER);
                         FORMATTER = getProperty(LogConstants.ELF_FORMATTER);
                     }
+
                     if (getProperty(LogConstants.BACKEND).equals("File")) {
                         /*
                          * create new log directory if it has changed and
                          * the new directory does not exist.
                          */
-                        String newLocation = getProperty(
-                            LogConstants.LOG_LOCATION);
 
-                        if ((newLocation != null) &&
+                        if (SystemProperties.isServerMode() &&
+                            (newLocation != null) &&
                             (oldLocation != null) &&
                             !oldLocation.equals(newLocation))
                         {
@@ -257,9 +322,20 @@ public class LogManager extends java.util.logging.LogManager {
                         }
                     }
 
-                    boolean loggingOff =
+                    boolean loggingInactive =
                         (getProperty(LogConstants.LOG_STATUS_ATTR).
                             equals("INACTIVE"));
+
+                    String strLogLevel =
+                        getProperty(LogConstants.LOGGING_LEVEL);
+                    try {
+                        loggingLevel = Level.parse(strLogLevel);
+                    } catch (IllegalArgumentException iaex) {
+                        loggingLevel = Level.INFO;  // default
+                        Debug.error("LogManager:readConfiguration:" +
+                            "Log level '" + strLogLevel +
+                            "' unknown; setting to Level.INFO.");
+                    }
 
                     /*
                      *  get the global logging level from the logging
@@ -267,20 +343,10 @@ public class LogManager extends java.util.logging.LogManager {
                      *  INACTIVE, the overriding level becomes OFF
                      */
 
-                    if (loggingOff) {
+                    if (loggingInactive) {
                         loggingLevel = Level.OFF;
-                    } else {
-                        String strLogLevel =
-                            getProperty(LogConstants.LOGGING_LEVEL);
-                        try {
-                            loggingLevel = Level.parse(strLogLevel);
-                        } catch (IllegalArgumentException iaex) {
-                            loggingLevel = Level.INFO;  // default
-                            Debug.error("LogManager:readConfiguration:" +
-                                "Log level '" + strLogLevel +
-                            "' unknown; setting to Level.INFO.");
-                        }
                     }
+                    xlogData = logData;
                 } else {
                     HANDLER = getProperty(LogConstants.REMOTE_HANDLER);
                     if (HANDLER == null) {
@@ -301,7 +367,7 @@ public class LogManager extends java.util.logging.LogManager {
                  * to the new configuration
                  */
                 loggerNames = getLoggerNames();
-                
+  
                 while (loggerNames.hasMoreElements()) {
                     String curEl = (String)loggerNames.nextElement();
                     /* avoid root logger */
@@ -319,6 +385,7 @@ public class LogManager extends java.util.logging.LogManager {
                          * this logger
                          */
                         Logger l = (Logger)Logger.getLogger(curEl);
+
                         String handlerClass = LogManager.HANDLER;
                         Class clz = null;
                         Class [] parameters = {String.class};
@@ -373,7 +440,6 @@ public class LogManager extends java.util.logging.LogManager {
                                 LogConstants.LOG_PROP_PREFIX + "." +
                                 l.getName() + ".level";
                             String lvlStr = SystemProperties.get (levelProp);
-                            tlevel = loggingLevel;
 
                             if ((lvlStr != null) && (lvlStr.length() > 0)) {
                                 try {
@@ -393,5 +459,131 @@ public class LogManager extends java.util.logging.LogManager {
         } finally {
             Logger.rwLock.writeDone();
         }
+        if (SystemProperties.isServerMode()) {
+            checkStartLogs(xlogData);
+        }
     } /* end of readConfiguration() */
+
+
+    /**
+     *  check the existing ("old") config and the new config for
+     *  specific attribute changes that would mean logging has
+     *  changed to a new location or has re-started.  these are:
+     *    1. logging location
+     *    2. new Status == ACTIVE && old Level == OFF &&
+     *       new Level != OFF
+     *    3. old Status == INACTIVE && new Status == ACTIVE &&
+     *       new Level != OFF
+     *    4. old Backend != new Backend (File <-> DB)
+     *    5. old Security Status != new Security Status
+     *
+     *  the String[] passed contains:
+     *    [0] = old Location
+     *    [1] = new Location
+     *    [2] = old Backend
+     *    [3] = new Backend
+     *    [4] = old Security Status
+     *    [5] = new Security Status
+     *    [6] = old Status
+     *    [7] = new Status
+     *    [8] = old Level
+     *    [9] = new Level
+     */
+    private void checkStartLogs(String[] vals) {
+        Enumeration loggerNames = getLoggerNames();
+        boolean loggingIsActive = false;
+        boolean levelIsOff = true;
+
+        if (vals == null) {
+            return;
+        }
+
+        if (vals[NEWSTATUS] != null) {
+            loggingIsActive = vals[NEWSTATUS].equals("ACTIVE");
+        }
+        if (vals[NEWLEVEL] != null) {
+            levelIsOff = vals[NEWLEVEL].equals("OFF");
+        }
+
+        /*
+         *  if current status == ACTIVE and Level != OFF,
+         *  and individual log's Level != OFF,
+         *  then write a start record to the log.
+         *
+         *  note that status == INACTIVE overrides any Level setting
+         *  for the logging service, or an individual log file.
+         *  
+         */
+        if (loggingIsActive) {
+            // see if there's a reason to write the log record
+            if (!vals[OLDBACKEND].equals(vals[NEWBACKEND]) ||
+                !vals[OLDLOCATION].equals(vals[NEWLOCATION]) ||
+                !vals[OLDSECURITYSTATUS].equals(vals[NEWSECURITYSTATUS]) ||
+                !vals[OLDSTATUS].equals(vals[NEWSTATUS]) ||
+                !vals[OLDLEVEL].equals(vals[NEWLEVEL]))
+            {
+                loggerNames = getLoggerNames();
+                String saveLevel = vals[NEWLEVEL];
+                Level level = Level.INFO;
+                try {
+                    level = Level.parse(vals[NEWLEVEL]);
+                } catch (IllegalArgumentException iaex) {
+                    // just leave it at "INFO" as a default
+                }
+  
+                while (loggerNames.hasMoreElements()) {
+                    vals[NEWLEVEL] = saveLevel;
+                    String curEl = (String)loggerNames.nextElement();
+                    /* avoid root logger */
+                    if (curEl.length() != 0 && curEl.length() != 0 &&
+                        !curEl.equals("global"))
+                    {
+                        Logger l = (Logger)Logger.getLogger(curEl);
+
+                        /*
+                         *  additional reason to check if start record
+                         *  should be written:
+                         *    general Level is now "OFF", but this
+                         *    individual file's level != OFF
+                         *    then log to the individual file
+                         *  and
+                         *    general Level != OFF, but this
+                         *    individual file's level == oFF
+                         *    then don't log to the individual file
+                         *  the individual file's level is set
+                         *  in the readConfiguration stuff, above.
+                         */
+
+                        //  get this log's level
+                        Level tlevel = l.getLevel();
+
+                        if (levelIsOff) {
+                            if (tlevel != Level.OFF) {
+                                vals[NEWLEVEL] = tlevel.toString();
+                                logIt(l, vals,
+                                    LogConstants.START_LOG_CONFIG_NAME);
+                            }
+                        } else {
+                            logIt(l, vals, LogConstants.START_LOG_CONFIG_NAME);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void logIt(Logger logger, String[] msg, String msgName) {
+        try {
+            LogMessageProviderBase provider =
+                (LogMessageProviderBase)MessageProviderFactory.getProvider(
+                    "Logging");
+            SSOToken ssot = LogManagerUtil.getLoggingSSOToken();
+            com.sun.identity.log.LogRecord lr =
+                provider.createLogRecord(msgName, msg, ssot);
+            logger.log(lr, ssot);
+        } catch (IOException ioex) {
+            Debug.error("LogManager.logIt:could not log to " +
+                logger.getName() + ": " + ioex.getMessage());
+        } 
+    }
 }
