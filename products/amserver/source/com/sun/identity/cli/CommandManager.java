@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.25 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CommandManager.java,v 1.26 2008-07-16 21:59:27 veiming Exp $
  *
  */
 
@@ -141,6 +141,7 @@ public class CommandManager {
      * @param argv Options from the command shell.
      */
     public CommandManager(String[] argv) {
+        int exitCode = 0;
         try {
             init(argv);
             requestQueue.add(new CLIRequest(null, argv));
@@ -170,11 +171,12 @@ public class CommandManager {
             }
 
             printUsageOnException(e);
-            System.exit(e.getExitCode());
+            exitCode = e.getExitCode();
         } finally {
             destroySSOTokens();
             ShutdownManager.getInstance().shutdown();
         }
+        System.exit(exitCode);
     }
 
     private void printUsageOnException(CLIException e) {
