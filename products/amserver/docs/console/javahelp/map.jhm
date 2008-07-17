@@ -91,11 +91,11 @@
 	<mapID target="federation.createwsfedprovider" url="federation.createwsfedprovider.html"/>
 	<mapID target="ggwwr" url="ggwwr.html"/>
 	<mapID target="federation.samlv2spassertioncontent" url="federation.samlv2spassertioncontent.html"/>	
-	<mapID target="federation.samlv2spassertionproccessing" url="federation.samlv2spassertioncontent.html"/>
+	<mapID target="federation.samlv2spassertionprocessing" url="federation.samlv2spassertioncontent.html"/>
 	<mapID target="federation.samlv2spservices" url="federation.samlv2spassertioncontent.html"/>
 	<mapID target="federation.samlv2spadvanced" url="federation.samlv2spassertioncontent.html"/>
 	<mapID target="federation.samlv2idpassertioncontent" url="federation.samlv2idpassertioncontent.html"/>
-	<mapID target="federation.samlv2idpassertionproccessing" url="federation.samlv2idpassertioncontent.html"/>
+	<mapID target="federation.samlv2idpassertionprocessing" url="federation.samlv2idpassertioncontent.html"/>
     <mapID target="federation.samlv2idpservices" url="federation.samlv2idpassertioncontent.html"/>
     <mapID target="federation.samlv2idpadvanced" url="federation.samlv2idpassertioncontent.html"/>
 	<mapID target="federation.samlv2pdp" url="federation.samlv2pdp.html"/>
