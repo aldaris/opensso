@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.14 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.15 2008-07-17 17:01:12 rajeevangal Exp $
  *
  */
 
@@ -124,8 +124,8 @@ public class EmbeddedOpenDS {
 
         // copy files
         String[] files = {
-            "config/upgrade/schema.ldif.3883",
-            "config/upgrade/config.ldif.3883",
+            "config/upgrade/schema.ldif.4337",
+            "config/upgrade/config.ldif.4337",
             "config/config.ldif",
             "config/admin-backend.ldif",
             "config/famsuffix.ldif",

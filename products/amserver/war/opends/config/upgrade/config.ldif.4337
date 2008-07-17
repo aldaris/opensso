@@ -36,7 +36,7 @@ ds-cfg-check-schema: true
 ds-cfg-add-missing-rdn-attributes: true
 ds-cfg-allow-attribute-name-exceptions: false
 ds-cfg-invalid-attribute-syntax-behavior: reject
-ds-cfg-single-structural-objectclass-behavior: accept
+ds-cfg-single-structural-objectclass-behavior: reject
 ds-cfg-notify-abandoned-operations: false
 ds-cfg-proxied-authorization-identity-mapper: cn=Exact Match,cn=Identity Mappers,cn=config
 ds-cfg-size-limit: 1000
@@ -44,7 +44,7 @@ ds-cfg-time-limit: 60 seconds
 ds-cfg-lookthrough-limit: 5000
 ds-cfg-writability-mode: enabled
 ds-cfg-bind-with-dn-requires-password: true
-ds-cfg-reject-unauthenticated-requests: true
+ds-cfg-reject-unauthenticated-requests: false
 ds-cfg-default-password-policy: cn=Default Password Policy,cn=Password Policies,cn=config
 ds-cfg-return-bind-error-messages: false
 ds-cfg-idle-time-limit: 0 seconds
@@ -88,7 +88,6 @@ objectClass: ds-cfg-crypto-manager
 cn: Crypto Manager
 ds-cfg-ssl-cert-nickname: ads-certificate
 ds-cfg-ssl-encryption: false
-ds-cfg-key-wrapping-transformation: @OPENDS_TRANSFORMATION@
 
 dn: cn=Account Status Notification Handlers,cn=config
 objectClass: top
@@ -176,7 +175,7 @@ ds-cfg-enabled: true
 ds-cfg-java-class: org.opends.server.backends.jeb.BackendImpl
 ds-cfg-backend-id: userRoot
 ds-cfg-writability-mode: enabled
-ds-cfg-base-dn: @SM_CONFIG_BASEDN@
+ds-cfg-base-dn: dc=example,dc=com
 ds-cfg-db-directory: db
 ds-cfg-db-directory-permissions: 700
 ds-cfg-index-entry-limit: 4000
@@ -422,7 +421,7 @@ cn: LDAP Connection Handler
 ds-cfg-java-class: org.opends.server.protocols.ldap.LDAPConnectionHandler
 ds-cfg-enabled: true
 ds-cfg-listen-address: 0.0.0.0
-ds-cfg-listen-port: @DIRECTORY_PORT@
+ds-cfg-listen-port: 389
 ds-cfg-accept-backlog: 128
 ds-cfg-allow-ldap-v2: true
 ds-cfg-keep-stats: true
@@ -1649,7 +1648,7 @@ objectClass: ds-cfg-root-dn-user
 cn: Directory Manager
 givenName: Directory
 sn: Manager
-userPassword: @SSHA512LDAPUSERPWD@
+userPassword: {SSHA512}l1t43vVl7Uh03PpQ2vCsT0B7Q0HTi+tKJmH7tZTmSGaKrMHWHO1czfwEsjMgfbeQoiYQDGDuxolipR0H6ajMu1YHlTjPNG9Z
 ds-cfg-alternate-bind-dn: cn=Directory Manager
 ds-rlim-size-limit: 0
 ds-rlim-time-limit: 0
@@ -1840,7 +1839,7 @@ objectClass: ds-cfg-directory-string-attribute-syntax
 cn: Directory String
 ds-cfg-java-class: org.opends.server.schema.DirectoryStringSyntax
 ds-cfg-enabled: true
-ds-cfg-allow-zero-length-values: true
+ds-cfg-allow-zero-length-values: false
 
 dn: cn=Distinguished Name,cn=Syntaxes,cn=config
 objectClass: top
@@ -2220,4 +2219,15 @@ cn: Work Queue
 ds-cfg-java-class: org.opends.server.extensions.TraditionalWorkQueue
 ds-cfg-num-worker-threads: 24
 ds-cfg-max-work-queue-capacity: 0
+
+
+dn: cn=SNMP Connection Handler,cn=Connection Handlers,cn=config
+objectClass: top
+objectClass: ds-cfg-connection-handler
+objectClass: ds-cfg-snmp-connection-handler
+cn: SNMP Connection Handler
+ds-cfg-java-class: org.opends.server.snmp.SNMPConnectionHandler
+ds-cfg-enabled: false
+ds-cfg-trap-port: 162
+ds-cfg-listen-port: 161
 
