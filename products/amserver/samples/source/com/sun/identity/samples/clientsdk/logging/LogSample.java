@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogSample.java,v 1.4 2008-06-25 05:41:14 qcheng Exp $
+ * $Id: LogSample.java,v 1.5 2008-07-17 05:05:11 bigfatrat Exp $
  *
  */
 
@@ -155,6 +155,8 @@ public class LogSample {
                 new LogRecord(java.util.logging.Level.INFO, message,
                     userSSOToken);
             logRecord.addLogInfo("ModuleName", DEF_MODULENAME);
+            java.net.InetAddress ipAddr = java.net.InetAddress.getLocalHost();
+            logRecord.addLogInfo("IPAddr", ipAddr.getHostAddress());
 
             Logger logger = (Logger)Logger.getLogger(logName);
             logger.log(logRecord, loggerSSOToken);
