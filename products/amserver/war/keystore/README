@@ -24,11 +24,11 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2008-06-25 05:44:25 qcheng Exp $
+$Id: README,v 1.3 2008-07-17 17:19:43 qcheng Exp $
 
 ------------------------------------------------------------------------------
 
 This directory contains a sample JKS keystore file. The file will be used as 
 default keystore after configuring the Federated Access Manager WAR.
 The keystore contains one key entry with alias name "test". Keystore 
-password and key password for the entry are "secret".
+password and key password for the entry are "changeit".

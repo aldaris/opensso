@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.74 2008-07-13 06:06:50 kevinserwin Exp $
+ * $Id: AMSetupServlet.java,v 1.75 2008-07-17 17:19:43 qcheng Exp $
  *
  */
 
@@ -1663,7 +1663,7 @@ public class AMSetupServlet extends HttpServlet {
         String deployuri 
     ) throws IOException
     {
-        String pwd = Crypt.encrypt("secret");
+        String pwd = Crypt.encrypt("changeit");
         String location = basedir + deployuri + "/" ;
         writeContent(location + ".keypass", pwd);
         writeContent(location + ".storepass", pwd);
