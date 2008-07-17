@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSignatureProvider.java,v 1.3 2008-06-25 05:47:05 qcheng Exp $
+ * $Id: FSSignatureProvider.java,v 1.4 2008-07-17 16:56:39 exu Exp $
  *
  */
 
@@ -125,37 +125,8 @@ public class FSSignatureProvider implements SignatureProviderSPI {
                 throw new FSSignatureException(
                     FSUtils.bundle.getString("invalidAlgorithm"));
             }
-            
-            Provider[] ps = Security.getProviders();
-            boolean isAvailable = false;
-            for(int i = 0; i < ps.length; i++) {
-                if(ps[i].getName().equals("SUN")) {
-                    isAvailable = true;
-                    break;
-                }
-            }
-            if(!isAvailable) {
-                int pos = java.security.Security.insertProviderAt(
-                    new sun.security.provider.Sun(), 2);
-                if (pos == -1) {
-                    FSUtils.debug.error("FSSignatureProvider.signBuffer: "
-                        + "could not add default provider");
-                }
-            }
+
             Signature sig = Signature.getInstance(algorithm);
-            if(algorithm.equals(IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA)) {
-                sig = getSignatureWithRSA();
-                if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("FSSignatureProvider.signBuffer: "
-                        + sig.getProvider().getName());
-                }
-           } else if(algorithm.equals(IFSConstants.ALGO_ID_SIGNATURE_DSA_JCA)) {
-                sig = Signature.getInstance(algorithm, "SUN");
-                if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("FSSignatureProvider.signBuffer: "
-                        + sig.getProvider().getName());
-                }
-            }
             sig.initSign(privateKey);
             sig.update(data.getBytes());
             return sig.sign();
@@ -227,37 +198,7 @@ public class FSSignatureProvider implements SignatureProviderSPI {
                 throw new FSSignatureException(
                     FSUtils.bundle.getString("invalidAlgorithm"));
             }
-            Provider[] ps = Security.getProviders();
-            boolean isAvailable = false;
-            for(int i = 0; i < ps.length; i++) {
-                if(ps[i].getName().equals("SUN")) {
-                    isAvailable = true;
-                    break;
-                }
-            }
-            if(!isAvailable) {
-                int pos = java.security.Security.insertProviderAt(
-                    new sun.security.provider.Sun(), 2);
-                if(pos == -1) {
-                    FSUtils.debug.error("FSSignatureProvider.signBuffer: "
-                        + "could not add default provider");
-                }
-            }
             Signature sig = Signature.getInstance(algorithm);    
-            if(algorithm.equals(IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA)) {
-                sig = getSignatureWithRSA();
-                if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("FSSignatureProvider.verifySignature:"
-                        + sig.getProvider().getName());
-                }
-           } else if(algorithm.equals(IFSConstants.ALGO_ID_SIGNATURE_DSA_JCA)) {
-                sig = Signature.getInstance(algorithm, "SUN");
-                if (FSUtils.debug.messageEnabled()) {
-                    FSUtils.debug.message("FSSignatureProvider.verifySignature:"
-                        + sig.getProvider().getName());
-                }
-            }
-            
             if (cert != null) { 
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("FSSignatureProvider.verifySignature:"

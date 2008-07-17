@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSignatureUtil.java,v 1.2 2008-06-25 05:47:05 qcheng Exp $
+ * $Id: FSSignatureUtil.java,v 1.3 2008-07-17 16:56:39 exu Exp $
  *
  */
 
@@ -86,6 +86,7 @@ public class FSSignatureUtil {
         
         FSSignatureManager manager = FSSignatureManager.getInstance();
         String sigAlg = IFSConstants.DEF_SIG_ALGO_JCA;
+        String algoId = null;
         if(manager.getKeyProvider().getPrivateKey(certAlias).
             getAlgorithm().equals(IFSConstants.KEY_ALG_RSA))
         {
@@ -94,7 +95,8 @@ public class FSSignatureUtil {
                     "FSSignatureUtil.signAndReturnQueryString: "
                         + "private key algorithm is: RSA");
             }
-            sigAlg = IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA;                                    
+            sigAlg = IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA;
+            algoId = IFSConstants.ALGO_ID_SIGNATURE_RSA;
         } else if(manager.getKeyProvider().getPrivateKey(certAlias).
             getAlgorithm().equals(IFSConstants.KEY_ALG_DSA))
         {
@@ -104,6 +106,7 @@ public class FSSignatureUtil {
                         + "private key algorithm is: DSA");
             }
             sigAlg = IFSConstants.ALGO_ID_SIGNATURE_DSA_JCA; 
+            algoId = IFSConstants.ALGO_ID_SIGNATURE_DSA;
         } else {
             FSUtils.debug.error(
                 "FSSignatureUtil.signAndReturnQueryString: "
@@ -115,17 +118,6 @@ public class FSSignatureUtil {
         
         if(queryString.charAt(queryString.length()-1) != '&'){
             queryString = queryString + "&";
-        }
-        String algoId = null;
-        if(sigAlg.equals(IFSConstants.ALGO_ID_SIGNATURE_DSA_JCA)) {
-            algoId = IFSConstants.ALGO_ID_SIGNATURE_DSA;
-        } else if (sigAlg.equals(IFSConstants.ALGO_ID_SIGNATURE_RSA_JCA)) {
-            algoId = IFSConstants.ALGO_ID_SIGNATURE_RSA;
-        } else {
-            FSUtils.debug.error(
-                "FSSignatureUtil.signAndReturnQueryString: "
-                + "Invalid signature algorithim");
-            return null;
         }
         queryString = queryString + "SigAlg=" + URLEncDec.encode(algoId);
         if (FSUtils.debug.messageEnabled()) {
