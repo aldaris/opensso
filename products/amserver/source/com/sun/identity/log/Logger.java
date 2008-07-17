@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.7 2008-07-16 00:30:44 bigfatrat Exp $
+ * $Id: Logger.java,v 1.8 2008-07-17 05:06:22 bigfatrat Exp $
  *
  */
 
@@ -402,7 +402,9 @@ public class Logger extends java.util.logging.Logger {
 
         result.logName = name;
         processNewLoggerObject(result);
-        logStartRecord(result);
+        if (SystemProperties.isServerMode()) {
+            logStartRecord(result);
+        }
         return result;
     }
     
@@ -454,7 +456,9 @@ public class Logger extends java.util.logging.Logger {
          */
         
         processNewLoggerObject(result);
-        logStartRecord(result);
+        if (SystemProperties.isServerMode()) {
+            logStartRecord(result);
+        }
         return result;
     }
     

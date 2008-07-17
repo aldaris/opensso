@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManagerUtil.java,v 1.5 2008-07-16 00:30:44 bigfatrat Exp $
+ * $Id: LogManagerUtil.java,v 1.6 2008-07-17 05:06:21 bigfatrat Exp $
  *
  */
 
@@ -64,13 +64,15 @@ public class LogManagerUtil {
         * get admin token for log service's use to write
         * the start and stop records
         */
-       ShutdownManager.getInstance().addShutdownListener(new
-           ShutdownListener() {
+       if (SystemProperties.isServerMode()) {
+           ShutdownManager.getInstance().addShutdownListener(new
+               ShutdownListener() {
             
-           public void shutdown() {
-               logEndRecords();
-           }
-       }, ShutdownPriority.HIGHEST);
+               public void shutdown() {
+                   logEndRecords();
+               }
+           }, ShutdownPriority.HIGHEST);
+        }
     }
 
     /**
