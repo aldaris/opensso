@@ -95,10 +95,10 @@
     function validateUserStorePassword() {
         field = "userStorePassword";
         var callUrl = "$context$path?actionLink=setPassword";
-        var param = "&password=" + $('userStorePassword').value;
+        var param = "password=" + $('userStorePassword').value;
         ie7fix++;
         callUrl = callUrl + "&ie7fix=" + ie7fix;
-        AjaxUtils.call(callUrl+param, validateUserFields);
+        AjaxUtils.doPost(null, callUrl, param, validateUserFields, null, null);
     }   
     
     function setAMDS() {
