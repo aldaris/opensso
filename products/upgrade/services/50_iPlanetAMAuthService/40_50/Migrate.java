@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.3 2008-06-25 05:53:35 qcheng Exp $
+ * $Id: Migrate.java,v 1.4 2008-07-17 18:28:28 bina Exp $
  *
  */
 
@@ -40,7 +40,9 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_NAME = "iPlanetAMAuthService";
     final static String SERVICE_DIR = "50_iPlanetAMAuthService/40_50";
     final static String SCHEMA_TYPE = "Organization";
+    final static String SCHEMA_GLOBAL = "GLOBAL";
     final static String SCHEMA_FILE = "amAuth_addAttr.xml";
+    final static String SCHEMA_FILE1 = "amAuth_addGlobalAttr.xml";
 
     /**
      * Updates the <code>iPlanetAMAuthService<code> service schema.
@@ -54,6 +56,10 @@ public class Migrate implements MigrateTasks {
                     UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE);
             UpgradeUtils.addAttributeToSchema(SERVICE_NAME,
                     SCHEMA_TYPE, fileName);
+            fileName =
+                    UpgradeUtils.getAbsolutePath(SERVICE_DIR, SCHEMA_FILE1);
+            UpgradeUtils.addAttributeToSchema(SERVICE_NAME,
+                SCHEMA_GLOBAL,fileName);
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);

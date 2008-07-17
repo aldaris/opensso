@@ -24,14 +24,25 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth_addAttr.xml,v 1.2 2008-07-17 18:28:28 bina Exp $
+    $Id: amAuth_addGlobalAttr.xml,v 1.1 2008-07-17 18:28:29 bina Exp $
 
 -->
 
 <Requests>
-    <AttributeSchema name="sunAMUserAttributesSessionMapping"
-        type="list"
-        syntax="string"
-        i18nKey="a147">
+    <AttributeSchema name="sunAMAuthKeepPostProcessInstances"
+        type="single"
+        syntax="boolean"
+        i18nKey="a148">
+        <DefaultValues>
+            <Value>false</Value>
+        </DefaultValues>
+    </AttributeSchema>
+    <AttributeSchema name="sunAMAuthKeepAuthModuleIntances"
+        type="single"
+        syntax="boolean"
+        i18nKey="a149">
+        <DefaultValues>
+            <Value>false</Value>
+        </DefaultValues>
     </AttributeSchema>
 </Requests>
