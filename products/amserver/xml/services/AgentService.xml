@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.53 2008-07-16 21:23:49 huacui Exp $
+   $Id: AgentService.xml,v 1.54 2008-07-18 06:51:46 mallas Exp $
 
 -->
 
@@ -2990,7 +2990,19 @@
                         </DefaultValues>
 
                     </AttributeSchema>
-
+                    <AttributeSchema name="TokenConversionType"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a343">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a344">urn:sun:wss:ssotoken</ChoiceValue>
+                            <ChoiceValue i18nKey="a345">urn:sun:wss:samltoken</ChoiceValue>
+                            <ChoiceValue i18nKey="a346">urn:sun:wss:saml2token</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>urn:sun:wss:ssotoken</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                 </SubSchema>
                 
