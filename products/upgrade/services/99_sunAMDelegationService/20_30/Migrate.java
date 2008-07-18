@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.4 2008-07-14 23:38:10 bina Exp $
+ * $Id: Migrate.java,v 1.5 2008-07-18 07:12:35 bina Exp $
  *
  */
 
@@ -47,6 +47,10 @@ public class Migrate implements MigrateTasks {
     final static String schemaType = "Global";
     final static String FILTERED_ROLE = "FILTERED_ROLE";
     final static String POLICY_NAME = "AllUserReadableServices";
+    final static String AGENTS_READ_WRITE = "AgentsReadWrite";
+    final static String AGENT_ADMIN = "AgentAdmin";
+    final static String PERMISSION = "Permission";
+    final static String PRIVILEGE = "Privilege";
     final static String RESOURCE_SUFFIX1 = 
         "/sunFMSAML2MetadataService/1.0/OrganizationConfig/*";
     final static String RESOURCE_SUFFIX2 = 
@@ -72,6 +76,32 @@ public class Migrate implements MigrateTasks {
             ruleMap.put(RULE_NAME_4,RESOURCE_SUFFIX1);
             ruleMap.put(RULE_NAME_5,RESOURCE_SUFFIX2);
             UpgradeUtils.addDelegationRule(POLICY_NAME,ruleMap); 
+
+            // add AgentsReadWrite Permission
+            Map attrValues = new HashMap();
+            Set attrValuesSet = new HashSet();
+            attrValuesSet.add("*REALM" +
+                "/sunIdentityRepositoryService/1.0/application/agent*");
+            attrValues.put("resource",attrValuesSet);
+
+            Set actionsSet = new HashSet();
+            actionsSet.add("READ");
+            actionsSet.add("MODIFY");
+            actionsSet.add("DELEGATE");
+            attrValues.put("actions",actionsSet);
+            UpgradeUtils.addSubConfig(SERVICE_NAME,"Permissions",
+                AGENTS_READ_WRITE,PERMISSION,attrValues,0);
+
+            attrValues.clear();
+            attrValuesSet.clear();
+
+            attrValuesSet.add("AgentsReadWrite");
+            attrValues.put("listOfPermissions",attrValuesSet);
+
+            UpgradeUtils.addSubConfig(SERVICE_NAME,"Privileges",
+                AGENT_ADMIN,PRIVILEGE,attrValues,0);
+
+            UpgradeUtils.createOrganizationConfiguration(SERVICE_NAME,"/",null);
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);
