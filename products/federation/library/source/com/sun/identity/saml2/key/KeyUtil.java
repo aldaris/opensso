@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.5 2008-06-25 05:47:48 qcheng Exp $
+ * $Id: KeyUtil.java,v 1.6 2008-07-18 01:27:48 exu Exp $
  *
  */
 
@@ -273,9 +273,16 @@ public class KeyUtil {
                 algorithm = em.getAlgorithm();
                 List cList = em.getContent();
                 if (cList != null) {
-                    keySize =
-                        ((EncryptionMethodType.KeySize)(cList.get(0))).
-                        getValue().intValue();
+                    Iterator cIter = cList.iterator();
+                    while (cIter.hasNext()) {
+                        Object cObject = cIter.next();
+                        if (cObject instanceof EncryptionMethodType.KeySize) {
+                            keySize =
+                                ((EncryptionMethodType.KeySize)(cList.get(0))).
+                                    getValue().intValue();
+                            break;
+                        }
+                    }
                 }
             }
         }
