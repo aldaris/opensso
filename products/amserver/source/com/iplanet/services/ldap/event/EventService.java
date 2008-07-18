@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.12 2008-07-18 06:58:19 arviranga Exp $
+ * $Id: EventService.java,v 1.13 2008-07-18 22:41:40 kenwho Exp $
  *
  */
 
@@ -631,6 +631,7 @@ public class EventService implements Runnable {
             // same instance of Event Service object (as it maintains all
             // the listener information)
             _monitorThread = new Thread(_instance, getName());
+            _monitorThread.setDaemon(true);
             _monitorThread.start();
             
             // Since this is a singleton class once a getEventService() 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.14 2008-06-25 05:43:31 qcheng Exp $
+ * $Id: LDAPv3EventService.java,v 1.15 2008-07-18 22:41:40 kenwho Exp $
  *
  */
 
@@ -633,6 +633,7 @@ public class LDAPv3EventService implements Runnable {
             // same instance of Event Service object (as it maintains all
             // the listener information)
             _monitorThread = new Thread(this, getName());
+            _monitorThread.setDaemon(true);
             _monitorThread.start();
         }
     }
