@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.3 2008-07-15 22:43:50 arviranga Exp $
+* $Id: IdRepoPluginsCache.java,v 1.4 2008-07-18 00:40:23 kenwho Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -31,8 +31,6 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.DNUtils;
-import com.sun.identity.common.GeneralTaskRunnable;
-import com.sun.identity.common.SystemTimer;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
@@ -46,6 +44,7 @@ import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSThreadPool;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
@@ -239,8 +238,8 @@ public class IdRepoPluginsCache implements ServiceListener {
                         ShutdownIdRepoPlugin shutdownrepo =
                             new ShutdownIdRepoPlugin(repo);
                         // Provide a delay of 500ms for existing operations
-                        // to complete
-                        SystemTimer.getTimer().schedule(shutdownrepo, 500);
+                        // to complete. the delay is in the forked thread.
+                        SMSThreadPool.scheduleTask(shutdownrepo);
                         
                         if (reinitialize) {
                             // Adding plugin back provides the atomic operation
@@ -284,8 +283,8 @@ public class IdRepoPluginsCache implements ServiceListener {
         }
         ShutdownIdRepoPlugin shutdownrepos = new ShutdownIdRepoPlugin(idrepos);
         // Provide a delay of 500ms for existing operations
-        // to complete
-        SystemTimer.getTimer().schedule(shutdownrepos, 500);
+        // to complete. the delay is in the forked thread.
+        SMSThreadPool.scheduleTask(shutdownrepos);
     }
     
     /**
@@ -658,7 +657,7 @@ public class IdRepoPluginsCache implements ServiceListener {
     }
     
     // Timer task to shutdown IdRepo plugins
-     private class ShutdownIdRepoPlugin extends GeneralTaskRunnable {
+     private class ShutdownIdRepoPlugin implements Runnable {
          
         IdRepo plugin;
         Map idrepos;
@@ -671,24 +670,17 @@ public class IdRepoPluginsCache implements ServiceListener {
             this.idrepos = idrepos;
         }
 
-        public boolean addElement(Object key) {
-            return false;
-        }
-
-        public boolean removeElement(Object key) {
-            return false;
-        }
-
-        public boolean isEmpty() {
-            return true;
-        }
-
-        public long getRunPeriod() {
-            return -1;
-        }
-
         public void run() {
             // Shutdown the repo
+            try {
+                // Provide a delay of 500ms for caller operations
+                // to complete
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                if (debug.messageEnabled()) {
+                   debug.message("IdRepoPluginsCache.ShutdownIdRepoPlugin: " + e );
+                }
+            }
             if (plugin != null) {
                 plugin.removeListener();
                 plugin.shutdown();

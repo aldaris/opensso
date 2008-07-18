@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.2 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.3 2008-07-18 00:40:22 kenwho Exp $
  *
  */
 package com.sun.identity.sm;
@@ -30,8 +30,6 @@ package com.sun.identity.sm;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.GeneralTaskRunnable;
-import com.sun.identity.common.SystemTimer;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
@@ -172,7 +170,7 @@ public class SMSNotificationManager implements SMSObjectListener {
             // executed within a TimerTask
             LocalChangeNotifcationTask changes = new
                 LocalChangeNotifcationTask(name, type);
-            SystemTimer.getTimer().schedule(changes, 0);
+            SMSThreadPool.scheduleTask(changes);
         }
     }
     
@@ -190,7 +188,7 @@ public class SMSNotificationManager implements SMSObjectListener {
         // calls cannot be predicted
         LocalChangeNotifcationTask changes = new
             LocalChangeNotifcationTask(name, type);
-        SystemTimer.getTimer().schedule(changes, 0);
+        SMSThreadPool.scheduleTask(changes);
     }
     
     
@@ -221,7 +219,7 @@ public class SMSNotificationManager implements SMSObjectListener {
             ServiceManager.getAMServerInstances().size() > 1)) {
             // To be executed by a new TimerTask, since it could be a while
             ServerNotificationTask nt = new ServerNotificationTask(name, type);
-            SystemTimer.getTimer().schedule(nt, 0);
+            SMSThreadPool.scheduleTask(nt);
         }
         
         // Called by one of the following
@@ -286,29 +284,13 @@ public class SMSNotificationManager implements SMSObjectListener {
         }
     }
     
-    private class LocalChangeNotifcationTask extends GeneralTaskRunnable {
+    private class LocalChangeNotifcationTask implements Runnable {
         String name;
         int type;
         
         private LocalChangeNotifcationTask(String name, int type) {
             this.name = name;
             this.type = type;
-        }
-
-        public boolean addElement(Object key) {
-            return false;
-        }
-
-        public boolean removeElement(Object key) {
-            return false;
-        }
-
-        public boolean isEmpty() {
-            return true;
-        }
-
-        public long getRunPeriod() {
-            return -1;
         }
 
         public void run() {
@@ -325,7 +307,7 @@ public class SMSNotificationManager implements SMSObjectListener {
      * To send no Servers from a Server or from CLI that uses the server impls.
      * Used only of datatore notifications is disabled
      */ 
-    private class ServerNotificationTask extends GeneralTaskRunnable {
+    private class ServerNotificationTask implements Runnable {
         SSOToken adminSSOToken;
         String name;
         int type;
@@ -362,22 +344,6 @@ public class SMSNotificationManager implements SMSObjectListener {
             }
         }
         
-        public boolean addElement(Object key) {
-            return false;
-        }
-
-        public boolean removeElement(Object key) {
-            return false;
-        }
-
-        public boolean isEmpty() {
-            return true;
-        }
-
-        public long getRunPeriod() {
-            return -1;
-        }
-
         public void run() {
             // At install time and creation of placeholder nodes
             // should not send notifications

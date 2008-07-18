@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.12 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: Constants.java,v 1.13 2008-07-18 00:40:23 kenwho Exp $
  *
  */
 
@@ -968,4 +968,12 @@ public interface Constants {
      * Install Time System property key.
      */
     String SYS_PROPERTY_INSTALL_TIME = "installTime";
+
+    /**
+     * Property string for sm and um notification thread pool size
+     */
+    String SM_THREADPOOL_SIZE =
+        "com.sun.identity.sm.notification.threadpool.size";
+
 }
+
