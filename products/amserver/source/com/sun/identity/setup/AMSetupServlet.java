@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.75 2008-07-17 17:19:43 qcheng Exp $
+ * $Id: AMSetupServlet.java,v 1.76 2008-07-18 06:58:19 arviranga Exp $
  *
  */
 
@@ -632,6 +632,9 @@ public class AMSetupServlet extends HttpServlet {
             Properties propAMConfig = ServerConfiguration.getProperties(
                 strAMConfigProperties);
             String serverInstanceName = serverURL + deployuri;
+            // Set the install property since reInitConfigProperties
+            // initializes SMS which inturn initializes EventService
+            System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
             reInitConfigProperties(serverInstanceName,
                 propAMConfig, strServerConfigXML);
             SetupProgress.reportEnd("emb.done", null);
@@ -644,6 +647,12 @@ public class AMSetupServlet extends HttpServlet {
                 regService.registers(adminSSOToken, bUseExtUMDS);
                 processDataRequests("/WEB-INF/template/sms");
             }
+            
+            // Set installTime to false, to avoid in-memory notification from
+            // SMS in cases where not needed, and to denote that service  
+            // registration got completed during configuration phase and it 
+            // has passed installtime.
+            System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "false");
             
             configureServerInstance(adminSSOToken, serverInstanceName,
                 strAMConfigProperties, isDITLoaded, basedir, strServerConfigXML,

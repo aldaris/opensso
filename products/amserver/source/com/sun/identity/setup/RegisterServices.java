@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.16 2008-07-06 05:48:31 arviranga Exp $
+ * $Id: RegisterServices.java,v 1.17 2008-07-18 06:58:19 arviranga Exp $
  *
  */
 
@@ -77,7 +77,6 @@ public class RegisterServices {
      */
     public void registers(SSOToken adminToken, boolean bUseExtUMDS)
         throws IOException, SMSException, SSOException {
-        System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
         Map map = ServicesDefaultValues.getDefaultValues();
         String basedir = (String)map.get(SetupConstants.CONFIG_VAR_BASE_DIR);
         String dirXML = basedir + "/config/xml";
@@ -105,12 +104,6 @@ public class RegisterServices {
         if (!bUseExtUMDS) {
             addSubConfigForEmbeddedDS(adminToken);
         }
- 
-        // Set installTime to false, to avoid in-memory notification from
-        // SMS in cases where not needed, and to denote that service  
-        // registration got completed during configuration phase and it 
-        // has passed installtime.
-        System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "false");
     }
 
     private void addSubConfigForEmbeddedDS(SSOToken adminSSOToken)

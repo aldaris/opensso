@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.39 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.40 2008-07-18 06:58:19 arviranga Exp $
  *
  */
 
@@ -188,8 +188,6 @@ public class SMSEntry implements Cloneable {
 
     static int LOCAL_CHANGES_MAX_SIZE = 25;
 
-    static boolean enableDataStoreNotification;
-
     static {
         // Initialize for checking delegation permissions
         readActionSet.add(READ);
@@ -226,16 +224,6 @@ public class SMSEntry implements Cloneable {
         }
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: cache enabled: " + cacheSMSEntries);
-        }
-
-        // Check if backend datastore notification needs to be enabled
-        String enable = SystemProperties.get(
-            Constants.SMS_ENABLE_DB_NOTIFICATION);
-        enableDataStoreNotification = (enable != null) && 
-            enable.equalsIgnoreCase("true");
-        if (debug.messageEnabled()) {
-            debug.message("SMSEntry: DN notification enabled: "
-                    + enableDataStoreNotification);
         }
 
         // Get an instance of SMSObject(can be SMSLDAP or SMSJAXRPC)
@@ -425,13 +413,6 @@ public class SMSEntry implements Cloneable {
             // Problem in getting amsdk base DN
             initializationException = new SMSException(bundle.getString(
                 "sms-invalid-dn"), "sms-invalid-dn");
-        }
-
-        // if UM and SM root suffix are different, then inmemory
-        // notification is enabled through
-        // enableDataStoreNotification=false
-        if (!SMSEntry.baseDN.equalsIgnoreCase(SMSEntry.amsdkbaseDN)) {
-            enableDataStoreNotification = false;
         }
     }
 

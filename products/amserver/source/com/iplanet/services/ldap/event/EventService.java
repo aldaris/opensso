@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.11 2008-06-25 05:41:38 qcheng Exp $
+ * $Id: EventService.java,v 1.12 2008-07-18 06:58:19 arviranga Exp $
  *
  */
 
@@ -58,7 +58,6 @@ import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.common.SystemTimer;
-import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
@@ -74,10 +73,11 @@ import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.security.ServerInstanceAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
-import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceManager;
 
 /**
  * Event Service monitors changes on the server. Implemented with the persistant
@@ -156,9 +156,9 @@ public class EventService implements Runnable {
     protected static long _idleTimeOutMills;
 
     protected static final String[] listeners = {
+            "com.sun.identity.sm.ldap.LDAPEventManager",
             "com.iplanet.am.sdk.ldap.ACIEventListener",
-            "com.iplanet.am.sdk.ldap.EntryEventListener",
-            "com.sun.identity.sm.ldap.LDAPEventManager" };
+            "com.iplanet.am.sdk.ldap.EntryEventListener" };
 
     protected static Hashtable _ideListenersMap = new Hashtable();   
     
@@ -353,11 +353,6 @@ public class EventService implements Runnable {
         
         LDAPConnection lc = null;
         try {
-            ServiceSchemaManager scm = new ServiceSchemaManager(token,
-                IdConstants.REPO_SERVICE, "1.0");
-            ServiceSchema idRepoSubSchema = scm.getOrganizationSchema();
-            Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
-
             // This amSDK plugin check is to avoid getting
             // connection and initiate these two listeners if amSDK plugin
             // is not loaded.
@@ -370,12 +365,27 @@ public class EventService implements Runnable {
                 (cm.getServerGroup("sms") != null)) {
                     lc = cm.getNewConnection("sms", LDAPUser.Type.AUTH_ADMIN);
 
-            } else if (idRepoPlugins.contains("amSDK")) {
-                // if amSDK plugin exists, use admin connection from 'default'
-                // servergroup for all um,aci,sm listeners.
-                lc = cm.getNewAdminConnection();
             } else {
-                return "0";
+                // Determine if called during configuration time.
+                // By default AMSDK i.e., UMS is not configured and hence
+                // should not initialize listeners
+                if (!Boolean.parseBoolean(SystemProperties
+                    .get(Constants.SYS_PROPERTY_INSTALL_TIME))) {
+                    ServiceSchemaManager scm = new ServiceSchemaManager(token,
+                        IdConstants.REPO_SERVICE, "1.0");
+                    ServiceSchema idRepoSubSchema = scm.getOrganizationSchema();
+                    Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
+                    if (idRepoPlugins.contains("amSDK") ||
+                        ServiceManager.isRealmEnabled()) {
+                        // if amSDK plugin exists, use admin connection from
+                        // 'default' servergroup for all um,aci,sm listeners.
+                        lc = cm.getNewAdminConnection();
+                    } else {
+                        return "0";
+                    }
+                } else {
+                    return "0";
+                }
             }
         } catch (SSOException ssoe) {
             throw new EventException(i18n
@@ -480,30 +490,24 @@ public class EventService implements Runnable {
             
             try {
                 if (l1.equals("com.sun.identity.sm.ldap.LDAPEventManager")) {
-                    String enableDataStoreNotification = SystemProperties.get(
-                        "com.sun.identity.sm.enableDataStoreNotification", 
-                        "true");
-
-                    // if UM and SM root suffix are different, then inmemory
-                    // notification is enabled through
-                    // enableDataStoreNotification=false
-
-                    if (!SMSEntry.getRootSuffix().equalsIgnoreCase(
-                        SMSEntry.getAMSdkBaseDN())) {
-                        enableDataStoreNotification = "false";
-                    }
-
+                    boolean enableDataStoreNotification =
+                        Boolean.parseBoolean(SystemProperties.get(
+                        Constants.SMS_ENABLE_DB_NOTIFICATION));
                     if (debugger.messageEnabled()) {
-                        debugger.message("EventService.initListeners()-" 
-                                + "com.sun.identity.sm." 
-                                + "enableDataStoreNotification:"
-                                + enableDataStoreNotification);
+                        debugger.message("EventService.initListeners()-" +
+                            "com.sun.identity.sm.enableDataStoreNotification:"
+                            + enableDataStoreNotification);
                     }
-                    if (enableDataStoreNotification.equals("false") &&
-                        com.sun.identity.sm.ServiceManager.isRealmEnabled()) {
-                        debugger.message("EventService.initListeners() - " 
-                                + "Skipping " 
-                                + "com.sun.identity.sm.ldap.LDAPEventManager");
+                    
+                    // During configuration SMS will not be initialized
+                    // and should not call ServiceManager
+                    // datastore may not be correctly setup
+                    boolean configTime = Boolean.parseBoolean(SystemProperties
+                        .get(Constants.SYS_PROPERTY_INSTALL_TIME));
+                    if (!enableDataStoreNotification && (configTime || 
+                        ServiceManager.isRealmEnabled())) {
+                        debugger.message("EventService.initListeners() - " +
+                            "Skipping SMS's ldap.LDAPEventManager");
                         continue;
                     }
                 }

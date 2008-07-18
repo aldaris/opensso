@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.16 2008-07-06 05:48:32 arviranga Exp $
+ * $Id: SMSLdapObject.java,v 1.17 2008-07-18 06:58:19 arviranga Exp $
  *
  */
 
@@ -68,6 +68,7 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.security.AdminDNAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSNotificationManager;
@@ -374,8 +375,22 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                     conn.add(new LDAPEntry(dn, attrSet));
                     break;
                 } catch (LDAPException e) {
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
+                    int errorCode = e.getLDAPResultCode();
+                    if (errorCode == LDAPException.ENTRY_ALREADY_EXISTS) {
+                        // During install time, this error gets throws
+                        // due to unknown issue. Issue: 
+                        // Hence mask it during install time only
+                        String installTime = SystemProperties.get(
+                            Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+                        if (installTime.equalsIgnoreCase("true")) {
+                            debug.error("SMSLdapObject.create() Entry " +
+                                "Already Exists Error during install time " +
+                                "for DN" + dn);
+                            break;
+                        }
+                    }
+                    if (!retryErrorCodes.contains(Integer.toString(errorCode))
+                        || retry == connNumRetry) {
                         throw e;
                     }
                     retry++;

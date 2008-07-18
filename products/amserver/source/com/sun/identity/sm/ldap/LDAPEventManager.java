@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPEventManager.java,v 1.4 2008-07-06 05:48:32 arviranga Exp $
+ * $Id: LDAPEventManager.java,v 1.5 2008-07-18 06:58:19 arviranga Exp $
  *
  */
 
@@ -65,8 +65,12 @@ public class LDAPEventManager implements IDSEventListener {
     // Used by EventService via IDSEventListener
     private Map listeners;
 
-    static void addObjectChangeListener(SMSObjectListener changeListener) {
-        LDAPEventManager.changeListener = changeListener;
+    static void addObjectChangeListener(SMSObjectListener cl) {
+        changeListener = cl;
+        if (debug.messageEnabled()) {
+            debug.message("LDAPEventManager.addObjectChangeListener " +
+                "Adding listener: " + cl.getClass().getName());
+        }
         try {
             // Verify is sms is not part of the disabled list
             String disabledList = SystemProperties.get(

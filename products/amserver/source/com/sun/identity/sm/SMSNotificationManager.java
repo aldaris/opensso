@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.3 2008-07-18 00:40:22 kenwho Exp $
+ * $Id: SMSNotificationManager.java,v 1.4 2008-07-18 06:58:20 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -79,6 +79,14 @@ public class SMSNotificationManager implements SMSObjectListener {
         // Should be initialied only once
         enableDataStoreNotification = Boolean.parseBoolean(
             SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION));
+        // If not config time and in legacy mode, enable dataStoreNotification
+        // ServiceManager will be called only if not config time
+        boolean configTime = Boolean.parseBoolean(SystemProperties.get(
+            Constants.SYS_PROPERTY_INSTALL_TIME));
+        if (!enableDataStoreNotification && !configTime &&
+            !ServiceManager.isRealmEnabled()) {
+            enableDataStoreNotification = true;
+        }
         cachedEnabled = Boolean.parseBoolean(
             SystemProperties.get(Constants.SDK_GLOBAL_CACHE_PROPERTY, "true"));
         if (!cachedEnabled) {
@@ -98,7 +106,7 @@ public class SMSNotificationManager implements SMSObjectListener {
         // registration for notification is handled by AMSDK code in DataLayer
         if (cachedEnabled && (enableDataStoreNotification || isClient)) {
             try {
-                object.registerCallbackHandler(instance);
+                object.registerCallbackHandler(this);
                 if (debug.messageEnabled()) {
                     debug.message("SMSNotificationManager.init " +
                         "Registered for notification with: " +
