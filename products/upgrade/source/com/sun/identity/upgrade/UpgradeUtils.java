@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.7 2008-07-14 23:37:42 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.8 2008-07-18 07:11:15 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -3872,6 +3872,66 @@ public class UpgradeUtils {
         } catch (Exception e) {
             debug.error(classMethod +
                     "Error loading sub realm delegation polices", e);
+        }
+    }
+
+    /**
+     * Creates <code>OrganizationConfiguration</code> in a service.
+     *
+     * @param serviceName name of the service
+     * @param orgName name of the organization
+     * @param attrValues map of attribute names and their values. The 
+     *        key is the attribute name a string and the values is a Set
+     *        of values.
+     */
+    public static void createOrganizationConfiguration(String serviceName,
+            String orgName,Map attrValues) {
+        String classeMthod = "UpgradeUtils:createOrganizationConfiguration: ";
+        try {
+            ServiceConfigManager sm = getServiceConfigManager(serviceName);
+            sm.createOrganizationConfig(orgName,attrValues);
+        } catch (Exception e) {
+            debug.error(classMethod + "Error creating organization "
+                + "configuration for " + serviceName , e);
+        }
+    }
+
+    /**
+     * Adds SubConfiguration to an existing subconfiguration in a service.
+     * 
+     * @param serviceName the service name
+     * @param parentConfigName the name of parent sub configuration.
+     * @param subConfigName the subconfig name 
+     * @param subConfigID the subconfig id
+     * @param attrValues a map of attribute value pairs to be added to the
+     *        subconfig.
+     * @param priority the priority value 
+     * @throws UpgradeException if there is an error.
+     */
+    public static void addSubConfig(
+            String serviceName,
+            String parentConfigName,
+            String subConfigName,
+            String subConfigID,
+            Map attrValues, int priority) throws UpgradeException {
+        String classMethod = "UpgradeUtils:addSubConfig";
+        try {
+            ServiceConfigManager scm =
+                    new ServiceConfigManager(serviceName, ssoToken);
+            ServiceConfig sc = scm.getGlobalConfig(null);
+            ServiceConfig sc1 = sc.getSubConfig(parentConfigName);
+            if (sc != null) {
+                sc1.addSubConfig(subConfigName,subConfigID,priority,attrValues);
+            } else {
+                debug.error(classMethod + 
+                        "Error adding sub cofiguration" + subConfigName);
+                throw new UpgradeException("Error adding subconfig");
+            }
+        } catch (SSOException ssoe) {
+            throw new UpgradeException(classMethod + "invalid sso token");
+        } catch (SMSException sm) {
+            debug.error(classMethod + "Error loading subconfig", sm);
+            throw new UpgradeException(classMethod + "error adding subconfig");
         }
     }
 }
