@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.3 2008-06-25 05:54:46 qcheng Exp $
+ * $Id: FAMClassLoader.java,v 1.4 2008-07-18 00:23:55 mrudul_uchil Exp $
  *
  */
 
@@ -137,7 +137,8 @@ public class FAMClassLoader {
     public static String[] jarsForProviders = new String[]{
         "webservices-rt.jar",
         "openssoclientsdk.jar",
-        "xalan.jar"
+        "xalan.jar",
+        "xercesImpl.jar"
     };
     
     

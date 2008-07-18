@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.3 2008-06-25 05:54:47 qcheng Exp $
+ * $Id: FAMServerAuthModule.java,v 1.4 2008-07-18 00:23:56 mrudul_uchil Exp $
  *
  */
 
@@ -368,6 +368,7 @@ public class FAMServerAuthModule implements ServerAuthModule {
     public static String[] jars = new String[]{
         "webservices-rt.jar",
         "openssoclientsdk.jar",
-        "xalan.jar"
+        "xalan.jar",
+        "xercesImpl.jar"
     };
 }
