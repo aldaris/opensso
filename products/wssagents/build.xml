@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2008-06-25 05:54:42 qcheng Exp $
+   $Id: build.xml,v 1.14 2008-07-18 06:49:43 mallas Exp $
 
 -->
 
@@ -131,6 +131,11 @@
             tofile="${zip.temp.dir}/README" />
         <copy file="${wssagents.basedir}/docs/README.glassfish"
             tofile="${zip.temp.dir}/README.glassfish" />
+
+        <copy todir="${zip.temp.dir}/bin">
+            <fileset file="${wssagents.basedir}/scripts/encrypt_util" />
+            <fileset file="${wssagents.basedir}/scripts/encrypt_util.bat" />
+        </copy>
 
         <copy todir="${zip.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
