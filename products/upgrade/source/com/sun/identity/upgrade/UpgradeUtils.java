@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.8 2008-07-18 07:11:15 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.9 2008-07-18 07:15:54 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -3886,7 +3886,7 @@ public class UpgradeUtils {
      */
     public static void createOrganizationConfiguration(String serviceName,
             String orgName,Map attrValues) {
-        String classeMthod = "UpgradeUtils:createOrganizationConfiguration: ";
+        String classMethod = "UpgradeUtils:createOrganizationConfiguration: ";
         try {
             ServiceConfigManager sm = getServiceConfigManager(serviceName);
             sm.createOrganizationConfig(orgName,attrValues);
