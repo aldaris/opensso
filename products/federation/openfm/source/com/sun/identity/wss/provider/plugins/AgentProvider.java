@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.25 2008-07-12 18:38:24 mallas Exp $
+ * $Id: AgentProvider.java,v 1.26 2008-07-18 06:45:16 mallas Exp $
  *
  */
 
@@ -115,6 +115,7 @@ public class AgentProvider extends ProviderConfig {
      private static final String VERIFY_KRB_SIGNATURE = "isVerifyKrbSignature";
      private static final String USE_PASSTHROUGH_TOKEN = 
                                   "isPassThroughSecurityToken";
+     private static final String TOKEN_CONVERSION_TYPE = "TokenConversionType";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -158,6 +159,7 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(KRB_KEYTAB_FILE);
          attrNames.add(VERIFY_KRB_SIGNATURE);
          attrNames.add(USE_PASSTHROUGH_TOKEN);
+         attrNames.add(TOKEN_CONVERSION_TYPE);
      }
 
      public void init (String providerName, 
@@ -430,6 +432,8 @@ public class AgentProvider extends ProviderConfig {
                 this.usePassThroughToken = 
                         Boolean.valueOf(value).booleanValue();
             }
+        } else if(attr.equals(TOKEN_CONVERSION_TYPE)) {
+            this.tokenConversionType = value;
         }  else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -593,9 +597,14 @@ public class AgentProvider extends ProviderConfig {
            config.put(KRB_KEYTAB_FILE, keytabFile);  
         }
         
-        config.put(USE_PASSTHROUGH_TOKEN, 
+        if(usePassThroughToken) {
+           config.put(USE_PASSTHROUGH_TOKEN, 
                 Boolean.toString(usePassThroughToken));
-                
+        }
+        
+        if(tokenConversionType != null) {
+           config.put(TOKEN_CONVERSION_TYPE, tokenConversionType); 
+        }        
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();

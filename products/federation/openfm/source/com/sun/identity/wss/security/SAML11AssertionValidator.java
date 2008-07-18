@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML11AssertionValidator.java,v 1.2 2008-06-25 05:50:07 qcheng Exp $
+ * $Id: SAML11AssertionValidator.java,v 1.3 2008-07-18 06:45:17 mallas Exp $
  *
  */
 
@@ -66,36 +66,38 @@ public class SAML11AssertionValidator {
         this.config = config;
         if(config == null) {
            throw new SecurityException(
-                 WSSUtils.bundle.getString("configuration is null"));
+                 WSSUtils.bundle.getString("nullConfig"));
         }
         
         try {
             Assertion saml11Assertion = new Assertion(assertionE);
             if(!saml11Assertion.isSigned() || 
                     !saml11Assertion.isSignatureValid()) {
-               throw new SecurityException("invalid signature");
+               throw new SecurityException(
+                       WSSUtils.bundle.getString("assertionNotSigned"));
             }
             String issuer = saml11Assertion.getIssuer();
             if(issuer == null) {
                throw new SecurityException(
-                       WSSUtils.bundle.getString("issuer is null"));
+                       WSSUtils.bundle.getString("nullIssuer"));
             }            
             Set trustedIssuers = (Set)config.get(STSConstants.TRUSTED_ISSUERS);
             if(trustedIssuers != null && !trustedIssuers.isEmpty()) {
                if(!trustedIssuers.contains(issuer)) {
                   throw new SecurityException(
-                          WSSUtils.bundle.getString("issuer is not trusted"));
+                          WSSUtils.bundle.getString("issuerNotTrusted"));
                }
             }
                        
             if(!saml11Assertion.isTimeValid()) {               
                throw new SecurityException(WSSUtils.bundle.getString(
-                       "assertion time is not valid"));               
+                       "assertionTimeNotValid"));               
             }
             
             Set statements = saml11Assertion.getStatement();
             if(statements == null || statements.isEmpty()) {
-               throw new SecurityException("no assertion statements ");
+               throw new SecurityException(
+                       WSSUtils.bundle.getString("nullStatments"));
             }
             
             for (Iterator iter = statements.iterator(); iter.hasNext();) {
@@ -124,7 +126,8 @@ public class SAML11AssertionValidator {
         
         Subject subject = authnStatement.getSubject();
         if(subject == null) {
-           throw new SecurityException("subject is null");
+           throw new SecurityException(
+                   WSSUtils.bundle.getString("nullSubject"));
         }        
         subjectName = subject.getNameIdentifier().getName();
         SubjectLocality subjectLocality = authnStatement.getSubjectLocality();
@@ -148,7 +151,8 @@ public class SAML11AssertionValidator {
         try {
             Subject subject = attributeStatement.getSubject();
             if(subject == null) {
-               throw new SecurityException("subject is null");
+               throw new SecurityException(
+                       WSSUtils.bundle.getString("nullSubject"));
             }
             subjectName = subject.getNameIdentifier().getName();
             Element keyInfo = attributeStatement.getSubject().

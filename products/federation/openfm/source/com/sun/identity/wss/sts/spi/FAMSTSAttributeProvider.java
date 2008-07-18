@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.11 2008-07-02 16:57:24 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.12 2008-07-18 06:45:17 mallas Exp $
  *
  */
 
@@ -70,6 +70,7 @@ import com.sun.identity.wss.security.SAML11AssertionValidator;
 import com.sun.identity.wss.security.SAML2AssertionValidator;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.wss.security.SecurityException;
 
 /**
  * The STS attribute provider is used to retrieve an authenticated user or
@@ -354,19 +355,49 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                   try {
                       STSClientUserToken userToken =
                           new STSClientUserToken(credential);
-                      if(!userToken.getType().equals(
-                              SecurityToken.WSS_FAM_SSO_TOKEN)) {
-                          return null;
-                      }
-                      String tokenId = userToken.getTokenId();
-                      SSOTokenManager manager = SSOTokenManager.getInstance();
-                      SSOToken currentToken = manager.createSSOToken(tokenId);
-                      if (manager.isValidToken(currentToken)) {
-                          ssoToken = currentToken;
-                      }
+                      String tokenID = userToken.getTokenId();
                       if(userToken.getType().equals(
-                                     STSConstants.SSO_TOKEN_TYPE)) {
-                         return userToken.getPrincipalName();
+                              SecurityToken.WSS_SAML2_TOKEN)) {
+                         try {
+                             Element assertionE = XMLUtils.toDOMDocument(
+                                  tokenID, STSUtils.debug).getDocumentElement();
+                             SAML2AssertionValidator validator = 
+                                 new SAML2AssertionValidator(
+                                 assertionE, new HashMap());
+                             return validator.getSubjectName();
+                         } catch (SecurityException se) {
+                            if(STSUtils.debug.messageEnabled()) {
+                               STSUtils.debug.message("FAMSTSAttributeProvider."
+                                  +"getSubjectFromCustomToken:: ", se); 
+                            }
+                         }
+                         return null;
+                      } else if(userToken.getType().equals(
+                              SecurityToken.WSS_SAML_TOKEN)) {                          
+                         try {
+                             Element assertionE = XMLUtils.toDOMDocument(
+                                  tokenID, STSUtils.debug).getDocumentElement();
+                             SAML11AssertionValidator validator = 
+                                 new SAML11AssertionValidator(
+                                 assertionE, new HashMap());
+                             return validator.getSubjectName();
+                         } catch (SecurityException se) {
+                            if(STSUtils.debug.messageEnabled()) {
+                               STSUtils.debug.error("FAMSTSAttributeProvider."
+                                   +"getSubjectFromCustomToken:: ", se); 
+                            }
+                         }
+                         return null;
+                      } else if(userToken.getType().equals(
+                              SecurityToken.WSS_FAM_SSO_TOKEN)) {                                                  
+                        SSOTokenManager manager = SSOTokenManager.getInstance();
+                        SSOToken currentToken = manager.createSSOToken(tokenID);
+                        if (manager.isValidToken(currentToken)) {
+                            ssoToken = currentToken;
+                        }                        
+                        return userToken.getPrincipalName();                        
+                      } else {
+                         return null;
                       }
                   } catch (FAMSTSException fae) {
                       if(STSUtils.debug.messageEnabled()) {

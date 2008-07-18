@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.13 2008-07-02 16:57:23 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.14 2008-07-18 06:45:17 mallas Exp $
  *
  */
 
@@ -77,7 +77,7 @@ public class TrustAuthorityClient {
     public SecurityToken getSecurityToken(
             ProviderConfig pc,            
             Object credential) throws FAMSTSException {
-        return getSecurityToken(pc,null,null,null,credential,null,null);
+        return getSecurityToken(pc,null,null,null,credential,null,null, null);
     }
     
     /**
@@ -97,7 +97,7 @@ public class TrustAuthorityClient {
             ProviderConfig pc,            
             Object credential,
             ServletContext context) throws FAMSTSException {
-        return getSecurityToken(pc,null,null,null,credential,null,context);
+        return getSecurityToken(pc,null,null,null,credential,null,null,context);
     }
     
     /**
@@ -121,8 +121,33 @@ public class TrustAuthorityClient {
             String securityMech,
             ServletContext context) throws FAMSTSException {
         return getSecurityToken(null,wspEndPoint,stsEndPoint,stsMexEndPoint,
-                credential,securityMech,context);
+                credential,securityMech,null,context);
     }
+    /**
+     * Returns the <code>SecurityToken</code> for the web services client from
+     * a trusted authority, which is Security Token Service (STS). 
+     *
+     * @param wspEndPoint Web Service Provider end point.
+     * @param stsEndPoint Security Token Service end point.
+     * @param stsMexEndPoint Security Token Service MEX end point.
+     * @param credential user's credential.
+     * @param securityMech Required Security Mechanism by Web Service Client.
+     * @param tokenType the token type for the returned security token.
+     * @param context web context under which this class is running.
+     * @return SecurityToken security token for the web services consumer.   
+     * @exception FAMSTSException if it's unable to retrieve security token.
+     */
+    public SecurityToken getSecurityToken(
+            String wspEndPoint,
+            String stsEndPoint,
+            String stsMexEndPoint,
+            Object credential,
+            String securityMech,
+            String tokenType,
+            ServletContext context) throws FAMSTSException {
+        return getSecurityToken(null,wspEndPoint,stsEndPoint,stsMexEndPoint,
+                credential,securityMech,tokenType,context);
+    }  
 
     // Gets Security Token from Security Token Service.
     private SecurityToken getSecurityToken(
@@ -132,6 +157,7 @@ public class TrustAuthorityClient {
             String stsMexEndPoint,
             Object credential,
             String securityMech,
+            String tokenType,
             ServletContext context) throws FAMSTSException {
         String keyType = STSConstants.PUBLIC_KEY;
         if (pc != null) {
@@ -169,7 +195,7 @@ public class TrustAuthorityClient {
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
            return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
-                   credential,keyType, context); 
+                   credential,keyType, tokenType,context); 
         } else if (securityMech.equals(
                 SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
            return getLibertyToken(pc, credential);
@@ -225,6 +251,7 @@ public class TrustAuthorityClient {
                                       String stsMexAddress,
                                       Object credential,
                                       String keyType,
+                                      String tokenType,
                                       ServletContext context) 
                                       throws FAMSTSException {
         
@@ -251,23 +278,25 @@ public class TrustAuthorityClient {
 
             Object stsClient = taClientCon.newInstance();
 
-            Class clsa[] = new Class[5];
+            Class clsa[] = new Class[6];
             clsa[0] = Class.forName("java.lang.String");
             clsa[1] = Class.forName("java.lang.String");
             clsa[2] = Class.forName("java.lang.String");
             clsa[3] = Class.forName("java.lang.Object");
             clsa[4] = Class.forName("java.lang.String");
+            clsa[5] = Class.forName("java.lang.String");
 
             Method getSTSTokenElement = 
                       stsClient.getClass().getDeclaredMethod(
                       "getSTSTokenElement", clsa);
 
-            Object args[] = new Object[5];
+            Object args[] = new Object[6];
             args[0] = wspEndPoint;
             args[1] = stsEndpoint;
             args[2] = stsMexAddress;
             args[3] = credential;
             args[4] = keyType;
+            args[5] = tokenType;
             Element element = (Element)getSTSTokenElement.invoke(stsClient, args);
             String type = getTokenType(element);
             

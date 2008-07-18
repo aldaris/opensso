@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.9 2008-06-25 05:50:10 qcheng Exp $
+ * $Id: DefaultAuthenticator.java,v 1.10 2008-07-18 06:45:17 mallas Exp $
  *
  */
 
@@ -106,6 +106,7 @@ import sun.security.krb5.EncryptionKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.wss.sts.STSConstants;
 
 /**
  * This class provides a default implementation for authenticating the
@@ -781,17 +782,30 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             URL stsMexURL = WebtopNaming.getServiceURL("sts-mex", protocol,
                     host, port, deployURI);
             TrustAuthorityClient taClient = new TrustAuthorityClient();
+            String tokenConversionType = config.getTokenConversionType();
+            String tokenType = tokenConversionType;
+            if(tokenConversionType != null) {
+               if(tokenConversionType.equals(SecurityToken.WSS_SAML_TOKEN)) {
+                  tokenType =  STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
+               } else if(tokenConversionType.equals(
+                       SecurityToken.WSS_SAML2_TOKEN)) {
+                   tokenType =  STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
+               }
+            }
             
             SecurityToken token = taClient.getSecurityToken(
                     config.getWSPEndpoint(),
                     stsURL.toString(), stsMexURL.toString(), assertionE, 
-                    SecurityMechanism.STS_SECURITY_URI, null);
+                    SecurityMechanism.STS_SECURITY_URI, 
+                    tokenType,null);
             
             if(token.getTokenType().equals(SecurityToken.WSS_FAM_SSO_TOKEN)) {
                FAMSecurityToken famToken = (FAMSecurityToken)token;
                SSOToken ssoToken = SSOTokenManager.getInstance().
                        createSSOToken(famToken.getTokenID());
                addSSOToken(ssoToken, subject);
+            } else  {
+               subject.getPublicCredentials().add(token.toDocumentElement());
             }
             return true;
         } catch (FAMSTSException fae) {

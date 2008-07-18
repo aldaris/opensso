@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.7 2008-07-02 16:57:23 mallas Exp $
+ * $Id: STSClientUserToken.java,v 1.8 2008-07-18 06:45:17 mallas Exp $
  *
  */
 
@@ -69,9 +69,9 @@ public class STSClientUserToken implements ClientUserToken {
                }
                String ns = element.getNamespaceURI();               
                if(STSConstants.SAML10_ASSERTION.equals(ns)){
-                  tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE; 
+                  tokenType = SecurityToken.WSS_SAML_TOKEN; 
                } else if(STSConstants.SAML20_ASSERTION.equals(ns)) {
-                  tokenType = STSConstants.SAML20_ASSERTION_TOKEN_TYPE; 
+                  tokenType = SecurityToken.WSS_SAML2_TOKEN; 
                } else {
                   throw new FAMSTSException(
                           STSUtils.bundle.getString("unsupportedcredential")); 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.20 2008-07-12 18:38:24 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.21 2008-07-18 06:45:16 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -115,6 +115,7 @@ public abstract class ProviderConfig {
      protected String keytabFile = null;
      protected boolean verifyKrbSignature = false;
      protected boolean usePassThroughToken = false;
+     protected String tokenConversionType = null;
 
      private static Class adapterClass;
 
@@ -761,6 +762,26 @@ public abstract class ProviderConfig {
      */
     public void setPassThroughSecurityToken(boolean usepassthrough) {
         this.usePassThroughToken = usepassthrough;
+    }
+    
+    /**
+     * Returns the type of the token that needs to be converted to.
+     * This method is used by the web service providers to convert a
+     * SAMLToken to the desired token type.
+     * @return the type of the token that needs to be converted to.
+     */
+    public String getTokenConversionType() {        
+        return tokenConversionType;
+    }
+    
+    /**
+     * Sets the type of the token that needs to be converted to.     
+     * This method is used by the web service providers to convert a
+     * SAMLToken to the desired token type.
+     * @param tokenType the type of the token that needs to be converted to.
+     */
+    public void setTokenConversionType(String tokenType) {
+        this.tokenConversionType = tokenType;
     }
     
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.5 2008-07-08 23:22:28 mallas Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.6 2008-07-18 06:45:18 mallas Exp $
  *
  */
 
@@ -120,7 +120,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                           SecurityToken.WSS_FAM_SSO_TOKEN)) {
            generateSSOToken(ctx);
            return;
-        }
+        }        
         String keyType = ctx.getKeyType();
         int tokenLifeSpan = 
             (int)(ctx.getExpirationTime().getTime() - ctx.getCreationTime().
@@ -241,7 +241,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
     }
     
     protected Assertion createSAML11Assertion(final WSTrustVersion wstVer, 
-        final int lifeSpan, String confirMethod, final String assertionId, 
+        int lifeSpan, String confirMethod, final String assertionId, 
         final String issuer, final String appliesTo, final KeyInfo keyInfo, 
         final Map<QName, List<String>> claimedAttrs, String keyType) 
         throws WSTrustException{
@@ -256,6 +256,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 new GregorianCalendar(utcTimeZone);
             final GregorianCalendar notOnOrAfter = 
                 new GregorianCalendar(utcTimeZone);
+            lifeSpan = lifeSpan + (5 * 60 * 1000);
             notOnOrAfter.add(Calendar.MILLISECOND, lifeSpan);
             
             List<AudienceRestrictionCondition> arc = null;

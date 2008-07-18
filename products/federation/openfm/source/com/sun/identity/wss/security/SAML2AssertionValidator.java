@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2AssertionValidator.java,v 1.2 2008-06-25 05:50:08 qcheng Exp $
+ * $Id: SAML2AssertionValidator.java,v 1.3 2008-07-18 06:45:17 mallas Exp $
  *
  */
 
@@ -70,40 +70,44 @@ public class SAML2AssertionValidator {
         this.config = config;
         if(config == null) {
            throw new SecurityException(
-                   WSSUtils.bundle.getString("config is null"));
+                   WSSUtils.bundle.getString("nullConfig"));
         }
         
         try {
             Assertion samlAssertion = new AssertionImpl(assertionE);
             if(!samlAssertion.isSigned()) {
-               throw new SecurityException("assertion is not signed"); 
+               throw new SecurityException(
+                       WSSUtils.bundle.getString("assertionNotSigned"));
             }
                                     
             Issuer issuer = samlAssertion.getIssuer();
             String issuerID = issuer.getValue();
             if(issuerID == null) {
                throw new SecurityException(
-                       WSSUtils.bundle.getString("issuer is null"));
+                       WSSUtils.bundle.getString("nullIssuer"));
             }
             Set trustedIssuers = (Set)config.get(TRUSTED_ISSUERS);
             if(trustedIssuers != null &&
                     !trustedIssuers.contains(issuerID)) {
                throw new SecurityException(
-                       WSSUtils.bundle.getString("issuer is not trusted"));
+                       WSSUtils.bundle.getString("issuerNotTrusted"));
             }
                        
             if(!samlAssertion.isTimeValid()) {               
-               throw new SecurityException("assertion time is not valid");               
+               throw new SecurityException(
+                     WSSUtils.bundle.getString("assertionTimeNotValid"));               
             }
             
             Subject subject = samlAssertion.getSubject(); 
             if(subject == null) {
-               throw new SecurityException("subject is null");
+               throw new SecurityException(
+                       WSSUtils.bundle.getString("nullSubject"));
             }
             
             subjectName = subject.getNameID().getValue();
             if(subjectName == null) {
-               throw new SecurityException("subject is null"); 
+               throw new SecurityException(
+                       WSSUtils.bundle.getString("nullSubject"));
             }
             Element keyInfo = getKeyInfo(subject);
             if(keyInfo != null) {
