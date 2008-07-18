@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.8 2008-06-26 20:02:40 rmisra Exp $
+ * $Id: AMSamples.java,v 1.9 2008-07-18 17:44:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -302,60 +302,6 @@ public class AMSamples extends TestCommon {
                     " with incorrect credentials (incorrect password).");
         }
         exiting("testUserProfileInvalidUserCredential");
-    }
-    
-    /**
-     * This test validates the service configuration for DAI service for
-     * configuration type set to Schema.
-     */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testServiceConfigDAISchema()
-    throws Exception {
-        entering("testServiceConfigDAISchema", null);
-        try {
-            String res = rb_ams.getString("serviceconfig_dai_schema_pass");
-            String xmlFile = "testServiceConfigDAISchema.xml";
-            generateServiceConfigXML(realm, adminUser, adminPassword, "DAI",
-                    "globalSchema", xmlFile, res);
-            task = new DefaultTaskHandler(baseDir + xmlFile);
-            webClient = new WebClient();
-            page = task.execute(webClient);
-        } catch (Exception e) {
-            log(Level.SEVERE, "testServiceConfigDAISchema", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the service configuration for" +
-                    " DAI service for configuration type set to Schema.");
-        }
-        exiting("testServiceConfigDAISchema");
-    }
-    
-    /**
-     * This test validates the service configuration for DAI service for
-     * configuration type set to Config.
-     */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testServiceConfigDAIConfig()
-    throws Exception {
-        entering("testServiceConfigDAIConfig", null);
-        try {
-            String res = rb_ams.getString("serviceconfig_config_pass");
-            String xmlFile = "testServiceConfigDAIConfig.xml";
-            generateServiceConfigXML(realm, adminUser, adminPassword, "DAI",
-                    "globalConfig", xmlFile, res);
-            task = new DefaultTaskHandler(baseDir + xmlFile);
-            webClient = new WebClient();
-            page = task.execute(webClient);
-        } catch (Exception e) {
-            log(Level.SEVERE, "testServiceConfigDAIConfig", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the service configuration for" +
-                    " DAI service for configuration type set to Config.");
-        }
-        exiting("testUserProfileAdminUser");
     }
     
     /**
