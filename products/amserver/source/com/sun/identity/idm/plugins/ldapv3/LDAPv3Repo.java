@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.48 2008-07-16 19:22:00 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.49 2008-07-18 22:43:06 kenwho Exp $
  *
  */
 
@@ -528,7 +528,6 @@ public class LDAPv3Repo extends IdRepo {
             if (debug.messageEnabled()) {
                 debug.warning("ServerEntryNotFoundException error: siteID="
                         + siteID + "; serverID=" + serverID);
-                senf.printStackTrace();
             }
         }
 
