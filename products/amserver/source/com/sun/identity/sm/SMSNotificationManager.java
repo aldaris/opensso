@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.4 2008-07-18 06:58:20 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.5 2008-07-19 12:56:16 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -81,9 +81,12 @@ public class SMSNotificationManager implements SMSObjectListener {
             SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION));
         // If not config time and in legacy mode, enable dataStoreNotification
         // ServiceManager will be called only if not config time
+        // Also disable the check for clients
         boolean configTime = Boolean.parseBoolean(SystemProperties.get(
             Constants.SYS_PROPERTY_INSTALL_TIME));
-        if (!enableDataStoreNotification && !configTime &&
+        SMSObject object = SMSEntry.getSMSObject();
+        isClient = object instanceof SMSJAXRPCObject;
+        if (!isClient && !enableDataStoreNotification && !configTime &&
             !ServiceManager.isRealmEnabled()) {
             enableDataStoreNotification = true;
         }
@@ -99,8 +102,6 @@ public class SMSNotificationManager implements SMSObjectListener {
                 "DataStore Notification: " + enableDataStoreNotification +
                 " CacheEnabled: " + cachedEnabled);
         }
-        SMSObject object = SMSEntry.getSMSObject();
-        isClient = object instanceof SMSJAXRPCObject;
         // Register for callbacks if in client or if server should be
         // based on enableDataStoreNotification. In the case of legacy mode
         // registration for notification is handled by AMSDK code in DataLayer
