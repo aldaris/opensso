@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2AssertionValidator.java,v 1.3 2008-07-18 06:45:17 mallas Exp $
+ * $Id: SAML2AssertionValidator.java,v 1.4 2008-07-21 17:18:32 mallas Exp $
  *
  */
 
@@ -139,7 +139,8 @@ public class SAML2AssertionValidator {
            String ipAddress = subjectLocality.getAddress();                 
            if(ipAddress != null && 
                 !config.getTrustedIPAddresses().contains(ipAddress)) {
-              throw new SecurityException("invalid ip address");           
+              throw new SecurityException(
+                WSSUtils.bundle.getString("invalidIPAddress"));           
            }
         }*/
         

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.10 2008-06-25 05:50:10 qcheng Exp $
+ * $Id: WSSUtils.java,v 1.11 2008-07-21 17:18:32 mallas Exp $
  *
  */
 
@@ -253,7 +253,8 @@ public class WSSUtils {
                         } else if (tagName.equals("Y")) {
                             y = v;
                         } else {
-                            throw new XMLSignatureException("Invalid reference");
+                            throw new XMLSignatureException(
+                                bundle.getString("invalidReference"));
                         }
                     }
                 }

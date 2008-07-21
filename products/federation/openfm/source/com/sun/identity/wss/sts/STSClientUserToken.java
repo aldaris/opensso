@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.8 2008-07-18 06:45:17 mallas Exp $
+ * $Id: STSClientUserToken.java,v 1.9 2008-07-21 17:18:33 mallas Exp $
  *
  */
 
@@ -78,7 +78,8 @@ public class STSClientUserToken implements ClientUserToken {
                }
                this.tokenValue = XMLUtils.print((Element)credential);              
             } else {
-               throw new FAMSTSException("unsupportedcredential");
+               throw new FAMSTSException(
+                          STSUtils.bundle.getString("unsupportedcredential")); 
             }
         } catch (SecurityException sse) {
             throw new FAMSTSException(sse.getMessage());
@@ -99,7 +100,8 @@ public class STSClientUserToken implements ClientUserToken {
         NodeList nl = element.getChildNodes();
         int length = nl.getLength();
         if(length == 0) {
-           throw new FAMSTSException();
+           throw new FAMSTSException(
+                   STSUtils.bundle.getString("invalidelementname"));
         }
         
         for (int i=0; i < length; i++ ) {

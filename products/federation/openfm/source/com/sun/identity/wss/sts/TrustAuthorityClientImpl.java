@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClientImpl.java,v 1.5 2008-07-18 06:45:17 mallas Exp $
+ * $Id: TrustAuthorityClientImpl.java,v 1.6 2008-07-21 17:18:33 mallas Exp $
  *
  */
 
@@ -105,7 +105,8 @@ public class TrustAuthorityClientImpl {
             } catch (Exception ex) {
                  debug.error("TrustAuthorityClientImpl.getClientUserToken:"
                            +  "Failed in obtaining class", ex);
-                 throw new FAMSTSException("initializationFailed");
+                 throw new FAMSTSException(
+                       STSUtils.bundle.getString("initializationFailed"));
             }
         }
         
