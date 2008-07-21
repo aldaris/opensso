@@ -27,7 +27,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showHttpHeaders.jsp,v 1.6 2008-06-25 05:52:18 qcheng Exp $
+   $Id: showHttpHeaders.jsp,v 1.7 2008-07-21 22:15:23 huacui Exp $
 
 -->        
         
@@ -164,8 +164,19 @@ a:hover{text-decoration:underline}
                                         Enumeration headerNames = request.getHeaderNames();
                                         while(headerNames.hasMoreElements()) {
                                             String headerName = (String)headerNames.nextElement();
+                                            Enumeration values = request.getHeaders(headerName);
+                                            StringBuffer sb = new StringBuffer();
+                                            if (values.hasMoreElements()) {
+                                                String value = (String)values.nextElement();
+                                                sb.append(value);
+                                                while (values.hasMoreElements()) {
+                                                    value = (String)values.nextElement();
+                                                    sb.append("|");
+                                                    sb.append(value);
+                                                }
+                                            }
                                             out.println("<tr><td>" + headerName);
-                                            out.println("    <td>" + request.getHeader(headerName));
+                                            out.println("    <td>" + sb.toString());
                                         }
                                         
                                         out.println("</table>\n");
