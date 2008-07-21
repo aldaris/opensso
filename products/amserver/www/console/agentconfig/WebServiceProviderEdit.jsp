@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.5 2008-06-25 05:44:35 qcheng Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.6 2008-07-21 17:00:10 veiming Exp $
 
 --%>
 
@@ -71,6 +71,12 @@
             }
         }
         document.getElementById('samlconf').style.display = visible;
+
+        if (visible == '') {
+            frm.elements['WebServiceProviderEdit.tokenconversiontype'].disabled = (frm.elements['WebServiceProviderEdit.authenticationchain'].value == '[Empty]');
+        } else {
+            frm.elements['WebServiceProviderEdit.tokenconversiontype'].disabled = true;
+        }
         return true;
     }
 </script>

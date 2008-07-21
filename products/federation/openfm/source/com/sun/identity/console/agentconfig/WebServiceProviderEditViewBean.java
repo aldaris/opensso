@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.5 2008-06-25 05:49:32 qcheng Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.6 2008-07-21 17:00:10 veiming Exp $
  *
  */
 
@@ -73,6 +73,8 @@ public class WebServiceProviderEditViewBean
     private static final String TBL_DATA_PWD = "tblDataPassword";
 
     private static final String CHILD_NAME_AUTH_CHAIN = "authenticationchain";
+    private static final String CHILD_NAME_TOKEN_CONV_TYPE = 
+        "tokenconversiontype";
     private static final String CHILD_NAME_SAML_ATTR_MAPPING =
         "SAMLAttributeMapping";
     
@@ -95,6 +97,7 @@ public class WebServiceProviderEditViewBean
             "sunIdentityServerDeviceStatus");
         attrToChildNames.put("serviceType", "libertyservicetype");
         attrToChildNames.put("authenticationChain", "authenticationchain");
+        attrToChildNames.put("TokenConversionType", "tokenconversiontype");
         attrToChildNames.put("isResponseSign", "isresponsesigned");
         attrToChildNames.put("isResponseEncrypt", "isresponsedecrypted");
         attrToChildNames.put("isRequestHeaderEncrypt",
@@ -146,12 +149,27 @@ public class WebServiceProviderEditViewBean
             authChains = "";
         }
 
+        String tokenConversionType = getValueFromMap(values, 
+            WSSAttributeNames.TOKEN_CONVERSION_TYPE);
+        if (tokenConversionType == null) {
+            tokenConversionType = "";
+        }
+
         if (!inheritedPropertyNames.contains(WSSAttributeNames.AUTH_CHAIN)) {
             CCSelectableList cb = (CCSelectableList)getChild(
                 CHILD_NAME_AUTH_CHAIN);
             cb.setOptions(getAuthChainOptionList());
         }
         propertySheetModel.setValue(CHILD_NAME_AUTH_CHAIN, authChains);
+        
+        if (!inheritedPropertyNames.contains(
+            WSSAttributeNames.TOKEN_CONVERSION_TYPE)) {
+            CCSelectableList cb = (CCSelectableList)getChild(
+                CHILD_NAME_TOKEN_CONV_TYPE);
+            cb.setOptions(getTokenConversionTypeOptionList());
+        }
+        propertySheetModel.setValue(CHILD_NAME_TOKEN_CONV_TYPE, 
+            tokenConversionType);
         
         if (!inheritedPropertyNames.contains(
             WSSAttributeNames.SAML_ATTR_MAPPING)) {
@@ -178,6 +196,12 @@ public class WebServiceProviderEditViewBean
             }
         }
         return optList;
+    }
+    
+    private OptionList getTokenConversionTypeOptionList()
+        throws AMConsoleException {
+        List config = ((AgentsModel)getModel()).getTokenConversionTypes();
+        return createOptionList(config);
     }
     
     private void populateTableModel(List list) {
@@ -269,8 +293,18 @@ public class WebServiceProviderEditViewBean
         if ((authChain != null) && (authChain.length() > 0)) {
             setAuthChain.add(authChain);
         }
-        
         values.put(WSSAttributeNames.AUTH_CHAIN, setAuthChain);
+
+        String tokenConversionType = (String)propertySheetModel.getValue(
+            CHILD_NAME_TOKEN_CONV_TYPE);
+        Set setTokenConversionType = new HashSet(2);
+        if ((tokenConversionType != null) && 
+            (tokenConversionType.length() > 0)
+        ) {
+            setTokenConversionType.add(tokenConversionType);
+        }
+        values.put(WSSAttributeNames.TOKEN_CONVERSION_TYPE, 
+            setTokenConversionType);
         
         CCEditableList elist  = (CCEditableList)getChild(
             CHILD_NAME_SAML_ATTR_MAPPING);

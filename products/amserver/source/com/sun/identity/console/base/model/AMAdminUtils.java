@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
-* $Id: AMAdminUtils.java,v 1.6 2008-06-25 05:42:49 qcheng Exp $
+* $Id: AMAdminUtils.java,v 1.7 2008-07-21 17:00:10 veiming Exp $
  *
  */
 
@@ -72,14 +72,6 @@ public class AMAdminUtils {
         AMAdminConstants.CONSOLE_DEBUG_FILENAME);
 
     /**
-     * Store connection object for administrator. This is required because
-     * some LDAP objects cannot be accessed by current user if current user
-     * is not an administrator.
-     */
-    private static SSOToken adminSSOToken = (SSOToken)
-        AccessController.doPrivileged(AdminTokenAction.getInstance());
-
-    /**
      * Returns the Single-Sign-On Token of super administrator.
      *
      * @return Single-Sign-On Token of super administrator.
@@ -88,7 +80,8 @@ public class AMAdminUtils {
     public static final SSOToken getSuperAdminSSOToken()
         throws SecurityException
     {
-        return adminSSOToken;
+        return (SSOToken)
+            AccessController.doPrivileged(AdminTokenAction.getInstance());
     }
 
     /**
@@ -548,11 +541,44 @@ public class AMAdminUtils {
         return set;
     }
 
+    /**
+     * Returns attribute schema object.
+     *
+     * @param serviceName Name of service.
+     * @param schemaType Type of Schema.
+     * @param subSchemaName Name of sub schema.
+     * @param attributeName Name of attribute schema.
+     * @return attribute schema object.
+     */
+    public static AttributeSchema getAttributeSchema(
+        String serviceName,
+        SchemaType schemaType,
+        String subSchemaName,
+        String attributeName) {
+        Set attributeSchemas = getAttributeSchemas(serviceName, schemaType,
+            subSchemaName);
+        AttributeSchema attrSchema = null;
+
+        for (Iterator i = attributeSchemas.iterator();
+            i.hasNext() && (attrSchema == null);
+        ) {
+            AttributeSchema as = (AttributeSchema)i.next();
+            if (as.getName().equals(attributeName)) {
+                attrSchema = as;
+            }
+        }
+
+        return attrSchema;
+    }
+
     private static Set getAttributeSchemas(
         String serviceName,
-        SchemaType schemaType
+        SchemaType schemaType,
+        String subSchemaName
     ) {
         Set attributeSchemas = null;
+        SSOToken adminSSOToken = (SSOToken)
+            AccessController.doPrivileged(AdminTokenAction.getInstance());
 
         try {
             ServiceSchemaManager mgr = new ServiceSchemaManager(
@@ -560,7 +586,12 @@ public class AMAdminUtils {
             ServiceSchema ss = mgr.getSchema(schemaType);
 
             if (ss != null) {
-                attributeSchemas = ss.getAttributeSchemas(); 
+                if (subSchemaName != null) {
+                    ss = ss.getSubSchema(subSchemaName);
+                }
+                if (ss != null) {
+                    attributeSchemas = ss.getAttributeSchemas(); 
+                }
             }
         } catch (SSOException e) {
             debug.warning("AMAdminUtils.getAttributeSchemas", e);
@@ -570,6 +601,13 @@ public class AMAdminUtils {
 
         return (attributeSchemas != null) ?
             attributeSchemas : Collections.EMPTY_SET;
+    }
+
+    private static Set getAttributeSchemas(
+        String serviceName,
+        SchemaType schemaType
+    ) {
+        return getAttributeSchemas(serviceName, schemaType, null);
     }
 
     /**
@@ -614,6 +652,9 @@ public class AMAdminUtils {
         IdType idType
     ) {
         ServiceSchema serviceSchema = null;
+         SSOToken adminSSOToken = (SSOToken)
+            AccessController.doPrivileged(AdminTokenAction.getInstance());
+
         try {
             ServiceSchemaManager mgr = new ServiceSchemaManager(
                 serviceName, adminSSOToken);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.8 2008-06-25 05:42:44 qcheng Exp $
+ * $Id: AgentsModel.java,v 1.9 2008-07-21 17:00:10 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.idm.AMIdentity;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -341,4 +342,11 @@ public interface AgentsModel
      */
     String getAgentType(AMIdentity amid) 
         throws AMConsoleException;
+    
+    /**
+     * Returns Token Conversion Types.
+     * 
+     * @return Token Conversion Types.
+     */
+    List getTokenConversionTypes();
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.14 2008-07-14 21:33:16 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.15 2008-07-21 17:00:10 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.CLIConstants;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.common.configuration.ConfigurationException;
+import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.base.model.AMModelBase;
@@ -44,13 +45,17 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SchemaType;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -994,4 +999,26 @@ public class AgentsModelImpl
             throw new AMConsoleException(getErrorString(e));
         }
     }
+    
+    /**
+     * Returns Token Conversion Types.
+     * 
+     * @return Token Conversion Types.
+     */
+    public List getTokenConversionTypes() {
+        List choices = null;
+        AttributeSchema as = AMAdminUtils.getAttributeSchema(
+            IdConstants.AGENT_SERVICE, SchemaType.ORGANIZATION, "WSPAgent",
+            "TokenConversionType");
+        if (as != null) {
+            String[] choiceValues = as.getChoiceValues();
+            int sz = choiceValues.length;
+            choices = new ArrayList(sz);
+            for (int i = 0; i < sz; i++) {
+                choices.add(choiceValues[i]);
+            }
+        }
+        return (choices == null) ? Collections.EMPTY_LIST : choices;
+    }
+
 }

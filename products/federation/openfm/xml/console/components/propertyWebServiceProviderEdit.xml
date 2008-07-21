@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.12 2008-06-25 05:51:09 qcheng Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.13 2008-07-21 17:00:11 veiming Exp $
 
 -->
 
@@ -88,6 +88,15 @@
             defaultValue="a321"
             labelFor="authenticationchain" />
         <cc name="authenticationchain"
+            tagclass="com.sun.web.ui.taglib.html.CCSelectableListTag">
+            <attribute name="onChange" value="showSAMLConfig()" />
+        </cc>
+    </property>
+    <property>
+        <label name="lbltokenconversiontype"
+            defaultValue="a343"
+            labelFor="tokenconversiontype" />
+        <cc name="tokenconversiontype"
             tagclass="com.sun.web.ui.taglib.html.CCSelectableListTag">
         </cc>
     </property>
