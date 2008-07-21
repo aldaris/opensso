@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpServletRequestWrapper.java,v 1.2 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: HttpServletRequestWrapper.java,v 1.3 2008-07-21 23:20:18 veiming Exp $
  *
  */
 
@@ -92,5 +92,15 @@ public class HttpServletRequestWrapper
      */
     public String getContextPath() {
         return req.getContextPath();
+    }
+
+    /**
+     * Returns header.
+     *
+     * @param key Key to header value.
+     * @return header.
+     */
+    public String getHeader(String key) {
+        return req.getHeader(key);
     }
 }

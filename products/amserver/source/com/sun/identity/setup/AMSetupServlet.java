@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.76 2008-07-18 06:58:19 arviranga Exp $
+ * $Id: AMSetupServlet.java,v 1.77 2008-07-21 23:20:18 veiming Exp $
  *
  */
 
@@ -2222,9 +2222,18 @@ public class AMSetupServlet extends HttpServlet {
         Map map = request.getParameterMap();
         String superLocale = (String)map.get("locale");
         if ((superLocale != null) && (superLocale.length() > 0)) {
-            configLocale = new java.util.Locale(superLocale);
+            configLocale = Locale.getLocaleObjFromAcceptLangHeader(
+                superLocale);
         } else {
-            configLocale = java.util.Locale.getDefault();
+            String acceptLangHeader = request.getHeader("Accept-Language");
+            if ((acceptLangHeader !=  null) &&
+                (acceptLangHeader.length() > 0))
+            {
+                configLocale = Locale.getLocaleObjFromAcceptLangHeader(
+                   acceptLangHeader);
+            } else {
+                configLocale = java.util.Locale.getDefault();
+            }
         }
         SetupProgress.setLocale(configLocale);
     }

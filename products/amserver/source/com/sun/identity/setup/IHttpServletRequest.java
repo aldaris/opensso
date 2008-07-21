@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IHttpServletRequest.java,v 1.2 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: IHttpServletRequest.java,v 1.3 2008-07-21 23:20:18 veiming Exp $
  *
  */
 
@@ -61,4 +61,12 @@ public interface IHttpServletRequest {
      * @return the context path.
      */
     String getContextPath();
+
+    /**
+     * Returns header.
+     *
+     * @param key Key to header value.
+     * @return header.
+     */
+    String getHeader(String key);
 }
