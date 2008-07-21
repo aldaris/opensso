@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.6 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: GeneralAgentTests.java,v 1.7 2008-07-21 17:32:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,9 +135,11 @@ public class GeneralAgentTests extends TestCommon {
         log(Level.FINEST, "setup", "Case sensitive resource name : " +
                 resourceCase);
         polIdx = new Integer(policyIdx).intValue();
-        mpc.createIdentities(strLocRB, polIdx);
+        mpc.createIdentities("agents" + fileseparator + strLocRB, polIdx);
         if (executeAgainstOpenSSO) {
-            mpc.createPolicyXML(strGblRB, strLocRB, polIdx, strLocRB + ".xml");
+            mpc.createPolicyXML("agents" + fileseparator + strGblRB, 
+                    "agents" + fileseparator + strLocRB, polIdx,
+                    strLocRB + ".xml");
             log(Level.FINEST, "setup", "Policy XML:\n" + strLocRB + ".xml");
            mpc.createPolicy(strLocRB + ".xml");
         } else
@@ -365,7 +367,7 @@ public class GeneralAgentTests extends TestCommon {
     throws Exception {
         entering("cleanup", null);
         if (executeAgainstOpenSSO)
-            mpc.deletePolicies(strLocRB, polIdx);
+            mpc.deletePolicies("agents" + fileseparator + strLocRB, polIdx);
         else 
             log(Level.FINE, "cleanup", "Executing against non OpenSSO install");
         idmc.deleteIdentity(admintoken, realm, IdType.USER, 
