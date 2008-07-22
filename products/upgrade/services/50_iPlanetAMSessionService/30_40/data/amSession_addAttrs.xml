@@ -23,7 +23,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amSession_addAttrs.xml,v 1.3 2008-06-25 05:53:51 qcheng Exp $
+    $Id: amSession_addAttrs.xml,v 1.4 2008-07-22 19:10:54 manish_rustagi Exp $
 
 -->
 
@@ -50,6 +50,18 @@
     </BooleanValues>
     <DefaultValues>
         <Value>true</Value>
+    </DefaultValues>
+</AttributeSchema>
+<AttributeSchema name="iplanet-am-session-enable-session-trimming"
+    type="single_choice"
+    syntax="string"
+    i18nKey="a122">
+    <ChoiceValues>
+        <ChoiceValue i18nKey="choiceYES">YES</ChoiceValue>
+        <ChoiceValue i18nKey="choiceNO">NO</ChoiceValue>
+    </ChoiceValues>
+    <DefaultValues>
+        <Value>NO</Value>
     </DefaultValues>
 </AttributeSchema>
 </Requests>
