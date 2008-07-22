@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.30 2008-07-11 01:46:23 arviranga Exp $
+ * $Id: Constants.java,v 1.31 2008-07-22 19:08:07 manish_rustagi Exp $
  *
  */
 
@@ -882,5 +882,11 @@ public interface Constants {
      */
     static final String EVENT_LISTENER_REMOTE_CLIENT_BACKLOG_CACHE =
         "com.sun.am.event.notification.expire.time";
-        
+                
+    /**
+     * Global schema property name in Session Service.
+     * constant used for session trimming when purge delay > 0 
+     */
+    static final String ENABLE_TRIM_SESSION = 
+        "iplanet-am-session-enable-session-trimming";        
 }

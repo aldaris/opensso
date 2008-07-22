@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.14 2008-07-11 22:37:31 manish_rustagi Exp $
+ * $Id: InternalSession.java,v 1.15 2008-07-22 19:05:30 manish_rustagi Exp $
  *
  */
 
@@ -188,8 +188,12 @@ public class InternalSession implements TaskRunnable, Serializable {
 
     private static final String HOST_NAME = "HostName";
 
-    /* AM Internal session maximum idile time */
+    /* AM Internal session maximum idle time */
     private static final String AM_MAX_IDLE_TIME = "AMMaxIdleTime";
+
+    /* session property: SAML2IDPSessionIndex */
+    private static final String SAML2_IDP_SESSION_INDEX = 
+        "SAML2IDPSessionIndex";
 
     /** AM User Universal Identifier Property*/
     protected static final String UNIVERSAL_IDENTIFIER = 
@@ -1163,7 +1167,9 @@ public class InternalSession implements TaskRunnable, Serializable {
         SessionService.decrementActiveSessions();
         SessionCount.decrementSessionCount(this);  
         setState(Session.INVALID);
-        trimSession();
+        if(SessionService.getSessionService().isSessionTrimmingEnabled()){
+            trimSession();
+        }        
         SessionService.getSessionService().sendEvent(this, eventType);
     }
 
@@ -1508,8 +1514,9 @@ public class InternalSession implements TaskRunnable, Serializable {
      * overhead. Even if the session lives in the server for the extra time out
      * period, the memory is not abused. Instance variables preserved are, 1)
      * sessionID 2) timedOutAt 3) clientID 4) purgeDelay 5)
-     * sessionProperties(loginURL/SessionTimedOut/AM_CTX_ID) 6) sessionEventURLs
-     * 7) sessionState All other instance variables are cleaned to save memory.
+     * sessionProperties(loginURL/SessionTimedOut/AM_CTX_ID/SAML2IDPSessionIndex)
+     * 6) sessionEventURLs 7) sessionState All other instance variables are 
+     * cleaned to save memory.
      */
     private void trimSession() {
         clientDomain = null;
@@ -1518,6 +1525,7 @@ public class InternalSession implements TaskRunnable, Serializable {
         Properties newProperties = new Properties();
         String loginURL = getProperty(LOGIN_URL);
         String sessionTimedOut = getProperty(SESSION_TIMED_OUT);
+        String  idpSessionIndex = getProperty(SAML2_IDP_SESSION_INDEX);
         if (loginURL != null)
             newProperties.put(LOGIN_URL, loginURL);
         if (sessionTimedOut != null)
@@ -1526,6 +1534,9 @@ public class InternalSession implements TaskRunnable, Serializable {
         if (ctxID != null) {
             newProperties.put(Constants.AM_CTX_ID, ctxID);
         }
+        if (idpSessionIndex != null) {
+            newProperties.put(SAML2_IDP_SESSION_INDEX, idpSessionIndex);
+        }        
         sessionProperties = newProperties;
     }
 

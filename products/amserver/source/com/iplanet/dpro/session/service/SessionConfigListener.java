@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConfigListener.java,v 1.4 2008-07-11 22:33:01 manish_rustagi Exp $
+ * $Id: SessionConfigListener.java,v 1.5 2008-07-22 19:05:29 manish_rustagi Exp $
  *
  */
 
@@ -53,8 +53,8 @@ public class SessionConfigListener implements ServiceListener {
         "iplanet-am-session-session-list-retrieval-timeout";
 
     private static final String MAX_SESSION_LIST_SIZE = 
-        "iplanet-am-session-max-session-list-size";
-    
+        "iplanet-am-session-max-session-list-size";    
+
     private static final String SESSION_CONSTRAINT = 
         "iplanet-am-session-enable-session-constraint";
     
@@ -136,6 +136,14 @@ public class SessionConfigListener implements ServiceListener {
                 SessionService.setNotificationProperties(notProp);
             } else {
                 SessionService.setPropertyNotificationEnabled(false);
+            }
+
+            String enableSessionTrimmingStr = CollectionHelper.getMapAttr(
+                    attrs, Constants.ENABLE_TRIM_SESSION, "NO");
+            if (enableSessionTrimmingStr.equalsIgnoreCase("YES")) {
+            	SessionService.setSessionTrimmingEnabled(true);
+            } else {
+            	SessionService.setSessionTrimmingEnabled(false);
             }
             
             String enableQuotaconstraintsStr = CollectionHelper.getMapAttr(

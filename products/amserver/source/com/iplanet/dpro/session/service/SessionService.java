@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.21 2008-07-11 22:35:53 manish_rustagi Exp $
+ * $Id: SessionService.java,v 1.22 2008-07-22 19:05:29 manish_rustagi Exp $
  *
  */
 
@@ -355,7 +355,9 @@ public class SessionService {
     private static boolean isSessionFailoverEnabled = false;
 
     private static boolean isSiteEnabled = false;
-
+    
+    // used for session trimming    
+    private static boolean isSessionTrimmingEnabled = false;            
     
     /* the following group of members are for session constraints */
     private static boolean isSessionConstraintEnabled = false;
@@ -1836,6 +1838,18 @@ public class SessionService {
         }
         return false;
     }
+
+    static public void setSessionTrimmingEnabled(boolean value) {
+        isSessionTrimmingEnabled = value;
+        if (sessionDebug.messageEnabled()) {
+            sessionDebug.message("SessionService.setSessionTrimmingEnabled()="
+                    + isSessionTrimmingEnabled);
+        }           
+    }
+
+    static public boolean isSessionTrimmingEnabled() {
+        return isSessionTrimmingEnabled;
+    }
     
     static public void setSessionConstraintEnabled(boolean value) {
         isSessionConstraintEnabled = value;
@@ -1916,6 +1930,17 @@ public class SessionService {
                 notificationProperties = (Set) attrs
                         .get(Constants.NOTIFICATION_PROPERTY_LIST);
             }
+            
+            String trimSessionStr = CollectionHelper.getMapAttr(
+                attrs, Constants.ENABLE_TRIM_SESSION, "NO");
+            if (trimSessionStr.equalsIgnoreCase("YES")) {
+                isSessionTrimmingEnabled = true;
+            }
+            if (sessionDebug.messageEnabled()) {
+                sessionDebug.message("SessionService.postInit():" +
+                " isSessionTrimmingEnabled=" + isSessionTrimmingEnabled);
+            }            
+            
             String constraintStr = CollectionHelper.getMapAttr(
                 attrs, SESSION_CONSTRAINT, "OFF");
             if (constraintStr.equalsIgnoreCase("ON")) {
