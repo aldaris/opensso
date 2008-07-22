@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PortCheckTaskHandler.java,v 1.3 2008-06-25 05:51:48 qcheng Exp $
+ * $Id: PortCheckTaskHandler.java,v 1.4 2008-07-22 18:01:41 sean_brydon Exp $
  *
  */
 
@@ -41,8 +41,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.sun.identity.agents.arch.AgentException;
+import com.sun.identity.agents.arch.IBaseModuleConstants;
 import com.sun.identity.agents.arch.Manager;
+import com.sun.identity.agents.util.ResourceReader;
 import com.sun.identity.agents.util.StringUtils;
+import com.sun.identity.shared.debug.Debug;
 
 
 /**
@@ -256,93 +259,12 @@ implements IPortCheckTaskHandler {
                 logMessage(
                     "PortCheckTaskHandler: Port check content file is: "
                     + fileName);
-            }
-
-            InputStream inStream = null;
-
-            try {
-                inStream = ClassLoader.getSystemResourceAsStream(fileName);
-            } catch(Exception ex) {
-                if(isLogWarningEnabled()) {
-                    logWarning(
-                        "PortCheckTaskHandler: Exception while trying to get "
-                        + "for file " + fileName, ex);
-                }
-            }
-
-            if( inStream == null ) {
-                try {
-                    ClassLoader cl = 
-                        Thread.currentThread().getContextClassLoader();
-                    if( cl != null ) 
-                        inStream = cl.getResourceAsStream(fileName);
-
-                } catch(Exception ex) {
-                    if (isLogWarningEnabled()) {
-                        logWarning(
-                         "PortCheckTaskHandler: Exception while trying to get "
-                         + "for file " + fileName, ex);
-                    }
-                }
-            }
-
-            if(inStream == null) {
-                try {
-                    File contentFile = new File(fileName);
-
-                    if( !contentFile.exists() || !contentFile.canRead()) {
-                        throw new AgentException(
-                            "Unable to read port check content " + fileName);
-                    }
-
-                    inStream = new FileInputStream(contentFile);
-                } catch(Exception ex) {
-                    logError(
-                        "PortCheckTaskHandler: Unable to read port check " 
-                        + "content " + fileName, ex);
-
-                    throw new AgentException(
-                        "Unable to read port check content " + fileName, ex);
-                }
-            }
-
-            if(inStream == null) {
-                throw new AgentException("Unable to read port check content "
-                                         + fileName);
-            }
-
-            try {
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(inStream));
-                StringBuffer contentBuffer = new StringBuffer();
-                String       nextLine      = null;
-
-                while((nextLine = reader.readLine()) != null) {
-                    contentBuffer.append(nextLine);
-                    contentBuffer.append(NEW_LINE);
-                }
-
-                setPortCheckContent(contentBuffer.toString());
-
-                if(isLogMessageEnabled()) {
-                    logMessage(
-                        "PortCheckTaskHandler: Port check internal content is: "
-                        + NEW_LINE + _portCheckContent);
-                }
-            } catch(Exception ex) {
-                throw new AgentException("Unable to read port check content "
-                                         + fileName, ex);
-            } finally {
-                if(inStream != null) {
-                    try {
-                        inStream.close();
-                    } catch(Exception ex) {
-                        logError(
-                            "Exception while trying to close input stream "
-                            + "for port check content file " + fileName, ex);
-                    }
-                }
-            }
+            }          
+            
+            ResourceReader resourceReader
+                    = new ResourceReader(Debug.getInstance(IBaseModuleConstants.AM_FILTER_RESOURCE));
+            String contentBufferStr = resourceReader.getTextFromFile(fileName);
+            setPortCheckContent(contentBufferStr);
         } else {
             if(isLogMessageEnabled()) {
                 logMessage(

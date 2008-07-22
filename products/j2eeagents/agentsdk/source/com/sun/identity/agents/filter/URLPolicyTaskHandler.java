@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPolicyTaskHandler.java,v 1.6 2008-06-25 05:51:49 qcheng Exp $
+ * $Id: URLPolicyTaskHandler.java,v 1.7 2008-07-22 18:01:41 sean_brydon Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 
 import com.sun.identity.agents.arch.AgentException;
+import com.sun.identity.agents.arch.IBaseModuleConstants;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.SSOValidationResult;
 import com.sun.identity.agents.policy.AmWebPolicyManager;
@@ -45,8 +46,10 @@ import com.sun.identity.agents.policy.AmWebPolicyResult;
 import com.sun.identity.agents.policy.AmWebPolicyResultStatus;
 import com.sun.identity.agents.policy.IAmWebPolicy;
 import com.sun.identity.agents.util.NameValuePair;
+import com.sun.identity.agents.util.ResourceReader;
 import com.sun.identity.agents.util.StringUtils;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * <p>
@@ -178,90 +181,11 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
             logMessage("URLPolicyTaskHandler: Composite Advice form file is: " 
                     + fileName);
         }
-        
-        InputStream inStream = null;
-        try {
-            inStream = ClassLoader.getSystemResourceAsStream(fileName);
-        } catch (Exception ex) {
-            if (isLogWarningEnabled()) {
-                logWarning(
-                        "URLPolicyTaskHandler: Exception while trying to get "
-                        + "for file " + fileName, ex);
-            }
-        }
 
-        if( inStream == null ) {
-            try {
-                ClassLoader cl = 
-                    Thread.currentThread().getContextClassLoader();
-                if( cl != null ) 
-                    inStream = cl.getResourceAsStream(fileName);
-
-            } catch(Exception ex) {
-                if (isLogWarningEnabled()) {
-                    logWarning(
-                     "URLPolicyTaskHandler: Exception while trying to get "
-                     + "for file " + fileName, ex);
-                }
-            }
-        }
-        
-        if (inStream == null) {
-            try {
-                File contentFile = new File(fileName);
-                if (!contentFile.exists() || !contentFile.canRead()) {
-                    throw new AgentException(
-                            "Unable to read composite advice form file "
-                            + fileName);
-                }
-                
-                inStream = new FileInputStream(contentFile);
-            } catch (Exception ex) {
-                logError("URLPolicyTaskHandler: Unable to read composite " 
-                        + "advice form file content"
-                        + fileName, ex);
-                throw new AgentException(
-                        "Unable to composite advice form file content "
-                        + fileName, ex);
-            }
-        }
-        
-        if (inStream == null) {
-            throw new AgentException("Unable to read form login content "
-                    + fileName);
-        }
-        
-        try {
-            BufferedReader reader = 
-                    new BufferedReader(new InputStreamReader(inStream));
-            StringBuffer contentBuffer = new StringBuffer();
-            String       nextLine      = null;
-            
-            while ( (nextLine = reader.readLine()) != null) {
-                contentBuffer.append(nextLine);
-                contentBuffer.append(NEW_LINE);
-            }
-            
-            setCompositeAdviceFormContent(contentBuffer.toString());
-            if (isLogMessageEnabled()) {
-                logMessage("URLPolicyTaskHandler: composite advice content: " +
-                        NEW_LINE + _compositeAdviceFormContent);
-            }
-        } catch (Exception ex) {
-            throw new AgentException(
-                    "Unable to read composite advice form content "
-                    + fileName, ex);
-        } finally {
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (Exception ex) {
-                    logError("Exception while trying to close input stream "
-                            + "for composite advice content file " 
-                            + fileName, ex);
-                }
-            }
-        }
+        ResourceReader resourceReader
+                    = new ResourceReader(Debug.getInstance(IBaseModuleConstants.AM_FILTER_RESOURCE));
+        String contentBufferStr = resourceReader.getTextFromFile(fileName);
+        setCompositeAdviceFormContent(contentBufferStr);
     }
     
     public void setCompositeAdviceFormContent(String contentString) {
