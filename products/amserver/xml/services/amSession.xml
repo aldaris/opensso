@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amSession.xml,v 1.4 2008-06-25 05:46:13 qcheng Exp $
+   $Id: amSession.xml,v 1.5 2008-07-22 18:56:40 manish_rustagi Exp $
   
 -->
 
@@ -48,6 +48,18 @@
                         <Value>iplanet-am-session-service</Value>
                     </DefaultValues>
                 </AttributeSchema>
+                <AttributeSchema name="iplanet-am-session-enable-session-trimming"
+                    type="single_choice"
+                    syntax="string"
+                    i18nKey="a122">
+                    <ChoiceValues>
+                        <ChoiceValue i18nKey="choiceYES">YES</ChoiceValue>
+                        <ChoiceValue i18nKey="choiceNO">NO</ChoiceValue>
+                   </ChoiceValues>
+                    <DefaultValues>
+                        <Value>NO</Value>
+                    </DefaultValues>
+                </AttributeSchema>                
                 <AttributeSchema name="iplanet-am-session-max-session-list-size"
                     type="single"
                     syntax="number_range"
