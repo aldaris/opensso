@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.77 2008-07-21 23:20:18 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.78 2008-07-22 16:12:21 mrudul_uchil Exp $
  *
  */
 
@@ -1918,7 +1918,6 @@ public class AMSetupServlet extends HttpServlet {
         config.remove("AgentType");
         config.put("AgentType","STSAgent");
         config.remove("SecurityMech");
-        config.remove("UserCredential");
         config.remove("keepSecurityHeaders");
         config.remove("WSPEndpoint");
         config.put("SecurityMech","urn:sun:wss:security:null:X509Token");

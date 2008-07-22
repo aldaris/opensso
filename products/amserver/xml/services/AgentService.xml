@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.54 2008-07-18 06:51:46 mallas Exp $
+   $Id: AgentService.xml,v 1.55 2008-07-22 16:12:21 mrudul_uchil Exp $
 
 -->
 
@@ -2427,19 +2427,6 @@
                          </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.identity.agents.config.repository.location"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a110">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>centralized</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
                         name="SecurityMech"
                         type="single_choice"
                         syntax="string"
@@ -2715,19 +2702,6 @@
                          <DefaultValues>
                              <Value>com.sun.identity.sm.RequiredValueValidator</Value>
                          </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.repository.location"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a110">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>centralized</Value>
-                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="SecurityMech"
@@ -3038,19 +3012,6 @@
                          </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
-                        name="com.sun.identity.agents.config.repository.location"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a110">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>centralized</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
                         name="SecurityMech"
                         type="single_choice"
                         syntax="string"
@@ -3286,19 +3247,6 @@
                          <DefaultValues>
                              <Value>com.sun.identity.sm.RequiredValueValidator</Value>
                          </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema
-                        name="com.sun.identity.agents.config.repository.location"
-                        type="single_choice"
-                        syntax="string"
-                        i18nKey="a110">
-                        <ChoiceValues>
-                            <ChoiceValue i18nKey="a111">centralized</ChoiceValue>
-                            <ChoiceValue i18nKey="a112">local</ChoiceValue>
-                        </ChoiceValues>
-                        <DefaultValues>
-                            <Value>centralized</Value>
-                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="privateKeyAlias"
