@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: getServerInfo.jsp,v 1.4 2008-06-25 05:44:27 qcheng Exp $
+   $Id: getServerInfo.jsp,v 1.5 2008-07-22 00:08:26 ak138937 Exp $
 
 --%>
 
@@ -134,7 +134,6 @@ import="com.iplanet.am.util.SystemProperties,
         }
     }
     // We have collected all the data - return a response
-    assert username != null && password != null;
     StringBuffer buf = new StringBuffer();
     
     buf.append(BootstrapData.DS_ISEMBEDDED).append("=").append(isEmbeddedDS).
