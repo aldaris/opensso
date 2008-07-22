@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.8 2008-06-30 18:09:19 mrudul_uchil Exp $
+   $Id: README,v 1.9 2008-07-22 16:14:57 mrudul_uchil Exp $
 
 -->
 
@@ -112,6 +112,22 @@ II. Configure the web services client for "StockService".
 III. Run the samples
 
   a) Web Service Client sample :
+
+    For StockQuoteClient to honor the "User Authentication Required" flag / configuration at wsc ("StockService" agent here), 
+    you need to add following configuration at HTTP provider in GF :
+
+    GF admin console - Expand Configuration -> Security -> Click on Message Security 
+    -> HttpSevlet -> Providers tab -> click on FAMHttpProvider
+    click on "Add Property" -> give name as "providername" and 
+    value as "StockService" (since we are using "StockService" agent profile here). 
+    Save changes and logout.
+
+    I) With this when "User Authentication Required" flag is checked at "StockService" agent profile, 
+    SAML token with end user's identity/token will be generated and 
+    you can use either SAML 1.1 or SAML 2.0 SenderVouches at "wsp" profile. 
+    
+    Here, the flow will be as follows :
+
     1. Access the stock quote client page.
 
        http://<host>:<port>/StockQuoteClient/index.jsp
@@ -124,6 +140,20 @@ III. Run the samples
     3. Enter "JAVA" as stock ticker symbol and click "Get Quote".
 
     4. If successful, this will display the stock values.
+
+    II) When "User Authentication Required" flag is not checked at "StockService" agent profile, 
+    SAML token with WSC's identity (WSC's cert) will be generated and 
+    you can use either SAML 1.1 or SAML 2.0 HolderOfKey at "wsp" profile.
+ 
+    Here, the flow will be as follows :
+
+    1. Access the stock quote client page.
+
+       http://<host>:<port>/StockQuoteClient/index.jsp
+
+    2. Enter "JAVA" as stock ticker symbol and click "Get Quote".
+
+    3. If successful, this will display the stock values.
 
   b) Standalone Client sample :
 
