@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: GroupContainer.jsp,v 1.4 2008-06-25 05:44:38 qcheng Exp $
+   $Id: GroupContainer.jsp,v 1.5 2008-07-22 21:39:20 babysunil Exp $
 
 --%>
 
@@ -92,7 +92,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-        <td><cc:textfield name="tfFilter" defaultValue="*" /></td>
+        <td><cc:label name ="lblFilter" elementName="tfFilter" /><cc:textfield name="tfFilter" defaultValue="*" /></td>
         <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
         <td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['GroupContainer'].submit();" /></td>
     </tr>

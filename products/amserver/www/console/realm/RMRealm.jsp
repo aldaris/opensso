@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: RMRealm.jsp,v 1.4 2008-06-25 05:44:48 qcheng Exp $
+   $Id: RMRealm.jsp,v 1.5 2008-07-22 21:42:08 babysunil Exp $
 
 --%>
 
@@ -77,7 +77,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
 	<td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-	<td><cc:textfield name="tfFilter" defaultValue="*" /></td>
+	<td><cc:label name ="lblFilter" elementName="tfFilter" /><cc:textfield name="tfFilter" defaultValue="*" /></td>
 	<td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
 	<td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['RMRealm'].submit();" /></td>
     </tr>

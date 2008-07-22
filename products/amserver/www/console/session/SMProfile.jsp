@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SMProfile.jsp,v 1.3 2008-06-25 05:44:54 qcheng Exp $
+   $Id: SMProfile.jsp,v 1.4 2008-07-22 21:43:09 babysunil Exp $
 
 --%>
 
@@ -94,7 +94,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
 	<td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-	<td><cc:textfield name="tfFilter" defaultValue="*" /></td>
+	<td><cc:label name ="lblFilter" elementName="tfFilter" /><cc:textfield name="tfFilter" defaultValue="*" /></td>
 	<td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
 	<td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['SMProfile'].submit();" /></td>
     </tr>
