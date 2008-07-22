@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.20 2008-07-09 18:51:52 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.21 2008-07-22 00:07:25 babysunil Exp $
  *
  */
 
@@ -56,6 +56,8 @@ public interface SAMLv2Model
             "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact";
     public static final String paosBinding = 
             "urn:oasis:names:tc:SAML:2.0:bindings:PAOS";
+    public static final String uriBinding =
+            "urn:oasis:names:tc:SAML:2.0:bindings:URI";
     
     //SAMLv2 IDP Standard attributes
     public static final String WANT_AUTHN_REQ_SIGNED =
