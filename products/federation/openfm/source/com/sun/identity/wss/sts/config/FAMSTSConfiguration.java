@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.6 2008-07-02 16:57:24 mallas Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.7 2008-07-22 16:33:05 mrudul_uchil Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 
 import com.sun.identity.wss.sts.STSUtils;
+import com.sun.identity.wss.security.PasswordCredential;
 
 import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
 import com.sun.identity.plugin.configuration.ConfigurationException;
@@ -81,7 +82,8 @@ public class FAMSTSConfiguration implements
     private static Set samlAttributes = null;
     private static boolean includeMemberships = false;
     private static String nameIDMapper = null;
-    private static String attributeNS = null;    
+    private static String attributeNS = null; 
+    private static List usercredentials = null;
     
     private CallbackHandler callbackHandler;
     
@@ -113,6 +115,9 @@ public class FAMSTSConfiguration implements
     static final String PRIVATE_KEY_TYPE = "privateKeyType";
     static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
     static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
+    static final String USER_NAME = "UserName";
+    static final String USER_PASSWORD = "UserPassword";
+    static final String USER_CREDENTIAL = "UserCredential";
     static final String KERBEROS_DOMAIN_SERVER = "KerberosDomainServer";
     static final String KERBEROS_DOMAIN = "KerberosDomain";
     static final String KERBEROS_SERVICE_PRINCIPAL = "KerberosServicePrincipal";
@@ -281,6 +286,49 @@ public class FAMSTSConfiguration implements
         values = (Set)attrMap.get(PUBLIC_KEY_ALIAS);
         if (values != null && !values.isEmpty()) {
             publicKeyAlias = (String)values.iterator().next();
+        }
+        
+        String value = null;
+        values = (Set)attrMap.get(USER_CREDENTIAL);
+        if (values != null && !values.isEmpty()) {
+            value = (String)values.iterator().next();
+        }
+        if ((value != null) && (value.length() != 0)) {
+            if(usercredentials == null) {
+                usercredentials = new ArrayList();
+            }
+            StringTokenizer stVal = new StringTokenizer(value, ","); 
+            while(stVal.hasMoreTokens()) {
+                String tmpVal = (String)stVal.nextToken();
+                int index = tmpVal.indexOf("|");
+                if(index == -1) {
+                    return;
+                }
+                String usertmp = tmpVal.substring(0, index);
+                String passwordtmp = tmpVal.substring(index+1, 
+                    tmpVal.length()); 
+
+                String user = null;
+                String password = null;
+                StringTokenizer st = new StringTokenizer(usertmp, ":"); 
+                if(USER_NAME.equals(st.nextToken())) {
+                    if(st.hasMoreTokens()) {
+                        user = st.nextToken();
+                    }               
+                }
+                StringTokenizer st1 = new StringTokenizer(passwordtmp, ":"); 
+                if(USER_PASSWORD.equals(st1.nextToken())) {
+                    if(st1.hasMoreTokens()) {
+                        password = st1.nextToken();
+                    }              
+                }
+
+                if((user != null) && (password != null)) {
+                    PasswordCredential credential = 
+                        new PasswordCredential(user, password);
+                    usercredentials.add(credential);
+                }   
+            }
         }
         
         values = (Set)attrMap.get(KERBEROS_DOMAIN_SERVER);
@@ -728,6 +776,23 @@ public class FAMSTSConfiguration implements
      */
     public void setSAMLAttributeNamespace(String attributeNS) {
         this.attributeNS = attributeNS;
+    }
+    
+    /**
+     * Sets the user credentials list.
+     * @param usercredentials list of <code>PasswordCredential</code>objects.
+     */
+    public void setUsers(List usercredentials) {
+        this.usercredentials = usercredentials;
+    }
+
+    /**
+     * Returns the list of <code>PasswordCredential</code>s of the user.
+     *
+     * @return the list of <code>PasswordCredential</code> objects.
+     */
+    public List getUsers() {
+        return usercredentials;
     }
        
 }

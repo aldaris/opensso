@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.6 2008-06-25 05:50:11 qcheng Exp $
+ * $Id: HTTPRequestHandler.java,v 1.7 2008-07-22 16:33:04 mrudul_uchil Exp $
  *
  */
 
@@ -109,10 +109,12 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
            return false;
         }
  
+        if(debug.messageEnabled()) {
+            debug.message("HTTPRequestHandler.shouldAuthenticate:: providername : " 
+                + providername);
+        }
+        
         if((providername == null) || (providername.length() == 0)) {
-            if(debug.messageEnabled()) {
-               debug.message("HTTPRequestHandler.init:: provider name is null");
-            }
             return true;
         }
 

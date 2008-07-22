@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.9 2008-07-02 16:58:29 mallas Exp $
+   $Id: famSTS.xml,v 1.10 2008-07-22 16:33:07 mrudul_uchil Exp $
                                                                                 
 -->
 
@@ -225,38 +225,48 @@
                    i18nKey="a119">
                </AttributeSchema>
 
-               <AttributeSchema name="KerberosDomainServer"
+               <AttributeSchema
+                   name="UserCredential"
                    type="single"
                    syntax="string"
                    i18nKey="a120">
+                   <DefaultValues>
+                       <Value>UserName:test|UserPassword:test</Value>
+                   </DefaultValues>
+               </AttributeSchema>
+                    
+               <AttributeSchema name="KerberosDomainServer"
+                   type="single"
+                   syntax="string"
+                   i18nKey="a121">
                </AttributeSchema>
 
                <AttributeSchema
                     name="KerberosDomain"
                     type="single"
                     syntax="string"
-                    i18nKey="a121">
+                    i18nKey="a122">
                </AttributeSchema>
 
                <AttributeSchema
                     name="KerberosServicePrincipal"
                     type="single"
                     syntax="string"
-                    i18nKey="a122">
+                    i18nKey="a123">
                </AttributeSchema>
 
                <AttributeSchema
                     name="KerberosKeyTabFile"
                     type="single"
                     syntax="string"
-                    i18nKey="a123">
+                    i18nKey="a124">
                </AttributeSchema>
 
                <AttributeSchema
                     name="isVerifyKrbSignature"
                     type="single"
                     syntax="boolean"
-                    i18nKey="a124">
+                    i18nKey="a125">
                     <BooleanValues>
                          <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
                          <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
@@ -270,21 +280,21 @@
                      name="SAMLAttributeMapping"
                      type="list"
                      syntax="string"
-                     i18nKey="a125">                        
+                     i18nKey="a126">                        
                </AttributeSchema>
 
                <AttributeSchema
                      name="NameIDMapper"
                      type="single"
                      syntax="string"
-                     i18nKey="a126">
+                     i18nKey="a127">
                </AttributeSchema>
 
                <AttributeSchema
                      name="AttributeNamespace"
                      type="single"
                      syntax="string"
-                     i18nKey="a127">
+                     i18nKey="a128">
                      <DefaultValues>
                          <Value>http://www.sun.com</Value>
                      </DefaultValues>
@@ -294,7 +304,7 @@
                      name="includeMemberships"
                      type="single"
                      syntax="boolean"
-                     i18nKey="a128">
+                     i18nKey="a129">
                      <BooleanValues>
                          <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
                          <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>

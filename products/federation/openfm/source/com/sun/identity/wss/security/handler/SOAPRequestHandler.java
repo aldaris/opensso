@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.18 2008-07-12 18:38:24 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.19 2008-07-22 16:33:04 mrudul_uchil Exp $
  *
  */
 
@@ -148,14 +148,6 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             debug.message("SOAPRequestHandler.Init map:" + config);
         }
         providerName = (String)config.get(PROVIDER_NAME);
-        if( (providerName == null) || (providerName.length() == 0) ) {
-            providerName = SystemConfigurationUtil.getProperty(
-                    "com.sun.identity.wss.provider.defaultWSP", "wsp");
-            if(debug.messageEnabled()) {
-               debug.message("SOAPRequestHandler.Init map: " +
-                       "default provider name:" + providerName);
-            }
-        }
     }
 
     /**
@@ -196,6 +188,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if (isSTS) {
             debug.message("ValidateRequest: This is WS-Trust Request");
             stsConfig = new FAMSTSConfiguration();
+            config = getSTSProviderConfig(stsConfig);
         } else {
             config = getWSPConfig();
         }
@@ -221,27 +214,22 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         SecureSOAPMessage secureMsg =
                 new SecureSOAPMessage(soapRequest, false);
 
-        secureMsg.parseSecurityHeader(
-                (Node) (secureMsg.getSecurityHeaderElement()));
-
         if ( ((config != null) && ((config.isRequestEncryptEnabled()) ||
-                (config.isRequestHeaderEncryptEnabled()))) ||
-           ((stsConfig != null) && ((stsConfig.isRequestEncryptEnabled()) ||
-                (stsConfig.isRequestHeaderEncryptEnabled()))) ){
+                (config.isRequestHeaderEncryptEnabled()))) ) {
             secureMsg.decrypt((config.isRequestEncryptEnabled()),
                     (config.isRequestHeaderEncryptEnabled()));            
             soapRequest = secureMsg.getSOAPMessage();
             secureMsg = new SecureSOAPMessage(soapRequest, false);
-            secureMsg.parseSecurityHeader(
-                    (Node)secureMsg.getSecurityHeaderElement());
         }
+        
+        secureMsg.parseSecurityHeader(
+                    (Node)secureMsg.getSecurityHeaderElement());
         
         SecurityMechanism securityMechanism =
                 secureMsg.getSecurityMechanism();
         String uri = securityMechanism.getURI();
         
-        if ( ((config != null) && (config.isRequestSignEnabled())) || 
-           ((stsConfig != null) && (stsConfig.isRequestSignEnabled())) ){
+        if ( ((config != null) && (config.isRequestSignEnabled())) ){
             // delay the signature verification after authentication
             // for kerberos token.
             if(!uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI)) {               
@@ -257,8 +245,6 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         List list = null;
         if (config != null) {
             list = config.getSecurityMechanisms();
-        } else if (stsConfig != null) {
-            list = stsConfig.getSecurityMechanisms();
         }
 
         if(debug.messageEnabled()) {
@@ -290,10 +276,6 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri))) {
             return subject;
         }
-
-        if(isSTS) {
-           config = getSTSProviderConfig(stsConfig);
-        }
         
         subject = (Subject) getAuthenticator().authenticate(subject,
                 secureMsg.getSecurityMechanism(),
@@ -323,7 +305,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         
         removeValidatedHeaders(config, soapRequest);
         if(!isSTS) {
-           ThreadLocalService.setSubject(subject);
+            ThreadLocalService.setSubject(subject);
+        }
+        if(debug.messageEnabled()) {
+            debug.message("SOAPRequestHandler.validateRequest:** SOAP message" +
+                    " at the end of Validate request **"); 
+            debug.message(WSSUtils.print(soapRequest.getSOAPPart()));
         }
         return subject;
     }
@@ -360,6 +347,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if (isSTS) {
             debug.message("SecureResponse: This is WS-Trust Response");
             stsConfig = new FAMSTSConfiguration();
+            config = getSTSProviderConfig(stsConfig);
         } else {
             ThreadLocalService.removeSubject();
             config = getWSPConfig();
@@ -379,10 +367,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         if ( ((config != null) && 
             (!config.isResponseSignEnabled() && 
-            !config.isResponseEncryptEnabled())) ||
-            ((stsConfig != null) && 
-            (!stsConfig.isResponseSignEnabled() && 
-            !stsConfig.isResponseEncryptEnabled())) ){
+            !config.isResponseEncryptEnabled())) ){
             return soapMessage;
         }
 
@@ -414,13 +399,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMessage.setSecurityMechanism(
                 SecurityMechanism.WSS_NULL_X509_TOKEN);
 
-        if ( (config != null && config.isResponseSignEnabled()) ||
-           (stsConfig != null && stsConfig.isResponseSignEnabled()) ){            
+        if ( (config != null && config.isResponseSignEnabled()) ){            
             secureMessage.sign(keyAlias);
         }
 
-        if ( (config != null && config.isResponseEncryptEnabled()) ||
-           (stsConfig != null && stsConfig.isResponseEncryptEnabled()) ) {            
+        if ( (config != null && config.isResponseEncryptEnabled()) ) {            
             secureMessage.encrypt(keyAlias,true,false);
         }
 
@@ -522,8 +505,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         securityMechanism, config, subject);
             }
         
-        secureMessage = 
-                    new SecureSOAPMessage(soapMessage, true);
+            secureMessage = 
+                new SecureSOAPMessage(soapMessage, true);
             secureMessage.setSecurityToken(securityToken);
         }
 
@@ -679,6 +662,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     private ProviderConfig getWSPConfig() throws SecurityException {
 
         ProviderConfig config = null;
+        if( (providerName == null) || (providerName.length() == 0) ) {
+            providerName = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.provider.defaultWSP", "wsp");
+            if(debug.messageEnabled()) {
+               debug.message("SOAPRequestHandler.getWSPConfig: " +
+                       "default provider name:" + providerName);
+            }
+        }
         try {
             if (!ProviderConfig.isProviderExists(
                     providerName, ProviderConfig.WSP)) {
@@ -1310,7 +1301,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         if(header != null) {
             Iterator iter = header.examineAllHeaderElements();
-           while(iter.hasNext()) {
+            while(iter.hasNext()) {
               SOAPHeaderElement headerElement = (SOAPHeaderElement)iter.next();
               if ((config == null) || (!config.preserveSecurityHeader())) {
                  if("Security".equalsIgnoreCase(
@@ -1342,6 +1333,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
              pc.setKeyTabFile(stsConfig.getKeyTabFile());
              pc.setValidateKerberosSignature(
                      stsConfig.isValidateKerberosSignature());
+             pc.setSecurityMechanisms(stsConfig.getSecurityMechanisms());
+             pc.setUsers(stsConfig.getUsers());
+             pc.setRequestEncryptEnabled(stsConfig.isRequestEncryptEnabled());
+             pc.setRequestHeaderEncryptEnabled(stsConfig.isRequestHeaderEncryptEnabled());
+             pc.setRequestSignEnabled(stsConfig.isRequestSignEnabled());
+             pc.setResponseEncryptEnabled(stsConfig.isResponseEncryptEnabled());
+             pc.setResponseSignEnabled(stsConfig.isResponseSignEnabled());
+             pc.setPreserveSecurityHeader(false);
              return pc;
              
         } catch (ProviderException pe) {

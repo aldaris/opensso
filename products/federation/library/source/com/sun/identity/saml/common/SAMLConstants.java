@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.8 2008-06-25 05:47:34 qcheng Exp $
+ * $Id: SAMLConstants.java,v 1.9 2008-07-22 16:33:02 mrudul_uchil Exp $
  *
  */
 
@@ -97,13 +97,20 @@ public final class SAMLConstants
     public static final String assertionSAMLNameSpaceURI = 
                 "urn:oasis:names:tc:SAML:1.0:assertion";
     /**
-     * SOAP namespace URI.
+     * SOAP 1.1 namespace URI.
      *
      * @supported.api
      */
     public static final String SOAP_URI =
                 "http://schemas.xmlsoap.org/soap/envelope/";
-
+    
+    /**
+     * SOAP 1.2 namespace URI.
+     *
+     * @supported.api
+     */
+    public static final String SOAP12_URI =
+                "http://www.w3.org/2003/05/soap-envelope";
     /**
      * SOAP envelope prefix.
      */

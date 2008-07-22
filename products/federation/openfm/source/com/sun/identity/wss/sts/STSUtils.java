@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.5 2008-07-02 16:57:23 mallas Exp $
+ * $Id: STSUtils.java,v 1.6 2008-07-22 16:33:05 mrudul_uchil Exp $
  *
  */
 
@@ -70,7 +70,8 @@ public class STSUtils {
      *             If there is any exception, it returns an empty map. 
      */
     public static Map getAgentAttributes(
-                 String endpoint, Set attrNames, String type) {
+                 String endpoint, String endPointAtrrName, 
+                 Set attrNames, String agentType) {
         try {
             SSOToken adminToken = WSSUtils.getAdminToken();
             AMIdentityRepository idRepo = 
@@ -81,12 +82,15 @@ public class STSUtils {
 
             Map kvPairMap = new HashMap();
             Set set = new HashSet();
-            set.add(type);
+            set.add(agentType);
             kvPairMap.put(AGENT_TYPE_ATTR, set);
 
             set = new HashSet();
             set.add(endpoint);
-            kvPairMap.put(WSP_ENDPOINT, set);
+            if ((endPointAtrrName == null) || (endPointAtrrName.length() == 0)) {
+                endPointAtrrName = WSP_ENDPOINT;
+            }
+            kvPairMap.put(endPointAtrrName, set);
 
             control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.14 2008-07-18 06:45:17 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.15 2008-07-22 16:33:05 mrudul_uchil Exp $
  *
  */
 
@@ -30,6 +30,9 @@ package com.sun.identity.wss.sts;
 
 import com.sun.identity.wss.security.SecurityMechanism;
 import java.util.List;
+import java.util.Map;
+import java.util.List;
+import java.util.Set;
 import org.w3c.dom.Element;
 import javax.servlet.ServletContext;
 
@@ -185,12 +188,35 @@ public class TrustAuthorityClient {
             String stsSecMech = (String)stsConfig.getSecurityMech().get(0);
             if(stsSecMech.equals(
                     SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) ||
-               stsSecMech.equals(
+                stsSecMech.equals(
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI) ||
-               stsSecMech.equals(SecurityMechanism.STS_SECURITY_URI)) {               
-               keyType = STSConstants.BEARER_KEY;
+                stsSecMech.equals(
+                    SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI) ||
+                stsSecMech.equals(SecurityMechanism.STS_SECURITY_URI)) {               
+                keyType = STSConstants.BEARER_KEY;
+            } else {
+                keyType = STSConstants.PUBLIC_KEY;
             }
             wspEndPoint = pc.getWSPEndpoint();
+        } else {
+            Map attrMap = 
+                 STSUtils.getAgentAttributes(stsEndPoint, "STSEndpoint", null, 
+                     TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+            Set values = (Set)attrMap.get("SecurityMech");
+            if (values != null && !values.isEmpty()) {
+                String stsSecMechTemp = (String)values.iterator().next();
+                if(stsSecMechTemp.equals(
+                    SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) ||
+                    stsSecMechTemp.equals(
+                    SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI) ||
+                    stsSecMechTemp.equals(
+                    SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI) ||
+                    stsSecMechTemp.equals(SecurityMechanism.STS_SECURITY_URI)) {               
+                    keyType = STSConstants.BEARER_KEY;
+                } else {
+                    keyType = STSConstants.PUBLIC_KEY;
+                }
+            }
         }
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
@@ -262,6 +288,8 @@ public class TrustAuthorityClient {
                 + stsMexAddress);
             debug.message("TrustAuthorityClient.getSTSToken:: wsp end point : " 
                 + wspEndPoint);
+            debug.message("TrustAuthorityClient.getSTSToken:: keyType : " 
+                + keyType);
         }
 
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();        

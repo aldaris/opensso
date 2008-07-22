@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.12 2008-07-18 06:45:17 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.13 2008-07-22 16:33:06 mrudul_uchil Exp $
  *
  */
 
@@ -154,10 +154,19 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                while (iterator.hasNext()){
                     String cnName = principals.iterator().next().getName();
                     int pos = cnName.indexOf("=");
-                    subjectName = cnName.substring(pos+1);
+                    if (pos != -1) {
+                        subjectName = cnName.substring(pos+1);
+                    } else {
+                        subjectName = cnName;
+                    }
                     break;
                }       
            }
+        }
+        
+        if(STSUtils.debug.messageEnabled()) {
+            STSUtils.debug.message("FAMSTSAttributeProvider.getClaimed" +
+                "Attributes: subjectName : " + subjectName);
         }
 
         if(subjectName == null) {
@@ -176,7 +185,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
               agentConfig = STSUtils.getSTSSAMLAttributes(stsConfig);
            } else {
               agentConfig = STSUtils.getAgentAttributes(
-                 appliesTo, null, ProviderConfig.WSP);
+                 appliesTo, null, null, ProviderConfig.WSP);
            }
         }
         

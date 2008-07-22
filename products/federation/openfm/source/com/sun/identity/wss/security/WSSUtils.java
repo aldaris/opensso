@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.11 2008-07-21 17:18:32 mallas Exp $
+ * $Id: WSSUtils.java,v 1.12 2008-07-22 16:33:03 mrudul_uchil Exp $
  *
  */
 
@@ -53,6 +53,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPConstants;
 import com.sun.org.apache.xml.internal.security.exceptions.XMLSecurityException;
 import com.sun.org.apache.xml.internal.security.keys.content.keyvalues.
        DSAKeyValue;
@@ -360,10 +361,17 @@ public class WSSUtils {
 
     public static SOAPMessage toSOAPMessage(Document document) {
         try {
+            Element elmDoc = (Element) document.getDocumentElement();
+            String nameSpaceURI = elmDoc.getNamespaceURI();
             MessageFactory msgFactory = MessageFactory.newInstance();
             MimeHeaders mimeHeaders = new MimeHeaders();
-            mimeHeaders.addHeader("Content-Type", "text/xml");
-
+            if (SAMLConstants.SOAP_URI.equals(nameSpaceURI)) {
+                mimeHeaders.addHeader("Content-Type", "text/xml");
+            } else if (SAMLConstants.SOAP12_URI.equals(nameSpaceURI)) {
+                msgFactory = 
+                    MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+                mimeHeaders.addHeader("Content-Type", "application/soap+xml");
+            }
             String xmlStr = print(document);
             return msgFactory.createMessage(mimeHeaders,
                    new ByteArrayInputStream(xmlStr.getBytes("UTF-8")));

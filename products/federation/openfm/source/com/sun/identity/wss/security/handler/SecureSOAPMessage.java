@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.15 2008-06-25 05:50:11 qcheng Exp $
+ * $Id: SecureSOAPMessage.java,v 1.16 2008-07-22 16:33:04 mrudul_uchil Exp $
  *
  */
 
@@ -833,8 +833,10 @@ public class SecureSOAPMessage {
 
          try {
              if (encryptBody) {
-                 Element bodyElement = (Element) doc.getDocumentElement().
-                     getElementsByTagNameNS(SAMLConstants.SOAP_URI, 
+                 Element elmDoc = (Element) doc.getDocumentElement();
+                 String nameSpaceURI = elmDoc.getNamespaceURI();
+                 Element bodyElement = 
+                     (Element) elmDoc.getElementsByTagNameNS(nameSpaceURI, 
                      WSSConstants.BODY_LNAME).item(0);
                  String bodyId  = bodyElement.getAttribute(WSSConstants.WSU_ID);
                  Node firstNodeInsideBody = bodyElement.getFirstChild();
@@ -1031,9 +1033,11 @@ public class SecureSOAPMessage {
          try {
              if (decryptBody) {
                  // Decrypted Body element replacement
+                 Element elmDoc = (Element) decryptedDoc.getDocumentElement();
+                 String nameSpaceURI = elmDoc.getNamespaceURI();
                  Element decryptedBodyElem = 
                      (Element)decryptedDoc.getElementsByTagNameNS(
-                     SAMLConstants.SOAP_URI, WSSConstants.BODY_LNAME).item(0);
+                     nameSpaceURI, WSSConstants.BODY_LNAME).item(0);
              
                  Element bodyElement = 
                      (Element)soapMessage.getSOAPPart().getEnvelope().getBody();
