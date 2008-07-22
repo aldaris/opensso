@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.19 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: WebtopNaming.java,v 1.20 2008-07-22 00:12:53 beomsuk Exp $
  *
  */
 
@@ -522,10 +522,12 @@ public class WebtopNaming {
             }
             if (server == null) {
                 throw new ServerEntryNotFoundException(NamingBundle
-                        .getString("noServer"));
+                        .getString("noServer" ));
             }
 
         } catch (Exception e) {
+            debug.error("WebtopNaming.getServerFromID() can not find "
+                        + "server name for server ID : " + serverID, e);
             throw new ServerEntryNotFoundException(e);
         }
         return server;
@@ -540,7 +542,7 @@ public class WebtopNaming {
     }
 
     private static void updateLBCookieValueMappings() {
-        lbCookieValuesTable = new Hashtable();
+        Hashtable lbcookieTbl = new Hashtable();
         String serverSet = (String) namingTable.get(
                            Constants.SERVERID_LBCOOKIEVALUE_LIST);
 
@@ -557,9 +559,11 @@ public class WebtopNaming {
                 lbCookieValue = serverid.substring(idx + 1, serverid.length());
                 serverid = serverid.substring(0, idx);
             }
-            lbCookieValuesTable.put(serverid, lbCookieValue);
+            lbcookieTbl.put(serverid, lbCookieValue);
         }
 
+        lbCookieValuesTable = lbcookieTbl;
+        
         if (debug.messageEnabled()) {
             debug.message("WebtopNaming.updateLBCookieValueMappings():" +
                 "LBCookieValues table -> " + lbCookieValuesTable.toString());
@@ -844,19 +848,21 @@ public class WebtopNaming {
             // Try for the primary server first, if it fails and then
             // for the second server. We get connection refused error
             // if it doesn't succeed.
-            namingTable = null;
+            Hashtable namingtbl = null;
             URL tempNamingURL = null;
-            for (int i = 0; ((namingTable == null) && 
+            for (int i = 0; ((namingtbl == null) && 
                     (i < namingServiceURL.length)); i++) {
                 tempNamingURL = new URL(namingServiceURL[i]);
-                namingTable = getNamingTable(tempNamingURL);
+                namingtbl = getNamingTable(tempNamingURL);
             }
 
-            if (namingTable == null) {
+            if (namingtbl == null) {
                 debug.error("updateNamingTable : "
                         + NamingBundle.getString("noNamingServiceAvailable"));
                 throw new Exception(NamingBundle
                         .getString("noNamingServiceAvailable"));
+            } else {
+                namingTable = namingtbl;
             }
 
             updateServerProperties(tempNamingURL);
@@ -868,13 +874,15 @@ public class WebtopNaming {
 
         if (servers != null) {
             StringTokenizer st = new StringTokenizer(servers, ",");
-            platformServers.clear();
-            lcPlatformServers.clear();
+            Vector platformServersNEW = new Vector(); 
+            Vector lcPlatformServersNEW = new Vector(); 
             while (st.hasMoreTokens()) {
                 String svr = st.nextToken();
-                lcPlatformServers.add(svr.toLowerCase());
-                platformServers.add(svr);
+                lcPlatformServersNEW.add(svr.toLowerCase());
+                platformServersNEW.add(svr);
             }
+            platformServers = platformServersNEW;
+            lcPlatformServers = lcPlatformServersNEW;
         }
         updateServerIdMappings();
         updateSiteIdMappings();
@@ -899,7 +907,7 @@ public class WebtopNaming {
      * mappings, but we need to exclude each other entry which is there in.
      */
     private static void updateServerIdMappings() {
-        serverIdTable = new Hashtable();
+        Hashtable serverIdTbl = new Hashtable();
         Enumeration e = namingTable.keys();
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
@@ -912,12 +920,14 @@ public class WebtopNaming {
             if (key.equals(Constants.PLATFORM_LIST)) {
                 continue;
             }
-            serverIdTable.put(value, key);
+            serverIdTbl.put(value, key);
         }
+        
+        serverIdTable = serverIdTbl;
     }
 
     private static void updateSiteIdMappings() {
-        siteIdTable = new Hashtable();
+        Hashtable siteIdTbl = new Hashtable();
         String serverSet = (String) namingTable.get(Constants.SITE_ID_LIST);
 
         if ((serverSet == null) || (serverSet.length() == 0)) {
@@ -933,9 +943,10 @@ public class WebtopNaming {
                 siteid = serverid.substring(idx + 1, serverid.length());
                 serverid = serverid.substring(0, idx);
             }
-            siteIdTable.put(serverid, siteid);
+            siteIdTbl.put(serverid, siteid);
         }
 
+        siteIdTable = siteIdTbl;
         if (debug.messageEnabled()) {
             debug.message("SiteID table -> " + siteIdTable.toString());
         }
