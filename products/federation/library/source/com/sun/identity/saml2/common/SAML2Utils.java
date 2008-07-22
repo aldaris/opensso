@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.33 2008-07-16 21:07:27 weisun2 Exp $
+ * $Id: SAML2Utils.java,v 1.34 2008-07-22 18:08:21 weisun2 Exp $
  *
  */
 
@@ -180,8 +180,6 @@ public class SAML2Utils extends SAML2SDKUtils {
     // Dir server info for CRL entry
     private static boolean checkCertStatus = false;
     private static boolean checkCAStatus = false;
-    public static boolean failOver = false; 
-    public static JMQSAML2Repository jmq = null; 
     static {
         try {
             scf = SOAPConnectionFactory.newInstance();
@@ -222,17 +220,6 @@ public class SAML2Utils extends SAML2SDKUtils {
                     "with old config style.");
             }
         }
-        
-        try {
-            jmq = (JMQSAML2Repository) Class.forName(
-                "com.sun.identity.saml2.plugins.DefaultJMQSAML2Repository").
-                 newInstance(); 
-        } catch (Exception e) {
-            if (debug.messageEnabled()) {
-                debug.message("JMQSAML2Repository is not available."); 
-            }
-            jmq = null;  
-        }    
     }
          
     public static MessageFactory mf = null;
@@ -262,17 +249,25 @@ public class SAML2Utils extends SAML2SDKUtils {
             CacheCleanUpScheduler.doSchedule();
         }
     }
-    
-    static {
-        String enableFailOver =  (String) SAML2ConfigService.getAttribute(
-            SAML2ConfigService.SAML2_FAILOVER_ATTR);
-        if ((enableFailOver != null) && enableFailOver.equalsIgnoreCase("true") 
-            && (jmq != null)) {
-            failOver = true; 
-        }
-    }   
+      
     static AssertionFactory af = AssertionFactory.getInstance();
     private static SecureRandom randomGenerator = new SecureRandom();
+    
+    /**
+     * Checks whether SAML2 fail over flag is or off.
+     * @return true if SAML2 fail over flag is on. Otherwise, 
+     *     return false.
+     */ 
+    public static boolean isSAML2FailOverEnabled() {
+        boolean failOver = false; 
+        String enableFailOver =  (String) SAML2ConfigService.getAttribute(
+            SAML2ConfigService.SAML2_FAILOVER_ATTR);
+        if ((enableFailOver != null) && 
+            enableFailOver.equalsIgnoreCase("true")) {
+            failOver = true; 
+        }
+        return failOver;      
+    } 
     
     /**
      * Verifies single sign on <code>Response</code> and returns information
@@ -534,9 +529,9 @@ public class SAML2Utils extends SAML2SDKUtils {
                     foundAssertion = true; 
                 } 
                
-                if ((!foundAssertion) && SAML2Utils.failOver) {
+                if ((!foundAssertion) && SAML2Utils.isSAML2FailOverEnabled()) {
                     try {
-                        if ((SAML2Utils.jmq.retrieve(assertionID)) != null) {
+                        if ((SAML2Repository.getInstance().retrieve(assertionID)) != null) {
                             foundAssertion = true; 
                         }    
                     } catch(Exception ae) {

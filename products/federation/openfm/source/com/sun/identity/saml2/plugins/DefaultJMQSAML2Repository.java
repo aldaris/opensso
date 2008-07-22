@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultJMQSAML2Repository.java,v 1.3 2008-06-25 05:50:00 qcheng Exp $
+ * $Id: DefaultJMQSAML2Repository.java,v 1.4 2008-07-22 18:09:47 weisun2 Exp $
  *
  */
 
@@ -395,18 +395,18 @@ public class DefaultJMQSAML2Repository extends GeneralTaskRunnable
      * healthCheckPeriod.
      */
      public void run() {
-        
+        String classMethod="DefaultJMQSAML2Repository.run: "; 
         try {
 
             if (debug.messageEnabled()) {
-                debug.message("Cleaning expired session records");
+                debug.message(classMethod + "Cleaning expired SAML2 records");
             }
 
             /*
              * Clean up is done based on the cleanUpPeriod even though the
              * thread runs based on the runPeriod.
              */
-            if (SAML2Utils.failOver && (cleanUpValue <= 0)) {
+            if (SAML2Utils.isSAML2FailOverEnabled() && (cleanUpValue <= 0)) {
                 deleteExpired();
                 cleanUpValue = cleanUpPeriod;
             }
@@ -416,7 +416,7 @@ public class DefaultJMQSAML2Repository extends GeneralTaskRunnable
              * HealthChecking is done based on the runPeriod but only when
              * the Database is down.
              */
-           if (SAML2Utils.failOver && (!isDatabaseUp)) {
+           if (SAML2Utils.isSAML2FailOverEnabled() && (!isDatabaseUp)) {
                 initPersistSession();
                 logDBStatus();
             }

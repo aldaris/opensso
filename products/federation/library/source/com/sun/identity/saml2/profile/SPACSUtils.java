@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.27 2008-07-16 21:07:27 weisun2 Exp $
+ * $Id: SPACSUtils.java,v 1.28 2008-07-22 18:08:21 weisun2 Exp $
  *
  */
 
@@ -79,6 +79,7 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.ecp.ECPFactory;
 import com.sun.identity.saml2.ecp.ECPRelayState;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
@@ -1293,9 +1294,14 @@ public class SPACSUtils {
         String assertionID=authnAssertion.getID();
         if (respInfo.getProfileBinding().equals(SAML2Constants.HTTP_POST)) {
             SPCache.assertionByIDCache.put(assertionID, SAML2Constants.ONETIME); 
-            if (SAML2Utils.failOver) {
-                SAML2Utils.jmq.save(assertionID, SAML2Constants.ONETIME, 
+            try {
+                if (SAML2Utils.isSAML2FailOverEnabled()) {
+                    SAML2Repository.getInstance().save(assertionID,
+                    SAML2Constants.ONETIME, 
                     ((Long) smap.get(SAML2Constants.NOTONORAFTER)).longValue()); 
+                }
+            } catch (SAML2Exception e) {
+                SAML2Utils.debug.error(classMethod + "DB error!", e); 
             }
         }
         return session;

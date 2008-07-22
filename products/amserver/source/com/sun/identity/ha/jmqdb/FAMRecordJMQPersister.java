@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMRecordJMQPersister.java,v 1.3 2008-06-25 05:43:27 qcheng Exp $
+ * $Id: FAMRecordJMQPersister.java,v 1.4 2008-07-22 18:12:04 weisun2 Exp $
  *
  */
 
@@ -46,9 +46,11 @@ import java.util.Iterator;
 import com.iplanet.dpro.session.service.SessionService;
 import com.sun.identity.ha.FAMRecord;
 import com.sun.identity.ha.FAMRecordPersister;
+import com.sun.identity.ha.FAMRecordUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.iplanet.services.naming.WebtopNaming;
+
 /**
  * This class <code>FAMRecordJMQPersister</code> implements 
  * </code> MessageListener</code> which is to receive 
@@ -159,9 +161,8 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
                 || thisServerPortAsString == null
                 || thisServer == null) {
             //TODO: 
-            throw new Exception("property must be set."); 
-                    //SessionBundle.rbName,
-                    //"propertyMustBeSet", null);
+            throw new Exception(FAMRecordUtils.bundle.getString(
+                "propertyMustBeSet")); 
         }
 
         _id = WebtopNaming.getServerID(thisServerProtocol,
@@ -316,7 +317,8 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
           BytesMessage message1 = (BytesMessage) processedMsgs.remove(random);
           String opStatus = message1.getStringProperty(OP_STATUS);
           if (opStatus != null && opStatus.equals(NOT_FOUND)) {
-              throw new Exception("Session not found in repository");
+              throw new Exception(FAMRecordUtils.bundle.getString(
+                  "notFoundSession"));
           }
           
           // Fill in the return value in FAMRecord 

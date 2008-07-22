@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.8 2008-06-27 00:45:55 hengming Exp $
+ * $Id: IDPArtifactResolution.java,v 1.9 2008-07-22 18:08:21 weisun2 Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.key.KeyUtil;
 import com.sun.identity.saml2.meta.SAML2MetaException;
@@ -327,14 +328,14 @@ public class IDPArtifactResolution {
 
             //Check the Persistent DB store
             try {
-                if (SAML2Utils.failOver) {
+                if (SAML2Utils.isSAML2FailOverEnabled()) {
                     if (SAML2Utils.debug.messageEnabled()) {
                         SAML2Utils.debug.message("Artifact=" + artStr);
                     }  
-                    String tmp = (String) SAML2Utils.jmq.retrieve(artStr);
+                    String tmp = (String) SAML2Repository.getInstance().retrieve(artStr);
                     res = ProtocolFactory.getInstance().createResponse(tmp);
                 }
-            } catch (Exception e) {
+            } catch (SAML2Exception e) {
                 SAML2Utils.debug.error(classMethod + "DB ERROR!!!");
             }
         }
@@ -344,10 +345,10 @@ public class IDPArtifactResolution {
         }
         // Remove Response from persistent DB
         try {
-            if (SAML2Utils.failOver) {
-                SAML2Utils.jmq.delete(artStr);
+            if (SAML2Utils.isSAML2FailOverEnabled()) {
+                SAML2Repository.getInstance().delete(artStr);
             }
-        } catch (Exception e) {
+        } catch (SAML2Exception e) {
             SAML2Utils.debug.error(classMethod + "DB ERROR!!!");
         } 
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.33 2008-07-15 21:58:03 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.34 2008-07-22 18:08:21 weisun2 Exp $
  *
  */
 
@@ -61,6 +61,7 @@ import com.sun.identity.saml2.common.NewBoolean;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.ecp.ECPFactory;
 import com.sun.identity.saml2.ecp.ECPResponse;
 import com.sun.identity.saml2.idpdiscovery.IDPDiscoveryConstants;
@@ -875,8 +876,8 @@ public class IDPSSOUtil {
         try {
             long sessionExpireTime = System.currentTimeMillis() +
                  (sessionProvider.getTimeLeft(session))*1000;
-            if (SAML2Utils.failOver) {
-                SAML2Utils.jmq.save(sessionIndex,
+            if (SAML2Utils.isSAML2FailOverEnabled()) {
+                SAML2Repository.getInstance().save(sessionIndex,
                     new IDPSessionCopy((IDPSession) 
                     IDPCache.idpSessionsByIndices.get(
                     sessionIndex)), sessionExpireTime);
@@ -884,10 +885,14 @@ public class IDPSSOUtil {
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("SAVE IDPSession!");
             }
-        } catch (Exception e) {
-            SAML2Utils.debug.error("DB error!");
+        } catch (SAML2Exception e) {
+            SAML2Utils.debug.error(classMethod + "DB error!");
+        } catch (SessionException se) {
+            SAML2Utils.debug.error(classMethod +
+                "Unable to get left-time from the session.", se);
+            throw new SAML2Exception(
+                SAML2Utils.bundle.getString("invalidSSOToken")); 
         }
-
         return assertion;
     }
 
@@ -1826,10 +1831,10 @@ public class IDPSSOUtil {
         String artStr = art.getArtifactValue();        
         try {
             IDPCache.responsesByArtifacts.put(artStr, res);
-            if (SAML2Utils.failOver) {
+            if (SAML2Utils.isSAML2FailOverEnabled()) {
                 long expireTime = getValidTimeofResponse(
                     realm, idpEntityID,res);
-                SAML2Utils.jmq.save(artStr, res.toXMLString(true,true),
+                SAML2Repository.getInstance().save(artStr, res.toXMLString(true,true),
                     expireTime);
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +

@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConnectionFactoryProviderFactory.java,v 1.2 2008-06-25 05:43:27 qcheng Exp $
+ * $Id: ConnectionFactoryProviderFactory.java,v 1.3 2008-07-22 18:12:03 weisun2 Exp $
  *
  */
 
 package com.sun.identity.ha.jmqdb;
 
+import com.sun.identity.ha.FAMRecordUtils;
 /**
  * A factory to access <code>ConnectionFactoryProvider</code> instance at
  * runtime. This factory uses the configuration key
@@ -79,7 +80,8 @@ public class ConnectionFactoryProviderFactory {
             connectionFactoryProvider = (ConnectionFactoryProvider) Thread.currentThread().getContextClassLoader().loadClass(className).newInstance();
             
         } catch (Exception ex) {
-            throw new RuntimeException("Initialization Failed", ex);
+            throw new RuntimeException(FAMRecordUtils.bundle.getString(
+               "failedInitialize"), ex);
         }
     }
 }

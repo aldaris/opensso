@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.18 2008-07-15 00:24:40 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.19 2008-07-22 18:08:21 weisun2 Exp $
  *
  */
 
@@ -49,6 +49,7 @@ import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
@@ -190,10 +191,10 @@ public class IDPSingleLogout {
                         + idpSessionIndex + " already removed.");
                 }
                 try {
-                    if (SAML2Utils.failOver) {
-                         SAML2Utils.jmq.delete(idpSessionIndex);
+                    if (SAML2Utils.isSAML2FailOverEnabled()) {
+                         SAML2Repository.getInstance().delete(idpSessionIndex);
                      }
-                } catch (Exception e) {
+                } catch (SAML2Exception e) {
                      debug.error("Error while deleting idpSessionIndex"
                         + " from Persistent DB." , e);
                 }
@@ -219,10 +220,10 @@ public class IDPSingleLogout {
                 }
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 try {
-                    if (SAML2Utils.failOver) {
-                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    if (SAML2Utils.isSAML2FailOverEnabled()) {
+                        SAML2Repository.getInstance().delete(idpSessionIndex);
                     }
-                } catch (Exception e) {
+                } catch (SAML2Exception e) {
                     debug.error("Error while deleting idpSessionIndex"
                         + " from Persistent DB.", e);
                 }
@@ -795,10 +796,10 @@ public class IDPSingleLogout {
                     + idpSessionIndex + " already removed.");
             }
             try {
-                if (SAML2Utils.failOver) {
-                     SAML2Utils.jmq.delete(idpSessionIndex);
+                if (SAML2Utils.isSAML2FailOverEnabled()) {
+                    SAML2Repository.getInstance().delete(idpSessionIndex);
                  }
-            } catch (Exception e) {
+            } catch (SAML2Exception e) {
                  debug.error("Error while deleting idpSessionIndex"
                      + " from Persistent DB." , e);
             }
@@ -840,10 +841,10 @@ public class IDPSingleLogout {
                 } else {
                     IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                     try {
-                        if (SAML2Utils.failOver) {
-                            SAML2Utils.jmq.delete(idpSessionIndex);
+                        if (SAML2Utils.isSAML2FailOverEnabled()) {
+                            SAML2Repository.getInstance().delete(idpSessionIndex);
                         }
-                    } catch (Exception e) {
+                    } catch (SAML2Exception e) {
                         debug.error("Error while deleting idpSessionIndex"
                         + " from Persistent DB.", e);
                     }
@@ -945,10 +946,10 @@ public class IDPSingleLogout {
                 logoutRes.setDestination(location); 
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 try {
-                    if (SAML2Utils.failOver) {
-                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    if (SAML2Utils.isSAML2FailOverEnabled()) {
+                        SAML2Repository.getInstance().delete(idpSessionIndex);
                     }
-                } catch (Exception e) {
+                } catch (SAML2Exception e) {
                     debug.error("Error while deleting idpSessionIndex"
                         + " from Persistent DB.", e);
                 }
@@ -1003,10 +1004,10 @@ public class IDPSingleLogout {
             
             IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
             try {
-                if (SAML2Utils.failOver) {
-                        SAML2Utils.jmq.delete(idpSessionIndex);
+                if (SAML2Utils.isSAML2FailOverEnabled()) {
+                    SAML2Repository.getInstance().delete(idpSessionIndex);
                 }
-            } catch (Exception e) {
+            } catch (SAML2Exception e) {
                 debug.error("Error while deleting idpSessionIndex"
                     + " from Persistent DB.", e);
             }
@@ -1148,10 +1149,11 @@ public class IDPSingleLogout {
                 IDPSession idpSession = (IDPSession)
                     IDPCache.idpSessionsByIndices.get(sessionIndex);
                     
-                if ((idpSession == null) && (SAML2Utils.failOver)) {
+                if ((idpSession == null) &&
+                    (SAML2Utils.isSAML2FailOverEnabled())) {
                     // Read from DataBase
                     IDPSessionCopy idpSessionCopy = (IDPSessionCopy)
-                        SAML2Utils.jmq.retrieve(sessionIndex);
+                        SAML2Repository.getInstance().retrieve(sessionIndex);
                     // Copy back to IDPSession
                     if (idpSessionCopy != null) {
                         idpSession = new IDPSession(idpSessionCopy);
@@ -1253,8 +1255,8 @@ public class IDPSingleLogout {
                         request, response, cleanUp);
                     if (cleanUp) {    
                        IDPCache.idpSessionsByIndices.remove(sessionIndex);
-                       if (SAML2Utils.failOver) {
-                           SAML2Utils.jmq.delete(sessionIndex);
+                       if (SAML2Utils.isSAML2FailOverEnabled()) {
+                           SAML2Repository.getInstance().delete(sessionIndex);
                        }
                        IDPCache.authnContextCache.remove(sessionIndex);
                     }   
@@ -1343,8 +1345,8 @@ public class IDPSingleLogout {
                     request, response, true);
                 if (cleanUp) {    
                     IDPCache.idpSessionsByIndices.remove(sessionIndex);
-                    if (SAML2Utils.failOver) {
-                        SAML2Utils.jmq.delete(sessionIndex);
+                    if (SAML2Utils.isSAML2FailOverEnabled()) {
+                        SAML2Repository.getInstance().delete(sessionIndex);
                     }
                     IDPCache.authnContextCache.remove(sessionIndex);
                 }    
@@ -1353,7 +1355,7 @@ public class IDPSingleLogout {
         } catch (SessionException ssoe) {
             debug.error("IDPLogoutUtil : unable to get meta for ", ssoe);
             status = SAML2Utils.generateStatus(idpEntityID, ssoe.toString()); 
-        } catch (Exception e) {
+        } catch (SAML2Exception e) {
              // show throw exception
              e.printStackTrace();
              SAML2Utils.debug.error("DB ERROR!!!");
@@ -1512,10 +1514,10 @@ public class IDPSingleLogout {
             } else {
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 try {
-                    if (SAML2Utils.failOver) {
-                        SAML2Utils.jmq.delete(idpSessionIndex);
+                    if (SAML2Utils.isSAML2FailOverEnabled()) {
+                        SAML2Repository.getInstance().delete(idpSessionIndex);
                     }
-                } catch (Exception e) {
+                } catch (SAML2Exception e) {
                     debug.error("Error while deleting idpSessionIndex"
                         + " from Persistent DB.", e);
                 }

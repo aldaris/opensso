@@ -22,14 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConnectionFactoryProviderImpl.java,v 1.2 2008-06-25 05:43:27 qcheng Exp $
+ * $Id: ConnectionFactoryProviderImpl.java,v 1.3 2008-07-22 18:12:04 weisun2 Exp $
  *
  */
 
 package com.sun.identity.ha.jmqdb;
 
 import javax.jms.TopicConnectionFactory;
- 
+import com.sun.identity.ha.FAMRecordUtils; 
+
 /**
  * This class <code>ConnectionFactoryProviderImpl</code> implements 
  * </code> ConnectionFactoryProvider</code> and provides a default 
@@ -79,16 +80,29 @@ public class ConnectionFactoryProviderImpl implements ConnectionFactoryProvider 
         tFactory = new com.sun.messaging.TopicConnectionFactory();
         com.sun.messaging.ConnectionFactory cf = 
             (com.sun.messaging.ConnectionFactory) tFactory;
-        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqAddressList,
-                    brokerAddressList);           
+        if ((brokerAddressList != null) && (!brokerAddressList.equals(""))) {
+            cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqAddressList,
+                    brokerAddressList); 
+        } else {
+            throw new Exception(FAMRecordUtils.bundle.getString("nullBokerAddress")); 
+        }                      
         cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectEnabled,
                     Boolean.toString(reconnectEnabled));
         cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqConnectionFlowLimitEnabled,
-        		Boolean.toString(flowLimitEnabled));
-        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqDefaultUsername,
-                    defaultUsername);
-        cf.setProperty(com.sun.messaging.ConnectionConfiguration.imqDefaultPassword,
-                    defaultPassword);
+                    Boolean.toString(flowLimitEnabled));
+        if ((defaultUsername != null) && (!defaultUsername.equals(""))) {
+            cf.setProperty(
+                com.sun.messaging.ConnectionConfiguration.imqDefaultUsername,
+                defaultUsername);
+        } else {
+            throw new Exception(FAMRecordUtils.bundle.getString("nullUserName")); 
+        }    
+        if ((defaultPassword != null) && (!defaultPassword.equals(""))) {                        cf.setProperty(
+                com.sun.messaging.ConnectionConfiguration.imqDefaultPassword,
+                defaultPassword);
+        } else {
+            throw new Exception(FAMRecordUtils.bundle.getString("nullPassword")); 
+        }               
         return tFactory;                        
     }    
 }
