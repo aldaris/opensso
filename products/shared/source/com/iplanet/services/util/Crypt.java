@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Crypt.java,v 1.2 2008-06-25 05:52:47 qcheng Exp $
+ * $Id: Crypt.java,v 1.3 2008-07-23 17:58:16 veiming Exp $
  *
  */
 
@@ -136,7 +136,7 @@ public class Crypt {
 
     /**
      * Check to see if security is enabled and Caller needs to be checked for
-     * Access Manager specific Java security permissions
+     * OpenSSO Enterprise specific Java security permissions
      * 
      * @return boolean true if security check enabled, false otherwise
      */

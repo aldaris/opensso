@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMAuthConfigProvider.java,v 1.2 2008-06-25 05:54:47 qcheng Exp $
+ * $Id: FAMAuthConfigProvider.java,v 1.3 2008-07-23 17:58:20 veiming Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import javax.security.auth.message.config.ServerAuthConfig;
 public class FAMAuthConfigProvider implements AuthConfigProvider {
 
     String id = null;
-    String description = "FAM AuthConfigProvider";
+    String description = "OpenSSO Enterprise AuthConfigProvider";
     
     WeakHashMap clientConfigMap = new WeakHashMap();
     WeakHashMap serverConfigMap = new WeakHashMap();

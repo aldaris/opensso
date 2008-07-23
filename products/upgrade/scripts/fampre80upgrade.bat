@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fampre80upgrade.bat,v 1.2 2008-06-25 05:53:09 qcheng Exp $
+: $Id: fampre80upgrade.bat,v 1.3 2008-07-23 17:58:17 veiming Exp $
 :
 
 @echo off
@@ -36,17 +36,17 @@ goto WHILE
 :WEND
 
 echo ===================================================
-echo FAM 8.0 Pre-Upgrade
+echo OpenSSO Enterprise 8.0 Pre-Upgrade
 echo ===================================================
 echo.
 
-set /p UPGRADE_DIR=Enter the FAM 8.0 base directory :
+set /p UPGRADE_DIR=Enter the OpenSSO Enterprise 8.0 base directory :
 echo.
-set /p STAGING_DIR=Enter the FAM 8.0 staging directory :
+set /p STAGING_DIR=Enter the OpenSSO Enterprise 8.0 staging directory :
 echo.
-set /p CONFIG_DIR=Enter the FAM configuration directory :
+set /p CONFIG_DIR=Enter the OpenSSO Enterprise configuration directory :
 
-"%JAVA_HOME%/bin/java.exe" -Xms64m -Xmx256m -cp "%CONFIG_DIR%;%STAGING_DIR%\WEB-INF\lib\ldapjdk.jar;%STAGING_DIR%\WEB-INF\lib\opensso-sharedlib.jar;%UPGRADE_DIR%\upgrade\lib\upgrade.jar;%STAGING_DIR%\WEB-INF\lib\opensso.jar" -D"basedir=%UPGRADE_DIR%" -D"stagingDir=%STAGING_DIR%" -D"configDir=%CONFIG_DIR%" com.sun.identity.upgrade.FAMPreUpgrade %PARAMS% 
+"%JAVA_HOME%/bin/java.exe" -Xms64m -Xmx256m -cp "%CONFIG_DIR%;%STAGING_DIR%\WEB-INF\lib\ldapjdk.jar;%STAGING_DIR%\WEB-INF\lib\opensso-sharedlib.jar;%UPGRADE_DIR%\upgrade\lib\upgrade.jar;%STAGING_DIR%\WEB-INF\lib\amserver.jar" -D"basedir=%UPGRADE_DIR%" -D"stagingDir=%STAGING_DIR%" -D"configDir=%CONFIG_DIR%" com.sun.identity.upgrade.FAMPreUpgrade %PARAMS% 
 endlocal
 :END
 echo.

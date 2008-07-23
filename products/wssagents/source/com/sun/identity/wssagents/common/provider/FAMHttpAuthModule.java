@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHttpAuthModule.java,v 1.4 2008-07-18 00:23:56 mrudul_uchil Exp $
+ * $Id: FAMHttpAuthModule.java,v 1.5 2008-07-23 17:58:20 veiming Exp $
  *
  */
  
@@ -94,7 +94,7 @@ public class FAMHttpAuthModule implements ServerAuthModule {
         ClassLoader oldcc = Thread.currentThread().getContextClassLoader();
         try {
             if (_handler == null) {
-                // Get the FAM Classloader
+                // Get the OpenSSO Enterprise Classloader
                 cls = com.sun.identity.wssagents.classloader.FAMClassLoader.
                             getFAMClassLoader(jars);
                 Thread.currentThread().setContextClassLoader(cls);

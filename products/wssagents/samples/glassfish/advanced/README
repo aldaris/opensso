@@ -1,4 +1,4 @@
-﻿<!--
+<!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
    Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.1 2008-07-12 18:33:40 mallas Exp $
+   $Id: README,v 1.2 2008-07-23 17:58:20 veiming Exp $
 
 -->
 
@@ -122,18 +122,18 @@ B. Web services proxy case where the intermediary obtains a new token using
    the token that is authenticated by the LoanRequestorClient.
 
 
-Configuring FAM for passthrough (use case A):
+Configuring OpenSSO Enterprise for passthrough (use case A):
 =============================================
 
 
-1.  Login into the Federated Access Manager Console with user
+1.  Login into the OpenSSO Enterprise Console with user
     amadmin and <amadmin password>
 
-    famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
     Note: If you have logged in as any other user, click Logout on the console
     page and Login again and make sure that you access the Federated
-    Access Manager Console.
+    OpenSSO Enterprise Console.
 
 2. Create agent profiles for "LoanRequestorService" WSC :
       Create "WSC" profile for "LoanRequestorService"
@@ -176,9 +176,9 @@ Configuring FAM for passthrough (use case A):
       two new profiles as "proxywsp" and "wsp" and in "proxywsp" create the
       end point as the LoanReqestorService web service endpoint.
 
-5.  Logout of Federated Access Manager Administration console.
+5.  Logout of OpenSSO Enterprise Administration console.
 
-Configuring FAM for proxying with a new token (use case B):
+Configuring OpenSSO Enterprise for proxying with a new token (use case B):
 ==========================================================
 TODO-Later
 

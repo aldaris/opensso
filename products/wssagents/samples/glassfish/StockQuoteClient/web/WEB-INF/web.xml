@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web.xml,v 1.4 2008-06-25 05:54:44 qcheng Exp $
+   $Id: web.xml,v 1.5 2008-07-23 17:58:19 veiming Exp $
 
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
@@ -52,7 +52,7 @@
         </welcome-file>
   </welcome-file-list>
   <security-constraint>
-    <display-name>Access Manager Security Constraint</display-name>
+    <display-name>OpenSSO Enterprise Security Constraint</display-name>
     <web-resource-collection>
       <web-resource-name>AUTHENTICATED_RESOURCE</web-resource-name>
       <url-pattern>/*</url-pattern>

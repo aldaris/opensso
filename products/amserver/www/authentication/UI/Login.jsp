@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: Login.jsp,v 1.7 2008-06-25 05:44:28 qcheng Exp $
+   $Id: Login.jsp,v 1.8 2008-07-23 18:02:08 veiming Exp $
                                                                                 
 --%>
 
@@ -121,7 +121,7 @@ if ((gotoURL != null) && (gotoURL.length() != 0)) {
         width="100%" title="">
           <tr>
             <td width="260"><img src="<%= ServiceURI %>/images/dot.gif" width="260" height="245" alt="" /></td>
-            <td width="415" bgcolor="#ffffff" valign="top"><img name="Login.productLogo" 
+            <td width="415" bgcolor="#ffffff" valign="top"><img src="<%= ServiceURI %>/images/dot.gif" width="30" height="1" alt="" /><img name="Login.productLogo" 
             src="<%= ServiceURI %>/images/PrimaryProductName.png" alt="<auth:resBundle bundleName="amAuthUI" resourceKey="basic_realm" />" 
             border="0" />
               <table border="0" cellspacing="0" cellpadding="0">

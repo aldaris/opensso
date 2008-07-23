@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncodeAction.java,v 1.2 2008-06-25 05:52:57 qcheng Exp $
+ * $Id: EncodeAction.java,v 1.3 2008-07-23 17:58:16 veiming Exp $
  *
  */
 
@@ -53,7 +53,7 @@ import com.iplanet.services.util.Crypt;
  * this is not done and Java security permissions check is enabled, then the
  * operation will fail and return a null everytime.
  * 
- * Note: Java security permissions check for Access Manager can be enabled by
+ * Note: Java security permissions check for OpenSSO Enterprise can be enabled by
  * setting the property <code>com.sun.identity.security.checkcaller</code> to
  * true in AMConfig properties file.
  * 

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2008-07-18 06:49:43 mallas Exp $
+   $Id: build.xml,v 1.15 2008-07-23 17:58:18 veiming Exp $
 
 -->
 
@@ -114,7 +114,7 @@
             </fileset>
             <fileset dir="${wssagents.xml.dir}" includes="*.xml" />
             <zipfileset dir="${wssagents.classes.dir}" />
-            <zipfileset src="${fm.dist.dir}/fam.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class,com/sun/identity/classloader/MaskingClassLoader.class"/>
+            <zipfileset src="${fm.dist.dir}/opensso.jar" includes="com/sun/identity/wss/security/SecurityPrincipal.class,com/sun/identity/wss/security/SecurityException.class,com/sun/identity/classloader/MaskingClassLoader.class"/>
         </jar>
 
         <checksum file="${wssagents.dist.dir}/openssowssproviders.jar" 

@@ -23,19 +23,19 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: fampre80upgrade,v 1.2 2008-06-25 05:53:09 qcheng Exp $
+# $Id: fampre80upgrade,v 1.3 2008-07-23 17:58:17 veiming Exp $
 #
 #
 
 #
-# This script does the preparation before upgrade to Federated Access Manager
+# This script does the preparation before upgrade to OpenSSO Enterprise
 # 8.0 binaries. The script can be run on Java ES 2 , Java ES 3, Java ES 4  and
 # FM 7.0 installations.
 #
 # It does the following:
 #
-# 1. Backs up the essential Access Manager files on the existing system.
-# 2. Removes the Sun Java(tm) System Access Manager 6.2 , 6.3 , 7.0 ,7.1 Packages.
+# 1. Backs up the essential OpenSSO Enterprise files on the existing system.
+# 2. Removes the Sun Java(tm) System OpenSSO Enterprise 6.2 , 6.3 , 7.0 ,7.1 Packages.
 # 3. Removes the Sun Java(tm) Federation Manager 7.0 Packages
 # 4. Removes the SAMLv2 Plugin package.
 # 5. Updates the /var/sadm/install/productregistry file to reflect the package
@@ -327,7 +327,7 @@ get_log_dir() {
 
     $NECHO "<?xml version=\"1.0\" encoding=\"$XML_ENCODING\"?>" > /tmp/log.file.xml
     $NECHO "<!DOCTYPE Requests" >>  /tmp/log.file.xml
-    $NECHO "PUBLIC \"-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN\"" >> /tmp/log.file.xml
+    $NECHO "PUBLIC \"-//iPlanet//Sun OpenSSO Enterprise 2005Q4 Admin CLI DTD//EN\"" >> /tmp/log.file.xml
     $NECHO "\"jar://com/iplanet/am/admin/cli/amAdmin.dtd\"">> /tmp/log.file.xml
     $NECHO ">" >> /tmp/log.file.xml
 
@@ -691,7 +691,7 @@ get_am_version() {
     VERSION="`$GREP com.iplanet.am.version= $AMCONFIG \
 	      | $SED -e 's/com.iplanet.am.version=//g'`"
 
-    $NECHO "Access Manager Version : $VERSION" >> $LOG 2>&1
+    $NECHO "OpenSSO Enterprise Version : $VERSION" >> $LOG 2>&1
 }
 
 
@@ -701,15 +701,15 @@ get_am_version() {
 #
 get_staging_dir() {
 
-    eval $ECHO "`$gettext 'FAM 8.0 Staging Directory : ${OMIT} '`"
+    eval $ECHO "`$gettext 'OpenSSO Enterprise 8.0 Staging Directory : ${OMIT} '`"
     tmp=""
     while [ "$tmp" = "" ]; do
         read tmp
-        file=`find $tmp/WEB-INF/lib -name opensso.jar -print`  >> $LOG_DIR 2>&1
+        file=`find $tmp/WEB-INF/lib -name amserver.jar -print`  >> $LOG_DIR 2>&1
         if [ x = x${file} ]; then
             tmp=""
-            eval $ECHO "`gettext 'Incorrect FAM 8.0 staging directory specified. Re-enter the correct value '` "
-            eval $ECHO "`$gettext 'FAM 8.0 Staging Directory : ${OMIT} '`"
+            eval $ECHO "`gettext 'Incorrect OpenSSO Enterprise 8.0 staging directory specified. Re-enter the correct value '` "
+            eval $ECHO "`$gettext 'OpenSSO Enterprise 8.0 Staging Directory : ${OMIT} '`"
         fi
     done
     if [ "$tmp" != "" ]
@@ -725,7 +725,7 @@ get_staging_dir() {
 #
 get_upgrade_dir() {
 
-    eval $ECHO "`$gettext 'Enter the FAM 8.0 Upgrade Directory : ${OMIT} '`"
+    eval $ECHO "`$gettext 'Enter the OpenSSO Enterprise 8.0 Upgrade Directory : ${OMIT} '`"
     tmp=""
     while [ "$tmp" = "" ]; do
         read tmp
@@ -733,7 +733,7 @@ get_upgrade_dir() {
         if [ x = x${file} ]; then
             tmp=""
             eval $ECHO "`gettext 'Incorrect upgrade directory specified. Re-enter the correct value '` "
-            eval $ECHO "`$gettext 'Enter the FAM 8.0 Upgrade Directory : ${OMIT} '`"
+            eval $ECHO "`$gettext 'Enter the OpenSSO Enterprise 8.0 Upgrade Directory : ${OMIT} '`"
         fi
     done
     if [ "$tmp" != "" ]
@@ -749,14 +749,14 @@ get_upgrade_dir() {
 #
 get_config_dir() {
 
-    eval $ECHO "`$gettext 'FAM 8.0 Configuration Directory : ${OMIT} '`"
+    eval $ECHO "`$gettext 'OpenSSO Enterprise 8.0 Configuration Directory : ${OMIT} '`"
     while [ "$tmp" = "" ]; do
         read tmp
         file=`find $tmp -name AMConfig.properties -print`  >> $LOG_DIR 2>&1
         if [ x = x${file} ]; then
             tmp=""
             eval $ECHO "`gettext 'Incorrect config directory specified. Re-enter the correct value'${OMIT}` "
-            eval $ECHO "`$gettext 'FAM 8.0 Configuration Directory : ${OMIT} '`"
+            eval $ECHO "`$gettext 'OpenSSO Enterprise 8.0 Configuration Directory : ${OMIT} '`"
         fi
     done
     if [ "$tmp" != "" ]
@@ -895,7 +895,7 @@ cleanupAM() {
     fi
 
     # now remove the packages.
-    $NECHO "`$gettext 'Removing Access Manager'` $VERSION ..."
+    $NECHO "`$gettext 'Removing OpenSSO Enterprise'` $VERSION ..."
     $NECHO
     $NECHO "mail=" > /tmp/isPkgPremove.admin
     $NECHO "instance=unique" >> /tmp/isPkgPremove.admin
@@ -1021,7 +1021,7 @@ else
     cleanupAM
 fi
 $NECHO
-$NECHO "`$gettext 'The system is ready for Federated Access Manager 8.0'`"
-$NECHO "`$gettext 'Please follow the Federated Access Manager 8.0 Upgrade Guide to continue upgrade'`" 
+$NECHO "`$gettext 'The system is ready for OpenSSO Enterprise 8.0'`"
+$NECHO "`$gettext 'Please follow the OpenSSO Enterprise 8.0 Upgrade Guide to continue upgrade'`" 
 $NECHO
 $NECHO

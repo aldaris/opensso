@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MonitoringConstants.java,v 1.2 2008-06-25 05:52:53 qcheng Exp $
+ * $Id: MonitoringConstants.java,v 1.3 2008-07-23 17:58:16 veiming Exp $
  *
  */
 
@@ -88,17 +88,17 @@ public interface MonitoringConstants {
 
     /**
      *
-     *  property string for the official FAM product name for the
+     *  property string for the official OpenSSO Enterprise product name for the
      *  PRODUCT_NAME_CTX_KEY
      */
-    public String AM_PRODUCT_NAME = "Federated Access Manager";
+    public String AM_PRODUCT_NAME = "OpenSSO Enterprise";
 
     /**
      *
      *  property string for the AM description for the
      *  CMM_APPLICATION_SYSTEM
      */
-    public String AM_PRODUCT_DESCRIPTION = "Federated Access Manager";
+    public String AM_PRODUCT_DESCRIPTION = "OpenSSO Enterprise";
 
     /**
      *

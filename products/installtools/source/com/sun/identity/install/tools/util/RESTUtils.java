@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RESTUtils.java,v 1.3 2008-06-25 05:51:30 qcheng Exp $
+ * $Id: RESTUtils.java,v 1.4 2008-07-23 17:58:15 veiming Exp $
  *
  */
 
@@ -42,7 +42,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 /**
- * Utility class to call REST APIs on FAM.
+ * Utility class to call REST APIs on OpenSSO Enterprise.
  */
 public class RESTUtils {
     

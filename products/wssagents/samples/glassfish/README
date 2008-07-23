@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.9 2008-07-22 16:14:57 mrudul_uchil Exp $
+   $Id: README,v 1.10 2008-07-23 17:58:19 veiming Exp $
 
 -->
 
@@ -47,9 +47,9 @@ client and a standalone client.
 The sample demonstrates a simple stock quote service where given
 a stock ticker symbol it obtains stock data. The secure communication
 between stock quote web services client is achieved using Federation
-Access Manager web services security agents. The web services security
+OpenSSO Enterprise web services security agents. The web services security
 agents profile configuation is stored in backend repository information
-like regular FAM agents.  
+like regular OpenSSO Enterprise agents.  
 
 Deployment of samples:
 ======================
@@ -83,11 +83,11 @@ I. Deploy the samples
 
 II. Configure the web services client for "StockService".
 
-1.  Login into the Federated Access Manager Console with user amadmin and <amadmin password>
+1.  Login into the OpenSSO Enterprise Console with user amadmin and <amadmin password>
 
-    famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
-    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Enterprise Console.
 
     Create agent profiles for "StockService" WSC :
 
@@ -107,7 +107,7 @@ II. Configure the web services client for "StockService".
         Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
         Save changes.
 
-2.  Logout of Federated Access Manager Administration console.
+2.  Logout of OpenSSO Enterprise Administration console.
 
 III. Run the samples
 
@@ -132,8 +132,8 @@ III. Run the samples
 
        http://<host>:<port>/StockQuoteClient/index.jsp
 
-    2. You will be redirected to Federated Access Manager's Authentication service
-       for end user login. Enter any existing Federated Access Manager user with
+    2. You will be redirected to OpenSSO Enterprise's Authentication service
+       for end user login. Enter any existing OpenSSO Enterprise user with
        its password. Upon successful end user authentication, you will be redirected
        back to http://<host>:<port>/StockQuoteClient/ page.
 
@@ -157,11 +157,11 @@ III. Run the samples
 
   b) Standalone Client sample :
 
-    1. Login into the Federated Access Manager Console with user amadmin and <amadmin password>
+    1. Login into the OpenSSO Enterprise Console with user amadmin and <amadmin password>
 
-    famserver_protocol://famserver_host:famserver_port/famserver_deploy_uri
+    openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
-    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the Federated Access Manager Console.
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Enterprise Console.
 
       Go to Access Control -> Default realm -> Agents ->
 

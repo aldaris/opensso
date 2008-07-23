@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.4 2008-07-18 00:23:55 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.5 2008-07-23 17:58:20 veiming Exp $
  *
  */
 
@@ -56,7 +56,7 @@ public class FAMClassLoader {
             oldcc.getResource("com/sun/identity/wss/sts/ClientUserToken.class");
         if (resClient != null) {
             if ( (!(resClient.toString().contains("/WEB-INF/lib/openssoclientsdk.jar"))) &&
-               (!(resClient.toString().contains("/WEB-INF/lib/fam.jar"))) ) {
+               (!(resClient.toString().contains("/WEB-INF/lib/opensso.jar"))) ) {
                 System.out.println("FAMClassLoader WSS : clientSDK found, return global classloader");
                 cl = oldcc;
                 return cl;

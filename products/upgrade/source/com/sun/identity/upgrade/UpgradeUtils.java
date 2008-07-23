@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.9 2008-07-18 07:15:54 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.10 2008-07-23 17:58:18 veiming Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -105,7 +105,7 @@ import netscape.ldap.LDAPv3;
 
 /**
  * This class contains utilities to upgrade the service schema
- * configuration to be compatible with FAM.
+ * configuration to be compatible with OpenSSO Enterprise.
  * 
  */
 public class UpgradeUtils {
@@ -1646,7 +1646,7 @@ public class UpgradeUtils {
     }
 
     /**
-     * Sets the deploy uri of fam instance.
+     * Sets the deploy uri of OpenSSO Enterprise instance.
      * 
      * @param dn the dn of the admin user.
      */
@@ -1655,7 +1655,7 @@ public class UpgradeUtils {
     }
 
     /**
-     * Gets the deploy uri of fam instance.
+     * Gets the deploy uri of OpenSSO Enterprise instance.
      */
     public static String getDeployURI() {
         if (deployURI == null) {

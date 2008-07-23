@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecuringWS.java,v 1.3 2008-06-30 18:09:19 mrudul_uchil Exp $
+ * $Id: SecuringWS.java,v 1.4 2008-07-23 17:58:19 veiming Exp $
  *
  */
 
@@ -71,7 +71,7 @@ public class SecuringWS {
             SOAPMessage message = msgFactory.createMessage(mimeHeader,
                 new ByteArrayInputStream(soapMessage.toString().getBytes()));
             
-            // Construct Access Manager's SOAPRquestHandler to
+            // Construct OpenSSO Enterprise's SOAPRquestHandler to
             // secure the SOAP message
             SOAPRequestHandler handler = new SOAPRequestHandler();
             HashMap params = new HashMap();
