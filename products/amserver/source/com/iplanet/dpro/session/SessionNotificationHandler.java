@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionNotificationHandler.java,v 1.4 2008-07-10 00:12:02 ww203982 Exp $
+ * $Id: SessionNotificationHandler.java,v 1.5 2008-07-23 18:13:55 ww203982 Exp $
  *
  */
 
@@ -91,16 +91,14 @@ public class SessionNotificationHandler implements NotificationHandler {
 
         SessionID sid = new SessionID(info.sid);
         Session session = null;
-        synchronized (sessionTable) {
-            session = (Session) sessionTable.get(sid);
-            if (session != null) {
-                if (!info.state.equals("valid")) {
-                    sessionTable.remove(sid);
-                    session.cancel();
-                }
+        session = (Session) sessionTable.get(sid);
+        if (session != null) {
+            if (!info.state.equals("valid")) {
+                Session.removeSID(sid);
+                return;
             }
-
         }
+
 
         try {
             if (session == null) {
@@ -114,10 +112,7 @@ public class SessionNotificationHandler implements NotificationHandler {
         } catch (Exception e) {
             sessionDebug.error(
                     "SessionNotificationHandler:processNotification : ", e);
-            Session sess = (Session) sessionTable.remove(sid);
-            if (sess != null) {
-                sess.cancel();
-            }
+            Session.removeSID(sid);
             return;
         }
         SessionEvent evt = new SessionEvent(session,
