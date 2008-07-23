@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.5 2008-07-16 22:46:50 rajeevangal Exp $
+   $Id: saeIDPApp.jsp,v 1.6 2008-07-23 17:44:57 veiming Exp $
 
 --%>
 
@@ -53,9 +53,9 @@ public void jspInit()
 <%@ include file="header.jsp" %>
 <br><b>Secure Attributes Exchange IDP APP SAMPLE</b><br>
 <% 
-    // Crypto type to be used with local FAM-IDP
+    // Crypto type to be used with local <OpenSSO Enterprise>-IDP
     String cryptotype     = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
-    // Shared secret with local FAM-IDP
+    // Shared secret with local <OpenSSO Enterprise>-IDP
     String secret     = "secret12";
     // Keystore path (for asym signing)
     String keystore = "";
@@ -67,7 +67,7 @@ public void jspInit()
     // registered application in one of the hosted IDP extended metadata.
     String idpAppName = request.getRequestURL().toString();
 
-    // FAM-IDP hosted SAE url that will act like the gateway.
+    // <OpenSSO Enterprise>-IDP hosted SAE url that will act like the gateway.
     String  saeServiceURL="http://sa.idp.com:8080/sa/idpsaehandler/metaAlias/idp";
 
     // String representing authenticated user.
@@ -90,18 +90,18 @@ public void jspInit()
 This sample represents an IDP-App wishing to securely invoke a remote SP-App and pass it some secure attributes (mail and branch).
 <br>
 <br>
-IDP-App -sae---> IDP-FAM --samlv2---> SP-FAM --sae--> SP-App 
+IDP-App -sae---> IDP-%lt;OpenSSO Enterprise> --samlv2---> SP-%lt;OpenSSO Enterprise> --sae--> SP-App 
 <br>
 <br>
 <b>Prerequisites :</b>
 <br>
 IDP=Identity Provider  SP=Service Provider
 <br>
-i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-FAM in one of the hosted extended metadata - you will enter the same appname and secret here.
+i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-%lt;OpenSSO Enterprise> in one of the hosted extended metadata - you will enter the same appname and secret here.
 <br>
-ii) SP_App and corresponding shared secret or key-pair provisioned on SP-FAM and destination SP-App. You will enter SP-App here.
+ii) SP_App and corresponding shared secret or key-pair provisioned on SP-%lt;OpenSSO Enterprise> and destination SP-App. You will enter SP-App here.
 <br>
-iii) "auto-federation" and corresponding attributes setup (branch and mail) on both SP-FAM and IDP-FAM ends.
+iii) "auto-federation" and corresponding attributes setup (branch and mail) on both SP-%lt;OpenSSO Enterprise> and IDP-%lt;OpenSSO Enterprise> ends.
 <br>
 iv) SP-App is already deployed and ready to accept requests.
 <br>

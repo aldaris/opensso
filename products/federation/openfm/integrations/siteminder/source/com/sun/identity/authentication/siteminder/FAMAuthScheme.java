@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMAuthScheme.java,v 1.2 2008-06-25 05:48:57 qcheng Exp $
+ * $Id: FAMAuthScheme.java,v 1.3 2008-07-23 17:44:54 veiming Exp $
  *
  */
 
@@ -50,7 +50,7 @@ import com.iplanet.sso.SSOToken;
 /**
  * The class <code>FAMAuthScheme</code> implements siteminer authentication
  * scheme <code>SMAuthScheme</code>. The FAMAuthScheme generates siteminder
- * session by consuming FAM session. 
+ * session by consuming OpenSSO Enterprise session. 
  * Siteminder is the trade mark of Computer Associates, the usage of the
  * Siteminder API is subject to Siteminder License terms.
  */
@@ -59,7 +59,7 @@ public class FAMAuthScheme implements SmAuthScheme {
     private static final int SCHEME_VERSION = 
                          SmAuthQueryResponse.SMAUTH_API_VERSION_V3;
     private static final String SCHEME_DESCRIPTION = 
-                         "Federation Access Manager Auth Scheme";
+                         "Federation OpenSSO Enterprise Auth Scheme";
 
 
     final static String  FMPREFIX = "FMTOKEN";

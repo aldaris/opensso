@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.tld,v 1.2 2008-06-25 05:44:28 qcheng Exp $
+   $Id: configurator.tld,v 1.3 2008-07-23 17:36:29 veiming Exp $
 
 -->
 
@@ -34,7 +34,7 @@
     <tlibversion>1.0</tlibversion> 
     <jspversion>1.1</jspversion>
     <shortname>auth</shortname>
-    <info>Access Manager Configurator Tags Library</info>
+    <info>Sun OpenSSO Enterprise Configurator Tags Library</info>
 
     <tag>
         <name>resBundle</name>

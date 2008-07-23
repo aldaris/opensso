@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validate.jsp,v 1.4 2008-06-25 05:48:38 qcheng Exp $
+   $Id: validate.jsp,v 1.5 2008-07-23 17:36:37 veiming Exp $
 
 --%>
 
@@ -209,7 +209,7 @@ TOFIX: localize all the messages.
             <tr>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td>ex: http://fam.co.com:port/opensso</td>
+                <td>ex: http://opensso.co.com:port/opensso</td>
             </tr>
 
  	    <tr>
@@ -242,7 +242,7 @@ TOFIX: localize all the messages.
             <tr>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td>ex: http://fam.co.com:port/opensso</td>
+                <td>ex: http://opensso.co.com:port/opensso</td>
             </tr>
         </table>
 	<p/>

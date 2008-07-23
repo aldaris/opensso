@@ -23,13 +23,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_policy.h,v 1.2 2008-06-25 05:48:54 qcheng Exp $
+ * $Id: am_policy.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
  */
 
 /*
  * Abstract:
  *
- * Types and functions for using Sun Java System Access Manager Access 
+ * Types and functions for using Sun OpenSSO Enterprise Access 
  * Management SDK policy objects.
  *
  */

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: success.jsp,v 1.3 2008-06-25 05:44:27 qcheng Exp $
+   $Id: success.jsp,v 1.4 2008-07-23 17:36:29 veiming Exp $
 
 --%>
 
@@ -38,7 +38,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Federated Access Manager</title>
+    <title>Sun OpenSSO Enterprise</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <meta name="Copyright"
          content="All Rights Reserved. Use is subject to license terms.">
@@ -91,7 +91,7 @@
                     <td width="260"><img src="<%= deployURI %>/images/dot.gif" width="260" height="2" alt="" /></td>
                     <td align="left">
                         <div style="color: #f88017; font-size:24px">
-                            Sun Federated Access Manager
+                            Sun OpenSSO Enterprise
                         </div>
                         <p>
                         <div style="color: #50697d; font-size:16px">

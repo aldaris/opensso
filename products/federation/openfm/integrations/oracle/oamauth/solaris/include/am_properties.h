@@ -23,13 +23,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_properties.h,v 1.2 2008-06-25 05:48:54 qcheng Exp $
+ * $Id: am_properties.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
  */
 
 /*
  * Abstract:
  *
- * Properties map for use by clients of the Sun Java System Access Manager
+ * Properties map for use by clients of the Sun OpenSSO Enterprise
  * Remote Client SDK.
  *
  */

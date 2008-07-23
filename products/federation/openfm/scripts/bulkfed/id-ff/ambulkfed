@@ -31,7 +31,7 @@
 # This is a convenient script for federating users in a bulk manner.
 #
 # The script assumes that the backend user database is LDAP compliant
-# and the Sun Java System Access Manager as the federation software provider. 
+# and the Sun OpenSSO Enterprise as the federation software provider. 
 #
 # This script expects userdn mappins file as the primary input for creating
 # federation data for the users specified in the file. The userdns must be
@@ -50,9 +50,10 @@
 #
 # The idpuserdata.ldif/spuserdata.ldif files  will also be stored locally for 
 # convenient loading using ldapmodify command if the remote provider is 
-# also an AccessManager instance.
+# also an OpenSSO Enterprise instance.
 #
-# If the remote provider is not an access manager instance, the generated files
+# If the remote provider is not an OpenSSO Enterprise instance, the generated
+# files
 # spnameidentifies.txt/idpnameidentifies.txt can be exchanged to the second
 # party so that it can generate federation/user specific data based on
 # this input.
@@ -115,7 +116,7 @@ display_help() {
 }
 
 display_version() {
-   $ECHO "`$gettext 'Sun Java System Access Manager version 2005Q3.'`"
+   $ECHO "`$gettext 'Sun OpenSSO Enterprise version 2005Q3.'`"
 }
 
 get_password() {

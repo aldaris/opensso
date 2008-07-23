@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
   
-$Id: README,v 1.8 2008-06-25 05:48:44 qcheng Exp $
+$Id: README,v 1.9 2008-07-23 17:40:34 veiming Exp $
 
 
 %% Contents:
@@ -59,7 +59,7 @@ is setup correctly pointing to its location.
        openSSO. You could
        - check out the "opensso/products/amserver" branch source code 
        or
-       - download opensso_server_samples.war, console.jar, opensso.jar, 
+       - download opensso_server_samples.war, console.jar, amserver.jar, 
          opensso-test.jar, amclientsdk.jar, amAdminTools.zip, 
          openssosamples.zip, amclientsdk.jar, opensso-sharedlib.jar from
          https://opensso.dev.java.net/public/use/index.html and copy them to 

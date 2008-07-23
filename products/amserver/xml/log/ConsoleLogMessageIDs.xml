@@ -22,12 +22,12 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: ConsoleLogMessageIDs.xml,v 1.9 2008-07-09 02:04:50 veiming Exp $
+    $Id: ConsoleLogMessageIDs.xml,v 1.10 2008-07-23 17:36:31 veiming Exp $
 
 -->
 
 <!DOCTYPE logmessages
-    PUBLIC "Sun Java System Access Manager Log Message DTD/EN"
+    PUBLIC "Sun OpenSSO Enterprise Log Message DTD/EN"
     "jar://com/sun/identity/log/messageid/amLogMessage.dtd"
 >
 

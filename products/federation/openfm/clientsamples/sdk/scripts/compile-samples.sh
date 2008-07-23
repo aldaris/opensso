@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #------------------------------------------------------------------------------
-#README file for Federated Access Manager stand alone client sdk samples
+#README file for OpenSSO Enterprise stand alone client sdk samples
 #------------------------------------------------------------------------------
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 #
@@ -26,7 +26,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: compile-samples.sh,v 1.7 2008-06-25 05:48:46 qcheng Exp $
+#$Id: compile-samples.sh,v 1.8 2008-07-23 17:40:36 veiming Exp $
 #------------------------------------------------------------------------------
 #
 javac -classpath resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar  -d classes source/samples/xacml/*.java source/com/sun/identity/samples/clientsdk/idrepo/*.java source/com/sun/identity/samples/clientsdk/logging/*.java source/com/sun/identity/samples/sso/*.java source/com/sun/identity/samples/authentication/*.java source/samples/policy/*.java

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.2 2008-06-25 05:49:26 qcheng Exp $
+   $Id: configure.jsp,v 1.3 2008-07-23 17:44:56 veiming Exp $
 
 --%>
 
@@ -189,7 +189,7 @@
 
     <tr>
     <td colspan="2">Please provide the remote Identity Provider (must also be an
-        Federated Access Manager instance) information:</td>
+        OpenSSO Enterprise instance) information:</td>
     </tr>
     <tr>
     <td valign="center" width="25%">Federation Protocol:</td>

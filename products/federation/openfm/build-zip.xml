@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.21 2008-06-25 05:48:44 qcheng Exp $
+   $Id: build-zip.xml,v 1.22 2008-07-23 17:40:34 veiming Exp $
 
 -->
 
@@ -161,8 +161,8 @@
             
         <copy file="${openfm.dir}/docs/README"
             tofile="${zip.temp.dir}/docs/README" />
-        <copy file="${fm.dist.dir}/fam-public-javadocs.jar"
-            tofile="${zip.temp.dir}/docs/fam-public-javadocs.jar" />
+        <copy file="${fm.dist.dir}/opensso-public-javadocs.jar"
+            tofile="${zip.temp.dir}/docs/opensso-public-javadocs.jar" />
  
         <copy todir="${zip.temp.dir}/ldif">
             <fileset dir="${openfm.dir}/ldif" includes="**/*"/>
@@ -191,7 +191,7 @@
         <copy file="${extlib.dir}/agent-csdk/agent-csdk.zip"
              tofile="${zip.temp.dir}/libraries/native/agent-csdk/agent-csdk.zip" />
         <copy file="${extlib.dir}/fmsae.dll"
-             tofile="${zip.temp.dir}/libraries/native/dll/fmsae.dll" />              
+             tofile="${zip.temp.dir}/libraries/native/dll/fmsae.dll" /> 
         <copy file="${openfm.dir}/docs/README.jars"
             tofile="${zip.temp.dir}/libraries/jars/README" />
         <copy todir="${zip.temp.dir}/libraries/jars">
@@ -206,14 +206,14 @@
 
         <copy todir="${zip.temp.dir}/samples">
             <fileset file="${openfm.dir}/samples/README" />
-            <fileset file="${fm.dist.dir}/fam-client.zip" />
+            <fileset file="${fm.dist.dir}/opensso-client.zip" />
         </copy>
 
         <copy file="${openfm.dir}/docs/README.tools"
             tofile="${zip.temp.dir}/tools/README" />
         <copy todir="${zip.temp.dir}/tools">
-            <fileset file="${fm.dist.dir}/famAdminTools.zip" />
-            <fileset file="${fm.dist.dir}/famSessionTools.zip" />
+            <fileset file="${fm.dist.dir}/ssoAdminTools.zip" />
+            <fileset file="${fm.dist.dir}/ssoSessionTools.zip" />
         </copy>
         
         <copy todir="${zip.temp.dir}/xml">

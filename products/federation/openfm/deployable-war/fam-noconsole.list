@@ -1107,7 +1107,7 @@
 ./WEB-INF/lib/click.jar
 ./WEB-INF/lib/commons-codec-1.3.jar
 ./WEB-INF/lib/crimsondeb.jar
-./WEB-INF/lib/fam.jar
+./WEB-INF/lib/opensso.jar
 ./WEB-INF/lib/famauth.jar
 ./WEB-INF/lib/iaik_jce_full.jar
 ./WEB-INF/lib/iaik_ssl.jar
@@ -1129,7 +1129,7 @@
 ./WEB-INF/lib/openfedlib.jar
 ./WEB-INF/lib/opensso-register.jar
 ./WEB-INF/lib/opensso-sharedlib.jar
-./WEB-INF/lib/opensso.jar
+./WEB-INF/lib/amserver.jar
 ./WEB-INF/lib/relaxngDatatype.jar
 ./WEB-INF/lib/scn_stprs_util.jar
 ./WEB-INF/lib/swec.jar
@@ -2012,7 +2012,7 @@
 ./css/css_ns6up.css
 ./css/styles.css
 ./encode.jsp
-./famadm.jsp
+./ssoadm.jsp
 ./fed_css/styles.css
 ./fed_images/Identity_LogIn.gif
 ./fed_images/brandingLogo.gif

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showServerConfig.jsp,v 1.5 2008-07-08 01:08:24 mrudulahg Exp $
+   $Id: showServerConfig.jsp,v 1.6 2008-07-23 17:36:30 veiming Exp $
 
 -->
 
@@ -51,7 +51,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Federated Access Manager</title>
+    <title>Sun OpenSSO Enterprise</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
 </head>
@@ -61,7 +61,7 @@
     <table class="MstTblBot" title="" border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
         <td class="MstTdTtl" width="99%">
-        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="console/images/PrimaryProductName.png" alt="Sun Java(TM) System Federated Access Manager" border="0"></div>
+        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="console/images/PrimaryProductName.png" alt="Sun OpenSSO Enterprise" border="0"></div>
         </td>
         <td class="MstTdLogo" width="1%"><img name="AMConfig.configurator.BrandLogo" src="com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo" border="0" height="55" width="31"></td>
         </tr>
@@ -89,7 +89,7 @@
                   <td>
               <%
                   Properties propDef = ServerConfiguration.getDefaults(ssoToken);
-                  out.println("<B>FAM Version</B>");
+                  out.println("<B>OpenSSO Enterprise Version</B>");
               %>
                   </td>
                   <td>

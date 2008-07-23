@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.3 2008-06-25 05:49:30 qcheng Exp $
+ * $Id: CDCServlet.java,v 1.4 2008-07-23 17:44:58 veiming Exp $
  *
  */
 
@@ -444,7 +444,8 @@ public class CDCServlet extends HttpServlet {
     ) throws IOException {
         StringBuffer redirectURL = new StringBuffer(1024);
         
-        // Check if user has authenticated to another Access Manager instance
+        // Check if user has authenticated to another OpenSSO Enterprise
+        // instance
         String authURL = null;
         Cookie authCookie = CookieUtils.getCookieFromReq(
             request, authURLCookieName);

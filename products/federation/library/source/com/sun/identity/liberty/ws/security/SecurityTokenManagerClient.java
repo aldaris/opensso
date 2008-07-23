@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManagerClient.java,v 1.7 2008-06-25 05:47:21 qcheng Exp $
+ * $Id: SecurityTokenManagerClient.java,v 1.8 2008-07-23 17:36:34 veiming Exp $
  *
  */
 
@@ -72,9 +72,9 @@ import javax.xml.soap.SOAPException;
  * <p>
  * The class provides mechanisms to manage the <code>Assertion</code>s either
  * locally (i.e., within the same JVM process) or remotely on another instance
- * of Access Manager. The default constructor will manage the <code>
+ * of OpenSSO Enterprise. The default constructor will manage the <code>
  * Assertion</code>s locally if it detects SAML web services running locally,
- * else will use on of the configured Access Manager. The constructor which
+ * else will use on of the configured OpenSSO Enterprise. The constructor which
  * accepts an <code>URL</code> will always use the URL to manage the assertions.
  * <p>
  * Having obtained an instance of <code>AssertionManagerClient</code>, its

@@ -22,15 +22,15 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.3 2008-06-25 05:48:45 qcheng Exp $
+   $Id: README,v 1.4 2008-07-23 17:40:34 veiming Exp $
 
 -->
 
-Federated Access Manager - Client Samples
+OpenSSO Enterprise - Client Samples
 
 There are two sub-directories under the client samples:
  - sdk : Contains CLI based client samples. 
  - war : Contains deployable WARs which includes all web based client samples.
-         The fam-client-jdk14.war is for web containers running JDK 1.4.x,
-         the fam-client-jdk15.war is for web containers running JDK 1.5+.
+         The opensso-client-jdk14.war is for web containers running JDK 1.4.x,
+         the opensso-client-jdk15.war is for web containers running JDK 1.5+.
 

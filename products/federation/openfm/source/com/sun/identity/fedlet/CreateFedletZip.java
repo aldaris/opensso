@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletZip.java,v 1.3 2008-06-25 05:49:55 qcheng Exp $
+ * $Id: CreateFedletZip.java,v 1.4 2008-07-23 17:44:59 veiming Exp $
  *
  */
 
@@ -506,9 +506,9 @@ public class CreateFedletZip {
     /**
      * Main program to create Fedlet ZIP
      * The program takes following parameters in order:
-     * 1. a file containing the list of filenames to be extract from fam.war
+     * 1. a file containing the list of filenames to be extract from opensso.war
      * 2. a file containing the list of jars to be extracted
-     * 3. file point to the fam.war
+     * 3. file point to the opensso.war
      * 4. name with full path to write Fedlet ZIP
      * 5. README file
      */

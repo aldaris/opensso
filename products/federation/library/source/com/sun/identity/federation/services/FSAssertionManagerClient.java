@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerClient.java,v 1.6 2008-06-25 05:46:51 qcheng Exp $
+ * $Id: FSAssertionManagerClient.java,v 1.7 2008-07-23 17:36:33 veiming Exp $
  *
  */
 
@@ -54,9 +54,9 @@ import org.w3c.dom.Document;
  * <p>
  * The class provides mechanisms to manage the <code>Assertion</code>s either
  * locally (i.e., within the same JVM process) or remotely on another instance
- * of Access Manager. The default constructor will manage the <code>
+ * of OpenSSO Enterprise. The default constructor will manage the <code>
  * Assertion</code>s locally if it detects SAML web services running locally,
- * else will use one of the configured Access Manager. The constructor which
+ * else will use one of the configured OpenSSO Enterprise. The constructor which
  * accepts an <code>URL</code> will always use the URL to manage the assertions.
  * <p>
  * Having obtained an instance of <code>FSAssertionManagerClient</code>, 

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-06-25 05:48:30 qcheng Exp $
+   $Id: build.xml,v 1.7 2008-07-23 17:36:37 veiming Exp $
 
 -->
 
@@ -95,7 +95,7 @@
 
     <target name="configure" unless="unittest.configured">
         <exec executable="${java.home}/../bin/keytool">
-            <arg line="--genkey -keyalg rsa -alias test -dname &quot;cn=sun-unix,ou=SUN Java System Access Manager,o=Sun, c=US&quot; -keypass 11111111 -keystore keystore.jks -storepass 11111111" />
+            <arg line="--genkey -keyalg rsa -alias test -dname &quot;cn=sun-unix,ou=SUN Java System OpenSSO Enterprise,o=Sun, c=US&quot; -keypass 11111111 -keystore keystore.jks -storepass 11111111" />
         </exec>
         <echo file=".configured">yes</echo>
         <echo file=".storepass">11111111</echo>

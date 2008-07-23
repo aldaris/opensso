@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMAdapter.java,v 1.2 2008-06-25 05:48:57 qcheng Exp $
+ * $Id: SMAdapter.java,v 1.3 2008-07-23 17:44:54 veiming Exp $
  *
  */
 
@@ -236,8 +236,8 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
     }
  
     /**
-     * Invokes before Federated Access Manager (<code>FAM</code>) sends the 
-     * Single-Sing-On request to IDP. 
+     * Invokes before OpenSSO Enterprise sends the 
+     * Single-Sign-On request to IDP. 
      * @param hostedEntityID entity ID for the hosted SP
      * @param idpEntityID entity id for the IDP to which the request will 
      * 		be sent. This will be null in ECP case.
@@ -260,7 +260,7 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
 
 
     /**
-     * Invokes when the <code>FAM</code> received the Single-Sign-On response
+     * Invokes when the OpenSSO Enterprise received the Single-Sign-On response
      * from the IDP, this is called before any processing started on SP side.
      * @param hostedEntityID entity ID for the hosted SP
      * @param realm Realm of the hosted SP.
@@ -331,7 +331,7 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
             }
 */
             if(famSession == null) {
-               throw new SAML2Exception("No FAM Session found"); 
+               throw new SAML2Exception("No OpenSSO Enterprise Session found"); 
             }
 
             UserCredentials uc = new UserCredentials(

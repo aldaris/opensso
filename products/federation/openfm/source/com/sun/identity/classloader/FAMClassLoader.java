@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.9 2008-06-25 05:49:32 qcheng Exp $
+ * $Id: FAMClassLoader.java,v 1.10 2008-07-23 17:44:58 veiming Exp $
  *
  */
 
@@ -44,8 +44,8 @@ public class FAMClassLoader {
     
     public static ClassLoader cl;
     
-    // Jar files path at FAM client, for FAM classloader to 
-    // load those jar files. 
+    // Jar files path at OpenSSO Enterprise client, for OpenSSO Enterprise
+    // classloader to load those jar files. 
     public static final String FAM_CLASSLOADER_DIR_PATH = 
         "com.sun.identity.classloader.client.jarsPath";
     
@@ -85,7 +85,8 @@ public class FAMClassLoader {
                     new ArrayList<String>(Arrays.asList(maskedResouces));
 
                 // first create a protected area so that we load WS 2.1 API
-                // and everything that depends on them, inside FAM classloader.
+                // and everything that depends on them, inside OpenSSO
+                // Enterprise classloader.
                 localcc = new MaskingClassLoader(localcc,mask,maskRes,urls);
 
                 // then this classloader loads the API and tools.jar
@@ -111,8 +112,6 @@ public class FAMClassLoader {
         try {
             for (int i=0; i < jars.length; i++) {
                 urls[i] = context.getResource("/WEB-INF/lib/" + jars[i]);
-                System.out.println("FAM urls[" + i + "] : " + 
-                                   (urls[i]).toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,12 +138,8 @@ public class FAMClassLoader {
         try {
             for (int i=0; i < jars.length; i++) {
                 urls[i] = new URL(jarsPath + jars[i]);
-                System.out.println("FAM urls[" + i + "] : " + 
-                                   (urls[i]).toString());
             }
             urls[jars.length] = new URL(jarsPath);
-            System.out.println("FAM urls[" + jars.length + "] : " + 
-                                   (urls[jars.length]).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,7 +167,7 @@ public class FAMClassLoader {
         "webservices-tools.jar",
         "webservices-extra-api.jar",
         "webservices-extra.jar",
-        "fam.jar",
+        "opensso.jar",
         "openssowssproviders.jar",
         "xalan.jar",
         "xercesImpl.jar",

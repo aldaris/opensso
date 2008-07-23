@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLClient.java,v 1.4 2008-06-25 05:47:30 qcheng Exp $
+ * $Id: SAMLClient.java,v 1.5 2008-07-23 17:36:34 veiming Exp $
  *
  */
 
@@ -124,7 +124,7 @@ public class SAMLClient {
 
     /**
      * This method is designed to do the SAML web-browser profile with 
-     * Artifact. Once the browser (user) authenticated to Access Manager, 
+     * Artifact. Once the browser (user) authenticated to OpenSSO Enterprise, 
      * it can call this method to complete the single sign on to the
      * target host and be redirected to the specified target site.
      * @param request HTTP Servlet Request
@@ -144,7 +144,7 @@ public class SAMLClient {
 
     /**
      * This method is designed to do the SAML web-browser POST profile. 
-     * Once the browser (user) authenticated to Access Manager, 
+     * Once the browser (user) authenticated to OpenSSO Enterprise, 
      * it can call this method
      * to complete the single sign on to the target host and be
      * redirected to the target site.
@@ -393,7 +393,7 @@ public class SAMLClient {
     /**
      * This private method is designed to get the URLEndpoint which points to 
      * the partner's SOAP Receiver service, such as the URLEndpoint of 
-     * SAMLSOAPReceiver servlet in SUN Java System access manager context. 
+     * SAMLSOAPReceiver servlet in Sun OpenSSO Enterprise context. 
      * @param destSite  A object of 
      *                com.sun.identity.saml.common.SAMLServiceManager.SOAPEntry
      * @param to An URLEndpoint object 

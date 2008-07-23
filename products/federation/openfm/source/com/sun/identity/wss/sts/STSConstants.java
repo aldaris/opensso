@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.10 2008-07-02 16:57:23 mallas Exp $
+ * $Id: STSConstants.java,v 1.11 2008-07-23 17:45:01 veiming Exp $
  *
  */
 
@@ -85,8 +85,8 @@ public class STSConstants {
     public static final String SAML_SENDER_VOUCHES_2_0 = 
         "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches";
     
-    // Jar files path at FAM client, for FAM classloader to 
-    // load those jar files. 
+    // Jar files path at OpenSSO Enterprise client, for OpenSSO Enterprise
+    // classloader to load those jar files. 
     public static final String FAM_CLASSLOADER_DIR_PATH = 
         "com.sun.identity.classloader.client.jarsPath";
     

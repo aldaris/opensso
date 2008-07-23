@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.23 2008-06-25 05:44:27 qcheng Exp $
+   $Id: configurator.jsp,v 1.24 2008-07-23 17:36:28 veiming Exp $
 
 --%>
 
@@ -41,7 +41,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun Federated Access Manager</title>
+    <title>Sun OpenSSO Enterprise</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <meta name="Copyright"
          content="All Rights Reserved. Use is subject to license terms.">
@@ -140,7 +140,7 @@
         Welcome to the 
     </div>
     <div style="color: #f88017; font-size:24px">
-        Sun Federated Access Manager<br>
+        Sun OpenSSO Enterprise<br>
         Configurator 
     </div>
 

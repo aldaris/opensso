@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.13 2008-06-25 05:49:58 qcheng Exp $
+ * $Id: FMSessionProvider.java,v 1.14 2008-07-23 17:44:59 veiming Exp $
  *
  */
 
@@ -93,7 +93,7 @@ public class FMSessionProvider implements SessionProvider {
         get(Constants.AM_COOKIE_NAME);
 /**
  *  Commented out since initializing session service statically here brings
- *  in the whole FAM which is not desirable for clientsdk.
+ *  in the whole OpenSSO Enterprise which is not desirable for clientsdk.
  *  Can remove this, issue handler probably could do that.
     private static String lbcookieName = Session.lbCookieName;
     private static String lbcookieValue = SessionService.getSessionService().

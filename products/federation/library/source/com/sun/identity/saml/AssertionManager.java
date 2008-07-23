@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.7 2008-06-25 05:47:30 qcheng Exp $
+ * $Id: AssertionManager.java,v 1.8 2008-07-23 17:36:34 veiming Exp $
  *
  */
 
@@ -74,7 +74,7 @@ import javax.servlet.http.HttpServletResponse;
  * <code>AssertionArtifact</code>, and to obtain decision from an 
  * <code>Query</code>.
  * <p>
- * This class could only be used in the same JVM as the Access Manager.
+ * This class could only be used in the same JVM as the OpenSSO Enterprise.
  * @supported.api
  */
 public final class AssertionManager {
@@ -1400,7 +1400,8 @@ public final class AssertionManager {
                     + " missing SubjectConfirmation.");
             }
             // since we couldn't find the SSOToken in SubjectConfirmationData
-            // we don't know if the subject is authenticated to Access Manager.
+            // we don't know if the subject is authenticated to OpenSSO
+            // Enterprise.
             throw new SAMLException(
                 SAMLUtils.bundle.getString("missingSubjectConfirmation"));
         }

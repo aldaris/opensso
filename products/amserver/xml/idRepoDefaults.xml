@@ -24,12 +24,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoDefaults.xml,v 1.5 2008-06-25 05:44:56 qcheng Exp $
+   $Id: idRepoDefaults.xml,v 1.6 2008-07-23 17:36:30 veiming Exp $
   
 -->
 
 <!DOCTYPE Requests
-    PUBLIC "-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN"
+    PUBLIC "-//iPlanet//Sun OpenSSO Enterprise 2005Q4 Admin CLI DTD//EN"
     "jar://com/iplanet/am/admin/cli/amAdmin.dtd"
 >
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.7 2008-06-25 05:49:32 qcheng Exp $
+ * $Id: MaskingClassLoader.java,v 1.8 2008-07-23 17:44:58 veiming Exp $
  *
  */
 
@@ -176,7 +176,7 @@ public class MaskingClassLoader extends ClassLoader {
         Enumeration[] tmp = new Enumeration[1];
         if(name.startsWith(resource)) {
             Vector vec = new Vector(1);
-            // Read the "resource" from fam.jar OR openssoclientsdk.jar
+            // Read the "resource" from amserver.jar OR openssoclientsdk.jar
             URL jarURL = 
                 new URL("jar:" + (urls[5]).toString() + "!/" + resource);
             vec.add(jarURL);

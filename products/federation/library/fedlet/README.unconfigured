@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.4 2008-06-25 05:46:15 qcheng Exp $
+$Id: README.unconfigured,v 1.5 2008-07-23 17:36:32 veiming Exp $
 
 
 
@@ -101,10 +101,10 @@ $Id: README.unconfigured,v 1.4 2008-06-25 05:46:15 qcheng Exp $
         Also copy FederationConfig.properties under "conf" to the fedlet 
         home directory.
      e) Get your IDP standard metadata XML file and copy to the fedlet home 
-        directory. For example, if the remote IDP is a FAM instance, you could
-        use "famadm" CLI to export the IDP metadata to a XML file. The XML file 
-        for IDP standard metadata must be named as "idp.xml" when copied to
-        the fedlet home directory.
+        directory. For example, if the remote IDP is a OpenSSO Enterprise
+        instance, you could use "ssoadm" CLI to export the IDP metadata to a
+        XML file. The XML file for IDP standard metadata must be named as
+        "idp.xml" when copied to the fedlet home directory.
      f) Give the Fedlet metadata XML file "sp.xml" to your IDP, the metadata
         file must be imported to IDP machine and add it to the same COT as 
         the IDP entity.

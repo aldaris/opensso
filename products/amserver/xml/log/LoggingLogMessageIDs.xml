@@ -18,13 +18,13 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: LoggingLogMessageIDs.xml,v 1.1 2008-07-16 00:29:45 bigfatrat Exp $
+    $Id: LoggingLogMessageIDs.xml,v 1.2 2008-07-23 17:36:31 veiming Exp $
 
     Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <!DOCTYPE logmessages
-    PUBLIC "Sun Java System Access Manager Log Message DTD/EN"
+    PUBLIC "Sun OpenSSO Enterprise Log Message DTD/EN"
     "jar://com/sun/identity/log/messageid/amLogMessage.dtd"
 >
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientSDKSamples.java,v 1.2 2008-06-25 05:50:00 qcheng Exp $
+ * $Id: SetupClientSDKSamples.java,v 1.3 2008-07-23 17:45:00 veiming Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * This setup the FAM client SDK samples.
+ * This setup the OpenSSO Enterprise client SDK samples.
  */
 public class SetupClientSDKSamples {
     private Map properties = new HashMap();

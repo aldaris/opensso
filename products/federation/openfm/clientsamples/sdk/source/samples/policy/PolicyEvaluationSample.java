@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationSample.java,v 1.3 2008-06-25 05:48:48 qcheng Exp $
+ * $Id: PolicyEvaluationSample.java,v 1.4 2008-07-23 17:40:36 veiming Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-/** Policy evaluation sample using FAM client sdk */
+/** Policy evaluation sample using OpenSSO Enterprise client sdk */
 public class PolicyEvaluationSample {
 
 

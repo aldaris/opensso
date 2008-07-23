@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: logout.jsp,v 1.4 2008-06-25 05:48:38 qcheng Exp $
+   $Id: logout.jsp,v 1.5 2008-07-23 17:40:33 veiming Exp $
 
 --%>
 
@@ -79,7 +79,7 @@
             <table class="MstTblBot" title="" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                     <td class="MstTdTtl" width="99%">
-                        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="<%= contextPath %>/console/images/PrimaryProductName.png" alt="Sun Java System Federated Access Manager" border="0"></div>
+                        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="<%= contextPath %>/console/images/PrimaryProductName.png" alt="Sun OpenSSO Enterprise" border="0"></div>
                     </td>
                     <td class="MstTdLogo" width="1%"><img name="AMConfig.configurator.BrandLogo" src="<%= contextPath %>/com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo" border="0" height="55" width="31"></td>
                 </tr>

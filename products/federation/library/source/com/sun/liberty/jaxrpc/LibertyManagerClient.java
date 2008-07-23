@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManagerClient.java,v 1.3 2008-06-25 05:48:18 qcheng Exp $
+ * $Id: LibertyManagerClient.java,v 1.4 2008-07-23 17:36:36 veiming Exp $
  *
  */
 package com.sun.liberty.jaxrpc;
@@ -48,7 +48,7 @@ import com.sun.identity.shared.xml.XMLUtils;
  * This <code>final</code> class is used to retrieve the Liberty protocol
  * objects such as Discovery Service Boot Strap information after 
  * successful Liberty ID-FF(Identity Federation) Single Sign-on. This 
- * information will be used by the remote Access Manager clients such as 
+ * information will be used by the remote OpenSSO Enterprise clients such as 
  * web service client providers for bootatrapping into Liberty ID-WSF
  * (Identity web services framework).
  */  

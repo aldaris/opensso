@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultActionMapper.java,v 1.2 2008-06-25 05:49:59 qcheng Exp $
+ * $Id: DefaultActionMapper.java,v 1.3 2008-07-23 17:45:00 veiming Exp $
  *
  */
 
@@ -181,11 +181,12 @@ public class DefaultActionMapper implements ActionMapper {
 
     /**
      * This method first converts the AttributeStatements in Evidence to
-     * Access Manager Policy API environment variables. The Attributes in
-     * the AttributeStatement(s) are expected to be Access Manager attributes.
+     * OpenSSO Enterprise Policy API environment variables. The Attributes in
+     * the AttributeStatement(s) are expected to be OpenSSO Enterprise
+     * attributes.
      * It then query the Policy decision one action at a time. Currently,
      * it handles actions defined in urn:oasis:names:tc:SAML:1.0:ghpp only.
-     * This action Namespace is mapped to Access Manager
+     * This action Namespace is mapped to OpenSSO Enterprise
      * iPlanetAMWebAgentService.
      */
     public Map getAuthorizationDecisions(AuthorizationDecisionQuery query,

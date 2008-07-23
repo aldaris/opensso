@@ -23,13 +23,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.2 2008-06-25 05:48:54 qcheng Exp $
+ * $Id: am_types.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
  */
 
 /*
  * Abstract:
  *
- * Common types and macros provided by the Sun Java System Access Manager 
+ * Common types and macros provided by the Sun OpenSSO Enterprise 
  * Access Management SDK.
  *
  */

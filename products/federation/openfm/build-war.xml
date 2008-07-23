@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.43 2008-07-03 00:55:15 veiming Exp $
+   $Id: build-war.xml,v 1.44 2008-07-23 17:40:34 veiming Exp $
 
 -->
 
@@ -106,8 +106,8 @@
             tofile="${war.package.dir}/WEB-INF/lib/openfedlib.jar" />
         <copy file="${fm.dist.dir}/console.jar"
             tofile="${war.package.dir}/WEB-INF/lib/console.jar" />
-        <copy file="${fm.dist.dir}/fam.jar"
-            tofile="${war.package.dir}/WEB-INF/lib/fam.jar" />
+        <copy file="${fm.dist.dir}/opensso.jar"
+            tofile="${war.package.dir}/WEB-INF/lib/opensso.jar" />
 
         <ant dir="${wssagents.basedir}" target="jars" />
         <copy todir="${war.package.dir}/WEB-INF/lib"
@@ -149,7 +149,7 @@
             <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
         </copy>
 
-        <copy file="${openfm.dir}/www/jsp/famadm.jsp" todir="${war.package.dir}" />
+        <copy file="${openfm.dir}/www/jsp/ssoadm.jsp" todir="${war.package.dir}" />
         <copy file="${openfm.dir}/www/jsp/validatorMain.jsp" todir="${war.package.dir}" />
         <copy file="${openfm.dir}/www/jsp/validatorStatus.jsp" todir="${war.package.dir}" />
         <copy file="${openfm.dir}/www/jsp/validateWait.jsp" todir="${war.package.dir}" />

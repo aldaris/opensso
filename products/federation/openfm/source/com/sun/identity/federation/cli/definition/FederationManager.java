@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.31 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: FederationManager.java,v 1.32 2008-07-23 17:44:59 veiming Exp $
  *
  */
 
@@ -35,8 +35,8 @@ import com.sun.identity.cli.annotation.ResourceStrings;
 
 public class FederationManager {
     @DefinitionClassInfo(
-        productName="Sun Federated Access Manager",
-        logName="famadm",
+        productName="Sun OpenSSO Enterprise",
+        logName="ssoadm",
         resourceBundle="FederationManagerCLI")
     private String product;
 

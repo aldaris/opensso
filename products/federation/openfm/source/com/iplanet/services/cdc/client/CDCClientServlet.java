@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCClientServlet.java,v 1.2 2008-06-25 05:49:30 qcheng Exp $
+ * $Id: CDCClientServlet.java,v 1.3 2008-07-23 17:44:58 veiming Exp $
  *
  */
 
@@ -64,7 +64,7 @@ import com.sun.identity.federation.services.util.FSServiceUtils;
 
 /**
  * The <code>CDCClientServlet</code> is the heart of the Cross Domain Single
- * Signon mechanism of Access Manager in the DMZ along with the distributed
+ * Signon mechanism of OpenSSO Enterprise in the DMZ along with the distributed
  * auth.
  * <BR><BR>
  * The following is the algorithm used by the program.
@@ -74,7 +74,7 @@ import com.sun.identity.federation.services.util.FSServiceUtils;
  *       the distributed auth service</LI>
  *  <LI> if request contains SSO related cookie and no advices
  *       <UL>
- *           <LI>Tunnel the Request to the Access Manager </LI>
+ *           <LI>Tunnel the Request to the OpenSSO Enterprise</LI>
  *           <LI>send the received AuthNResponse as Form POST to the
  *               original request requested using the goto parameter in 
  *               the query string.</LI>
@@ -216,7 +216,7 @@ extends HttpServlet {
     /**
      * This the main method of this servlet which takes in the request
      * opens a URLConnection to the CDCServlet endpoint in the
-     * Access manager, and tunnels the request content to it.
+     * OpenSSO Enterprise, and tunnels the request content to it.
      * It parses the Response received and if the HTTP_STATUS is "HTTP_OK"
      * or "HTTP_MOVED_TEMP" POSTs the received Liberty Authn Response to the
      * goto URL specified in the original request.
@@ -232,11 +232,13 @@ extends HttpServlet {
             sessionServiceURL = Session.getSessionServiceURL(sessid);
         } catch (SessionException se) {
             debug.error("CDCClientServlet.sendAuthnRequest: Cannot locate"
-                +" Access manager instance to forward to.", se);
-            showError(response, "Cannot locate Access manager instance to forward to");
+                +" OpenSSO Enterprise instance to forward to.", se);
+            showError(response,
+                "Cannot locate OpenSSO Enterprise instance to forward to");
         }
         if (sessionServiceURL == null) {
-            showError(response, "Cannot locate Access manager instance to forward to");
+            showError(response,
+                "Cannot locate OpenSSO Enterprise instance to forward to");
         }
         // replace "sessionservice" by cdcservlet in obtained URL
         // we use naming so that we get the URL of the exact server
@@ -443,7 +445,8 @@ extends HttpServlet {
         StringBuffer redirectURL = new StringBuffer(100);
         StringBuffer gotoURL = new StringBuffer(100);
 
-        // Check if user has authenticated to another Access Manager instance
+        // Check if user has authenticated to another OpenSSO Enterprise
+        // instance
         String authURL = null;
         Cookie authCookie = 
             CookieUtils.getCookieFromReq(request,authURLCookieName);

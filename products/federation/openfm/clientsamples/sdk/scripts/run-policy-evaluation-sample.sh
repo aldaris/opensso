@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #------------------------------------------------------------------------------
-#README file for Federated Access Manager stand alone client sdk 
+#README file for OpenSSO Enterprise stand alone client sdk 
 #policy evaluation sample
 #------------------------------------------------------------------------------
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
@@ -27,7 +27,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-policy-evaluation-sample.sh,v 1.4 2008-06-25 05:48:46 qcheng Exp $
+#$Id: run-policy-evaluation-sample.sh,v 1.5 2008-07-23 17:40:36 veiming Exp $
 #------------------------------------------------------------------------------
 #
 #Runs the client policy evaluation sample
@@ -47,7 +47,7 @@
 #
 #Requires ../resources/AMConfig.properties 
 #
-#Must run "setup.sh" once to configure the client to find the FAM server.
+#Must run "setup.sh" once to configure the client to find the OpenSSO Enterprise server.
 #
 # Then, run this script
 java -classpath resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/jaxb-libs.jar:lib/jaxb-impl.jar:lib/webservices-rt.jar:classes samples.policy.PolicyEvaluationSample policyEvaluationSample

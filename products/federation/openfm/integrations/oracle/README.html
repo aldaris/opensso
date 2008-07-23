@@ -3,26 +3,26 @@
 <head>
   <meta content="text/html; charset=ISO-8859-1"
  http-equiv="content-type">
-  <title>Oracle Access Manager Integration</title>
+  <title>Oracle OpenSSO Enterprise Integration</title>
 </head>
 <body>
-<h1><small><span style="font-weight: bold;">Federated Access Manager
-Integration with Oracle Access Manager</span></small><br>
+<h1><small><span style="font-weight: bold;">OpenSSO Enterprise
+Integration with Oracle OpenSSO Enterprise</span></small><br>
 </h1>
 ===============================================================================<br>
 <br>
-This README explains the Federation Access Manager (FAM) SSO
-Integration with Oracle Access Manager previously known as Oblix. The
+This README explains the Sun OpenSSO Enterprise SSO
+Integration with Oracle OpenSSO Enterprise previously known as Oblix. The
 README must
-be read in the context of Federated Access Manager Integration Document
+be read in the context of OpenSSO Enterprise Integration Document
 where the use cases, possible integrations and configurations are
 described in detail.<br>
 <br>
 This README explains the custom codes for e.g. Authentication
 Modules,&nbsp; compilation instructions and the configuration of the
-auth modules for Federated Access Manager context. The FAM custom
+auth modules for OpenSSO Enterprise context. The OpenSSO Enterprise custom
 authentication enables the SSO integration between legacy Oblix&nbsp;
-Access Server and Federation Access Manager especially when the
+Access Server and Federation OpenSSO Enterprise especially when the
 deployment contains Oblix for protecting existing applications.<br>
 <br>
 1. Pre-requisites :<br>
@@ -31,27 +31,27 @@ deployment contains Oblix for protecting existing applications.<br>
 1. opensso.zip&nbsp;&nbsp;&nbsp; -&nbsp; This zip file contains all
 the&nbsp; integration souce code, configuration files and ofcourse this
 README file along with regular opensso.war<br>
-2. Oracle Access Manager 10g (10.1.4.0.1)&nbsp;&nbsp; - The Oracle
-Access Manager must be installed and configured. For more details,
+2. Oracle OpenSSO Enterprise 10g (10.1.4.0.1)&nbsp;&nbsp; - The Oracle
+OpenSSO Enterprise must be installed and configured. For more details,
 check the<br>
-&nbsp; Oracle Access Manager Documenation. You can download from Oracle
+&nbsp; Oracle OpenSSO Enterprise Documenation. You can download from Oracle
 Web site for evaluation.<br>
-3. Oracle Access Manager SDK
-10g(10.1.4.0.1) - The Oracle Access Manager SDK
+3. Oracle OpenSSO Enterprise SDK
+10g(10.1.4.0.1) - The Oracle OpenSSO Enterprise SDK
 must be installed and configured. The SDK is required to compile and
 <br>
-&nbsp;&nbsp;&nbsp; build Federated Access Manager Authentication
-Modules for Oracle Access Manager. <br>
+&nbsp;&nbsp;&nbsp; build OpenSSO Enterprise Authentication
+Modules for Oracle OpenSSO Enterprise. <br>
 4. Oracle Web Gate installed and configured.<br>
-5. Federation Access Manager C-SDK 2.2<br>
+5. Federation OpenSSO Enterprise C-SDK 2.2<br>
 <br>
 <br>
 2. Brief Description of Contents:<br>
 ======================<br>
 <br>
 The opensso/integrations directory contains source and configurations
-to compile and build the custom authentication modules and other
-plugins.&nbsp; Check the FAM integration document for your use case and
+to compile and build the custom authentication modules and other plugins.&nbsp;
+Check the OpenSSO Enterprise integration document for your use case and
 configure accordingly. This document provides instructions on how to
 configure authentication modules<br>
 <br>
@@ -65,7 +65,7 @@ build.xml - This file is a build script for building <br>
 config - This directory contains auth module configuration files.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 OblixAuthService.xml&nbsp;&nbsp;&nbsp; -&nbsp; This is oblix auth
-module configuration file that must be imported into FAM<br>
+module configuration file that must be imported into OpenSSO Enterprise<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 OblixAuthModule.xml&nbsp;&nbsp; -&nbsp; This file is used for auth
 module
@@ -80,9 +80,9 @@ lib - This directory is by default empty . However, this lib directory
 must contain all the necessary libraries to compile the source
 libraries. They are:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; jobaccess.jar (Oracle
-Access Manager SDK jar file)<br>
+OpenSSO Enterprise SDK jar file)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; openfedlib.jar,
-opensso.jar, opensso-sharedlib.jar (OpenSSO jar files)<br>
+amserver.jar, opensso-sharedlib.jar (OpenSSO jar files)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; servlet .jar file (If
 it's Glassfish, it is javaee.jar)<br>
 <br>
@@ -94,34 +94,33 @@ com/sun/identity/authentication/oblix/OAMAuthModule.java <br>
 com/sun/identity/authentication/siteminder/OAMPrincipal.java<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The above java source
 files are the custom authentication module classes that would be
-plugged into Federated Access Manager for generating FAM Session by<br>
+plugged into OpenSSO Enterprise for generating OpenSSO Enterprise Session by<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; using Oblix session.<br>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 com/sun/identity/saml2/plugins/OAMAdapter.java&nbsp; - This class is a
 SAML2 Plugin Adapter for SAML service providers to do the remote
 authentication to<br>
-&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; Oracle Access Manager using FAM
-Session.
-Essentially these java files are used for usecase2 in FAM integration
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; Oracle OpenSSO Enterprise using OpenSSO Enterprise Session.
+Essentially these java files are used for usecase2 in OpenSSO Enterprise integration
 document.<br>
 <br>
 oamauth- This directory contains source files for&nbsp; Oblix Auth
-Scheme for Federation Access Manager. This is a C-based auth module and
-leverages Access Manager C-SDK for validation.<br>
+Scheme for Federation OpenSSO Enterprise. This is a C-based auth module and
+leverages OpenSSO Enterprise C-SDK for validation.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oam/solaris/authn_api.c-&nbsp; This file
-implements Oblix custom authentication for FAM.<br>
+implements Oblix custom authentication for OpenSSO Enterprise.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oam/solaris/include/*.h -&nbsp; All the
 header files that are required to compile auth scheme.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oam/solaris/AMAgent.properties&nbsp; -
-Sample FAM Agent Configuration file. This is required for the auth
-scheme to validate FAM session.<br>
+Sample OpenSSO Enterprise Agent Configuration file. This is required for the auth
+scheme to validate OpenSSO Enterprise session.<br>
 <br>
 &nbsp;&nbsp;&nbsp; <br>
 3: How to build:<br>
 ===========<br>
 <br>
-1.&nbsp; Make sure all the siteminder libraries and FAM libraries
+1.&nbsp; Make sure all the siteminder libraries and OpenSSO Enterprise libraries
 present in lib directory as mentioned above.<br>
 <br>
 2.&nbsp; Use&nbsp; "ant" script to build the source files. A compatible
@@ -139,11 +138,11 @@ makefile. Also since this is C-based auth module, it is OS dependent.<br>
 1.&nbsp; The auth scheme files are located under
 $openssozipdir/integrations/oracle/oamauth/solaris<br>
 <br>
-2. Download and configure FAM C-SDK 2.2 version. The authn_api.c
+2. Download and configure OpenSSO Enterprise C-SDK 2.2 version. The authn_api.c
 contains a reference to AMAgent.propeties file , so modify accordingly.<br>
 <br>
 3. Customize makefile for your environment for e.g. gcc compile
-location. Also edit the LDFLAGS to point to your FAM C-SDK lib
+location. Also edit the LDFLAGS to point to your OpenSSO Enterprise C-SDK lib
 directory.<br>
 <br>
 4.&nbsp; make command should result in authn_api.so file.<br>
@@ -173,7 +172,7 @@ $WAR_DIR/config/auth/default_en<br>
 <br>
 5. Re-war opensso.war using jar cvf opensso.war from $WAR_DIR<br>
 <br>
-6. Deploy opensso.war onto FAM web container. The deployment is self
+6. Deploy opensso.war onto OpenSSO Enterprise web container. The deployment is self
 explanatory. Please check the web container documentation for war<br>
 deployment.<br>
 <br>
@@ -182,11 +181,11 @@ deployment.<br>
 http://&lt;host&gt;:&lt;port&gt;/opensso<br>
 <br>
 8. Accessing deployed application redirects to opensso configurator.
-Choose custom configuration. By default FAM uses embedded directory<br>
+Choose custom configuration. By default OpenSSO Enterprise uses embedded directory<br>
 server for configuration, however, you could choose to use existing or
 a new directory server instance for configuration. <br>
 <br>
-Note: The federation access manager can be configured to use various
+Note: The OpenSSO Enterprise can be configured to use various
 user repository for validating the user existance, however, you could
 also choose to ignore profile. <br>
 <br>
@@ -199,26 +198,26 @@ user login and verify your administrator credentials. <br>
 Now we have to load the Oblix authentication module service
 into&nbsp; Open SSO and configure for the SSO integration. The auth
 module service<br>
-is loaded from a FAM command line utility called as "famadm". For FAM,
-the famadm utitily is exposed in both console mode and browser based<br>
-interfaces. Here we will use use browser based famadm for FAM
+is loaded from a OpenSSO Enterprise command line utility called as "ssoadm". For OpenSSO Enterprise,
+the ssoadm utitily is exposed in both console mode and browser based<br>
+interfaces. Here we will use use browser based ssoadm for OpenSSO Enterprise
 configuration changes.<br>
 <br>
-1. Login into FAM using amadmin<br>
+1. Login into OpenSSO Enterprise using amadmin<br>
 <br>
 2. Now access the following URL<br>
-http://&lt;host&gt;:&lt;port&gt;/opensso/famadm.jsp<br>
+http://&lt;host&gt;:&lt;port&gt;/opensso/ssoadm.jsp<br>
 <br>
 3. Choose create-service option. <br>
 <br>
 4. Copy and paste the xml file from
 $openssozipdir/integrations/oracle/config/OblixAuthService.xml and
 Submit<br>
-This will load the auth module service into FAM configuration.<br>
+This will load the auth module service into OpenSSO Enterprise configuration.<br>
 <br>
 5. Register the auth module into the authentication core framework. <br>
 <br>
-http://&lt;host&gt;:&lt;port&gt;/opensso/famadm.jsp<br>
+http://&lt;host&gt;:&lt;port&gt;/opensso/ssoadm.jsp<br>
 Choose register-auth-module option.<br>
 Enter "com.sun.identity.authentication.siteminder.OAMAuthModule" as the
 auth module class name.<br>
@@ -235,14 +234,14 @@ OblixAuthModule<br>
 Oblix SDK directory and make sure that&nbsp; ObAccessClient.xml
 (located under $OAMSDK/<br>
 &nbsp; &nbsp; oblix/lib) is configured properly. For details on Oracle
-Access Manager SDK, check the Oracle Documentation<br>
+OpenSSO Enterprise SDK, check the Oracle Documentation<br>
 <br>
 <br>
 <br>
 6. Oblix Auth Module Testing:<br>
 ====================<br>
 <br>
-The testing of oblix auth module assumes that Oracle Access Manager SDK
+The testing of oblix auth module assumes that Oracle OpenSSO Enterprise SDK
 is already
 installed and configured. <br>
 <br>
@@ -255,40 +254,40 @@ sure that container is loaded with these Oblix&nbsp; SDK shared libs.<br>
 3. Now access the siteminder protected application and login with
 siteminder configured user to establish ObSession. The configuration<br>
 of&nbsp; oblix policy and authentication schemes are outside scope of
-this documentation and please check Oracle Access Manager documentation
+this documentation and please check Oracle OpenSSO Enterprise documentation
 for more <br>
-information.&nbsp; Also, check the FAM integration guide for sample
+information.&nbsp; Also, check the OpenSSO Enterprise integration guide for sample
 configuration.<br>
 <br>
-4. After successful authentication at Oracle Access Manager, access the
-FAM
+4. After successful authentication at Oracle OpenSSO Enterprise, access the
+OpenSSO Enterprise
 auth module url as follows:<br>
 <br>
 http://&lt;host&gt;:&lt;port&gt;/opensso/UI/Login?module=OblixAuth<br>
 <br>
-This should provide a valid FAM session.<br>
+This should provide a valid OpenSSO Enterprise session.<br>
 <br>
-Note: Assumption here is that Oblix and FAM are in the same
+Note: Assumption here is that Oblix and OpenSSO Enterprise are in the same
 physical domain. <br>
 <br>
-By default FAM authentication framework looks for user profile
+By default OpenSSO Enterprise authentication framework looks for user profile
 existance in it's known data repositories. However, you could use
 ignoreProfile<br>
 option if your integration does not require a user to be searched from
-siteminder's user repository. Check the FAM documentation for more info<br>
+siteminder's user repository. Check the OpenSSO Enterprise documentation for more info<br>
 about ignoreProfile option.<br>
 <br>
-7. Installation of&nbsp; Oblix AuthScheme into Oracle Access Manager:<br>
+7. Installation of&nbsp; Oblix AuthScheme into Oracle OpenSSO Enterprise:<br>
 ============================================<br>
 <br>
 This section is for a use case where the Oblix session needs to be
-generated upon validating FAM session.&nbsp; Check the integration
+generated upon validating OpenSSO Enterprise session.&nbsp; Check the integration
 document for<br>
 use case descriptions. The Oblix Auth Schemes are exposed as C Auth
-modules and this auth scheme uses FAM C-SDK 2.2 version to validate<br>
-FAM Session.<br>
+modules and this auth scheme uses OpenSSO Enterprise C-SDK 2.2 version to validate<br>
+OpenSSO Enterprise Session.<br>
 <br>
-The FAM Auth Scheme in Oblix uses a configuration FAM client side
+The OpenSSO Enterprise Auth Scheme in Oblix uses a configuration OpenSSO Enterprise client side
 configuration in AMAgent.properties and this must need to be customized<br>
 before configuring the auth module. The build instructions specify the
 location of this file.<br>

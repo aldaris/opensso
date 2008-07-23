@@ -1,7 +1,7 @@
 <%--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: famadm.jsp,v 1.3 2008-07-12 03:22:25 veiming Exp $
+   $Id: ssoadm.jsp,v 1.1 2008-07-23 17:45:02 veiming Exp $
   
 --%>
 
@@ -34,7 +34,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Federated Access Manager</title>
+    <title>OpenSSO Enterprise</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
     <script language="Javascript" src="js/admincli.js"></script>
@@ -44,7 +44,7 @@
     <table class="MstTblBot" title="" border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
         <td class="MstTdTtl" width="99%">
-        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="console/images/PrimaryProductName.png" alt="Sun Java System Access Manager" border="0"></div>
+        <div class="MstDivTtl"><img name="AMConfig.configurator.ProdName" src="console/images/PrimaryProductName.png" alt="Sun OpenSSO Enterprise" border="0"></div>
         </td>
         <td class="MstTdLogo" width="1%"><img name="AMConfig.configurator.BrandLogo" src="com_sun_web_ui/images/other/javalogo.gif" alt="Java(TM) Logo" border="0" height="55" width="31"></td>
         </tr>
@@ -67,13 +67,13 @@
 
         WebCLIHelper helper = new WebCLIHelper(request,
             "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
-            "famadm", "famadm.jsp");
+            "ssoadm", "ssoadm.jsp");
         out.println(helper.getHTML(request, ssoToken));
         Object[] param = {"0"};
         out.println(MessageFormat.format(
             CLIConstants.JSP_EXIT_CODE_TAG, param));
     } catch (SSOException e) {
-        response.sendRedirect("UI/Login?goto=../famadm.jsp");
+        response.sendRedirect("UI/Login?goto=../ssoadm.jsp");
     } catch (CLIException e) {
         Object[] param = {Integer.toString(e.getExitCode())};
         out.println(MessageFormat.format(

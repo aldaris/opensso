@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.6 2008-06-25 05:48:51 qcheng Exp $
+   $Id: README,v 1.7 2008-07-23 17:40:37 veiming Exp $
 
 -->
 
-Federated Access Manager - Deployable WAR 
+OpenSSO Enterprise - Deployable WAR 
 
-This directory contains the Federated Access Manager deployable WAR file
+This directory contains the OpenSSO Enterprise deployable WAR file
 (opensso.war which contains all server components and server samples), 
 and files/directories required to create some specialized WAR files.
 

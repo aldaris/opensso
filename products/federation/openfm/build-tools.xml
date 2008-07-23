@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.14 2008-07-14 20:27:43 veiming Exp $
+   $Id: build-tools.xml,v 1.15 2008-07-23 17:40:34 veiming Exp $
 
 -->
 
@@ -50,7 +50,7 @@
             tofile="${tools.temp.dir}/license.txt" />
 
         <copy todir="${tools.temp.dir}/lib">
-            <fileset file="${fm.dist.dir}/fam.jar" />
+            <fileset file="${fm.dist.dir}/opensso.jar" />
             <fileset file="${fedlibrary.dist.dir}/openfedlib.jar" />
             <fileset dir="${extlib.dir}" includes="FastInfoset.jar, webservices-tools.jar, jsr173_api.jar, relaxngDatatype.jar, xalan.jar, xmlsec.jar, xsdlib.jar" />
         </copy>
@@ -58,11 +58,11 @@
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties"/>
             <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>
         </copy>
-        <copy file="${openfm.dir}/scripts/bin/famadm"
-            tofile="${tools.temp.dir}/template/unix/bin/famadm.template" />
-        <copy file="${openfm.dir}/scripts/bin/famadm.bat"
-            tofile="${tools.temp.dir}/template/windows/bin/famadm.bat.template" />
-        <zip destfile="${fm.dist.dir}/famAdminTools.zip" whenempty="create">
+        <copy file="${openfm.dir}/scripts/bin/ssoadm"
+            tofile="${tools.temp.dir}/template/unix/bin/ssoadm.template" />
+        <copy file="${openfm.dir}/scripts/bin/ssoadm.bat"
+            tofile="${tools.temp.dir}/template/windows/bin/ssoadm.bat.template" />
+        <zip destfile="${fm.dist.dir}/ssoAdminTools.zip" whenempty="create">
             <zipfileset dir="${tools.temp.dir}" filemode="755">
                 <include name="setup"/>
             </zipfileset>
@@ -71,7 +71,7 @@
             </zipfileset>
         </zip>
 
-        <checksum file="${fm.dist.dir}/famAdminTools.zip"
+        <checksum file="${fm.dist.dir}/ssoAdminTools.zip"
             algorithm="SHA" fileext=".sha" />
         <delete dir="${tools.temp.dir}" />
     </target>

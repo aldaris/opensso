@@ -6,22 +6,22 @@
   <title>CA Siteminder Integration</title>
 </head>
 <body>
-<h1><small><span style="font-weight: bold;">Federated Access Manager
+<h1><small><span style="font-weight: bold;">OpenSSO Enterprise
 Integration with CA Siteminder</span></small><br>
 </h1>
 =====================================================================<br>
 <br>
-This README explains the Federation Access Manager (FAM) SSO
+This README explains the Federation OpenSSO Enterprise Server SSO
 Integration with Computer Associates (CA) SiteMinder. The README must
-be read in the context of Federated Access Manager Integration Document
+be read in the context of OpenSSO Enterprise Integration Document
 where the use cases, possible integrations and configurations are
 described in detail.<br>
 <br>
 This README explains the custom codes for e.g. Authentication
 Modules,&nbsp; compilation instructions and the configuration of the
-auth modules for Federated Access Manager context. The FAM custom
+auth modules for OpenSSO Enterprise context. The OpenSSO Enterprise custom
 authentication enables the SSO integration between legacy Siteminder
-(SM) access server and Federation Access Manager especially when the
+(SM) access server and Federation OpenSSO Enterprise especially when the
 deployment contains SM for protecting existing applications.<br>
 <br>
 1. Pre-requisites :<br>
@@ -32,8 +32,9 @@ the&nbsp; integration souce code, configuration files and ofcourse this
 README file along with regular opensso.war<br>
 2. Siteminder server 6.0 SP4 or higer version&nbsp; - The siteminder
 server must be installed and configured. For more details, check
-siteminder documentation. For&nbsp; FAM <br>
-&nbsp;&nbsp;&nbsp; related configuration, check the FAM integration
+siteminder documentation. For OpenSSO Enterprise <br>
+&nbsp;&nbsp;&nbsp; related configuration, check the OpenSSO Enterprise
+integration
 document. There are no trial versions available for Siteminder
 libraries or for other siteminder components. This <br>
 &nbsp;&nbsp;&nbsp; document assumes that the user has minimal knowledge
@@ -41,7 +42,7 @@ on Siteminder components and knows how to get them.<br>
 3. Siteminder SDK 6.0 SP4 or higher version&nbsp; - The siteminder SDK
 must be installed and configured. The SDK is required to compile and
 build Federated<br>
-&nbsp;&nbsp;&nbsp; Access Manager Authentication Modules for
+&nbsp;&nbsp;&nbsp; OpenSSO Enterprise Authentication Modules for
 Siteminder. <br>
 4. Siteminder Agent installed and configured.<br>
 <br>
@@ -50,8 +51,8 @@ Siteminder. <br>
 ======================<br>
 <br>
 The opensso/integrations directory contains source and configurations
-to compile and build the custom authentication modules and other
-plugins.&nbsp; Check the FAM integration document for your use case and
+to compile and build the custom authentication modules and other plugins.&nbsp;
+Check the OpenSSO Enterprise integration document for your use case and
 configure accordingly. This document provides instructions on how to
 configure authentication modules<br>
 <br>
@@ -65,7 +66,7 @@ build.xml - This file is a build script for building <br>
 config - This directory contains auth module configuration files.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 SMAuthService.xml&nbsp;&nbsp;&nbsp; -&nbsp; This is siteminder auth
-module configuration file that must be imported into FAM<br>
+module configuration file that must be imported into OpenSSO Enterprise<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 SMAuthModule.xml&nbsp;&nbsp; -&nbsp; This file is used for auth module
 call backs and for Siteminder auth module they are empty. However, the
@@ -81,7 +82,7 @@ libraries. They are:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; smjavaagentapi.jar,
 SmJavaApi.jar (Siteminder jar files)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; openfedlib.jar,
-opensso.jar, opensso-sharedlib.jar (OpenSSO jar files)<br>
+amserver.jar, opensso-sharedlib.jar (OpenSSO jar files)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; servlet .jar file (If
 it's Glassfish, it is javaee.jar)<br>
 <br>
@@ -93,7 +94,7 @@ com/sun/identity/authentication/siteminder/SMAuthModule.java <br>
 com/sun/identity/authentication/siteminder/SMPrincipal.java<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The above java source
 files are the custom authentication module classes that would be
-plugged into Federated Access Manager for generating FAM Session by<br>
+plugged into OpenSSO Enterprise for generating OpenSSO Enterprise Session by<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; using Siteminder session.<br>
 <br>
 &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; com
@@ -101,20 +102,21 @@ plugged into Federated Access Manager for generating FAM Session by<br>
 -&nbsp; This class provides codes for Siteminder AuthScheme Plugin
 class for generating<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Siteminder
-session using FAM session.<br>
+session using OpenSSO Enterprise session.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 com/sun/identity/saml2/plugins/SMAdapter.java&nbsp; - This class is a
 SAML2 Plugin Adapter for SAML service providers to do the remote
 authentication to<br>
-&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; Siteminder using FAM Session.
-Essentially these java files are used for usecase2 in FAM integration
-document.<br>
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; Siteminder using OpenSSO Enterprise
+Session.
+Essentially these java files are used for usecase2 in OpenSSO Enterprise
+integration document.<br>
 <br>
 &nbsp;&nbsp;&nbsp; <br>
 3: How to build:<br>
 ===========<br>
 <br>
-1.&nbsp; Make sure all the siteminder libraries and FAM libraries
+1.&nbsp; Make sure all the siteminder libraries and OpenSSO Enterprise libraries
 present in lib directory as mentioned above.<br>
 <br>
 2.&nbsp; Use&nbsp; "ant" script to build the source files. A compatible
@@ -152,7 +154,7 @@ $WAR_DIR/config/auth/default_en<br>
 <br>
 5. Re-war opensso.war using jar cvf opensso.war from $WAR_DIR<br>
 <br>
-6. Deploy opensso.war onto FAM web container. The deployment is self
+6. Deploy opensso.war onto OpenSSO Enterprise web container. The deployment is self
 explanatory. Please check the web container documentation for war<br>
 deployment.<br>
 <br>
@@ -161,11 +163,11 @@ deployment.<br>
 http://&lt;host&gt;:&lt;port&gt;/opensso<br>
 <br>
 8. Accessing deployed application redirects to opensso configurator.
-Choose custom configuration. By default FAM uses embedded directory<br>
+Choose custom configuration. By default OpenSSO Enterprise uses embedded directory<br>
 server for configuration, however, you could choose to use existing or
 a new directory server instance for configuration. <br>
 <br>
-Note: The federation access manager can be configured to use various
+Note: The OpenSSO Enterprise can be configured to use various
 user repository for validating the user existance, however, you could
 also choose to ignore profile. <br>
 <br>
@@ -178,26 +180,26 @@ user login and verify your administrator credentials. <br>
 Now we have to load the Siteminder authentication module service
 into&nbsp; Open SSO and configure for the SSO integration. The auth
 module service<br>
-is loaded from a FAM command line utility called as "famadm". For FAM,
-the famadm utitily is exposed in both console mode and browser based<br>
-interfaces. Here we will use use browser based famadm for FAM
+is loaded from a OpenSSO Enterprise command line utility called as "ssoadm". For OpenSSO Enterprise,
+the ssoadm utitily is exposed in both console mode and browser based<br>
+interfaces. Here we will use use browser based ssoadm for OpenSSO Enterprise
 configuration changes.<br>
 <br>
-1. Login into FAM using amadmin<br>
+1. Login into OpenSSO Enterprise using amadmin<br>
 <br>
 2. Now access the following URL<br>
-http://&lt;host&gt;:&lt;port&gt;/opensso/famadm.jsp<br>
+http://&lt;host&gt;:&lt;port&gt;/opensso/ssoadm.jsp<br>
 <br>
 3. Choose create-service option. <br>
 <br>
 4. Copy and paste the xml file from
 $openssozipdir/integrations/siteminder/config/SMAuthService.xml and
 Submit<br>
-This will load the auth module service into FAM configuration.<br>
+This will load the auth module service into OpenSSO Enterprise configuration.<br>
 <br>
 5. Register the auth module into the authentication core framework. <br>
 <br>
-http://&lt;host&gt;:&lt;port&gt;/opensso/famadm.jsp<br>
+http://&lt;host&gt;:&lt;port&gt;/opensso/ssoadm.jsp<br>
 Choose register-auth-module option.<br>
 Enter "com.sun.identity.authentication.siteminder.SMAuthModule" as the
 auth module class name.<br>
@@ -221,10 +223,10 @@ Policy Server IP Address: IP Address of Site minder policy server<br>
 Trusted host name: Agent/SDK host name<br>
 HTTPHeaders: If you have configured SMPolicyServer/SMAgent to send
 HTTPHeaders to the applications, enter the same<br>
-HTTP Header names here so that they could be uploaded to the FAM
+HTTP Header names here so that they could be uploaded to the OpenSSO Enterprise
 session. Also, the same could be sent to SAML Assertion<br>
 by using SAML Attribute configuration mapper. For details on SAML
-Attribute mapping, check the FAM&nbsp; integration documentation.<br>
+Attribute mapping, check the OpenSSO Enterprise&nbsp; integration documentation.<br>
 <br>
 Configure as appropriate and save the configuration. <br>
 <br>
@@ -256,30 +258,30 @@ of siteminder policy and authentication schemes are outside scope of
 this documentation and please check siteminder documentation for more <br>
 information. <br>
 <br>
-4. After successful authentication at siteminder server, access the FAM
+4. After successful authentication at siteminder server, access the OpenSSO Enterprise
 auth module url as follows:<br>
 <br>
 http://&lt;host&gt;:&lt;port&gt;/opensso/UI/Login?module=SMAuth<br>
 <br>
-This should provide a valid FAM session.<br>
+This should provide a valid OpenSSO Enterprise session.<br>
 <br>
-Note: Assumption here is that siteminder and FAM are in the same
+Note: Assumption here is that siteminder and OpenSSO Enterprise are in the same
 physical domain. <br>
 <br>
-By default FAM authentication framework looks for user profile
+By default OpenSSO Enterprise authentication framework looks for user profile
 existance in it's known data repositories. However, you could use
 ignoreProfile<br>
 option if your integration does not require a user to be searched from
-siteminder's user repository. Check the FAM documentation for more info<br>
+siteminder's user repository. Check the OpenSSO Enterprise documentation for more info<br>
 about ignoreProfile option.<br>
 <br>
 7. Installation of FAMAuthScheme into Siteminder:<br>
 ==================================<br>
 <br>
 This section is for a use case where the siteminder session needs to be
-generated upon validating FAM session. The FAMAuthScheme class<br>
+generated upon validating OpenSSO Enterprise session. The FAMAuthScheme class<br>
 implements Siteminder java SPI to configure a custom authentication
 module. The integration dcoumentation guide describes in detail how to<br>
-configure the custom FAM Authentication Scheme in Siteminder.<br>
+configure the custom OpenSSO Enterprise Authentication Scheme in Siteminder.<br>
 </body>
 </html>

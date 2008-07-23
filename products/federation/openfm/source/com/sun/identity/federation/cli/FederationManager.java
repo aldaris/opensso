@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.6 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: FederationManager.java,v 1.7 2008-07-23 17:44:59 veiming Exp $
  *
  */
 
@@ -34,7 +34,7 @@ import com.sun.identity.cli.RequestContext;
 import java.util.List;
 
 /**
- * Access Manager CLI definition class.
+ * OpenSSO Enterprise CLI definition class.
  */
 public class FederationManager extends CLIDefinitionBase {
     private static final String DEFINITION_CLASS =

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.40 2008-06-25 05:48:44 qcheng Exp $
+   $Id: build.xml,v 1.41 2008-07-23 17:40:34 veiming Exp $
 
 -->
 
@@ -176,7 +176,7 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${fm.dist.dir}/fam.jar">
+        <jar destfile="${fm.dist.dir}/opensso.jar">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -205,7 +205,7 @@
                 includes="com/sun/identity/console/**" />
         </jar>
 
-        <checksum file="${fm.dist.dir}/fam.jar" 
+        <checksum file="${fm.dist.dir}/opensso.jar" 
             algorithm="SHA" fileext=".sha" />
     </target>
 
@@ -283,7 +283,7 @@
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
 
-        <jar destfile="${fm.dist.dir}/fam-public-javadocs.jar">
+        <jar destfile="${fm.dist.dir}/opensso-public-javadocs.jar">
             <manifest>
                 <attribute name="Version" value="${openfm.version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -340,7 +340,7 @@
         <delete file="${openfm.extlib.dir}/amclientsdk.jar"/>
         <delete file="${openfm.extlib.dir}/amAdminTools.zip"/>
         <delete file="${openfm.extlib.dir}/console.jar"/>
-        <delete file="${openfm.extlib.dir}/opensso.jar"/>
+        <delete file="${openfm.extlib.dir}/amserver.jar"/>
         <delete file="${openfm.extlib.dir}/opensso-register.jar"/>
         <delete file="${openfm.extlib.dir}/opensso.war"/>
         <delete file="${openfm.extlib.dir}/opensso-sharedlib.jar"/>

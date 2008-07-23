@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAccountMapper.java,v 1.3 2008-06-25 05:47:52 qcheng Exp $
+ * $Id: SPAccountMapper.java,v 1.4 2008-07-23 17:36:35 veiming Exp $
  *
  */
 
@@ -45,8 +45,8 @@ import com.sun.identity.saml2.common.SAML2Exception;
  * through local configuration in the <code>SAML2</code> plugin.
  *
  * The implementation of this interface may need to consider the
- * deployment of the SAML v2 plugin for example on the Access Manager platform
- * or on Federation Manager.
+ * deployment of the SAML v2 plugin for example on the OpenSSO Enterprise
+ * platform or on Federation Manager.
  * @see com.sun.identity.saml2.plugins.IDPAccountMapper
  *
  * @supported.all.api

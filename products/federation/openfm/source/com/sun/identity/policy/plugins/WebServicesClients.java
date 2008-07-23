@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServicesClients.java,v 1.4 2008-06-25 05:49:58 qcheng Exp $
+ * $Id: WebServicesClients.java,v 1.5 2008-07-23 17:45:00 veiming Exp $
  *
  */
 
@@ -59,7 +59,7 @@ import com.sun.identity.shared.debug.Debug;
 
 /**
  * This subject represents web services clients that authenticate to web service
- * providers(PP service, Discovery Service) hosted by Access Manager. The 
+ * providers(PP service, Discovery Service) hosted by OpenSSO Enterprise. The 
  * clients authenticate either by Anonymous, X509 token, ClientTLS, or
  * SAML token profile. This subject covers X509Token, ClientTLS and SAML Token
  * profiles. The subject values are the subject DNs associated with the 

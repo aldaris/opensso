@@ -23,10 +23,10 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: run-policy-evaluation-sample.bat,v 1.2 2008-07-07 22:58:30 dillidorai Exp $
+: $Id: run-policy-evaluation-sample.bat,v 1.3 2008-07-23 17:40:36 veiming Exp $
 :
 : ------------------------------------------------------------------------------
-: README file for Federated Access Manager stand alone client sdk 
+: README file for OpenSSO Enterprise stand alone client sdk 
 : policy evaluation sample
 : ------------------------------------------------------------------------------
 : 
@@ -47,7 +47,7 @@
 : 
 : Requires ../resources/AMConfig.properties 
 : 
-: Must run "setup.sh" once to configure the client to find the FAM server.
+: Must run "setup.sh" once to configure the client to find the OpenSSO Enterprise server.
 : 
 :  Then, run this script
 java -classpath resources;lib/openssoclientsdk.jar;lib/j2ee.jar;lib/jaxb-libs.jar;lib/jaxb-impl.jar;lib/webservices-rt.jar;classes samples.policy.PolicyEvaluationSample policyEvaluationSample

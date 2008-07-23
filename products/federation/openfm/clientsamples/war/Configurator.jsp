@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.4 2008-07-02 17:44:31 veiming Exp $
+   $Id: Configurator.jsp,v 1.5 2008-07-23 17:40:36 veiming Exp $
 
 --%>
 
 
 <html>
 <head>
-<title>Configure Federated Access Manager Client SDK</title>
+<title>Configure OpenSSO Enterprise Client SDK</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
 
@@ -153,11 +153,11 @@ java.util.Properties"
     if (!configured) {
 %>
 
-<h3>Configuring Federated Access Manager Client SDK</h3>
+<h3>Configuring OpenSSO Enterprise Client SDK</h3>
 
 <form action="Configurator.jsp" method="POST" 
     name="clientsampleconfigurator">
-    Please provide the Federated Access Manager Server Information. This is the server this Client SDK (including samples) will interact with. 
+    Please provide the OpenSSO Enterprise Server Information. This is the server this Client SDK (including samples) will interact with. 
     <p>&nbsp;</p>    
 
     <table border=0 cellpadding=5 cellspacing=0>
