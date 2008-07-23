@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README,v 1.3 2008-06-25 05:44:14 qcheng Exp $
+   $Id: README,v 1.4 2008-07-23 17:30:49 veiming Exp $
                                                                                 
 -->
 
@@ -36,7 +36,7 @@ Steps:
        in the same machine where opensso.war is deployed.
  3. Run the test
      - type
-       ant -D""bootstrap.dir=<base dir of your FAM installation>"
+       ant -D""bootstrap.dir=<base dir of your OpenSSO Enterprise Server installation>"
        e.g.
        ant -D"bootstrap.dir=/opt/fam"
        to run all test suites; or to selectively run individually

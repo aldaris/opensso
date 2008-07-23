@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneDSBase.java,v 1.2 2008-07-10 12:42:03 kanduls Exp $
+ * $Id: AMTuneDSBase.java,v 1.3 2008-07-23 17:30:46 veiming Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -830,8 +830,8 @@ public abstract class AMTuneDSBase extends TuneDS {
     }
 
     /**
-     * This method finds the FAM search Attributes.
-     * @return List of FAM search attributes.
+     * This method finds the OpenSSO Enterprise search Attributes.
+     * @return List of OpenSSO Enterprise search attributes.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     protected List getFAMSearchAttrs ()
@@ -839,7 +839,7 @@ public abstract class AMTuneDSBase extends TuneDS {
         ArrayList attrList = new ArrayList();
         try {
             pLogger.log(Level.FINE, "getFAMSearchAttrs",
-                    "Getting FAM search attributes.");
+                    "Getting OpenSSO Enterprise search attributes.");
             String sunKeyAttr[] = {SUNKEY_VALUE};
             String searchAttr = IPLANET_AM_AUTH_LDAP_USER_SEARCH_ATTRIBUTES;
             //If SM store is different then use smconfig info get connecting to 
@@ -882,7 +882,7 @@ public abstract class AMTuneDSBase extends TuneDS {
             }
         } catch (Exception ex) {
             pLogger.log(Level.FINER, "getFAMSearchAttrs",
-                    "Error getting FAM Search Attributes.");
+                    "Error getting OpenSSO Enterprise Search Attributes.");
             throw new AMTuneException(ex.getMessage());
         }
         if (attrList.size() == 0) {
@@ -892,13 +892,14 @@ public abstract class AMTuneDSBase extends TuneDS {
             attrList.add("uid");
         }
         pLogger.log(Level.FINER, "getFAMSearchAttrs",
-                    "Returning FAM search attributes. " + attrList.toString());
+            "Returning OpenSSO Enterprise search attributes. " +
+            attrList.toString());
         return attrList;
     }
 
     /**
      * Finds the attributes that need to be indexed.
-     * @param amSearchAttributes FAM search attributes
+     * @param amSearchAttributes OpenSSO Enterprise search attributes
      * @param existingIndex Existing LDAP search attributes
      * @return List of attributes need to be indexed.
      * @throws com.sun.identity.tune.common.AMTuneException
@@ -1218,8 +1219,8 @@ public abstract class AMTuneDSBase extends TuneDS {
     }
     
     /**
-     * This method parses the index.ldif file and finds out the current FAM
-     * indexes.
+     * This method parses the index.ldif file and finds out the current
+     * OpenSSO Enterprise indexes.
      * 
      */
     protected List getListDefaultFAMIndexes() 
@@ -1261,8 +1262,9 @@ public abstract class AMTuneDSBase extends TuneDS {
                 }
             }
         } catch (Exception ex) {
-            throw new AMTuneException("Error getting default FAM indexes : " +
-                    ex.getMessage());
+            throw new AMTuneException(
+                "Error getting default OpenSSO Enterprise indexes : " +
+                ex.getMessage());
         }
         return dIndex;
     } 

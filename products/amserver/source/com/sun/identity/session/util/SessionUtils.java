@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUtils.java,v 1.5 2008-06-25 05:43:59 qcheng Exp $
+ * $Id: SessionUtils.java,v 1.6 2008-07-23 17:30:44 veiming Exp $
  *
  */
 
@@ -147,7 +147,7 @@ public class SessionUtils {
      *       &lt;cookieName>=&lt;cookieValue>
      * </pre>
      * <p>
-     * This is the default and Access Manager always encodes in this format
+     * This is the default and OpenSSO Enterprise always encodes in this format
      * unless otherwise specified. If the URL passed in has query parameter then
      * entity escaping of ampersand will be done before appending the cookie if
      * the escape is true.Only the ampersand before appending cookie parameter
@@ -192,7 +192,7 @@ public class SessionUtils {
      * </pre>
      * <p>
      * 
-     * This is the default and Access Manager always encodes in this format
+     * This is the default and OpenSSO Enterprise always encodes in this format
      * unless otherwise specified. If the URL passed in has query parameter then
      * entity escaping of ampersand will be done before appending the cookie if
      * the escape is true.Only the ampersand before appending cookie parameter

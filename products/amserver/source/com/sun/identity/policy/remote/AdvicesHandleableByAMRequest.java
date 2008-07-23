@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdvicesHandleableByAMRequest.java,v 1.3 2008-06-25 05:43:53 qcheng Exp $
+ * $Id: AdvicesHandleableByAMRequest.java,v 1.4 2008-07-23 17:30:43 veiming Exp $
  *
  */
 
@@ -39,8 +39,8 @@ import org.w3c.dom.Node;
  * <p>
  * <pre>
  *    <!-- AdvicesHandleableByAMRequest element requests the server to return
- *         the names of policy advices that could be handled by Access Manager
- *         if PEP redirects the user agent to Access Manager
+ *         the names of policy advices that could be handled by OpenSSO
+ *         Enterprise if PEP redirects the user agent to OpenSSO Enterprise
  *    -->
  *
  *    <!ELEMENT    AdvicesHandleableByAMRequest    EMPTY >

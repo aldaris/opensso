@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISPolicy.java,v 1.4 2008-06-25 05:43:50 qcheng Exp $
+ * $Id: ISPolicy.java,v 1.5 2008-07-23 17:30:43 veiming Exp $
  *
  */
 package com.sun.identity.policy.jaas;
@@ -40,13 +40,13 @@ import java.util.Enumeration;
  * <code>java.security.Policy</code> for representing the system security
  * policy for a Java application environment. It provides a custom policy
  * implementation based on JAAS and JDK 1.5 and above.It makes policy evaluation
- * against the Access Manager Policy Service instead of the default file based
- * one.
+ * against the OpenSSO Enterprise Policy Service instead of the default file
+ * based one.
  *<p>
  * It provides implementation of the abstract methods in Policy class.
  * <p>In general the source location for the policy information utilized by the
  * Policy object to make policy decisions is up to the Policy implementation.
- * In the case of ISPolicy the source comes from the Access Manager's policy
+ * In the case of ISPolicy the source comes from the OpenSSO Enterprise's policy
  * store, which is consulted to make the policy evaluation.
  * <p>A <code>Policy</code> object can be queried for the set of Permissions 
  * granted to set of classes running as a <code>Principal</code> in the 
@@ -99,7 +99,7 @@ public class ISPolicy extends java.security.Policy {
      * set of classes. Here we always return the 
      * <code>PermissionCollection</code> after
      * adding the<code>ISPermission</code> object into it, so that policy
-     * determination is also based on Access Manager's policies.
+     * determination is also based on OpenSSO Enterprise's policies.
      *
      * @param protectionDomain  the protection domain which encapsulates the 
      *        characteristics of a domain, which encloses the set of classes 
@@ -141,7 +141,7 @@ public class ISPolicy extends java.security.Policy {
      * permissions allowed for Principals associated with the specified code
      * source. Here we always return the <code>PermissionCollection</code> 
      * after adding the<code>ISPermission</code> object into it, so that policy
-     * determination is also based on Access Manager's policies.
+     * determination is also based on OpenSSO Enterprise's policies.
      *
      * @param codesource the <code>CodeSource</code> associated with the caller.
      * This encapsulates the original location of the code (where the code 

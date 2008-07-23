@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdvicesHandleableByAMResponse.java,v 1.2 2008-06-25 05:43:53 qcheng Exp $
+ * $Id: AdvicesHandleableByAMResponse.java,v 1.3 2008-07-23 17:30:43 veiming Exp $
  *
  */
 
@@ -43,8 +43,8 @@ import org.w3c.dom.Node;
  * <pre>
  *    <!-- AdvicesHandleableByAMResponse element is the response from server
  *         that contains the names of policy advices that could be
- *         handled by Access Manager
- *         if PEP redirects the user agent to Access Manager
+ *         handled by OpenSSO Enterprise
+ *         if PEP redirects the user agent to OpenSSO Enterprise
  *    -->
  *
  *    <!ELEMENT    AdvicesHandleableByAMResponse    (AttributeValuePair?) >
@@ -72,28 +72,28 @@ public class AdvicesHandleableByAMResponse {
     /**
      * Constructs an <code>AdvicesHandleableByAMResponse</code> object.
      *
-     * @param advicesHandleableByAM Set of advices to be handled by Access
-     *        Manager.
+     * @param advicesHandleableByAM Set of advices to be handled by OpenSSO
+     *        Enterprise
      */
     public AdvicesHandleableByAMResponse(Set advicesHandleableByAM) {
         this.advicesHandleableByAM = advicesHandleableByAM;
     }
 
     /**
-     * Sets the advices to be handled by Access Manager.
+     * Sets the advices to be handled by OpenSSO Enterprise.
      *
-     * @param advicesHandleableByAM Set of advices to be handled by Access
-     *        Manager.
+     * @param advicesHandleableByAM Set of advices to be handled by OpenSSO
+     *        Enterprise.
      */
     public void setAdvicesHandleableByAM(Set advicesHandleableByAM) {
         this.advicesHandleableByAM = advicesHandleableByAM;
     }
 
     /**
-     * Returns the advices to be handled by Access Manager.
+     * Returns the advices to be handled by OpenSSO Enterprise.
      *
-     * @return advicesHandleableByAM Set of advices to be handled by Access
-     *        Manager.
+     * @return advicesHandleableByAM Set of advices to be handled by OpenSSO
+     *         Enterprise.
      */
     public Set getAdvicesHandleableByAM() {
         return advicesHandleableByAM;

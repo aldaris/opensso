@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.2 2008-07-10 12:42:03 kanduls Exp $
+ * $Id: AMTuneFAMBase.java,v 1.3 2008-07-23 17:30:46 veiming Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -45,7 +45,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
- * Base class for tuning Federated Access Manager.
+ * Base class for tuning OpenSSO Enterprise.
  *
  */
 public abstract class AMTuneFAMBase extends TuneFAM {
@@ -76,17 +76,17 @@ public abstract class AMTuneFAMBase extends TuneFAM {
     }
     
     /**
-     * Set famadm cmd based on platform.
+     * Set ssoadm cmd based on platform.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMAdmCmd() 
     throws AMTuneException {
         if (AMTuneUtil.isWindows2003()) {
             famCmdPath = configInfo.getFAMAdmLocation() + FILE_SEP +
-                    "famadm.bat ";
+                    "ssoadm.bat ";
         } else {
             famCmdPath = configInfo.getFAMAdmLocation() + FILE_SEP +
-                    "famadm ";
+                    "ssoadm ";
         }
         File famAdmF = new File(famCmdPath.trim());
         if (!famAdmF.isFile()) {
@@ -179,13 +179,13 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 }
                 if (retVal == -1) {
                     pLogger.log(Level.SEVERE, "updateFAMServiceCfg", 
-                            "Error updating fam service config values.");
+                    "Error updating OpenSSO Enterprise service config values.");
                     throw new AMTuneException(resultBuffer.toString());
                 }
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "updateFAMServiceCfg", "Error updating " +
-                    "FAM Server configuration. " + ex.getMessage());
+                "OpenSSO Enterprise Server configuration. " + ex.getMessage());
         }
     }
     
@@ -238,8 +238,8 @@ public abstract class AMTuneFAMBase extends TuneFAM {
     }
     
     /**
-     * This method queries the FAM server and returns the server configuration
-     * in the form of Map.
+     * This method queries the OpenSSO Enterprise server and returns the
+     * server configuration in the form of Map.
      */
     protected Map getFAMServerConfig() {
         Map famCfgInfo = new HashMap();
@@ -277,7 +277,8 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                     "Error while getting server configuration.");
         }
         pLogger.log(Level.FINEST, "getFAMServerConfig",
-                    "Returning FAM configuration Map " + famCfgInfo.toString());
+            "Returning OpenSSO Enterprise configuration Map " +
+            famCfgInfo.toString());
         return famCfgInfo;
     }
 }

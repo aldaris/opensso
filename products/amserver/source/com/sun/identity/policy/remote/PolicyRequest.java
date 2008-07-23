@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequest.java,v 1.3 2008-06-25 05:43:53 qcheng Exp $
+ * $Id: PolicyRequest.java,v 1.4 2008-07-23 17:30:43 veiming Exp $
  *
  */
 
@@ -74,7 +74,7 @@ public class PolicyRequest {
     public static final int POLICY_REQUEST_REMOVE_POLICY_LISTENER = 3;
 
     /**
-     * Policy Request - Advices handleable by Access Manager Id.
+     * Policy Request - Advices handleable by OpenSSO Enterprise Id.
      */
     public static final int POLICY_REQUEST_ADVICES_HANDLEABLE_BY_AM_REQUEST = 4;
 

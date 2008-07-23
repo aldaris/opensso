@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.2 2008-07-10 12:36:39 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.3 2008-07-23 17:30:49 veiming Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -568,7 +568,7 @@ import java.util.regex.Pattern;
                 pLogger.log(Level.FINE, "executeScriptCmd",
                         "Command in the file :" + command);
                 //write the command to file and then execute the file
-                //workaround as famadm is not working directly from
+                //workaround as ssodm is not working directly from
                 //runtime in *unix if any option contains space character.
                 // -m "Sun DS with AM Schema"
                 File tempSh = new File(tempF);
@@ -977,8 +977,8 @@ import java.util.regex.Pattern;
     }
     
     /**
-     * Return true if the DS version is supported for storing FAM Service data.
-     * 
+     * Return true if the DS version is supported for storing OpenSSO Enterprise
+     * Service data.
      */
     public static boolean isSupportedSMDSVersion(String dsVersion) {
         if ((dsVersion.indexOf(DSConstants.DS63_VERSION) != -1 ||

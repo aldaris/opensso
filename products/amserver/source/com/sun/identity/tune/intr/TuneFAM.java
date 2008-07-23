@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM.java,v 1.1 2008-07-02 18:56:22 kanduls Exp $
+ * $Id: TuneFAM.java,v 1.2 2008-07-23 17:30:49 veiming Exp $
  */
 
 package com.sun.identity.tune.intr;
@@ -43,7 +43,7 @@ public abstract class TuneFAM implements Tuning, FAMConstants {
     protected abstract void tuneFAMServerConfig();
     
      /**
-     * abstract method for tuning FAM Serverconfig.xml
+     * abstract method for tuning OpenSSO Enterprise Serverconfig.xml
      */
     protected abstract void tuneServerConfig() throws AMTuneException;
     

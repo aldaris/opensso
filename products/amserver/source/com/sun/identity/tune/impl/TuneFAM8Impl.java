@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.2 2008-07-10 12:50:07 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.3 2008-07-23 17:30:48 veiming Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -41,7 +41,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
- * <code>TuneFAM8Impl<\code> Tunes Federated Access Manager.
+ * <code>TuneFAM8Impl<\code> Tunes OpenSSO Enterprise Server.
  * 
  */
 public class TuneFAM8Impl extends AMTuneFAMBase {
@@ -50,7 +50,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
      * Initializes the configuration information.
      * 
      * @param confInfo Configuration information used for computing the tuning 
-     *   parameters for Federated Access Manager.
+     *   parameters for OpenSSO Enterprise.
      * 
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -61,14 +61,15 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
     
     /**
      * This method performs the sequence of operations for tuning 
-     * Federated Access Manager.
+     * OpenSSO Enterprise server.
      * 
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     public void startTuning() 
     throws AMTuneException {
         try {
-            pLogger.log(Level.FINE, "startTuning", "Start tuning FAM.");
+            pLogger.log(Level.FINE, "startTuning",
+                "Start tuning OpenSSO Enterprise.");
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-fam-tuning-msg");
             mWriter.writeln(CHAPTER_SEP);
@@ -111,7 +112,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
     
     /**
      * This method provides the recommendation for tuning 
-     * Federated Access manager and apply those recommendations if run in
+     * OpenSSO Enterprise server and apply those recommendations if run in
      * "CHANGE" mode.
      * 
      */
@@ -283,7 +284,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             if (extVal == -1) {
                 pLogger.log(Level.SEVERE, "tuneServerConfig", "Couldn't get " +
                         "serverconfig.xml file");
-                throw new AMTuneException("Error exectuing famadm " + 
+                throw new AMTuneException("Error exectuing ssoadm " + 
                         GET_SVRCFG_XML_SUB_CMD);
             }
             FileHandler fh = new FileHandler(tuneFile);
@@ -375,7 +376,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             if (extVal == -1) {
                 pLogger.log(Level.SEVERE, "tuneServerConfig", "Couldn't set " +
                         "serverconfig.xml file");
-                throw new AMTuneException("Error exectuing famadm " + 
+                throw new AMTuneException("Error exectuing ssoadm " + 
                         SET_SVRCFG_XML_SUB_CMD);
             }
             
@@ -418,7 +419,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             if (extVal == -1) {
                 pLogger.log(Level.SEVERE, "tuneLDAPConnPool", "Error getting " +
                         "ldapconnpool size.");
-                throw new AMTuneException("Error executing famadm cmd " +
+                throw new AMTuneException("Error executing ssoadm cmd " +
                         GET_ATTR_DEFS_SUB_CMD);
             }
             StringTokenizer str = new StringTokenizer(rBuff.toString(), "\n");
@@ -479,7 +480,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             if (extVal == -1) {
                 pLogger.log(Level.SEVERE, "tuneLDAPConnPool", "Error setting " +
                         "ldapconnpool size.");
-                throw new AMTuneException("Error executing famadm cmd " +
+                throw new AMTuneException("Error executing ssoadm cmd " +
                         SET_ATTR_DEFS_SUB_CMD);
             }
         } catch (Exception ex) {
@@ -595,7 +596,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             int extVal = 0;
             if (!AMTuneUtil.isWindows2003()) {
                 //write the command to file and then execute the file
-                //workaround as famadm is not working directly from
+                //workaround as ssoadm is not working directly from
                 //runtime in *unix if any option contains space character.
                 // -m "Sun DS with AM Schema"
                 extVal = AMTuneUtil.executeScriptCmd(

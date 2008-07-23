@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.2 2008-07-10 12:43:47 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.3 2008-07-23 17:30:47 veiming Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -382,7 +382,7 @@ FAMConstants, WebContainerConstants {
     
     /**
      * Set Federated AccessManager admin tools location.
-     * @param famAdmLocation Directory were famadm tool is present.
+     * @param famAdmLocation Directory were ssodm tool is present.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMAdmLocation(String famAdmLocation) 
@@ -454,8 +454,8 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set FAM server URL
-     * @param famServerUrl FAM server url.
+     * Set OpenSSO Enterprise server URL
+     * @param famServerUrl OpenSSO Enterprise server url.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMServerUrl(String famServerUrl) 
@@ -478,7 +478,7 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set FAM Administrator User.
+     * Set OpenSSO Enterprise Administrator User.
      * @param famAdmUser Administrator user name.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -866,7 +866,7 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set FAM admin Password.
+     * Set OpenSSO Enterprise admin Password.
      * @param famAdminPassword
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -913,7 +913,7 @@ FAMConstants, WebContainerConstants {
     throws AMTuneException {
         try {
             mWriter.writeln(LINE_SEP);
-            mWriter.write("FAM tune ");
+            mWriter.write("OpenSSO Enterprise tune ");
             mWriter.writelnLocaleMsg("pt-conf-info");
             mWriter.writeln(LINE_SEP);
             if (isReviewMode) {

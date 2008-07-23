@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestInstaller.java,v 1.3 2008-06-25 05:44:20 qcheng Exp $
+ * $Id: TestInstaller.java,v 1.4 2008-07-23 17:30:50 veiming Exp $
  *
  */
 
@@ -61,9 +61,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class is the first class to get loaded by the Servlet container. 
- * It has helper methods to determine the status of Access Manager 
+ * It has helper methods to determine the status of OpenSSO Enterprise
  * configuration when deployed as a single web-application. If 
- * Access Manager is not deployed as single web-application then the 
+ * OpenSSO Enterprise server is not deployed as single web-application then the 
  * configured status returned is always true.   
  */
 public class TestInstaller {

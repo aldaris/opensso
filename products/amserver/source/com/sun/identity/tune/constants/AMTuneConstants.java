@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.1 2008-07-02 18:50:37 kanduls Exp $
+ * $Id: AMTuneConstants.java,v 1.2 2008-07-23 17:30:47 veiming Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -64,7 +64,7 @@ public interface AMTuneConstants {
     static int AMTUNE_AVG_PER_ENTRY_CACHE_SIZE_IN_KB = 8;
     static int AMTUNE_AVG_PER_SESSION_SIZE_IN_KB = 4;
     /**
-     * Out the memory available for Java part of the Federated Access Manager 
+     * Out the memory available for Java part of the OpenSSO Enterprise
      * process memory, the following is the breakdown of memory needs
      */
     static double AMTUNE_MEM_MAX_NEW_SIZE = (double) 1/8;
@@ -74,7 +74,7 @@ public interface AMTuneConstants {
     static double AMTUNE_MEM_CACHES_SIZE = (double) 1/3;
     
     /**
-     * Out of the memory available for Federated Access Manager Caches, 
+     * Out of the memory available for OpenSSO Enterprise Caches, 
      * the breakdown b/w SDK and Session Cache size is as follows:
      * NOTE :  Its not clear how much memory Policy, Liberty, SAML Caches use. 
      *         These fall into the OPERATIONAL memory category. 
@@ -117,7 +117,7 @@ public interface AMTuneConstants {
     static double AMTUNE_IS_AUTH_LDAP_THREADS = (double)1/24;
     static double AMTUNE_IS_SM_LDAP_THREADS = (double)1/24;
 
-    //Some known WS and Federated Access Manager Defaults
+    //Some known WS and OpenSSO Enterprise Defaults
     static int AMTUNE_NUM_WS_RQTHROTTLE_MIN = 10;
     static int AMTUNE_NUM_WS_THREAD_INCREMENT = 10;
     static int AMTUNE_NUM_IS_MIN_AUTH_LDAP_THREADS = 10;
@@ -189,7 +189,7 @@ public interface AMTuneConstants {
             "======================";
     static String CHAPTER_SEP = "############################################" +
             "#########################";
-    static String START_FAM_MSG = "Start: Federated Access Manager Tuning";
-    static String END_FAM_MSG = "End: Federated Access Manager Tuning";
+    static String START_FAM_MSG = "Start: OpenSSO Enterprise Tuning";
+    static String END_FAM_MSG = "End: OpenSSO Enterprise Tuning";
     
 }

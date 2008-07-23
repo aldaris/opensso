@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMConstants.java,v 1.2 2008-07-10 12:48:39 kanduls Exp $
+ * $Id: FAMConstants.java,v 1.3 2008-07-23 17:30:47 veiming Exp $
  */
 
 package com.sun.identity.tune.constants;
 
 /**
- * Federated Access Manager Constants.
+ * OpenSSO Enterprise Constants.
  * 
  */
 public interface FAMConstants extends AMTuneConstants {

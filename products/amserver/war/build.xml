@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.49 2008-07-17 17:01:13 rajeevangal Exp $
+   $Id: build.xml,v 1.50 2008-07-23 17:30:50 veiming Exp $
 
 -->
 
@@ -83,7 +83,7 @@
             <lib dir="${jatolib.dir}">
                 <include name="jato.jar" />
             </lib>
-            <lib dir="${amserver.dist.dir}" includes="opensso.jar" />
+            <lib dir="${amserver.dist.dir}" includes="amserver.jar" />
             <lib dir="${amserver.dist.dir}" includes="console.jar" />
             <lib dir="${amserver.dist.dir}" includes="opensso-register.jar" />
             <lib dir="${sharedlib.dist.dir}" includes="opensso-sharedlib.jar" />

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyResponse.java,v 1.5 2008-06-25 05:43:53 qcheng Exp $
+ * $Id: PolicyResponse.java,v 1.6 2008-07-23 17:30:44 veiming Exp $
  *
  */
 
@@ -90,7 +90,7 @@ public class PolicyResponse {
     public static final int POLICY_EXCEPTION = 4;
 
     /**
-     * Policy Advices Handleable by Access Manager Response Id.
+     * Policy Advices Handleable by OpenSSO Enterprise Response Id.
      */
     public static final int POLICY_ADVICES_HANDLEABLE_BY_AM_RESPONSE = 5;
 

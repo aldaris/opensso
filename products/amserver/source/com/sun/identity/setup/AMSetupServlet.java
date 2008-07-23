@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.78 2008-07-22 16:12:21 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.79 2008-07-23 17:30:45 veiming Exp $
  *
  */
 
@@ -1156,7 +1156,7 @@ public class AMSetupServlet extends HttpServlet {
     
             /*
              * if the file's not there, just skip it
-             * usually will be about a file included with FAM,
+             * usually will be about a file included with OpenSSO Enterprise,
              * so it's informational, rather than a "real" error.
              */
             try {
@@ -1383,13 +1383,14 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     /**
-      * Obtains misc config data from a remote FAM server :
+      * Obtains misc config data from a remote OpenSSO Enterprise server :
       *     opends port
       *     config basedn
       *     flag to indicate replication is already on or not
       *     opends replication port or opends sugested port
       *
-      * @param server - URL string representing the remote fam server
+      * @param server URL string representing the remote OpenSSO Enterprise
+      *        server
       * @param userid - admin userid on remote server (only amdmin)
       * @param password - admin password
       * @return Map of confif params.
@@ -1626,8 +1627,8 @@ public class AMSetupServlet extends HttpServlet {
         String basedir, 
         String deployuri 
     ) throws IOException {
-        // Get FAM web application base location.
-        URL url = servletCtx.getResource("/WEB-INF/lib/fam.jar");
+        // Get OpenSSO Enterprise web application base location.
+        URL url = servletCtx.getResource("/WEB-INF/lib/opensso.jar");
         String webAppLocation = (url.toString()).substring(5);
         int index = webAppLocation.indexOf("WEB-INF");
         webAppLocation = webAppLocation.substring(0, index-1);
@@ -2119,7 +2120,7 @@ public class AMSetupServlet extends HttpServlet {
          * written to <configdir>/<uri>/auth/ace/data earlier.
          *
          * if file isn't copied, it's probably because this is
-         * an OpenSSO deployment, rather than FAM, so it would
+         * an OpenSSO deployment, rather than OpenSSO Enterprise, so it would
          * just be informational, but at the debug error level.
          * additionally, before some point, the debug stuff can't
          * be invoked.

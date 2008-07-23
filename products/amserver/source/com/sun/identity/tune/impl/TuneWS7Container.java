@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneWS7Container.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
+ * $Id: TuneWS7Container.java,v 1.3 2008-07-23 17:30:48 veiming Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -59,7 +59,7 @@ public class TuneWS7Container extends TuneWebServer implements
      * Initializes the configuration information.
      *
      * @param confInfo Configuration information used for computing the tuning
-     *   parameters for Federated Access Manager.
+     *   parameters for OpenSSO Enterprise server.
      *
      * @throws com.sun.identity.tune.common.AMTuneException
      */

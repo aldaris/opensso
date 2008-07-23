@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.31 2008-07-04 06:25:22 veiming Exp $
+ * $Id: SetupConstants.java,v 1.32 2008-07-23 17:30:45 veiming Exp $
  *
  */
 
@@ -155,7 +155,7 @@ public interface SetupConstants {
     String UM_EMBEDDED = "embedded";
 
     /**
-     * User Management datastore option - Sun DS with FAM Schema.
+     * User Management datastore option - Sun DS with OpenSSO Enterprise Schema.
      */
     String UM_LDAPv3ForAMDS = "LDAPv3ForAMDS";
 
