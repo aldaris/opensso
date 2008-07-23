@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-ws7,v 1.3 2008-06-25 05:41:18 qcheng Exp $
+# $Id: amtune-ws7,v 1.4 2008-07-23 17:21:55 veiming Exp $
 #
 
 #-------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ tuneServerXML() {
     # Configuration file cannot be backup in the same directory because deploy-config will fail
     backupConfigFile $tune_file "/tmp/config-ws7-backup"
 
-    # Start: Performance Related Thread Pool parameters for Federated Access Manager
+    # Start: Performance Related Thread Pool parameters for OpenSSO Enterprise
     if [ "$JVM64bitAvailable" = "true" ]; then 
         $WSADMIN set-thread-pool-prop $WSADMIN_COMMON_PARAMS min_threads=$AMTUNE_NUM_WS_MIN_THREADS \
                                                                 max_threads=$numOfMaxThreadPool \
@@ -336,26 +336,26 @@ tuneServerXML() {
                                                                 max_threads=$numOfMaxThreadPool \
                                                                 queue-size=$AMTUNE_NUM_TCP_CONN_SIZE 
     fi
-    # End: Performance Related Thread Pool parameters for Federated Access Manager
+    # End: Performance Related Thread Pool parameters for OpenSSO Enterprise
 
 
-    # Start: Performance Related Http Listener parameters for Federated Access Manager
+    # Start: Performance Related Http Listener parameters for OpenSSO Enterprise
     $WSADMIN set-http-listener-prop $WSADMIN_COMMON_PARAMS --http-listener=$WSADMIN_HTTPLISTENER \
                                                                 acceptor-threads=$acceptorThreads
-    # End: Performance Related Http Listener parameters for Federated Access Manager
+    # End: Performance Related Http Listener parameters for OpenSSO Enterprise
 
-    # Start: Performance Related Statistic parameters for Federated Access Manager
+    # Start: Performance Related Statistic parameters for OpenSSO Enterprise
     if [ "$stat_prop_string" != "$AMTUNE_STATISTIC_ENABLED" ]; then
         $WSADMIN set-stats-prop $WSADMIN_COMMON_PARAMS enabled=$AMTUNE_STATISTIC_ENABLED
     fi
-    # End: Performance Related Statistic parameters for Federated Access Manager
+    # End: Performance Related Statistic parameters for OpenSSO Enterprise
 
     if [ ! "`/bin/uname -r | grep 8 | wc -m`" -eq "0" ] ; then
         $ECHO  "Solaris 8 " `$gettext "specific changes"`
         $WSADMIN set-jvm-prop $WSADMIN_COMMON_PARAMS native-library-path-prefix=/usr/lib/lwp
     fi
 
-    # Start: Performance Related JVM Options for Federated Access Manager
+    # Start: Performance Related JVM Options for OpenSSO Enterprise
     curJvmOptionHeapString=""
     curJvmOptionHeapString=`createParamString "$curJvmOptionHeapString" "$wsadmin_min_heap"`
     curJvmOptionHeapString=`createParamString "$curJvmOptionHeapString" "$wsadmin_max_heap"`
@@ -381,9 +381,9 @@ tuneServerXML() {
        # Delete other JVM Options 
        deleteJVMOptionUsingWSAdmin "$curJvmOptionString"
     fi
-    # End: Performance Related JVM Options for Federated Access Manager"
+    # End: Performance Related JVM Options for OpenSSO Enterprise"
 
-    # Start: Performance Related JVM Options for Federated Access Manager 
+    # Start: Performance Related JVM Options for OpenSSO Enterprise 
     # Insert Min Heap and Max Heap JVM Option : -Xms -Xmx
     jvm_insert_result1=`insertJVMOptionUsingWSAdmin "$wsadmin_new_min_heap $wsadmin_new_max_heap" "combined"`
     $ECHO "\n$jvm_insert_result1\n"
@@ -410,7 +410,7 @@ tuneServerXML() {
     # Insert other JVM Options
     jvm_insert_result2=`insertJVMOptionUsingWSAdmin "$newJvmOptionString"`
     $ECHO "\n$jvm_insert_result2 \n"
-    # End: Performance Related JVM Options for Federated Access Manager
+    # End: Performance Related JVM Options for OpenSSO Enterprise
 
     # If one of the insert operation is successful, execute deploy-config operation
     if [ `$ECHO $jvm_insert_result1 | $GREP -i "successfully" | $WC -l` -eq 1 ] ||
@@ -443,7 +443,7 @@ fi
 
 $ECHO "$WSADMIN_PASSWORD_SYNTAX$WSADMIN_PASSWORD" > $WSADMIN_PASSFILE
 
-ECHO_MSG "`$gettext 'Federated Access Manager - Web Server Tuning Script'`"
+ECHO_MSG "`$gettext 'OpenSSO Enterprise - Web Server Tuning Script'`"
 
 tuneServerXML   | eval $OUTPUT_TYPE
 

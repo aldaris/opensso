@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetHttpSession.java,v 1.3 2008-06-25 05:41:30 qcheng Exp $
+ * $Id: GetHttpSession.java,v 1.4 2008-07-23 17:21:56 veiming Exp $
  *
  */
 
@@ -49,10 +49,12 @@ import com.sun.identity.security.DecodeAction;
 
 /**
  * This servlet class is used as a helper to aid SessionService to perform
- * certain session-failover related operations: 1. Creating a new Http session
- * 2. Recovering an existing Http session in case of server failover 3.
- * Releasing an existing Access Manager session if it is being relocated to a
- * different "owner" server
+ * certain session-failover related operations:
+ * <ol>
+ * <li>Creating a new Http session
+ * <li>Recovering an existing Http session in case of server failover
+ * <li>Releasing an existing OpenSSO Enterprise session if it is being
+ * relocated to a different "owner" server
  * 
  * Name GetHttpSession is largely a misnomer, but it was kept to minimize
  * changes to other places of code/configuration This class does minimal amount
@@ -202,7 +204,7 @@ public final class GetHttpSession extends HttpServlet {
                         SessionService.sessionDebug.message(
                                 "Exception:invalidateSession: the web " +
                                 "containers session timeout could be " +
-                                "shorter than the Access Manager session " +
+                                "shorter than the OpenSSO Enterprise session " +
                                 "timeout", ise);
                     }
                 }

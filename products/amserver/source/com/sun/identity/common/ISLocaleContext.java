@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISLocaleContext.java,v 1.12 2008-06-27 20:56:24 arviranga Exp $
+ * $Id: ISLocaleContext.java,v 1.13 2008-07-23 17:24:55 veiming Exp $
  *
  */
 
@@ -51,15 +51,15 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Sets the locale suitable for the given situation. Each response to end-user
- * must be in a well defined locale. Even if the user has not logged in, Access
- * Manager should respond in a locale. Hence Access Manager consults various
- * parameter to find out the locale for any given response. The order and
- * priorty of local setting is as follows:
+ * must be in a well defined locale. Even if the user has not logged in, OpenSSO
+ * Enterprise should respond in a locale. Hence OpenSSO Enterprise consults
+ * various parameter to find out the locale for any given response. The order
+ * and priorty of local setting is as follows:
  *
  * Priority 0 - OS_LOCALE - value returned by java.util.Locale.getDefault()
  * Priority 1 - PLATFORM_LOCALE - iplanet-am-platform-locale attribute value
  *              in iPlanetAMPlatform Service - Global value for entire 
- *              Access Manager
+ *              OpenSSO Enterprise
  * Priority 2 - AUTH-LOCALE - iplanet-am-auth-locale attribute value in 
  *              iPlantAMAuth service - Org specific locale value
  * Priority 3 - USER_LOCALE - preferredlocale - iPlanetAMUser service and 

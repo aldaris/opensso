@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.12 2008-07-16 00:30:44 bigfatrat Exp $
+ * $Id: LogConstants.java,v 1.13 2008-07-23 17:24:59 veiming Exp $
  *
  */
 
@@ -122,7 +122,7 @@ public class LogConstants {
 
     /**
      * Attribute defining the ELFFormatter class.
-     * (Sun Java System Access Manager 2005Q4 ELF Formatting. Hence FHandler
+     * (Sun OpenSSO Enterprise ELF Formatting. Hence FHandler
      * should be associated with a ELFFormatter).
      */
     public static final String ELF_FORMATTER =
@@ -131,7 +131,7 @@ public class LogConstants {
     /**
      * Attribute defining the RemoteFormatter class which creates a
      * xml string for a log action and sends it across to the remote
-     * Sun Java System Access Manager.
+     * Sun OpenSSO Enterprise.
      */
     public static final String REMOTE_FORMATTER =
         "iplanet-am-logging-remote-formatter";

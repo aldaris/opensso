@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CompositeAdvices.java,v 1.4 2008-06-25 05:42:04 qcheng Exp $
+ * $Id: CompositeAdvices.java,v 1.5 2008-07-23 17:22:01 veiming Exp $
  *
  */
 
@@ -49,10 +49,10 @@ import com.sun.identity.policy.plugins.AuthenticateToServiceCondition;
 import com.sun.identity.policy.plugins.AuthenticateToRealmCondition;
 
 /**
- * This class allows the authentication services of Access Manager to 
+ * This class allows the authentication services of OpenSSO Enterprise to 
  * decouple the advice handling mechanism of the agents. 
  * This allows user to introduce and manage custom advices by solely 
- * writing Access Manager side plug-ins. 
+ * writing OpenSSO Enterprise side plug-ins. 
  * Users are not required to make changes on the agent side. 
  * Such advices are honored automatically by the composite advice 
  * handling mechanism. A benefit of composite advice is that you can 

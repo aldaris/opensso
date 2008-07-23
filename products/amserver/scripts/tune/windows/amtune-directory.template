@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-directory.template,v 1.2 2008-06-25 05:41:18 qcheng Exp $
+# $Id: amtune-directory.template,v 1.3 2008-07-23 17:21:55 veiming Exp $
 #
 #
 #############################################################################
@@ -686,7 +686,7 @@ sub tuneDSIndex
     &echo_msg("1. The following attributes are used to search for a user to be authenticated\n");
     &echo_msg("We recommend to create index(es) for them.\n");
     verify_index(@list_am_search_attributes);
-    &echo_msg("2. Verify Access Manager indexes\n");
+    &echo_msg("2. Verify OpenSSO Enterprise indexes\n");
     verify_index(@list_am_default_index);
 		
     if($AMTUNE_MODE eq "REVIEW")
@@ -1224,7 +1224,7 @@ if($new_number_worker_threads eq "")
 
 
 &echo_msg($PARA_SEP);
-&echo_msg("Access Manager - Directory Server Tuning Script");
+&echo_msg("OpenSSO Enterprise - Directory Server Tuning Script");
 
 #determine physical memory limitations
 #determine application size (32-bits, 64-bits)

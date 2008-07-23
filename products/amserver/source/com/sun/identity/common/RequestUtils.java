@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestUtils.java,v 1.3 2008-06-25 05:42:26 qcheng Exp $
+ * $Id: RequestUtils.java,v 1.4 2008-07-23 17:24:55 veiming Exp $
  *
  */
 
@@ -102,7 +102,7 @@ public class RequestUtils {
     /**
      * Use this method to check an HTTP servlet request size against the
      * configured limit to insure that it is not too large, and possibly being
-     * sent to an Access Manager servlet to cause a Denial of Service (DOS).
+     * sent to an OpenSSO Enterprise servlet to cause a Denial of Service (DOS).
      * 
      * @param servletRequest
      *            The HTTP servlet request.

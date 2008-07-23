@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DMConstants.java,v 1.2 2008-06-25 05:42:56 qcheng Exp $
+ * $Id: DMConstants.java,v 1.3 2008-07-23 17:24:57 veiming Exp $
  *
  */
 
@@ -109,7 +109,7 @@ public interface DMConstants {
     public static final int DEFAULT_PAGE_SIZE = 25;
 
 
-    /** Access Manager's entry specific service name */
+    /** OpenSSO Enterprise's entry specific service name */
     public static final String ENTRY_SPECIFIC_SERVICE =
         "iPlanetAMEntrySpecificService";
 

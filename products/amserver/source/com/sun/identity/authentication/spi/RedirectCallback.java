@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectCallback.java,v 1.3 2008-06-25 05:42:06 qcheng Exp $
+ * $Id: RedirectCallback.java,v 1.4 2008-07-23 17:24:54 veiming Exp $
  *
  */
 
@@ -90,7 +90,7 @@ public class RedirectCallback implements Callback, java.io.Serializable {
      * @param statusParameter statusParameter to be checked from 
      * HttpServletRequest object at the result of redirection.
      * @param redirectBackUrlCookie redirectBackUrlCookie name to be set as 
-     * Access Manager server URL when redirecting to external web site.
+     * OpenSSO Enterprise server URL when redirecting to external web site.
      */
     public RedirectCallback(String redirectUrl, Map redirectData, 
                             String method, String statusParameter, 
@@ -198,21 +198,21 @@ public class RedirectCallback implements Callback, java.io.Serializable {
     }
     
     /**
-     * Sets the redirectBackUrlCookie name to be set as Access Manager 
+     * Sets the redirectBackUrlCookie name to be set as OpenSSO Enterprise 
      * server URL when redirecting to external web site.
      *
      * @param redirectBackUrlCookie redirectBackUrlCookie name to be set as 
-     * Access Manager server URL when redirecting to external web site.
+     * OpenSSO Enterprise server URL when redirecting to external web site.
      */
     public void setRedirectBackUrlCookieName(String redirectBackUrlCookie) {
         this.redirectBackUrlCookie = redirectBackUrlCookie;
     }
     
     /**
-     * Returns the redirectBackUrlCookie name to be set as Access Manager 
+     * Returns the redirectBackUrlCookie name to be set as OpenSSO Enterprise 
      * server URL when redirecting to external web site.
      *
-     * @return the redirectBackUrlCookie name to be set as Access Manager 
+     * @return the redirectBackUrlCookie name to be set as OpenSSO Enterprise 
      * server URL when redirecting to external web site.
      */
     public String getRedirectBackUrlCookieName() {

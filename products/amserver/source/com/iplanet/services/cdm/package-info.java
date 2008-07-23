@@ -22,18 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.3 2008-06-25 05:41:33 qcheng Exp $
+ * $Id: package-info.java,v 1.4 2008-07-23 17:21:57 veiming Exp $
  *
  */
 
 /**
  * Provides the classes for implementing services and applications
- * serving multiple clients to Sun Java System Access Manager.
+ * serving multiple clients to Sun OpenSSO Enterprise.
  * <p>
  * Using the interfaces and classes provided, services and applications
- * serving multiple clients may provide access to Access Manager's services.
- * Through the implementation, Access Manager determines the client from which
- * the request has originated.
+ * serving multiple clients may provide access to OpenSSO Enterprise's services.
+ * Through the implementation, OpenSSO Enterprise determines the client from
+ * which the request has originated.
  * @supported.api
  */
 package com.iplanet.services.cdm;

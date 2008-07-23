@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Authenticator.java,v 1.7 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: Authenticator.java,v 1.8 2008-07-23 17:24:55 veiming Exp $
  *
  */
 
@@ -180,7 +180,7 @@ class Authenticator {
         
         /*
          * Even if installTime is false, ssoToken could be null if none of
-         * the access manager servers are running.
+         * the OpenSSO Enterprise servers are running.
          * Hence check for ssoToken and use local AuthContext
          */
         if (ssoToken == null) {

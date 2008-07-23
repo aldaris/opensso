@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.9 2008-06-25 05:43:46 qcheng Exp $
+ * $Id: ResourceResultCache.java,v 1.10 2008-07-23 17:25:00 veiming Exp $
  *
  */
 
@@ -1296,16 +1296,17 @@ class ResourceResultCache implements SSOTokenListener {
     }
 
     /** 
-     * Returns names of policy advices that could be handled by Access Manager
-     * if PEP redirects user agent to Access Manager.
+     * Returns names of policy advices that could be handled by OpenSSO
+     * Enterprise if PEP redirects user agent to OpenSSO Enterprise.
      *
      * @param appToken application sso token that would be used while
-     *        communicating to Access Manager
+     *        communicating to OpenSSO Enterprise
      * @param refetchFromServer indicates whether to get the values fresh 
-     *      from Access Manager or return the values from local cache. 
+     *      from OpenSSO Enterprise or return the values from local cache. 
      *      If the server reports app sso token is invalid, a new app sso
      *      token is created and one more call is made to the server.
-     * @return  names of policy advices that could be handled by Access Manager
+     * @return names of policy advices that could be handled by OpenSSO
+     *         Enterprise
      * @throws InvalidAppSSOTokenException if the server reported that the
      *         app sso token provided wasinvalid
      * @throws PolicyEvaluationException if the server reported any other error

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBCSessionRepository.java,v 1.4 2008-06-25 05:41:30 qcheng Exp $
+ * $Id: JDBCSessionRepository.java,v 1.5 2008-07-23 17:21:56 veiming Exp $
  *
  */
 
@@ -220,14 +220,12 @@ public class JDBCSessionRepository extends GeneralTaskRunnable implements
     }
 
     /**
-     * Constructs <code> JDBCSessionRepository </code> checks if Access Manager 
-     * tables/indices are present in the  database If they are not, it creates 
-     * them .It also creates and starts cleanup thread
+     * Constructs <code> JDBCSessionRepository </code> checks if OpenSSO
+     * Enterprise tables/indices are present in the  database If they are not,
+     * it creates them .It also creates and starts cleanup thread
      * @exception If session repository initialiazation fails
      */
-
     public JDBCSessionRepository() throws Exception {
-
         Connection conn = null;
         ResultSet rs = null;
         try {

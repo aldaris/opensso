@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: G11NSettings.java,v 1.5 2008-06-27 20:56:23 arviranga Exp $
+ * $Id: G11NSettings.java,v 1.6 2008-07-23 17:21:57 veiming Exp $
  *
  */
 
@@ -148,9 +148,9 @@ public class G11NSettings implements ServiceListener, ICDMConstants,
 
     /**
      * @param mimeCharset
-     * @return a Map which can provide equivalent charset names Currently Access
-     *         Manager uses only Java name however application Can configure to
-     *         have different names for platform level mapping etc.
+     * @return a Map which can provide equivalent charset names Currently,
+     *        OpenSSO Enterprise uses only Java name however application Can
+     *        configure to have different names for platform level mapping etc.
      */
     public Map getCharsetAliasTable(String mimeCharset) {
         return (Map) charsetAlias.get(mimeCharset);

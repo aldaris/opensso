@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Configurator.java,v 1.3 2008-06-25 05:42:31 qcheng Exp $
+ * $Id: Configurator.java,v 1.4 2008-07-23 17:24:56 veiming Exp $
  *
  */
 package com.sun.identity.config;
@@ -119,20 +119,20 @@ public interface Configurator {
                              String loadBalancerHost, int loadBalancerPort );
 
     /**
-     * Returns a list of URL {@link java.lang.String strings}, one for each each FAM instance whose configuration
+     * Returns a list of URL {@link java.lang.String strings}, one for each each OpenSSO Enterprise instance whose configuration
      * could be copied over to this instance.  This method supports the first step (of two) in Wireframes
      * Flow 3E.
      *
-     * @return a list of URL strings, one for each FAM instance whose config could be copied to this instance.
+     * @return a list of URL strings, one for each OpenSSO Enterprise instance whose config could be copied to this instance.
      */
     List getExistingConfigurations();
 
 
     /**
-     * Sets this instance's configuration based on the specified URL strings of the corresponding FAM instances.
+     * Sets this instance's configuration based on the specified URL strings of the corresponding OpenSSO Enterprise instances.
      * This method supports the second step (of two) in Wireframes Flow 3E.
      *
-     * @param configStringUrls URL strings, one for each FAM instance whose config should be copied to this instance.
+     * @param configStringUrls URL strings, one for each OpenSSO Enterprise instance whose config should be copied to this instance.
      */
     void writeConfiguration( List configStringUrls );
 
@@ -239,7 +239,7 @@ public interface Configurator {
     List getAgentTypes();
 
     /**
-     * Checks whether the FAM Server URL is valid
+     * Checks whether the OpenSSO Enterprise Server URL is valid
      * @param url text representing the URL
      * @return true if it's valid
      */

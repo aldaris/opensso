@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetModel.java,v 1.2 2008-06-25 05:43:42 qcheng Exp $
+ * $Id: PWResetModel.java,v 1.3 2008-07-23 17:24:59 veiming Exp $
  *
  */
 
@@ -44,7 +44,7 @@ public interface PWResetModel {
     String PW_RESET_SERVICE = "iPlanetAMPasswordResetService";
 
     /**
-     * Access Manager's user service name
+     * OpenSSO Enterprise's user service name
      */
     String USER_SERVICE = "iPlanetAMUserService";
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.13 2008-07-09 02:04:50 veiming Exp $
+ * $Id: AMModelBase.java,v 1.14 2008-07-23 17:24:57 veiming Exp $
  *
  */
 
@@ -81,7 +81,8 @@ import javax.servlet.http.HttpServletRequest;
  * This class implements all the basic and commonly used methods used by view
  * beans.
  * <p>
- * All the Access Manager model implementation classes extends from this class.
+ * All the OpenSSO Enterprise model implementation classes extends from this
+ * class.
  */
 public class AMModelBase
     implements AMModel
@@ -743,8 +744,8 @@ public class AMModelBase
                     // add the "Agent" tab only if revision number of
                     // sunIdentityRepository service is less than 30.
                     // This is for backward compatibility to support 
-                    // this scenerio : FAM 8.0 server against AM 7.x 
-                    // existing DIT (Coexistence).
+                    // this scenerio : OpenSSO Enterprise 8.0 server against
+                    // AM 7.x existing DIT (Coexistence).
 
                     map.put(type.getName(), 
                         getLocalizedString(type.getName()));

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.8 2008-07-17 05:06:22 bigfatrat Exp $
+ * $Id: Logger.java,v 1.9 2008-07-23 17:24:59 veiming Exp $
  *
  */
 
@@ -50,9 +50,9 @@ import com.sun.identity.log.spi.Authorizer;
 import com.sun.identity.log.spi.Debug;
 
 /**
- * Sun Java System Access Manager extension to the jdk1.4 Logger
+ * Sun OpenSSO Enterprise extension to the jdk1.4 Logger
  * This extension gives some functionality required by
- * Sun Java System Access Manager secure logger.
+ * Sun OpenSSO Enterprise secure logger.
  * For <code>JDK1.4</code> Logger please refer to
  * <pre>
  * http://java.sun.com/j2se/1.4.1/docs/api/java/util/logging/Logger.html

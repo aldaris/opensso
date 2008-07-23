@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentMigration71.java,v 1.3 2008-06-25 05:43:30 qcheng Exp $
+ * $Id: AgentMigration71.java,v 1.4 2008-07-23 17:24:58 veiming Exp $
  *
  */
 
@@ -47,8 +47,10 @@ public class AgentMigration71 {
 
     public static void migrate22AgentsToFAM80() {
         try {
-            // Assuming upgrade scripts imported the FAM AgentService.xml,
-            // migrate agents from existing DIT (AM 6.x/AM 7.x to FAM 8.0.
+            // Assuming upgrade scripts imported the OpenSSO Enterprise
+            // AgentService.xml,
+            // migrate agents from existing DIT (AM 6.x/AM 7.x to OpenSSO
+            // Enterprise 8.0.
 
             SSOToken token = getSSOToken();
             // First get all the sub realms
@@ -92,7 +94,8 @@ public class AgentMigration71 {
                     attrs.remove("sunidentityserverdeviceversion");
                     attrs.remove("uid");
                     if (attrs.containsKey("sunidentityserverdevicestatus")) {
-                        // To match the schema in FAM's AgentService.xml
+                        // To match the schema in OpenSSO Enterprise's
+                        // AgentService.xml
                         Set dSet = 
                             (Set)attrs.get("sunidentityserverdevicestatus");
                         attrs.remove("sunidentityserverdevicestatus");

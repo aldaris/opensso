@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SerializedField.java,v 1.2 2008-06-25 05:42:51 qcheng Exp $
+ * $Id: SerializedField.java,v 1.3 2008-07-23 17:24:57 veiming Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import java.io.Serializable;
  * adding as a hidden field in a form (for information tracking
  * between pages) and deserialized it when retrieving during
  * form submission.
- * This component is proprietary to Access Manager Administration Console
+ * This component is proprietary to OpenSSO Enterprise Administration Console
  */
 public class SerializedField extends HtmlDisplayFieldBase
 {

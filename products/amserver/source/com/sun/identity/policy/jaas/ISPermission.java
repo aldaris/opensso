@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISPermission.java,v 1.3 2008-06-25 05:43:50 qcheng Exp $
+ * $Id: ISPermission.java,v 1.4 2008-07-23 17:25:00 veiming Exp $
  *
  */
 
@@ -56,10 +56,10 @@ import java.util.Collections;
  * Its a new JAAS <code>Permission</code> which extends the
  * {@link java.security.Permission} class. This is the only
  * API which gets used by an application/container to evaluate policy against
- * the Access Manager Policy framework. This class provides implementations
+ * the OpenSSO Enterprise Policy framework. This class provides implementations
  * of all the required abstract methods of <code>java.security.Permission</code>
- * , in a way that the policy evaluation is made against the Access Manager's
- * Policy service.
+ * , in a way that the policy evaluation is made against the OpenSSO
+ * Enterprise's Policy service.
  * <p>
  * For example, one would use this class as follows to evaluate policy
  * permissions:
@@ -68,7 +68,7 @@ import java.util.Collections;
  *                  "http://www.sun.com:80","GET");
  * AccessController.checkPermission(perm);
  * </pre>
- * If Access Manager has the policy service
+ * If OpenSSO Enterprise has the policy service
  * <code>iPlanetAMWebAgentService</code> which has a <code>Rule</code> defined
  * for resource <code>http://www.sun.com:80</code>
  * with action "GET" with allow privilege, this call will return quietly, if
@@ -154,7 +154,7 @@ public class ISPermission extends Permission {
      * service name, resource name and action name.
      * @param serviceName name of service for which this
      *        <code>ISPermission</code> is being created. This name needs to be
-     *        one of the loaded services in the access manager's policy
+     *        one of the loaded services in the OpenSSO Enterprise's policy
      *        engine. example: <code>iPlanetAMWegAgentService</code>
      *
      * @param resourceName name of the resource for which this 
@@ -180,7 +180,8 @@ public class ISPermission extends Permission {
      * service name, resource name and action name.
      * @param serviceName name of service for which this
      *        <code>ISPermission</code> is being created. This name needs to be
-     *        one of the loaded policy services in the access manager. example:
+     *        one of the loaded policy services in the OpenSSO Enterprise.
+     *        example:
      *        <code>iPlanetAMWegAgentService</code>
      *
      * @param resourceName name of the resource for which this 
@@ -526,7 +527,7 @@ public class ISPermission extends Permission {
      * @param perm the permission to check against.
      *
      * @return true if the specified permission is implied by this object,
-     *         false if not. The check is made against the Access Manager's 
+     *         false if not. The check is made against the OpenSSO Enterprise's 
      *         policy service to determine this evaluation.
      */
     public boolean implies(Permission perm) {

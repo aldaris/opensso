@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-env.pl,v 1.2 2008-06-25 05:41:18 qcheng Exp $
+# $Id: amtune-env.pl,v 1.3 2008-07-23 17:21:55 veiming Exp $
 #
 #
 ################################################################################
@@ -33,18 +33,18 @@ require "amtune-utils.pl";
 
 ################################################################################
 # Keys to performance tuning parameter documentation:    
-#           IS      - Access Manager (formerly Identity Server)
-#           AM      - Access Manager
+#           IS      - OpenSSO Enterprise (formerly Identity Server)
+#           AM      - OpenSSO Enterprise
 #           DS      - Directory Server
 #           WS      - Web Server
 #           AS      - Application Server
-#           amtune  - Access Manager tuning scripts located in amtune directory
+#           amtune  - OpenSSO Enterprise tuning scripts located in amtune directory
 #           #x      - Number of x (eg. #Sessions - Number of Sessions) 
 #           KB      - Kilo Bytes
 #           MB      - Mega Bytes
 #           GB      - Giga Bytes
 #           MTS     - Minutes
-#           SM      - Access Manager Service Management Module
+#           SM      - OpenSSO Enterprise Service Management Module
 #           NYI     - Not yet incorporated
 #
 # You will need to modify/verify the parameters mentioned below for perftune/* 
@@ -63,7 +63,7 @@ require "amtune-utils.pl";
 # Note that amtune currently is non-interactive.
 #
 # Also, there is a list of "DO NOT MODIFY" parameters towards the end of this file
-# that the amtune scripts rely on. This section is maintained by Access Manager engineers
+# that the amtune scripts rely on. This section is maintained by OpenSSO Enterprise engineers
 # and modifications to these parameters are unwarranted and will not be supported.
 #
 ################################################################################
@@ -95,12 +95,12 @@ require "amtune-utils.pl";
 #
 # Note          :   1. On CHANGE mode
 #                   Please use extreme caution while using CHANGE mode.
-#                   In CHANGE mode, amtune might need to restart the Web Container, Access Manager
+#                   In CHANGE mode, amtune might need to restart the Web Container, OpenSSO Enterprise
 #                   and might recommend a system restart.
 #   
 #                   2. On Directory Server tuning   
 #                   Tuning Directory Server requires extra levels of confirmation.
-#                   Assumption is that Access Manager will use an existing Directory Server in
+#                   Assumption is that OpenSSO Enterprise will use an existing Directory Server in
 #                   non-exclusive mode (other applications might use Directory Server)
 #                   
 #                   Irrespective of where the Directory Server is installed (local or remote),
@@ -110,7 +110,7 @@ require "amtune-utils.pl";
 #                   and execute the amtune-ds script.
 #                   
 #                   3. On selectively tuning different components
-#                   Different components (such as Web Container, Access Manager, Directory)
+#                   Different components (such as Web Container, OpenSSO Enterprise, Directory)
 #                   can be selectively based on AMTUNE_TUNE_* parameters. (Described in
 #                   detail next in the next comment block)
 #-------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ $AMTUNE_LOG_LEVEL="FILE";
 #                       Components to tune:
 #                       a) AMTUNE_TUNE_DS               - Directory Server
 #                       b) AMTUNE_TUNE_WEB_CONTAINER    - Web Container - Application Server or Web Server
-#                       c) AMTUNE_TUNE_IDENTITY         - Access Manager
+#                       c) AMTUNE_TUNE_IDENTITY         - OpenSSO Enterprise
 #                   These settings work in conjunction with AMTUNE_MODE parameter setting.
 #                   You could review or change recommended tunings of any set of components.
 #
@@ -256,7 +256,7 @@ if("$BASEDIR" eq "")
 
 #-------------------------------------------------------------------------------
 # Parameter     :   IS_INSTALL_DIR
-# Value         :   Access Manager installation directory
+# Value         :   OpenSSO Enterprise installation directory
 #
 # Description   :   Leave this variable blank to use default location
 #-------------------------------------------------------------------------------
@@ -299,7 +299,7 @@ $AMTUNE_BIN_DIR=dirname($0);
 # Parameter     :   WEB_CONTAINER
 # Values        :   WS7 or AS8
 #
-# Description   :   Name of the Web Container that Access Manager is deployed on.
+# Description   :   Name of the Web Container that OpenSSO Enterprise is deployed on.
 #                   Accepted values for WEB_CONTAINER
 #                   WebServer6.1=WS61, WebServer7=WS7, AppServer 7.x=AS7, AppServer 8.x=AS8
 #
@@ -332,7 +332,7 @@ elsif("$WEB_CONTAINER" eq "AS8")
 #                   domains/server1                         - for Application Server 7.x
 #                   domains/domain1                         - for Application Server 8.x
 #
-# Description   :   Typically, this value is the hostname where Access Manager is deployed.
+# Description   :   Typically, this value is the hostname where OpenSSO Enterprise is deployed.
 #                   When you have multiple instances for the web container,
 #                   this value might be different from the hostname.
 #                   Please customize this accordingly
@@ -360,11 +360,11 @@ if($WEB_CONTAINER_INSTANCE_NAME eq "")
 
 #-------------------------------------------------------------------------------
 # Parameter     :   CONTAINER_INSTANCE_DIR
-# Value         :   Access Manager Web Container instance directory
+# Value         :   OpenSSO Enterprise Web Container instance directory
 # Default       :   $CONTAINER_BASE_DIR/https-${WEB_CONTAINER_INSTANCE_NAME}    - for Web Server 6.1 or later
 #                   $CONTAINER_BASE_DIR/${WEB_CONTAINER_INSTANCE_NAME}          - for Application Server 7.0 or later
 #
-# Description   :   Typical value is the default value. If you install Access Manager in a
+# Description   :   Typical value is the default value. If you install OpenSSO Enterprise in a
 #                   non-default location, you will need to change this value
 #-------------------------------------------------------------------------------
 
@@ -486,7 +486,7 @@ $WSADMIN_PASSWORD_SYNTAX="wadm_password=";
 #
 # Parameter         : ASADMIN_TARGET
 # Value             : Typically, this value is set to 'server'  (with the assumption that
-#                       this AS 8 installation is exclusively used for Access Manager/Portal Server
+#                       this AS 8 installation is exclusively used for OpenSSO Enterprise/Portal Server
 # Default Value     : server
 #
 # Parameter         : ASADMIN_HTTPLISTENER
@@ -543,31 +543,31 @@ $ASADMIN_PASSWORD_SYNTAX="AS_ADMIN_PASSWORD=";
 
 #-------------------------------------------------------------------------------
 # Parameter     :   IS_INSTANCE_NAME
-# Value         :   Access Manager Instance Name
+# Value         :   OpenSSO Enterprise Instance Name
 # Default       :   <empty>
 #                   
 #
 # Description   :   This value is used in determining the property
-#                   filenames for the Access Manager install.
-#                   Multiple instances of Access Manager could be deployed in
+#                   filenames for the OpenSSO Enterprise install.
+#                   Multiple instances of OpenSSO Enterprise could be deployed in
 #                   the same machine.
 #                   Assumption is that there will be one set of property files
-#                   per Access Manager instance and the instance name will be
+#                   per OpenSSO Enterprise instance and the instance name will be
 #                   appended to the 
-#                   file names. If there is only one instance of Access Manager in a machine,
+#                   file names. If there is only one instance of OpenSSO Enterprise in a machine,
 #                   then the instance name will not be appended to the file names
 #   
-#                   e.g. If your Access Manager is installed on a machine named
+#                   e.g. If your OpenSSO Enterprise is installed on a machine named
 #                   server.sun.com,
 #                   typically, your first instance of the web server will be 
 #                   https-server.sun.com.
-#                   The property files for the first Access Manager instance will
+#                   The property files for the first OpenSSO Enterprise instance will
 #                   not have the instance name appended. (AMConfig.properties)
 #                   In case of multiple instances, you will have different names.
 #                   lets take an example of 3 instances. Instances could be 
 #                   server.sun.com-instance1, server.sun.com-instance2, 
 #                   server.sun.com-instance3. 
-#                   If 3 instances of Access Manager are deployed, one per
+#                   If 3 instances of OpenSSO Enterprise are deployed, one per
 #                   container instance, then the property files will look
 #                   something like the following:
 #                   AMConfig-instance1.properties
@@ -588,7 +588,7 @@ $ASADMIN_PASSWORD_SYNTAX="AS_ADMIN_PASSWORD=";
 #                   point to the correct server name as well (java option -Dserver.name=<IS_INSTANCE_NAME>)
 #                   
 # Significance  :   AMTune will automatically try to associate your instance names with 
-#                   Access Manager Property files using this parameter.
+#                   OpenSSO Enterprise Property files using this parameter.
 #                   Currently, only 2 files are based on this Instance Name
 #                       a. AMConfig.properties file
 #                       b. serverconfig.xml
@@ -644,20 +644,20 @@ $AMTUNE_DEBUG_FILE_PREFIX=amtune;
 # Values        :   0-100
 # Default       :   75
 # Description   :   Percentage value; Dictates how much of available memory
-#                   will be used by Access Manager
-# Note          :   Currently, Access Manager can use a maximum of 4GB. This is the 
+#                   will be used by OpenSSO Enterprise
+# Note          :   Currently, OpenSSO Enterprise can use a maximum of 4GB. This is the 
 #                   per-process address space limit for 32-bit apps.
 #
-#                   Access Manager currently requires a minimum of 256MB RAM
+#                   OpenSSO Enterprise currently requires a minimum of 256MB RAM
 #
 #                   When you set AMTUNE_PCT_MEMORY_TO_USE to 100, the maximum 
-#                   space allocated for Access Manager would be the minimum
+#                   space allocated for OpenSSO Enterprise would be the minimum
 #                   between 4GB and 100% of available RAM
 #
-#                   When you set AMTUNE_PCT_MEMORY_TO_USE to 0, Access Manager
+#                   When you set AMTUNE_PCT_MEMORY_TO_USE to 0, OpenSSO Enterprise
 #                   will be configured to use 256MB RAM 
 #                   
-# Significance  :   This value is the driving force in tuning Access Manager.
+# Significance  :   This value is the driving force in tuning OpenSSO Enterprise.
 #                   The following values are derived from this setting:
 #                   1. JVM memory usage - Heap Sizes, NewSizes, PermSizes
 #                   2. ThreadPool sizes - WS RqThrottle, 
@@ -665,7 +665,7 @@ $AMTUNE_DEBUG_FILE_PREFIX=amtune;
 #                           SM LDAP Connection Pool,
 #                           Notification ThreadPools
 #                           
-#                   3. Access Manager Caches - SDK Caches, Session Caches
+#                   3. OpenSSO Enterprise Caches - SDK Caches, Session Caches
 #                           (NYI: Policy Caches)
 #                   4. Max Sizes - Max. #Sessions, Max #CacheEntries
 #                   
@@ -681,7 +681,7 @@ $AMTUNE_PCT_MEMORY_TO_USE=75;
 #
 # Description   :   This value is the available stack space per thread in Java(/Web Container).
 #                   Per thread stack size is used to tune various thread related
-#                   parameters in Access Manager and the Web Container.
+#                   parameters in OpenSSO Enterprise and the Web Container.
 #                   
 #                   128 KB is a reasonable value for this, and should not be 
 #                   changed unless otherwise absolutely necessary
@@ -704,7 +704,7 @@ $AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT=512;
 #                   level, the tuning will not apply to them
 #
 # Significance  :   Setting this value to very high or very low values (minutes) will affect the
-#                   number of users an Access Manager deployment can support. Hence, these parameters
+#                   number of users an OpenSSO Enterprise deployment can support. Hence, these parameters
 #                   could be optionally tuned using this tool
 #
 # Note          :   You will have to explicitly enable session timeout tuning by setting
@@ -728,7 +728,7 @@ $AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS=2;
 # Description   :   These parameters are used to calculate the max and min heap sizes.
 #                   You should only change these parameters for JVM 64 bits.  For JVM 32 bits
 #                   leave the default values.
-#                   Note: WS uses about 1/8 of the Access Manager process memory. Hence
+#                   Note: WS uses about 1/8 of the OpenSSO Enterprise process memory. Hence
 #                   this setting
 #-------------------------------------------------------------------------------
 $AMTUNE_MEM_MAX_HEAP_SIZE_RATIO=7/8;
@@ -769,7 +769,7 @@ $AMTUNE_AVG_PER_SESSION_SIZE_IN_KB=4;
 #Per thread stack size is a JDK recommended value
 $AMTUNE_DEF_PER_THREAD_STACK_SIZE_IN_KB=128;
 
-#Out the memory available for Java part of the Access Manager process memory, 
+#Out the memory available for Java part of the OpenSSO Enterprise process memory, 
 #the following is the breakdown of memory needs
 $AMTUNE_MEM_MAX_NEW_SIZE=1/8;
 $AMTUNE_MEM_MAX_PERM_SIZE=1/12;
@@ -777,7 +777,7 @@ $AMTUNE_MEM_THREADS_SIZE=1/16;
 $AMTUNE_MEM_OPERATIONAL=19/48;
 $AMTUNE_MEM_CACHES_SIZE=1/3;
 
-#Out of the memory available for Access Manager Caches, 
+#Out of the memory available for OpenSSO Enterprise Caches, 
 #the breakdown b/w SDK and Session Cache size is as follows:
 #NOTE   :   Its not clear how much memory Policy, Liberty, SAML Caches use. 
 #           These fall into the OPERATIONAL memory category. 
@@ -788,7 +788,7 @@ $AMTUNE_MEM_SDK_CACHE_SIZE=2/3;
 $AMTUNE_MEM_SESSION_CACHE_SIZE=1/3;
 
 #Notification queue size is estimated to be 10% of concurrent sessions
-#Basically, Access Manager can operate properly as long as 10% or less sessions expire under a short period of time
+#Basically, OpenSSO Enterprise can operate properly as long as 10% or less sessions expire under a short period of time
 #Current estimation of "short period of time" is 5-10 minutes.
 $AMTUNE_NOTIFICATION_QUEUE_SIZE=1/1000;
 
@@ -821,7 +821,7 @@ $AMTUNE_IS_NOTIFICATION_THREADS=1/48;
 #Defines how many notifications can be in the pending queue per notification thread
 $AMTUNE_IS_NOTIFICATION_QUEUE_SIZE_PER_THREAD=100;
 
-#Some known WS and Access Manager Defaults
+#Some known WS and OpenSSO Enterprise Defaults
 $AMTUNE_NUM_WS_RQTHROTTLE_MIN=10;
 $AMTUNE_NUM_WS_THREAD_INCREMENT=10;
 $AMTUNE_NUM_IS_MIN_AUTH_LDAP_THREADS=10;
@@ -938,7 +938,7 @@ sub getUsage
 	}
 	elsif($NUM_PARAMS_EXPECTED == 2)
 	{
-		print "$RUN_SCRIPT_NAME <access manager password> $display_usage_password\n";
+		print "$RUN_SCRIPT_NAME <OpenSSO Enterprise server password> $display_usage_password\n";
 	}
 	else
 	{
@@ -985,7 +985,7 @@ checkArgs(($#ARGV+1),$ARGV[0],$ARGV[1],$ARGV[2]);
 $g=localtime();
 $SCRIPT_BASENAME="$SCRIPT_LOCATION/$SCRIPT_BASENAME : $g";
 
-# Access Manager Constants
+# OpenSSO Enterprise Constants
 $ADMIN_CLIENT="$IS_INSTALL_DIR/bin/amadmin.bat";
 $LDAPSEARCH="$BASEDIR/share/bin/ldapsearch.exe";
 $LDAPMODIFY="$BASEDIR/share/bin/ldapmodify.exe";
@@ -1005,22 +1005,22 @@ if(($AMTUNE_SCRIPT_TYPE eq "all")||($AMTUNE_SCRIPT_TYPE eq "am")||($AMTUNE_SCRIP
 	#-------------------------------------------------------------------------------
 	if(($IS_INSTALL_DIR eq "")||(! -d $IS_INSTALL_DIR)||(! -d "$IS_INSTALL_DIR/bin"))
 	{
-		print "Invalid Access Manager installation. Cannot proceed.\n";
-	    print "Access Manager installation directory: $IS_INSTALL_DIR\n";
+		print "Invalid OpenSSO Enterprise installation. Cannot proceed.\n";
+	    print "OpenSSO Enterprise installation directory: $IS_INSTALL_DIR\n";
 	    exit($AMTUNE_INVALID_ENVIRON_SETTING);
 	}
 	
 	if(($IS_CONFIG_DIR eq "")||(! -d $IS_CONFIG_DIR))
 	{
-		print "Access Manager configuration directory not found. Cannot proceed.\n";
-	    print "Access Manager configuration directory: $IS_CONFIG_DIR\n";
+		print "OpenSSO Enterprise configuration directory not found. Cannot proceed.\n";
+	    print "OpenSSO Enterprise configuration directory: $IS_CONFIG_DIR\n";
 	    print "You may need to customize the following file appropriately: amtune-env.pl\n";
 	    exit($AMTUNE_INVALID_ENVIRON_SETTING);
 	}
 	
 	if(($ADMIN_CLIENT eq "")||(! -f $ADMIN_CLIENT))
 	{
-		print "Access Manager Admin Client Utility not found. Cannot proceed.\n";
+		print "OpenSSO Enterprise Admin Client Utility not found. Cannot proceed.\n";
 	    print "Current Admin Client Utility: $ADMIN_CLIENT\n";
 	    print "You may need to customize the following file appropriately: amtune-env.pl\n";
 	    exit($AMTUNE_INVALID_ENVIRON_SETTING);
@@ -1028,8 +1028,8 @@ if(($AMTUNE_SCRIPT_TYPE eq "all")||($AMTUNE_SCRIPT_TYPE eq "am")||($AMTUNE_SCRIP
 	
 	if(($AMCONFIG_PROPERTY_FILE eq "")||(! -f $AMCONFIG_PROPERTY_FILE))
 	{
-		print "Access Manager configuration file not found. Cannot proceed.\n";
-	    print "Access Manager configuration file : $AMCONFIG_PROPERTY_FILE\n";
+		print "OpenSSO Enterprise configuration file not found. Cannot proceed.\n";
+	    print "OpenSSO Enterprise configuration file : $AMCONFIG_PROPERTY_FILE\n";
 	    exit($AMTUNE_INVALID_ENVIRON_SETTING);
 	}
 }
@@ -1338,7 +1338,7 @@ if(($AMTUNE_SCRIPT_TYPE eq "all")||($AMTUNE_SCRIPT_TYPE eq "ds"))
    	}
 }
   
-# If Access Manager installed, use debug log directory to store debug file; otherwise, 
+# If OpenSSO Enterprise installed, use debug log directory to store debug file; otherwise, 
 # save it in the current directory
 if(-f "$AMCONFIG_PROPERTY_FILE")
 {
@@ -1404,7 +1404,7 @@ else
 &check_env; 
 
 
-# if amtune-prepareDSTuner is running, don't need to display Access Manager machine info
+# if amtune-prepareDSTuner is running, don't need to display OpenSSO Enterprise machine info
 if($AMTUNE_SCRIPT_TYPE ne "ds")
 {
 
@@ -1429,7 +1429,7 @@ if($AMTUNE_SCRIPT_TYPE ne "ds")
 	&echo_msg("amtune Information...\n");
 	&echo_msg("$LINE_SEP");
 	&echo_msg("Amtune Mode      : $AMTUNE_MODE\n");
-	&echo_msg("Access Manager   : $AMTUNE_TUNE_IDENTITY\n");
+	&echo_msg("OpenSSO Enterprise   : $AMTUNE_TUNE_IDENTITY\n");
 	&echo_msg("Directory        : $AMTUNE_TUNE_DS\n");
 	&echo_msg("Web Container    : $AMTUNE_TUNE_WEB_CONTAINER\n");
 	if ($JVM64bitAvailable eq "true")

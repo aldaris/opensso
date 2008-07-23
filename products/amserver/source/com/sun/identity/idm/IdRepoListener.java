@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.10 2008-07-14 20:27:42 veiming Exp $
+ * $Id: IdRepoListener.java,v 1.11 2008-07-23 17:24:58 veiming Exp $
  *
  */
 
@@ -118,7 +118,7 @@ public final class IdRepoListener {
 
     /**
      * 
-     * This method has been deprecated as of FAM 8.0.
+     * This method has been deprecated as of OpenSSO Enterprise 8.0.
      * 
      * @param name name of the identity that changed
      * @param type change type i.e., add, delete, modify, etc.

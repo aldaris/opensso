@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.13 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: RemoteHandler.java,v 1.14 2008-07-23 17:24:59 veiming Exp $
  *
  */
 
@@ -76,7 +76,7 @@ public class RemoteHandler extends Handler {
     private int recCountLimit;
     // Map with loggedBySID as key & reqSet as value.
     // It's to make remote loggging work properly when buffering is enabled 
-    // and log request is directed to different Access Managers.
+    // and log request is directed to different OpenSSO Enterprise servers.
     private Map reqSetMap;
     private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;

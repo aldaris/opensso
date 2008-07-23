@@ -22,24 +22,24 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-env,v 1.4 2008-06-25 05:41:18 qcheng Exp $
+# $Id: amtune-env,v 1.5 2008-07-23 17:21:54 veiming Exp $
 #
 #
 
 ################################################################################
 # Keys to performance tuning parameter documentation:    
-#           IS      - Federated Access Manager
-#           AM      - Federated Access Manager
+#           IS      - OpenSSO Enterprise
+#           AM      - OpenSSO Enterprise
 #           DS      - Directory Server
 #           WS      - Web Server
 #           AS      - Application Server
-#           amtune  - Federated Access Manager tuning scripts located in amtune directory
+#           amtune  - OpenSSO Enterprise tuning scripts located in amtune directory
 #           #x      - Number of x (eg. #Sessions - Number of Sessions) 
 #           KB      - Kilo Bytes
 #           MB      - Mega Bytes
 #           GB      - Giga Bytes
 #           MTS     - Minutes
-#           SM      - Federated Access Manager Service Management Module
+#           SM      - OpenSSO Enterprise Service Management Module
 #           NYI     - Not yet incorporated
 #
 # You will need to modify/verify the parameters mentioned below for perftune/* 
@@ -62,7 +62,7 @@
 # Note that amtune currently is not interactive.
 #
 # Also, there is a list of "DO NOT MODIFY" parameters towards the end of this file
-# that the amtune scripts rely on. This section is maintained by Federated Access Manager engineers
+# that the amtune scripts rely on. This section is maintained by OpenSSO Enterprise engineers
 # and modifications to these parameters are unwarranted and will not be supported.
 #
 ################################################################################
@@ -94,12 +94,12 @@
 #
 # Note          :   1. On CHANGE mode
 #                   Please use extreme caution while using CHANGE mode.
-#                   In CHANGE mode, amtune might need to restart the Web Container, Federated Access Manager
+#                   In CHANGE mode, amtune might need to restart the Web Container, OpenSSO Enterprise
 #                   and might recommend a system restart.
 #   
 #                   2. On Directory Server tuning   
 #                   Tuning Directory Server requires extra levels of confirmation.
-#                   Assumption is that Federated Access Manager will use an existing Directory Server in
+#                   Assumption is that OpenSSO Enterprise will use an existing Directory Server in
 #                   non-exclusive mode (other applications might use Directory Server)
 #                   
 #                   Irrespective of where the Directory Server is installed (local or remote),
@@ -109,7 +109,7 @@
 #                   and execute the amtune-ds script.
 #                   
 #                   3. On selectively tuning different components
-#                   Different components (such as OS, Web Container, Federated Access Manager, Directory)
+#                   Different components (such as OS, Web Container, OpenSSO Enterprise, Directory)
 #                   can be selectively based on AMTUNE_TUNE_* parameters. (Described in
 #                   detail next in the next comment block)
 #-------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ AMTUNE_LOG_LEVEL=FILE
 #                       a) AMTUNE_TUNE_OS               - Operating System - Kernel, TCP settings
 #                       b) AMTUNE_TUNE_DS               - Directory Server
 #                       c) AMTUNE_TUNE_WEB_CONTAINER    - Web Container - Application Server or Web Server
-#                       d) AMTUNE_TUNE_IDENTITY         - Federated Access Manager
+#                       d) AMTUNE_TUNE_IDENTITY         - OpenSSO Enterprise
 #                   These settings work in conjunction with AMTUNE_MODE parameter setting.
 #                   You could review or change recommended tunings of any set of components.
 #
@@ -220,7 +220,7 @@ fi
 #-------------------------------------------------------------------------------
 # Parameter     :   IS_INSTALL_DIR
 #                   IS_CONFIG_DIR
-# Value         :   Federated Access Manager installation and configuration directory for AM 6.x and 7.x only.
+# Value         :   OpenSSO Enterprise installation and configuration directory for AM 6.x and 7.x only.
 # Default       :   /opt/SUNWam for Solaris and /opt/sun/identity for Linux
 #                   /etc/opt/SUNWam/config for Solaris and /etc/opt/sun/identity/config for Linux
 #                   where AMConfig.properties and serverconfig.xml are typically installed.
@@ -247,7 +247,7 @@ AMTUNE_BIN_DIR=`/usr/bin/dirname $0`
 # Parameter     :   WEB_CONTAINER
 # Values        :   WS61 or WS7 or AS8 or AS91
 #
-# Description   :   Name of the Web Container that Federated Access Manager is deployed on.
+# Description   :   Name of the Web Container that OpenSSO Enterprise is deployed on.
 #                   Accepted values for WEB_CONTAINER
 #                   WebServer6.1=WS61, WebServer7=WS7, AppServer 8.x=AS8 
 #                   AppServer 9.1=AS91
@@ -258,7 +258,7 @@ WEB_CONTAINER=AS91
 
 #-------------------------------------------------------------------------------
 # Parameter     :   CONTAINER_BASE_DIR
-# Value         :   Federated Access Manager Web Container's Install Directory
+# Value         :   OpenSSO Enterprise Web Container's Install Directory
 # Default       :   /var/opt/SUNWwbsvr7                         - for Web Server 7 or later
 #                   /opt/SUNWwbsvr                              - for Web Server 6.1 
 #                   /var/opt/SUNWappserver7/                    - for Application Server 7.x
@@ -305,7 +305,7 @@ fi
 #                   domains/server1                         - for Application Server 7.x
 #                   domains/domain1                         - for Application Server 8.x or 9.1
 #
-# Description   :   Typically, this value is the hostname where Federated Access Manager is deployed.
+# Description   :   Typically, this value is the hostname where OpenSSO Enterprise is deployed.
 #                   When you have multiple instances for the web container,
 #                   this value might be different from the hostname.
 #                   Please customize this accordingly
@@ -325,11 +325,11 @@ fi
 
 #-------------------------------------------------------------------------------
 # Parameter     :   CONTAINER_INSTANCE_DIR
-# Value         :   Federated Access Manager Web Container instance directory
+# Value         :   OpenSSO Enterprise Web Container instance directory
 # Default       :   $CONTAINER_BASE_DIR/https-${WEB_CONTAINER_INSTANCE_NAME}    - for Web Server 6.1 or later
 #                   $CONTAINER_BASE_DIR/${WEB_CONTAINER_INSTANCE_NAME}          - for Application Server 7.0 or later
 #
-# Description   :   Typical value is the default value. If you install Federated Access Manager in a
+# Description   :   Typical value is the default value. If you install OpenSSO Enterprise in a
 #                   non-default location, you will need to change this value
 #-------------------------------------------------------------------------------
 if [ "$WEB_CONTAINER" = "" ] || [ `echo $WEB_CONTAINER|cut -c1-2` = "WS" ]; then
@@ -458,7 +458,7 @@ WSADMIN_COMMON_PARAMS="$WSADMIN_COMMON_PARAMS_NO_CONFIG --config=$WSADMIN_CONFIG
 #
 # Parameter         : ASADMIN_TARGET
 # Value             : Typically, this value is set to 'server'  (with the assumption that
-#                       this AS 8 or AS91 installation is exclusively used for Federated Access Manager/Portal Server
+#                       this AS 8 or AS91 installation is exclusively used for OpenSSO Enterprise/Portal Server
 # Default Value     : server
 #
 # Parameter         : ASADMIN_HTTPLISTENER
@@ -522,9 +522,9 @@ ASADMIN_COMMON_PARAMS="$ASADMIN_COMMON_PARAMS_NO_TARGET --target $ASADMIN_TARGET
 # Parameter     :  FAMADM_LOCATION
 # Value         :  famadm CLI tool location for tuning FAM configurations.
 # Default Value :  <TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin
-# Description   :  <TOOLS_DIR> is the directory which has famAdminTools.zip unzipped
+# Description   :  <TOOLS_DIR> is the directory which has ssoAdminTools.zip unzipped
 #               :  (ie: current directory), and <FAM_INSTANCE_NAME> is the name of the 
-#               :  Federated Federated Access Manager that is deployed in the web container.
+#               :  Federated OpenSSO Enterprise that is deployed in the web container.
 #               :  This is a mandatory field to be filled.
 #
 # Parameter     :  FAMADM_USER
@@ -537,47 +537,47 @@ ASADMIN_COMMON_PARAMS="$ASADMIN_COMMON_PARAMS_NO_TARGET --target $ASADMIN_TARGET
 # Description   :  This file will be created and deleted by amtune-fam script.
 #
 # Parameter     :  FAMSERVER_URL
-# Value         :  URL for FAM Server 8.x or later after it was deployed in a web container.
+# Value         :  URL for OpenSSO Enterprise Server 8.x or later after it was deployed in a web container.
 #               :  For instance, a typical value is "http://serverhostname.domainname:port/opensso"
 #               :  Or "http://serverhostname.domainname:port/openfm". 
 #               :  This is a mandatory field to be filled.
 #
 #--------------------------------------------------------------------------------------
-FAMADM_LOCATION=/famadm/opensso/bin
+FAMADM_LOCATION=/ssoadm/opensso/bin
 FAMSERVER_URL=http://servername.domainname:port/opensso
 FAMADM_USER=amadmin
-FAMADM=$FAMADM_LOCATION/famadm
+FAMADM=$FAMADM_LOCATION/ssoadm
 FAMADM_PASSFILE=/tmp/fampassfile
 FAMADM_COMMON_PARAMS_NO_SERVER="--adminid $FAMADM_USER --password-file $FAMADM_PASSFILE"
 FAMADM_SERVER="--servername"
 
 #-------------------------------------------------------------------------------
 # Parameter     :   IS_INSTANCE_NAME
-# Value         :   Federated Access Manager Instance Name for AM 6.x and 7.x only.
+# Value         :   OpenSSO Enterprise Instance Name for AM 6.x and 7.x only.
 # Default       :   <empty>
 #                   
 #
 # Description   :   This value is used in determining the property
-#                   filenames for the Federated Access Manager install.
-#                   Multiple instances of Federated Access Manager could be deployed in
+#                   filenames for the OpenSSO Enterprise install.
+#                   Multiple instances of OpenSSO Enterprise could be deployed in
 #                   the same machine.
 #                   Assumption is that there will be one set of property files
-#                   per Federated Access Manager instance and the instance name will be
+#                   per OpenSSO Enterprise instance and the instance name will be
 #                   appended to the 
-#                   file names. If there is only one instance of Federated Access Manager in a machine,
+#                   file names. If there is only one instance of OpenSSO Enterprise in a machine,
 #                   then the instance name will not be appended to the file names
 #   
-#                   e.g. If your Federated Access Manager is installed on a machine named
+#                   e.g. If your OpenSSO Enterprise is installed on a machine named
 #                   server.sun.com,
 #                   typically, your first instance of the web server will be 
 #                   https-server.sun.com.
-#                   The property files for the first Federated Access Manager instance will
+#                   The property files for the first OpenSSO Enterprise instance will
 #                   not have the instance name appended. (AMConfig.properties)
 #                   In case of multiple instances, you will have different names.
 #                   lets take an example of 3 instances. Instances could be 
 #                   server.sun.com-instance1, server.sun.com-instance2, 
 #                   server.sun.com-instance3. 
-#                   If 3 instances of Federated Access Manager are deployed, one per
+#                   If 3 instances of OpenSSO Enterprise are deployed, one per
 #                   container instance, then the property files will look
 #                   something like the following:
 #                   AMConfig-instance1.properties
@@ -598,7 +598,7 @@ FAMADM_SERVER="--servername"
 #                   point to the correct server name as well (java option -Dserver.name=<IS_INSTANCE_NAME>)
 #                   
 # Significance  :   AMTune will automatically try to associate your instance names with 
-#                   Federated Access Manager Property files using this parameter.
+#                   OpenSSO Enterprise Property files using this parameter.
 #                   Currently, only 2 files are based on this Instance Name
 #                       a. AMConfig.properties file
 #                       b. serverconfig.xml
@@ -653,20 +653,20 @@ AMTUNE_DEBUG_FILE_PREFIX=amtune
 # Values        :   0-100
 # Default       :   75
 # Description   :   Percentage value; Dictates how much of available memory
-#                   will be used by Federated Access Manager
-# Note          :   Currently, Federated Access Manager can use a maximum of 4GB. This is the 
+#                   will be used by OpenSSO Enterprise
+# Note          :   Currently, OpenSSO Enterprise can use a maximum of 4GB. This is the 
 #                   per-process address space limit for 32-bit apps.
 #
-#                   Federated Access Manager currently requires a minimum of 256MB RAM
+#                   OpenSSO Enterprise currently requires a minimum of 256MB RAM
 #
 #                   When you set AMTUNE_PCT_MEMORY_TO_USE to 100, the maximum 
-#                   space allocated for Federated Access Manager would be the minimum
+#                   space allocated for OpenSSO Enterprise would be the minimum
 #                   between 4GB and 100% of available RAM
 #
-#                   When you set AMTUNE_PCT_MEMORY_TO_USE to 0, Federated Access Manager
+#                   When you set AMTUNE_PCT_MEMORY_TO_USE to 0, OpenSSO Enterprise
 #                   will be configured to use 256MB RAM 
 #                   
-# Significance  :   This value is the driving force in tuning Federated Access Manager.
+# Significance  :   This value is the driving force in tuning OpenSSO Enterprise.
 #                   The following values are derived from this setting:
 #                   1. JVM memory usage - Heap Sizes, NewSizes, PermSizes
 #                   2. ThreadPool sizes - WS RqThrottle, 
@@ -674,7 +674,7 @@ AMTUNE_DEBUG_FILE_PREFIX=amtune
 #                           SM LDAP Connection Pool,
 #                           Notification ThreadPools
 #                           
-#                   3. Federated Access Manager Caches - SDK Caches, Session Caches
+#                   3. OpenSSO Enterprise Caches - SDK Caches, Session Caches
 #                           (NYI: Policy Caches)
 #                   4. Max Sizes - Max. #Sessions, Max #CacheEntries
 #                   
@@ -690,7 +690,7 @@ AMTUNE_PCT_MEMORY_TO_USE=75
 #
 # Description   :   This value is the available stack space per thread in Java(/Web Container).
 #                   Per thread stack size is used to tune various thread related
-#                   parameters in Federated Access Manager and the Web Container.
+#                   parameters in OpenSSO Enterprise and the Web Container.
 #                   
 #                   128 KB is a reasonable value for this, and should not be 
 #                   changed unless otherwise absolutely necessary
@@ -713,7 +713,7 @@ AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT=512
 #                   level, the tuning will not apply to them
 #
 # Significance  :   Setting this value to very high or very low values (minutes) will affect the
-#                   number of users an Federated Access Manager deployment can support. Hence, these parameters
+#                   number of users an OpenSSO Enterprise deployment can support. Hence, these parameters
 #                   could be optionally tuned using this tool
 #
 # Note          :   You will have to explicitly enable session timeout tuning by setting
@@ -737,7 +737,7 @@ AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS=2
 # Description   :   These parameters are used to calculate the max and min heap sizes.
 #                   You should only change these parameters for JVM 64 bits.  For JVM 32 bits
 #                   leave the default values.
-#                   Note: WS uses about 1/8 of the Federated Access Manager process memory. Hence
+#                   Note: WS uses about 1/8 of the OpenSSO Enterprise process memory. Hence
 #                   this setting
 #-------------------------------------------------------------------------------
 AMTUNE_MEM_MAX_HEAP_SIZE_RATIO=7/8
@@ -782,7 +782,7 @@ AMTUNE_MIN_PERM_SIZE_AS8=400
 AMTUNE_AVG_PER_ENTRY_CACHE_SIZE_IN_KB=8
 AMTUNE_AVG_PER_SESSION_SIZE_IN_KB=4
 
-#Out the memory available for Java part of the Federated Access Manager process memory, 
+#Out the memory available for Java part of the OpenSSO Enterprise process memory, 
 #the following is the breakdown of memory needs
 AMTUNE_MEM_MAX_NEW_SIZE=1/8
 AMTUNE_MEM_MAX_PERM_SIZE=1/12
@@ -790,7 +790,7 @@ AMTUNE_MEM_THREADS_SIZE=1/16
 AMTUNE_MEM_OPERATIONAL=19/48
 AMTUNE_MEM_CACHES_SIZE=1/3
 
-#Out of the memory available for Federated Access Manager Caches, 
+#Out of the memory available for OpenSSO Enterprise Caches, 
 #the breakdown b/w SDK and Session Cache size is as follows:
 #NOTE   :   Its not clear how much memory Policy, Liberty, SAML Caches use. 
 #           These fall into the OPERATIONAL memory category. 
@@ -828,7 +828,7 @@ AMTUNE_IS_OPERATIONAL_THREADS=5/12
 AMTUNE_IS_AUTH_LDAP_THREADS=1/24
 AMTUNE_IS_SM_LDAP_THREADS=1/24
 
-#Some known WS and Federated Access Manager Defaults
+#Some known WS and OpenSSO Enterprise Defaults
 AMTUNE_NUM_WS_RQTHROTTLE_MIN=10
 AMTUNE_NUM_WS_THREAD_INCREMENT=10
 AMTUNE_NUM_IS_MIN_AUTH_LDAP_THREADS=10
@@ -936,7 +936,7 @@ checkArgs() {
             display_usage_password="[<web server admin password> is needed only if web server is running in 64-bit mode]"
             ;;
         "fam" )
-            display_usage_password="requires a password file with famadm password as an argument."  
+            display_usage_password="requires a password file with ssoadm password as an argument."  
             ;;
         "os" )
             display_usage_password="does not require any password to run."
@@ -1066,7 +1066,7 @@ fi
 #-------------------------------------------------------------------------------
 # Validate Installation Directory
 #-------------------------------------------------------------------------------
-# Federated Access Manager Constants
+# OpenSSO Enterprise Constants
 ADMIN_CLIENT=$IS_INSTALL_DIR/bin/amadmin
 # Retrieve AM config file name
 setAMConfigPropertyFile
@@ -1078,7 +1078,7 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
 
    if [ "$FAMADM_LOCATION" = "" ] || [ ! -d $FAMADM_LOCATION ]; then
    
-      $ECHO `$gettext "Please enter FAM server's famadm location in amtune-env file."`
+      $ECHO `$gettext "Please enter FAM server's ssoadm location in amtune-env file."`
       $ECHO `$gettext "It should be set to "` "FAMADM_LOCATION."
       exit $AMTUNE_INVALID_ENVIRON_SETTING
      
@@ -1086,8 +1086,8 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
 
    if [ "$FAMADM" = "" ] || [ ! -f $FAMADM ]; then
         
-      $ECHO `$gettext "FAM server's famadm tool is not found."`
-      $ECHO `$gettext "Please set famadm's location to FAMADM_LOCATION in amtune-env."`
+      $ECHO `$gettext "OpenSSO Enterprise server's ssoadm tool is not found."`
+      $ECHO `$gettext "Please set ssoadm's location to FAMADM_LOCATION in amtune-env."`
       exit $AMTUNE_INVALID_ENVIRON_SETTING
    
    fi
@@ -1100,7 +1100,7 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
 
    if [ "$FAMADM_USER" = "" ]; then
        $ECHO `$gettext "FAM server's admin user not found."`
-       $ECHO `$gettext "Please set famadm user to FAMADM_USER in amtune-env."`
+       $ECHO `$gettext "Please set ssoadm user to FAMADM_USER in amtune-env."`
        exit $AMTUNE_INVALID_ENVIRON_SETTING
    fi
 
@@ -1146,8 +1146,8 @@ if   [ "$AMTUNE_SCRIPT_TYPE" = "am"  ] || [ "$AMTUNE_SCRIPT_TYPE" = "fam" ] ||
    fi
 
    if [ "$AMCONFIG_PROPERTY_FILE" = "" ] || [ ! -f $AMCONFIG_PROPERTY_FILE ]; then
-        $ECHO "Federated Access Manager " `$gettext "configuration file not found. "` `$gettext "Cannot proceed."`
-        $ECHO "Federated Access Manager " `$gettext "configuration file: "` "$AMCONFIG_PROPERTY_FILE"
+        $ECHO "OpenSSO Enterprise " `$gettext "configuration file not found. "` `$gettext "Cannot proceed."`
+        $ECHO "OpenSSO Enterprise " `$gettext "configuration file: "` "$AMCONFIG_PROPERTY_FILE"
         exit $AMTUNE_INVALID_ENVIRON_SETTING
    fi
 
@@ -1391,7 +1391,7 @@ if  [ "$AMTUNE_SCRIPT_TYPE" = "ds"  ]; then
 
 fi
 
-# If Federated Access Manager installed, use debug log directory to store debug file; otherwise, 
+# If OpenSSO Enterprise installed, use debug log directory to store debug file; otherwise, 
 # save it in the current directory
 if [ -f "$AMCONFIG_PROPERTY_FILE" ]; then
    debug_dir=`getConfigEntry "com.iplanet.services.debug.directory"`
@@ -1440,7 +1440,7 @@ check_env
 ECHO_MSG "`$gettext 'Checking User...'`"
 check_root_user 
 
-# if amtune-prepareDSTuner is running, don't need to display Federated Access Manager machine info
+# if amtune-prepareDSTuner is running, don't need to display OpenSSO Enterprise machine info
 if [ "$AMTUNE_SCRIPT_TYPE" != "ds" ]; then
 
 JVM64bitAvailable="false"
@@ -1461,7 +1461,7 @@ ECHO_MSG "amtune `$gettext 'information...'`"
 ECHO_MSG $LINE_SEP
 ECHO_MSG "amtune Mode      : $AMTUNE_MODE"
 ECHO_MSG "OS               : $AMTUNE_TUNE_OS"
-ECHO_MSG "Federated Access Manager   : $AMTUNE_TUNE_IDENTITY"
+ECHO_MSG "OpenSSO Enterprise   : $AMTUNE_TUNE_IDENTITY"
 ECHO_MSG "Directory        : $AMTUNE_TUNE_DS"
 ECHO_MSG "Web Container    : $AMTUNE_TUNE_WEB_CONTAINER"
 if [ "$WEB_CONTAINER" = "WS7" ] || [ "$WEB_CONTAINER" = "WS61" ]; then

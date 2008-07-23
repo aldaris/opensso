@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2008-07-10 12:47:15 kanduls Exp $
+$Id: README,v 1.5 2008-07-23 17:21:54 veiming Exp $
 
 ------------------------------------------------------------------------------
 
@@ -35,9 +35,9 @@ $Id: README,v 1.4 2008-07-10 12:47:15 kanduls Exp $
 
 %% 1. About tuning scripts
 --------------------------
-The Access Manager tuning scripts allow you to tune Access Manager and other 
+The OpenSSO Enterprise tuning scripts allow you to tune OpenSSO Enterprise and other 
 components of your deployment, including Sun Java System Directory Server, 
-the web container running Access Manager, and the operating system (OS) kernel 
+the web container running OpenSSO Enterprise, and the operating system (OS) kernel 
 and TCP/IP parameters.
 
 The following table describes the tuning scripts that are available in OpenSSO release.
@@ -47,31 +47,31 @@ opensso/products/amserver/scripts/tune/amtune.bat.
 
 %% 2. Setup tuning scripts
 ---------------------------
-Step 1: Unzip famAdminTools.zip to the desired directory.
+Step 1: Unzip ssoAdminTools.zip to the desired directory.
 
-Step 2: Go to the directory which has the famAdminTools.zip unzipped.
+Step 2: Go to the directory which has the ssoAdminTools.zip unzipped.
         Run the setup command as follows:
         "./setup" or "setup"
         for Unix and Windows respectively.
         Then enter the configuration directory when prompted.
-        "Path to config files of Federated Access Manager
+        "Path to config files of OpenSSO Enterprise
         (example: /fam_config/opensso):"
 
 Step 3: After step 2 is performed, the CLIs can be run under the following
         directory:
         <TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin
-        where <TOOLS_DIR> is the directory which has famAdminTools.zip unzipped
+        where <TOOLS_DIR> is the directory which has ssoAdminTools.zip unzipped
         (ie: current directory), and <FAM_INSTANCE_NAME> is the deployment
-        URI of Federated Access Manager.
+        URI of OpenSSO Enterprise.
 
 %% 2. Running tunning scripts
 
 2.1 Tuning Modes
 
-The Access Manager tuning scripts can run in the following modes, as determined by the AMTUNE_MODE 
+The OpenSSO Enterprise tuning scripts can run in the following modes, as determined by the AMTUNE_MODE 
 parameter in the amtune-env.properties file.
 
-    * 	REVIEW mode (default). The scripts return tuning recommendations for an Access Manager deployment, 
+    * 	REVIEW mode (default). The scripts return tuning recommendations for an OpenSSO Enterprise deployment, 
 	but they do not make any actual changes to the environment.
     * 	CHANGE mode. The scripts make all of the tuning modifications that are defined in the amtune-env.properties 
 	file.  Use CHANGE mode only after you have reviewed and understand the tuning 
@@ -85,7 +85,7 @@ terminal window,  debug logs will be present in the file
 
 2.2 Running scripts
 
-2.2.1 Running scripts to tune the operating system, the Web Container, and the Access Manager
+2.2.1 Running scripts to tune the operating system, the Web Container, and the OpenSSO Enterprise
 
 To run a tuning script, 
 
@@ -102,14 +102,14 @@ To run a tuning script,
 	  to CHANGE in the amtune-env.properties file.
 	* Check the debug log file for the results of the run.
 
-	Note: In CHANGE mode, the amtune script might need to restart the Web container and Access Manager. In 
+	Note: In CHANGE mode, the amtune script might need to restart the Web container and OpenSSO Enterprise. In 
 	some instances, amtune might also recommend a system restart.  
 
 
 2.2.2 Executing amtune on a remote Sun Directory Server machine.
 
-Step 1. FTP or copy over famAdminTools.zip to the remote Sun DS machine.
-Step 2. Unzip famAdminTools.zip.
+Step 1. FTP or copy over ssoAdminTools.zip to the remote Sun DS machine.
+Step 2. Unzip ssoAdminTools.zip.
 Step 3. Create <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune on Unix/Linux
         and TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune on Windows   
 Step 4. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune.template on Unix/Linux to

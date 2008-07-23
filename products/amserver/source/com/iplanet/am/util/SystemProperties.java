@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.12 2008-06-25 05:41:28 qcheng Exp $
+ * $Id: SystemProperties.java,v 1.13 2008-07-23 17:21:56 veiming Exp $
  *
  */
 
@@ -402,12 +402,13 @@ public class SystemProperties {
     }
     
     /**
-     * Initializes the properties to be used by Access Manager. Ideally this
-     * must be called first before any other method is called within Access
-     * Manager. This method provides a programmatic way to set the properties,
-     * and will override similar properties if loaded for a properties file.
+     * Initializes the properties to be used by OpenSSO Enterprise. Ideally this
+     * must be called first before any other method is called within OpenSSO
+     * Enterprise. This method provides a programmatic way to set the
+     * properties, and will override similar properties if loaded for a
+     * properties file.
      * 
-     * @param properties properties for access manager
+     * @param properties properties for OpenSSO Enterprise
      * @param reset <code>true</code> to reset existing properties.
      */
     public static synchronized void initializeProperties(
@@ -418,12 +419,13 @@ public class SystemProperties {
     }
     
     /**
-     * Initializes the properties to be used by Access Manager. Ideally this
-     * must be called first before any other method is called within Access
-     * Manager. This method provides a programmatic way to set the properties,
-     * and will override similar properties if loaded for a properties file.
+     * Initializes the properties to be used by OpenSSO Enterprise. Ideally this
+     * must be called first before any other method is called within OpenSSO
+     * Enterprise. This method provides a programmatic way to set the
+     * properties, and will override similar properties if loaded for a
+     * properties file.
      * 
-     * @param properties properties for access manager
+     * @param properties properties for OpenSSO Enterprise.
      * @param reset <code>true</code> to reset existing properties.
      * @param withDefaults <code>true</code> to include default properties.
      */
@@ -454,8 +456,9 @@ public class SystemProperties {
     }
 
     /**
-     * Initializes the property to be used by Access Manager. Ideally this must
-     * be called first before any other method is called within Access Manager.
+     * Initializes the property to be used by OpenSSO Enterprise. Ideally this
+     * must be called first before any other method is called within OpenSSO
+     * Enterprise.
      * This method provides a programmatic way to set a specific property, and
      * will override similar property if loaded for a properties file.
      * 
@@ -476,7 +479,7 @@ public class SystemProperties {
      * Returns a counter for last modification. The counter is incremented if
      * the properties are changed by calling the following method
      * <code>initializeProperties</code>. This is a convenience methods for
-     * applications to track changes to access manager properties.
+     * applications to track changes to OpenSSO Enterprise properties.
      * 
      * @return counter of the last modification
      */

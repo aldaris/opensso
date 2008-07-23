@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModel.java,v 1.6 2008-06-25 05:42:49 qcheng Exp $
+ * $Id: AMModel.java,v 1.7 2008-07-23 17:24:56 veiming Exp $
  *
  */
 
@@ -42,7 +42,7 @@ public interface AMModel
     extends AMAdminConstants
 {
     /**
-     * Access Manager's administration console service name.
+     * OpenSSO Enterprise's administration console service name.
      */
     String ADMIN_CONSOLE_SERVICE = "iPlanetAMAdminConsoleService";
 

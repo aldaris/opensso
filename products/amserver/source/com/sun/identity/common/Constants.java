@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.13 2008-07-18 00:40:23 kenwho Exp $
+ * $Id: Constants.java,v 1.14 2008-07-23 17:24:55 veiming Exp $
  *
  */
 
@@ -31,7 +31,7 @@ package com.sun.identity.common;
 /**
  * This interface contains all the property names defined in in
  * <code>AMConfig.properties</code> and may be expanded with other constant
- * values that are used for Access Manager server development.
+ * values that are used for OpenSSO Enterprise server development.
  *
  * @deprecated As of OpenSSO version 8.0
  *             {@link com.sun.identity.shared.Constants}
@@ -737,8 +737,8 @@ public interface Constants {
         "com.sun.identity.session.application.maxCacheTime";
 
     /**
-     * Property string to enable Session/Cookie hijacking mode in Access
-     * Manager.
+     * Property string to enable Session/Cookie hijacking mode in OpenSSO
+     * Enterprise.
      */
     public static final String IS_ENABLE_UNIQUE_COOKIE = 
         "com.sun.identity.enableUniqueSSOTokenCookie";
@@ -799,7 +799,7 @@ public interface Constants {
 
     /**
      * Property string to determine if validation is required when parsing XML
-     * documents using Access Manager XMLUtils class.
+     * documents using OpenSSO Enterprise XMLUtils class.
      */
     public static final String XML_VALIDATING = 
         "com.iplanet.am.util.xml.validating";

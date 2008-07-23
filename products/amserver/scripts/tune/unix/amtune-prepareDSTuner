@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-prepareDSTuner,v 1.4 2008-06-25 05:41:18 qcheng Exp $
+# $Id: amtune-prepareDSTuner,v 1.5 2008-07-23 17:21:54 veiming Exp $
 #
 #
 
@@ -72,7 +72,7 @@ prepareDirectoryTuner() {
 
     list_default_am_indexes=`getListDefaultAMIndexes`
     if [ "$list_default_am_indexes" = "" ]; then
-        $ECHO `$gettext "WARNING: Can't find Federated Access Manager Index file.  Using the default list in amtune-directory-template."`
+        $ECHO `$gettext "WARNING: Can't find OpenSSO Enterprise Index file.  Using the default list in amtune-directory-template."`
     fi
 
     $CP $AMTUNE_UTILS_SCRIPT /tmp/amtune-utils
@@ -118,7 +118,7 @@ prepareDirectoryTuner() {
 #############################################################################
 # Start of main program
 #############################################################################
-# This flag is used only when Federated Access Manager is deployed as single
+# This flag is used only when OpenSSO Enterprise is deployed as single
 # web-application.
 ##@SINGLEWAR_FLAG@
 
@@ -137,7 +137,7 @@ if [ -f $SCRIPT_LOCATION/amtune-env ]; then
     fi
 fi
 
-ECHO_MSG "`$gettext 'Federated Access Manager - Directory Server Tuner Preparation Script'`"
+ECHO_MSG "`$gettext 'OpenSSO Enterprise - Directory Server Tuner Preparation Script'`"
 
 DS_TAR_DIR=$SCRIPT_LOCATION
 

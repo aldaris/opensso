@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfiguration.java,v 1.4 2008-06-25 05:41:52 qcheng Exp $
+ * $Id: AMConfiguration.java,v 1.5 2008-07-23 17:22:00 veiming Exp $
  *
  */
 
@@ -53,7 +53,7 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 
 /**
- * Access Manager JAAS Configuration implementation.
+ * OpenSSO Enterprise JAAS Configuration implementation.
  */
 public class AMConfiguration extends Configuration {
     
@@ -213,7 +213,7 @@ public class AMConfiguration extends Configuration {
                 default :
                     if (debug.messageEnabled()) {
                         debug.message("Unable to find config " + name +
-                        " in Access Manager config");
+                        " in OpenSSO Enterprise config");
                     }
                     // check the default configuration
                     debug.message("Getting default configuration.");

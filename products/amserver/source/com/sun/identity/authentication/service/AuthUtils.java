@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.19 2008-06-25 05:42:04 qcheng Exp $
+ * $Id: AuthUtils.java,v 1.20 2008-07-23 17:22:01 veiming Exp $
  *
  */
 
@@ -1329,7 +1329,7 @@ public class AuthUtils extends AuthClientUtils {
      * the value is retrieved from the auth service if a
      * handle on the auth context object is there otherwise
      * check the HttpServletRequest object to see if the
-     * Access Manager cookie is in the request header
+     * OpenSSO Enterprise cookie is in the request header
      *
      * @param authContext is the handle to the auth service
      *	                  for the request

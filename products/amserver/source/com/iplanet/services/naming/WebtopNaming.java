@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.20 2008-07-22 00:12:53 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.21 2008-07-23 17:21:58 veiming Exp $
  *
  */
 
@@ -254,7 +254,7 @@ public class WebtopNaming {
     ) throws URLNotFoundException {
         try {
             // check before the first naming table update to avoid deadlock
-            // uri can be empty string for pre-FAM 8.0 releases
+            // uri can be empty string for pre-OpenSSO Enterprise 8.0 releases
             if ((protocol == null) || (host == null) || (port == null) ||
                 (uri == null) || (protocol.length() == 0) ||
                 (host.length() == 0) || (port.length() == 0)
@@ -474,7 +474,8 @@ public class WebtopNaming {
                 serverID = getValueFromTable(serverIdTable, server);
                 
                 if (serverID == null) {
-                    //try without URI, this is for prior release of FAM 8.0
+                    //try without URI, this is for prior release of OpenSSO
+                    //Enterprise 8.0
                     serverID = getValueFromTable(serverIdTable, 
                         serverWithoutURI);
                 }
@@ -485,7 +486,8 @@ public class WebtopNaming {
                 getNamingProfile(true);
                 serverID = getValueFromTable(serverIdTable, server);
                 if (serverID == null) {
-                    //try without URI, this is for prior release of FAM 8.0
+                    //try without URI, this is for prior release of OpenSSO
+                    //Enterprise 8.0
                     serverID = getValueFromTable(serverIdTable, 
                         serverWithoutURI);
                 }

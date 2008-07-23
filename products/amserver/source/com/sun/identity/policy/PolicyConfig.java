@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfig.java,v 1.7 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: PolicyConfig.java,v 1.8 2008-07-23 17:24:59 veiming Exp $
  *
  */
 
@@ -201,7 +201,7 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
             = "iPlanetAMPolicyConfigService";
 
     /** 
-     * Access Manager directory host.
+     * OpenSSO Enterprise directory host.
      */
     public static final String ISDS_HOST = PolicyUtils.getISDSHostName();
 
@@ -726,10 +726,11 @@ public class PolicyConfig implements com.sun.identity.sm.ServiceListener {
 
     }
 
-    /** Returns names of policy advices that could be handled by Access Manager 
-     * if PEP redirects the user agent to Access Manager.
+    /**
+     * Returns names of policy advices that could be handled by OpenSSO
+     * Enterprise if PEP redirects the user agent to OpenSSO Enterprise.
      * @return <code>Set</code> representing names of policy advices 
-     * Access Manager could handle 
+     *         OpenSSO Enterprise could handle.
      */
     public static Set getAdvicesHandleableByAM() throws PolicyException {
         if (advicesHandleableByAM == null) {

@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-utils,v 1.4 2008-06-25 05:41:18 qcheng Exp $
+# $Id: amtune-utils,v 1.5 2008-07-23 17:21:54 veiming Exp $
 #
 #
 
@@ -515,7 +515,7 @@ getEntry() {
 #-------------------------------------------------------------------------------
 # Function      :   getAMVersion, getFAMVersion
 # Parameters    :   None
-# Output        :   Returns the version string of Federated Access Manager to be tuned.
+# Output        :   Returns the version string of OpenSSO Enterprise to be tuned.
 # Description   :   This function runs amadmin to get the version string for 
 #               :   AM 6.x and AM 7.x and famadm for FAM 8.x or later. 
 #-------------------------------------------------------------------------------

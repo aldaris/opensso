@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.6 2008-06-25 05:43:25 qcheng Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.7 2008-07-23 17:24:58 veiming Exp $
  *
  */
 package com.sun.identity.delegation.plugins;
@@ -80,9 +80,9 @@ import com.sun.identity.delegation.DelegationPrivilege;
 
 /**
  * The class <code>DelegationPolicyImpl</code> implements the interface
- * <code>DelegationInterface</code> using Access Manager Policy
+ * <code>DelegationInterface</code> using OpenSSO Enterprise Policy
  * Management and Evaluation APIs. It provides access control for access 
- * manager using the access manager's internal policy framework.
+ * manager using the OpenSSO Enterprise's internal policy framework.
  */
 
 public class DelegationPolicyImpl implements DelegationInterface, 

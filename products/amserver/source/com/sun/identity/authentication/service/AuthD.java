@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.16 2008-06-25 05:42:04 qcheng Exp $
+ * $Id: AuthD.java,v 1.17 2008-07-23 17:22:01 veiming Exp $
  *
  */
 
@@ -1259,10 +1259,10 @@ public class AuthD  {
     }
     
     /**
-     * Returns the Access Manager Identity Repository for an organization.
+     * Returns the OpenSSO Enterprise Identity Repository for an organization.
      *
      * @param orgDN name of the organization
-     * @return Access Manager Identity Repository.
+     * @return OpenSSO Enterprise Identity Repository.
      */
     public AMIdentityRepository getAMIdentityRepository(String orgDN) {
         AMIdentityRepository amIdentityRepository = null;

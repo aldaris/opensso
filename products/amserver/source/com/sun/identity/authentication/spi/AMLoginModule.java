@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.10 2008-06-25 05:42:06 qcheng Exp $
+ * $Id: AMLoginModule.java,v 1.11 2008-07-23 17:24:54 veiming Exp $
  *
  */
 
@@ -83,7 +83,7 @@ import com.sun.identity.sm.ServiceSchemaManager;
 
 /**
  * An abstract class which implements JAAS LoginModule, it provides
- * methods to access Java System Access Manager services and the module
+ * methods to access Sun OpenSSO Enterprise services and the module
  * xml configuration.
  * <p>
  * Because it is an abstract class, Login Module writers must subclass
@@ -1388,7 +1388,7 @@ public abstract class AMLoginModule implements LoginModule {
      * @deprecated This method has been deprecated. Please use the
      *             IdRepo API's to get the AMIdentity object for the user. More
      *             information on how to use the Identity Repository APIs is
-     *             available in the Access Manager Developer's Guide.
+     *             available in the OpenSSO Enterprise Developer's Guide.
      *
      * @supported.api
      */
@@ -1722,7 +1722,7 @@ public abstract class AMLoginModule implements LoginModule {
     /**
      * Sets the <code>userID</code> of user who failed authentication.
      * This <code>userID</code> will be used to log failed authentication in
-     * the Access Manager error logs.
+     * the OpenSSO Enterprise error logs.
      *
      * @param userID user name of user who failed authentication.
      * @supported.api

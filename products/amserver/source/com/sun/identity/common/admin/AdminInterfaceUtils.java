@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminInterfaceUtils.java,v 1.3 2008-06-25 05:42:27 qcheng Exp $
+ * $Id: AdminInterfaceUtils.java,v 1.4 2008-07-23 17:24:56 veiming Exp $
  *
  */
 
@@ -208,13 +208,13 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default people container name created when an organization is
-     * created in Access Manager. This may not be the one which the user sees as
-     * his/her default container through Access Manager console.
+     * created in OpenSSO Enterprise. This may not be the one which the user
+     * sees as his/her default container through OpenSSO Enterprise console.
      * 
      * @return Returns the default people container name created when an
-     *         organization is created in Access Manager. This may not be the
-     *         one which the user sees as his/her default container through
-     *         Access Manager console.
+     *         organization is created in OpenSSO Enterprise. This may not be
+     *         the one which the user sees as his/her default container through
+     *         OpenSSO Enterprise console.
      */
     public static String defaultPCCreateDuringOrgConfig() {
         initialize();
@@ -223,13 +223,13 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default group container name created when an organization is
-     * created in Access Manager. This may not be the one which the user sees as
-     * his/her default container through Access Manager console.
+     * created in OpenSSO Enterprise. This may not be the one which the user
+     * sees as his/her default container through OpenSSO Enterprise console.
      * 
      * @return Returns the default group container name created when an
-     *         organization is created in Access Manager. This may not be the
-     *         one which the user sees as his/her default container through
-     *         Access Manager console.
+     *         organization is created in OpenSSO Enterprise. This may not be
+     *         the one which the user sees as his/her default container through
+     *         OpenSSO Enterprise console.
      */
     public static String defaultGCCreateDuringOrgConfig() {
         initialize();
@@ -238,10 +238,10 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default org admin role name created when an organization is
-     * created in Access Manager.
+     * created in OpenSSO Enterprise.
      * 
      * @return Returns the default org admin role name created when an
-     *         organization is created in Access Manager.
+     *         organization is created in OpenSSO Enterprise.
      */
     public static String defaultOrgAdminRoleCreateDuringOrgConfig() {
         initialize();
@@ -250,10 +250,10 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default help desk admin role name created when an
-     * organization is created in Access Manager.
+     * organization is created in OpenSSO Enterprise.
      * 
      * @return Returns the default help desk admin role name created when an
-     *         organization is created in Access Manager.
+     *         organization is created in OpenSSO Enterprise.
      */
     public static String defaultHelpDeskAdminRoleCreateDuringOrgConfig() {
         initialize();
@@ -262,10 +262,10 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default policy admin role name created when an organization
-     * is created in Access Manager.
+     * is created in OpenSSO Enterprise.
      * 
      * @return Returns the default policy admin role name created when an
-     *         organization is created in Access Manager.
+     *         organization is created in OpenSSO Enterprise.
      */
     public static String defaultPolicyAdminRoleCreateDuringOrgConfig() {
         initialize();

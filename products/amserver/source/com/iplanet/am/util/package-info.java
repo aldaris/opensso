@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.3 2008-06-25 05:41:28 qcheng Exp $
+ * $Id: package-info.java,v 1.4 2008-07-23 17:21:56 veiming Exp $
  *
  */
 
 /**
- * Provides utility classes for use by other Access Manager SDK and custom
- * applications accessing Access Manager SDK.
+ * Provides utility classes for use by other OpenSSO Enterprise SDK and custom
+ * applications accessing OpenSSO Enterprise SDK.
  * @supported.api
  */
 
