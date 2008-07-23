@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSEncryptionProvider.java,v 1.3 2008-06-25 05:50:15 qcheng Exp $
+ * $Id: WSSEncryptionProvider.java,v 1.4 2008-07-23 05:13:31 mallas Exp $
  *
  */
 
@@ -233,7 +233,12 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
                 reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
                     WSSConstants.ASSERTION_VALUE_TYPE);
                 searchType = SAMLConstants.TAG_ASSERTION;
+            } else if (SecurityToken.WSS_SAML2_TOKEN.equals(tokenType)) {
+                reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                    WSSConstants.SAML2_ASSERTION_VALUE_TYPE);
+                searchType = SAMLConstants.TAG_ASSERTION;
             }
+            
             Element bsf = (Element)root.getElementsByTagNameNS(
                 WSSConstants.WSSE_NS,searchType).item(0);
 

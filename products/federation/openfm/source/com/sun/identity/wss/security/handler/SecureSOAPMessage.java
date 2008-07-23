@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.16 2008-07-22 16:33:04 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.17 2008-07-23 05:13:31 mallas Exp $
  *
  */
 
@@ -965,9 +965,7 @@ public class SecureSOAPMessage {
                  }
              }
 
-             
-             soapMessage =  
-                 WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());             
+                                       
              this.soapMessage.saveChanges();
              
 
@@ -1099,8 +1097,6 @@ public class SecureSOAPMessage {
 
              }
              
-             soapMessage =  
-                 WSSUtils.toSOAPMessage((Document) soapMessage.getSOAPPart());
              this.soapMessage.saveChanges();             
 
              if(debug.messageEnabled()) {
