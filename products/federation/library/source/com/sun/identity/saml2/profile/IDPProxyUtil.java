@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.10 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: IDPProxyUtil.java,v 1.11 2008-07-23 18:18:04 exu Exp $
  *
  */
 
@@ -264,7 +264,8 @@ public class IDPProxyUtil {
             }
 
             StringBuffer redirectURL =
-                new StringBuffer().append(targetURL).append("?");
+                new StringBuffer().append(targetURL)
+                    .append(targetURL.contains("?") ? "&" : "?");
              // sign the query string
             if (signingNeeded) {
                 String certAlias = SPSSOFederate.getParameter(

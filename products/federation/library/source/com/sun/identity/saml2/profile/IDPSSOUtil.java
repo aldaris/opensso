@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.34 2008-07-22 18:08:21 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.35 2008-07-23 18:18:04 exu Exp $
  *
  */
 
@@ -1863,7 +1863,8 @@ public class IDPSSOUtil {
                 SAML2Utils.postToTarget(response, SAML2Constants.SAML_ART,
                     artStr, "RelayState", relayState, acsURL);
             } else {
-                String redirectURL = acsURL + "?SAMLart=" +
+                String redirectURL = acsURL + 
+                    (acsURL.contains("?") ? "&" : "?") + "SAMLart=" +
                     URLEncDec.encode(artStr);
                 if ((relayState != null) && (relayState.trim().length() != 0)){
                     redirectURL += "&RelayState=" +

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.20 2008-07-15 00:24:40 qcheng Exp $
+ * $Id: SPSSOFederate.java,v 1.21 2008-07-23 18:18:04 exu Exp $
  *
  */
 
@@ -324,7 +324,7 @@ public class SPSSOFederate {
                 }
 
                 StringBuffer redirectURL = 
-                    new StringBuffer().append(ssoURL).append("?");
+                    new StringBuffer().append(ssoURL).append(ssoURL.contains("?") ? "&" : "?");
                 // sign the query string
                 if (((idpsso != null) && idpsso.isWantAuthnRequestsSigned()) ||
                     ((spsso != null) && spsso.isAuthnRequestsSigned()) ) {
