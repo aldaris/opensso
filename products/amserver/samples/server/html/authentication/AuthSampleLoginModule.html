@@ -24,14 +24,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AuthSampleLoginModule.html,v 1.3 2008-06-30 17:38:28 pawand Exp $
+   $Id: AuthSampleLoginModule.html,v 1.4 2008-07-23 17:14:30 veiming Exp $
 
 -->
 
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Sun Java(TM) System Access Manager</title>
+<title>Sun OpenSSO Enterprise</title>
 
 <link rel="stylesheet" type="text/css" href="../../com_sun_web_ui/css/css_ns6up.css" />
 <link rel="shortcut icon" href="../../com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon"></link>
@@ -140,7 +140,7 @@
     implement <code>init()</code>, <code>process()</code>,
     <code>getPrincipal()</code> methods. <code>AMLoginModule</code> is an
     abstract class which implements JAAS <code>LoginModule</code>, it provides
-    methods to access Sun Java System Access Manager services and the module
+    methods to access Sun OpenSSO Enterprise services and the module
     XML configuration. Refer javadocs for complete list of methods. 
     <pre>
     public void init(Subject subject,Map sharedState, Map options);
@@ -214,7 +214,7 @@
     pages in the Module properties XML file have been sent and the module
     has not thrown an exception. The method retrieves the authenticated
     token string that the authenticated user will be known by in the
-    Access Manager environment. 
+    OpenSSO Enterprise environment. 
     </p>
 <p>
     
@@ -230,7 +230,7 @@
     </p>
 <p>
 <ol>
-<li>Login to Access Manager Console as amadmin. [<a target="console" href="../../UI/Login">here</a>]</li>
+<li>Login to OpenSSO Enterprise Console as amadmin. [<a target="console" href="../../UI/Login">here</a>]</li>
 <li>Click on "Configuration" tab.</li>
 <li>Select "Core" under the Authentication table.</li>
 <li>Add <code>com.sun.identity.samples.authentication.spi.providers.LoginModuleSample</code> to "Pluggable Auth Modules Classes" attribute.</li>

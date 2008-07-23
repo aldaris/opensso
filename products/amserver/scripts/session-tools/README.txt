@@ -22,13 +22,13 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.3 2008-06-25 05:41:16 qcheng Exp $
+# $Id: README.txt,v 1.4 2008-07-23 17:14:32 veiming Exp $
 #
 amSessionTools.zip 
 ======================================================
 
 This file contains information on installing and using amSessionTools.zip.
-It is assumed that Access Manager Server is available.
+It is assumed that OpenSSO Enterprise Server is available.
 
 Table of contents:
 -----------------

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.16 2008-07-14 20:27:40 veiming Exp $
+   $Id: build-tools.xml,v 1.17 2008-07-23 17:14:26 veiming Exp $
 
 -->
 
@@ -119,7 +119,7 @@
             <fileset dir="${sharedlib.dist.dir}"
                 includes="opensso-sharedlib.jar"/>
             <fileset dir="${amserver.dist.dir}"
-                includes="opensso.jar"/>
+                includes="amserver.jar"/>
         </copy>
         <copy todir="${amadm.res.dir}"
             overwrite="yes" encoding="UTF-8">

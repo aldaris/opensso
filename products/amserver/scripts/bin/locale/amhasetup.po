@@ -2,8 +2,8 @@ domain "amhasetup"
 msgid  " "
 msgstr " "
 
-msgid  "Welcome to Sun Java System Access Manager 7 2005Q4"
-msgstr "Welcome to Sun Java System Access Manager 7 2005Q4"
+msgid  "Welcome to Sun OpenSSO Enterprise 8"
+msgstr "Welcome to Sun OpenSSO Enterprise 8"
 
 msgid  "Session Failover Configuration Setup Program."
 msgstr "Session Failover Configuration Setup Program."
@@ -356,11 +356,11 @@ msgstr "Resource file:"
 msgid  "Verify:"
 msgstr "Verify:"
 
-msgid  "Access Manager configuration file does not exist. Please make sure it is present."
-msgstr "Access Manager configuration file does not exist. Please make sure it is present."
+msgid  "OpenSSO Enterprise configuration file does not exist. Please make sure it is present."
+msgstr "OpenSSO Enterprise configuration file does not exist. Please make sure it is present."
 
-msgid  "Access Manager configuration file is not readable. Please rerun with read permissions."
-msgstr "Access Manager configuration file is not readable. Please rerun with read permissions."
+msgid  "OpenSSO Enterprise configuration file is not readable. Please rerun with read permissions."
+msgstr "OpenSSO Enterprise configuration file is not readable. Please rerun with read permissions."
 
 msgid  "Succeeded..."
 msgstr "Succeeded..."

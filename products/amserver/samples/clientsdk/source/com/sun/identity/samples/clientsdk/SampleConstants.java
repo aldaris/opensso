@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SampleConstants.java,v 1.2 2008-06-25 05:41:09 qcheng Exp $
+ * $Id: SampleConstants.java,v 1.3 2008-07-23 17:14:29 veiming Exp $
  *
  */
 
@@ -32,7 +32,7 @@ public interface SampleConstants {
     String HTML_HEADER =
         "<!DOCTYPE html PUBLIC \"-//w3c//dtd html 4.0 transitional//en\">" +
         "<html><head>" +
-        "<title>Access Manager - Samples - Service Configuration</title>" +
+        "<title>OpenSSO Enterprise - Samples - Service Configuration</title>" +
         "<link rel=\"stylesheet\" href=\"sample.css\">" +
         "</head>" +
         "<body style=\"background-color: rgb(255, 255, 255);\"" +
@@ -44,7 +44,7 @@ public interface SampleConstants {
         " href=\"http://www.sun.com\"><img src=" +
         "\"sunLogo.gif\" border=\"0\"></a></td>" +
         "<td class=\"bannerContentCenter\" nowrap=\"nowrap\" valign=\"bottom\"" +
-        " width=\"60%\">Sun Java System Access Manager<br>" +
+        " width=\"60%\">Sun OpenSSO Enterprise<br>" +
         "Sample</td> <td class=\"bannerContentRight\" nowrap=\"nowrap\" " +
         "valign=\"bottom\" width=\"20%\">&nbsp;</td></tr></table>" +
         "<table border=\"0\" cellpadding=\"4\" cellspacing=\"8\" width=\"100%\">"+

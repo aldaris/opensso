@@ -24,7 +24,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amclsetup,v 1.2 2008-06-25 05:41:15 qcheng Exp $
+# $Id: amclsetup,v 1.3 2008-07-23 17:14:31 veiming Exp $
 #
 #
 
@@ -121,7 +121,7 @@ CLEAR_SESSIONSTORE="false"
 #Show welcome text and get confirmation from the user before proceding.
 ShowWelcome()
 {
-    ${ECHO} "`${GETTEXT} 'Welcome to JES Access Manager Session Failover Setup'`"
+    ${ECHO} "`${GETTEXT} 'Welcome to JES OpenSSO Enterprise Session Failover Setup'`"
     ${ECHO} "`${GETTEXT} 'Session Failover Configuration Setup Program.'`"
     ${ECHO} "===================================================================="
     ${ECHO} "`${GETTEXT} 'Please read the following prior to starting the configuration process. '`"
@@ -313,7 +313,7 @@ myread()
 
 
 #This function checks if amadmin is available in the directory where
-#the Access Manager is installed. If not this will bail out..
+#the OpenSSO Enterprise is installed. If not this will bail out..
 CheckAmadmin()
 {
     if [ ! -f ${AMADMIN} ]
@@ -562,7 +562,7 @@ CreateXMLFile()
     echo "-->" >> $1
     echo "" >> $1
     echo "<!DOCTYPE Requests" >> $1
-    echo "\tPUBLIC \"-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN\"" >> $1
+    echo "\tPUBLIC \"-//iPlanet//Sun OpenSSO Enterprise 8 Admin CLI DTD//EN\"" >> $1
     echo "\t\"jar://com/iplanet/am/admin/cli/amAdmin.dtd\"" >> $1
     echo ">" >> $1 
     echo "\n"

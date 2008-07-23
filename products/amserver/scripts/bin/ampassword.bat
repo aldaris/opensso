@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: ampassword.bat,v 1.15 2008-07-14 20:27:41 veiming Exp $
+: $Id: ampassword.bat,v 1.16 2008-07-23 17:14:31 veiming Exp $
 :
 
 set TOOLS_HOME="@TOOLS_HOME@"
@@ -36,7 +36,7 @@ shift
 goto WHILE
 :WEND
 
-set TOOLS_CLASSPATH="@CONFIG_DIR@";%TOOLS_HOME%/lib/amadm_setup.jar;%TOOLS_HOME%/lib/OpenDS.jar;%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/db.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/webservices-api.jar;%TOOLS_HOME%/lib/webservices-rt.jar;%TOOLS_HOME%/lib/webservices-tools.jar;%TOOLS_HOME%/lib/jaxrpc-spi.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/opensso.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/resources;%TOOLS_HOME%/config
+set TOOLS_CLASSPATH="@CONFIG_DIR@";%TOOLS_HOME%/lib/amadm_setup.jar;%TOOLS_HOME%/lib/OpenDS.jar;%TOOLS_HOME%/lib/activation.jar;%TOOLS_HOME%/lib/db.jar;%TOOLS_HOME%/lib/j2ee.jar;%TOOLS_HOME%/lib/webservices-api.jar;%TOOLS_HOME%/lib/webservices-rt.jar;%TOOLS_HOME%/lib/webservices-tools.jar;%TOOLS_HOME%/lib/jaxrpc-spi.jar;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/mail.jar;%TOOLS_HOME%/lib/amserver.jar;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/resources;%TOOLS_HOME%/config
 
 
 "@JAVA_HOME@/bin/java.exe" -Xms64m -Xmx256m -classpath %TOOLS_CLASSPATH% -D"bootstrap.dir=@CONFIG_DIR@" -D"java.version.current=java.vm.version" -D"java.version.expected=1.4+"  -D"am.version.current=com.iplanet.am.version" -D"am.version.expected=8.0" com.iplanet.services.ldap.ServerConfigMgr %PARAMS%

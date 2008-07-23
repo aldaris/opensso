@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.32 2008-06-27 18:49:39 veiming Exp $
+   $Id: build.xml,v 1.33 2008-07-23 17:14:25 veiming Exp $
 
 -->
 
@@ -61,16 +61,16 @@
         <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
             target="build" />
         <copy todir="${fm.base.dir}/extlib">
-            <fileset file="${amserver.dist.dir}/opensso.jar" />
+            <fileset file="${amserver.dist.dir}/amserver.jar" />
             <fileset file="${amserver.dist.dir}/opensso-register.jar" />
             <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
             <fileset file="${amserver.dist.dir}/amAdminTools.zip" />
             <fileset file="${amserver.dist.dir}/amSessionTools.zip" />
         </copy>
         <!-- fake a copy to pass check-openfm-jars.xml -->
-        <copy file="${amserver.dist.dir}/opensso.jar" 
+        <copy file="${amserver.dist.dir}/amserver.jar" 
             tofile="${fm.base.dir}/extlib/console.jar" />
-        <copy file="${amserver.dist.dir}/opensso.jar" 
+        <copy file="${amserver.dist.dir}/amserver.jar" 
             tofile="${fm.base.dir}/extlib/opensso-test.jar" />
         <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
             target="tools" />
@@ -88,7 +88,7 @@
             target="build" />
         <copy todir="${fm.base.dir}/extlib">
             <fileset file="${amserver.dist.dir}/console.jar" />
-            <fileset file="${amserver.dist.dir}/opensso.jar" />
+            <fileset file="${amserver.dist.dir}/amserver.jar" />
             <fileset file="${amserver.dist.dir}/opensso-register.jar" />
             <fileset file="${amserver.dist.dir}/opensso_server_samples.war" />
             <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
@@ -139,7 +139,7 @@
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/amSessionTools.zip"
             todir="${openfm.extlib.dir}"  />            
-        <copy file="${amserver.dist.dir}/opensso.jar"
+        <copy file="${amserver.dist.dir}/amserver.jar"
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/opensso-register.jar"
             todir="${openfm.extlib.dir}"  />

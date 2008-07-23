@@ -22,47 +22,47 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.9 2008-07-10 12:46:23 kanduls Exp $
+   $Id: README.setup,v 1.10 2008-07-23 17:14:33 veiming Exp $
 
 -->
                                                                                
-Sun Java System OpenSSO: famAdminTools.zip 
+Sun Java System OpenSSO: ssoAdminTools.zip 
 ====================================================
 
-This file contains information on installing and using famAdminTools.zip.
-It is assumed that Federated Access Manager Server is available.
+This file contains information on installing and using ssoAdminTools.zip.
+It is assumed that OpenSSO Enterprise Server is available.
 
 Table of contents:
 -----------------
 1. Supported versions of Java Runtime
-2. Installing famAdminTools.zip
+2. Installing ssoAdminTools.zip
 3. What does this package contain?
 
 1. Supported versions of Java Runtime
 -------------------------
 J2SE 1.5 or higher.
 
-2. Installing famAdminTools.zip
+2. Installing ssoAdminTools.zip
 ------------------------------ 
 
-Steps involved in installing famAdminTools.zip are:
+Steps involved in installing ssoAdminTools.zip are:
 
-Step 1: Unzip famAdminTools.zip to the desired directory.
+Step 1: Unzip ssoAdminTools.zip to the desired directory.
 
-Step 2: Go to the directory which has the famAdminTools.zip unzipped.
+Step 2: Go to the directory which has the ssoAdminTools.zip unzipped.
         Run the setup command as follows:
         "./setup" or "setup"
         for Unix and Windows respectively.
         Then enter the configuration directory when prompted.
-        "Path to config files of Federated Access Manager
-        (example: /fam_config/opensso):"
+        "Path to config files of OpenSSO Enterprise
+        (example: /opensso_config/opensso):"
 
 Step 3: After step 2 is performed, the CLIs can be run under the following
         directory:
-        <TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin
-        where <TOOLS_DIR> is the directory which has famAdminTools.zip unzipped
-        (ie: current directory), and <FAM_INSTANCE_NAME> is the deployment
-        URI of Federated Access Manager.
+        <TOOLS_DIR>/<OPENSSO_INSTANCE_NAME>/bin
+        where <TOOLS_DIR> is the directory which has ssoAdminTools.zip unzipped
+        (ie: current directory), and <OPENSSO_INSTANCE_NAME> is the deployment
+        URI of OpenSSO Enterprise.
         
 3. What does this package contain?
 ----------------------------------
@@ -95,11 +95,11 @@ Step 3: After step 2 is performed, the CLIs can be run under the following
 4. Using amtune after setup is run
 ----------------------------------
 After setup is run, amtune directory will be created under
-<TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin, which would contain amtune or amtune.bat
+<TOOLS_DIR>/<OPENSSO_INSTANCE_NAME>/bin, which would contain amtune or amtune.bat
 script for tuning operating systems (Solaris 9, 10 or later or RedHat Enterprise
 AS 4 or 5), web containers (Sun Application Server 9.1/Glassfish v2 or Sun Web Server
 7.0 U3), Sun Directory Server 5.1/5.2 or 6.3 as SM (Service Management) and UM (User
-Manangement) data stores, as well as Federated Access Manager configuration
+Manangement) data stores, as well as OpenSSO Enterprise configuration
 values stored in SM and UM data stores.
 
 To run amtune, amtune-env.properties must be customized to specify installation/
@@ -108,17 +108,17 @@ the components mentioned above.
 
 5. Executing amtune on a remote Sun Directory Server machine.
 ----------------------------------------------------------------------
-Step 1. FTP or copy over famAdminTools.zip to the remote Sun DS machine.
-Step 2. Unzip famAdminTools.zip.
-Step 3. Create <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune on Unix/Linux
-        and TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune on Windows   
+Step 1. FTP or copy over ssoAdminTools.zip to the remote Sun DS machine.
+Step 2. Unzip ssoAdminTools.zip.
+Step 3. Create <TOOLS_DIR>/<OPENSSO_URI_DIR>/unix/bin/amtune on Unix/Linux
+        and TOOLS_DIR>\<OPENSSO_URI_DIR>\windows\bin\amtune on Windows   
 Step 4. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune.template on Unix/Linux to
-        <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune/amtune and
+        <TOOLS_DIR>/<OPENSSO_URI_DIR>/unix/bin/amtune/amtune and
         <TOOLS_DIR>\template\windows\bin\amtune\amtune.bat.template on Windows to
-        <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat
+        <TOOLS_DIR>\<OPENSSO_URI_DIR>\windows\bin\amtune\amtune.bat
 Step 5. Set values for TOOLS_HOME and JAVA_HOME in
-        <TOOLS_DIR>/<FAM_URI_DIR>/unix/bin/amtune/amtune on Unix/Linux and
-        <TOOLS_DIR>\<FAM_URI_DIR>\windows\bin\amtune\amtune.bat on Windows.   
+        <TOOLS_DIR>/<OPENSSO_URI_DIR>/unix/bin/amtune/amtune on Unix/Linux and
+        <TOOLS_DIR>\<OPENSSO_URI_DIR>\windows\bin\amtune\amtune.bat on Windows.   
 Step 6. Copy <TOOLS_DIR>/template/unix/bin/amtune/amtune-env.properties.template
         on Unix/Linux to <TOOLS_DIR>/template/unix/bin/amtune/amtune-env.properties
         and <TOOLS_DIR>\template\windows\bin\amtune\amtune-env.properties.template 

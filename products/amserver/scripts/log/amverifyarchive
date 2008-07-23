@@ -23,13 +23,13 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amverifyarchive,v 1.7 2008-07-16 00:27:49 bigfatrat Exp $
+# $Id: amverifyarchive,v 1.8 2008-07-23 17:14:32 veiming Exp $
 #
 
 TOOLS_HOME="@TOOLS_HOME@"
 JAVA_HOME="@JAVA_HOME@"
 
-TOOLS_CLASSPATH="@CONFIG_DIR@":${TOOLS_HOME}/lib/amadm_setup.jar:${TOOLS_HOME}/lib/OpenDS.jar:${TOOLS_HOME}/lib/activation.jar:${TOOLS_HOME}/lib/db.jar:${TOOLS_HOME}/lib/j2ee.jar:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/opensso.jar:${TOOLS_HOME}/lib/opensso-sharedlib.jar:${TOOLS_HOME}/lib/fam.jar:${TOOLS_HOME}/lib/openfedlib.jar:${TOOLS_HOME}/resources:${TOOLS_HOME}/config
+TOOLS_CLASSPATH="@CONFIG_DIR@":${TOOLS_HOME}/lib/amadm_setup.jar:${TOOLS_HOME}/lib/OpenDS.jar:${TOOLS_HOME}/lib/activation.jar:${TOOLS_HOME}/lib/db.jar:${TOOLS_HOME}/lib/j2ee.jar:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/amserver.jar:${TOOLS_HOME}/lib/opensso-sharedlib.jar:${TOOLS_HOME}/lib/opensso.jar:${TOOLS_HOME}/lib/openfedlib.jar:${TOOLS_HOME}/resources:${TOOLS_HOME}/config
 
 # Setup proper LD_LIBRARY_PATH if not already set
 

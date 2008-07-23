@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web.xml,v 1.2 2008-06-25 05:40:24 qcheng Exp $
+   $Id: web.xml,v 1.3 2008-07-23 17:14:26 veiming Exp $
 
 -->
 
@@ -33,7 +33,7 @@
   "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
 
-    <display-name>Access Manager Web Application SDK Samples</display-name>
+    <display-name>Sun OpenSSO Enterprise Web Application SDK Samples</display-name>
 
     <servlet>
 	<servlet-name>notificationservice</servlet-name>

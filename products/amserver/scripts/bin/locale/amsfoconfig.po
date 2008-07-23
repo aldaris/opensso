@@ -2,8 +2,8 @@ domain "amsfoconfig"
 msgid  " "
 msgstr " "
 
-msgid  "Welcome to Sun Java System Access Manager 7 2005Q4"
-msgstr "Welcome to Sun Java System Access Manager 7 2005Q4"
+msgid  "Welcome to Sun OpenSSO Enterprise 8"
+msgstr "Welcome to Sun OpenSSO Enterprise 8"
 
 msgid  "Session Failover Configuration Setup script."
 msgstr "Session Failover Configuration Setup script."
@@ -179,8 +179,8 @@ msgstr "Environment file:"
 msgid  "Resource file:"
 msgstr "Resource file:"
 
-msgid  "Sun Java System Access Manager 7 2005Q4."
-msgstr "Sun Java System Access Manager 7 2005Q4."
+msgid  "Sun OpenSSO Enterprise 8."
+msgstr "Sun OpenSSO Enterprise 8."
 
 msgid  "Session Configuration Program Log."
 msgstr "Session Configuration Program Log."

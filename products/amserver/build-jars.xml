@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.8 2008-06-27 18:49:39 veiming Exp $
+   $Id: build-jars.xml,v 1.9 2008-07-23 17:14:25 veiming Exp $
 
 -->
 
@@ -46,7 +46,7 @@
     </target>
 
     <target name="openssojar" depends="preparebuild">
-        <jar destfile="${amserver.dist.dir}/opensso.jar">
+        <jar destfile="${amserver.dist.dir}/amserver.jar">
             <manifest>
                 <attribute name="Version" value="${version}"/>
                 <attribute name="Create-On" value="${touch.time}"/>
@@ -70,7 +70,7 @@
                 prefix="com/sun/identity/console"/>
         </jar>
 
-        <checksum file="${amserver.dist.dir}/opensso.jar" 
+        <checksum file="${amserver.dist.dir}/amserver.jar" 
             algorithm="SHA" fileext=".sha" />
         <checksum file="${amserver.dist.dir}/console.jar" 
             algorithm="SHA" fileext=".sha" />
@@ -78,7 +78,7 @@
 
     <target name="jar-legacy" if="legacy">
         <ant antfile="${legacy.base.dir}/build.xml" inheritRefs="true" target="build" />
-        <jar destfile="${amserver.dist.dir}/opensso.jar" update="true">
+        <jar destfile="${amserver.dist.dir}/amserver.jar" update="true">
             <zipfileset dir="${legacy.built.dir}/classes" />
         </jar>
     </target>
@@ -123,8 +123,8 @@
     </target>
 
     <target name="clean">
-        <delete file="${amserver.dist.dir}/opensso.jar"/>
-        <delete file="${amserver.dist.dir}/opensso.jar.sha"/>
+        <delete file="${amserver.dist.dir}/amserver.jar"/>
+        <delete file="${amserver.dist.dir}/amserver.jar.sha"/>
         <delete file="${amserver.dist.dir}/opensso-test.jar"/>
         <delete file="${amserver.dist.dir}/opensso-test.jar.sha"/>
         <delete file="${amserver.dist.dir}/opensso-register.jar"/>

@@ -24,7 +24,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: amsfoconfig,v 1.3 2008-06-25 05:41:16 qcheng Exp $
+#$Id: amsfoconfig,v 1.4 2008-07-23 17:14:31 veiming Exp $
 #
 #
 
@@ -137,7 +137,7 @@ ShowWelcome()
 {
     RemoveXMLFiles
     ${ECHO} "===================================================================="
-    ${ECHO} "\t`${GETTEXT} 'Welcome to Sun Java System Access Manager 7 2005Q4'`"
+    ${ECHO} "\t`${GETTEXT} 'Welcome to Sun OpenSSO Enterprise 8'`"
     ${ECHO} "`${GETTEXT} ''`"
     ${ECHO} "\t`${GETTEXT} 'Session Failover Configuration Setup script.'`"
     ${ECHO} "===================================================================="
@@ -301,7 +301,7 @@ CreateXMLHeader()
     ${ECHO} "-->" >> $1
     ${ECHO} "" >> $1
     ${ECHO} "<!DOCTYPE Requests" >> $1
-    ${ECHO} "\tPUBLIC \"-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN\"" >> $1
+    ${ECHO} "\tPUBLIC \"-//iPlanet//Sun OpenSSO Enterprise 2005Q4 Admin CLI DTD//EN\"" >> $1
     ${ECHO} "\t\"jar://com/iplanet/am/admin/cli/amAdmin.dtd\"" >> $1
     ${ECHO} ">" >> $1
     ${ECHO} "\n" >> $1
@@ -642,7 +642,7 @@ LoadConfigXML()
 
 
 #This function checks if amadmin is available in the directory where
-#the Access Manager is installed. If not this will bail out..
+#the OpenSSO Enterprise is installed. If not this will bail out..
 CheckAmadmin()
 {
     if [ ! -f ${AMADMIN} ]
@@ -872,7 +872,7 @@ displayConfig()
 CheckUser
 WriteToLog " "
 WriteToLog " "
-${ECHO} "`${GETTEXT} 'Sun Java System Access Manager 7 2005Q4.'`" >> ${LOGFILE}
+${ECHO} "`${GETTEXT} 'Sun OpenSSO Enterprise 7 2005Q4.'`" >> ${LOGFILE}
 ${ECHO} "`${GETTEXT} 'Session Configuration Program Log.'`" >> ${LOGFILE}
 WriteToLog " "
 ${ECHO} "#####################################################################" >> ${LOGFILE}
