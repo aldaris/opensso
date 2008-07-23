@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.49 2008-07-18 22:43:06 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.50 2008-07-23 17:57:48 kenwho Exp $
  *
  */
 
@@ -1764,7 +1764,6 @@ public class LDAPv3Repo extends IdRepo {
             String test = doublequote + passwd  + doublequote;
             byte[] testBytes = test.getBytes("UTF-16LE");
             encodedBytesStr = Base64.encode(testBytes);
-            debug.error("PASSWORD secret= " + encodedBytesStr);
         } catch (Exception e) {
             e.printStackTrace();
         }

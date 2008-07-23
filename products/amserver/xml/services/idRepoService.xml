@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.25 2008-06-25 05:46:13 qcheng Exp $
+   $Id: idRepoService.xml,v 1.26 2008-07-23 17:55:50 kenwho Exp $
   
 -->
 
@@ -1676,6 +1676,7 @@
                             <Value>employeeNumber=distinguishedName</Value>
                             <Value>iplanet-am-user-alias-list=objectGUID</Value>
                             <Value>mail=userPrincipalName</Value>
+                            <Value>userPassword=unicodePwd</Value>
                             <Value>portalAddress=sAMAccountName</Value>
                             <Value>telephonenumber=displayName</Value>
                             <Value>uid=sAMAccountName</Value>
@@ -1887,6 +1888,8 @@
                             <Value>objectGUID</Value>
                             <Value>sAMAccountName</Value>
                             <Value>sn</Value>
+                            <Value>unicodePwd</Value>
+                            <Value>userAccountControl</Value>
                             <Value>userpassword</Value>
                             <Value>userPrincipalname</Value>
                             <Value>iplanet-am-user-federation-info-key</Value>

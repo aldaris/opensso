@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.4 2008-07-14 21:30:28 bina Exp $
+ * $Id: Migrate.java,v 1.5 2008-07-23 17:57:48 kenwho Exp $
  *
  */
 
@@ -213,6 +213,7 @@ public class Migrate implements MigrateTasks {
     final static String ATTR_AGENT_ATTRS =
             "sun-idrepo-ldapv3-config-agent-attributes";
     final static String ATTR_IS_ACTIVE = "sun-idrepo-ldapv3-config-isactive";
+    final static String ATTR_IDREPO_ATTR_MAPPING = "sunIdRepoAttributeMapping";
     final static String OU = "ou";
     final static String PEOPLE = "people";
     final static String ATTR_GIVEN_NAME = "givenName";
@@ -222,6 +223,7 @@ public class Migrate implements MigrateTasks {
     final static String ATTR_PRINCIPAL_NAME = "userPrincipalname";
     final static String ATTR_NAME = "name";
     final static String USER_ACCT_CTRL = "userAccountControl";
+    final static String UNICODE_PASS = "unicodePwd";
     final static String CONFIG_ACTIVE_VALUE = "544";
     final static String ATTR_CONFIG_ACTIVE = "sun-idrepo-ldapv3-config-active";
     final static String CONFIG_INACTIVE_VALUE = "546";
@@ -530,6 +532,8 @@ public class Migrate implements MigrateTasks {
             defaultVal.add(ATTR_ACCT_NAME);
             defaultVal.add(ATTR_PRINCIPAL_NAME);
             defaultVal.add(ATTR_NAME);
+            defaultVal.add(UNICODE_PASS);
+            defaultVal.add(USER_ACCT_CTRL);
 
             // add to organization schema.
             UpgradeUtils.addAttributeDefaultValues(SERVICE_NAME, LDAPv3ForAD,
@@ -538,6 +542,16 @@ public class Migrate implements MigrateTasks {
             UpgradeUtils.addAttrDefaultValueSubConfig(SERVICE_NAME, 
                     sunServiceIdAD,
                     ATTR_CONFIG_USER, defaultVal);
+
+	    // update sunIdRepoAttributeMapping
+	    defaultVal.clear();
+	    defaultVal.add("userPassword=unicodePwd");
+            UpgradeUtils.addAttributeDefaultValues(SERVICE_NAME, LDAPv3ForAD,
+                    ORG_SCHEMA_TYPE, ATTR_IDREPO_ATTR_MAPPING , defaultVal);
+            // add to all instances.
+            UpgradeUtils.addAttrDefaultValueSubConfig(SERVICE_NAME, 
+                    sunServiceIdAD,
+                    ATTR_IDREPO_ATTR_MAPPING, defaultVal);
 
             // add attribute to schema
             fileName =
