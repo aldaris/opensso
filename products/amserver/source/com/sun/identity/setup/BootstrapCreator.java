@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.8 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: BootstrapCreator.java,v 1.9 2008-07-23 06:03:31 veiming Exp $
  *
  */
 
@@ -54,6 +54,8 @@ import java.util.Iterator;
  */
 public class BootstrapCreator {
     private static BootstrapCreator instance = new BootstrapCreator();
+    private static boolean isUnix = 
+        System.getProperty("path.separator").equals(":");
     
     static final String template =
         "@DS_PROTO@://@DS_HOST@/@INSTANCE_NAME@" +
@@ -128,8 +130,14 @@ public class BootstrapCreator {
         try {
             String bootstrapString = getBootStrapURL(dsCfg);
             String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
-            AMSetupServlet.writeToFile(baseDir + "/" + BootstrapData.BOOTSTRAP,
-                bootstrapString);
+            String file = baseDir + "/" + BootstrapData.BOOTSTRAP;
+            if (isUnix) {
+                Runtime.getRuntime().exec("/bin/chmod 600 " + file);
+            }            
+            AMSetupServlet.writeToFile(file, bootstrapString);
+            if (isUnix) {
+                Runtime.getRuntime().exec("/bin/chmod 400 " + file);
+            }
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage());
         }
