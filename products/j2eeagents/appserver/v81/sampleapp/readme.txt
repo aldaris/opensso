@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.12 2008-07-10 21:38:44 huacui Exp $
+   $Id: readme.txt,v 1.13 2008-07-23 00:02:17 sean_brydon Exp $
 
 -->
 
@@ -35,7 +35,7 @@ with the Sun Application Server and the J2EE Agent. Please note that the agent
 needs to be installed first before deploying this sample application.
 
     * Overview
-    * Configure the Federated Access Manager server
+    * Configure the Sun OpenSSO Enterprise server
     * Configure the agent properties
     * Compiling and Assembling the Application
     * Deploying the Sample Application
@@ -59,18 +59,18 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent
-successfully and have followed the steps outlined in the Sun Federated Access 
-Manager Policy Agent 3.0 Guide for Sun Java System Application
-Server 9, including the post-installation steps.
+successfully and have followed the steps outlined in the Sun OpenSSO Enterprise
+Policy Agent 3.0 Guide for Sun Java System Application Server 9, including 
+the post-installation steps.
 
 
 
-Configure the Federated Access Manager server
+Configure the OpenSSO Enterprise server
 ---------------------------------------------
-This agent sample application requires that the Federated Access Manager server
+This agent sample application requires that the OpenSSO Enterprise server
 is configured with the subjects and policies required by the sample application.
 
-On Federated Access Manager admin console, do the following configuration.
+On OpenSSO Enterprise admin console, do the following configuration.
 1.  Create the following users:
     Here is the following list of users with username/password :
 
@@ -121,22 +121,22 @@ Configure the agent properties
 ------------------------------
 
    If the agent configuration is centralized, then do the following steps.
-   1). login to Opensso/FAM console as amadmin user
+   1). login to Opensso console as amadmin user
    2). navigate to Access Control/realm/Agents/J2EE, and click on the agent 
        instance link (assume the agent instance is already created, otherwise 
        refer to the agent doc to create the agent instance).
    3). in tab "Global", section "General", property "Resource Access Denied URI"
        enter /agentsample/authentication/accessdenied.html, and SAVE the change.
    4). in tab "Application", section "Login Processing", property "Login Form URI",
-       add [0]=/agentsample/authentication/login.html, and SAVE the change.
-   5). in tab "Application", section "URI Processing", property "Not Enforced URIs",
-       add the following entries:
-          [0]=/agentsample/public/*
-          [1]=/agentsample/images/*
-          [2]=/agentsample/styles/*
-          [3]=/agentsample/index.html
-          [4]=/agentsample/
-          [5]=/agentsample
+       add /agentsample/authentication/login.html, and SAVE the change.
+   5). in tab "Application", section "Not Enforced URI Processing", property
+       "Not Enforced URIs", add the following entries:
+          /agentsample/public/*
+          /agentsample/images/*
+          /agentsample/styles/*
+          /agentsample/index.html
+          /agentsample/
+          /agentsample
        and SAVE the change. 
 
    If the agent configuration is local, then edit the local agent configuration
@@ -161,7 +161,8 @@ Configure the agent properties
 
 Compiling and Assembling the Application
 ----------------------------------------
-This section contains instructions to build and assemble the sample application using a Command Line Interface (CLI).
+This section contains instructions to build and assemble the sample application
+using a Command Line Interface (CLI).
 
 To build the entire application from scratch, follow these steps:
 
@@ -180,7 +181,7 @@ To build the entire application from scratch, follow these steps:
       "dc=opensso,dc=java,dc=net". If the Org/Realm for the deployment scenario
       is different from the default root suffix, the Universal Id(uuid) for the
       role/principal mappings should be changed accordingly. The Universal Id 
-      can be obtained from the OpenSSO/FAM server console the group/role pages.
+      can be obtained from the OpenSSO server console the group/role pages.
    4. Deploy the application. After you have re-created the sample application 
       from scratch, you may proceed directly to Deploying the Sample Application
       or optionally perform step 5.

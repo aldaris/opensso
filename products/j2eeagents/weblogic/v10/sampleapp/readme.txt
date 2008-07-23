@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.13 2008-07-10 21:38:03 huacui Exp $
+   $Id: readme.txt,v 1.14 2008-07-23 00:02:17 sean_brydon Exp $
 
 -->
 
@@ -35,7 +35,7 @@ with the Weblogic 10 Application Server and the J2EE Agent. Please note that
 the agent needs to be installed first before deploying this sample application.
 
     * Overview
-    * Configure the Federated Access Manager server
+    * Configure the Sun OpenSSO Enterprise server
     * Configure the agent properties
     * Deploying the Sample Application
     * Running the Sample Application
@@ -60,19 +60,19 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
-successfully and have followed the steps outlined in the Sun Federated Access 
-Manager Policy Agent 3.0 Guide for BEA WebLogic Server/Portal
-10.0, including the post-installation steps.
+successfully and have followed the steps outlined in the Sun OpenSSO Enterprise 
+Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, including the 
+post-installation steps.
 
 
 
 
-Configure the Federated Access Manager server
+Configure the OpenSSO Enterprise server
 ----------------------------------------------
-This agent sample application requires that the Federated Access Manager server
+This agent sample application requires that the OpenSSO Enterprise server
 is configured with the subjects and policies required by the sample application.
 
-On Federated Access Manager admin console, do the following configuration.
+On OpenSSO Enterprise admin console, do the following configuration.
 1.  Create the following users:
     Here is the following list of users with username/password :
 
@@ -123,35 +123,46 @@ Configure the agent properties
 --------------------------------------------
 
    If the agent configuration is centralized, then do the following steps.
-   1). login to Opensso/FAM console as amadmin user
+   1). login to Opensso console as amadmin user
    2). navigate to Access Control/realm/Agents/J2EE, and click on the agent 
        instance link (assume the agent instance is already created, otherwise 
        refer to the agent doc to create the agent instance).
    3). in tab "Global", section "General", property "Resource Access Denied URI"
        enter /agentsample/authentication/accessdenied.html, and SAVE the change.
    4). in tab "Application", section "Login Processing", property "Login Form URI",
-       add [0]=/agentsample/authentication/login.html, and SAVE the change.
-   5). in tab "Application", section "URI Processing", property "Not Enforced URIs",
-       add the following entries:
-          [0]=/agentsample/public/*
-          [1]=/agentsample/images/*
-          [2]=/agentsample/styles/*
-          [3]=/agentsample/index.html
-          [4]=/agentsample
+       add /agentsample/authentication/login.html, and SAVE the change.
+   5). in tab "Application", section "Not Enforced URI Processing", property 
+       "Not Enforced URIs", add the following entries:
+          /agentsample/public/*
+          /agentsample/images/*
+          /agentsample/styles/*
+          /agentsample/index.html
+          /agentsample
        and SAVE the change. 
    6). in tab "Application", section "Privilege Attributes Processing", property
        "Privileged Attribute Mapping",
        add the following entries:
-       [UUID of group employee]=am_employee_role
-       [UUID of group manager]=am_manager_role
-       and SAVE the change.
+       a) add the UUID of group employee in the Map Key field of the UI
+          add am_employee_role in the Corresponding Map Value field of the UI 
+          and click the Add button.
+       b) add the UUID of group manager in the Map Key field of the UI
+          add am_manager_role in the Corresponding Map Value field of the UI 
+          and click the Add button.
+       c) then SAVE the change.
        Note you can find the UUID (Universal User ID) of the groups employee 
-       and manager from the FAM/OpenSSO console group page.
+       and manager from the OpenSSO console group page.
        For example, if the UUID of employee is id=employee,ou=group,dc=opensso,dc=java,dc=net 
        and the UUID of manager is id=manager,ou=group,dc=opensso,dc=java,dc=net
        then you need to add the following entries in the "Privileged Attribute Mapping".
-       [id=employee,ou=group,dc=opensso,dc=java,dc=net]=am_employee_role
-       [id=manager,ou=group,dc=opensso,dc=java,dc=net]=am_manager_role
+       a) add id=employee,ou=group,dc=opensso,dc=java,dc=net in the Map Key 
+          field of the UI.
+          add am_employee_role in the Corresponding Map Value field of the UI
+          and click the Add button.
+       b) add id=manager,ou=group,dc=opensso,dc=java,dc=net in the Map Key 
+          field of the UI.
+          add am_manager_role in the Corresponding Map Value field of the UI
+          and click the Add button.
+
 
    If the agent configuration is local, then edit the local agent configuration
    file FAMAgentConfiguration.properties located at the directory 
@@ -184,7 +195,7 @@ Deploying the Sample Application
 --------------------------------
 Note, before deploying the sample application, please be sure that you have
 deployed the Agent Application, which should have been done after installing 
-the agent. This is explained in the Sun Federated Access Manager Policy Agent 
+the agent. This is explained in the Sun OpenSSO Enterprise Policy Agent 
 3.0 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
 outlined the post-installation tasks.
 
@@ -212,7 +223,7 @@ If you encounter problems when running the application, review the log files to
 learn what exactly went wrong. J2EE Agent logs can be found at 
 <agent_install_root>/Agent_<instance_number>/logs/debug directory.
 
-Also, see the Sun Federated Access Manager Policy Agent 3.0 Guide for BEA 
+Also, see the Sun OpenSSO Enterprise Policy Agent 3.0 Guide for BEA 
 WebLogic Server/Portal 10.0.
 
 
