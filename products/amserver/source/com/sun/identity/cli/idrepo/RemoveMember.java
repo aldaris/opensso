@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveMember.java,v 1.2 2008-06-25 05:42:15 qcheng Exp $
+ * $Id: RemoveMember.java,v 1.3 2008-07-23 05:50:14 veiming Exp $
  *
  */
 
@@ -86,9 +86,34 @@ public class RemoveMember extends IdentityCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_IDREPO_REMOVE_MEMBER", params);
             AMIdentity amid = new AMIdentity(
-                adminSSOToken, idName, idType, realm, null); 
+                adminSSOToken, idName, idType, realm, null);
+            if (!amid.isExists()) {
+                Object[] param= {idName};
+                CLIException ex = new CLIException(
+                    MessageFormat.format(getResourceString(
+                    "idrepo-group-does-not-exist"), param),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                String[] args = {realm, type, idName, memberIdName, memberType,
+                    ex.getMessage()};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_IDREPO_REMOVE_MEMBER", args);
+                throw ex;
+            }
+            
             AMIdentity memberAmid = new AMIdentity(
                 adminSSOToken, memberIdName, memberIdType, realm, null); 
+            if (!memberAmid.isExists()) {
+                Object[] param= {memberIdName};
+                CLIException ex = new CLIException(
+                    MessageFormat.format(getResourceString(
+                    "idrepo-member-does-not-exist"), param),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                String[] args = {realm, type, idName, memberIdName, memberType,
+                    ex.getMessage()};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_IDREPO_REMOVE_MEMBER", args);
+                throw ex;
+            }
 
             String[] args = {memberIdName, idName};
             amid.removeMember(memberAmid);
