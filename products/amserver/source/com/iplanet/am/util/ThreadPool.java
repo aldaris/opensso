@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.7 2008-06-25 05:41:28 qcheng Exp $
+ * $Id: ThreadPool.java,v 1.8 2008-07-24 19:16:23 ww203982 Exp $
  *
  */
 
@@ -80,9 +80,13 @@ public class ThreadPool {
 	this.poolSize = poolSize;
 	this.threshold = threshold;
         this.poolName = name;
-        // initialize the size of the ArrayList, it doesn't need to expand
-        // during runtime.
-        this.taskList = new java.util.ArrayList(threshold);
+        if (threshold > 0) {
+            // initialize the size of the ArrayList, it doesn't need to expand
+            // during runtime.
+            this.taskList = new java.util.ArrayList(threshold);
+        } else {
+            this.taskList = new java.util.ArrayList();
+        }
         this.busyThreadCount = 0;
         this.currentThreadCount = 0;
         this.daemon = daemon;
@@ -140,7 +144,7 @@ public class ThreadPool {
         WorkerThread t = null;
         synchronized (this) {
             if (busyThreadCount == poolSize) {
-                if (taskList.size() >= threshold) {
+                if ((threshold > 0) && (taskList.size() >= threshold)) {
                     throw new ThreadPoolException(poolName + 
                         " thread pool's task queue is full.");
                 } else {
@@ -167,33 +171,34 @@ public class ThreadPool {
     
     // return the thread to the thread pool
     protected synchronized void returnThread(WorkerThread t) {
-        if(shutdownThePool) {
-            t.terminate();
-            // notify the thread pool when all threads are backed
-            // need to discuss whether the thread pool need to wait until all
-            // threads are terminated.  For stand alone application, the answer
-            // is yes, however, our application is run under web container.
-            // The reason why we need shutdown because it has a parameter daemon
-            // in the constructor, if it is set to false, the old implementation
-            // has no way to stop the running threads.  For the new
-            // implementation, if daemon is set to false, it is necessary to
-            // call shutdown.  If daemon is set to true, it is nice to call it
-            // because the thread pool has better knownledge than the web
-            // container to stop the threads in the pool.
-            t.setNeedReturn(false);
-            busyThreadCount--;
-            if(busyThreadCount == 0){
-                notify();
-            }
-            return;
-        }
         if (!taskList.isEmpty()){
             t.runTask((Runnable)taskList.remove(0));
         }
         else{
-            busyThreadCount--;
-            // return threads from the end of array
-            threads[currentThreadCount - busyThreadCount - 1] = t;
+            if(shutdownThePool) {
+                t.terminate();
+                // notify the thread pool when all threads are backed
+                // need to discuss whether the thread pool need to wait until
+                // all threads are terminated.  For stand alone application, the
+                // answer is yes, however, our application is run under web
+                // container. The reason why we need shutdown because it has a
+                // parameter daemon in the constructor, if it is set to false,
+                // the old implementation has no way to stop the running
+                // threads. For the new implementation, if daemon is set to
+                // false, it is necessary to call shutdown.  If daemon is set to
+                // true, it is nice to call it because the thread pool has
+                // better knownledge than the web container to stop the threads
+                // in the pool.
+                t.setNeedReturn(false);
+                busyThreadCount--;
+                if(busyThreadCount == 0){
+                    notify();
+                }
+            } else {
+                busyThreadCount--;
+                // return threads from the end of array
+                threads[currentThreadCount - busyThreadCount - 1] = t;
+            }
         }
     }
     
