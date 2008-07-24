@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.78 2008-07-23 17:24:55 veiming Exp $
+ * $Id: AccessManager.java,v 1.79 2008-07-24 09:39:24 veiming Exp $
  *
  */
 
@@ -1226,6 +1226,8 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
+            "idrepo-group-does-not-exist={0} did not exist.",
+            "idrepo-member-does-not-exist={0} did not exist.",
             "idrepo-get-removemember-succeed={0} was removed from {1}."})
     private String remove_member;
 
