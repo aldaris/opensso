@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Manager.java,v 1.3 2008-06-25 05:51:36 qcheng Exp $
+ * $Id: Manager.java,v 1.4 2008-07-24 23:06:12 huacui Exp $
  *
  */
 
@@ -130,7 +130,24 @@ public class Manager implements IConfigurationKeyConstants,
     public String getConfigurationString(String id) {
         return getConfiguration(id);
     }
+
+   /* (non-Javadoc)
+    * @see IConfigurationAccess#getApplicationConfigurationString(java.lang.String, String applicationName)
+    */
+    public String getApplicationConfigurationString(String id, String applicationName) {
+        String result = null;
+        Map map = getConfigurationMap(id);
+        if ((map != null) && (applicationName != null) &&
+                (applicationName.trim().length() > 0)) {
+            result = (String) map.get(applicationName);
+        }
+        if ((result == null) || (result.trim().length() == 0)) {
+            result = getConfigurationString(id);
+        }
+        return result;
+    }
     
+
    /* (non-Javadoc)
     * @see IConfigurationAccess#getConfigurationLong(java.lang.String, long)
     */

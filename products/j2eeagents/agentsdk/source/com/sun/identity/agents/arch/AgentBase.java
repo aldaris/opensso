@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentBase.java,v 1.2 2008-06-25 05:51:35 qcheng Exp $
+ * $Id: AgentBase.java,v 1.3 2008-07-24 23:05:28 huacui Exp $
  *
  */
 
@@ -72,13 +72,21 @@ public class AgentBase extends ModuleAccess implements ISystemAccess {
         return getManager().getConfigurationString(id, defaultValue);
     }
 
+    /* (non-Javadoc)
+     * @see IConfigurationAccess#getApplicationConfigurationString(java.lang.String, java.lang.String)
+     */
+     public String getApplicationConfigurationString(String id, String applicationName) {
+         return getManager().getApplicationConfigurationString(id, applicationName);
+     }
+     
+
    /* (non-Javadoc)
     * @see IConfigurationAccess#getConfigurationString(String)
     */
     public String getConfigurationString(String id) {
         return getManager().getConfigurationString(id);
     }
-
+    
    /* (non-Javadoc)
     * @see IConfigurationAccess#getConfigurationLong(String, long)
     */

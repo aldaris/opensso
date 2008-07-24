@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.7 2008-06-25 05:51:44 qcheng Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.8 2008-07-24 23:07:08 huacui Exp $
  *
  */
 
@@ -166,8 +166,8 @@ implements IApplicationLogoutHandler {
         String appName = getApplicationName(request);
         String result = (String) getEntryURIs().get(appName);
         if (result == null) {
-            Map entryMap = getConfigurationMap(CONFIG_LOGOUT_ENTRY_URI_MAP);
-            result = (String) entryMap.get(appName);
+            result = getManager().getApplicationConfigurationString(
+                        CONFIG_LOGOUT_ENTRY_URI_MAP, appName);
             if (result == null) {
                 if (isLogMessageEnabled()) {
                     logMessage("ApplicationLogoutHandler: no entry URI "
@@ -201,10 +201,9 @@ implements IApplicationLogoutHandler {
                     .get(appName);
 
             if (localLogoutHandlerClass == null) {
-                String localLogoutHandlerClassName = (String) getManager()
-                        .getConfigurationMap(
-                                CONFIG_LOGOUT_APPLICATION_HANDLER_MAP).get(
-                                appName);
+                String localLogoutHandlerClassName = 
+                     getManager().getApplicationConfigurationString(
+                     CONFIG_LOGOUT_APPLICATION_HANDLER_MAP, appName);
 
                 if ((localLogoutHandlerClassName != null)
                         && (localLogoutHandlerClassName.length() > 0)) {
@@ -279,8 +278,8 @@ implements IApplicationLogoutHandler {
     private boolean searchForLogoutParam(HttpServletRequest request,
             String appName) {
         boolean result = false;
-        String logoutParam = (String) getManager().getConfigurationMap(
-                CONFIG_LOGOUT_REQUEST_PARAM_MAP).get(appName);
+        String logoutParam = getManager().getApplicationConfigurationString(
+                CONFIG_LOGOUT_REQUEST_PARAM_MAP, appName);
 
         if ((logoutParam != null) && (logoutParam.length() > 0)) {
 
@@ -357,9 +356,8 @@ implements IApplicationLogoutHandler {
         boolean result = false;
 
         if ((appName != null) && (appName.length() > 0)) {
-            String logoutURI = (String) getManager().getConfigurationMap(
-                    CONFIG_LOGOUT_URI_MAP).get(appName);
-
+            String logoutURI = getManager().getApplicationConfigurationString(
+                    CONFIG_LOGOUT_URI_MAP, appName);            
             if ((logoutURI != null) && (logoutURI.length() > 0)) {
                 if (request.getRequestURI().equals(logoutURI)) {
                     result = true;
@@ -388,14 +386,20 @@ implements IApplicationLogoutHandler {
      * Caches the isActive flag
      */
     private void setIsActiveFlag() {
-
         Map logoutUrlMap = getManager().getConfigurationMap(
+                CONFIG_LOGOUT_URI_MAP);
+        String globalLogoutURI = getManager().getConfigurationString(
                 CONFIG_LOGOUT_URI_MAP);
         Map requestParamMap = getManager().getConfigurationMap(
                 CONFIG_LOGOUT_REQUEST_PARAM_MAP);
+        String globalRequestParam = getManager().getConfigurationString(
+                CONFIG_LOGOUT_REQUEST_PARAM_MAP);
 
-        if ((logoutUrlMap != null && logoutUrlMap.size() > 0)
-                || (requestParamMap != null && requestParamMap.size() > 0)) {
+        if ((logoutUrlMap != null && logoutUrlMap.size() > 0) ||
+            (globalLogoutURI != null && globalLogoutURI.trim().length() > 0) ||
+            (requestParamMap != null && requestParamMap.size() > 0) ||
+            (globalRequestParam != null && globalRequestParam.trim().length() >
+0)) {
             _isActiveFlag = true;
         }
     }
