@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDPViewBean.java,v 1.7 2008-06-25 05:49:47 qcheng Exp $
+ * $Id: CreateHostedIDPViewBean.java,v 1.8 2008-07-24 18:16:55 veiming Exp $
  *
  */
 
@@ -176,7 +176,8 @@ public class CreateHostedIDPViewBean
 
                 idx = html.indexOf("radioCOT");
                 idx = html.lastIndexOf("<table ", idx);
-                idx = html.lastIndexOf("<div ", idx);
+                int idx1 = html.lastIndexOf("<fieldset ", idx);
+                idx = (idx1 == -1) ? html.lastIndexOf("<div ", idx) : idx1;
                 html = html.substring(0, idx) + 
                     "<div id=\"cotsection\" style=\"display:none\">" +
                     html.substring(idx);
@@ -216,17 +217,13 @@ public class CreateHostedIDPViewBean
                     html.substring(idx);
 
                 idx = html.indexOf("tfSigningKey");
-                idx = html.lastIndexOf("<select ", idx);
-                html = html.substring(0, idx) +
-                    "<table border=0><tr><td>" +
-                    html.substring(idx);
                 idx = html.indexOf("</select>", idx);
                 html = html.substring(0, idx+9) + 
-                    "</td><td><span id=\"signTest\" style=\"display:none\">" + 
+                    "<span id=\"signTest\" style=\"display:none\">" + 
                     html.substring(idx+9);
-                idx = html.indexOf("<br />", idx);
+                idx = html.indexOf("<img ", idx);
                 html = html.substring(0, idx) + 
-                    "</span></td></tr></table>" + html.substring(idx+6);
+                    "</span> " + html.substring(idx);
                 html = CreateFedletViewBean.removeSortHref(html);
             }
         }

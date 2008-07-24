@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: tasksPage.js,v 1.2 2008-06-25 05:44:41 qcheng Exp $
+ * $Id: tasksPage.js,v 1.3 2008-07-24 18:16:55 veiming Exp $
  *
  */
 
@@ -34,8 +34,15 @@ var ttop;
 var ileft;
 var colnum = 17; // number of tasks
 
+function getElementPositionByName(elemID) {
+    getElementPositionEx(document.getElementsByName(elemID)[0]);
+}
+
 function getElementPosition(elemID) {
-    var offsetTrail = document.getElementById(elemID);
+    getElementPositionEx(document.getElementById(elemID));
+}
+
+function getElementPositionEx(offsetTrail) {
     var offsetLeft = 0;
     var offsetTop = 0;
 
@@ -57,7 +64,10 @@ function getElementPosition(elemID) {
 
 }
 function getElementPosition2(elemID) {
-    var offsetTrail = document.getElementById(elemID);
+    getElementPosition2Ex(document.getElementById(elemID));
+}
+
+function getElementPosition2Ex(offsetTrail) {
     var offsetLeft = 0;
     var offsetTop = 0;
 
@@ -73,11 +83,11 @@ function getElementPosition2(elemID) {
         offsetTop += document.body.topMargin;
     }
    ileft=offsetLeft;
-
-   //return {left:offsetLeft, top:offsetTop}; 
-
 }
 
+function getElementPosition2ByName(elemID) {
+    getElementPosition2Ex(document.getElementsByName(elemID)[0]);
+}
 
 function closeAll(num) {
   for(i=1;i<=colnum;i++) {
@@ -155,4 +165,25 @@ function outImg(num) {
     document.getElementById("togImg"+num).src = "../console/images/tasks/rightToggle-selected.gif";
   }
 }
+
+function hideHelp() {
+    var divHelp = document.getElementById('divhelp');
+    divHelp.style.display = 'none';
+}
+
+function showHelp(icon, msg) {
+    var divHelp = document.getElementById('divhelp');
+    getElementPosition2ByName(icon);
+    getElementPositionByName(icon);
+
+    divHelp.style.display = '';
+    divHelp.style.top = (ttop + 10) + 'px';
+    var left = (tleft -400);
+    if (left < 0) {
+        left = 1;
+    }
+    divHelp.style.left = left + 'px';
+    document.getElementById('divHelpmsg').innerHTML = msg;
+}
+
 

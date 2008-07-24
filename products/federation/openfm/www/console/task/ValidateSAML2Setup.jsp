@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.4 2008-06-25 05:50:58 qcheng Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.5 2008-07-24 18:16:56 veiming Exp $
 
 --%>
 
@@ -41,9 +41,22 @@
 <link rel="stylesheet" type="text/css" href="../console/css/opensso.css" />
 
 <script language="javascript" src="../console/js/am.js"></script>
+<script language="javascript" src="../console/js/tasksPage.js"></script>
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
 <div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
+
+<div id="divhelp" style="display: none; position:absolute; margin: 0; border: 1px solid #AABCC8; padding: 0; width:400px; height:200px; background:#FCFCFC">
+<table border=0 cellpadding=2 cellspacing=0 width="100%">
+<tr><td width=99%><span id="divHelpmsg" /></td>
+<td width="1%" valign="top">
+<img src="../console/images/tasks/close.gif" width="16" height="16" onClick="hideHelp()" />
+</td>
+</tr>
+</table>
+</div>
+
+
 <cc:form name="ValidateSAML2Setup" method="post">
 <jato:hidden name="szCache" />
 <script language="javascript">
@@ -74,6 +87,12 @@
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
 <cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.validate.fed" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+
+<table border="0" cellpadding="20" cellspacing="0">
+<tr><td>
+    <cc:text name="txtDesc" defaultValue="page.desc.validate" bundleID="amConsole" />
+</td></tr>
+</table>
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
 
@@ -107,7 +126,7 @@
             vdiv.style.left = (e.pageX +10) + 'px';
             vdiv.style.top = (e.pageY +10) + 'px';
         }
-        vdiv.style.display = '';
+        vdiv.style.display = 'block';
     }
 
     function hideCannotValidateDiv() {
@@ -235,6 +254,18 @@
             }
         }
     }
+
+    function unescapeQuote(str) {
+        str = str.replace(/&quot;/g, '"');
+        str = str.replace(/&lt;/g, '<');
+        str = str.replace(/&gt;/g, '>');
+        return str;
+    }
+ 
+    var infoRealm = unescapeQuote("<cc:text name="txtInfoRealm" defaultValue="validate.entities.help.realm" bundleID="amConsole" />");
+    var infoIDP = unescapeQuote("<cc:text name="txtInfoIDP" defaultValue="validate.entities.help.idp" bundleID="amConsole" />");
+    var infoSP = unescapeQuote("<cc:text name="txtInfoSP" defaultValue="validate.entities.help.sp" bundleID="amConsole" />");
+
 </script>
 </cc:header>
 

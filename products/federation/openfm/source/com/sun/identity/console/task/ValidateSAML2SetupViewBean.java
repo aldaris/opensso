@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateSAML2SetupViewBean.java,v 1.3 2008-06-25 05:49:48 qcheng Exp $
+ * $Id: ValidateSAML2SetupViewBean.java,v 1.4 2008-07-24 18:16:55 veiming Exp $
  *
  */
 
@@ -140,6 +140,7 @@ public class ValidateSAML2SetupViewBean
     private void populateTableModel() {
         tableModel.clearAll();
         TaskModel model = (TaskModel) getModel();
+        int invalid = 0;
 
         try {
             String realm = getRequestContext().getRequest().getParameter(
@@ -176,7 +177,7 @@ public class ValidateSAML2SetupViewBean
                 tableModel.setSelectionVisible(valid);
                 
                 if (!valid) {
-                    i.remove();
+                    invalid++;
                 }
                 tableModel.setValue("HostedIDPValue",
                     Integer.toString(nHostedIDP));
@@ -192,7 +193,7 @@ public class ValidateSAML2SetupViewBean
                 ex.getMessage());
         }
 
-        if (setCOTs.isEmpty()) {
+        if ((setCOTs.size() - invalid) == 0) {
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                 "no.providers.to.validate");
         }
@@ -302,12 +303,6 @@ public class ValidateSAML2SetupViewBean
             html += buff.toString();
         }
 
-        idx = html.indexOf("divRealmLabel");
-        idx = html.lastIndexOf("<table ", idx);
-        idx = html.lastIndexOf("<table ", idx-8);
-        idx1 = html.indexOf("</table>", idx);
-        html = html.substring(0, idx) + html.substring(idx1+8);
-        
         html = addQuestionImages(html);
         return html;
     }

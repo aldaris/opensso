@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletViewBean.java,v 1.3 2008-06-25 05:49:47 qcheng Exp $
+ * $Id: CreateFedletViewBean.java,v 1.4 2008-07-24 18:16:55 veiming Exp $
  *
  */
 
@@ -285,11 +285,7 @@ public class CreateFedletViewBean
             "<div class=\"ConTblCl1Div\" id=\"idptxt\"></div>" +
             html.substring(idx);
         idx = html.indexOf("id=\"realmlbl\"");
-        idx = html.lastIndexOf("<div class=\"ConFldSetDiv\">", idx);
-        int idx1 = html.lastIndexOf("<div>", idx);
-        html = html.substring(0, idx1) + html.substring(idx);
-        
-        
+
         html = removeSortHref(html);
         return html;
     }
@@ -297,7 +293,7 @@ public class CreateFedletViewBean
     static String removeSortHref(String html) {
         int idx = html.indexOf("deleteAttrMappingBtn");
         idx = html.lastIndexOf("</caption>", idx);
-        int idx1 = html.lastIndexOf("#160;", idx);
+        int idx1 = html.lastIndexOf("&#160;", idx);
         html = html.substring(0, idx1) + html.substring(idx);
         
         idx = html.indexOf("SortHref=");        

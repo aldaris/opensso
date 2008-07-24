@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateHostedSP.xml,v 1.6 2008-06-25 05:51:02 qcheng Exp $
+   $Id: propertyCreateHostedSP.xml,v 1.7 2008-07-24 18:16:56 veiming Exp $
 
 -->
 
@@ -30,11 +30,6 @@
 
 <propertysheet>
     <section name="question" defaultValue="configure.provider.section.setup">
-    <property span="true">
-        <cc name="txtDesc" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
-            <attribute name="defaultValue" value="page.desc.configure.hosted.sp" />
-        </cc>
-    </property>
     <property>
 	<label name="lblHasMetaData" defaultValue="configure.provider.label.hasMetaData" labelFor="tfHasMetaData" />
 	<cc name="radioHasMetaData" tagclass="com.sun.web.ui.taglib.html.CCRadioButtonTag">
@@ -43,7 +38,15 @@
 	    <attribute name="layout" value="horizontal" />
             <attribute name="onClick" value="metadataOptionSelect(this);" />
 	</cc>
-        <fieldhelp name="helpHasMetaData" defaultValue="configure.provider.help.hasMetaData" />
+        <cc name="infoHasMetaData" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateHostedSP.infoHasMetaData', infoHasMetaData);" />
+        </cc>
     </property>
     </section>
 
@@ -56,7 +59,15 @@
 	    <attribute name="layout" value="horizontal" />
             <attribute name="onClick" value="metaOptionSelect(this);" />
 	</cc>
-        <fieldhelp name="helpMetadataFile" defaultValue="configure.provider.help.metadata" />
+        <cc name="infoMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateHostedSP.infoMetadataFile', infoMetadataFile);" />
+        </cc>
     </property>
     <property required="true">
 	<label name="lblMetadataFile" defaultValue="configure.provider.label.metadata" labelFor="tfMetadataFileURL" />
@@ -79,7 +90,15 @@
 	    <attribute name="layout" value="horizontal" />
             <attribute name="onClick" value="extendedOptionSelect(this);" />
 	</cc>
-        <fieldhelp name="helpExtendedFile" defaultValue="configure.provider.help.extendeddata" />
+        <cc name="infoExtendedDataRadio" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateHostedSP.infoExtendedDataRadio', infoExtendedDataRadio);" />
+        </cc>
     </property>
     <property required="true">
 	<label name="lblExtendedFile" defaultValue="configure.provider.label.extendeddata" labelFor="tfExtendedFile" />
@@ -101,7 +120,15 @@
 	<cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
             <attribute name="onChange" value="realmSelect(this);" />
         </cc>
-        <fieldhelp name="helpRealm" defaultValue="configure.provider.help.realm" />
+        <cc name="infoRealm" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateHostedSP.infoRealm', infoRealm);" />
+        </cc>
     </property>
     <property required="true">
 	<label name="lblEntityId" defaultValue="configure.provider.label.entityId" labelFor="tfEntityId" />
@@ -109,7 +136,15 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
 	    <attribute name="size" value="75" />
 	</cc>
-        <fieldhelp name="helpEntityId" defaultValue="configure.provider.help.entityId" />
+        <cc name="infoEntityId" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateHostedSP.infoEntityId', infoEntityId);" />
+        </cc>
     </property>
     </section>
     <section name="cot" defaultValue="configure.provider.section.cot">
@@ -181,7 +216,15 @@
             <cc name="menuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
                 <attribute name="onChange" value="userAttrSelect(this);" />
             </cc>
-            <fieldhelp name="helpMenuUserAttributes" defaultValue="configure.provider.help.user.attributes.choices" />
+            <cc name="infoMenuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+                <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+                <attribute name="title" value="click.to.see.info" />
+                <attribute name="alt" value="click.to.see.info" />
+                <attribute name="border" value="0" />
+                <attribute name="height" value="18" />
+                <attribute name="width" value="18" />
+                <attribute name="onClick" value="showHelp('CreateHostedSP.infoMenuUserAttributes', infoMenuUserAttributes);" />
+            </cc>
         </property>
     </section>
 </propertysheet>

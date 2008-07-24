@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateRemoteSP.xml,v 1.7 2008-06-25 05:51:03 qcheng Exp $
+   $Id: propertyCreateRemoteSP.xml,v 1.8 2008-07-24 18:16:56 veiming Exp $
 
 -->
 
@@ -30,17 +30,20 @@
 
 <propertysheet>
     <section name="question" defaultValue="configure.provider.section.setup">
-    <property span="true">
-        <cc name="txtDesc" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
-            <attribute name="defaultValue" value="page.desc.configure.remote.sp" />
-        </cc>
-    </property>
     <property required="true">
         <label name="lblRealm" defaultValue="configure.provider.label.realm" labelFor="tfRealm" />
         <cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
             <attribute name="onChange" value="realmSelect(this);" />
         </cc>
-        <fieldhelp name="helpRealm" defaultValue="configure.provider.help.realm" />
+        <cc name="infoRealm" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateRemoteSP.infoRealm', infoRealm);" />
+        </cc>
     </property>
     <property>
         <label name="lblMetaRadio" defaultValue="configure.provider.label.meta.question" labelFor="radioMeta" />
@@ -50,7 +53,15 @@
             <attribute name="layout" value="horizontal" />
             <attribute name="onClick" value="metaOptionSelect(this);" />
         </cc>
-        <fieldhelp name="helpMetadataFile" defaultValue="configure.provider.help.metadata" />
+        <cc name="infoMetadataFile" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateRemoteSP.infoMetadataFile', infoMetadataFile);" />
+        </cc>
     </property>
     <property required="true">
         <label name="lblMetadataFile" defaultValue="configure.provider.label.metadata" labelFor="tfMetadataFileURL" />
@@ -58,7 +69,15 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
             <attribute name="size" value="70" />
         </cc>
-        <fieldhelp name="helpMetadataFileURL" defaultValue="configure.provider.help.metadataurl" />
+        <cc name="infoMetadataFileURL" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateRemoteSP.infoMetadataFileURL', infoMetadataFileURL);" />
+        </cc>
         <cc name="btnMetadata"
             tagclass="com.sun.web.ui.taglib.html.CCButtonTag" >
             <attribute name="OnClick" value="openWindow('tfMetadataFile_metadatafilename'); return false;" />
@@ -131,7 +150,15 @@
             <cc name="menuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
                 <attribute name="onChange" value="userAttrSelect(this);" />
             </cc>
-            <fieldhelp name="helpMenuUserAttributes" defaultValue="configure.provider.help.user.attributes.choices" />
+            <cc name="infoMenuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+                <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+                <attribute name="title" value="click.to.see.info" />
+                <attribute name="alt" value="click.to.see.info" />
+                <attribute name="border" value="0" />
+                <attribute name="height" value="18" />
+                <attribute name="width" value="18" />
+                <attribute name="onClick" value="showHelp('CreateRemoteSP.infoMenuUserAttributes', infoMenuUserAttributes);" />
+            </cc>
         </property>
     </section>
 

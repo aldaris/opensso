@@ -22,27 +22,28 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateFedlet.xml,v 1.2 2008-06-25 05:51:02 qcheng Exp $
+   $Id: propertyCreateFedlet.xml,v 1.3 2008-07-24 18:16:56 veiming Exp $
 
 -->
 
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-    <section name="dummy" defaultValue="blank.header">
-    <property span="true">
-        <cc name="txtDesc" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
-            <attribute name="defaultValue" value="page.desc.create.fedlet" />
-        </cc>
-    </property>
-    </section>
     <section name="question" defaultValue="blank.header">
     <property required="true">
         <label name="lblRealm" defaultValue="create.fedlet.label.realm" labelFor="tfRealm" />
         <cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
             <attribute name="onChange" value="realmSelect(this);" />
         </cc>
-        <fieldhelp name="helpRealm" defaultValue="create.fedlet.help.realm" />
+        <cc name="infoRealm" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateFedlet.infoRealm', infoRealm);" />
+        </cc>
     </property>
     <property required="true">
         <label name="lblCOT" defaultValue="create.fedlet.label.cot" labelFor="choiceCOT" />
@@ -62,7 +63,15 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
             <attribute name="size" value="75" />
         </cc>
-        <fieldhelp name="helpEntityId" defaultValue="create.fedlet.help.entity.id" />
+        <cc name="infoEntityId" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateFedlet.infoEntityId', infoEntityId);" />
+        </cc>
     </property>
     <property required="true">
         <label name="lblAssertConsumer" defaultValue="create.fedlet.label.assert.consumer" labelFor="tfAssertConsumer" />
@@ -70,7 +79,15 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
             <attribute name="size" value="75" />
         </cc>
-        <fieldhelp name="helpAssertConsumer" defaultValue="create.fedlet.help.assert.consumer" />
+        <cc name="infoAssertConsumer" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+            <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+            <attribute name="title" value="click.to.see.info" />
+            <attribute name="alt" value="click.to.see.info" />
+            <attribute name="border" value="0" />
+            <attribute name="height" value="18" />
+            <attribute name="width" value="18" />
+            <attribute name="onClick" value="showHelp('CreateFedlet.infoAssertConsumer', infoAssertConsumer);" />
+        </cc>
     </property>
     </section>
     <section name="attrmapping" defaultValue="configure.provider.section.attributesmapping">
@@ -111,7 +128,15 @@
             <cc name="menuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
                 <attribute name="onChange" value="userAttrSelect(this);" />
             </cc>
-            <fieldhelp name="helpMenuUserAttributes" defaultValue="configure.provider.help.user.attributes.choices" />
+            <cc name="infoMenuUserAttributes" tagclass="com.sun.web.ui.taglib.html.CCImageTag">
+                <attribute name="defaultValue" value="../console/images/infoicon.gif" />
+                <attribute name="title" value="click.to.see.info" />
+                <attribute name="alt" value="click.to.see.info" />
+                <attribute name="border" value="0" />
+                <attribute name="height" value="18" />
+                <attribute name="width" value="18" />
+                <attribute name="onClick" value="showHelp('CreateFedlet.infoMenuUserAttributes', infoMenuUserAttributes);" />
+            </cc>
         </property>
     </section>
 

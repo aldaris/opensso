@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.6 2008-06-25 05:50:57 qcheng Exp $
+   $Id: CreateFedlet.jsp,v 1.7 2008-07-24 18:16:56 veiming Exp $
 
 --%>
 
@@ -40,9 +40,19 @@
 
 <link rel="stylesheet" type="text/css" href="../console/css/opensso.css" />
 <script language="javascript" src="../console/js/am.js"></script>
+<script language="javascript" src="../console/js/tasksPage.js"></script>
 <script language="javascript" src="../com_sun_web_ui/js/dynamic.js"></script>
 
 <div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%;">
+<div id="divhelp" style="display: none; position:absolute; margin: 0; border: 1px solid #AABCC8; padding: 0; width:400px; height:200px; background:#FCFCFC">
+<table border=0 cellpadding=2 cellspacing=0 width="100%">
+<tr><td width=99%><span id="divHelpmsg" /></td>
+<td width="1%" valign="top">
+<img src="../console/images/tasks/close.gif" width="16" height="16" onClick="hideHelp()" />
+</td>
+</tr>
+</table>
+</div>
 
 <cc:form name="CreateFedlet" method="post">
 <jato:hidden name="szCache" />
@@ -122,6 +132,13 @@
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
 <cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.create.fedlet" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+
+<table border="0" cellpadding="20" cellspacing="0">
+<tr><td>
+    <cc:text name="txtDesc" defaultValue="page.desc.create.fedlet" bundleID="amConsole" />
+</td></tr>
+</table>
+
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
 
@@ -393,6 +410,19 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
     
 %>
     getActionTable().deleteRow(2);
+
+    function unescapeQuote(str) {
+        str = str.replace(/&quot;/g, '"');
+        str = str.replace(/&lt;/g, '<');
+        str = str.replace(/&gt;/g, '>');
+        return str;
+    }
+ 
+    var infoRealm = unescapeQuote("<cc:text name="txtInfoRealm" defaultValue="create.fedlet.help.realm" bundleID="amConsole" />");
+    var infoEntityId = unescapeQuote("<cc:text name="txtInfoEntityId" defaultValue="create.fedlet.help.entity.id" bundleID="amConsole" />");
+    var infoAssertConsumer = unescapeQuote("<cc:text name="txtInfoAssertConsumer" defaultValue="create.fedlet.help.assert.consumer" bundleID="amConsole" />");
+    var infoMenuUserAttributes = unescapeQuote("<cc:text name="txtInfoMenuUserAttributes" defaultValue="configure.provider.help.user.attributes.choices" bundleID="amConsole" />");
+
 </script>
 
 </jato:useViewBean>
