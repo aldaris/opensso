@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.17 2008-07-23 17:21:59 veiming Exp $
+ * $Id: AuthClientUtils.java,v 1.18 2008-07-24 22:13:24 dillidorai Exp $
  *
  */
 
@@ -67,9 +67,7 @@ import com.iplanet.dpro.session.SessionID;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.sun.identity.session.util.SessionUtils;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.AMClientDetector;
-import com.iplanet.am.util.Locale;
 import com.iplanet.am.util.SystemProperties;
 
 import com.iplanet.services.cdm.Client;
@@ -97,7 +95,9 @@ import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.common.RequestUtils;
 import com.sun.identity.common.ISLocaleContext;
 
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.SMSException;
@@ -156,9 +156,6 @@ public class AuthClientUtils {
     private static String serviceURI = SystemProperties.get(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR) + "/UI/Login";
 
-    // Name of the webcontainer
-    private static String webContainer =
-        SystemProperties.get(Constants.IDENTITY_WEB_CONTAINER);
     private static String serverURL = null;
     static Debug utilDebug = Debug.getInstance("amAuthClientUtils");
     private static boolean useCache = Boolean.getBoolean(SystemProperties.get(
@@ -175,12 +172,6 @@ public class AuthClientUtils {
             }
         }
         bundle = Locale.getInstallResourceBundle(BUNDLE_NAME);
-        if (webContainer != null && webContainer.length() > 0) {
-            if (webContainer.indexOf("BEA") >= 0 ||
-                webContainer.indexOf("IBM5.1") >= 0 ) {
-                setRequestEncoding = true;
-            }
-        }
         if (SystemProperties.isServerMode()) {
             loadBalanceCookieName =
                 SystemProperties.get(Constants.AM_LB_COOKIE_NAME,"amlbcookie");
@@ -222,18 +213,17 @@ public class AuthClientUtils {
         HttpServletRequest request, Enumeration names) {
 
         Hashtable data = new Hashtable();
-        String enc = request.getParameter("gx_charset");
+        String clientEncoding = request.getCharacterEncoding();
+        String encoding = (clientEncoding != null) ? clientEncoding : "UTF-8";
         if (utilDebug.messageEnabled()) {
-            utilDebug.message("AuthUtils::decodeHash:enc = "+enc);
+            utilDebug.message("AuthUtils::decodeHash:clientEncoding = "  
+                    + clientEncoding
+                    + ", encoding=" + encoding);
         }
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             String value = request.getParameter(name);
-            if (setRequestEncoding) {
-                data.put(name, Locale.URLDecodeField(value, enc, utilDebug));
-            } else {
-                data.put(name, value);
-            }
+            data.put(name, Locale.URLDecodeField(value, encoding, utilDebug));
         }// while
         return (data);
     }           
