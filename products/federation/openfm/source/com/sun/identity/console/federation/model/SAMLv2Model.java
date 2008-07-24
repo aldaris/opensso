@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.21 2008-07-22 00:07:25 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.22 2008-07-24 17:56:14 babysunil Exp $
  *
  */
 
@@ -221,6 +221,8 @@ public interface SAMLv2Model
         "wantArtifactResponseSigned";
     public static final String SP_META_ALIAS =
         "metaAlias";
+    public static final String ARTI_MSG_ENCODE =
+            "responseArtifactMessageEncoding";
     
     //IDP PROXY
     public static final String ENABLE_IDP_PROXY = "enableIDPProxy";

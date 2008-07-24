@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.28 2008-07-22 00:07:58 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.29 2008-07-24 17:56:49 babysunil Exp $
  *
  */
 
@@ -92,9 +92,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private static Map extendedAPMetaIdpMap = new HashMap(12);
     private static Map extendedSMetaIdpMap = new HashMap(2);
     private static Map extendedAdMetaIdpMap = new HashMap(6);
-    private static Map extendedMetaSpMap = new HashMap(54);
+    private static Map extendedMetaSpMap = new HashMap(56);
     private static Map extendedACMetaSpMap = new HashMap(34);
-    private static Map extendedAPMetaSpMap = new HashMap(24);
+    private static Map extendedAPMetaSpMap = new HashMap(26);
     private static Map extendedSMetaSpMap = new HashMap(2);
     private static Map extendedAdMetaSpMap = new HashMap(20);
     private static Map xacmlPDPExtendedMeta = new HashMap(18);
@@ -179,6 +179,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(WANT_ASSERTION_ENCRYPTED,
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(ARTI_MSG_ENCODE, Collections.EMPTY_SET); 
         
                
         //IDP PROXY
@@ -297,6 +298,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
        extendedAPMetaSpMap.put(SAML2_AUTH_MODULE, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(ATTR_SP_ADAPTER, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(ATTR_SP_ADAPTER_ENV, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(ARTI_MSG_ENCODE, Collections.EMPTY_SET); 
     }
     
     //extended Services metadata attributes for sp only    

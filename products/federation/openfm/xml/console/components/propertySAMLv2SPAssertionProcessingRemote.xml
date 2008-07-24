@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionProcessingRemote.xml,v 1.4 2008-06-25 05:51:07 qcheng Exp $
+   $Id: propertySAMLv2SPAssertionProcessingRemote.xml,v 1.5 2008-07-24 17:53:51 babysunil Exp $
 
 -->
 
@@ -49,5 +49,15 @@
                 </property>
             </ccgroup>
         </property>            
+    </section>
+    <section name="ArtMsgEncoding" defaultValue="samlv2sp.attribute.label.spArtMsgEncoding" >
+         <property>
+                    <label name="lblArtMsgEncoding" defaultValue="samlv2sp.attribute.label.artifactmessageEncoding"
+                           labelFor="responseArtifactMessageEncoding" />
+                    <cc name="responseArtifactMessageEncoding" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+                        <option label="samlv2idp.attribute.label.uri" value="URI" />
+                        <option label="samlv2idp.attribute.label.form" value="FORM" />
+                    </cc>
+        </property>
     </section>
 </propertysheet>
