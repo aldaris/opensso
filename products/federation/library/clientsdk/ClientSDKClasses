@@ -453,6 +453,7 @@ com/sun/identity/saml2/common/NameIDInfoKey.class
 com/sun/identity/saml2/common/NewBoolean.class
 com/sun/identity/saml2/common/SAML2Constants.class
 com/sun/identity/saml2/common/SAML2Exception.class
+com/sun/identity/saml2/common/SAML2InvalidNameIDPolicyException.class
 com/sun/identity/saml2/common/SAML2SDKUtils.class
 com/sun/identity/saml2/key/EncInfo.class
 com/sun/identity/saml2/key/KeyUtil.class

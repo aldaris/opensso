@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.35 2008-07-23 18:18:04 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.36 2008-07-24 17:46:34 exu Exp $
  *
  */
 
@@ -60,6 +60,7 @@ import com.sun.identity.saml2.common.NameIDInfo;
 import com.sun.identity.saml2.common.NewBoolean;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.common.SAML2InvalidNameIDPolicyException;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.ecp.ECPFactory;
@@ -646,16 +647,13 @@ public class IDPSSOUtil {
             res.setAssertion(assertionList);
         
             statusCode.setValue(SAML2Constants.SUCCESS);
-        } catch (SAML2Exception se) {
+        } catch (SAML2InvalidNameIDPolicyException se) {
             statusCode.setValue(SAML2Constants.REQUESTER);
-            if (se.getMessage().equals(
-                SAML2Utils.bundle.getString("cannotCreateNameID")))
-            {
-                StatusCode subStatusCode = ProtocolFactory.getInstance().
+            StatusCode subStatusCode = ProtocolFactory.getInstance().
                                 createStatusCode();
-                subStatusCode.setValue(SAML2Constants.INVALID_NAME_ID_POLICY);
-                statusCode.setStatusCode(subStatusCode);
-            }
+            subStatusCode.setValue(SAML2Constants.INVALID_NAME_ID_POLICY);
+            statusCode.setStatusCode(subStatusCode);
+            status.setStatusMessage(se.getMessage());
         }
         status.setStatusCode(statusCode);
         res.setStatus(status);
@@ -1340,17 +1338,18 @@ public class IDPSSOUtil {
         }
 
         if (nameID == null) {
-            // read federation info from the persistent datastore
+            if (!allowCreate && 
+                nameIDFormat.equals(SAML2Constants.PERSISTENT))
+            {
+                throw new SAML2InvalidNameIDPolicyException(
+                    SAML2Utils.bundle.getString("cannotCreateNameID"));
+            }
+
             IDPAccountMapper idpAccountMapper = 
                 SAML2Utils.getIDPAccountMapper(realm, idpEntityID);
             nameID = idpAccountMapper.getNameID(session, idpEntityID,
                 spNameQualifier, realm, nameIDFormat); 
-            if (!allowCreate && 
-                nameIDFormat.equals(SAML2Constants.PERSISTENT))
-            {
-                throw new SAML2Exception(
-                    SAML2Utils.bundle.getString("cannotCreateNameID"));
-            }
+
             if (!isTransient && allowCreate) {
                 // write federation info the into persistent datastore
                 if (SAML2Utils.isDualRole(idpEntityID,realm)){
