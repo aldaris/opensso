@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.79 2008-07-23 17:30:45 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.80 2008-07-25 17:02:15 veiming Exp $
  *
  */
 
@@ -1484,6 +1484,10 @@ public class AMSetupServlet extends HttpServlet {
             Debug.getInstance(SetupConstants.DEBUG_NAME).warning(
                     "AMSetupServlet.getRemoteServerInfo()", e);
             throw cex;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
     }
 
