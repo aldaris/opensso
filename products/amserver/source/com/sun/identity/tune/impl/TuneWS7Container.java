@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneWS7Container.java,v 1.3 2008-07-23 17:30:48 veiming Exp $
+ * $Id: TuneWS7Container.java,v 1.4 2008-07-25 06:12:13 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -121,16 +121,17 @@ public class TuneWS7Container extends TuneWebServer implements
             mWriter.writeln(" ");
             mWriter.writelnLocaleMsg("pt-minthreads-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
-            mWriter.writeln(MIN_THREADS + "=" + curCfgMap.get(MIN_THREADS));
+            String curMinThreads = curCfgMap.get(MIN_THREADS).toString();
+            mWriter.writeln(MIN_THREADS + "=" + curMinThreads);
             mWriter.writeLocaleMsg("pt-rec-val");
-            mWriter.writeln(MIN_THREADS + "=" + AMTUNE_NUM_WS_MIN_THREADS);
+            mWriter.writeln(MIN_THREADS + "=" + curMinThreads);
             mWriter.writeln(" ");
             mWriter.writelnLocaleMsg("pt-maxthreads-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
-            mWriter.writeln(MAX_THREADS + "=" + curCfgMap.get(MAX_THREADS));
+            String curMaxThreads = curCfgMap.get(MAX_THREADS).toString();
+            mWriter.writeln(MAX_THREADS + "=" + curMaxThreads);
             mWriter.writeLocaleMsg("pt-rec-val");
-            mWriter.writeln(MAX_THREADS + "=" +
-                    configInfo.getNumOfMaxThreadPool());
+            mWriter.writeln(MAX_THREADS + "=" + getMaxThreadPoolVal());
             mWriter.writeln(" ");
             mWriter.writelnLocaleMsg("pt-queuesize-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
@@ -165,14 +166,11 @@ public class TuneWS7Container extends TuneWebServer implements
             mWriter.writeln(" ");
             int newMinHeapVal = configInfo.getMaxHeapSize();
             int newMaxHeapVal = configInfo.getMaxHeapSize();
-            //workaround as WS u3 is not starting if the it heap size is more 
-            //than 8 GB
-            if (newMinHeapVal > 8192) {
-                newMinHeapVal = 8192;
+            //workaround as WS u3 is not starting if the heap size is more 
+            //than 12 GB
+            if (newMinHeapVal > 12288) {
+                newMinHeapVal = 12288;
             } 
-            if (newMaxHeapVal > 8192) {
-                newMaxHeapVal = 8192;
-            }
             String wsAdminNewMinHeap = MIN_HEAP_FLAG + newMinHeapVal + "M";
             String wsAdminNewMaxHeap = MAX_HEAP_FLAG + newMaxHeapVal + "M";
             mWriter.writelnLocaleMsg("pt-maxminheap-msg");
@@ -284,11 +282,13 @@ public class TuneWS7Container extends TuneWebServer implements
             mWriter.writeln(wsAdminNewUseConMarkSweepGc);
             mWriter.writeln(" ");
             String wsAdminNewParallelGCThreads = "";
+            String wsAdminCurParellelGCThreads = "";
             if (AMTuneUtil.isNiagara()) {
                 mWriter.writelnLocaleMsg("pt-parallel-gc-threads-msg");
                 mWriter.writeLocaleMsg("pt-cur-val");
-                mWriter.writeln(PARALLEL_GC_THREADS + "=" + 
-                        curCfgMap.get(PARALLEL_GC_THREADS));
+                wsAdminCurParellelGCThreads = PARALLEL_GC_THREADS + "=" + 
+                        curCfgMap.get(PARALLEL_GC_THREADS);
+                mWriter.writeln(wsAdminCurParellelGCThreads);
                 wsAdminNewParallelGCThreads = PARALLEL_GC_THREADS + "=" + 
                         AMTuneUtil.getNumberOfCPUS();
                 mWriter.writeLocaleMsg("pt-rec-val");
@@ -301,50 +301,113 @@ public class TuneWS7Container extends TuneWebServer implements
             String bakFile = wsConfigInfo.getContainerInstanceDir() + 
                     FILE_SEP + "server.xml-orig" + AMTuneUtil.getRandomStr();
             AMTuneUtil.CopyFile(new File(tuneFile), new File(bakFile));
-            setThreadPoolProp();
-            setHttpListenerProp();
+            boolean isThreadPoolPropChanged = false;
+            int curMax = Integer.parseInt(curMaxThreads);
+            if (curMax != getMaxThreadPoolVal()) {
+                isThreadPoolPropChanged = setThreadPoolProp();
+            }
+            boolean isHttpListnerPropChanged = false;
+            int curAcceptorT = Integer.parseInt(
+                    curCfgMap.get(ACCEPTOR_THREADS).toString());
+            if (curAcceptorT < configInfo.getAcceptorThreads()) {
+                isHttpListnerPropChanged = setHttpListenerProp();
+            }
             boolean statsEnb =
                     Boolean.parseBoolean(curCfgMap.get(ENABLED).toString());
+            boolean isStatsChanged = false;
             if (statsEnb != AMTUNE_STATISTIC_ENABLED) {
-                setStatsProp();
+                isStatsChanged = setStatsProp();
             }
             List curJVMHeapOptList = new ArrayList();
-            curJVMHeapOptList.add(curCfgMap.get(MIN_HEAP_FLAG));
-            curJVMHeapOptList.add(curCfgMap.get(MAX_HEAP_FLAG));
-            deleteJVMOptionUsingWSAdmin(curJVMHeapOptList, true);
-            List curJVMOptList = new ArrayList();
-            curJVMOptList.add(curCfgMap.get(SERVER_FLAG));
-            curJVMOptList.add(curCfgMap.get(STACK_SIZE_FLAG));
-            curJVMOptList.add(curCfgMap.get(GC_LOG_FLAG));
-            curJVMOptList.add(curCfgMap.get(NEW_SIZE_FLAG));
-            curJVMOptList.add(curCfgMap.get(MAX_NEW_SIZE_FLAG));
-            curJVMOptList.add(curCfgMap.get(DISABLE_EXPLICIT_GC_FLAG));
-            curJVMOptList.add(curCfgMap.get(PARALLEL_GC_FLAG));
-            curJVMOptList.add(curCfgMap.get(HISTOGRAM_FLAG));
-            curJVMOptList.add(curCfgMap.get(GC_TIME_STAMP_FLAG));
-            curJVMOptList.add(curCfgMap.get(MARK_SWEEP_GC_FLAG));
-            deleteJVMOptionUsingWSAdmin(curJVMOptList, false);
             List newJVMHeapOptList = new ArrayList();
-            newJVMHeapOptList.add(wsAdminNewMinHeap);
-            newJVMHeapOptList.add(wsAdminNewMaxHeap);
-            insertJVMOptionUsingWSAdmin(newJVMHeapOptList, true);
+            List curJVMOptList = new ArrayList();
             List newJVMOptList = new ArrayList();
-            newJVMOptList.add(wsAdminNewServerMode);
-            newJVMOptList.add(wsAdminNewStackSize);
-            newJVMOptList.add(wsAdminNewLoggcOutput);
-            newJVMOptList.add(wsAdminNewNewSize);
-            newJVMOptList.add(wsAdminNewMaxNewSize);
-            newJVMOptList.add(wsAdminNewDisableExplicitGc);
-            newJVMOptList.add(wsAdminNewUseParallelGc);
-            newJVMOptList.add(wsAdminNewPrintClassHistogram);
-            newJVMOptList.add(wsAdminNewPrintGcTimeStamps);
-            newJVMOptList.add(wsAdminNewUseConMarkSweepGc);
-            if (AMTuneUtil.isNiagara()) {
-                newJVMOptList.add(wsAdminNewParallelGCThreads);
+            
+            if (!curCfgMap.get(MIN_HEAP_FLAG).toString().equals(
+                    wsAdminNewMinHeap)) {
+                curJVMHeapOptList.add(curCfgMap.get(MIN_HEAP_FLAG));
+                newJVMHeapOptList.add(wsAdminNewMinHeap);
             }
-            insertJVMOptionUsingWSAdmin(newJVMOptList, false);
-            deployConfig();
-            AMTuneUtil.reStartWS7Serv(wsConfigInfo);
+            if (!curCfgMap.get(MAX_HEAP_FLAG).toString().equals(
+                    wsAdminNewMaxHeap)) {
+                curJVMHeapOptList.add(curCfgMap.get(MAX_HEAP_FLAG));
+                newJVMHeapOptList.add(wsAdminNewMaxHeap);
+            }
+            if (!curCfgMap.get(SERVER_FLAG).toString().equals(
+                    wsAdminNewServerMode)) {
+                curJVMOptList.add(curCfgMap.get(SERVER_FLAG));
+                newJVMOptList.add(wsAdminNewServerMode);
+            }
+            if (!curCfgMap.get(STACK_SIZE_FLAG).toString().equals(
+                    wsAdminNewStackSize)) {
+                curJVMOptList.add(curCfgMap.get(STACK_SIZE_FLAG));
+                newJVMOptList.add(wsAdminNewStackSize);
+            }
+            if (!curCfgMap.get(GC_LOG_FLAG).toString().equals(
+                    wsAdminNewLoggcOutput)) {
+                curJVMOptList.add(curCfgMap.get(GC_LOG_FLAG));
+                newJVMOptList.add(wsAdminNewLoggcOutput);
+            }
+            if (!curCfgMap.get(NEW_SIZE_FLAG).toString().equals(
+                    wsAdminNewNewSize)) {
+                curJVMOptList.add(curCfgMap.get(NEW_SIZE_FLAG));
+                newJVMOptList.add(wsAdminNewNewSize);
+            }
+            if (!curCfgMap.get(MAX_NEW_SIZE_FLAG).toString().equals(
+                    wsAdminNewMaxNewSize)) {
+                curJVMOptList.add(curCfgMap.get(MAX_NEW_SIZE_FLAG));
+                newJVMOptList.add(wsAdminNewMaxNewSize);
+            }
+            if (!curCfgMap.get(DISABLE_EXPLICIT_GC_FLAG).toString().equals(
+                    wsAdminNewDisableExplicitGc)) {
+                curJVMOptList.add(curCfgMap.get(DISABLE_EXPLICIT_GC_FLAG));
+                newJVMOptList.add(wsAdminNewDisableExplicitGc);
+            }
+            if (!curCfgMap.get(PARALLEL_GC_FLAG).toString().equals(
+                    wsAdminNewUseParallelGc)) {
+                curJVMOptList.add(curCfgMap.get(PARALLEL_GC_FLAG));
+                newJVMOptList.add(wsAdminNewUseParallelGc);
+            }
+            if (!curCfgMap.get(HISTOGRAM_FLAG).toString().equals(
+                    wsAdminNewPrintClassHistogram)) {
+                curJVMOptList.add(curCfgMap.get(HISTOGRAM_FLAG));
+                newJVMOptList.add(wsAdminNewPrintClassHistogram);
+            }
+            if (!curCfgMap.get(GC_TIME_STAMP_FLAG).toString().equals(
+                    wsAdminNewPrintGcTimeStamps)) {
+                curJVMOptList.add(curCfgMap.get(GC_TIME_STAMP_FLAG));
+                newJVMOptList.add(wsAdminNewPrintGcTimeStamps);
+            }
+            if (!curCfgMap.get(MARK_SWEEP_GC_FLAG).toString().equals(
+                    wsAdminNewUseConMarkSweepGc)) {
+                curJVMOptList.add(curCfgMap.get(MARK_SWEEP_GC_FLAG));
+                newJVMOptList.add(wsAdminNewUseConMarkSweepGc);
+            }
+            if (AMTuneUtil.isNiagara()) {
+                if (!wsAdminCurParellelGCThreads.equals(
+                        wsAdminNewParallelGCThreads)) {
+                    if (wsAdminCurParellelGCThreads.indexOf(NO_VAL_SET) == -1) {
+                        curJVMOptList.add(wsAdminCurParellelGCThreads);
+                    }
+                    newJVMOptList.add(wsAdminNewParallelGCThreads);
+                }
+            }
+            boolean isHeapOptDel = 
+                    deleteJVMOptionUsingWSAdmin(curJVMHeapOptList, true);
+            boolean isJvmOptDel =
+                    deleteJVMOptionUsingWSAdmin(curJVMOptList, false);
+            boolean isInsertHeapOpt =
+                    insertJVMOptionUsingWSAdmin(newJVMHeapOptList, true);
+            boolean isInsertJVMOpt = 
+                    insertJVMOptionUsingWSAdmin(newJVMOptList, false);
+            if (isThreadPoolPropChanged || isHttpListnerPropChanged || 
+                    isStatsChanged || isHeapOptDel || isJvmOptDel || 
+                    isInsertHeapOpt || isInsertJVMOpt) {
+                deployConfig();
+                AMTuneUtil.reStartWS7Serv(wsConfigInfo);
+            } else {
+                mWriter.writelnLocaleMsg("pt-web-conf-same-rec-msg");
+            }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "tuneServerConfigFile",
                     "Error tuning webserver7 configuration.");
@@ -378,7 +441,8 @@ public class TuneWS7Container extends TuneWebServer implements
     /**
      * This method disables the  for statistics in Web Server
      */
-    private void setStatsProp() {
+    private boolean setStatsProp() {
+        boolean statsChange = false;
         try {
             String statsCmd = wsConfigInfo.getWSAdminCmd() + 
                     WADM_SET_STATS_SUB_CMD + 
@@ -392,17 +456,21 @@ public class TuneWS7Container extends TuneWebServer implements
                 mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
                 pLogger.log(Level.SEVERE, "setStatsProp",
                         "Error executing command " + statsCmd);
+            } else {
+                statsChange = true;
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "setStatsProp", "Error setting " +
                     "set-thread-pool-prop " + ex.getMessage());
         }
+        return statsChange;
     }
 
     /**
      * This method sets the HTTP Listener.
      */
-    private void setHttpListenerProp() {
+    private boolean setHttpListenerProp() {
+        boolean listenerChange = false;
         try {
             String setListenerCmd = wsConfigInfo.getWSAdminCmd() +
                     WADM_SET_HTTP_LISTENER_SUB_CMD +
@@ -418,24 +486,26 @@ public class TuneWS7Container extends TuneWebServer implements
                 mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
                 pLogger.log(Level.SEVERE, "setHttpListenerProp",
                         "Error executing command " + setListenerCmd);
+            } else {
+                listenerChange = true;
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "setHttpListenerProp", "Error setting " +
                     "set-http-listener-prop " + ex.getMessage());
         }
+        return listenerChange;
     }
 
     /**
      * Sets the thread pool size
      */
-    private void setThreadPoolProp() {
+    private boolean setThreadPoolProp() {
+        boolean threadPoolPropChange = false;
         try {
             pLogger.log(Level.INFO, "setThreadPoolProp",
                     "Setting set-thread-pool-prop using wadm command.");
-            String commonParam = MIN_THREADS + "=" + AMTUNE_NUM_WS_MIN_THREADS +
-                    " " + MAX_THREADS + "=" +
-                    configInfo.getNumOfMaxThreadPool() + " " + QUEUE_SIZE +
-                    "=" + AMTUNE_NUM_TCP_CONN_SIZE;
+            String commonParam = MAX_THREADS + "=" + getMaxThreadPoolVal() +
+                    " " + QUEUE_SIZE + "=" + AMTUNE_NUM_TCP_CONN_SIZE;
             String parmStr64Bit = commonParam + " " + STACK_SIZE + "=" +
                     AMTUNE_NATIVE_STACK_SIZE_64_BIT;
 
@@ -457,6 +527,8 @@ public class TuneWS7Container extends TuneWebServer implements
                     mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
                     pLogger.log(Level.SEVERE, "setThreadPoolProp",
                             "Error executing command " + setProp64Cmd);
+                } else {
+                    threadPoolPropChange = true;
                 }
             } else {
                 retVal = AMTuneUtil.executeCommand(setPropCmd,
@@ -466,6 +538,8 @@ public class TuneWS7Container extends TuneWebServer implements
                     mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
                     pLogger.log(Level.SEVERE, "setThreadPoolProp",
                             "Error executing command " + setPropCmd);
+                } else {
+                    threadPoolPropChange = true;
                 }
             }
 
@@ -473,6 +547,7 @@ public class TuneWS7Container extends TuneWebServer implements
             pLogger.log(Level.SEVERE, "setThreadPoolProp", "Error setting " +
                     "set-thread-pool-prop " + ex.getMessage());
         }
+        return threadPoolPropChange;
     }
 
     /**
@@ -506,7 +581,7 @@ public class TuneWS7Container extends TuneWebServer implements
         mWriter.write("                     : ");
         mWriter.writelnLocaleMsg("pt-web-64bit-jvm-cur-msg2");
         mWriter.write("                     : ");
-        mWriter.writeln("Min Heap: " + calMaxHeapSize + "Max Heap: " +
+        mWriter.writeln("Min Heap: " + calMaxHeapSize + " Max Heap: " +
                 calMinHeapSize);
 
     }
@@ -516,18 +591,20 @@ public class TuneWS7Container extends TuneWebServer implements
      * configuration.
      *
      * @param jvmOptions list of JVM options to be deleted.
+     * @param combined set to true if options need to be enclosed in double 
+     * quotes.
      *
      */
-    private void deleteJVMOptionUsingWSAdmin(List jvmOptions,
+    private boolean deleteJVMOptionUsingWSAdmin(List jvmOptions,
             boolean combined) {
         if (jvmOptions.size() == 0) {
             pLogger.log(Level.WARNING, "deleteJVMOptionUsingWSAdmin",
                     "JVM to be deleted are null");
-            return;
+            return false;
         }
         mWriter.writeln(" ");
         mWriter.writeLocaleMsg("pt-web-del-jvm-options");
-        mWriter.writeln(jvmOptions.toString());
+        mWriter.writeln(jvmOptions.toString().replace(NO_VAL_SET, ""));
         StringBuffer jvmOpts = new StringBuffer();
         Iterator optItr = jvmOptions.iterator();
         if (combined) {
@@ -535,15 +612,16 @@ public class TuneWS7Container extends TuneWebServer implements
         }
         while (optItr.hasNext()) {
             String val = (String) optItr.next();
-            if (val != null && val.trim().length() > 0) {
+            if (val != null && val.trim().length() > 0 && 
+                    !val.equals(NO_VAL_SET)) {
                 jvmOpts.append(val);
                 jvmOpts.append(" ");
             }
         }
-        if (jvmOpts.toString().trim().length() == 0) {
+        if (jvmOpts.toString().trim().length() < 1) {
             pLogger.log(Level.INFO, "deleteJVMOptionUsingWSAdmin",
                     "Nothing to delete from webserver config.");
-            return;
+            return false;
         }
         String delJVMCmd = wsConfigInfo.getWSAdminCmd() + 
                 WADM_DEL_JVM_OPT_SUB_CMD +
@@ -555,7 +633,7 @@ public class TuneWS7Container extends TuneWebServer implements
         }
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = -1;
-        if (!AMTuneUtil.isWindows2003()) {
+        if (!AMTuneUtil.isWindows()) {
             try {
                 retVal = AMTuneUtil.executeScriptCmd(delJVMCmd, resultBuffer);
             } catch (AMTuneException ex) {
@@ -567,8 +645,9 @@ public class TuneWS7Container extends TuneWebServer implements
         if (retVal == -1) {
             mWriter.writelnLocaleMsg("pt-del-jvm-error-msg");
             mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
-            pLogger.log(Level.WARNING, "deleteJVMOptionUsingWSAdmin",
-                    "Error deleting jvm options. " + resultBuffer.toString());
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -576,13 +655,15 @@ public class TuneWS7Container extends TuneWebServer implements
      * This method Create one or more jvm option(s)
      *
      * @param jvmOptions List of JVM options to be inserted
+     * @param combined Set to true if options need to be enclosed in 
+     * double quotes.
      */
-     private void insertJVMOptionUsingWSAdmin(List jvmOptions,
+     private boolean insertJVMOptionUsingWSAdmin(List jvmOptions,
              boolean combined) {
         if (jvmOptions.size() == 0) {
             pLogger.log(Level.WARNING, "insertJVMOptionUsingWSAdmin",
                     "JVM options to add are null");
-            return;
+            return false;
         }
         mWriter.writeln(" ");
         mWriter.writelnLocaleMsg("pt-web-add-jvm-options");
@@ -609,7 +690,7 @@ public class TuneWS7Container extends TuneWebServer implements
         }
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = 0;
-        if (AMTuneUtil.isWindows2003()) {
+        if (AMTuneUtil.isWindows()) {
             retVal = AMTuneUtil.executeCommand(addJVMCmd, resultBuffer);
         } else {
             try {
@@ -621,8 +702,9 @@ public class TuneWS7Container extends TuneWebServer implements
         if (retVal == -1) {
             mWriter.writelnLocaleMsg("pt-create-jvm-opts-error-msg");
             mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
-            pLogger.log(Level.WARNING, "insertJVMOptionUsingWSAdmin",
-                    "Error inserting jvm options. " + resultBuffer.toString());
+            return false;
+        } else {
+            return true;
         }
     }
      
@@ -631,5 +713,19 @@ public class TuneWS7Container extends TuneWebServer implements
         if (passFile.isFile()) {
             passFile.delete();
         }
+    }
+    
+    /**
+     * Return maximum number of threads.
+     */
+    private int getMaxThreadPoolVal() {
+        int recMaxThreadPool = configInfo.getNumOfMaxThreadPool();
+        if (recMaxThreadPool < AMTUNE_NUM_WS_THREADS_MIN_VAL) {
+            recMaxThreadPool = AMTUNE_NUM_WS_THREADS_MIN_VAL;
+        }
+        if (recMaxThreadPool > AMTUNE_NUM_WS_THREADS_MAX_VAL) {
+            recMaxThreadPool = AMTUNE_NUM_WS_THREADS_MAX_VAL;
+        }
+        return recMaxThreadPool;
     }
 }
