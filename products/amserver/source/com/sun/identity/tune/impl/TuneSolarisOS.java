@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneSolarisOS.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
+ * $Id: TuneSolarisOS.java,v 1.3 2008-07-25 06:07:37 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -80,7 +80,6 @@ public class TuneSolarisOS extends TuneOS {
             int extVal = AMTuneUtil.executeCommand(cmd, rBuf);
             if (extVal == -1) {
                 mWriter.writelnLocaleMsg("pt-sol-error-tuning");
-                pLogger.log(Level.SEVERE, "startTuning", rBuf.toString());
                     throw new AMTuneException("Error executing command " +
                             "zoneadm.");
             } else {
