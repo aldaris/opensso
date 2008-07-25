@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.3 2008-07-23 17:30:47 veiming Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.4 2008-07-25 05:21:34 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -198,6 +198,12 @@ FAMConstants, WebContainerConstants {
                 dsConfigInfo = new DSConfigInfo(confBundle, false);
                 if (!isUMSMDSSame()) {
                     smConfigInfo = new DSConfigInfo(confBundle, true);
+                }
+                //famconfig dir is required if DS is remote for creating
+                //amtune.zip file.
+                if (dsConfigInfo.isRemoteDS() || 
+                        (smConfigInfo != null && smConfigInfo.isRemoteDS())) {
+                    setFAMConfigDir(confBundle.getString(FAM_CONFIG_DIR));
                 }
             } 
             calculateTuneParams();
@@ -431,7 +437,6 @@ FAMConstants, WebContainerConstants {
             } else {
                 mWriter.write(famConfigDir + " ");
                 mWriter.writeLocaleMsg("pt-not-valid-dir");
-               
                 pLogger.log(Level.SEVERE, "setFAMAdmLocation",
                         "FAM config is not valid Directory. " +
                         "Please check the value for the property " +
@@ -445,6 +450,10 @@ FAMConstants, WebContainerConstants {
                     "Error setting FAM config Location. " +
                     "Please check the value for the property " +
                     FAM_CONFIG_DIR);
+            if (dsConfigInfo != null && dsConfigInfo.isRemoteDS() ||
+                        smConfigInfo != null && smConfigInfo.isRemoteDS()) {
+                    mWriter.writelnLocaleMsg("pt-fam-config-dir-req");
+            }
             throw new AMTuneException("Invalid value for " + FAM_CONFIG_DIR);
         }
     }
@@ -807,7 +816,7 @@ FAMConstants, WebContainerConstants {
                             AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS));
                 }
             }
-        } else if (AMTuneUtil.isWindows2003()) {
+        } else if (AMTuneUtil.isWindows()) {
             setFAMTuneMaxMemoryToUseInMB(                   
                     Integer.toString(getFAMTuneMaxMemoryToUseInMBDefault()));
         }
