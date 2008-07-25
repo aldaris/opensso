@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.32 2008-07-04 06:25:22 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.33 2008-07-25 17:00:58 veiming Exp $
  *
  */
 
@@ -120,56 +120,34 @@ public class ServicesDefaultValues {
         setPlatformLocale();
         
         String dbOption = (String)map.get(SetupConstants.CONFIG_VAR_DATA_STORE);
-        boolean embedded = 
-              dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
-        boolean dbSunDS = false;
-        boolean dbMsAD  = false;
-        if (embedded) {
-            dbSunDS = true;
-        } else { // Keep old behavior for now.
-            dbSunDS = dbOption.equals(SetupConstants.SMS_DS_DATASTORE);
-            dbMsAD  = dbOption.equals(SetupConstants.SMS_AD_DATASTORE);
-        }
+        boolean embedded = dbOption.equals(SetupConstants.SMS_EMBED_DATASTORE);
         
-        if (dbSunDS || dbMsAD) {
-            AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
-            dsConfig.setDSValues();
+        AMSetupDSConfig dsConfig = AMSetupDSConfig.getInstance();
+        dsConfig.setDSValues();
 
-            //try to connect to the DS with the supplied host/port
-            if (!embedded) {
-                String sslEnabled = (String)map.get(
-                    SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL);
-                boolean ssl = (sslEnabled != null) && sslEnabled.equals("SSL");
-                if (!dsConfig.isDServerUp(ssl)) {
-                    dsConfig = null;
-                    throw new ConfiguratorException(
-                        "configurator.dsconnnectfailure", null, locale);
-                }
-                if ((!DN.isDN((String) map.get(
-                    SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
-                        (!dsConfig.connectDSwithDN(ssl))
-                ) {
-                    dsConfig = null;
-                    throw new ConfiguratorException("configurator.invalidsuffix",
-                        null, locale);
-                }
-                
-                if (dbSunDS) {
-                    map.put(SetupConstants.DIT_LOADED, 
-                        dsConfig.isDITLoaded(ssl));
-                    map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
-                    map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, "");
-                } else {
-                    map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
-                    map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, 
-                        "aci,um,sm");
-                }
-            } else { 
-                map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
-                map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, "aci,um,sm");
+        if (!embedded) { //Sun DS as SM datastore
+            String sslEnabled = (String) map.get(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL);
+            boolean ssl = (sslEnabled != null) && sslEnabled.equals("SSL");
+            if (!dsConfig.isDServerUp(ssl)) {
+                dsConfig = null;
+                throw new ConfiguratorException(
+                    "configurator.dsconnnectfailure", null, locale);
             }
-        } else {
+            if ((!DN.isDN((String) map.get(
+                SetupConstants.CONFIG_VAR_ROOT_SUFFIX))) ||
+                (!dsConfig.connectDSwithDN(ssl))) {
+                dsConfig = null;
+                throw new ConfiguratorException("configurator.invalidsuffix",
+                    null, locale);
+            }
+
+            map.put(SetupConstants.DIT_LOADED, dsConfig.isDITLoaded(ssl));
             map.put(SetupConstants.DATASTORE_NOTIFICATION, "true");
+            map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, "aci,um");
+        } else {
+            map.put(SetupConstants.DATASTORE_NOTIFICATION, "false");
+            map.put(SetupConstants.DISABLE_PERSISTENT_SEARCH, "aci,um,sm");
         }
 
         Map userRepo = (Map)map.get("UserStore");
