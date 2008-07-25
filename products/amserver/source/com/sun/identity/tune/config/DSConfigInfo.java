@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigInfo.java,v 1.2 2008-07-10 12:37:35 kanduls Exp $
+ * $Id: DSConfigInfo.java,v 1.3 2008-07-25 05:43:17 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -345,6 +345,9 @@ public class DSConfigInfo implements DSConstants {
                     "Error setting Directory Server Manager Password. " +
                     "Please check the value for the property " + 
                     SM_DIRMGR_PASSWORD);
+            if(dsVersion.equalsIgnoreCase(OPEN_DS)) {
+                mWriter.writelnLocaleMsg("pt-fam-password-same");
+            }
             throw new AMTuneException("Invalid value for " + 
                     SM_DIRMGR_PASSWORD);
         }
