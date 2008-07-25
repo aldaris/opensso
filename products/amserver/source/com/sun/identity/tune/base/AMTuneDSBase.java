@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneDSBase.java,v 1.3 2008-07-23 17:30:46 veiming Exp $
+ * $Id: AMTuneDSBase.java,v 1.4 2008-07-25 05:25:41 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -30,6 +30,7 @@ package com.sun.identity.tune.base;
 import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.AMTuneException;
+import com.sun.identity.tune.common.AMTuneFileFilter;
 import com.sun.identity.tune.common.AMTuneLogger;
 import com.sun.identity.tune.config.DSConfigInfo;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
@@ -1008,9 +1009,8 @@ public abstract class AMTuneDSBase extends TuneDS {
             return mergeLists(notInSearchIndex, notInDefaultIdx);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "tuneDSIndex", "Error tuning Index.");
-            new AMTuneException(ex.getMessage());
+            throw new AMTuneException(ex.getMessage());
         }
-        return null;
     }
 
     /**
