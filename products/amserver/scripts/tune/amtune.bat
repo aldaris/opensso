@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amtune.bat,v 1.1 2008-07-02 18:28:55 kanduls Exp $
+: $Id: amtune.bat,v 1.2 2008-07-25 05:30:44 kanduls Exp $
 
 set TOOLS_HOME="@TOOLS_HOME@"
-"@JAVA_HOME@/bin/java.exe" -cp "%TOOLS_HOME%/locale;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/amtune.jar;./;" com.sun.identity.tune.AMTune
+"@JAVA_HOME@/bin/java.exe" -cp "%TOOLS_HOME%/resources;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/amtune.jar;./;" com.sun.identity.tune.AMTune

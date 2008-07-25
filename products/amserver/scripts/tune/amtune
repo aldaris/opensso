@@ -23,10 +23,10 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune,v 1.1 2008-07-02 18:28:53 kanduls Exp $
+# $Id: amtune,v 1.2 2008-07-25 05:31:28 kanduls Exp $
 
 TOOLS_HOME="@TOOLS_HOME@"
 JAVA_HOME="@JAVA_HOME@"
 
-${JAVA_HOME}/bin/java -cp "${TOOLS_HOME}/locale:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/amtune.jar:./:" com.sun.identity.tune.AMTune
+${JAVA_HOME}/bin/java -cp "${TOOLS_HOME}/resources:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/amtune.jar:./:" com.sun.identity.tune.AMTune
 
