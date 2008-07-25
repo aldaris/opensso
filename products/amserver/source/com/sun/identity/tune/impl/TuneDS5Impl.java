@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneDS5Impl.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
+ * $Id: TuneDS5Impl.java,v 1.3 2008-07-25 05:48:57 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -72,7 +72,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
     public void initialize(AMTuneConfigInfo confInfo)
     throws AMTuneException {
         super.initialize(confInfo);
-        if (AMTuneUtil.isWindows2003()) {
+        if (AMTuneUtil.isWindows()) {
             db2BakPath = instanceDir + FILE_SEP + "db2bak.bat ";
             db2IndexPath = instanceDir + FILE_SEP + "db2index.pl ";
             stopCmdPath = instanceDir + FILE_SEP + "stop-slapd.bat";
@@ -107,7 +107,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
             computeTuneValues();
             mWriter.writeln(PARA_SEP);
             modifyLDAP();
-            if ( !AMTuneUtil.isWindows2003()) {
+            if ( !AMTuneUtil.isWindows()) {
                 //For Windows changing dse with this script is not recommended.
                 tuneUsingDSE();
             }
@@ -115,7 +115,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
                 tuneDSIndex();
             }
             tuneFuture();
-
+            mWriter.writelnLocaleMsg("pt-ds-um-mutliple-msg");
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", "Error tuning DS5.2");
             mWriter.writelnLocaleMsg("pt-error-tuning-msg");
@@ -269,13 +269,13 @@ public class TuneDS5Impl extends AMTuneDSBase {
             StringBuffer resultBuffer = new StringBuffer();
             int retVal = AMTuneUtil.executeCommand(idxCmd, resultBuffer);
             if (retVal == -1) {
-                throw new AMTuneException(resultBuffer.toString());
+                throw new AMTuneException("Creating index command failed.");
             }
         } catch (Exception ex) {
             //just print the message
             mWriter.writelnLocaleMsg("pt-idx-create-error");
             pLogger.log(Level.SEVERE, "createIndex", "Error creating index " +
-                    "for attribute " + attrName);
+                    "for attribute " + attrName + " : " + ex.getMessage());
 
         }
     }
@@ -307,8 +307,6 @@ public class TuneDS5Impl extends AMTuneDSBase {
             int retVal = AMTuneUtil.executeCommand(db2BakCmd, resultBuffer);
             if (retVal == -1) {
                 mWriter.writelnLocaleMsg("pt-cannot-backup-db");
-                pLogger.log(Level.SEVERE, "backUpDS", "Error taking backup: " +
-                        resultBuffer.toString());
                 throw new AMTuneException("Data Base Backup failed.");
             }
             pLogger.log(Level.FINE, "backUpDS", "Backing up Done...");
@@ -341,7 +339,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = AMTuneUtil.executeCommand(stopCmdPath, resultBuffer);
         if (retVal == -1){
-            throw new AMTuneException(resultBuffer.toString());
+            throw new AMTuneException("Error stopping DS 5.");
         }
         pLogger.log(Level.FINE, "stopDS", "DS Successfully stopped.");
     }
@@ -357,7 +355,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = AMTuneUtil.executeCommand(startCmdPath, resultBuffer);
         if (retVal == -1){
-            throw new AMTuneException(resultBuffer.toString());
+            throw new AMTuneException("Error starting DS 5.");
         }
         pLogger.log(Level.FINE, "startDS", "DS Successfully started.");
     }
