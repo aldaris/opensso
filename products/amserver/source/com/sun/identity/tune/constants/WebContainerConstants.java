@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebContainerConstants.java,v 1.1 2008-07-02 18:50:41 kanduls Exp $
+ * $Id: WebContainerConstants.java,v 1.2 2008-07-25 05:56:23 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -99,5 +99,6 @@ public interface WebContainerConstants extends AMTuneConstants {
     static String QUEUE_SIZE_PARAM =
             "server.http-service.connection-pool.queue-size-in-bytes";
     static String AS_PARAM_DELIM = ":";
+    static String GENERATE_JVM_REPORT_SUB_CMD = "generate-jvm-report";
             
 }
