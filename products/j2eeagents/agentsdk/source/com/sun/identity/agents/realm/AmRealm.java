@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealm.java,v 1.8 2008-07-02 18:27:13 leiming Exp $
+ * $Id: AmRealm.java,v 1.9 2008-07-25 00:49:29 huacui Exp $
  *
  */
 
@@ -224,19 +224,19 @@ public class AmRealm extends AmRealmBase implements IAmRealm {
                                         origUUID = IdUtils.getUniversalId(
                                                     (AMIdentity) mIt.next());
                                         if (toLowerCaseStat.booleanValue()) {
-                                                origUUID =
-                                                        origUUID.toLowerCase();
+                                            origUUID = origUUID.toLowerCase();
                                         }
+                                        attributeSet.add(origUUID);
                                         String mappedId = getPrivilegedMappedAttribute(origUUID);
                                         attributeSet.add(mappedId);
 
-                                        String universalId = getUniquePartOfUuid(
-                                                    origUUID);
+                                        String universalId = 
+                                            getUniquePartOfUuid(origUUID);
                                         if (!origUUID.equalsIgnoreCase(universalId)) {
                                             if (toLowerCaseStat.booleanValue()) {
-                                                    universalId =
-                                                            universalId.toLowerCase();
+                                                universalId = universalId.toLowerCase();
                                             }
+                                            attributeSet.add(universalId);
                                             mappedId = getPrivilegedMappedAttribute(universalId);
                                             attributeSet.add(mappedId);
                                         }
