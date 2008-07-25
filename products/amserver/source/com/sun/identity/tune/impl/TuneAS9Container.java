@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.3 2008-07-23 17:30:48 veiming Exp $
+ * $Id: TuneAS9Container.java,v 1.4 2008-07-25 05:55:09 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -154,17 +154,28 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writeln(QUEUE_SIZE + "=" + AMTUNE_NUM_TCP_CONN_SIZE);
             mWriter.writeln(" ");
             
-            String asAdminNewMinHeap = MIN_HEAP_FLAG + 
-                    configInfo.getMaxHeapSize() + "M";
-            String asAdminNewMaxHeap = MAX_HEAP_FLAG + 
-                    configInfo.getMaxHeapSize() + "M";
+            int newMinHeapVal = configInfo.getMaxHeapSize();
+            int newMaxHeapVal = configInfo.getMaxHeapSize();
+            //workaround as WS u3 is not starting if the heap size is more 
+            //than 12 GB
+            if (newMinHeapVal > 12288) {
+                newMinHeapVal = 12288;
+            } 
+            
+            String asAdminNewMinHeap = MIN_HEAP_FLAG + newMinHeapVal + "M";
+            String asAdminNewMaxHeap = MAX_HEAP_FLAG + newMaxHeapVal + "M";
             mWriter.writelnLocaleMsg("pt-as-heap-size-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
             mWriter.write("Min Heap: " + curCfgMap.get(MIN_HEAP_FLAG));
             mWriter.writeln(" Max Heap: " + curCfgMap.get(MAX_HEAP_FLAG));
-            mWriter.writeLocaleMsg("pt-rec-val");
-            mWriter.writeln(asAdminNewMinHeap + " " + asAdminNewMaxHeap);
-            mWriter.writeln(" ");
+            if (asConfigInfo.isJVM64Bit() && (configInfo.getMemToUse() >
+                    configInfo.getFAMTuneMaxMemoryToUseInMB())) {
+                displayJVM64bitMessage(asAdminNewMinHeap, asAdminNewMaxHeap);
+            } else {
+                mWriter.writeLocaleMsg("pt-rec-val");
+                mWriter.writeln(asAdminNewMinHeap + " " + asAdminNewMaxHeap);
+                mWriter.writeln(" ");
+            }
             
             String asAdminNewLoggcOutput = GC_LOG_FLAG + ":" +
                     asConfigInfo.getContainerInstanceDir() + FILE_SEP +
@@ -192,8 +203,15 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writeln(asAdminNewServerMode);
             mWriter.writeln(" ");
             
-            String asAdminNewStackSize = STACK_SIZE_FLAG +
+            String asAdminNewStackSize = "";
+            if (asConfigInfo.isJVM64Bit()) {
+                asAdminNewStackSize = STACK_SIZE_FLAG +
+                        configInfo.getFAMTunePerThreadStackSizeInKB64Bit() +
+                        "k";
+            } else {
+                asAdminNewStackSize = STACK_SIZE_FLAG +
                         configInfo.getFAMTunePerThreadStackSizeInKB() + "k";
+            }
             mWriter.writelnLocaleMsg("pt-as-stack-size-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
             mWriter.writeln((String)curCfgMap.get(STACK_SIZE_FLAG));
@@ -383,7 +401,7 @@ public class TuneAS9Container extends TuneAppServer implements
                 mWriter.writelnLocaleMsg("pt-set-param-error-msg");
                 mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
                 pLogger.log(Level.SEVERE, "setASParams", "Error executing " +
-                        "asadmin " + resultBuffer.toString());
+                        "asadmin.");
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "setASParams",
@@ -399,7 +417,7 @@ public class TuneAS9Container extends TuneAppServer implements
     private void deleteCurJVMOptions(List curJvmOptions) {
         try {
             StringBuffer delOpts = new StringBuffer();
-            if (AMTuneUtil.isWindows2003()) {
+            if (AMTuneUtil.isWindows()) {
                 delOpts.append(" \"");
             } else {
                 delOpts.append(" :");
@@ -414,7 +432,7 @@ public class TuneAS9Container extends TuneAppServer implements
                     delOpts.append(val);
                 }
             }
-            if (AMTuneUtil.isWindows2003()) {
+            if (AMTuneUtil.isWindows()) {
                 delOpts.append("\"");
             }
             if(delOpts.toString().trim().length() < 3) {
@@ -433,9 +451,6 @@ public class TuneAS9Container extends TuneAppServer implements
             if (retVal != 0) {
                 mWriter.writelnLocaleMsg("pt-del-jvm-error-msg");
                 mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
-                pLogger.log(Level.SEVERE, "deleteCurJVMOptions", 
-                        "Error running cmd " + depOptCmd + " \n Error msg :" +
-                         resultBuffer.toString());
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "deleteCurJVMOptions",
@@ -451,7 +466,7 @@ public class TuneAS9Container extends TuneAppServer implements
     private void insertNewJVMOptions(List newJVMOpts) {
         try {
             StringBuffer newOpts = new StringBuffer();
-            if (AMTuneUtil.isWindows2003()) {
+            if (AMTuneUtil.isWindows()) {
                 newOpts.append(" \"");
             } else {
                 newOpts.append(" :");
@@ -465,7 +480,7 @@ public class TuneAS9Container extends TuneAppServer implements
                     newOpts.append(val);
                 }
             }
-            if (AMTuneUtil.isWindows2003()) {
+            if (AMTuneUtil.isWindows()) {
                 newOpts.append("\"");
             }
             if(newOpts.toString().trim().length() < 3) {
@@ -484,9 +499,6 @@ public class TuneAS9Container extends TuneAppServer implements
             if (retVal != 0) {
                 mWriter.writelnLocaleMsg("pt-create-jvm-opts-error-msg");
                 mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
-                pLogger.log(Level.SEVERE, "insertNewJVMOptions", 
-                        "Error running cmd " + newOptCmd.toString() + 
-                        " \n Error msg :" + resultBuffer.toString());
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "insertNewJVMOptions", 
@@ -548,6 +560,42 @@ public class TuneAS9Container extends TuneAppServer implements
         }
     }
 
+    /**
+     * Displays the heap size value 64 bit JVM.
+     *
+     * @param calMaxHeapSize
+     * @param calMinHeapSize
+     */
+    private void displayJVM64bitMessage(String calMaxHeapSize,
+            String calMinHeapSize) {
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-rec-msg1");
+        mWriter.write("                     : " + configInfo.getMemToUse());
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-rec-msg2");
+        mWriter.write("                     : ");
+        mWriter.writeLocaleMsg("pt-web-64bit-jvm-rec-msg3");
+        mWriter.writeln(AMTUNE_MEM_MAX_HEAP_SIZE_RATIO + ", in amtune-env");
+        mWriter.write("                     : ");
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-rec-msg4");
+        mWriter.write("                     : ");
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-rec-msg5");
+        mWriter.write("                     : ");
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-rec-msg6");
+        mWriter.write("                     : ");
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-rec-msg7");
+        mWriter.writeln(" ");
+        mWriter.write("                     : ");
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-cur-msg1");
+        mWriter.write("                     : ");
+        mWriter.writeln(AMTUNE_MEM_MAX_HEAP_SIZE_RATIO + "=" +
+                configInfo.getFAMTuneMemMaxHeapSizeRatioExp());
+        mWriter.write("                     : ");
+        mWriter.writelnLocaleMsg("pt-web-64bit-jvm-cur-msg2");
+        mWriter.write("                     : ");
+        mWriter.writeln("Min Heap: " + calMaxHeapSize + " Max Heap: " +
+                calMinHeapSize);
+
+    }
+    
     private void deletePasswordFile() {
         File passFile = new File(asConfigInfo.getAdminPassfilePath());
         if (passFile.isFile()) {
