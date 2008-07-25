@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.3 2008-07-23 17:30:46 veiming Exp $
+ * $Id: AMTuneFAMBase.java,v 1.4 2008-07-25 05:59:29 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -36,6 +36,9 @@ import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Base class for tuning OpenSSO Enterprise.
@@ -81,7 +85,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
      */
     private void setFAMAdmCmd() 
     throws AMTuneException {
-        if (AMTuneUtil.isWindows2003()) {
+        if (AMTuneUtil.isWindows()) {
             famCmdPath = configInfo.getFAMAdmLocation() + FILE_SEP +
                     "ssoadm.bat ";
         } else {
@@ -112,7 +116,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             pOut.write(configInfo.getFamAdminPassword());
             pOut.flush();
             pOut.close();
-            if (!AMTuneUtil.isWindows2003()) {
+            if (!AMTuneUtil.isWindows()) {
                 String chmodCmd = "/bin/chmod 400 " + famPassFilePath;
                 StringBuffer rbuff = new StringBuffer();
                 int ext = AMTuneUtil.executeCommand(chmodCmd, rbuff);
@@ -128,7 +132,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
      * Deletes password file.
      */
     protected void deletePasswordFile() {
-        if (!AMTuneUtil.isWindows2003()) {
+        if (!AMTuneUtil.isWindows()) {
             String chmodCmd = "/bin/chmod 700 " + famPassFilePath;
             StringBuffer rbuff = new StringBuffer();
             int ext = AMTuneUtil.executeCommand(chmodCmd, rbuff);
@@ -153,7 +157,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             updateCmd.append(configInfo.getFAMServerUrl());
             updateCmd.append(" ");
             updateCmd.append(ATTR_VALUES_OPT);
-            if (!AMTuneUtil.isWindows2003()) {
+            if (!AMTuneUtil.isWindows()) {
                 updateCmd.append(" ");
             } else {
                 updateCmd.append(" \"");
@@ -163,12 +167,12 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             while(itr.hasNext()) {
                 String args = itr.next().toString();
                 String cmd = updateCmd.toString() + args;
-                if (AMTuneUtil.isWindows2003()) {
+                if (AMTuneUtil.isWindows()) {
                     cmd = cmd + "\"";
                 }
                 pLogger.log(Level.FINEST, "updateFAMServiceCfg", 
                         "Executing cmd " + cmd);
-                if (!AMTuneUtil.isWindows2003()) {
+                if (!AMTuneUtil.isWindows()) {
                     try {
                         retVal = AMTuneUtil.executeScriptCmd(cmd, resultBuffer);
                     } catch (AMTuneException ex) {
@@ -179,8 +183,10 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 }
                 if (retVal == -1) {
                     pLogger.log(Level.SEVERE, "updateFAMServiceCfg", 
-                    "Error updating OpenSSO Enterprise service config values.");
-                    throw new AMTuneException(resultBuffer.toString());
+                            "Error updating OpenSSO Enterprise service " +
+                            "config values.");
+                    throw new AMTuneException("Error updating " + 
+                            "OpenSSO Enterprise service configuration");
                 }
             }
         } catch (Exception ex) {
@@ -190,7 +196,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
     }
     
     /**
-     * Returns the list of datastores for the realmName
+     * Returns the list of data stores for the realmName
      * @param realmName Name of the realm.
      * @return DataStore names in the form of List.
      * @throws com.sun.identity.tune.common.AMTuneException
@@ -269,7 +275,6 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                     } else {
                         famCfgInfo.put(key, "");
                     }
-                
                 }
             }
         } else {
@@ -280,5 +285,26 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             "Returning OpenSSO Enterprise configuration Map " +
             famCfgInfo.toString());
         return famCfgInfo;
+    }
+
+    protected boolean isFAMServerUp() {
+        boolean isUp = true;
+        try {
+            URL u = new URL(configInfo.getFAMServerUrl());
+            pLogger.log(Level.INFO, "isFAMServerUp", "Connect FAM URL : " +
+                    u.toString());
+            URLConnection  famConn = u.openConnection();
+            if (u.getProtocol().equalsIgnoreCase("http")){
+                HttpURLConnection testConnect = (HttpURLConnection)famConn;
+                testConnect.connect();
+            } else if (u.getProtocol().equalsIgnoreCase("https")) {
+                HttpsURLConnection testConnect = (HttpsURLConnection)famConn;
+                testConnect.connect();
+            }
+        } catch (Exception ex) {
+            pLogger.log(Level.SEVERE, "isFAMServerUp", "FAM server is down");
+            isUp = false;
+        }   
+        return isUp;
     }
 }
