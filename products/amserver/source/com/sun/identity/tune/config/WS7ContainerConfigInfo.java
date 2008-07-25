@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WS7ContainerConfigInfo.java,v 1.1 2008-07-02 18:48:45 kanduls Exp $
+ * $Id: WS7ContainerConfigInfo.java,v 1.2 2008-07-25 06:14:04 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -186,7 +186,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
 
     private void setWSAdminCmd()
     throws AMTuneException {
-        if (AMTuneUtil.isWindows2003()) {
+        if (AMTuneUtil.isWindows()) {
             wsAdminCmd = wsAdminDir + FILE_SEP + "wadm.bat ";
         } else {
             wsAdminCmd = wsAdminDir + FILE_SEP + "wadm ";
@@ -290,8 +290,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             }
         } else {
             mWriter.writelnLocaleMsg("pt-web-wadm-conf-error");
-            mWriter.writeln(resultBuffer.toString());
-            throw new AMTuneException(resultBuffer.toString());
+            throw new AMTuneException("Error validating WS 7.x config.");
         }
     }
 
@@ -322,8 +321,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             }
         } else {
             mWriter.writelnLocaleMsg("pt-web-wadm-httplistener-error");
-            mWriter.writeln(resultBuffer.toString());
-            throw new AMTuneException(resultBuffer.toString());
+            throw new AMTuneException("Error validating HTTPListener.");
         }
     }
 
@@ -344,8 +342,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             }
         } else {
             pLogger.log(Level.SEVERE, "checkWebContainer64BitEnabled",
-                    "Error checking jvm bits so using 32 bit. " +
-                    resultBuffer.toString());
+                    "Error checking jvm bits so using 32 bit. ");
             setJVM64BitEnabled(false);
         }
     }
@@ -366,8 +363,6 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                     wsAdminCommonParams + " --http-listener=" +
                     getWSAdminHttpListener();
             String statsPropCmd = getWSAdminCmd() + "get-stats-prop" +
-                    wsAdminCommonParams;
-            String jvmPropCmd = getWSAdminCmd() + "get-jvm-prop" +
                     wsAdminCommonParams;
             String listJvmOptions = getWSAdminCmd() + "list-jvm-options" +
                     wsAdminCommonParams;
@@ -395,7 +390,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             } else {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting get-thread-pool-prop configuration " +
-                        "information. " + resultBuffer.toString());
+                        "information. ");
                 throw new AMTuneException("Error getting thread pool prop.");
             }
             resultBuffer.setLength(0);
@@ -411,7 +406,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             } else {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting get-http-listener-prop configuration " +
-                        "information. " + resultBuffer.toString());
+                        "information. ");
                 throw new AMTuneException("Error getting http listener prop");
             }
             resultBuffer.setLength(0);
@@ -427,7 +422,7 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             } else {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting get-stats-prop configuration " +
-                        "information. " + resultBuffer.toString());
+                        "information. ");
                 throw new AMTuneException("Error getting stats prop.");
             }
             resultBuffer.setLength(0);
@@ -442,37 +437,42 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 cfgMap.put(MIN_HEAP_FLAG, st.nextToken());
                 st.hasMoreTokens();
                 cfgMap.put(MAX_HEAP_FLAG, st.nextToken());
-                reqLine = cfgF.getLine(GC_LOG_FLAG);
-
-                cfgMap.put(GC_LOG_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(SERVER_FLAG);
-                cfgMap.put(SERVER_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(STACK_SIZE_FLAG);
-                cfgMap.put(STACK_SIZE_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(NEW_SIZE_FLAG);
-                cfgMap.put(NEW_SIZE_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(MAX_NEW_SIZE_FLAG);
-                cfgMap.put(MAX_NEW_SIZE_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(DISABLE_EXPLICIT_GC_FLAG);
-                cfgMap.put(DISABLE_EXPLICIT_GC_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(PARALLEL_GC_FLAG);
-                cfgMap.put(PARALLEL_GC_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(HISTOGRAM_FLAG);
-                cfgMap.put(HISTOGRAM_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(GC_TIME_STAMP_FLAG);
-                cfgMap.put(GC_TIME_STAMP_FLAG, reqLine.trim());
-                reqLine = cfgF.getLine(MARK_SWEEP_GC_FLAG);
-                cfgMap.put(MARK_SWEEP_GC_FLAG, reqLine.trim());
+                reqLine = checkJVMOpt(cfgF.getLine(GC_LOG_FLAG));
+                cfgMap.put(GC_LOG_FLAG, reqLine);
+                reqLine = checkJVMOpt(cfgF.getLine(SERVER_FLAG));
+                cfgMap.put(SERVER_FLAG, reqLine);
+                reqLine = checkJVMOpt(cfgF.getLine(STACK_SIZE_FLAG));
+                cfgMap.put(STACK_SIZE_FLAG, reqLine);
+                reqLine = checkJVMOpt(cfgF.getLine(NEW_SIZE_FLAG));
+                cfgMap.put(NEW_SIZE_FLAG, reqLine);
+                reqLine = checkJVMOpt(cfgF.getLine(MAX_NEW_SIZE_FLAG));
+                cfgMap.put(MAX_NEW_SIZE_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(DISABLE_EXPLICIT_GC_FLAG.replace("-XX:+", 
+                        "")));
+                cfgMap.put(DISABLE_EXPLICIT_GC_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(PARALLEL_GC_FLAG.replace("-XX:+", "")));
+                cfgMap.put(PARALLEL_GC_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(HISTOGRAM_FLAG.replace("-XX:+", "")));
+                cfgMap.put(HISTOGRAM_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(GC_TIME_STAMP_FLAG.replace("-XX:+", "")));
+                cfgMap.put(GC_TIME_STAMP_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(MARK_SWEEP_GC_FLAG.replace("-XX:+", "")));
+                cfgMap.put(MARK_SWEEP_GC_FLAG, reqLine);
                 if (AMTuneUtil.isNiagara()) {
-                    reqLine = cfgF.getLine(PARALLEL_GC_THREADS);
+                    reqLine = checkJVMOpt(cfgF.getLine(PARALLEL_GC_THREADS));
                     cfgMap.put(PARALLEL_GC_THREADS, 
-                            AMTuneUtil.getLastToken(reqLine, "="));
+                            AMTuneUtil.getLastToken(reqLine, PARAM_VAL_DELIM));
                 }
                 cfgF.close();
             } else {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting list-jvm-options configuration " +
-                        "information. " + resultBuffer.toString());
+                        "information. ");
                 throw new AMTuneException("Error gettig list jvm options.");
             }
         } catch (Exception ex) {
@@ -560,5 +560,13 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
      */
     public String getWSAdminUser() {
         return wsAdminUser;
+    }
+    
+    private String checkJVMOpt(String val) {
+        if ((val == null) || (val != null && val.trim().length() <= 0)) {
+            return NO_VAL_SET;
+        } else {
+            return val.trim();
+        }
     }
 }
