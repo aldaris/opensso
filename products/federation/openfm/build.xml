@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.41 2008-07-23 17:40:34 veiming Exp $
+   $Id: build.xml,v 1.42 2008-07-25 16:59:25 veiming Exp $
 
 -->
 
@@ -219,7 +219,7 @@
 
     <target name="doc" depends="preparebuild">
         <javadoc maxmemory="512m" destdir="${openfm.built.apidocs.dir}" 
-            windowtitle="Federated Access Manager API" failonerror="true">
+            windowtitle="OpenSSO Enterprise API" failonerror="true">
             <classpath refid="build.class.path"/>
             <packageset dir="${openfm.src.dir}">
                 <include name="com/sun/identity/authentication/**"/>
@@ -245,7 +245,7 @@
 
     <target name="publicdoc" depends="preparebuild">
         <javadoc maxmemory="512m" destdir="${openfm.built.publicapidocs.dir}"
-                 windowtitle="Federated Access Manager Public API" failonerror="true">
+                 windowtitle="OpenSSO Enterprise Public API" failonerror="true">
             <classpath refid="build.class.path"/>
             <packageset dir="${amserver.src.dir}">
                 <include name="com/iplanet/am/sdk/**"/>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMAuthModule.java,v 1.3 2008-07-23 17:44:54 veiming Exp $
+ * $Id: SMAuthModule.java,v 1.4 2008-07-25 16:59:27 veiming Exp $
  *
  */
 
@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Custom authentication module for validating siteminder user session
- * to enable SSO integration between Federation OpenSSO Enterprise and
+ * to enable SSO integration between OpenSSO Enterprise and
  * Siteminder access server.
  * Siteminder is the trade mark of Computer Associates, the usage of the
  * Siteminder API is subject to Siteminder License terms.

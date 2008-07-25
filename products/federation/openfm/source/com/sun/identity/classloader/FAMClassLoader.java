@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.10 2008-07-23 17:44:58 veiming Exp $
+ * $Id: FAMClassLoader.java,v 1.11 2008-07-25 16:59:25 veiming Exp $
  *
  */
 
@@ -37,8 +37,8 @@ import java.util.Arrays;
 import com.sun.identity.common.SystemConfigurationUtil;
 
 /**
- * Federated Access Mananger class loader to overcome the class loading
- * issues of jars that are not compatible for Federation Access Manager.
+ * OpenSSO Enterprise class loader to overcome the class loading
+ * issues of jars that are not compatible for OpenSSO Enterprise.
  */
 public class FAMClassLoader {
     

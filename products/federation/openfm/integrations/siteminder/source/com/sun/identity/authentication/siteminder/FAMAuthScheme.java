@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMAuthScheme.java,v 1.3 2008-07-23 17:44:54 veiming Exp $
+ * $Id: FAMAuthScheme.java,v 1.4 2008-07-25 16:59:27 veiming Exp $
  *
  */
 
@@ -59,7 +59,7 @@ public class FAMAuthScheme implements SmAuthScheme {
     private static final int SCHEME_VERSION = 
                          SmAuthQueryResponse.SMAUTH_API_VERSION_V3;
     private static final String SCHEME_DESCRIPTION = 
-                         "Federation OpenSSO Enterprise Auth Scheme";
+                         "OpenSSO Enterprise Auth Scheme";
 
 
     final static String  FMPREFIX = "FMTOKEN";
