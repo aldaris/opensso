@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTune.java,v 1.3 2008-07-23 17:30:46 veiming Exp $
+ * $Id: AMTune.java,v 1.4 2008-07-25 05:15:57 kanduls Exp $
  */
 
 package com.sun.identity.tune;
@@ -79,8 +79,6 @@ public class AMTune {
                 if (opt.indexOf(AMTuneConstants.CMD_OPTION2) != -1) {
                     st.hasMoreTokens();
                     AMTuneLogger.setLogLevel(st.nextToken());
-                } else {
-                    printUsage();
                 }
             }
             confInfo = new AMTuneConfigInfo(confFilePath);
@@ -93,6 +91,7 @@ public class AMTune {
             }
         } catch (Exception ex) {
             if (pLogger != null) {
+                pLogger.log(Level.SEVERE, "main", ex.getMessage());
                 pLogger.logException("main", ex);
             } else {
                 ex.printStackTrace();
@@ -110,14 +109,6 @@ public class AMTune {
         }
     }
 
-    private static void printUsage() {
-        System.out.println("Usage:java -cp .;../lib/ldapjdk.jar;" +
-                "../lib/perftuneconfig.jar;../locale;../config " +
-                "com.sun.identity.tune.PerfTuner [-debug=ALL|INFO|FINE|" +
-                "FINEST|FINER|WARNING|SEVERE]");
-        System.exit(1);
-    }
-    
     /**
      * Factory method which creates component tuners for tuning.
      * @param confInfo
@@ -138,8 +129,7 @@ public class AMTune {
         }
         if (confInfo.isTuneDS()) {
             if (confInfo.getDSConfigInfo().isRemoteDS()) {
-                pLogger.log(Level.INFO, "getTuners", "UM DS is remote.");
-                mWriter.writelnLocaleMsg("pt-remote-ds-msg");
+                AMTuneUtil.createRemoteDSTuningZipFile(confInfo);
             } else {
                 String dsVersion = confInfo.getDSConfigInfo().getDsVersion();
                 if (AMTuneUtil.isSupportedUMDSVersion(dsVersion)) {
@@ -156,8 +146,7 @@ public class AMTune {
             }
             if (!confInfo.isUMSMDSSame() && !confInfo.isUMOnlyTune()) {
                 if (confInfo.getSMConfigInfo().isRemoteDS()) {
-                    pLogger.log(Level.INFO, "getTuners", "SM DS is remote.");
-                    mWriter.writelnLocaleMsg("pt-remote-ds-msg");
+                    AMTuneUtil.createRemoteDSTuningZipFile(confInfo);
                 } else {
                     String smDSVersion =
                             confInfo.getSMConfigInfo().getDsVersion();
