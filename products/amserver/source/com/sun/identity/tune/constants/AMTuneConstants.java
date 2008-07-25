@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.2 2008-07-23 17:30:47 veiming Exp $
+ * $Id: AMTuneConstants.java,v 1.3 2008-07-25 05:51:56 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -37,6 +37,7 @@ public interface AMTuneConstants {
     static String CMD_OPTION2 = "debug";
     static String RB_NAME = "amtune";
     static String WINDOWS_2003 = "Windows 2003";
+    static String WINDOWS_VISTA = "Windows Vista";
     static String LINUX ="Linux";
     static String SUN_OS = "SUNOS";
     static String HOST_NAME_LINE = "Host Name:";
@@ -121,7 +122,8 @@ public interface AMTuneConstants {
     static int AMTUNE_NUM_WS_RQTHROTTLE_MIN = 10;
     static int AMTUNE_NUM_WS_THREAD_INCREMENT = 10;
     static int AMTUNE_NUM_IS_MIN_AUTH_LDAP_THREADS = 10;
-    static int AMTUNE_NUM_WS_MIN_THREADS = 10;
+    static int AMTUNE_NUM_WS_THREADS_MAX_VAL = 512;
+    static int AMTUNE_NUM_WS_THREADS_MIN_VAL = 256;
     static boolean AMTUNE_STATISTIC_ENABLED = false;
 
     //Just plain constants
