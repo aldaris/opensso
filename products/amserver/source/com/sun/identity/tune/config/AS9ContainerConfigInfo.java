@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AS9ContainerConfigInfo.java,v 1.1 2008-07-02 18:48:44 kanduls Exp $
+ * $Id: AS9ContainerConfigInfo.java,v 1.2 2008-07-25 05:53:45 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -112,6 +112,7 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             acceptorThreadParam = "server.http-service.http-listener." +
                     getASAdminHttpListener() + ACCEPTOR_THREAD_PARAM;
             writePasswordToFile(confRbl.getString(ASADMIN_PASSWORD));
+            checkAppServer64BitEnabled();
             fillCfgMap();
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "AS91ContainerConfigInfo", 
@@ -208,7 +209,7 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             } else {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting acceptor threads, count threads and " +
-                        "queue size values. " + resultBuffer.toString());
+                        "queue size values. ");
                 throw new AMTuneException("Error getting current setting " +
                         "for threads and queue size.");
             }
@@ -300,7 +301,7 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
     }
     
     /**
-     * Set Application Server Administrtor user name
+     * Set Application Server Administrator user name
      * 
      * @param asAdminUser Application Server Administrator user name
      * @throws com.sun.identity.tune.common.AMTuneException
@@ -499,7 +500,7 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      */
     private void setASAdminCmd() 
     throws AMTuneException {
-        if (AMTuneUtil.isWindows2003()) {
+        if (AMTuneUtil.isWindows()) {
             asAdminCmd = getASAdminDir() + FILE_SEP + "asadmin.bat ";
         } else {
             asAdminCmd = getASAdminDir() + FILE_SEP + "asadmin ";
@@ -605,5 +606,35 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      */
     public String getAsAdminCommonParams() {
         return asAdminCommonParams.toString();
+    }
+    
+    /**
+     * Checks if Web server is using 64 bit JVM
+     */
+    private void checkAppServer64BitEnabled() 
+    throws AMTuneException {
+        mWriter.writelnLocaleMsg("pt-app-check-jvmbits");
+        StringBuffer jvmcmd = new StringBuffer(getASAdminCmd());
+        jvmcmd.append(GENERATE_JVM_REPORT_SUB_CMD);
+        jvmcmd.append(" ");
+        jvmcmd.append(getAsAdminCommonParamsNoTarget());
+        StringBuffer resultBuffer = new StringBuffer();
+        int retVal = AMTuneUtil.executeCommand(jvmcmd.toString(), resultBuffer);
+        if (resultBuffer.indexOf("Unable to connect to admin-server") != -1) {
+            mWriter.writelnLocaleMsg("pt-web-not-running-msg");
+            throw new AMTuneException("Unable to connect to appserver.");
+        }
+        if (retVal == 0) {
+            if (resultBuffer.toString().indexOf("sun.arch.data.model = 64") == 
+                    -1) {
+                setJVM64BitEnabled(false);
+            } else {
+                setJVM64BitEnabled(true);
+            }
+        } else {
+            pLogger.log(Level.SEVERE, "checkAppServer64BitEnabled",
+                    "Error checking jvm bits so using 32 bit. ");
+            setJVM64BitEnabled(false);
+        }
     }
 }
