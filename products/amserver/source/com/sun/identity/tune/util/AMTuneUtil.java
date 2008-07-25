@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.3 2008-07-23 17:30:49 veiming Exp $
+ * $Id: AMTuneUtil.java,v 1.4 2008-07-25 05:41:21 kanduls Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -31,7 +31,9 @@ import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.OutputReaderThread;
 import com.sun.identity.tune.common.AMTuneException;
+import com.sun.identity.tune.common.AMTuneFileFilter;
 import com.sun.identity.tune.common.AMTuneLogger;
+import com.sun.identity.tune.config.AMTuneConfigInfo;
 import com.sun.identity.tune.config.WS7ContainerConfigInfo;
 import com.sun.identity.tune.constants.DSConstants;
 import com.sun.identity.tune.constants.AMTuneConstants;
@@ -56,6 +58,8 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * This class contains all the utility functions for Tuning.
@@ -65,6 +69,7 @@ import java.util.regex.Pattern;
     private static AMTuneLogger pLogger;
     private static MessageWriter mWriter;
     private static boolean isWindows2003;
+    private static boolean isWinVista;
     private static boolean isSunOs;
     private static boolean isLinux;
     private static String tempFile;
@@ -91,7 +96,7 @@ import java.util.regex.Pattern;
         tempFile = AMTuneUtil.TMP_DIR + "perftune-temp.txt";
         sysInfoMap = new HashMap();
         try {
-            if (isWindows2003()) {
+            if (isWindows()) {
                 getWinSystemInfo();
                 //remove the temp file
                 File temp = new File(tempFile);
@@ -146,24 +151,37 @@ import java.util.regex.Pattern;
             }
         } else if (osName.equalsIgnoreCase(WINDOWS_2003)) {
             isWindows2003 = true;
+        } else if (osName.equalsIgnoreCase(WINDOWS_VISTA)) {
+            isWinVista = true;
         } else if (osName.equalsIgnoreCase(LINUX)) {
             isLinux = true;
-            String rVersionFile = "/etc/redhat-release";
+            StringBuffer rBuf = new StringBuffer();
+            String rVersionCmd = "/usr/bin/lsb_release -a";
+            int extVal = executeCommand(rVersionCmd, rBuf);
+            String tempF = "/tmp/lnx-version.txt";
+            if (extVal == -1) {
+                mWriter.writeLocaleMsg("pt-unable-find-lnx-ver");
+                mWriter.writelnLocaleMsg("pt-cannot-proceed");
+                throw new AMTuneException("Error finding Linux version.");
+            } else {
+                AMTuneUtil.writeResultBufferToTempFile(rBuf, tempF);
+            }
             try {
-                FileHandler fh = new FileHandler(rVersionFile);
+                FileHandler fh = new FileHandler(tempF);
                 String reqLine = fh.getLine("Red Hat");
                 if (reqLine == null || 
                         (reqLine != null && reqLine.trim().length() == 0)) {
                     mWriter.writelnLocaleMsg("pt-unsupported-lnx");
-                    String curVersion = fh.getLine(0);
+                    String curVersion = fh.getLine("Description:");
                     if (curVersion != null) {
                         pLogger.log(Level.SEVERE, "checkSystemEnv", 
                              "Unsupported Linux : " + curVersion );
                     }
                     throw new AMTuneException("Unsupported Linux ");
                 }
-                int relidx = reqLine.indexOf("release");
-                String ver = reqLine.substring(relidx + 8, relidx + 10 );
+                
+                String ver = fh.getLine("Release:").replace("Release:", "");
+                ver = ver.trim();
                 pLogger.log(Level.INFO, "checkSystemEnv", "Red Hat version " +
                         ver);
                 int version = Integer.parseInt(ver.trim()); 
@@ -173,12 +191,19 @@ import java.util.regex.Pattern;
                             version);
                 }
             } catch (FileNotFoundException fe) {
-                throw new AMTuneException("File not found " + rVersionFile);
+                pLogger.log(Level.SEVERE, "checkSystemEnv", 
+                        "Exception finding System information " + 
+                        fe.getMessage());
+                throw new AMTuneException("File not found " + tempFile);
             } catch (IOException ioe) {
                 throw new AMTuneException("Error reading file " + 
                         ioe.getMessage());
+            } finally {
+                File delFile = new File(tempF);
+                if (delFile.isFile()) {
+                    delFile.delete();
+                }
             } 
-            
         } else {
             mWriter.writelnLocaleMsg("pt-unsupported-os");
             throw new AMTuneException("Unsupported Operating system.");
@@ -429,7 +454,8 @@ import java.util.regex.Pattern;
                         "processors.");
             }
             if (hostName != null && domainName != null) {
-                domainName = domainName.replace(hostName + ".", "");
+                domainName = domainName.replace(hostName.toLowerCase() + ".", 
+                        "");
                 sysInfoMap.put(HOST_NAME_LINE, hostName + "." + domainName);
             }
             fh.close();
@@ -446,14 +472,8 @@ import java.util.regex.Pattern;
      * @return Returns FQDN
      */
     public static String getHostName() {
-        if (sysInfoMap.get(HOST_NAME_LINE).toString().indexOf(
-                getDomainName()) == -1) {
-            return (String)sysInfoMap.get(HOST_NAME_LINE) + "." + 
-                    getDomainName();
-        } else {
             return (String)sysInfoMap.get(HOST_NAME_LINE);
         }
-    }
 
     /**
      * Returns Domain Name
@@ -550,9 +570,9 @@ import java.util.regex.Pattern;
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "executeCommand", "Executing command " +
                     command + " failed.");
-            pLogger.log(Level.SEVERE, "executeCommand", "Error is " + 
-                    resultBuffer.toString());
             pLogger.logException("executeCommand", ex);
+            pLogger.log(Level.SEVERE, "executeCommand", "Error is : " + 
+                    resultBuffer.toString());
             resultBuffer.insert(0, ex.getMessage());
             return (-1);
         }
@@ -564,7 +584,7 @@ import java.util.regex.Pattern;
         int extVal = -1;
         String tempF = AMTuneUtil.TMP_DIR + "amtunecmdhelper.sh";
         try {
-            if (!AMTuneUtil.isWindows2003()) {
+            if (!AMTuneUtil.isWindows()) {
                 pLogger.log(Level.FINE, "executeScriptCmd",
                         "Command in the file :" + command);
                 //write the command to file and then execute the file
@@ -657,11 +677,9 @@ import java.util.regex.Pattern;
      * @return Random String.
      */
     public static String getRandomStr() {
-	String DATE_FORMAT = "yyyyMMdd";
+	String DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss";
 	DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-        String ranStr = Double.toString(Math.random()).substring(5);
-        String rand = df.format(new Date(System.currentTimeMillis()))+ "-" +
-                ranStr;
+        String rand = df.format(new Date(System.currentTimeMillis()));
         return rand;
     }
 
@@ -677,7 +695,8 @@ import java.util.regex.Pattern;
         if (source == null || dest == null) {
             throw new IllegalArgumentException();
         }
-
+        pLogger.log(Level.FINEST, "CopyFile", "Copying file from " +
+                source.toString() + " to " + dest.toString());
         FileInputStream fis = new FileInputStream(source);
         FileOutputStream fos = new FileOutputStream(dest);
         byte[] buf = new byte[1024];
@@ -694,8 +713,12 @@ import java.util.regex.Pattern;
      *
      * @return <code>true</code> if OS is Windows 2003.
      */
-    public static boolean isWindows2003() {
-        return isWindows2003;
+    public static boolean isWindows() {
+        if (isWinVista || isWindows2003) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -828,7 +851,6 @@ import java.util.regex.Pattern;
             String tFile)
     throws AMTuneException {
         try {
-            File f = new File(tFile);
             FileWriter fw = new FileWriter(new File(tFile));
             fw.write(buf.toString());
             fw.flush();
@@ -1013,6 +1035,196 @@ import java.util.regex.Pattern;
             TMP_DIR = "/tmp" + FILE_SEP;
         } else {
             TMP_DIR = System.getProperty("java.io.tmpdir");
+        }
+    }
+    
+    /**
+     * This method returns all the files in a given directory and its 
+     * sub directories.  
+     * @param directory name of the directory.
+     * @return file names in the form of List.
+     */
+    public static List getFileList(String directory) 
+    throws AMTuneException {
+        List allFiles = new ArrayList();
+        File instanceDir = new File(directory);
+        if (instanceDir != null && !instanceDir.isDirectory()) {
+            pLogger.log(Level.SEVERE, "getFileList", "Directory not present :" +
+                    directory);
+            throw new AMTuneException("Not a valid directory ");
+        }
+        String[] list = instanceDir.list();
+        for (int i = 0; i < list.length; i++) {
+            File tFile = new File(directory + FILE_SEP + list[i]);
+            if (tFile.isDirectory()) {
+                List curList = getFileList(tFile.toString());
+                Iterator itr = curList.iterator();
+                while (itr.hasNext()) {
+                    allFiles.add(itr.next().toString());
+                }
+            }
+            allFiles.add(tFile.toString());
+        }
+        pLogger.log(Level.FINEST, "getFileList", "Returning files " + 
+                allFiles.toString());
+        return allFiles;
+    }
+    
+    /**
+     * Creates zip file from a given directory
+     * @param directory
+     * @param zipName
+     * @return
+     */
+    public static String createZipFile(String directory, String zipName) 
+    throws AMTuneException {
+        ZipOutputStream out = null;
+        FileInputStream in = null;
+        File zipFile = new File(zipName + ".zip");
+        if (zipFile.isFile()) {
+            pLogger.log(Level.FINEST, "createZipFile", 
+                    "Deleting existing zip file.");
+            zipFile.delete();
+        }
+        try {
+            List entries = getFileList(directory);
+            byte[] buffer = new byte[4096]; // Create a buffer for copying
+            int bytesRead;
+            out = new ZipOutputStream(new FileOutputStream(zipFile));
+            Iterator itr = entries.iterator();
+            while(itr.hasNext()) {
+                File f = new File(itr.next().toString());
+                pLogger.log(Level.FINEST, "createZipFile", "Zipping file " +
+                        f.toString());
+                if (f.isDirectory())
+                    continue;//Ignore directory
+                in = new FileInputStream(f);
+                ZipEntry entry = new ZipEntry(f.getPath());
+                out.putNextEntry(entry);
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+                in.close();
+            }
+           return zipFile.getAbsolutePath();
+        } catch(Exception ex) {
+            pLogger.log(Level.SEVERE, "createZipFile", 
+                    "Exception while creating zip file " + ex.getMessage());
+            throw new AMTuneException("Error creating zip file.");
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch(Exception ex) {
+                    //ignore
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+        }
+    }
+    
+    /**
+     * Deletes files in a given directory.
+     * @param directory
+     */
+    public static void deleteDirectory(String directory) {
+        try {
+            List delFiles = getFileList(directory);
+            Iterator dlItr = delFiles.iterator();
+            while (dlItr.hasNext()) {
+                File delFile = new File(dlItr.next().toString());
+                delFile.delete();
+            }
+            File delD = new File(directory);
+            delD.delete();
+        } catch (Exception ex) {
+            pLogger.log(Level.WARNING, "deleteDirectory", "Error occured " +
+                    "while deleting the files :" + ex.getMessage());
+        }
+    }
+    
+    /**
+     * Creates zip file for tuning remote directory.
+     * @param configInfo
+     */
+    public static void createRemoteDSTuningZipFile(AMTuneConfigInfo configInfo){
+        try {
+            pLogger.log(Level.INFO, "createRemoteDSTuningZipFile", 
+                    "Creating amtune.zip file.");
+            mWriter.writelnLocaleMsg("pt-ds-create-tar");
+            String curDir = AMTuneUtil.getCurDir();
+            String baseDir = "amtune" + FILE_SEP;
+            String zBinDir = baseDir + "bin";
+            String zLibDir =  baseDir + "lib";
+            String zLocaleDir = baseDir + "resources";
+            String zLdifDir = baseDir + "ldif";
+            String zBinWinDir = zBinDir + FILE_SEP + "windows";
+            String zBinUnxDir = zBinDir + FILE_SEP + "unix";
+            String reqDirs[] = { zBinDir, zLibDir, zLocaleDir, zLdifDir, 
+                zBinWinDir, zBinUnxDir };
+            //create layout
+            for (int i = 0; i < reqDirs.length; i ++) {
+                File dir = new File (reqDirs[i]);
+                if (!dir.isDirectory()) {
+                    pLogger.log(Level.FINEST, "createRemoteDSTuningZipFile",
+                            "Creating directory " + dir.toString());
+                    dir.mkdirs();
+                }
+            }
+            String filesToCopy[][] = { 
+                {"../../../lib/amtune.jar", zLibDir + FILE_SEP + "amtune.jar"},
+                {"../../../lib/ldapjdk.jar", zLibDir + FILE_SEP + 
+                         "ldapjdk.jar"},
+                {"../../../template/unix/bin/amtune/amtune.template",
+                         zBinUnxDir + FILE_SEP + "amtune"},
+                {"../../../template/windows/bin/amtune/amtune.bat.template",
+                         zBinWinDir + FILE_SEP + "amtune.bat"},
+                {"../../../template/unix/bin/amtune/" +
+                         "amtune-env.properties.template",
+                         zBinUnxDir + FILE_SEP + "amtune-env.properties"},
+                {"../../../template/windows/bin/amtune/" +
+                         "amtune-env.properties.template",
+                         zBinWinDir + FILE_SEP + "amtune-env.properties"},
+                {configInfo.getFAMConfigDir() + FILE_SEP + "index.ldif",
+                         zLdifDir + FILE_SEP + "index.ldif"},
+                {configInfo.getFAMConfigDir() + FILE_SEP + "fam_sds_index.ldif",
+                         zLdifDir + FILE_SEP + "fam_sds_index.ldif"},
+            } ;
+            for (int i = 0; i < filesToCopy.length; i++) {
+                AMTuneUtil.CopyFile(new File(filesToCopy[i][0]), 
+                        new File(filesToCopy[i][1]));
+            }
+            
+            File localeFiles = new File (curDir + "../../../resources");
+            File lFiles[] = localeFiles.listFiles(
+                    new AMTuneFileFilter("amtune"));
+            for (int i = 0; i < lFiles.length; i++) {
+                String fileName = lFiles[i].getName();
+                AMTuneUtil.CopyFile(lFiles[i], new File(zLocaleDir + FILE_SEP +
+                        fileName));
+            }
+            String zipPath = AMTuneUtil.createZipFile("amtune", "amtune");
+            mWriter.writeLocaleMsg("pt-ds-tar-file-location");
+            mWriter.writeln(" " + zipPath);
+            mWriter.writelnLocaleMsg("pt-ds-steps");
+            mWriter.writelnLocaleMsg("pt-ds-copy-tar-file");
+            mWriter.writelnLocaleMsg("pt-ds-untar-file");
+            mWriter.writelnLocaleMsg("pt-ds-set-values");
+            mWriter.writelnLocaleMsg("pt-ds-set-env-values");
+            mWriter.writelnLocaleMsg("pt-ds-execute-review-mode");
+            mWriter.writelnLocaleMsg("pt-ds-review");
+            mWriter.writelnLocaleMsg("pt-ds-change-mode");
+            //Delete any temp directory
+            deleteDirectory(baseDir);
+        } catch (Exception ex) {
+            pLogger.log(Level.SEVERE, "createRemoteDSTuningZipFile",
+                    "Error creating amtune.zip file." + ex.getMessage());
         }
     }
 }
