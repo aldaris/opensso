@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessageWriter.java,v 1.1 2008-07-02 18:45:44 kanduls Exp $
+ * $Id: MessageWriter.java,v 1.2 2008-07-25 06:03:56 kanduls Exp $
  */
 
 package com.sun.identity.tune.common;
@@ -208,9 +208,7 @@ public class MessageWriter {
      */
     private String generateLogFileName(String prefix) {
         if(prefix == null || prefix.length() == 0) return "";
-        String rand = Double.toString(Math.random());
-        String numberComponent = rand.substring(rand.indexOf('.') + 1);
-        String logFileName = prefix + "." + numberComponent + ".log";
+        String logFileName = prefix + "." + AMTuneUtil.getRandomStr() + ".log";
         return logFileName;
     }
     
