@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientSDKSamples.java,v 1.3 2008-07-23 17:45:00 veiming Exp $
+ * $Id: SetupClientSDKSamples.java,v 1.4 2008-07-25 23:32:56 veiming Exp $
  *
  */
 
@@ -180,8 +180,9 @@ public class SetupClientSDKSamples {
         String content = getFileContent(FILE_AMCONFIG_PROPERTIES_TEMPLATE);
         for (Iterator i = properties.keySet().iterator(); i.hasNext(); ) {
             String tag = (String)i.next();
-            content = content.replaceAll("@" + tag + "@",
-                (String)properties.get(tag));
+            String value = (String)properties.get(tag);
+            value = value.replaceAll("\\\\", "\\\\\\\\");
+            content = content.replaceAll("@" + tag + "@", value);
         }
 
         String protocol = (String)properties.get(TAG_SERVER_PROTOCOL);
