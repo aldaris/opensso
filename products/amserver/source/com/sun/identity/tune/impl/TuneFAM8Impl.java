@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.3 2008-07-23 17:30:48 veiming Exp $
+ * $Id: TuneFAM8Impl.java,v 1.4 2008-07-25 06:06:21 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -75,6 +75,10 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-init");
             mWriter.writeln(LINE_SEP);
+            if (!isFAMServerUp()) {
+                mWriter.writelnLocaleMsg("pt-fam-server-down-msg");
+                return;
+            }
             tuneFAMServerConfig();
             tuneServerConfig();
             tuneLDAPConnPool();
@@ -463,7 +467,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             setCmd.append(GLOBAL_SCHEMA);
             setCmd.append(" ");
             setCmd.append(ATTR_VALUES_OPT);
-            if (!AMTuneUtil.isWindows2003()) {
+            if (!AMTuneUtil.isWindows()) {
                 setCmd.append(" ");
                 setCmd.append(LDAP_CONNECTION_POOL_SIZE);
                 setCmd.append("=");
@@ -594,7 +598,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             mWriter.writelnLocaleMsg("pt-cur-val");
             StringBuffer rBuf = new StringBuffer();
             int extVal = 0;
-            if (!AMTuneUtil.isWindows2003()) {
+            if (!AMTuneUtil.isWindows()) {
                 //write the command to file and then execute the file
                 //workaround as ssoadm is not working directly from
                 //runtime in *unix if any option contains space character.
@@ -609,8 +613,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             }
             if (extVal == -1) {
                 pLogger.log(Level.SEVERE, "tuneRealmDataStoreConfig",
-                        "Error finding realm ldap config info :" +
-                        rBuf.toString());
+                        "Error finding realm ldap config info ");
             }
             String dsFile = AMTuneUtil.TMP_DIR + realm.replace("/", "rdelim") +
                     "datastore.txt";
@@ -633,7 +636,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                 return;
             }
             AMTuneUtil.backupConfigFile(dsFile, "conf-fam-backup");
-            if (!AMTuneUtil.isWindows2003()) {
+            if (!AMTuneUtil.isWindows()) {
                 extVal = AMTuneUtil.executeScriptCmd(
                         dataStoreUpdateCmd.toString().replace(
                         "REALM_NAME", realm), rBuf);
@@ -644,8 +647,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             }
             if (extVal == -1) {
                     pLogger.log(Level.SEVERE, "tuneRealmDataStoreConfig",
-                            "Error setting realm ldap config info :" + 
-                            rBuf.toString());
+                        "Error setting realm ldap config info.");
             }
             File dsF = new File(dsFile);
             if (dsF.isFile()) {
