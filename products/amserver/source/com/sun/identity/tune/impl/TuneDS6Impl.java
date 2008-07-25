@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneDS6Impl.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
+ * $Id: TuneDS6Impl.java,v 1.3 2008-07-25 05:49:59 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -65,7 +65,7 @@ public class TuneDS6Impl extends AMTuneDSBase {
     public void initialize(AMTuneConfigInfo configInfo)
     throws AMTuneException {
         super.initialize(configInfo);
-        if (AMTuneUtil.isWindows2003()) {
+        if (AMTuneUtil.isWindows()) {
             dsAdmPath = dsConfInfo.getDSToolsBinDir() + FILE_SEP + "dsadm.exe ";
             dsConf = dsConfInfo.getDSToolsBinDir() + FILE_SEP + "dsconf.exe ";
         } else {
@@ -84,16 +84,12 @@ public class TuneDS6Impl extends AMTuneDSBase {
         if (extVal == -1) {
             mWriter.writelnLocaleMsg("pt-ds-version-fail-msg");
             mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            pLogger.log(Level.SEVERE, "checkDSRealVersion", "dsadm cmd error " +
-                    rBuff.toString());
             throw new AMTuneException("Error getting DS version.");
         } else {
             if (rBuff.toString().indexOf(DS63_VERSION) == -1 &&
                 rBuff.indexOf(DS62_VERSION) != -1) {
                 mWriter.writelnLocaleMsg("pt-ds-unsupported-msg");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                pLogger.log(Level.SEVERE, "checkDSRealVersion", "Unsupported " +
-                    "DS version" + rBuff.toString());
                 throw new AMTuneException("Unsupported DS version.");
             }
         }
@@ -120,7 +116,7 @@ public class TuneDS6Impl extends AMTuneDSBase {
             computeTuneValues();
             mWriter.writeln(PARA_SEP);
             modifyLDAP();
-            if ( ! AMTuneUtil.isWindows2003()) {
+            if ( ! AMTuneUtil.isWindows()) {
                 //For Windows changing dse is not recommended.
                 tuneUsingDSE();
             }
@@ -128,6 +124,7 @@ public class TuneDS6Impl extends AMTuneDSBase {
                 tuneDSIndex();
             }
             tuneFuture();
+            mWriter.writelnLocaleMsg("pt-ds-um-mutliple-msg");
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", "Error Tuning DSEE6.0");
             mWriter.writelnLocaleMsg("pt-error-tuning-msg");
@@ -334,8 +331,6 @@ public class TuneDS6Impl extends AMTuneDSBase {
             int retVal = AMTuneUtil.executeCommand(db2BakCmd, resultBuffer);
             if (retVal == -1) {
                 mWriter.writelnLocaleMsg("pt-cannot-backup-db");
-                pLogger.log(Level.SEVERE, "backUpDS", "Error taking backup: " +
-                        resultBuffer.toString());
                 throw new AMTuneException("Data Base Backup failed.");
             }
             pLogger.log(Level.FINE, "backUpDS", "Backing up Done...");
