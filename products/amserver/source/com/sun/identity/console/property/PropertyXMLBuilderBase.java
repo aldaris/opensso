@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.9 2008-07-10 23:27:24 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.10 2008-07-28 23:43:36 veiming Exp $
  *
  */
 
@@ -88,7 +88,8 @@ public abstract class PropertyXMLBuilderBase
         mapUITypeToName.put(AttributeSchema.UIType.ORDEREDLIST,
             "orderedlist");
         mapUITypeToName.put(AttributeSchema.UIType.MAPLIST,  "maplist");
-
+        mapUITypeToName.put(AttributeSchema.UIType.GLOBALMAPLIST,  
+            "globalmaplist");
 
         mapTypeToName.put(AttributeSchema.Type.LIST, "list");
         mapTypeToName.put(AttributeSchema.Type.MULTIPLE_CHOICE,

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CCMapListModel.java,v 1.1 2008-07-02 17:21:45 veiming Exp $
+ * $Id: CCMapListModel.java,v 1.2 2008-07-28 23:43:36 veiming Exp $
  */
 
 package com.sun.identity.console.ui.model;
@@ -38,6 +38,7 @@ public class CCMapListModel extends CCEditableListModel {
     private String valueLabel;
     private String msgInvalidKey;
     private String msgInvalidValue;
+    private String msgInvalidNoKey;
     private String msgInvalidEntry;
 
     /**
@@ -86,6 +87,15 @@ public class CCMapListModel extends CCEditableListModel {
     }
 
     /**
+     * Returns invalid value (no key in map)  message.
+     *
+     * @return invalid value (no key in map)  message.
+     */
+    public String getMsgMapListInvalidNoKey() {
+        return msgInvalidNoKey;
+    }
+
+    /**
      * Set invalid value message.
      *
      * @param msgInvalidValue Invalid value message.
@@ -93,6 +103,16 @@ public class CCMapListModel extends CCEditableListModel {
     public void setMsgInvalidValue(String msgInvalidValue) {
         this.msgInvalidValue = msgInvalidValue;
     }
+
+    /**
+     * Set invalid value (no key in map) message.
+     *
+     * @param msgInvalidNoKey Invalid value (no key in map) message.
+     */
+    public void setMsgInvalidNoKey(String msgInvalidNoKey) {
+        this.msgInvalidNoKey = msgInvalidNoKey;
+    }
+    
     
     /**
      * Returns label for Key text box.

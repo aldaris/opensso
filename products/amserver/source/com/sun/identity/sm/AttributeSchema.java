@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.9 2008-07-04 02:35:44 veiming Exp $
+ * $Id: AttributeSchema.java,v 1.10 2008-07-28 23:43:36 veiming Exp $
  *
  */
 
@@ -1073,6 +1073,12 @@ public class AttributeSchema {
          */
         public static final UIType MAPLIST = new UIType("maplist");
 
+        /**
+         * The <code>GLOBALMAP_LIST</code> attribute type specifies that the
+         * attribute should be display as a global map list widget.
+         */
+        public static final UIType GLOBALMAPLIST = new UIType("globalmaplist");
+        
         private String attrType;
 
         private UIType() {

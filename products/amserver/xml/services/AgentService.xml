@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.55 2008-07-22 16:12:21 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.56 2008-07-28 23:43:37 veiming Exp $
 
 -->
 
@@ -1093,7 +1093,7 @@
                         name="com.sun.identity.agents.config.filter.mode"
                         type="list"
                         syntax="string"
-                        uitype="maplist"
+                        uitype="globalmaplist"
                         validator="FilterModeValueValidator"
                         i18nKey="a113">
                         <DefaultValues>
@@ -1691,7 +1691,7 @@
                         name="com.sun.identity.agents.config.logout.application.handler"
                         type="list"
                         syntax="string"
-                        uitype="maplist"
+                        uitype="globalmaplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a171">
                         <DefaultValues>
@@ -1702,7 +1702,7 @@
                         name="com.sun.identity.agents.config.logout.uri"
                         type="list"
                         syntax="string"
-                        uitype="maplist"
+                        uitype="globalmaplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a172">
                         <DefaultValues>
@@ -1713,7 +1713,7 @@
                         name="com.sun.identity.agents.config.logout.request.param"
                         type="list"
                         syntax="string"
-                        uitype="maplist"
+                        uitype="globalmaplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a173">
                         <DefaultValues>
@@ -1737,7 +1737,7 @@
                         name="com.sun.identity.agents.config.logout.entry.uri"
                         type="list"
                         syntax="string"
-                        uitype="maplist"
+                        uitype="globalmaplist"
                         validator="GlobalMapValueValidator"
                         i18nKey="a175">
                         <DefaultValues>

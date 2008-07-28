@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CCMapListTag.java,v 1.1 2008-07-02 17:21:46 veiming Exp $
+ * $Id: CCMapListTag.java,v 1.2 2008-07-28 23:43:36 veiming Exp $
  */
 
 package com.sun.identity.console.ui.taglib;
@@ -30,11 +30,9 @@ package com.sun.identity.console.ui.taglib;
 import com.iplanet.jato.view.View;
 import com.sun.identity.console.ui.model.CCMapListModel;
 import com.sun.identity.console.ui.view.CCMapList;
-import com.sun.identity.console.ui.view.CCOrderedList;
 import com.sun.web.ui.taglib.editablelist.CCEditableListTag;
 import com.sun.web.ui.taglib.html.CCTextFieldTag;
 import com.sun.web.ui.view.editablelist.CCEditableList;
-import com.sun.web.ui.view.html.CCButton;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
@@ -98,7 +96,9 @@ public class CCMapListTag extends CCEditableListTag  {
         
         idx = strHTML.indexOf("new CCEditableList(");
         idx = strHTML.indexOf(");", idx);
-        strHTML = strHTML.substring(0, idx) + ", '1'" + strHTML.substring(idx);
+        String extraParam = (isGlobal()) ? ", '1', '1'" : ", '1'";
+        strHTML = strHTML.substring(0, idx) + extraParam +
+            strHTML.substring(idx);
         
         idx = strHTML.indexOf("new CCEditableList(");
         idx = strHTML.indexOf(");", idx) +2;
@@ -108,9 +108,9 @@ public class CCMapListTag extends CCEditableListTag  {
             "var msgMapListInvalidKey=\"" + model.getMsgInvalidKey() + "\"; " +
             "var msgMapListInvalidValue=\"" + model.getMsgInvalidValue() + 
                 "\"; " +
+            "var msgMapListInvalidNoKey=\"" + model.getMsgMapListInvalidNoKey()+
+                "\"; " +
             strHTML.substring(idx);
-        
-        
         
         return strHTML;
     }
@@ -124,5 +124,14 @@ public class CCMapListTag extends CCEditableListTag  {
         // register common ordered list children
         super.initChildViews(field);
         valueTextfield = field.getChild(CCMapList.VALUE_TEXTFIELD);
+    }
+
+    /**
+     * Returns <code>true</code> for global map.
+     *
+     * @return <code>true</code> for global map.
+     */
+    protected boolean isGlobal() {
+        return false;
     }
 }

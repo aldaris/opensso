@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.3 2008-07-02 17:21:47 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.4 2008-07-28 23:43:35 veiming Exp $
  *
  */
 
@@ -98,6 +98,8 @@ public class AMPropertySheetModel
         "com.sun.identity.console.ui.taglib.CCUnOrderedListTag";
     public static final String MAP_LIST =
         "com.sun.identity.console.ui.taglib.CCMapListTag";
+    public static final String GLOBAL_MAP_LIST =
+        "com.sun.identity.console.ui.taglib.CCGlobalMapListTag";
 
     public AMPropertySheetModel() {
         super();
@@ -320,7 +322,9 @@ public class AMPropertySheetModel
                 view = new CCUnOrderedList((ContainerView) parent,
                     m, name);
                 setModel(name, m);
-            } else if (tagName.equals(MAP_LIST)) {
+            } else if (tagName.equals(MAP_LIST) ||
+                tagName.equals(GLOBAL_MAP_LIST)
+            ) {
                 CCMapListModel m = new CCMapListModel();
                 view = new CCMapList((ContainerView) parent, m, name);
                 m.setKeyLabel(model.getLocalizedString("maplist.key.label"));
@@ -332,6 +336,8 @@ public class AMPropertySheetModel
                     "maplist.msg.invalid.key"));
                 m.setMsgInvalidValue(model.getLocalizedString(
                     "maplist.msg.invalid.value"));
+                m.setMsgInvalidNoKey(model.getLocalizedString(
+                    "maplist.msg.invalid.nokey"));
                 setModel(name, m);
             }
 
