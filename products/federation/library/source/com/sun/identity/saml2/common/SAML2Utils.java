@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.35 2008-07-28 16:50:36 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.36 2008-07-28 16:56:38 qcheng Exp $
  *
  */
 
@@ -3986,7 +3986,8 @@ public class SAML2Utils extends SAML2SDKUtils {
                 }
                 conn.setRequestProperty("Cookie", strCookies);
             }
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Type", 
+                "application/x-www-form-urlencoded");
 
             // set header & content 
             StringBuffer buffer = new StringBuffer();
