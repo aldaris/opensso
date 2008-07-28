@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.6 2008-07-16 22:46:49 rajeevangal Exp $
+   $Id: SA_IDP.jsp,v 1.7 2008-07-28 20:38:45 exu Exp $
 
 --%>
 
@@ -420,6 +420,17 @@ com.sun.identity.shared.debug.Debug"
     String spFMUrl = null;
     try {
         spEntityID = getTrustedSP(mm, realm, idpEntityId, spAppUrl);
+        if (spEntityID == null) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message(
+                    "SA_IDP.jsp: errorcode=IDP_8:no matching SP is found.");
+            }
+            String errStr =
+                errorUrl+"?errorcode=IDP_8&errorstring=Error_SP_metadata";
+            SAML2Utils.debug.error(errStr);
+            response.sendRedirect(errStr);
+            return;
+        }
         SPSSOConfigElement spConfig = mm.getSPSSOConfig(realm, spEntityID); 
         spFMUrl = SAML2Utils.getAttributeValueFromSPSSOConfig(
             spConfig, SAML2Constants.SAE_SP_URL);
