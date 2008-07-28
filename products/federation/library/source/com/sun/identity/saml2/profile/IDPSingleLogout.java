@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.19 2008-07-22 18:08:21 weisun2 Exp $
+ * $Id: IDPSingleLogout.java,v 1.20 2008-07-28 16:50:37 qcheng Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.common.SAML2Repository;
+import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
@@ -1221,6 +1222,20 @@ public class IDPSingleLogout {
                 }
 
                 session = idpSession.getSession();
+                // handle external application logout if configured
+                BaseConfigType idpConfig = SAML2Utils.getSAML2MetaManager()
+                    .getIDPSSOConfig(realm, idpEntityID);  
+                List appLogoutURL = (List) SAML2MetaUtils.getAttributes(
+                    idpConfig).get(SAML2Constants.APP_LOGOUT_URL);
+                if (debug.messageEnabled()) {
+                    debug.message("IDPLogoutUtil.processLogoutRequest: " +
+                        "external app logout URL= " + appLogoutURL);
+                }
+                if ((appLogoutURL != null) && (appLogoutURL.size() != 0)) {
+                    SAML2Utils.postToAppLogout(request, 
+                        (String) appLogoutURL.get(0), session);
+                }
+
                 List list = (List)idpSession.getNameIDandSPpairs();
                 int n = list.size();
                 if (debug.messageEnabled()) {

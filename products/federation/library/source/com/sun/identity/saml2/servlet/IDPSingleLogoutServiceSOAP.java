@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogoutServiceSOAP.java,v 1.6 2008-06-27 00:46:51 hengming Exp $
+ * $Id: IDPSingleLogoutServiceSOAP.java,v 1.7 2008-07-28 16:50:57 qcheng Exp $
  *
  */
 
@@ -124,8 +124,6 @@ public class IDPSingleLogoutServiceSOAP extends HttpServlet {
                    resp.setStatus(HttpServletResponse.SC_OK);
                    SAML2Utils.putHeaders(reply.getMimeHeaders(), resp);
                    // Write out the message on the response stream
-                   String sessionIndex = (String) aMap.get(
-                       SAML2Constants.SESSION_INDEX); 
                    OutputStream os = resp.getOutputStream();
                    reply.writeTo(os);
                    os.flush();

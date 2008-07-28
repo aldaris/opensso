@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.17 2008-06-25 05:47:55 qcheng Exp $
+ * $Id: SPSingleLogout.java,v 1.18 2008-07-28 16:50:37 qcheng Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.AccountUtils;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
@@ -954,6 +955,16 @@ public class SPSingleLogout {
                         response, userId, logoutReq, null, binding);
                 }
 
+                // get application logout URL 
+                BaseConfigType spConfig = SAML2Utils.getSAML2MetaManager()
+                    .getSPSSOConfig(realm, spEntityID);
+                List appLogoutURL = (List) SAML2MetaUtils.getAttributes(
+                    spConfig).get(SAML2Constants.APP_LOGOUT_URL);
+                if (debug.messageEnabled()) {
+                    debug.message("IDPLogoutUtil.processLogoutRequest: " +
+                        "external app logout URL= " + appLogoutURL);
+                }
+ 
                 if (numSI == 0) {
                     // logout all fed sessions for this user
                     // between this SP and the IDP
@@ -966,7 +977,7 @@ public class SPSingleLogout {
                             iter.remove();
                         }
                     }
-                    
+                   
                     for (Iterator iter = tokenIDsToBeDestroyed.listIterator();
                         iter.hasNext();) {                          
                         String tokenID =(String) iter.next();
@@ -983,6 +994,12 @@ public class SPSingleLogout {
                             debug.message(method
                                 + "destroy token " + tokenID);
                         } 
+                        // handle external application logout if configured
+                        if ((appLogoutURL != null) && 
+                            (appLogoutURL.size() != 0)) {
+                            SAML2Utils.postToAppLogout(request,
+                                (String) appLogoutURL.get(0), token);
+                        }
                         if (destroySession) {
                             sessionProvider.invalidateSession(token, request,
                             response);
@@ -1044,6 +1061,12 @@ public class SPSingleLogout {
                                      debug.message(method 
                                          + "destroy token (2) " 
                                          + tokenIDToBeDestroyed);
+                                 }
+                                 // handle external application logout 
+                                 if ((appLogoutURL != null) && 
+                                     (appLogoutURL.size() != 0)) {
+                                     SAML2Utils.postToAppLogout(request,
+                                         (String) appLogoutURL.get(0), token);
                                  }
                                  if (destroySession) {
                                      sessionProvider.invalidateSession(

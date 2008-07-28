@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.21 2008-06-27 23:44:09 qcheng Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.22 2008-07-28 16:50:57 qcheng Exp $
  *
  */
 
@@ -286,6 +286,10 @@ public class CreateSAML2HostedProviderTemplate {
             "        <Attribute name=\""+SAML2Constants.AUTH_URL+"\">\n" +
             "            <Value></Value>\n" +
             "        </Attribute>\n" +
+            "       <Attribute name=\"" + SAML2Constants.APP_LOGOUT_URL +
+            "\">\n" +
+            "           <Value></Value>\n" +
+            "       </Attribute>\n" +
             "    </IDPSSOConfig>\n"
         );
     }
@@ -394,6 +398,10 @@ public class CreateSAML2HostedProviderTemplate {
             "           <Value></Value>\n" +
             "       </Attribute>\n" +
             "       <Attribute name=\"" + SAML2Constants.DEFAULT_RELAY_STATE +
+            "\">\n" +
+            "           <Value></Value>\n" +
+            "       </Attribute>\n" +
+            "       <Attribute name=\"" + SAML2Constants.APP_LOGOUT_URL +
             "\">\n" +
             "           <Value></Value>\n" +
             "       </Attribute>\n" +

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.34 2008-07-16 21:07:27 weisun2 Exp $
+ * $Id: SAML2Constants.java,v 1.35 2008-07-28 16:50:36 qcheng Exp $
  *
  */
 
@@ -1421,4 +1421,21 @@ public interface SAML2Constants {
      * Is Bearer assertion
      */
     public String IS_BEARER="isBearer";  
+
+    /**
+     * String to represent the logout url for external application.
+     * SAML2 component will send request to the external logout URL 
+     * using back channel HTTP POST mechanism.
+     * This is used when the single logout is initiated from remote party
+     * (SP or IDP).
+     */
+    public String APP_LOGOUT_URL = "appLogoutUrl";
+
+    /**
+     * URL parameter name in external application logout URL for requesting 
+     * user session property. Value is a session property name whose
+     * value will be posted to application as http header and content for its 
+     * logout use.
+     */
+    public String APP_SESSION_PROPERTY = "appsessionproperty";
 } 

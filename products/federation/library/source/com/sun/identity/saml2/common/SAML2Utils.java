@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.34 2008-07-22 18:08:21 weisun2 Exp $
+ * $Id: SAML2Utils.java,v 1.35 2008-07-28 16:50:36 qcheng Exp $
  *
  */
 
 
 package com.sun.identity.saml2.common;
 
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.common.SystemTimerPool;
 import com.sun.identity.common.TimerPool;
@@ -103,8 +104,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -127,6 +131,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.Detail;
@@ -172,7 +177,7 @@ public class SAML2Utils extends SAML2SDKUtils {
     private static String localURL = server_protocol + "://" + server_host +
             ":" + server_port + server_uri;
     private static int int_server_port = 0;
-    
+
     public static SOAPConnectionFactory scf = null;
     private static String bufferLen = (String) SAML2ConfigService.
             getAttribute(SAML2ConfigService.SAML2_BUFFER_LENGTH);
@@ -3919,5 +3924,144 @@ public class SAML2Utils extends SAML2SDKUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Processes logout for external application. This will do a back channel
+     * HTTP POST to the external application logout URL with all the cookies
+     * and selected session property as HTTP header.
+     * @param request HttpServletRequest
+     * @param appLogoutURL external application logout URL
+     * @param session session object of the user
+     */
+    public static void postToAppLogout(HttpServletRequest request,
+        String appLogoutURL, Object session) {
+   
+        String method = "SAML2Utils.postToAppLogout: "; 
+        try {
+            if ((appLogoutURL == null) || (appLogoutURL.length() == 0)) {
+                return;
+            }
+            // actual application logout URL without the session 
+            // property query parameter
+            String logoutURL = appLogoutURL;
+            // name of the session property
+            String sessProp = null;
+            // find out session property name from the URL
+            int pos = appLogoutURL.indexOf(
+                SAML2Constants.APP_SESSION_PROPERTY + "=");
+            if (pos != -1) {
+                int endPos = appLogoutURL.indexOf("&", pos);
+                if (endPos != -1) {
+                    sessProp = appLogoutURL.substring(
+                        pos + SAML2Constants.APP_SESSION_PROPERTY.length() + 1, 
+                        endPos); 
+                    logoutURL = appLogoutURL.substring(0, pos) + 
+                        appLogoutURL.substring(endPos + 1);
+                } else {
+                    sessProp = appLogoutURL.substring(
+                        pos + SAML2Constants.APP_SESSION_PROPERTY.length() + 1);
+                    logoutURL = appLogoutURL.substring(0, pos - 1);
+                }
+            }
+            if (debug.messageEnabled()) {
+                debug.message(method + "appLogoutURL=" + appLogoutURL + 
+                    ", real logoutURL=" + logoutURL + 
+                    ", session property name: " + sessProp);
+            }
+
+            URL url = new URL(logoutURL);
+            HttpURLConnection conn = 
+                HttpURLConnectionManager.getConnection(url);
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setFollowRedirects(false);
+            conn.setInstanceFollowRedirects(false);
+
+            // replay cookies
+            String strCookies = getCookiesString(request);
+            if (strCookies != null) {
+                if (debug.messageEnabled()) {
+                    debug.message(method + "Sending cookies : " + strCookies);
+                }
+                conn.setRequestProperty("Cookie", strCookies);
+            }
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            // set header & content 
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("");
+            if ((sessProp != null) && (session != null)) {
+                String[] values = SessionManager.getProvider().getProperty(
+                    session, sessProp);
+                if ((values != null) && (values.length != 0)) {
+                    int i = 0;
+                    while (true) {  
+                        conn.setRequestProperty(URLEncDec.encode(sessProp), 
+                            URLEncDec.encode(values[i]));
+                        buffer.append(URLEncDec.encode(sessProp)).append('=');
+                        buffer.append(URLEncDec.encode(values[i++]));
+                        if (i != values.length) {
+                            buffer.append('&');
+                        } else {
+                            break;
+                        }
+                    }
+                } 
+            }  
+            if (debug.messageEnabled()) {
+                debug.message(method + "Sending content: " + buffer.toString());
+            }
+
+            OutputStream outputStream = conn.getOutputStream();
+            // Write the request to the HTTP server.
+            outputStream.write(buffer.toString().getBytes());
+            outputStream.flush();
+            outputStream.close();
+            
+            // Check response code
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                if (debug.messageEnabled()) {
+                    debug.message(method + "Response code OK");
+                }
+            } else {
+                debug.error(method + "Response code NOT OK: " 
+                    + conn.getResponseCode());
+            }
+        } catch (SessionException ex) {
+            debug.error(method + " post to external app failed.", ex);
+        } catch (IOException ex) {
+            debug.error(method + " post to external app failed.", ex);
+        }
+    }
+
+    // Get cookies string from HTTP request object
+    private static String getCookiesString(HttpServletRequest request) {
+        String method = "SAML2Utils.getCookiesString: ";
+        Cookie cookies[] = request.getCookies();
+        StringBuffer cookieStr = null;
+        String strCookies = null;
+        // Process Cookies
+        if (cookies != null) {
+            for (int nCookie = 0; nCookie < cookies.length; nCookie++) {
+                if (debug.messageEnabled()) {
+                    debug.message(method + "Cookie name = " +
+                                      cookies[nCookie].getName());
+                    debug.message(method +" Cookie value = " +
+                                      cookies[nCookie].getValue());
+                }
+                if (cookieStr == null) {
+                    cookieStr = new StringBuffer();
+                } else {
+                    cookieStr.append(";");
+                }
+                cookieStr.append(cookies[nCookie].getName())
+                    .append("=").append(cookies[nCookie].getValue());
+            }
+        }
+        if (cookieStr != null) {
+            strCookies = cookieStr.toString();
+        }
+        return (strCookies);
     }
 }
