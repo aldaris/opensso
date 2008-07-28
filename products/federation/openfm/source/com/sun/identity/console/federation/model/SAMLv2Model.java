@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.22 2008-07-24 17:56:14 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.23 2008-07-28 16:58:26 babysunil Exp $
  *
  */
 
@@ -117,6 +117,10 @@ public interface SAMLv2Model
         "mnisoapResponseLocation";
     public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT =
         "isDefault";
+    public static final String POST_ASSRT_CONS_SERVICE_DEFAULT =
+        "isDefaultPost";
+    public static final String PAOS_ASSRT_CONS_SERVICE_DEFAULT =
+        "isDefaultPaos";
     public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX =
         "httpArtifactIndex";
     public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION =
@@ -221,7 +225,7 @@ public interface SAMLv2Model
         "wantArtifactResponseSigned";
     public static final String SP_META_ALIAS =
         "metaAlias";
-    public static final String ARTI_MSG_ENCODE =
+    public static final String ARTI_MSG_ENCODE = 
             "responseArtifactMessageEncoding";
     
     //IDP PROXY
@@ -924,4 +928,3 @@ public interface SAMLv2Model
         Map affilaitionValues
         ) throws AMConsoleException;
 }
-

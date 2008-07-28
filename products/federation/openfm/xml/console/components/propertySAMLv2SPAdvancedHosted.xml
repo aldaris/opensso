@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAdvancedHosted.xml,v 1.3 2008-06-25 05:51:06 qcheng Exp $
+   $Id: propertySAMLv2SPAdvancedHosted.xml,v 1.4 2008-07-28 17:00:01 babysunil Exp $
 
 -->
 
@@ -69,32 +69,6 @@
     </section>
     
     <section name="ECP" defaultValue="samlv2sp.attribute.label.ecp">
-        <property>
-            <label name="lblPaosAssertConsumerService" defaultValue="samlv2sp.attribute.label.paosassertconsumerservice" />
-            <ccgroup>
-                <property>
-                    <label name="lblPaosAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.paosassertconsumerservicelocation" 
-                           labelFor="PaosLocation" />
-                    <cc name="PaosLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="85" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                    <fieldhelp name="helpPaosLocation" defaultValue="samlv2sp.attribute.help.SPECPPaosLocation" />
-                </property>
-                <property>
-                    <label name="lblPaosAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.paosassertconsumerserviceindex" 
-                           labelFor="PaosIndex" />                    
-                    <cc name="PaosIndex" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="2" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                    <fieldhelp name="helpPaosIndex" defaultValue="samlv2sp.attribute.help.SPECPPaosIndex" />
-                </property>
-            </ccgroup>
-        </property>
-
         <property>
             <label name="lblECPRequestIDPListFinderImpl" defaultValue="samlv2sp.attribute.label.ecp.ECPRequestIDPListFinderImpl" labelFor="ECPRequestIDPListFinderImpl" />
             <cc name="ECPRequestIDPListFinderImpl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
