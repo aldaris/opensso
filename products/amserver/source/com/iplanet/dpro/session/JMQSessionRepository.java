@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.3 2008-06-25 05:41:29 qcheng Exp $
+ * $Id: JMQSessionRepository.java,v 1.4 2008-07-28 21:22:17 pawand Exp $
  *
  */
 
@@ -191,6 +191,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             isDatabaseUp = true;
         } catch (Exception e) {
             isDatabaseUp = false;
+            FAMPersisterManager.clearInstance();
             debug.error(BRIEF_DB_ERROR_MSG);
             if (debug.messageEnabled()) {
                 debug.message(DB_ERROR_MSG, e);
@@ -226,6 +227,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             return is;
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
+            FAMPersisterManager.clearInstance();
             logDBStatus();
             debug.error(BRIEF_DB_ERROR_MSG, e);
             if (debug.messageEnabled()) {
@@ -257,6 +259,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
            
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
+            FAMPersisterManager.clearInstance();
             logDBStatus();
             debug.error(BRIEF_DB_ERROR_MSG, e);
             if (debug.messageEnabled()) {
@@ -285,6 +288,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             FAMRecord retRec = pSession.send(famRec);
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
+            FAMPersisterManager.clearInstance();
             logDBStatus();
             debug.error(BRIEF_DB_ERROR_MSG, e);
             if (debug.messageEnabled()) {
@@ -320,6 +324,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             FAMRecord retRec = pSession.send(famRec); 
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
+            FAMPersisterManager.clearInstance();
             logDBStatus();
             debug.error(BRIEF_DB_ERROR_MSG, e);
             if (debug.messageEnabled()) {
@@ -358,6 +363,7 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             sessions = retRec.getExtraStringAttributes(); 
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
+            FAMPersisterManager.clearInstance();
             logDBStatus();
             debug.error(BRIEF_DB_ERROR_MSG, e);
             if (debug.messageEnabled()) {
