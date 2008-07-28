@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMPersisterManager.java,v 1.2 2008-06-25 05:43:27 qcheng Exp $
+ * $Id: FAMPersisterManager.java,v 1.3 2008-07-28 21:21:23 pawand Exp $
  *
  */
 
@@ -53,7 +53,8 @@ public class FAMPersisterManager {
             famRecordPersisterImpl).newInstance();        
     } 
     
-    public static FAMPersisterManager getInstance() throws Exception{
+    public synchronized static FAMPersisterManager getInstance() 
+        throws Exception{
         if (instance == null) {
             instance = new FAMPersisterManager();           
         }
@@ -62,5 +63,9 @@ public class FAMPersisterManager {
    
     public static FAMRecordPersister getFAMRecordPersister() {
         return recordPesister; 
+    }
+
+    public synchronized static void clearInstance() {
+        instance = null;
     }
 }
