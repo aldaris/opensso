@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.11 2008-07-11 01:46:22 arviranga Exp $
+ * $Id: ServerConfiguration.java,v 1.12 2008-07-29 20:11:29 veiming Exp $
  *
  */
 
@@ -31,10 +31,8 @@ package com.sun.identity.common.configuration;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.setup.BootstrapCreator;
 import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.shared.Constants;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.RemoteServiceAttributeValidator;
@@ -393,17 +391,6 @@ public class ServerConfiguration extends ConfigurationBase {
                 set.add(xml);
                 map.put(ATTR_SERVER_CONFIG_XML, set);
                 cfg.setAttributes(map);
-                if (instanceName.equals(
-                    SystemProperties.getServerInstanceName())
-                ) {
-                    try {
-                        BootstrapCreator.updateBootstrap();
-                    } catch (ConfigurationException e) {
-                        Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                            "ServerConfiguration.setServerConfigXML", e);
-                        throw e;
-                    }
-                }
             }
         }
     }

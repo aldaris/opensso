@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.80 2008-07-25 17:02:15 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.81 2008-07-29 20:11:29 veiming Exp $
  *
  */
 
@@ -43,6 +43,7 @@ import com.sun.identity.common.DebugPropertiesObserver;
 import com.sun.identity.common.FQDNUtils;
 import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ConfigurationException;
+import com.sun.identity.common.configuration.ServerConfigXMLObserver;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.SiteConfiguration;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
@@ -160,12 +161,9 @@ public class AMSetupServlet extends HttpServlet {
         LoginLogoutMapping.setProductInitialized(isConfiguredFlag);
         
         if (isConfiguredFlag && !ServerConfiguration.isLegacy()) { 
-            try {
-                BootstrapCreator.createBootstrap();
-            } catch (ConfigurationException e) {
-                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
-                    "AMSetupServlet,init", e);
-            }        
+            // this will sync up bootstrap file will serverconfig,xml
+            // due startup; and also register the observer.
+            ServerConfigXMLObserver.getInstance().update(true);
         }
     }
 
@@ -360,16 +358,15 @@ public class AMSetupServlet extends HttpServlet {
             
             if (isConfiguredFlag) {
                 boolean legacy = ServerConfiguration.isLegacy();
-                Map bootstrapRes = createBootstrapResource(legacy);
-                String url = BootstrapData.createBootstrapResource(
-                    bootstrapRes, legacy);  
                 String fileBootstrap = getBootstrapLocator();
                 if (fileBootstrap != null) {
                    writeToFileEx(fileBootstrap, basedir);
                 }
 
                 if (!legacy) {
-                    writeBootstrapFile(url);
+                    // this will write bootstrap file after configuration is 
+                    // done; and also register the observer.
+                    ServerConfigXMLObserver.getInstance().update(true);
                     Map mapBootstrap = new HashMap(2);
                     Set set = new HashSet(2);
                     set.add(fileBootstrap);
@@ -805,22 +802,6 @@ public class AMSetupServlet extends HttpServlet {
         return initMap;
     }
     
-    private static void writeBootstrapFile(String url)
-        throws IOException {
-        Map map = ServicesDefaultValues.getDefaultValues();
-        String basedir = (String)map.get(
-            SetupConstants.CONFIG_VAR_BASE_DIR);
-        String deployuri = (String)map.get(
-            SetupConstants.CONFIG_VAR_SERVER_URI);
-        String fileName = basedir + "/" + BOOTSTRAP_EXTRA; 
-        writeToFile(fileName, url);
-
-        // Do "chmod" only if it is on UNIX/Linux platform
-        if (System.getProperty("path.separator").equals(":")) {
-            Runtime.getRuntime().exec("/bin/chmod 400 " + fileName);
-        }
-    }
-
     private static void handlePostPlugins(SSOToken adminSSOToken)
         throws IllegalAccessException, InstantiationException,
             ClassNotFoundException 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.33 2008-07-25 17:00:58 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.34 2008-07-29 20:11:29 veiming Exp $
  *
  */
 
@@ -98,6 +98,13 @@ public class ServicesDefaultValues {
             throw new ConfiguratorException("configurator.encryptkey",
                 null, locale);
         }
+        
+        // this set the encryption password for crypt class.
+        // otherwises password in serverconfig.xml will be incorrect
+        String ekey = ((String)map.get(
+            SetupConstants.CONFIG_VAR_ENCRYPTION_KEY));
+        SystemProperties.initializeProperties("am.encryption.pwd", ekey);
+        
         validatePassword(locale);
         if (!isServiceURLValid()) {
             throw new ConfiguratorException("configurator.invalidhostname",
@@ -415,7 +422,6 @@ public class ServicesDefaultValues {
                 map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
             }
         }        
-        
         String ldapUserPwd = (String)map.get(SetupConstants.LDAP_USER_PWD);
         if (ldapUserPwd != null) {
             ldapUserPwd.trim();        
