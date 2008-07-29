@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.29 2008-07-23 17:24:54 veiming Exp $
+ * $Id: LoginState.java,v 1.30 2008-07-29 20:37:37 bigfatrat Exp $
  *
  */
 
@@ -1287,7 +1287,7 @@ public class LoginState {
             
             session.setClientDomain(getOrgDN());
             session.setType(Session.USER_SESSION);
-            if (client != null) {
+            if ((client = getClient()) != null) {
                 session.putProperty(ISAuthConstants.HOST, client);
             }
             if (!sessionUpgrade) {
