@@ -18,12 +18,19 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.12 2008-07-10 16:34:52 inthanga Exp $
+ $Id: opensso-common.xml,v 1.13 2008-07-29 21:10:39 kmeduri Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project>
+    <property 
+      name="configurator.server1.properties" 
+      value="${QATEST_HOME}/resources/Configurator-${SERVER_NAME1}.properties"/>
+    <property 
+      name="configurator.server2.properties" 
+      value="${QATEST_HOME}/resources/Configurator-${SERVER_NAME2}.properties"/>
+
     <target name="moveDebugFiles" depends="init-common">
         <move file="${SERVER_DIR}/test_env.txt" todir="${base.report.dir}"/>
         <move file="${SERVER_DIR}/debug" todir="${base.report.dir}"/>
@@ -76,10 +83,10 @@
         </condition>
         <echo message="server2.set=${server2.set}"/>
 
-        <available file="${QATEST_HOME}/resources/Configurator-${SERVER_NAME1}.properties" type="file" property="config.file1"/>
+        <available file="${configurator.server1.properties}" type="file" property="config.file1"/>
         <echo message="config.file1=${config.file1}"/>
 
-        <available file="${QATEST_HOME}/resources/Configurator-${SERVER_NAME2}.properties" type="file" property="config.file2"/>
+        <available file="${configurator.server2.properties}" type="file" property="config.file2"/>
         <echo message="config.file2=${config.file2}"/>
 
         <condition property="config.file1.present" else="false">
@@ -149,13 +156,13 @@
         </condition>
         <echo message="cond-is-true=${cond-is-true}"/>
 
-        <fail message="*** Configuration file ${QATEST_HOME}/resources/Configurator-${SERVER_NAME1}.properties is missing ***">
+        <fail message="*** Configuration file ${configurator.server1.properties} is missing ***">
             <condition>
                <istrue value="${all.server1.false}"/>
             </condition>
         </fail>
 
-        <fail message="*** Configuration file ${QATEST_HOME}/resources/Configurator-${SERVER_NAME2}.properties is missing ***">
+        <fail message="*** Configuration file ${configurator.server2.properties} is missing ***">
             <condition>
                 <istrue value="${all.server2.false}"/>
             </condition>
@@ -192,29 +199,44 @@
         <classpath refid="client.classpath"/>
     </taskdef>
 
-    <target name="wscompile-idsvcs-module" depends="check-idsvcs-cond" if="compile.idsvcs">
-        <wscompile
-            fork= "false"
-            base="${built.classes.dir}"
-            classpath="${client.cp}"
-            gen="true"
-            verbose="true"
-            config="./xml/idsvcs/idsvcsSoapTest.xml">
-        </wscompile>
-    </target>
-
-    <target name="compile-idsvcs-module" depends="wscompile-idsvcs-module" if="compile.idsvcs">
-        <echo message="Compiling idsvcs test source files"/>
-        <javac destdir="${built.classes.dir}"
-        debug="on"
-        failonerror="true">
-            <src path="./source"/>
-            <include name="com/sun/identity/qatest/idsvcs/**"/>
-            <classpath refid="client.classpath"/>
-        </javac>
+    <target name="compile-idsvcs-module" depends="check-idsvcs-cond" if="compile.idsvcs">
+        <antcall target="compile-idsvcs-all"/>
     </target>
 
     <target name="wscompile-idsvcs-all">
+        <copy file="./xml/idsvcs/idsvcsSoapTest.xml"
+              tofile="./xml/idsvcs/idsvcsSoapTest.xml.orig" 
+              overwrite="false" />
+
+        <!-- This stmt is a must for the below if task to work -->
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+        <if>
+          <equals arg1="${server1.set}" arg2="false" />
+          <then>
+            <echo message="Error: server1 not set." />
+          </then>
+
+          <elseif>
+            <equals arg1="${server1.set}" arg2="${server2.set}" />
+            <then>
+              <echo message="Use server2." />
+              <property file="${configurator.server2.properties}" />
+            </then>
+          </elseif>
+
+          <else>
+            <echo message="Use server1." />
+            <property file="${configurator.server1.properties}" />
+          </else>
+        </if>
+
+        <replace file="./xml/idsvcs/idsvcsSoapTest.xml"
+                 token="[PROTOCOL]://[HOST]:[PORT]/[DEPLOY_URI]"
+                 value="${com.iplanet.am.naming.url}" />
+        <replace file="./xml/idsvcs/idsvcsSoapTest.xml"
+                 token="/namingservice"
+                 value="" />
+
         <wscompile
             fork= "false"
             base="${built.classes.dir}"
@@ -234,6 +256,10 @@
             <include name="com/sun/identity/qatest/idsvcs/**"/>
             <classpath refid="client.classpath"/>
         </javac>
+
+        <move file="./xml/idsvcs/idsvcsSoapTest.xml.orig"
+              tofile="./xml/idsvcs/idsvcsSoapTest.xml" 
+              overwrite="true" />
     </target>
 
     <target name="compile-all" depends="clean-all">
