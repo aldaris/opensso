@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentHotSwapTests.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: J2EEAgentHotSwapTests.java,v 1.5 2008-07-29 22:25:45 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,7 +132,8 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             agentId = rbg.getString(strGblRB + ".agentId");
             hotswap = new HotSwapProperties("agentonly", tstIdx);
             boolean isHotSwapSupported = hotswap.isHotSwapSupported();
-            if (isHotSwapSupported && strAgentBeingTested.contains("J2EE")) { 
+            if (isHotSwapSupported && (strAgentBeingTested.contains("J2EE")
+                || strAgentBeingTested.contains("WEBLOGIC"))) { 
                 amid = idmc.getFirstAMIdentity(admintoken, agentId, 
                     idmc.getIdType("agentonly"), "/");
                 resIdx = new Integer(resourceIdx).intValue();
@@ -225,6 +226,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         String strPropValue = rbp.getString(strHotSwapRB + testIdx +
                ".responseFetchValue");
         hotswap.hotSwapProperty(strPropName, strPropValue);
+        Thread.sleep(3000);        
         set = amid.getAttribute(
                 "com.sun.identity.agents.config.response.attribute.fetch.mode");
         itr = set.iterator();
@@ -296,6 +298,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         String strPropValue = rbp.getString(strHotSwapRB + testIdx + 
                ".sessionFetchValue");
         hotswap.hotSwapProperty(strPropName, strPropValue);
+        Thread.sleep(3000);
         set = amid.getAttribute(
                 "com.sun.identity.agents.config.session.attribute.fetch.mode");
         itr = set.iterator();
@@ -340,6 +343,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         String strPropValue = rbp.getString(strHotSwapRB + testIdx + 
                ".profileFetchValue");
         hotswap.hotSwapProperty(strPropName, strPropValue);
+        Thread.sleep(3000);                
         Set set;
         Iterator itr;
         set = amid.getAttribute(
@@ -470,6 +474,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             strEvalValue = rbp.getString(strHotSwapRB + testIdx + 
                    ".accessDeniedURIEvalValue");
             hotswap.hotSwapProperty(strPropName, strPropValue);
+            Thread.sleep(3000);
             webClient.setCookiesEnabled(true);
             page = consoleLogin(webClient, resource, "hsuser0",
                 "hsuser0");
@@ -534,6 +539,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             strEvalValue = rbp.getString(strHotSwapRB + testIdx + 
                    ".notenfURIEvalValue");
             hotswap.hotSwapProperty(strPropName, strPropValue);
+            Thread.sleep(3000);
             URL Url = new URL (agentURL + strPropValue);
             log(Level.FINE,"evalNotEnfURI", "New evalNotEnfURI is : " + 
                     Url.toString());
