@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogSampleUtils.java,v 1.2 2008-06-25 05:41:14 qcheng Exp $
+ * $Id: LogSampleUtils.java,v 1.3 2008-07-29 20:34:57 bigfatrat Exp $
  *
  */
 
@@ -139,6 +139,9 @@ public class LogSampleUtils {
         try {
             while ((c = System.in.read()) != -1) {
                 char ch = (char)c;
+                if (ch == '\r') {
+                    continue;
+                }
                 if (ch == '\n') {
                     break;
                 }
