@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureELFFormatter.java,v 1.5 2008-07-16 00:26:39 bigfatrat Exp $
+ * $Id: SecureELFFormatter.java,v 1.6 2008-07-29 18:14:56 bigfatrat Exp $
  *
  */
 
@@ -117,9 +117,6 @@ public class SecureELFFormatter extends Formatter {
             sbuffer.append("\"").append(strTime).append("\"\t");
             stringForMAC.append("\"").append(strTime).append("\"");
             String message = processString(formatMessage(logRecord));
-            if ((message == null) || (message.length() <= 0)) {
-                message = NOTAVAIL;
-            }
             if ((message.indexOf(' ') != -1) || (message.indexOf('\t') != -1)) {
                 sbuffer.append("\"").append(message).append("\"\t");
                 stringForMAC.append("\"").append(message).append("\"");
@@ -137,11 +134,7 @@ public class SecureELFFormatter extends Formatter {
                 (logInfoTable != null) &&
                 (selectedFields.contains(key))) {
                     value = (String) logInfoTable.get(key);
-                    if ((value != null) && (value.length() != 0)) {
-                        value = processString(value);
-                    } else {
-                        value = NOTAVAIL;
-                    }
+                    value = processString(value);
                     // the following check is to check if the string has
                     // a white space ... if it does then it should be
                     // enclosed within quotes.
@@ -246,6 +239,9 @@ public class SecureELFFormatter extends Formatter {
      * messages.
      */
     private String processString(String field) {
+        if ((field == null) || (field.length() == 0)) {
+            return LogConstants.NOTAVAIL;
+        }
         StringBuffer sbuffer = new StringBuffer();
         int len = field.length();
         boolean hasUniqueChar = false;

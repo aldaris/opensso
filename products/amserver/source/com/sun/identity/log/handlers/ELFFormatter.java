@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELFFormatter.java,v 1.5 2008-07-16 00:26:39 bigfatrat Exp $
+ * $Id: ELFFormatter.java,v 1.6 2008-07-29 18:14:56 bigfatrat Exp $
  *
  */
 
@@ -117,9 +117,6 @@ public class ELFFormatter extends Formatter {
             }
             sbuffer.append("\"").append(strTime).append("\"\t");
             String message = processString(formatMessage(logRecord));
-            if ((message == null) || (message.length() <= 0)) {
-                message = NOTAVAIL;
-            }
             if ((message.indexOf(' ') != -1) || (message.indexOf('\t') != -1)) {
                 sbuffer.append("\"").append(message).append("\"\t");
             } else {
@@ -216,6 +213,9 @@ public class ELFFormatter extends Formatter {
      * multiline strings(Strings which have \r\n in them)
      */
     private String processString(String field) {
+        if ((field == null) || (field.length() == 0)) {
+            return LogConstants.NOTAVAIL;
+        }
         StringBuffer sbuffer = new StringBuffer();
         int len = field.length();
         boolean hasUniqueChar = false;

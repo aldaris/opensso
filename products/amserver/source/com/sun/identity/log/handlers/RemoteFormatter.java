@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteFormatter.java,v 1.5 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: RemoteFormatter.java,v 1.6 2008-07-29 18:14:56 bigfatrat Exp $
  *
  */
 
@@ -97,6 +97,9 @@ public class RemoteFormatter extends Formatter {
         xml.append("</level><recMsg>");
 
         String msg = formatMessage(logRecord);
+        if ((msg == null) || (msg.length() == 0)) {
+            msg = LogConstants.NOTAVAIL;
+        }
         msg = com.sun.identity.shared.encode.Base64.encode(msg.getBytes());
         
         xml.append(msg);

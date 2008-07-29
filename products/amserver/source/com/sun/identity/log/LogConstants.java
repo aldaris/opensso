@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.13 2008-07-23 17:24:59 veiming Exp $
+ * $Id: LogConstants.java,v 1.14 2008-07-29 18:12:40 bigfatrat Exp $
  *
  */
 
@@ -529,6 +529,11 @@ public class LogConstants {
      */
     public static final String LOG_STATUS_ATTR =
         "logstatus";
+
+    /**
+     * the "Not Available" String for when a field is not provided
+     */
+    public static final String NOTAVAIL = "Not Available";
 
     /**
      * default logging level

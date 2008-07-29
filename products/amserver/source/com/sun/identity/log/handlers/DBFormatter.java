@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.6 2008-07-16 00:26:39 bigfatrat Exp $
+ * $Id: DBFormatter.java,v 1.7 2008-07-29 18:14:56 bigfatrat Exp $
  *
  */
 
@@ -57,8 +57,6 @@ public class DBFormatter extends Formatter {
     private LogManager lmanager = LogManagerUtil.getLogManager();
     private String [] allFields;
     private ITimestampGenerator secureTimestampGenerator;
-
-    private final String NOTAVAIL = "Not Available";
 
     private String dateTimeFormat = null;
     private boolean isMySQL = false;
@@ -185,10 +183,9 @@ public class DBFormatter extends Formatter {
          * to the db
          */
         String tstr = formatMessage(logRecord);
-	if ((tstr == null) || (tstr.length() <= 0)) {
-            tstr = NOTAVAIL;
-	}
-        if ((tstr.length() > 0 ) && (tstr.indexOf("'") != -1)) {
+        if ((tstr == null) || (tstr.length() <= 0)) {
+            tstr = LogConstants.NOTAVAIL;
+        } else if ((tstr.length() > 0 ) && (tstr.indexOf("'") != -1)) {
             StringTokenizer tmps = new StringTokenizer(tstr, "'");
             StringBuffer thisfield = new StringBuffer();
             if (Debug.messageEnabled()) {
@@ -281,11 +278,11 @@ public class DBFormatter extends Formatter {
                     tempstr = thisfield.toString();
                 }
                 if (tempstr == null) {
-                    tempstr = NOTAVAIL;
+                    tempstr = LogConstants.NOTAVAIL;
                 }
                 sbuffer.append("'").append(tempstr).append("', ");
             } else {
-                sbuffer.append("'" + NOTAVAIL + "'").append(", ");
+                sbuffer.append("'" + LogConstants.NOTAVAIL + "'").append(", ");
             }
         }
 
@@ -297,11 +294,11 @@ public class DBFormatter extends Formatter {
         if (selectedFields.contains(allFields[len-1])) {
             String tmpstr = (String)logInfoTable.get(allFields[len-1]);
             if (tmpstr == null) {
-                tmpstr = NOTAVAIL;
+                tmpstr = LogConstants.NOTAVAIL;
             }
             sbuffer.append("'").append(tmpstr).append("'");
         } else {
-            sbuffer.append("'" + NOTAVAIL + "'");
+            sbuffer.append("'" + LogConstants.NOTAVAIL + "'");
         }
 
         if (Debug.messageEnabled()) {
