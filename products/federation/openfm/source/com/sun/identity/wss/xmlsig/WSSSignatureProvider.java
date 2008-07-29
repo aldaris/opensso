@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.5 2008-06-25 05:50:15 qcheng Exp $
+ * $Id: WSSSignatureProvider.java,v 1.6 2008-07-29 20:01:55 mrudul_uchil Exp $
  *
  */
 
@@ -232,14 +232,14 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
 
-/*
- *          Until we verify the fix from XWSS to support STRTransform
+
+//          Until we verify the fix from XWSS to support STRTransform
             Transforms strtransform = new Transforms(doc);
             strtransform.addTransform(STRTransform.STR_TRANSFORM_URI,
                        transformParams);
             signature.addDocument("#"+secRefId, strtransform,
                         Constants.ALGO_ID_DIGEST_SHA1);
-*/
+
 
             Element keyIdentifier = doc.createElementNS(
                         WSSConstants.WSSE_NS,
@@ -437,13 +437,13 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                 signature.addDocument("#"+id, transforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
-/*
+
             Transforms strtransforms = new Transforms(doc);
             strtransforms.addTransform(
                                STRTransform.STR_TRANSFORM_URI, transformParams);
             signature.addDocument("#"+secRefId, strtransforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
-*/
+
 
             Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
                         SAMLConstants.TAG_REFERENCE);

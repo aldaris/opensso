@@ -28,5 +28,6 @@ com/sun/identity/wss/security/ConfiguredWSCSecurityMech.class
 com/sun/identity/wss/security/ConfiguredWSPSecurityMech.class
 com/sun/identity/wss/provider/ConfiguredSTSConfig.class
 com/sun/identity/wss/provider/ConfiguredDiscoveryConfig.class
+com/sun/identity/wss/logging/LogUtil.class
 com/sun/identity/classloader/FAMClassLoader.class
 com/sun/identity/classloader/MaskingClassLoader.class

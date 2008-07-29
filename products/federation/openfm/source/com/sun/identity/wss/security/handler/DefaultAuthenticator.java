@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.10 2008-07-18 06:45:17 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.11 2008-07-29 20:01:53 mrudul_uchil Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.net.URL;
 import javax.security.auth.Subject;
 import java.security.PrivilegedAction;
@@ -107,6 +108,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.wss.sts.STSConstants;
+import com.sun.identity.wss.logging.LogUtil;
 
 /**
  * This class provides a default implementation for authenticating the
@@ -303,6 +305,11 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         } else {
             debug.error("DefaultAuthenticator.authenticate:: Invalid " +
             "security mechanism");
+            String[] data = {uri};
+            LogUtil.error(Level.INFO,
+                        LogUtil.AUTHENTICATION_FAILED,
+                        data,
+                        null);
             throw new SecurityException(
                      bundle.getString("authenticationFailed"));
         }

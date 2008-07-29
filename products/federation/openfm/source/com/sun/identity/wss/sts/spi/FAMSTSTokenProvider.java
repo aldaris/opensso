@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.7 2008-07-23 17:45:01 veiming Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.8 2008-07-29 20:01:55 mrudul_uchil Exp $
  *
  */
 
@@ -68,6 +68,7 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.TimeZone;
+import java.util.logging.Level;
 import com.sun.xml.ws.security.trust.logging.LogStringsMessages;
 
 import java.security.cert.X509Certificate;
@@ -102,7 +103,7 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 import com.sun.identity.wss.security.SecurityToken;
-
+import com.sun.identity.wss.logging.LogUtil;
 
 
 public class FAMSTSTokenProvider implements STSTokenProvider {
@@ -161,6 +162,12 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             assertion = 
                 createSAML11Assertion(wstVer, tokenLifeSpan, confirMethod, 
                 assertionId, issuer, appliesTo, keyInfo, claimedAttrs, keyType);
+            String[] data = {assertionId,issuer,appliesTo,confirMethod,
+                tokenType,keyType};
+            LogUtil.access(Level.INFO,
+                        LogUtil.CREATED_SAML11_ASSERTION,
+                        data,
+                        null);
         } else if (WSTrustConstants.SAML20_ASSERTION_TOKEN_TYPE.equals(
             tokenType)){
             String authnCtx = 
@@ -170,11 +177,22 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 createSAML20Assertion(wstVer, tokenLifeSpan, confirMethod, 
                 assertionId, issuer, appliesTo, keyInfo, claimedAttrs, keyType, 
                 authnCtx);
+            String[] data = {assertionId,issuer,appliesTo,confirMethod,
+                tokenType,keyType};
+            LogUtil.access(Level.INFO,
+                        LogUtil.CREATED_SAML20_ASSERTION,
+                        data,
+                        null);
         } else {
             // TBD : Need to add code for UserName token creation and 
             // X509 token creation.
             STSUtils.debug.error("FAMSTSTokenProvider.generateToken ERROR : " + 
                 "UNSUPPORTED_TOKEN_TYPE");
+            String[] data = {tokenType};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNSUPPORTED_TOKEN_TYPE,
+                        data,
+                        null);
             throw new WSTrustException(
                 LogStringsMessages.WST_0031_UNSUPPORTED_TOKEN_TYPE(
                 tokenType, appliesTo));
@@ -195,7 +213,12 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             //signedAssertion = assertion.sign(stsCert, stsPrivKey);
         } catch (SAMLException ex){
             STSUtils.debug.error("FAMSTSTokenProvider.generateToken ERROR : " + 
-                "ERROR_CREATING_SAML_ASSERTION : ", ex);
+                "ERROR_SIGNING_SAML_ASSERTION : ", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_SIGNING_SAML_ASSERTION,
+                        data,
+                        null);
             throw new WSTrustException(
                     LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(),
                     ex);
@@ -330,13 +353,31 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 conditions, advice, statements);
         } catch(SAMLException ex){
             STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion : " 
-                + "ERROR_CREATING_SAML_ASSERTION : ", ex);
+                + "ERROR_CREATING_SAML11_ASSERTION : ", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
+                        data,
+                        null);
+            LogUtil.error(Level.SEVERE,
+                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
+                        data,
+                        null);
             throw new WSTrustException(
                 LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
                 ex);
         } catch(XWSSecurityException ex){
             STSUtils.debug.error("FAMSTSTokenProvider.createSAML11Assertion : " 
-                + "ERROR_CREATING_SAML_ASSERTION : ", ex);
+                + "ERROR_CREATING_SAML11_ASSERTION : ", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
+                        data,
+                        null);
+            LogUtil.error(Level.SEVERE,
+                        LogUtil.ERROR_CREATING_SAML11_ASSERTION,
+                        data,
+                        null);
             throw new WSTrustException(
                 LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
                 ex);
@@ -440,13 +481,31 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 conditions, null, subj, statements);
         } catch(SAMLException ex){
             STSUtils.debug.error("FAMSTSTokenProvider.createSAML20Assertion " + 
-                " ERROR : ERROR_CREATING_SAML_ASSERTION : ", ex);
+                " ERROR : ERROR_CREATING_SAML20_ASSERTION : ", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
+                        data,
+                        null);
+            LogUtil.error(Level.SEVERE,
+                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
+                        data,
+                        null);
             throw new WSTrustException(
                 LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
                 ex);
         } catch(XWSSecurityException ex){
             STSUtils.debug.error("FAMSTSTokenProvider.createSAML20Assertion " + 
-                " ERROR : ERROR_CREATING_SAML_ASSERTION : ", ex);
+                " ERROR : ERROR_CREATING_SAML20_ASSERTION : ", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
+                        data,
+                        null);
+            LogUtil.error(Level.SEVERE,
+                        LogUtil.ERROR_CREATING_SAML20_ASSERTION,
+                        data,
+                        null);
             throw new WSTrustException(
                 LogStringsMessages.WST_0032_ERROR_CREATING_SAML_ASSERTION(), 
                 ex);

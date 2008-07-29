@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.14 2008-07-23 17:45:01 veiming Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.15 2008-07-29 20:01:54 mrudul_uchil Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import javax.xml.namespace.QName;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -71,6 +72,7 @@ import com.sun.identity.wss.security.SAML2AssertionValidator;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wss.security.SecurityException;
+import com.sun.identity.wss.logging.LogUtil;
 
 /**
  * The STS attribute provider is used to retrieve an authenticated user or
@@ -175,6 +177,12 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
            return null;
         }
         
+        String[] data = {subjectName};
+        LogUtil.access(Level.INFO,
+                LogUtil.IDENTITY_SUBJECT_NAME,
+                data,
+                null);
+        
 	Map<QName, List<String>> attrs = new HashMap<QName, List<String>>();         
         String namespace = defaultNS;
         Set tmp = null;
@@ -241,6 +249,13 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
               attrs.putAll(memberships);
            }
         }
+        
+        String attrsStr = attrs.toString();
+        String[] data2 = {attrsStr};
+        LogUtil.access(Level.INFO,
+                    LogUtil.ATTR_MAP_FOR_SP,
+                    data2,
+                    null);
        
 	return attrs;
     }

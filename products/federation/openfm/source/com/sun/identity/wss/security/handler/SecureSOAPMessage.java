@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.17 2008-07-23 05:13:31 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.18 2008-07-29 20:01:54 mrudul_uchil Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -61,6 +62,7 @@ import com.sun.identity.wss.security.BinarySecurityToken;
 import com.sun.identity.wss.security.UserNameToken;
 import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.security.SAML2TokenUtils;
+import com.sun.identity.wss.logging.LogUtil;
 
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.saml.common.SAMLConstants;
@@ -215,6 +217,11 @@ public class SecureSOAPMessage {
          } catch (SOAPException se) {
              debug.error("SecureSOAPMessage.parseSOAPMessage: SOAP" +
              "Exception in parsing the headers.", se);
+             String[] data = {se.getLocalizedMessage()};
+             LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_PARSING_SOAP_HEADERS,
+                        data,
+                        null);
              throw new SecurityException(se.getMessage());
          }
      }
@@ -491,6 +498,11 @@ public class SecureSOAPMessage {
          } catch (SOAPException se) {
              debug.error("SecureSOAPMessage.addSecurityHeader:: SOAPException"+
              " while adding the security header.", se);
+             String[] data = {se.getLocalizedMessage()};
+             LogUtil.error(Level.INFO,
+                        LogUtil.ERROR_ADDING_SECURITY_HEADER,
+                        data,
+                        null);
              throw new SecurityException(
                     bundle.getString("addSecurityHeaderFailed"));
          }
@@ -600,11 +612,21 @@ public class SecureSOAPMessage {
          } catch (XMLSignatureException se) {
              debug.error("SecureSOAPMessage.signWithAssertion:: " +
                 "signing failed", se);
+            String[] data = {se.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
              throw new SecurityException(
                    bundle.getString("unabletoSign"));
          } catch (Exception ex) {
              debug.error("SecureSOAPMessage.signWithAssertion:: " +
                 "signing failed", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
              throw new SecurityException(
                    bundle.getString("unabletoSign"));
          }
@@ -636,11 +658,21 @@ public class SecureSOAPMessage {
          } catch (XMLSignatureException se) {
             debug.error("SecureSOAPMessage.signWithBinaryToken:: Signature " +
             "Exception.", se);
+            String[] data = {se.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          } catch (Exception ex) {
             debug.error("SecureSOAPMessage.signWithBinaryToken:: " +
                 "signing failed", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          }
@@ -671,11 +703,21 @@ public class SecureSOAPMessage {
          } catch (XMLSignatureException se) {
             debug.error("SecureSOAPMessage.signWithBinaryToken:: Signature " +
             "Exception.", se);
+            String[] data = {se.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          } catch (Exception ex) {
             debug.error("SecureSOAPMessage.signWithBinaryToken:: " +
                 "signing failed", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          }
@@ -706,11 +748,21 @@ public class SecureSOAPMessage {
          } catch (XMLSignatureException se) {
             debug.error("SecureSOAPMessage.signWithUNToken:: Signature " +
             "Exception.", se);
+            String[] data = {se.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          } catch (Exception ex) {
             debug.error("SecureSOAPMessage.signWithUNToken:: " +
                 "signing failed", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_SIGN,
+                        data,
+                        null);
             throw new SecurityException(
                    bundle.getString("unabletoSign"));
          }
@@ -754,6 +806,11 @@ public class SecureSOAPMessage {
         } catch (SAMLException se) {
             debug.error("SecureSOAPMessage.verify:: Signature validation " +
                    "failed", se);
+            String[] data = {se.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                        LogUtil.SIGNATURE_VALIDATION_FAILED,
+                        data,
+                        null);
             throw new SecurityException(
                 bundle.getString("signatureValidationFailed"));
         }
@@ -893,11 +950,21 @@ public class SecureSOAPMessage {
          } catch (EncryptionException ee) {
              debug.error("SecureSOAPMessage.encrypt:: Encryption " +
                  "Exception : ", ee);
+             String[] data = {ee.getLocalizedMessage()};
+             LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_ENCRYPT,
+                        data,
+                        null);
              throw new SecurityException(
                  bundle.getString("unabletoEncrypt"));        
          } catch (Exception ex) {
              debug.error("SecureSOAPMessage.encrypt:: " +
                  "encryption failed : ", ex);
+             String[] data = {ex.getLocalizedMessage()};
+             LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_ENCRYPT,
+                        data,
+                        null);
              throw new SecurityException(
                  bundle.getString("unabletoEncrypt"));
          }
@@ -1019,11 +1086,21 @@ public class SecureSOAPMessage {
          } catch (EncryptionException ee) {
              debug.error("SecureSOAPMessage.decrypt:: Decrypt " +
                 "encryption failed : ", ee);
-                throw new SecurityException(
+             String[] data = {ee.getLocalizedMessage()};
+             LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_DECRYPT,
+                        data,
+                        null);
+             throw new SecurityException(
                     bundle.getString("decryptEncryptionFailed"));
          } catch (Exception ex) {
              debug.error("SecureSOAPMessage.decrypt:: " +
                  "exception : ", ex);
+             String[] data = {ex.getLocalizedMessage()};
+             LogUtil.error(Level.INFO,
+                        LogUtil.UNABLE_TO_DECRYPT,
+                        data,
+                        null);
              throw new SecurityException(
                  bundle.getString("unabletoDecrypt"));
          }

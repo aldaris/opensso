@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.15 2008-07-22 16:33:05 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.16 2008-07-29 20:01:54 mrudul_uchil Exp $
  *
  */
 
@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 import org.w3c.dom.Element;
 import javax.servlet.ServletContext;
 
@@ -45,9 +48,8 @@ import com.sun.identity.wss.provider.STSConfig;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.FAMSecurityToken;
 import com.sun.identity.wss.security.SAML2Token;
+import com.sun.identity.wss.logging.LogUtil;
 import com.sun.identity.classloader.FAMClassLoader;
-import java.lang.reflect.Method;
-import java.lang.reflect.Constructor;
 
 /**
  * The class <code>TrustAuthorityClient</code> is used to obtain the 
@@ -335,6 +337,22 @@ public class TrustAuthorityClient {
                     + " obtained from STS : " + XMLUtils.print(element));
             }
 
+            if (credential != null) {
+                String[] data = {wspEndPoint,stsEndpoint,stsMexAddress,
+                credential.toString(),keyType,tokenType};
+                LogUtil.access(Level.INFO,
+                    LogUtil.SUCCESS_RETRIEVING_TOKEN_FROM_STS,
+                    data,
+                    credential);
+            } else {
+                String[] data2 = {wspEndPoint,stsEndpoint,stsMexAddress,
+                null,keyType,tokenType};
+                LogUtil.access(Level.INFO,
+                    LogUtil.SUCCESS_RETRIEVING_TOKEN_FROM_STS,
+                    data2,
+                    null);
+            }
+        
             if (type != null) {
                 if (type.equals(STSConstants.SAML20_ASSERTION_TOKEN_TYPE)) {
                     return new SAML2Token(element);
@@ -354,7 +372,16 @@ public class TrustAuthorityClient {
 
         } catch (Exception ex) {
             debug.error("TrustAuthorityClient.getSTSToken:: Failed in" +
-                "obtainining STS Token : ", ex);            
+                "obtainining STS Token : ", ex);
+            String[] data = {ex.getLocalizedMessage()};
+            LogUtil.error(Level.INFO,
+                    LogUtil.ERROR_RETRIEVING_TOKEN_FROM_STS,
+                    data,
+                    null);
+            LogUtil.error(Level.SEVERE,
+                    LogUtil.ERROR_RETRIEVING_TOKEN_FROM_STS,
+                    data,
+                    null);
             throw new FAMSTSException(
                     STSUtils.bundle.getString("wstrustexception"));
         } finally {

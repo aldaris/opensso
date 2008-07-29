@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.19 2008-07-22 16:33:04 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.20 2008-07-29 20:01:54 mrudul_uchil Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +98,7 @@ import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.sts.STSConstants;
+import com.sun.identity.wss.logging.LogUtil;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -180,6 +182,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
        
         ProviderConfig config = null;
         FAMSTSConfiguration stsConfig = null;
+        
+        String[] data = {WSSUtils.print(soapRequest.getSOAPPart())};
+        LogUtil.access(Level.FINE,
+                LogUtil.REQUEST_TO_BE_VALIDATED,
+                data,
+                null);
         
         Boolean isTrustMessage = (Boolean) sharedState.get("IS_TRUST_MSG");
         boolean isSTS = 
@@ -312,6 +320,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                     " at the end of Validate request **"); 
             debug.message(WSSUtils.print(soapRequest.getSOAPPart()));
         }
+        
+        String[] data2 = {providerName,uri};
+        LogUtil.access(Level.INFO,
+                LogUtil.SUCCESS_VALIDATE_REQUEST,
+                data2,
+                null);
+        
         return subject;
     }
 
@@ -337,6 +352,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 WSSUtils.print(soapMessage.getSOAPPart()));
         }
 
+        String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
+        LogUtil.access(Level.FINE,
+                LogUtil.RESPONSE_TO_BE_SECURED,
+                data,
+                null);
+        
         ProviderConfig config = null;
         FAMSTSConfiguration stsConfig = null;
         
@@ -409,6 +430,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         soapMessage = secureMessage.getSOAPMessage();
         
+        String[] data2 = {providerName};
+        LogUtil.access(Level.INFO,
+                LogUtil.SUCCESS_SECURE_RESPONSE,
+                data2,
+                null);
+        
         return soapMessage;
 
     }
@@ -431,6 +458,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             Subject subject,
             Map sharedState) throws SecurityException {
        
+        String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
+        LogUtil.access(Level.FINE,
+                LogUtil.REQUEST_TO_BE_SECURED,
+                data,
+                null);
+        
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
@@ -530,6 +563,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
 
         soapMessage = secureMessage.getSOAPMessage();
+        
+        String[] data2 = {providerName,uri};
+        LogUtil.access(Level.INFO,
+                LogUtil.SUCCESS_SECURE_REQUEST,
+                data2,
+                null);
+        
         return soapMessage;
     }
 
@@ -555,6 +595,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 "Input SOAP message : " + 
                 WSSUtils.print(soapMessage.getSOAPPart()));
         }
+        
+        String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
+        LogUtil.access(Level.FINE,
+                LogUtil.RESPONSE_TO_BE_VALIDATED,
+                data,
+                null);
+        
         ProviderConfig config = getProviderConfig(sharedState);
         if(config == null) {
            if(WSSUtils.debug.messageEnabled()) {
@@ -599,6 +646,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             }
         }
         removeValidatedHeaders(config, soapMessage);
+        
+        String[] data2 = {providerName};
+        LogUtil.access(Level.INFO,
+                LogUtil.SUCCESS_VALIDATE_RESPONSE,
+                data2,
+                null);
     }
 
     /**
