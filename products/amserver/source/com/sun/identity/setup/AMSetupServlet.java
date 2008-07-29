@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.81 2008-07-29 20:11:29 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.82 2008-07-29 20:13:20 veiming Exp $
  *
  */
 
@@ -678,6 +678,7 @@ public class AMSetupServlet extends HttpServlet {
                 }
             } 
             SystemProperties.setServerInstanceName(serverInstanceName);
+            LDIFTemplates.copy(basedir + "/template/ldif", servletCtx);
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
            
